@@ -1,0 +1,9 @@
+appConfig {
+  grpcServer = 'y'
+  logging = 'y'
+  javaMainClass = "com.cpdss.loadableplan.Application"
+}
+
+dependencies {
+    implementation project(':common')
+}

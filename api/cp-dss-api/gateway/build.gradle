@@ -1,0 +1,12 @@
+appConfig {
+  rest = 'y'
+  persistence = 'springData'
+  dataBase = 'mysql'
+  logging = 'y'
+  devTools = 'y'
+  javaMainClass = "com.cpdss.gateway.Application"
+}
+
+dependencies {
+    implementation project(':common')
+}
