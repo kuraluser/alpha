@@ -1,0 +1,518 @@
+/* You can add global styles to this file, and also import other style files */
+@import "themes/default/variables.scss";
+@import "node_modules/bootstrap/scss/bootstrap.scss";
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: $body-bg;
+  color: $text-primary;
+  font-family: 'Play', sans-serif;
+  font-size: 11px;
+}
+
+a {
+  cursor: pointer;
+}
+
+.no-top-padding {
+  padding-top: 0 !important;
+}
+
+.no-right-padding {
+  padding-right: 0 !important;
+}
+
+.no-bottom-padding {
+  padding-bottom: 0 !important;
+}
+
+.no-left-padding {
+  padding-left: 0 !important;
+}
+
+.pt-5 {
+  padding-top: 5px !important;
+}
+
+.pt-10 {
+  padding-top: 10px !important;
+}
+
+.pt-15 {
+  padding-top: 15px !important;
+}
+
+.pt-20 {
+  padding-top: 20px !important;
+}
+
+.pt-25 {
+  padding-top: 25px !important;
+}
+
+.pt-30 {
+  padding-top: 30px !important;
+}
+
+
+.pr-5 {
+  padding-right: 5px !important;
+}
+
+.pr-10 {
+  padding-right: 10px !important;
+}
+
+.pr-15 {
+  padding-right: 15px !important;
+}
+
+.pr-20 {
+  padding-right: 20px !important;
+}
+
+.pr-25 {
+  padding-right: 25px !important;
+}
+
+.pr-30 {
+  padding-right: 30px !important;
+}
+
+.pb-5 {
+  padding-bottom: 5px !important;
+}
+
+.pb-10 {
+  padding-bottom: 10px !important;
+}
+
+.pb-15 {
+  padding-bottom: 15px !important;
+}
+
+.pb-20 {
+  padding-bottom: 20px !important;
+}
+
+.pb-25 {
+  padding-bottom: 25px !important;
+}
+
+.pb-30 {
+  padding-bottom: 30px !important;
+}
+
+.pl-5 {
+  padding-left: 5px !important;
+}
+
+.pl-10 {
+  padding-left: 10px !important;
+}
+
+.pl-15 {
+  padding-left: 15px !important;
+}
+
+.pl-20 {
+  padding-left: 20px !important;
+}
+
+.pl-25 {
+  padding-left: 25px !important;
+}
+
+.pl-30 {
+  padding-left: 30px !important;
+}
+
+.mb-0 {
+  margin-bottom: 0 !important;
+}
+
+.mt-0 {
+  margin-top: 0 !important;
+}
+
+.ml-0 {
+  margin-left: 0 !important;
+}
+
+.mr-0 {
+  margin-right: 0 !important;
+}
+
+.mt-0 {
+  margin-top: 0px !important;
+}
+
+.mt-5 {
+  margin-top: 5px !important;
+}
+
+
+.mt-10 {
+  margin-top: 10px !important;
+}
+
+.mt-15 {
+  margin-top: 15px !important;
+}
+
+
+
+.mt-20 {
+  margin-top: 20px !important;
+}
+
+.mt-25 {
+  margin-top: 25px !important;
+}
+
+.mt-30 {
+  margin-top: 30px !important;
+}
+
+.mt-35 {
+  margin-top: 35px !important;
+}
+
+.mt-80 {
+  margin-top: 80px !important;
+}
+
+.mt-45 {
+  margin-top: 45px;
+}
+
+
+
+.mr-5 {
+  margin-right: 5px !important;
+}
+
+.mr-10 {
+  margin-right: 10px !important;
+}
+
+.mr-15 {
+  margin-right: 15px !important;
+}
+
+.mr-20 {
+  margin-right: 20px !important;
+}
+
+.mr-25 {
+  margin-right: 25px !important;
+}
+
+.mr-30 {
+  margin-right: 30px !important;
+}
+
+.mb-0 {
+  margin-bottom: 0px !important;
+}
+
+.mb-5 {
+  margin-bottom: 5px !important;
+}
+
+.mb-10 {
+  margin-bottom: 10px !important;
+}
+
+.mb-15 {
+  margin-bottom: 15px !important;
+}
+
+.mb-20 {
+  margin-bottom: 20px !important;
+}
+
+.mb-25 {
+  margin-bottom: 25px !important;
+}
+
+.mb-30 {
+  margin-bottom: 30px !important;
+}
+
+
+
+.ml-5 {
+  margin-left: 5px !important;
+}
+
+.ml-10 {
+  margin-left: 10px !important;
+}
+
+.ml-15 {
+  margin-left: 15px !important;
+}
+
+.ml-20 {
+  margin-left: 20px !important;
+}
+
+.ml-25 {
+  margin-left: 25px !important;
+}
+
+.ml-30 {
+  margin-left: 30px !important;
+}
+
+.right {
+  float: right;
+}
+
+.left {
+  float: right;
+}
+
+.vessel-info-wrapper {
+  max-width: 310px;
+}
+
+.btn {
+  font-size: 11px;
+}
+
+.btn-link {
+  color: $link-color !important;
+
+  &:hover {
+    color: $text-secondary !important;
+  }
+}
+
+.icon-btn {
+  padding-left: 25px;
+}
+
+.plus-icon-rounded {
+  background: url(../src/assets/images/plus-rounded-icon.png) no-repeat;
+  background-position: center left;
+}
+
+.pencil-icon {
+  background: url(../src/assets/images/pencil-icon.png) no-repeat;
+  background-position: center left;
+}
+
+.tab-btn {
+  display: inline-block;
+  width: 57px;
+  height: 35px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  border-right: 1px solid $tab-border;
+
+  &.active {
+    background: $border-color;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+
+  &:last-child {
+    border-right: 0;
+  }
+}
+
+.two-column-list-sidebar {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding-left: 10px;
+  text-transform: uppercase;
+  border-bottom: 1px solid $border-color;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+
+  li {
+    flex-basis: 0;
+    flex-grow: 1;
+
+    &:last-child {
+      font-size: 14px;
+      color: $text-secondary;
+      text-align: right;
+    }
+  }
+
+  &.heading {
+    border-bottom: 2px solid $border-color;
+
+    li {
+      font-size: 11px;
+      color: $text-secondary;
+    }
+  }
+}
+
+.tank-outer {
+  padding: 0 112px 0 52px;
+  min-width: 100%;
+  height: calc(100vh - 260px);
+  max-height: 500px;
+  position: relative;
+
+  .tank-inner-wrapper {
+    min-width: 100%;
+    height: 100%;
+    background: url(../src/assets/images/ship-tank-area.png) no-repeat;
+    background-size: 100% 100%;
+    display: flex;
+    flex-direction: column;
+
+    >div {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      flex-direction: row-reverse;
+
+      >div {
+        flex-basis: 0;
+        flex-grow: 1;
+        padding: 2px 0;
+
+        &.two-tank-width {
+          flex-grow: 2;
+        }
+
+        >div {
+          width: calc(100% - 4px);
+          height: 100%;
+          background: $tank-bg;
+          border: 1px solid $tank-border;
+          padding: 2px;
+          position: relative;
+
+          .tank-level {
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            height: 30%;
+            left: 0;
+          }
+
+          .tank-info {
+            position: absolute;
+            top: 0;
+            right: 5px;
+            padding: 5px;
+            left: 18px;
+            line-height: 1;
+            color: $text-secondary;
+          }
+        }
+      }
+
+      &:first-child {
+        height: 35%;
+
+        >div {
+          padding-top: 0;
+        }
+      }
+
+      &:last-child {
+        height: 35%;
+
+        >div {
+          padding-bottom: 0;
+        }
+      }
+    }
+  }
+
+  &:after {
+    width: 52px;
+    content: "";
+    position: absolute;
+    height: 100%;
+    left: 0;
+    background: url(../src/assets/images/ship-tank-rear.png) no-repeat;
+    background-size: 100% 100%;
+    z-index: 0;
+    top: 0;
+  }
+
+  &:before {
+    width: 112px;
+    content: "";
+    position: absolute;
+    height: 100%;
+    right: 0;
+    background: url(../src/assets/images/ship-tank-front.png) no-repeat;
+    background-size: 100% 100%;
+    z-index: 0;
+    top: 0;
+  }
+}
+
+.sidebar-right {
+  max-width: 270px;
+  min-width: 270px;
+}
+
+.ael {
+  background: $ael;
+}
+
+.ku {
+  background: $ku;
+}
+
+.om {
+  background: $om;
+}
+
+.aeh {
+  background: #5c9ea0;
+}
+
+.tank-info-btn {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid $tank-bg;
+  background: $tank-btn;
+  position: absolute;
+  cursor: pointer;
+}
+
+.form-control-sm {
+  height: 30px;
+}
+
+.text-lead {
+  font-size: 14px;
+}
+
+.secondary-text {
+  color: $text-secondary;
+}
+
+a {
+  color: $link-text;
+
+  &:hover {
+    color: $text-secondary;
+    text-decoration: none;
+  }
+}
+
+.font-small {
+  font-size: 8px;
+}
