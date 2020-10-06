@@ -226,6 +226,7 @@ public class CommonControllerAdvice extends ResponseEntityExceptionHandler
    */
   @ExceptionHandler(value = {ConstraintViolationException.class})
   @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+  @ResponseBody
   public CommonErrorResponse handleConstraintViolation(final ConstraintViolationException cve) {
     HttpServletRequest request =
         ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();

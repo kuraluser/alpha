@@ -1,7 +1,7 @@
 appConfig {
   rest = 'y'
   persistence = 'springData'
-  dataBase = 'mysql'
+  dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
   javaMainClass = "com.cpdss.gateway.Application"
