@@ -8,7 +8,7 @@ body {
 }
 
 body {
-  background: $body-bg;
+  /*background: $body-bg;*/
   color: $text-primary;
   font-family: 'Play', sans-serif;
   font-size: 11px;
@@ -17,6 +17,7 @@ body {
 a {
   cursor: pointer;
 }
+
 
 .no-top-padding {
   padding-top: 0 !important;
@@ -299,12 +300,11 @@ a {
 }
 
 .plus-icon-rounded {
-  background: url(../src/assets/images/plus-rounded-icon.png) no-repeat;
   background-position: center left;
 }
 
 .pencil-icon {
-  background: url(../src/assets/images/pencil-icon.png) no-repeat;
+  background: url(../src/assets/images/themes/dark/pencil-icon.png) no-repeat;
   background-position: center left;
 }
 
@@ -369,7 +369,7 @@ a {
   .tank-inner-wrapper {
     min-width: 100%;
     height: 100%;
-    background: url(../src/assets/images/ship-tank-area.png) no-repeat;
+    background: url(../src/assets/images/themes/dark/ship-tank-area.png) no-repeat;
     background-size: 100% 100%;
     display: flex;
     flex-direction: column;
@@ -441,7 +441,7 @@ a {
     position: absolute;
     height: 100%;
     left: 0;
-    background: url(../src/assets/images/ship-tank-rear.png) no-repeat;
+    background: url(../src/assets/images/themes/dark/ship-tank-rear.png) no-repeat;
     background-size: 100% 100%;
     z-index: 0;
     top: 0;
@@ -453,7 +453,7 @@ a {
     position: absolute;
     height: 100%;
     right: 0;
-    background: url(../src/assets/images/ship-tank-front.png) no-repeat;
+    background: url(../src/assets/images/themes/dark/ship-tank-front.png) no-repeat;
     background-size: 100% 100%;
     z-index: 0;
     top: 0;

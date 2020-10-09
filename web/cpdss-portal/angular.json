@@ -22,7 +22,11 @@
             "tsConfig": "apps/cpdss/tsconfig.app.json",
             "aot": true,
             "extractCss": true,
-            "assets": ["apps/cpdss/src/favicon.ico", "apps/cpdss/src/assets", "apps/cpdss/src/manifest.webmanifest"],
+            "assets": [
+              "apps/cpdss/src/favicon.ico",
+              "apps/cpdss/src/assets",
+              "apps/cpdss/src/manifest.webmanifest"
+            ],
             "styles": [
               {
                 "input": "apps/cpdss/src/styles/themes/dark/theme-dark.scss",
@@ -34,7 +38,8 @@
                 "lazy": true,
                 "bundleName": "theme-light"
               },
-              "apps/cpdss/src/styles.scss"],
+              "apps/cpdss/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -248,7 +253,10 @@
               "apps/cpdss/tsconfig.app.json",
               "apps/cpdss/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/cpdss/**/*"]
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/cpdss/**/*"
+            ]
           }
         },
         "test": {
@@ -281,8 +289,13 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["apps/cpdss-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/cpdss-e2e/**/*"]
+            "tsConfig": [
+              "apps/cpdss-e2e/tsconfig.e2e.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/cpdss-e2e/**/*"
+            ]
           }
         }
       }
@@ -308,7 +321,10 @@
             "tsConfig": "apps/login/tsconfig.app.json",
             "aot": true,
             "extractCss": true,
-            "assets": ["apps/login/src/favicon.ico", "apps/login/src/assets"],
+            "assets": [
+              "apps/login/src/favicon.ico",
+              "apps/login/src/assets"
+            ],
             "styles": [
               {
                 "input": "apps/login/src/styles/themes/dark/theme-dark.scss",
@@ -320,7 +336,8 @@
                 "lazy": true,
                 "bundleName": "theme-light"
               },
-              "apps/login/src/styles.scss"],
+              "apps/login/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -524,7 +541,10 @@
               "apps/login/tsconfig.app.json",
               "apps/login/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/login/**/*"]
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/login/**/*"
+            ]
           }
         },
         "test": {
@@ -557,15 +577,21 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["apps/login-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/login-e2e/**/*"]
+            "tsConfig": [
+              "apps/login-e2e/tsconfig.e2e.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/login-e2e/**/*"
+            ]
           }
         }
       }
     }
   },
   "cli": {
-    "defaultCollection": "@nrwl/angular"
+    "defaultCollection": "@nrwl/angular",
+    "analytics": false
   },
   "schematics": {
     "@nrwl/workspace": {

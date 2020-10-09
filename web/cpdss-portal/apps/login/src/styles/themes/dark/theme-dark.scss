@@ -1,2 +1,14 @@
 @import 'theme-dark-variables.scss';
-html, body {  background-color:$background; color: $color; }
+
+body{
+    background: $background;
+}
+
+.plus-icon-rounded {
+    // background: url(../src/assets/images/themes/dark/plus-rounded-icon.png) no-repeat;
+}
+
+.pencil-icon {
+    // background: url(../src/assets/images/themes/dark/pencil-icon.png) no-repeat;
+    background: url(../../../assets/images/themes/dark/pencil-icon.png) no-repeat;
+  } 
