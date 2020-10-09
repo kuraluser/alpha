@@ -1,0 +1,16 @@
+# UI application code owners
+
+/web/cpdss-portal/apps/login/ srutheesh.ng@alphaori.sg varsha.ts@alphaori.sg
+/web/cpdss-portal/apps/cpdss/src/app/login/ srutheesh.ng@alphaori.sg varsha.ts@alphaori.sg
+/web/cpdss-portal/apps/cpdss/src/app/business/voyage-status/ akhila.va@alphaori.sg varsha.ts@alphaori.sg
+/web/cpdss-portal/apps/cpdss/src/app/business/cargo-planning/ srutheesh.ng@alphaori.sg varsha.ts@alphaori.sg
+
+# API applications code owners
+
+/api/cp-dss-api/cargo-info/ @varghev
+/api/cp-dss-api/port-info/ @varghev
+/api/cp-dss-api/vessel-info/ @varghev
+/api/cp-dss-api/loadable-study/ @varghev @jeringeorgealpha
+/api/cp-dss-api/company-info/ @ks-suhail
+/api/cp-dss-api/gateway/ @ks-suhail
+/api/cp-dss-api/user-authorization/ @ks-suhail
