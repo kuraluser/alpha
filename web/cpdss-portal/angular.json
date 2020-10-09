@@ -21,8 +21,20 @@
             "polyfills": "apps/cpdss/src/polyfills.ts",
             "tsConfig": "apps/cpdss/tsconfig.app.json",
             "aot": true,
+            "extractCss": true,
             "assets": ["apps/cpdss/src/favicon.ico", "apps/cpdss/src/assets", "apps/cpdss/src/manifest.webmanifest"],
-            "styles": ["apps/cpdss/src/styles.scss"],
+            "styles": [
+              {
+                "input": "apps/cpdss/src/styles/themes/dark/theme-dark.scss",
+                "lazy": true,
+                "bundleName": "theme-dark"
+              },
+              {
+                "input": "apps/cpdss/src/styles/themes/light/theme-light.scss",
+                "lazy": true,
+                "bundleName": "theme-light"
+              },
+              "apps/cpdss/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -295,8 +307,20 @@
             "polyfills": "apps/login/src/polyfills.ts",
             "tsConfig": "apps/login/tsconfig.app.json",
             "aot": true,
+            "extractCss": true,
             "assets": ["apps/login/src/favicon.ico", "apps/login/src/assets"],
-            "styles": ["apps/login/src/styles.scss"],
+            "styles": [
+              {
+                "input": "apps/login/src/styles/themes/dark/theme-dark.scss",
+                "lazy": true,
+                "bundleName": "theme-dark"
+              },
+              {
+                "input": "apps/login/src/styles/themes/light/theme-light.scss",
+                "lazy": true,
+                "bundleName": "theme-light"
+              },
+              "apps/login/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
