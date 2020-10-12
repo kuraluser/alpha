@@ -1,4 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { KeycloakService } from 'keycloak-angular';
+import { environment } from '../../environments/environment';
+import { IAppConfiguration } from '../shared/services/app-configuration/app-configuration.model';
+import { AppConfigurationService } from '../shared/services/app-configuration/app-configuration.service';
+
+// Login component for shore-module
 
 @Component({
   selector: 'app-login-shore',
@@ -7,9 +13,30 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LoginShoreComponent implements OnInit {
 
-  constructor() { }
+  idpList = [];
+  settings: IAppConfiguration;
+
+  constructor(private kcService: KeycloakService, private appConfig: AppConfigurationService) { }
 
   ngOnInit(): void {
+    this.settings = AppConfigurationService.settings;
+    this.createIdpInput();
+  }
+
+  // to bind input buttons dynamically from api response with identity-provider enabled
+  createIdpInput() {
+    let idpConfig = localStorage.getItem('keycloakIdpConfig').split(',');
+    for (let i = 0; i < idpConfig.length; i++) {
+      this.idpList.push(idpConfig[i]);
+    }
+  }
+
+  // common login function for all identity-providers
+  login(idp) {
+    this.kcService.login({
+      redirectUri: window.location.protocol + '//' + window.location.hostname + ':' + this.settings.targetPort + '/?idp=' + idp,
+      idpHint: idp
+    });
   }
 
 }

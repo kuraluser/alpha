@@ -1,1 +1,6 @@
-<p>login-shore works!</p>
+<div>
+    <div *ngFor="let provider of idpList">
+        <button id="btn_login_{{provider}}" (click)="login(provider)">{{provider | translate}}</button>
+    </div>
+</div>
+

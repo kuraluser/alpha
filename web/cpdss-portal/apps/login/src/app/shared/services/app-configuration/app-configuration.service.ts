@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
 /**
- * SERVICE FOR APP CONFIG
+ * service for app config
  */
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class AppConfigurationService {
   }
 
   /**
-   * LOAD CONFIG JSON FILE
+   * load config json file
    */
   async load(): Promise<IAppConfiguration> {
     const jsonFile = `assets/config/config.${environment.name}.${environment.production ? 'prod' : 'dev'}.json`;
