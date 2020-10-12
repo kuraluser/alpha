@@ -1,14 +1,128 @@
 @import 'theme-dark-variables.scss';
 
 body{
-    background: $background;
+    background: $body-bg;
+    color: $text-primary;
 }
 
 .plus-icon-rounded {
-    // background: url(../src/assets/images/themes/dark/plus-rounded-icon.png) no-repeat;
+     background: url(../../../assets/images/themes/dark/plus-rounded-icon.png) no-repeat;
 }
 
 .pencil-icon {
-    // background: url(../src/assets/images/themes/dark/pencil-icon.png) no-repeat;
     background: url(../../../assets/images/themes/dark/pencil-icon.png) no-repeat;
   } 
+
+  .btn-link {
+    color: $link-color !important;
+    &:hover {
+      color: $text-secondary !important;
+    }
+  }
+
+  .tab-btn {
+    border-right: 1px solid $tab-border;
+    &.active {
+      background: $border-color;
+    }
+  }
+
+  .two-column-list-sidebar {
+    border-bottom: 1px solid $border-color;
+    li {
+      &:last-child {
+        color: $text-secondary;
+      }
+    }
+  
+    &.heading {
+      border-bottom: 2px solid $border-color;
+      li {
+        color: $text-secondary;
+      }
+    }
+  }
+  
+
+  .tank-outer {
+    .tank-inner-wrapper {
+      background: url(../../../assets/images/themes/dark/ship-tank-area.png) no-repeat;
+      >div {
+        >div {
+          >div {
+            background: $tank-bg;
+            border: 1px solid $tank-border;
+            .tank-info {
+              color: $text-secondary;
+            }
+          }
+        }
+      }
+    }
+  
+    &:after {
+      background: url(../../../assets/images/themes/dark/ship-tank-rear.png) no-repeat;
+    }
+  
+    &:before {
+      background: url(../../../assets/images/themes/dark/ship-tank-front.png) no-repeat;
+    }
+  }
+
+  .tank-info-btn {
+    border: 1px solid $tank-bg;
+    background: $tank-btn;
+  }
+  
+  .secondary-text {
+    color: $text-secondary;
+  }
+
+  
+a {
+    color: $link-text;
+    &:hover {
+      color: $text-secondary;
+    }
+  }
+
+  .menu-item-icon {
+    &.status {
+        &:before {
+            background: url("../../../assets/images/themes/dark/menu-icons/status-icon.png") no-repeat;
+        }
+
+        &:after {
+            background: url("../../../assets/images/themes/dark/menu-icons/status-icon-hover.png") no-repeat;
+        }
+    }
+
+    &.cargo-planning {
+        &:before {
+            background: url("../../../assets/images/themes/dark/menu-icons/cargo-planning.png") no-repeat;
+        }
+
+        &:after {
+            background: url("../../../assets/images/themes/dark/menu-icons/cargo-planning-hover.png") no-repeat;
+        }
+    }
+
+    &.voyages {
+        &:before {
+            background: url("../../../assets/images/themes/dark/menu-icons/voyage-icon.png") no-repeat;
+        }
+
+        &:after {
+            background: url("../../../assets/images/themes/dark/menu-icons/voyage-icon-hover.png") no-repeat;
+        }
+    }
+}
+
+header .header-nav .nav li.active {
+    background-image: url("../../../assets/images/themes/dark/menu-icons/nav_selected.png");
+}
+
+.sign-in-icon {
+    background: url("../../../assets/images/themes/dark/menu-icons/user-icon.png") no-repeat;
+
+}
