@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option java_multiple_files = false;
+option java_package = "com.cpdss.common.generated";
+
+service LoadableStudyService {
+	rpc SaveVoyage (VoyageRequest) returns (VoyageReply) {
+	}
+}
+
+message VoyageRequest {
+	int64 captainId = 1;
+	int64 chiefOfficerId = 2;
+	int64 companyId = 3;
+	int64 vesselId = 4;
+	string voyageNo = 5;
+}
+
+message VoyageReply {
+	string status = 1;
+	string message = 2;
+}
