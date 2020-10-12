@@ -23,7 +23,7 @@ public class CommonRestException extends Exception {
       Throwable throwable) {
     super(errorMessage, throwable);
     this.code = code;
-    this.correlationId = headers.getFirst(Utils.CORRELATION_ID);
+    this.correlationId = null != headers ? headers.getFirst(Utils.CORRELATION_ID) : null;
     this.status = status;
   }
 
