@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package com.cpdss.companyinfo.service;
 
 import static com.cpdss.companyinfo.TestUtils.IDP;
@@ -13,6 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.companyinfo.domain.CompanyInfoResponse;
+import com.cpdss.companyinfo.entity.Company;
+import com.cpdss.companyinfo.repository.CompanyRepository;
+import com.cpdss.companyinfo.services.CompanyInfoService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -21,16 +28,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.rest.CommonErrorCodes;
-import com.cpdss.companyinfo.domain.CompanyInfoResponse;
-import com.cpdss.companyinfo.entity.Company;
-import com.cpdss.companyinfo.repository.CompanyRepository;
-import com.cpdss.companyinfo.services.CompanyInfoService;
-
 /** Test class for {@link CompanyInfoService} */
 @SpringJUnitConfig(classes = {CompanyInfoService.class})
-public class CompanyInfoServiceTest {
+class CompanyInfoServiceTest {
 
   @Autowired private CompanyInfoService companyInfoService;
 
@@ -42,7 +42,7 @@ public class CompanyInfoServiceTest {
    * @throws GenericServiceException
    */
   @Test
-  public void testFindCompanyInfoByDomain() throws GenericServiceException {
+  void testFindCompanyInfoByDomain() throws GenericServiceException {
     when(this.companyRepository.findByDomain(anyString())).thenReturn(prepareCompanyEntity());
     CompanyInfoResponse response = this.companyInfoService.findCompanyInfoByDomain(TEST_DOMAIN);
     assertNotNull(response);
@@ -56,7 +56,7 @@ public class CompanyInfoServiceTest {
    * @throws GenericServiceException
    */
   @Test
-  public void testFindCompanyInfoByDomainEmptyData() throws GenericServiceException {
+  void testFindCompanyInfoByDomainEmptyData() throws GenericServiceException {
     when(this.companyRepository.findByDomain(anyString())).thenReturn(null);
     final GenericServiceException ex =
         assertThrows(
@@ -75,7 +75,7 @@ public class CompanyInfoServiceTest {
    */
   @ParameterizedTest
   @ValueSource(strings = {REALM, IDP})
-  public void testFindCompanyInfoByDomainEmptyIdpSettings(final String property)
+  void testFindCompanyInfoByDomainEmptyIdpSettings(final String property)
       throws GenericServiceException {
     Company entity = prepareCompanyEntity();
     if (REALM.contentEquals(property)) {

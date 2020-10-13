@@ -1,9 +1,9 @@
+/* Licensed under Apache-2.0 */
 package com.cpdss.companyinfo;
-
-import java.util.Arrays;
 
 import com.cpdss.companyinfo.domain.CompanyInfoResponse;
 import com.cpdss.companyinfo.entity.Company;
+import java.util.Arrays;
 
 /** Common constants and method for unit tests */
 public final class TestUtils {
