@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+option java_multiple_files = false;
+option java_package = "com.cpdss.common.generated";
+
+service LoadableStudyService {
+	rpc SaveVoyage (VoyageRequest) returns (VoyageReply) {
+	}
+	
+	rpc FindLoadableStudiesByVesselAndVoyage (LoadableStudyRequest) returns (LoadableStudyReply){
+	}
+}
+
+
+message VoyageRequest {
+	int64 captainId = 1;
+	int64 chiefOfficerId = 2;
+	int64 companyId = 3;
+	int64 vesselId = 4;
+	string voyageNo = 5;
+}
+
+message VoyageReply {
+	string status = 1;
+	string message = 2;
+}
+
+message StatusReply {
+	string status = 1;
+	string message = 2;
+}
+
+message LoadableStudyRequest{
+	int64 companyId = 1;
+	int64 vesselId = 2;
+	int64 voyageId = 3;
+}
+
+message LoadableStudyDetail{
+	int64 id = 1;
+	string name = 2;
+	string detail = 3;
+	string status = 4;
+	string createdDate = 5;
+	string charterer = 6;
+	string subCharterer = 7;
+	string draftMark = 8;
+	int64 loadLineXId = 9;
+	string draftRestriction = 10;
+	string maxTempExpected = 11;
+}
+
+message LoadableStudyReply{
+	StatusReply responseStatus = 1;
+	repeated  LoadableStudyDetail loadableStudies = 2;
+}

@@ -13,11 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-/**
- * 
- * @Author jerin.g
- *
- */
+/** @Author jerin.g */
 @Service
 public class GatewayService {
 
@@ -27,14 +23,12 @@ public class GatewayService {
   private static final String SUCCESS = "SUCCESS";
 
   /**
-   * 
    * @param voyage
    * @param companyId
    * @param vesselId
    * @param headers
    * @return response to contoller
-   * @throws GenericServiceException
-   * CommonSuccessResponse
+   * @throws GenericServiceException CommonSuccessResponse
    */
   public CommonSuccessResponse saveVoyage(
       Voyage voyage, long companyId, long vesselId, HttpHeaders headers)
@@ -47,7 +41,7 @@ public class GatewayService {
             .setVesselId(vesselId)
             .setVoyageNo(voyage.getVoyageNo())
             .build();
-    
+
     VoyageReply voyageReply = loadableStudyServiceBlockingStub.saveVoyage(voyageRequest);
     if (SUCCESS.equalsIgnoreCase(voyageReply.getStatus())) {
       return new CommonSuccessResponse(voyageReply.getMessage(), "correlationId");

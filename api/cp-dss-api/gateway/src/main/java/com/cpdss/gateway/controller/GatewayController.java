@@ -28,13 +28,11 @@ public class GatewayController {
   @Autowired private GatewayService gatewayService;
 
   /**
-   * 
    * @param voyage
    * @param vesselId
    * @param headers
    * @return
-   * @throws CommonRestException
-   * CommonSuccessResponse
+   * @throws CommonRestException CommonSuccessResponse
    */
   @PostMapping("/{env}/vessels/{vesselId}/voyages")
   public CommonSuccessResponse saveVoyage(

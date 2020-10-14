@@ -15,9 +15,4 @@ import org.springframework.context.annotation.Import;
 @Import({CommonConfig.class, Log4j2Config.class, SpringDataConfig.class, GrpcServerConfig.class})
 public class AppConfig {
 	
-	@Bean
-	LoadableStudyService loadableStudyService() {
-        return new LoadableStudyService();
-    }
-	
 }
