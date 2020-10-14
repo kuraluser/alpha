@@ -8,8 +8,6 @@ body {
 }
 
 body {
-  /*background: $body-bg;*/
-  color: $text-primary;
   font-family: 'Play', sans-serif;
   font-size: 11px;
 }
@@ -287,14 +285,6 @@ a {
   font-size: 11px;
 }
 
-.btn-link {
-  color: $link-color !important;
-
-  &:hover {
-    color: $text-secondary !important;
-  }
-}
-
 .icon-btn {
   padding-left: 25px;
 }
@@ -304,7 +294,6 @@ a {
 }
 
 .pencil-icon {
-  background: url(../src/assets/images/themes/dark/pencil-icon.png) no-repeat;
   background-position: center left;
 }
 
@@ -314,10 +303,7 @@ a {
   height: 35px;
   background-position: center center;
   background-repeat: no-repeat;
-  border-right: 1px solid $tab-border;
-
   &.active {
-    background: $border-color;
     background-position: center center;
     background-repeat: no-repeat;
   }
@@ -334,7 +320,6 @@ a {
   list-style: none;
   padding-left: 10px;
   text-transform: uppercase;
-  border-bottom: 1px solid $border-color;
   padding-bottom: 10px;
   margin-bottom: 10px;
 
@@ -344,17 +329,13 @@ a {
 
     &:last-child {
       font-size: 14px;
-      color: $text-secondary;
       text-align: right;
     }
   }
 
   &.heading {
-    border-bottom: 2px solid $border-color;
-
     li {
       font-size: 11px;
-      color: $text-secondary;
     }
   }
 }
@@ -369,7 +350,6 @@ a {
   .tank-inner-wrapper {
     min-width: 100%;
     height: 100%;
-    background: url(../src/assets/images/themes/dark/ship-tank-area.png) no-repeat;
     background-size: 100% 100%;
     display: flex;
     flex-direction: column;
@@ -379,7 +359,6 @@ a {
       width: 100%;
       height: 100%;
       flex-direction: row-reverse;
-
       >div {
         flex-basis: 0;
         flex-grow: 1;
@@ -392,8 +371,6 @@ a {
         >div {
           width: calc(100% - 4px);
           height: 100%;
-          background: $tank-bg;
-          border: 1px solid $tank-border;
           padding: 2px;
           position: relative;
 
@@ -412,7 +389,6 @@ a {
             padding: 5px;
             left: 18px;
             line-height: 1;
-            color: $text-secondary;
           }
         }
       }
@@ -441,7 +417,6 @@ a {
     position: absolute;
     height: 100%;
     left: 0;
-    background: url(../src/assets/images/themes/dark/ship-tank-rear.png) no-repeat;
     background-size: 100% 100%;
     z-index: 0;
     top: 0;
@@ -453,7 +428,6 @@ a {
     position: absolute;
     height: 100%;
     right: 0;
-    background: url(../src/assets/images/themes/dark/ship-tank-front.png) no-repeat;
     background-size: 100% 100%;
     z-index: 0;
     top: 0;
@@ -486,8 +460,6 @@ a {
   height: 14px;
   border-radius: 50%;
   display: inline-block;
-  border: 1px solid $tank-bg;
-  background: $tank-btn;
   position: absolute;
   cursor: pointer;
 }
@@ -500,19 +472,73 @@ a {
   font-size: 14px;
 }
 
-.secondary-text {
-  color: $text-secondary;
-}
+
 
 a {
-  color: $link-text;
-
   &:hover {
-    color: $text-secondary;
     text-decoration: none;
   }
 }
 
-.font-small {
-  font-size: 8px;
+.font-x-small {
+  font-size: $font-size-x-small;
+}
+.p-component{
+  font-family: 'Play', sans-serif;
+}
+
+.p-dialog{
+  border-radius: 10px;
+  box-shadow: none;
+  .p-dialog-header{
+    border-radius: 10px 10px 0px 0px;
+    padding: 10px 15px;
+    .p-dialog-title{
+    font-weight: normal;
+    font-size: $heading-font-size;
+    }
+  } 
+  .p-dialog-content{
+    font-size: $font-size-normal;
+    border-radius: 0 0 10px 10px;
+    padding-top: 5px;
+  }
+  .p-dialog-footer{
+    background: none;
+    margin-right: 10px;
+    margin-left: 10px;
+    padding-top: 10px;
+    padding-right: 0;
+    padding-bottom: 10px;
+  }
+}
+.form-control{
+  height: 25px;
+  border: 0;
+  font-size: $font-size-normal;
+  &:focus{
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.form-control-plaintext {
+  font-size: $font-size-normal;
+  border: 0;
+  &:focus{
+    outline: none;
+    box-shadow: none;
+  }
+}
+.btn-main{
+  min-width: 100px;
+  height: 30px;
+  font-size: $font-size-normal;
+}
+.new-voayge-pop-up{
+  width: 370px;
+}
+
+.p-dialog .p-dialog-footer button:last-child{
+  margin-right: 0;
 }

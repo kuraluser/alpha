@@ -1,14 +1,193 @@
 @import 'theme-dark-variables.scss';
 
 body{
-    background: $background;
+    background: $body-bg;
+    color: $text-primary;
 }
 
 .plus-icon-rounded {
-    // background: url(../src/assets/images/themes/dark/plus-rounded-icon.png) no-repeat;
+     background: url($images-theme + 'plus-rounded-icon.png') no-repeat;
 }
 
 .pencil-icon {
-    // background: url(../src/assets/images/themes/dark/pencil-icon.png) no-repeat;
-    background: url(../../../assets/images/themes/dark/pencil-icon.png) no-repeat;
+    background: url($images-theme + 'pencil-icon.png') no-repeat;
   } 
+
+  .btn-link {
+    color: $link-color !important;
+    &:hover {
+      color: $text-secondary !important;
+    }
+  }
+
+  .tab-btn {
+    border-right: 1px solid $tab-border;
+    &.active {
+      background: $border-color;
+    }
+  }
+
+  .two-column-list-sidebar {
+    border-bottom: 1px solid $border-color;
+    li {
+      &:last-child {
+        color: $text-secondary;
+      }
+    }
+  
+    &.heading {
+      border-bottom: 2px solid $border-color;
+      li {
+        color: $text-secondary;
+      }
+    }
+  }
+  
+
+  .tank-outer {
+    .tank-inner-wrapper {
+      background: url($images-theme + 'ship-tank-area.png') no-repeat;
+      >div {
+        >div {
+          >div {
+            background: $tank-bg;
+            border: 1px solid $tank-border;
+            .tank-info {
+              color: $text-secondary;
+            }
+          }
+        }
+      }
+    }
+  
+    &:after {
+      background: url($images-theme + 'ship-tank-rear.png') no-repeat;
+    }
+  
+    &:before {
+      background: url($images-theme + 'ship-tank-front.png') no-repeat;
+    }
+  }
+
+  .tank-info-btn {
+    border: 1px solid $tank-bg;
+    background: $tank-btn;
+  }
+  
+  .secondary-text {
+    color: $text-secondary;
+  }
+
+  
+a {
+    color: $link-text;
+    &:hover {
+      color: $text-secondary;
+    }
+  }
+
+  .menu-item-icon {
+    &.status {
+        &:before {
+            background: url($images-menu-icons + 'status-icon.png') no-repeat;
+        }
+
+        &:after {
+            background: url($images-menu-icons + 'status-icon-hover.png') no-repeat;
+        }
+    }
+
+    &.cargo-planning {
+        &:before {
+            background: url($images-menu-icons + 'cargo-planning.png') no-repeat;
+        }
+
+        &:after {
+            background: url($images-menu-icons + 'cargo-planning-hover.png') no-repeat;
+        }
+    }
+
+    &.voyages {
+        &:before {
+            background: url($images-menu-icons + 'voyage-icon.png') no-repeat;
+        }
+
+        &:after {
+            background: url($images-menu-icons + 'voyage-icon-hover.png') no-repeat;
+        }
+    }
+}
+
+header .header-nav .nav li.active {
+    background-image: url($images-menu-icons + 'nav_selected.png');
+}
+
+.sign-in-icon {
+    background: url($images-menu-icons + 'user-icon.png') no-repeat;
+
+}
+.p-dialog {
+  background:$body-bg;
+    border: 1px solid $outline-border;
+    .p-dialog-header{
+        background: $body-bg;
+        color:$heading-color;
+    }
+    .p-dialog-content {
+        color: $text-primary;
+        background: $body-bg;
+    }
+    .p-dialog-footer{
+      background: none;
+      border-top: 1px solid $tab-border;
+    }
+    
+}
+.p-dialog-mask.p-component-overlay {
+  background-color: rgba($body-bg, 0.4);
+}
+
+.form-control{
+  background: $text-area-bg;
+  color: $text-secondary;
+  &:focus{
+    background: $text-area-bg;
+    color: $text-secondary;
+  }
+}
+
+hr{
+  border-top: 1px solid $tab-border;
+}
+
+.form-control-plaintext {
+  color: $text-primary;
+}
+
+.text-secondary{
+  color: $text-secondary!important;
+}
+.btn{
+  color: $link-color;
+  &.btn-main{
+    border: 1px solid $outline-border;
+    &:hover{
+      color: $text-secondary;
+    }
+  }
+}
+.text-danger{
+  color:$red!important;
+}
+.logo{
+  background: url($images-theme + 'logo.png') no-repeat left center
+}
+.menu-item-text{
+  color: $link-color;
+}
+.vessel-info{
+  background: $card-bg;
+  h5{
+     color: $heading-color;
+  }
+}
