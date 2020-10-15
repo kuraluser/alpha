@@ -114,7 +114,11 @@ class roapp implements Plugin<Project> {
 	                testImplementation ("org.mockito:mockito-core")
     				testImplementation ("org.junit.jupiter:junit-jupiter-api:5.5.2")
     				testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.5.2")
-					testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.5.2")	                
+					testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.5.2")	  
+					
+					//for grpc testing
+					compile group: 'io.grpc', name: 'grpc-testing', version: '1.20.0'
+					testImplementation("io.grpc:grpc-testing")              
 	                
 	                
 	                if(extension.security == 'y'){

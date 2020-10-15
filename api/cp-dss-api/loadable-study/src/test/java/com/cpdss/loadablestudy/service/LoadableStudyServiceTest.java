@@ -31,7 +31,12 @@ import com.cpdss.loadablestudy.repository.VoyageRepository;
 
 import io.grpc.internal.testing.StreamRecorder;
 
-/** @Author jerin.g */
+
+/** @Author jerin.g 
+ * 
+ * Class for writing test cases for loadable study
+ * */
+
 @SpringJUnitConfig(classes = {LoadableStudyService.class})
 public class LoadableStudyServiceTest {
 
@@ -43,6 +48,7 @@ public class LoadableStudyServiceTest {
   
   private static final String SUCCESS = "SUCCESS";
   private static final String VOYAGE = "VOYAGE";
+  private static final String VOYAGEEXISTS = "VOYATE_EXISTS";
   private static final String FAILED = "FAILED";
   private static final String LOADABLE_STUDY_NAME = "LS";
   private static final String LOADABLE_STUDY_DETAILS = "details";
@@ -55,80 +61,81 @@ public class LoadableStudyServiceTest {
   private static final String DRAFT_RESTRICTION = "1000";
   private static final String MAX_TEMP_EXPECTED = "100";
 
+
+
   /**
-   * method for positive test case
-   *
-   * @throws GenericServiceException void
+   * method for positive test case of save voyage
+   * 
+   * @throws GenericServiceException
+   * @returns void
    */
   @Test
   public void testSaveVoyage() throws GenericServiceException {
-    VoyageRequest request =
-        VoyageRequest.newBuilder()
-            .setCaptainId(1)
-            .setChiefOfficerId(1)
-            .setCompanyId(1)
-            .setVesselId(1)
-            .setVoyageNo(VOYAGE)
-            .build();
-    StreamRecorder<VoyageReply> responseObserver = StreamRecorder.create();
-    Voyage voyage = new Voyage();
-    Mockito.when(this.voyageRepository.save(voyage)).thenReturn(voyage);
-    List<Voyage> voyages = new ArrayList<Voyage>();
-    voyages.add(voyage);
-    Mockito.when(
-            this.voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNo(
-                ArgumentMatchers.anyLong(),
-                ArgumentMatchers.anyLong(),
-                ArgumentMatchers.anyString()))
-        .thenReturn(new ArrayList<Voyage>());
+	  VoyageRequest request = VoyageRequest.newBuilder()
+	            .setCaptainId(1)
+	            .setChiefOfficerId(1)
+	            .setCompanyId(1)
+	            .setVesselId(1)
+	            .setVoyageNo(VOYAGE)
+	            .build();
+	  /* used for grpc testing */
+      StreamRecorder<VoyageReply> responseObserver = StreamRecorder.create();
+      Voyage voyage = new Voyage();
+      voyage.setId((long) 1);
+	    
+	   Mockito.when(this.voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNo(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong(), ArgumentMatchers.anyString())).thenReturn(new ArrayList<Voyage>());
 
-    loadableStudyService.saveVoyage(request, responseObserver);
+	   Mockito.when(this.voyageRepository.save(ArgumentMatchers.any(Voyage.class))).thenReturn(voyage);
+      loadableStudyService.saveVoyage(request, responseObserver);
+     
+      assertNull(responseObserver.getError());
+      List<VoyageReply> results = responseObserver.getValues();
+      assertEquals(1, results.size());
+      VoyageReply response = results.get(0);
+      assertEquals(VoyageReply.newBuilder()
+              .setMessage(SUCCESS)
+              .setStatus(SUCCESS)
+              .setVoyageId((long) 1)
+              .build(), response);
 
-    assertNull(responseObserver.getError());
-    List<VoyageReply> results = responseObserver.getValues();
-    assertEquals(1, results.size());
-    VoyageReply response = results.get(0);
-    assertEquals(
-        VoyageReply.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build(), response);
   }
-
+  
   /**
-   * method for negative case
-   *
-   * @throws GenericServiceException void
+   * method for negative test case for voyage save
+   * 
+   * @throws GenericServiceException
+   * @returns void
    */
   @Test
   public void testSaveVoyageFailure() throws GenericServiceException {
-    VoyageRequest request =
-        VoyageRequest.newBuilder()
-            .setCaptainId(1)
-            .setChiefOfficerId(1)
-            .setCompanyId(1)
-            .setVesselId(1)
-            .setVoyageNo(VOYAGE)
-            .build();
-    StreamRecorder<VoyageReply> responseObserver = StreamRecorder.create();
-    Voyage voyage = new Voyage();
-    Mockito.when(this.voyageRepository.save(voyage)).thenReturn(voyage);
-    List<Voyage> voyages = new ArrayList<Voyage>();
-    voyages.add(voyage);
-    Mockito.when(
-            this.voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNo(
-                ArgumentMatchers.anyLong(),
-                ArgumentMatchers.anyLong(),
-                ArgumentMatchers.anyString()))
-        .thenReturn(voyages);
+	  VoyageRequest request = VoyageRequest.newBuilder()
+	            .setCaptainId(1)
+	            .setChiefOfficerId(1)
+	            .setCompanyId(1)
+	            .setVesselId(1)
+	            .setVoyageNo(VOYAGE)
+	            .build();
+	  /* used for grpc testing */
+      StreamRecorder<VoyageReply> responseObserver = StreamRecorder.create();
+      Voyage voyage = new Voyage();
+      Mockito.when(this.voyageRepository.save(voyage)).thenReturn(voyage);
+      List<Voyage> voyages = new ArrayList<Voyage>();
+      voyages.add(voyage);
+      Mockito.when(this.voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNo(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong(), ArgumentMatchers.anyString())).thenReturn(voyages);
+     
+      loadableStudyService.saveVoyage(request, responseObserver);
+      
+      assertNull(responseObserver.getError());
+      List<VoyageReply> results = responseObserver.getValues();
+      assertEquals(1, results.size());
+      VoyageReply response = results.get(0);
+      assertEquals(VoyageReply.newBuilder()
+              .setMessage(VOYAGEEXISTS)
+              .setStatus(SUCCESS)
+              .build(), response);
 
-    loadableStudyService.saveVoyage(request, responseObserver);
-
-    assertNull(responseObserver.getError());
-    List<VoyageReply> results = responseObserver.getValues();
-    assertEquals(1, results.size());
-    VoyageReply response = results.get(0);
-    assertEquals(
-        VoyageReply.newBuilder().setMessage("VOYATE_EXISTS").setStatus(SUCCESS).build(),
-        response);
   }
+
 
   @Test
   void testFindLoadableStudiesByVesselAndVoyage() {
@@ -161,6 +168,7 @@ public class LoadableStudyServiceTest {
   private LoadableStudyRequest createLoadableStudyRequest() {
     return LoadableStudyRequest.newBuilder().setVesselId(1L).setVoyageId(1L).build();
   }
+
 
   private List<LoadableStudy> createLoadableStudyEntityList() {
     List<LoadableStudy> entityList = new ArrayList<LoadableStudy>();

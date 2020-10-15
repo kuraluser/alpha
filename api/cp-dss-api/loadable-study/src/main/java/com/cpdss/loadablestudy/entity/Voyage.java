@@ -29,13 +29,13 @@ public class Voyage extends EntityDoc {
   private String voyageNo;
 
   @Column(name = "isactive")
-  private Boolean isactive;
+  private Boolean isActive;
 
   @Column(name = "companyxid")
   private Long companyXId;
 
   @Column(name = "voyagestatus")
-  private Integer voyagestatus;
+  private Integer voyageStatus;
 
   @Column(name = "captainxid")
   private Long captainXId;

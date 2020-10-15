@@ -5,7 +5,11 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.Voyage;
+import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
+
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +38,38 @@ public class LoadableStudyController {
   @Autowired private LoadableStudyService loadableStudyService;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
+  
+
+  /** API for save voyage
+   * 
+   * @param voyage
+   * @param vesselId
+   * @param headers
+   * @return CommonSuccessResponse
+   * @throws CommonRestException
+   * CommonSuccessResponse
+   */
+  @PostMapping("/vessels/{vesselId}/voyages")
+  public VoyageResponse saveVoyage(
+      @RequestBody @Valid Voyage voyage,
+      @PathVariable long vesselId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      Long companyId = 1L; // TODO get the companyId from userContext in keycloak token
+      return loadableStudyService.saveVoyage(voyage, companyId, vesselId, headers);
+    } catch (Exception e) {
+      log.error("Error in save voyage ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatus.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+   
+  }
+  
 
   /**
    * Get list of loadable studies baed on vessel and voyage

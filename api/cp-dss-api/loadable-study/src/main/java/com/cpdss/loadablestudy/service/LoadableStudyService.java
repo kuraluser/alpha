@@ -27,7 +27,9 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 
 /** @Author jerin.g */
-/** Class has mehtod to save voyage */
+
+/** Class has methods to save loadable study */
+
 @Log4j2
 @GrpcService
 @Service
@@ -41,48 +43,50 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
   private static final String CREATED_DATE_FORMAT = "dd-MM-yyyy";
+  private static final String VOYAGEEXISTS = "VOYATE_EXISTS";
+	/**
+	 * method for save voyage
+	 * 
+	 * @param request - voyage request details
+	 * @param responseObserver - grpc class
+	 * @return
+	 */
+	@Override
+	public void saveVoyage(VoyageRequest request, StreamObserver<VoyageReply> responseObserver) {
+		VoyageReply reply = null;
+		try {
 
-  /**
-   * @param request
-   * @param responseObserver
-   */
-  @Override
-  public void saveVoyage(VoyageRequest request, StreamObserver<VoyageReply> responseObserver) {
-    try {
+			// validation for duplicate voyages
+			if (!voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNo(request.getCompanyId(), request.getVesselId(),
+					request.getVoyageNo()).isEmpty()) {
+				reply = VoyageReply.newBuilder().setMessage(VOYAGEEXISTS).setStatus(SUCCESS).build();
+			} else {
 
-      // validation for duplicate voyages
-      if (!voyageRepository
-          .findByCompanyXIdAndVesselXIdAndVoyageNo(
-              request.getCompanyId(), request.getVesselId(), request.getVoyageNo())
-          .isEmpty()) {
-        VoyageReply reply =
-            VoyageReply.newBuilder().setMessage("VOYATE_EXISTS").setStatus(SUCCESS).build();
-        responseObserver.onNext(reply);
-        responseObserver.onCompleted();
+				Voyage voyage = new Voyage();
+				voyage.setIsActive(true);
+				voyage.setCompanyXId(request.getCompanyId());
+				voyage.setVesselXId(request.getVesselId());
+				voyage.setVoyageNo(request.getVoyageNo());
+				voyage.setCaptainXId(request.getCaptainId());
+				voyage.setChiefOfficerXId(request.getChiefOfficerId());
+				voyage = voyageRepository.save(voyage);
 
-      } else {
+				// when Db save is complete we return to client a success message
+				reply = VoyageReply.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).setVoyageId(voyage.getId()).build();
 
-        Voyage voyage = new Voyage();
-        voyage.setIsactive(true);
-        voyage.setCompanyXId(request.getCompanyId());
-        voyage.setVesselXId(request.getVesselId());
-        voyage.setVoyageNo(request.getVoyageNo());
-        voyage.setCaptainXId(request.getCaptainId());
-        voyage.setChiefOfficerXId(request.getChiefOfficerId());
-        voyageRepository.save(voyage);
+			}
+		} catch (Exception e) {
 
-        // when Db save is complete we return to client a success message
-        VoyageReply reply = VoyageReply.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build();
-        responseObserver.onNext(reply);
-        responseObserver.onCompleted();
-      }
-    } catch (Exception e) {
+			log.error("Error in saving Voyage ", e);
+			reply = VoyageReply.newBuilder().setMessage("FAIL").setStatus("FAIL").build();
 
-      log.error("Error in saving Voyage ", e);
-      //			throw new GenericServiceException("Error in saving Voyage", "ERR",
-      // HttpStatus.INTERNAL_SERVER_ERROR, e);
-    }
-  }
+		} finally {
+			responseObserver.onNext(reply);
+			responseObserver.onCompleted();
+		}
+	}
+
+
 
   /**
    * Method to find list of loadable studies based on vessel and voyage

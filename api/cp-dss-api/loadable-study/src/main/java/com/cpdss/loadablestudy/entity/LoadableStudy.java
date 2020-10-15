@@ -28,6 +28,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LoadableStudy extends EntityDoc {
 
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
   @Column(name = "vesselxid")
   private Long vesselXId;
 

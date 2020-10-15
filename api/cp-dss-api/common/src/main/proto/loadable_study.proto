@@ -23,6 +23,7 @@ message VoyageRequest {
 message VoyageReply {
 	string status = 1;
 	string message = 2;
+	int64 voyageId = 3;
 }
 
 message StatusReply {
