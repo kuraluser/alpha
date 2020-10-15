@@ -16,7 +16,7 @@ plugins {
 ext {
   protobufVersion = "3.11.4"
   protocJavaVersion = "1.27.1"
-  grpcVersion = "2.7.0.RELEASE"
+  grpcVersion = "2.10.1.RELEASE"
   springVersion = "5.2.3.RELEASE"
   hazelcastVersion = "4.0.2"
   servletApiVersin = "2.5"
@@ -74,6 +74,7 @@ class ROExtension {
     String security
     String dataBase
     String persistence
+    String multitenancy
     String keyvaluestore
     String cache
     String queue
@@ -217,6 +218,9 @@ class roapp implements Plugin<Project> {
 					  props.setProperty("dataBase", 'postgres')
 					}
 					
+					if(extension.multitenancy == 'y'){
+					  props.setProperty("multitenancy.enabled", 'y')
+					}
 					if(extension.logging == 'y') {
 					  implementation 'org.springframework.boot:spring-boot-starter-log4j2'
 					  props.setProperty("log.enabled", 'y')
@@ -250,7 +254,18 @@ class roapp implements Plugin<Project> {
 				           throw new GradleException('Spring data persistence is implicitly configured for '+project.appConfig.dataBase+". Remove any persistence layer already added.")
 				       }
 				       if(project.appConfig.persistence != "springData" && project.appConfig.persistence != "hibernate"){
-				            throw new GradleException('Unsupported persistence layer '+project.appConfig.persistence+". Supports only springData and hibernate.")
+				            throw new GradleException('Unsupported persistence layer '+project.appConfig.persistence+'. Supports only springData and hibernate.')
+				        }
+				     }
+				     if(project.appConfig.multitenancy) {
+				       if(project.appConfig.dataBase != "postgres"){
+				           throw new GradleException('Multitenancy is not supported for '+project.appConfig.dataBase+'. Supports only postgres database.')
+				       }
+				       if(project.appConfig.persistence != "springData"){
+				            throw new GradleException('Multitenancy is not supported for '+project.appConfig.persistence+'. Supports only springData.')
+				       }
+				        if(!project.appConfig.rest || !project.appConfig.grpc || !project.appConfig.grpcServer){
+				        throw new GradleException('Rest Or Grpc Server should be enabled for Multitenancy support')
 				        }
 				     }
 				     String enabledServices=""

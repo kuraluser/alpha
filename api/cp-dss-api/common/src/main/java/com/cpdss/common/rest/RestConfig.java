@@ -1,18 +1,23 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.common.rest;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.web.server.ConfigurableWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.cpdss.common.springdata.MultitenantInterceptor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Default configuration class for Rest
@@ -20,12 +25,24 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
  * @author r.krishnakumar
  */
 @Configuration
-@EnableAutoConfiguration(exclude = {ErrorMvcAutoConfiguration.class})
-@DependsOn("log")
-public class RestConfig implements WebServerFactoryCustomizer<ConfigurableWebServerFactory> {
+@EnableWebMvc
+@DependsOn({"log"})
+public class RestConfig
+    implements WebServerFactoryCustomizer<ConfigurableWebServerFactory>, WebMvcConfigurer {
 
   @Value("${ro.server.port: 8080}")
   private Integer port;
+
+  @Autowired
+  @Qualifier("multitenancy")
+  private boolean isMultitenant;
+
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    if (isMultitenant) {
+      registry.addInterceptor(new MultitenantInterceptor());
+    }
+  }
 
   /**
    * Customizing server port using the property file, This can be overridden using the command line

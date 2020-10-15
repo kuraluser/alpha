@@ -1,13 +1,24 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.common.springdata;
 
-import com.cpdss.common.utils.Utils;
-import com.zaxxer.hikari.HikariDataSource;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+
+import org.hibernate.MultiTenancyStrategy;
+import org.hibernate.cfg.Environment;
+import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
+import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -20,6 +31,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import com.cpdss.common.exception.SpringDataInitException;
+import com.cpdss.common.utils.Utils;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * JPA configuration params
@@ -50,7 +65,19 @@ public class SpringDataConfig {
   @Value("${ro.db.showSQL:false}")
   private boolean showSQL;
 
+  @Autowired
+  @Qualifier("multitenancy")
+  private boolean isMultenant;
+
   @Autowired private String dataBaseType;
+
+  /** Spring data initialisation validations */
+  @PostConstruct
+  public void initialise() {
+    if (dataBaseType.equals("mysql") && isMultenant) {
+      throw new SpringDataInitException("Multitenancy is not supported with MySQL");
+    }
+  }
 
   /**
    * Datasource with connection pooling
@@ -95,20 +122,60 @@ public class SpringDataConfig {
     }
   }
 
-  /** Entity manager factory bean creation */
+  /**
+   * Multitenant connection provider
+   *
+   * @return
+   */
   @Bean
-  public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+  @ConditionalOnBean(name = "multitenancy")
+  public MultiTenantConnectionProvider multiTenantConnectionProvider(DataSource dataSource) {
+    return new TenantConnectionProvider(dataSource);
+  }
+
+  /**
+   * Multitenant schema resolver
+   *
+   * @return
+   */
+  @Bean
+  @ConditionalOnBean(name = "multitenancy")
+  public CurrentTenantIdentifierResolver currentTenantIdentifierResolver() {
+    return new TenantSchemaResolver();
+  }
+
+  /**
+   * Entity manager factory bean creation
+   *
+   * @throws SQLException
+   */
+  @Bean
+  public LocalContainerEntityManagerFactoryBean entityManagerFactory(
+      DataSource dataSource,
+      @Autowired(required = false) MultiTenantConnectionProvider multiTenantConnectionProviderImpl,
+      @Autowired(required = false)
+          CurrentTenantIdentifierResolver currentTenantIdentifierResolverImpl)
+      throws SQLException {
     LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
     HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
     vendorAdapter.setGenerateDdl(true);
+    if (this.isMultenant && dataBaseType.equals("postgres")) {
+      Map<String, Object> jpaPropertiesMap = new HashMap<>();
+      jpaPropertiesMap.put(Environment.MULTI_TENANT, MultiTenancyStrategy.SCHEMA);
+      jpaPropertiesMap.put(
+          Environment.MULTI_TENANT_CONNECTION_PROVIDER, multiTenantConnectionProviderImpl);
+      jpaPropertiesMap.put(
+          Environment.MULTI_TENANT_IDENTIFIER_RESOLVER, currentTenantIdentifierResolverImpl);
+      factory.setJpaPropertyMap(jpaPropertiesMap);
+    }
+    Properties jpaProperties = new Properties();
     if (this.showSQL) {
       vendorAdapter.setShowSql(true);
-      Properties jpaProperties = new Properties();
       jpaProperties.put("hibernate.format_sql", true);
-      factory.setJpaProperties(jpaProperties);
     }
+    factory.setJpaProperties(jpaProperties);
     factory.setJpaVendorAdapter(vendorAdapter);
-    factory.setDataSource(dataSource());
+    factory.setDataSource(dataSource);
     factory.setPackagesToScan(entityPackageName);
     factory.setPersistenceUnitName("ricoPersistence");
     return factory;

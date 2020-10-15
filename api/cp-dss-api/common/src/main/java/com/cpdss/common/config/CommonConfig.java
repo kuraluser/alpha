@@ -1,8 +1,8 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.common.config;
 
-import com.cpdss.common.logging.Log4j2Config;
 import javax.annotation.PostConstruct;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
+
+import com.cpdss.common.logging.Log4j2Config;
 
 /**
  * Defines common configuration beans for the RICO framework
@@ -28,6 +30,9 @@ public class CommonConfig implements ApplicationContextAware {
 
   @Value("${database:''}")
   private String dataBaseType;
+
+  @Value("${multitenancy.enabled: 'n'}")
+  private String isMultitenancyEnabled;
 
   @Override
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -73,5 +78,14 @@ public class CommonConfig implements ApplicationContextAware {
   @ConditionalOnProperty(name = "cache.enabled", havingValue = "y", matchIfMissing = true)
   public boolean isCacheNotEnabled() {
     return true;
+  }
+
+  @Bean("multitenancy")
+  public boolean isMultitenancyEnabled() {
+    if ("y".contentEquals(this.isMultitenancyEnabled)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
