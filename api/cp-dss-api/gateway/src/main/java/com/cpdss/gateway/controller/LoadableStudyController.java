@@ -8,7 +8,6 @@ import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.extern.log4j.Log4j2;
@@ -26,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Gateway controller for loadable study related operations
- * @author suhail.k
  *
+ * @author suhail.k
  */
 @Log4j2
 @Validated
@@ -40,14 +39,15 @@ public class LoadableStudyController {
   private static final String CORRELATION_ID_HEADER = "correlationId";
   
 
-  /** API for save voyage
-   * 
+
+  /**
+   * API for save voyage
+   *
    * @param voyage
    * @param vesselId
    * @param headers
    * @return CommonSuccessResponse
-   * @throws CommonRestException
-   * CommonSuccessResponse
+   * @throws CommonRestException CommonSuccessResponse
    */
   @PostMapping("/vessels/{vesselId}/voyages")
   public VoyageResponse saveVoyage(
@@ -67,12 +67,11 @@ public class LoadableStudyController {
           e.getMessage(),
           e);
     }
-   
   }
-  
 
   /**
    * Get list of loadable studies baed on vessel and voyage
+   *
    * @param vesselId - the vessel id
    * @param voyageId - the voyage id
    * @param headers - http request headers

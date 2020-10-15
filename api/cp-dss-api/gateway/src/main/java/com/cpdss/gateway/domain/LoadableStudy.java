@@ -2,7 +2,6 @@
 package com.cpdss.gateway.domain;
 
 import java.math.BigDecimal;
-
 import lombok.Data;
 
 /**
@@ -22,16 +21,16 @@ public class LoadableStudy {
   private String status;
 
   private String createdDate;
-  
+
   private String charterer;
-  
+
   private String subCharterer;
-  
+
   private BigDecimal draftMark;
-  
+
   private Long loadLineXId;
-  
+
   private BigDecimal draftRestriction;
-  
+
   private BigDecimal maxTempExpected;
 }

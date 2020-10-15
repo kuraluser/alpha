@@ -13,12 +13,10 @@ import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,24 +29,23 @@ public class LoadableStudyService {
   private LoadableStudyServiceBlockingStub loadableStudyServiceBlockingStub;
 
   private static final String SUCCESS = "SUCCESS";
-  
+
   private static final String STRING_NULL = "null";
 
   /**
    * method for voyage save
-   * 
+   *
    * @param voyage
    * @param companyId
    * @param vesselId
    * @param headers
    * @return response to controller
-   * @throws GenericServiceException
-   * CommonSuccessResponse
+   * @throws GenericServiceException CommonSuccessResponse
    */
   public VoyageResponse saveVoyage(
       Voyage voyage, long companyId, long vesselId, HttpHeaders headers)
       throws GenericServiceException {
-	  VoyageResponse voyageResponse = new VoyageResponse();  
+    VoyageResponse voyageResponse = new VoyageResponse();
     VoyageRequest voyageRequest =
         VoyageRequest.newBuilder()
             .setCaptainId(voyage.getCaptainId())
@@ -57,11 +54,12 @@ public class LoadableStudyService {
             .setVesselId(vesselId)
             .setVoyageNo(voyage.getVoyageNo())
             .build();
-    
+
     VoyageReply voyageReply = loadableStudyServiceBlockingStub.saveVoyage(voyageRequest);
     if (SUCCESS.equalsIgnoreCase(voyageReply.getStatus())) {
-    	voyageResponse.setResponseStatus(new CommonSuccessResponse(voyageReply.getMessage(), "correlationId"));
-    	voyageResponse.setVoyageId(voyageReply.getVoyageId());
+      voyageResponse.setResponseStatus(
+          new CommonSuccessResponse(voyageReply.getMessage(), "correlationId"));
+      voyageResponse.setVoyageId(voyageReply.getVoyageId());
       return voyageResponse;
     } else {
       throw new GenericServiceException(
@@ -70,8 +68,7 @@ public class LoadableStudyService {
           HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  
-  
+
   /**
    * This method calls loadable study microservice to get a list of loadable studies by vessel and
    * voyage
@@ -109,14 +106,16 @@ public class LoadableStudyService {
               loadableStudy.setCharterer(study.getCharterer());
               loadableStudy.setSubCharterer(study.getSubCharterer());
               loadableStudy.setDraftMark(
-            		  !STRING_NULL.equals(study.getDraftMark())? new BigDecimal(study.getDraftMark()) : null);
+                  !STRING_NULL.equals(study.getDraftMark())
+                      ? new BigDecimal(study.getDraftMark())
+                      : null);
               loadableStudy.setLoadLineXId(study.getLoadLineXId());
               loadableStudy.setDraftRestriction(
-            		  !STRING_NULL.equals(study.getDraftRestriction())
+                  !STRING_NULL.equals(study.getDraftRestriction())
                       ? new BigDecimal(study.getDraftRestriction())
                       : null);
               loadableStudy.setMaxTempExpected(
-            		  !STRING_NULL.equals(study.getMaxTempExpected())
+                  !STRING_NULL.equals(study.getMaxTempExpected())
                       ? new BigDecimal(study.getMaxTempExpected())
                       : null);
               list.add(loadableStudy);

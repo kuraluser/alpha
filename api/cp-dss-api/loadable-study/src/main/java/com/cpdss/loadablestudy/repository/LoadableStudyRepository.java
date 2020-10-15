@@ -1,10 +1,10 @@
+/* Licensed under Apache-2.0 */
 package com.cpdss.loadablestudy.repository;
-
-import java.util.List;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.Voyage;
+import java.util.List;
 
 /**
  * Repository interface for loadbale study entity {@link LoadableStudy}

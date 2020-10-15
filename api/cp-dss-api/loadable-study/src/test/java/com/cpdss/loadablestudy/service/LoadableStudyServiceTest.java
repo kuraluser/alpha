@@ -3,21 +3,8 @@ package com.cpdss.loadablestudy.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.*;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
@@ -28,14 +15,18 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
-
 import io.grpc.internal.testing.StreamRecorder;
-
-
-/** @Author jerin.g 
- * 
- * Class for writing test cases for loadable study
- * */
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 @SpringJUnitConfig(classes = {LoadableStudyService.class})
 public class LoadableStudyServiceTest {
@@ -45,15 +36,15 @@ public class LoadableStudyServiceTest {
   @MockBean private VoyageRepository voyageRepository;
 
   @MockBean private LoadableStudyRepository loadableStudyRepository;
-  
+
   private static final String SUCCESS = "SUCCESS";
   private static final String VOYAGE = "VOYAGE";
-  private static final String VOYAGEEXISTS = "VOYATE_EXISTS";
+  private static final String VOYAGEEXISTS = "VOYAGEEXISTS";
   private static final String FAILED = "FAILED";
   private static final String LOADABLE_STUDY_NAME = "LS";
   private static final String LOADABLE_STUDY_DETAILS = "details";
   private static final String LOADABLE_STUDY_STATUS = "pending";
-  
+
   private static final String CHARTERER = "charterer";
   private static final String SUB_CHARTERER = "sub-chartere";
   private static final String DRAFT_MARK = "1000";
@@ -63,7 +54,7 @@ public class LoadableStudyServiceTest {
 
 
 
-  /**
+   /**
    * method for positive test case of save voyage
    * 
    * @throws GenericServiceException
