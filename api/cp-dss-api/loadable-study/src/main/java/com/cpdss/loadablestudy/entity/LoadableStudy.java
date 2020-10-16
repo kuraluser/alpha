@@ -3,10 +3,13 @@ package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,9 +28,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoadableStudy extends EntityDoc {
-
-  /** */
-  private static final long serialVersionUID = 1L;
 
   @Column(name = "vesselxid")
   private Long vesselXId;
@@ -72,4 +72,7 @@ public class LoadableStudy extends EntityDoc {
 
   @Column(name = "isactive")
   private boolean isActive;
+
+  @OneToMany(mappedBy = "loadableStudy", cascade = CascadeType.PERSIST)
+  private Set<LoadableStudyAttachments> attachments;
 }

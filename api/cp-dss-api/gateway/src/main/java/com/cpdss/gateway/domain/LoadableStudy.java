@@ -1,7 +1,15 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.domain;
 
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.math.BigDecimal;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import lombok.Data;
 
 /**
@@ -10,22 +18,28 @@ import lombok.Data;
  * @author suhail.k
  */
 @Data
+@JsonInclude(Include.NON_EMPTY)
 public class LoadableStudy {
 
   private Long id;
 
+  @NotEmpty(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private String name;
 
+  @Size(max = 1000, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private String detail;
 
   private String status;
 
   private String createdDate;
 
+  @NotEmpty(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private String charterer;
 
   private String subCharterer;
 
+
+  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal draftMark;
 
   private Long loadLineXId;
@@ -33,4 +47,12 @@ public class LoadableStudy {
   private BigDecimal draftRestriction;
 
   private BigDecimal maxTempExpected;
+
+  private Long vesselId;
+
+  private Long voyageId;
+
+  private Long companyId;
+
+  private Long createdFromId;
 }

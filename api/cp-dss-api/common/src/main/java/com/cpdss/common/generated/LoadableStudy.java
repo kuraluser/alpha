@@ -1656,12 +1656,24 @@ public final class LoadableStudy {
         getStatusBytes();
 
     /**
-     * <code>string message = 2;</code>
+     * <code>string code = 2;</code>
+     * @return The code.
+     */
+    java.lang.String getCode();
+    /**
+     * <code>string code = 2;</code>
+     * @return The bytes for code.
+     */
+    com.google.protobuf.ByteString
+        getCodeBytes();
+
+    /**
+     * <code>string message = 3;</code>
      * @return The message.
      */
     java.lang.String getMessage();
     /**
-     * <code>string message = 2;</code>
+     * <code>string message = 3;</code>
      * @return The bytes for message.
      */
     com.google.protobuf.ByteString
@@ -1681,6 +1693,7 @@ public final class LoadableStudy {
     }
     private StatusReply() {
       status_ = "";
+      code_ = "";
       message_ = "";
     }
 
@@ -1721,6 +1734,12 @@ public final class LoadableStudy {
               break;
             }
             case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              code_ = s;
+              break;
+            }
+            case 26: {
               java.lang.String s = input.readStringRequireUtf8();
 
               message_ = s;
@@ -1794,10 +1813,46 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int MESSAGE_FIELD_NUMBER = 2;
+    public static final int CODE_FIELD_NUMBER = 2;
+    private volatile java.lang.Object code_;
+    /**
+     * <code>string code = 2;</code>
+     * @return The code.
+     */
+    public java.lang.String getCode() {
+      java.lang.Object ref = code_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        code_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string code = 2;</code>
+     * @return The bytes for code.
+     */
+    public com.google.protobuf.ByteString
+        getCodeBytes() {
+      java.lang.Object ref = code_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        code_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MESSAGE_FIELD_NUMBER = 3;
     private volatile java.lang.Object message_;
     /**
-     * <code>string message = 2;</code>
+     * <code>string message = 3;</code>
      * @return The message.
      */
     public java.lang.String getMessage() {
@@ -1813,7 +1868,7 @@ public final class LoadableStudy {
       }
     }
     /**
-     * <code>string message = 2;</code>
+     * <code>string message = 3;</code>
      * @return The bytes for message.
      */
     public com.google.protobuf.ByteString
@@ -1847,8 +1902,11 @@ public final class LoadableStudy {
       if (!getStatusBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, status_);
       }
+      if (!getCodeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, code_);
+      }
       if (!getMessageBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, message_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, message_);
       }
       unknownFields.writeTo(output);
     }
@@ -1862,8 +1920,11 @@ public final class LoadableStudy {
       if (!getStatusBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, status_);
       }
+      if (!getCodeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, code_);
+      }
       if (!getMessageBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, message_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, message_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -1882,6 +1943,8 @@ public final class LoadableStudy {
 
       if (!getStatus()
           .equals(other.getStatus())) return false;
+      if (!getCode()
+          .equals(other.getCode())) return false;
       if (!getMessage()
           .equals(other.getMessage())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
@@ -1897,6 +1960,8 @@ public final class LoadableStudy {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + STATUS_FIELD_NUMBER;
       hash = (53 * hash) + getStatus().hashCode();
+      hash = (37 * hash) + CODE_FIELD_NUMBER;
+      hash = (53 * hash) + getCode().hashCode();
       hash = (37 * hash) + MESSAGE_FIELD_NUMBER;
       hash = (53 * hash) + getMessage().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
@@ -2034,6 +2099,8 @@ public final class LoadableStudy {
         super.clear();
         status_ = "";
 
+        code_ = "";
+
         message_ = "";
 
         return this;
@@ -2063,6 +2130,7 @@ public final class LoadableStudy {
       public com.cpdss.common.generated.LoadableStudy.StatusReply buildPartial() {
         com.cpdss.common.generated.LoadableStudy.StatusReply result = new com.cpdss.common.generated.LoadableStudy.StatusReply(this);
         result.status_ = status_;
+        result.code_ = code_;
         result.message_ = message_;
         onBuilt();
         return result;
@@ -2114,6 +2182,10 @@ public final class LoadableStudy {
         if (other == com.cpdss.common.generated.LoadableStudy.StatusReply.getDefaultInstance()) return this;
         if (!other.getStatus().isEmpty()) {
           status_ = other.status_;
+          onChanged();
+        }
+        if (!other.getCode().isEmpty()) {
+          code_ = other.code_;
           onChanged();
         }
         if (!other.getMessage().isEmpty()) {
@@ -2225,9 +2297,85 @@ public final class LoadableStudy {
         return this;
       }
 
+      private java.lang.Object code_ = "";
+      /**
+       * <code>string code = 2;</code>
+       * @return The code.
+       */
+      public java.lang.String getCode() {
+        java.lang.Object ref = code_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          code_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string code = 2;</code>
+       * @return The bytes for code.
+       */
+      public com.google.protobuf.ByteString
+          getCodeBytes() {
+        java.lang.Object ref = code_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          code_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string code = 2;</code>
+       * @param value The code to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCode(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        code_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string code = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCode() {
+        
+        code_ = getDefaultInstance().getCode();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string code = 2;</code>
+       * @param value The bytes for code to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCodeBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        code_ = value;
+        onChanged();
+        return this;
+      }
+
       private java.lang.Object message_ = "";
       /**
-       * <code>string message = 2;</code>
+       * <code>string message = 3;</code>
        * @return The message.
        */
       public java.lang.String getMessage() {
@@ -2243,7 +2391,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string message = 2;</code>
+       * <code>string message = 3;</code>
        * @return The bytes for message.
        */
       public com.google.protobuf.ByteString
@@ -2260,7 +2408,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string message = 2;</code>
+       * <code>string message = 3;</code>
        * @param value The message to set.
        * @return This builder for chaining.
        */
@@ -2275,7 +2423,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string message = 2;</code>
+       * <code>string message = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearMessage() {
@@ -2285,7 +2433,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string message = 2;</code>
+       * <code>string message = 3;</code>
        * @param value The bytes for message to set.
        * @return This builder for chaining.
        */
@@ -2978,6 +3126,644 @@ public final class LoadableStudy {
 
   }
 
+  public interface LoadableStudyAttachmentOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:LoadableStudyAttachment)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>bytes byteString = 1;</code>
+     * @return The byteString.
+     */
+    com.google.protobuf.ByteString getByteString();
+
+    /**
+     * <code>string fileName = 2;</code>
+     * @return The fileName.
+     */
+    java.lang.String getFileName();
+    /**
+     * <code>string fileName = 2;</code>
+     * @return The bytes for fileName.
+     */
+    com.google.protobuf.ByteString
+        getFileNameBytes();
+  }
+  /**
+   * Protobuf type {@code LoadableStudyAttachment}
+   */
+  public  static final class LoadableStudyAttachment extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:LoadableStudyAttachment)
+      LoadableStudyAttachmentOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use LoadableStudyAttachment.newBuilder() to construct.
+    private LoadableStudyAttachment(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private LoadableStudyAttachment() {
+      byteString_ = com.google.protobuf.ByteString.EMPTY;
+      fileName_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new LoadableStudyAttachment();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private LoadableStudyAttachment(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+
+              byteString_ = input.readBytes();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              fileName_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachment_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachment_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.class, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder.class);
+    }
+
+    public static final int BYTESTRING_FIELD_NUMBER = 1;
+    private com.google.protobuf.ByteString byteString_;
+    /**
+     * <code>bytes byteString = 1;</code>
+     * @return The byteString.
+     */
+    public com.google.protobuf.ByteString getByteString() {
+      return byteString_;
+    }
+
+    public static final int FILENAME_FIELD_NUMBER = 2;
+    private volatile java.lang.Object fileName_;
+    /**
+     * <code>string fileName = 2;</code>
+     * @return The fileName.
+     */
+    public java.lang.String getFileName() {
+      java.lang.Object ref = fileName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        fileName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string fileName = 2;</code>
+     * @return The bytes for fileName.
+     */
+    public com.google.protobuf.ByteString
+        getFileNameBytes() {
+      java.lang.Object ref = fileName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        fileName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!byteString_.isEmpty()) {
+        output.writeBytes(1, byteString_);
+      }
+      if (!getFileNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, fileName_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!byteString_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, byteString_);
+      }
+      if (!getFileNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, fileName_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment other = (com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment) obj;
+
+      if (!getByteString()
+          .equals(other.getByteString())) return false;
+      if (!getFileName()
+          .equals(other.getFileName())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + BYTESTRING_FIELD_NUMBER;
+      hash = (53 * hash) + getByteString().hashCode();
+      hash = (37 * hash) + FILENAME_FIELD_NUMBER;
+      hash = (53 * hash) + getFileName().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code LoadableStudyAttachment}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:LoadableStudyAttachment)
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachment_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachment_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.class, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        byteString_ = com.google.protobuf.ByteString.EMPTY;
+
+        fileName_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachment_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment build() {
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment result = new com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment(this);
+        result.byteString_ = byteString_;
+        result.fileName_ = fileName_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment other) {
+        if (other == com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.getDefaultInstance()) return this;
+        if (other.getByteString() != com.google.protobuf.ByteString.EMPTY) {
+          setByteString(other.getByteString());
+        }
+        if (!other.getFileName().isEmpty()) {
+          fileName_ = other.fileName_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private com.google.protobuf.ByteString byteString_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes byteString = 1;</code>
+       * @return The byteString.
+       */
+      public com.google.protobuf.ByteString getByteString() {
+        return byteString_;
+      }
+      /**
+       * <code>bytes byteString = 1;</code>
+       * @param value The byteString to set.
+       * @return This builder for chaining.
+       */
+      public Builder setByteString(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        byteString_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes byteString = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearByteString() {
+        
+        byteString_ = getDefaultInstance().getByteString();
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object fileName_ = "";
+      /**
+       * <code>string fileName = 2;</code>
+       * @return The fileName.
+       */
+      public java.lang.String getFileName() {
+        java.lang.Object ref = fileName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          fileName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string fileName = 2;</code>
+       * @return The bytes for fileName.
+       */
+      public com.google.protobuf.ByteString
+          getFileNameBytes() {
+        java.lang.Object ref = fileName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          fileName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string fileName = 2;</code>
+       * @param value The fileName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFileName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        fileName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string fileName = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFileName() {
+        
+        fileName_ = getDefaultInstance().getFileName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string fileName = 2;</code>
+       * @param value The bytes for fileName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFileNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        fileName_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:LoadableStudyAttachment)
+    }
+
+    // @@protoc_insertion_point(class_scope:LoadableStudyAttachment)
+    private static final com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<LoadableStudyAttachment>
+        PARSER = new com.google.protobuf.AbstractParser<LoadableStudyAttachment>() {
+      @java.lang.Override
+      public LoadableStudyAttachment parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new LoadableStudyAttachment(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<LoadableStudyAttachment> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<LoadableStudyAttachment> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface LoadableStudyDetailOrBuilder extends
       // @@protoc_insertion_point(interface_extends:LoadableStudyDetail)
       com.google.protobuf.MessageOrBuilder {
@@ -3101,6 +3887,48 @@ public final class LoadableStudy {
      */
     com.google.protobuf.ByteString
         getMaxTempExpectedBytes();
+
+    /**
+     * <code>int64 duplicatedFromId = 12;</code>
+     * @return The duplicatedFromId.
+     */
+    long getDuplicatedFromId();
+
+    /**
+     * <code>int64 voyageId = 13;</code>
+     * @return The voyageId.
+     */
+    long getVoyageId();
+
+    /**
+     * <code>int64 vesselId = 14;</code>
+     * @return The vesselId.
+     */
+    long getVesselId();
+
+    /**
+     * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+     */
+    java.util.List<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment> 
+        getAttachmentsList();
+    /**
+     * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+     */
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment getAttachments(int index);
+    /**
+     * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+     */
+    int getAttachmentsCount();
+    /**
+     * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+     */
+    java.util.List<? extends com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder> 
+        getAttachmentsOrBuilderList();
+    /**
+     * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+     */
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder getAttachmentsOrBuilder(
+        int index);
   }
   /**
    * Protobuf type {@code LoadableStudyDetail}
@@ -3124,6 +3952,7 @@ public final class LoadableStudy {
       draftMark_ = "";
       draftRestriction_ = "";
       maxTempExpected_ = "";
+      attachments_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -3146,6 +3975,7 @@ public final class LoadableStudy {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -3220,6 +4050,30 @@ public final class LoadableStudy {
               maxTempExpected_ = s;
               break;
             }
+            case 96: {
+
+              duplicatedFromId_ = input.readInt64();
+              break;
+            }
+            case 104: {
+
+              voyageId_ = input.readInt64();
+              break;
+            }
+            case 112: {
+
+              vesselId_ = input.readInt64();
+              break;
+            }
+            case 122: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                attachments_ = new java.util.ArrayList<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              attachments_.add(
+                  input.readMessage(com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.parser(), extensionRegistry));
+              break;
+            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -3235,6 +4089,9 @@ public final class LoadableStudy {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          attachments_ = java.util.Collections.unmodifiableList(attachments_);
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -3596,6 +4453,71 @@ public final class LoadableStudy {
       }
     }
 
+    public static final int DUPLICATEDFROMID_FIELD_NUMBER = 12;
+    private long duplicatedFromId_;
+    /**
+     * <code>int64 duplicatedFromId = 12;</code>
+     * @return The duplicatedFromId.
+     */
+    public long getDuplicatedFromId() {
+      return duplicatedFromId_;
+    }
+
+    public static final int VOYAGEID_FIELD_NUMBER = 13;
+    private long voyageId_;
+    /**
+     * <code>int64 voyageId = 13;</code>
+     * @return The voyageId.
+     */
+    public long getVoyageId() {
+      return voyageId_;
+    }
+
+    public static final int VESSELID_FIELD_NUMBER = 14;
+    private long vesselId_;
+    /**
+     * <code>int64 vesselId = 14;</code>
+     * @return The vesselId.
+     */
+    public long getVesselId() {
+      return vesselId_;
+    }
+
+    public static final int ATTACHMENTS_FIELD_NUMBER = 15;
+    private java.util.List<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment> attachments_;
+    /**
+     * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+     */
+    public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment> getAttachmentsList() {
+      return attachments_;
+    }
+    /**
+     * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+     */
+    public java.util.List<? extends com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder> 
+        getAttachmentsOrBuilderList() {
+      return attachments_;
+    }
+    /**
+     * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+     */
+    public int getAttachmentsCount() {
+      return attachments_.size();
+    }
+    /**
+     * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+     */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment getAttachments(int index) {
+      return attachments_.get(index);
+    }
+    /**
+     * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+     */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder getAttachmentsOrBuilder(
+        int index) {
+      return attachments_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -3643,6 +4565,18 @@ public final class LoadableStudy {
       if (!getMaxTempExpectedBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 11, maxTempExpected_);
       }
+      if (duplicatedFromId_ != 0L) {
+        output.writeInt64(12, duplicatedFromId_);
+      }
+      if (voyageId_ != 0L) {
+        output.writeInt64(13, voyageId_);
+      }
+      if (vesselId_ != 0L) {
+        output.writeInt64(14, vesselId_);
+      }
+      for (int i = 0; i < attachments_.size(); i++) {
+        output.writeMessage(15, attachments_.get(i));
+      }
       unknownFields.writeTo(output);
     }
 
@@ -3687,6 +4621,22 @@ public final class LoadableStudy {
       if (!getMaxTempExpectedBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, maxTempExpected_);
       }
+      if (duplicatedFromId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(12, duplicatedFromId_);
+      }
+      if (voyageId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(13, voyageId_);
+      }
+      if (vesselId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(14, vesselId_);
+      }
+      for (int i = 0; i < attachments_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(15, attachments_.get(i));
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -3724,6 +4674,14 @@ public final class LoadableStudy {
           .equals(other.getDraftRestriction())) return false;
       if (!getMaxTempExpected()
           .equals(other.getMaxTempExpected())) return false;
+      if (getDuplicatedFromId()
+          != other.getDuplicatedFromId()) return false;
+      if (getVoyageId()
+          != other.getVoyageId()) return false;
+      if (getVesselId()
+          != other.getVesselId()) return false;
+      if (!getAttachmentsList()
+          .equals(other.getAttachmentsList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -3759,6 +4717,19 @@ public final class LoadableStudy {
       hash = (53 * hash) + getDraftRestriction().hashCode();
       hash = (37 * hash) + MAXTEMPEXPECTED_FIELD_NUMBER;
       hash = (53 * hash) + getMaxTempExpected().hashCode();
+      hash = (37 * hash) + DUPLICATEDFROMID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getDuplicatedFromId());
+      hash = (37 * hash) + VOYAGEID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getVoyageId());
+      hash = (37 * hash) + VESSELID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getVesselId());
+      if (getAttachmentsCount() > 0) {
+        hash = (37 * hash) + ATTACHMENTS_FIELD_NUMBER;
+        hash = (53 * hash) + getAttachmentsList().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -3887,6 +4858,7 @@ public final class LoadableStudy {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
+          getAttachmentsFieldBuilder();
         }
       }
       @java.lang.Override
@@ -3914,6 +4886,18 @@ public final class LoadableStudy {
 
         maxTempExpected_ = "";
 
+        duplicatedFromId_ = 0L;
+
+        voyageId_ = 0L;
+
+        vesselId_ = 0L;
+
+        if (attachmentsBuilder_ == null) {
+          attachments_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          attachmentsBuilder_.clear();
+        }
         return this;
       }
 
@@ -3940,6 +4924,7 @@ public final class LoadableStudy {
       @java.lang.Override
       public com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail buildPartial() {
         com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail result = new com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail(this);
+        int from_bitField0_ = bitField0_;
         result.id_ = id_;
         result.name_ = name_;
         result.detail_ = detail_;
@@ -3951,6 +4936,18 @@ public final class LoadableStudy {
         result.loadLineXId_ = loadLineXId_;
         result.draftRestriction_ = draftRestriction_;
         result.maxTempExpected_ = maxTempExpected_;
+        result.duplicatedFromId_ = duplicatedFromId_;
+        result.voyageId_ = voyageId_;
+        result.vesselId_ = vesselId_;
+        if (attachmentsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            attachments_ = java.util.Collections.unmodifiableList(attachments_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.attachments_ = attachments_;
+        } else {
+          result.attachments_ = attachmentsBuilder_.build();
+        }
         onBuilt();
         return result;
       }
@@ -4041,6 +5038,41 @@ public final class LoadableStudy {
           maxTempExpected_ = other.maxTempExpected_;
           onChanged();
         }
+        if (other.getDuplicatedFromId() != 0L) {
+          setDuplicatedFromId(other.getDuplicatedFromId());
+        }
+        if (other.getVoyageId() != 0L) {
+          setVoyageId(other.getVoyageId());
+        }
+        if (other.getVesselId() != 0L) {
+          setVesselId(other.getVesselId());
+        }
+        if (attachmentsBuilder_ == null) {
+          if (!other.attachments_.isEmpty()) {
+            if (attachments_.isEmpty()) {
+              attachments_ = other.attachments_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureAttachmentsIsMutable();
+              attachments_.addAll(other.attachments_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.attachments_.isEmpty()) {
+            if (attachmentsBuilder_.isEmpty()) {
+              attachmentsBuilder_.dispose();
+              attachmentsBuilder_ = null;
+              attachments_ = other.attachments_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              attachmentsBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getAttachmentsFieldBuilder() : null;
+            } else {
+              attachmentsBuilder_.addAllMessages(other.attachments_);
+            }
+          }
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -4069,6 +5101,7 @@ public final class LoadableStudy {
         }
         return this;
       }
+      private int bitField0_;
 
       private long id_ ;
       /**
@@ -4813,6 +5846,336 @@ public final class LoadableStudy {
         onChanged();
         return this;
       }
+
+      private long duplicatedFromId_ ;
+      /**
+       * <code>int64 duplicatedFromId = 12;</code>
+       * @return The duplicatedFromId.
+       */
+      public long getDuplicatedFromId() {
+        return duplicatedFromId_;
+      }
+      /**
+       * <code>int64 duplicatedFromId = 12;</code>
+       * @param value The duplicatedFromId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDuplicatedFromId(long value) {
+        
+        duplicatedFromId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 duplicatedFromId = 12;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDuplicatedFromId() {
+        
+        duplicatedFromId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long voyageId_ ;
+      /**
+       * <code>int64 voyageId = 13;</code>
+       * @return The voyageId.
+       */
+      public long getVoyageId() {
+        return voyageId_;
+      }
+      /**
+       * <code>int64 voyageId = 13;</code>
+       * @param value The voyageId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVoyageId(long value) {
+        
+        voyageId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 voyageId = 13;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVoyageId() {
+        
+        voyageId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long vesselId_ ;
+      /**
+       * <code>int64 vesselId = 14;</code>
+       * @return The vesselId.
+       */
+      public long getVesselId() {
+        return vesselId_;
+      }
+      /**
+       * <code>int64 vesselId = 14;</code>
+       * @param value The vesselId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVesselId(long value) {
+        
+        vesselId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 vesselId = 14;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVesselId() {
+        
+        vesselId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment> attachments_ =
+        java.util.Collections.emptyList();
+      private void ensureAttachmentsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          attachments_ = new java.util.ArrayList<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment>(attachments_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder> attachmentsBuilder_;
+
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment> getAttachmentsList() {
+        if (attachmentsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(attachments_);
+        } else {
+          return attachmentsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public int getAttachmentsCount() {
+        if (attachmentsBuilder_ == null) {
+          return attachments_.size();
+        } else {
+          return attachmentsBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment getAttachments(int index) {
+        if (attachmentsBuilder_ == null) {
+          return attachments_.get(index);
+        } else {
+          return attachmentsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public Builder setAttachments(
+          int index, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment value) {
+        if (attachmentsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAttachmentsIsMutable();
+          attachments_.set(index, value);
+          onChanged();
+        } else {
+          attachmentsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public Builder setAttachments(
+          int index, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder builderForValue) {
+        if (attachmentsBuilder_ == null) {
+          ensureAttachmentsIsMutable();
+          attachments_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          attachmentsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public Builder addAttachments(com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment value) {
+        if (attachmentsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAttachmentsIsMutable();
+          attachments_.add(value);
+          onChanged();
+        } else {
+          attachmentsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public Builder addAttachments(
+          int index, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment value) {
+        if (attachmentsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAttachmentsIsMutable();
+          attachments_.add(index, value);
+          onChanged();
+        } else {
+          attachmentsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public Builder addAttachments(
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder builderForValue) {
+        if (attachmentsBuilder_ == null) {
+          ensureAttachmentsIsMutable();
+          attachments_.add(builderForValue.build());
+          onChanged();
+        } else {
+          attachmentsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public Builder addAttachments(
+          int index, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder builderForValue) {
+        if (attachmentsBuilder_ == null) {
+          ensureAttachmentsIsMutable();
+          attachments_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          attachmentsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public Builder addAllAttachments(
+          java.lang.Iterable<? extends com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment> values) {
+        if (attachmentsBuilder_ == null) {
+          ensureAttachmentsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, attachments_);
+          onChanged();
+        } else {
+          attachmentsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public Builder clearAttachments() {
+        if (attachmentsBuilder_ == null) {
+          attachments_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          attachmentsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public Builder removeAttachments(int index) {
+        if (attachmentsBuilder_ == null) {
+          ensureAttachmentsIsMutable();
+          attachments_.remove(index);
+          onChanged();
+        } else {
+          attachmentsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder getAttachmentsBuilder(
+          int index) {
+        return getAttachmentsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder getAttachmentsOrBuilder(
+          int index) {
+        if (attachmentsBuilder_ == null) {
+          return attachments_.get(index);  } else {
+          return attachmentsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public java.util.List<? extends com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder> 
+           getAttachmentsOrBuilderList() {
+        if (attachmentsBuilder_ != null) {
+          return attachmentsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(attachments_);
+        }
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder addAttachmentsBuilder() {
+        return getAttachmentsFieldBuilder().addBuilder(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder addAttachmentsBuilder(
+          int index) {
+        return getAttachmentsFieldBuilder().addBuilder(
+            index, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .LoadableStudyAttachment attachments = 15;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder> 
+           getAttachmentsBuilderList() {
+        return getAttachmentsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder> 
+          getAttachmentsFieldBuilder() {
+        if (attachmentsBuilder_ == null) {
+          attachmentsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder>(
+                  attachments_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          attachments_ = null;
+        }
+        return attachmentsBuilder_;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -4908,6 +6271,12 @@ public final class LoadableStudy {
      */
     com.cpdss.common.generated.LoadableStudy.LoadableStudyDetailOrBuilder getLoadableStudiesOrBuilder(
         int index);
+
+    /**
+     * <code>int64 id = 3;</code>
+     * @return The id.
+     */
+    long getId();
   }
   /**
    * Protobuf type {@code LoadableStudyReply}
@@ -4976,6 +6345,11 @@ public final class LoadableStudy {
               }
               loadableStudies_.add(
                   input.readMessage(com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail.parser(), extensionRegistry));
+              break;
+            }
+            case 24: {
+
+              id_ = input.readInt64();
               break;
             }
             default: {
@@ -5071,6 +6445,16 @@ public final class LoadableStudy {
       return loadableStudies_.get(index);
     }
 
+    public static final int ID_FIELD_NUMBER = 3;
+    private long id_;
+    /**
+     * <code>int64 id = 3;</code>
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -5091,6 +6475,9 @@ public final class LoadableStudy {
       for (int i = 0; i < loadableStudies_.size(); i++) {
         output.writeMessage(2, loadableStudies_.get(i));
       }
+      if (id_ != 0L) {
+        output.writeInt64(3, id_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -5107,6 +6494,10 @@ public final class LoadableStudy {
       for (int i = 0; i < loadableStudies_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(2, loadableStudies_.get(i));
+      }
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(3, id_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -5130,6 +6521,8 @@ public final class LoadableStudy {
       }
       if (!getLoadableStudiesList()
           .equals(other.getLoadableStudiesList())) return false;
+      if (getId()
+          != other.getId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -5149,6 +6542,9 @@ public final class LoadableStudy {
         hash = (37 * hash) + LOADABLESTUDIES_FIELD_NUMBER;
         hash = (53 * hash) + getLoadableStudiesList().hashCode();
       }
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -5295,6 +6691,8 @@ public final class LoadableStudy {
         } else {
           loadableStudiesBuilder_.clear();
         }
+        id_ = 0L;
+
         return this;
       }
 
@@ -5336,6 +6734,7 @@ public final class LoadableStudy {
         } else {
           result.loadableStudies_ = loadableStudiesBuilder_.build();
         }
+        result.id_ = id_;
         onBuilt();
         return result;
       }
@@ -5412,6 +6811,9 @@ public final class LoadableStudy {
               loadableStudiesBuilder_.addAllMessages(other.loadableStudies_);
             }
           }
+        }
+        if (other.getId() != 0L) {
+          setId(other.getId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -5801,6 +7203,36 @@ public final class LoadableStudy {
         }
         return loadableStudiesBuilder_;
       }
+
+      private long id_ ;
+      /**
+       * <code>int64 id = 3;</code>
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 3;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+        
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -5875,6 +7307,11 @@ public final class LoadableStudy {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_LoadableStudyRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_LoadableStudyAttachment_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadableStudyAttachment_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_LoadableStudyDetail_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -5898,23 +7335,30 @@ public final class LoadableStudy {
       "(\003\022\021\n\tcompanyId\030\003 \001(\003\022\020\n\010vesselId\030\004 \001(\003\022" +
       "\020\n\010voyageNo\030\005 \001(\t\"@\n\013VoyageReply\022\016\n\006stat" +
       "us\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\022\020\n\010voyageId\030\003 " +
-      "\001(\003\".\n\013StatusReply\022\016\n\006status\030\001 \001(\t\022\017\n\007me" +
-      "ssage\030\002 \001(\t\"M\n\024LoadableStudyRequest\022\021\n\tc" +
-      "ompanyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voya" +
-      "geId\030\003 \001(\003\"\350\001\n\023LoadableStudyDetail\022\n\n\002id" +
-      "\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\016\n\006detail\030\003 \001(\t\022\016\n\006" +
-      "status\030\004 \001(\t\022\023\n\013createdDate\030\005 \001(\t\022\021\n\tcha" +
-      "rterer\030\006 \001(\t\022\024\n\014subCharterer\030\007 \001(\t\022\021\n\tdr" +
-      "aftMark\030\010 \001(\t\022\023\n\013loadLineXId\030\t \001(\003\022\030\n\020dr" +
-      "aftRestriction\030\n \001(\t\022\027\n\017maxTempExpected\030" +
-      "\013 \001(\t\"i\n\022LoadableStudyReply\022$\n\016responseS" +
-      "tatus\030\001 \001(\0132\014.StatusReply\022-\n\017loadableStu" +
-      "dies\030\002 \003(\0132\024.LoadableStudyDetail2\232\001\n\024Loa" +
+      "\001(\003\"<\n\013StatusReply\022\016\n\006status\030\001 \001(\t\022\014\n\004co" +
+      "de\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\"M\n\024LoadableStu" +
+      "dyRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId" +
+      "\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\"?\n\027LoadableStud" +
+      "yAttachment\022\022\n\nbyteString\030\001 \001(\014\022\020\n\010fileN" +
+      "ame\030\002 \001(\t\"\325\002\n\023LoadableStudyDetail\022\n\n\002id\030" +
+      "\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\016\n\006detail\030\003 \001(\t\022\016\n\006s" +
+      "tatus\030\004 \001(\t\022\023\n\013createdDate\030\005 \001(\t\022\021\n\tchar" +
+      "terer\030\006 \001(\t\022\024\n\014subCharterer\030\007 \001(\t\022\021\n\tdra" +
+      "ftMark\030\010 \001(\t\022\023\n\013loadLineXId\030\t \001(\003\022\030\n\020dra" +
+      "ftRestriction\030\n \001(\t\022\027\n\017maxTempExpected\030\013" +
+      " \001(\t\022\030\n\020duplicatedFromId\030\014 \001(\003\022\020\n\010voyage" +
+      "Id\030\r \001(\003\022\020\n\010vesselId\030\016 \001(\003\022-\n\013attachment" +
+      "s\030\017 \003(\0132\030.LoadableStudyAttachment\"u\n\022Loa" +
+      "dableStudyReply\022$\n\016responseStatus\030\001 \001(\0132" +
+      "\014.StatusReply\022-\n\017loadableStudies\030\002 \003(\0132\024" +
+      ".LoadableStudyDetail\022\n\n\002id\030\003 \001(\0032\334\001\n\024Loa" +
       "dableStudyService\022,\n\nSaveVoyage\022\016.Voyage" +
       "Request\032\014.VoyageReply\"\000\022T\n$FindLoadableS" +
       "tudiesByVesselAndVoyage\022\025.LoadableStudyR" +
-      "equest\032\023.LoadableStudyReply\"\000B\036\n\032com.cpd" +
-      "ss.common.generatedP\000b\006proto3"
+      "equest\032\023.LoadableStudyReply\"\000\022@\n\021SaveLoa" +
+      "dableStudy\022\024.LoadableStudyDetail\032\023.Loada" +
+      "bleStudyReply\"\000B\036\n\032com.cpdss.common.gene" +
+      "ratedP\000b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -5937,25 +7381,31 @@ public final class LoadableStudy {
     internal_static_StatusReply_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_StatusReply_descriptor,
-        new java.lang.String[] { "Status", "Message", });
+        new java.lang.String[] { "Status", "Code", "Message", });
     internal_static_LoadableStudyRequest_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_LoadableStudyRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_LoadableStudyRequest_descriptor,
         new java.lang.String[] { "CompanyId", "VesselId", "VoyageId", });
-    internal_static_LoadableStudyDetail_descriptor =
+    internal_static_LoadableStudyAttachment_descriptor =
       getDescriptor().getMessageTypes().get(4);
+    internal_static_LoadableStudyAttachment_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_LoadableStudyAttachment_descriptor,
+        new java.lang.String[] { "ByteString", "FileName", });
+    internal_static_LoadableStudyDetail_descriptor =
+      getDescriptor().getMessageTypes().get(5);
     internal_static_LoadableStudyDetail_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_LoadableStudyDetail_descriptor,
-        new java.lang.String[] { "Id", "Name", "Detail", "Status", "CreatedDate", "Charterer", "SubCharterer", "DraftMark", "LoadLineXId", "DraftRestriction", "MaxTempExpected", });
+        new java.lang.String[] { "Id", "Name", "Detail", "Status", "CreatedDate", "Charterer", "SubCharterer", "DraftMark", "LoadLineXId", "DraftRestriction", "MaxTempExpected", "DuplicatedFromId", "VoyageId", "VesselId", "Attachments", });
     internal_static_LoadableStudyReply_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_LoadableStudyReply_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_LoadableStudyReply_descriptor,
-        new java.lang.String[] { "ResponseStatus", "LoadableStudies", });
+        new java.lang.String[] { "ResponseStatus", "LoadableStudies", "Id", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

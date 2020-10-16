@@ -4,16 +4,19 @@ package com.cpdss.gateway.controller;
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +24,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Gateway controller for loadable study related operations
@@ -37,8 +42,6 @@ public class LoadableStudyController {
   @Autowired private LoadableStudyService loadableStudyService;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
-  
-
 
   /**
    * API for save voyage
@@ -88,6 +91,49 @@ public class LoadableStudyController {
       Long companyId = 1L; // TODO get the companyId from userContext in keycloak token
       return this.loadableStudyService.getLoadableStudies(
           companyId, vesselId, voyageId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching loadable study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error fetching loadable study", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Save loadable study
+   *
+   * @param vesselId - the vessel id for which loadable study is created
+   * @param voyageId - the voyage id for which loadable study is created
+   * @param request - the request body {@link LoadableStudy}
+   * @param headers - the http request header
+   * @return {@link LoadableStudyResponse}
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      value = "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}",
+      consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public LoadableStudyResponse saveLoadableStudy(
+      @PathVariable Long vesselId,
+      @PathVariable Long voyageId,
+      @Valid final LoadableStudy request,
+      @Size(max = 5, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          @RequestParam(name = "files", required = false)
+          MultipartFile[] files,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      request.setVesselId(vesselId);
+      request.setVoyageId(voyageId);
+      request.setCompanyId(1L);
+      return this.loadableStudyService.saveLoadableStudy(
+          request, headers.getFirst(CORRELATION_ID_HEADER), files);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching loadable study", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

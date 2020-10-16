@@ -1,7 +1,10 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.domain;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import com.cpdss.common.rest.CommonSuccessResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 import lombok.Data;
 
@@ -11,9 +14,12 @@ import lombok.Data;
  * @author suhail.k
  */
 @Data
+@JsonInclude(Include.NON_NULL)
 public class LoadableStudyResponse {
 
   private CommonSuccessResponse responseStatus;
 
   private List<LoadableStudy> loadableStudies;
+
+  private Long loadableStudyId;
 }

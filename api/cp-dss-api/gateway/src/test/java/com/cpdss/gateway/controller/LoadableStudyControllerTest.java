@@ -1,13 +1,16 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.controller;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.gateway.GatewayTestConfiguration;
+import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -43,6 +47,17 @@ class LoadableStudyControllerTest {
   private static final Long TEST_VESSEL_ID = 1L;
   private static final Long TEST_VOYAGE_ID = 1L;
 
+  private static final String CHARTERER = "charterer";
+  private static final String SUB_CHARTERER = "sub-chartere";
+  private static final String DRAFT_MARK = "1000";
+  private static final Long LOAD_LINE_ID = 1L;
+  private static final String DRAFT_RESTRICTION = "1000";
+  private static final String MAX_TEMP_EXPECTED = "100";
+  private static final String LOADABLE_STUDY_NAME = "LS-01";
+  private static final String LOADABLE_STUDY_DETAIL = "detail-1";
+  private static final String CREATED_DATE_FORMAT = "dd-MM-yyyy";
+  private static final String LOADABLE_STUDY_STATUS = "pending";
+
   // API URLS
   private static final String CLOUD_API_URL_PREFIX = "/api/cloud";
   private static final String SHIP_API_URL_PREFIX = "/api/cloud";
@@ -52,6 +67,17 @@ class LoadableStudyControllerTest {
       CLOUD_API_URL_PREFIX + LOADABLE_STUDY_LIST_API_URL;
   private static final String LOADABLE_STUDY_LIST_SHIP_API_URL =
       SHIP_API_URL_PREFIX + LOADABLE_STUDY_LIST_API_URL;
+  private static final String LOADABLE_STUDY_SAVE_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}";
+  private static final String LOADABLE_STUDY_SAVE_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + LOADABLE_STUDY_SAVE_API_URL;
+  private static final String LOADABLE_STUDY_SAVE_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + LOADABLE_STUDY_SAVE_API_URL;
+
+  private static final String NAME = "name";
+  private static final String CHARTERER_LITERAL = "charterer";
+  private static final String DRAFT_MARK_LITERAL = "draftMark";
+  private static final String LOAD_LINE_ID_LITERAL = "loadLineXId";
 
   /**
    * Positive test case. Test method for positive response scenario
@@ -112,6 +138,88 @@ class LoadableStudyControllerTest {
             MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  /**
+   * Test method for loadable study save operation
+   *
+   * @throws Exception
+   */
+  @ValueSource(strings = {LOADABLE_STUDY_SAVE_CLOUD_API_URL, LOADABLE_STUDY_SAVE_SHIP_API_URL})
+  @ParameterizedTest
+  void testSaveLoadableStudy(String url) throws Exception {
+    when(this.loadableStudyService.saveLoadableStudy(any(LoadableStudy.class), anyString(), any()))
+        .thenReturn(new LoadableStudyResponse());
+    MockMultipartFile firstFile =
+        new MockMultipartFile("files", "filename.pdf", "text/plain", "test".getBytes());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.multipart(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 0L)
+                .file(firstFile)
+                .param(NAME, LOADABLE_STUDY_NAME)
+                .param(CHARTERER_LITERAL, CHARTERER)
+                .param(DRAFT_MARK_LITERAL, DRAFT_MARK)
+                .param(LOAD_LINE_ID_LITERAL, String.valueOf(LOAD_LINE_ID))
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  /**
+   * Test method for loadable study save operation
+   *
+   * @throws Exception
+   */
+  @ValueSource(strings = {LOADABLE_STUDY_SAVE_CLOUD_API_URL, LOADABLE_STUDY_SAVE_SHIP_API_URL})
+  @ParameterizedTest
+  void testSaveLoadableStudyServiceException(String url) throws Exception {
+    when(this.loadableStudyService.saveLoadableStudy(any(LoadableStudy.class), anyString(), any()))
+        .thenThrow(
+            new GenericServiceException(
+                "service exception",
+                CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                HttpStatus.INTERNAL_SERVER_ERROR));
+    MockMultipartFile firstFile =
+        new MockMultipartFile("files", "filename.pdf", "text/plain", "test".getBytes());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.multipart(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 0L)
+                .file(firstFile)
+                .param(NAME, LOADABLE_STUDY_NAME)
+                .param(CHARTERER_LITERAL, CHARTERER)
+                .param(DRAFT_MARK_LITERAL, DRAFT_MARK)
+                .param(LOAD_LINE_ID_LITERAL, String.valueOf(LOAD_LINE_ID))
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  /**
+   * Test method for loadable study save operation
+   *
+   * @throws Exception
+   */
+  @ValueSource(strings = {LOADABLE_STUDY_SAVE_CLOUD_API_URL, LOADABLE_STUDY_SAVE_SHIP_API_URL})
+  @ParameterizedTest
+  void testSaveLoadableStudyRuntimeException(String url) throws Exception {
+    when(this.loadableStudyService.saveLoadableStudy(any(LoadableStudy.class), anyString(), any()))
+        .thenThrow(RuntimeException.class);
+    MockMultipartFile firstFile =
+        new MockMultipartFile("files", "filename.pdf", "text/plain", "test".getBytes());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.multipart(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 0L)
+                .file(firstFile)
+                .param(NAME, LOADABLE_STUDY_NAME)
+                .param(CHARTERER_LITERAL, CHARTERER)
+                .param(DRAFT_MARK_LITERAL, DRAFT_MARK)
+                .param(LOAD_LINE_ID_LITERAL, String.valueOf(LOAD_LINE_ID))
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isInternalServerError());
   }

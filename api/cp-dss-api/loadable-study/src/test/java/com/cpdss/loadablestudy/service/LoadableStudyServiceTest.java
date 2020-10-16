@@ -7,6 +7,8 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
@@ -15,19 +17,27 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.google.protobuf.ByteString;
 import io.grpc.internal.testing.StreamRecorder;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+/**
+ * @Author jerin.g
+ *
+ * <p>Class for writing test cases for loadable study
+ */
 @SpringJUnitConfig(classes = {LoadableStudyService.class})
 public class LoadableStudyServiceTest {
 
@@ -52,87 +62,94 @@ public class LoadableStudyServiceTest {
   private static final String DRAFT_RESTRICTION = "1000";
   private static final String MAX_TEMP_EXPECTED = "100";
 
-
-
-   /**
+  /**
    * method for positive test case of save voyage
-   * 
+   *
    * @throws GenericServiceException
    * @returns void
    */
   @Test
   public void testSaveVoyage() throws GenericServiceException {
-	  VoyageRequest request = VoyageRequest.newBuilder()
-	            .setCaptainId(1)
-	            .setChiefOfficerId(1)
-	            .setCompanyId(1)
-	            .setVesselId(1)
-	            .setVoyageNo(VOYAGE)
-	            .build();
-	  /* used for grpc testing */
-      StreamRecorder<VoyageReply> responseObserver = StreamRecorder.create();
-      Voyage voyage = new Voyage();
-      voyage.setId((long) 1);
-	    
-	   Mockito.when(this.voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNo(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong(), ArgumentMatchers.anyString())).thenReturn(new ArrayList<Voyage>());
+    VoyageRequest request =
+        VoyageRequest.newBuilder()
+            .setCaptainId(1)
+            .setChiefOfficerId(1)
+            .setCompanyId(1)
+            .setVesselId(1)
+            .setVoyageNo(VOYAGE)
+            .build();
+    /* used for grpc testing */
+    StreamRecorder<VoyageReply> responseObserver = StreamRecorder.create();
+    Voyage voyage = new Voyage();
+    voyage.setId((long) 1);
 
-	   Mockito.when(this.voyageRepository.save(ArgumentMatchers.any(Voyage.class))).thenReturn(voyage);
-      loadableStudyService.saveVoyage(request, responseObserver);
-     
-      assertNull(responseObserver.getError());
-      List<VoyageReply> results = responseObserver.getValues();
-      assertEquals(1, results.size());
-      VoyageReply response = results.get(0);
-      assertEquals(VoyageReply.newBuilder()
-              .setMessage(SUCCESS)
-              .setStatus(SUCCESS)
-              .setVoyageId((long) 1)
-              .build(), response);
+    Mockito.when(
+            this.voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNo(
+                ArgumentMatchers.anyLong(),
+                ArgumentMatchers.anyLong(),
+                ArgumentMatchers.anyString()))
+        .thenReturn(new ArrayList<Voyage>());
 
+    Mockito.when(this.voyageRepository.save(ArgumentMatchers.any(Voyage.class))).thenReturn(voyage);
+    loadableStudyService.saveVoyage(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<VoyageReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    VoyageReply response = results.get(0);
+    assertEquals(
+        VoyageReply.newBuilder()
+            .setMessage(SUCCESS)
+            .setStatus(SUCCESS)
+            .setVoyageId((long) 1)
+            .build(),
+        response);
   }
-  
+
   /**
    * method for negative test case for voyage save
-   * 
+   *
    * @throws GenericServiceException
    * @returns void
    */
   @Test
   public void testSaveVoyageFailure() throws GenericServiceException {
-	  VoyageRequest request = VoyageRequest.newBuilder()
-	            .setCaptainId(1)
-	            .setChiefOfficerId(1)
-	            .setCompanyId(1)
-	            .setVesselId(1)
-	            .setVoyageNo(VOYAGE)
-	            .build();
-	  /* used for grpc testing */
-      StreamRecorder<VoyageReply> responseObserver = StreamRecorder.create();
-      Voyage voyage = new Voyage();
-      Mockito.when(this.voyageRepository.save(voyage)).thenReturn(voyage);
-      List<Voyage> voyages = new ArrayList<Voyage>();
-      voyages.add(voyage);
-      Mockito.when(this.voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNo(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong(), ArgumentMatchers.anyString())).thenReturn(voyages);
-     
-      loadableStudyService.saveVoyage(request, responseObserver);
-      
-      assertNull(responseObserver.getError());
-      List<VoyageReply> results = responseObserver.getValues();
-      assertEquals(1, results.size());
-      VoyageReply response = results.get(0);
-      assertEquals(VoyageReply.newBuilder()
-              .setMessage(VOYAGEEXISTS)
-              .setStatus(SUCCESS)
-              .build(), response);
+    VoyageRequest request =
+        VoyageRequest.newBuilder()
+            .setCaptainId(1)
+            .setChiefOfficerId(1)
+            .setCompanyId(1)
+            .setVesselId(1)
+            .setVoyageNo(VOYAGE)
+            .build();
+    /* used for grpc testing */
+    StreamRecorder<VoyageReply> responseObserver = StreamRecorder.create();
+    Voyage voyage = new Voyage();
+    Mockito.when(this.voyageRepository.save(voyage)).thenReturn(voyage);
+    List<Voyage> voyages = new ArrayList<Voyage>();
+    voyages.add(voyage);
+    Mockito.when(
+            this.voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNo(
+                ArgumentMatchers.anyLong(),
+                ArgumentMatchers.anyLong(),
+                ArgumentMatchers.anyString()))
+        .thenReturn(voyages);
 
+    loadableStudyService.saveVoyage(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<VoyageReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    VoyageReply response = results.get(0);
+    assertEquals(
+        VoyageReply.newBuilder().setMessage(VOYAGEEXISTS).setStatus(SUCCESS).build(), response);
   }
-
 
   @Test
   void testFindLoadableStudiesByVesselAndVoyage() {
     LoadableStudyRequest request = this.createLoadableStudyRequest();
     StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
-    when(this.voyageRepository.getOne(anyLong())).thenReturn(new Voyage());
+    when(this.voyageRepository.findById(anyLong())).thenReturn(Optional.of(new Voyage()));
     when(this.loadableStudyRepository.findByVesselXIdAndVoyage(anyLong(), any(Voyage.class)))
         .thenReturn(this.createLoadableStudyEntityList());
     this.loadableStudyService.findLoadableStudiesByVesselAndVoyage(request, responseObserver);
@@ -146,7 +163,7 @@ public class LoadableStudyServiceTest {
   void testFindLoadableStudiesServiceException() {
     LoadableStudyRequest request = this.createLoadableStudyRequest();
     StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
-    when(this.voyageRepository.getOne(anyLong())).thenReturn(new Voyage());
+    when(this.voyageRepository.findById(anyLong())).thenReturn(Optional.of(new Voyage()));
     when(this.loadableStudyRepository.findByVesselXIdAndVoyage(anyLong(), any(Voyage.class)))
         .thenThrow(RuntimeException.class);
     this.loadableStudyService.findLoadableStudiesByVesselAndVoyage(request, responseObserver);
@@ -156,10 +173,141 @@ public class LoadableStudyServiceTest {
     assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
   }
 
+  @Test
+  void testFindLoadableStudiesInvalidVoyage() {
+    LoadableStudyRequest request = this.createLoadableStudyRequest();
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    when(this.voyageRepository.findById(anyLong())).thenReturn(Optional.empty());
+    this.loadableStudyService.findLoadableStudiesByVesselAndVoyage(request, responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  /** Test loadable study saving */
+  @Test
+  void testSaveLoadableStudy() {
+    LoadableStudyDetail request = this.createLoadableStudySaveRequest();
+    LoadableStudy entity = new LoadableStudy();
+    entity.setId(2L);
+    when(this.voyageRepository.findById(anyLong())).thenReturn(Optional.of(new Voyage()));
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+    when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudy(request, responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+    assertEquals(2L, replies.get(0).getId());
+  }
+
+  @Test
+  void testSaveLoadableStudyWithNullValues() {
+    LoadableStudyDetail request =
+        LoadableStudyDetail.newBuilder()
+            .setName(LOADABLE_STUDY_NAME)
+            .setVesselId(1L)
+            .setVoyageId(1L)
+            .setLoadLineXId(LOAD_LINE_ID)
+            .addAttachments(
+                LoadableStudyAttachment.newBuilder()
+                    .setByteString(ByteString.copyFrom("test content".getBytes()))
+                    .setFileName("test name")
+                    .build())
+            .build();
+    LoadableStudy entity = new LoadableStudy();
+    entity.setId(2L);
+    when(this.voyageRepository.findById(anyLong())).thenReturn(Optional.of(new Voyage()));
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+    when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudy(request, responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+    assertEquals(2L, replies.get(0).getId());
+  }
+
+  @Test
+  void testSaveLoadableStudyInvalidVoyage() {
+    LoadableStudyDetail request = this.createLoadableStudySaveRequest();
+    when(this.voyageRepository.findById(anyLong())).thenReturn(Optional.empty());
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudy(request, responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+    assertEquals(
+        String.valueOf(HttpStatus.BAD_REQUEST.value()),
+        replies.get(0).getResponseStatus().getCode());
+  }
+
+  @Test
+  void testSaveLoadableStudyInvalidCreatedFromStudy() {
+    LoadableStudyDetail request = this.createLoadableStudySaveRequest();
+    when(this.voyageRepository.findById(anyLong())).thenReturn(Optional.of(new Voyage()));
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.empty());
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudy(request, responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+    assertEquals(
+        String.valueOf(HttpStatus.BAD_REQUEST.value()),
+        replies.get(0).getResponseStatus().getCode());
+  }
+
+  @Test
+  void testSaveLoadableStudyRuntimeException() {
+    LoadableStudyDetail request = this.createLoadableStudySaveRequest();
+    when(this.voyageRepository.findById(anyLong())).thenThrow(RuntimeException.class);
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudy(request, responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+    assertEquals(
+        String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()),
+        replies.get(0).getResponseStatus().getCode());
+  }
+
+  /**
+   * Create save request for loadable study
+   *
+   * @return {@link LoadableStudyDetail}
+   */
+  private LoadableStudyDetail createLoadableStudySaveRequest() {
+    LoadableStudyDetail request =
+        LoadableStudyDetail.newBuilder()
+            .setName(LOADABLE_STUDY_NAME)
+            .setDetail(LOADABLE_STUDY_DETAILS)
+            .setCharterer(CHARTERER)
+            .setSubCharterer(SUB_CHARTERER)
+            .setVesselId(1L)
+            .setVoyageId(1L)
+            .setDraftMark(DRAFT_MARK)
+            .setDraftRestriction(DRAFT_RESTRICTION)
+            .setMaxTempExpected(MAX_TEMP_EXPECTED)
+            .setLoadLineXId(LOAD_LINE_ID)
+            .setDuplicatedFromId(1L)
+            .addAttachments(
+                LoadableStudyAttachment.newBuilder()
+                    .setByteString(ByteString.copyFrom("test content".getBytes()))
+                    .setFileName("test name")
+                    .build())
+            .build();
+    return request;
+  }
+
   private LoadableStudyRequest createLoadableStudyRequest() {
     return LoadableStudyRequest.newBuilder().setVesselId(1L).setVoyageId(1L).build();
   }
-
 
   private List<LoadableStudy> createLoadableStudyEntityList() {
     List<LoadableStudy> entityList = new ArrayList<LoadableStudy>();

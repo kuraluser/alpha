@@ -1,6 +1,25 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.loadablestudy.service;
 
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
@@ -9,18 +28,17 @@ import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceImplBase;
+import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
+
+import io.grpc.internal.GrpcUtil.Http2Error;
 import io.grpc.stub.StreamObserver;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /** @Author jerin.g */
 @Log4j2
@@ -28,6 +46,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class LoadableStudyService extends LoadableStudyServiceImplBase {
+
+  @Value("${loadablestudy.attachement.path}")
+  private String uploadFolderPath;
 
   @Autowired private VoyageRepository voyageRepository;
 
@@ -37,7 +58,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String FAILED = "FAILED";
   private static final String VOYAGEEXISTS = "VOYAGEEXISTS";
   private static final String CREATED_DATE_FORMAT = "dd-MM-yyyy";
- 
+
   /**
    * method for save voyage
    *
@@ -66,7 +87,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         voyage.setCaptainXId(request.getCaptainId());
         voyage.setChiefOfficerXId(request.getChiefOfficerId());
         voyage = voyageRepository.save(voyage);
-
         // when Db save is complete we return to client a success message
         reply =
             VoyageReply.newBuilder()
@@ -86,7 +106,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
-
   /**
    * Method to find list of loadable studies based on vessel and voyage
    *
@@ -99,37 +118,146 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Builder replyBuilder = null;
     try {
       log.info("inside loadable study service - findLoadableStudiesByVesselAndVoyage");
-      List<LoadableStudy> loadableStudies =
+      Optional<Voyage> voyageOpt = this.voyageRepository.findById(request.getVoyageId());
+      if (!voyageOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Voyage does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatus.BAD_REQUEST);
+      }
+      List<LoadableStudy> loadableStudyEntityList =
           this.loadableStudyRepository.findByVesselXIdAndVoyage(
-              request.getVesselId(), this.voyageRepository.getOne(request.getVoyageId()));
+              request.getVesselId(), voyageOpt.get());
       replyBuilder =
           LoadableStudyReply.newBuilder()
               .setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT);
-      for (LoadableStudy study : loadableStudies) {
-        replyBuilder.addLoadableStudies(
-            LoadableStudyDetail.newBuilder()
-                .setId(study.getId())
-                .setName(study.getName())
-                .setDetail(study.getDetails())
-                .setCreatedDate(dateTimeFormatter.format(study.getCreatedDate()))
-                .setStatus(study.getLoadableStudyStatus())
-                .setCharterer(study.getCharterer())
-                .setSubCharterer(study.getSubCharterer())
-                .setDraftMark(
-                    String.valueOf(
-                        study.getDraftMark())) // TODO check for Bigdecimal usage with GRPC
-                .setLoadLineXId(study.getLoadLineXId())
-                .setDraftRestriction(String.valueOf(study.getDraftRestriction()))
-                .setMaxTempExpected(String.valueOf(study.getMaxTempExpected()))
-                .build());
+      for (LoadableStudy entity : loadableStudyEntityList) {
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail.Builder builder =
+            LoadableStudyDetail.newBuilder();
+        builder.setId(entity.getId());
+        builder.setName(entity.getName());
+        builder.setCreatedDate(dateTimeFormatter.format(entity.getCreatedDate()));
+        Optional.ofNullable(entity.getLoadableStudyStatus()).ifPresent(builder::setStatus);
+        Optional.ofNullable(entity.getDetails()).ifPresent(builder::setDetail);
+        Optional.ofNullable(entity.getCharterer()).ifPresent(builder::setCharterer);
+        Optional.ofNullable(entity.getSubCharterer()).ifPresent(builder::setSubCharterer);
+        Optional.ofNullable(entity.getLoadLineXId()).ifPresent(builder::setLoadLineXId);
+        Optional.ofNullable(entity.getDraftMark())
+            .ifPresent(dratMark -> builder.setDraftMark(String.valueOf(dratMark)));
+        Optional.ofNullable(entity.getDraftRestriction())
+            .ifPresent(
+                draftRestriction -> builder.setDraftRestriction(String.valueOf(draftRestriction)));
+        Optional.ofNullable(entity.getMaxTempExpected())
+            .ifPresent(maxTemp -> builder.setMaxTempExpected(String.valueOf(maxTemp)));
+        replyBuilder.addLoadableStudies(builder.build());
       }
 
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching loadable study", e);
+      replyBuilder =
+          LoadableStudyReply.newBuilder()
+              .setResponseStatus(
+                  StatusReply.newBuilder()
+                      .setCode(e.getCode())
+                      .setMessage(e.getMessage())
+                      .setStatus(FAILED)
+                      .build());
     } catch (Exception e) {
       log.error("Error fetching loadable studies", e);
       replyBuilder =
           LoadableStudyReply.newBuilder()
-              .setResponseStatus(StatusReply.newBuilder().setStatus(FAILED).build());
+              .setResponseStatus(
+                  StatusReply.newBuilder()
+                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                      .setMessage("Error fetching loadable studies")
+                      .setStatus(FAILED)
+                      .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void saveLoadableStudy(
+      LoadableStudyDetail request, StreamObserver<LoadableStudyReply> responseObserver) {
+    Builder replyBuilder = null;
+    try {
+      Optional<Voyage> voyageOpt = this.voyageRepository.findById(request.getVoyageId());
+      if (!voyageOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Voyage does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatus.BAD_REQUEST);
+      }
+      LoadableStudy entity = new LoadableStudy();
+      if (0 != request.getDuplicatedFromId()) {
+        Optional<LoadableStudy> createdFromOpt =
+            this.loadableStudyRepository.findById(request.getDuplicatedFromId());
+        if (!createdFromOpt.isPresent()) {
+          throw new GenericServiceException(
+              "Created from loadable study does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatus.BAD_REQUEST);
+        }
+        entity.setDuplicatedFrom(createdFromOpt.get());
+      }
+      entity.setName(request.getName());
+      entity.setDetails(StringUtils.isEmpty(request.getDetail()) ? null : request.getDetail());
+      entity.setCharterer(
+          StringUtils.isEmpty(request.getCharterer()) ? null : request.getCharterer());
+      entity.setSubCharterer(
+          StringUtils.isEmpty(request.getSubCharterer()) ? null : request.getSubCharterer());
+      entity.setVesselXId(request.getVesselId());
+      entity.setDraftMark(
+          StringUtils.isEmpty(request.getDraftMark())
+              ? null
+              : new BigDecimal(request.getDraftMark()));
+      entity.setLoadLineXId(request.getLoadLineXId());
+      entity.setDraftRestriction(
+          StringUtils.isEmpty(request.getDraftRestriction())
+              ? null
+              : new BigDecimal(request.getDraftRestriction()));
+      entity.setMaxTempExpected(
+          StringUtils.isEmpty(request.getMaxTempExpected())
+              ? null
+              : new BigDecimal(request.getMaxTempExpected()));
+      entity.setVoyage(voyageOpt.get());
+      if (!request.getAttachmentsList().isEmpty()) {
+        Set<LoadableStudyAttachments> attachmentCollection = new HashSet<>();
+        for (LoadableStudyAttachment attachment : request.getAttachmentsList()) {
+          Path path = Paths.get(this.uploadFolderPath + attachment.getFileName());
+          Files.write(path, attachment.getByteString().toByteArray());
+          LoadableStudyAttachments attachmentEntity = new LoadableStudyAttachments();
+          attachmentEntity.setUploadedFileName(attachment.getFileName());
+          attachmentEntity.setFilePath(this.uploadFolderPath);
+          attachmentEntity.setLoadableStudy(entity);
+          attachmentCollection.add(attachmentEntity);
+        }
+        entity.setAttachments(attachmentCollection);
+      }
+      entity = this.loadableStudyRepository.save(entity);
+      replyBuilder =
+          LoadableStudyReply.newBuilder()
+              .setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build())
+              .setId(entity.getId());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving loadable study", e);
+      replyBuilder =
+          LoadableStudyReply.newBuilder()
+              .setResponseStatus(
+                  StatusReply.newBuilder()
+                      .setCode(e.getCode())
+                      .setMessage(e.getMessage())
+                      .setStatus(FAILED)
+                      .build());
+    } catch (Exception e) {
+      log.error("Error saving loadable study", e);
+      replyBuilder =
+          LoadableStudyReply.newBuilder()
+              .setResponseStatus(
+                  StatusReply.newBuilder()
+                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                      .setMessage("Error saving loadable study")
+                      .setStatus(FAILED)
+                      .build());
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();

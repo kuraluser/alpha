@@ -9,6 +9,9 @@ service LoadableStudyService {
 	
 	rpc FindLoadableStudiesByVesselAndVoyage (LoadableStudyRequest) returns (LoadableStudyReply){
 	}
+
+	rpc SaveLoadableStudy (LoadableStudyDetail) returns (LoadableStudyReply){
+	}
 }
 
 
@@ -28,13 +31,19 @@ message VoyageReply {
 
 message StatusReply {
 	string status = 1;
-	string message = 2;
+	string code = 2;
+	string message = 3;
 }
 
 message LoadableStudyRequest{
 	int64 companyId = 1;
 	int64 vesselId = 2;
 	int64 voyageId = 3;
+}
+
+message LoadableStudyAttachment{
+	bytes byteString = 1;
+	string fileName = 2;
 }
 
 message LoadableStudyDetail{
@@ -49,9 +58,14 @@ message LoadableStudyDetail{
 	int64 loadLineXId = 9;
 	string draftRestriction = 10;
 	string maxTempExpected = 11;
+	int64 duplicatedFromId = 12;
+	int64 voyageId = 13;
+	int64 vesselId = 14;
+	repeated LoadableStudyAttachment attachments = 15;
 }
 
 message LoadableStudyReply{
 	StatusReply responseStatus = 1;
 	repeated  LoadableStudyDetail loadableStudies = 2;
+	int64 id = 3;
 }
