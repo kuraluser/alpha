@@ -7,6 +7,9 @@ service LoadableStudyService {
 	rpc SaveVoyage (VoyageRequest) returns (VoyageReply) {
 	}
 	
+	rpc SaveLoadableQuantity (LoadableQuantityRequest) returns (LoadableQuantityReply) {
+	}
+	
 	rpc FindLoadableStudiesByVesselAndVoyage (LoadableStudyRequest) returns (LoadableStudyReply){
 	}
 
@@ -33,6 +36,36 @@ message StatusReply {
 	string status = 1;
 	string code = 2;
 	string message = 3;
+}
+
+
+message LoadableQuantityRequest {
+	string limitingDraft = 1;
+	string estSeaDensity = 2;
+	string tpc = 3;
+	string estSagging = 4;
+	string displacmentDraftRestriction = 5;
+	string vesselLightWeight = 6;
+	string dwt = 7;
+	string sgCorrection = 8;
+	string saggingDeduction = 9;
+	string estFOOnBoard = 10;
+	string estDOOnBoard = 11;
+	string estFreshWaterOnBoard = 12;
+	string constant = 13;
+	string otherIfAny = 14;
+	string totalQuantity = 15;
+	string distanceFromLastPort = 16;
+	string vesselAverageSpeed = 17;
+	string foConsumptionPerDay = 18;
+	string estTotalFOConsumption = 19;
+	int64 loadableStudyId = 20;
+}
+
+message LoadableQuantityReply {
+	string status = 1;
+	string message = 2;
+	int64 loadableQuantityId = 3;
 }
 
 message LoadableStudyRequest{

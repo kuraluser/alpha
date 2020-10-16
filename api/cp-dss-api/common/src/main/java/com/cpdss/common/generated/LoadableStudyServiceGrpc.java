@@ -58,6 +58,37 @@ public final class LoadableStudyServiceGrpc {
     return getSaveVoyageMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest,
+      com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> getSaveLoadableQuantityMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveLoadableQuantity",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest,
+      com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> getSaveLoadableQuantityMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest, com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> getSaveLoadableQuantityMethod;
+    if ((getSaveLoadableQuantityMethod = LoadableStudyServiceGrpc.getSaveLoadableQuantityMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveLoadableQuantityMethod = LoadableStudyServiceGrpc.getSaveLoadableQuantityMethod) == null) {
+          LoadableStudyServiceGrpc.getSaveLoadableQuantityMethod = getSaveLoadableQuantityMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest, com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveLoadableQuantity"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("SaveLoadableQuantity"))
+              .build();
+        }
+      }
+    }
+    return getSaveLoadableQuantityMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest,
       com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> getFindLoadableStudiesByVesselAndVoyageMethod;
 
@@ -177,6 +208,13 @@ public final class LoadableStudyServiceGrpc {
 
     /**
      */
+    public void saveLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveLoadableQuantityMethod(), responseObserver);
+    }
+
+    /**
+     */
     public void findLoadableStudiesByVesselAndVoyage(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> responseObserver) {
       asyncUnimplementedUnaryCall(getFindLoadableStudiesByVesselAndVoyageMethod(), responseObserver);
@@ -198,6 +236,13 @@ public final class LoadableStudyServiceGrpc {
                 com.cpdss.common.generated.LoadableStudy.VoyageRequest,
                 com.cpdss.common.generated.LoadableStudy.VoyageReply>(
                   this, METHODID_SAVE_VOYAGE)))
+          .addMethod(
+            getSaveLoadableQuantityMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest,
+                com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>(
+                  this, METHODID_SAVE_LOADABLE_QUANTITY)))
           .addMethod(
             getFindLoadableStudiesByVesselAndVoyageMethod(),
             asyncUnaryCall(
@@ -240,6 +285,14 @@ public final class LoadableStudyServiceGrpc {
 
     /**
      */
+    public void saveLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveLoadableQuantityMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
     public void findLoadableStudiesByVesselAndVoyage(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> responseObserver) {
       asyncUnaryCall(
@@ -274,6 +327,13 @@ public final class LoadableStudyServiceGrpc {
     public com.cpdss.common.generated.LoadableStudy.VoyageReply saveVoyage(com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
       return blockingUnaryCall(
           getChannel(), getSaveVoyageMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply saveLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getSaveLoadableQuantityMethod(), getCallOptions(), request);
     }
 
     /**
@@ -315,6 +375,14 @@ public final class LoadableStudyServiceGrpc {
 
     /**
      */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> saveLoadableQuantity(
+        com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveLoadableQuantityMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> findLoadableStudiesByVesselAndVoyage(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
       return futureUnaryCall(
@@ -331,8 +399,9 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
-  private static final int METHODID_FIND_LOADABLE_STUDIES_BY_VESSEL_AND_VOYAGE = 1;
-  private static final int METHODID_SAVE_LOADABLE_STUDY = 2;
+  private static final int METHODID_SAVE_LOADABLE_QUANTITY = 1;
+  private static final int METHODID_FIND_LOADABLE_STUDIES_BY_VESSEL_AND_VOYAGE = 2;
+  private static final int METHODID_SAVE_LOADABLE_STUDY = 3;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -354,6 +423,10 @@ public final class LoadableStudyServiceGrpc {
         case METHODID_SAVE_VOYAGE:
           serviceImpl.saveVoyage((com.cpdss.common.generated.LoadableStudy.VoyageRequest) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageReply>) responseObserver);
+          break;
+        case METHODID_SAVE_LOADABLE_QUANTITY:
+          serviceImpl.saveLoadableQuantity((com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>) responseObserver);
           break;
         case METHODID_FIND_LOADABLE_STUDIES_BY_VESSEL_AND_VOYAGE:
           serviceImpl.findLoadableStudiesByVesselAndVoyage((com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest) request,
@@ -425,6 +498,7 @@ public final class LoadableStudyServiceGrpc {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new LoadableStudyServiceFileDescriptorSupplier())
               .addMethod(getSaveVoyageMethod())
+              .addMethod(getSaveLoadableQuantityMethod())
               .addMethod(getFindLoadableStudiesByVesselAndVoyageMethod())
               .addMethod(getSaveLoadableStudyMethod())
               .build();

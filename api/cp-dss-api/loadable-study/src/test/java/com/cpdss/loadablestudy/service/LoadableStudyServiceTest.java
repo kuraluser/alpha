@@ -33,24 +33,49 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-/**
- * @Author jerin.g
- *
- * <p>Class for writing test cases for loadable study
- */
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
+import com.cpdss.common.generated.LoadableStudy.VoyageReply;
+import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
+import com.cpdss.loadablestudy.entity.LoadableQuantity;
+import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.VoyageRepository;
+
+import io.grpc.internal.testing.StreamRecorder;
+
+
+
+
+
+
+/** @Author jerin.g 
+ * 
+ * Class for writing test cases for loadable study
+ * */
+
 @SpringJUnitConfig(classes = {LoadableStudyService.class})
 public class LoadableStudyServiceTest {
 
   @Autowired private LoadableStudyService loadableStudyService;
 
   @MockBean private VoyageRepository voyageRepository;
-
+  
   @MockBean private LoadableStudyRepository loadableStudyRepository;
 
+  @MockBean private LoadableQuantityRepository loadableQuantityRepository;
+
+  
   private static final String SUCCESS = "SUCCESS";
   private static final String VOYAGE = "VOYAGE";
   private static final String VOYAGEEXISTS = "VOYAGEEXISTS";
   private static final String FAILED = "FAILED";
+  private static final String INVALID_LOADABLE_STUDY = "INVALID_LOADABLE_STUDY";
   private static final String LOADABLE_STUDY_NAME = "LS";
   private static final String LOADABLE_STUDY_DETAILS = "details";
   private static final String LOADABLE_STUDY_STATUS = "pending";
@@ -144,6 +169,105 @@ public class LoadableStudyServiceTest {
     assertEquals(
         VoyageReply.newBuilder().setMessage(VOYAGEEXISTS).setStatus(SUCCESS).build(), response);
   }
+
+  @Test
+  public void testLoadableQuantity() throws GenericServiceException {
+	  
+	  LoadableQuantityRequest loadableQuantityRequest =
+		        LoadableQuantityRequest.newBuilder()
+		            .setConstant("100")
+		            .setDisplacmentDraftRestriction("100")
+		            .setDistanceFromLastPort("100")
+		            .setDwt("100")
+		            .setEstDOOnBoard("100")
+		            .setEstFOOnBoard("100")
+		            .setEstFreshWaterOnBoard("100")
+		            .setEstSagging("100")
+		            .setEstSeaDensity("100")
+		            .setEstTotalFOConsumption("100")
+		            .setFoConsumptionPerDay("100")
+		            .setLimitingDraft("100")
+		            .setOtherIfAny("100")
+		            .setSaggingDeduction("100")
+		            .setSgCorrection("100")
+		            .setTotalQuantity("100")
+		            .setTpc("100")
+		            .setVesselAverageSpeed("100")
+		            .setVesselLightWeight("100")
+		            .setLoadableStudyId(1)
+		            .build();
+	  
+	    StreamRecorder<LoadableQuantityReply> responseObserver = StreamRecorder.create();
+	    
+	    LoadableStudy loadableStudy = Mockito.mock(LoadableStudy.class);
+	    LoadableQuantity loadableQuantity = new LoadableQuantity();
+	    loadableQuantity.setId((long) 1);
+	    
+	    Mockito.when(this.loadableStudyRepository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(loadableStudy));
+	    Mockito.when(this.loadableQuantityRepository.save(ArgumentMatchers.any(LoadableQuantity.class))).thenReturn(loadableQuantity);
+	    
+	    loadableStudyService.saveLoadableQuantity(loadableQuantityRequest, responseObserver);
+	    
+	    assertNull(responseObserver.getError());
+	    List<LoadableQuantityReply> results = responseObserver.getValues();
+	    assertEquals(1, results.size());
+	    LoadableQuantityReply response = results.get(0);
+	    assertEquals(
+	    		LoadableQuantityReply.newBuilder().setMessage("SUCCESS").setStatus("SUCCESS").setLoadableQuantityId((long) 1).build(), response);
+	    
+  }
+  
+  /**
+   * loadabe study saving failing test case
+   *
+   * @throws GenericServiceException void
+   */
+  @Test
+  public void testLoadableQuantityFailure() throws GenericServiceException {
+	  
+	  LoadableQuantityRequest loadableQuantityRequest =
+		        LoadableQuantityRequest.newBuilder()
+		            .setConstant("100")
+		            .setDisplacmentDraftRestriction("100")
+		            .setDistanceFromLastPort("100")
+		            .setDwt("100")
+		            .setEstDOOnBoard("100")
+		            .setEstFOOnBoard("100")
+		            .setEstFreshWaterOnBoard("100")
+		            .setEstSagging("100")
+		            .setEstSeaDensity("100")
+		            .setEstTotalFOConsumption("100")
+		            .setFoConsumptionPerDay("100")
+		            .setLimitingDraft("100")
+		            .setOtherIfAny("100")
+		            .setSaggingDeduction("100")
+		            .setSgCorrection("100")
+		            .setTotalQuantity("100")
+		            .setTpc("100")
+		            .setVesselAverageSpeed("100")
+		            .setVesselLightWeight("100")
+		            .setLoadableStudyId(1)
+		            .build();
+	  
+	    StreamRecorder<LoadableQuantityReply> responseObserver = StreamRecorder.create();
+	    
+	    
+	    Mockito.when(this.loadableStudyRepository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.<LoadableStudy>empty());
+	    
+	    loadableStudyService.saveLoadableQuantity(loadableQuantityRequest, responseObserver);
+	    
+	    assertNull(responseObserver.getError());
+	    List<LoadableQuantityReply> results = responseObserver.getValues();
+	    assertEquals(1, results.size());
+	    LoadableQuantityReply response = results.get(0);
+	    assertEquals(
+	    		LoadableQuantityReply.newBuilder().setMessage(INVALID_LOADABLE_STUDY).setStatus("SUCCESS").build(), response);
+	    
+	   
+  }
+
+  
+  
 
   @Test
   void testFindLoadableStudiesByVesselAndVoyage() {

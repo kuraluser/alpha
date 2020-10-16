@@ -2,6 +2,8 @@
 package com.cpdss.gateway.service;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail.Builder;
@@ -12,6 +14,8 @@ import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
+import com.cpdss.gateway.domain.LoadableQuantity;
+import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.Voyage;
@@ -82,7 +86,62 @@ public class LoadableStudyService {
           HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+  
+  /**
+   * 
+   * @param loadableQuantity
+   * @param companyId
+   * @param vesselId
+   * @param loadableStudiesId
+   * @param headers
+   * @return
+   * @throws GenericServiceException
+   * CommonSuccessResponse
+   */
+    public LoadableQuantityResponse saveLoadableQuantity(
+        LoadableQuantity loadableQuantity, long loadableStudiesId, HttpHeaders headers)
+        throws GenericServiceException {
+  	  LoadableQuantityResponse loadableQuantityResponse = new LoadableQuantityResponse();
+      LoadableQuantityRequest loadableQuantityRequest =
+          LoadableQuantityRequest.newBuilder()
+              .setConstant(loadableQuantity.getConstant())
+              .setDisplacmentDraftRestriction(loadableQuantity.getDisplacmentDraftRestriction())
+              .setDistanceFromLastPort(loadableQuantity.getDistanceFromLastPort())
+              .setDwt(loadableQuantity.getDwt())
+              .setEstDOOnBoard(loadableQuantity.getEstDOOnBoard())
+              .setEstFOOnBoard(loadableQuantity.getEstFOOnBoard())
+              .setEstFreshWaterOnBoard(loadableQuantity.getEstFreshWaterOnBoard())
+              .setEstSagging(loadableQuantity.getEstSagging())
+              .setEstSeaDensity(loadableQuantity.getEstSeaDensity())
+              .setEstTotalFOConsumption(loadableQuantity.getEstTotalFOConsumption())
+              .setFoConsumptionPerDay(loadableQuantity.getFoConsumptionPerDay())
+              .setLimitingDraft(loadableQuantity.getLimitingDraft())
+              .setOtherIfAny(loadableQuantity.getOtherIfAny())
+              .setSaggingDeduction(loadableQuantity.getSaggingDeduction())
+              .setSgCorrection(loadableQuantity.getSgCorrection())
+              .setTotalQuantity(loadableQuantity.getTotalQuantity())
+              .setTpc(loadableQuantity.getTpc())
+              .setVesselAverageSpeed(loadableQuantity.getVesselAverageSpeed())
+              .setVesselLightWeight(loadableQuantity.getVesselLightWeight())
+              .setLoadableStudyId(loadableStudiesId)
+              .build();
 
+      LoadableQuantityReply loadableQuantityReply =
+          loadableStudyServiceBlockingStub.saveLoadableQuantity(loadableQuantityRequest);
+      if (SUCCESS.equalsIgnoreCase(loadableQuantityReply.getStatus())) {
+      	loadableQuantityResponse.setCommonSuccessResponse(new CommonSuccessResponse(loadableQuantityReply.getMessage(), "correlationId"));
+      	loadableQuantityResponse.setLoadableQuantityId(loadableQuantityReply.getLoadableQuantityId());
+        return loadableQuantityResponse;
+      } else {
+        throw new GenericServiceException(
+            "Error in calling loadable quantity service",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+
+    
+  
   /**
    * This method calls loadable study microservice to get a list of loadable studies by vessel and
    * voyage

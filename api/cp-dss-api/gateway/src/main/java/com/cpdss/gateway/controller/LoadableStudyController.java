@@ -4,6 +4,8 @@ package com.cpdss.gateway.controller;
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.gateway.domain.LoadableQuantity;
+import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.Voyage;
@@ -71,6 +73,39 @@ public class LoadableStudyController {
           e);
     }
   }
+
+
+  /**
+   * API for save loadable Quantity
+   * 
+   * @param loadableQuantity - has the details of loadable quantity
+   * @param vesselId
+   * @param loadableStudiesId
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   * CommonSuccessResponse
+   */
+  @PostMapping("/vessels/{vesselId}/voyage/{voyageId}/loadable-studies/{loadableStudiesId}")
+  public LoadableQuantityResponse saveLoadableQuantity(
+      @RequestBody @Valid LoadableQuantity loadableQuantity,
+      @PathVariable long loadableStudiesId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+    	return
+    			loadableStudyService.saveLoadableQuantity(loadableQuantity, loadableStudiesId, headers);
+    } catch (Exception e) {
+      log.error("Error in save loadable quantity ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatus.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
 
   /**
    * Get list of loadable studies baed on vessel and voyage

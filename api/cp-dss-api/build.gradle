@@ -121,6 +121,8 @@ class roapp implements Plugin<Project> {
 					compile group: 'io.grpc', name: 'grpc-testing', version: '1.20.0'
 					testImplementation("io.grpc:grpc-testing")              
 	                
+	                //For grpc testing
+					testImplementation("io.grpc:grpc-testing:1.32.1")
 	                
 	                if(extension.security == 'y'){
 	                    implementation 'org.springframework.boot:spring-boot-starter-security'

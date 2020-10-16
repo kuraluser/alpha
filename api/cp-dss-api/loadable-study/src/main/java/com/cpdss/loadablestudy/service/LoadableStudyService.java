@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
@@ -29,14 +31,18 @@ import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
 import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 
 import io.grpc.internal.GrpcUtil.Http2Error;
 import io.grpc.stub.StreamObserver;
+import java.math.BigDecimal;
+import java.util.Optional;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 
@@ -53,6 +59,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private VoyageRepository voyageRepository;
 
   @Autowired private LoadableStudyRepository loadableStudyRepository;
+
+  @Autowired private LoadableQuantityRepository loadableQuantityRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -105,6 +113,84 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+	  /**
+	   * method to save loadable quantity
+	   *
+	   * @param loadableQuantityRequest
+	   * @param responseObserver
+	   * @throws Exception
+	   * @return void
+	   */
+	  @Override
+	  public void saveLoadableQuantity(
+	      LoadableQuantityRequest loadableQuantityRequest,
+	      StreamObserver<LoadableQuantityReply> responseObserver) {
+	    LoadableQuantityReply loadableQuantityReply = null;
+	    try {
+	      Optional<LoadableStudy> loadableStudy =
+	          loadableStudyRepository.findById((Long) loadableQuantityRequest.getLoadableStudyId());
+	      if (loadableStudy.isPresent()) {
+	        LoadableQuantity loadableQuantity = new LoadableQuantity();
+	        loadableQuantity.setConstant(new BigDecimal(loadableQuantityRequest.getConstant()));
+	        loadableQuantity.setDeadWeight(new BigDecimal(loadableQuantityRequest.getDwt()));
+	        loadableQuantity.setDisplacementAtDraftRestriction(
+	            new BigDecimal(loadableQuantityRequest.getDisplacmentDraftRestriction()));
+	        loadableQuantity.setDistanceFromLastPort(
+	        		new BigDecimal(loadableQuantityRequest.getDistanceFromLastPort()));
+	        loadableQuantity.setEstimatedDOOnBoard(
+	            new BigDecimal(loadableQuantityRequest.getEstDOOnBoard()));
+	        loadableQuantity.setEstimatedFOOnBoard(
+	            new BigDecimal(loadableQuantityRequest.getEstFOOnBoard()));
+	        loadableQuantity.setEstimatedFWOnBoard(
+	            new BigDecimal(loadableQuantityRequest.getEstFreshWaterOnBoard()));
+	        loadableQuantity.setEstimatedSagging(
+	            new BigDecimal(loadableQuantityRequest.getEstSagging()));
+
+	        loadableQuantity.setEstimatedSeaDensity(
+	            new BigDecimal(loadableQuantityRequest.getEstSeaDensity()));
+	        loadableQuantity.setFoConsumptionPerDay(
+	            new BigDecimal(loadableQuantityRequest.getFoConsumptionPerDay()));
+	        loadableQuantity.setLightWeight(
+	            new BigDecimal(loadableQuantityRequest.getVesselLightWeight()));
+	        loadableQuantity.setLoadableStudyXId(loadableStudy.get());
+	        loadableQuantity.setOtherIfAny(new BigDecimal(loadableQuantityRequest.getOtherIfAny()));
+	        loadableQuantity.setSaggingDeduction(
+	            new BigDecimal(loadableQuantityRequest.getSaggingDeduction()));
+	        loadableQuantity.setSgCorrection(new BigDecimal(loadableQuantityRequest.getSgCorrection()));
+
+	        loadableQuantity.setTotalFoConsumption(
+	            new BigDecimal(loadableQuantityRequest.getEstTotalFOConsumption()));
+	        loadableQuantity.setTotalQuantity(
+	            new BigDecimal(loadableQuantityRequest.getTotalQuantity()));
+	        loadableQuantity.setTpcatDraft(new BigDecimal(loadableQuantityRequest.getTpc()));
+	        loadableQuantity.setVesselAverageSpeed(
+	            new BigDecimal(loadableQuantityRequest.getVesselAverageSpeed()));
+	        loadableQuantity =  loadableQuantityRepository.save(loadableQuantity);
+
+	        // when Db save is complete we return to client a success message
+	        loadableQuantityReply =
+	            LoadableQuantityReply.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).setLoadableQuantityId(loadableQuantity.getId()).build();
+	      } else {
+	        log.info("INVALID_LOADABLE_STUDY ", "");
+	        loadableQuantityReply =
+	            LoadableQuantityReply.newBuilder()
+	                .setMessage("INVALID_LOADABLE_STUDY")
+	                .setStatus(SUCCESS)
+	                .build();
+	      }
+	    } catch (Exception e) {
+	      log.error("Error in saving loadable quantity ", e);
+	      loadableQuantityReply =
+	              LoadableQuantityReply.newBuilder()
+	                  .setMessage("INVALID_LOADABLE_STUDY")
+	                  .setStatus(FAILED)
+	                  .build();
+	    } finally {
+	      responseObserver.onNext(loadableQuantityReply);
+	      responseObserver.onCompleted();
+	    }
+	  }
 
   /**
    * Method to find list of loadable studies based on vessel and voyage
