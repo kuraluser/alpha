@@ -21,6 +21,8 @@ ext {
   hazelcastVersion = "4.0.2"
   servletApiVersin = "2.5"
   modelMapperVersion = "2.3.5"
+  junitTestVersion = "5.5.2"
+  grpcUnitTestVersion = "1.32.1"
 }
 
 //Compile only libraries for common application
@@ -111,18 +113,12 @@ class roapp implements Plugin<Project> {
 	                testImplementation('org.springframework.boot:spring-boot-starter-test') {
 	                   exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	                }
-	                
+	                // JUnit testing            
 	                testImplementation ("org.mockito:mockito-core")
-    				testImplementation ("org.junit.jupiter:junit-jupiter-api:5.5.2")
-    				testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.5.2")
+    				testImplementation ("org.junit.jupiter:junit-jupiter-api:${junitTestVersion}")
+    				testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:${junitTestVersion}")
 					testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.5.2")	  
-					
-					//for grpc testing
-					compile group: 'io.grpc', name: 'grpc-testing', version: '1.20.0'
-					testImplementation("io.grpc:grpc-testing")              
-	                
-	                //For grpc testing
-					testImplementation("io.grpc:grpc-testing:1.32.1")
+		
 	                
 	                if(extension.security == 'y'){
 	                    implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -134,7 +130,6 @@ class roapp implements Plugin<Project> {
 	                    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	                }
 	                if(extension.rest == 'y'){
-	                  compileOnly 'jakarta.validation:jakarta.validation-api'
 	                  runtimeOnly "org.modelmapper:modelmapper:${modelMapperVersion}"
 	                  implementation 'org.springframework.boot:spring-boot-starter-web'
 	                  props.setProperty('spring.mvc.throw-exception-if-no-handler-found', 'true')
@@ -171,12 +166,21 @@ class roapp implements Plugin<Project> {
 				    }
 				    // For both grpc server and grpc client
 				    if(extension.grpc == 'y') {
+				       testImplementation("io.grpc:grpc-testing:${grpcUnitTestVersion}")
+				      if(extension.rest != 'y'){
+	                      runtimeOnly 'jakarta.validation:jakarta.validation-api'
+	                  }
 					  implementation "net.devh:grpc-spring-boot-starter:${grpcVersion}"
 					}else if(extension.grpcServer == 'y') {
+					   testImplementation("io.grpc:grpc-testing:${grpcUnitTestVersion}")
 					  // For grpc server
+					  if(extension.rest != 'y'){
+	                      runtimeOnly 'jakarta.validation:jakarta.validation-api'
+	                  }
 					  implementation "net.devh:grpc-server-spring-boot-starter:${grpcVersion}"
 					  runtimeOnly "io.grpc:grpc-stub:${protocJavaVersion}"
 					}else if(extension.grpcClient == 'y') {
+					   testImplementation("io.grpc:grpc-testing:${grpcUnitTestVersion}")
 					  // For grpc client
 					  implementation "net.devh:grpc-client-spring-boot-starter:${grpcVersion}"
 					}

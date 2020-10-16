@@ -41,7 +41,7 @@ public class LoadablePlan extends EntityDoc {
   private Boolean isActive;
 
 
-  @OneToMany(mappedBy = "loadableplanxid")
+  @OneToMany(mappedBy = "loadablePlanXId")
   private Collection<LoadablePlanQuantity> loadablePlanquantityCollection;
 
   @JoinColumn(name = "loadablepatternxid", referencedColumnName = "id")
