@@ -170,10 +170,10 @@ public class LoadableStudyController {
       return this.loadableStudyService.saveLoadableStudy(
           request, headers.getFirst(CORRELATION_ID_HEADER), files);
     } catch (GenericServiceException e) {
-      log.error("GenericServiceException when fetching loadable study", e);
+      log.error("GenericServiceException when saving loadable study", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
-      log.error("Error fetching loadable study", e);
+      log.error("Error when saving loadable study", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

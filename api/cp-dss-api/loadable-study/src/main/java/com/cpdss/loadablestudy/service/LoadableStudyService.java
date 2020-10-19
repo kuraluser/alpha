@@ -1,23 +1,6 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.loadablestudy.service;
 
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
@@ -38,28 +21,36 @@ import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
-
-import io.grpc.internal.GrpcUtil.Http2Error;
 import io.grpc.stub.StreamObserver;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /** @Author jerin.g */
 @Log4j2
 @GrpcService
 @Service
-@Transactional
 public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
-  @Value("${loadablestudy.attachement.path}")
-  private String uploadFolderPath;
+  @Value("${loadablestudy.attachement.rooFolder}")
+  private String rootFolder;
 
   @Autowired private VoyageRepository voyageRepository;
-
   @Autowired private LoadableStudyRepository loadableStudyRepository;
-
   @Autowired private LoadableQuantityRepository loadableQuantityRepository;
 
   private static final String SUCCESS = "SUCCESS";
@@ -114,83 +105,87 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
-	  /**
-	   * method to save loadable quantity
-	   *
-	   * @param loadableQuantityRequest
-	   * @param responseObserver
-	   * @throws Exception
-	   * @return void
-	   */
-	  @Override
-	  public void saveLoadableQuantity(
-	      LoadableQuantityRequest loadableQuantityRequest,
-	      StreamObserver<LoadableQuantityReply> responseObserver) {
-	    LoadableQuantityReply loadableQuantityReply = null;
-	    try {
-	      Optional<LoadableStudy> loadableStudy =
-	          loadableStudyRepository.findById((Long) loadableQuantityRequest.getLoadableStudyId());
-	      if (loadableStudy.isPresent()) {
-	        LoadableQuantity loadableQuantity = new LoadableQuantity();
-	        loadableQuantity.setConstant(new BigDecimal(loadableQuantityRequest.getConstant()));
-	        loadableQuantity.setDeadWeight(new BigDecimal(loadableQuantityRequest.getDwt()));
-	        loadableQuantity.setDisplacementAtDraftRestriction(
-	            new BigDecimal(loadableQuantityRequest.getDisplacmentDraftRestriction()));
-	        loadableQuantity.setDistanceFromLastPort(
-	        		new BigDecimal(loadableQuantityRequest.getDistanceFromLastPort()));
-	        loadableQuantity.setEstimatedDOOnBoard(
-	            new BigDecimal(loadableQuantityRequest.getEstDOOnBoard()));
-	        loadableQuantity.setEstimatedFOOnBoard(
-	            new BigDecimal(loadableQuantityRequest.getEstFOOnBoard()));
-	        loadableQuantity.setEstimatedFWOnBoard(
-	            new BigDecimal(loadableQuantityRequest.getEstFreshWaterOnBoard()));
-	        loadableQuantity.setEstimatedSagging(
-	            new BigDecimal(loadableQuantityRequest.getEstSagging()));
+  /**
+   * method to save loadable quantity
+   *
+   * @param loadableQuantityRequest
+   * @param responseObserver
+   * @throws Exception
+   * @return void
+   */
+  @Override
+  public void saveLoadableQuantity(
+      LoadableQuantityRequest loadableQuantityRequest,
+      StreamObserver<LoadableQuantityReply> responseObserver) {
+    LoadableQuantityReply loadableQuantityReply = null;
+    try {
+      Optional<LoadableStudy> loadableStudy =
+          loadableStudyRepository.findById((Long) loadableQuantityRequest.getLoadableStudyId());
+      if (loadableStudy.isPresent()) {
+        LoadableQuantity loadableQuantity = new LoadableQuantity();
+        loadableQuantity.setConstant(new BigDecimal(loadableQuantityRequest.getConstant()));
+        loadableQuantity.setDeadWeight(new BigDecimal(loadableQuantityRequest.getDwt()));
+        loadableQuantity.setDisplacementAtDraftRestriction(
+            new BigDecimal(loadableQuantityRequest.getDisplacmentDraftRestriction()));
+        loadableQuantity.setDistanceFromLastPort(
+            new BigDecimal(loadableQuantityRequest.getDistanceFromLastPort()));
+        loadableQuantity.setEstimatedDOOnBoard(
+            new BigDecimal(loadableQuantityRequest.getEstDOOnBoard()));
+        loadableQuantity.setEstimatedFOOnBoard(
+            new BigDecimal(loadableQuantityRequest.getEstFOOnBoard()));
+        loadableQuantity.setEstimatedFWOnBoard(
+            new BigDecimal(loadableQuantityRequest.getEstFreshWaterOnBoard()));
+        loadableQuantity.setEstimatedSagging(
+            new BigDecimal(loadableQuantityRequest.getEstSagging()));
 
-	        loadableQuantity.setEstimatedSeaDensity(
-	            new BigDecimal(loadableQuantityRequest.getEstSeaDensity()));
-	        loadableQuantity.setFoConsumptionPerDay(
-	            new BigDecimal(loadableQuantityRequest.getFoConsumptionPerDay()));
-	        loadableQuantity.setLightWeight(
-	            new BigDecimal(loadableQuantityRequest.getVesselLightWeight()));
-	        loadableQuantity.setLoadableStudyXId(loadableStudy.get());
-	        loadableQuantity.setOtherIfAny(new BigDecimal(loadableQuantityRequest.getOtherIfAny()));
-	        loadableQuantity.setSaggingDeduction(
-	            new BigDecimal(loadableQuantityRequest.getSaggingDeduction()));
-	        loadableQuantity.setSgCorrection(new BigDecimal(loadableQuantityRequest.getSgCorrection()));
+        loadableQuantity.setEstimatedSeaDensity(
+            new BigDecimal(loadableQuantityRequest.getEstSeaDensity()));
+        loadableQuantity.setFoConsumptionPerDay(
+            new BigDecimal(loadableQuantityRequest.getFoConsumptionPerDay()));
+        loadableQuantity.setLightWeight(
+            new BigDecimal(loadableQuantityRequest.getVesselLightWeight()));
+        loadableQuantity.setLoadableStudyXId(loadableStudy.get());
+        loadableQuantity.setOtherIfAny(new BigDecimal(loadableQuantityRequest.getOtherIfAny()));
+        loadableQuantity.setSaggingDeduction(
+            new BigDecimal(loadableQuantityRequest.getSaggingDeduction()));
+        loadableQuantity.setSgCorrection(new BigDecimal(loadableQuantityRequest.getSgCorrection()));
 
-	        loadableQuantity.setTotalFoConsumption(
-	            new BigDecimal(loadableQuantityRequest.getEstTotalFOConsumption()));
-	        loadableQuantity.setTotalQuantity(
-	            new BigDecimal(loadableQuantityRequest.getTotalQuantity()));
-	        loadableQuantity.setTpcatDraft(new BigDecimal(loadableQuantityRequest.getTpc()));
-	        loadableQuantity.setVesselAverageSpeed(
-	            new BigDecimal(loadableQuantityRequest.getVesselAverageSpeed()));
-	        loadableQuantity =  loadableQuantityRepository.save(loadableQuantity);
+        loadableQuantity.setTotalFoConsumption(
+            new BigDecimal(loadableQuantityRequest.getEstTotalFOConsumption()));
+        loadableQuantity.setTotalQuantity(
+            new BigDecimal(loadableQuantityRequest.getTotalQuantity()));
+        loadableQuantity.setTpcatDraft(new BigDecimal(loadableQuantityRequest.getTpc()));
+        loadableQuantity.setVesselAverageSpeed(
+            new BigDecimal(loadableQuantityRequest.getVesselAverageSpeed()));
+        loadableQuantity = loadableQuantityRepository.save(loadableQuantity);
 
-	        // when Db save is complete we return to client a success message
-	        loadableQuantityReply =
-	            LoadableQuantityReply.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).setLoadableQuantityId(loadableQuantity.getId()).build();
-	      } else {
-	        log.info("INVALID_LOADABLE_STUDY ", "");
-	        loadableQuantityReply =
-	            LoadableQuantityReply.newBuilder()
-	                .setMessage("INVALID_LOADABLE_STUDY")
-	                .setStatus(SUCCESS)
-	                .build();
-	      }
-	    } catch (Exception e) {
-	      log.error("Error in saving loadable quantity ", e);
-	      loadableQuantityReply =
-	              LoadableQuantityReply.newBuilder()
-	                  .setMessage("INVALID_LOADABLE_STUDY")
-	                  .setStatus(FAILED)
-	                  .build();
-	    } finally {
-	      responseObserver.onNext(loadableQuantityReply);
-	      responseObserver.onCompleted();
-	    }
-	  }
+        // when Db save is complete we return to client a success message
+        loadableQuantityReply =
+            LoadableQuantityReply.newBuilder()
+                .setMessage(SUCCESS)
+                .setStatus(SUCCESS)
+                .setLoadableQuantityId(loadableQuantity.getId())
+                .build();
+      } else {
+        log.info("INVALID_LOADABLE_STUDY ", "");
+        loadableQuantityReply =
+            LoadableQuantityReply.newBuilder()
+                .setMessage("INVALID_LOADABLE_STUDY")
+                .setStatus(SUCCESS)
+                .build();
+      }
+    } catch (Exception e) {
+      log.error("Error in saving loadable quantity ", e);
+      loadableQuantityReply =
+          LoadableQuantityReply.newBuilder()
+              .setMessage("INVALID_LOADABLE_STUDY")
+              .setStatus(FAILED)
+              .build();
+    } finally {
+      responseObserver.onNext(loadableQuantityReply);
+      responseObserver.onCompleted();
+    }
+  }
 
   /**
    * Method to find list of loadable studies based on vessel and voyage
@@ -207,7 +202,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional<Voyage> voyageOpt = this.voyageRepository.findById(request.getVoyageId());
       if (!voyageOpt.isPresent()) {
         throw new GenericServiceException(
-            "Voyage does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatus.BAD_REQUEST);
+            "Voyage does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       List<LoadableStudy> loadableStudyEntityList =
           this.loadableStudyRepository.findByVesselXIdAndVoyage(
@@ -263,28 +258,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
+  /**
+   * Save loadable study
+   *
+   * @param {@link LoadableStudyDetail}
+   * @param {@link StreamObserver}
+   */
   @Override
   public void saveLoadableStudy(
       LoadableStudyDetail request, StreamObserver<LoadableStudyReply> responseObserver) {
-    Builder replyBuilder = null;
+    Builder replyBuilder = LoadableStudyReply.newBuilder();
+    LoadableStudy entity = null;
     try {
-      Optional<Voyage> voyageOpt = this.voyageRepository.findById(request.getVoyageId());
-      if (!voyageOpt.isPresent()) {
-        throw new GenericServiceException(
-            "Voyage does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatus.BAD_REQUEST);
-      }
-      LoadableStudy entity = new LoadableStudy();
-      if (0 != request.getDuplicatedFromId()) {
-        Optional<LoadableStudy> createdFromOpt =
-            this.loadableStudyRepository.findById(request.getDuplicatedFromId());
-        if (!createdFromOpt.isPresent()) {
-          throw new GenericServiceException(
-              "Created from loadable study does not exist",
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatus.BAD_REQUEST);
-        }
-        entity.setDuplicatedFrom(createdFromOpt.get());
-      }
+      entity = new LoadableStudy();
+      this.checkVoyageAndCreatedFrom(request, entity);
       entity.setName(request.getName());
       entity.setDetails(StringUtils.isEmpty(request.getDetail()) ? null : request.getDetail());
       entity.setCharterer(
@@ -305,48 +292,118 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           StringUtils.isEmpty(request.getMaxTempExpected())
               ? null
               : new BigDecimal(request.getMaxTempExpected()));
-      entity.setVoyage(voyageOpt.get());
       if (!request.getAttachmentsList().isEmpty()) {
+        String folderLocation = this.constructFolderPath(entity);
+        Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
         Set<LoadableStudyAttachments> attachmentCollection = new HashSet<>();
         for (LoadableStudyAttachment attachment : request.getAttachmentsList()) {
-          Path path = Paths.get(this.uploadFolderPath + attachment.getFileName());
+          Path path = Paths.get(this.rootFolder + folderLocation + attachment.getFileName());
+          Files.createFile(path);
           Files.write(path, attachment.getByteString().toByteArray());
           LoadableStudyAttachments attachmentEntity = new LoadableStudyAttachments();
           attachmentEntity.setUploadedFileName(attachment.getFileName());
-          attachmentEntity.setFilePath(this.uploadFolderPath);
+          attachmentEntity.setFilePath(folderLocation);
           attachmentEntity.setLoadableStudy(entity);
           attachmentCollection.add(attachmentEntity);
         }
         entity.setAttachments(attachmentCollection);
       }
       entity = this.loadableStudyRepository.save(entity);
-      replyBuilder =
-          LoadableStudyReply.newBuilder()
-              .setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build())
-              .setId(entity.getId());
+      replyBuilder
+          .setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build())
+          .setId(entity.getId());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable study", e);
-      replyBuilder =
-          LoadableStudyReply.newBuilder()
-              .setResponseStatus(
-                  StatusReply.newBuilder()
-                      .setCode(e.getCode())
-                      .setMessage(e.getMessage())
-                      .setStatus(FAILED)
-                      .build());
+      replyBuilder.setResponseStatus(
+          StatusReply.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+      this.deleteFiles(entity);
     } catch (Exception e) {
+      e.printStackTrace();
       log.error("Error saving loadable study", e);
-      replyBuilder =
-          LoadableStudyReply.newBuilder()
-              .setResponseStatus(
-                  StatusReply.newBuilder()
-                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-                      .setMessage("Error saving loadable study")
-                      .setStatus(FAILED)
-                      .build());
+      replyBuilder.setResponseStatus(
+          StatusReply.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Error saving loadable study")
+              .setStatus(FAILED)
+              .build());
+      this.deleteFiles(entity);
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  private void checkVoyageAndCreatedFrom(LoadableStudyDetail request, LoadableStudy entity)
+      throws GenericServiceException {
+    Optional<Voyage> voyageOpt = this.voyageRepository.findById(request.getVoyageId());
+    if (!voyageOpt.isPresent()) {
+      throw new GenericServiceException(
+          "Voyage does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+    }
+    entity.setVoyage(voyageOpt.get());
+    if (0 != request.getDuplicatedFromId()) {
+      Optional<LoadableStudy> createdFromOpt =
+          this.loadableStudyRepository.findById(request.getDuplicatedFromId());
+      if (!createdFromOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Created from loadable study does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            null);
+      }
+      entity.setDuplicatedFrom(createdFromOpt.get());
+    }
+  }
+
+  /**
+   * Construct folder path for loadable study attachments
+   *
+   * @param loadableStudy - loadable study entity
+   * @param voyage - voyage entity
+   * @return - the folder path
+   */
+  private String constructFolderPath(LoadableStudy loadableStudy) {
+    String separator = File.separator;
+    StringBuilder pathBuilder = new StringBuilder(separator);
+    pathBuilder
+        .append("company_")
+        .append(loadableStudy.getVoyage().getCompanyXId())
+        .append(separator)
+        .append("vessel_")
+        .append(loadableStudy.getVesselXId())
+        .append(separator)
+        .append(loadableStudy.getVoyage().getVoyageNo().replaceAll(" ", "_"))
+        .append("_")
+        .append(loadableStudy.getVoyage().getId())
+        .append(separator)
+        .append(loadableStudy.getName().replaceAll(" ", "_"))
+        .append(separator);
+    return String.valueOf(pathBuilder);
+  }
+
+  /**
+   * Method to delete file if there is any exception when saving loadable study
+   *
+   * @param entity - the set of entities for attachments
+   */
+  private void deleteFiles(LoadableStudy entity) {
+    if (null == entity || null == entity.getAttachments()) {
+      return;
+    }
+    for (LoadableStudyAttachments attachment : entity.getAttachments()) {
+      Path path =
+          Paths.get(this.rootFolder + attachment.getFilePath() + attachment.getUploadedFileName());
+      try {
+        Files.deleteIfExists(path);
+      } catch (IOException e) {
+        log.error(
+            "unable to delete file : {}",
+            this.rootFolder + attachment.getFilePath() + attachment.getUploadedFileName(),
+            e);
+      }
     }
   }
 }

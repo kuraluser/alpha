@@ -114,7 +114,8 @@ class roapp implements Plugin<Project> {
 	                   exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	                }
 	                // JUnit testing            
-	                testImplementation ("org.mockito:mockito-core")
+	                testImplementation ("org.mockito:mockito-core:3.4.0")
+	                testImplementation 'org.mockito:mockito-inline:3.4.6'
     				testImplementation ("org.junit.jupiter:junit-jupiter-api:${junitTestVersion}")
     				testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:${junitTestVersion}")
 					testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.5.2")	  
