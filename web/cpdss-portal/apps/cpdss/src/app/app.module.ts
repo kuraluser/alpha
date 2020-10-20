@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,6 +13,10 @@ import { environment } from '../environments/environment';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import createTranslateLoader from './shared/services/translation/translation-http-loader.service';
 import { AppConfigurationService } from './shared/services/app-configuration/app-configuration.service';
+import { ActivatedRoute } from '@angular/router';
+import { KeycloakService } from 'keycloak-angular';
+import { keycloakCPDSSInitializer } from "../app/shared/utils/keycloak.cpdss.init";
+import { HttpAuthInterceptor } from "../app/shared/services/interceptors/auth.interceptors";
 
 @NgModule({
   declarations: [
@@ -39,8 +43,11 @@ import { AppConfigurationService } from './shared/services/app-configuration/app
     {
       provide: APP_INITIALIZER,
       useFactory: (appConfigService: AppConfigurationService) => () => appConfigService.load(),
-      deps: [AppConfigurationService], multi: true
-    }
+      deps: [AppConfigurationService, ActivatedRoute], multi: true
+    },
+    KeycloakService,
+    { provide: APP_INITIALIZER, useFactory: keycloakCPDSSInitializer, multi: true, deps: [KeycloakService, HttpClient, AppConfigurationService, ActivatedRoute] },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 })

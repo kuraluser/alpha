@@ -15,6 +15,7 @@ export class LoginShoreComponent implements OnInit {
 
   idpList = [];
   settings: IAppConfiguration;
+  realm: string = '';
 
   constructor(private kcService: KeycloakService, private appConfig: AppConfigurationService) { }
 
@@ -26,6 +27,7 @@ export class LoginShoreComponent implements OnInit {
   // to bind input buttons dynamically from api response with identity-provider enabled
   createIdpInput() {
     let idpConfig = localStorage.getItem('keycloakIdpConfig').split(',');
+    this.realm = localStorage.getItem('realm');
     for (let i = 0; i < idpConfig.length; i++) {
       this.idpList.push(idpConfig[i]);
     }
@@ -33,8 +35,9 @@ export class LoginShoreComponent implements OnInit {
 
   // common login function for all identity-providers
   login(idp) {
+    let imageUrl = localStorage.getItem('logoUrl');
     this.kcService.login({
-      redirectUri: window.location.protocol + '//' + window.location.hostname + ':' + this.settings.targetPort + '/?idp=' + idp,
+      redirectUri: window.location.protocol + '//' + window.location.hostname + ':' + this.settings.targetPort + '/?realm=' + this.realm + '&imgurl=' + imageUrl,
       idpHint: idp
     });
   }

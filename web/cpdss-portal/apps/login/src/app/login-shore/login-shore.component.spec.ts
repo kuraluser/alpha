@@ -1,4 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, tick } from '@angular/core/testing';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { LoginShoreComponent } from './login-shore.component';
 
@@ -8,7 +9,8 @@ describe('LoginShoreComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LoginShoreComponent ]
+      declarations: [ LoginShoreComponent ],
+      imports:[TranslateModule]
     })
     .compileComponents();
   });
@@ -19,7 +21,31 @@ describe('LoginShoreComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should call oninit function', () => {
+    const fixture = TestBed.createComponent(LoginShoreComponent);
+    const component = fixture.debugElement.componentInstance;
+    const spycanCreateData = jest.spyOn(component, 'ngOnInit');
+    component.ngOnInit();
+    tick(100);
+    expect(component.createIdpInput()).toHaveBeenCalled();
   });
+
+  it('should call createIdpInput function', () => {
+    const fixture = TestBed.createComponent(LoginShoreComponent);
+    const component = fixture.debugElement.componentInstance;
+    const spycanCreateData = jest.spyOn(component, 'createIdpInput');
+    component.createIdpInput();
+    tick(100);
+    expect(component.createIdpInput()).toHaveBeenCalled();
+  });
+
+  it('should call login function', () => {
+    const fixture = TestBed.createComponent(LoginShoreComponent);
+    const component = fixture.debugElement.componentInstance;
+    const spycanCreateData = jest.spyOn(component, 'login');
+    component.login('google');
+    tick(100);
+    expect(component.login('google')).toHaveBeenCalled();
+  });
+  
 });
