@@ -1,6 +1,26 @@
-<div>
-    <div *ngFor="let provider of idpList">
-        <button id="btn_login_{{provider}}" (click)="login(provider)">{{provider | translate}}</button>
+
+ 
+ <div class="bg-wrapper">
+    <owl-carousel-o [options]="customOptions">
+        <ng-template carouselSlide><img src="../../assets/images/slider-images/1.jpg"></ng-template>  
+        <ng-template carouselSlide><img src="../../assets/images/slider-images/2.jpg"></ng-template>  
+        <ng-template carouselSlide><img src="../../assets/images/slider-images/3.jpg"></ng-template>  
+      </owl-carousel-o>
+    <div>
+        <div class="login-wrapper">
+            <div class="login-inner-wrapper">
+                <div class="login-logo"><img src="../../assets/images/themes/dark/logo.png"></div>
+                <div class="login-form text-center">
+                  <span class="text-secondary mr-10">{{'SIGN_IN_WITH' | translate}} </span> <button id="btn_login_{{provider}}" (click)="login(provider)" class="login-btn btn" *ngFor="let provider of idpList">{{provider | translate}}</button>
+                </div>
+                <div class="validation-wrapper"></div>
+            </div>
+        </div>
     </div>
 </div>
+<div class="login-footer">
+    <img src="../../assets/images/themes/dark/logo-alpha-ori.png" alt="" class=""> 
+    <div class="font-small">©2020 ALPHA ORI TECHNOLOGY HOLDINGS PTE. LTD. Privacy Policy</div>
+</div>
+
 

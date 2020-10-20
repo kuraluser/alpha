@@ -3,6 +3,7 @@ import { KeycloakService } from 'keycloak-angular';
 import { environment } from '../../environments/environment';
 import { IAppConfiguration } from '../shared/services/app-configuration/app-configuration.model';
 import { AppConfigurationService } from '../shared/services/app-configuration/app-configuration.service';
+import { OwlOptions } from 'ngx-owl-carousel-o';
 
 // Login component for shore-module
 
@@ -12,7 +13,24 @@ import { AppConfigurationService } from '../shared/services/app-configuration/ap
   styleUrls: ['./login-shore.component.scss']
 })
 export class LoginShoreComponent implements OnInit {
-
+  customOptions: OwlOptions = {
+    loop:true,
+    margin:0,
+    items:1,
+    nav:false,
+    dots: false,
+    autoplay:true,
+    autoplayTimeout:5000,
+    autoplayHoverPause:false,
+    animateOut: 'fadeOut',
+    animateIn: 'fadeIn',
+    responsive: {
+      0: {
+        items: 1
+      }
+      
+    },
+  }
   idpList = [];
   settings: IAppConfiguration;
   realm: string = '';
@@ -41,5 +59,6 @@ export class LoginShoreComponent implements OnInit {
       idpHint: idp
     });
   }
+  
 
 }

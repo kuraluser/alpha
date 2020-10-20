@@ -4,3 +4,40 @@ body{
     background: $body-bg;
     color: $text-primary;
 }
+
+.login-inner-wrapper {
+    border-bottom: 1px solid $login-border;
+
+}
+
+.login-btn {
+    background: $login-btn;
+    color: $text-secondary;
+    &#btn_login_google{
+        &::after{
+            background: url($images + 'google-icon.jpg') no-repeat;
+        }
+    }
+    &#btn_login_microsoft{
+        &::after{
+            background: url($images + 'microsoft-icon.jpg') no-repeat;
+        }
+    }
+    &#btn_login_keycloak{
+        &::after{
+            background: url($images + 'keycloack-icon.jpg') no-repeat;
+        }
+    }
+}
+
+.bg-wrapper {
+    background: url($images-theme + 'land.png') no-repeat;
+    background-size: cover;
+}
+
+.btn:hover{
+    color: $text-secondary;
+}
+.text-secondary {
+    color: $text-secondary!important;
+}

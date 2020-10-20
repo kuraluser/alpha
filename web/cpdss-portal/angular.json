@@ -38,6 +38,7 @@
                 "lazy": true,
                 "bundleName": "theme-light"
               },
+              "node_modules/animate.css/animate.min.css",
               "apps/cpdss/src/styles.scss"
             ],
             "scripts": []
