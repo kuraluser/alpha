@@ -61,7 +61,7 @@ public class LoadableStudyService {
    * @throws GenericServiceException CommonSuccessResponse
    */
   public VoyageResponse saveVoyage(
-      Voyage voyage, long companyId, long vesselId, HttpHeaders headers)
+      Voyage voyage, long companyId, long vesselId)
       throws GenericServiceException {
     VoyageResponse voyageResponse = new VoyageResponse();
     VoyageRequest voyageRequest =
@@ -73,7 +73,7 @@ public class LoadableStudyService {
             .setVoyageNo(voyage.getVoyageNo())
             .build();
 
-    VoyageReply voyageReply = loadableStudyServiceBlockingStub.saveVoyage(voyageRequest);
+    VoyageReply voyageReply = this.saveVoyage(voyageRequest);
     if (SUCCESS.equalsIgnoreCase(voyageReply.getStatus())) {
       voyageResponse.setResponseStatus(
           new CommonSuccessResponse(voyageReply.getMessage(), "correlationId"));
@@ -89,6 +89,17 @@ public class LoadableStudyService {
   
   /**
    * 
+   * @param voyageRequest
+   * @return
+   * VoyageReply
+   */
+  public VoyageReply saveVoyage(VoyageRequest voyageRequest) {
+	  return loadableStudyServiceBlockingStub.saveVoyage(voyageRequest);
+  }
+  
+  
+  /**
+   * 
    * @param loadableQuantity
    * @param companyId
    * @param vesselId
@@ -99,7 +110,7 @@ public class LoadableStudyService {
    * CommonSuccessResponse
    */
     public LoadableQuantityResponse saveLoadableQuantity(
-        LoadableQuantity loadableQuantity, long loadableStudiesId, HttpHeaders headers)
+        LoadableQuantity loadableQuantity, long loadableStudiesId)
         throws GenericServiceException {
   	  LoadableQuantityResponse loadableQuantityResponse = new LoadableQuantityResponse();
       LoadableQuantityRequest loadableQuantityRequest =
@@ -127,9 +138,9 @@ public class LoadableStudyService {
               .build();
 
       LoadableQuantityReply loadableQuantityReply =
-          loadableStudyServiceBlockingStub.saveLoadableQuantity(loadableQuantityRequest);
+          this.saveLoadableQuantity(loadableQuantityRequest);
       if (SUCCESS.equalsIgnoreCase(loadableQuantityReply.getStatus())) {
-      	loadableQuantityResponse.setCommonSuccessResponse(new CommonSuccessResponse(loadableQuantityReply.getMessage(), "correlationId"));
+      	loadableQuantityResponse.setResponseStatus(new CommonSuccessResponse(loadableQuantityReply.getMessage(), "correlationId"));
       	loadableQuantityResponse.setLoadableQuantityId(loadableQuantityReply.getLoadableQuantityId());
         return loadableQuantityResponse;
       } else {
@@ -141,7 +152,11 @@ public class LoadableStudyService {
     }
 
     
-  
+  public LoadableQuantityReply saveLoadableQuantity(LoadableQuantityRequest loadableQuantityRequest) {
+	  return loadableStudyServiceBlockingStub.saveLoadableQuantity(loadableQuantityRequest);
+  }
+    
+    
   /**
    * This method calls loadable study microservice to get a list of loadable studies by vessel and
    * voyage

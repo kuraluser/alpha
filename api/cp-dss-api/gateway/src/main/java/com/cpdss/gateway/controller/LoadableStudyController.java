@@ -62,7 +62,7 @@ public class LoadableStudyController {
       throws CommonRestException {
     try {
       Long companyId = 1L; // TODO get the companyId from userContext in keycloak token
-      return loadableStudyService.saveVoyage(voyage, companyId, vesselId, headers);
+      return loadableStudyService.saveVoyage(voyage, companyId, vesselId);
     } catch (Exception e) {
       log.error("Error in save voyage ", e);
       throw new CommonRestException(
@@ -94,7 +94,7 @@ public class LoadableStudyController {
       throws CommonRestException {
     try {
     	return
-    			loadableStudyService.saveLoadableQuantity(loadableQuantity, loadableStudiesId, headers);
+    			loadableStudyService.saveLoadableQuantity(loadableQuantity, loadableStudiesId);
     } catch (Exception e) {
       log.error("Error in save loadable quantity ", e);
       throw new CommonRestException(

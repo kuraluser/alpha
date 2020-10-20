@@ -9,17 +9,28 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.anyString;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.VoyageReply;
+import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.gateway.domain.LoadableQuantity;
+import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.Voyage;
+import com.cpdss.gateway.domain.VoyageResponse;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -53,6 +64,11 @@ class LoadableStudyServiceTest {
   private static final Long LOAD_LINE_ID = 1L;
   private static final String DRAFT_RESTRICTION = "1000";
   private static final String MAX_TEMP_EXPECTED = "100";
+  
+  private static final String VOYAGE = "VOYAGE";
+  private static final String VOYAGE_ERROR = "Error in calling voyage service";
+  private static final String LOADABLE_QUANTITY_DUMMY = "100";
+  private static final String LOADABLE_QUANTITY_ERROR = "Error in calling loadable quantity service";
 
   /**
    * Loadable study listing - positive scenario
@@ -257,4 +273,156 @@ class LoadableStudyServiceTest {
     request.setMaxTempExpected(new BigDecimal(MAX_TEMP_EXPECTED));
     return request;
   }
+  
+  
+  
+	/**
+	 * Save voyage - positive scenario
+	 *
+	 * @throws GenericServiceException
+	 */
+	@Test
+	void testSaveVoyagePositiveTestCase() throws GenericServiceException {
+
+		LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
+
+		VoyageReply voyageReply = VoyageReply.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).setVoyageId(1)
+				.build();
+
+		Mockito.when(spy.saveVoyage(ArgumentMatchers.any(Voyage.class),  anyLong(), anyLong())).thenCallRealMethod();
+		
+		Mockito.when(spy.saveVoyage(ArgumentMatchers.any(VoyageRequest.class))).thenReturn(voyageReply);
+		Voyage voyage = new Voyage();
+		voyage.setVoyageNo(VOYAGE);
+		voyage.setCaptainId((long) 1);
+		voyage.setChiefOfficerId((long) 1);
+
+		VoyageResponse voyageResponse = spy.saveVoyage(voyage, (long) 1, (long) 1);
+		
+		Assert.assertEquals(
+				SUCCESS,voyageResponse.getResponseStatus().getStatus());
+	}
+	
+	/**
+	 * Save voyage - negative scenario
+	 *
+	 * @throws GenericServiceException
+	 */
+	@Test
+	void testSaveVoyageNegativeTestCase() throws GenericServiceException {
+
+		LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
+
+		VoyageReply voyageReply = VoyageReply.newBuilder().setMessage(SUCCESS).setStatus(FAILED).setVoyageId(1).build();
+
+		Mockito.when(spy.saveVoyage(ArgumentMatchers.any(Voyage.class), anyLong(), anyLong())).thenCallRealMethod();
+
+		Mockito.when(spy.saveVoyage(ArgumentMatchers.any(VoyageRequest.class))).thenReturn(voyageReply);
+		Voyage voyage = new Voyage();
+		voyage.setVoyageNo(VOYAGE);
+		voyage.setCaptainId((long) 1);
+		voyage.setChiefOfficerId((long) 1);
+
+		final GenericServiceException ex = assertThrows(GenericServiceException.class,
+				() -> spy.saveVoyage(voyage, (long) 1, (long) 1));
+
+		assertAll(() -> Assert.assertEquals(VOYAGE_ERROR, ex.getMessage()),
+				() -> Assert.assertEquals(CommonErrorCodes.E_GEN_INTERNAL_ERR, ex.getCode()),
+				() -> Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus()));
+
+	}
+	
+	/**
+	 * Save loadable quantity - positive scenario
+	 *
+	 * @throws GenericServiceException
+	 */
+	@Test
+	void testSaveLoadableQuantityPositiveTestCase() throws GenericServiceException {
+
+		LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
+
+		LoadableQuantityReply loadableQuantityReply = LoadableQuantityReply.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).setLoadableQuantityId(1)
+				.build();
+
+		Mockito.when(spy.saveLoadableQuantity(ArgumentMatchers.any(LoadableQuantity.class),  anyLong())).thenCallRealMethod();
+		
+		Mockito.when(spy.saveLoadableQuantity(ArgumentMatchers.any(LoadableQuantityRequest.class))).thenReturn(loadableQuantityReply);
+		LoadableQuantity loadableQuantity = new LoadableQuantity();
+		loadableQuantity.setLoadableStudyId(1);
+		loadableQuantity.setConstant(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setDisplacmentDraftRestriction(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setDistanceFromLastPort(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setDwt(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setEstDOOnBoard(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setEstFOOnBoard(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setEstFreshWaterOnBoard(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setEstSagging(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setEstSeaDensity(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setEstTotalFOConsumption(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setLimitingDraft(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setOtherIfAny(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setSaggingDeduction(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setSgCorrection(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setTotalQuantity(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setTpc(LOADABLE_QUANTITY_DUMMY);
+        loadableQuantity.setVesselAverageSpeed(LOADABLE_QUANTITY_DUMMY);
+        loadableQuantity.setVesselLightWeight(LOADABLE_QUANTITY_DUMMY);
+	
+		LoadableQuantityResponse loadableQuantityResponse = spy.saveLoadableQuantity(loadableQuantity, (long) 1);
+		
+		
+		Assert.assertEquals(
+				SUCCESS,loadableQuantityResponse.getResponseStatus().getStatus());
+	}
+	
+	/**
+	 * Save loadable quantity - negative scenario
+	 *
+	 * @throws GenericServiceException
+	 */
+	@Test
+	void testSaveLoadableQuantityNegativeTestCase() throws GenericServiceException {
+
+		LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
+
+		LoadableQuantityReply loadableQuantityReply = LoadableQuantityReply.newBuilder().setMessage(SUCCESS).setStatus(FAILED).setLoadableQuantityId(1)
+				.build();
+
+		Mockito.when(spy.saveLoadableQuantity(ArgumentMatchers.any(LoadableQuantity.class),  anyLong())).thenCallRealMethod();
+
+		Mockito.when(spy.saveLoadableQuantity(ArgumentMatchers.any(LoadableQuantity.class),  anyLong())).thenCallRealMethod();
+		
+		Mockito.when(spy.saveLoadableQuantity(ArgumentMatchers.any(LoadableQuantityRequest.class))).thenReturn(loadableQuantityReply);
+		LoadableQuantity loadableQuantity = new LoadableQuantity();
+		loadableQuantity.setLoadableStudyId(1);
+		loadableQuantity.setConstant(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setDisplacmentDraftRestriction(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setDistanceFromLastPort(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setDwt(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setEstDOOnBoard(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setEstFOOnBoard(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setEstFreshWaterOnBoard(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setEstSagging(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setEstSeaDensity(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setEstTotalFOConsumption(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setLimitingDraft(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setOtherIfAny(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setSaggingDeduction(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setSgCorrection(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setTotalQuantity(LOADABLE_QUANTITY_DUMMY);
+		loadableQuantity.setTpc(LOADABLE_QUANTITY_DUMMY);
+        loadableQuantity.setVesselAverageSpeed(LOADABLE_QUANTITY_DUMMY);
+        loadableQuantity.setVesselLightWeight(LOADABLE_QUANTITY_DUMMY);
+
+		final GenericServiceException ex = assertThrows(GenericServiceException.class,
+				() -> spy.saveLoadableQuantity(loadableQuantity, (long) 1));
+
+		assertAll(() -> Assert.assertEquals(LOADABLE_QUANTITY_ERROR, ex.getMessage()),
+				() -> Assert.assertEquals(CommonErrorCodes.E_GEN_INTERNAL_ERR, ex.getCode()),
+				() -> Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus()));
+
+	}
 }

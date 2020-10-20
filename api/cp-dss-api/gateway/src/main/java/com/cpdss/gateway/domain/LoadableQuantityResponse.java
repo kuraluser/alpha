@@ -10,6 +10,6 @@ import lombok.Data;
  */
 @Data
 public class LoadableQuantityResponse {
-	private CommonSuccessResponse commonSuccessResponse;
+	private CommonSuccessResponse responseStatus;
 	private Long loadableQuantityId;
 }

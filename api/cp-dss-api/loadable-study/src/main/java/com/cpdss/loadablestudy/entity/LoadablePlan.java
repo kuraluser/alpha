@@ -40,7 +40,6 @@ public class LoadablePlan extends EntityDoc {
   @Column(name = "isactive")
   private Boolean isActive;
 
-
   @OneToMany(mappedBy = "loadablePlanXId")
   private Collection<LoadablePlanQuantity> loadablePlanquantityCollection;
 
