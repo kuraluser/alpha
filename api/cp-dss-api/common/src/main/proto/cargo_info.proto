@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option java_multiple_files = false;
+option java_package = "com.cpdss.common.generated";
+
+// import common definitions like ResponseStatus
+import "common.proto";
+
+service CargoInfoService {
+	rpc GetCargoInfo (CargoRequest) returns (CargoReply) {
+	}
+}
+
+message CargoRequest {
+	int64 companyId = 1;
+	int64 vesselId = 2;
+	int64 voyageId = 3;
+	int64 loadableStudyId = 4;
+}
+
+message CargoDetail {
+	int64 id = 1;
+	string crudeType = 2;
+	string abbreviation = 3;
+	string api = 4;
+}
+
+message CargoReply {
+	ResponseStatus responseStatus = 1;
+	repeated CargoDetail cargos = 2;
+}

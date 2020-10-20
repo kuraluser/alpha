@@ -8,17 +8,23 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
+import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
+import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
@@ -33,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -59,6 +66,8 @@ public class LoadableStudyServiceTest {
   @MockBean private LoadableStudyRepository loadableStudyRepository;
 
   @MockBean private LoadableQuantityRepository loadableQuantityRepository;
+  
+  @MockBean private CargoNominationRepository cargoNominationRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String VOYAGE = "VOYAGE";
@@ -476,5 +485,48 @@ public class LoadableStudyServiceTest {
               entityList.add(entity);
             });
     return entityList;
+  }
+  
+  @Test
+  void testSaveCargoNomination() throws Exception {
+	  CargoNominationRequest cargoNominationRequest = createSaveCargoNominationRequest();
+	  StreamRecorder<CargoNominationReply> responseObserver = StreamRecorder.create();
+	  when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.LoadableStudy()));
+	  loadableStudyService.saveCargoNomination(cargoNominationRequest, responseObserver);
+	  assertNull(responseObserver.getError());
+	  // get results when no errors
+	  List<CargoNominationReply> results = responseObserver.getValues();
+	  assertEquals(true, results.size() > 0);
+	  CargoNominationReply returnedCargoNominationReply = results.get(0);
+	  CargoNominationReply.Builder cargoNominationReply = CargoNominationReply.newBuilder();
+	  //		CargoDetail.Builder cargoDetail = CargoDetail.newBuilder();
+	  //		cargoDetail.setAbbreviation("testAbbr");
+	  //		cargoDetail.setApi("testApi");
+	  //		cargoReply.addCargos(cargoDetail);
+	  ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+	  responseStatus.setStatus("SUCCESS");
+	  cargoNominationReply.setResponseStatus(responseStatus);
+	  assertEquals(cargoNominationReply.getResponseStatus(), returnedCargoNominationReply.getResponseStatus());
+  }
+  
+  private CargoNominationRequest createSaveCargoNominationRequest() {
+	  CargoNominationRequest request =
+			  CargoNominationRequest.newBuilder()
+			  .setLoadableStudyId(30)
+			  .setCargoNominationDetail(CargoNominationDetail.newBuilder()
+					  .setPriority(3L)
+					  .setLoadableStudyId(30)
+					  .setCargoId(1L)
+					  .setAbbreviation("ABBREV")
+					  .setColor("testColor")
+					  .setMaxTolerance("10.0")
+					  .setMinTolerance("20.0")
+					  .setApiEst("5.0")
+					  .setTempEst("6.0")
+					  .setSegregationId(2L)
+					  .addLoadingPortDetails(LoadingPortDetail.newBuilder()
+							  .setPortId(2L)
+							  .setQuantity("100.00")).build()).build();
+	  return request;
   }
 }
