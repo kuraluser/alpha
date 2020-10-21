@@ -1,17 +1,14 @@
+/* Licensed under Apache-2.0 */
 package com.cpdss.common.springdata;
 
+import com.cpdss.common.utils.TenantContext;
 import java.util.HashSet;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
-
+import lombok.extern.log4j.Log4j2;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import com.cpdss.common.utils.TenantContext;
-
-import lombok.extern.log4j.Log4j2;
 
 /**
  * Interceptor for multitenant support

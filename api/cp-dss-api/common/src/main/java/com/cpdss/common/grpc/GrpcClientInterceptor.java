@@ -1,7 +1,7 @@
+/* Licensed under Apache-2.0 */
 package com.cpdss.common.grpc;
 
 import com.cpdss.common.utils.TenantContext;
-
 import io.grpc.CallOptions;
 import io.grpc.Channel;
 import io.grpc.ClientCall;

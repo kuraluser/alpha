@@ -1,8 +1,8 @@
+/* Licensed under Apache-2.0 */
 package com.cpdss.common.springdata;
 
-import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
-
 import com.cpdss.common.utils.TenantContext;
+import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 
 /**
  * Class to configure the tenant schema name

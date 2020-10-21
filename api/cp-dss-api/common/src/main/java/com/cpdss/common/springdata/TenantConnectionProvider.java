@@ -1,10 +1,9 @@
+/* Licensed under Apache-2.0 */
 package com.cpdss.common.springdata;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
 import javax.sql.DataSource;
-
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 
 /**

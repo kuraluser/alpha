@@ -1,16 +1,17 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.common.springdata;
 
+import com.cpdss.common.exception.SpringDataInitException;
+import com.cpdss.common.utils.Utils;
+import com.zaxxer.hikari.HikariDataSource;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
 import org.hibernate.MultiTenancyStrategy;
 import org.hibernate.cfg.Environment;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
@@ -31,10 +32,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import com.cpdss.common.exception.SpringDataInitException;
-import com.cpdss.common.utils.Utils;
-import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * JPA configuration params

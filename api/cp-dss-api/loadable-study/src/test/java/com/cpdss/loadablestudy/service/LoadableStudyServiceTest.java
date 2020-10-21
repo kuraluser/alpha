@@ -19,13 +19,19 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
+import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
+import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
+import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRoationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.google.protobuf.ByteString;
@@ -35,11 +41,11 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -60,14 +66,13 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 public class LoadableStudyServiceTest {
 
   @Autowired private LoadableStudyService loadableStudyService;
-
   @MockBean private VoyageRepository voyageRepository;
-
   @MockBean private LoadableStudyRepository loadableStudyRepository;
-
   @MockBean private LoadableQuantityRepository loadableQuantityRepository;
-  
+
   @MockBean private CargoNominationRepository cargoNominationRepository;
+  @MockBean private LoadableStudyPortRoationRepository loadableStudyPortRoationRepository;
+  @MockBean private CargoOperationRepository cargoOperationRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String VOYAGE = "VOYAGE";
@@ -426,6 +431,98 @@ public class LoadableStudyServiceTest {
         replies.get(0).getResponseStatus().getCode());
   }
 
+  @Test
+  void testGetLoadableStudyPorts() {
+    LoadableStudy loadableStudy = new LoadableStudy();
+    loadableStudy.setId(1L);
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(loadableStudy));
+    when(this.loadableStudyPortRoationRepository.findByLoadableStudy(any(LoadableStudy.class)))
+        .thenReturn(this.createPortEntityList());
+    when(this.cargoOperationRepository.findAll()).thenReturn(this.createCargoOperationList());
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.getLoadableStudyPortRotation(
+        this.createPortRequest(), responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadableStudyPortsInvalidLoadableStudy() {
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.empty());
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.getLoadableStudyPortRotation(
+        this.createPortRequest(), responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadableStudyPortsRuntimeException() {
+    when(this.loadableStudyRepository.findById(anyLong())).thenThrow(RuntimeException.class);
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.getLoadableStudyPortRotation(
+        this.createPortRequest(), responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  private List<CargoOperation> createCargoOperationList() {
+    List<CargoOperation> entityList = new ArrayList<>();
+    IntStream.of(0, 5)
+        .forEach(
+            i -> {
+              CargoOperation entity = new CargoOperation();
+              entity.setId(Long.valueOf(i));
+              entity.setName("op" + i);
+              entityList.add(entity);
+            });
+    return entityList;
+  }
+
+  private List<LoadableStudyPortRotation> createPortEntityList() {
+    List<LoadableStudyPortRotation> entityList = new ArrayList<>();
+    LoadableStudy study = new LoadableStudy();
+    study.setId(1L);
+    CargoOperation operation = new CargoOperation();
+    operation.setId(1L);
+    IntStream.range(0, 10)
+        .forEach(
+            i -> {
+              LoadableStudyPortRotation entity = new LoadableStudyPortRotation();
+              entity.setId(Long.valueOf(i));
+              entity.setPortXId(Long.valueOf(i));
+              entity.setBirthXId(Long.valueOf(i));
+              entity.setAirDraftRestriction(BigDecimal.TEN);
+              entity.setDistanceBetweenPorts(BigDecimal.ONE);
+              entity.setEta(LocalDateTime.now());
+              entity.setEtd(LocalDateTime.now());
+              entity.setLayCanFrom(LocalDate.now());
+              entity.setLayCanTo(LocalDate.now());
+              entity.setMaxDraft(BigDecimal.TEN);
+              entity.setSeaWaterDensity(BigDecimal.ONE);
+              entity.setTimeOfStay(BigDecimal.ONE);
+              entity.setLoadableStudy(study);
+              entity.setOperation(operation);
+              entityList.add(entity);
+            });
+
+    return entityList;
+  }
+
+  private PortRotationRequest createPortRequest() {
+    return PortRotationRequest.newBuilder()
+        .setLoadableStudyId(1L)
+        .setVesselId(1L)
+        .setVoyageId(1L)
+        .build();
+  }
+
   /**
    * Create save request for loadable study
    *
@@ -486,47 +583,51 @@ public class LoadableStudyServiceTest {
             });
     return entityList;
   }
-  
+
   @Test
   void testSaveCargoNomination() throws Exception {
-	  CargoNominationRequest cargoNominationRequest = createSaveCargoNominationRequest();
-	  StreamRecorder<CargoNominationReply> responseObserver = StreamRecorder.create();
-	  when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.LoadableStudy()));
-	  loadableStudyService.saveCargoNomination(cargoNominationRequest, responseObserver);
-	  assertNull(responseObserver.getError());
-	  // get results when no errors
-	  List<CargoNominationReply> results = responseObserver.getValues();
-	  assertEquals(true, results.size() > 0);
-	  CargoNominationReply returnedCargoNominationReply = results.get(0);
-	  CargoNominationReply.Builder cargoNominationReply = CargoNominationReply.newBuilder();
-	  //		CargoDetail.Builder cargoDetail = CargoDetail.newBuilder();
-	  //		cargoDetail.setAbbreviation("testAbbr");
-	  //		cargoDetail.setApi("testApi");
-	  //		cargoReply.addCargos(cargoDetail);
-	  ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-	  responseStatus.setStatus("SUCCESS");
-	  cargoNominationReply.setResponseStatus(responseStatus);
-	  assertEquals(cargoNominationReply.getResponseStatus(), returnedCargoNominationReply.getResponseStatus());
+    CargoNominationRequest cargoNominationRequest = createSaveCargoNominationRequest();
+    StreamRecorder<CargoNominationReply> responseObserver = StreamRecorder.create();
+    when(this.loadableStudyRepository.findById(anyLong()))
+        .thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.LoadableStudy()));
+    loadableStudyService.saveCargoNomination(cargoNominationRequest, responseObserver);
+    assertNull(responseObserver.getError());
+    // get results when no errors
+    List<CargoNominationReply> results = responseObserver.getValues();
+    assertEquals(true, results.size() > 0);
+    CargoNominationReply returnedCargoNominationReply = results.get(0);
+    CargoNominationReply.Builder cargoNominationReply = CargoNominationReply.newBuilder();
+    //		CargoDetail.Builder cargoDetail = CargoDetail.newBuilder();
+    //		cargoDetail.setAbbreviation("testAbbr");
+    //		cargoDetail.setApi("testApi");
+    //		cargoReply.addCargos(cargoDetail);
+    ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+    responseStatus.setStatus("SUCCESS");
+    cargoNominationReply.setResponseStatus(responseStatus);
+    assertEquals(
+        cargoNominationReply.getResponseStatus(), returnedCargoNominationReply.getResponseStatus());
   }
-  
+
   private CargoNominationRequest createSaveCargoNominationRequest() {
-	  CargoNominationRequest request =
-			  CargoNominationRequest.newBuilder()
-			  .setLoadableStudyId(30)
-			  .setCargoNominationDetail(CargoNominationDetail.newBuilder()
-					  .setPriority(3L)
-					  .setLoadableStudyId(30)
-					  .setCargoId(1L)
-					  .setAbbreviation("ABBREV")
-					  .setColor("testColor")
-					  .setMaxTolerance("10.0")
-					  .setMinTolerance("20.0")
-					  .setApiEst("5.0")
-					  .setTempEst("6.0")
-					  .setSegregationId(2L)
-					  .addLoadingPortDetails(LoadingPortDetail.newBuilder()
-							  .setPortId(2L)
-							  .setQuantity("100.00")).build()).build();
-	  return request;
+    CargoNominationRequest request =
+        CargoNominationRequest.newBuilder()
+            .setLoadableStudyId(30)
+            .setCargoNominationDetail(
+                CargoNominationDetail.newBuilder()
+                    .setPriority(3L)
+                    .setLoadableStudyId(30)
+                    .setCargoId(1L)
+                    .setAbbreviation("ABBREV")
+                    .setColor("testColor")
+                    .setMaxTolerance("10.0")
+                    .setMinTolerance("20.0")
+                    .setApiEst("5.0")
+                    .setTempEst("6.0")
+                    .setSegregationId(2L)
+                    .addLoadingPortDetails(
+                        LoadingPortDetail.newBuilder().setPortId(2L).setQuantity("100.00"))
+                    .build())
+            .build();
+    return request;
   }
 }

@@ -1,8 +1,8 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.common.config;
 
+import com.cpdss.common.logging.Log4j2Config;
 import javax.annotation.PostConstruct;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,8 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
-
-import com.cpdss.common.logging.Log4j2Config;
 
 /**
  * Defines common configuration beans for the RICO framework

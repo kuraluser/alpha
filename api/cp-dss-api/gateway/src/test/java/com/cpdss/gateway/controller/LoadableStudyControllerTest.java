@@ -12,6 +12,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -74,10 +75,18 @@ class LoadableStudyControllerTest {
   private static final String LOADABLE_STUDY_SAVE_CLOUD_API_URL =
       CLOUD_API_URL_PREFIX + LOADABLE_STUDY_SAVE_API_URL;
 
+  private static final String PORT_ROTATION_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports";
+  private static final String PORT_ROTATION_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + PORT_ROTATION_API_URL;
+  private static final String PORT_ROTATION_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + PORT_ROTATION_API_URL;
+
   private static final String NAME = "name";
   private static final String CHARTERER_LITERAL = "charterer";
   private static final String DRAFT_MARK_LITERAL = "draftMark";
   private static final String LOAD_LINE_ID_LITERAL = "loadLineXId";
+  private static final Long TEST_LODABLE_STUDY_ID = 1L;
 
   /**
    * Positive test case. Test method for positive response scenario
@@ -220,6 +229,68 @@ class LoadableStudyControllerTest {
                 .param(LOAD_LINE_ID_LITERAL, String.valueOf(LOAD_LINE_ID))
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  /**
+   * Test method for port rotation
+   *
+   * @throws Exception
+   */
+  @ValueSource(strings = {PORT_ROTATION_CLOUD_API_URL, PORT_ROTATION_SHIP_API_URL})
+  @ParameterizedTest
+  void testLoadableStudyPortList(String url) throws Exception {
+    when(this.loadableStudyService.getLoadableStudyPortRotationList(
+            anyLong(), anyLong(), anyLong(), anyString()))
+        .thenReturn(new PortRotationResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_LODABLE_STUDY_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  /**
+   * Test method for port rotation
+   *
+   * @throws Exception
+   */
+  @ValueSource(strings = {PORT_ROTATION_CLOUD_API_URL, PORT_ROTATION_SHIP_API_URL})
+  @ParameterizedTest
+  void testLoadableStudyPortListServiceException(String url) throws Exception {
+    when(this.loadableStudyService.getLoadableStudyPortRotationList(
+            anyLong(), anyLong(), anyLong(), anyString()))
+        .thenThrow(
+            new GenericServiceException(
+                "test", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatus.BAD_REQUEST));
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_LODABLE_STUDY_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isBadRequest());
+  }
+
+  /**
+   * Test method for port rotation
+   *
+   * @throws Exception
+   */
+  @ValueSource(strings = {PORT_ROTATION_CLOUD_API_URL, PORT_ROTATION_SHIP_API_URL})
+  @ParameterizedTest
+  void testLoadableStudyPortListRuntimeException(String url) throws Exception {
+    when(this.loadableStudyService.getLoadableStudyPortRotationList(
+            anyLong(), anyLong(), anyLong(), anyString()))
+        .thenThrow(RuntimeException.class);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_LODABLE_STUDY_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isInternalServerError());
   }

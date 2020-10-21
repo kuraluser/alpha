@@ -1,15 +1,13 @@
+/* Licensed under Apache-2.0 */
 package com.cpdss.common.grpc;
 
-import java.util.HashSet;
-
-import javax.validation.ConstraintViolationException;
-
 import com.cpdss.common.utils.TenantContext;
-
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
 import io.grpc.ServerCallHandler;
 import io.grpc.ServerInterceptor;
+import java.util.HashSet;
+import javax.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
 
 /**

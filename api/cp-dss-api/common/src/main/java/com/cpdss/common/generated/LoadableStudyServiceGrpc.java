@@ -269,6 +269,59 @@ public final class LoadableStudyServiceGrpc {
     return getSaveCargoNominationMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
+      getGetLoadableStudyPortRotationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetLoadableStudyPortRotation",
+      requestType = com.cpdss.common.generated.LoadableStudy.PortRotationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.PortRotationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
+      getGetLoadableStudyPortRotationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+            com.cpdss.common.generated.LoadableStudy.PortRotationReply>
+        getGetLoadableStudyPortRotationMethod;
+    if ((getGetLoadableStudyPortRotationMethod =
+            LoadableStudyServiceGrpc.getGetLoadableStudyPortRotationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadableStudyPortRotationMethod =
+                LoadableStudyServiceGrpc.getGetLoadableStudyPortRotationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetLoadableStudyPortRotationMethod =
+              getGetLoadableStudyPortRotationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+                          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetLoadableStudyPortRotation"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.PortRotationRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.PortRotationReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "GetLoadableStudyPortRotation"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadableStudyPortRotationMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -354,6 +407,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getSaveCargoNominationMethod(), responseObserver);
     }
 
+    /** */
+    public void getLoadableStudyPortRotation(
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetLoadableStudyPortRotationMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -392,6 +453,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
                       com.cpdss.common.generated.LoadableStudy.CargoNominationReply>(
                       this, METHODID_SAVE_CARGO_NOMINATION)))
+          .addMethod(
+              getGetLoadableStudyPortRotationMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+                      com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
+                      this, METHODID_GET_LOADABLE_STUDY_PORT_ROTATION)))
           .build();
     }
   }
@@ -461,6 +529,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getLoadableStudyPortRotation(
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetLoadableStudyPortRotationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -510,6 +589,13 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
       return blockingUnaryCall(
           getChannel(), getSaveCargoNominationMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.PortRotationReply getLoadableStudyPortRotation(
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetLoadableStudyPortRotationMethod(), getCallOptions(), request);
     }
   }
 
@@ -570,6 +656,15 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getSaveCargoNominationMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.PortRotationReply>
+        getLoadableStudyPortRotation(
+            com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetLoadableStudyPortRotationMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -577,6 +672,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_FIND_LOADABLE_STUDIES_BY_VESSEL_AND_VOYAGE = 2;
   private static final int METHODID_SAVE_LOADABLE_STUDY = 3;
   private static final int METHODID_SAVE_CARGO_NOMINATION = 4;
+  private static final int METHODID_GET_LOADABLE_STUDY_PORT_ROTATION = 5;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -627,6 +723,13 @@ public final class LoadableStudyServiceGrpc {
               (com.cpdss.common.generated.LoadableStudy.CargoNominationRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.LoadableStudy.CargoNominationReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_LOADABLE_STUDY_PORT_ROTATION:
+          serviceImpl.getLoadableStudyPortRotation(
+              (com.cpdss.common.generated.LoadableStudy.PortRotationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.PortRotationReply>)
                   responseObserver);
           break;
         default:
@@ -698,6 +801,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getFindLoadableStudiesByVesselAndVoyageMethod())
                       .addMethod(getSaveLoadableStudyMethod())
                       .addMethod(getSaveCargoNominationMethod())
+                      .addMethod(getGetLoadableStudyPortRotationMethod())
                       .build();
         }
       }

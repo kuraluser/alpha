@@ -1,10 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.loadablestudy.service;
 
-
-import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
-import io.grpc.stub.StreamObserver;
+import static java.lang.String.valueOf;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
@@ -17,21 +14,31 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
+import com.cpdss.common.generated.LoadableStudy.Operation;
+import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
+import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
+import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceImplBase;
+import com.cpdss.common.generated.PortInfo.PortDetail;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
+import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
+import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRoationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
+import io.grpc.stub.StreamObserver;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -48,6 +55,7 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -57,69 +65,71 @@ import org.springframework.util.StringUtils;
 @Service
 public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
-	@Value("${loadablestudy.attachement.rooFolder}")
+  @Value("${loadablestudy.attachement.rooFolder}")
   private String rootFolder;
 
-	@Autowired private VoyageRepository voyageRepository;
+  @Autowired private VoyageRepository voyageRepository;
+  @Autowired private LoadableStudyPortRoationRepository loadableStudyPortRoationRepository;
+  @Autowired private CargoOperationRepository cargoOperationRepository;
 
-	@Autowired private LoadableStudyRepository loadableStudyRepository;
+  @Autowired private LoadableStudyRepository loadableStudyRepository;
 
-	@Autowired private LoadableQuantityRepository loadableQuantityRepository;
+  @Autowired private LoadableQuantityRepository loadableQuantityRepository;
 
-	@Autowired private CargoNominationRepository cargoNominationRepository;
+  @Autowired private CargoNominationRepository cargoNominationRepository;
 
-	private static final String SUCCESS = "SUCCESS";
-	private static final String FAILED = "FAILED";
-	private static final String VOYAGEEXISTS = "VOYAGEEXISTS";
-	private static final String CREATED_DATE_FORMAT = "dd-MM-yyyy";
+  private static final String SUCCESS = "SUCCESS";
+  private static final String FAILED = "FAILED";
+  private static final String VOYAGEEXISTS = "VOYAGEEXISTS";
+  private static final String CREATED_DATE_FORMAT = "dd-MM-yyyy";
 
-	/**
-	 * method for save voyage
-	 *
-	 * @param request - voyage request details
-	 * @param responseObserver - grpc class
-	 * @return
-	 */
-	@Override
-	public void saveVoyage(VoyageRequest request, StreamObserver<VoyageReply> responseObserver) {
-		VoyageReply reply = null;
-		try {
-			// validation for duplicate voyages
-			if (!voyageRepository
-					.findByCompanyXIdAndVesselXIdAndVoyageNo(
-							request.getCompanyId(), request.getVesselId(), request.getVoyageNo())
-					.isEmpty()) {
-				reply = VoyageReply.newBuilder().setMessage(VOYAGEEXISTS).setStatus(SUCCESS).build();
-			} else {
+  /**
+   * method for save voyage
+   *
+   * @param request - voyage request details
+   * @param responseObserver - grpc class
+   * @return
+   */
+  @Override
+  public void saveVoyage(VoyageRequest request, StreamObserver<VoyageReply> responseObserver) {
+    VoyageReply reply = null;
+    try {
+      // validation for duplicate voyages
+      if (!voyageRepository
+          .findByCompanyXIdAndVesselXIdAndVoyageNo(
+              request.getCompanyId(), request.getVesselId(), request.getVoyageNo())
+          .isEmpty()) {
+        reply = VoyageReply.newBuilder().setMessage(VOYAGEEXISTS).setStatus(SUCCESS).build();
+      } else {
 
-				Voyage voyage = new Voyage();
-				voyage.setIsActive(true);
-				voyage.setCompanyXId(request.getCompanyId());
-				voyage.setVesselXId(request.getVesselId());
-				voyage.setVoyageNo(request.getVoyageNo());
-				voyage.setCaptainXId(request.getCaptainId());
-				voyage.setChiefOfficerXId(request.getChiefOfficerId());
-				voyage = voyageRepository.save(voyage);
-				// when Db save is complete we return to client a success message
-				reply =
-						VoyageReply.newBuilder()
-						.setMessage(SUCCESS)
-						.setStatus(SUCCESS)
-						.setVoyageId(voyage.getId())
-						.build();
-			}
-		} catch (Exception e) {
+        Voyage voyage = new Voyage();
+        voyage.setIsActive(true);
+        voyage.setCompanyXId(request.getCompanyId());
+        voyage.setVesselXId(request.getVesselId());
+        voyage.setVoyageNo(request.getVoyageNo());
+        voyage.setCaptainXId(request.getCaptainId());
+        voyage.setChiefOfficerXId(request.getChiefOfficerId());
+        voyage = voyageRepository.save(voyage);
+        // when Db save is complete we return to client a success message
+        reply =
+            VoyageReply.newBuilder()
+                .setMessage(SUCCESS)
+                .setStatus(SUCCESS)
+                .setVoyageId(voyage.getId())
+                .build();
+      }
+    } catch (Exception e) {
 
-			log.error("Error in saving Voyage ", e);
-			reply = VoyageReply.newBuilder().setMessage("FAIL").setStatus("FAIL").build();
+      log.error("Error in saving Voyage ", e);
+      reply = VoyageReply.newBuilder().setMessage("FAIL").setStatus("FAIL").build();
 
-		} finally {
-			responseObserver.onNext(reply);
-			responseObserver.onCompleted();
-		}
-	}
+    } finally {
+      responseObserver.onNext(reply);
+      responseObserver.onCompleted();
+    }
+  }
 
-	/**
+  /**
    * method to save loadable quantity
    *
    * @param loadableQuantityRequest
@@ -237,12 +247,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         Optional.ofNullable(entity.getSubCharterer()).ifPresent(builder::setSubCharterer);
         Optional.ofNullable(entity.getLoadLineXId()).ifPresent(builder::setLoadLineXId);
         Optional.ofNullable(entity.getDraftMark())
-            .ifPresent(dratMark -> builder.setDraftMark(String.valueOf(dratMark)));
+            .ifPresent(dratMark -> builder.setDraftMark(valueOf(dratMark)));
         Optional.ofNullable(entity.getDraftRestriction())
-            .ifPresent(
-                draftRestriction -> builder.setDraftRestriction(String.valueOf(draftRestriction)));
+            .ifPresent(draftRestriction -> builder.setDraftRestriction(valueOf(draftRestriction)));
         Optional.ofNullable(entity.getMaxTempExpected())
-            .ifPresent(maxTemp -> builder.setMaxTempExpected(String.valueOf(maxTemp)));
+            .ifPresent(maxTemp -> builder.setMaxTempExpected(valueOf(maxTemp)));
         replyBuilder.addLoadableStudies(builder.build());
       }
 
@@ -350,7 +359,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
-  
+
   private void checkVoyageAndCreatedFrom(LoadableStudyDetail request, LoadableStudy entity)
       throws GenericServiceException {
     Optional<Voyage> voyageOpt = this.voyageRepository.findById(request.getVoyageId());
@@ -395,7 +404,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .append(separator)
         .append(loadableStudy.getName().replaceAll(" ", "_"))
         .append(separator);
-    return String.valueOf(pathBuilder);
+    return valueOf(pathBuilder);
   }
 
   /**
@@ -420,83 +429,201 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
     }
   }
-  
-	@Override
-	public void saveCargoNomination(CargoNominationRequest request,
-			StreamObserver<CargoNominationReply> responseObserver) {
-		CargoNominationReply.Builder cargoNominationReplyBuilder = CargoNominationReply.newBuilder();
-		try {
-			Optional<LoadableStudy> loadableStudy = this.loadableStudyRepository.findById(request.getLoadableStudyId());
-			if (!loadableStudy.isPresent()) {
-				throw new GenericServiceException(
-						"Loadable Study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatus.BAD_REQUEST);
-			}
-			CargoNomination cargoNomination = null;
-			if (request.getCargoNominationDetail() != null
-					&& request.getCargoNominationDetail().getId() != 0) {
-				Optional<CargoNomination> existingCargoNomination =
-						this.cargoNominationRepository.findById(request.getCargoNominationDetail().getId());
-				if (!existingCargoNomination.isPresent()) {
-					throw new GenericServiceException(
-							"Cargo Nomination does not exist",
-							CommonErrorCodes.E_HTTP_BAD_REQUEST,
-							HttpStatus.BAD_REQUEST);
-				}
-				cargoNomination = existingCargoNomination.get();
-				cargoNomination = buildCargoNomination(cargoNomination, request);
-			} else if (request.getCargoNominationDetail() != null
-					&& request.getCargoNominationDetail().getId() == 0) {
-				cargoNomination = new CargoNomination();
-				cargoNomination = buildCargoNomination(cargoNomination, request);
-			}
-			this.cargoNominationRepository.save(cargoNomination);
-			cargoNominationReplyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS))
-			.setCargoNominationId((cargoNomination!=null && cargoNomination.getId()!=null)?cargoNomination.getId(): 0);
-		} catch (Exception e) {
-			log.error("Error saving cargo nomination", e);
-			cargoNominationReplyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
-		} finally {
-			responseObserver.onNext(cargoNominationReplyBuilder.build());
-			responseObserver.onCompleted();
-		}
-	}
 
-	private CargoNomination buildCargoNomination(CargoNomination cargoNomination, CargoNominationRequest request) {
-		cargoNomination.setLoadableStudyId(request.getCargoNominationDetail().getLoadableStudyId());
-		cargoNomination.setPriority(request.getCargoNominationDetail().getPriority());
-		cargoNomination.setCargoId(request.getCargoNominationDetail().getCargoId());
-		cargoNomination.setAbbreviation(request.getCargoNominationDetail().getAbbreviation());
-		cargoNomination.setColor(request.getCargoNominationDetail().getColor());
-		cargoNomination.setMaxTolerance(!StringUtils.isEmpty(request.getCargoNominationDetail().getMaxTolerance())?
-				new BigDecimal(request.getCargoNominationDetail().getMaxTolerance()): null);
-		cargoNomination.setMinTolerance(!StringUtils.isEmpty(request.getCargoNominationDetail().getMinTolerance())?
-				new BigDecimal(request.getCargoNominationDetail().getMinTolerance()): null);
-		cargoNomination.setApi(!StringUtils.isEmpty(request.getCargoNominationDetail().getApiEst())?
-				new BigDecimal(request.getCargoNominationDetail().getApiEst()): null);
-		cargoNomination.setTemperature(!StringUtils.isEmpty(request.getCargoNominationDetail().getTempEst())?
-				new BigDecimal(request.getCargoNominationDetail().getTempEst()): null);
-		cargoNomination.setSegregationId(request.getCargoNominationDetail().getSegregationId());
-		if (!request.getCargoNominationDetail().getLoadingPortDetailsList().isEmpty()) {
-			// clear any existing CargoNominationPortDetails otherwise create new
-			if (cargoNomination.getCargoNominationPortDetails() != null) {
-				cargoNomination.getCargoNominationPortDetails().clear();
-			}
-			Set<CargoNominationPortDetails> cargoNominationPortDetailsList 
-			= request.getCargoNominationDetail().getLoadingPortDetailsList().stream().
-			map(loadingPortDetail -> {
-				CargoNominationPortDetails cargoNominationPortDetails = new CargoNominationPortDetails();
-				cargoNominationPortDetails.setCargoNomination(cargoNomination);
-				cargoNominationPortDetails.setPortId(loadingPortDetail.getPortId());
-				cargoNominationPortDetails.setQuantity(!loadingPortDetail.getQuantity().isEmpty()? new BigDecimal(loadingPortDetail.getQuantity()): null);
-				return cargoNominationPortDetails;
-			}).collect(Collectors.toSet());
-			// clear any existing CargoNominationPortDetails otherwise create new
-			if (cargoNomination.getCargoNominationPortDetails() != null) {
-				cargoNomination.getCargoNominationPortDetails().addAll(cargoNominationPortDetailsList);
-			} else {
-				cargoNomination.setCargoNominationPortDetails(cargoNominationPortDetailsList);
-			}
-		}
-		return cargoNomination;
-	}
+  @Override
+  public void saveCargoNomination(
+      CargoNominationRequest request, StreamObserver<CargoNominationReply> responseObserver) {
+    CargoNominationReply.Builder cargoNominationReplyBuilder = CargoNominationReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudy =
+          this.loadableStudyRepository.findById(request.getLoadableStudyId());
+      if (!loadableStudy.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable Study does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatus.BAD_REQUEST);
+      }
+      CargoNomination cargoNomination = null;
+      if (request.getCargoNominationDetail() != null
+          && request.getCargoNominationDetail().getId() != 0) {
+        Optional<CargoNomination> existingCargoNomination =
+            this.cargoNominationRepository.findById(request.getCargoNominationDetail().getId());
+        if (!existingCargoNomination.isPresent()) {
+          throw new GenericServiceException(
+              "Cargo Nomination does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatus.BAD_REQUEST);
+        }
+        cargoNomination = existingCargoNomination.get();
+        cargoNomination = buildCargoNomination(cargoNomination, request);
+      } else if (request.getCargoNominationDetail() != null
+          && request.getCargoNominationDetail().getId() == 0) {
+        cargoNomination = new CargoNomination();
+        cargoNomination = buildCargoNomination(cargoNomination, request);
+      }
+      this.cargoNominationRepository.save(cargoNomination);
+      cargoNominationReplyBuilder
+          .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS))
+          .setCargoNominationId(
+              (cargoNomination != null && cargoNomination.getId() != null)
+                  ? cargoNomination.getId()
+                  : 0);
+    } catch (Exception e) {
+      log.error("Error saving cargo nomination", e);
+      cargoNominationReplyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(cargoNominationReplyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private CargoNomination buildCargoNomination(
+      CargoNomination cargoNomination, CargoNominationRequest request) {
+    cargoNomination.setLoadableStudyId(request.getCargoNominationDetail().getLoadableStudyId());
+    cargoNomination.setPriority(request.getCargoNominationDetail().getPriority());
+    cargoNomination.setCargoId(request.getCargoNominationDetail().getCargoId());
+    cargoNomination.setAbbreviation(request.getCargoNominationDetail().getAbbreviation());
+    cargoNomination.setColor(request.getCargoNominationDetail().getColor());
+    cargoNomination.setMaxTolerance(
+        !StringUtils.isEmpty(request.getCargoNominationDetail().getMaxTolerance())
+            ? new BigDecimal(request.getCargoNominationDetail().getMaxTolerance())
+            : null);
+    cargoNomination.setMinTolerance(
+        !StringUtils.isEmpty(request.getCargoNominationDetail().getMinTolerance())
+            ? new BigDecimal(request.getCargoNominationDetail().getMinTolerance())
+            : null);
+    cargoNomination.setApi(
+        !StringUtils.isEmpty(request.getCargoNominationDetail().getApiEst())
+            ? new BigDecimal(request.getCargoNominationDetail().getApiEst())
+            : null);
+    cargoNomination.setTemperature(
+        !StringUtils.isEmpty(request.getCargoNominationDetail().getTempEst())
+            ? new BigDecimal(request.getCargoNominationDetail().getTempEst())
+            : null);
+    cargoNomination.setSegregationId(request.getCargoNominationDetail().getSegregationId());
+    if (!request.getCargoNominationDetail().getLoadingPortDetailsList().isEmpty()) {
+      // clear any existing CargoNominationPortDetails otherwise create new
+      if (cargoNomination.getCargoNominationPortDetails() != null) {
+        cargoNomination.getCargoNominationPortDetails().clear();
+      }
+      Set<CargoNominationPortDetails> cargoNominationPortDetailsList =
+          request.getCargoNominationDetail().getLoadingPortDetailsList().stream()
+              .map(
+                  loadingPortDetail -> {
+                    CargoNominationPortDetails cargoNominationPortDetails =
+                        new CargoNominationPortDetails();
+                    cargoNominationPortDetails.setCargoNomination(cargoNomination);
+                    cargoNominationPortDetails.setPortId(loadingPortDetail.getPortId());
+                    cargoNominationPortDetails.setQuantity(
+                        !loadingPortDetail.getQuantity().isEmpty()
+                            ? new BigDecimal(loadingPortDetail.getQuantity())
+                            : null);
+                    return cargoNominationPortDetails;
+                  })
+              .collect(Collectors.toSet());
+      // clear any existing CargoNominationPortDetails otherwise create new
+      if (cargoNomination.getCargoNominationPortDetails() != null) {
+        cargoNomination.getCargoNominationPortDetails().addAll(cargoNominationPortDetailsList);
+      } else {
+        cargoNomination.setCargoNominationPortDetails(cargoNominationPortDetailsList);
+      }
+    }
+    return cargoNomination;
+  }
+
+  @Override
+  public void getLoadableStudyPortRotation(
+      PortRotationRequest request, StreamObserver<PortRotationReply> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder replyBuilder =
+        PortRotationReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findById(request.getLoadableStudyId());
+      if (!loadableStudyOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable study does not exist in database", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+      }
+      List<LoadableStudyPortRotation> entityList =
+          this.loadableStudyPortRoationRepository.findByLoadableStudy(loadableStudyOpt.get());
+      for (LoadableStudyPortRotation entity : entityList) {
+        replyBuilder.addPorts(
+            this.createPortDetail(
+                entity,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+      }
+      List<CargoOperation> operationEntityList = this.cargoOperationRepository.findAll();
+      for (CargoOperation entity : operationEntityList) {
+        replyBuilder.addOperations(this.createOperationDetail(entity));
+      }
+      replyBuilder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching loadable study - port data", e);
+      replyBuilder.setResponseStatus(
+          StatusReply.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Exception when fetching loadable study - port data", e);
+      replyBuilder.setResponseStatus(
+          StatusReply.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Error saving loadable study")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Create {@link Operation} from {@link CargoOperation}
+   *
+   * @param entity - {@link CargoOperation}
+   * @return
+   */
+  private Operation createOperationDetail(CargoOperation entity) {
+    return Operation.newBuilder().setId(entity.getId()).setOperationName(entity.getName()).build();
+  }
+
+  /**
+   * Create {@link PortDetail} from {@link LoadableStudyPortRotation}
+   *
+   * @param entity {@link LoadableStudyPortRotation}
+   * @return {@link PortDetail}
+   */
+  private PortRotationDetail createPortDetail(
+      LoadableStudyPortRotation entity,
+      DateTimeFormatter etaEtdFormatter,
+      DateTimeFormatter layCanFormatter) {
+    PortRotationDetail.Builder builder = PortRotationDetail.newBuilder();
+    builder.setId(entity.getId());
+    builder.setPortId(entity.getPortXId());
+    builder.setLoadableStudyId(entity.getLoadableStudy().getId());
+    builder.setOperationId(entity.getOperation().getId());
+    Optional.ofNullable(entity.getBirthXId()).ifPresent(builder::setBirthId);
+    Optional.ofNullable(entity.getSeaWaterDensity())
+        .ifPresent(density -> builder.setSeaWaterDensity(valueOf(density)));
+    Optional.ofNullable(entity.getDistanceBetweenPorts())
+        .ifPresent(distance -> builder.setDistanceBetweenPorts(valueOf(distance)));
+    Optional.ofNullable(entity.getTimeOfStay())
+        .ifPresent(timeOfStay -> builder.setTimeOfStay(valueOf(timeOfStay)));
+    Optional.ofNullable(entity.getMaxDraft())
+        .ifPresent(maxDraft -> builder.setMaxDraft(valueOf(maxDraft)));
+    Optional.ofNullable(entity.getAirDraftRestriction())
+        .ifPresent(airDraft -> builder.setMaxAirDraft(valueOf(airDraft)));
+    Optional.ofNullable(entity.getEta())
+        .ifPresent(eta -> builder.setEta(etaEtdFormatter.format(eta)));
+    Optional.ofNullable(entity.getEtd())
+        .ifPresent(etd -> builder.setEtd(etaEtdFormatter.format(etd)));
+    Optional.ofNullable(entity.getLayCanFrom())
+        .ifPresent(layCanFrom -> builder.setLayCanFrom(layCanFormatter.format(layCanFrom)));
+    Optional.ofNullable(entity.getLayCanTo())
+        .ifPresent(layCanTo -> builder.setLayCanTo(layCanFormatter.format(layCanTo)));
+    return builder.build();
+  }
 }
