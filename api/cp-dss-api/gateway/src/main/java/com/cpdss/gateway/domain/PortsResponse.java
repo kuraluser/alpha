@@ -1,17 +1,18 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.domain;
 
+import com.cpdss.common.rest.CommonSuccessResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import java.math.BigDecimal;
+import java.util.List;
 import lombok.Data;
 
-/** Dto for loading ports in cargo nomination */
+/** Dto for displaying port master info */
 @Data
 @JsonInclude(Include.NON_EMPTY)
-public class LoadingPort {
+public class PortsResponse {
 
-  private Long id;
+  private CommonSuccessResponse responseStatus;
 
-  private BigDecimal quantity;
+  private List<Port> ports;
 }

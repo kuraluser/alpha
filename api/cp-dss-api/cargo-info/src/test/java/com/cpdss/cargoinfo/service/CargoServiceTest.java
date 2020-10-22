@@ -5,24 +5,22 @@ import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import com.cpdss.cargoinfo.entity.Cargo;
+import com.cpdss.cargoinfo.repository.CargoRepository;
+import com.cpdss.common.generated.CargoInfo.CargoReply;
+import com.cpdss.common.generated.CargoInfo.CargoRequest;
+import com.cpdss.common.generated.Common.ResponseStatus;
+import io.grpc.internal.testing.StreamRecorder;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.cpdss.cargoinfo.entity.Cargo;
-import com.cpdss.cargoinfo.repository.CargoRepository;
-import com.cpdss.common.generated.CargoInfo.CargoReply;
-import com.cpdss.common.generated.CargoInfo.CargoRequest;
-import com.cpdss.common.generated.Common.ResponseStatus;
-
-import io.grpc.internal.testing.StreamRecorder;
-
-//@SpringBootTest
+/** Test class for cargo related methods */
+// @SpringBootTest
 public class CargoServiceTest {
 
   @InjectMocks private CargoService cargoService;

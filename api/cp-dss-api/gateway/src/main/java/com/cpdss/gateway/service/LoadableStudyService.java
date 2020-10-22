@@ -453,7 +453,7 @@ public class LoadableStudyService {
           .forEach(
               loadingPort -> {
                 LoadingPortDetail.Builder loadingPortDetailBuilder = LoadingPortDetail.newBuilder();
-                Optional.ofNullable(loadingPort.getPortId())
+                Optional.ofNullable(loadingPort.getId())
                     .ifPresent(loadingPortDetailBuilder::setPortId);
                 Optional.ofNullable(loadingPort.getQuantity())
                     .ifPresent(

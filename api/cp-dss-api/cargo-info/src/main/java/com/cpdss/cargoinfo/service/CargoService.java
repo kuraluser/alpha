@@ -6,8 +6,8 @@ import com.cpdss.cargoinfo.repository.CargoRepository;
 import com.cpdss.common.generated.CargoInfo.CargoDetail;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
-import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceImplBase;
+import com.cpdss.common.generated.Common.ResponseStatus;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -30,17 +30,17 @@ public class CargoService extends CargoInfoServiceImplBase {
       cargoList.forEach(
           cargo -> {
             CargoDetail.Builder cargoDetail = CargoDetail.newBuilder();
-            if (cargo.getId()!=null) {
-            	cargoDetail.setId(cargo.getId());
+            if (cargo.getId() != null) {
+              cargoDetail.setId(cargo.getId());
             }
             if (!StringUtils.isEmpty(cargo.getApi())) {
-            	cargoDetail.setApi(cargo.getApi());
+              cargoDetail.setApi(cargo.getApi());
             }
             if (!StringUtils.isEmpty(cargo.getAbbreviation())) {
-            	cargoDetail.setAbbreviation(cargo.getAbbreviation());
+              cargoDetail.setAbbreviation(cargo.getAbbreviation());
             }
             if (!StringUtils.isEmpty(cargo.getCrudeType())) {
-            	cargoDetail.setCrudeType(cargo.getCrudeType());
+              cargoDetail.setCrudeType(cargo.getCrudeType());
             }
             cargoReply.addCargos(cargoDetail);
           });

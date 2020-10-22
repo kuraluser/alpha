@@ -1,4 +1,5 @@
 appConfig {
+  rest = 'y'
   grpcServer = 'y'
   persistence = 'springData'
   dataBase = 'postgres'

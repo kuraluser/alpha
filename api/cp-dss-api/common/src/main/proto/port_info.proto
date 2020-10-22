@@ -9,6 +9,9 @@ import "common.proto";
 service PortInfoService {
 	rpc GetPortInfo (PortRequest) returns (PortReply) {
 	}
+	
+	rpc GetPortInfoByCargoId (GetPortInfoByCargoIdRequest) returns (GetPortInfoByCargoIdReply) {
+	}
 }
 
 message PortRequest {
@@ -24,6 +27,15 @@ message PortDetail {
 }
 
 message PortReply {
+	ResponseStatus responseStatus = 1;
+	repeated PortDetail ports = 2;
+}
+
+message GetPortInfoByCargoIdRequest{
+	int64 cargoId = 1;
+}
+
+message GetPortInfoByCargoIdReply{
 	ResponseStatus responseStatus = 1;
 	repeated PortDetail ports = 2;
 }
