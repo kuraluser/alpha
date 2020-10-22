@@ -23,7 +23,7 @@ import lombok.Setter;
 public class CargoPortMapping extends EntityDoc {
 
   @Column(name = "cargoxid")
-  private Long cargoxid;
+  private Long cargoXId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "portxid")

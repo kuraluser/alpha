@@ -70,7 +70,7 @@ public class CargoPortInfoController {
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
-          HttpStatus.SERVICE_UNAVAILABLE,
+          HttpStatus.INTERNAL_SERVER_ERROR,
           e.getMessage(),
           e);
     }

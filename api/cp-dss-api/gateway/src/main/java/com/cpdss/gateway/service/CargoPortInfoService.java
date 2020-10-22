@@ -103,7 +103,7 @@ public class CargoPortInfoService {
         && portReply.getResponseStatus() != null
         && SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
       CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
-      commonSuccessResponse.setStatus(SUCCESS);
+      commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
       portsResponse.setResponseStatus(commonSuccessResponse);
       buildPortsResponse(portsResponse, portReply);
     } else {
