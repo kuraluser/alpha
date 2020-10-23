@@ -2,38 +2,33 @@
     <div class="logo"></div>
     <div class="header-nav">
         <ul class="nav">
-            <li class="nav-item" [routerLink]="['voyage-status']" routerLinkActive="active">
-                <div class="menu-item-icon status"></div>
-                <div class="menu-item-text">{{ 'STATUS' | translate }}</div>
-            </li>
-            <li class="nav-item" [routerLink]="['cargo-planning']" routerLinkActive="active">
-                <div class="menu-item-icon cargo-planning"></div>
-                <div class="menu-item-text">{{'CARGO_PLANNING' | translate}}</div>
-            </li>
-            <li class="nav-item" [routerLink]="['operations']" routerLinkActive="active">
-                <div class="menu-item-icon voyages"></div>
-                <div class="menu-item-text">Operations</div>
-            </li>
-            <li class="nav-item" [routerLink]="['voyages']" routerLinkActive="active">
-                <div class="menu-item-icon voyages"></div>
-                <div class="menu-item-text">Voyages</div>
-            </li>
-            <li class="nav-item" [routerLink]="['admin']" routerLinkActive="active">
-                <div class="menu-item-icon voyages"></div>
-                <div class="menu-item-text">Admin</div>
+            <li [ngClass]="{'nav-item dropdown':true ,'show': isSubMenu[i] }" (click)="showSubmenu(list.subMenu, i)"
+                (focusout)="hide(list.subMenu, i)" *ngFor="let list of menuList; let i = index"
+                [routerLink]="list.menuLink" routerLinkActive="active">
+                <div class="menu-item-icon {{list.menuIcon}}"></div>
+                <div class="menu-item-text">{{ list.menu | translate}}</div>
+                <div class="dropdown-menu" *ngIf="list.subMenu.length>0 && isSubMenu[i]">
+                    <a class="dropdown-item" href="#" *ngFor="let subMenu of list.subMenu">{{subMenu.name}}</a>
+                </div>
             </li>
         </ul>
     </div>
     <div>
         <ul class="nav right pt-10">
+            <li class="nav-item">
+                <a></a>
+            </li>
+            <li class="nav-item">
+                <a></a>
+            </li>
+            <li class="nav-item">
+                <a></a>
+            </li>
+            <li class="nav-item">
+                <a></a>
+            </li>
             <li class="nav-item  active">
                 <a class="header-menu-item-right sign-in-icon"></a>
-            </li>
-            <li class="nav-item">
-                <a></a>
-            </li>
-            <li class="nav-item">
-                <a></a>
             </li>
         </ul>
     </div>

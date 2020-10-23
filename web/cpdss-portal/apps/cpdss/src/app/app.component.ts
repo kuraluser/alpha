@@ -9,23 +9,14 @@ import { ThemeService } from './shared/services/theme-service/theme.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  isToggle: boolean = true;
-  darkMode$: Observable<boolean>;
 
-  constructor(private translateService: TranslateService, private themeService: ThemeService) {
+
+  constructor(private translateService: TranslateService) {
     this.initLanguageTranslator();
   }
 
   /**
-   * Change theme on button click
-   */
-  setDarkMode() {
-    this.isToggle = !this.isToggle;
-    this.themeService.setDarkMode(this.isToggle);
-  }
-
-  /**
-   * INITIALISE TRANSLATION SERVICE
+   * Initialize translation service
    */
   initLanguageTranslator(): void {
     const language = localStorage.getItem('language');

@@ -542,3 +542,11 @@ a {
 .p-dialog .p-dialog-footer button:last-child{
   margin-right: 0;
 }
+
+.dropdown.show .dropdown-menu{
+  display: block !important;
+}
+
+.dropdown-menu{
+  font-size: $font-size-normal;
+}

@@ -191,3 +191,13 @@ hr{
      color: $heading-color;
   }
 }
+.dropdown-menu{
+  background:$dropdown-bg;
+  .dropdown-item{
+   color: $text-primary;
+    &:hover, &:focus{
+      background:$dropdown-menu-hover-bg;
+      color: $text-secondary;
+    }
+  }
+}
