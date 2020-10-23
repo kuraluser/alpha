@@ -1,7 +1,7 @@
-<form [formGroup]="newVoyageForm" (ngSubmit)="onSubmit()">
+
   <p-dialog header="{{vesselDetails[0].name}} - {{'NEW_VOYAGE_POPUP_HEADER' | translate}}" [(visible)]="showPopUp" styleClass="new-voayge-pop-up"
     [closable]="false" [draggable]="false" [modal]="true">
-
+    <form [formGroup]="newVoyageForm" (ngSubmit)="onSubmit()">
     <div class="container">
       <div class="row">
         <div class="col-md-12">
@@ -37,5 +37,6 @@
       <button class="btn btn-main" type="submit" id="voyage_popup_submit" >{{ 'SAVE_BUTTON_NEW_VOYAGE_POPUP' | translate }}</button>
       <div *ngIf="isSubmitted && !newVoyageForm.valid" class="pt-5 text-danger">{{ 'VOYAGE_POPUP_FORM_INVALID' | translate }}</div>
     </p-footer>
+  </form>
   </p-dialog>
-</form>
+

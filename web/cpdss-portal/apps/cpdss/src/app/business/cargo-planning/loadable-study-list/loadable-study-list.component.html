@@ -1,1 +1,63 @@
-<p>loadable-study-list works!</p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+           {{vesselDetails[0].name}} -  {{ 'LOADABLE_STUDY_LIST' | translate }}
+        </div>
+        <div class="col">
+            {{ 'LOADABLE_STUDY_LIST_VOYAGE_NO'  | translate }}
+            <p-dropdown [options]="voyageNo" [(ngModel)]="selectedVoyageNo" optionLabel="name"></p-dropdown>
+        </div>
+        <div class="col">
+            <button (click)="callNewLoadableStudyPopup()"
+                id="btn_callNewLoadableStudyPopup">{{'LOADABLE_STUDY_LIST_CREATE_NEW_LOADABLE_STUDY' | translate}}</button>
+        </div>
+
+    </div>
+    <div class="row">
+        <p-table #dt [value]="loadableStudyList" [columns]="cols" [loading]="loading"
+            styleClass="p-datatable-loadableStudyList" selectionMode="single" [(selection)]="selectedLoadableStudy"
+            dataKey="name" (onRowSelect)="onRowSelect($event)"
+            styleClass="p-datatable-loadableStudyList">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th *ngFor="let col of cols"> {{col.header | translate}}</th>
+                </tr>
+                <tr>
+                    <th>
+                        <input pInputText type="text" placeholder="Search by Name" class="p-column-filter">
+                    </th>
+                    <th>
+                        <input pInputText type="text" placeholder="Search by Details"
+                            (input)="dt.filter($event.target.value, 'name', 'startsWith')" class="p-column-filter">
+                    </th>
+                    <th>
+                        <input pInputText type="text" placeholder="Search by Status"
+                            (input)="dt.filter($event.target.value, 'detail', 'contains')" class="p-column-filter">
+                    </th>
+                    <th>
+                        <p-calendar (onSelect)="onDateSelect($event)" (onClearClick)="dt.filter('', 'date', 'equals')"
+                            [showButtonBar]="true" styleClass="p-column-filter" placeholder="Search by Date"
+                            [readonlyInput]="true" dateFormat="dd-mm-yy"></p-calendar>
+                    </th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-loadableStudy>
+                <tr [pSelectableRow]="loadableStudy">
+                    <td *ngFor="let col of cols">{{loadableStudy[col.field]}}</td>
+
+                    <td></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="6">{{ 'LOADABLE_STUDY_NO_DATA_FOUND' | translate }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<cpdss-portal-new-loadable-study-popup [display]="display" (displayPopup)="setPopupVisibility($event)"
+    [duplicateExistingLoadableStudy]="isDuplicateExistingLoadableStudy"
+    [loadableStudyIdForDuplication]="duplicatingLoadableStudyId">
+</cpdss-portal-new-loadable-study-popup>

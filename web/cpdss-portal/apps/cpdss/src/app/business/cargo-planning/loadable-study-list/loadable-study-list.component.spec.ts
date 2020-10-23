@@ -1,6 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LoadableStudyListComponent } from './loadable-study-list.component';
+
+import { LoadableStudyListRoutingModule } from "./loadable-study-list-routing.module";
+import { DialogModule } from 'primeng/dialog';
+import { NewLoadableStudyPopupModule } from "../../core/components/new-loadable-study-popup/new-loadable-study-popup.module";
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('LoadableStudyListComponent', () => {
   let component: LoadableStudyListComponent;
@@ -8,9 +14,16 @@ describe('LoadableStudyListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LoadableStudyListComponent ]
+      declarations: [LoadableStudyListComponent],
+      imports: [
+        CommonModule,
+        LoadableStudyListRoutingModule,
+        DialogModule,
+        NewLoadableStudyPopupModule
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  name: 'ship'
+  name: 'ship',
+  uriPath: 'api/cloud/'
 };
