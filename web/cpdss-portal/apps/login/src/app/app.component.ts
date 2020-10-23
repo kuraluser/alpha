@@ -24,6 +24,8 @@ export class AppComponent {
     this.themeService.setDarkMode(this.isToggle);
   }
 
+
+
   /**
    * INITIALISE TRANSLATION SERVICE
    */

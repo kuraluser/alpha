@@ -1,0 +1,41 @@
+<form [formGroup]="newVoyageForm" (ngSubmit)="onSubmit()">
+  <p-dialog header="{{vesselDetails[0].name}} - {{'NEW_VOYAGE_POPUP_HEADER' | translate}}" [(visible)]="showPopUp" styleClass="new-voayge-pop-up"
+    [closable]="false" [draggable]="false" [modal]="true">
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+
+          <div class="form-group row">
+            <label for="captain_name" class="col-md-6 col-form-label text-secondary">{{'CAPTAIN' | translate}}</label>
+            <div class="col-md-6">
+              <input type="text" readonly class="form-control-plaintext" formControlName="captain" id="captain_name">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="chief_name"
+              class="col-md-6 col-form-label text-secondary">{{'CHIEF_OFFICER' | translate}}</label>
+            <div class="col-md-6">
+              <input type="text" readonly class="form-control-plaintext" formControlName="chiefOfficer" id="chief_name">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="voyage_no" class="col-md-6 col-form-label text-secondary">{{'VOYAGE_NO' | translate}}</label>
+            <div class="col-md-6">
+              <input type="text" class="form-control" id="voyage_no" formControlName="voyageNo">
+              <div *ngIf="!newVoyageFormControl.voyageNo.valid && newVoyageFormControl.voyageNo.touched"
+                class="pt-5 text-danger">
+                <span *ngIf="newVoyageFormControl.voyageNo.errors?.required"> {{ 'VOYAGE_POPUP_VOYAGE_NO_REQUIRED_ERROR' | translate}} </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p-footer>
+      <button class="btn btn-main mr-10" id="voyage_popup_cancel" (click)="cancel()">{{ 'CANCEL_BUTTON_NEW_VOYAGE_POPUP' | translate }}</button>
+      <button class="btn btn-main" type="submit" id="voyage_popup_submit" >{{ 'SAVE_BUTTON_NEW_VOYAGE_POPUP' | translate }}</button>
+      <div *ngIf="isSubmitted && !newVoyageForm.valid" class="pt-5 text-danger">{{ 'VOYAGE_POPUP_FORM_INVALID' | translate }}</div>
+    </p-footer>
+  </p-dialog>
+</form>

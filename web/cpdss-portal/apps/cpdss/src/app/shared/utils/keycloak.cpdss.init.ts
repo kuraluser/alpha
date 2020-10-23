@@ -43,7 +43,7 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                     clientId: 'frontend'
                 }
                 hostUrl = 'companies/' + hostname + '.cpdss.com/idp-info';
-
+        
                 await keycloak.init({
                     config: keycloakConfig,
                     initOptions: {

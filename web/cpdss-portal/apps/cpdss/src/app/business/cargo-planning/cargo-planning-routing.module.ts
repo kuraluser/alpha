@@ -9,7 +9,7 @@ const routes: Routes = [
     component: CargoPlanningComponent,
     children: [
       {
-        path: 'loadable-stusy-list',
+        path: 'loadable-study-list',
         loadChildren: () => import('./loadable-study-list/loadable-study-list.module').then(m => m.LoadableStudyListModule)
       },
       {

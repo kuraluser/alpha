@@ -38,6 +38,8 @@
                 "lazy": true,
                 "bundleName": "theme-light"
               },
+              "node_modules/primeng/resources/themes/saga-blue/theme.css",
+              "node_modules/primeng/resources/primeng.min.css",
               "node_modules/animate.css/animate.min.css",
               "apps/cpdss/src/styles.scss"
             ],
@@ -228,7 +230,8 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "cpdss:build",
-            "proxyConfig": "proxy.config.json"
+            "proxyConfig": "proxy.config.json",
+            "disableHostCheck":true
           },
           "configurations": {
             "production": {
@@ -517,7 +520,8 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "login:build",
-            "proxyConfig": "proxy.config.json"
+            "proxyConfig": "proxy.config.json",
+            "disableHostCheck":true
           },
           "configurations": {
             "production": {

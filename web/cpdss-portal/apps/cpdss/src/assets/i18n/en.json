@@ -1,4 +1,13 @@
 {
 	"STATUS": "Status",
-	"CARGO_PLANNING": "Cargo Planning"
+	"CARGO_PLANNING": "Cargo Planning",
+	"CAPTAIN": "Captain",
+	"CHIEF_OFFICER": "Chief Officer",
+	"VOYAGE_NO": "Voyage No",
+	"NEW_VOYAGE_POPUP_HEADER" : "New Voyage",
+	"NEW_VOYAGE_BUTTON_VOYAGE_STATUS": "New Voyage",
+	"VOYAGE_POPUP_VOYAGE_NO_REQUIRED_ERROR": "Voyage No is required",
+	"VOYAGE_POPUP_FORM_INVALID": "Voyage No should not be empty",
+	"SAVE_BUTTON_NEW_VOYAGE_POPUP": "Save",
+	"CANCEL_BUTTON_NEW_VOYAGE_POPUP": "Cancel"
 }

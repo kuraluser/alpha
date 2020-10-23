@@ -65,7 +65,7 @@
     "keycloak-angular": "^8.0.1",
     "keycloak-js": "^10.0.2",
     "ngx-owl-carousel-o": "^4.0.0",
-    "primeng": "^10.0.2",
+    "primeng": "^10.0.3",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.0",
     "zone.js": "^0.10.2"
