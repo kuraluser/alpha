@@ -1,6 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.common.utils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -15,7 +16,11 @@ public class AppContext {
   private static String userIdKey = "userId";
 
   private static ThreadLocal<Map<String, String>> currentThreadLocal =
-      new InheritableThreadLocal<>();
+      InheritableThreadLocal.withInitial(
+          () -> {
+            Map<String, String> map = new HashMap<>();
+            return map;
+          });
 
   public static String getCurrentTenant() {
     return currentThreadLocal.get().get(tenantKey);
@@ -34,6 +39,6 @@ public class AppContext {
   }
 
   public static void clear() {
-    currentThreadLocal.set(null);
+    currentThreadLocal.get().clear();
   }
 }
