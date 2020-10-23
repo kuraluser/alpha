@@ -3,13 +3,13 @@ package com.cpdss.companyinfo.services;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.companyinfo.domain.CompanyInfoResponse;
 import com.cpdss.companyinfo.entity.Company;
 import com.cpdss.companyinfo.repository.CompanyRepository;
 import java.util.Arrays;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -38,14 +38,14 @@ public class CompanyInfoService {
       throw new GenericServiceException(
           "Company with given domain could not be found",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatus.BAD_REQUEST);
+          HttpStatusCode.BAD_REQUEST);
     }
     if (StringUtils.isEmpty(company.getKeycloakIdp()) || StringUtils.isEmpty(company.getRealm())) {
       log.error("Keycloak related info not set for the domain: {}", domain);
       throw new GenericServiceException(
           "Keycloak related info not set",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatus.INTERNAL_SERVER_ERROR);
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     CompanyInfoResponse response = new CompanyInfoResponse();
     response.setRealm(company.getRealm());

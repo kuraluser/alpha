@@ -32,6 +32,9 @@ public class CommonConfig implements ApplicationContextAware {
   @Value("${multitenancy.enabled: 'n'}")
   private String isMultitenancyEnabled;
 
+  @Value("${security.enabled: 'n'}")
+  private String isSecurityEnabled;
+
   @Override
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
     this.applicationContext = applicationContext;
@@ -81,6 +84,15 @@ public class CommonConfig implements ApplicationContextAware {
   @Bean("multitenancy")
   public boolean isMultitenancyEnabled() {
     if ("y".contentEquals(this.isMultitenancyEnabled)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Bean("security")
+  public boolean isSecurityEnabled() {
+    if ("y".contentEquals(this.isSecurityEnabled)) {
       return true;
     } else {
       return false;

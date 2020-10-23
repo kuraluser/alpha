@@ -3,12 +3,12 @@ package com.cpdss.gateway.controller;
 
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.PortsResponse;
 import com.cpdss.gateway.service.CargoPortInfoService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,7 +45,7 @@ public class CargoPortInfoController {
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
-          HttpStatus.SERVICE_UNAVAILABLE,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
           e.getMessage(),
           e);
     }
@@ -70,7 +70,7 @@ public class CargoPortInfoController {
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
-          HttpStatus.INTERNAL_SERVER_ERROR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
           e.getMessage(),
           e);
     }

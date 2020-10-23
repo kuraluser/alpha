@@ -4,12 +4,12 @@ package com.cpdss.companyinfo.controller;
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.companyinfo.domain.CompanyInfoResponse;
 import com.cpdss.companyinfo.services.CompanyInfoService;
 import javax.validation.constraints.NotEmpty;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,7 +52,7 @@ public class CompanyInfoController {
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           null,
-          HttpStatus.INTERNAL_SERVER_ERROR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
           e.getMessage(),
           e);
     }

@@ -2,6 +2,7 @@
 package com.cpdss.common.springdata;
 
 import com.cpdss.common.exception.SpringDataInitException;
+import com.cpdss.common.utils.AppContext;
 import com.cpdss.common.utils.Utils;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.SQLException;
@@ -28,8 +29,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -187,16 +186,24 @@ public class SpringDataConfig {
   }
 
   /**
-   * Auditor Provider bean
+   * Auditor Provider bean.
+   *
+   * <p>Do not modify this method
    *
    * @return
    */
   @Bean
   public AuditorAware<String> auditorProvider() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null) {
-      return () -> Optional.ofNullable("unknown");
+    String userIdentifier = "unknown";
+    // To-Do Need to move to Spring Security interceptor
+    //    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    //    if (authentication != null) {
+    //      userIdentifier = authentication.getName();
+    //    }
+    if (AppContext.getCurrentUserId() != null) {
+      userIdentifier = AppContext.getCurrentUserId();
     }
-    return () -> Optional.ofNullable(authentication.getName());
+    final String id = userIdentifier;
+    return () -> Optional.ofNullable(id);
   }
 }

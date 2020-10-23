@@ -23,6 +23,7 @@ ext {
   modelMapperVersion = "2.3.5"
   junitTestVersion = "5.5.2"
   grpcUnitTestVersion = "1.32.1"
+  javaAssistVersion = "3.27.0-GA"
 }
 
 //Compile only libraries for common application
@@ -66,6 +67,8 @@ project(':common') {
 			    compileOnly 'org.springframework:spring-webmvc'
 			    compileOnly 'jakarta.validation:jakarta.validation-api'
 			    compileOnly "javax.servlet:servlet-api:${servletApiVersin}"
+			    
+			    implementation "org.javassist:javassist:${javaAssistVersion}"
             }
             
          }
@@ -123,6 +126,7 @@ class roapp implements Plugin<Project> {
 	                
 	                if(extension.security == 'y'){
 	                    implementation 'org.springframework.boot:spring-boot-starter-security'
+	                    props.setProperty("security.enabled", 'y')
 	                }
 	                if(extension.monitoring == 'y'){
 	                    implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -196,9 +200,6 @@ class roapp implements Plugin<Project> {
 					
 					if(extension.persistence == 'springData') {
 					  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-					  if(extension.security != 'y'){
-	                     runtimeOnly('org.springframework.boot:spring-boot-starter-security')
-	                   }
 					  props.setProperty("persistence", 'springData')
 					}
 					
@@ -209,9 +210,7 @@ class roapp implements Plugin<Project> {
 					  runtimeOnly "org.springframework:spring-orm:${springVersion}"
 					  runtimeOnly 'org.hibernate:hibernate-core'
 					  runtimeOnly 'com.zaxxer:HikariCP'
-					  if(extension.security != 'y'){
-	                     runtimeOnly('org.springframework.boot:spring-boot-starter-security')
-	                   }
+					  
 					  props.setProperty("persistence", 'hibernate')
 					}
 					
@@ -322,7 +321,8 @@ class roapp implements Plugin<Project> {
 				    finalizedBy bootRun
 				}
 	         }
-         } 
+         }
+          
     }
 }
 

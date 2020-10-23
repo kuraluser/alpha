@@ -1,11 +1,13 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.common.grpc;
 
-import com.cpdss.common.utils.TenantContext;
+import com.cpdss.common.utils.AppContext;
+import io.grpc.ForwardingServerCallListener.SimpleForwardingServerCallListener;
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
 import io.grpc.ServerCallHandler;
 import io.grpc.ServerInterceptor;
+import io.grpc.Status;
 import java.util.HashSet;
 import javax.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
@@ -24,6 +26,10 @@ public class GrpcServerInterceptor implements ServerInterceptor {
     this.isMultitenant = isMultitenant;
   }
 
+  /**
+   * Grpc Server interceptor which intercepts the incoming request and gets the tenant id and user
+   * id from the Metadata and sets in the Current Thread local
+   */
   @Override
   public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
       ServerCall<ReqT, RespT> serverCall,
@@ -37,8 +43,35 @@ public class GrpcServerInterceptor implements ServerInterceptor {
         throw new ConstraintViolationException(
             "X-TenantID not present in the Request Header", new HashSet<>());
       }
-      TenantContext.setCurrentTenant(tenantID);
+      AppContext.setCurrentTenant(tenantID);
     }
-    return serverCallHandler.startCall(serverCall, metadata);
+    String userID = metadata.get(Metadata.Key.of("X-UserID", Metadata.ASCII_STRING_MARSHALLER));
+    if (userID != null) {
+      AppContext.setCurrentUserId(userID);
+    }
+    ServerCall.Listener<ReqT> delegate = serverCallHandler.startCall(serverCall, metadata);
+    return new SimpleForwardingServerCallListener<ReqT>(delegate) {
+      @Override
+      public void onHalfClose() {
+        try {
+          AppContext.clear();
+          super.onHalfClose();
+        } catch (Exception e) {
+          serverCall.close(
+              Status.INTERNAL.withCause(e).withDescription("error message"), new Metadata());
+        }
+      }
+
+      @Override
+      public void onComplete() {
+        try {
+          AppContext.clear();
+          super.onComplete();
+        } catch (Exception e) {
+          serverCall.close(
+              Status.INTERNAL.withCause(e).withDescription("error message"), new Metadata());
+        }
+      }
+    };
   }
 }

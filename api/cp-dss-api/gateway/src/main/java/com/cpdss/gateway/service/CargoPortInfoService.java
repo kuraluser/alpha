@@ -9,6 +9,7 @@ import com.cpdss.common.generated.PortInfo.PortRequest;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.Port;
 import com.cpdss.gateway.domain.PortsResponse;
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class CargoPortInfoService {
       throw new GenericServiceException(
           "Error in calling port service",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatus.INTERNAL_SERVER_ERROR);
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return portsResponse;
   }
@@ -110,7 +111,7 @@ public class CargoPortInfoService {
       throw new GenericServiceException(
           "Error in calling port service",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatus.INTERNAL_SERVER_ERROR);
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return portsResponse;
   }

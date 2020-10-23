@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.companyinfo.CompanyInfoTestConfiguration;
 import com.cpdss.companyinfo.services.CompanyInfoService;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -62,7 +62,9 @@ class CompanyInfoControllerTest {
     when(this.companyInfoService.findCompanyInfoByDomain(anyString()))
         .thenThrow(
             new GenericServiceException(
-                "Service Exception", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatus.BAD_REQUEST));
+                "Service Exception",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST));
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(COMPANY_INFO_URI, TEST_DOMAIN)

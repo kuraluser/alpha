@@ -1,7 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.common.springdata;
 
-import com.cpdss.common.utils.TenantContext;
+import com.cpdss.common.utils.AppContext;
 import java.util.HashSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,19 +16,31 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * @author krishna
  */
 @Log4j2
-public class MultitenantInterceptor extends HandlerInterceptorAdapter {
+public class AppContextInterceptor extends HandlerInterceptorAdapter {
+
+  private boolean isMultitenant;
+
+  public AppContextInterceptor(boolean isMultitenant) {
+    this.isMultitenant = isMultitenant;
+  }
 
   /** Method to intercept the request and set the multi tenant id in the TenantContext */
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object)
       throws Exception {
-    String tenantID = request.getHeader("X-TenantID");
-    if (tenantID == null) {
-      log.error("X-TenantID not present in the Request Header");
-      throw new ConstraintViolationException(
-          "X-TenantID not present in the Request Header", new HashSet<>());
+    if (isMultitenant) {
+      String tenantID = request.getHeader("X-TenantID");
+      if (tenantID == null) {
+        log.error("X-TenantID not present in the Request Header");
+        throw new ConstraintViolationException(
+            "X-TenantID not present in the Request Header", new HashSet<>());
+      }
+      AppContext.setCurrentTenant(tenantID);
     }
-    TenantContext.setCurrentTenant(tenantID);
+    String userID = request.getHeader("X-UserID");
+    if (userID != null) {
+      AppContext.setCurrentUserId(userID);
+    }
     return true;
   }
 
@@ -40,6 +52,6 @@ public class MultitenantInterceptor extends HandlerInterceptorAdapter {
       Object handler,
       ModelAndView modelAndView)
       throws Exception {
-    TenantContext.clear();
+    AppContext.clear();
   }
 }

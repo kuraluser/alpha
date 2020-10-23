@@ -1,7 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.common.springdata;
 
-import com.cpdss.common.utils.TenantContext;
+import com.cpdss.common.utils.AppContext;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 
 /**
@@ -15,7 +15,7 @@ public class TenantSchemaResolver implements CurrentTenantIdentifierResolver {
 
   @Override
   public String resolveCurrentTenantIdentifier() {
-    String t = TenantContext.getCurrentTenant();
+    String t = AppContext.getCurrentTenant();
     if (t != null) {
       return t;
     } else {

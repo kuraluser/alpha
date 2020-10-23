@@ -1,7 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.common.grpc;
 
-import com.cpdss.common.utils.TenantContext;
+import com.cpdss.common.utils.AppContext;
 import io.grpc.CallOptions;
 import io.grpc.Channel;
 import io.grpc.ClientCall;
@@ -26,11 +26,17 @@ public class GrpcClientInterceptor implements ClientInterceptor {
 
       @Override
       public void start(Listener<RespT> responseListener, Metadata headers) {
-        if (TenantContext.getCurrentTenant() != null) {
+        if (AppContext.getCurrentTenant() != null) {
           /* put custom header for multitenancy */
           headers.put(
               Metadata.Key.of("X-TenantID", Metadata.ASCII_STRING_MARSHALLER),
-              TenantContext.getCurrentTenant());
+              AppContext.getCurrentTenant());
+        }
+        if (AppContext.getCurrentUserId() != null) {
+          /* put custom header for userid */
+          headers.put(
+              Metadata.Key.of("X-UserID", Metadata.ASCII_STRING_MARSHALLER),
+              AppContext.getCurrentUserId());
         }
         super.start(
             new SimpleForwardingClientCallListener<RespT>(responseListener) {

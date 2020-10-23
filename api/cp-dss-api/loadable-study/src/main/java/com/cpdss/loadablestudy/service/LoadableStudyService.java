@@ -24,6 +24,7 @@ import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceImplBase;
 import com.cpdss.common.generated.PortInfo.PortDetail;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.CargoOperation;
@@ -55,7 +56,6 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -441,7 +441,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         throw new GenericServiceException(
             "Loadable Study does not exist",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatus.BAD_REQUEST);
+            HttpStatusCode.BAD_REQUEST);
       }
       CargoNomination cargoNomination = null;
       if (request.getCargoNominationDetail() != null
@@ -452,7 +452,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           throw new GenericServiceException(
               "Cargo Nomination does not exist",
               CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatus.BAD_REQUEST);
+              HttpStatusCode.BAD_REQUEST);
         }
         cargoNomination = existingCargoNomination.get();
         cargoNomination = buildCargoNomination(cargoNomination, request);

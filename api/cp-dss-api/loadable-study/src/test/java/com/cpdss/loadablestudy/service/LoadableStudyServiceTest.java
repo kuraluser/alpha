@@ -23,6 +23,7 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
@@ -54,7 +55,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
@@ -389,7 +389,7 @@ public class LoadableStudyServiceTest {
     assertNull(responseObserver.getError());
     assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
     assertEquals(
-        String.valueOf(HttpStatus.BAD_REQUEST.value()),
+        String.valueOf(HttpStatusCode.BAD_REQUEST.value()),
         replies.get(0).getResponseStatus().getCode());
   }
 
@@ -406,7 +406,7 @@ public class LoadableStudyServiceTest {
     assertNull(responseObserver.getError());
     assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
     assertEquals(
-        String.valueOf(HttpStatus.BAD_REQUEST.value()),
+        String.valueOf(HttpStatusCode.BAD_REQUEST.value()),
         replies.get(0).getResponseStatus().getCode());
   }
 
@@ -427,7 +427,7 @@ public class LoadableStudyServiceTest {
     assertNull(responseObserver.getError());
     assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
     assertEquals(
-        String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()),
+        String.valueOf(HttpStatusCode.INTERNAL_SERVER_ERROR.value()),
         replies.get(0).getResponseStatus().getCode());
   }
 

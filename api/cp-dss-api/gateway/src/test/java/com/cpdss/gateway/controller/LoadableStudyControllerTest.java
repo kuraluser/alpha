@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
@@ -121,7 +121,7 @@ class LoadableStudyControllerTest {
             new GenericServiceException(
                 "service exception",
                 CommonErrorCodes.E_GEN_INTERNAL_ERR,
-                HttpStatus.INTERNAL_SERVER_ERROR));
+                HttpStatusCode.INTERNAL_SERVER_ERROR));
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID)
@@ -190,7 +190,7 @@ class LoadableStudyControllerTest {
             new GenericServiceException(
                 "service exception",
                 CommonErrorCodes.E_GEN_INTERNAL_ERR,
-                HttpStatus.INTERNAL_SERVER_ERROR));
+                HttpStatusCode.INTERNAL_SERVER_ERROR));
     MockMultipartFile firstFile =
         new MockMultipartFile("files", "filename.pdf", "text/plain", "test".getBytes());
     this.mockMvc
@@ -265,7 +265,7 @@ class LoadableStudyControllerTest {
             anyLong(), anyLong(), anyLong(), anyString()))
         .thenThrow(
             new GenericServiceException(
-                "test", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatus.BAD_REQUEST));
+                "test", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST));
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_LODABLE_STUDY_ID)

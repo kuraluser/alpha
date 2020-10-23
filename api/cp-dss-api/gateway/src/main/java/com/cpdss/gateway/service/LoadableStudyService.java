@@ -30,6 +30,7 @@ import com.cpdss.common.generated.PortInfo.PortRequest;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.Cargo;
 import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CargoNominationResponse;
@@ -110,7 +111,7 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "Error in calling voyage service",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatus.INTERNAL_SERVER_ERROR);
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -169,7 +170,7 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "Error in calling loadable quantity service",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatus.INTERNAL_SERVER_ERROR);
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -200,7 +201,7 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to fetch loadable studies",
           reply.getResponseStatus().getCode(),
-          HttpStatus.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
     }
     List<LoadableStudy> list = new ArrayList<>();
     for (LoadableStudyDetail grpcReply : reply.getLoadableStudiesList()) {
@@ -278,7 +279,7 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to save loadable studies",
           reply.getResponseStatus().getCode(),
-          HttpStatus.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
     response.setLoadableStudyId(reply.getId());
@@ -295,14 +296,16 @@ public class LoadableStudyService {
         throw new GenericServiceException(
             "loadable study attachment size exceeds maximum allowed size",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatus.BAD_REQUEST);
+            HttpStatusCode.BAD_REQUEST);
       }
       String originalFileName =
           file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
       if (!ATTACHMENT_ALLOWED_EXTENSIONS.contains(
           originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase())) {
         throw new GenericServiceException(
-            "unsupported file type", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatus.BAD_REQUEST);
+            "unsupported file type",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
       }
     }
   }
@@ -337,7 +340,7 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "Error in calling cargo service",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatus.INTERNAL_SERVER_ERROR);
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     // Retrieve port information from port master
     PortRequest portRequest = PortRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
@@ -350,7 +353,7 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "Error in calling port service",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatus.INTERNAL_SERVER_ERROR);
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return cargoNominationResponse;
   }
@@ -488,7 +491,7 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "Error in calling cargo service",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatus.INTERNAL_SERVER_ERROR);
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return cargoNominationResponse;
   }
@@ -517,7 +520,7 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to fetch loadable study - ports",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatus.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }
     response.setPortList(new ArrayList<>());
     for (PortRotationDetail portDetail : grpcReply.getPortsList()) {

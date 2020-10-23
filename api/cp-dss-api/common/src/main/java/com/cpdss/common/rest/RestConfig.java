@@ -1,7 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.common.rest;
 
-import com.cpdss.common.springdata.MultitenantInterceptor;
+import com.cpdss.common.springdata.AppContextInterceptor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
@@ -38,9 +38,7 @@ public class RestConfig
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
-    if (isMultitenant) {
-      registry.addInterceptor(new MultitenantInterceptor());
-    }
+    registry.addInterceptor(new AppContextInterceptor(isMultitenant));
   }
 
   /**
