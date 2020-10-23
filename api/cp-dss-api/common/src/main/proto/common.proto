@@ -6,4 +6,5 @@ option java_package = "com.cpdss.common.generated";
 message ResponseStatus {
 	string status = 1;
 	string message = 2;
+	string code = 3;
 }

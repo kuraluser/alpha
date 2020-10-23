@@ -40,6 +40,19 @@ public final class Common {
      * @return The bytes for message.
      */
     com.google.protobuf.ByteString getMessageBytes();
+
+    /**
+     * <code>string code = 3;</code>
+     *
+     * @return The code.
+     */
+    java.lang.String getCode();
+    /**
+     * <code>string code = 3;</code>
+     *
+     * @return The bytes for code.
+     */
+    com.google.protobuf.ByteString getCodeBytes();
   }
   /** Protobuf type {@code ResponseStatus} */
   public static final class ResponseStatus extends com.google.protobuf.GeneratedMessageV3
@@ -55,6 +68,7 @@ public final class Common {
     private ResponseStatus() {
       status_ = "";
       message_ = "";
+      code_ = "";
     }
 
     @java.lang.Override
@@ -98,6 +112,13 @@ public final class Common {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 message_ = s;
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                code_ = s;
                 break;
               }
             default:
@@ -202,6 +223,41 @@ public final class Common {
       }
     }
 
+    public static final int CODE_FIELD_NUMBER = 3;
+    private volatile java.lang.Object code_;
+    /**
+     * <code>string code = 3;</code>
+     *
+     * @return The code.
+     */
+    public java.lang.String getCode() {
+      java.lang.Object ref = code_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        code_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string code = 3;</code>
+     *
+     * @return The bytes for code.
+     */
+    public com.google.protobuf.ByteString getCodeBytes() {
+      java.lang.Object ref = code_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        code_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -222,6 +278,9 @@ public final class Common {
       if (!getMessageBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, message_);
       }
+      if (!getCodeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, code_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -236,6 +295,9 @@ public final class Common {
       }
       if (!getMessageBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, message_);
+      }
+      if (!getCodeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, code_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -255,6 +317,7 @@ public final class Common {
 
       if (!getStatus().equals(other.getStatus())) return false;
       if (!getMessage().equals(other.getMessage())) return false;
+      if (!getCode().equals(other.getCode())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -270,6 +333,8 @@ public final class Common {
       hash = (53 * hash) + getStatus().hashCode();
       hash = (37 * hash) + MESSAGE_FIELD_NUMBER;
       hash = (53 * hash) + getMessage().hashCode();
+      hash = (37 * hash) + CODE_FIELD_NUMBER;
+      hash = (53 * hash) + getCode().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -411,6 +476,8 @@ public final class Common {
 
         message_ = "";
 
+        code_ = "";
+
         return this;
       }
 
@@ -439,6 +506,7 @@ public final class Common {
             new com.cpdss.common.generated.Common.ResponseStatus(this);
         result.status_ = status_;
         result.message_ = message_;
+        result.code_ = code_;
         onBuilt();
         return result;
       }
@@ -497,6 +565,10 @@ public final class Common {
         }
         if (!other.getMessage().isEmpty()) {
           message_ = other.message_;
+          onChanged();
+        }
+        if (!other.getCode().isEmpty()) {
+          code_ = other.code_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -681,6 +753,82 @@ public final class Common {
         return this;
       }
 
+      private java.lang.Object code_ = "";
+      /**
+       * <code>string code = 3;</code>
+       *
+       * @return The code.
+       */
+      public java.lang.String getCode() {
+        java.lang.Object ref = code_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          code_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string code = 3;</code>
+       *
+       * @return The bytes for code.
+       */
+      public com.google.protobuf.ByteString getCodeBytes() {
+        java.lang.Object ref = code_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          code_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string code = 3;</code>
+       *
+       * @param value The code to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCode(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        code_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string code = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCode() {
+
+        code_ = getDefaultInstance().getCode();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string code = 3;</code>
+       *
+       * @param value The bytes for code to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCodeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        code_ = value;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -746,9 +894,9 @@ public final class Common {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\014common.proto\"1\n\016ResponseStatus\022\016\n\006stat"
-          + "us\030\001 \001(\t\022\017\n\007message\030\002 \001(\tB\036\n\032com.cpdss.c"
-          + "ommon.generatedP\000b\006proto3"
+      "\n\014common.proto\"?\n\016ResponseStatus\022\016\n\006stat"
+          + "us\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\022\014\n\004code\030\003 \001(\tB"
+          + "\036\n\032com.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -758,7 +906,7 @@ public final class Common {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ResponseStatus_descriptor,
             new java.lang.String[] {
-              "Status", "Message",
+              "Status", "Message", "Code",
             });
   }
 

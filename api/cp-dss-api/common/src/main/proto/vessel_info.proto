@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+option java_multiple_files = false;
+option java_package = "com.cpdss.common.generated";
+
+// import common definitions like ResponseStatus
+import "common.proto";
+
+service VesselInfoService {
+	rpc GetAllVesselsByCompany (VesselRequest) returns (VesselReply) {
+	}
+}
+
+message VesselRequest {
+	int64 companyId = 1;
+}
+
+message LoadLineDetail {
+	int64 id = 1;
+	string name = 2;
+	repeated string draftMarks = 3;
+}
+
+message VesselDetail {
+	int64 id = 1;
+	string name = 2;
+	int64 captainId = 3;
+	int64 cheifOfficerId = 4;
+	string imoNumber = 5;
+	string flag = 6;
+	repeated LoadLineDetail loadLines = 7;
+}
+
+message VesselReply {
+	ResponseStatus responseStatus = 1;
+	repeated VesselDetail vessels = 2;
+}
