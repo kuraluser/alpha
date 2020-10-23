@@ -60,12 +60,14 @@ public class LoadableStudyController {
   @PostMapping("/vessels/{vesselId}/voyages")
   public VoyageResponse saveVoyage(
       @RequestBody @Valid Voyage voyage,
-      @PathVariable long vesselId,
+      @PathVariable @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+      log.info("save voyage API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
       Long companyId = 1L; // TODO get the companyId from userContext in keycloak token
-      return loadableStudyService.saveVoyage(voyage, companyId, vesselId);
+      return loadableStudyService.saveVoyage(
+          voyage, companyId, vesselId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (Exception e) {
       log.error("Error in save voyage ", e);
       throw new CommonRestException(
@@ -87,14 +89,18 @@ public class LoadableStudyController {
    * @return
    * @throws CommonRestException CommonSuccessResponse
    */
-  @PostMapping("/vessels/{vesselId}/voyage/{voyageId}/loadable-studies/{loadableStudiesId}")
+  @PostMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-quantity")
   public LoadableQuantityResponse saveLoadableQuantity(
       @RequestBody @Valid LoadableQuantity loadableQuantity,
       @PathVariable long loadableStudiesId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-      return loadableStudyService.saveLoadableQuantity(loadableQuantity, loadableStudiesId);
+      log.info(
+          "save loadable quantity API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
+      return loadableStudyService.saveLoadableQuantity(
+          loadableQuantity, loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (Exception e) {
       log.error("Error in save loadable quantity ", e);
       throw new CommonRestException(
@@ -248,28 +254,26 @@ public class LoadableStudyController {
     return response;
   }
 
+
   @GetMapping(
-      value = "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports",
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  public PortRotationResponse loadableStudyPortList(
-      @PathVariable Long vesselId,
-      @PathVariable Long voyageId,
-      @PathVariable Long loadableStudyId,
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-quantity/{loadableQuantityId}")
+  public LoadableQuantityResponse getLoadableQuantity(
+      @PathVariable @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long loadableQuantityId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-      return this.loadableStudyService.getLoadableStudyPortRotationList(
-          vesselId, voyageId, loadableStudyId, headers.getFirst(CORRELATION_ID_HEADER));
-    } catch (GenericServiceException e) {
-      log.error("GenericServiceException when list loadable study - ports", e);
-      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+      log.info(
+          "get loadable quantity API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
+      return loadableStudyService.getLoadableQuantity(
+          loadableQuantityId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (Exception e) {
-      log.error("Exception when list loadable study - ports", e);
+      log.error("Error in save loadable quantity ", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
-          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
           e.getMessage(),
           e);
     }

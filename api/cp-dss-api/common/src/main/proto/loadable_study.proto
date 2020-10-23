@@ -24,7 +24,11 @@ service LoadableStudyService {
 	
 	rpc GetLoadableStudyPortRotation (PortRotationRequest) returns (PortRotationReply){
 	}
-}
+	
+	rpc getLoadableQuantity (LoadableQuantityReply) returns (LoadableQuantityResponse) {
+	}
+	
+	}
 
 
 message VoyageRequest {
@@ -36,9 +40,8 @@ message VoyageRequest {
 }
 
 message VoyageReply {
-	string status = 1;
-	string message = 2;
-	int64 voyageId = 3;
+	int64 voyageId = 1;
+	StatusReply responseStatus = 2;
 }
 
 message StatusReply {
@@ -69,12 +72,12 @@ message LoadableQuantityRequest {
 	string foConsumptionPerDay = 18;
 	string estTotalFOConsumption = 19;
 	int64 loadableStudyId = 20;
+	string updateDateAndTime = 21;
 }
 
 message LoadableQuantityReply {
-	string status = 1;
-	string message = 2;
-	int64 loadableQuantityId = 3;
+	StatusReply responseStatus = 1;
+	int64 loadableQuantityId = 2;
 }
 
 message LoadableStudyRequest{
@@ -182,4 +185,10 @@ message PortRotationReply{
 	StatusReply responseStatus = 1;
 	repeated PortRotationDetail ports=2;
 	repeated Operation operations=3;
+}message LoadableQuantityResponse {
+	LoadableQuantityRequest loadableQuantityRequest = 1;
+	StatusReply responseStatus = 2;
 }
+
+
+

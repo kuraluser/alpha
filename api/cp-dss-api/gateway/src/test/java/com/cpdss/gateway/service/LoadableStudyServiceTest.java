@@ -79,6 +79,7 @@ class LoadableStudyServiceTest {
   private static final String LOADABLE_QUANTITY_DUMMY = "100";
   private static final String LOADABLE_QUANTITY_ERROR =
       "Error in calling loadable quantity service";
+  private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
 
   @BeforeEach
   public void init() {
@@ -429,9 +430,17 @@ class LoadableStudyServiceTest {
     LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
 
     VoyageReply voyageReply =
-        VoyageReply.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).setVoyageId(1).build();
+        VoyageReply.newBuilder()
+            .setResponseStatus(
+                StatusReply.newBuilder()
+                    .setMessage(SUCCESS)
+                    .setStatus(SUCCESS)
+                    .setCode(String.valueOf(HttpStatus.OK.value())))
+            .setVoyageId(1)
+            .build();
 
-    Mockito.when(spy.saveVoyage(ArgumentMatchers.any(Voyage.class), anyLong(), anyLong()))
+    Mockito.when(
+            spy.saveVoyage(ArgumentMatchers.any(Voyage.class), anyLong(), anyLong(), anyString()))
         .thenCallRealMethod();
 
     Mockito.when(spy.saveVoyage(ArgumentMatchers.any(VoyageRequest.class))).thenReturn(voyageReply);
@@ -440,9 +449,10 @@ class LoadableStudyServiceTest {
     voyage.setCaptainId((long) 1);
     voyage.setChiefOfficerId((long) 1);
 
-    VoyageResponse voyageResponse = spy.saveVoyage(voyage, (long) 1, (long) 1);
+    VoyageResponse voyageResponse = spy.saveVoyage(voyage, (long) 1, (long) 1, "123");
 
-    Assert.assertEquals(SUCCESS, voyageResponse.getResponseStatus().getStatus());
+    Assert.assertEquals(
+        String.valueOf(HttpStatus.OK.value()), voyageResponse.getResponseStatus().getStatus());
   }
 
   /**
@@ -456,9 +466,17 @@ class LoadableStudyServiceTest {
     LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
 
     VoyageReply voyageReply =
-        VoyageReply.newBuilder().setMessage(SUCCESS).setStatus(FAILED).setVoyageId(1).build();
+        VoyageReply.newBuilder()
+            .setResponseStatus(
+                StatusReply.newBuilder()
+                    .setStatus(SUCCESS)
+                    .setMessage(INVALID_LOADABLE_QUANTITY)
+                    .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
+            .setVoyageId(1)
+            .build();
 
-    Mockito.when(spy.saveVoyage(ArgumentMatchers.any(Voyage.class), anyLong(), anyLong()))
+    Mockito.when(
+            spy.saveVoyage(ArgumentMatchers.any(Voyage.class), anyLong(), anyLong(), anyString()))
         .thenCallRealMethod();
 
     Mockito.when(spy.saveVoyage(ArgumentMatchers.any(VoyageRequest.class))).thenReturn(voyageReply);
@@ -467,16 +485,12 @@ class LoadableStudyServiceTest {
     voyage.setCaptainId((long) 1);
     voyage.setChiefOfficerId((long) 1);
 
-    final GenericServiceException ex =
-        assertThrows(
-            GenericServiceException.class, () -> spy.saveVoyage(voyage, (long) 1, (long) 1));
+    VoyageResponse voyageResponse = spy.saveVoyage(voyage, (long) 1, (long) 1, "123");
 
-    assertAll(
-        () -> Assert.assertEquals(VOYAGE_ERROR, ex.getMessage()),
-        () -> Assert.assertEquals(CommonErrorCodes.E_GEN_INTERNAL_ERR, ex.getCode()),
-        () -> Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus()));
+    Assert.assertEquals(
+        String.valueOf(HttpStatus.BAD_REQUEST.value()),
+        voyageResponse.getResponseStatus().getStatus());
   }
-
   /**
    * Save loadable quantity - positive scenario
    *
@@ -489,12 +503,13 @@ class LoadableStudyServiceTest {
 
     LoadableQuantityReply loadableQuantityReply =
         LoadableQuantityReply.newBuilder()
-            .setMessage(SUCCESS)
-            .setStatus(SUCCESS)
+            .setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
             .setLoadableQuantityId(1)
             .build();
 
-    Mockito.when(spy.saveLoadableQuantity(ArgumentMatchers.any(LoadableQuantity.class), anyLong()))
+    Mockito.when(
+            spy.saveLoadableQuantity(
+                ArgumentMatchers.any(LoadableQuantity.class), anyLong(), anyString()))
         .thenCallRealMethod();
 
     Mockito.when(spy.saveLoadableQuantity(ArgumentMatchers.any(LoadableQuantityRequest.class)))
@@ -522,9 +537,11 @@ class LoadableStudyServiceTest {
     loadableQuantity.setVesselLightWeight(LOADABLE_QUANTITY_DUMMY);
 
     LoadableQuantityResponse loadableQuantityResponse =
-        spy.saveLoadableQuantity(loadableQuantity, (long) 1);
+        spy.saveLoadableQuantity(loadableQuantity, (long) 1, "123");
 
-    Assert.assertEquals(SUCCESS, loadableQuantityResponse.getResponseStatus().getStatus());
+    Assert.assertEquals(
+        String.valueOf(HttpStatus.OK.value()),
+        loadableQuantityResponse.getResponseStatus().getStatus());
   }
 
   /**
@@ -539,15 +556,16 @@ class LoadableStudyServiceTest {
 
     LoadableQuantityReply loadableQuantityReply =
         LoadableQuantityReply.newBuilder()
-            .setMessage(SUCCESS)
-            .setStatus(FAILED)
-            .setLoadableQuantityId(1)
+            .setResponseStatus(
+                StatusReply.newBuilder()
+                    .setStatus(SUCCESS)
+                    .setMessage(INVALID_LOADABLE_QUANTITY)
+                    .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
             .build();
 
-    Mockito.when(spy.saveLoadableQuantity(ArgumentMatchers.any(LoadableQuantity.class), anyLong()))
-        .thenCallRealMethod();
-
-    Mockito.when(spy.saveLoadableQuantity(ArgumentMatchers.any(LoadableQuantity.class), anyLong()))
+    Mockito.when(
+            spy.saveLoadableQuantity(
+                ArgumentMatchers.any(LoadableQuantity.class), anyLong(), anyString()))
         .thenCallRealMethod();
 
     Mockito.when(spy.saveLoadableQuantity(ArgumentMatchers.any(LoadableQuantityRequest.class)))
@@ -574,14 +592,97 @@ class LoadableStudyServiceTest {
     loadableQuantity.setVesselAverageSpeed(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setVesselLightWeight(LOADABLE_QUANTITY_DUMMY);
 
-    final GenericServiceException ex =
-        assertThrows(
-            GenericServiceException.class,
-            () -> spy.saveLoadableQuantity(loadableQuantity, (long) 1));
+    LoadableQuantityResponse loadableQuantityResponse =
+        spy.saveLoadableQuantity(loadableQuantity, (long) 1, "123");
 
-    assertAll(
-        () -> Assert.assertEquals(LOADABLE_QUANTITY_ERROR, ex.getMessage()),
-        () -> Assert.assertEquals(CommonErrorCodes.E_GEN_INTERNAL_ERR, ex.getCode()),
-        () -> Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus()));
+    Assert.assertEquals(
+        String.valueOf(HttpStatus.BAD_REQUEST.value()),
+        loadableQuantityResponse.getResponseStatus().getStatus());
+  }
+
+  /**
+   * positive test case for get loadable study
+   *
+   * @throws GenericServiceException void
+   */
+  @Test
+  void testGetLoadableQuantityPositiveTestCase() throws GenericServiceException {
+
+    LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
+
+    LoadableQuantityRequest loadableQuantityRequest =
+        LoadableQuantityRequest.newBuilder()
+            .setConstant(LOADABLE_QUANTITY_DUMMY)
+            .setDisplacmentDraftRestriction(LOADABLE_QUANTITY_DUMMY)
+            .setDistanceFromLastPort(LOADABLE_QUANTITY_DUMMY)
+            .setDwt(LOADABLE_QUANTITY_DUMMY)
+            .setEstDOOnBoard(LOADABLE_QUANTITY_DUMMY)
+            .setEstFOOnBoard(LOADABLE_QUANTITY_DUMMY)
+            .setEstFreshWaterOnBoard(LOADABLE_QUANTITY_DUMMY)
+            .setEstSagging(LOADABLE_QUANTITY_DUMMY)
+            .setEstSeaDensity(LOADABLE_QUANTITY_DUMMY)
+            .setEstTotalFOConsumption(LOADABLE_QUANTITY_DUMMY)
+            .setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY)
+            .setLimitingDraft(LOADABLE_QUANTITY_DUMMY)
+            .setOtherIfAny(LOADABLE_QUANTITY_DUMMY)
+            .setSaggingDeduction(LOADABLE_QUANTITY_DUMMY)
+            .setSgCorrection(LOADABLE_QUANTITY_DUMMY)
+            .setTotalQuantity(LOADABLE_QUANTITY_DUMMY)
+            .setTpc(LOADABLE_QUANTITY_DUMMY)
+            .setVesselAverageSpeed(LOADABLE_QUANTITY_DUMMY)
+            .setVesselLightWeight(LOADABLE_QUANTITY_DUMMY)
+            .build();
+
+    Mockito.when(spy.getLoadableQuantity((anyLong()), anyString())).thenCallRealMethod();
+
+    com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.newBuilder()
+            .setLoadableQuantityRequest(loadableQuantityRequest)
+            .setResponseStatus(
+                StatusReply.newBuilder()
+                    .setMessage(SUCCESS)
+                    .setStatus(SUCCESS)
+                    .setCode(String.valueOf(HttpStatus.OK.value()))
+                    .build());
+
+    LoadableQuantityReply loadableQuantityReply =
+        LoadableQuantityReply.newBuilder().setLoadableQuantityId(1).build();
+    Mockito.when(spy.getLoadableQuantityResponse(loadableQuantityReply))
+        .thenReturn(replyBuilder.build());
+
+    LoadableQuantityResponse loadableQuantityResponse = spy.getLoadableQuantity((long) 1, "123");
+
+    Assert.assertEquals(
+        String.valueOf(HttpStatus.OK.value()),
+        loadableQuantityResponse.getResponseStatus().getStatus());
+  }
+
+  @Test
+  public void negativeTestCaseForLoadableQuantity() throws GenericServiceException {
+
+    LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
+
+    Mockito.when(spy.getLoadableQuantity((anyLong()), anyString())).thenCallRealMethod();
+
+    LoadableQuantityRequest loadableQuantityRequest =
+        LoadableQuantityRequest.newBuilder().setVesselLightWeight(LOADABLE_QUANTITY_DUMMY).build();
+
+    com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.newBuilder()
+            .setLoadableQuantityRequest(loadableQuantityRequest)
+            .setResponseStatus(
+                StatusReply.newBuilder()
+                    .setStatus(SUCCESS)
+                    .setMessage(INVALID_LOADABLE_QUANTITY)
+                    .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
+            .build();
+
+    LoadableQuantityReply loadableQuantityReply =
+        LoadableQuantityReply.newBuilder().setLoadableQuantityId(1).build();
+    Mockito.when(spy.getLoadableQuantityResponse(loadableQuantityReply)).thenReturn(replyBuilder);
+
+    LoadableQuantityResponse loadableQuantityResponse = spy.getLoadableQuantity((long) 1, "123");
+
+    Assert.assertEquals("400", loadableQuantityResponse.getResponseStatus().getStatus());
   }
 }

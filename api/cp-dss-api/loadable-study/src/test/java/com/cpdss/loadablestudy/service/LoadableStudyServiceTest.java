@@ -14,6 +14,7 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
@@ -21,8 +22,10 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
+import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
+import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
@@ -89,6 +92,9 @@ public class LoadableStudyServiceTest {
   private static final Long LOAD_LINE_ID = 1L;
   private static final String DRAFT_RESTRICTION = "1000";
   private static final String MAX_TEMP_EXPECTED = "100";
+  private static final String LOADABLE_QUANTITY_DUMMY = "100";
+  private static final String LOADABLE_QUANTITY_DUMMY_VALUE = "100";
+  private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
 
   @BeforeAll
   public static void beforeAll() {
@@ -139,12 +145,8 @@ public class LoadableStudyServiceTest {
     assertEquals(1, results.size());
     VoyageReply response = results.get(0);
     assertEquals(
-        VoyageReply.newBuilder()
-            .setMessage(SUCCESS)
-            .setStatus(SUCCESS)
-            .setVoyageId((long) 1)
-            .build(),
-        response);
+        StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS).build(),
+        response.getResponseStatus());
   }
 
   /**
@@ -183,33 +185,39 @@ public class LoadableStudyServiceTest {
     assertEquals(1, results.size());
     VoyageReply response = results.get(0);
     assertEquals(
-        VoyageReply.newBuilder().setMessage(VOYAGEEXISTS).setStatus(SUCCESS).build(), response);
+        StatusReply.newBuilder()
+            .setStatus(SUCCESS)
+            .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+            .setMessage(VOYAGEEXISTS)
+            .build(),
+        response.getResponseStatus());
   }
 
+  /** @throws GenericServiceException void */
   @Test
   public void testLoadableQuantity() throws GenericServiceException {
 
     LoadableQuantityRequest loadableQuantityRequest =
         LoadableQuantityRequest.newBuilder()
-            .setConstant("100")
-            .setDisplacmentDraftRestriction("100")
-            .setDistanceFromLastPort("100")
-            .setDwt("100")
-            .setEstDOOnBoard("100")
-            .setEstFOOnBoard("100")
-            .setEstFreshWaterOnBoard("100")
-            .setEstSagging("100")
-            .setEstSeaDensity("100")
-            .setEstTotalFOConsumption("100")
-            .setFoConsumptionPerDay("100")
-            .setLimitingDraft("100")
-            .setOtherIfAny("100")
-            .setSaggingDeduction("100")
-            .setSgCorrection("100")
-            .setTotalQuantity("100")
-            .setTpc("100")
-            .setVesselAverageSpeed("100")
-            .setVesselLightWeight("100")
+            .setConstant(LOADABLE_QUANTITY_DUMMY)
+            .setDisplacmentDraftRestriction(LOADABLE_QUANTITY_DUMMY)
+            .setDistanceFromLastPort(LOADABLE_QUANTITY_DUMMY)
+            .setDwt(LOADABLE_QUANTITY_DUMMY)
+            .setEstDOOnBoard(LOADABLE_QUANTITY_DUMMY)
+            .setEstFOOnBoard(LOADABLE_QUANTITY_DUMMY)
+            .setEstFreshWaterOnBoard(LOADABLE_QUANTITY_DUMMY)
+            .setEstSagging(LOADABLE_QUANTITY_DUMMY)
+            .setEstSeaDensity(LOADABLE_QUANTITY_DUMMY)
+            .setEstTotalFOConsumption(LOADABLE_QUANTITY_DUMMY)
+            .setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY)
+            .setLimitingDraft(LOADABLE_QUANTITY_DUMMY)
+            .setOtherIfAny(LOADABLE_QUANTITY_DUMMY)
+            .setSaggingDeduction(LOADABLE_QUANTITY_DUMMY)
+            .setSgCorrection(LOADABLE_QUANTITY_DUMMY)
+            .setTotalQuantity(LOADABLE_QUANTITY_DUMMY)
+            .setTpc(LOADABLE_QUANTITY_DUMMY)
+            .setVesselAverageSpeed(LOADABLE_QUANTITY_DUMMY)
+            .setVesselLightWeight(LOADABLE_QUANTITY_DUMMY)
             .setLoadableStudyId(1)
             .build();
 
@@ -231,12 +239,8 @@ public class LoadableStudyServiceTest {
     assertEquals(1, results.size());
     LoadableQuantityReply response = results.get(0);
     assertEquals(
-        LoadableQuantityReply.newBuilder()
-            .setMessage("SUCCESS")
-            .setStatus("SUCCESS")
-            .setLoadableQuantityId((long) 1)
-            .build(),
-        response);
+        StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS).build(),
+        response.getResponseStatus());
   }
 
   /**
@@ -249,25 +253,25 @@ public class LoadableStudyServiceTest {
 
     LoadableQuantityRequest loadableQuantityRequest =
         LoadableQuantityRequest.newBuilder()
-            .setConstant("100")
-            .setDisplacmentDraftRestriction("100")
-            .setDistanceFromLastPort("100")
-            .setDwt("100")
-            .setEstDOOnBoard("100")
-            .setEstFOOnBoard("100")
-            .setEstFreshWaterOnBoard("100")
-            .setEstSagging("100")
-            .setEstSeaDensity("100")
-            .setEstTotalFOConsumption("100")
-            .setFoConsumptionPerDay("100")
-            .setLimitingDraft("100")
-            .setOtherIfAny("100")
-            .setSaggingDeduction("100")
-            .setSgCorrection("100")
-            .setTotalQuantity("100")
-            .setTpc("100")
-            .setVesselAverageSpeed("100")
-            .setVesselLightWeight("100")
+            .setConstant(LOADABLE_QUANTITY_DUMMY)
+            .setDisplacmentDraftRestriction(LOADABLE_QUANTITY_DUMMY)
+            .setDistanceFromLastPort(LOADABLE_QUANTITY_DUMMY)
+            .setDwt(LOADABLE_QUANTITY_DUMMY)
+            .setEstDOOnBoard(LOADABLE_QUANTITY_DUMMY)
+            .setEstFOOnBoard(LOADABLE_QUANTITY_DUMMY)
+            .setEstFreshWaterOnBoard(LOADABLE_QUANTITY_DUMMY)
+            .setEstSagging(LOADABLE_QUANTITY_DUMMY)
+            .setEstSeaDensity(LOADABLE_QUANTITY_DUMMY)
+            .setEstTotalFOConsumption(LOADABLE_QUANTITY_DUMMY)
+            .setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY)
+            .setLimitingDraft(LOADABLE_QUANTITY_DUMMY)
+            .setOtherIfAny(LOADABLE_QUANTITY_DUMMY)
+            .setSaggingDeduction(LOADABLE_QUANTITY_DUMMY)
+            .setSgCorrection(LOADABLE_QUANTITY_DUMMY)
+            .setTotalQuantity(LOADABLE_QUANTITY_DUMMY)
+            .setTpc(LOADABLE_QUANTITY_DUMMY)
+            .setVesselAverageSpeed(LOADABLE_QUANTITY_DUMMY)
+            .setVesselLightWeight(LOADABLE_QUANTITY_DUMMY)
             .setLoadableStudyId(1)
             .build();
 
@@ -283,11 +287,12 @@ public class LoadableStudyServiceTest {
     assertEquals(1, results.size());
     LoadableQuantityReply response = results.get(0);
     assertEquals(
-        LoadableQuantityReply.newBuilder()
-            .setMessage(INVALID_LOADABLE_STUDY)
-            .setStatus("SUCCESS")
+        StatusReply.newBuilder()
+            .setStatus(SUCCESS)
+            .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+            .setMessage(INVALID_LOADABLE_QUANTITY)
             .build(),
-        response);
+        response.getResponseStatus());
   }
 
   @Test
@@ -629,5 +634,87 @@ public class LoadableStudyServiceTest {
                     .build())
             .build();
     return request;
+  }
+
+  /**
+   * positive test case for get loadable study
+   *
+   * @throws GenericServiceException void
+   */
+  @Test
+  public void postiveTestCaseForGetLoadableQuantity() throws GenericServiceException {
+    LoadableQuantity loadableQuantity = new LoadableQuantity();
+    loadableQuantity.setConstant(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setDisplacementAtDraftRestriction(
+        new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setDistanceFromLastPort(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setDeadWeight(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setEstimatedDOOnBoard(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setEstimatedFOOnBoard(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setEstimatedFWOnBoard(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setEstimatedSagging(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setEstimatedSeaDensity(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setTotalFoConsumption(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    ;
+    loadableQuantity.setFoConsumptionPerDay(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setDraftRestriction(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setOtherIfAny(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setSaggingDeduction(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setSgCorrection(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setTotalQuantity(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setTpcatDraft(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setVesselAverageSpeed(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setLightWeight(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setLastModifiedDateTime(LocalDateTime.now());
+    Mockito.when(loadableQuantityRepository.findById(ArgumentMatchers.anyLong()))
+        .thenReturn(Optional.of(loadableQuantity));
+    StreamRecorder<LoadableQuantityResponse> responseObserver = StreamRecorder.create();
+
+    LoadableQuantityReply request =
+        LoadableQuantityReply.newBuilder()
+            .setLoadableQuantityId(ArgumentMatchers.anyLong())
+            .build();
+
+    loadableStudyService.getLoadableQuantity(request, responseObserver);
+    assertNull(responseObserver.getError());
+    List<LoadableQuantityResponse> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    LoadableQuantityResponse response = results.get(0);
+
+    assertEquals(
+        StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS).build(),
+        response.getResponseStatus());
+  }
+
+  /**
+   * negative test case for get loadable quantity api
+   *
+   * @throws GenericServiceException void
+   */
+  @Test
+  public void negativeTestCaseForGetLoadableQuantity() throws GenericServiceException {
+    StreamRecorder<LoadableQuantityResponse> responseObserver = StreamRecorder.create();
+
+    Mockito.when(loadableQuantityRepository.findById(ArgumentMatchers.anyLong()))
+        .thenReturn((Optional.<LoadableQuantity>empty()));
+    LoadableQuantityReply request =
+        LoadableQuantityReply.newBuilder()
+            .setLoadableQuantityId(ArgumentMatchers.anyLong())
+            .build();
+
+    loadableStudyService.getLoadableQuantity(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<LoadableQuantityResponse> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    LoadableQuantityResponse response = results.get(0);
+
+    assertEquals(
+        StatusReply.newBuilder()
+            .setStatus(SUCCESS)
+            .setMessage(INVALID_LOADABLE_QUANTITY)
+            .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+            .build(),
+        response.getResponseStatus());
   }
 }

@@ -74,6 +74,8 @@ public class LoadableStudyService {
   private PortInfoServiceBlockingStub portInfoServiceBlockingStub;
 
   private static final String SUCCESS = "SUCCESS";
+  private static final String VOYAGEEXISTS = "VOYAGEEXISTS";
+  private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
 
   private static final int LOADABLE_STUDY_ATTACHEMENT_MAX_SIZE = 1 * 1024 * 1024;
   private static final List<String> ATTACHMENT_ALLOWED_EXTENSIONS =
@@ -89,7 +91,8 @@ public class LoadableStudyService {
    * @return response to controller
    * @throws GenericServiceException CommonSuccessResponse
    */
-  public VoyageResponse saveVoyage(Voyage voyage, long companyId, long vesselId)
+  public VoyageResponse saveVoyage(
+      Voyage voyage, long companyId, long vesselId, String correlationId)
       throws GenericServiceException {
     VoyageResponse voyageResponse = new VoyageResponse();
     VoyageRequest voyageRequest =
@@ -102,17 +105,18 @@ public class LoadableStudyService {
             .build();
 
     VoyageReply voyageReply = this.saveVoyage(voyageRequest);
-    if (SUCCESS.equalsIgnoreCase(voyageReply.getStatus())) {
+    if (!SUCCESS.equalsIgnoreCase(voyageReply.getResponseStatus().getMessage())) {
+      if (VOYAGEEXISTS.equalsIgnoreCase(voyageReply.getResponseStatus().getMessage())) {
+        voyageResponse.setMessage(VOYAGEEXISTS);
+      }
       voyageResponse.setResponseStatus(
-          new CommonSuccessResponse(voyageReply.getMessage(), "correlationId"));
-      voyageResponse.setVoyageId(voyageReply.getVoyageId());
-      return voyageResponse;
+          new CommonSuccessResponse(voyageReply.getResponseStatus().getCode(), correlationId));
     } else {
-      throw new GenericServiceException(
-          "Error in calling voyage service",
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
+      voyageResponse.setResponseStatus(
+          new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+      voyageResponse.setVoyageId(voyageReply.getVoyageId());
     }
+    return voyageResponse;
   }
 
   /**
@@ -133,7 +137,8 @@ public class LoadableStudyService {
    * @throws GenericServiceException CommonSuccessResponse
    */
   public LoadableQuantityResponse saveLoadableQuantity(
-      LoadableQuantity loadableQuantity, long loadableStudiesId) throws GenericServiceException {
+      LoadableQuantity loadableQuantity, long loadableStudiesId, String correlationId)
+      throws GenericServiceException {
     LoadableQuantityResponse loadableQuantityResponse = new LoadableQuantityResponse();
     LoadableQuantityRequest loadableQuantityRequest =
         LoadableQuantityRequest.newBuilder()
@@ -161,17 +166,22 @@ public class LoadableStudyService {
 
     LoadableQuantityReply loadableQuantityReply =
         this.saveLoadableQuantity(loadableQuantityRequest);
-    if (SUCCESS.equalsIgnoreCase(loadableQuantityReply.getStatus())) {
+    if (!SUCCESS.equalsIgnoreCase(loadableQuantityReply.getResponseStatus().getMessage())) {
+      if (INVALID_LOADABLE_QUANTITY.equalsIgnoreCase(
+          loadableQuantityReply.getResponseStatus().getMessage())) {
+        loadableQuantityResponse.setMessage(INVALID_LOADABLE_QUANTITY);
+      }
       loadableQuantityResponse.setResponseStatus(
-          new CommonSuccessResponse(loadableQuantityReply.getMessage(), "correlationId"));
-      loadableQuantityResponse.setLoadableQuantityId(loadableQuantityReply.getLoadableQuantityId());
-      return loadableQuantityResponse;
+          new CommonSuccessResponse(
+              loadableQuantityReply.getResponseStatus().getCode(), correlationId));
+
     } else {
-      throw new GenericServiceException(
-          "Error in calling loadable quantity service",
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+      loadableQuantityResponse.setResponseStatus(
+          new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+      loadableQuantityResponse.setLoadableQuantityId(loadableQuantityReply.getLoadableQuantityId());
     }
+    return loadableQuantityResponse;
   }
 
   public LoadableQuantityReply saveLoadableQuantity(
@@ -572,5 +582,86 @@ public class LoadableStudyService {
    */
   public PortRotationReply getLoadableStudyPortRotationList(PortRotationRequest request) {
     return this.loadableStudyServiceBlockingStub.getLoadableStudyPortRotation(request);
+  }
+
+  /**
+   * @param loadableQuantityId
+   * @param correlationId
+   * @return
+   * @throws GenericServiceException LoadableQuantityResponse
+   */
+  public LoadableQuantityResponse getLoadableQuantity(long loadableQuantityId, String correlationId)
+      throws GenericServiceException {
+    LoadableQuantityResponse loadableQuantityResponseDto = new LoadableQuantityResponse();
+    LoadableQuantity loadableQuantity = new LoadableQuantity();
+    LoadableQuantityReply loadableQuantityRequest =
+        LoadableQuantityReply.newBuilder().setLoadableQuantityId(loadableQuantityId).build();
+    com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse loadableQuantityResponse =
+        this.getLoadableQuantityResponse(loadableQuantityRequest);
+    if (!SUCCESS.equalsIgnoreCase(loadableQuantityResponse.getResponseStatus().getMessage())) {
+      if (INVALID_LOADABLE_QUANTITY.equalsIgnoreCase(
+          loadableQuantityResponse.getResponseStatus().getMessage())) {
+        loadableQuantityResponseDto.setMessage(INVALID_LOADABLE_QUANTITY);
+      }
+      loadableQuantityResponseDto.setResponseStatus(
+          new CommonSuccessResponse(
+              loadableQuantityResponse.getResponseStatus().getCode(), correlationId));
+      return loadableQuantityResponseDto;
+    }
+
+    loadableQuantity.setConstant(
+        loadableQuantityResponse.getLoadableQuantityRequest().getConstant());
+    loadableQuantity.setDwt(loadableQuantityResponse.getLoadableQuantityRequest().getDwt());
+    loadableQuantity.setDisplacmentDraftRestriction(
+        loadableQuantityResponse.getLoadableQuantityRequest().getDisplacmentDraftRestriction());
+    loadableQuantity.setDistanceFromLastPort(
+        loadableQuantityResponse.getLoadableQuantityRequest().getDistanceFromLastPort());
+    loadableQuantity.setEstDOOnBoard(
+        loadableQuantityResponse.getLoadableQuantityRequest().getEstDOOnBoard());
+    loadableQuantity.setEstFOOnBoard(
+        loadableQuantityResponse.getLoadableQuantityRequest().getEstFOOnBoard());
+    loadableQuantity.setEstFreshWaterOnBoard(
+        loadableQuantityResponse.getLoadableQuantityRequest().getEstFreshWaterOnBoard());
+    loadableQuantity.setEstSagging(
+        loadableQuantityResponse.getLoadableQuantityRequest().getEstSagging());
+    loadableQuantity.setLimitingDraft(
+        loadableQuantityResponse.getLoadableQuantityRequest().getLimitingDraft());
+    loadableQuantity.setEstSeaDensity(
+        loadableQuantityResponse.getLoadableQuantityRequest().getEstSeaDensity());
+    loadableQuantity.setFoConsumptionPerDay(
+        loadableQuantityResponse.getLoadableQuantityRequest().getFoConsumptionPerDay());
+    loadableQuantity.setVesselLightWeight(
+        loadableQuantityResponse.getLoadableQuantityRequest().getVesselLightWeight());
+    loadableQuantity.setOtherIfAny(
+        loadableQuantityResponse.getLoadableQuantityRequest().getOtherIfAny());
+    loadableQuantity.setSaggingDeduction(
+        loadableQuantityResponse.getLoadableQuantityRequest().getSaggingDeduction());
+    loadableQuantity.setSgCorrection(
+        loadableQuantityResponse.getLoadableQuantityRequest().getSgCorrection());
+
+    loadableQuantity.setEstTotalFOConsumption(
+        loadableQuantityResponse.getLoadableQuantityRequest().getEstTotalFOConsumption());
+    loadableQuantity.setTotalQuantity(
+        loadableQuantityResponse.getLoadableQuantityRequest().getTotalQuantity());
+    loadableQuantity.setTpc(loadableQuantityResponse.getLoadableQuantityRequest().getTpc());
+    loadableQuantity.setVesselAverageSpeed(
+        loadableQuantityResponse.getLoadableQuantityRequest().getVesselAverageSpeed());
+    loadableQuantity.setUpdateDateAndTime(
+        loadableQuantityResponse.getLoadableQuantityRequest().getUpdateDateAndTime());
+    loadableQuantityResponseDto.setLoadableQuantity(loadableQuantity);
+
+    loadableQuantityResponseDto.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+
+    return loadableQuantityResponseDto;
+  }
+
+  /**
+   * @param loadableQuantityId
+   * @return LoadableQuantityReply
+   */
+  public com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse
+      getLoadableQuantityResponse(LoadableQuantityReply loadableQuantityRequest) {
+    return loadableStudyServiceBlockingStub.getLoadableQuantity(loadableQuantityRequest);
   }
 }

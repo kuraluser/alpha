@@ -5,6 +5,7 @@ appConfig {
   logging = 'y'
   devTools = 'y'
   javaMainClass = "com.cpdss.loadablestudy.Application"
+  rest = 'y'
 }
 
 dependencies {

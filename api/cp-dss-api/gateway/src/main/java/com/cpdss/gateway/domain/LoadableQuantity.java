@@ -66,4 +66,6 @@ public class LoadableQuantity {
   private String estTotalFOConsumption;
 
   private Integer loadableStudyId;
+  
+  private String updateDateAndTime;
 }

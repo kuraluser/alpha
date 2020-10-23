@@ -8,5 +8,7 @@ import lombok.Data;
 @Data
 public class LoadableQuantityResponse {
   private CommonSuccessResponse responseStatus;
-  private Long loadableQuantityId;
+  private Long loadableQuantityId; 
+  private String message;
+  private LoadableQuantity loadableQuantity;
 }
