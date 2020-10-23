@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -24,13 +25,13 @@ import lombok.Setter;
 public class CargoNomination extends EntityDoc {
 
   @Column(name = "loadablestudyxid")
-  private Long loadableStudyId;
+  private Long loadableStudyXId;
 
   @Column(name = "priority")
   private Long priority;
 
   @Column(name = "cargoxid")
-  private Long cargoId;
+  private Long cargoXId;
 
   @Column(name = "abbreviation")
   private String abbreviation;
@@ -51,8 +52,12 @@ public class CargoNomination extends EntityDoc {
   private BigDecimal temperature;
 
   @Column(name = "valvesegregationxid")
-  private Long segregationId;
+  private Long segregationXId;
 
-  @OneToMany(mappedBy = "cargoNomination", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(
+      mappedBy = "cargoNomination",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER)
   private Set<CargoNominationPortDetails> cargoNominationPortDetails;
 }

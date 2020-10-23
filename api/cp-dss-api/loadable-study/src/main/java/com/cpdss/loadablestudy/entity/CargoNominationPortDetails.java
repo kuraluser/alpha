@@ -5,7 +5,6 @@ import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -23,7 +22,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CargoNominationPortDetails extends EntityDoc {
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "cargonominationxid")
   private CargoNomination cargoNomination;
 

@@ -371,6 +371,71 @@ public final class LoadableStudyServiceGrpc {
     return getGetLoadableStudyPortRotationMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+      com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getGetCargoNominationByIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetCargoNominationById",
+      requestType = com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.CargoNominationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+      com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getGetCargoNominationByIdMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest, com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getGetCargoNominationByIdMethod;
+    if ((getGetCargoNominationByIdMethod = LoadableStudyServiceGrpc.getGetCargoNominationByIdMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetCargoNominationByIdMethod = LoadableStudyServiceGrpc.getGetCargoNominationByIdMethod) == null) {
+          LoadableStudyServiceGrpc.getGetCargoNominationByIdMethod = getGetCargoNominationByIdMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest, com.cpdss.common.generated.LoadableStudy.CargoNominationReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetCargoNominationById"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.CargoNominationReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("GetCargoNominationById"))
+              .build();
+        }
+      }
+    }
+    return getGetCargoNominationByIdMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest,
+      com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> getGetValveSegregationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetValveSegregation",
+      requestType = com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.ValveSegregationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest,
+      com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> getGetValveSegregationMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest, com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> getGetValveSegregationMethod;
+    if ((getGetValveSegregationMethod = LoadableStudyServiceGrpc.getGetValveSegregationMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetValveSegregationMethod = LoadableStudyServiceGrpc.getGetValveSegregationMethod) == null) {
+          LoadableStudyServiceGrpc.getGetValveSegregationMethod = getGetValveSegregationMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest, com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetValveSegregation"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.ValveSegregationReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("GetValveSegregation"))
+              .build();
+        }
+      }
+    }
+    return getGetValveSegregationMethod;
+  }
+
+  /**
+   * Creates a new async stub that supports all call types for the service
+   */
   private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply,
           com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>
@@ -522,6 +587,22 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetLoadableStudyPortRotationMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void getCargoNominationById(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
+      asyncUnimplementedUnaryCall(getGetCargoNominationByIdMethod(), responseObserver);
+    }
+
+    /**
+     */
+    public void getValveSegregation(com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> responseObserver) {
+      asyncUnimplementedUnaryCall(getGetValveSegregationMethod(), responseObserver);
+    }
+
+    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
+
     /** */
     public void getLoadableQuantity(
         com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply request,
@@ -533,6 +614,7 @@ public final class LoadableStudyServiceGrpc {
 
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
+
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
               getSaveVoyageMethod(),
@@ -577,6 +659,27 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.CargoNominationReply>(
                       this, METHODID_SAVE_CARGO_NOMINATION)))
           .addMethod(
+
+            getGetLoadableStudyPortRotationMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+                com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
+                  this, METHODID_GET_LOADABLE_STUDY_PORT_ROTATION)))
+          .addMethod(
+            getGetCargoNominationByIdMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+                com.cpdss.common.generated.LoadableStudy.CargoNominationReply>(
+                  this, METHODID_GET_CARGO_NOMINATION_BY_ID)))
+          .addMethod(
+            getGetValveSegregationMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest,
+                com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>(
+                  this, METHODID_GET_VALVE_SEGREGATION)))
               getGetLoadableStudyPortRotationMethod(),
               asyncUnaryCall(
                   new MethodHandlers<
@@ -693,6 +796,22 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /**
+     */
+    public void getCargoNominationById(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetCargoNominationByIdMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void getValveSegregation(com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetValveSegregationMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /** */
@@ -758,6 +877,18 @@ public final class LoadableStudyServiceGrpc {
           getChannel(), getGetLoadableStudyPortRotationMethod(), getCallOptions(), request);
     }
 
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.CargoNominationReply getCargoNominationById(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetCargoNominationByIdMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.ValveSegregationReply getValveSegregation(com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetValveSegregationMethod(), getCallOptions(), request);
     /** */
     public com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse getLoadableQuantity(
         com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply request) {
@@ -841,6 +972,20 @@ public final class LoadableStudyServiceGrpc {
           getChannel().newCall(getGetLoadableStudyPortRotationMethod(), getCallOptions()), request);
     }
 
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getCargoNominationById(
+        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetCargoNominationByIdMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> getValveSegregation(
+        com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetValveSegregationMethod(), getCallOptions()), request);
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>
@@ -852,6 +997,19 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
+  private static final int METHODID_SAVE_LOADABLE_QUANTITY = 1;
+  private static final int METHODID_FIND_LOADABLE_STUDIES_BY_VESSEL_AND_VOYAGE = 2;
+  private static final int METHODID_SAVE_LOADABLE_STUDY = 3;
+  private static final int METHODID_SAVE_CARGO_NOMINATION = 4;
+  private static final int METHODID_GET_LOADABLE_STUDY_PORT_ROTATION = 5;
+  private static final int METHODID_GET_CARGO_NOMINATION_BY_ID = 6;
+  private static final int METHODID_GET_VALVE_SEGREGATION = 7;
+
+  private static final class MethodHandlers<Req, Resp> implements
+      io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
   private static final int METHODID_GET_VOYAGES_BY_VESSEL = 1;
   private static final int METHODID_SAVE_LOADABLE_QUANTITY = 2;
   private static final int METHODID_FIND_LOADABLE_STUDIES_BY_VESSEL_AND_VOYAGE = 3;
@@ -932,6 +1090,14 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>)
                   responseObserver);
           break;
+        case METHODID_GET_CARGO_NOMINATION_BY_ID:
+          serviceImpl.getCargoNominationById((com.cpdss.common.generated.LoadableStudy.CargoNominationRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply>) responseObserver);
+          break;
+        case METHODID_GET_VALVE_SEGREGATION:
+          serviceImpl.getValveSegregation((com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>) responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -992,6 +1158,17 @@ public final class LoadableStudyServiceGrpc {
       synchronized (LoadableStudyServiceGrpc.class) {
         result = serviceDescriptor;
         if (result == null) {
+          serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
+              .setSchemaDescriptor(new LoadableStudyServiceFileDescriptorSupplier())
+              .addMethod(getSaveVoyageMethod())
+              .addMethod(getSaveLoadableQuantityMethod())
+              .addMethod(getFindLoadableStudiesByVesselAndVoyageMethod())
+              .addMethod(getSaveLoadableStudyMethod())
+              .addMethod(getSaveCargoNominationMethod())
+              .addMethod(getGetLoadableStudyPortRotationMethod())
+              .addMethod(getGetCargoNominationByIdMethod())
+              .addMethod(getGetValveSegregationMethod())
+              .build();
           serviceDescriptor =
               result =
                   io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)

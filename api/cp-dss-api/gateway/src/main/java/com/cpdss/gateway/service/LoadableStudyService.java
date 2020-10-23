@@ -22,6 +22,8 @@ import com.cpdss.common.generated.LoadableStudy.Operation;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
+import com.cpdss.common.generated.LoadableStudy.ValveSegregationReply;
+import com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
 import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
@@ -41,8 +43,10 @@ import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.Port;
+import com.cpdss.gateway.domain.LoadingPort;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.ValveSegregation;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.google.protobuf.ByteString;
@@ -354,18 +358,32 @@ public class LoadableStudyService {
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    // Retrieve port information from port master
-    PortRequest portRequest = PortRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
-    PortReply portReply = portInfoServiceBlockingStub.getPortInfo(portRequest);
-    if (portReply != null
-        && portReply.getResponseStatus() != null
-        && SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
-      buildCargoNominationResponseWithPort(cargoNominationResponse, portReply);
+    // Retrieve cargo Nominations from cargo nomination table
+    CargoNominationRequest cargoNominationRequest =
+        CargoNominationRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
+    CargoNominationReply cargoNominationReply =
+        loadableStudyServiceBlockingStub.getCargoNominationById(cargoNominationRequest);
+    if (SUCCESS.equalsIgnoreCase(cargoNominationReply.getResponseStatus().getStatus())) {
+      buildCargoNominationResponse(cargoNominationResponse, cargoNominationReply);
     } else {
       throw new GenericServiceException(
-          "Error in calling port service",
+          "Error calling getCargoNominationById service",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    // Retrieve segregation List
+    ValveSegregationRequest valveSegregationRequest =
+        ValveSegregationRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
+    ValveSegregationReply valveSegregationReply =
+        loadableStudyServiceBlockingStub.getValveSegregation(valveSegregationRequest);
+    if (SUCCESS.equalsIgnoreCase(valveSegregationReply.getResponseStatus().getStatus())) {
+      buildCargoNominationResponseWithValveSegregation(
+          cargoNominationResponse, valveSegregationReply);
+    } else {
+      throw new GenericServiceException(
+          "Error calling getValveSegregation service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return cargoNominationResponse;
   }
@@ -374,8 +392,95 @@ public class LoadableStudyService {
       CargoNominationResponse cargoNominationResponse) {
     // set response status irrespective of whether cargo details are available
     CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
-    commonSuccessResponse.setStatus(SUCCESS);
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
     cargoNominationResponse.setResponseStatus(commonSuccessResponse);
+    return cargoNominationResponse;
+  }
+
+  /**
+   * Builds the cargoNomination saved list from database
+   *
+   * @param cargoNominationResponse
+   * @param reply
+   * @return
+   */
+  private CargoNominationResponse buildCargoNominationResponse(
+      CargoNominationResponse cargoNominationResponse, CargoNominationReply reply) {
+    if (reply != null && !reply.getCargoNominationsList().isEmpty()) {
+      List<CargoNomination> cargoNominationList = new ArrayList<>();
+      reply
+          .getCargoNominationsList()
+          .forEach(
+              cargoNominationDetail -> {
+                CargoNomination cargoNomination = new CargoNomination();
+                cargoNomination.setId(cargoNominationDetail.getId());
+                cargoNomination.setLoadableStudyId(cargoNominationDetail.getLoadableStudyId());
+                cargoNomination.setPriority(cargoNominationDetail.getPriority());
+                cargoNomination.setColor(cargoNominationDetail.getColor());
+                cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
+                cargoNomination.setAbbreviation(cargoNominationDetail.getAbbreviation());
+                if (!CollectionUtils.isEmpty(cargoNominationDetail.getLoadingPortDetailsList())) {
+                  List<LoadingPort> loadingPortList = new ArrayList<>();
+                  cargoNominationDetail
+                      .getLoadingPortDetailsList()
+                      .forEach(
+                          port -> {
+                            LoadingPort loadingPort = new LoadingPort();
+                            loadingPort.setId(port.getPortId());
+                            loadingPort.setQuantity(
+                                port.getQuantity() != null
+                                    ? new BigDecimal(port.getQuantity())
+                                    : new BigDecimal("0"));
+                            loadingPortList.add(loadingPort);
+                          });
+                  cargoNomination.setLoadingPorts(loadingPortList);
+                }
+                // TODO: add quantity column whena added in database
+                //                cargoNomination.setQuantity(cargoNominationDetail.getQuantity);
+                cargoNomination.setMaxTolerance(
+                    !StringUtils.isEmpty(cargoNominationDetail.getMaxTolerance())
+                        ? new BigDecimal(cargoNominationDetail.getMaxTolerance())
+                        : new BigDecimal("0"));
+                cargoNomination.setMinTolerance(
+                    !StringUtils.isEmpty(cargoNominationDetail.getMinTolerance())
+                        ? new BigDecimal(cargoNominationDetail.getMinTolerance())
+                        : new BigDecimal("0"));
+                cargoNomination.setApi(
+                    !StringUtils.isEmpty(cargoNominationDetail.getApiEst())
+                        ? new BigDecimal(cargoNominationDetail.getApiEst())
+                        : new BigDecimal("0"));
+                cargoNomination.setTemperature(
+                    !StringUtils.isEmpty(cargoNominationDetail.getTempEst())
+                        ? new BigDecimal(cargoNominationDetail.getTempEst())
+                        : new BigDecimal("0"));
+                cargoNomination.setSegregationId(cargoNominationDetail.getSegregationId());
+                cargoNominationList.add(cargoNomination);
+              });
+      cargoNominationResponse.setCargoNominations(cargoNominationList);
+    }
+    return cargoNominationResponse;
+  }
+
+  /**
+   * @param cargoNominationResponse
+   * @param cargoReply
+   * @return
+   */
+  private CargoNominationResponse buildCargoNominationResponseWithValveSegregation(
+      CargoNominationResponse cargoNominationResponse, ValveSegregationReply reply) {
+    if (reply != null && !reply.getValveSegregationList().isEmpty()) {
+      List<ValveSegregation> segregationList = new ArrayList<>();
+      reply
+          .getValveSegregationList()
+          .forEach(
+              segregationDetail -> {
+                ValveSegregation valveSegregation = new ValveSegregation();
+                valveSegregation.setId(segregationDetail.getId());
+                valveSegregation.setName(segregationDetail.getName());
+                segregationList.add(valveSegregation);
+              });
+      cargoNominationResponse.setSegregations(segregationList);
+    }
     return cargoNominationResponse;
   }
 
@@ -400,29 +505,6 @@ public class LoadableStudyService {
                 cargoList.add(cargo);
               });
       cargoNominationResponse.setCargos(cargoList);
-    }
-    return cargoNominationResponse;
-  }
-
-  /**
-   * @param cargoNominationResponse
-   * @param cargoReply
-   * @return
-   */
-  private CargoNominationResponse buildCargoNominationResponseWithPort(
-      CargoNominationResponse cargoNominationResponse, PortReply portReply) {
-    if (portReply != null && !portReply.getPortsList().isEmpty()) {
-      List<Port> portList = new ArrayList<>();
-      portReply
-          .getPortsList()
-          .forEach(
-              portDetail -> {
-                Port port = new Port();
-                port.setId(portDetail.getId());
-                port.setName(portDetail.getName());
-                portList.add(port);
-              });
-      cargoNominationResponse.setPorts(portList);
     }
     return cargoNominationResponse;
   }

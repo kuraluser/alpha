@@ -17,7 +17,7 @@ public class CargoNomination {
   private Long loadableStudyId;
 
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-  private Integer priority;
+  private Long priority;
 
   private String color;
 

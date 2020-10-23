@@ -28,7 +28,14 @@ service LoadableStudyService {
 	rpc GetLoadableStudyPortRotation (PortRotationRequest) returns (PortRotationReply){
 	}
 	
-	rpc getLoadableQuantity (LoadableQuantityReply) returns (LoadableQuantityResponse) {
+
+	rpc GetCargoNominationById (CargoNominationRequest) returns (CargoNominationReply){
+	}
+	
+	rpc GetValveSegregation (ValveSegregationRequest) returns (ValveSegregationReply){
+	}
+
+  rpc getLoadableQuantity (LoadableQuantityReply) returns (LoadableQuantityResponse) {
 	}
 	
 	}
@@ -163,6 +170,7 @@ message CargoNominationRequest {
 message CargoNominationReply {
 	ResponseStatus responseStatus = 1;
 	int64 cargoNominationId = 2;
+	repeated CargoNominationDetail cargoNominations = 3;
 }
 
 
@@ -203,5 +211,18 @@ message PortRotationReply{
 	StatusReply responseStatus = 2;
 }
 
+message ValveSegregation{
+	int64 id = 1;
+	string name = 2;
+}
+
+message ValveSegregationRequest{
+	int64 loadableStudyId = 1;
+}
+
+message ValveSegregationReply{
+	ResponseStatus responseStatus = 1;
+	repeated ValveSegregation valveSegregation = 2;
+}
 
 

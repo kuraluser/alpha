@@ -17361,6 +17361,30 @@ public final class LoadableStudy {
      * @return The cargoNominationId.
      */
     long getCargoNominationId();
+
+    /**
+     * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+     */
+    java.util.List<com.cpdss.common.generated.LoadableStudy.CargoNominationDetail> 
+        getCargoNominationsList();
+    /**
+     * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+     */
+    com.cpdss.common.generated.LoadableStudy.CargoNominationDetail getCargoNominations(int index);
+    /**
+     * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+     */
+    int getCargoNominationsCount();
+    /**
+     * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+     */
+    java.util.List<? extends com.cpdss.common.generated.LoadableStudy.CargoNominationDetailOrBuilder> 
+        getCargoNominationsOrBuilderList();
+    /**
+     * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+     */
+    com.cpdss.common.generated.LoadableStudy.CargoNominationDetailOrBuilder getCargoNominationsOrBuilder(
+        int index);
   }
   /** Protobuf type {@code CargoNominationReply} */
   public static final class CargoNominationReply extends com.google.protobuf.GeneratedMessageV3
@@ -17372,8 +17396,9 @@ public final class LoadableStudy {
     private CargoNominationReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-
-    private CargoNominationReply() {}
+    private CargoNominationReply() {
+      cargoNominations_ = java.util.Collections.emptyList();
+    }
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
@@ -17394,6 +17419,7 @@ public final class LoadableStudy {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -17426,10 +17452,19 @@ public final class LoadableStudy {
                 cargoNominationId_ = input.readInt64();
                 break;
               }
-            default:
-              {
-                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
-                  done = true;
+            case 26: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                cargoNominations_ = new java.util.ArrayList<com.cpdss.common.generated.LoadableStudy.CargoNominationDetail>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              cargoNominations_.add(
+                  input.readMessage(com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.parser(), extensionRegistry));
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
                 }
                 break;
               }
@@ -17440,6 +17475,9 @@ public final class LoadableStudy {
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          cargoNominations_ = java.util.Collections.unmodifiableList(cargoNominations_);
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -17496,6 +17534,41 @@ public final class LoadableStudy {
       return cargoNominationId_;
     }
 
+    public static final int CARGONOMINATIONS_FIELD_NUMBER = 3;
+    private java.util.List<com.cpdss.common.generated.LoadableStudy.CargoNominationDetail> cargoNominations_;
+    /**
+     * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+     */
+    public java.util.List<com.cpdss.common.generated.LoadableStudy.CargoNominationDetail> getCargoNominationsList() {
+      return cargoNominations_;
+    }
+    /**
+     * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+     */
+    public java.util.List<? extends com.cpdss.common.generated.LoadableStudy.CargoNominationDetailOrBuilder> 
+        getCargoNominationsOrBuilderList() {
+      return cargoNominations_;
+    }
+    /**
+     * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+     */
+    public int getCargoNominationsCount() {
+      return cargoNominations_.size();
+    }
+    /**
+     * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+     */
+    public com.cpdss.common.generated.LoadableStudy.CargoNominationDetail getCargoNominations(int index) {
+      return cargoNominations_.get(index);
+    }
+    /**
+     * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+     */
+    public com.cpdss.common.generated.LoadableStudy.CargoNominationDetailOrBuilder getCargoNominationsOrBuilder(
+        int index) {
+      return cargoNominations_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -17516,6 +17589,9 @@ public final class LoadableStudy {
       if (cargoNominationId_ != 0L) {
         output.writeInt64(2, cargoNominationId_);
       }
+      for (int i = 0; i < cargoNominations_.size(); i++) {
+        output.writeMessage(3, cargoNominations_.get(i));
+      }
       unknownFields.writeTo(output);
     }
 
@@ -17530,6 +17606,10 @@ public final class LoadableStudy {
       }
       if (cargoNominationId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, cargoNominationId_);
+      }
+      for (int i = 0; i < cargoNominations_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, cargoNominations_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -17551,7 +17631,10 @@ public final class LoadableStudy {
       if (hasResponseStatus()) {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
-      if (getCargoNominationId() != other.getCargoNominationId()) return false;
+      if (getCargoNominationId()
+          != other.getCargoNominationId()) return false;
+      if (!getCargoNominationsList()
+          .equals(other.getCargoNominationsList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -17568,7 +17651,12 @@ public final class LoadableStudy {
         hash = (53 * hash) + getResponseStatus().hashCode();
       }
       hash = (37 * hash) + CARGONOMINATIONID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoNominationId());
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getCargoNominationId());
+      if (getCargoNominationsCount() > 0) {
+        hash = (37 * hash) + CARGONOMINATIONS_FIELD_NUMBER;
+        hash = (53 * hash) + getCargoNominationsList().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -17703,7 +17791,10 @@ public final class LoadableStudy {
       }
 
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+          getCargoNominationsFieldBuilder();
+        }
       }
 
       @java.lang.Override
@@ -17717,6 +17808,12 @@ public final class LoadableStudy {
         }
         cargoNominationId_ = 0L;
 
+        if (cargoNominationsBuilder_ == null) {
+          cargoNominations_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          cargoNominationsBuilder_.clear();
+        }
         return this;
       }
 
@@ -17743,14 +17840,23 @@ public final class LoadableStudy {
 
       @java.lang.Override
       public com.cpdss.common.generated.LoadableStudy.CargoNominationReply buildPartial() {
-        com.cpdss.common.generated.LoadableStudy.CargoNominationReply result =
-            new com.cpdss.common.generated.LoadableStudy.CargoNominationReply(this);
+        com.cpdss.common.generated.LoadableStudy.CargoNominationReply result = new com.cpdss.common.generated.LoadableStudy.CargoNominationReply(this);
+        int from_bitField0_ = bitField0_;
         if (responseStatusBuilder_ == null) {
           result.responseStatus_ = responseStatus_;
         } else {
           result.responseStatus_ = responseStatusBuilder_.build();
         }
         result.cargoNominationId_ = cargoNominationId_;
+        if (cargoNominationsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            cargoNominations_ = java.util.Collections.unmodifiableList(cargoNominations_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.cargoNominations_ = cargoNominations_;
+        } else {
+          result.cargoNominations_ = cargoNominationsBuilder_.build();
+        }
         onBuilt();
         return result;
       }
@@ -17811,6 +17917,32 @@ public final class LoadableStudy {
         if (other.getCargoNominationId() != 0L) {
           setCargoNominationId(other.getCargoNominationId());
         }
+        if (cargoNominationsBuilder_ == null) {
+          if (!other.cargoNominations_.isEmpty()) {
+            if (cargoNominations_.isEmpty()) {
+              cargoNominations_ = other.cargoNominations_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureCargoNominationsIsMutable();
+              cargoNominations_.addAll(other.cargoNominations_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.cargoNominations_.isEmpty()) {
+            if (cargoNominationsBuilder_.isEmpty()) {
+              cargoNominationsBuilder_.dispose();
+              cargoNominationsBuilder_ = null;
+              cargoNominations_ = other.cargoNominations_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              cargoNominationsBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getCargoNominationsFieldBuilder() : null;
+            } else {
+              cargoNominationsBuilder_.addAllMessages(other.cargoNominations_);
+            }
+          }
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -17841,6 +17973,7 @@ public final class LoadableStudy {
         }
         return this;
       }
+      private int bitField0_;
 
       private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -17992,6 +18125,246 @@ public final class LoadableStudy {
         cargoNominationId_ = 0L;
         onChanged();
         return this;
+      }
+
+      private java.util.List<com.cpdss.common.generated.LoadableStudy.CargoNominationDetail> cargoNominations_ =
+        java.util.Collections.emptyList();
+      private void ensureCargoNominationsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          cargoNominations_ = new java.util.ArrayList<com.cpdss.common.generated.LoadableStudy.CargoNominationDetail>(cargoNominations_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.LoadableStudy.CargoNominationDetail, com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.Builder, com.cpdss.common.generated.LoadableStudy.CargoNominationDetailOrBuilder> cargoNominationsBuilder_;
+
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.CargoNominationDetail> getCargoNominationsList() {
+        if (cargoNominationsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(cargoNominations_);
+        } else {
+          return cargoNominationsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public int getCargoNominationsCount() {
+        if (cargoNominationsBuilder_ == null) {
+          return cargoNominations_.size();
+        } else {
+          return cargoNominationsBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.CargoNominationDetail getCargoNominations(int index) {
+        if (cargoNominationsBuilder_ == null) {
+          return cargoNominations_.get(index);
+        } else {
+          return cargoNominationsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public Builder setCargoNominations(
+          int index, com.cpdss.common.generated.LoadableStudy.CargoNominationDetail value) {
+        if (cargoNominationsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargoNominationsIsMutable();
+          cargoNominations_.set(index, value);
+          onChanged();
+        } else {
+          cargoNominationsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public Builder setCargoNominations(
+          int index, com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.Builder builderForValue) {
+        if (cargoNominationsBuilder_ == null) {
+          ensureCargoNominationsIsMutable();
+          cargoNominations_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          cargoNominationsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public Builder addCargoNominations(com.cpdss.common.generated.LoadableStudy.CargoNominationDetail value) {
+        if (cargoNominationsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargoNominationsIsMutable();
+          cargoNominations_.add(value);
+          onChanged();
+        } else {
+          cargoNominationsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public Builder addCargoNominations(
+          int index, com.cpdss.common.generated.LoadableStudy.CargoNominationDetail value) {
+        if (cargoNominationsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargoNominationsIsMutable();
+          cargoNominations_.add(index, value);
+          onChanged();
+        } else {
+          cargoNominationsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public Builder addCargoNominations(
+          com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.Builder builderForValue) {
+        if (cargoNominationsBuilder_ == null) {
+          ensureCargoNominationsIsMutable();
+          cargoNominations_.add(builderForValue.build());
+          onChanged();
+        } else {
+          cargoNominationsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public Builder addCargoNominations(
+          int index, com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.Builder builderForValue) {
+        if (cargoNominationsBuilder_ == null) {
+          ensureCargoNominationsIsMutable();
+          cargoNominations_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          cargoNominationsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public Builder addAllCargoNominations(
+          java.lang.Iterable<? extends com.cpdss.common.generated.LoadableStudy.CargoNominationDetail> values) {
+        if (cargoNominationsBuilder_ == null) {
+          ensureCargoNominationsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, cargoNominations_);
+          onChanged();
+        } else {
+          cargoNominationsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public Builder clearCargoNominations() {
+        if (cargoNominationsBuilder_ == null) {
+          cargoNominations_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          cargoNominationsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public Builder removeCargoNominations(int index) {
+        if (cargoNominationsBuilder_ == null) {
+          ensureCargoNominationsIsMutable();
+          cargoNominations_.remove(index);
+          onChanged();
+        } else {
+          cargoNominationsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.Builder getCargoNominationsBuilder(
+          int index) {
+        return getCargoNominationsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.CargoNominationDetailOrBuilder getCargoNominationsOrBuilder(
+          int index) {
+        if (cargoNominationsBuilder_ == null) {
+          return cargoNominations_.get(index);  } else {
+          return cargoNominationsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public java.util.List<? extends com.cpdss.common.generated.LoadableStudy.CargoNominationDetailOrBuilder> 
+           getCargoNominationsOrBuilderList() {
+        if (cargoNominationsBuilder_ != null) {
+          return cargoNominationsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(cargoNominations_);
+        }
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.Builder addCargoNominationsBuilder() {
+        return getCargoNominationsFieldBuilder().addBuilder(
+            com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.Builder addCargoNominationsBuilder(
+          int index) {
+        return getCargoNominationsFieldBuilder().addBuilder(
+            index, com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .CargoNominationDetail cargoNominations = 3;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.Builder> 
+           getCargoNominationsBuilderList() {
+        return getCargoNominationsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.LoadableStudy.CargoNominationDetail, com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.Builder, com.cpdss.common.generated.LoadableStudy.CargoNominationDetailOrBuilder> 
+          getCargoNominationsFieldBuilder() {
+        if (cargoNominationsBuilder_ == null) {
+          cargoNominationsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.CargoNominationDetail, com.cpdss.common.generated.LoadableStudy.CargoNominationDetail.Builder, com.cpdss.common.generated.LoadableStudy.CargoNominationDetailOrBuilder>(
+                  cargoNominations_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          cargoNominations_ = null;
+        }
+        return cargoNominationsBuilder_;
       }
 
       @java.lang.Override
@@ -23642,6 +24015,2180 @@ public final class LoadableStudy {
     }
   }
 
+  public interface ValveSegregationOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:ValveSegregation)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string name = 2;</code>
+     * @return The name.
+     */
+    java.lang.String getName();
+    /**
+     * <code>string name = 2;</code>
+     * @return The bytes for name.
+     */
+    com.google.protobuf.ByteString
+        getNameBytes();
+  }
+  /**
+   * Protobuf type {@code ValveSegregation}
+   */
+  public  static final class ValveSegregation extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:ValveSegregation)
+      ValveSegregationOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ValveSegregation.newBuilder() to construct.
+    private ValveSegregation(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ValveSegregation() {
+      name_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ValveSegregation();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ValveSegregation(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              id_ = input.readInt64();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              name_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregation_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregation_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.ValveSegregation.class, com.cpdss.common.generated.LoadableStudy.ValveSegregation.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int NAME_FIELD_NUMBER = 2;
+    private volatile java.lang.Object name_;
+    /**
+     * <code>string name = 2;</code>
+     * @return The name.
+     */
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string name = 2;</code>
+     * @return The bytes for name.
+     */
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, name_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, id_);
+      }
+      if (!getNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, name_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.ValveSegregation)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.ValveSegregation other = (com.cpdss.common.generated.LoadableStudy.ValveSegregation) obj;
+
+      if (getId()
+          != other.getId()) return false;
+      if (!getName()
+          .equals(other.getName())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregation parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregation parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregation parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregation parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregation parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregation parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregation parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregation parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregation parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregation parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregation parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregation parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.cpdss.common.generated.LoadableStudy.ValveSegregation prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code ValveSegregation}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:ValveSegregation)
+        com.cpdss.common.generated.LoadableStudy.ValveSegregationOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregation_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregation_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.ValveSegregation.class, com.cpdss.common.generated.LoadableStudy.ValveSegregation.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.LoadableStudy.ValveSegregation.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        name_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregation_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.ValveSegregation getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.ValveSegregation.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.ValveSegregation build() {
+        com.cpdss.common.generated.LoadableStudy.ValveSegregation result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.ValveSegregation buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.ValveSegregation result = new com.cpdss.common.generated.LoadableStudy.ValveSegregation(this);
+        result.id_ = id_;
+        result.name_ = name_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.ValveSegregation) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.ValveSegregation)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.LoadableStudy.ValveSegregation other) {
+        if (other == com.cpdss.common.generated.LoadableStudy.ValveSegregation.getDefaultInstance()) return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.ValveSegregation parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.LoadableStudy.ValveSegregation) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_ ;
+      /**
+       * <code>int64 id = 1;</code>
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+        
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object name_ = "";
+      /**
+       * <code>string name = 2;</code>
+       * @return The name.
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string name = 2;</code>
+       * @return The bytes for name.
+       */
+      public com.google.protobuf.ByteString
+          getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string name = 2;</code>
+       * @param value The name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearName() {
+        
+        name_ = getDefaultInstance().getName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 2;</code>
+       * @param value The bytes for name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:ValveSegregation)
+    }
+
+    // @@protoc_insertion_point(class_scope:ValveSegregation)
+    private static final com.cpdss.common.generated.LoadableStudy.ValveSegregation DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.ValveSegregation();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregation getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ValveSegregation>
+        PARSER = new com.google.protobuf.AbstractParser<ValveSegregation>() {
+      @java.lang.Override
+      public ValveSegregation parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ValveSegregation(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ValveSegregation> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ValveSegregation> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.ValveSegregation getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ValveSegregationRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:ValveSegregationRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 loadableStudyId = 1;</code>
+     * @return The loadableStudyId.
+     */
+    long getLoadableStudyId();
+  }
+  /**
+   * Protobuf type {@code ValveSegregationRequest}
+   */
+  public  static final class ValveSegregationRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:ValveSegregationRequest)
+      ValveSegregationRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ValveSegregationRequest.newBuilder() to construct.
+    private ValveSegregationRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ValveSegregationRequest() {
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ValveSegregationRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ValveSegregationRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              loadableStudyId_ = input.readInt64();
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregationRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregationRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.class, com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.Builder.class);
+    }
+
+    public static final int LOADABLESTUDYID_FIELD_NUMBER = 1;
+    private long loadableStudyId_;
+    /**
+     * <code>int64 loadableStudyId = 1;</code>
+     * @return The loadableStudyId.
+     */
+    public long getLoadableStudyId() {
+      return loadableStudyId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (loadableStudyId_ != 0L) {
+        output.writeInt64(1, loadableStudyId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (loadableStudyId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, loadableStudyId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest other = (com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest) obj;
+
+      if (getLoadableStudyId()
+          != other.getLoadableStudyId()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + LOADABLESTUDYID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getLoadableStudyId());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code ValveSegregationRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:ValveSegregationRequest)
+        com.cpdss.common.generated.LoadableStudy.ValveSegregationRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregationRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregationRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.class, com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        loadableStudyId_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregationRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest build() {
+        com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest result = new com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest(this);
+        result.loadableStudyId_ = loadableStudyId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest other) {
+        if (other == com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.getDefaultInstance()) return this;
+        if (other.getLoadableStudyId() != 0L) {
+          setLoadableStudyId(other.getLoadableStudyId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long loadableStudyId_ ;
+      /**
+       * <code>int64 loadableStudyId = 1;</code>
+       * @return The loadableStudyId.
+       */
+      public long getLoadableStudyId() {
+        return loadableStudyId_;
+      }
+      /**
+       * <code>int64 loadableStudyId = 1;</code>
+       * @param value The loadableStudyId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadableStudyId(long value) {
+        
+        loadableStudyId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadableStudyId = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadableStudyId() {
+        
+        loadableStudyId_ = 0L;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:ValveSegregationRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:ValveSegregationRequest)
+    private static final com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ValveSegregationRequest>
+        PARSER = new com.google.protobuf.AbstractParser<ValveSegregationRequest>() {
+      @java.lang.Override
+      public ValveSegregationRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ValveSegregationRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ValveSegregationRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ValveSegregationRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ValveSegregationReplyOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:ValveSegregationReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /**
+     * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+     */
+    java.util.List<com.cpdss.common.generated.LoadableStudy.ValveSegregation> 
+        getValveSegregationList();
+    /**
+     * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+     */
+    com.cpdss.common.generated.LoadableStudy.ValveSegregation getValveSegregation(int index);
+    /**
+     * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+     */
+    int getValveSegregationCount();
+    /**
+     * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+     */
+    java.util.List<? extends com.cpdss.common.generated.LoadableStudy.ValveSegregationOrBuilder> 
+        getValveSegregationOrBuilderList();
+    /**
+     * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+     */
+    com.cpdss.common.generated.LoadableStudy.ValveSegregationOrBuilder getValveSegregationOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code ValveSegregationReply}
+   */
+  public  static final class ValveSegregationReply extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:ValveSegregationReply)
+      ValveSegregationReplyOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ValveSegregationReply.newBuilder() to construct.
+    private ValveSegregationReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ValveSegregationReply() {
+      valveSegregation_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ValveSegregationReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ValveSegregationReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+              if (responseStatus_ != null) {
+                subBuilder = responseStatus_.toBuilder();
+              }
+              responseStatus_ = input.readMessage(com.cpdss.common.generated.Common.ResponseStatus.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(responseStatus_);
+                responseStatus_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 18: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                valveSegregation_ = new java.util.ArrayList<com.cpdss.common.generated.LoadableStudy.ValveSegregation>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              valveSegregation_.add(
+                  input.readMessage(com.cpdss.common.generated.LoadableStudy.ValveSegregation.parser(), extensionRegistry));
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          valveSegregation_ = java.util.Collections.unmodifiableList(valveSegregation_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregationReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregationReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.ValveSegregationReply.class, com.cpdss.common.generated.LoadableStudy.ValveSegregationReply.Builder.class);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance() : responseStatus_;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    public static final int VALVESEGREGATION_FIELD_NUMBER = 2;
+    private java.util.List<com.cpdss.common.generated.LoadableStudy.ValveSegregation> valveSegregation_;
+    /**
+     * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+     */
+    public java.util.List<com.cpdss.common.generated.LoadableStudy.ValveSegregation> getValveSegregationList() {
+      return valveSegregation_;
+    }
+    /**
+     * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+     */
+    public java.util.List<? extends com.cpdss.common.generated.LoadableStudy.ValveSegregationOrBuilder> 
+        getValveSegregationOrBuilderList() {
+      return valveSegregation_;
+    }
+    /**
+     * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+     */
+    public int getValveSegregationCount() {
+      return valveSegregation_.size();
+    }
+    /**
+     * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+     */
+    public com.cpdss.common.generated.LoadableStudy.ValveSegregation getValveSegregation(int index) {
+      return valveSegregation_.get(index);
+    }
+    /**
+     * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+     */
+    public com.cpdss.common.generated.LoadableStudy.ValveSegregationOrBuilder getValveSegregationOrBuilder(
+        int index) {
+      return valveSegregation_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (responseStatus_ != null) {
+        output.writeMessage(1, getResponseStatus());
+      }
+      for (int i = 0; i < valveSegregation_.size(); i++) {
+        output.writeMessage(2, valveSegregation_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getResponseStatus());
+      }
+      for (int i = 0; i < valveSegregation_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, valveSegregation_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.ValveSegregationReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.ValveSegregationReply other = (com.cpdss.common.generated.LoadableStudy.ValveSegregationReply) obj;
+
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus()
+            .equals(other.getResponseStatus())) return false;
+      }
+      if (!getValveSegregationList()
+          .equals(other.getValveSegregationList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      if (getValveSegregationCount() > 0) {
+        hash = (37 * hash) + VALVESEGREGATION_FIELD_NUMBER;
+        hash = (53 * hash) + getValveSegregationList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationReply parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationReply parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationReply parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationReply parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationReply parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationReply parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationReply parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationReply parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationReply parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationReply parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationReply parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationReply parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.cpdss.common.generated.LoadableStudy.ValveSegregationReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code ValveSegregationReply}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:ValveSegregationReply)
+        com.cpdss.common.generated.LoadableStudy.ValveSegregationReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregationReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregationReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.ValveSegregationReply.class, com.cpdss.common.generated.LoadableStudy.ValveSegregationReply.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.LoadableStudy.ValveSegregationReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+          getValveSegregationFieldBuilder();
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        if (valveSegregationBuilder_ == null) {
+          valveSegregation_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          valveSegregationBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_ValveSegregationReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.ValveSegregationReply getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.ValveSegregationReply.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.ValveSegregationReply build() {
+        com.cpdss.common.generated.LoadableStudy.ValveSegregationReply result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.ValveSegregationReply buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.ValveSegregationReply result = new com.cpdss.common.generated.LoadableStudy.ValveSegregationReply(this);
+        int from_bitField0_ = bitField0_;
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        if (valveSegregationBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            valveSegregation_ = java.util.Collections.unmodifiableList(valveSegregation_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.valveSegregation_ = valveSegregation_;
+        } else {
+          result.valveSegregation_ = valveSegregationBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.ValveSegregationReply) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.ValveSegregationReply)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.LoadableStudy.ValveSegregationReply other) {
+        if (other == com.cpdss.common.generated.LoadableStudy.ValveSegregationReply.getDefaultInstance()) return this;
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        if (valveSegregationBuilder_ == null) {
+          if (!other.valveSegregation_.isEmpty()) {
+            if (valveSegregation_.isEmpty()) {
+              valveSegregation_ = other.valveSegregation_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureValveSegregationIsMutable();
+              valveSegregation_.addAll(other.valveSegregation_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.valveSegregation_.isEmpty()) {
+            if (valveSegregationBuilder_.isEmpty()) {
+              valveSegregationBuilder_.dispose();
+              valveSegregationBuilder_ = null;
+              valveSegregation_ = other.valveSegregation_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              valveSegregationBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getValveSegregationFieldBuilder() : null;
+            } else {
+              valveSegregationBuilder_.addAllMessages(other.valveSegregation_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.ValveSegregationReply parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.LoadableStudy.ValveSegregationReply) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.cpdss.common.generated.Common.ResponseStatus, com.cpdss.common.generated.Common.ResponseStatus.Builder, com.cpdss.common.generated.Common.ResponseStatusOrBuilder> responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance() : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+              com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_).mergeFrom(value).buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+        
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null ?
+              com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance() : responseStatus_;
+        }
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.cpdss.common.generated.Common.ResponseStatus, com.cpdss.common.generated.Common.ResponseStatus.Builder, com.cpdss.common.generated.Common.ResponseStatusOrBuilder> 
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus, com.cpdss.common.generated.Common.ResponseStatus.Builder, com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(),
+                  getParentForChildren(),
+                  isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.LoadableStudy.ValveSegregation> valveSegregation_ =
+        java.util.Collections.emptyList();
+      private void ensureValveSegregationIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          valveSegregation_ = new java.util.ArrayList<com.cpdss.common.generated.LoadableStudy.ValveSegregation>(valveSegregation_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.LoadableStudy.ValveSegregation, com.cpdss.common.generated.LoadableStudy.ValveSegregation.Builder, com.cpdss.common.generated.LoadableStudy.ValveSegregationOrBuilder> valveSegregationBuilder_;
+
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.ValveSegregation> getValveSegregationList() {
+        if (valveSegregationBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(valveSegregation_);
+        } else {
+          return valveSegregationBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public int getValveSegregationCount() {
+        if (valveSegregationBuilder_ == null) {
+          return valveSegregation_.size();
+        } else {
+          return valveSegregationBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.ValveSegregation getValveSegregation(int index) {
+        if (valveSegregationBuilder_ == null) {
+          return valveSegregation_.get(index);
+        } else {
+          return valveSegregationBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public Builder setValveSegregation(
+          int index, com.cpdss.common.generated.LoadableStudy.ValveSegregation value) {
+        if (valveSegregationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureValveSegregationIsMutable();
+          valveSegregation_.set(index, value);
+          onChanged();
+        } else {
+          valveSegregationBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public Builder setValveSegregation(
+          int index, com.cpdss.common.generated.LoadableStudy.ValveSegregation.Builder builderForValue) {
+        if (valveSegregationBuilder_ == null) {
+          ensureValveSegregationIsMutable();
+          valveSegregation_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          valveSegregationBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public Builder addValveSegregation(com.cpdss.common.generated.LoadableStudy.ValveSegregation value) {
+        if (valveSegregationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureValveSegregationIsMutable();
+          valveSegregation_.add(value);
+          onChanged();
+        } else {
+          valveSegregationBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public Builder addValveSegregation(
+          int index, com.cpdss.common.generated.LoadableStudy.ValveSegregation value) {
+        if (valveSegregationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureValveSegregationIsMutable();
+          valveSegregation_.add(index, value);
+          onChanged();
+        } else {
+          valveSegregationBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public Builder addValveSegregation(
+          com.cpdss.common.generated.LoadableStudy.ValveSegregation.Builder builderForValue) {
+        if (valveSegregationBuilder_ == null) {
+          ensureValveSegregationIsMutable();
+          valveSegregation_.add(builderForValue.build());
+          onChanged();
+        } else {
+          valveSegregationBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public Builder addValveSegregation(
+          int index, com.cpdss.common.generated.LoadableStudy.ValveSegregation.Builder builderForValue) {
+        if (valveSegregationBuilder_ == null) {
+          ensureValveSegregationIsMutable();
+          valveSegregation_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          valveSegregationBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public Builder addAllValveSegregation(
+          java.lang.Iterable<? extends com.cpdss.common.generated.LoadableStudy.ValveSegregation> values) {
+        if (valveSegregationBuilder_ == null) {
+          ensureValveSegregationIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, valveSegregation_);
+          onChanged();
+        } else {
+          valveSegregationBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public Builder clearValveSegregation() {
+        if (valveSegregationBuilder_ == null) {
+          valveSegregation_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          valveSegregationBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public Builder removeValveSegregation(int index) {
+        if (valveSegregationBuilder_ == null) {
+          ensureValveSegregationIsMutable();
+          valveSegregation_.remove(index);
+          onChanged();
+        } else {
+          valveSegregationBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.ValveSegregation.Builder getValveSegregationBuilder(
+          int index) {
+        return getValveSegregationFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.ValveSegregationOrBuilder getValveSegregationOrBuilder(
+          int index) {
+        if (valveSegregationBuilder_ == null) {
+          return valveSegregation_.get(index);  } else {
+          return valveSegregationBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public java.util.List<? extends com.cpdss.common.generated.LoadableStudy.ValveSegregationOrBuilder> 
+           getValveSegregationOrBuilderList() {
+        if (valveSegregationBuilder_ != null) {
+          return valveSegregationBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(valveSegregation_);
+        }
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.ValveSegregation.Builder addValveSegregationBuilder() {
+        return getValveSegregationFieldBuilder().addBuilder(
+            com.cpdss.common.generated.LoadableStudy.ValveSegregation.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public com.cpdss.common.generated.LoadableStudy.ValveSegregation.Builder addValveSegregationBuilder(
+          int index) {
+        return getValveSegregationFieldBuilder().addBuilder(
+            index, com.cpdss.common.generated.LoadableStudy.ValveSegregation.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .ValveSegregation valveSegregation = 2;</code>
+       */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.ValveSegregation.Builder> 
+           getValveSegregationBuilderList() {
+        return getValveSegregationFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.cpdss.common.generated.LoadableStudy.ValveSegregation, com.cpdss.common.generated.LoadableStudy.ValveSegregation.Builder, com.cpdss.common.generated.LoadableStudy.ValveSegregationOrBuilder> 
+          getValveSegregationFieldBuilder() {
+        if (valveSegregationBuilder_ == null) {
+          valveSegregationBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.ValveSegregation, com.cpdss.common.generated.LoadableStudy.ValveSegregation.Builder, com.cpdss.common.generated.LoadableStudy.ValveSegregationOrBuilder>(
+                  valveSegregation_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          valveSegregation_ = null;
+        }
+        return valveSegregationBuilder_;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:ValveSegregationReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:ValveSegregationReply)
+    private static final com.cpdss.common.generated.LoadableStudy.ValveSegregationReply DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.ValveSegregationReply();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.ValveSegregationReply getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ValveSegregationReply>
+        PARSER = new com.google.protobuf.AbstractParser<ValveSegregationReply>() {
+      @java.lang.Override
+      public ValveSegregationReply parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ValveSegregationReply(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ValveSegregationReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ValveSegregationReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.ValveSegregationReply getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_VoyageRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_VoyageRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_VoyageReply_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_VoyageReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_StatusReply_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_StatusReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_LoadableQuantityRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadableQuantityRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_LoadableQuantityReply_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadableQuantityReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_LoadableStudyRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadableStudyRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_LoadableStudyAttachment_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadableStudyAttachment_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_LoadableStudyDetail_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadableStudyDetail_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_LoadableStudyReply_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadableStudyReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_LoadingPortDetail_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadingPortDetail_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_segregationDetail_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_segregationDetail_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_CargoNominationDetail_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_CargoNominationDetail_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_CargoNominationRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_VoyageRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -23701,6 +26248,7 @@ public final class LoadableStudy {
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_CargoNominationRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+
       internal_static_CargoNominationRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_CargoNominationReply_descriptor;
@@ -23723,9 +26271,24 @@ public final class LoadableStudy {
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_PortRotationReply_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ValveSegregation_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_ValveSegregation_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ValveSegregationRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_ValveSegregationRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ValveSegregationReply_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_ValveSegregationReply_fieldAccessorTable;
       internal_static_LoadableQuantityResponse_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_LoadableQuantityResponse_fieldAccessorTable;
+
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -23735,6 +26298,229 @@ public final class LoadableStudy {
 
   static {
     java.lang.String[] descriptorData = {
+
+      "\n\024loadable_study.proto\032\014common.proto\"q\n\r" +
+      "VoyageRequest\022\021\n\tcaptainId\030\001 \001(\003\022\026\n\016chie" +
+      "fOfficerId\030\002 \001(\003\022\021\n\tcompanyId\030\003 \001(\003\022\020\n\010v" +
+      "esselId\030\004 \001(\003\022\020\n\010voyageNo\030\005 \001(\t\"@\n\013Voyag" +
+      "eReply\022\016\n\006status\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\022" +
+      "\020\n\010voyageId\030\003 \001(\003\"<\n\013StatusReply\022\016\n\006stat" +
+      "us\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\"" +
+      "\373\003\n\027LoadableQuantityRequest\022\025\n\rlimitingD" +
+      "raft\030\001 \001(\t\022\025\n\restSeaDensity\030\002 \001(\t\022\013\n\003tpc" +
+      "\030\003 \001(\t\022\022\n\nestSagging\030\004 \001(\t\022#\n\033displacmen" +
+      "tDraftRestriction\030\005 \001(\t\022\031\n\021vesselLightWe" +
+      "ight\030\006 \001(\t\022\013\n\003dwt\030\007 \001(\t\022\024\n\014sgCorrection\030" +
+      "\010 \001(\t\022\030\n\020saggingDeduction\030\t \001(\t\022\024\n\014estFO" +
+      "OnBoard\030\n \001(\t\022\024\n\014estDOOnBoard\030\013 \001(\t\022\034\n\024e" +
+      "stFreshWaterOnBoard\030\014 \001(\t\022\020\n\010constant\030\r " +
+      "\001(\t\022\022\n\notherIfAny\030\016 \001(\t\022\025\n\rtotalQuantity" +
+      "\030\017 \001(\t\022\034\n\024distanceFromLastPort\030\020 \001(\t\022\032\n\022" +
+      "vesselAverageSpeed\030\021 \001(\t\022\033\n\023foConsumptio" +
+      "nPerDay\030\022 \001(\t\022\035\n\025estTotalFOConsumption\030\023" +
+      " \001(\t\022\027\n\017loadableStudyId\030\024 \001(\003\"T\n\025Loadabl" +
+      "eQuantityReply\022\016\n\006status\030\001 \001(\t\022\017\n\007messag" +
+      "e\030\002 \001(\t\022\032\n\022loadableQuantityId\030\003 \001(\003\"M\n\024L" +
+      "oadableStudyRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020" +
+      "\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\"?\n\027Lo" +
+      "adableStudyAttachment\022\022\n\nbyteString\030\001 \001(" +
+      "\014\022\020\n\010fileName\030\002 \001(\t\"\325\002\n\023LoadableStudyDet" +
+      "ail\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\016\n\006detail\030" +
+      "\003 \001(\t\022\016\n\006status\030\004 \001(\t\022\023\n\013createdDate\030\005 \001" +
+      "(\t\022\021\n\tcharterer\030\006 \001(\t\022\024\n\014subCharterer\030\007 " +
+      "\001(\t\022\021\n\tdraftMark\030\010 \001(\t\022\023\n\013loadLineXId\030\t " +
+      "\001(\003\022\030\n\020draftRestriction\030\n \001(\t\022\027\n\017maxTemp" +
+      "Expected\030\013 \001(\t\022\030\n\020duplicatedFromId\030\014 \001(\003" +
+      "\022\020\n\010voyageId\030\r \001(\003\022\020\n\010vesselId\030\016 \001(\003\022-\n\013" +
+      "attachments\030\017 \003(\0132\030.LoadableStudyAttachm" +
+      "ent\"u\n\022LoadableStudyReply\022$\n\016responseSta" +
+      "tus\030\001 \001(\0132\014.StatusReply\022-\n\017loadableStudi" +
+      "es\030\002 \003(\0132\024.LoadableStudyDetail\022\n\n\002id\030\003 \001" +
+      "(\003\"5\n\021LoadingPortDetail\022\016\n\006portId\030\001 \001(\003\022" +
+      "\020\n\010quantity\030\002 \001(\t\".\n\021segregationDetail\022\n" +
+      "\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\"\230\002\n\025CargoNomin" +
+      "ationDetail\022\n\n\002id\030\001 \001(\003\022\027\n\017loadableStudy" +
+      "Id\030\002 \001(\003\022\020\n\010priority\030\003 \001(\003\022\r\n\005color\030\004 \001(" +
+      "\t\022\017\n\007cargoId\030\005 \001(\003\022\024\n\014abbreviation\030\006 \001(\t" +
+      "\022.\n\022loadingPortDetails\030\007 \003(\0132\022.LoadingPo" +
+      "rtDetail\022\024\n\014maxTolerance\030\010 \001(\t\022\024\n\014minTol" +
+      "erance\030\t \001(\t\022\016\n\006apiEst\030\n \001(\t\022\017\n\007tempEst\030" +
+      "\013 \001(\t\022\025\n\rsegregationId\030\014 \001(\003\"\214\001\n\026CargoNo" +
+      "minationRequest\022\020\n\010vesselId\030\001 \001(\003\022\020\n\010voy" +
+      "ageId\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\0225\n\025" +
+      "cargoNominationDetail\030\004 \001(\0132\026.CargoNomin" +
+      "ationDetail\"\214\001\n\024CargoNominationReply\022\'\n\016" +
+      "responseStatus\030\001 \001(\0132\017.ResponseStatus\022\031\n" +
+      "\021cargoNominationId\030\002 \001(\003\0220\n\020cargoNominat" +
+      "ions\030\003 \003(\0132\026.CargoNominationDetail\"R\n\023Po" +
+      "rtRotationRequest\022\027\n\017loadableStudyId\030\001 \001" +
+      "(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\"\241" +
+      "\002\n\022PortRotationDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006por" +
+      "tId\030\002 \001(\003\022\017\n\007birthId\030\003 \001(\003\022\023\n\013operationI" +
+      "d\030\004 \001(\003\022\027\n\017seaWaterDensity\030\005 \001(\t\022\034\n\024dist" +
+      "anceBetweenPorts\030\006 \001(\t\022\022\n\ntimeOfStay\030\007 \001" +
+      "(\t\022\020\n\010maxDraft\030\010 \001(\t\022\023\n\013maxAirDraft\030\t \001(" +
+      "\t\022\013\n\003eta\030\n \001(\t\022\013\n\003etd\030\013 \001(\t\022\022\n\nlayCanFro" +
+      "m\030\014 \001(\t\022\020\n\010layCanTo\030\r \001(\t\022\027\n\017loadableStu" +
+      "dyId\030\016 \001(\003\".\n\tOperation\022\n\n\002id\030\001 \001(\003\022\025\n\ro" +
+      "perationName\030\002 \001(\t\"}\n\021PortRotationReply\022" +
+      "$\n\016responseStatus\030\001 \001(\0132\014.StatusReply\022\"\n" +
+      "\005ports\030\002 \003(\0132\023.PortRotationDetail\022\036\n\nope" +
+      "rations\030\003 \003(\0132\n.Operation\",\n\020ValveSegreg" +
+      "ation\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"2\n\027Valve" +
+      "SegregationRequest\022\027\n\017loadableStudyId\030\001 " +
+      "\001(\003\"m\n\025ValveSegregationReply\022\'\n\016response" +
+      "Status\030\001 \001(\0132\017.ResponseStatus\022+\n\020valveSe" +
+      "gregation\030\002 \003(\0132\021.ValveSegregation2\324\004\n\024L" +
+      "oadableStudyService\022,\n\nSaveVoyage\022\016.Voya" +
+      "geRequest\032\014.VoyageReply\"\000\022J\n\024SaveLoadabl" +
+      "eQuantity\022\030.LoadableQuantityRequest\032\026.Lo" +
+      "adableQuantityReply\"\000\022T\n$FindLoadableStu" +
+      "diesByVesselAndVoyage\022\025.LoadableStudyReq" +
+      "uest\032\023.LoadableStudyReply\"\000\022@\n\021SaveLoada" +
+      "bleStudy\022\024.LoadableStudyDetail\032\023.Loadabl" +
+      "eStudyReply\"\000\022G\n\023SaveCargoNomination\022\027.C" +
+      "argoNominationRequest\032\025.CargoNominationR" +
+      "eply\"\000\022J\n\034GetLoadableStudyPortRotation\022\024" +
+      ".PortRotationRequest\032\022.PortRotationReply" +
+      "\"\000\022J\n\026GetCargoNominationById\022\027.CargoNomi" +
+      "nationRequest\032\025.CargoNominationReply\"\000\022I" +
+      "\n\023GetValveSegregation\022\030.ValveSegregation" +
+      "Request\032\026.ValveSegregationReply\"\000B\036\n\032com" +
+      ".cpdss.common.generatedP\000b\006proto3"
+    };
+    descriptor = com.google.protobuf.Descriptors.FileDescriptor
+      .internalBuildGeneratedFileFrom(descriptorData,
+        new com.google.protobuf.Descriptors.FileDescriptor[] {
+          com.cpdss.common.generated.Common.getDescriptor(),
+        });
+    internal_static_VoyageRequest_descriptor =
+      getDescriptor().getMessageTypes().get(0);
+    internal_static_VoyageRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_VoyageRequest_descriptor,
+        new java.lang.String[] { "CaptainId", "ChiefOfficerId", "CompanyId", "VesselId", "VoyageNo", });
+    internal_static_VoyageReply_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_VoyageReply_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_VoyageReply_descriptor,
+        new java.lang.String[] { "Status", "Message", "VoyageId", });
+    internal_static_StatusReply_descriptor =
+      getDescriptor().getMessageTypes().get(2);
+    internal_static_StatusReply_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_StatusReply_descriptor,
+        new java.lang.String[] { "Status", "Code", "Message", });
+    internal_static_LoadableQuantityRequest_descriptor =
+      getDescriptor().getMessageTypes().get(3);
+    internal_static_LoadableQuantityRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_LoadableQuantityRequest_descriptor,
+        new java.lang.String[] { "LimitingDraft", "EstSeaDensity", "Tpc", "EstSagging", "DisplacmentDraftRestriction", "VesselLightWeight", "Dwt", "SgCorrection", "SaggingDeduction", "EstFOOnBoard", "EstDOOnBoard", "EstFreshWaterOnBoard", "Constant", "OtherIfAny", "TotalQuantity", "DistanceFromLastPort", "VesselAverageSpeed", "FoConsumptionPerDay", "EstTotalFOConsumption", "LoadableStudyId", });
+    internal_static_LoadableQuantityReply_descriptor =
+      getDescriptor().getMessageTypes().get(4);
+    internal_static_LoadableQuantityReply_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_LoadableQuantityReply_descriptor,
+        new java.lang.String[] { "Status", "Message", "LoadableQuantityId", });
+    internal_static_LoadableStudyRequest_descriptor =
+      getDescriptor().getMessageTypes().get(5);
+    internal_static_LoadableStudyRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_LoadableStudyRequest_descriptor,
+        new java.lang.String[] { "CompanyId", "VesselId", "VoyageId", });
+    internal_static_LoadableStudyAttachment_descriptor =
+      getDescriptor().getMessageTypes().get(6);
+    internal_static_LoadableStudyAttachment_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_LoadableStudyAttachment_descriptor,
+        new java.lang.String[] { "ByteString", "FileName", });
+    internal_static_LoadableStudyDetail_descriptor =
+      getDescriptor().getMessageTypes().get(7);
+    internal_static_LoadableStudyDetail_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_LoadableStudyDetail_descriptor,
+        new java.lang.String[] { "Id", "Name", "Detail", "Status", "CreatedDate", "Charterer", "SubCharterer", "DraftMark", "LoadLineXId", "DraftRestriction", "MaxTempExpected", "DuplicatedFromId", "VoyageId", "VesselId", "Attachments", });
+    internal_static_LoadableStudyReply_descriptor =
+      getDescriptor().getMessageTypes().get(8);
+    internal_static_LoadableStudyReply_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_LoadableStudyReply_descriptor,
+        new java.lang.String[] { "ResponseStatus", "LoadableStudies", "Id", });
+    internal_static_LoadingPortDetail_descriptor =
+      getDescriptor().getMessageTypes().get(9);
+    internal_static_LoadingPortDetail_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_LoadingPortDetail_descriptor,
+        new java.lang.String[] { "PortId", "Quantity", });
+    internal_static_segregationDetail_descriptor =
+      getDescriptor().getMessageTypes().get(10);
+    internal_static_segregationDetail_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_segregationDetail_descriptor,
+        new java.lang.String[] { "Id", "Value", });
+    internal_static_CargoNominationDetail_descriptor =
+      getDescriptor().getMessageTypes().get(11);
+    internal_static_CargoNominationDetail_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_CargoNominationDetail_descriptor,
+        new java.lang.String[] { "Id", "LoadableStudyId", "Priority", "Color", "CargoId", "Abbreviation", "LoadingPortDetails", "MaxTolerance", "MinTolerance", "ApiEst", "TempEst", "SegregationId", });
+    internal_static_CargoNominationRequest_descriptor =
+      getDescriptor().getMessageTypes().get(12);
+    internal_static_CargoNominationRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_CargoNominationRequest_descriptor,
+        new java.lang.String[] { "VesselId", "VoyageId", "LoadableStudyId", "CargoNominationDetail", });
+    internal_static_CargoNominationReply_descriptor =
+      getDescriptor().getMessageTypes().get(13);
+    internal_static_CargoNominationReply_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_CargoNominationReply_descriptor,
+        new java.lang.String[] { "ResponseStatus", "CargoNominationId", "CargoNominations", });
+    internal_static_PortRotationRequest_descriptor =
+      getDescriptor().getMessageTypes().get(14);
+    internal_static_PortRotationRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_PortRotationRequest_descriptor,
+        new java.lang.String[] { "LoadableStudyId", "VesselId", "VoyageId", });
+    internal_static_PortRotationDetail_descriptor =
+      getDescriptor().getMessageTypes().get(15);
+    internal_static_PortRotationDetail_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_PortRotationDetail_descriptor,
+        new java.lang.String[] { "Id", "PortId", "BirthId", "OperationId", "SeaWaterDensity", "DistanceBetweenPorts", "TimeOfStay", "MaxDraft", "MaxAirDraft", "Eta", "Etd", "LayCanFrom", "LayCanTo", "LoadableStudyId", });
+    internal_static_Operation_descriptor =
+      getDescriptor().getMessageTypes().get(16);
+    internal_static_Operation_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_Operation_descriptor,
+        new java.lang.String[] { "Id", "OperationName", });
+    internal_static_PortRotationReply_descriptor =
+      getDescriptor().getMessageTypes().get(17);
+    internal_static_PortRotationReply_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_PortRotationReply_descriptor,
+        new java.lang.String[] { "ResponseStatus", "Ports", "Operations", });
+    internal_static_ValveSegregation_descriptor =
+      getDescriptor().getMessageTypes().get(18);
+    internal_static_ValveSegregation_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_ValveSegregation_descriptor,
+        new java.lang.String[] { "Id", "Name", });
+    internal_static_ValveSegregationRequest_descriptor =
+      getDescriptor().getMessageTypes().get(19);
+    internal_static_ValveSegregationRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_ValveSegregationRequest_descriptor,
+        new java.lang.String[] { "LoadableStudyId", });
+    internal_static_ValveSegregationReply_descriptor =
+      getDescriptor().getMessageTypes().get(20);
+    internal_static_ValveSegregationReply_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_ValveSegregationReply_descriptor,
+        new java.lang.String[] { "ResponseStatus", "ValveSegregation", });
+
       "\n\024loadable_study.proto\032\014common.proto\"q\n\r"
           + "VoyageRequest\022\021\n\tcaptainId\030\001 \001(\003\022\026\n\016chie"
           + "fOfficerId\030\002 \001(\003\022\021\n\tcompanyId\030\003 \001(\003\022\020\n\010v"

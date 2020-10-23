@@ -5,6 +5,7 @@ import static java.lang.String.valueOf;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
@@ -15,11 +16,15 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.Operation;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.ValveSegregation;
+import com.cpdss.common.generated.LoadableStudy.ValveSegregationReply;
+import com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
 import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
@@ -30,6 +35,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
+import com.cpdss.loadablestudy.entity.CargoNominationValveSegregation;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
@@ -37,6 +43,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
+import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRoationRepository;
@@ -60,6 +67,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /** @Author jerin.g */
@@ -80,6 +88,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadableQuantityRepository loadableQuantityRepository;
 
   @Autowired private CargoNominationRepository cargoNominationRepository;
+
+  @Autowired private CargoNominationValveSegregationRepository valveSegregationRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -502,9 +512,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   private CargoNomination buildCargoNomination(
       CargoNomination cargoNomination, CargoNominationRequest request) {
-    cargoNomination.setLoadableStudyId(request.getCargoNominationDetail().getLoadableStudyId());
+    cargoNomination.setLoadableStudyXId(request.getCargoNominationDetail().getLoadableStudyId());
     cargoNomination.setPriority(request.getCargoNominationDetail().getPriority());
-    cargoNomination.setCargoId(request.getCargoNominationDetail().getCargoId());
+    cargoNomination.setCargoXId(request.getCargoNominationDetail().getCargoId());
     cargoNomination.setAbbreviation(request.getCargoNominationDetail().getAbbreviation());
     cargoNomination.setColor(request.getCargoNominationDetail().getColor());
     cargoNomination.setMaxTolerance(
@@ -523,7 +533,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         !StringUtils.isEmpty(request.getCargoNominationDetail().getTempEst())
             ? new BigDecimal(request.getCargoNominationDetail().getTempEst())
             : null);
-    cargoNomination.setSegregationId(request.getCargoNominationDetail().getSegregationId());
+    cargoNomination.setSegregationXId(request.getCargoNominationDetail().getSegregationId());
     if (!request.getCargoNominationDetail().getLoadingPortDetailsList().isEmpty()) {
       // clear any existing CargoNominationPortDetails otherwise create new
       if (cargoNomination.getCargoNominationPortDetails() != null) {
@@ -649,6 +659,40 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .ifPresent(layCanTo -> builder.setLayCanTo(layCanFormatter.format(layCanTo)));
     return builder.build();
   }
+
+  /**
+   * Retrieves list of cargoNominations by LoadableStudyId can be extended to other Ids like
+   * vesselId or voyageId
+   */
+  @Override
+  public void getCargoNominationById(
+      CargoNominationRequest request, StreamObserver<CargoNominationReply> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.CargoNominationReply.Builder replyBuilder =
+        CargoNominationReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findById(request.getLoadableStudyId());
+      if (!loadableStudyOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+      }
+      List<CargoNomination> cargoNominationList =
+          this.cargoNominationRepository.findByLoadableStudyXId(request.getLoadableStudyId());
+      buildCargoNominationReply(cargoNominationList, replyBuilder);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching loadable study - port data", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Exception when fetching loadable study - port data", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+       responseObserver.onCompleted();
+    }
+  }
+
   /**
    * method for getting loadable quantity
    *
@@ -709,6 +753,87 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR));
     } finally {
       responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void buildCargoNominationReply(
+      List<CargoNomination> cargoNominationList,
+      com.cpdss.common.generated.LoadableStudy.CargoNominationReply.Builder
+          cargoNominationReplyBuilder) {
+    if (!CollectionUtils.isEmpty(cargoNominationList)) {
+      cargoNominationList.forEach(
+          cargoNomination -> {
+            CargoNominationDetail.Builder builder = CargoNominationDetail.newBuilder();
+            Optional.ofNullable(cargoNomination.getId()).ifPresent(builder::setId);
+            Optional.ofNullable(cargoNomination.getLoadableStudyXId())
+                .ifPresent(builder::setLoadableStudyId);
+            Optional.ofNullable(cargoNomination.getPriority()).ifPresent(builder::setPriority);
+            Optional.ofNullable(cargoNomination.getColor()).ifPresent(builder::setColor);
+            Optional.ofNullable(cargoNomination.getCargoXId()).ifPresent(builder::setCargoId);
+            Optional.ofNullable(cargoNomination.getAbbreviation())
+                .ifPresent(builder::setAbbreviation);
+            // build inner loadingPort details object
+            if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
+              cargoNomination
+                  .getCargoNominationPortDetails()
+                  .forEach(
+                      loadingPort -> {
+                        LoadingPortDetail.Builder loadingPortDetailBuilder =
+                            LoadingPortDetail.newBuilder();
+                        Optional.ofNullable(loadingPort.getId())
+                            .ifPresent(loadingPortDetailBuilder::setPortId);
+                        Optional.ofNullable(loadingPort.getQuantity())
+                            .ifPresent(
+                                quantity ->
+                                    loadingPortDetailBuilder.setQuantity(String.valueOf(quantity)));
+                        builder.addLoadingPortDetails(loadingPortDetailBuilder);
+                      });
+            }
+            Optional.ofNullable(cargoNomination.getMaxTolerance())
+                .ifPresent(maxTolerance -> builder.setMaxTolerance(String.valueOf(maxTolerance)));
+            Optional.ofNullable(cargoNomination.getMinTolerance())
+                .ifPresent(minTolerance -> builder.setMinTolerance(String.valueOf(minTolerance)));
+            Optional.ofNullable(cargoNomination.getApi())
+                .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
+            Optional.ofNullable(cargoNomination.getTemperature())
+                .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
+            Optional.ofNullable(cargoNomination.getSegregationXId())
+                .ifPresent(builder::setSegregationId);
+            cargoNominationReplyBuilder.addCargoNominations(builder);
+          });
+    }
+  }
+
+  /** Retrieves all valve segregation available */
+  @Override
+  public void getValveSegregation(
+      ValveSegregationRequest request, StreamObserver<ValveSegregationReply> responseObserver) {
+    ValveSegregationReply.Builder reply = ValveSegregationReply.newBuilder();
+    try {
+      Iterable<CargoNominationValveSegregation> segregationsList =
+          valveSegregationRepository.findAll();
+      segregationsList.forEach(
+          segregation -> {
+            ValveSegregation.Builder segregationDetail = ValveSegregation.newBuilder();
+            if (segregation.getId() != null) {
+              segregationDetail.setId(segregation.getId());
+            }
+            if (!StringUtils.isEmpty(segregation.getName())) {
+              segregationDetail.setName(segregation.getName());
+            }
+            reply.addValveSegregation(segregationDetail);
+          });
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      reply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getValveSegregation method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      reply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(reply.build());
       responseObserver.onCompleted();
     }
   }

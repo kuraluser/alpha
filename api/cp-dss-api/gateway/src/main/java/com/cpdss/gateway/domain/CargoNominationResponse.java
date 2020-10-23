@@ -19,5 +19,5 @@ public class CargoNominationResponse {
 
   private List<Cargo> cargos;
 
-  private List<Port> ports;
+  private List<ValveSegregation> segregations;
 }
