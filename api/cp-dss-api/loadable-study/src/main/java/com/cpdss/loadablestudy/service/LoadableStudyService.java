@@ -20,6 +20,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
+import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceImplBase;
@@ -705,6 +707,33 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setStatus(SUCCESS)
               .setMessage(FAILED)
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR));
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /** Get voyages by vessel */
+  @Override
+  public void getVoyagesByVessel(
+      VoyageRequest request, StreamObserver<VoyageListReply> responseObserver) {
+    VoyageListReply.Builder builder = VoyageListReply.newBuilder();
+    try {
+      List<Voyage> entityList =
+          this.voyageRepository.findByVesselXIdAndIsActive(request.getVesselId(), true);
+      for (Voyage entity : entityList) {
+        VoyageDetail.Builder detailbuilder = VoyageDetail.newBuilder();
+        detailbuilder.setId(entity.getId());
+        detailbuilder.setVoyageNumber(entity.getVoyageNo());
+        builder.addVoyages(detailbuilder.build());
+      }
+      builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      builder.setResponseStatus(
+          StatusReply.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

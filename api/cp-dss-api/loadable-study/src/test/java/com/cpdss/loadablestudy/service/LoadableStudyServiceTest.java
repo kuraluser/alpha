@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -23,6 +24,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -716,5 +718,44 @@ public class LoadableStudyServiceTest {
             .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
             .build(),
         response.getResponseStatus());
+  }
+
+  @Test
+  void testGetVoyagesByVessel() {
+    when(this.voyageRepository.findByVesselXIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(this.createVoyageEntities());
+    StreamRecorder<VoyageListReply> responseObserver = StreamRecorder.create();
+    VoyageRequest request = VoyageRequest.newBuilder().setVesselId(1L).build();
+    this.loadableStudyService.getVoyagesByVessel(request, responseObserver);
+    List<VoyageListReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVoyagesByVesselRuntimeException() {
+    when(this.voyageRepository.findByVesselXIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(RuntimeException.class);
+    StreamRecorder<VoyageListReply> responseObserver = StreamRecorder.create();
+    VoyageRequest request = VoyageRequest.newBuilder().setVesselId(1L).build();
+    this.loadableStudyService.getVoyagesByVessel(request, responseObserver);
+    List<VoyageListReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  private List<Voyage> createVoyageEntities() {
+    List<Voyage> entityList = new ArrayList<>();
+    IntStream.of(1, 10)
+        .forEach(
+            i -> {
+              Voyage voyage = new Voyage();
+              voyage.setId(Long.valueOf(i));
+              voyage.setVoyageNo("VYG-" + i);
+              entityList.add(voyage);
+            });
+    return entityList;
   }
 }

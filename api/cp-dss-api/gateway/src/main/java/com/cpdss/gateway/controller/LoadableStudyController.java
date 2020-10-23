@@ -11,11 +11,11 @@ import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
-import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.extern.log4j.Log4j2;
@@ -254,7 +254,16 @@ public class LoadableStudyController {
     return response;
   }
 
-
+  /**
+   * Get port list for loadable study
+   *
+   * @param vesselId
+   * @param voyageId
+   * @param loadableStudyId
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
   @GetMapping(
       "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-quantity/{loadableQuantityId}")
   public LoadableQuantityResponse getLoadableQuantity(
@@ -274,6 +283,35 @@ public class LoadableStudyController {
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
           HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Get voyages by vessel
+   *
+   * @param vesselId
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(value = "/vessels/{vesselId}/voyages")
+  public VoyageResponse getVoyageListByVessel(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.loadableStudyService.getVoyageListByVessel(
+          vesselId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when listing voyages", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when listing voyages", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
           e.getMessage(),
           e);
     }

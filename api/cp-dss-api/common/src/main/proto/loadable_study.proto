@@ -10,6 +10,9 @@ service LoadableStudyService {
 	rpc SaveVoyage (VoyageRequest) returns (VoyageReply) {
 	}
 	
+	rpc GetVoyagesByVessel (VoyageRequest) returns (VoyageListReply) {
+	}
+	
 	rpc SaveLoadableQuantity (LoadableQuantityRequest) returns (LoadableQuantityReply) {
 	}
 	
@@ -42,6 +45,16 @@ message VoyageRequest {
 message VoyageReply {
 	int64 voyageId = 1;
 	StatusReply responseStatus = 2;
+}
+
+message VoyageDetail{
+	int64 id = 1;
+	string voyageNumber = 2;
+}
+
+message VoyageListReply{
+	StatusReply responseStatus = 1;
+	repeated VoyageDetail voyages = 2;
 }
 
 message StatusReply {

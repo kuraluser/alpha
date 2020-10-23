@@ -7,6 +7,9 @@ import java.util.List;
 
 /** @Author jerin.g */
 public interface VoyageRepository extends CommonCrudRepository<Voyage, Long> {
+
   public List<Voyage> findByCompanyXIdAndVesselXIdAndVoyageNo(
       Long companyId, Long vesselXId, String voyageNo);
+
+  public List<Voyage> findByVesselXIdAndIsActive(Long vesselXId, boolean isActive);
 }

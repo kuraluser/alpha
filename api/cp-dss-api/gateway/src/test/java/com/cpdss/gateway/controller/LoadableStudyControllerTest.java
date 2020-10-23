@@ -14,6 +14,7 @@ import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -81,6 +82,11 @@ class LoadableStudyControllerTest {
       SHIP_API_URL_PREFIX + PORT_ROTATION_API_URL;
   private static final String PORT_ROTATION_CLOUD_API_URL =
       CLOUD_API_URL_PREFIX + PORT_ROTATION_API_URL;
+  private static final String GET_VOYAGES_BY_VESSEL_URL = "/vessels/{vesselId}/voyages";
+  private static final String GET_VOYAGES_BY_VESSEL_SHIP_URL =
+      SHIP_API_URL_PREFIX + GET_VOYAGES_BY_VESSEL_URL;
+  private static final String GET_VOYAGES_BY_VESSEL_CLOUD_URL =
+      CLOUD_API_URL_PREFIX + GET_VOYAGES_BY_VESSEL_URL;
 
   private static final String NAME = "name";
   private static final String CHARTERER_LITERAL = "charterer";
@@ -289,6 +295,67 @@ class LoadableStudyControllerTest {
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_LODABLE_STUDY_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  /**
+   * Test method for port rotation
+   *
+   * @throws Exception
+   */
+  @ValueSource(strings = {GET_VOYAGES_BY_VESSEL_CLOUD_URL, GET_VOYAGES_BY_VESSEL_SHIP_URL})
+  @ParameterizedTest
+  void testGetVoyageListByVessel(String url) throws Exception {
+    when(this.loadableStudyService.getVoyageListByVessel(anyLong(), anyString()))
+        .thenReturn(new VoyageResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  /**
+   * Test method for port rotation
+   *
+   * @throws Exception
+   */
+  @ValueSource(strings = {GET_VOYAGES_BY_VESSEL_CLOUD_URL, GET_VOYAGES_BY_VESSEL_SHIP_URL})
+  @ParameterizedTest
+  void testGetVoyageListByVesselServiceException(String url) throws Exception {
+    when(this.loadableStudyService.getVoyageListByVessel(anyLong(), anyString()))
+        .thenThrow(
+            new GenericServiceException(
+                "service exception",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST));
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isBadRequest());
+  }
+
+  /**
+   * Test method for port rotation
+   *
+   * @throws Exception
+   */
+  @ValueSource(strings = {GET_VOYAGES_BY_VESSEL_CLOUD_URL, GET_VOYAGES_BY_VESSEL_SHIP_URL})
+  @ParameterizedTest
+  void testGetVoyageListByVesselRuntimeException(String url) throws Exception {
+    when(this.loadableStudyService.getVoyageListByVessel(anyLong(), anyString()))
+        .thenThrow(RuntimeException.class);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))

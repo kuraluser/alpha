@@ -22,6 +22,8 @@ import com.cpdss.common.generated.LoadableStudy.Operation;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
+import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
+import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
@@ -663,5 +665,46 @@ public class LoadableStudyService {
   public com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse
       getLoadableQuantityResponse(LoadableQuantityReply loadableQuantityRequest) {
     return loadableStudyServiceBlockingStub.getLoadableQuantity(loadableQuantityRequest);
+  }
+
+  /**
+   * Get voyage list by vessel
+   *
+   * @param vesselId
+   * @param first
+   * @return
+   * @throws GenericServiceException
+   */
+  public VoyageResponse getVoyageListByVessel(Long vesselId, String correlationId)
+      throws GenericServiceException {
+    VoyageRequest request = VoyageRequest.newBuilder().setVesselId(vesselId).build();
+    VoyageListReply grpcReply = this.getVoyageListByVessel(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to fetch voyage list",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    VoyageResponse response = new VoyageResponse();
+    response.setVoyages(new ArrayList<>());
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    for (VoyageDetail detail : grpcReply.getVoyagesList()) {
+      Voyage voyage = new Voyage();
+      voyage.setId(detail.getId());
+      voyage.setVoyageNo(detail.getVoyageNumber());
+      response.getVoyages().add(voyage);
+    }
+    return response;
+  }
+
+  /**
+   * Call grpc service to fetch list of voyages by vessel
+   *
+   * @param request
+   * @return
+   */
+  public VoyageListReply getVoyageListByVessel(VoyageRequest request) {
+    return this.loadableStudyServiceBlockingStub.getVoyagesByVessel(request);
   }
 }

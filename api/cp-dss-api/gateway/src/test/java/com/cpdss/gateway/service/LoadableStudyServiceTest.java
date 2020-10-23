@@ -21,9 +21,12 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
+import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
@@ -41,7 +44,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.multipart.MultipartFile;
@@ -125,7 +127,7 @@ class LoadableStudyServiceTest {
     assertAll(
         () ->
             assertEquals(
-                String.valueOf(HttpStatus.OK.value()),
+                String.valueOf(HttpStatusCode.OK.value()),
                 response.getResponseStatus().getStatus(),
                 "Invalid response status"),
         () -> assertNotNull(response.getLoadableStudies()));
@@ -162,7 +164,7 @@ class LoadableStudyServiceTest {
                     TEST_COMPANY_ID, TEST_VESSEL_ID, TEST_VOYAGE_ID, CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
-        () -> assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
   /**
@@ -195,7 +197,7 @@ class LoadableStudyServiceTest {
     assertAll(
         () ->
             assertEquals(
-                String.valueOf(HttpStatus.OK.value()),
+                String.valueOf(HttpStatusCode.OK.value()),
                 response.getResponseStatus().getStatus(),
                 "Invalid response status"),
         () -> assertNotNull(response.getLoadableStudyId()));
@@ -236,7 +238,7 @@ class LoadableStudyServiceTest {
                     new MultipartFile[] {file}));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
-        () -> assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
   /**
@@ -262,7 +264,7 @@ class LoadableStudyServiceTest {
                     new MultipartFile[] {file}));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
-        () -> assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
   /**
@@ -288,11 +290,11 @@ class LoadableStudyServiceTest {
                     new MultipartFile[] {file}));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
-        () -> assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
   @Test
-  void TestGetLoadableStudyPortList() throws GenericServiceException {
+  void testGetLoadableStudyPortList() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.getLoadableStudyPortRotationList(
                 anyLong(), anyLong(), anyLong(), anyString()))
@@ -307,7 +309,7 @@ class LoadableStudyServiceTest {
     assertAll(
         () ->
             assertEquals(
-                String.valueOf(HttpStatus.OK.value()),
+                String.valueOf(HttpStatusCode.OK.value()),
                 response.getResponseStatus().getStatus(),
                 "Invalid response status"),
         () -> assertNotNull(response.getPortList()),
@@ -315,7 +317,7 @@ class LoadableStudyServiceTest {
   }
 
   @Test
-  void TestGetLoadableStudyPortListFailureScenario() throws GenericServiceException {
+  void testGetLoadableStudyPortListFailureScenario() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.getLoadableStudyPortRotationList(
                 anyLong(), anyLong(), anyLong(), anyString()))
@@ -339,11 +341,11 @@ class LoadableStudyServiceTest {
                     1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
-        () -> assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
   @Test
-  void TestGetLoadableStudyPortListWithEmptyData() throws GenericServiceException {
+  void testGetLoadableStudyPortListWithEmptyData() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.getLoadableStudyPortRotationList(
                 anyLong(), anyLong(), anyLong(), anyString()))
@@ -360,7 +362,7 @@ class LoadableStudyServiceTest {
     assertAll(
         () ->
             assertEquals(
-                String.valueOf(HttpStatus.OK.value()),
+                String.valueOf(HttpStatusCode.OK.value()),
                 response.getResponseStatus().getStatus(),
                 "Invalid response status"),
         () -> assertNotNull(response.getPortList()),
@@ -435,7 +437,7 @@ class LoadableStudyServiceTest {
                 StatusReply.newBuilder()
                     .setMessage(SUCCESS)
                     .setStatus(SUCCESS)
-                    .setCode(String.valueOf(HttpStatus.OK.value())))
+                    .setCode(String.valueOf(HttpStatusCode.OK.value())))
             .setVoyageId(1)
             .build();
 
@@ -452,7 +454,7 @@ class LoadableStudyServiceTest {
     VoyageResponse voyageResponse = spy.saveVoyage(voyage, (long) 1, (long) 1, "123");
 
     Assert.assertEquals(
-        String.valueOf(HttpStatus.OK.value()), voyageResponse.getResponseStatus().getStatus());
+        String.valueOf(HttpStatusCode.OK.value()), voyageResponse.getResponseStatus().getStatus());
   }
 
   /**
@@ -488,7 +490,7 @@ class LoadableStudyServiceTest {
     VoyageResponse voyageResponse = spy.saveVoyage(voyage, (long) 1, (long) 1, "123");
 
     Assert.assertEquals(
-        String.valueOf(HttpStatus.BAD_REQUEST.value()),
+        String.valueOf(HttpStatusCode.BAD_REQUEST.value()),
         voyageResponse.getResponseStatus().getStatus());
   }
   /**
@@ -540,7 +542,7 @@ class LoadableStudyServiceTest {
         spy.saveLoadableQuantity(loadableQuantity, (long) 1, "123");
 
     Assert.assertEquals(
-        String.valueOf(HttpStatus.OK.value()),
+        String.valueOf(HttpStatusCode.OK.value()),
         loadableQuantityResponse.getResponseStatus().getStatus());
   }
 
@@ -596,7 +598,7 @@ class LoadableStudyServiceTest {
         spy.saveLoadableQuantity(loadableQuantity, (long) 1, "123");
 
     Assert.assertEquals(
-        String.valueOf(HttpStatus.BAD_REQUEST.value()),
+        String.valueOf(HttpStatusCode.BAD_REQUEST.value()),
         loadableQuantityResponse.getResponseStatus().getStatus());
   }
 
@@ -642,7 +644,7 @@ class LoadableStudyServiceTest {
                 StatusReply.newBuilder()
                     .setMessage(SUCCESS)
                     .setStatus(SUCCESS)
-                    .setCode(String.valueOf(HttpStatus.OK.value()))
+                    .setCode(String.valueOf(HttpStatusCode.OK.value()))
                     .build());
 
     LoadableQuantityReply loadableQuantityReply =
@@ -653,7 +655,7 @@ class LoadableStudyServiceTest {
     LoadableQuantityResponse loadableQuantityResponse = spy.getLoadableQuantity((long) 1, "123");
 
     Assert.assertEquals(
-        String.valueOf(HttpStatus.OK.value()),
+        String.valueOf(HttpStatusCode.OK.value()),
         loadableQuantityResponse.getResponseStatus().getStatus());
   }
 
@@ -684,5 +686,52 @@ class LoadableStudyServiceTest {
     LoadableQuantityResponse loadableQuantityResponse = spy.getLoadableQuantity((long) 1, "123");
 
     Assert.assertEquals("400", loadableQuantityResponse.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVoyageListByVessel() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.getVoyageListByVessel(anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.getVoyageListByVessel(any(VoyageRequest.class)))
+        .thenReturn(this.generateVoyageListResponse().build());
+    VoyageResponse response =
+        this.loadableStudyService.getVoyageListByVessel(1L, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "Invalid response status"),
+        () -> assertNotNull(response.getVoyages()));
+  }
+
+  @Test
+  void testGetVoyageListByVesselFailureScenario() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.getVoyageListByVessel(anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.getVoyageListByVessel(any(VoyageRequest.class)))
+        .thenReturn(
+            this.generateVoyageListResponse()
+                .setResponseStatus(
+                    StatusReply.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
+                .build());
+
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () -> this.loadableStudyService.getVoyageListByVessel(1L, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  private VoyageListReply.Builder generateVoyageListResponse() {
+    VoyageListReply.Builder builder = VoyageListReply.newBuilder();
+    VoyageDetail detail = VoyageDetail.newBuilder().setId(1L).setVoyageNumber(VOYAGE).build();
+    builder.addVoyages(detail);
+    builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS));
+    return builder;
   }
 }
