@@ -10,8 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 /** Repository class for CargoPortMapping table */
 public interface CargoPortMappingRepository extends CommonCrudRepository<CargoPortMapping, Long> {
 
-  List<CargoPortMapping> findByCargoxid(Long id);
-
   @Query(
       "Select new com.cpdss.portinfo.domain.PortInfo(c.portInfo.id, c.portInfo.name) from CargoPortMapping c where c.cargoXId = ?1")
   List<PortInfo> getPortsInfo(long cargoId);

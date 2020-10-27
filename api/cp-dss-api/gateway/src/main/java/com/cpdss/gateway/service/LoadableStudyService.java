@@ -42,7 +42,6 @@ import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
-import com.cpdss.gateway.domain.Port;
 import com.cpdss.gateway.domain.LoadingPort;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
@@ -369,7 +368,7 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "Error calling getCargoNominationById service",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatus.INTERNAL_SERVER_ERROR);
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     // Retrieve segregation List
     ValveSegregationRequest valveSegregationRequest =
@@ -383,7 +382,7 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "Error calling getValveSegregation service",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatus.INTERNAL_SERVER_ERROR);
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return cargoNominationResponse;
   }
