@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -395,5 +396,31 @@ public class LoadableStudyController {
           e.getMessage(),
           e);
     }
+  }
+    
+  @DeleteMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/cargo-nominations/{id}")
+  public CargoNominationResponse deleteCargoNomination(
+      @PathVariable Long vesselId,
+      @PathVariable Long voyageId,
+      @PathVariable Long loadableStudyId,
+      @PathVariable Long id,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    CargoNominationResponse response = null;
+    try {
+      Long companyId = 1L; // TODO get the companyId from userContext in keycloak token
+      response = loadableStudyService.deleteCargoNomination(id, headers);
+    } catch (Exception e) {
+      log.error("Error in deleteCargoNomination ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+    return response;
   }
 }

@@ -29,6 +29,9 @@ public class CargoNominationPortDetails extends EntityDoc {
   @Column(name = "portxid")
   private Long portId;
 
+  @Column(name = "isactive")
+  private Boolean isActive;
+
   @Column(name = "quantity")
   private BigDecimal quantity;
 }

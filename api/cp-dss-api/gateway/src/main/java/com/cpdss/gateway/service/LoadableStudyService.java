@@ -561,6 +561,8 @@ public class LoadableStudyService {
                 cargoNominationDetailbuilder.addLoadingPortDetails(loadingPortDetailBuilder);
               });
     }
+    Optional.ofNullable(request.getQuantity())
+        .ifPresent(quantity -> cargoNominationDetailbuilder.setQuantity(String.valueOf(quantity)));
     Optional.ofNullable(request.getMaxTolerance())
         .ifPresent(
             maxTolerance ->
@@ -882,5 +884,36 @@ public class LoadableStudyService {
    */
   public VoyageListReply getVoyageListByVessel(VoyageRequest request) {
     return this.loadableStudyServiceBlockingStub.getVoyagesByVessel(request);
+  }
+
+  /**
+   * Delete cargo nomination details using loadable-study service
+   *
+   * @param loadableStudyId
+   * @param headers
+   * @return
+   * @throws GenericServiceException
+   */
+  public CargoNominationResponse deleteCargoNomination(Long cargoNominationId, HttpHeaders headers)
+      throws GenericServiceException {
+    CargoNominationResponse cargoNominationResponse = new CargoNominationResponse();
+    // Build response with response status
+    buildCargoNominationResponseWithResponseStatus(cargoNominationResponse);
+    // Build cargoNomination payload for grpc call
+    com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.Builder builder =
+        CargoNominationRequest.newBuilder();
+    Optional.ofNullable(cargoNominationId).ifPresent(builder::setCargoNominationId);
+    CargoNominationRequest cargoNominationRequest = builder.build();
+    CargoNominationReply cargoNominationReply =
+        loadableStudyServiceBlockingStub.deleteCargoNomination(cargoNominationRequest);
+    if (cargoNominationReply != null
+        && cargoNominationReply.getResponseStatus() != null
+        && !SUCCESS.equalsIgnoreCase(cargoNominationReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Error in calling deleteCargoNomination",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    return cargoNominationResponse;
   }
 }

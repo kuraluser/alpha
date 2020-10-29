@@ -54,6 +54,12 @@ public class CargoNomination extends EntityDoc {
   @Column(name = "valvesegregationxid")
   private Long segregationXId;
 
+  @Column(name = "isactive")
+  private Boolean isActive;
+
+  @Column(name = "quantity")
+  private BigDecimal quantity;
+
   @OneToMany(
       mappedBy = "cargoNomination",
       cascade = CascadeType.ALL,

@@ -43,6 +43,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
@@ -71,6 +72,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -78,6 +80,7 @@ import org.springframework.util.StringUtils;
 @Log4j2
 @GrpcService
 @Service
+@Transactional
 public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Value("${loadablestudy.attachement.rooFolder}")
@@ -86,10 +89,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyPortRoationRepository loadableStudyPortRoationRepository;
   @Autowired private CargoOperationRepository cargoOperationRepository;
+
   @Autowired private LoadableStudyRepository loadableStudyRepository;
+
   @Autowired private LoadableQuantityRepository loadableQuantityRepository;
+
   @Autowired private CargoNominationRepository cargoNominationRepository;
+
   @Autowired private CargoNominationValveSegregationRepository valveSegregationRepository;
+
+  @Autowired
+  private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -482,7 +492,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       if (request.getCargoNominationDetail() != null
           && request.getCargoNominationDetail().getId() != 0) {
         Optional<CargoNomination> existingCargoNomination =
-            this.cargoNominationRepository.findById(request.getCargoNominationDetail().getId());
+            this.cargoNominationRepository.findByIdAndIsActive(
+                request.getCargoNominationDetail().getId(), true);
         if (!existingCargoNomination.isPresent()) {
           throw new GenericServiceException(
               "Cargo Nomination does not exist",
@@ -519,6 +530,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     cargoNomination.setCargoXId(request.getCargoNominationDetail().getCargoId());
     cargoNomination.setAbbreviation(request.getCargoNominationDetail().getAbbreviation());
     cargoNomination.setColor(request.getCargoNominationDetail().getColor());
+    cargoNomination.setQuantity(
+        !StringUtils.isEmpty(request.getCargoNominationDetail().getQuantity())
+            ? new BigDecimal(request.getCargoNominationDetail().getQuantity())
+            : null);
     cargoNomination.setMaxTolerance(
         !StringUtils.isEmpty(request.getCargoNominationDetail().getMaxTolerance())
             ? new BigDecimal(request.getCargoNominationDetail().getMaxTolerance())
@@ -536,6 +551,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ? new BigDecimal(request.getCargoNominationDetail().getTempEst())
             : null);
     cargoNomination.setSegregationXId(request.getCargoNominationDetail().getSegregationId());
+    // activate the records to be saved
+    cargoNomination.setIsActive(true);
     if (!request.getCargoNominationDetail().getLoadingPortDetailsList().isEmpty()) {
       // clear any existing CargoNominationPortDetails otherwise create new
       if (cargoNomination.getCargoNominationPortDetails() != null) {
@@ -553,6 +570,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         !loadingPortDetail.getQuantity().isEmpty()
                             ? new BigDecimal(loadingPortDetail.getQuantity())
                             : null);
+                    cargoNominationPortDetails.setIsActive(true);
                     return cargoNominationPortDetails;
                   })
               .collect(Collectors.toSet());
@@ -680,7 +698,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       List<CargoNomination> cargoNominationList =
-          this.cargoNominationRepository.findByLoadableStudyXId(request.getLoadableStudyId());
+          this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
+              request.getLoadableStudyId(), true);
       buildCargoNominationReply(cargoNominationList, replyBuilder);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (GenericServiceException e) {
@@ -784,7 +803,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       loadingPort -> {
                         LoadingPortDetail.Builder loadingPortDetailBuilder =
                             LoadingPortDetail.newBuilder();
-                        Optional.ofNullable(loadingPort.getId())
+                        Optional.ofNullable(loadingPort.getPortId())
                             .ifPresent(loadingPortDetailBuilder::setPortId);
                         Optional.ofNullable(loadingPort.getQuantity())
                             .ifPresent(
@@ -971,5 +990,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 DateTimeFormatter.ofPattern(LAY_CAN_FROMAT).parse(request.getLayCanTo())));
     entity.setOperation(this.cargoOperationRepository.getOne(request.getOperationId()));
     return entity;
+  }
+  
+  /** Delete specific cargo nomination */
+  @Override
+  public void deleteCargoNomination(
+      CargoNominationRequest request, StreamObserver<CargoNominationReply> responseObserver) {
+    CargoNominationReply.Builder cargoNominationReplyBuilder = CargoNominationReply.newBuilder();
+    try {
+      Optional<CargoNomination> existingCargoNomination =
+          this.cargoNominationRepository.findById(request.getCargoNominationId());
+      if (!existingCargoNomination.isPresent()) {
+        throw new GenericServiceException(
+            "Cargo Nomination does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      this.cargoNominationOperationDetailsRepository.deleteCargoNominationPortDetails(
+          request.getCargoNominationId());
+      this.cargoNominationRepository.deleteCargoNomination(request.getCargoNominationId());
+      cargoNominationReplyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+    } catch (Exception e) {
+      log.error("Error deleting cargo nomination", e);
+      cargoNominationReplyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(cargoNominationReplyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

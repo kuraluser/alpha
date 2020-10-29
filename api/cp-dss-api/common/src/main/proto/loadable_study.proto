@@ -41,6 +41,8 @@ service LoadableStudyService {
 	rpc SaveLoadableStudyPortRotation (PortRotationDetail) returns (PortRotationReply){
 	}
 	
+	rpc DeleteCargoNomination (CargoNominationRequest) returns (CargoNominationReply){
+	}	
 }
 
 
@@ -156,18 +158,20 @@ message CargoNominationDetail {
 	int64 cargoId = 5;
 	string abbreviation = 6;
 	repeated LoadingPortDetail loadingPortDetails = 7;
-	string maxTolerance = 8;
-	string minTolerance = 9;
-	string apiEst = 10;
-	string tempEst = 11;
-	int64 segregationId = 12;
+	string quantity = 8;
+	string maxTolerance = 9;
+	string minTolerance = 10;
+	string apiEst = 11;
+	string tempEst = 12;
+	int64 segregationId = 13;
 }
 
 message CargoNominationRequest {
 	int64 vesselId = 1;
 	int64 voyageId = 2;
 	int64 loadableStudyId = 3;
-	CargoNominationDetail cargoNominationDetail = 4;
+	int64 cargoNominationId = 4;
+	CargoNominationDetail cargoNominationDetail = 5;
 }
 
 message CargoNominationReply {

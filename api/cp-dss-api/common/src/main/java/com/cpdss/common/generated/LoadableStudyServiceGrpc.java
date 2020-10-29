@@ -576,6 +576,57 @@ public final class LoadableStudyServiceGrpc {
     return getSaveLoadableStudyPortRotationMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+          com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
+      getDeleteCargoNominationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DeleteCargoNomination",
+      requestType = com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.CargoNominationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+          com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
+      getDeleteCargoNominationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+            com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
+        getDeleteCargoNominationMethod;
+    if ((getDeleteCargoNominationMethod = LoadableStudyServiceGrpc.getDeleteCargoNominationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getDeleteCargoNominationMethod =
+                LoadableStudyServiceGrpc.getDeleteCargoNominationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getDeleteCargoNominationMethod =
+              getDeleteCargoNominationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+                          com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "DeleteCargoNomination"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.CargoNominationRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.CargoNominationReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("DeleteCargoNomination"))
+                      .build();
+        }
+      }
+    }
+    return getDeleteCargoNominationMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -710,6 +761,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getSaveLoadableStudyPortRotationMethod(), responseObserver);
     }
 
+    /** */
+    public void deleteCargoNomination(
+        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getDeleteCargoNominationMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -790,6 +849,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.PortRotationDetail,
                       com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
                       this, METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION)))
+          .addMethod(
+              getDeleteCargoNominationMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+                      com.cpdss.common.generated.LoadableStudy.CargoNominationReply>(
+                      this, METHODID_DELETE_CARGO_NOMINATION)))
           .build();
     }
   }
@@ -926,6 +992,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void deleteCargoNomination(
+        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getDeleteCargoNominationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1017,6 +1094,13 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.PortRotationDetail request) {
       return blockingUnaryCall(
           getChannel(), getSaveLoadableStudyPortRotationMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.CargoNominationReply deleteCargoNomination(
+        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getDeleteCargoNominationMethod(), getCallOptions(), request);
     }
   }
 
@@ -1131,6 +1215,15 @@ public final class LoadableStudyServiceGrpc {
           getChannel().newCall(getSaveLoadableStudyPortRotationMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
+        deleteCargoNomination(
+            com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getDeleteCargoNominationMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -1144,6 +1237,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_VALVE_SEGREGATION = 8;
   private static final int METHODID_GET_LOADABLE_QUANTITY = 9;
   private static final int METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION = 10;
+  private static final int METHODID_DELETE_CARGO_NOMINATION = 11;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1238,6 +1332,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.PortRotationReply>)
                   responseObserver);
           break;
+        case METHODID_DELETE_CARGO_NOMINATION:
+          serviceImpl.deleteCargoNomination(
+              (com.cpdss.common.generated.LoadableStudy.CargoNominationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.CargoNominationReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1313,6 +1414,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetValveSegregationMethod())
                       .addMethod(getGetLoadableQuantityMethod())
                       .addMethod(getSaveLoadableStudyPortRotationMethod())
+                      .addMethod(getDeleteCargoNominationMethod())
                       .build();
         }
       }
