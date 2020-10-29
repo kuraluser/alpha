@@ -21,6 +21,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
@@ -35,6 +36,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
+import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRoationRepository;
@@ -55,6 +57,8 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -79,11 +83,13 @@ public class LoadableStudyServiceTest {
   @MockBean private LoadableStudyPortRoationRepository loadableStudyPortRoationRepository;
   @MockBean private CargoOperationRepository cargoOperationRepository;
 
+  @MockBean
+  private CargoNominationValveSegregationRepository cargoNominationValveSegregationRepository;
+
   private static final String SUCCESS = "SUCCESS";
   private static final String VOYAGE = "VOYAGE";
   private static final String VOYAGEEXISTS = "VOYAGEEXISTS";
   private static final String FAILED = "FAILED";
-  private static final String INVALID_LOADABLE_STUDY = "INVALID_LOADABLE_STUDY";
   private static final String LOADABLE_STUDY_NAME = "LS";
   private static final String LOADABLE_STUDY_DETAILS = "details";
   private static final String LOADABLE_STUDY_STATUS = "pending";
@@ -97,6 +103,10 @@ public class LoadableStudyServiceTest {
   private static final String LOADABLE_QUANTITY_DUMMY = "100";
   private static final String LOADABLE_QUANTITY_DUMMY_VALUE = "100";
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
+  private static final String NUMERICAL_TEST_VALUE = "100";
+  private static final Long ID_TEST_VALUE = 1L;
+  private static final String DATE_TEST_VALUE = "2020-10-10";
+  private static final String DATE_TIME_TEST_VALUE = "2020-10-10 12:20";
 
   @BeforeAll
   public static void beforeAll() {
@@ -504,7 +514,7 @@ public class LoadableStudyServiceTest {
               LoadableStudyPortRotation entity = new LoadableStudyPortRotation();
               entity.setId(Long.valueOf(i));
               entity.setPortXId(Long.valueOf(i));
-              entity.setBirthXId(Long.valueOf(i));
+              entity.setBerthXId(Long.valueOf(i));
               entity.setAirDraftRestriction(BigDecimal.TEN);
               entity.setDistanceBetweenPorts(BigDecimal.ONE);
               entity.setEta(LocalDateTime.now());
@@ -757,5 +767,83 @@ public class LoadableStudyServiceTest {
               entityList.add(voyage);
             });
     return entityList;
+  }
+
+  @ParameterizedTest
+  @ValueSource(longs = {0, 1})
+  void testSaveLoadableStudyPortRotation(Long id) {
+    when(this.loadableStudyRepository.findById(anyLong()))
+        .thenReturn(Optional.of(new LoadableStudy()));
+    LoadableStudyPortRotation entity = new LoadableStudyPortRotation();
+    entity.setId(1L);
+    when(this.loadableStudyPortRoationRepository.save(any(LoadableStudyPortRotation.class)))
+        .thenReturn(entity);
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    if (id.equals(1L)) {
+      when(this.loadableStudyPortRoationRepository.findById(id))
+          .thenReturn(Optional.of(new LoadableStudyPortRotation()));
+    }
+    this.loadableStudyService.saveLoadableStudyPortRotation(
+        this.createPortRotationRequest().setId(id).build(), responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadableStudyPortRotationInvalidLoadableStudy() {
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.empty());
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudyPortRotation(
+        this.createPortRotationRequest().build(), responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadableStudyPortRotationInvalidId() {
+    when(this.loadableStudyRepository.findById(anyLong()))
+        .thenReturn(Optional.of(new LoadableStudy()));
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    when(this.loadableStudyPortRoationRepository.findById(anyLong())).thenReturn(Optional.empty());
+    this.loadableStudyService.saveLoadableStudyPortRotation(
+        this.createPortRotationRequest().setId(1L).build(), responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadableStudyPortRotationRuntimeException() {
+    when(this.loadableStudyRepository.findById(anyLong())).thenThrow(RuntimeException.class);
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudyPortRotation(
+        this.createPortRotationRequest().setId(1L).build(), responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  private PortRotationDetail.Builder createPortRotationRequest() {
+    PortRotationDetail.Builder builder = PortRotationDetail.newBuilder();
+    builder.setId(0);
+    builder.setLoadableStudyId(ID_TEST_VALUE);
+    builder.setOperationId(ID_TEST_VALUE);
+    builder.setDistanceBetweenPorts(NUMERICAL_TEST_VALUE);
+    builder.setEta(DATE_TIME_TEST_VALUE);
+    builder.setEtd(DATE_TIME_TEST_VALUE);
+    builder.setLayCanFrom(DATE_TEST_VALUE);
+    builder.setLayCanTo(DATE_TEST_VALUE);
+    builder.setMaxAirDraft(NUMERICAL_TEST_VALUE);
+    builder.setMaxDraft(NUMERICAL_TEST_VALUE);
+    builder.setPortId(ID_TEST_VALUE);
+    builder.setSeaWaterDensity(NUMERICAL_TEST_VALUE);
+    builder.setTimeOfStay(NUMERICAL_TEST_VALUE);
+    return builder;
   }
 }

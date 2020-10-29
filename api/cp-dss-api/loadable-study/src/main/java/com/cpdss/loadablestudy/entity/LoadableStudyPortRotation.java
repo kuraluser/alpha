@@ -39,8 +39,8 @@ public class LoadableStudyPortRotation extends EntityDoc {
   @Column(name = "portxid")
   private Long portXId;
 
-  @Column(name = "birthxid")
-  private Long birthXId;
+  @Column(name = "berthxid")
+  private Long berthXId;
 
   @Column(name = "seawaterdensity")
   private BigDecimal seaWaterDensity;

@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
@@ -31,6 +32,7 @@ import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
@@ -42,6 +44,8 @@ import java.util.stream.IntStream;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockMultipartFile;
@@ -77,11 +81,9 @@ class LoadableStudyServiceTest {
   private static final String MAX_TEMP_EXPECTED = "100";
 
   private static final String VOYAGE = "VOYAGE";
-  private static final String VOYAGE_ERROR = "Error in calling voyage service";
   private static final String LOADABLE_QUANTITY_DUMMY = "100";
-  private static final String LOADABLE_QUANTITY_ERROR =
-      "Error in calling loadable quantity service";
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
+  private static final BigDecimal TEST_BIGDECIMAL_VALUE = new BigDecimal(100);
 
   @BeforeEach
   public void init() {
@@ -324,7 +326,7 @@ class LoadableStudyServiceTest {
         .thenCallRealMethod();
     PortRotationReply.Builder reply = this.generatePortRotationReply(false);
     reply.setResponseStatus(
-        StatusReply.newBuilder()
+        ResponseStatus.newBuilder()
             .setStatus(FAILED)
             .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
             .build());
@@ -384,7 +386,7 @@ class LoadableStudyServiceTest {
               builder.setPortId(Long.valueOf(i));
               builder.setLoadableStudyId(Long.valueOf(i));
               builder.setOperationId(Long.valueOf(i));
-              builder.setBirthId(Long.valueOf(i));
+              builder.setBerthId(Long.valueOf(i));
               builder.setSeaWaterDensity(!empty ? "1.025" : "");
               builder.setDistanceBetweenPorts(!empty ? "100" : "");
               builder.setTimeOfStay(!empty ? "2.5" : "");
@@ -404,7 +406,7 @@ class LoadableStudyServiceTest {
               builder.setOperationName("op-" + i);
               replyBuilder.addOperations(builder.build());
             });
-    replyBuilder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
+    replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;
   }
 
@@ -733,5 +735,80 @@ class LoadableStudyServiceTest {
     builder.addVoyages(detail);
     builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS));
     return builder;
+  }
+
+  @Test
+  void testSavePortRotation() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotationDetail.class)))
+        .thenReturn(this.generatePortRotationReply(false).build());
+    PortRotation request = this.createPortRotationRequest();
+    request.setOperationId(null);
+    PortRotationResponse response =
+        this.loadableStudyService.savePortRotation(request, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "Invalid response status"),
+        () -> assertNotNull(response.getId()));
+  }
+
+  @Test
+  void testSavePortRotationGrpcFailure() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotationDetail.class)))
+        .thenReturn(
+            this.generatePortRotationReply(false)
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
+                .build());
+
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.savePortRotation(
+                    this.createPortRotationRequest(), CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(longs = {1L, 2L})
+  void testSavePortRotationInvalidOperation(Long operationId) throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotationDetail.class)))
+        .thenReturn(this.generatePortRotationReply(false).build());
+    PortRotation request = this.createPortRotationRequest();
+    request.setOperationId(operationId);
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () -> this.loadableStudyService.savePortRotation(request, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  private PortRotation createPortRotationRequest() {
+    PortRotation request = new PortRotation();
+    request.setId(1L);
+    request.setLoadableStudyId(1L);
+    request.setDistanceBetweenPorts(TEST_BIGDECIMAL_VALUE);
+    request.setEta(LocalDateTime.now().toString());
+    request.setEtd(request.getEta());
+    request.setLayCanFrom(LocalDate.now().toString());
+    request.setLayCanTo(request.getLayCanFrom());
+    request.setLoadableStudyId(1L);
+    request.setOperationId(3L);
+    return request;
   }
 }

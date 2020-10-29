@@ -13,9 +13,15 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -50,16 +56,15 @@ class LoadableStudyControllerTest {
   private static final Long TEST_VOYAGE_ID = 1L;
 
   private static final String CHARTERER = "charterer";
-  private static final String SUB_CHARTERER = "sub-chartere";
   private static final String DRAFT_MARK = "1000";
   private static final Long LOAD_LINE_ID = 1L;
-  private static final String DRAFT_RESTRICTION = "1000";
-  private static final String MAX_TEMP_EXPECTED = "100";
   private static final String LOADABLE_STUDY_NAME = "LS-01";
-  private static final String LOADABLE_STUDY_DETAIL = "detail-1";
-  private static final String CREATED_DATE_FORMAT = "dd-MM-yyyy";
-  private static final String LOADABLE_STUDY_STATUS = "pending";
-
+  private static final String NAME = "name";
+  private static final String CHARTERER_LITERAL = "charterer";
+  private static final String DRAFT_MARK_LITERAL = "draftMark";
+  private static final String LOAD_LINE_ID_LITERAL = "loadLineXId";
+  private static final Long TEST_LODABLE_STUDY_ID = 1L;
+  private static final BigDecimal TEST_BIGDECIMAL_VALUE = new BigDecimal(100);
   // API URLS
   private static final String CLOUD_API_URL_PREFIX = "/api/cloud";
   private static final String SHIP_API_URL_PREFIX = "/api/cloud";
@@ -88,11 +93,12 @@ class LoadableStudyControllerTest {
   private static final String GET_VOYAGES_BY_VESSEL_CLOUD_URL =
       CLOUD_API_URL_PREFIX + GET_VOYAGES_BY_VESSEL_URL;
 
-  private static final String NAME = "name";
-  private static final String CHARTERER_LITERAL = "charterer";
-  private static final String DRAFT_MARK_LITERAL = "draftMark";
-  private static final String LOAD_LINE_ID_LITERAL = "loadLineXId";
-  private static final Long TEST_LODABLE_STUDY_ID = 1L;
+  private static final String PORT_ROTATION_SAVE_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{id}";
+  private static final String PORT_ROTATION_SAVE_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + PORT_ROTATION_SAVE_API_URL;
+  private static final String PORT_ROTATION_SAVE_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + PORT_ROTATION_SAVE_API_URL;
 
   /**
    * Positive test case. Test method for positive response scenario
@@ -360,5 +366,69 @@ class LoadableStudyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isInternalServerError());
+  }
+
+  @ValueSource(strings = {PORT_ROTATION_SAVE_CLOUD_API_URL, PORT_ROTATION_SAVE_SHIP_API_URL})
+  @ParameterizedTest
+  void testSavePortRotation(String url) throws Exception {
+    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+        .thenReturn(new PortRotationResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 0)
+                .content(this.createPortRotationRequest())
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+    ;
+  }
+
+  @ValueSource(strings = {PORT_ROTATION_SAVE_CLOUD_API_URL, PORT_ROTATION_SAVE_SHIP_API_URL})
+  @ParameterizedTest
+  void testSavePortRotationServiceException(String url) throws Exception {
+    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+        .thenThrow(
+            new GenericServiceException(
+                "service exception",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST));
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 0)
+                .content(this.createPortRotationRequest())
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isBadRequest());
+    ;
+  }
+
+  @ValueSource(strings = {PORT_ROTATION_SAVE_CLOUD_API_URL, PORT_ROTATION_SAVE_SHIP_API_URL})
+  @ParameterizedTest
+  void testSavePortRotationRuntimeException(String url) throws Exception {
+    when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+        .thenThrow(RuntimeException.class);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 0)
+                .content(this.createPortRotationRequest())
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+    ;
+  }
+
+  private String createPortRotationRequest() throws JsonProcessingException {
+    PortRotation request = new PortRotation();
+    request.setDistanceBetweenPorts(TEST_BIGDECIMAL_VALUE);
+    request.setEta(LocalDateTime.now().toString());
+    request.setEtd(request.getEta());
+    request.setLayCanFrom(LocalDate.now().toString());
+    request.setLayCanTo(request.getLayCanFrom());
+    request.setLoadableStudyId(1L);
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.writeValueAsString(request);
   }
 }

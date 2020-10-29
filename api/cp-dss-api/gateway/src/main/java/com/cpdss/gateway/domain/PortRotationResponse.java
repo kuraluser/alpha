@@ -2,6 +2,8 @@
 package com.cpdss.gateway.domain;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.List;
 import lombok.Data;
 
@@ -11,6 +13,7 @@ import lombok.Data;
  * @author suhail.k
  */
 @Data
+@JsonInclude(Include.NON_EMPTY)
 public class PortRotationResponse {
 
   private CommonSuccessResponse responseStatus;
@@ -18,4 +21,6 @@ public class PortRotationResponse {
   private List<PortRotation> portList;
 
   private List<Operation> operations;
+
+  private Long id;
 }

@@ -1,6 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.service;
 
+import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -85,6 +86,9 @@ public class LoadableStudyService {
   private static final int LOADABLE_STUDY_ATTACHEMENT_MAX_SIZE = 1 * 1024 * 1024;
   private static final List<String> ATTACHMENT_ALLOWED_EXTENSIONS =
       Arrays.asList("docx", "pdf", "txt", "jpg", "png", "msg", "eml");
+
+  private static final Long LOADING_OPERATION_ID = 1L;
+  private static final Long DISCHARGIN_OPERATION_ID = 2L;
 
   /**
    * method for voyage save
@@ -619,10 +623,10 @@ public class LoadableStudyService {
     for (PortRotationDetail portDetail : grpcReply.getPortsList()) {
       PortRotation port = new PortRotation();
       port.setId(portDetail.getId());
-      port.setPortId(portDetail.getPortId());
-      port.setBirthId(portDetail.getBirthId());
+      port.setPortId(0 == portDetail.getPortId() ? null : portDetail.getPortId());
+      port.setBerthId(0 == portDetail.getBerthId() ? null : portDetail.getBerthId());
       port.setLoadableStudyId(loadableStudyId);
-      port.setOperationId(portDetail.getOperationId());
+      port.setOperationId(0 == portDetail.getOperationId() ? null : portDetail.getOperationId());
       port.setSeaWaterDensity(
           isEmpty(portDetail.getSeaWaterDensity())
               ? null
@@ -665,6 +669,97 @@ public class LoadableStudyService {
    */
   public PortRotationReply getLoadableStudyPortRotationList(PortRotationRequest request) {
     return this.loadableStudyServiceBlockingStub.getLoadableStudyPortRotation(request);
+  }
+
+  /**
+   * Save port rotation for a loadable study
+   *
+   * @param request
+   * @param first
+   * @return
+   * @throws GenericServiceException
+   */
+  public PortRotationResponse savePortRotation(PortRotation request, String correlationId)
+      throws GenericServiceException {
+    log.info("Inside savePortRotation");
+    this.validatePortRotationSaveRequest(request);
+    PortRotationReply grpcReply = this.savePortRotation(this.createPortRotationDetail(request));
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to save loadable study - ports",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    PortRotationResponse response = new PortRotationResponse();
+    response.setId(grpcReply.getPortRotationId());
+    response.setResponseStatus(
+        new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * Call loadable study service to save port rotation
+   *
+   * @param request {@link PortRotationDetail}
+   * @return
+   */
+  public PortRotationReply savePortRotation(PortRotationDetail request) {
+    return this.loadableStudyServiceBlockingStub.saveLoadableStudyPortRotation(request);
+  }
+
+  /**
+   * Validate port rotation request
+   *
+   * @param request - {@link PortRotation}
+   * @throws GenericServiceException
+   */
+  private void validatePortRotationSaveRequest(PortRotation request)
+      throws GenericServiceException {
+    log.debug("Validating portRoationRequest");
+    if (null != request.getOperationId()
+        && (request.getOperationId().equals(LOADING_OPERATION_ID)
+            || request.getOperationId().equals(DISCHARGIN_OPERATION_ID))) {
+      throw new GenericServiceException(
+          "Loading/Discharging operation not allowed",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  /**
+   * Create Port rotation grpc request object
+   *
+   * @param request
+   * @return
+   */
+  private PortRotationDetail createPortRotationDetail(PortRotation request) {
+    PortRotationDetail.Builder builder = PortRotationDetail.newBuilder();
+    builder.setId(request.getId());
+    builder.setLoadableStudyId(request.getLoadableStudyId());
+    Optional.ofNullable(request.getOperationId()).ifPresent(builder::setOperationId);
+    Optional.ofNullable(request.getBerthId()).ifPresent(builder::setBerthId);
+    Optional.ofNullable(request.getDistanceBetweenPorts())
+        .ifPresent(
+            item -> builder.setDistanceBetweenPorts(valueOf(request.getDistanceBetweenPorts())));
+    Optional.ofNullable(request.getEta())
+        .ifPresent(item -> builder.setEta(valueOf(request.getEta())));
+    Optional.ofNullable(request.getEtd())
+        .ifPresent(item -> builder.setEtd(valueOf(request.getEtd())));
+    Optional.ofNullable(request.getLayCanFrom())
+        .ifPresent(item -> builder.setLayCanFrom(valueOf(request.getLayCanFrom())));
+    Optional.ofNullable(request.getLayCanTo())
+        .ifPresent(item -> builder.setLayCanTo(valueOf(request.getLayCanTo())));
+    Optional.ofNullable(request.getMaxAirDraft())
+        .ifPresent(item -> builder.setMaxAirDraft(valueOf(request.getMaxAirDraft())));
+    Optional.ofNullable(request.getMaxDraft())
+        .ifPresent(item -> builder.setMaxDraft(valueOf(request.getMaxDraft())));
+    Optional.ofNullable(request.getPortId())
+        .ifPresent(item -> builder.setPortId(request.getPortId()));
+    Optional.ofNullable(request.getSeaWaterDensity())
+        .ifPresent(item -> builder.setSeaWaterDensity(valueOf(request.getSeaWaterDensity())));
+    Optional.ofNullable(request.getTimeOfStay())
+        .ifPresent(item -> builder.setTimeOfStay(valueOf(request.getTimeOfStay())));
+    return builder.build();
   }
 
   /**

@@ -35,10 +35,13 @@ service LoadableStudyService {
 	rpc GetValveSegregation (ValveSegregationRequest) returns (ValveSegregationReply){
 	}
 
-  rpc getLoadableQuantity (LoadableQuantityReply) returns (LoadableQuantityResponse) {
+  	rpc getLoadableQuantity (LoadableQuantityReply) returns (LoadableQuantityResponse) {
 	}
 	
+	rpc SaveLoadableStudyPortRotation (PortRotationDetail) returns (PortRotationReply){
 	}
+	
+}
 
 
 message VoyageRequest {
@@ -183,7 +186,7 @@ message PortRotationRequest{
 message PortRotationDetail{
 	int64 id = 1;
 	int64 portId=2;
-	int64 birthId=3;
+	int64 berthId=3;
 	int64 operationId=4;
 	string seaWaterDensity=5;
 	string distanceBetweenPorts =6;
@@ -203,10 +206,13 @@ message Operation{
 }
 
 message PortRotationReply{
-	StatusReply responseStatus = 1;
+	ResponseStatus responseStatus = 1;
 	repeated PortRotationDetail ports=2;
 	repeated Operation operations=3;
-}message LoadableQuantityResponse {
+	int64 portRotationId = 4;
+}
+
+message LoadableQuantityResponse {
 	LoadableQuantityRequest loadableQuantityRequest = 1;
 	StatusReply responseStatus = 2;
 }
@@ -224,5 +230,3 @@ message ValveSegregationReply{
 	ResponseStatus responseStatus = 1;
 	repeated ValveSegregation valveSegregation = 2;
 }
-
-

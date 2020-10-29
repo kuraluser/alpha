@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.service;
 
 import static java.lang.String.valueOf;
+import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
@@ -56,7 +57,10 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -82,13 +86,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyPortRoationRepository loadableStudyPortRoationRepository;
   @Autowired private CargoOperationRepository cargoOperationRepository;
-
   @Autowired private LoadableStudyRepository loadableStudyRepository;
-
   @Autowired private LoadableQuantityRepository loadableQuantityRepository;
-
   @Autowired private CargoNominationRepository cargoNominationRepository;
-
   @Autowired private CargoNominationValveSegregationRepository valveSegregationRepository;
 
   private static final String SUCCESS = "SUCCESS";
@@ -96,6 +96,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String VOYAGEEXISTS = "VOYAGEEXISTS";
   private static final String CREATED_DATE_FORMAT = "dd-MM-yyyy";
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
+  private static final String ETA_ETD_FROMAT = "yyyy-MM-dd HH:mm";
+  private static final String LAY_CAN_FROMAT = "yyyy-MM-dd";
+  private static final Long LOADING_OPERATION_ID = 1L;
+  private static final Long DISCHARGING_OPERATION_ID = 2L;
 
   /**
    * method for save voyage
@@ -253,7 +257,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Override
   public void findLoadableStudiesByVesselAndVoyage(
       LoadableStudyRequest request, StreamObserver<LoadableStudyReply> responseObserver) {
-    Builder replyBuilder = null;
+    Builder replyBuilder = LoadableStudyReply.newBuilder();
     try {
       log.info("inside loadable study service - findLoadableStudiesByVesselAndVoyage");
       Optional<Voyage> voyageOpt = this.voyageRepository.findById(request.getVoyageId());
@@ -264,9 +268,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<LoadableStudy> loadableStudyEntityList =
           this.loadableStudyRepository.findByVesselXIdAndVoyage(
               request.getVesselId(), voyageOpt.get());
-      replyBuilder =
-          LoadableStudyReply.newBuilder()
-              .setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
+      replyBuilder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT);
       for (LoadableStudy entity : loadableStudyEntityList) {
         com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail.Builder builder =
@@ -431,11 +433,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .append("vessel_")
         .append(loadableStudy.getVesselXId())
         .append(separator)
-        .append(loadableStudy.getVoyage().getVoyageNo().replaceAll(" ", "_"))
+        .append(loadableStudy.getVoyage().getVoyageNo().replace(" ", "_"))
         .append("_")
         .append(loadableStudy.getVoyage().getId())
         .append(separator)
-        .append(loadableStudy.getName().replaceAll(" ", "_"))
+        .append(loadableStudy.getName().replace(" ", "_"))
         .append(separator);
     return valueOf(pathBuilder);
   }
@@ -567,8 +569,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Override
   public void getLoadableStudyPortRotation(
       PortRotationRequest request, StreamObserver<PortRotationReply> responseObserver) {
-    com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder replyBuilder =
-        PortRotationReply.newBuilder();
+    PortRotationReply.Builder replyBuilder = PortRotationReply.newBuilder();
     try {
       Optional<LoadableStudy> loadableStudyOpt =
           this.loadableStudyRepository.findById(request.getLoadableStudyId());
@@ -582,29 +583,31 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         replyBuilder.addPorts(
             this.createPortDetail(
                 entity,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"),
-                DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                DateTimeFormatter.ofPattern(ETA_ETD_FROMAT),
+                DateTimeFormatter.ofPattern(LAY_CAN_FROMAT)));
       }
-      List<CargoOperation> operationEntityList = this.cargoOperationRepository.findAll();
+      List<CargoOperation> operationEntityList =
+          this.cargoOperationRepository.findByIdNotIn(
+              Arrays.asList(LOADING_OPERATION_ID, DISCHARGING_OPERATION_ID));
       for (CargoOperation entity : operationEntityList) {
         replyBuilder.addOperations(this.createOperationDetail(entity));
       }
-      replyBuilder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching loadable study - port data", e);
       replyBuilder.setResponseStatus(
-          StatusReply.newBuilder()
+          ResponseStatus.newBuilder()
               .setCode(e.getCode())
               .setMessage(e.getMessage())
               .setStatus(FAILED)
               .build());
     } catch (Exception e) {
       e.printStackTrace();
-      log.error("Exception when fetching loadable study - port data", e);
+      log.error("Exception when fetching port rotation data", e);
       replyBuilder.setResponseStatus(
-          StatusReply.newBuilder()
+          ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .setMessage("Error saving loadable study")
+              .setMessage("Exception when fetching loadable study - port data")
               .setStatus(FAILED)
               .build());
     } finally {
@@ -635,10 +638,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       DateTimeFormatter layCanFormatter) {
     PortRotationDetail.Builder builder = PortRotationDetail.newBuilder();
     builder.setId(entity.getId());
-    builder.setPortId(entity.getPortXId());
     builder.setLoadableStudyId(entity.getLoadableStudy().getId());
-    builder.setOperationId(entity.getOperation().getId());
-    Optional.ofNullable(entity.getBirthXId()).ifPresent(builder::setBirthId);
+    Optional.ofNullable(entity.getPortXId()).ifPresent(builder::setPortId);
+    Optional.ofNullable(entity.getOperation()).ifPresent(op -> builder.setOperationId(op.getId()));
+    Optional.ofNullable(entity.getBerthXId()).ifPresent(builder::setBerthId);
     Optional.ofNullable(entity.getSeaWaterDensity())
         .ifPresent(density -> builder.setSeaWaterDensity(valueOf(density)));
     Optional.ofNullable(entity.getDistanceBetweenPorts())
@@ -689,7 +692,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
     } finally {
       responseObserver.onNext(replyBuilder.build());
-       responseObserver.onCompleted();
+      responseObserver.onCompleted();
     }
   }
 
@@ -863,5 +866,110 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /** Save port rotation info for loadable study */
+  @Override
+  public void saveLoadableStudyPortRotation(
+      PortRotationDetail request, StreamObserver<PortRotationReply> responseObserver) {
+    PortRotationReply.Builder replyBuilder = PortRotationReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findById(request.getLoadableStudyId());
+      if (!loadableStudyOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable study does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      LoadableStudyPortRotation entity = null;
+      if (request.getId() == 0) {
+        entity = new LoadableStudyPortRotation();
+        entity.setLoadableStudy(loadableStudyOpt.get());
+      } else {
+        Optional<LoadableStudyPortRotation> portRoationOpt =
+            this.loadableStudyPortRoationRepository.findById(request.getId());
+        if (!portRoationOpt.isPresent()) {
+          throw new GenericServiceException(
+              "Port rotation does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        entity = portRoationOpt.get();
+      }
+      entity =
+          this.loadableStudyPortRoationRepository.save(
+              this.createPortRotationEntity(entity, request));
+      replyBuilder.setPortRotationId(entity.getId());
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving loadable study - port data", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Exception when saving loadable study - port data", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when saving loadable study - port data")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Create entity class from request
+   *
+   * @param entity
+   * @param request
+   * @return
+   */
+  private LoadableStudyPortRotation createPortRotationEntity(
+      LoadableStudyPortRotation entity, PortRotationDetail request) {
+    entity.setAirDraftRestriction(
+        isEmpty(request.getMaxAirDraft()) ? null : new BigDecimal(request.getMaxAirDraft()));
+    entity.setBerthXId(0 == request.getBerthId() ? null : request.getBerthId());
+    entity.setDistanceBetweenPorts(
+        isEmpty(request.getDistanceBetweenPorts())
+            ? null
+            : new BigDecimal(request.getDistanceBetweenPorts()));
+    entity.setMaxDraft(
+        isEmpty(request.getMaxDraft()) ? null : new BigDecimal(request.getMaxDraft()));
+    entity.setSeaWaterDensity(
+        isEmpty(request.getSeaWaterDensity())
+            ? null
+            : new BigDecimal(request.getSeaWaterDensity()));
+    entity.setTimeOfStay(
+        isEmpty(request.getTimeOfStay()) ? null : new BigDecimal(request.getTimeOfStay()));
+    entity.setEta(
+        isEmpty(request.getEta())
+            ? null
+            : LocalDateTime.from(
+                DateTimeFormatter.ofPattern(ETA_ETD_FROMAT).parse(request.getEta())));
+    entity.setEtd(
+        isEmpty(request.getEtd())
+            ? null
+            : LocalDateTime.from(
+                DateTimeFormatter.ofPattern(ETA_ETD_FROMAT).parse(request.getEtd())));
+    entity.setLayCanFrom(
+        isEmpty(request.getLayCanFrom())
+            ? null
+            : LocalDate.from(
+                DateTimeFormatter.ofPattern(LAY_CAN_FROMAT).parse(request.getLayCanFrom())));
+    entity.setLayCanTo(
+        isEmpty(request.getLayCanTo())
+            ? null
+            : LocalDate.from(
+                DateTimeFormatter.ofPattern(LAY_CAN_FROMAT).parse(request.getLayCanTo())));
+    entity.setOperation(this.cargoOperationRepository.getOne(request.getOperationId()));
+    return entity;
   }
 }
