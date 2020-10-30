@@ -7575,6 +7575,13 @@ public final class LoadableStudy {
      * @return The loadableQuantityId.
      */
     long getLoadableQuantityId();
+
+    /**
+     * <code>int64 loadableStudyId = 3;</code>
+     *
+     * @return The loadableStudyId.
+     */
+    long getLoadableStudyId();
   }
   /** Protobuf type {@code LoadableQuantityReply} */
   public static final class LoadableQuantityReply extends com.google.protobuf.GeneratedMessageV3
@@ -7638,6 +7645,11 @@ public final class LoadableStudy {
             case 16:
               {
                 loadableQuantityId_ = input.readInt64();
+                break;
+              }
+            case 24:
+              {
+                loadableStudyId_ = input.readInt64();
                 break;
               }
             default:
@@ -7711,6 +7723,17 @@ public final class LoadableStudy {
       return loadableQuantityId_;
     }
 
+    public static final int LOADABLESTUDYID_FIELD_NUMBER = 3;
+    private long loadableStudyId_;
+    /**
+     * <code>int64 loadableStudyId = 3;</code>
+     *
+     * @return The loadableStudyId.
+     */
+    public long getLoadableStudyId() {
+      return loadableStudyId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -7731,6 +7754,9 @@ public final class LoadableStudy {
       if (loadableQuantityId_ != 0L) {
         output.writeInt64(2, loadableQuantityId_);
       }
+      if (loadableStudyId_ != 0L) {
+        output.writeInt64(3, loadableStudyId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -7745,6 +7771,9 @@ public final class LoadableStudy {
       }
       if (loadableQuantityId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, loadableQuantityId_);
+      }
+      if (loadableStudyId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, loadableStudyId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -7767,6 +7796,7 @@ public final class LoadableStudy {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
       if (getLoadableQuantityId() != other.getLoadableQuantityId()) return false;
+      if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -7784,6 +7814,8 @@ public final class LoadableStudy {
       }
       hash = (37 * hash) + LOADABLEQUANTITYID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableQuantityId());
+      hash = (37 * hash) + LOADABLESTUDYID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -7932,6 +7964,8 @@ public final class LoadableStudy {
         }
         loadableQuantityId_ = 0L;
 
+        loadableStudyId_ = 0L;
+
         return this;
       }
 
@@ -7966,6 +8000,7 @@ public final class LoadableStudy {
           result.responseStatus_ = responseStatusBuilder_.build();
         }
         result.loadableQuantityId_ = loadableQuantityId_;
+        result.loadableStudyId_ = loadableStudyId_;
         onBuilt();
         return result;
       }
@@ -8025,6 +8060,9 @@ public final class LoadableStudy {
         }
         if (other.getLoadableQuantityId() != 0L) {
           setLoadableQuantityId(other.getLoadableQuantityId());
+        }
+        if (other.getLoadableStudyId() != 0L) {
+          setLoadableStudyId(other.getLoadableStudyId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -8207,6 +8245,39 @@ public final class LoadableStudy {
       public Builder clearLoadableQuantityId() {
 
         loadableQuantityId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long loadableStudyId_;
+      /**
+       * <code>int64 loadableStudyId = 3;</code>
+       *
+       * @return The loadableStudyId.
+       */
+      public long getLoadableStudyId() {
+        return loadableStudyId_;
+      }
+      /**
+       * <code>int64 loadableStudyId = 3;</code>
+       *
+       * @param value The loadableStudyId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadableStudyId(long value) {
+
+        loadableStudyId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadableStudyId = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadableStudyId() {
+
+        loadableStudyId_ = 0L;
         onChanged();
         return this;
       }
@@ -27201,92 +27272,93 @@ public final class LoadableStudy {
           + "ed\030\021 \001(\t\022\033\n\023foConsumptionPerDay\030\022 \001(\t\022\035\n"
           + "\025estTotalFOConsumption\030\023 \001(\t\022\027\n\017loadable"
           + "StudyId\030\024 \001(\003\022\031\n\021updateDateAndTime\030\025 \001(\t"
-          + "\"Y\n\025LoadableQuantityReply\022$\n\016responseSta"
+          + "\"r\n\025LoadableQuantityReply\022$\n\016responseSta"
           + "tus\030\001 \001(\0132\014.StatusReply\022\032\n\022loadableQuant"
-          + "ityId\030\002 \001(\003\"M\n\024LoadableStudyRequest\022\021\n\tc"
-          + "ompanyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voya"
-          + "geId\030\003 \001(\003\"?\n\027LoadableStudyAttachment\022\022\n"
-          + "\nbyteString\030\001 \001(\014\022\020\n\010fileName\030\002 \001(\t\"\242\003\n\023"
-          + "LoadableStudyDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030"
-          + "\002 \001(\t\022\016\n\006detail\030\003 \001(\t\022\020\n\010statusId\030\004 \001(\003\022"
-          + "\016\n\006status\030\005 \001(\t\022\023\n\013createdDate\030\006 \001(\t\022\021\n\t"
-          + "charterer\030\007 \001(\t\022\024\n\014subCharterer\030\010 \001(\t\022\021\n"
-          + "\tdraftMark\030\t \001(\t\022\023\n\013loadLineXId\030\n \001(\003\022\030\n"
-          + "\020draftRestriction\030\013 \001(\t\022\031\n\021maxAirTempera"
-          + "ture\030\014 \001(\t\022\033\n\023maxWaterTemperature\030\r \001(\t\022"
-          + "\030\n\020duplicatedFromId\030\016 \001(\003\022\020\n\010voyageId\030\017 "
-          + "\001(\003\022\020\n\010vesselId\030\020 \001(\003\022-\n\013attachments\030\021 \003"
-          + "(\0132\030.LoadableStudyAttachment\022\032\n\022discharg"
-          + "ingPortIds\030\022 \003(\003\"u\n\022LoadableStudyReply\022$"
-          + "\n\016responseStatus\030\001 \001(\0132\014.StatusReply\022-\n\017"
-          + "loadableStudies\030\002 \003(\0132\024.LoadableStudyDet"
-          + "ail\022\n\n\002id\030\003 \001(\003\"5\n\021LoadingPortDetail\022\016\n\006"
-          + "portId\030\001 \001(\003\022\020\n\010quantity\030\002 \001(\t\".\n\021segreg"
-          + "ationDetail\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\"\252"
-          + "\002\n\025CargoNominationDetail\022\n\n\002id\030\001 \001(\003\022\027\n\017"
-          + "loadableStudyId\030\002 \001(\003\022\020\n\010priority\030\003 \001(\003\022"
-          + "\r\n\005color\030\004 \001(\t\022\017\n\007cargoId\030\005 \001(\003\022\024\n\014abbre"
-          + "viation\030\006 \001(\t\022.\n\022loadingPortDetails\030\007 \003("
-          + "\0132\022.LoadingPortDetail\022\020\n\010quantity\030\010 \001(\t\022"
-          + "\024\n\014maxTolerance\030\t \001(\t\022\024\n\014minTolerance\030\n "
-          + "\001(\t\022\016\n\006apiEst\030\013 \001(\t\022\017\n\007tempEst\030\014 \001(\t\022\025\n\r"
-          + "segregationId\030\r \001(\003\"\247\001\n\026CargoNominationR"
-          + "equest\022\020\n\010vesselId\030\001 \001(\003\022\020\n\010voyageId\030\002 \001"
-          + "(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\031\n\021cargoNomi"
-          + "nationId\030\004 \001(\003\0225\n\025cargoNominationDetail\030"
-          + "\005 \001(\0132\026.CargoNominationDetail\"\214\001\n\024CargoN"
-          + "ominationReply\022\'\n\016responseStatus\030\001 \001(\0132\017"
-          + ".ResponseStatus\022\031\n\021cargoNominationId\030\002 \001"
-          + "(\003\0220\n\020cargoNominations\030\003 \003(\0132\026.CargoNomi"
-          + "nationDetail\"n\n\023PortRotationRequest\022\027\n\017l"
-          + "oadableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020"
-          + "\n\010voyageId\030\003 \001(\003\022\032\n\022dischargingPortIds\030\004"
-          + " \003(\003\"\241\002\n\022PortRotationDetail\022\n\n\002id\030\001 \001(\003\022"
-          + "\016\n\006portId\030\002 \001(\003\022\017\n\007berthId\030\003 \001(\003\022\023\n\013oper"
-          + "ationId\030\004 \001(\003\022\027\n\017seaWaterDensity\030\005 \001(\t\022\034"
-          + "\n\024distanceBetweenPorts\030\006 \001(\t\022\022\n\ntimeOfSt"
-          + "ay\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t\022\023\n\013maxAirDraf"
-          + "t\030\t \001(\t\022\013\n\003eta\030\n \001(\t\022\013\n\003etd\030\013 \001(\t\022\022\n\nlay"
-          + "CanFrom\030\014 \001(\t\022\020\n\010layCanTo\030\r \001(\t\022\027\n\017loada"
-          + "bleStudyId\030\016 \001(\003\".\n\tOperation\022\n\n\002id\030\001 \001("
-          + "\003\022\025\n\roperationName\030\002 \001(\t\"\230\001\n\021PortRotatio"
-          + "nReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respons"
-          + "eStatus\022\"\n\005ports\030\002 \003(\0132\023.PortRotationDet"
-          + "ail\022\036\n\noperations\030\003 \003(\0132\n.Operation\022\026\n\016p"
-          + "ortRotationId\030\004 \001(\003\"{\n\030LoadableQuantityR"
-          + "esponse\0229\n\027loadableQuantityRequest\030\001 \001(\013"
-          + "2\030.LoadableQuantityRequest\022$\n\016responseSt"
-          + "atus\030\002 \001(\0132\014.StatusReply\",\n\020ValveSegrega"
-          + "tion\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"2\n\027ValveS"
-          + "egregationRequest\022\027\n\017loadableStudyId\030\001 \001"
-          + "(\003\"m\n\025ValveSegregationReply\022\'\n\016responseS"
-          + "tatus\030\001 \001(\0132\017.ResponseStatus\022+\n\020valveSeg"
-          + "regation\030\002 \003(\0132\021.ValveSegregation2\265\007\n\024Lo"
-          + "adableStudyService\022,\n\nSaveVoyage\022\016.Voyag"
-          + "eRequest\032\014.VoyageReply\"\000\0228\n\022GetVoyagesBy"
-          + "Vessel\022\016.VoyageRequest\032\020.VoyageListReply"
-          + "\"\000\022J\n\024SaveLoadableQuantity\022\030.LoadableQua"
-          + "ntityRequest\032\026.LoadableQuantityReply\"\000\022T"
-          + "\n$FindLoadableStudiesByVesselAndVoyage\022\025"
-          + ".LoadableStudyRequest\032\023.LoadableStudyRep"
-          + "ly\"\000\022@\n\021SaveLoadableStudy\022\024.LoadableStud"
-          + "yDetail\032\023.LoadableStudyReply\"\000\022G\n\023SaveCa"
-          + "rgoNomination\022\027.CargoNominationRequest\032\025"
-          + ".CargoNominationReply\"\000\022J\n\034GetLoadableSt"
-          + "udyPortRotation\022\024.PortRotationRequest\032\022."
-          + "PortRotationReply\"\000\022J\n\026GetCargoNominatio"
-          + "nById\022\027.CargoNominationRequest\032\025.CargoNo"
-          + "minationReply\"\000\022I\n\023GetValveSegregation\022\030"
-          + ".ValveSegregationRequest\032\026.ValveSegregat"
-          + "ionReply\"\000\022J\n\023getLoadableQuantity\022\026.Load"
-          + "ableQuantityReply\032\031.LoadableQuantityResp"
-          + "onse\"\000\022J\n\035SaveLoadableStudyPortRotation\022"
-          + "\023.PortRotationDetail\032\022.PortRotationReply"
-          + "\"\000\022I\n\025DeleteCargoNomination\022\027.CargoNomin"
-          + "ationRequest\032\025.CargoNominationReply\"\000\022B\n"
-          + "\024SaveDischargingPorts\022\024.PortRotationRequ"
-          + "est\032\022.PortRotationReply\"\000B\036\n\032com.cpdss.c"
-          + "ommon.generatedP\000b\006proto3"
+          + "ityId\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\"M\n\024"
+          + "LoadableStudyRequest\022\021\n\tcompanyId\030\001 \001(\003\022"
+          + "\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\"?\n\027L"
+          + "oadableStudyAttachment\022\022\n\nbyteString\030\001 \001"
+          + "(\014\022\020\n\010fileName\030\002 \001(\t\"\242\003\n\023LoadableStudyDe"
+          + "tail\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\016\n\006detail"
+          + "\030\003 \001(\t\022\020\n\010statusId\030\004 \001(\003\022\016\n\006status\030\005 \001(\t"
+          + "\022\023\n\013createdDate\030\006 \001(\t\022\021\n\tcharterer\030\007 \001(\t"
+          + "\022\024\n\014subCharterer\030\010 \001(\t\022\021\n\tdraftMark\030\t \001("
+          + "\t\022\023\n\013loadLineXId\030\n \001(\003\022\030\n\020draftRestricti"
+          + "on\030\013 \001(\t\022\031\n\021maxAirTemperature\030\014 \001(\t\022\033\n\023m"
+          + "axWaterTemperature\030\r \001(\t\022\030\n\020duplicatedFr"
+          + "omId\030\016 \001(\003\022\020\n\010voyageId\030\017 \001(\003\022\020\n\010vesselId"
+          + "\030\020 \001(\003\022-\n\013attachments\030\021 \003(\0132\030.LoadableSt"
+          + "udyAttachment\022\032\n\022dischargingPortIds\030\022 \003("
+          + "\003\"u\n\022LoadableStudyReply\022$\n\016responseStatu"
+          + "s\030\001 \001(\0132\014.StatusReply\022-\n\017loadableStudies"
+          + "\030\002 \003(\0132\024.LoadableStudyDetail\022\n\n\002id\030\003 \001(\003"
+          + "\"5\n\021LoadingPortDetail\022\016\n\006portId\030\001 \001(\003\022\020\n"
+          + "\010quantity\030\002 \001(\t\".\n\021segregationDetail\022\n\n\002"
+          + "id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\"\252\002\n\025CargoNominat"
+          + "ionDetail\022\n\n\002id\030\001 \001(\003\022\027\n\017loadableStudyId"
+          + "\030\002 \001(\003\022\020\n\010priority\030\003 \001(\003\022\r\n\005color\030\004 \001(\t\022"
+          + "\017\n\007cargoId\030\005 \001(\003\022\024\n\014abbreviation\030\006 \001(\t\022."
+          + "\n\022loadingPortDetails\030\007 \003(\0132\022.LoadingPort"
+          + "Detail\022\020\n\010quantity\030\010 \001(\t\022\024\n\014maxTolerance"
+          + "\030\t \001(\t\022\024\n\014minTolerance\030\n \001(\t\022\016\n\006apiEst\030\013"
+          + " \001(\t\022\017\n\007tempEst\030\014 \001(\t\022\025\n\rsegregationId\030\r"
+          + " \001(\003\"\247\001\n\026CargoNominationRequest\022\020\n\010vesse"
+          + "lId\030\001 \001(\003\022\020\n\010voyageId\030\002 \001(\003\022\027\n\017loadableS"
+          + "tudyId\030\003 \001(\003\022\031\n\021cargoNominationId\030\004 \001(\003\022"
+          + "5\n\025cargoNominationDetail\030\005 \001(\0132\026.CargoNo"
+          + "minationDetail\"\214\001\n\024CargoNominationReply\022"
+          + "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus"
+          + "\022\031\n\021cargoNominationId\030\002 \001(\003\0220\n\020cargoNomi"
+          + "nations\030\003 \003(\0132\026.CargoNominationDetail\"n\n"
+          + "\023PortRotationRequest\022\027\n\017loadableStudyId\030"
+          + "\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001("
+          + "\003\022\032\n\022dischargingPortIds\030\004 \003(\003\"\241\002\n\022PortRo"
+          + "tationDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003"
+          + "\022\017\n\007berthId\030\003 \001(\003\022\023\n\013operationId\030\004 \001(\003\022\027"
+          + "\n\017seaWaterDensity\030\005 \001(\t\022\034\n\024distanceBetwe"
+          + "enPorts\030\006 \001(\t\022\022\n\ntimeOfStay\030\007 \001(\t\022\020\n\010max"
+          + "Draft\030\010 \001(\t\022\023\n\013maxAirDraft\030\t \001(\t\022\013\n\003eta\030"
+          + "\n \001(\t\022\013\n\003etd\030\013 \001(\t\022\022\n\nlayCanFrom\030\014 \001(\t\022\020"
+          + "\n\010layCanTo\030\r \001(\t\022\027\n\017loadableStudyId\030\016 \001("
+          + "\003\".\n\tOperation\022\n\n\002id\030\001 \001(\003\022\025\n\roperationN"
+          + "ame\030\002 \001(\t\"\230\001\n\021PortRotationReply\022\'\n\016respo"
+          + "nseStatus\030\001 \001(\0132\017.ResponseStatus\022\"\n\005port"
+          + "s\030\002 \003(\0132\023.PortRotationDetail\022\036\n\noperatio"
+          + "ns\030\003 \003(\0132\n.Operation\022\026\n\016portRotationId\030\004"
+          + " \001(\003\"{\n\030LoadableQuantityResponse\0229\n\027load"
+          + "ableQuantityRequest\030\001 \001(\0132\030.LoadableQuan"
+          + "tityRequest\022$\n\016responseStatus\030\002 \001(\0132\014.St"
+          + "atusReply\",\n\020ValveSegregation\022\n\n\002id\030\001 \001("
+          + "\003\022\014\n\004name\030\002 \001(\t\"2\n\027ValveSegregationReque"
+          + "st\022\027\n\017loadableStudyId\030\001 \001(\003\"m\n\025ValveSegr"
+          + "egationReply\022\'\n\016responseStatus\030\001 \001(\0132\017.R"
+          + "esponseStatus\022+\n\020valveSegregation\030\002 \003(\0132"
+          + "\021.ValveSegregation2\265\007\n\024LoadableStudyServ"
+          + "ice\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014.Voya"
+          + "geReply\"\000\0228\n\022GetVoyagesByVessel\022\016.Voyage"
+          + "Request\032\020.VoyageListReply\"\000\022J\n\024SaveLoada"
+          + "bleQuantity\022\030.LoadableQuantityRequest\032\026."
+          + "LoadableQuantityReply\"\000\022T\n$FindLoadableS"
+          + "tudiesByVesselAndVoyage\022\025.LoadableStudyR"
+          + "equest\032\023.LoadableStudyReply\"\000\022@\n\021SaveLoa"
+          + "dableStudy\022\024.LoadableStudyDetail\032\023.Loada"
+          + "bleStudyReply\"\000\022G\n\023SaveCargoNomination\022\027"
+          + ".CargoNominationRequest\032\025.CargoNominatio"
+          + "nReply\"\000\022J\n\034GetLoadableStudyPortRotation"
+          + "\022\024.PortRotationRequest\032\022.PortRotationRep"
+          + "ly\"\000\022J\n\026GetCargoNominationById\022\027.CargoNo"
+          + "minationRequest\032\025.CargoNominationReply\"\000"
+          + "\022I\n\023GetValveSegregation\022\030.ValveSegregati"
+          + "onRequest\032\026.ValveSegregationReply\"\000\022J\n\023g"
+          + "etLoadableQuantity\022\026.LoadableQuantityRep"
+          + "ly\032\031.LoadableQuantityResponse\"\000\022J\n\035SaveL"
+          + "oadableStudyPortRotation\022\023.PortRotationD"
+          + "etail\032\022.PortRotationReply\"\000\022I\n\025DeleteCar"
+          + "goNomination\022\027.CargoNominationRequest\032\025."
+          + "CargoNominationReply\"\000\022B\n\024SaveDischargin"
+          + "gPorts\022\024.PortRotationRequest\032\022.PortRotat"
+          + "ionReply\"\000B\036\n\032com.cpdss.common.generated"
+          + "P\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -27361,7 +27433,7 @@ public final class LoadableStudy {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableQuantityReply_descriptor,
             new java.lang.String[] {
-              "ResponseStatus", "LoadableQuantityId",
+              "ResponseStatus", "LoadableQuantityId", "LoadableStudyId",
             });
     internal_static_LoadableStudyRequest_descriptor = getDescriptor().getMessageTypes().get(7);
     internal_static_LoadableStudyRequest_fieldAccessorTable =

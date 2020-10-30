@@ -1,11 +1,10 @@
 appConfig {
-  grpcServer = 'y'
   persistence = 'springData'
   dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
   javaMainClass = "com.cpdss.loadablestudy.Application"
-}
+grpc = 'y'}
 
 dependencies {
     implementation project(':common')

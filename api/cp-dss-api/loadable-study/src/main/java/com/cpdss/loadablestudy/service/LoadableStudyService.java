@@ -32,6 +32,9 @@ import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceImplBase;
 import com.cpdss.common.generated.PortInfo.PortDetail;
+import com.cpdss.common.generated.VesselInfo.VesselReply;
+import com.cpdss.common.generated.VesselInfo.VesselRequest;
+import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.CargoNomination;
@@ -70,6 +73,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -106,7 +110,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
-  private static final String VOYAGEEXISTS = "VOYAGEEXISTS";
+  private static final String VOYAGEEXISTS = "VOYAGE_EXISTS";
   private static final String CREATED_DATE_FORMAT = "dd-MM-yyyy";
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
   private static final String ETA_ETD_FROMAT = "yyyy-MM-dd HH:mm";
@@ -114,6 +118,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
+
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   /**
    * method for save voyage
@@ -135,7 +142,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             VoyageReply.newBuilder()
                 .setResponseStatus(
                     StatusReply.newBuilder()
-                        .setStatus(SUCCESS)
+                        .setStatus(FAILED)
                         .setMessage(VOYAGEEXISTS)
                         .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
                 .build();
@@ -163,7 +170,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           VoyageReply.newBuilder()
               .setResponseStatus(
                   StatusReply.newBuilder()
-                      .setStatus(SUCCESS)
+                      .setStatus(FAILED)
                       .setMessage(FAILED)
                       .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR))
               .build();
@@ -241,7 +248,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             LoadableQuantityReply.newBuilder()
                 .setResponseStatus(
                     StatusReply.newBuilder()
-                        .setStatus(SUCCESS)
+                        .setStatus(FAILED)
                         .setMessage(INVALID_LOADABLE_QUANTITY)
                         .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
                 .build();
@@ -252,7 +259,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           LoadableQuantityReply.newBuilder()
               .setResponseStatus(
                   StatusReply.newBuilder()
-                      .setStatus(SUCCESS)
+                      .setStatus(FAILED)
                       .setMessage(FAILED)
                       .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR))
               .build();
@@ -758,42 +765,69 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableQuantityReply request, StreamObserver<LoadableQuantityResponse> responseObserver) {
     LoadableQuantityResponse.Builder builder = LoadableQuantityResponse.newBuilder();
     try {
-      Optional<LoadableQuantity> loadableQuantity =
-          loadableQuantityRepository.findById(request.getLoadableQuantityId());
-      if (!loadableQuantity.isPresent()) {
-        log.info("INVALID_LOADABLE_QUANTITY_ID - ", request.getLoadableQuantityId());
+      List<LoadableQuantity> loadableQuantity =
+          loadableQuantityRepository.findByLoadableStudyXId(request.getLoadableStudyId());
+      Optional<LoadableStudy> loadableStudy =
+          this.loadableStudyRepository.findById(request.getLoadableStudyId());
+      if (!loadableStudy.isPresent()) {
+        log.info("INVALID_STUDY_ID - ", request.getLoadableStudyId());
         builder.setResponseStatus(
             StatusReply.newBuilder()
-                .setStatus(SUCCESS)
+                .setStatus(FAILED)
                 .setMessage(INVALID_LOADABLE_QUANTITY)
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+      } else if (loadableQuantity.isEmpty()) {
+        String draftRestictoin = null;
+        VesselRequest replyBuilder =
+            VesselRequest.newBuilder()
+                .setVesselId(loadableStudy.get().getVesselXId())
+                .setVesselDraftConditionId(loadableStudy.get().getLoadLineXId())
+                .setDraftExtreme(loadableStudy.get().getDraftMark().toString())
+                .build();
+        VesselReply vesselReply = this.getVesselDetailsById(replyBuilder);
+        if (Optional.ofNullable(loadableStudy.get().getDraftRestriction()).isPresent()) {
+          draftRestictoin = loadableStudy.get().getDraftRestriction().toString();
+        } else {
+          draftRestictoin =
+              vesselReply.getVesselLoadableQuantityDetails().getDisplacmentDraftRestriction();
+        }
+        LoadableQuantityRequest loadableQuantityRequest =
+            LoadableQuantityRequest.newBuilder()
+                .setDisplacmentDraftRestriction(draftRestictoin)
+                .setVesselLightWeight(
+                    vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight())
+                .setConstant(vesselReply.getVesselLoadableQuantityDetails().getConstant())
+                .build();
+        builder.setLoadableQuantityRequest(loadableQuantityRequest);
+        builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
       } else {
         LoadableQuantityRequest loadableQuantityRequest =
             LoadableQuantityRequest.newBuilder()
-                .setConstant(loadableQuantity.get().getConstant().toString())
+                .setConstant(loadableQuantity.get(0).getConstant().toString())
                 .setDisplacmentDraftRestriction(
-                    loadableQuantity.get().getDisplacementAtDraftRestriction().toString())
+                    loadableQuantity.get(0).getDisplacementAtDraftRestriction().toString())
                 .setDistanceFromLastPort(
-                    loadableQuantity.get().getDistanceFromLastPort().toString())
-                .setDwt(loadableQuantity.get().getDeadWeight().toString())
-                .setEstDOOnBoard(loadableQuantity.get().getEstimatedDOOnBoard().toString())
-                .setEstFOOnBoard(loadableQuantity.get().getEstimatedFOOnBoard().toString())
-                .setEstFreshWaterOnBoard(loadableQuantity.get().getEstimatedFWOnBoard().toString())
-                .setEstSagging(loadableQuantity.get().getEstimatedSagging().toString())
-                .setEstSeaDensity(loadableQuantity.get().getEstimatedSeaDensity().toString())
-                .setEstTotalFOConsumption(loadableQuantity.get().getTotalFoConsumption().toString())
-                .setFoConsumptionPerDay(loadableQuantity.get().getFoConsumptionPerDay().toString())
-                .setLimitingDraft(loadableQuantity.get().getDraftRestriction().toString())
-                .setOtherIfAny(loadableQuantity.get().getOtherIfAny().toString())
-                .setSaggingDeduction(loadableQuantity.get().getSaggingDeduction().toString())
-                .setSgCorrection(loadableQuantity.get().getSgCorrection().toString())
-                .setTotalQuantity(loadableQuantity.get().getTotalQuantity().toString())
-                .setTpc(loadableQuantity.get().getTpcatDraft().toString())
-                .setVesselAverageSpeed(loadableQuantity.get().getVesselAverageSpeed().toString())
-                .setVesselLightWeight(loadableQuantity.get().getLightWeight().toString())
+                    loadableQuantity.get(0).getDistanceFromLastPort().toString())
+                .setDwt(loadableQuantity.get(0).getDeadWeight().toString())
+                .setEstDOOnBoard(loadableQuantity.get(0).getEstimatedDOOnBoard().toString())
+                .setEstFOOnBoard(loadableQuantity.get(0).getEstimatedFOOnBoard().toString())
+                .setEstFreshWaterOnBoard(loadableQuantity.get(0).getEstimatedFWOnBoard().toString())
+                .setEstSagging(loadableQuantity.get(0).getEstimatedSagging().toString())
+                .setEstSeaDensity(loadableQuantity.get(0).getEstimatedSeaDensity().toString())
+                .setEstTotalFOConsumption(
+                    loadableQuantity.get(0).getTotalFoConsumption().toString())
+                .setFoConsumptionPerDay(loadableQuantity.get(0).getFoConsumptionPerDay().toString())
+                .setLimitingDraft(loadableQuantity.get(0).getDraftRestriction().toString())
+                .setOtherIfAny(loadableQuantity.get(0).getOtherIfAny().toString())
+                .setSaggingDeduction(loadableQuantity.get(0).getSaggingDeduction().toString())
+                .setSgCorrection(loadableQuantity.get(0).getSgCorrection().toString())
+                .setTotalQuantity(loadableQuantity.get(0).getTotalQuantity().toString())
+                .setTpc(loadableQuantity.get(0).getTpcatDraft().toString())
+                .setVesselAverageSpeed(loadableQuantity.get(0).getVesselAverageSpeed().toString())
+                .setVesselLightWeight(loadableQuantity.get(0).getLightWeight().toString())
                 .setUpdateDateAndTime(
                     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                        .format(loadableQuantity.get().getLastModifiedDateTime()))
+                        .format(loadableQuantity.get(0).getLastModifiedDateTime()))
                 .build();
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
@@ -802,13 +836,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       log.error("Error getting loadable quantity ", e);
       builder.setResponseStatus(
           StatusReply.newBuilder()
-              .setStatus(SUCCESS)
+              .setStatus(FAILED)
               .setMessage(FAILED)
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR));
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  public VesselReply getVesselDetailsById(VesselRequest replyBuilder) {
+    return this.vesselInfoGrpcService.getVesselDetailsById(replyBuilder);
   }
 
   private void buildCargoNominationReply(

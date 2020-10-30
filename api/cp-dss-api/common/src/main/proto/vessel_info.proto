@@ -9,10 +9,15 @@ import "common.proto";
 service VesselInfoService {
 	rpc GetAllVesselsByCompany (VesselRequest) returns (VesselReply) {
 	}
+	rpc GetVesselDetailsById (VesselRequest) returns (VesselReply) {
+	}
 }
 
 message VesselRequest {
 	int64 companyId = 1;
+	int64 vesselId = 2;
+	int64 vesselDraftConditionId = 3;
+	string draftExtreme = 4;
 }
 
 message LoadLineDetail {
@@ -32,7 +37,14 @@ message VesselDetail {
 	repeated LoadLineDetail loadLines = 8;
 }
 
+message VesselLoadableQuantityDetails {
+	string displacmentDraftRestriction = 1;
+	string vesselLightWeight = 2;
+	string constant = 3;
+}
+
 message VesselReply {
 	ResponseStatus responseStatus = 1;
 	repeated VesselDetail vessels = 2;
+	VesselLoadableQuantityDetails vesselLoadableQuantityDetails = 3;
 }

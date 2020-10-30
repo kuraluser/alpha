@@ -49,6 +49,9 @@ public class Vessel extends EntityDoc {
   @Column(name = "companyxid")
   private Long companyXId;
 
+  @Column(name = "deadweight")
+  private String deadWeight;
+
   @OneToMany(mappedBy = "vessel")
   private Set<VesselDraftCondition> vesselDraftConditions;
 }

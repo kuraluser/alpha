@@ -4,16 +4,19 @@ package com.cpdss.vesselinfo.service;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
+import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.vesselinfo.domain.VesselDetails;
 import com.cpdss.vesselinfo.entity.Vessel;
 import com.cpdss.vesselinfo.entity.VesselChartererMapping;
 import com.cpdss.vesselinfo.entity.VesselDraftCondition;
 import com.cpdss.vesselinfo.repository.VesselChartererMappingRepository;
 import com.cpdss.vesselinfo.repository.VesselRepository;
 import io.grpc.stub.StreamObserver;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,6 +99,48 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .setMessage(null != e.getMessage() ? e.getMessage() : "")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void getVesselDetailsById(
+      VesselRequest request, StreamObserver<VesselReply> responseObserver) {
+    VesselReply.Builder replyBuilder = VesselReply.newBuilder();
+    try {
+      log.info("inside grpc service: getVesselDetailsById");
+      VesselDetails vesselDetails =
+          vesselRepository.findVesselDetailsById(
+              request.getVesselId(),
+              request.getVesselDraftConditionId(),
+              new BigDecimal(request.getDraftExtreme()));
+
+      VesselLoadableQuantityDetails.Builder builder = VesselLoadableQuantityDetails.newBuilder();
+
+      if (null != vesselDetails) {
+        Optional.ofNullable(vesselDetails.getDisplacmentDraftRestriction().toString())
+            .ifPresent(builder::setDisplacmentDraftRestriction);
+        Optional.ofNullable(vesselDetails.getVesselLightWeight())
+            .ifPresent(builder::setVesselLightWeight);
+        Optional.ofNullable(vesselDetails.getConstant()).ifPresent(builder::setConstant);
+      }
+      replyBuilder.setVesselLoadableQuantityDetails(builder.build());
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS).build());
+    } catch (Exception e) {
+      log.error("Exception when fetching vessel details by id ", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(FAILED)
               .setStatus(FAILED)
               .build());
     } finally {

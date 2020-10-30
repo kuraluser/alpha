@@ -64,7 +64,7 @@ public class LoadableStudyController {
   @PostMapping("/vessels/{vesselId}/voyages")
   public VoyageResponse saveVoyage(
       @RequestBody @Valid Voyage voyage,
-      @PathVariable @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
@@ -72,6 +72,9 @@ public class LoadableStudyController {
       Long companyId = 1L; // TODO get the companyId from userContext in keycloak token
       return loadableStudyService.saveVoyage(
           voyage, companyId, vesselId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in save voyage", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in save voyage ", e);
       throw new CommonRestException(
@@ -97,7 +100,10 @@ public class LoadableStudyController {
       "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-quantity")
   public LoadableQuantityResponse saveLoadableQuantity(
       @RequestBody @Valid LoadableQuantity loadableQuantity,
-      @PathVariable long loadableStudiesId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudiesId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
@@ -105,6 +111,9 @@ public class LoadableStudyController {
           "save loadable quantity API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
       return loadableStudyService.saveLoadableQuantity(
           loadableQuantity, loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in save loadable quantity ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in save loadable quantity ", e);
       throw new CommonRestException(
@@ -269,18 +278,22 @@ public class LoadableStudyController {
    * @throws CommonRestException
    */
   @GetMapping(
-      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-quantity/{loadableQuantityId}")
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-quantity")
   public LoadableQuantityResponse getLoadableQuantity(
-      @PathVariable @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
-      @PathVariable @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
-      @PathVariable @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long loadableQuantityId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudiesId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
       log.info(
           "get loadable quantity API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
       return loadableStudyService.getLoadableQuantity(
-          loadableQuantityId, headers.getFirst(CORRELATION_ID_HEADER));
+          loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in save loadable quantity ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in save loadable quantity ", e);
       throw new CommonRestException(

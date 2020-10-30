@@ -115,12 +115,11 @@ public class LoadableStudyService {
             .build();
 
     VoyageReply voyageReply = this.saveVoyage(voyageRequest);
-    if (!SUCCESS.equalsIgnoreCase(voyageReply.getResponseStatus().getMessage())) {
-      if (VOYAGEEXISTS.equalsIgnoreCase(voyageReply.getResponseStatus().getMessage())) {
-        voyageResponse.setMessage(VOYAGEEXISTS);
-      }
-      voyageResponse.setResponseStatus(
-          new CommonSuccessResponse(voyageReply.getResponseStatus().getCode(), correlationId));
+    if (!SUCCESS.equalsIgnoreCase(voyageReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          voyageReply.getResponseStatus().getMessage(),
+          voyageReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(voyageReply.getResponseStatus().getCode())));
     } else {
       voyageResponse.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
@@ -176,15 +175,12 @@ public class LoadableStudyService {
 
     LoadableQuantityReply loadableQuantityReply =
         this.saveLoadableQuantity(loadableQuantityRequest);
-    if (!SUCCESS.equalsIgnoreCase(loadableQuantityReply.getResponseStatus().getMessage())) {
-      if (INVALID_LOADABLE_QUANTITY.equalsIgnoreCase(
-          loadableQuantityReply.getResponseStatus().getMessage())) {
-        loadableQuantityResponse.setMessage(INVALID_LOADABLE_QUANTITY);
-      }
-      loadableQuantityResponse.setResponseStatus(
-          new CommonSuccessResponse(
-              loadableQuantityReply.getResponseStatus().getCode(), correlationId));
-
+    if (!SUCCESS.equalsIgnoreCase(loadableQuantityReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          loadableQuantityReply.getResponseStatus().getMessage(),
+          loadableQuantityReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(loadableQuantityReply.getResponseStatus().getCode())));
     } else {
 
       loadableQuantityResponse.setResponseStatus(
@@ -780,23 +776,20 @@ public class LoadableStudyService {
    * @return
    * @throws GenericServiceException LoadableQuantityResponse
    */
-  public LoadableQuantityResponse getLoadableQuantity(long loadableQuantityId, String correlationId)
+  public LoadableQuantityResponse getLoadableQuantity(long loadableStudyId, String correlationId)
       throws GenericServiceException {
     LoadableQuantityResponse loadableQuantityResponseDto = new LoadableQuantityResponse();
     LoadableQuantity loadableQuantity = new LoadableQuantity();
     LoadableQuantityReply loadableQuantityRequest =
-        LoadableQuantityReply.newBuilder().setLoadableQuantityId(loadableQuantityId).build();
+        LoadableQuantityReply.newBuilder().setLoadableStudyId(loadableStudyId).build();
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse loadableQuantityResponse =
         this.getLoadableQuantityResponse(loadableQuantityRequest);
-    if (!SUCCESS.equalsIgnoreCase(loadableQuantityResponse.getResponseStatus().getMessage())) {
-      if (INVALID_LOADABLE_QUANTITY.equalsIgnoreCase(
-          loadableQuantityResponse.getResponseStatus().getMessage())) {
-        loadableQuantityResponseDto.setMessage(INVALID_LOADABLE_QUANTITY);
-      }
-      loadableQuantityResponseDto.setResponseStatus(
-          new CommonSuccessResponse(
-              loadableQuantityResponse.getResponseStatus().getCode(), correlationId));
-      return loadableQuantityResponseDto;
+    if (!SUCCESS.equalsIgnoreCase(loadableQuantityResponse.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          loadableQuantityResponse.getResponseStatus().getMessage(),
+          loadableQuantityResponse.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(loadableQuantityResponse.getResponseStatus().getCode())));
     }
 
     loadableQuantity.setConstant(

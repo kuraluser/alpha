@@ -472,33 +472,37 @@ class LoadableStudyServiceTest {
   @Test
   void testSaveVoyageNegativeTestCase() throws GenericServiceException {
 
-    LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
-
     VoyageReply voyageReply =
         VoyageReply.newBuilder()
             .setResponseStatus(
                 StatusReply.newBuilder()
-                    .setStatus(SUCCESS)
+                    .setStatus(FAILED)
                     .setMessage(INVALID_LOADABLE_QUANTITY)
                     .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
             .setVoyageId(1)
             .build();
 
     Mockito.when(
-            spy.saveVoyage(ArgumentMatchers.any(Voyage.class), anyLong(), anyLong(), anyString()))
+            loadableStudyService.saveVoyage(
+                ArgumentMatchers.any(Voyage.class), anyLong(), anyLong(), anyString()))
         .thenCallRealMethod();
 
-    Mockito.when(spy.saveVoyage(ArgumentMatchers.any(VoyageRequest.class))).thenReturn(voyageReply);
+    Mockito.when(loadableStudyService.saveVoyage(ArgumentMatchers.any(VoyageRequest.class)))
+        .thenReturn(voyageReply);
     Voyage voyage = new Voyage();
     voyage.setVoyageNo(VOYAGE);
     voyage.setCaptainId((long) 1);
     voyage.setChiefOfficerId((long) 1);
 
-    VoyageResponse voyageResponse = spy.saveVoyage(voyage, (long) 1, (long) 1, "123");
-
-    Assert.assertEquals(
-        String.valueOf(HttpStatusCode.BAD_REQUEST.value()),
-        voyageResponse.getResponseStatus().getStatus());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.saveVoyage(
+                    voyage, (long) 1, (long) 1, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
   /**
    * Save loadable quantity - positive scenario
@@ -546,7 +550,7 @@ class LoadableStudyServiceTest {
     loadableQuantity.setVesselLightWeight(LOADABLE_QUANTITY_DUMMY);
 
     LoadableQuantityResponse loadableQuantityResponse =
-        spy.saveLoadableQuantity(loadableQuantity, (long) 1, "123");
+        spy.saveLoadableQuantity(loadableQuantity, (long) 1, CORRELATION_ID_HEADER_VALUE);
 
     Assert.assertEquals(
         String.valueOf(HttpStatusCode.OK.value()),
@@ -561,23 +565,23 @@ class LoadableStudyServiceTest {
   @Test
   void testSaveLoadableQuantityNegativeTestCase() throws GenericServiceException {
 
-    LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
-
     LoadableQuantityReply loadableQuantityReply =
         LoadableQuantityReply.newBuilder()
             .setResponseStatus(
                 StatusReply.newBuilder()
-                    .setStatus(SUCCESS)
+                    .setStatus(FAILED)
                     .setMessage(INVALID_LOADABLE_QUANTITY)
                     .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
             .build();
 
     Mockito.when(
-            spy.saveLoadableQuantity(
+            loadableStudyService.saveLoadableQuantity(
                 ArgumentMatchers.any(LoadableQuantity.class), anyLong(), anyString()))
         .thenCallRealMethod();
 
-    Mockito.when(spy.saveLoadableQuantity(ArgumentMatchers.any(LoadableQuantityRequest.class)))
+    Mockito.when(
+            loadableStudyService.saveLoadableQuantity(
+                ArgumentMatchers.any(LoadableQuantityRequest.class)))
         .thenReturn(loadableQuantityReply);
     LoadableQuantity loadableQuantity = new LoadableQuantity();
     loadableQuantity.setLoadableStudyId(1);
@@ -601,16 +605,19 @@ class LoadableStudyServiceTest {
     loadableQuantity.setVesselAverageSpeed(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setVesselLightWeight(LOADABLE_QUANTITY_DUMMY);
 
-    LoadableQuantityResponse loadableQuantityResponse =
-        spy.saveLoadableQuantity(loadableQuantity, (long) 1, "123");
-
-    Assert.assertEquals(
-        String.valueOf(HttpStatusCode.BAD_REQUEST.value()),
-        loadableQuantityResponse.getResponseStatus().getStatus());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.saveLoadableQuantity(
+                    loadableQuantity, (long) 1, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
   /**
-   * positive test case for get loadable study
+   * positive test case for get loadable Quantity
    *
    * @throws GenericServiceException void
    */
@@ -655,23 +662,28 @@ class LoadableStudyServiceTest {
                     .build());
 
     LoadableQuantityReply loadableQuantityReply =
-        LoadableQuantityReply.newBuilder().setLoadableQuantityId(1).build();
+        LoadableQuantityReply.newBuilder().setLoadableStudyId(1).build();
     Mockito.when(spy.getLoadableQuantityResponse(loadableQuantityReply))
         .thenReturn(replyBuilder.build());
-
-    LoadableQuantityResponse loadableQuantityResponse = spy.getLoadableQuantity((long) 1, "123");
+    spy.getLoadableQuantity((long) 1, CORRELATION_ID_HEADER_VALUE);
+    LoadableQuantityResponse loadableQuantityResponse =
+        spy.getLoadableQuantity((long) 1, CORRELATION_ID_HEADER_VALUE);
 
     Assert.assertEquals(
         String.valueOf(HttpStatusCode.OK.value()),
         loadableQuantityResponse.getResponseStatus().getStatus());
   }
 
+  /**
+   * negative test case for get loadable Quantity
+   *
+   * @throws GenericServiceException void
+   */
   @Test
   public void negativeTestCaseForLoadableQuantity() throws GenericServiceException {
 
-    LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
-
-    Mockito.when(spy.getLoadableQuantity((anyLong()), anyString())).thenCallRealMethod();
+    Mockito.when(loadableStudyService.getLoadableQuantity((anyLong()), anyString()))
+        .thenCallRealMethod();
 
     LoadableQuantityRequest loadableQuantityRequest =
         LoadableQuantityRequest.newBuilder().setVesselLightWeight(LOADABLE_QUANTITY_DUMMY).build();
@@ -681,18 +693,25 @@ class LoadableStudyServiceTest {
             .setLoadableQuantityRequest(loadableQuantityRequest)
             .setResponseStatus(
                 StatusReply.newBuilder()
-                    .setStatus(SUCCESS)
+                    .setStatus(FAILED)
                     .setMessage(INVALID_LOADABLE_QUANTITY)
                     .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
             .build();
 
     LoadableQuantityReply loadableQuantityReply =
-        LoadableQuantityReply.newBuilder().setLoadableQuantityId(1).build();
-    Mockito.when(spy.getLoadableQuantityResponse(loadableQuantityReply)).thenReturn(replyBuilder);
+        LoadableQuantityReply.newBuilder().setLoadableStudyId(1).build();
+    Mockito.when(loadableStudyService.getLoadableQuantityResponse(loadableQuantityReply))
+        .thenReturn(replyBuilder);
 
-    LoadableQuantityResponse loadableQuantityResponse = spy.getLoadableQuantity((long) 1, "123");
-
-    Assert.assertEquals("400", loadableQuantityResponse.getResponseStatus().getStatus());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.getLoadableQuantity(
+                    (long) 1, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
   @Test
