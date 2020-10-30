@@ -7,9 +7,11 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,13 +34,17 @@ public class LoadableStudy extends EntityDoc {
   @Column(name = "vesselxid")
   private Long vesselXId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "voyagexid")
   private Voyage voyage;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "duplicatedfrom")
   private LoadableStudy duplicatedFrom;
+
+  @ManyToOne
+  @JoinColumn(name = "loadablestudystatusxid")
+  private LoadableStudyStatus loadableStudyStatus;
 
   @Column(name = "name", length = 100)
   private String name;
@@ -48,9 +54,6 @@ public class LoadableStudy extends EntityDoc {
 
   @Column(name = "charterer", length = 100)
   private String charterer;
-
-  @Column(name = "loadablestudystatus")
-  private String loadableStudyStatus;
 
   @Column(name = "subcharterer", length = 100)
   private String subCharterer;
@@ -67,12 +70,23 @@ public class LoadableStudy extends EntityDoc {
   @Column(name = "estimatedmaxsag")
   private BigDecimal estimatedMaxSag;
 
-  @Column(name = "maxtempexpected")
-  private BigDecimal maxTempExpected;
+  @Column(name = "maxairtemperature")
+  private BigDecimal maxAirTemperature;
+
+  @Column(name = "maxwatertemperature")
+  private BigDecimal maxWaterTemperature;
 
   @Column(name = "isactive")
   private boolean isActive;
 
-  @OneToMany(mappedBy = "loadableStudy", cascade = CascadeType.PERSIST)
+  @OneToMany(mappedBy = "loadableStudy", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
   private Set<LoadableStudyAttachments> attachments;
+
+  @OneToMany(mappedBy = "loadableStudy", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+  private Set<LoadableStudyPortRotation> portRotations;
+
+  @PrePersist
+  void prePersist() {
+    this.isActive = true;
+  }
 }

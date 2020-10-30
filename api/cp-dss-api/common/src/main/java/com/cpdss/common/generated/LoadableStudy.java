@@ -9624,138 +9624,178 @@ public final class LoadableStudy {
     com.google.protobuf.ByteString getDetailBytes();
 
     /**
-     * <code>string status = 4;</code>
+     * <code>int64 statusId = 4;</code>
+     *
+     * @return The statusId.
+     */
+    long getStatusId();
+
+    /**
+     * <code>string status = 5;</code>
      *
      * @return The status.
      */
     java.lang.String getStatus();
     /**
-     * <code>string status = 4;</code>
+     * <code>string status = 5;</code>
      *
      * @return The bytes for status.
      */
     com.google.protobuf.ByteString getStatusBytes();
 
     /**
-     * <code>string createdDate = 5;</code>
+     * <code>string createdDate = 6;</code>
      *
      * @return The createdDate.
      */
     java.lang.String getCreatedDate();
     /**
-     * <code>string createdDate = 5;</code>
+     * <code>string createdDate = 6;</code>
      *
      * @return The bytes for createdDate.
      */
     com.google.protobuf.ByteString getCreatedDateBytes();
 
     /**
-     * <code>string charterer = 6;</code>
+     * <code>string charterer = 7;</code>
      *
      * @return The charterer.
      */
     java.lang.String getCharterer();
     /**
-     * <code>string charterer = 6;</code>
+     * <code>string charterer = 7;</code>
      *
      * @return The bytes for charterer.
      */
     com.google.protobuf.ByteString getChartererBytes();
 
     /**
-     * <code>string subCharterer = 7;</code>
+     * <code>string subCharterer = 8;</code>
      *
      * @return The subCharterer.
      */
     java.lang.String getSubCharterer();
     /**
-     * <code>string subCharterer = 7;</code>
+     * <code>string subCharterer = 8;</code>
      *
      * @return The bytes for subCharterer.
      */
     com.google.protobuf.ByteString getSubChartererBytes();
 
     /**
-     * <code>string draftMark = 8;</code>
+     * <code>string draftMark = 9;</code>
      *
      * @return The draftMark.
      */
     java.lang.String getDraftMark();
     /**
-     * <code>string draftMark = 8;</code>
+     * <code>string draftMark = 9;</code>
      *
      * @return The bytes for draftMark.
      */
     com.google.protobuf.ByteString getDraftMarkBytes();
 
     /**
-     * <code>int64 loadLineXId = 9;</code>
+     * <code>int64 loadLineXId = 10;</code>
      *
      * @return The loadLineXId.
      */
     long getLoadLineXId();
 
     /**
-     * <code>string draftRestriction = 10;</code>
+     * <code>string draftRestriction = 11;</code>
      *
      * @return The draftRestriction.
      */
     java.lang.String getDraftRestriction();
     /**
-     * <code>string draftRestriction = 10;</code>
+     * <code>string draftRestriction = 11;</code>
      *
      * @return The bytes for draftRestriction.
      */
     com.google.protobuf.ByteString getDraftRestrictionBytes();
 
     /**
-     * <code>string maxTempExpected = 11;</code>
+     * <code>string maxAirTemperature = 12;</code>
      *
-     * @return The maxTempExpected.
+     * @return The maxAirTemperature.
      */
-    java.lang.String getMaxTempExpected();
+    java.lang.String getMaxAirTemperature();
     /**
-     * <code>string maxTempExpected = 11;</code>
+     * <code>string maxAirTemperature = 12;</code>
      *
-     * @return The bytes for maxTempExpected.
+     * @return The bytes for maxAirTemperature.
      */
-    com.google.protobuf.ByteString getMaxTempExpectedBytes();
+    com.google.protobuf.ByteString getMaxAirTemperatureBytes();
 
     /**
-     * <code>int64 duplicatedFromId = 12;</code>
+     * <code>string maxWaterTemperature = 13;</code>
+     *
+     * @return The maxWaterTemperature.
+     */
+    java.lang.String getMaxWaterTemperature();
+    /**
+     * <code>string maxWaterTemperature = 13;</code>
+     *
+     * @return The bytes for maxWaterTemperature.
+     */
+    com.google.protobuf.ByteString getMaxWaterTemperatureBytes();
+
+    /**
+     * <code>int64 duplicatedFromId = 14;</code>
      *
      * @return The duplicatedFromId.
      */
     long getDuplicatedFromId();
 
     /**
-     * <code>int64 voyageId = 13;</code>
+     * <code>int64 voyageId = 15;</code>
      *
      * @return The voyageId.
      */
     long getVoyageId();
 
     /**
-     * <code>int64 vesselId = 14;</code>
+     * <code>int64 vesselId = 16;</code>
      *
      * @return The vesselId.
      */
     long getVesselId();
 
-    /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+    /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
     java.util.List<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment>
         getAttachmentsList();
-    /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+    /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
     com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment getAttachments(int index);
-    /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+    /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
     int getAttachmentsCount();
-    /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+    /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
     java.util.List<
             ? extends com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder>
         getAttachmentsOrBuilderList();
-    /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+    /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
     com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder
         getAttachmentsOrBuilder(int index);
+
+    /**
+     * <code>repeated int64 dischargingPortIds = 18;</code>
+     *
+     * @return A list containing the dischargingPortIds.
+     */
+    java.util.List<java.lang.Long> getDischargingPortIdsList();
+    /**
+     * <code>repeated int64 dischargingPortIds = 18;</code>
+     *
+     * @return The count of dischargingPortIds.
+     */
+    int getDischargingPortIdsCount();
+    /**
+     * <code>repeated int64 dischargingPortIds = 18;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The dischargingPortIds at the given index.
+     */
+    long getDischargingPortIds(int index);
   }
   /** Protobuf type {@code LoadableStudyDetail} */
   public static final class LoadableStudyDetail extends com.google.protobuf.GeneratedMessageV3
@@ -9777,8 +9817,10 @@ public final class LoadableStudy {
       subCharterer_ = "";
       draftMark_ = "";
       draftRestriction_ = "";
-      maxTempExpected_ = "";
+      maxAirTemperature_ = "";
+      maxWaterTemperature_ = "";
       attachments_ = java.util.Collections.emptyList();
+      dischargingPortIds_ = emptyLongList();
     }
 
     @java.lang.Override
@@ -9830,76 +9872,88 @@ public final class LoadableStudy {
                 detail_ = s;
                 break;
               }
-            case 34:
+            case 32:
               {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                status_ = s;
+                statusId_ = input.readInt64();
                 break;
               }
             case 42:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                createdDate_ = s;
+                status_ = s;
                 break;
               }
             case 50:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                charterer_ = s;
+                createdDate_ = s;
                 break;
               }
             case 58:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                subCharterer_ = s;
+                charterer_ = s;
                 break;
               }
             case 66:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                draftMark_ = s;
+                subCharterer_ = s;
                 break;
               }
-            case 72:
-              {
-                loadLineXId_ = input.readInt64();
-                break;
-              }
-            case 82:
+            case 74:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                draftRestriction_ = s;
+                draftMark_ = s;
+                break;
+              }
+            case 80:
+              {
+                loadLineXId_ = input.readInt64();
                 break;
               }
             case 90:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                maxTempExpected_ = s;
+                draftRestriction_ = s;
                 break;
               }
-            case 96:
+            case 98:
               {
-                duplicatedFromId_ = input.readInt64();
+                java.lang.String s = input.readStringRequireUtf8();
+
+                maxAirTemperature_ = s;
                 break;
               }
-            case 104:
+            case 106:
               {
-                voyageId_ = input.readInt64();
+                java.lang.String s = input.readStringRequireUtf8();
+
+                maxWaterTemperature_ = s;
                 break;
               }
             case 112:
               {
+                duplicatedFromId_ = input.readInt64();
+                break;
+              }
+            case 120:
+              {
+                voyageId_ = input.readInt64();
+                break;
+              }
+            case 128:
+              {
                 vesselId_ = input.readInt64();
                 break;
               }
-            case 122:
+            case 138:
               {
                 if (!((mutable_bitField0_ & 0x00000001) != 0)) {
                   attachments_ =
@@ -9911,6 +9965,29 @@ public final class LoadableStudy {
                     input.readMessage(
                         com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.parser(),
                         extensionRegistry));
+                break;
+              }
+            case 144:
+              {
+                if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                  dischargingPortIds_ = newLongList();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                dischargingPortIds_.addLong(input.readInt64());
+                break;
+              }
+            case 146:
+              {
+                int length = input.readRawVarint32();
+                int limit = input.pushLimit(length);
+                if (!((mutable_bitField0_ & 0x00000002) != 0) && input.getBytesUntilLimit() > 0) {
+                  dischargingPortIds_ = newLongList();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                while (input.getBytesUntilLimit() > 0) {
+                  dischargingPortIds_.addLong(input.readInt64());
+                }
+                input.popLimit(limit);
                 break;
               }
             default:
@@ -9929,6 +10006,9 @@ public final class LoadableStudy {
       } finally {
         if (((mutable_bitField0_ & 0x00000001) != 0)) {
           attachments_ = java.util.Collections.unmodifiableList(attachments_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) != 0)) {
+          dischargingPortIds_.makeImmutable(); // C
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -10031,10 +10111,21 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int STATUS_FIELD_NUMBER = 4;
+    public static final int STATUSID_FIELD_NUMBER = 4;
+    private long statusId_;
+    /**
+     * <code>int64 statusId = 4;</code>
+     *
+     * @return The statusId.
+     */
+    public long getStatusId() {
+      return statusId_;
+    }
+
+    public static final int STATUS_FIELD_NUMBER = 5;
     private volatile java.lang.Object status_;
     /**
-     * <code>string status = 4;</code>
+     * <code>string status = 5;</code>
      *
      * @return The status.
      */
@@ -10050,7 +10141,7 @@ public final class LoadableStudy {
       }
     }
     /**
-     * <code>string status = 4;</code>
+     * <code>string status = 5;</code>
      *
      * @return The bytes for status.
      */
@@ -10066,10 +10157,10 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int CREATEDDATE_FIELD_NUMBER = 5;
+    public static final int CREATEDDATE_FIELD_NUMBER = 6;
     private volatile java.lang.Object createdDate_;
     /**
-     * <code>string createdDate = 5;</code>
+     * <code>string createdDate = 6;</code>
      *
      * @return The createdDate.
      */
@@ -10085,7 +10176,7 @@ public final class LoadableStudy {
       }
     }
     /**
-     * <code>string createdDate = 5;</code>
+     * <code>string createdDate = 6;</code>
      *
      * @return The bytes for createdDate.
      */
@@ -10101,10 +10192,10 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int CHARTERER_FIELD_NUMBER = 6;
+    public static final int CHARTERER_FIELD_NUMBER = 7;
     private volatile java.lang.Object charterer_;
     /**
-     * <code>string charterer = 6;</code>
+     * <code>string charterer = 7;</code>
      *
      * @return The charterer.
      */
@@ -10120,7 +10211,7 @@ public final class LoadableStudy {
       }
     }
     /**
-     * <code>string charterer = 6;</code>
+     * <code>string charterer = 7;</code>
      *
      * @return The bytes for charterer.
      */
@@ -10136,10 +10227,10 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int SUBCHARTERER_FIELD_NUMBER = 7;
+    public static final int SUBCHARTERER_FIELD_NUMBER = 8;
     private volatile java.lang.Object subCharterer_;
     /**
-     * <code>string subCharterer = 7;</code>
+     * <code>string subCharterer = 8;</code>
      *
      * @return The subCharterer.
      */
@@ -10155,7 +10246,7 @@ public final class LoadableStudy {
       }
     }
     /**
-     * <code>string subCharterer = 7;</code>
+     * <code>string subCharterer = 8;</code>
      *
      * @return The bytes for subCharterer.
      */
@@ -10171,10 +10262,10 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int DRAFTMARK_FIELD_NUMBER = 8;
+    public static final int DRAFTMARK_FIELD_NUMBER = 9;
     private volatile java.lang.Object draftMark_;
     /**
-     * <code>string draftMark = 8;</code>
+     * <code>string draftMark = 9;</code>
      *
      * @return The draftMark.
      */
@@ -10190,7 +10281,7 @@ public final class LoadableStudy {
       }
     }
     /**
-     * <code>string draftMark = 8;</code>
+     * <code>string draftMark = 9;</code>
      *
      * @return The bytes for draftMark.
      */
@@ -10206,10 +10297,10 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int LOADLINEXID_FIELD_NUMBER = 9;
+    public static final int LOADLINEXID_FIELD_NUMBER = 10;
     private long loadLineXId_;
     /**
-     * <code>int64 loadLineXId = 9;</code>
+     * <code>int64 loadLineXId = 10;</code>
      *
      * @return The loadLineXId.
      */
@@ -10217,10 +10308,10 @@ public final class LoadableStudy {
       return loadLineXId_;
     }
 
-    public static final int DRAFTRESTRICTION_FIELD_NUMBER = 10;
+    public static final int DRAFTRESTRICTION_FIELD_NUMBER = 11;
     private volatile java.lang.Object draftRestriction_;
     /**
-     * <code>string draftRestriction = 10;</code>
+     * <code>string draftRestriction = 11;</code>
      *
      * @return The draftRestriction.
      */
@@ -10236,7 +10327,7 @@ public final class LoadableStudy {
       }
     }
     /**
-     * <code>string draftRestriction = 10;</code>
+     * <code>string draftRestriction = 11;</code>
      *
      * @return The bytes for draftRestriction.
      */
@@ -10252,45 +10343,80 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int MAXTEMPEXPECTED_FIELD_NUMBER = 11;
-    private volatile java.lang.Object maxTempExpected_;
+    public static final int MAXAIRTEMPERATURE_FIELD_NUMBER = 12;
+    private volatile java.lang.Object maxAirTemperature_;
     /**
-     * <code>string maxTempExpected = 11;</code>
+     * <code>string maxAirTemperature = 12;</code>
      *
-     * @return The maxTempExpected.
+     * @return The maxAirTemperature.
      */
-    public java.lang.String getMaxTempExpected() {
-      java.lang.Object ref = maxTempExpected_;
+    public java.lang.String getMaxAirTemperature() {
+      java.lang.Object ref = maxAirTemperature_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        maxTempExpected_ = s;
+        maxAirTemperature_ = s;
         return s;
       }
     }
     /**
-     * <code>string maxTempExpected = 11;</code>
+     * <code>string maxAirTemperature = 12;</code>
      *
-     * @return The bytes for maxTempExpected.
+     * @return The bytes for maxAirTemperature.
      */
-    public com.google.protobuf.ByteString getMaxTempExpectedBytes() {
-      java.lang.Object ref = maxTempExpected_;
+    public com.google.protobuf.ByteString getMaxAirTemperatureBytes() {
+      java.lang.Object ref = maxAirTemperature_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        maxTempExpected_ = b;
+        maxAirTemperature_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
 
-    public static final int DUPLICATEDFROMID_FIELD_NUMBER = 12;
+    public static final int MAXWATERTEMPERATURE_FIELD_NUMBER = 13;
+    private volatile java.lang.Object maxWaterTemperature_;
+    /**
+     * <code>string maxWaterTemperature = 13;</code>
+     *
+     * @return The maxWaterTemperature.
+     */
+    public java.lang.String getMaxWaterTemperature() {
+      java.lang.Object ref = maxWaterTemperature_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxWaterTemperature_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string maxWaterTemperature = 13;</code>
+     *
+     * @return The bytes for maxWaterTemperature.
+     */
+    public com.google.protobuf.ByteString getMaxWaterTemperatureBytes() {
+      java.lang.Object ref = maxWaterTemperature_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        maxWaterTemperature_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DUPLICATEDFROMID_FIELD_NUMBER = 14;
     private long duplicatedFromId_;
     /**
-     * <code>int64 duplicatedFromId = 12;</code>
+     * <code>int64 duplicatedFromId = 14;</code>
      *
      * @return The duplicatedFromId.
      */
@@ -10298,10 +10424,10 @@ public final class LoadableStudy {
       return duplicatedFromId_;
     }
 
-    public static final int VOYAGEID_FIELD_NUMBER = 13;
+    public static final int VOYAGEID_FIELD_NUMBER = 15;
     private long voyageId_;
     /**
-     * <code>int64 voyageId = 13;</code>
+     * <code>int64 voyageId = 15;</code>
      *
      * @return The voyageId.
      */
@@ -10309,10 +10435,10 @@ public final class LoadableStudy {
       return voyageId_;
     }
 
-    public static final int VESSELID_FIELD_NUMBER = 14;
+    public static final int VESSELID_FIELD_NUMBER = 16;
     private long vesselId_;
     /**
-     * <code>int64 vesselId = 14;</code>
+     * <code>int64 vesselId = 16;</code>
      *
      * @return The vesselId.
      */
@@ -10320,34 +10446,64 @@ public final class LoadableStudy {
       return vesselId_;
     }
 
-    public static final int ATTACHMENTS_FIELD_NUMBER = 15;
+    public static final int ATTACHMENTS_FIELD_NUMBER = 17;
     private java.util.List<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment>
         attachments_;
-    /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+    /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
     public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment>
         getAttachmentsList() {
       return attachments_;
     }
-    /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+    /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
     public java.util.List<
             ? extends com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder>
         getAttachmentsOrBuilderList() {
       return attachments_;
     }
-    /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+    /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
     public int getAttachmentsCount() {
       return attachments_.size();
     }
-    /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+    /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
     public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment getAttachments(
         int index) {
       return attachments_.get(index);
     }
-    /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+    /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
     public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder
         getAttachmentsOrBuilder(int index) {
       return attachments_.get(index);
     }
+
+    public static final int DISCHARGINGPORTIDS_FIELD_NUMBER = 18;
+    private com.google.protobuf.Internal.LongList dischargingPortIds_;
+    /**
+     * <code>repeated int64 dischargingPortIds = 18;</code>
+     *
+     * @return A list containing the dischargingPortIds.
+     */
+    public java.util.List<java.lang.Long> getDischargingPortIdsList() {
+      return dischargingPortIds_;
+    }
+    /**
+     * <code>repeated int64 dischargingPortIds = 18;</code>
+     *
+     * @return The count of dischargingPortIds.
+     */
+    public int getDischargingPortIdsCount() {
+      return dischargingPortIds_.size();
+    }
+    /**
+     * <code>repeated int64 dischargingPortIds = 18;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The dischargingPortIds at the given index.
+     */
+    public long getDischargingPortIds(int index) {
+      return dischargingPortIds_.getLong(index);
+    }
+
+    private int dischargingPortIdsMemoizedSerializedSize = -1;
 
     private byte memoizedIsInitialized = -1;
 
@@ -10363,6 +10519,7 @@ public final class LoadableStudy {
 
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      getSerializedSize();
       if (id_ != 0L) {
         output.writeInt64(1, id_);
       }
@@ -10372,41 +10529,54 @@ public final class LoadableStudy {
       if (!getDetailBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, detail_);
       }
+      if (statusId_ != 0L) {
+        output.writeInt64(4, statusId_);
+      }
       if (!getStatusBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, status_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, status_);
       }
       if (!getCreatedDateBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, createdDate_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, createdDate_);
       }
       if (!getChartererBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, charterer_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, charterer_);
       }
       if (!getSubChartererBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, subCharterer_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, subCharterer_);
       }
       if (!getDraftMarkBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, draftMark_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, draftMark_);
       }
       if (loadLineXId_ != 0L) {
-        output.writeInt64(9, loadLineXId_);
+        output.writeInt64(10, loadLineXId_);
       }
       if (!getDraftRestrictionBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, draftRestriction_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, draftRestriction_);
       }
-      if (!getMaxTempExpectedBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, maxTempExpected_);
+      if (!getMaxAirTemperatureBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, maxAirTemperature_);
+      }
+      if (!getMaxWaterTemperatureBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 13, maxWaterTemperature_);
       }
       if (duplicatedFromId_ != 0L) {
-        output.writeInt64(12, duplicatedFromId_);
+        output.writeInt64(14, duplicatedFromId_);
       }
       if (voyageId_ != 0L) {
-        output.writeInt64(13, voyageId_);
+        output.writeInt64(15, voyageId_);
       }
       if (vesselId_ != 0L) {
-        output.writeInt64(14, vesselId_);
+        output.writeInt64(16, vesselId_);
       }
       for (int i = 0; i < attachments_.size(); i++) {
-        output.writeMessage(15, attachments_.get(i));
+        output.writeMessage(17, attachments_.get(i));
+      }
+      if (getDischargingPortIdsList().size() > 0) {
+        output.writeUInt32NoTag(146);
+        output.writeUInt32NoTag(dischargingPortIdsMemoizedSerializedSize);
+      }
+      for (int i = 0; i < dischargingPortIds_.size(); i++) {
+        output.writeInt64NoTag(dischargingPortIds_.getLong(i));
       }
       unknownFields.writeTo(output);
     }
@@ -10426,41 +10596,61 @@ public final class LoadableStudy {
       if (!getDetailBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, detail_);
       }
+      if (statusId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, statusId_);
+      }
       if (!getStatusBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, status_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, status_);
       }
       if (!getCreatedDateBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, createdDate_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, createdDate_);
       }
       if (!getChartererBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, charterer_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, charterer_);
       }
       if (!getSubChartererBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, subCharterer_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, subCharterer_);
       }
       if (!getDraftMarkBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, draftMark_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, draftMark_);
       }
       if (loadLineXId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(9, loadLineXId_);
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(10, loadLineXId_);
       }
       if (!getDraftRestrictionBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, draftRestriction_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, draftRestriction_);
       }
-      if (!getMaxTempExpectedBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, maxTempExpected_);
+      if (!getMaxAirTemperatureBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, maxAirTemperature_);
+      }
+      if (!getMaxWaterTemperatureBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, maxWaterTemperature_);
       }
       if (duplicatedFromId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(12, duplicatedFromId_);
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(14, duplicatedFromId_);
       }
       if (voyageId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(13, voyageId_);
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(15, voyageId_);
       }
       if (vesselId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(14, vesselId_);
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(16, vesselId_);
       }
       for (int i = 0; i < attachments_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream.computeMessageSize(15, attachments_.get(i));
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(17, attachments_.get(i));
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < dischargingPortIds_.size(); i++) {
+          dataSize +=
+              com.google.protobuf.CodedOutputStream.computeInt64SizeNoTag(
+                  dischargingPortIds_.getLong(i));
+        }
+        size += dataSize;
+        if (!getDischargingPortIdsList().isEmpty()) {
+          size += 2;
+          size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
+        }
+        dischargingPortIdsMemoizedSerializedSize = dataSize;
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -10481,6 +10671,7 @@ public final class LoadableStudy {
       if (getId() != other.getId()) return false;
       if (!getName().equals(other.getName())) return false;
       if (!getDetail().equals(other.getDetail())) return false;
+      if (getStatusId() != other.getStatusId()) return false;
       if (!getStatus().equals(other.getStatus())) return false;
       if (!getCreatedDate().equals(other.getCreatedDate())) return false;
       if (!getCharterer().equals(other.getCharterer())) return false;
@@ -10488,11 +10679,13 @@ public final class LoadableStudy {
       if (!getDraftMark().equals(other.getDraftMark())) return false;
       if (getLoadLineXId() != other.getLoadLineXId()) return false;
       if (!getDraftRestriction().equals(other.getDraftRestriction())) return false;
-      if (!getMaxTempExpected().equals(other.getMaxTempExpected())) return false;
+      if (!getMaxAirTemperature().equals(other.getMaxAirTemperature())) return false;
+      if (!getMaxWaterTemperature().equals(other.getMaxWaterTemperature())) return false;
       if (getDuplicatedFromId() != other.getDuplicatedFromId()) return false;
       if (getVoyageId() != other.getVoyageId()) return false;
       if (getVesselId() != other.getVesselId()) return false;
       if (!getAttachmentsList().equals(other.getAttachmentsList())) return false;
+      if (!getDischargingPortIdsList().equals(other.getDischargingPortIdsList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -10510,6 +10703,8 @@ public final class LoadableStudy {
       hash = (53 * hash) + getName().hashCode();
       hash = (37 * hash) + DETAIL_FIELD_NUMBER;
       hash = (53 * hash) + getDetail().hashCode();
+      hash = (37 * hash) + STATUSID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getStatusId());
       hash = (37 * hash) + STATUS_FIELD_NUMBER;
       hash = (53 * hash) + getStatus().hashCode();
       hash = (37 * hash) + CREATEDDATE_FIELD_NUMBER;
@@ -10524,8 +10719,10 @@ public final class LoadableStudy {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadLineXId());
       hash = (37 * hash) + DRAFTRESTRICTION_FIELD_NUMBER;
       hash = (53 * hash) + getDraftRestriction().hashCode();
-      hash = (37 * hash) + MAXTEMPEXPECTED_FIELD_NUMBER;
-      hash = (53 * hash) + getMaxTempExpected().hashCode();
+      hash = (37 * hash) + MAXAIRTEMPERATURE_FIELD_NUMBER;
+      hash = (53 * hash) + getMaxAirTemperature().hashCode();
+      hash = (37 * hash) + MAXWATERTEMPERATURE_FIELD_NUMBER;
+      hash = (53 * hash) + getMaxWaterTemperature().hashCode();
       hash = (37 * hash) + DUPLICATEDFROMID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getDuplicatedFromId());
       hash = (37 * hash) + VOYAGEID_FIELD_NUMBER;
@@ -10535,6 +10732,10 @@ public final class LoadableStudy {
       if (getAttachmentsCount() > 0) {
         hash = (37 * hash) + ATTACHMENTS_FIELD_NUMBER;
         hash = (53 * hash) + getAttachmentsList().hashCode();
+      }
+      if (getDischargingPortIdsCount() > 0) {
+        hash = (37 * hash) + DISCHARGINGPORTIDS_FIELD_NUMBER;
+        hash = (53 * hash) + getDischargingPortIdsList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -10684,6 +10885,8 @@ public final class LoadableStudy {
 
         detail_ = "";
 
+        statusId_ = 0L;
+
         status_ = "";
 
         createdDate_ = "";
@@ -10698,7 +10901,9 @@ public final class LoadableStudy {
 
         draftRestriction_ = "";
 
-        maxTempExpected_ = "";
+        maxAirTemperature_ = "";
+
+        maxWaterTemperature_ = "";
 
         duplicatedFromId_ = 0L;
 
@@ -10712,6 +10917,8 @@ public final class LoadableStudy {
         } else {
           attachmentsBuilder_.clear();
         }
+        dischargingPortIds_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -10744,6 +10951,7 @@ public final class LoadableStudy {
         result.id_ = id_;
         result.name_ = name_;
         result.detail_ = detail_;
+        result.statusId_ = statusId_;
         result.status_ = status_;
         result.createdDate_ = createdDate_;
         result.charterer_ = charterer_;
@@ -10751,7 +10959,8 @@ public final class LoadableStudy {
         result.draftMark_ = draftMark_;
         result.loadLineXId_ = loadLineXId_;
         result.draftRestriction_ = draftRestriction_;
-        result.maxTempExpected_ = maxTempExpected_;
+        result.maxAirTemperature_ = maxAirTemperature_;
+        result.maxWaterTemperature_ = maxWaterTemperature_;
         result.duplicatedFromId_ = duplicatedFromId_;
         result.voyageId_ = voyageId_;
         result.vesselId_ = vesselId_;
@@ -10764,6 +10973,11 @@ public final class LoadableStudy {
         } else {
           result.attachments_ = attachmentsBuilder_.build();
         }
+        if (((bitField0_ & 0x00000002) != 0)) {
+          dischargingPortIds_.makeImmutable();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.dischargingPortIds_ = dischargingPortIds_;
         onBuilt();
         return result;
       }
@@ -10828,6 +11042,9 @@ public final class LoadableStudy {
           detail_ = other.detail_;
           onChanged();
         }
+        if (other.getStatusId() != 0L) {
+          setStatusId(other.getStatusId());
+        }
         if (!other.getStatus().isEmpty()) {
           status_ = other.status_;
           onChanged();
@@ -10855,8 +11072,12 @@ public final class LoadableStudy {
           draftRestriction_ = other.draftRestriction_;
           onChanged();
         }
-        if (!other.getMaxTempExpected().isEmpty()) {
-          maxTempExpected_ = other.maxTempExpected_;
+        if (!other.getMaxAirTemperature().isEmpty()) {
+          maxAirTemperature_ = other.maxAirTemperature_;
+          onChanged();
+        }
+        if (!other.getMaxWaterTemperature().isEmpty()) {
+          maxWaterTemperature_ = other.maxWaterTemperature_;
           onChanged();
         }
         if (other.getDuplicatedFromId() != 0L) {
@@ -10894,6 +11115,16 @@ public final class LoadableStudy {
               attachmentsBuilder_.addAllMessages(other.attachments_);
             }
           }
+        }
+        if (!other.dischargingPortIds_.isEmpty()) {
+          if (dischargingPortIds_.isEmpty()) {
+            dischargingPortIds_ = other.dischargingPortIds_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureDischargingPortIdsIsMutable();
+            dischargingPortIds_.addAll(other.dischargingPortIds_);
+          }
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -11113,9 +11344,42 @@ public final class LoadableStudy {
         return this;
       }
 
+      private long statusId_;
+      /**
+       * <code>int64 statusId = 4;</code>
+       *
+       * @return The statusId.
+       */
+      public long getStatusId() {
+        return statusId_;
+      }
+      /**
+       * <code>int64 statusId = 4;</code>
+       *
+       * @param value The statusId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStatusId(long value) {
+
+        statusId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 statusId = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearStatusId() {
+
+        statusId_ = 0L;
+        onChanged();
+        return this;
+      }
+
       private java.lang.Object status_ = "";
       /**
-       * <code>string status = 4;</code>
+       * <code>string status = 5;</code>
        *
        * @return The status.
        */
@@ -11131,7 +11395,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string status = 4;</code>
+       * <code>string status = 5;</code>
        *
        * @return The bytes for status.
        */
@@ -11147,7 +11411,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string status = 4;</code>
+       * <code>string status = 5;</code>
        *
        * @param value The status to set.
        * @return This builder for chaining.
@@ -11162,7 +11426,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string status = 4;</code>
+       * <code>string status = 5;</code>
        *
        * @return This builder for chaining.
        */
@@ -11173,7 +11437,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string status = 4;</code>
+       * <code>string status = 5;</code>
        *
        * @param value The bytes for status to set.
        * @return This builder for chaining.
@@ -11191,7 +11455,7 @@ public final class LoadableStudy {
 
       private java.lang.Object createdDate_ = "";
       /**
-       * <code>string createdDate = 5;</code>
+       * <code>string createdDate = 6;</code>
        *
        * @return The createdDate.
        */
@@ -11207,7 +11471,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string createdDate = 5;</code>
+       * <code>string createdDate = 6;</code>
        *
        * @return The bytes for createdDate.
        */
@@ -11223,7 +11487,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string createdDate = 5;</code>
+       * <code>string createdDate = 6;</code>
        *
        * @param value The createdDate to set.
        * @return This builder for chaining.
@@ -11238,7 +11502,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string createdDate = 5;</code>
+       * <code>string createdDate = 6;</code>
        *
        * @return This builder for chaining.
        */
@@ -11249,7 +11513,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string createdDate = 5;</code>
+       * <code>string createdDate = 6;</code>
        *
        * @param value The bytes for createdDate to set.
        * @return This builder for chaining.
@@ -11267,7 +11531,7 @@ public final class LoadableStudy {
 
       private java.lang.Object charterer_ = "";
       /**
-       * <code>string charterer = 6;</code>
+       * <code>string charterer = 7;</code>
        *
        * @return The charterer.
        */
@@ -11283,7 +11547,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string charterer = 6;</code>
+       * <code>string charterer = 7;</code>
        *
        * @return The bytes for charterer.
        */
@@ -11299,7 +11563,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string charterer = 6;</code>
+       * <code>string charterer = 7;</code>
        *
        * @param value The charterer to set.
        * @return This builder for chaining.
@@ -11314,7 +11578,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string charterer = 6;</code>
+       * <code>string charterer = 7;</code>
        *
        * @return This builder for chaining.
        */
@@ -11325,7 +11589,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string charterer = 6;</code>
+       * <code>string charterer = 7;</code>
        *
        * @param value The bytes for charterer to set.
        * @return This builder for chaining.
@@ -11343,7 +11607,7 @@ public final class LoadableStudy {
 
       private java.lang.Object subCharterer_ = "";
       /**
-       * <code>string subCharterer = 7;</code>
+       * <code>string subCharterer = 8;</code>
        *
        * @return The subCharterer.
        */
@@ -11359,7 +11623,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string subCharterer = 7;</code>
+       * <code>string subCharterer = 8;</code>
        *
        * @return The bytes for subCharterer.
        */
@@ -11375,7 +11639,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string subCharterer = 7;</code>
+       * <code>string subCharterer = 8;</code>
        *
        * @param value The subCharterer to set.
        * @return This builder for chaining.
@@ -11390,7 +11654,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string subCharterer = 7;</code>
+       * <code>string subCharterer = 8;</code>
        *
        * @return This builder for chaining.
        */
@@ -11401,7 +11665,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string subCharterer = 7;</code>
+       * <code>string subCharterer = 8;</code>
        *
        * @param value The bytes for subCharterer to set.
        * @return This builder for chaining.
@@ -11419,7 +11683,7 @@ public final class LoadableStudy {
 
       private java.lang.Object draftMark_ = "";
       /**
-       * <code>string draftMark = 8;</code>
+       * <code>string draftMark = 9;</code>
        *
        * @return The draftMark.
        */
@@ -11435,7 +11699,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string draftMark = 8;</code>
+       * <code>string draftMark = 9;</code>
        *
        * @return The bytes for draftMark.
        */
@@ -11451,7 +11715,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string draftMark = 8;</code>
+       * <code>string draftMark = 9;</code>
        *
        * @param value The draftMark to set.
        * @return This builder for chaining.
@@ -11466,7 +11730,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string draftMark = 8;</code>
+       * <code>string draftMark = 9;</code>
        *
        * @return This builder for chaining.
        */
@@ -11477,7 +11741,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string draftMark = 8;</code>
+       * <code>string draftMark = 9;</code>
        *
        * @param value The bytes for draftMark to set.
        * @return This builder for chaining.
@@ -11495,7 +11759,7 @@ public final class LoadableStudy {
 
       private long loadLineXId_;
       /**
-       * <code>int64 loadLineXId = 9;</code>
+       * <code>int64 loadLineXId = 10;</code>
        *
        * @return The loadLineXId.
        */
@@ -11503,7 +11767,7 @@ public final class LoadableStudy {
         return loadLineXId_;
       }
       /**
-       * <code>int64 loadLineXId = 9;</code>
+       * <code>int64 loadLineXId = 10;</code>
        *
        * @param value The loadLineXId to set.
        * @return This builder for chaining.
@@ -11515,7 +11779,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>int64 loadLineXId = 9;</code>
+       * <code>int64 loadLineXId = 10;</code>
        *
        * @return This builder for chaining.
        */
@@ -11528,7 +11792,7 @@ public final class LoadableStudy {
 
       private java.lang.Object draftRestriction_ = "";
       /**
-       * <code>string draftRestriction = 10;</code>
+       * <code>string draftRestriction = 11;</code>
        *
        * @return The draftRestriction.
        */
@@ -11544,7 +11808,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string draftRestriction = 10;</code>
+       * <code>string draftRestriction = 11;</code>
        *
        * @return The bytes for draftRestriction.
        */
@@ -11560,7 +11824,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string draftRestriction = 10;</code>
+       * <code>string draftRestriction = 11;</code>
        *
        * @param value The draftRestriction to set.
        * @return This builder for chaining.
@@ -11575,7 +11839,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string draftRestriction = 10;</code>
+       * <code>string draftRestriction = 11;</code>
        *
        * @return This builder for chaining.
        */
@@ -11586,7 +11850,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string draftRestriction = 10;</code>
+       * <code>string draftRestriction = 11;</code>
        *
        * @param value The bytes for draftRestriction to set.
        * @return This builder for chaining.
@@ -11602,85 +11866,161 @@ public final class LoadableStudy {
         return this;
       }
 
-      private java.lang.Object maxTempExpected_ = "";
+      private java.lang.Object maxAirTemperature_ = "";
       /**
-       * <code>string maxTempExpected = 11;</code>
+       * <code>string maxAirTemperature = 12;</code>
        *
-       * @return The maxTempExpected.
+       * @return The maxAirTemperature.
        */
-      public java.lang.String getMaxTempExpected() {
-        java.lang.Object ref = maxTempExpected_;
+      public java.lang.String getMaxAirTemperature() {
+        java.lang.Object ref = maxAirTemperature_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          maxTempExpected_ = s;
+          maxAirTemperature_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string maxTempExpected = 11;</code>
+       * <code>string maxAirTemperature = 12;</code>
        *
-       * @return The bytes for maxTempExpected.
+       * @return The bytes for maxAirTemperature.
        */
-      public com.google.protobuf.ByteString getMaxTempExpectedBytes() {
-        java.lang.Object ref = maxTempExpected_;
+      public com.google.protobuf.ByteString getMaxAirTemperatureBytes() {
+        java.lang.Object ref = maxAirTemperature_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          maxTempExpected_ = b;
+          maxAirTemperature_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string maxTempExpected = 11;</code>
+       * <code>string maxAirTemperature = 12;</code>
        *
-       * @param value The maxTempExpected to set.
+       * @param value The maxAirTemperature to set.
        * @return This builder for chaining.
        */
-      public Builder setMaxTempExpected(java.lang.String value) {
+      public Builder setMaxAirTemperature(java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
 
-        maxTempExpected_ = value;
+        maxAirTemperature_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string maxTempExpected = 11;</code>
+       * <code>string maxAirTemperature = 12;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearMaxTempExpected() {
+      public Builder clearMaxAirTemperature() {
 
-        maxTempExpected_ = getDefaultInstance().getMaxTempExpected();
+        maxAirTemperature_ = getDefaultInstance().getMaxAirTemperature();
         onChanged();
         return this;
       }
       /**
-       * <code>string maxTempExpected = 11;</code>
+       * <code>string maxAirTemperature = 12;</code>
        *
-       * @param value The bytes for maxTempExpected to set.
+       * @param value The bytes for maxAirTemperature to set.
        * @return This builder for chaining.
        */
-      public Builder setMaxTempExpectedBytes(com.google.protobuf.ByteString value) {
+      public Builder setMaxAirTemperatureBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
 
-        maxTempExpected_ = value;
+        maxAirTemperature_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object maxWaterTemperature_ = "";
+      /**
+       * <code>string maxWaterTemperature = 13;</code>
+       *
+       * @return The maxWaterTemperature.
+       */
+      public java.lang.String getMaxWaterTemperature() {
+        java.lang.Object ref = maxWaterTemperature_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          maxWaterTemperature_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string maxWaterTemperature = 13;</code>
+       *
+       * @return The bytes for maxWaterTemperature.
+       */
+      public com.google.protobuf.ByteString getMaxWaterTemperatureBytes() {
+        java.lang.Object ref = maxWaterTemperature_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          maxWaterTemperature_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string maxWaterTemperature = 13;</code>
+       *
+       * @param value The maxWaterTemperature to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxWaterTemperature(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        maxWaterTemperature_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxWaterTemperature = 13;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxWaterTemperature() {
+
+        maxWaterTemperature_ = getDefaultInstance().getMaxWaterTemperature();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxWaterTemperature = 13;</code>
+       *
+       * @param value The bytes for maxWaterTemperature to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxWaterTemperatureBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        maxWaterTemperature_ = value;
         onChanged();
         return this;
       }
 
       private long duplicatedFromId_;
       /**
-       * <code>int64 duplicatedFromId = 12;</code>
+       * <code>int64 duplicatedFromId = 14;</code>
        *
        * @return The duplicatedFromId.
        */
@@ -11688,7 +12028,7 @@ public final class LoadableStudy {
         return duplicatedFromId_;
       }
       /**
-       * <code>int64 duplicatedFromId = 12;</code>
+       * <code>int64 duplicatedFromId = 14;</code>
        *
        * @param value The duplicatedFromId to set.
        * @return This builder for chaining.
@@ -11700,7 +12040,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>int64 duplicatedFromId = 12;</code>
+       * <code>int64 duplicatedFromId = 14;</code>
        *
        * @return This builder for chaining.
        */
@@ -11713,7 +12053,7 @@ public final class LoadableStudy {
 
       private long voyageId_;
       /**
-       * <code>int64 voyageId = 13;</code>
+       * <code>int64 voyageId = 15;</code>
        *
        * @return The voyageId.
        */
@@ -11721,7 +12061,7 @@ public final class LoadableStudy {
         return voyageId_;
       }
       /**
-       * <code>int64 voyageId = 13;</code>
+       * <code>int64 voyageId = 15;</code>
        *
        * @param value The voyageId to set.
        * @return This builder for chaining.
@@ -11733,7 +12073,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>int64 voyageId = 13;</code>
+       * <code>int64 voyageId = 15;</code>
        *
        * @return This builder for chaining.
        */
@@ -11746,7 +12086,7 @@ public final class LoadableStudy {
 
       private long vesselId_;
       /**
-       * <code>int64 vesselId = 14;</code>
+       * <code>int64 vesselId = 16;</code>
        *
        * @return The vesselId.
        */
@@ -11754,7 +12094,7 @@ public final class LoadableStudy {
         return vesselId_;
       }
       /**
-       * <code>int64 vesselId = 14;</code>
+       * <code>int64 vesselId = 16;</code>
        *
        * @param value The vesselId to set.
        * @return This builder for chaining.
@@ -11766,7 +12106,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>int64 vesselId = 14;</code>
+       * <code>int64 vesselId = 16;</code>
        *
        * @return This builder for chaining.
        */
@@ -11795,7 +12135,7 @@ public final class LoadableStudy {
               com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder>
           attachmentsBuilder_;
 
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment>
           getAttachmentsList() {
         if (attachmentsBuilder_ == null) {
@@ -11804,7 +12144,7 @@ public final class LoadableStudy {
           return attachmentsBuilder_.getMessageList();
         }
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public int getAttachmentsCount() {
         if (attachmentsBuilder_ == null) {
           return attachments_.size();
@@ -11812,7 +12152,7 @@ public final class LoadableStudy {
           return attachmentsBuilder_.getCount();
         }
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment getAttachments(
           int index) {
         if (attachmentsBuilder_ == null) {
@@ -11821,7 +12161,7 @@ public final class LoadableStudy {
           return attachmentsBuilder_.getMessage(index);
         }
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public Builder setAttachments(
           int index, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment value) {
         if (attachmentsBuilder_ == null) {
@@ -11836,7 +12176,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public Builder setAttachments(
           int index,
           com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder
@@ -11850,7 +12190,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public Builder addAttachments(
           com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment value) {
         if (attachmentsBuilder_ == null) {
@@ -11865,7 +12205,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public Builder addAttachments(
           int index, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment value) {
         if (attachmentsBuilder_ == null) {
@@ -11880,7 +12220,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public Builder addAttachments(
           com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder
               builderForValue) {
@@ -11893,7 +12233,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public Builder addAttachments(
           int index,
           com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder
@@ -11907,7 +12247,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public Builder addAllAttachments(
           java.lang.Iterable<
                   ? extends com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment>
@@ -11921,7 +12261,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public Builder clearAttachments() {
         if (attachmentsBuilder_ == null) {
           attachments_ = java.util.Collections.emptyList();
@@ -11932,7 +12272,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public Builder removeAttachments(int index) {
         if (attachmentsBuilder_ == null) {
           ensureAttachmentsIsMutable();
@@ -11943,12 +12283,12 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder
           getAttachmentsBuilder(int index) {
         return getAttachmentsFieldBuilder().getBuilder(index);
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder
           getAttachmentsOrBuilder(int index) {
         if (attachmentsBuilder_ == null) {
@@ -11957,7 +12297,7 @@ public final class LoadableStudy {
           return attachmentsBuilder_.getMessageOrBuilder(index);
         }
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public java.util.List<
               ? extends com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentOrBuilder>
           getAttachmentsOrBuilderList() {
@@ -11967,7 +12307,7 @@ public final class LoadableStudy {
           return java.util.Collections.unmodifiableList(attachments_);
         }
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder
           addAttachmentsBuilder() {
         return getAttachmentsFieldBuilder()
@@ -11975,7 +12315,7 @@ public final class LoadableStudy {
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment
                     .getDefaultInstance());
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder
           addAttachmentsBuilder(int index) {
         return getAttachmentsFieldBuilder()
@@ -11984,7 +12324,7 @@ public final class LoadableStudy {
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment
                     .getDefaultInstance());
       }
-      /** <code>repeated .LoadableStudyAttachment attachments = 15;</code> */
+      /** <code>repeated .LoadableStudyAttachment attachments = 17;</code> */
       public java.util.List<
               com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder>
           getAttachmentsBuilderList() {
@@ -12009,6 +12349,90 @@ public final class LoadableStudy {
           attachments_ = null;
         }
         return attachmentsBuilder_;
+      }
+
+      private com.google.protobuf.Internal.LongList dischargingPortIds_ = emptyLongList();
+
+      private void ensureDischargingPortIdsIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          dischargingPortIds_ = mutableCopy(dischargingPortIds_);
+          bitField0_ |= 0x00000002;
+        }
+      }
+      /**
+       * <code>repeated int64 dischargingPortIds = 18;</code>
+       *
+       * @return A list containing the dischargingPortIds.
+       */
+      public java.util.List<java.lang.Long> getDischargingPortIdsList() {
+        return ((bitField0_ & 0x00000002) != 0)
+            ? java.util.Collections.unmodifiableList(dischargingPortIds_)
+            : dischargingPortIds_;
+      }
+      /**
+       * <code>repeated int64 dischargingPortIds = 18;</code>
+       *
+       * @return The count of dischargingPortIds.
+       */
+      public int getDischargingPortIdsCount() {
+        return dischargingPortIds_.size();
+      }
+      /**
+       * <code>repeated int64 dischargingPortIds = 18;</code>
+       *
+       * @param index The index of the element to return.
+       * @return The dischargingPortIds at the given index.
+       */
+      public long getDischargingPortIds(int index) {
+        return dischargingPortIds_.getLong(index);
+      }
+      /**
+       * <code>repeated int64 dischargingPortIds = 18;</code>
+       *
+       * @param index The index to set the value at.
+       * @param value The dischargingPortIds to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDischargingPortIds(int index, long value) {
+        ensureDischargingPortIdsIsMutable();
+        dischargingPortIds_.setLong(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 dischargingPortIds = 18;</code>
+       *
+       * @param value The dischargingPortIds to add.
+       * @return This builder for chaining.
+       */
+      public Builder addDischargingPortIds(long value) {
+        ensureDischargingPortIdsIsMutable();
+        dischargingPortIds_.addLong(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 dischargingPortIds = 18;</code>
+       *
+       * @param values The dischargingPortIds to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllDischargingPortIds(java.lang.Iterable<? extends java.lang.Long> values) {
+        ensureDischargingPortIdsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, dischargingPortIds_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 dischargingPortIds = 18;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDischargingPortIds() {
+        dischargingPortIds_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
       }
 
       @java.lang.Override
@@ -18647,6 +19071,26 @@ public final class LoadableStudy {
      * @return The voyageId.
      */
     long getVoyageId();
+
+    /**
+     * <code>repeated int64 dischargingPortIds = 4;</code>
+     *
+     * @return A list containing the dischargingPortIds.
+     */
+    java.util.List<java.lang.Long> getDischargingPortIdsList();
+    /**
+     * <code>repeated int64 dischargingPortIds = 4;</code>
+     *
+     * @return The count of dischargingPortIds.
+     */
+    int getDischargingPortIdsCount();
+    /**
+     * <code>repeated int64 dischargingPortIds = 4;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The dischargingPortIds at the given index.
+     */
+    long getDischargingPortIds(int index);
   }
   /** Protobuf type {@code PortRotationRequest} */
   public static final class PortRotationRequest extends com.google.protobuf.GeneratedMessageV3
@@ -18659,7 +19103,9 @@ public final class LoadableStudy {
       super(builder);
     }
 
-    private PortRotationRequest() {}
+    private PortRotationRequest() {
+      dischargingPortIds_ = emptyLongList();
+    }
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
@@ -18680,6 +19126,7 @@ public final class LoadableStudy {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -18705,6 +19152,29 @@ public final class LoadableStudy {
                 voyageId_ = input.readInt64();
                 break;
               }
+            case 32:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  dischargingPortIds_ = newLongList();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                dischargingPortIds_.addLong(input.readInt64());
+                break;
+              }
+            case 34:
+              {
+                int length = input.readRawVarint32();
+                int limit = input.pushLimit(length);
+                if (!((mutable_bitField0_ & 0x00000001) != 0) && input.getBytesUntilLimit() > 0) {
+                  dischargingPortIds_ = newLongList();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                while (input.getBytesUntilLimit() > 0) {
+                  dischargingPortIds_.addLong(input.readInt64());
+                }
+                input.popLimit(limit);
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -18719,6 +19189,9 @@ public final class LoadableStudy {
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          dischargingPortIds_.makeImmutable(); // C
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -18772,6 +19245,36 @@ public final class LoadableStudy {
       return voyageId_;
     }
 
+    public static final int DISCHARGINGPORTIDS_FIELD_NUMBER = 4;
+    private com.google.protobuf.Internal.LongList dischargingPortIds_;
+    /**
+     * <code>repeated int64 dischargingPortIds = 4;</code>
+     *
+     * @return A list containing the dischargingPortIds.
+     */
+    public java.util.List<java.lang.Long> getDischargingPortIdsList() {
+      return dischargingPortIds_;
+    }
+    /**
+     * <code>repeated int64 dischargingPortIds = 4;</code>
+     *
+     * @return The count of dischargingPortIds.
+     */
+    public int getDischargingPortIdsCount() {
+      return dischargingPortIds_.size();
+    }
+    /**
+     * <code>repeated int64 dischargingPortIds = 4;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The dischargingPortIds at the given index.
+     */
+    public long getDischargingPortIds(int index) {
+      return dischargingPortIds_.getLong(index);
+    }
+
+    private int dischargingPortIdsMemoizedSerializedSize = -1;
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -18786,6 +19289,7 @@ public final class LoadableStudy {
 
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      getSerializedSize();
       if (loadableStudyId_ != 0L) {
         output.writeInt64(1, loadableStudyId_);
       }
@@ -18794,6 +19298,13 @@ public final class LoadableStudy {
       }
       if (voyageId_ != 0L) {
         output.writeInt64(3, voyageId_);
+      }
+      if (getDischargingPortIdsList().size() > 0) {
+        output.writeUInt32NoTag(34);
+        output.writeUInt32NoTag(dischargingPortIdsMemoizedSerializedSize);
+      }
+      for (int i = 0; i < dischargingPortIds_.size(); i++) {
+        output.writeInt64NoTag(dischargingPortIds_.getLong(i));
       }
       unknownFields.writeTo(output);
     }
@@ -18812,6 +19323,20 @@ public final class LoadableStudy {
       }
       if (voyageId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, voyageId_);
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < dischargingPortIds_.size(); i++) {
+          dataSize +=
+              com.google.protobuf.CodedOutputStream.computeInt64SizeNoTag(
+                  dischargingPortIds_.getLong(i));
+        }
+        size += dataSize;
+        if (!getDischargingPortIdsList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
+        }
+        dischargingPortIdsMemoizedSerializedSize = dataSize;
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -18832,6 +19357,7 @@ public final class LoadableStudy {
       if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
       if (getVesselId() != other.getVesselId()) return false;
       if (getVoyageId() != other.getVoyageId()) return false;
+      if (!getDischargingPortIdsList().equals(other.getDischargingPortIdsList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -18849,6 +19375,10 @@ public final class LoadableStudy {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVesselId());
       hash = (37 * hash) + VOYAGEID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVoyageId());
+      if (getDischargingPortIdsCount() > 0) {
+        hash = (37 * hash) + DISCHARGINGPORTIDS_FIELD_NUMBER;
+        hash = (53 * hash) + getDischargingPortIdsList().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -18995,6 +19525,8 @@ public final class LoadableStudy {
 
         voyageId_ = 0L;
 
+        dischargingPortIds_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -19023,9 +19555,15 @@ public final class LoadableStudy {
       public com.cpdss.common.generated.LoadableStudy.PortRotationRequest buildPartial() {
         com.cpdss.common.generated.LoadableStudy.PortRotationRequest result =
             new com.cpdss.common.generated.LoadableStudy.PortRotationRequest(this);
+        int from_bitField0_ = bitField0_;
         result.loadableStudyId_ = loadableStudyId_;
         result.vesselId_ = vesselId_;
         result.voyageId_ = voyageId_;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          dischargingPortIds_.makeImmutable();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.dischargingPortIds_ = dischargingPortIds_;
         onBuilt();
         return result;
       }
@@ -19088,6 +19626,16 @@ public final class LoadableStudy {
         if (other.getVoyageId() != 0L) {
           setVoyageId(other.getVoyageId());
         }
+        if (!other.dischargingPortIds_.isEmpty()) {
+          if (dischargingPortIds_.isEmpty()) {
+            dischargingPortIds_ = other.dischargingPortIds_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureDischargingPortIdsIsMutable();
+            dischargingPortIds_.addAll(other.dischargingPortIds_);
+          }
+          onChanged();
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -19118,6 +19666,8 @@ public final class LoadableStudy {
         }
         return this;
       }
+
+      private int bitField0_;
 
       private long loadableStudyId_;
       /**
@@ -19214,6 +19764,90 @@ public final class LoadableStudy {
       public Builder clearVoyageId() {
 
         voyageId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.Internal.LongList dischargingPortIds_ = emptyLongList();
+
+      private void ensureDischargingPortIdsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          dischargingPortIds_ = mutableCopy(dischargingPortIds_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+      /**
+       * <code>repeated int64 dischargingPortIds = 4;</code>
+       *
+       * @return A list containing the dischargingPortIds.
+       */
+      public java.util.List<java.lang.Long> getDischargingPortIdsList() {
+        return ((bitField0_ & 0x00000001) != 0)
+            ? java.util.Collections.unmodifiableList(dischargingPortIds_)
+            : dischargingPortIds_;
+      }
+      /**
+       * <code>repeated int64 dischargingPortIds = 4;</code>
+       *
+       * @return The count of dischargingPortIds.
+       */
+      public int getDischargingPortIdsCount() {
+        return dischargingPortIds_.size();
+      }
+      /**
+       * <code>repeated int64 dischargingPortIds = 4;</code>
+       *
+       * @param index The index of the element to return.
+       * @return The dischargingPortIds at the given index.
+       */
+      public long getDischargingPortIds(int index) {
+        return dischargingPortIds_.getLong(index);
+      }
+      /**
+       * <code>repeated int64 dischargingPortIds = 4;</code>
+       *
+       * @param index The index to set the value at.
+       * @param value The dischargingPortIds to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDischargingPortIds(int index, long value) {
+        ensureDischargingPortIdsIsMutable();
+        dischargingPortIds_.setLong(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 dischargingPortIds = 4;</code>
+       *
+       * @param value The dischargingPortIds to add.
+       * @return This builder for chaining.
+       */
+      public Builder addDischargingPortIds(long value) {
+        ensureDischargingPortIdsIsMutable();
+        dischargingPortIds_.addLong(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 dischargingPortIds = 4;</code>
+       *
+       * @param values The dischargingPortIds to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllDischargingPortIds(java.lang.Iterable<? extends java.lang.Long> values) {
+        ensureDischargingPortIdsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, dischargingPortIds_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 dischargingPortIds = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDischargingPortIds() {
+        dischargingPortIds_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -26572,83 +27206,87 @@ public final class LoadableStudy {
           + "ityId\030\002 \001(\003\"M\n\024LoadableStudyRequest\022\021\n\tc"
           + "ompanyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voya"
           + "geId\030\003 \001(\003\"?\n\027LoadableStudyAttachment\022\022\n"
-          + "\nbyteString\030\001 \001(\014\022\020\n\010fileName\030\002 \001(\t\"\325\002\n\023"
+          + "\nbyteString\030\001 \001(\014\022\020\n\010fileName\030\002 \001(\t\"\242\003\n\023"
           + "LoadableStudyDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030"
-          + "\002 \001(\t\022\016\n\006detail\030\003 \001(\t\022\016\n\006status\030\004 \001(\t\022\023\n"
-          + "\013createdDate\030\005 \001(\t\022\021\n\tcharterer\030\006 \001(\t\022\024\n"
-          + "\014subCharterer\030\007 \001(\t\022\021\n\tdraftMark\030\010 \001(\t\022\023"
-          + "\n\013loadLineXId\030\t \001(\003\022\030\n\020draftRestriction\030"
-          + "\n \001(\t\022\027\n\017maxTempExpected\030\013 \001(\t\022\030\n\020duplic"
-          + "atedFromId\030\014 \001(\003\022\020\n\010voyageId\030\r \001(\003\022\020\n\010ve"
-          + "sselId\030\016 \001(\003\022-\n\013attachments\030\017 \003(\0132\030.Load"
-          + "ableStudyAttachment\"u\n\022LoadableStudyRepl"
-          + "y\022$\n\016responseStatus\030\001 \001(\0132\014.StatusReply\022"
-          + "-\n\017loadableStudies\030\002 \003(\0132\024.LoadableStudy"
-          + "Detail\022\n\n\002id\030\003 \001(\003\"5\n\021LoadingPortDetail\022"
-          + "\016\n\006portId\030\001 \001(\003\022\020\n\010quantity\030\002 \001(\t\".\n\021seg"
-          + "regationDetail\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001("
-          + "\t\"\252\002\n\025CargoNominationDetail\022\n\n\002id\030\001 \001(\003\022"
-          + "\027\n\017loadableStudyId\030\002 \001(\003\022\020\n\010priority\030\003 \001"
-          + "(\003\022\r\n\005color\030\004 \001(\t\022\017\n\007cargoId\030\005 \001(\003\022\024\n\014ab"
-          + "breviation\030\006 \001(\t\022.\n\022loadingPortDetails\030\007"
-          + " \003(\0132\022.LoadingPortDetail\022\020\n\010quantity\030\010 \001"
-          + "(\t\022\024\n\014maxTolerance\030\t \001(\t\022\024\n\014minTolerance"
-          + "\030\n \001(\t\022\016\n\006apiEst\030\013 \001(\t\022\017\n\007tempEst\030\014 \001(\t\022"
-          + "\025\n\rsegregationId\030\r \001(\003\"\247\001\n\026CargoNominati"
-          + "onRequest\022\020\n\010vesselId\030\001 \001(\003\022\020\n\010voyageId\030"
-          + "\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\031\n\021cargoN"
-          + "ominationId\030\004 \001(\003\0225\n\025cargoNominationDeta"
-          + "il\030\005 \001(\0132\026.CargoNominationDetail\"\214\001\n\024Car"
-          + "goNominationReply\022\'\n\016responseStatus\030\001 \001("
-          + "\0132\017.ResponseStatus\022\031\n\021cargoNominationId\030"
-          + "\002 \001(\003\0220\n\020cargoNominations\030\003 \003(\0132\026.CargoN"
-          + "ominationDetail\"R\n\023PortRotationRequest\022\027"
-          + "\n\017loadableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001("
-          + "\003\022\020\n\010voyageId\030\003 \001(\003\"\241\002\n\022PortRotationDeta"
-          + "il\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\017\n\007berthI"
-          + "d\030\003 \001(\003\022\023\n\013operationId\030\004 \001(\003\022\027\n\017seaWater"
-          + "Density\030\005 \001(\t\022\034\n\024distanceBetweenPorts\030\006 "
-          + "\001(\t\022\022\n\ntimeOfStay\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001("
-          + "\t\022\023\n\013maxAirDraft\030\t \001(\t\022\013\n\003eta\030\n \001(\t\022\013\n\003e"
-          + "td\030\013 \001(\t\022\022\n\nlayCanFrom\030\014 \001(\t\022\020\n\010layCanTo"
-          + "\030\r \001(\t\022\027\n\017loadableStudyId\030\016 \001(\003\".\n\tOpera"
-          + "tion\022\n\n\002id\030\001 \001(\003\022\025\n\roperationName\030\002 \001(\t\""
-          + "\230\001\n\021PortRotationReply\022\'\n\016responseStatus\030"
-          + "\001 \001(\0132\017.ResponseStatus\022\"\n\005ports\030\002 \003(\0132\023."
-          + "PortRotationDetail\022\036\n\noperations\030\003 \003(\0132\n"
-          + ".Operation\022\026\n\016portRotationId\030\004 \001(\003\"{\n\030Lo"
-          + "adableQuantityResponse\0229\n\027loadableQuanti"
-          + "tyRequest\030\001 \001(\0132\030.LoadableQuantityReques"
-          + "t\022$\n\016responseStatus\030\002 \001(\0132\014.StatusReply\""
-          + ",\n\020ValveSegregation\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030"
-          + "\002 \001(\t\"2\n\027ValveSegregationRequest\022\027\n\017load"
-          + "ableStudyId\030\001 \001(\003\"m\n\025ValveSegregationRep"
-          + "ly\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSta"
-          + "tus\022+\n\020valveSegregation\030\002 \003(\0132\021.ValveSeg"
-          + "regation2\361\006\n\024LoadableStudyService\022,\n\nSav"
-          + "eVoyage\022\016.VoyageRequest\032\014.VoyageReply\"\000\022"
-          + "8\n\022GetVoyagesByVessel\022\016.VoyageRequest\032\020."
-          + "VoyageListReply\"\000\022J\n\024SaveLoadableQuantit"
-          + "y\022\030.LoadableQuantityRequest\032\026.LoadableQu"
-          + "antityReply\"\000\022T\n$FindLoadableStudiesByVe"
-          + "sselAndVoyage\022\025.LoadableStudyRequest\032\023.L"
-          + "oadableStudyReply\"\000\022@\n\021SaveLoadableStudy"
-          + "\022\024.LoadableStudyDetail\032\023.LoadableStudyRe"
-          + "ply\"\000\022G\n\023SaveCargoNomination\022\027.CargoNomi"
-          + "nationRequest\032\025.CargoNominationReply\"\000\022J"
-          + "\n\034GetLoadableStudyPortRotation\022\024.PortRot"
-          + "ationRequest\032\022.PortRotationReply\"\000\022J\n\026Ge"
-          + "tCargoNominationById\022\027.CargoNominationRe"
-          + "quest\032\025.CargoNominationReply\"\000\022I\n\023GetVal"
-          + "veSegregation\022\030.ValveSegregationRequest\032"
-          + "\026.ValveSegregationReply\"\000\022J\n\023getLoadable"
-          + "Quantity\022\026.LoadableQuantityReply\032\031.Loada"
-          + "bleQuantityResponse\"\000\022J\n\035SaveLoadableStu"
-          + "dyPortRotation\022\023.PortRotationDetail\032\022.Po"
-          + "rtRotationReply\"\000\022I\n\025DeleteCargoNominati"
-          + "on\022\027.CargoNominationRequest\032\025.CargoNomin"
-          + "ationReply\"\000B\036\n\032com.cpdss.common.generat"
-          + "edP\000b\006proto3"
+          + "\002 \001(\t\022\016\n\006detail\030\003 \001(\t\022\020\n\010statusId\030\004 \001(\003\022"
+          + "\016\n\006status\030\005 \001(\t\022\023\n\013createdDate\030\006 \001(\t\022\021\n\t"
+          + "charterer\030\007 \001(\t\022\024\n\014subCharterer\030\010 \001(\t\022\021\n"
+          + "\tdraftMark\030\t \001(\t\022\023\n\013loadLineXId\030\n \001(\003\022\030\n"
+          + "\020draftRestriction\030\013 \001(\t\022\031\n\021maxAirTempera"
+          + "ture\030\014 \001(\t\022\033\n\023maxWaterTemperature\030\r \001(\t\022"
+          + "\030\n\020duplicatedFromId\030\016 \001(\003\022\020\n\010voyageId\030\017 "
+          + "\001(\003\022\020\n\010vesselId\030\020 \001(\003\022-\n\013attachments\030\021 \003"
+          + "(\0132\030.LoadableStudyAttachment\022\032\n\022discharg"
+          + "ingPortIds\030\022 \003(\003\"u\n\022LoadableStudyReply\022$"
+          + "\n\016responseStatus\030\001 \001(\0132\014.StatusReply\022-\n\017"
+          + "loadableStudies\030\002 \003(\0132\024.LoadableStudyDet"
+          + "ail\022\n\n\002id\030\003 \001(\003\"5\n\021LoadingPortDetail\022\016\n\006"
+          + "portId\030\001 \001(\003\022\020\n\010quantity\030\002 \001(\t\".\n\021segreg"
+          + "ationDetail\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\"\252"
+          + "\002\n\025CargoNominationDetail\022\n\n\002id\030\001 \001(\003\022\027\n\017"
+          + "loadableStudyId\030\002 \001(\003\022\020\n\010priority\030\003 \001(\003\022"
+          + "\r\n\005color\030\004 \001(\t\022\017\n\007cargoId\030\005 \001(\003\022\024\n\014abbre"
+          + "viation\030\006 \001(\t\022.\n\022loadingPortDetails\030\007 \003("
+          + "\0132\022.LoadingPortDetail\022\020\n\010quantity\030\010 \001(\t\022"
+          + "\024\n\014maxTolerance\030\t \001(\t\022\024\n\014minTolerance\030\n "
+          + "\001(\t\022\016\n\006apiEst\030\013 \001(\t\022\017\n\007tempEst\030\014 \001(\t\022\025\n\r"
+          + "segregationId\030\r \001(\003\"\247\001\n\026CargoNominationR"
+          + "equest\022\020\n\010vesselId\030\001 \001(\003\022\020\n\010voyageId\030\002 \001"
+          + "(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\031\n\021cargoNomi"
+          + "nationId\030\004 \001(\003\0225\n\025cargoNominationDetail\030"
+          + "\005 \001(\0132\026.CargoNominationDetail\"\214\001\n\024CargoN"
+          + "ominationReply\022\'\n\016responseStatus\030\001 \001(\0132\017"
+          + ".ResponseStatus\022\031\n\021cargoNominationId\030\002 \001"
+          + "(\003\0220\n\020cargoNominations\030\003 \003(\0132\026.CargoNomi"
+          + "nationDetail\"n\n\023PortRotationRequest\022\027\n\017l"
+          + "oadableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020"
+          + "\n\010voyageId\030\003 \001(\003\022\032\n\022dischargingPortIds\030\004"
+          + " \003(\003\"\241\002\n\022PortRotationDetail\022\n\n\002id\030\001 \001(\003\022"
+          + "\016\n\006portId\030\002 \001(\003\022\017\n\007berthId\030\003 \001(\003\022\023\n\013oper"
+          + "ationId\030\004 \001(\003\022\027\n\017seaWaterDensity\030\005 \001(\t\022\034"
+          + "\n\024distanceBetweenPorts\030\006 \001(\t\022\022\n\ntimeOfSt"
+          + "ay\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t\022\023\n\013maxAirDraf"
+          + "t\030\t \001(\t\022\013\n\003eta\030\n \001(\t\022\013\n\003etd\030\013 \001(\t\022\022\n\nlay"
+          + "CanFrom\030\014 \001(\t\022\020\n\010layCanTo\030\r \001(\t\022\027\n\017loada"
+          + "bleStudyId\030\016 \001(\003\".\n\tOperation\022\n\n\002id\030\001 \001("
+          + "\003\022\025\n\roperationName\030\002 \001(\t\"\230\001\n\021PortRotatio"
+          + "nReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respons"
+          + "eStatus\022\"\n\005ports\030\002 \003(\0132\023.PortRotationDet"
+          + "ail\022\036\n\noperations\030\003 \003(\0132\n.Operation\022\026\n\016p"
+          + "ortRotationId\030\004 \001(\003\"{\n\030LoadableQuantityR"
+          + "esponse\0229\n\027loadableQuantityRequest\030\001 \001(\013"
+          + "2\030.LoadableQuantityRequest\022$\n\016responseSt"
+          + "atus\030\002 \001(\0132\014.StatusReply\",\n\020ValveSegrega"
+          + "tion\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"2\n\027ValveS"
+          + "egregationRequest\022\027\n\017loadableStudyId\030\001 \001"
+          + "(\003\"m\n\025ValveSegregationReply\022\'\n\016responseS"
+          + "tatus\030\001 \001(\0132\017.ResponseStatus\022+\n\020valveSeg"
+          + "regation\030\002 \003(\0132\021.ValveSegregation2\265\007\n\024Lo"
+          + "adableStudyService\022,\n\nSaveVoyage\022\016.Voyag"
+          + "eRequest\032\014.VoyageReply\"\000\0228\n\022GetVoyagesBy"
+          + "Vessel\022\016.VoyageRequest\032\020.VoyageListReply"
+          + "\"\000\022J\n\024SaveLoadableQuantity\022\030.LoadableQua"
+          + "ntityRequest\032\026.LoadableQuantityReply\"\000\022T"
+          + "\n$FindLoadableStudiesByVesselAndVoyage\022\025"
+          + ".LoadableStudyRequest\032\023.LoadableStudyRep"
+          + "ly\"\000\022@\n\021SaveLoadableStudy\022\024.LoadableStud"
+          + "yDetail\032\023.LoadableStudyReply\"\000\022G\n\023SaveCa"
+          + "rgoNomination\022\027.CargoNominationRequest\032\025"
+          + ".CargoNominationReply\"\000\022J\n\034GetLoadableSt"
+          + "udyPortRotation\022\024.PortRotationRequest\032\022."
+          + "PortRotationReply\"\000\022J\n\026GetCargoNominatio"
+          + "nById\022\027.CargoNominationRequest\032\025.CargoNo"
+          + "minationReply\"\000\022I\n\023GetValveSegregation\022\030"
+          + ".ValveSegregationRequest\032\026.ValveSegregat"
+          + "ionReply\"\000\022J\n\023getLoadableQuantity\022\026.Load"
+          + "ableQuantityReply\032\031.LoadableQuantityResp"
+          + "onse\"\000\022J\n\035SaveLoadableStudyPortRotation\022"
+          + "\023.PortRotationDetail\032\022.PortRotationReply"
+          + "\"\000\022I\n\025DeleteCargoNomination\022\027.CargoNomin"
+          + "ationRequest\032\025.CargoNominationReply\"\000\022B\n"
+          + "\024SaveDischargingPorts\022\024.PortRotationRequ"
+          + "est\032\022.PortRotationReply\"\000B\036\n\032com.cpdss.c"
+          + "ommon.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -26747,6 +27385,7 @@ public final class LoadableStudy {
               "Id",
               "Name",
               "Detail",
+              "StatusId",
               "Status",
               "CreatedDate",
               "Charterer",
@@ -26754,11 +27393,13 @@ public final class LoadableStudy {
               "DraftMark",
               "LoadLineXId",
               "DraftRestriction",
-              "MaxTempExpected",
+              "MaxAirTemperature",
+              "MaxWaterTemperature",
               "DuplicatedFromId",
               "VoyageId",
               "VesselId",
               "Attachments",
+              "DischargingPortIds",
             });
     internal_static_LoadableStudyReply_descriptor = getDescriptor().getMessageTypes().get(10);
     internal_static_LoadableStudyReply_fieldAccessorTable =
@@ -26823,7 +27464,7 @@ public final class LoadableStudy {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortRotationRequest_descriptor,
             new java.lang.String[] {
-              "LoadableStudyId", "VesselId", "VoyageId",
+              "LoadableStudyId", "VesselId", "VoyageId", "DischargingPortIds",
             });
     internal_static_PortRotationDetail_descriptor = getDescriptor().getMessageTypes().get(17);
     internal_static_PortRotationDetail_fieldAccessorTable =

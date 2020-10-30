@@ -31,5 +31,7 @@ public class Vessel {
 
   private String captainName;
 
+  private String charterer;
+
   private List<LoadLine> loadlines;
 }

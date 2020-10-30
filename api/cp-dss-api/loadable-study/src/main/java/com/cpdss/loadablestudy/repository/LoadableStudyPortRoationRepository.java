@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
+import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import java.util.List;
@@ -9,5 +10,25 @@ import java.util.List;
 public interface LoadableStudyPortRoationRepository
     extends CommonCrudRepository<LoadableStudyPortRotation, Long> {
 
-  public List<LoadableStudyPortRotation> findByLoadableStudy(final LoadableStudy loadableStudy);
+  /**
+   * Get active port rotation list against a loadable study by excluding discharging ports
+   *
+   * @param loadableStudy
+   * @param operation
+   * @param isActive
+   * @return
+   */
+  public List<LoadableStudyPortRotation> findByLoadableStudyAndOperationNotAndIsActive(
+      final LoadableStudy loadableStudy, final CargoOperation operation, final boolean isActive);
+
+  /**
+   * Get active port rotation for discharging ports against a loadable study
+   *
+   * @param loadableStudy
+   * @param operation
+   * @param isActive
+   * @return
+   */
+  public List<LoadableStudyPortRotation> findByLoadableStudyAndOperationAndIsActive(
+      final LoadableStudy loadableStudy, final CargoOperation operation, final boolean isActive);
 }

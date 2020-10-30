@@ -7,6 +7,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CargoNominationResponse;
+import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
@@ -332,7 +333,6 @@ public class LoadableStudyController {
    */
   @GetMapping(
       value = "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports",
-      consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public PortRotationResponse loadableStudyPortList(
       @PathVariable Long vesselId,
@@ -397,7 +397,7 @@ public class LoadableStudyController {
           e);
     }
   }
-    
+
   @DeleteMapping(
       value =
           "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/cargo-nominations/{id}")
@@ -422,5 +422,43 @@ public class LoadableStudyController {
           e);
     }
     return response;
+  }
+
+  /**
+   * Save discharging ports to port rotation
+   *
+   * @param request {@link DischargingPortRequest}
+   * @param loadableStudyId - the loadable study id
+   * @param headers {@link HttpHeaders}
+   * @return {@link PortRotationResponse}
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/discharging-ports",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public PortRotationResponse saveDischargingPorts(
+      @RequestBody @Valid DischargingPortRequest request,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      request.setLoadableStudyId(loadableStudyId);
+      return this.loadableStudyService.saveDischargingPorts(
+          request, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving discharging ports", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when saving discharging ports", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
   }
 }

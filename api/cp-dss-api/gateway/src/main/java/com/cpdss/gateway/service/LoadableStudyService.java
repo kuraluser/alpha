@@ -39,6 +39,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.Cargo;
 import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CargoNominationResponse;
+import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
@@ -240,10 +241,17 @@ public class LoadableStudyService {
           StringUtils.isEmpty(grpcReply.getDraftRestriction())
               ? null
               : new BigDecimal(grpcReply.getDraftRestriction()));
-      dto.setMaxTempExpected(
-          StringUtils.isEmpty(grpcReply.getMaxTempExpected())
+      dto.setMaxAirTemperature(
+          StringUtils.isEmpty(grpcReply.getMaxAirTemperature())
               ? null
-              : new BigDecimal(grpcReply.getMaxTempExpected()));
+              : new BigDecimal(grpcReply.getMaxAirTemperature()));
+      dto.setMaxWaterTemperature(
+          StringUtils.isEmpty(grpcReply.getMaxWaterTemperature())
+              ? null
+              : new BigDecimal(grpcReply.getMaxWaterTemperature()));
+      dto.setDischargingPortIds(grpcReply.getDischargingPortIdsList());
+      dto.setStatus(grpcReply.getStatus());
+      dto.setStatusId(grpcReply.getStatusId());
       list.add(dto);
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
@@ -278,8 +286,10 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getDraftRestriction())
         .ifPresent(
             draftRestriction -> builder.setDraftRestriction(String.valueOf(draftRestriction)));
-    Optional.ofNullable(request.getMaxTempExpected())
-        .ifPresent(maxTemp -> builder.setMaxTempExpected(String.valueOf(maxTemp)));
+    Optional.ofNullable(request.getMaxAirTemperature())
+        .ifPresent(maxTemp -> builder.setMaxAirTemperature(String.valueOf(maxTemp)));
+    Optional.ofNullable(request.getMaxWaterTemperature())
+        .ifPresent(maxTemp -> builder.setMaxWaterTemperature(String.valueOf(maxTemp)));
     Optional.ofNullable(request.getVesselId()).ifPresent(builder::setVesselId);
     Optional.ofNullable(request.getVoyageId()).ifPresent(builder::setVoyageId);
     Optional.ofNullable(request.getCreatedFromId()).ifPresent(builder::setDuplicatedFromId);
@@ -439,7 +449,7 @@ public class LoadableStudyService {
                   cargoNomination.setLoadingPorts(loadingPortList);
                 }
                 // TODO: add quantity column whena added in database
-                //                cargoNomination.setQuantity(cargoNominationDetail.getQuantity);
+                // cargoNomination.setQuantity(cargoNominationDetail.getQuantity);
                 cargoNomination.setMaxTolerance(
                     !StringUtils.isEmpty(cargoNominationDetail.getMaxTolerance())
                         ? new BigDecimal(cargoNominationDetail.getMaxTolerance())
@@ -915,5 +925,44 @@ public class LoadableStudyService {
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return cargoNominationResponse;
+  }
+
+  /**
+   * Save discharging ports for a loadable study
+   *
+   * @param request {@link DischargingPortRequest}
+   * @param correlationId
+   * @return {@link PortRotationResponse}
+   * @throws GenericServiceException
+   */
+  public PortRotationResponse saveDischargingPorts(
+      DischargingPortRequest request, String correlationId) throws GenericServiceException {
+    log.info("Inside savePortRotation");
+    PortRotationRequest grpcRequest =
+        PortRotationRequest.newBuilder()
+            .addAllDischargingPortIds(request.getPortIds())
+            .setLoadableStudyId(request.getLoadableStudyId())
+            .build();
+    PortRotationReply grpcReply = this.saveDischargingPorts(grpcRequest);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to save discharging ports",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    PortRotationResponse response = new PortRotationResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * Call loadble study micro service to save discharging ports
+   *
+   * @param grpcRequest {@link PortRotationRequest}
+   * @return
+   */
+  public PortRotationReply saveDischargingPorts(PortRotationRequest grpcRequest) {
+    return this.loadableStudyServiceBlockingStub.saveDischargingPorts(grpcRequest);
   }
 }

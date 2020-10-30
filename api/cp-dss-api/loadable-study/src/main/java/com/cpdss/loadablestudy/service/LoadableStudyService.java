@@ -50,7 +50,9 @@ import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRoationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.google.common.collect.Lists;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
 import java.io.IOException;
@@ -97,6 +99,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private CargoNominationRepository cargoNominationRepository;
 
   @Autowired private CargoNominationValveSegregationRepository valveSegregationRepository;
+  @Autowired private LoadableStudyStatusRepository loadableStudyStatusRepository;
 
   @Autowired
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
@@ -110,6 +113,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String LAY_CAN_FROMAT = "yyyy-MM-dd";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
+  private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
 
   /**
    * method for save voyage
@@ -265,6 +269,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param {@link StreamObserver}
    */
   @Override
+  @Transactional
   public void findLoadableStudiesByVesselAndVoyage(
       LoadableStudyRequest request, StreamObserver<LoadableStudyReply> responseObserver) {
     Builder replyBuilder = LoadableStudyReply.newBuilder();
@@ -276,8 +281,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Voyage does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       List<LoadableStudy> loadableStudyEntityList =
-          this.loadableStudyRepository.findByVesselXIdAndVoyage(
-              request.getVesselId(), voyageOpt.get());
+          this.loadableStudyRepository.findByVesselXIdAndVoyageAndIsActive(
+              request.getVesselId(), voyageOpt.get(), true);
       replyBuilder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT);
       for (LoadableStudy entity : loadableStudyEntityList) {
@@ -286,7 +291,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         builder.setId(entity.getId());
         builder.setName(entity.getName());
         builder.setCreatedDate(dateTimeFormatter.format(entity.getCreatedDate()));
-        Optional.ofNullable(entity.getLoadableStudyStatus()).ifPresent(builder::setStatus);
+        Optional.ofNullable(entity.getLoadableStudyStatus())
+            .ifPresent(
+                status -> {
+                  builder.setStatusId(status.getId());
+                  builder.setStatus(status.getName());
+                });
         Optional.ofNullable(entity.getDetails()).ifPresent(builder::setDetail);
         Optional.ofNullable(entity.getCharterer()).ifPresent(builder::setCharterer);
         Optional.ofNullable(entity.getSubCharterer()).ifPresent(builder::setSubCharterer);
@@ -295,8 +305,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(dratMark -> builder.setDraftMark(valueOf(dratMark)));
         Optional.ofNullable(entity.getDraftRestriction())
             .ifPresent(draftRestriction -> builder.setDraftRestriction(valueOf(draftRestriction)));
-        Optional.ofNullable(entity.getMaxTempExpected())
-            .ifPresent(maxTemp -> builder.setMaxTempExpected(valueOf(maxTemp)));
+        Optional.ofNullable(entity.getMaxAirTemperature())
+            .ifPresent(maxTemp -> builder.setMaxAirTemperature(valueOf(maxTemp)));
+        Optional.ofNullable(entity.getMaxWaterTemperature())
+            .ifPresent(maxTemp -> builder.setMaxWaterTemperature(valueOf(maxTemp)));
+        Set<LoadableStudyPortRotation> portRotations = entity.getPortRotations();
+        if (null != portRotations && !portRotations.isEmpty()) {
+          portRotations.forEach(
+              port -> {
+                if (port.isActive()
+                    && null != port.getOperation()
+                    && DISCHARGING_OPERATION_ID.equals(port.getOperation().getId())) {
+                  builder.addDischargingPortIds(port.getPortXId());
+                }
+              });
+        }
         replyBuilder.addLoadableStudies(builder.build());
       }
 
@@ -356,10 +379,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           StringUtils.isEmpty(request.getDraftRestriction())
               ? null
               : new BigDecimal(request.getDraftRestriction()));
-      entity.setMaxTempExpected(
-          StringUtils.isEmpty(request.getMaxTempExpected())
+      entity.setMaxAirTemperature(
+          StringUtils.isEmpty(request.getMaxAirTemperature())
               ? null
-              : new BigDecimal(request.getMaxTempExpected()));
+              : new BigDecimal(request.getMaxAirTemperature()));
+      entity.setMaxWaterTemperature(
+          StringUtils.isEmpty(request.getMaxWaterTemperature())
+              ? null
+              : new BigDecimal(request.getMaxWaterTemperature()));
       if (!request.getAttachmentsList().isEmpty()) {
         String folderLocation = this.constructFolderPath(entity);
         Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
@@ -376,6 +403,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
         entity.setAttachments(attachmentCollection);
       }
+      entity.setLoadableStudyStatus(
+          this.loadableStudyStatusRepository.getOne(LOADABLE_STUDY_INITIAL_STATUS_ID));
       entity = this.loadableStudyRepository.save(entity);
       replyBuilder
           .setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build())
@@ -595,8 +624,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         throw new GenericServiceException(
             "Loadable study does not exist in database", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
+      CargoOperation dischargingOperation =
+          this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID);
       List<LoadableStudyPortRotation> entityList =
-          this.loadableStudyPortRoationRepository.findByLoadableStudy(loadableStudyOpt.get());
+          this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationNotAndIsActive(
+              loadableStudyOpt.get(), dischargingOperation, true);
       for (LoadableStudyPortRotation entity : entityList) {
         replyBuilder.addPorts(
             this.createPortDetail(
@@ -944,6 +976,67 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
+  @Override
+  @Transactional
+  public void saveDischargingPorts(
+      PortRotationRequest request, StreamObserver<PortRotationReply> responseObserver) {
+    PortRotationReply.Builder replyBuilder = PortRotationReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findById(request.getLoadableStudyId());
+      if (!loadableStudyOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable study does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      CargoOperation discharging = this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID);
+      List<LoadableStudyPortRotation> dischargingPorts =
+          this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
+              loadableStudyOpt.get(), discharging, true);
+      List<Long> portIds = Lists.newArrayList(request.getDischargingPortIdsList());
+      for (LoadableStudyPortRotation portRoation : dischargingPorts) {
+        if (!request.getDischargingPortIdsList().contains(portRoation.getPortXId())) {
+          portRoation.setActive(false);
+        } else {
+          portIds.remove(portRoation.getPortXId());
+        }
+      }
+      if (!portIds.isEmpty()) {
+        portIds.forEach(
+            id -> {
+              LoadableStudyPortRotation port = new LoadableStudyPortRotation();
+              port.setPortXId(id);
+              port.setLoadableStudy(loadableStudyOpt.get());
+              port.setOperation(discharging);
+              dischargingPorts.add(port);
+            });
+      }
+      this.loadableStudyPortRoationRepository.saveAll(dischargingPorts);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving loadable study - port data", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Exception when saving loadable study - port data", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when saving loadable study - port data")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
   /**
    * Create entity class from request
    *
@@ -991,7 +1084,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     entity.setOperation(this.cargoOperationRepository.getOne(request.getOperationId()));
     return entity;
   }
-  
+
   /** Delete specific cargo nomination */
   @Override
   public void deleteCargoNomination(

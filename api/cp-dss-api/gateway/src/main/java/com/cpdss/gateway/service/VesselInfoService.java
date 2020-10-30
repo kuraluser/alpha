@@ -96,6 +96,7 @@ public class VesselInfoService {
       vessel.setFlagPath(grpcReply.getFlag());
       vessel.setCaptainId(grpcReply.getCaptainId());
       vessel.setChiefOfficerId(grpcReply.getCheifOfficerId());
+      vessel.setCharterer(grpcReply.getCharterer());
       Optional<Users> userOpt =
           userList.stream().filter(item -> item.getId().equals(vessel.getCaptainId())).findAny();
       if (!userOpt.isPresent()) {

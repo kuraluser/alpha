@@ -32,10 +32,7 @@ public class VesselInfoController {
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
 
-  @GetMapping(
-      value = "/vessels",
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/vessels", produces = MediaType.APPLICATION_JSON_VALUE)
   public VesselResponse getVesselsByCompany(@RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {

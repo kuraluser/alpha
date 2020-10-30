@@ -9,7 +9,9 @@ import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.vesselinfo.entity.Vessel;
+import com.cpdss.vesselinfo.entity.VesselChartererMapping;
 import com.cpdss.vesselinfo.entity.VesselDraftCondition;
+import com.cpdss.vesselinfo.repository.VesselChartererMappingRepository;
 import com.cpdss.vesselinfo.repository.VesselRepository;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class VesselInfoService extends VesselInfoServiceImplBase {
 
   @Autowired private VesselRepository vesselRepository;
+  @Autowired private VesselChartererMappingRepository chartererMappingRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -78,6 +81,11 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         }
         builder.addAllLoadLines(
             builderList.stream().map(LoadLineDetail.Builder::build).collect(Collectors.toList()));
+        VesselChartererMapping vesselChartererMapping =
+            this.chartererMappingRepository.findByVesselAndIsActive(entity, true);
+        if (null != vesselChartererMapping && null != vesselChartererMapping.getCharterer()) {
+          builder.setCharterer(vesselChartererMapping.getCharterer().getName());
+        }
         replyBuilder.addVessels(builder.build());
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }

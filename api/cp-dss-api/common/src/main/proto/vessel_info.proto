@@ -28,7 +28,8 @@ message VesselDetail {
 	int64 cheifOfficerId = 4;
 	string imoNumber = 5;
 	string flag = 6;
-	repeated LoadLineDetail loadLines = 7;
+	string charterer = 7;
+	repeated LoadLineDetail loadLines = 8;
 }
 
 message VesselReply {

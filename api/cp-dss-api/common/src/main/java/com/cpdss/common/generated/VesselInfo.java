@@ -1451,16 +1451,29 @@ public final class VesselInfo {
      */
     com.google.protobuf.ByteString getFlagBytes();
 
-    /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+    /**
+     * <code>string charterer = 7;</code>
+     *
+     * @return The charterer.
+     */
+    java.lang.String getCharterer();
+    /**
+     * <code>string charterer = 7;</code>
+     *
+     * @return The bytes for charterer.
+     */
+    com.google.protobuf.ByteString getChartererBytes();
+
+    /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
     java.util.List<com.cpdss.common.generated.VesselInfo.LoadLineDetail> getLoadLinesList();
-    /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+    /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
     com.cpdss.common.generated.VesselInfo.LoadLineDetail getLoadLines(int index);
-    /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+    /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
     int getLoadLinesCount();
-    /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+    /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
     java.util.List<? extends com.cpdss.common.generated.VesselInfo.LoadLineDetailOrBuilder>
         getLoadLinesOrBuilderList();
-    /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+    /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
     com.cpdss.common.generated.VesselInfo.LoadLineDetailOrBuilder getLoadLinesOrBuilder(int index);
   }
   /** Protobuf type {@code VesselDetail} */
@@ -1478,6 +1491,7 @@ public final class VesselInfo {
       name_ = "";
       imoNumber_ = "";
       flag_ = "";
+      charterer_ = "";
       loadLines_ = java.util.Collections.emptyList();
     }
 
@@ -1548,6 +1562,13 @@ public final class VesselInfo {
                 break;
               }
             case 58:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                charterer_ = s;
+                break;
+              }
+            case 66:
               {
                 if (!((mutable_bitField0_ & 0x00000001) != 0)) {
                   loadLines_ =
@@ -1734,26 +1755,61 @@ public final class VesselInfo {
       }
     }
 
-    public static final int LOADLINES_FIELD_NUMBER = 7;
+    public static final int CHARTERER_FIELD_NUMBER = 7;
+    private volatile java.lang.Object charterer_;
+    /**
+     * <code>string charterer = 7;</code>
+     *
+     * @return The charterer.
+     */
+    public java.lang.String getCharterer() {
+      java.lang.Object ref = charterer_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        charterer_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string charterer = 7;</code>
+     *
+     * @return The bytes for charterer.
+     */
+    public com.google.protobuf.ByteString getChartererBytes() {
+      java.lang.Object ref = charterer_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        charterer_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LOADLINES_FIELD_NUMBER = 8;
     private java.util.List<com.cpdss.common.generated.VesselInfo.LoadLineDetail> loadLines_;
-    /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+    /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
     public java.util.List<com.cpdss.common.generated.VesselInfo.LoadLineDetail> getLoadLinesList() {
       return loadLines_;
     }
-    /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+    /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
     public java.util.List<? extends com.cpdss.common.generated.VesselInfo.LoadLineDetailOrBuilder>
         getLoadLinesOrBuilderList() {
       return loadLines_;
     }
-    /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+    /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
     public int getLoadLinesCount() {
       return loadLines_.size();
     }
-    /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+    /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
     public com.cpdss.common.generated.VesselInfo.LoadLineDetail getLoadLines(int index) {
       return loadLines_.get(index);
     }
-    /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+    /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
     public com.cpdss.common.generated.VesselInfo.LoadLineDetailOrBuilder getLoadLinesOrBuilder(
         int index) {
       return loadLines_.get(index);
@@ -1791,8 +1847,11 @@ public final class VesselInfo {
       if (!getFlagBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 6, flag_);
       }
+      if (!getChartererBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, charterer_);
+      }
       for (int i = 0; i < loadLines_.size(); i++) {
-        output.writeMessage(7, loadLines_.get(i));
+        output.writeMessage(8, loadLines_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -1821,8 +1880,11 @@ public final class VesselInfo {
       if (!getFlagBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, flag_);
       }
+      if (!getChartererBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, charterer_);
+      }
       for (int i = 0; i < loadLines_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream.computeMessageSize(7, loadLines_.get(i));
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(8, loadLines_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -1846,6 +1908,7 @@ public final class VesselInfo {
       if (getCheifOfficerId() != other.getCheifOfficerId()) return false;
       if (!getImoNumber().equals(other.getImoNumber())) return false;
       if (!getFlag().equals(other.getFlag())) return false;
+      if (!getCharterer().equals(other.getCharterer())) return false;
       if (!getLoadLinesList().equals(other.getLoadLinesList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
@@ -1870,6 +1933,8 @@ public final class VesselInfo {
       hash = (53 * hash) + getImoNumber().hashCode();
       hash = (37 * hash) + FLAG_FIELD_NUMBER;
       hash = (53 * hash) + getFlag().hashCode();
+      hash = (37 * hash) + CHARTERER_FIELD_NUMBER;
+      hash = (53 * hash) + getCharterer().hashCode();
       if (getLoadLinesCount() > 0) {
         hash = (37 * hash) + LOADLINES_FIELD_NUMBER;
         hash = (53 * hash) + getLoadLinesList().hashCode();
@@ -2025,6 +2090,8 @@ public final class VesselInfo {
 
         flag_ = "";
 
+        charterer_ = "";
+
         if (loadLinesBuilder_ == null) {
           loadLines_ = java.util.Collections.emptyList();
           bitField0_ = (bitField0_ & ~0x00000001);
@@ -2064,6 +2131,7 @@ public final class VesselInfo {
         result.cheifOfficerId_ = cheifOfficerId_;
         result.imoNumber_ = imoNumber_;
         result.flag_ = flag_;
+        result.charterer_ = charterer_;
         if (loadLinesBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             loadLines_ = java.util.Collections.unmodifiableList(loadLines_);
@@ -2144,6 +2212,10 @@ public final class VesselInfo {
         }
         if (!other.getFlag().isEmpty()) {
           flag_ = other.flag_;
+          onChanged();
+        }
+        if (!other.getCharterer().isEmpty()) {
+          charterer_ = other.charterer_;
           onChanged();
         }
         if (loadLinesBuilder_ == null) {
@@ -2532,6 +2604,82 @@ public final class VesselInfo {
         return this;
       }
 
+      private java.lang.Object charterer_ = "";
+      /**
+       * <code>string charterer = 7;</code>
+       *
+       * @return The charterer.
+       */
+      public java.lang.String getCharterer() {
+        java.lang.Object ref = charterer_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          charterer_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string charterer = 7;</code>
+       *
+       * @return The bytes for charterer.
+       */
+      public com.google.protobuf.ByteString getChartererBytes() {
+        java.lang.Object ref = charterer_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          charterer_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string charterer = 7;</code>
+       *
+       * @param value The charterer to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCharterer(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        charterer_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string charterer = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCharterer() {
+
+        charterer_ = getDefaultInstance().getCharterer();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string charterer = 7;</code>
+       *
+       * @param value The bytes for charterer to set.
+       * @return This builder for chaining.
+       */
+      public Builder setChartererBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        charterer_ = value;
+        onChanged();
+        return this;
+      }
+
       private java.util.List<com.cpdss.common.generated.VesselInfo.LoadLineDetail> loadLines_ =
           java.util.Collections.emptyList();
 
@@ -2550,7 +2698,7 @@ public final class VesselInfo {
               com.cpdss.common.generated.VesselInfo.LoadLineDetailOrBuilder>
           loadLinesBuilder_;
 
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public java.util.List<com.cpdss.common.generated.VesselInfo.LoadLineDetail>
           getLoadLinesList() {
         if (loadLinesBuilder_ == null) {
@@ -2559,7 +2707,7 @@ public final class VesselInfo {
           return loadLinesBuilder_.getMessageList();
         }
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public int getLoadLinesCount() {
         if (loadLinesBuilder_ == null) {
           return loadLines_.size();
@@ -2567,7 +2715,7 @@ public final class VesselInfo {
           return loadLinesBuilder_.getCount();
         }
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public com.cpdss.common.generated.VesselInfo.LoadLineDetail getLoadLines(int index) {
         if (loadLinesBuilder_ == null) {
           return loadLines_.get(index);
@@ -2575,7 +2723,7 @@ public final class VesselInfo {
           return loadLinesBuilder_.getMessage(index);
         }
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public Builder setLoadLines(
           int index, com.cpdss.common.generated.VesselInfo.LoadLineDetail value) {
         if (loadLinesBuilder_ == null) {
@@ -2590,7 +2738,7 @@ public final class VesselInfo {
         }
         return this;
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public Builder setLoadLines(
           int index, com.cpdss.common.generated.VesselInfo.LoadLineDetail.Builder builderForValue) {
         if (loadLinesBuilder_ == null) {
@@ -2602,7 +2750,7 @@ public final class VesselInfo {
         }
         return this;
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public Builder addLoadLines(com.cpdss.common.generated.VesselInfo.LoadLineDetail value) {
         if (loadLinesBuilder_ == null) {
           if (value == null) {
@@ -2616,7 +2764,7 @@ public final class VesselInfo {
         }
         return this;
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public Builder addLoadLines(
           int index, com.cpdss.common.generated.VesselInfo.LoadLineDetail value) {
         if (loadLinesBuilder_ == null) {
@@ -2631,7 +2779,7 @@ public final class VesselInfo {
         }
         return this;
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public Builder addLoadLines(
           com.cpdss.common.generated.VesselInfo.LoadLineDetail.Builder builderForValue) {
         if (loadLinesBuilder_ == null) {
@@ -2643,7 +2791,7 @@ public final class VesselInfo {
         }
         return this;
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public Builder addLoadLines(
           int index, com.cpdss.common.generated.VesselInfo.LoadLineDetail.Builder builderForValue) {
         if (loadLinesBuilder_ == null) {
@@ -2655,7 +2803,7 @@ public final class VesselInfo {
         }
         return this;
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public Builder addAllLoadLines(
           java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.LoadLineDetail>
               values) {
@@ -2668,7 +2816,7 @@ public final class VesselInfo {
         }
         return this;
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public Builder clearLoadLines() {
         if (loadLinesBuilder_ == null) {
           loadLines_ = java.util.Collections.emptyList();
@@ -2679,7 +2827,7 @@ public final class VesselInfo {
         }
         return this;
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public Builder removeLoadLines(int index) {
         if (loadLinesBuilder_ == null) {
           ensureLoadLinesIsMutable();
@@ -2690,12 +2838,12 @@ public final class VesselInfo {
         }
         return this;
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public com.cpdss.common.generated.VesselInfo.LoadLineDetail.Builder getLoadLinesBuilder(
           int index) {
         return getLoadLinesFieldBuilder().getBuilder(index);
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public com.cpdss.common.generated.VesselInfo.LoadLineDetailOrBuilder getLoadLinesOrBuilder(
           int index) {
         if (loadLinesBuilder_ == null) {
@@ -2704,7 +2852,7 @@ public final class VesselInfo {
           return loadLinesBuilder_.getMessageOrBuilder(index);
         }
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public java.util.List<? extends com.cpdss.common.generated.VesselInfo.LoadLineDetailOrBuilder>
           getLoadLinesOrBuilderList() {
         if (loadLinesBuilder_ != null) {
@@ -2713,19 +2861,19 @@ public final class VesselInfo {
           return java.util.Collections.unmodifiableList(loadLines_);
         }
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public com.cpdss.common.generated.VesselInfo.LoadLineDetail.Builder addLoadLinesBuilder() {
         return getLoadLinesFieldBuilder()
             .addBuilder(com.cpdss.common.generated.VesselInfo.LoadLineDetail.getDefaultInstance());
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public com.cpdss.common.generated.VesselInfo.LoadLineDetail.Builder addLoadLinesBuilder(
           int index) {
         return getLoadLinesFieldBuilder()
             .addBuilder(
                 index, com.cpdss.common.generated.VesselInfo.LoadLineDetail.getDefaultInstance());
       }
-      /** <code>repeated .LoadLineDetail loadLines = 7;</code> */
+      /** <code>repeated .LoadLineDetail loadLines = 8;</code> */
       public java.util.List<com.cpdss.common.generated.VesselInfo.LoadLineDetail.Builder>
           getLoadLinesBuilderList() {
         return getLoadLinesFieldBuilder().getBuilderList();
@@ -3785,16 +3933,16 @@ public final class VesselInfo {
       "\n\021vessel_info.proto\032\014common.proto\"\"\n\rVes"
           + "selRequest\022\021\n\tcompanyId\030\001 \001(\003\">\n\016LoadLin"
           + "eDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\022\n\ndra"
-          + "ftMarks\030\003 \003(\t\"\230\001\n\014VesselDetail\022\n\n\002id\030\001 \001"
+          + "ftMarks\030\003 \003(\t\"\253\001\n\014VesselDetail\022\n\n\002id\030\001 \001"
           + "(\003\022\014\n\004name\030\002 \001(\t\022\021\n\tcaptainId\030\003 \001(\003\022\026\n\016c"
           + "heifOfficerId\030\004 \001(\003\022\021\n\timoNumber\030\005 \001(\t\022\014"
-          + "\n\004flag\030\006 \001(\t\022\"\n\tloadLines\030\007 \003(\0132\017.LoadLi"
-          + "neDetail\"V\n\013VesselReply\022\'\n\016responseStatu"
-          + "s\030\001 \001(\0132\017.ResponseStatus\022\036\n\007vessels\030\002 \003("
-          + "\0132\r.VesselDetail2M\n\021VesselInfoService\0228\n"
-          + "\026GetAllVesselsByCompany\022\016.VesselRequest\032"
-          + "\014.VesselReply\"\000B\036\n\032com.cpdss.common.gene"
-          + "ratedP\000b\006proto3"
+          + "\n\004flag\030\006 \001(\t\022\021\n\tcharterer\030\007 \001(\t\022\"\n\tloadL"
+          + "ines\030\010 \003(\0132\017.LoadLineDetail\"V\n\013VesselRep"
+          + "ly\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSta"
+          + "tus\022\036\n\007vessels\030\002 \003(\0132\r.VesselDetail2M\n\021V"
+          + "esselInfoService\0228\n\026GetAllVesselsByCompa"
+          + "ny\022\016.VesselRequest\032\014.VesselReply\"\000B\036\n\032co"
+          + "m.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -3821,7 +3969,14 @@ public final class VesselInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselDetail_descriptor,
             new java.lang.String[] {
-              "Id", "Name", "CaptainId", "CheifOfficerId", "ImoNumber", "Flag", "LoadLines",
+              "Id",
+              "Name",
+              "CaptainId",
+              "CheifOfficerId",
+              "ImoNumber",
+              "Flag",
+              "Charterer",
+              "LoadLines",
             });
     internal_static_VesselReply_descriptor = getDescriptor().getMessageTypes().get(3);
     internal_static_VesselReply_fieldAccessorTable =

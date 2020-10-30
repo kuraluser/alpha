@@ -28,6 +28,7 @@ import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
@@ -40,6 +41,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -117,7 +120,8 @@ class LoadableStudyServiceTest {
             .setDraftMark(DRAFT_MARK)
             .setLoadLineXId(LOAD_LINE_ID)
             .setDraftRestriction(DRAFT_RESTRICTION)
-            .setMaxTempExpected(MAX_TEMP_EXPECTED)
+            .setMaxAirTemperature(MAX_TEMP_EXPECTED)
+            .setMaxWaterTemperature(MAX_TEMP_EXPECTED)
             .build());
     Mockito.when(
             this.loadableStudyService.getloadableStudyList(
@@ -419,7 +423,8 @@ class LoadableStudyServiceTest {
     request.setDraftMark(new BigDecimal(DRAFT_MARK));
     request.setLoadLineXId(LOAD_LINE_ID);
     request.setDraftRestriction(new BigDecimal(DRAFT_RESTRICTION));
-    request.setMaxTempExpected(new BigDecimal(MAX_TEMP_EXPECTED));
+    request.setMaxAirTemperature(new BigDecimal(MAX_TEMP_EXPECTED));
+    request.setMaxWaterTemperature(new BigDecimal(MAX_TEMP_EXPECTED));
     return request;
   }
 
@@ -809,6 +814,62 @@ class LoadableStudyServiceTest {
     request.setLayCanTo(request.getLayCanFrom());
     request.setLoadableStudyId(1L);
     request.setOperationId(3L);
+    return request;
+  }
+
+  @Test
+  void testSaveDischargingPorts() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.saveDischargingPorts(
+                any(DischargingPortRequest.class), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.saveDischargingPorts(any(PortRotationRequest.class)))
+        .thenReturn(this.generatePortRotationReply(false).build());
+    PortRotationResponse response =
+        this.loadableStudyService.saveDischargingPorts(
+            this.createDischargingPortRequest(), CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "Invalid response status"));
+  }
+
+  @Test
+  void testSaveDischargingPortsGrpcFailure() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.saveDischargingPorts(
+                any(DischargingPortRequest.class), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.saveDischargingPorts(any(PortRotationRequest.class)))
+        .thenReturn(
+            this.generatePortRotationReply(false)
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.saveDischargingPorts(
+                    this.createDischargingPortRequest(), CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  private DischargingPortRequest createDischargingPortRequest() {
+    DischargingPortRequest request = new DischargingPortRequest();
+    List<Long> ids = new ArrayList<>();
+    ids.add(1L);
+    ids.add(2L);
+    request.setPortIds(ids);
+    request.setLoadableStudyId(1L);
     return request;
   }
 }

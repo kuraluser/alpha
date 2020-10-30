@@ -13,5 +13,6 @@ import java.util.List;
  */
 public interface LoadableStudyRepository extends CommonCrudRepository<LoadableStudy, Long> {
 
-  public List<LoadableStudy> findByVesselXIdAndVoyage(final Long vesselXId, final Voyage voyage);
+  public List<LoadableStudy> findByVesselXIdAndVoyageAndIsActive(
+      final Long vesselXId, final Voyage voyage, final boolean isActive);
 }

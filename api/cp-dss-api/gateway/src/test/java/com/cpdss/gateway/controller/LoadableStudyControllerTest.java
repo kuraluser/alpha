@@ -11,6 +11,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
+import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.PortRotation;
@@ -22,6 +23,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -99,6 +102,13 @@ class LoadableStudyControllerTest {
       CLOUD_API_URL_PREFIX + PORT_ROTATION_SAVE_API_URL;
   private static final String PORT_ROTATION_SAVE_SHIP_API_URL =
       SHIP_API_URL_PREFIX + PORT_ROTATION_SAVE_API_URL;
+
+  private static final String DISCHARGING_PORTS_SAVE_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/discharging-ports";
+  private static final String DISCHARGING_PORTS_SAVE_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + DISCHARGING_PORTS_SAVE_API_URL;
+  private static final String DISCHARGING_PORTS_SAVE_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + DISCHARGING_PORTS_SAVE_API_URL;
 
   /**
    * Positive test case. Test method for positive response scenario
@@ -428,6 +438,60 @@ class LoadableStudyControllerTest {
     request.setLayCanFrom(LocalDate.now().toString());
     request.setLayCanTo(request.getLayCanFrom());
     request.setLoadableStudyId(1L);
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.writeValueAsString(request);
+  }
+
+  @ValueSource(
+      strings = {DISCHARGING_PORTS_SAVE_CLOUD_API_URL, DISCHARGING_PORTS_SAVE_SHIP_API_URL})
+  @ParameterizedTest
+  void testsaveDischargingPorts(String url) throws Exception {
+    when(this.loadableStudyService.saveDischargingPorts(
+            any(DischargingPortRequest.class), anyString()))
+        .thenReturn(new PortRotationResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1L)
+                .content(this.createDischargingPortRequest())
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+    ;
+  }
+
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testsaveDischargingPortsException(Class<? extends Exception> exceptionClass)
+      throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.loadableStudyService.saveDischargingPorts(
+            any(DischargingPortRequest.class), anyString()))
+        .thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(
+                    DISCHARGING_PORTS_SAVE_CLOUD_API_URL, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1L)
+                .content(this.createDischargingPortRequest())
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+    ;
+  }
+
+  private String createDischargingPortRequest() throws JsonProcessingException {
+    DischargingPortRequest request = new DischargingPortRequest();
+    List<Long> ids = new ArrayList<>();
+    ids.add(1L);
+    request.setPortIds(ids);
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(request);
   }

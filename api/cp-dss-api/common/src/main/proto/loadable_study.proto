@@ -27,7 +27,6 @@ service LoadableStudyService {
 	
 	rpc GetLoadableStudyPortRotation (PortRotationRequest) returns (PortRotationReply){
 	}
-	
 
 	rpc GetCargoNominationById (CargoNominationRequest) returns (CargoNominationReply){
 	}
@@ -43,6 +42,9 @@ service LoadableStudyService {
 	
 	rpc DeleteCargoNomination (CargoNominationRequest) returns (CargoNominationReply){
 	}	
+	rpc SaveDischargingPorts(PortRotationRequest) returns (PortRotationReply){
+	}
+	
 }
 
 
@@ -120,18 +122,21 @@ message LoadableStudyDetail{
 	int64 id = 1;
 	string name = 2;
 	string detail = 3;
-	string status = 4;
-	string createdDate = 5;
-	string charterer = 6;
-	string subCharterer = 7;
-	string draftMark = 8;
-	int64 loadLineXId = 9;
-	string draftRestriction = 10;
-	string maxTempExpected = 11;
-	int64 duplicatedFromId = 12;
-	int64 voyageId = 13;
-	int64 vesselId = 14;
-	repeated LoadableStudyAttachment attachments = 15;
+	int64 statusId = 4;
+	string status = 5;
+	string createdDate = 6;
+	string charterer = 7;
+	string subCharterer = 8;
+	string draftMark = 9;
+	int64 loadLineXId = 10;
+	string draftRestriction = 11;
+	string maxAirTemperature = 12;
+	string maxWaterTemperature = 13;
+	int64 duplicatedFromId = 14;
+	int64 voyageId = 15;
+	int64 vesselId = 16;
+	repeated LoadableStudyAttachment attachments = 17;
+	repeated int64 dischargingPortIds = 18;
 }
 
 message LoadableStudyReply{
@@ -185,6 +190,7 @@ message PortRotationRequest{
 	int64 loadableStudyId = 1;
 	int64 vesselId = 2;
 	int64 voyageId = 3;
+	repeated int64 dischargingPortIds = 4;
 }
 
 message PortRotationDetail{

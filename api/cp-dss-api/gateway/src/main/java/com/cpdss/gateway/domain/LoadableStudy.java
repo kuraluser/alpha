@@ -5,8 +5,8 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.math.BigDecimal;
+import java.util.List;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 
@@ -29,6 +29,8 @@ public class LoadableStudy {
 
   private String status;
 
+  private Long statusId;
+
   private String createdDate;
 
   @NotEmpty(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
@@ -36,14 +38,15 @@ public class LoadableStudy {
 
   private String subCharterer;
 
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal draftMark;
 
   private Long loadLineXId;
 
   private BigDecimal draftRestriction;
 
-  private BigDecimal maxTempExpected;
+  private BigDecimal maxAirTemperature;
+
+  private BigDecimal maxWaterTemperature;
 
   private Long vesselId;
 
@@ -52,4 +55,6 @@ public class LoadableStudy {
   private Long companyId;
 
   private Long createdFromId;
+
+  private List<Long> dischargingPortIds;
 }

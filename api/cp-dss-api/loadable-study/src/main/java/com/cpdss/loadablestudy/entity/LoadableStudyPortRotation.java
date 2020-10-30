@@ -7,8 +7,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,11 +30,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LoadableStudyPortRotation extends EntityDoc {
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "loadablestudyxid")
   private LoadableStudy loadableStudy;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "operationxid")
   private CargoOperation operation;
 
@@ -64,11 +66,16 @@ public class LoadableStudyPortRotation extends EntityDoc {
   private LocalDateTime etd;
 
   @Column(name = "isactive")
-  private Boolean isActive;
+  private boolean isActive;
 
   @Column(name = "laycanfrom")
   private LocalDate layCanFrom;
 
   @Column(name = "laycanto")
   private LocalDate layCanTo;
+
+  @PrePersist
+  void prePersist() {
+    this.isActive = true;
+  }
 }
