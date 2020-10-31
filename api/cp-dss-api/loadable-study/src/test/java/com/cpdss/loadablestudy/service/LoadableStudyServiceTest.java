@@ -48,8 +48,6 @@ import com.cpdss.loadablestudy.repository.LoadableStudyPortRoationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.protobuf.ByteString;
 import io.grpc.internal.testing.StreamRecorder;
 import java.io.IOException;
@@ -59,8 +57,10 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
@@ -622,7 +622,9 @@ public class LoadableStudyServiceTest {
               operation.setId(DISCHARGING_OPERATION_ID);
               port.setOperation(operation);
               port.setPortXId(1L);
-              entity.setPortRotations(Sets.newHashSet(port));
+              Set<LoadableStudyPortRotation> portSet = new HashSet<>();
+              portSet.add(port);
+              entity.setPortRotations(portSet);
               entityList.add(entity);
             });
     return entityList;
@@ -964,7 +966,7 @@ public class LoadableStudyServiceTest {
   private PortRotationRequest createDischargingPortsSaveRequest() {
     return PortRotationRequest.newBuilder()
         .setLoadableStudyId(1L)
-        .addAllDischargingPortIds(Lists.newArrayList(1L, 2L))
+        .addAllDischargingPortIds(new ArrayList<Long>(java.util.Arrays.asList(1L, 2L)))
         .build();
   }
 

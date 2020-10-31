@@ -116,10 +116,18 @@ public class LoadableStudyService {
 
     VoyageReply voyageReply = this.saveVoyage(voyageRequest);
     if (!SUCCESS.equalsIgnoreCase(voyageReply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          voyageReply.getResponseStatus().getMessage(),
-          voyageReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(voyageReply.getResponseStatus().getCode())));
+      if (CommonErrorCodes.E_CPDSS_VOYAGE_EXISTS.equalsIgnoreCase(
+          voyageReply.getResponseStatus().getCode())) {
+        throw new GenericServiceException(
+            voyageReply.getResponseStatus().getMessage(),
+            voyageReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(Integer.valueOf(CommonErrorCodes.E_HTTP_BAD_REQUEST)));
+      } else {
+        throw new GenericServiceException(
+            voyageReply.getResponseStatus().getMessage(),
+            voyageReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(Integer.valueOf(voyageReply.getResponseStatus().getCode())));
+      }
     } else {
       voyageResponse.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));

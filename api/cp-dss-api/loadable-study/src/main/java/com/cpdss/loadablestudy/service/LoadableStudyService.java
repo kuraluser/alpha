@@ -55,7 +55,6 @@ import com.cpdss.loadablestudy.repository.LoadableStudyPortRoationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
-import com.google.common.collect.Lists;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
 import java.io.IOException;
@@ -66,6 +65,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -144,7 +144,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     StatusReply.newBuilder()
                         .setStatus(FAILED)
                         .setMessage(VOYAGEEXISTS)
-                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
+                        .setCode(CommonErrorCodes.E_CPDSS_VOYAGE_EXISTS))
                 .build();
       } else {
 
@@ -1032,7 +1032,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<LoadableStudyPortRotation> dischargingPorts =
           this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
               loadableStudyOpt.get(), discharging, true);
-      List<Long> portIds = Lists.newArrayList(request.getDischargingPortIdsList());
+      List<Long> portIds = new ArrayList<>();
+      portIds.addAll(request.getDischargingPortIdsList());
       for (LoadableStudyPortRotation portRoation : dischargingPorts) {
         if (!request.getDischargingPortIdsList().contains(portRoation.getPortXId())) {
           portRoation.setActive(false);
