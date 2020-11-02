@@ -1,14 +1,22 @@
-/* Licensed under Apache-2.0 */
 package com.cpdss.common.generated;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
+import static io.grpc.stub.ClientCalls.asyncBidiStreamingCall;
+import static io.grpc.stub.ClientCalls.asyncClientStreamingCall;
+import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ClientCalls.asyncUnaryCall;
+import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
 import static io.grpc.stub.ClientCalls.blockingUnaryCall;
 import static io.grpc.stub.ClientCalls.futureUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncBidiStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncClientStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
-/** */
+/**
+ */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.27.1)",
     comments = "Source: loadable_study.proto")
@@ -19,916 +27,650 @@ public final class LoadableStudyServiceGrpc {
   public static final String SERVICE_NAME = "LoadableStudyService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.VoyageRequest,
-          com.cpdss.common.generated.LoadableStudy.VoyageReply>
-      getSaveVoyageMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.VoyageRequest,
+      com.cpdss.common.generated.LoadableStudy.VoyageReply> getSaveVoyageMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "SaveVoyage",
       requestType = com.cpdss.common.generated.LoadableStudy.VoyageRequest.class,
       responseType = com.cpdss.common.generated.LoadableStudy.VoyageReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.VoyageRequest,
-          com.cpdss.common.generated.LoadableStudy.VoyageReply>
-      getSaveVoyageMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.VoyageRequest,
-            com.cpdss.common.generated.LoadableStudy.VoyageReply>
-        getSaveVoyageMethod;
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.VoyageRequest,
+      com.cpdss.common.generated.LoadableStudy.VoyageReply> getSaveVoyageMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.VoyageRequest, com.cpdss.common.generated.LoadableStudy.VoyageReply> getSaveVoyageMethod;
     if ((getSaveVoyageMethod = LoadableStudyServiceGrpc.getSaveVoyageMethod) == null) {
       synchronized (LoadableStudyServiceGrpc.class) {
         if ((getSaveVoyageMethod = LoadableStudyServiceGrpc.getSaveVoyageMethod) == null) {
-          LoadableStudyServiceGrpc.getSaveVoyageMethod =
-              getSaveVoyageMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.VoyageRequest,
-                          com.cpdss.common.generated.LoadableStudy.VoyageReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveVoyage"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.VoyageRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.VoyageReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier("SaveVoyage"))
-                      .build();
+          LoadableStudyServiceGrpc.getSaveVoyageMethod = getSaveVoyageMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.VoyageRequest, com.cpdss.common.generated.LoadableStudy.VoyageReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveVoyage"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.VoyageRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.VoyageReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("SaveVoyage"))
+              .build();
         }
       }
     }
     return getSaveVoyageMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.VoyageRequest,
-          com.cpdss.common.generated.LoadableStudy.VoyageListReply>
-      getGetVoyagesByVesselMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.VoyageRequest,
+      com.cpdss.common.generated.LoadableStudy.VoyageListReply> getGetVoyagesByVesselMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetVoyagesByVessel",
       requestType = com.cpdss.common.generated.LoadableStudy.VoyageRequest.class,
       responseType = com.cpdss.common.generated.LoadableStudy.VoyageListReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.VoyageRequest,
-          com.cpdss.common.generated.LoadableStudy.VoyageListReply>
-      getGetVoyagesByVesselMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.VoyageRequest,
-            com.cpdss.common.generated.LoadableStudy.VoyageListReply>
-        getGetVoyagesByVesselMethod;
-    if ((getGetVoyagesByVesselMethod = LoadableStudyServiceGrpc.getGetVoyagesByVesselMethod)
-        == null) {
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.VoyageRequest,
+      com.cpdss.common.generated.LoadableStudy.VoyageListReply> getGetVoyagesByVesselMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.VoyageRequest, com.cpdss.common.generated.LoadableStudy.VoyageListReply> getGetVoyagesByVesselMethod;
+    if ((getGetVoyagesByVesselMethod = LoadableStudyServiceGrpc.getGetVoyagesByVesselMethod) == null) {
       synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getGetVoyagesByVesselMethod = LoadableStudyServiceGrpc.getGetVoyagesByVesselMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getGetVoyagesByVesselMethod =
-              getGetVoyagesByVesselMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.VoyageRequest,
-                          com.cpdss.common.generated.LoadableStudy.VoyageListReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetVoyagesByVessel"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.VoyageRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.VoyageListReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier("GetVoyagesByVessel"))
-                      .build();
+        if ((getGetVoyagesByVesselMethod = LoadableStudyServiceGrpc.getGetVoyagesByVesselMethod) == null) {
+          LoadableStudyServiceGrpc.getGetVoyagesByVesselMethod = getGetVoyagesByVesselMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.VoyageRequest, com.cpdss.common.generated.LoadableStudy.VoyageListReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetVoyagesByVessel"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.VoyageRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.VoyageListReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("GetVoyagesByVessel"))
+              .build();
         }
       }
     }
     return getGetVoyagesByVesselMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest,
-          com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>
-      getSaveLoadableQuantityMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest,
+      com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> getSaveLoadableQuantityMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "SaveLoadableQuantity",
       requestType = com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest.class,
       responseType = com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest,
-          com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>
-      getSaveLoadableQuantityMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest,
-            com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>
-        getSaveLoadableQuantityMethod;
-    if ((getSaveLoadableQuantityMethod = LoadableStudyServiceGrpc.getSaveLoadableQuantityMethod)
-        == null) {
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest,
+      com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> getSaveLoadableQuantityMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest, com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> getSaveLoadableQuantityMethod;
+    if ((getSaveLoadableQuantityMethod = LoadableStudyServiceGrpc.getSaveLoadableQuantityMethod) == null) {
       synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getSaveLoadableQuantityMethod = LoadableStudyServiceGrpc.getSaveLoadableQuantityMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getSaveLoadableQuantityMethod =
-              getSaveLoadableQuantityMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest,
-                          com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "SaveLoadableQuantity"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier("SaveLoadableQuantity"))
-                      .build();
+        if ((getSaveLoadableQuantityMethod = LoadableStudyServiceGrpc.getSaveLoadableQuantityMethod) == null) {
+          LoadableStudyServiceGrpc.getSaveLoadableQuantityMethod = getSaveLoadableQuantityMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest, com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveLoadableQuantity"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("SaveLoadableQuantity"))
+              .build();
         }
       }
     }
     return getSaveLoadableQuantityMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest,
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>
-      getFindLoadableStudiesByVesselAndVoyageMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest,
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> getFindLoadableStudiesByVesselAndVoyageMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "FindLoadableStudiesByVesselAndVoyage",
       requestType = com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest.class,
       responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest,
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>
-      getFindLoadableStudiesByVesselAndVoyageMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest,
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>
-        getFindLoadableStudiesByVesselAndVoyageMethod;
-    if ((getFindLoadableStudiesByVesselAndVoyageMethod =
-            LoadableStudyServiceGrpc.getFindLoadableStudiesByVesselAndVoyageMethod)
-        == null) {
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest,
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> getFindLoadableStudiesByVesselAndVoyageMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest, com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> getFindLoadableStudiesByVesselAndVoyageMethod;
+    if ((getFindLoadableStudiesByVesselAndVoyageMethod = LoadableStudyServiceGrpc.getFindLoadableStudiesByVesselAndVoyageMethod) == null) {
       synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getFindLoadableStudiesByVesselAndVoyageMethod =
-                LoadableStudyServiceGrpc.getFindLoadableStudiesByVesselAndVoyageMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getFindLoadableStudiesByVesselAndVoyageMethod =
-              getFindLoadableStudiesByVesselAndVoyageMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest,
-                          com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(
-                              SERVICE_NAME, "FindLoadableStudiesByVesselAndVoyage"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.LoadableStudyReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier(
-                              "FindLoadableStudiesByVesselAndVoyage"))
-                      .build();
+        if ((getFindLoadableStudiesByVesselAndVoyageMethod = LoadableStudyServiceGrpc.getFindLoadableStudiesByVesselAndVoyageMethod) == null) {
+          LoadableStudyServiceGrpc.getFindLoadableStudiesByVesselAndVoyageMethod = getFindLoadableStudiesByVesselAndVoyageMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest, com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "FindLoadableStudiesByVesselAndVoyage"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("FindLoadableStudiesByVesselAndVoyage"))
+              .build();
         }
       }
     }
     return getFindLoadableStudiesByVesselAndVoyageMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail,
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>
-      getSaveLoadableStudyMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail,
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> getSaveLoadableStudyMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "SaveLoadableStudy",
       requestType = com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail.class,
       responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail,
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>
-      getSaveLoadableStudyMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail,
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>
-        getSaveLoadableStudyMethod;
-    if ((getSaveLoadableStudyMethod = LoadableStudyServiceGrpc.getSaveLoadableStudyMethod)
-        == null) {
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail,
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> getSaveLoadableStudyMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail, com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> getSaveLoadableStudyMethod;
+    if ((getSaveLoadableStudyMethod = LoadableStudyServiceGrpc.getSaveLoadableStudyMethod) == null) {
       synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getSaveLoadableStudyMethod = LoadableStudyServiceGrpc.getSaveLoadableStudyMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getSaveLoadableStudyMethod =
-              getSaveLoadableStudyMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail,
-                          com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveLoadableStudy"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.LoadableStudyReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier("SaveLoadableStudy"))
-                      .build();
+        if ((getSaveLoadableStudyMethod = LoadableStudyServiceGrpc.getSaveLoadableStudyMethod) == null) {
+          LoadableStudyServiceGrpc.getSaveLoadableStudyMethod = getSaveLoadableStudyMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail, com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveLoadableStudy"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("SaveLoadableStudy"))
+              .build();
         }
       }
     }
     return getSaveLoadableStudyMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-          com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-      getSaveCargoNominationMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+      com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getSaveCargoNominationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "SaveCargoNomination",
       requestType = com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.class,
       responseType = com.cpdss.common.generated.LoadableStudy.CargoNominationReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-          com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-      getSaveCargoNominationMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-            com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-        getSaveCargoNominationMethod;
-    if ((getSaveCargoNominationMethod = LoadableStudyServiceGrpc.getSaveCargoNominationMethod)
-        == null) {
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+      com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getSaveCargoNominationMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest, com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getSaveCargoNominationMethod;
+    if ((getSaveCargoNominationMethod = LoadableStudyServiceGrpc.getSaveCargoNominationMethod) == null) {
       synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getSaveCargoNominationMethod = LoadableStudyServiceGrpc.getSaveCargoNominationMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getSaveCargoNominationMethod =
-              getSaveCargoNominationMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-                          com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "SaveCargoNomination"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.CargoNominationRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.CargoNominationReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier("SaveCargoNomination"))
-                      .build();
+        if ((getSaveCargoNominationMethod = LoadableStudyServiceGrpc.getSaveCargoNominationMethod) == null) {
+          LoadableStudyServiceGrpc.getSaveCargoNominationMethod = getSaveCargoNominationMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest, com.cpdss.common.generated.LoadableStudy.CargoNominationReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveCargoNomination"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.CargoNominationReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("SaveCargoNomination"))
+              .build();
         }
       }
     }
     return getSaveCargoNominationMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
-          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-      getGetLoadableStudyPortRotationMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+      com.cpdss.common.generated.LoadableStudy.PortRotationReply> getGetLoadableStudyPortRotationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetLoadableStudyPortRotation",
       requestType = com.cpdss.common.generated.LoadableStudy.PortRotationRequest.class,
       responseType = com.cpdss.common.generated.LoadableStudy.PortRotationReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
-          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-      getGetLoadableStudyPortRotationMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
-            com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-        getGetLoadableStudyPortRotationMethod;
-    if ((getGetLoadableStudyPortRotationMethod =
-            LoadableStudyServiceGrpc.getGetLoadableStudyPortRotationMethod)
-        == null) {
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+      com.cpdss.common.generated.LoadableStudy.PortRotationReply> getGetLoadableStudyPortRotationMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.PortRotationRequest, com.cpdss.common.generated.LoadableStudy.PortRotationReply> getGetLoadableStudyPortRotationMethod;
+    if ((getGetLoadableStudyPortRotationMethod = LoadableStudyServiceGrpc.getGetLoadableStudyPortRotationMethod) == null) {
       synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getGetLoadableStudyPortRotationMethod =
-                LoadableStudyServiceGrpc.getGetLoadableStudyPortRotationMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getGetLoadableStudyPortRotationMethod =
-              getGetLoadableStudyPortRotationMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
-                          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "GetLoadableStudyPortRotation"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.PortRotationRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.PortRotationReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier(
-                              "GetLoadableStudyPortRotation"))
-                      .build();
+        if ((getGetLoadableStudyPortRotationMethod = LoadableStudyServiceGrpc.getGetLoadableStudyPortRotationMethod) == null) {
+          LoadableStudyServiceGrpc.getGetLoadableStudyPortRotationMethod = getGetLoadableStudyPortRotationMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.PortRotationRequest, com.cpdss.common.generated.LoadableStudy.PortRotationReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetLoadableStudyPortRotation"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.PortRotationRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.PortRotationReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("GetLoadableStudyPortRotation"))
+              .build();
         }
       }
     }
     return getGetLoadableStudyPortRotationMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-          com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-      getGetCargoNominationByIdMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+      com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getGetCargoNominationByIdMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetCargoNominationById",
       requestType = com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.class,
       responseType = com.cpdss.common.generated.LoadableStudy.CargoNominationReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-          com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-      getGetCargoNominationByIdMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-            com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-        getGetCargoNominationByIdMethod;
-    if ((getGetCargoNominationByIdMethod = LoadableStudyServiceGrpc.getGetCargoNominationByIdMethod)
-        == null) {
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+      com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getGetCargoNominationByIdMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest, com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getGetCargoNominationByIdMethod;
+    if ((getGetCargoNominationByIdMethod = LoadableStudyServiceGrpc.getGetCargoNominationByIdMethod) == null) {
       synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getGetCargoNominationByIdMethod =
-                LoadableStudyServiceGrpc.getGetCargoNominationByIdMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getGetCargoNominationByIdMethod =
-              getGetCargoNominationByIdMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-                          com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "GetCargoNominationById"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.CargoNominationRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.CargoNominationReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier(
-                              "GetCargoNominationById"))
-                      .build();
+        if ((getGetCargoNominationByIdMethod = LoadableStudyServiceGrpc.getGetCargoNominationByIdMethod) == null) {
+          LoadableStudyServiceGrpc.getGetCargoNominationByIdMethod = getGetCargoNominationByIdMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest, com.cpdss.common.generated.LoadableStudy.CargoNominationReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetCargoNominationById"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.CargoNominationReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("GetCargoNominationById"))
+              .build();
         }
       }
     }
     return getGetCargoNominationByIdMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest,
-          com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>
-      getGetValveSegregationMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest,
+      com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> getGetValveSegregationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetValveSegregation",
       requestType = com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.class,
       responseType = com.cpdss.common.generated.LoadableStudy.ValveSegregationReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest,
-          com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>
-      getGetValveSegregationMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest,
-            com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>
-        getGetValveSegregationMethod;
-    if ((getGetValveSegregationMethod = LoadableStudyServiceGrpc.getGetValveSegregationMethod)
-        == null) {
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest,
+      com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> getGetValveSegregationMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest, com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> getGetValveSegregationMethod;
+    if ((getGetValveSegregationMethod = LoadableStudyServiceGrpc.getGetValveSegregationMethod) == null) {
       synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getGetValveSegregationMethod = LoadableStudyServiceGrpc.getGetValveSegregationMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getGetValveSegregationMethod =
-              getGetValveSegregationMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest,
-                          com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "GetValveSegregation"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.ValveSegregationReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier("GetValveSegregation"))
-                      .build();
+        if ((getGetValveSegregationMethod = LoadableStudyServiceGrpc.getGetValveSegregationMethod) == null) {
+          LoadableStudyServiceGrpc.getGetValveSegregationMethod = getGetValveSegregationMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest, com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetValveSegregation"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.ValveSegregationReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("GetValveSegregation"))
+              .build();
         }
       }
     }
     return getGetValveSegregationMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply,
-          com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>
-      getGetLoadableQuantityMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply,
+      com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse> getGetLoadableQuantityMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "getLoadableQuantity",
       requestType = com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply.class,
       responseType = com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply,
-          com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>
-      getGetLoadableQuantityMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply,
-            com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>
-        getGetLoadableQuantityMethod;
-    if ((getGetLoadableQuantityMethod = LoadableStudyServiceGrpc.getGetLoadableQuantityMethod)
-        == null) {
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply,
+      com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse> getGetLoadableQuantityMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply, com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse> getGetLoadableQuantityMethod;
+    if ((getGetLoadableQuantityMethod = LoadableStudyServiceGrpc.getGetLoadableQuantityMethod) == null) {
       synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getGetLoadableQuantityMethod = LoadableStudyServiceGrpc.getGetLoadableQuantityMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getGetLoadableQuantityMethod =
-              getGetLoadableQuantityMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply,
-                          com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "getLoadableQuantity"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier("getLoadableQuantity"))
-                      .build();
+        if ((getGetLoadableQuantityMethod = LoadableStudyServiceGrpc.getGetLoadableQuantityMethod) == null) {
+          LoadableStudyServiceGrpc.getGetLoadableQuantityMethod = getGetLoadableQuantityMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply, com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "getLoadableQuantity"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("getLoadableQuantity"))
+              .build();
         }
       }
     }
     return getGetLoadableQuantityMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.PortRotationDetail,
-          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-      getSaveLoadableStudyPortRotationMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.PortRotationDetail,
+      com.cpdss.common.generated.LoadableStudy.PortRotationReply> getSaveLoadableStudyPortRotationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "SaveLoadableStudyPortRotation",
       requestType = com.cpdss.common.generated.LoadableStudy.PortRotationDetail.class,
       responseType = com.cpdss.common.generated.LoadableStudy.PortRotationReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.PortRotationDetail,
-          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-      getSaveLoadableStudyPortRotationMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.PortRotationDetail,
-            com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-        getSaveLoadableStudyPortRotationMethod;
-    if ((getSaveLoadableStudyPortRotationMethod =
-            LoadableStudyServiceGrpc.getSaveLoadableStudyPortRotationMethod)
-        == null) {
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.PortRotationDetail,
+      com.cpdss.common.generated.LoadableStudy.PortRotationReply> getSaveLoadableStudyPortRotationMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.PortRotationDetail, com.cpdss.common.generated.LoadableStudy.PortRotationReply> getSaveLoadableStudyPortRotationMethod;
+    if ((getSaveLoadableStudyPortRotationMethod = LoadableStudyServiceGrpc.getSaveLoadableStudyPortRotationMethod) == null) {
       synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getSaveLoadableStudyPortRotationMethod =
-                LoadableStudyServiceGrpc.getSaveLoadableStudyPortRotationMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getSaveLoadableStudyPortRotationMethod =
-              getSaveLoadableStudyPortRotationMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.PortRotationDetail,
-                          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "SaveLoadableStudyPortRotation"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.PortRotationDetail
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.PortRotationReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier(
-                              "SaveLoadableStudyPortRotation"))
-                      .build();
+        if ((getSaveLoadableStudyPortRotationMethod = LoadableStudyServiceGrpc.getSaveLoadableStudyPortRotationMethod) == null) {
+          LoadableStudyServiceGrpc.getSaveLoadableStudyPortRotationMethod = getSaveLoadableStudyPortRotationMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.PortRotationDetail, com.cpdss.common.generated.LoadableStudy.PortRotationReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveLoadableStudyPortRotation"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.PortRotationDetail.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.PortRotationReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("SaveLoadableStudyPortRotation"))
+              .build();
         }
       }
     }
     return getSaveLoadableStudyPortRotationMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-          com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-      getDeleteCargoNominationMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+      com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getDeleteCargoNominationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "DeleteCargoNomination",
       requestType = com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.class,
       responseType = com.cpdss.common.generated.LoadableStudy.CargoNominationReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-          com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-      getDeleteCargoNominationMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-            com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-        getDeleteCargoNominationMethod;
-    if ((getDeleteCargoNominationMethod = LoadableStudyServiceGrpc.getDeleteCargoNominationMethod)
-        == null) {
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+      com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getDeleteCargoNominationMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest, com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getDeleteCargoNominationMethod;
+    if ((getDeleteCargoNominationMethod = LoadableStudyServiceGrpc.getDeleteCargoNominationMethod) == null) {
       synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getDeleteCargoNominationMethod =
-                LoadableStudyServiceGrpc.getDeleteCargoNominationMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getDeleteCargoNominationMethod =
-              getDeleteCargoNominationMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-                          com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "DeleteCargoNomination"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.CargoNominationRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.CargoNominationReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier("DeleteCargoNomination"))
-                      .build();
+        if ((getDeleteCargoNominationMethod = LoadableStudyServiceGrpc.getDeleteCargoNominationMethod) == null) {
+          LoadableStudyServiceGrpc.getDeleteCargoNominationMethod = getDeleteCargoNominationMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.CargoNominationRequest, com.cpdss.common.generated.LoadableStudy.CargoNominationReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "DeleteCargoNomination"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.CargoNominationReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("DeleteCargoNomination"))
+              .build();
         }
       }
     }
     return getDeleteCargoNominationMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
-          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-      getSaveDischargingPortsMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+      com.cpdss.common.generated.LoadableStudy.PortRotationReply> getSaveDischargingPortsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "SaveDischargingPorts",
       requestType = com.cpdss.common.generated.LoadableStudy.PortRotationRequest.class,
       responseType = com.cpdss.common.generated.LoadableStudy.PortRotationReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
-          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-      getSaveDischargingPortsMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
-            com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-        getSaveDischargingPortsMethod;
-    if ((getSaveDischargingPortsMethod = LoadableStudyServiceGrpc.getSaveDischargingPortsMethod)
-        == null) {
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+      com.cpdss.common.generated.LoadableStudy.PortRotationReply> getSaveDischargingPortsMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.PortRotationRequest, com.cpdss.common.generated.LoadableStudy.PortRotationReply> getSaveDischargingPortsMethod;
+    if ((getSaveDischargingPortsMethod = LoadableStudyServiceGrpc.getSaveDischargingPortsMethod) == null) {
       synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getSaveDischargingPortsMethod = LoadableStudyServiceGrpc.getSaveDischargingPortsMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getSaveDischargingPortsMethod =
-              getSaveDischargingPortsMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
-                          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "SaveDischargingPorts"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.PortRotationRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.PortRotationReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier("SaveDischargingPorts"))
-                      .build();
+        if ((getSaveDischargingPortsMethod = LoadableStudyServiceGrpc.getSaveDischargingPortsMethod) == null) {
+          LoadableStudyServiceGrpc.getSaveDischargingPortsMethod = getSaveDischargingPortsMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.PortRotationRequest, com.cpdss.common.generated.LoadableStudy.PortRotationReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveDischargingPorts"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.PortRotationRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.PortRotationReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("SaveDischargingPorts"))
+              .build();
         }
       }
     }
     return getSaveDischargingPortsMethod;
   }
 
-  /** Creates a new async stub that supports all call types for the service */
+  /**
+   * Creates a new async stub that supports all call types for the service
+   */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
-        new io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub>() {
-          @java.lang.Override
-          public LoadableStudyServiceStub newStub(
-              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-            return new LoadableStudyServiceStub(channel, callOptions);
-          }
-        };
+      new io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub>() {
+        @java.lang.Override
+        public LoadableStudyServiceStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new LoadableStudyServiceStub(channel, callOptions);
+        }
+      };
     return LoadableStudyServiceStub.newStub(factory, channel);
   }
 
   /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
-  public static LoadableStudyServiceBlockingStub newBlockingStub(io.grpc.Channel channel) {
+  public static LoadableStudyServiceBlockingStub newBlockingStub(
+      io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceBlockingStub> factory =
-        new io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceBlockingStub>() {
-          @java.lang.Override
-          public LoadableStudyServiceBlockingStub newStub(
-              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-            return new LoadableStudyServiceBlockingStub(channel, callOptions);
-          }
-        };
+      new io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceBlockingStub>() {
+        @java.lang.Override
+        public LoadableStudyServiceBlockingStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new LoadableStudyServiceBlockingStub(channel, callOptions);
+        }
+      };
     return LoadableStudyServiceBlockingStub.newStub(factory, channel);
   }
 
-  /** Creates a new ListenableFuture-style stub that supports unary calls on the service */
-  public static LoadableStudyServiceFutureStub newFutureStub(io.grpc.Channel channel) {
+  /**
+   * Creates a new ListenableFuture-style stub that supports unary calls on the service
+   */
+  public static LoadableStudyServiceFutureStub newFutureStub(
+      io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceFutureStub> factory =
-        new io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceFutureStub>() {
-          @java.lang.Override
-          public LoadableStudyServiceFutureStub newStub(
-              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-            return new LoadableStudyServiceFutureStub(channel, callOptions);
-          }
-        };
+      new io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceFutureStub>() {
+        @java.lang.Override
+        public LoadableStudyServiceFutureStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new LoadableStudyServiceFutureStub(channel, callOptions);
+        }
+      };
     return LoadableStudyServiceFutureStub.newStub(factory, channel);
   }
 
-  /** */
-  public abstract static class LoadableStudyServiceImplBase implements io.grpc.BindableService {
+  /**
+   */
+  public static abstract class LoadableStudyServiceImplBase implements io.grpc.BindableService {
 
-    /** */
-    public void saveVoyage(
-        com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageReply>
-            responseObserver) {
+    /**
+     */
+    public void saveVoyage(com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageReply> responseObserver) {
       asyncUnimplementedUnaryCall(getSaveVoyageMethod(), responseObserver);
     }
 
-    /** */
-    public void getVoyagesByVessel(
-        com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageListReply>
-            responseObserver) {
+    /**
+     */
+    public void getVoyagesByVessel(com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageListReply> responseObserver) {
       asyncUnimplementedUnaryCall(getGetVoyagesByVesselMethod(), responseObserver);
     }
 
-    /** */
-    public void saveLoadableQuantity(
-        com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>
-            responseObserver) {
+    /**
+     */
+    public void saveLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> responseObserver) {
       asyncUnimplementedUnaryCall(getSaveLoadableQuantityMethod(), responseObserver);
     }
 
-    /** */
-    public void findLoadableStudiesByVesselAndVoyage(
-        com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>
-            responseObserver) {
-      asyncUnimplementedUnaryCall(
-          getFindLoadableStudiesByVesselAndVoyageMethod(), responseObserver);
+    /**
+     */
+    public void findLoadableStudiesByVesselAndVoyage(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> responseObserver) {
+      asyncUnimplementedUnaryCall(getFindLoadableStudiesByVesselAndVoyageMethod(), responseObserver);
     }
 
-    /** */
-    public void saveLoadableStudy(
-        com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>
-            responseObserver) {
+    /**
+     */
+    public void saveLoadableStudy(com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> responseObserver) {
       asyncUnimplementedUnaryCall(getSaveLoadableStudyMethod(), responseObserver);
     }
 
-    /** */
-    public void saveCargoNomination(
-        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-            responseObserver) {
+    /**
+     */
+    public void saveCargoNomination(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
       asyncUnimplementedUnaryCall(getSaveCargoNominationMethod(), responseObserver);
     }
 
-    /** */
-    public void getLoadableStudyPortRotation(
-        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-            responseObserver) {
+    /**
+     */
+    public void getLoadableStudyPortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
       asyncUnimplementedUnaryCall(getGetLoadableStudyPortRotationMethod(), responseObserver);
     }
 
-    /** */
-    public void getCargoNominationById(
-        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-            responseObserver) {
+    /**
+     */
+    public void getCargoNominationById(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
       asyncUnimplementedUnaryCall(getGetCargoNominationByIdMethod(), responseObserver);
     }
 
-    /** */
-    public void getValveSegregation(
-        com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>
-            responseObserver) {
+    /**
+     */
+    public void getValveSegregation(com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> responseObserver) {
       asyncUnimplementedUnaryCall(getGetValveSegregationMethod(), responseObserver);
     }
 
-    /** */
-    public void getLoadableQuantity(
-        com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>
-            responseObserver) {
+    /**
+     */
+    public void getLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse> responseObserver) {
       asyncUnimplementedUnaryCall(getGetLoadableQuantityMethod(), responseObserver);
     }
 
-    /** */
-    public void saveLoadableStudyPortRotation(
-        com.cpdss.common.generated.LoadableStudy.PortRotationDetail request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-            responseObserver) {
+    /**
+     */
+    public void saveLoadableStudyPortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationDetail request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
       asyncUnimplementedUnaryCall(getSaveLoadableStudyPortRotationMethod(), responseObserver);
     }
 
-    /** */
-    public void deleteCargoNomination(
-        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-            responseObserver) {
+    /**
+     */
+    public void deleteCargoNomination(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
       asyncUnimplementedUnaryCall(getDeleteCargoNominationMethod(), responseObserver);
     }
 
-    /** */
-    public void saveDischargingPorts(
-        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-            responseObserver) {
+    /**
+     */
+    public void saveDischargingPorts(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
       asyncUnimplementedUnaryCall(getSaveDischargingPortsMethod(), responseObserver);
     }
 
-    @java.lang.Override
-    public final io.grpc.ServerServiceDefinition bindService() {
+    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
-              getSaveVoyageMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.VoyageRequest,
-                      com.cpdss.common.generated.LoadableStudy.VoyageReply>(
-                      this, METHODID_SAVE_VOYAGE)))
+            getSaveVoyageMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.VoyageRequest,
+                com.cpdss.common.generated.LoadableStudy.VoyageReply>(
+                  this, METHODID_SAVE_VOYAGE)))
           .addMethod(
-              getGetVoyagesByVesselMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.VoyageRequest,
-                      com.cpdss.common.generated.LoadableStudy.VoyageListReply>(
-                      this, METHODID_GET_VOYAGES_BY_VESSEL)))
+            getGetVoyagesByVesselMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.VoyageRequest,
+                com.cpdss.common.generated.LoadableStudy.VoyageListReply>(
+                  this, METHODID_GET_VOYAGES_BY_VESSEL)))
           .addMethod(
-              getSaveLoadableQuantityMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest,
-                      com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>(
-                      this, METHODID_SAVE_LOADABLE_QUANTITY)))
+            getSaveLoadableQuantityMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest,
+                com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>(
+                  this, METHODID_SAVE_LOADABLE_QUANTITY)))
           .addMethod(
-              getFindLoadableStudiesByVesselAndVoyageMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest,
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>(
-                      this, METHODID_FIND_LOADABLE_STUDIES_BY_VESSEL_AND_VOYAGE)))
+            getFindLoadableStudiesByVesselAndVoyageMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest,
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>(
+                  this, METHODID_FIND_LOADABLE_STUDIES_BY_VESSEL_AND_VOYAGE)))
           .addMethod(
-              getSaveLoadableStudyMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail,
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>(
-                      this, METHODID_SAVE_LOADABLE_STUDY)))
+            getSaveLoadableStudyMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail,
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>(
+                  this, METHODID_SAVE_LOADABLE_STUDY)))
           .addMethod(
-              getSaveCargoNominationMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-                      com.cpdss.common.generated.LoadableStudy.CargoNominationReply>(
-                      this, METHODID_SAVE_CARGO_NOMINATION)))
+            getSaveCargoNominationMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+                com.cpdss.common.generated.LoadableStudy.CargoNominationReply>(
+                  this, METHODID_SAVE_CARGO_NOMINATION)))
           .addMethod(
-              getGetLoadableStudyPortRotationMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
-                      com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
-                      this, METHODID_GET_LOADABLE_STUDY_PORT_ROTATION)))
+            getGetLoadableStudyPortRotationMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+                com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
+                  this, METHODID_GET_LOADABLE_STUDY_PORT_ROTATION)))
           .addMethod(
-              getGetCargoNominationByIdMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-                      com.cpdss.common.generated.LoadableStudy.CargoNominationReply>(
-                      this, METHODID_GET_CARGO_NOMINATION_BY_ID)))
+            getGetCargoNominationByIdMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+                com.cpdss.common.generated.LoadableStudy.CargoNominationReply>(
+                  this, METHODID_GET_CARGO_NOMINATION_BY_ID)))
           .addMethod(
-              getGetValveSegregationMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest,
-                      com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>(
-                      this, METHODID_GET_VALVE_SEGREGATION)))
+            getGetValveSegregationMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest,
+                com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>(
+                  this, METHODID_GET_VALVE_SEGREGATION)))
           .addMethod(
-              getGetLoadableQuantityMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply,
-                      com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>(
-                      this, METHODID_GET_LOADABLE_QUANTITY)))
+            getGetLoadableQuantityMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply,
+                com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>(
+                  this, METHODID_GET_LOADABLE_QUANTITY)))
           .addMethod(
-              getSaveLoadableStudyPortRotationMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.PortRotationDetail,
-                      com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
-                      this, METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION)))
+            getSaveLoadableStudyPortRotationMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.PortRotationDetail,
+                com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
+                  this, METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION)))
           .addMethod(
-              getDeleteCargoNominationMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
-                      com.cpdss.common.generated.LoadableStudy.CargoNominationReply>(
-                      this, METHODID_DELETE_CARGO_NOMINATION)))
+            getDeleteCargoNominationMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
+                com.cpdss.common.generated.LoadableStudy.CargoNominationReply>(
+                  this, METHODID_DELETE_CARGO_NOMINATION)))
           .addMethod(
-              getSaveDischargingPortsMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
-                      com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
-                      this, METHODID_SAVE_DISCHARGING_PORTS)))
+            getSaveDischargingPortsMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+                com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
+                  this, METHODID_SAVE_DISCHARGING_PORTS)))
           .build();
     }
   }
 
-  /** */
-  public static final class LoadableStudyServiceStub
-      extends io.grpc.stub.AbstractAsyncStub<LoadableStudyServiceStub> {
-    private LoadableStudyServiceStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+  /**
+   */
+  public static final class LoadableStudyServiceStub extends io.grpc.stub.AbstractAsyncStub<LoadableStudyServiceStub> {
+    private LoadableStudyServiceStub(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }
 
@@ -938,152 +680,114 @@ public final class LoadableStudyServiceGrpc {
       return new LoadableStudyServiceStub(channel, callOptions);
     }
 
-    /** */
-    public void saveVoyage(
-        com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageReply>
-            responseObserver) {
+    /**
+     */
+    public void saveVoyage(com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageReply> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getSaveVoyageMethod(), getCallOptions()), request, responseObserver);
     }
 
-    /** */
-    public void getVoyagesByVessel(
-        com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageListReply>
-            responseObserver) {
+    /**
+     */
+    public void getVoyagesByVessel(com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageListReply> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetVoyagesByVesselMethod(), getCallOptions()),
-          request,
-          responseObserver);
+          getChannel().newCall(getGetVoyagesByVesselMethod(), getCallOptions()), request, responseObserver);
     }
 
-    /** */
-    public void saveLoadableQuantity(
-        com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>
-            responseObserver) {
+    /**
+     */
+    public void saveLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getSaveLoadableQuantityMethod(), getCallOptions()),
-          request,
-          responseObserver);
+          getChannel().newCall(getSaveLoadableQuantityMethod(), getCallOptions()), request, responseObserver);
     }
 
-    /** */
-    public void findLoadableStudiesByVesselAndVoyage(
-        com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>
-            responseObserver) {
+    /**
+     */
+    public void findLoadableStudiesByVesselAndVoyage(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getFindLoadableStudiesByVesselAndVoyageMethod(), getCallOptions()),
-          request,
-          responseObserver);
+          getChannel().newCall(getFindLoadableStudiesByVesselAndVoyageMethod(), getCallOptions()), request, responseObserver);
     }
 
-    /** */
-    public void saveLoadableStudy(
-        com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>
-            responseObserver) {
+    /**
+     */
+    public void saveLoadableStudy(com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getSaveLoadableStudyMethod(), getCallOptions()),
-          request,
-          responseObserver);
+          getChannel().newCall(getSaveLoadableStudyMethod(), getCallOptions()), request, responseObserver);
     }
 
-    /** */
-    public void saveCargoNomination(
-        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-            responseObserver) {
+    /**
+     */
+    public void saveCargoNomination(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getSaveCargoNominationMethod(), getCallOptions()),
-          request,
-          responseObserver);
+          getChannel().newCall(getSaveCargoNominationMethod(), getCallOptions()), request, responseObserver);
     }
 
-    /** */
-    public void getLoadableStudyPortRotation(
-        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-            responseObserver) {
+    /**
+     */
+    public void getLoadableStudyPortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetLoadableStudyPortRotationMethod(), getCallOptions()),
-          request,
-          responseObserver);
+          getChannel().newCall(getGetLoadableStudyPortRotationMethod(), getCallOptions()), request, responseObserver);
     }
 
-    /** */
-    public void getCargoNominationById(
-        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-            responseObserver) {
+    /**
+     */
+    public void getCargoNominationById(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetCargoNominationByIdMethod(), getCallOptions()),
-          request,
-          responseObserver);
+          getChannel().newCall(getGetCargoNominationByIdMethod(), getCallOptions()), request, responseObserver);
     }
 
-    /** */
-    public void getValveSegregation(
-        com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>
-            responseObserver) {
+    /**
+     */
+    public void getValveSegregation(com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetValveSegregationMethod(), getCallOptions()),
-          request,
-          responseObserver);
+          getChannel().newCall(getGetValveSegregationMethod(), getCallOptions()), request, responseObserver);
     }
 
-    /** */
-    public void getLoadableQuantity(
-        com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>
-            responseObserver) {
+    /**
+     */
+    public void getLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetLoadableQuantityMethod(), getCallOptions()),
-          request,
-          responseObserver);
+          getChannel().newCall(getGetLoadableQuantityMethod(), getCallOptions()), request, responseObserver);
     }
 
-    /** */
-    public void saveLoadableStudyPortRotation(
-        com.cpdss.common.generated.LoadableStudy.PortRotationDetail request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-            responseObserver) {
+    /**
+     */
+    public void saveLoadableStudyPortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationDetail request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getSaveLoadableStudyPortRotationMethod(), getCallOptions()),
-          request,
-          responseObserver);
+          getChannel().newCall(getSaveLoadableStudyPortRotationMethod(), getCallOptions()), request, responseObserver);
     }
 
-    /** */
-    public void deleteCargoNomination(
-        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-            responseObserver) {
+    /**
+     */
+    public void deleteCargoNomination(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getDeleteCargoNominationMethod(), getCallOptions()),
-          request,
-          responseObserver);
+          getChannel().newCall(getDeleteCargoNominationMethod(), getCallOptions()), request, responseObserver);
     }
 
-    /** */
-    public void saveDischargingPorts(
-        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-            responseObserver) {
+    /**
+     */
+    public void saveDischargingPorts(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getSaveDischargingPortsMethod(), getCallOptions()),
-          request,
-          responseObserver);
+          getChannel().newCall(getSaveDischargingPortsMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
-  /** */
-  public static final class LoadableStudyServiceBlockingStub
-      extends io.grpc.stub.AbstractBlockingStub<LoadableStudyServiceBlockingStub> {
+  /**
+   */
+  public static final class LoadableStudyServiceBlockingStub extends io.grpc.stub.AbstractBlockingStub<LoadableStudyServiceBlockingStub> {
     private LoadableStudyServiceBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -1095,101 +799,101 @@ public final class LoadableStudyServiceGrpc {
       return new LoadableStudyServiceBlockingStub(channel, callOptions);
     }
 
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.VoyageReply saveVoyage(
-        com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
-      return blockingUnaryCall(getChannel(), getSaveVoyageMethod(), getCallOptions(), request);
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.VoyageReply saveVoyage(com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getSaveVoyageMethod(), getCallOptions(), request);
     }
 
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.VoyageListReply getVoyagesByVessel(
-        com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.VoyageListReply getVoyagesByVessel(com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetVoyagesByVesselMethod(), getCallOptions(), request);
     }
 
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply saveLoadableQuantity(
-        com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request) {
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply saveLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request) {
       return blockingUnaryCall(
           getChannel(), getSaveLoadableQuantityMethod(), getCallOptions(), request);
     }
 
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.LoadableStudyReply
-        findLoadableStudiesByVesselAndVoyage(
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyReply findLoadableStudiesByVesselAndVoyage(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
       return blockingUnaryCall(
           getChannel(), getFindLoadableStudiesByVesselAndVoyageMethod(), getCallOptions(), request);
     }
 
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.LoadableStudyReply saveLoadableStudy(
-        com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail request) {
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyReply saveLoadableStudy(com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail request) {
       return blockingUnaryCall(
           getChannel(), getSaveLoadableStudyMethod(), getCallOptions(), request);
     }
 
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.CargoNominationReply saveCargoNomination(
-        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.CargoNominationReply saveCargoNomination(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
       return blockingUnaryCall(
           getChannel(), getSaveCargoNominationMethod(), getCallOptions(), request);
     }
 
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.PortRotationReply getLoadableStudyPortRotation(
-        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.PortRotationReply getLoadableStudyPortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetLoadableStudyPortRotationMethod(), getCallOptions(), request);
     }
 
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.CargoNominationReply getCargoNominationById(
-        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.CargoNominationReply getCargoNominationById(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetCargoNominationByIdMethod(), getCallOptions(), request);
     }
 
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.ValveSegregationReply getValveSegregation(
-        com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request) {
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.ValveSegregationReply getValveSegregation(com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetValveSegregationMethod(), getCallOptions(), request);
     }
 
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse getLoadableQuantity(
-        com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply request) {
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse getLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply request) {
       return blockingUnaryCall(
           getChannel(), getGetLoadableQuantityMethod(), getCallOptions(), request);
     }
 
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.PortRotationReply saveLoadableStudyPortRotation(
-        com.cpdss.common.generated.LoadableStudy.PortRotationDetail request) {
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.PortRotationReply saveLoadableStudyPortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationDetail request) {
       return blockingUnaryCall(
           getChannel(), getSaveLoadableStudyPortRotationMethod(), getCallOptions(), request);
     }
 
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.CargoNominationReply deleteCargoNomination(
-        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.CargoNominationReply deleteCargoNomination(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
       return blockingUnaryCall(
           getChannel(), getDeleteCargoNominationMethod(), getCallOptions(), request);
     }
 
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.PortRotationReply saveDischargingPorts(
-        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.PortRotationReply saveDischargingPorts(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
       return blockingUnaryCall(
           getChannel(), getSaveDischargingPortsMethod(), getCallOptions(), request);
     }
   }
 
-  /** */
-  public static final class LoadableStudyServiceFutureStub
-      extends io.grpc.stub.AbstractFutureStub<LoadableStudyServiceFutureStub> {
+  /**
+   */
+  public static final class LoadableStudyServiceFutureStub extends io.grpc.stub.AbstractFutureStub<LoadableStudyServiceFutureStub> {
     private LoadableStudyServiceFutureStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -1201,117 +905,106 @@ public final class LoadableStudyServiceGrpc {
       return new LoadableStudyServiceFutureStub(channel, callOptions);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.VoyageReply>
-        saveVoyage(com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.VoyageReply> saveVoyage(
+        com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getSaveVoyageMethod(), getCallOptions()), request);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.VoyageListReply>
-        getVoyagesByVessel(com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.VoyageListReply> getVoyagesByVessel(
+        com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getGetVoyagesByVesselMethod(), getCallOptions()), request);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>
-        saveLoadableQuantity(
-            com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> saveLoadableQuantity(
+        com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getSaveLoadableQuantityMethod(), getCallOptions()), request);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>
-        findLoadableStudiesByVesselAndVoyage(
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> findLoadableStudiesByVesselAndVoyage(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
       return futureUnaryCall(
-          getChannel().newCall(getFindLoadableStudiesByVesselAndVoyageMethod(), getCallOptions()),
-          request);
+          getChannel().newCall(getFindLoadableStudiesByVesselAndVoyageMethod(), getCallOptions()), request);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>
-        saveLoadableStudy(com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> saveLoadableStudy(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail request) {
       return futureUnaryCall(
           getChannel().newCall(getSaveLoadableStudyMethod(), getCallOptions()), request);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-        saveCargoNomination(
-            com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> saveCargoNomination(
+        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getSaveCargoNominationMethod(), getCallOptions()), request);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-        getLoadableStudyPortRotation(
-            com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.PortRotationReply> getLoadableStudyPortRotation(
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getGetLoadableStudyPortRotationMethod(), getCallOptions()), request);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-        getCargoNominationById(
-            com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getCargoNominationById(
+        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getGetCargoNominationByIdMethod(), getCallOptions()), request);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>
-        getValveSegregation(
-            com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> getValveSegregation(
+        com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getGetValveSegregationMethod(), getCallOptions()), request);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>
-        getLoadableQuantity(
-            com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse> getLoadableQuantity(
+        com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply request) {
       return futureUnaryCall(
           getChannel().newCall(getGetLoadableQuantityMethod(), getCallOptions()), request);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-        saveLoadableStudyPortRotation(
-            com.cpdss.common.generated.LoadableStudy.PortRotationDetail request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.PortRotationReply> saveLoadableStudyPortRotation(
+        com.cpdss.common.generated.LoadableStudy.PortRotationDetail request) {
       return futureUnaryCall(
-          getChannel().newCall(getSaveLoadableStudyPortRotationMethod(), getCallOptions()),
-          request);
+          getChannel().newCall(getSaveLoadableStudyPortRotationMethod(), getCallOptions()), request);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
-        deleteCargoNomination(
-            com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> deleteCargoNomination(
+        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getDeleteCargoNominationMethod(), getCallOptions()), request);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.PortRotationReply>
-        saveDischargingPorts(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.PortRotationReply> saveDischargingPorts(
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getSaveDischargingPortsMethod(), getCallOptions()), request);
     }
@@ -1331,11 +1024,11 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_DELETE_CARGO_NOMINATION = 11;
   private static final int METHODID_SAVE_DISCHARGING_PORTS = 12;
 
-  private static final class MethodHandlers<Req, Resp>
-      implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
-          io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
-          io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
-          io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
+  private static final class MethodHandlers<Req, Resp> implements
+      io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
     private final LoadableStudyServiceImplBase serviceImpl;
     private final int methodId;
 
@@ -1349,94 +1042,56 @@ public final class LoadableStudyServiceGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_SAVE_VOYAGE:
-          serviceImpl.saveVoyage(
-              (com.cpdss.common.generated.LoadableStudy.VoyageRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageReply>)
-                  responseObserver);
+          serviceImpl.saveVoyage((com.cpdss.common.generated.LoadableStudy.VoyageRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageReply>) responseObserver);
           break;
         case METHODID_GET_VOYAGES_BY_VESSEL:
-          serviceImpl.getVoyagesByVessel(
-              (com.cpdss.common.generated.LoadableStudy.VoyageRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.VoyageListReply>)
-                  responseObserver);
+          serviceImpl.getVoyagesByVessel((com.cpdss.common.generated.LoadableStudy.VoyageRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageListReply>) responseObserver);
           break;
         case METHODID_SAVE_LOADABLE_QUANTITY:
-          serviceImpl.saveLoadableQuantity(
-              (com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>)
-                  responseObserver);
+          serviceImpl.saveLoadableQuantity((com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>) responseObserver);
           break;
         case METHODID_FIND_LOADABLE_STUDIES_BY_VESSEL_AND_VOYAGE:
-          serviceImpl.findLoadableStudiesByVesselAndVoyage(
-              (com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>)
-                  responseObserver);
+          serviceImpl.findLoadableStudiesByVesselAndVoyage((com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>) responseObserver);
           break;
         case METHODID_SAVE_LOADABLE_STUDY:
-          serviceImpl.saveLoadableStudy(
-              (com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>)
-                  responseObserver);
+          serviceImpl.saveLoadableStudy((com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>) responseObserver);
           break;
         case METHODID_SAVE_CARGO_NOMINATION:
-          serviceImpl.saveCargoNomination(
-              (com.cpdss.common.generated.LoadableStudy.CargoNominationRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.CargoNominationReply>)
-                  responseObserver);
+          serviceImpl.saveCargoNomination((com.cpdss.common.generated.LoadableStudy.CargoNominationRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply>) responseObserver);
           break;
         case METHODID_GET_LOADABLE_STUDY_PORT_ROTATION:
-          serviceImpl.getLoadableStudyPortRotation(
-              (com.cpdss.common.generated.LoadableStudy.PortRotationRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.PortRotationReply>)
-                  responseObserver);
+          serviceImpl.getLoadableStudyPortRotation((com.cpdss.common.generated.LoadableStudy.PortRotationRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply>) responseObserver);
           break;
         case METHODID_GET_CARGO_NOMINATION_BY_ID:
-          serviceImpl.getCargoNominationById(
-              (com.cpdss.common.generated.LoadableStudy.CargoNominationRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.CargoNominationReply>)
-                  responseObserver);
+          serviceImpl.getCargoNominationById((com.cpdss.common.generated.LoadableStudy.CargoNominationRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply>) responseObserver);
           break;
         case METHODID_GET_VALVE_SEGREGATION:
-          serviceImpl.getValveSegregation(
-              (com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>)
-                  responseObserver);
+          serviceImpl.getValveSegregation((com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>) responseObserver);
           break;
         case METHODID_GET_LOADABLE_QUANTITY:
-          serviceImpl.getLoadableQuantity(
-              (com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>)
-                  responseObserver);
+          serviceImpl.getLoadableQuantity((com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>) responseObserver);
           break;
         case METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION:
-          serviceImpl.saveLoadableStudyPortRotation(
-              (com.cpdss.common.generated.LoadableStudy.PortRotationDetail) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.PortRotationReply>)
-                  responseObserver);
+          serviceImpl.saveLoadableStudyPortRotation((com.cpdss.common.generated.LoadableStudy.PortRotationDetail) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply>) responseObserver);
           break;
         case METHODID_DELETE_CARGO_NOMINATION:
-          serviceImpl.deleteCargoNomination(
-              (com.cpdss.common.generated.LoadableStudy.CargoNominationRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.CargoNominationReply>)
-                  responseObserver);
+          serviceImpl.deleteCargoNomination((com.cpdss.common.generated.LoadableStudy.CargoNominationRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply>) responseObserver);
           break;
         case METHODID_SAVE_DISCHARGING_PORTS:
-          serviceImpl.saveDischargingPorts(
-              (com.cpdss.common.generated.LoadableStudy.PortRotationRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.PortRotationReply>)
-                  responseObserver);
+          serviceImpl.saveDischargingPorts((com.cpdss.common.generated.LoadableStudy.PortRotationRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -1454,9 +1109,8 @@ public final class LoadableStudyServiceGrpc {
     }
   }
 
-  private abstract static class LoadableStudyServiceBaseDescriptorSupplier
-      implements io.grpc.protobuf.ProtoFileDescriptorSupplier,
-          io.grpc.protobuf.ProtoServiceDescriptorSupplier {
+  private static abstract class LoadableStudyServiceBaseDescriptorSupplier
+      implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     LoadableStudyServiceBaseDescriptorSupplier() {}
 
     @java.lang.Override
@@ -1498,24 +1152,22 @@ public final class LoadableStudyServiceGrpc {
       synchronized (LoadableStudyServiceGrpc.class) {
         result = serviceDescriptor;
         if (result == null) {
-          serviceDescriptor =
-              result =
-                  io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
-                      .setSchemaDescriptor(new LoadableStudyServiceFileDescriptorSupplier())
-                      .addMethod(getSaveVoyageMethod())
-                      .addMethod(getGetVoyagesByVesselMethod())
-                      .addMethod(getSaveLoadableQuantityMethod())
-                      .addMethod(getFindLoadableStudiesByVesselAndVoyageMethod())
-                      .addMethod(getSaveLoadableStudyMethod())
-                      .addMethod(getSaveCargoNominationMethod())
-                      .addMethod(getGetLoadableStudyPortRotationMethod())
-                      .addMethod(getGetCargoNominationByIdMethod())
-                      .addMethod(getGetValveSegregationMethod())
-                      .addMethod(getGetLoadableQuantityMethod())
-                      .addMethod(getSaveLoadableStudyPortRotationMethod())
-                      .addMethod(getDeleteCargoNominationMethod())
-                      .addMethod(getSaveDischargingPortsMethod())
-                      .build();
+          serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
+              .setSchemaDescriptor(new LoadableStudyServiceFileDescriptorSupplier())
+              .addMethod(getSaveVoyageMethod())
+              .addMethod(getGetVoyagesByVesselMethod())
+              .addMethod(getSaveLoadableQuantityMethod())
+              .addMethod(getFindLoadableStudiesByVesselAndVoyageMethod())
+              .addMethod(getSaveLoadableStudyMethod())
+              .addMethod(getSaveCargoNominationMethod())
+              .addMethod(getGetLoadableStudyPortRotationMethod())
+              .addMethod(getGetCargoNominationByIdMethod())
+              .addMethod(getGetValveSegregationMethod())
+              .addMethod(getGetLoadableQuantityMethod())
+              .addMethod(getSaveLoadableStudyPortRotationMethod())
+              .addMethod(getDeleteCargoNominationMethod())
+              .addMethod(getSaveDischargingPortsMethod())
+              .build();
         }
       }
     }

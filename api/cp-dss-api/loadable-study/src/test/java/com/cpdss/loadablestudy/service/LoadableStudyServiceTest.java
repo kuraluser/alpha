@@ -211,7 +211,7 @@ public class LoadableStudyServiceTest {
     assertEquals(
         StatusReply.newBuilder()
             .setStatus(FAILED)
-            .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+            .setCode(CommonErrorCodes.E_CPDSS_VOYAGE_EXISTS)
             .setMessage(VOYAGEEXISTS)
             .build(),
         response.getResponseStatus());

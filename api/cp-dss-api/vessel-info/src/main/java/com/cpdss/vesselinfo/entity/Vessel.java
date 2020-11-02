@@ -27,6 +27,9 @@ import lombok.Setter;
 @Table(name = "vessel")
 public class Vessel extends EntityDoc {
 
+  /** */
+  private static final long serialVersionUID = 1L;
+
   @Column(name = "name")
   private String name;
 
@@ -51,6 +54,12 @@ public class Vessel extends EntityDoc {
 
   @Column(name = "deadweight")
   private String deadWeight;
+
+  @Column(name = "deadweightconstant")
+  private String deadWeightConstant;
+
+  @Column(name = "lightweight")
+  private String lightWeight;
 
   @OneToMany(mappedBy = "vessel")
   private Set<VesselDraftCondition> vesselDraftConditions;
