@@ -2,14 +2,19 @@
  * Model for new voyage
  */
 export class NewVoyageModel {
-    public voyageNumber!: string;
+    public voyageNo!: string;
     public captainId!: number;
-    public cheifOfficerId!: number;   
+    public chiefOfficerId!: number;
 }
 
 /**
  * Model for new voyage api response
  */
 export class NewVoyageResponseModel {
-    public status!: string; 
+    public responseStatus: Status;
+    public message: number;
+    public voyageId: number;
+}
+export class Status {
+    status: string;
 }

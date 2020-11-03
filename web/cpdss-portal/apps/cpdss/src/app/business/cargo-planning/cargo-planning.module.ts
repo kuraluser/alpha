@@ -5,13 +5,20 @@ import { CargoPlanningRoutingModule } from './cargo-planning-routing.module';
 import { CargoPlanningComponent } from './cargo-planning.component';
 import { VesselInfoModule } from '../core/components/vessel-info/vessel-info.module';
 import { LoadableStudyListApiService } from './services/loadable-study-list-api.service';
+import { ReactiveFormsModule } from '@angular/forms';
 
-
+/**
+ * Module class Cargo Planning module 
+ *
+ * @export
+ * @class CargoPlanningModule
+ */
 
 @NgModule({
   declarations: [CargoPlanningComponent],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     CargoPlanningRoutingModule,
     VesselInfoModule
   ],

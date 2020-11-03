@@ -1,13 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Table } from 'primeng/table';
 import { VesselDetailsModel } from '../../model/vessel-details.model';
-import { VesselsApiService } from '../../services/vessels-api.service';
-
-import { LoadableStudies, TableColumns } from '../model/loadable-study-list.model';
-import { VoyageList } from '../model/loadable-study-list.model';
+import { VesselsApiService } from '../../core/services/vessels-api.service';
+import { LoadableStudy, TableColumns } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
+import { Voyage } from '../../core/models/common.models';
+import { VoyageService } from '../../core/services/voyage.service';
+import { LoadableStudyListTransformationService } from '../services/loadable-study-list-transformation.service';
+import { IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 
 /**
  * Loadable study list
@@ -18,85 +20,105 @@ import { LoadableStudyListApiService } from '../services/loadable-study-list-api
   styleUrls: ['./loadable-study-list.component.scss']
 })
 export class LoadableStudyListComponent implements OnInit {
-  loadableStudyList: LoadableStudies[];
-  voyageNo: VoyageList[];
-  selectedVoyageNo: VoyageList;
-  selectedLoadableStudy: LoadableStudies[];
+  loadableStudyList: LoadableStudy[];
+  voyages: Voyage[];
+  selectedVoyage: Voyage;
+  selectedLoadableStudy: LoadableStudy[];
   loading = true;
   cols: TableColumns[];
   display = false;
-  duplicatingLoadableStudyId = 'LS1';
   isDuplicateExistingLoadableStudy = true;
   vesselDetails: VesselDetailsModel[];
+  voyageId: number;
+  columns: IDataTableColumn[];
+  loadableStudyListForm: FormGroup;
+  readonly editMode = null;
+  isVoyageIdSelected = true;
 
-  @ViewChild('dt') table: Table;
 
-  constructor(private loadableStudyListApiService: LoadableStudyListApiService, private vesselsApiService: VesselsApiService,
-    private router: Router, private translateService: TranslateService) { }
+  constructor(private loadableStudyListApiService: LoadableStudyListApiService,
+    private vesselsApiService: VesselsApiService, private router: Router,
+    private translateService: TranslateService, private activatedRoute: ActivatedRoute,
+    private voyageService: VoyageService, private loadableStudyListTransformationService: LoadableStudyListTransformationService,
+    private fb: FormBuilder) { }
 
-  ngOnInit(): void {
-    this.vesselDetails = this.vesselsApiService.vesselDetails;
-    this.getLoadableStudyInfo();
-    this.voyageNo = [
-      { name: 'TC-10', code: 'TC-10' },
-      { name: 'TC-11', code: 'TC-11' }
-    ];
-    this.cols = [
-      { field: 'name', header: 'LOADABLE_STUDY_LIST_GRID_LOADABLE_STUDY_NAME_LABEL' },
-      { field: 'detail', header: 'LOADABLE_STUDY_LIST_GRID_ENQUIRY_DETAILS_LABEL' },
-      { field: 'status', header: 'LOADABLE_STUDY_LIST_GRID_STATUS_LABEL' },
-      { field: 'createdDate', header: 'LOADABLE_STUDY_LIST_GRID_DATE_LABEL' }
-    ];
+  async ngOnInit(): Promise<void> {
+    this.activatedRoute.params.subscribe(async params => {
+      this.voyageId = Number(params.id);
+      this.vesselDetails = await this.vesselsApiService.getVesselsInfo().toPromise();
+      this.voyages = await this.voyageService.getVoyagesByVesselId(this.vesselDetails[0].id).toPromise();
+      this.getLoadableStudyInfo(this.vesselDetails[0].id, this.voyageId);
+      this.selectedVoyage = this.voyages.find(voyage => voyage.id === this.voyageId);
+    })
+    this.columns = this.loadableStudyListTransformationService.getLoadableStudyListDatatableColumns();
     this.loading = false;
 
   }
   /**
-   * Called when row is selected
+   * Take the user to particular loadable study
    */
-  onRowSelect(event: HTMLInputElement) {
-    this.router.navigate(['/business/cargo-planning']);
+  onRowSelect(event: IDataTableEvent) {
+    this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.vesselDetails[0].id}/${this.selectedVoyage.id}/${event.data.id}`]);
   }
 
-  /**
-   * Filter date
-   */
-  onDateSelect(value) {
-    this.table.filter(this.formatDate(value), 'date', 'equals');
-  }
-
-  /**
-   * Format date(dd-mm-yyyy)
-   */
-  formatDate(date) {
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-
-    if (month < 10) {
-      month = '0' + month;
-    }
-
-    if (day < 10) {
-      day = '0' + day;
-    }
-
-    return day + '-' + month + '-' + date.getFullYear();
-  }
   /**
    * Get loadable study list
    */
-  async getLoadableStudyInfo(): Promise<LoadableStudies[]> {
-    this.loadableStudyList = await this.loadableStudyListApiService.getLoadableStudyData();
-    return this.loadableStudyList;
-
+  async getLoadableStudyInfo(vesselId: number, voyageId: number): Promise<LoadableStudy[]> {
+      const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
+      this.loadableStudyList = result.loadableStudies;
+      this.initLoadableStudyArray(this.loadableStudyList);
+      return this.loadableStudyList;
   }
   // invoke popup which binds new-loadable-study-popup component
   callNewLoadableStudyPopup() {
-    this.display = true;
+    if (this.voyageId !== 0)
+      this.display = true;
+    else
+      this.isVoyageIdSelected = false;
+
+
   }
 
   // set visibility of popup (show/hide)
   setPopupVisibility(emittedValue) {
     this.display = emittedValue;
+  }
+
+  private initLoadableStudyArray(loadableStudyLists: LoadableStudy[]) {
+    this.loadableStudyListForm = this.fb.group({
+      dataTable: this.fb.array([...loadableStudyLists])
+    });
+  }
+
+  /**
+  * Method for fetching form fields
+  *
+  * @private
+  * @param {number} formGroupIndex
+  * @param {string} formControlName
+  * @returns {FormControl}
+  * @memberof 
+  */
+  private field(formGroupIndex: number, formControlName: string): FormControl {
+    const formControl = <FormControl>(<FormArray>this.loadableStudyListForm.get('dataTable')).at(formGroupIndex).get(formControlName);
+    return formControl;
+  }
+
+  /**
+   * Show loadable study list based on selected voyage id
+   */
+  showLoadableStudyList() {
+      this.getLoadableStudyInfo(this.vesselDetails[0].id, this.selectedVoyage.id);
+  }
+
+  /**
+   * called when name is clicked
+   */
+  columnClick(data: IDataTableEvent) {
+    if (data?.field === 'name') {
+      this.onRowSelect(data);
+    }
   }
 
 }

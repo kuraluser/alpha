@@ -3,22 +3,34 @@ import { IdraftMarks } from '../../models/common.models';
 /**
  *  model for new-loadable-study
  */
-export interface INewLoadableStudyPopupModel {
-    loadableStudyId: string;
-    duplicateExisting: string;
-    newLoadableStudyName: string;
-    enquiryDetails: string;
-    attachMail: string[];
+export interface INewLoadableStudy {
+    id: number;
+    createdFromId: number;
+    name: string;
+    detail: string;
     charterer: string;
     subCharterer: string;
-    loadLine: string;
-    draftMark: string;
-    draftRestriction: string;
-    maxTempExpected: string;
+    draftMark: number;
+    loadLineXId: number;
+    draftRestriction: number;
+    maxAirTempExpected: number;
+    maxWaterTempExpected: number;
+    attachMail: string[];
 }
 
 export interface ILoadLineLists {
     id: number;
     name: string;
     draftMarks: string[];
+}
+
+/**
+ * Interface for IDropdown Event
+ *
+ * @export
+ * @interface IDropdownEvent
+ */
+export interface IDropdownEvent {
+    originalEvent: Event;
+    value: any;
 }

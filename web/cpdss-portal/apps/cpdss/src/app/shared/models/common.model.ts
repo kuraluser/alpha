@@ -1,0 +1,86 @@
+import Dexie from 'dexie';
+
+/**
+ * Class for converting values to value object with additional status like modified, visible, edited etc
+ *
+ * @export
+ * @class ValueObject
+ * @template T
+ */
+export class ValueObject<T = any> {
+    private _value: T;
+
+    public get value(): T {
+        return this._value;
+    }
+    public set value(v: T) {
+        this._value = v;
+        this._isModified = true;
+    }
+
+    public get isVisible(): boolean {
+        return this._isVisible;
+    }
+
+    public set isVisible(v: boolean) {
+        this._isVisible = v;
+    }
+
+    public get isEditable(): boolean {
+        return this._isEditable;
+    }
+
+    public set isEditable(v: boolean) {
+        this._isEditable = v;
+    }
+
+    public get isModified(): boolean {
+        return this._isModified;
+    }
+
+    public cloneData(): ValueObject<T> {
+        return new ValueObject<T>(this.value);
+    }
+
+    constructor(prop: T, private _isVisible = true, private _isEditable = true, private _isModified = false) {
+        this._value = prop;
+    }
+
+}
+
+/**
+ * Inteface for response status from api calls
+ *
+ * @export
+ * @interface IResponseStatus
+ */
+export interface IResponseStatus {
+    status: string;
+    message?: string,
+    erroCode?: string,
+    correlationId?: string;
+}
+
+/**
+ * Generic Response interface
+ *
+ * @export
+ * @interface IResponse
+ */
+export interface IResponse {
+    responseStatus: IResponseStatus;
+}
+
+/**
+ * Common class for indexed db database
+ *
+ * @export
+ * @class CPDSSDB
+ * @extends {Dexie}
+ */
+export class CPDSSDB extends Dexie {
+    cargoNominations!: Dexie.Table<any, number>;
+    constructor() {
+        super('CPDSS');
+    }
+}

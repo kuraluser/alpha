@@ -1,7 +1,7 @@
 import { KeycloakService } from 'keycloak-angular';
 import { environment } from '../../../environments/environment';
 import { KeycloakConfig } from 'keycloak-js';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { IAppConfiguration } from '../services/app-configuration/app-configuration.model';
 import { AppConfigurationService } from '../services/app-configuration/app-configuration.service';
 
@@ -11,22 +11,23 @@ export function keycloakShoreInitializer(keycloak: KeycloakService, http: HttpCl
     return (): Promise<any> => {
         return new Promise(async (resolve, reject) => {
             try {
-                let hostname = window.location.hostname.split('.')[0];
-                let hostUrl: string = '';
-                hostUrl = 'companies/' + hostname + '.cpdss.com/idp-info';
+                const hostname = window.location.hostname.split('.')[0];
+                let hostUrl = '';
+                hostUrl = 'companies/' + hostname + '/idp-info';
 
-                let appSettings: IAppConfiguration = await appConfig.load();
+                const appSettings: IAppConfiguration = await appConfig.load();
 
-                await http.get(environment.uriPath + hostUrl).toPromise().then(function (response: any) {
+                const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+                await http.get(environment.uriPath + hostUrl, { headers: httpHeaders }).toPromise().then(function (response: any) {
                     if (response) {
                         localStorage.setItem('keycloakIdpConfig', response.providers);
                         localStorage.setItem('realm', response.realm);
                         localStorage.setItem('logoUrl', response.logoUrl);
                         const keycloakUrl = appSettings.keycloakUrl;
-                        let keycloakConfig = {
+                        const keycloakConfig = {
                             url: keycloakUrl,
                             realm: response.realm,
-                            clientId: response.clientId,
+                            clientId: appSettings.clientId,
                         }
 
                         keycloak.init({

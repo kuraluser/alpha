@@ -9,7 +9,7 @@ body {
 
 body {
   font-family: 'Play', sans-serif;
-  font-size: 11px;
+  font-size: $font-size-normal!important;
 }
 
 a {
@@ -299,8 +299,6 @@ a {
 
 .tab-btn {
   display: inline-block;
-  width: 57px;
-  height: 35px;
   background-position: center center;
   background-repeat: no-repeat;
   &.active {
@@ -310,6 +308,15 @@ a {
 
   &:last-child {
     border-right: 0;
+  }
+}
+
+.cargo-nomiantion-tab{
+  .tab-btn {
+    padding: 20px;
+    font-size: $sub-heading-font-size;
+    text-transform: uppercase;
+    text-align: center;
   }
 }
 
@@ -549,4 +556,368 @@ a {
 
 .dropdown-menu{
   font-size: $font-size-normal;
+}
+
+.sidebar{
+  max-width: 220px;
+  .p-datatable .p-datatable-thead > tr > th:last-child{
+    width: 35px;
+  }
+}
+
+.inline-block{
+  display: inline-block;
+}
+
+h5{
+  font-size: $heading-font-size;
+}
+.p-component{
+  font-size: $font-size-normal;
+}
+.p-datatable .p-datatable-thead > tr > th, .p-datatable .p-datatable-tbody > tr{
+  background: none!important;
+  font-weight: normal;
+}
+.p-datatable .p-datatable-thead{
+
+  > tr{
+  &:last-child{
+    th{
+      padding-bottom: 10px;
+    }
+  }
+   > th{
+    padding: 0 2px;
+  }
+}
+}
+.p-column-filter, .p-column-filter .p-inputtext {
+  background: none!important;
+  border-radius: 0!important;
+  border: 0;
+  padding-left: 0px;
+  &:enabled:focus, &:enabled:hover{
+    box-shadow: none;
+    outline: none;
+  }
+}
+
+.btn-link.plus-icon-rounded{
+  background-position:0 5px ;
+}
+
+.p-datepicker{
+  min-width: 340px !important;
+}
+
+.p-dropdown{ 
+  border-radius: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  &:focus{
+    border: 0;
+    outline: none;
+  }
+  &:not(.p-disabled).p-focus{
+    box-shadow: none;
+  }
+  .p-dropdown-trigger{
+    justify-content: flex-end;
+    margin-right: 3px;
+  }
+}
+.p-dropdown-label{
+  font-family: 'Play', sans-serif;
+  font-size: $font-size-normal;
+}
+
+.p-datatable .p-datatable-tbody > tr > td{
+  padding: 11px 5px;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  border-radius:3px;
+}
+
+.new-loadable-study-pop-up{
+  width: 735px;
+  .col-form-label{
+    min-width: 185px;
+    padding-right: 0;
+  }
+}
+.form-control.p-dropdown{
+  align-items: center;
+  border-radius: 3px;
+  border-bottom: 0;
+  &:hover{
+    border-bottom: 0!important;
+  }
+  &:not(.p-disabled).p-focus{
+    border-bottom: 0!important;
+  }
+  .p-dropdown-trigger{
+    margin-right: 0;
+  }
+}
+
+.p-dropdown .p-dropdown-trigger{
+  width: 18px;
+}
+
+.pi{
+  font-size: $sub-heading-font-size;
+}
+
+.upload-file {
+  display: inline-block;
+  position: relative;
+  border: 1px solid;
+  line-height: 25px;
+  padding: 0 10px 0 29px;
+  border-radius: 3px;
+  overflow: hidden;
+  input[type=file] {
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      cursor: pointer !important;
+      height: 33px;
+      z-index: 9;
+      opacity: 0;
+  }
+}
+
+.row.form-group{
+  flex-wrap: nowrap;
+}
+
+.dropdown-w-100{
+  width: 100px;
+}
+.dropdown-w-180{
+  width: 180px;
+}
+.sub-heading{
+  font-size: $sub-heading-font-size;
+}
+.p-dialog-title{
+  text-transform: uppercase;
+}
+.p-dropdown-filter-container .p-dropdown-filter{
+  border: 0!important;
+  outline: none;
+  &:enabled:focus{
+    box-shadow: none;
+  }
+}
+.p-dropdown-panel .p-dropdown-header{
+  background: none;
+}
+
+.p-datatable .p-datatable-thead > tr > th{
+  text-transform: uppercase;
+}
+
+tr{
+  &:hover{
+    .action-buttons{
+      display: inline-block;
+    }
+  }
+}
+
+.btn.btn-xs{
+  width: auto !important;
+  padding: 2px 5px!important;
+  height: auto!important;
+  min-width: 20px!important;
+}
+
+.grid-dropdown-icon .p-splitbutton-defaultbutton{
+  display: none;
+}
+
+.grid-dropdown-icon .p-splitbutton-menubutton{
+  border: 0;
+  outline: none;
+  width: 18px;
+  &:hover, &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+  .p-button.p-button-icon-only{
+    width: 18px;
+  }
+}
+
+.p-datatable .p-datatable-thead > tr > th:last-child{
+  width: 55px;
+}
+
+.grid-dropdown-menu{
+  width: 80px;
+  text-transform: uppercase;
+  &.p-menu .p-menuitem-link{
+    padding: 5px 7px;
+  }
+ 
+}
+
+.row.no-wrap{
+  flex-wrap: nowrap;
+}
+
+
+.sidebar table{
+  table-layout: auto!important;
+  .p-column-filter{
+    width: 100%;
+  }
+}
+
+.relative{
+  position: relative;
+}
+
+[class^="icon-status-"]{
+  width: 17px;
+  height: 17px;
+  display: inline-block;
+}
+
+.column-sl{
+  width: 50px;
+}
+.column-color{
+  width: 70px;
+}
+.icon-api-temp{
+  display: inline-block;
+  width: 19px;
+  height: 16px;
+  vertical-align: bottom;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.p-multiselect{
+  outline: none;
+  box-shadow: none;
+  border: 0;
+  &:focus, &:hover{
+    outline: none;
+    box-shadow: none;
+    border: 0;
+  }
+}
+
+
+.p-datepicker table{ 
+
+  th{
+    padding: 1px;
+    text-align: center;
+    span{
+      font-size: 12px;
+    }
+  }
+  td{
+  padding: 1px;
+  span{
+    font-size: 12px;
+  }
+}
+}
+
+.loading-port-pop-up{
+  width: 370px;
+}
+
+.tab-status-icon{
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 22px;
+  margin-right: 5px;
+}
+
+.action-buttons{
+ visibility: hidden;
+}
+.p-datatable .p-datatable-tbody > tr{
+  &:hover{
+    .action-buttons{
+      visibility: visible;
+    }
+  }
+}
+.p-datatable .p-datatable-tbody > tr.p-highlight{
+  .action-buttons{
+    visibility: visible;
+  }
+}
+.p-button.p-button-icon-only{
+  padding: 2px 0;
+}
+
+.view-icon{
+  width: 22px;
+  height: 14px;
+  display: inline-block;
+}
+
+.p-datatable .p-sortable-column:focus{
+  box-shadow: none;
+}
+
+.pi-sort-alt:before{
+  content: "\e930"!important;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+}
+.pi-sort-alt:after{
+  content: "\e933"!important;
+  position: absolute;
+  top: -5px;
+  left: 2px;
+}
+
+.pi-sort-alt{
+  position: relative;
+  font-size: 10px;
+}
+
+.p-datatable .p-sortable-column .p-sortable-column-icon{
+  margin-top: -6px;
+}
+.pi-sort-amount-up-alt:before{
+  content: "\e933"!important;
+}
+.pi-sort-amount-down:before{
+  content: "\e930"!important;
 }

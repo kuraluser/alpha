@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { VoyageStatusComponent } from '../../voyage-status/voyage-status.component';
 
 export class BusinessRoutingCommonConfig {
     static getRoutesForEnvironment(): Routes {

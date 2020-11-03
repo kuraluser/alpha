@@ -16,7 +16,7 @@ import { UserProfile } from "../shared/models/user-profile.model";
 })
 export class LoginComponent implements OnInit {
 
-  loggedIn: boolean = false;
+  loggedIn = false;
 
   constructor(private router: Router, private kycloakService: KeycloakService) { }
 
@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
       this.loggedIn = isLoggedIn;
       
       // wait for keycloak to set auth-token and user-profile if logged-in
-      if (this.loggedIn == true) {
+      if (this.loggedIn) {
         const token = await this.kycloakService.getToken();
         SecurityService.setAuthToken(token);
 

@@ -1,7 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { ThemeService } from './shared/services/theme-service/theme.service';
 
 @Component({
   selector: 'cpdss-portal-root',

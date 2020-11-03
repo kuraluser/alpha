@@ -27,8 +27,13 @@
             <li class="nav-item">
                 <a></a>
             </li>
-            <li class="nav-item  active">
-                <a class="header-menu-item-right sign-in-icon"></a>
+            <li tabindex="-1" class="nav-item dropdown" [ngClass]="{'active': showUserIconDropdown}"
+                (focusout)="onUserIconMenuToggle()">
+                <a class="header-menu-item-right sign-in-icon" id="user-icon-button" (click)="onUserIconMenuToggle()">
+                </a>
+                <div class="dropdown-menu dropdown-menu dropdown-menu-right" [ngClass]="{'show': showUserIconDropdown}">
+                    <a class="dropdown-item" (click)="logout()" id="logout-button">{{'LOGOUT'| translate}}</a>
+                </div>
             </li>
         </ul>
     </div>

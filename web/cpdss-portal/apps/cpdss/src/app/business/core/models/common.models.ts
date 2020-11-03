@@ -1,3 +1,5 @@
+import { IResponseStatus } from '../../../shared/models/common.model';
+
 /**
  *  vessel-info model
  */
@@ -29,7 +31,7 @@ export interface ILoadLineList {
  *  model for draft-marks
  */
 export interface IdraftMarks {
-    id: string,
+    id: number,
     name: string
 }
 
@@ -44,4 +46,17 @@ export interface IVessels {
     chiefOfficerId: string,
     chiefOfficerName: string,
     loadlines: ILoadLineList[]
+}
+
+/**
+ * Model for voyage list 
+ */
+export class Voyage {
+    public voyageNo: string;
+    public id: number;
+}
+
+export interface IVoyageResponse {
+    responseStatus: IResponseStatus;
+    voyages: Voyage[];
 }

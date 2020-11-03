@@ -25,7 +25,13 @@
             "assets": [
               "apps/cpdss/src/favicon.ico",
               "apps/cpdss/src/assets",
-              "apps/cpdss/src/manifest.webmanifest"
+              "apps/cpdss/src/manifest.webmanifest",
+              {
+                "glob": "dexie.min.js",
+                "input": "node_modules/dexie/dist/",
+                "output": "./"
+              },
+              "apps/cpdss/src/sw-sync.js"
             ],
             "styles": [
               {
@@ -37,8 +43,10 @@
                 "input": "apps/cpdss/src/styles/themes/light/theme-light.scss",
                 "lazy": true,
                 "bundleName": "theme-light"
-              },         
-              "node_modules/primeng/resources/primeng.min.css",
+              },
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeng/resources/themes/saga-blue/theme.css",
+              "node_modules/primeng/resources/primeng.min.css",         
               "node_modules/animate.css/animate.min.css",
               "apps/cpdss/src/styles.scss"
             ],
@@ -230,7 +238,7 @@
           "options": {
             "browserTarget": "cpdss:build",
             "proxyConfig": "proxy.config.json",
-            "disableHostCheck":true
+            "disableHostCheck": true
           },
           "configurations": {
             "production": {
@@ -520,7 +528,7 @@
           "options": {
             "browserTarget": "login:build",
             "proxyConfig": "proxy.config.json",
-            "disableHostCheck":true
+            "disableHostCheck": true
           },
           "configurations": {
             "production": {

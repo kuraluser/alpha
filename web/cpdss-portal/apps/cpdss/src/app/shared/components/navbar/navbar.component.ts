@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { KeycloakService } from 'keycloak-angular';
 import { Observable } from 'rxjs';
+import { AppConfigurationService } from '../../services/app-configuration/app-configuration.service';
+import { SecurityService } from '../../services/security/security.service';
 import { ThemeService } from '../../services/theme-service/theme.service';
 import { IMenuItem } from './navbar.component.model';
 
@@ -13,8 +16,9 @@ export class NavbarComponent implements OnInit {
   darkMode$: Observable<boolean>;
   menuList: IMenuItem[];
   isSubMenu: boolean[] = [];
+  showUserIconDropdown = false;
 
-  constructor(private themeService: ThemeService) { }
+  constructor(private themeService: ThemeService, private keycloakService: KeycloakService) { }
 
   ngOnInit(): void {
 
@@ -34,7 +38,7 @@ export class NavbarComponent implements OnInit {
         'menuLink': 'cargo-planning',
         'subMenu': []
       },
-      {
+      /* {
         'menu': 'OPERATIONS',
         'menuIcon': 'voyages',
         'menuLink': 'operations',
@@ -52,24 +56,24 @@ export class NavbarComponent implements OnInit {
 
         ]
       },
-      // {
-      //   'menu': 'REPORTERS',
-      //   'menuIcon': 'voyages',
-      //   'menuLink': 'admin',
-      //   'subMenu': []
-      // },
+      {
+        'menu': 'REPORTERS',
+        'menuIcon': 'voyages',
+        'menuLink': 'admin',
+        'subMenu': []
+      },
       {
         'menu': 'ADMIN',
         'menuIcon': 'voyages',
         'menuLink': 'admin',
         'subMenu': []
       },
-      // {
-      //   'menu': 'FLEET',
-      //   'menuIcon': 'voyages',
-      //   'menuLink': 'admin',
-      //   'subMenu': []
-      // }
+      {
+        'menu': 'FLEET',
+        'menuIcon': 'voyages',
+        'menuLink': 'admin',
+        'subMenu': []
+      } */
 
     ];
   }
@@ -99,6 +103,32 @@ export class NavbarComponent implements OnInit {
   setDarkMode() {
     this.isToggle = !this.isToggle;
     this.themeService.setDarkMode(this.isToggle);
+  }
+
+  /**
+   * Method for user logout
+   *
+   * @memberof NavbarComponent
+   */
+  logout() {
+    try {
+      const redirectUrl = window.location.protocol + '//' + window.location.hostname + ':' + AppConfigurationService.settings.redirectPort;
+      SecurityService.userLogoutAction();
+      this.keycloakService.logout(redirectUrl);
+
+    }
+    catch {
+      console.error('Something went wrong');
+    }
+  }
+
+  /**
+   * Handler for User Icon toggle 
+   *
+   * @memberof NavbarComponent
+   */
+  onUserIconMenuToggle() {
+    this.showUserIconDropdown = !this.showUserIconDropdown;
   }
 
 }

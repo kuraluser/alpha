@@ -1,7 +1,7 @@
+<p-dialog header="{{vesselDetails? vesselDetails[0].name : ''}} - {{'NEW_VOYAGE_POPUP_HEADER' | translate}}"
+  [(visible)]="showPopUp" styleClass="new-voayge-pop-up" [closable]="false" [draggable]="false" [modal]="true">
+  <form [formGroup]="newVoyageForm" (submit)="onSubmit()" *ngIf="newVoyageForm">
 
-  <p-dialog header="{{vesselDetails[0].name}} - {{'NEW_VOYAGE_POPUP_HEADER' | translate}}" [(visible)]="showPopUp" styleClass="new-voayge-pop-up"
-    [closable]="false" [draggable]="false" [modal]="true">
-    <form [formGroup]="newVoyageForm" (ngSubmit)="onSubmit()">
     <div class="container">
       <div class="row">
         <div class="col-md-12">
@@ -25,18 +25,36 @@
               <input type="text" class="form-control" id="voyage_no" formControlName="voyageNo">
               <div *ngIf="!newVoyageFormControl.voyageNo.valid && newVoyageFormControl.voyageNo.touched"
                 class="pt-5 text-danger">
-                <span *ngIf="newVoyageFormControl.voyageNo.errors?.required"> {{ 'VOYAGE_POPUP_VOYAGE_NO_REQUIRED_ERROR' | translate}} </span>
+                <span *ngIf="newVoyageFormControl.voyageNo.errors?.required">
+                  {{ 'VOYAGE_POPUP_VOYAGE_NO_REQUIRED_ERROR' | translate}} </span>
+                <span *ngIf="newVoyageFormControl.voyageNo.errors?.pattern">
+                  {{ 'NEW_VOYAGE_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED' | translate }}</span>
+                <span *ngIf="newVoyageFormControl.voyageNo.errors?.maxlength">
+                  {{ 'NEW_VOYAGE_POPUP_CHARACTER_LIMIT' | translate }} </span>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div *ngIf="isSubmitted && newVoyageForm.valid && isExisting" class="pt-5 text-danger">
+                {{'NEW_VOYAGE_ALREADY_EXIST' | translate}}
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <p-footer>
-      <button class="btn btn-main mr-10" id="voyage_popup_cancel" (click)="cancel()">{{ 'CANCEL_BUTTON_NEW_VOYAGE_POPUP' | translate }}</button>
-      <button class="btn btn-main" type="submit" id="voyage_popup_submit" >{{ 'SAVE_BUTTON_NEW_VOYAGE_POPUP' | translate }}</button>
-      <div *ngIf="isSubmitted && !newVoyageForm.valid" class="pt-5 text-danger">{{ 'VOYAGE_POPUP_FORM_INVALID' | translate }}</div>
-    </p-footer>
-  </form>
-  </p-dialog>
 
+  </form>
+  <p-footer>
+    <div class="row">
+      <div class="col text-right">
+        <button class="btn btn-main mr-10" id="voyage_popup_cancel"
+          (click)="cancel()">{{ 'CANCEL_BUTTON_NEW_VOYAGE_POPUP' | translate }}</button>
+        <button class="btn btn-main" type="submit" id="voyage_popup_submit"
+          (click)="saveNewVoyagePopup()">{{ 'SAVE_BUTTON_NEW_VOYAGE_POPUP' | translate }}</button>
+      </div>
+    </div>
+
+  </p-footer>
+</p-dialog>

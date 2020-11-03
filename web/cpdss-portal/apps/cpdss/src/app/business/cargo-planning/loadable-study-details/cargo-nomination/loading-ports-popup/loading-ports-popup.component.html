@@ -1,0 +1,32 @@
+<p-dialog [(visible)]="visible" styleClass="loading-port-pop-up" [draggable]="false" [responsive]="true" [minY]="70"
+[closable]="false">
+
+    <p-header>
+        {{popupData.rowData.cargo.value.name}}-{{'LOADING_PORT_POPUP_HEADER'| translate}}
+    </p-header>
+    <form [formGroup]="loadingPortsFrom" *ngIf="loadingPortsFrom">
+        <div class="col">
+        <div class="form-group row">
+            
+            <div class="col-sm-12 pl-0">
+                <label class="col-form-label pr-10">{{'LOADING_PORT_POPUP_DROPDOWN_LABEL'| translate}}</label>
+                <p-dropdown id="port_dropdown" [options]="popupData?.ports" formControlName="addPort" optionLabel="name"
+                    placeholder="{{'LOADING_PORT_POPUP_DROPDOWN_PLACEHOLDER'| translate}}" filter="true">
+                </p-dropdown>
+                <button id="add_port_button" class="btn btn-dark ml-10" [disabled]="!loadingPortsFrom.get('addPort').value"
+                    (click)="addPort(loadingPortsFrom.get('addPort').value)">{{'LOADING_PORT_POPUP_ADD_BUTTON'| translate}}</button>
+            </div>
+            
+        </div>
+        <div class="form-group row">
+            <cpdss-portal-datatable [form]="loadingPortsFrom" [columns]="columns" [value]="loadingPort"
+                [editMode]="editMode" (editComplete)="onEditComplete($event)"></cpdss-portal-datatable>
+        </div>
+    </div>
+    </form>
+    <p-footer>
+        <button id="port_cancel_btn" class="btn btn-main"
+            (click)="closePopup()">{{'LOADING_PORT_POPUP_CANCEL'| translate}}</button>
+        <button id="port_save_btn" class="btn btn-main" (click)="savePopup()">{{'LOADING_PORT_POPUP_SAVE'| translate}}</button>
+    </p-footer>
+</p-dialog>

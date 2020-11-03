@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { VesselDetailsModel } from '../../../model/vessel-details.model';
-import { VesselsApiService } from '../../../services/vessels-api.service';
+import { VesselsApiService } from '../../services/vessels-api.service';
 
 /**
- * Component for vessel information
+ * Componnet for shareble Vessel Icon widget
+ *
+ * @export
+ * @class VesselInfoComponent
+ * @implements {OnInit}
  */
 @Component({
   selector: 'cpdss-portal-vessel-info',
@@ -13,15 +17,20 @@ import { VesselsApiService } from '../../../services/vessels-api.service';
 export class VesselInfoComponent implements OnInit {
   vesselDetails: VesselDetailsModel[];
   vesselName: string;
-
+  imoNumber: number;
   constructor(private vesselApiService: VesselsApiService) { }
 
   ngOnInit(): void {
-    /**
+    this.getVesselDetails();
+  }
+
+  /**
      * Get vessel details
      */
-    this.vesselDetails = this.vesselApiService.vesselDetails;
+  async getVesselDetails() {
+    this.vesselDetails = await this.vesselApiService.getVesselsInfo().toPromise();
     this.vesselName = this.vesselDetails[0].name;
+    this.imoNumber = Number(this.vesselDetails[0].imoNumber);
   }
 
 }

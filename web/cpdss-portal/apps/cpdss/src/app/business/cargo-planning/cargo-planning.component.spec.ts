@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CargoPlanningComponent } from './cargo-planning.component';
 import { RouterTestingModule } from '@angular/router/testing';
+import { VesselInfoModule } from '../core/components/vessel-info/vessel-info.module';
 
 import { VesselInfoModule } from '../core/components/vessel-info/vessel-info.module';
 

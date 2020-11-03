@@ -8,9 +8,14 @@ const routes: Routes = [
     path: '',
     component: CargoPlanningComponent,
     children: [
+      { path: '', redirectTo: 'loadable-study-list/', pathMatch: 'full' },
       {
-        path: 'loadable-study-list',
+        path: 'loadable-study-list/:id',
         loadChildren: () => import('./loadable-study-list/loadable-study-list.module').then(m => m.LoadableStudyListModule)
+      },
+      {
+        path: 'loadable-study-details/:vesselId/:voyageId/:loadableStudyId',
+        loadChildren: () => import('./loadable-study-details/loadable-study-details.module').then(m => m.LoadableStudyDetailsModule)
       },
       {
         path: 'loadable-study-details',

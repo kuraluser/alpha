@@ -14,43 +14,56 @@ export class SecurityService {
    *  static functions can be used in other classes without creating instance of the service
    */
 
-  private static token: string = '';
+  private static token: string;
   private static userProfile: UserProfile;
-  private static loggedIn: boolean = false;
+  private static loggedIn = false;
 
   constructor() { }
 
   // setting token
-  public static setAuthToken(jwtToken: string) {
-    this.token = jwtToken;
+  static setAuthToken(jwtToken: string) {
+    SecurityService.token = jwtToken;
   }
 
   // getting token
-  public static getAuthToken(): string {
-    return this.token;
+  static getAuthToken(): string {
+    return SecurityService.token;
   }
 
   // setting logged-in user details
-  public static setUserProfile(userDetails: UserProfile) {
-    this.userProfile = {
+  static setUserProfile(userDetails: UserProfile) {
+    SecurityService.userProfile = {
       email: userDetails.email,
       userName: userDetails.userName
     }
   }
 
   // getting logged-in user details
-  public static getUserProfile(): UserProfile {
-    return this.userProfile;
+  static getUserProfile(): UserProfile {
+    return SecurityService.userProfile;
   }
 
   // setting current login status
-  public static setLoginStatus(status: boolean) {
-    this.loggedIn = status;
+  static setLoginStatus(status: boolean) {
+    SecurityService.loggedIn = status;
   }
 
   // getting current login status
-  public static getLoginStatus(): boolean {
-    return this.loggedIn;
+  static getLoginStatus(): boolean {
+    return SecurityService.loggedIn;
+  }
+
+  /**
+   * After logout rest all User details
+   *
+   * @static
+   * @memberof SecurityService
+   */
+  static userLogoutAction() {
+    SecurityService.token = null;
+    SecurityService.userProfile = null;
+    SecurityService.loggedIn = false;
+    window.localStorage.clear();
   }
 
 }

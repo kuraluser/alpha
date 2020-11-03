@@ -4,10 +4,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { VesselDetailsModel } from '../../model/vessel-details.model';
-import { VesselsApiService } from '../../services/vessels-api.service';
-
+import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { NewVoyageModel } from '../models/new-voyage.model';
-import { NewVoyageResponseModel } from '../models/new-voyage.model';
 import { VoyageApiService } from '../services/voyage-api.service';
 
 /**
@@ -26,22 +24,14 @@ export class NewVoyagePopupComponent implements OnInit {
   isLoading: boolean;
   isSubmitted: boolean;
   vesselDetails: VesselDetailsModel[];
+  isExisting = false;
 
   constructor(private fb: FormBuilder, private router: Router,
     private voyageApiService: VoyageApiService,
     private vesselApiService: VesselsApiService) { }
 
   ngOnInit(): void {
-    this.showPopUp = true;
-    this.isLoading = false;
-    this.isSubmitted = false;
-    this.vesselDetails = this.vesselApiService.vesselDetails;
-    this.showPopUp = true;
-    this.newVoyageForm = this.fb.group({
-      'captain': [this.vesselDetails[0].captainName],
-      'chiefOfficer': [this.vesselDetails[0].chiefOfficerName],
-      'voyageNo': [null, [Validators.required]]
-    });
+    this.getVesselInfo();
   }
 
   /**
@@ -55,17 +45,16 @@ export class NewVoyagePopupComponent implements OnInit {
    * Submit form
    */
   onSubmit() {
-    this.isSubmitted = true;
-    if (this.newVoyageForm.valid) {
-      this.isLoading = true;
-      this.newVoyageModel = new NewVoyageModel();
-      this.newVoyageModel.captainId = this.vesselDetails[0].captainId;
-      this.newVoyageModel.cheifOfficerId = this.vesselDetails[0].chiefOfficerId;
-      this.newVoyageModel.voyageNumber = this.newVoyageForm.value.voyageNo;
-      this.saveNewVoyage();
-      this.isLoading = false;
-      this.router.navigate(['business/cargo-planning/loadable-study-list']);
-    }
+
+
+    this.isLoading = true;
+    this.newVoyageModel = new NewVoyageModel();
+    this.newVoyageModel.captainId = this.vesselDetails[0].captainId;
+    this.newVoyageModel.chiefOfficerId = this.vesselDetails[0].chiefOfficerId;
+    this.newVoyageModel.voyageNo = this.newVoyageForm.value.voyageNo;
+    this.saveNewVoyage();
+    this.isLoading = false;
+
   }
 
   /**
@@ -78,11 +67,46 @@ export class NewVoyagePopupComponent implements OnInit {
   /**
    * Save new-voyage
    */
-  async saveNewVoyage(): Promise<NewVoyageResponseModel> {
-    const vessel_id = 557;
-    const company_id = 9997;
-    return await this.voyageApiService.saveNewVoyageData(this.newVoyageModel, vessel_id, company_id).toPromise();
+  async saveNewVoyage() {
+    const vesselId = this.vesselDetails[0].id;
+    this.voyageApiService.saveNewVoyageData(this.newVoyageModel, vesselId).subscribe((res) => {
+      if (res.responseStatus.status === "200") {
+        this.router.navigate(['business/cargo-planning/loadable-study-list', res.voyageId]);
+      }
+    },
+      (error) => {
+        if (error.error.status === "400") {
+          this.isExisting = true;
+        }
+      }
+    );
   }
 
+  /**
+   * Assign value and validators
+   */
+  async getVesselInfo() {
+    this.vesselDetails = await this.vesselApiService.getVesselsInfo().toPromise();
+    this.newVoyageForm = this.fb.group({
+      'captain': [this.vesselDetails[0].captainName],
+      'chiefOfficer': [this.vesselDetails[0].chiefOfficerName],
+      'voyageNo': [null, [Validators.required, Validators.pattern('^[a-zA-Z0-9][ A-Za-z0-9_.()&,-]*$'), Validators.maxLength(100)]]
+    });
+    this.showPopUp = true;
+    this.isLoading = false;
+    this.isSubmitted = false;
+  }
 
+  /**
+   * Save button click 
+   */
+  saveNewVoyagePopup() {
+    this.isSubmitted = true;
+    if (this.newVoyageForm.valid) {
+      this.onSubmit();
+    } else {
+      this.newVoyageForm.controls.voyageNo.markAsTouched({ onlySelf: true });
+    }
+
+  }
 }

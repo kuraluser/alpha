@@ -21,15 +21,14 @@ export class AuthGuard extends KeycloakAuthGuard {
 
         // Force the user to log in if currently unauthenticated.
         if (!this.authenticated) {
-            await this.keycloak.login({
-            });
+            window.location.href = window.location.protocol + '//' + window.location.hostname + ':' + AppConfigurationService.settings.redirectPort;
         }
 
         const loggedIn = await this.keycloak.isLoggedIn();
         if (loggedIn) {
             setTimeout(() => {
                 this.router.navigate(['business']);
-            }, 2000);
+            }, 500);
         }
         else {
             window.location.href = window.location.protocol + '//' + window.location.hostname + ':' + AppConfigurationService.settings.redirectPort;

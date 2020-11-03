@@ -8,9 +8,10 @@ import {
     HttpErrorResponse
 } from '@angular/common/http';
 
-import { Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { SecurityService } from '../security/security.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 /**
  *  interceptor for API calls
@@ -20,7 +21,7 @@ import { SecurityService } from '../security/security.service';
 @Injectable()
 export class HttpAuthInterceptor implements HttpInterceptor {
 
-    constructor() { }
+    constructor(private ngxSpinnerService: NgxSpinnerService) { }
 
     /**
      *  initiates interceptor with http module
@@ -31,23 +32,21 @@ export class HttpAuthInterceptor implements HttpInterceptor {
         if (token) {
             request = request.clone({ headers: request.headers.set('Authorization', 'Bearer ' + token) });
         }
-
-        if (!request.headers.has('Content-Type')) {
-            request = request.clone({ headers: request.headers.set('Content-Type', 'application/json') });
-        }
-
-        request = request.clone({ headers: request.headers.set('Accept', 'application/json') });
-
         if (localStorage.getItem('realm')) {
             request = request.clone({ headers: request.headers.set('X-TenantID', localStorage.getItem('realm')) });
         }
 
+        this.ngxSpinnerService.show();
         return next.handle(request).pipe(
             map((event: HttpEvent<any>) => {
                 if (event instanceof HttpResponse) {
                     // console.log('event--->>>', event);
+                    this.ngxSpinnerService.hide();
                 }
                 return event;
+            }), catchError((error) => {
+                this.ngxSpinnerService.hide();
+                throw error;
             }));
     }
 }

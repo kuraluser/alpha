@@ -1,57 +1,53 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LoadableStudies } from '../model/loadable-study-list.model'
+import { CommonApiService } from '../../../shared/services/common/common-api.service';
+import { INewLoadableStudy } from '../../core/components/new-loadable-study-popup/new-loadable-study-popup.model';
+import { ILoadableStudiesResponse, ILoadableStudyResponse, LoadableStudy } from '../models/loadable-study-list.model'
 
 @Injectable()
 export class LoadableStudyListApiService {
-  loadableStudyList: LoadableStudies[];
+  loadableStudyList: LoadableStudy[];
 
-  constructor(private http: HttpClient) { }
+  constructor(private commonApiService: CommonApiService) { }
 
-  /**
-   * Get loadable study list mock json
-   */
-  getLoadableStudyList() {
-
-    this.loadableStudyList = [
-      {
-        "id": 1,
-        "name": "LS-01",
-        "status": "Plan generated",
-        "detail": "LS-01_details",
-        "createdDate": "15-10-2020",
-        "charterer": "charter-1",
-        "subCharterer": "sub-charter",
-        "draftMark": 100,
-        "loadLineXId": 1,
-        "draftRestriction": 122,
-        "maxTempExpected": 100
-      },
-      {
-        "id": 2,
-        "name": "LS-02",
-        "status": "Confirmed",
-        "detail": "details",
-        "createdDate": "15-10-2020",
-        "charterer": "charter-2",
-        "subCharterer": "sub-charter",
-        "draftMark": 200,
-        "loadLineXId": 1,
-        "draftRestriction": 200,
-        "maxTempExpected": 50
-      }
-    ];
-    return this.loadableStudyList;
-  }
 
   /**
    * Get loadable study list
    */
-  getLoadableStudyData(): LoadableStudies[] {
-    //  this.http.get<LoadableStudies[]>('/vessels/{vesselId}/voyages/{voyageId}/loadable-studies');
-    this.loadableStudyList = this.getLoadableStudyList();
-    return this.loadableStudyList;
+  getLoadableStudies(vesselId: number, voyageId: number): Observable<ILoadableStudiesResponse> {
+    return this.commonApiService.get<ILoadableStudiesResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies
+    `);
+  }
 
+  /**
+   * Set loadable study api
+   *
+   * @param {number} vesselId
+   * @param {number} voyageId
+   * @param {LoadableStudy} loadableStudy
+   * @returns {Observable<ILoadableStudyResponse>}
+   * @memberof LoadableStudyListApiService
+   */
+  setLodableStudy(vesselId: number, voyageId: number, loadableStudy: INewLoadableStudy): Observable<ILoadableStudyResponse> {
+    const formData: FormData = new FormData();
+    formData.append('charterer', loadableStudy.charterer);
+    formData.append('createdFromId', loadableStudy.createdFromId.toString());
+    formData.append('detail', loadableStudy.detail);
+    formData.append('draftMark', loadableStudy.draftMark !== undefined ? loadableStudy.draftMark.toString() : "");
+    formData.append('draftRestriction', loadableStudy.draftRestriction?.toString());
+    formData.append('loadLineXId', loadableStudy.draftMark !== undefined ? loadableStudy.loadLineXId.toString() : "");
+    formData.append('name', loadableStudy.name);
+    formData.append('subCharterer', loadableStudy.subCharterer);
+    formData.append('maxAirTemperature', loadableStudy.maxAirTempExpected?.toString());
+    formData.append('maxWaterTemperature', loadableStudy.maxWaterTempExpected?.toString());
+    for (let i = 0; i < loadableStudy.attachMail.length; i++) {
+      formData.append('files',loadableStudy.attachMail[i] );
+
+    }
+    return this.commonApiService.postFormData<ILoadableStudyResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudy.id}`, formData);
+  }
+
+  deleteLodableStudy(vesselId: number, voyageId: number, loadableStudy: INewLoadableStudy): Observable<any> {
+    return this.commonApiService.delete('')
   }
 }  

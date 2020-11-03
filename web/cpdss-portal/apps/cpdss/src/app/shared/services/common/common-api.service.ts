@@ -1,12 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'apps/cpdss/src/environments/environment';
+import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { AppConfigurationService } from '../app-configuration/app-configuration.service';
 
 /**
  *  common service which will be shared to all components in this module
  */
-
 @Injectable({
   providedIn: 'root'
 })
@@ -15,40 +15,49 @@ export class CommonApiService {
   constructor(private http: HttpClient) { }
 
   /**
-   *  apiGetter function will concatenate api host url, host port (if needed), host sub-domain and service url
+   *  apiGetter function will concatenate api host url, uri of ship or shore
    *  eg: {http://localhost} + {:} + {8080} + {/} + {api/cloud/} + {companies/mol.cpdss.com/idp-info}
    */
-  public apiGetter(apiUri: string) {
+  apiGetter(apiUri: string): string {
     return AppConfigurationService.settings.apiUrl + environment.uriPath + apiUri;
   }
 
   /**
-   *  returns http GET
+   *  Common get request handler
    */
-  public get(apiUri: string, params?: string) {
-    let reqParam = params ? '/' + params : '';
-    return this.http.get(this.apiGetter(apiUri) + reqParam);
+  get<T>(apiUri: string): Observable<T> {
+    const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+    return this.http.get<T>(this.apiGetter(apiUri), {headers:httpHeaders});
   }
 
   /**
-   *  returns http POST 
+   *  Common post request handler
    */
-  public post(apiUri: string, postData: any) {
-    return this.http.post(this.apiGetter(apiUri), postData);
+  post<N, T>(apiUri: string, body: N): Observable<T> {
+    const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+    return this.http.post<T>(this.apiGetter(apiUri), body,{headers:httpHeaders});
   }
 
   /**
-   *  returns http PUT
+   *  Common post request handler
    */
-  public put(apiUri: string, params: string) {
-    return this.http.put(this.apiGetter(apiUri), { params: params });
+  postFormData<T>(apiUri: string, body: FormData): Observable<T> {
+    return this.http.post<T>(this.apiGetter(apiUri), body);
   }
 
   /**
-   *  returns http DELETE
+   *  Common put request handler
    */
-  public delete(apiUri: string, params: any) {
-    return this.http.delete(this.apiGetter(apiUri), { params: params });
+  put<N, T>(apiUri: string, body: N): Observable<T> {
+    const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+    return this.http.put<T>(this.apiGetter(apiUri), body, {headers:httpHeaders});
   }
 
+  /**
+   * Common delete request handler
+   */
+  delete<T>(apiUri: string): Observable<T> {
+    const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+    return this.http.delete<T>(this.apiGetter(apiUri),{headers:httpHeaders});
+  }
 }
