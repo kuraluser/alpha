@@ -119,6 +119,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
+  private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -1195,6 +1196,69 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .build());
     } finally {
       responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+  /**
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void getPortRotationByLoadableStudyId(
+      PortRotationRequest request, StreamObserver<PortRotationReply> responseObserver) {
+    log.info("Inside getPortRotation loadable study micro service");
+    PortRotationReply.Builder portRotationReplyBuilder = PortRotationReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudy =
+          this.loadableStudyRepository.findById(request.getLoadableStudyId());
+
+      if (!loadableStudy.isPresent()) {
+        log.info("INVALID_STUDY_ID - ", request.getLoadableStudyId());
+        portRotationReplyBuilder.setResponseStatus(
+            ResponseStatus.newBuilder()
+                .setStatus(FAILED)
+                .setMessage(INVALID_LOADABLE_STUDY_ID)
+                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+      } else {
+
+        List<LoadableStudyPortRotation> loadableStudyPortRotations =
+            this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
+                loadableStudy.get(), cargoOperationRepository.getOne(LOADING_OPERATION_ID), true);
+        if (loadableStudyPortRotations.isEmpty()) {
+          log.info("INVALID_STUDY_ID - ", request.getLoadableStudyId());
+          portRotationReplyBuilder.setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setStatus(FAILED)
+                  .setMessage(INVALID_LOADABLE_STUDY_ID)
+                  .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+        } else {
+          List<LoadableStudyPortRotation> loadingPorts =
+              this.loadableStudyPortRoationRepository
+                  .findByLoadableStudyAndOperationAndIsActiveOrderByPortOrder(
+                      loadableStudy.get(),
+                      cargoOperationRepository.getOne(LOADING_OPERATION_ID),
+                      true);
+          loadingPorts.forEach(
+              loadingPort -> {
+                PortRotationDetail.Builder builder = PortRotationDetail.newBuilder();
+                builder.setPortId(loadingPort.getPortXId());
+                portRotationReplyBuilder.addPorts(builder);
+              });
+
+          portRotationReplyBuilder
+              .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
+              .build();
+        }
+      }
+    } catch (Exception e) {
+      log.error("Error deleting cargo nomination", e);
+      portRotationReplyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR));
+    } finally {
+      responseObserver.onNext(portRotationReplyBuilder.build());
       responseObserver.onCompleted();
     }
   }

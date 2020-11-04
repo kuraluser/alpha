@@ -46,7 +46,8 @@ service LoadableStudyService {
 		
 	rpc SaveDischargingPorts(PortRotationRequest) returns (PortRotationReply){
 	}
-	
+	rpc GetPortRotationByLoadableStudyId (PortRotationRequest) returns (PortRotationReply){
+	}
 	rpc DeleteLoadableStudy(LoadableStudyRequest) returns (LoadableStudyReply){
 	}
 	

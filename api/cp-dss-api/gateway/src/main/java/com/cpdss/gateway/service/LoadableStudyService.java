@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.http.HttpHeaders;
@@ -997,5 +998,46 @@ public class LoadableStudyService {
    */
   public LoadableStudyReply deleteLoadableStudy(LoadableStudyRequest request) {
     return this.loadableStudyServiceBlockingStub.deleteLoadableStudy(request);
+  }
+  /**
+   * @param loadableStudyId
+   * @param first
+   * @return PortRotationResponse
+   */
+  public PortRotationResponse getPortRotation(
+      @Min(value = 1, message = "400") Long loadableStudyId, String correlationId)
+      throws GenericServiceException {
+    log.info("Inside getPortRotation gateway service with correlationId : " + correlationId);
+    PortRotationRequest portRotationRequest =
+        PortRotationRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
+    PortRotationReply portRotationReply = this.getPortRotation(portRotationRequest);
+    if (!SUCCESS.equals(portRotationReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get Port Rotation",
+          portRotationReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(portRotationReply.getResponseStatus().getCode())));
+    }
+    PortRotationResponse response = new PortRotationResponse();
+    response.setPortList(new ArrayList<>());
+    portRotationReply
+        .getPortsList()
+        .forEach(
+            portList -> {
+              PortRotation portRotation = new PortRotation();
+              portRotation.setPortId(portList.getPortId());
+              response.getPortList().add(portRotation);
+            });
+    response.setResponseStatus(
+        new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * @param portRotationRequest
+   * @return PortRotationReply
+   */
+  public PortRotationReply getPortRotation(PortRotationRequest portRotationRequest) {
+    return this.loadableStudyServiceBlockingStub.getPortRotationByLoadableStudyId(
+        portRotationRequest);
   }
 }

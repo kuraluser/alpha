@@ -31,4 +31,15 @@ public interface LoadableStudyPortRoationRepository
    */
   public List<LoadableStudyPortRotation> findByLoadableStudyAndOperationAndIsActive(
       final LoadableStudy loadableStudy, final CargoOperation operation, final boolean isActive);
+
+  /**
+   * Get active port rotation for discharging ports against a loadable study order by port order
+   *
+   * @param loadableStudy
+   * @param operation
+   * @param isActive
+   * @return List<LoadableStudyPortRotation>
+   */
+  public List<LoadableStudyPortRotation> findByLoadableStudyAndOperationAndIsActiveOrderByPortOrder(
+      final LoadableStudy loadableStudy, final CargoOperation operation, final boolean isActive);
 }

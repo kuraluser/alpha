@@ -30,6 +30,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LoadableStudyPortRotation extends EntityDoc {
 
+  /** */
+  private static final long serialVersionUID = 1L;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "loadablestudyxid")
   private LoadableStudy loadableStudy;
@@ -73,6 +76,9 @@ public class LoadableStudyPortRotation extends EntityDoc {
 
   @Column(name = "laycanto")
   private LocalDate layCanTo;
+
+  @Column(name = "portorder")
+  private Long portOrder;
 
   @PrePersist
   void prePersist() {
