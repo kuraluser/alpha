@@ -729,6 +729,54 @@ public final class PortInfo {
      */
     com.google.protobuf.ByteString
         getNameBytes();
+
+    /**
+     * <code>string code = 3;</code>
+     * @return The code.
+     */
+    java.lang.String getCode();
+    /**
+     * <code>string code = 3;</code>
+     * @return The bytes for code.
+     */
+    com.google.protobuf.ByteString
+        getCodeBytes();
+
+    /**
+     * <code>string waterDensity = 4;</code>
+     * @return The waterDensity.
+     */
+    java.lang.String getWaterDensity();
+    /**
+     * <code>string waterDensity = 4;</code>
+     * @return The bytes for waterDensity.
+     */
+    com.google.protobuf.ByteString
+        getWaterDensityBytes();
+
+    /**
+     * <code>string maxDraft = 5;</code>
+     * @return The maxDraft.
+     */
+    java.lang.String getMaxDraft();
+    /**
+     * <code>string maxDraft = 5;</code>
+     * @return The bytes for maxDraft.
+     */
+    com.google.protobuf.ByteString
+        getMaxDraftBytes();
+
+    /**
+     * <code>string maxAirDraft = 6;</code>
+     * @return The maxAirDraft.
+     */
+    java.lang.String getMaxAirDraft();
+    /**
+     * <code>string maxAirDraft = 6;</code>
+     * @return The bytes for maxAirDraft.
+     */
+    com.google.protobuf.ByteString
+        getMaxAirDraftBytes();
   }
   /**
    * Protobuf type {@code PortDetail}
@@ -744,6 +792,10 @@ public final class PortInfo {
     }
     private PortDetail() {
       name_ = "";
+      code_ = "";
+      waterDensity_ = "";
+      maxDraft_ = "";
+      maxAirDraft_ = "";
     }
 
     @java.lang.Override
@@ -785,6 +837,30 @@ public final class PortInfo {
               java.lang.String s = input.readStringRequireUtf8();
 
               name_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              code_ = s;
+              break;
+            }
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              waterDensity_ = s;
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              maxDraft_ = s;
+              break;
+            }
+            case 50: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              maxAirDraft_ = s;
               break;
             }
             default: {
@@ -865,6 +941,150 @@ public final class PortInfo {
       }
     }
 
+    public static final int CODE_FIELD_NUMBER = 3;
+    private volatile java.lang.Object code_;
+    /**
+     * <code>string code = 3;</code>
+     * @return The code.
+     */
+    public java.lang.String getCode() {
+      java.lang.Object ref = code_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        code_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string code = 3;</code>
+     * @return The bytes for code.
+     */
+    public com.google.protobuf.ByteString
+        getCodeBytes() {
+      java.lang.Object ref = code_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        code_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int WATERDENSITY_FIELD_NUMBER = 4;
+    private volatile java.lang.Object waterDensity_;
+    /**
+     * <code>string waterDensity = 4;</code>
+     * @return The waterDensity.
+     */
+    public java.lang.String getWaterDensity() {
+      java.lang.Object ref = waterDensity_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        waterDensity_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string waterDensity = 4;</code>
+     * @return The bytes for waterDensity.
+     */
+    public com.google.protobuf.ByteString
+        getWaterDensityBytes() {
+      java.lang.Object ref = waterDensity_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        waterDensity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MAXDRAFT_FIELD_NUMBER = 5;
+    private volatile java.lang.Object maxDraft_;
+    /**
+     * <code>string maxDraft = 5;</code>
+     * @return The maxDraft.
+     */
+    public java.lang.String getMaxDraft() {
+      java.lang.Object ref = maxDraft_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxDraft_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string maxDraft = 5;</code>
+     * @return The bytes for maxDraft.
+     */
+    public com.google.protobuf.ByteString
+        getMaxDraftBytes() {
+      java.lang.Object ref = maxDraft_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        maxDraft_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MAXAIRDRAFT_FIELD_NUMBER = 6;
+    private volatile java.lang.Object maxAirDraft_;
+    /**
+     * <code>string maxAirDraft = 6;</code>
+     * @return The maxAirDraft.
+     */
+    public java.lang.String getMaxAirDraft() {
+      java.lang.Object ref = maxAirDraft_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxAirDraft_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string maxAirDraft = 6;</code>
+     * @return The bytes for maxAirDraft.
+     */
+    public com.google.protobuf.ByteString
+        getMaxAirDraftBytes() {
+      java.lang.Object ref = maxAirDraft_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        maxAirDraft_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -885,6 +1105,18 @@ public final class PortInfo {
       if (!getNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, name_);
       }
+      if (!getCodeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, code_);
+      }
+      if (!getWaterDensityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, waterDensity_);
+      }
+      if (!getMaxDraftBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, maxDraft_);
+      }
+      if (!getMaxAirDraftBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, maxAirDraft_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -900,6 +1132,18 @@ public final class PortInfo {
       }
       if (!getNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, name_);
+      }
+      if (!getCodeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, code_);
+      }
+      if (!getWaterDensityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, waterDensity_);
+      }
+      if (!getMaxDraftBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, maxDraft_);
+      }
+      if (!getMaxAirDraftBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, maxAirDraft_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -920,6 +1164,14 @@ public final class PortInfo {
           != other.getId()) return false;
       if (!getName()
           .equals(other.getName())) return false;
+      if (!getCode()
+          .equals(other.getCode())) return false;
+      if (!getWaterDensity()
+          .equals(other.getWaterDensity())) return false;
+      if (!getMaxDraft()
+          .equals(other.getMaxDraft())) return false;
+      if (!getMaxAirDraft()
+          .equals(other.getMaxAirDraft())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -936,6 +1188,14 @@ public final class PortInfo {
           getId());
       hash = (37 * hash) + NAME_FIELD_NUMBER;
       hash = (53 * hash) + getName().hashCode();
+      hash = (37 * hash) + CODE_FIELD_NUMBER;
+      hash = (53 * hash) + getCode().hashCode();
+      hash = (37 * hash) + WATERDENSITY_FIELD_NUMBER;
+      hash = (53 * hash) + getWaterDensity().hashCode();
+      hash = (37 * hash) + MAXDRAFT_FIELD_NUMBER;
+      hash = (53 * hash) + getMaxDraft().hashCode();
+      hash = (37 * hash) + MAXAIRDRAFT_FIELD_NUMBER;
+      hash = (53 * hash) + getMaxAirDraft().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1073,6 +1333,14 @@ public final class PortInfo {
 
         name_ = "";
 
+        code_ = "";
+
+        waterDensity_ = "";
+
+        maxDraft_ = "";
+
+        maxAirDraft_ = "";
+
         return this;
       }
 
@@ -1101,6 +1369,10 @@ public final class PortInfo {
         com.cpdss.common.generated.PortInfo.PortDetail result = new com.cpdss.common.generated.PortInfo.PortDetail(this);
         result.id_ = id_;
         result.name_ = name_;
+        result.code_ = code_;
+        result.waterDensity_ = waterDensity_;
+        result.maxDraft_ = maxDraft_;
+        result.maxAirDraft_ = maxAirDraft_;
         onBuilt();
         return result;
       }
@@ -1154,6 +1426,22 @@ public final class PortInfo {
         }
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
+          onChanged();
+        }
+        if (!other.getCode().isEmpty()) {
+          code_ = other.code_;
+          onChanged();
+        }
+        if (!other.getWaterDensity().isEmpty()) {
+          waterDensity_ = other.waterDensity_;
+          onChanged();
+        }
+        if (!other.getMaxDraft().isEmpty()) {
+          maxDraft_ = other.maxDraft_;
+          onChanged();
+        }
+        if (!other.getMaxAirDraft().isEmpty()) {
+          maxAirDraft_ = other.maxAirDraft_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -1287,6 +1575,310 @@ public final class PortInfo {
   checkByteStringIsUtf8(value);
         
         name_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object code_ = "";
+      /**
+       * <code>string code = 3;</code>
+       * @return The code.
+       */
+      public java.lang.String getCode() {
+        java.lang.Object ref = code_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          code_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string code = 3;</code>
+       * @return The bytes for code.
+       */
+      public com.google.protobuf.ByteString
+          getCodeBytes() {
+        java.lang.Object ref = code_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          code_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string code = 3;</code>
+       * @param value The code to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCode(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        code_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string code = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCode() {
+        
+        code_ = getDefaultInstance().getCode();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string code = 3;</code>
+       * @param value The bytes for code to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCodeBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        code_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object waterDensity_ = "";
+      /**
+       * <code>string waterDensity = 4;</code>
+       * @return The waterDensity.
+       */
+      public java.lang.String getWaterDensity() {
+        java.lang.Object ref = waterDensity_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          waterDensity_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string waterDensity = 4;</code>
+       * @return The bytes for waterDensity.
+       */
+      public com.google.protobuf.ByteString
+          getWaterDensityBytes() {
+        java.lang.Object ref = waterDensity_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          waterDensity_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string waterDensity = 4;</code>
+       * @param value The waterDensity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWaterDensity(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        waterDensity_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string waterDensity = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearWaterDensity() {
+        
+        waterDensity_ = getDefaultInstance().getWaterDensity();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string waterDensity = 4;</code>
+       * @param value The bytes for waterDensity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWaterDensityBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        waterDensity_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object maxDraft_ = "";
+      /**
+       * <code>string maxDraft = 5;</code>
+       * @return The maxDraft.
+       */
+      public java.lang.String getMaxDraft() {
+        java.lang.Object ref = maxDraft_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          maxDraft_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string maxDraft = 5;</code>
+       * @return The bytes for maxDraft.
+       */
+      public com.google.protobuf.ByteString
+          getMaxDraftBytes() {
+        java.lang.Object ref = maxDraft_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          maxDraft_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string maxDraft = 5;</code>
+       * @param value The maxDraft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxDraft(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        maxDraft_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxDraft = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxDraft() {
+        
+        maxDraft_ = getDefaultInstance().getMaxDraft();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxDraft = 5;</code>
+       * @param value The bytes for maxDraft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxDraftBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        maxDraft_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object maxAirDraft_ = "";
+      /**
+       * <code>string maxAirDraft = 6;</code>
+       * @return The maxAirDraft.
+       */
+      public java.lang.String getMaxAirDraft() {
+        java.lang.Object ref = maxAirDraft_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          maxAirDraft_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string maxAirDraft = 6;</code>
+       * @return The bytes for maxAirDraft.
+       */
+      public com.google.protobuf.ByteString
+          getMaxAirDraftBytes() {
+        java.lang.Object ref = maxAirDraft_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          maxAirDraft_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string maxAirDraft = 6;</code>
+       * @param value The maxAirDraft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxAirDraft(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        maxAirDraft_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxAirDraft = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxAirDraft() {
+        
+        maxAirDraft_ = getDefaultInstance().getMaxAirDraft();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxAirDraft = 6;</code>
+       * @param value The bytes for maxAirDraft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxAirDraftBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        maxAirDraft_ = value;
         onChanged();
         return this;
       }
@@ -3843,18 +4435,20 @@ public final class PortInfo {
       "\n\017port_info.proto\032\014common.proto\"]\n\013PortR" +
       "equest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId\030\002 " +
       "\001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017loadableStudyId" +
-      "\030\004 \001(\003\"&\n\nPortDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004name" +
-      "\030\002 \001(\t\"P\n\tPortReply\022\'\n\016responseStatus\030\001 " +
-      "\001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003(\0132\013.Po" +
-      "rtDetail\".\n\033GetPortInfoByCargoIdRequest\022" +
-      "\017\n\007cargoId\030\001 \001(\003\"`\n\031GetPortInfoByCargoId" +
-      "Reply\022\'\n\016responseStatus\030\001 \001(\0132\017.Response" +
-      "Status\022\032\n\005ports\030\002 \003(\0132\013.PortDetail2\220\001\n\017P" +
-      "ortInfoService\022)\n\013GetPortInfo\022\014.PortRequ" +
-      "est\032\n.PortReply\"\000\022R\n\024GetPortInfoByCargoI" +
-      "d\022\034.GetPortInfoByCargoIdRequest\032\032.GetPor" +
-      "tInfoByCargoIdReply\"\000B\036\n\032com.cpdss.commo" +
-      "n.generatedP\000b\006proto3"
+      "\030\004 \001(\003\"q\n\nPortDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004name" +
+      "\030\002 \001(\t\022\014\n\004code\030\003 \001(\t\022\024\n\014waterDensity\030\004 \001" +
+      "(\t\022\020\n\010maxDraft\030\005 \001(\t\022\023\n\013maxAirDraft\030\006 \001(" +
+      "\t\"P\n\tPortReply\022\'\n\016responseStatus\030\001 \001(\0132\017" +
+      ".ResponseStatus\022\032\n\005ports\030\002 \003(\0132\013.PortDet" +
+      "ail\".\n\033GetPortInfoByCargoIdRequest\022\017\n\007ca" +
+      "rgoId\030\001 \001(\003\"`\n\031GetPortInfoByCargoIdReply" +
+      "\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatu" +
+      "s\022\032\n\005ports\030\002 \003(\0132\013.PortDetail2\220\001\n\017PortIn" +
+      "foService\022)\n\013GetPortInfo\022\014.PortRequest\032\n" +
+      ".PortReply\"\000\022R\n\024GetPortInfoByCargoId\022\034.G" +
+      "etPortInfoByCargoIdRequest\032\032.GetPortInfo" +
+      "ByCargoIdReply\"\000B\036\n\032com.cpdss.common.gen" +
+      "eratedP\000b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -3872,7 +4466,7 @@ public final class PortInfo {
     internal_static_PortDetail_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_PortDetail_descriptor,
-        new java.lang.String[] { "Id", "Name", });
+        new java.lang.String[] { "Id", "Name", "Code", "WaterDensity", "MaxDraft", "MaxAirDraft", });
     internal_static_PortReply_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_PortReply_fieldAccessorTable = new

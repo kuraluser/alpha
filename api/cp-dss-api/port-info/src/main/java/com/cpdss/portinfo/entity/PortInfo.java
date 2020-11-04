@@ -2,9 +2,11 @@
 package com.cpdss.portinfo.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.math.BigDecimal;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -24,6 +26,15 @@ public class PortInfo extends EntityDoc {
   @Column(name = "name")
   private String name;
 
+  @Column(name = "code")
+  private String code;
+
+  @Column(name = "densityseawater")
+  private BigDecimal densitySeaWater;
+
   @OneToMany(mappedBy = "portInfo")
   private Set<CargoPortMapping> cargoportmappingSet;
+
+  @OneToMany(mappedBy = "portInfo", fetch = FetchType.EAGER)
+  private Set<BerthInfo> berthInfoSet;
 }

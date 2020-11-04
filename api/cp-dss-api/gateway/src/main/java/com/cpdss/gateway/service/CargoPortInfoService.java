@@ -12,6 +12,8 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.Port;
 import com.cpdss.gateway.domain.PortsResponse;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.log4j.Log4j2;
@@ -131,6 +133,10 @@ public class CargoPortInfoService {
                 Port port = new Port();
                 port.setId(portDetail.getId());
                 port.setName(portDetail.getName());
+                port.setCode(portDetail.getCode());
+                port.setWaterDensity(!portDetail.getWaterDensity().isEmpty()? new BigDecimal(portDetail.getWaterDensity()):null);
+                port.setMaxDraft(!portDetail.getMaxDraft().isEmpty()? new BigDecimal(portDetail.getMaxDraft()):null);
+                port.setMaxAirDraft(!portDetail.getMaxAirDraft().isEmpty()? new BigDecimal(portDetail.getMaxAirDraft()):null);
                 portList.add(port);
               });
       portsResponse.setPorts(portList);

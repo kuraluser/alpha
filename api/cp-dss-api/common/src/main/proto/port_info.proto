@@ -24,6 +24,10 @@ message PortRequest {
 message PortDetail {
 	int64 id = 1;
 	string name = 2;
+	string code = 3;
+	string waterDensity = 4;
+	string maxDraft = 5;
+	string maxAirDraft = 6;
 }
 
 message PortReply {
