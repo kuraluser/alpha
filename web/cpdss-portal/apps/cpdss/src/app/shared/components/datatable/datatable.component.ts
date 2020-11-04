@@ -113,20 +113,20 @@ export class DatatableComponent implements OnInit {
         event.data[event.field].value = control.value;
         this.editComplete.emit(event);
       }
-      event.data[event.field].isEditable = control?.invalid;
+      event.data[event.field].isEditMode = control?.invalid;
     }
   }
 
   /**
    * Hadler for table cell edit change event
    *
-   * @param {MouseEvent} event
+   * @param event
    * @param {Object} rowData
    * @param {number} rowIndex
    * @param {IDataTableColumn} col
    * @memberof DatatableComponent
    */
-  onChange(event: MouseEvent, rowData: Object, rowIndex: number, col: IDataTableColumn) {
+  onChange(event, rowData: Object, rowIndex: number, col: IDataTableColumn) {
     rowData[col.field].value = this.field(rowIndex, col.field).value;
     this.editComplete.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
     // this.onEditComplete({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
@@ -171,12 +171,12 @@ export class DatatableComponent implements OnInit {
    */
   onFocus(event, rowData: Object, rowIndex: number, col: IDataTableColumn, colIndex: number) {
     const code = (event.keyCode ? event.keyCode : event.which);
-    if (code === 9 && col.fieldType !== this.fieldType.ACTION) {
+    if (code === 9 && col.fieldType !== this.fieldType.ACTION && (col.editable === undefined || col.editable) && rowData[col.field]?.isEditable) {
       const prevField = this.columns[colIndex - 1].field;
       if (prevField && rowData[prevField]) {
-        rowData[prevField].isEditable = false
+        rowData[prevField].isEditMode = false
       }
-      rowData[col.field].isEditable = true;
+      rowData[col.field].isEditMode = true;
     }
   }
 
@@ -189,8 +189,8 @@ export class DatatableComponent implements OnInit {
   * @param colIndex 
   */
   onClick(event, rowData, rowIndex, col: IDataTableColumn) {
-    if (this.row(rowIndex) && this.editMode && (col.editable === undefined || col.editable) && col.fieldType !== this.fieldType.ACTION) {
-      rowData[col.field].isEditable = true;
+    if (rowData[col.field]?.isEditable && this.row(rowIndex) && this.editMode && (col.editable === undefined || col.editable) && col.fieldType !== this.fieldType.ACTION) {
+      rowData[col.field].isEditMode = true;
     }
     this.columnClick.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
   }

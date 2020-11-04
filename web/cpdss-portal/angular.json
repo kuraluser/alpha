@@ -31,7 +31,8 @@
                 "input": "node_modules/dexie/dist/",
                 "output": "./"
               },
-              "apps/cpdss/src/sw-sync.js"
+              "apps/cpdss/src/sw-sync.js",
+              "apps/cpdss/src/sw-master.js"
             ],
             "styles": [
               {

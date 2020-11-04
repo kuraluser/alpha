@@ -26,6 +26,16 @@ export class ValueObject<T = any> {
         this._isVisible = v;
     }
 
+    // Value Object is in edit mode or not
+    public get isEditMode(): boolean {
+        return this._isEditMode;
+    }
+
+    public set isEditMode(v: boolean) {
+        this._isEditMode = v;
+    }
+
+    // Value Object is in editable or not
     public get isEditable(): boolean {
         return this._isEditable;
     }
@@ -42,7 +52,7 @@ export class ValueObject<T = any> {
         return new ValueObject<T>(this.value);
     }
 
-    constructor(prop: T, private _isVisible = true, private _isEditable = true, private _isModified = false) {
+    constructor(prop: T, private _isVisible = true, private _isEditMode = true, private _isModified = false, private _isEditable = true) {
         this._value = prop;
     }
 

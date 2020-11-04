@@ -192,8 +192,8 @@ export class CargoNominationComponent implements OnInit {
         if (res) {
           this.cargoNominations[event.index].isAdd = false;
           for (const key in this.cargoNominations[event.index]) {
-            if (this.cargoNominations[event.index].hasOwnProperty(key) && this.cargoNominations[event.index][key].hasOwnProperty('_isEditable')) {
-              this.cargoNominations[event.index][key].isEditable = false;
+            if (this.cargoNominations[event.index].hasOwnProperty(key) && this.cargoNominations[event.index][key].hasOwnProperty('_isEditMode')) {
+              this.cargoNominations[event.index][key].isEditMode = false;
             }
           }
           this.cargoNominations = [...this.cargoNominations];
@@ -203,7 +203,7 @@ export class CargoNominationComponent implements OnInit {
         const fromGroup = this.row(event.index);
         const invalidFormControls = this.findInvalidControlsRecursive(fromGroup);
         invalidFormControls.forEach((key) => {
-          this.cargoNominations[event.index][key].isEditable = true;
+          this.cargoNominations[event.index][key].isEditMode = true;
         });
         fromGroup.markAllAsTouched();
         this.cargoNominationForm.updateValueAndValidity();
@@ -224,8 +224,8 @@ export class CargoNominationComponent implements OnInit {
       if (res) {
         this.cargoNominations[event.index].isAdd = false;
         for (const key in this.cargoNominations[event.index]) {
-          if (this.cargoNominations[event.index].hasOwnProperty(key) && this.cargoNominations[event.index][key].hasOwnProperty('_isEditable')) {
-            this.cargoNominations[event.index][key].isEditable = false;
+          if (this.cargoNominations[event.index].hasOwnProperty(key) && this.cargoNominations[event.index][key].hasOwnProperty('_isEditMode')) {
+            this.cargoNominations[event.index][key].isEditMode = false;
           }
         }
         this.cargoNominations = [...this.cargoNominations];
@@ -372,7 +372,7 @@ export class CargoNominationComponent implements OnInit {
    */
   private updateLoadingPortData(loadingPopupData: ILoadingPopupData) {
     this.cargoNominations[loadingPopupData.rowIndex].loadingPorts.value = loadingPopupData.rowData.loadingPorts.value;
-    this.cargoNominations[loadingPopupData.rowIndex].loadingPorts.isEditable = false;
+    this.cargoNominations[loadingPopupData.rowIndex].loadingPorts.isEditMode = false;
     this.cargoNominations = [...this.cargoNominations];
     this.updateField(loadingPopupData.rowIndex, 'loadingPorts', loadingPopupData.rowData.loadingPorts.value);
     this.updateField(loadingPopupData.rowIndex, 'quantity', loadingPopupData.rowData.quantity.value);
