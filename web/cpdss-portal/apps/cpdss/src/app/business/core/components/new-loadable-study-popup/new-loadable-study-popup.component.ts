@@ -116,20 +116,21 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       if (!this.newLoadableStudyNameExist) {
         this.newLoadableStudyPopupModel = {
           id: 0,
-          createdFromId: this.newLoadableStudyFormGroup.controls.duplicateExisting.value,
+          createdFromId: this.newLoadableStudyFormGroup.controls.duplicateExisting.value?.id,
           name: this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value,
           detail: this.newLoadableStudyFormGroup.controls.enquiryDetails.value,
           attachMail: this.uploadedFiles,
           charterer: this.newLoadableStudyFormGroup.controls.charterer.value,
           subCharterer: this.newLoadableStudyFormGroup.controls.subCharterer.value,
-          loadLineXId: this.newLoadableStudyFormGroup.controls.loadLine.value.id,
-          draftMark: this.newLoadableStudyFormGroup.controls.draftMark.value.id,
+          loadLineXId: this.newLoadableStudyFormGroup.controls.loadLine.value?.id,
+          draftMark: this.newLoadableStudyFormGroup.controls.draftMark.value?.id,
           draftRestriction: this.newLoadableStudyFormGroup.controls.draftRestriction.value,
           maxAirTempExpected: this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value,
           maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value
         }
         const result = await this.loadableStudyListApiService.setLodableStudy(this.vesselInfoList[0].id, this.voyage.id, this.newLoadableStudyPopupModel).toPromise();
         if (result.responseStatus.status === "200") {
+          this.closeDialog();
           this.router.navigate(['business/cargo-planning/loadable-study-details/' + this.vesselInfoList[0].id + '/' + this.voyage.id + '/' + result.loadableStudyId]);
         }
       }
@@ -172,6 +173,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
 
   // for closing active modal popup
   closeDialog() {
+    this.newLoadableStudyFormGroup.reset();
     this.displayPopup.emit(false);
   }
 

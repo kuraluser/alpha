@@ -47,7 +47,16 @@ export class LoadableStudyListApiService {
     return this.commonApiService.postFormData<ILoadableStudyResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudy.id}`, formData);
   }
 
-  deleteLodableStudy(vesselId: number, voyageId: number, loadableStudy: INewLoadableStudy): Observable<any> {
-    return this.commonApiService.delete('')
+  /**
+   *
+   *
+   * @param {number} vesselId
+   * @param {number} voyageId
+   * @param {number} loadableStudy
+   * @returns {Observable<any>}
+   * @memberof LoadableStudyListApiService
+   */
+  deleteLodableStudy(vesselId: number, voyageId: number, loadableStudyId: number): Observable<any> {
+    return this.commonApiService.delete(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}`)
   }
 }  
