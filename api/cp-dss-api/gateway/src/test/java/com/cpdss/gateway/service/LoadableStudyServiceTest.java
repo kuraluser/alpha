@@ -106,7 +106,7 @@ class LoadableStudyServiceTest {
         .thenCallRealMethod();
     Builder replyBuilder =
         LoadableStudyReply.newBuilder()
-            .setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
+            .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     replyBuilder.addLoadableStudies(
         LoadableStudyDetail.newBuilder()
             .setId(1L)
@@ -153,7 +153,7 @@ class LoadableStudyServiceTest {
     Builder replyBuilder =
         LoadableStudyReply.newBuilder()
             .setResponseStatus(
-                StatusReply.newBuilder()
+                ResponseStatus.newBuilder()
                     .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
                     .setMessage("Failure")
                     .setStatus(FAILED)
@@ -188,7 +188,7 @@ class LoadableStudyServiceTest {
         LoadableStudyReply.newBuilder()
             .setId(1L)
             .setResponseStatus(
-                StatusReply.newBuilder().setMessage("Success").setStatus(SUCCESS).build());
+                ResponseStatus.newBuilder().setMessage("Success").setStatus(SUCCESS).build());
     Mockito.when(
             this.loadableStudyService.saveLoadableStudy(
                 ArgumentMatchers.any(LoadableStudyDetail.class)))
@@ -223,7 +223,7 @@ class LoadableStudyServiceTest {
     Builder replyBuilder =
         LoadableStudyReply.newBuilder()
             .setResponseStatus(
-                StatusReply.newBuilder()
+                ResponseStatus.newBuilder()
                     .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
                     .setMessage("Failure")
                     .setStatus(FAILED)
@@ -890,5 +890,46 @@ class LoadableStudyServiceTest {
     request.setPortIds(ids);
     request.setLoadableStudyId(1L);
     return request;
+  }
+
+  @Test
+  void testDeleteLoadableStudy() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.deleteLoadableStudy(anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.deleteLoadableStudy(any(LoadableStudyRequest.class)))
+        .thenReturn(
+            LoadableStudyReply.newBuilder()
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    LoadableStudyResponse response =
+        this.loadableStudyService.deleteLoadableStudy(1L, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "Invalid response status"));
+  }
+
+  @Test
+  void testDeleteLoadableStudyGrpcFailure() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.deleteLoadableStudy(anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.deleteLoadableStudy(any(LoadableStudyRequest.class)))
+        .thenReturn(
+            LoadableStudyReply.newBuilder()
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () -> this.loadableStudyService.deleteLoadableStudy(1L, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 }

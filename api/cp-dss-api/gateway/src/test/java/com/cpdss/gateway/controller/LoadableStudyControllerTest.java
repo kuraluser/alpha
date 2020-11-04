@@ -110,6 +110,13 @@ class LoadableStudyControllerTest {
   private static final String DISCHARGING_PORTS_SAVE_SHIP_API_URL =
       SHIP_API_URL_PREFIX + DISCHARGING_PORTS_SAVE_API_URL;
 
+  private static final String DELETE_LOADABLE_STUDY_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}";
+  private static final String DELETE_LOADABLE_STUDY_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + DELETE_LOADABLE_STUDY_API_URL;
+  private static final String DELETE_LOADABLE_STUDY_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + DELETE_LOADABLE_STUDY_API_URL;
+
   /**
    * Positive test case. Test method for positive response scenario
    *
@@ -494,5 +501,42 @@ class LoadableStudyControllerTest {
     request.setPortIds(ids);
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(request);
+  }
+
+  @ValueSource(strings = {DELETE_LOADABLE_STUDY_CLOUD_API_URL, DELETE_LOADABLE_STUDY_SHIP_API_URL})
+  @ParameterizedTest
+  void testDeleteLoadableStudy(String url) throws Exception {
+    when(this.loadableStudyService.deleteLoadableStudy(anyLong(), anyString()))
+        .thenReturn(new LoadableStudyResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.delete(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testDeleteLoadableStudyException(Class<? extends Exception> exceptionClass)
+      throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.loadableStudyService.deleteLoadableStudy(anyLong(), anyString())).thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.delete(
+                    DELETE_LOADABLE_STUDY_CLOUD_API_URL, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
   }
 }

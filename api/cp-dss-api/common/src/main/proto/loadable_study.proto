@@ -42,8 +42,12 @@ service LoadableStudyService {
 	}
 	
 	rpc DeleteCargoNomination (CargoNominationRequest) returns (CargoNominationReply){
-	}	
+	}
+		
 	rpc SaveDischargingPorts(PortRotationRequest) returns (PortRotationReply){
+	}
+	
+	rpc DeleteLoadableStudy(LoadableStudyRequest) returns (LoadableStudyReply){
 	}
 	
 }
@@ -113,6 +117,7 @@ message LoadableStudyRequest{
 	int64 companyId = 1;
 	int64 vesselId = 2;
 	int64 voyageId = 3;
+	int64 loadableStudyId = 4;
 }
 
 message LoadableStudyAttachment{
@@ -142,7 +147,7 @@ message LoadableStudyDetail{
 }
 
 message LoadableStudyReply{
-	StatusReply responseStatus = 1;
+	ResponseStatus responseStatus = 1;
 	repeated  LoadableStudyDetail loadableStudies = 2;
 	int64 id = 3;
 }

@@ -57,6 +57,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -103,7 +104,6 @@ public class LoadableStudyServiceTest {
   private static final String FAILED = "FAILED";
   private static final String LOADABLE_STUDY_NAME = "LS";
   private static final String LOADABLE_STUDY_DETAILS = "details";
-  private static final String LOADABLE_STUDY_STATUS = "pending";
 
   private static final String CHARTERER = "charterer";
   private static final String SUB_CHARTERER = "sub-chartere";
@@ -119,6 +119,7 @@ public class LoadableStudyServiceTest {
   private static final String DATE_TEST_VALUE = "2020-10-10";
   private static final String DATE_TIME_TEST_VALUE = "2020-10-10 12:20";
   private static final Long DISCHARGING_OPERATION_ID = 2L;
+  private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
 
   @BeforeAll
   public static void beforeAll() {
@@ -622,9 +623,9 @@ public class LoadableStudyServiceTest {
               operation.setId(DISCHARGING_OPERATION_ID);
               port.setOperation(operation);
               port.setPortXId(1L);
-              Set<LoadableStudyPortRotation> portSet = new HashSet<>();
-              portSet.add(port);
-              entity.setPortRotations(portSet);
+              Set<LoadableStudyPortRotation> set = new HashSet<>();
+              set.add(port);
+              entity.setPortRotations(set);
               entityList.add(entity);
             });
     return entityList;
@@ -966,7 +967,7 @@ public class LoadableStudyServiceTest {
   private PortRotationRequest createDischargingPortsSaveRequest() {
     return PortRotationRequest.newBuilder()
         .setLoadableStudyId(1L)
-        .addAllDischargingPortIds(new ArrayList<Long>(java.util.Arrays.asList(1L, 2L)))
+        .addAllDischargingPortIds(Arrays.asList(new Long(1L), new Long(2L)))
         .build();
   }
 
@@ -997,5 +998,60 @@ public class LoadableStudyServiceTest {
     builder.setSeaWaterDensity(NUMERICAL_TEST_VALUE);
     builder.setTimeOfStay(NUMERICAL_TEST_VALUE);
     return builder;
+  }
+
+  @Test
+  void testDeleteLoadableStudy() {
+    LoadableStudy entity = new LoadableStudy();
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+    when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    LoadableStudyRequest request = LoadableStudyRequest.newBuilder().setLoadableStudyId(1L).build();
+    this.loadableStudyService.deleteLoadableStudy(request, responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testDeleteLoadableStudyInvalidLoadableStudy() {
+    LoadableStudy entity = new LoadableStudy();
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.empty());
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    LoadableStudyRequest request = LoadableStudyRequest.newBuilder().setLoadableStudyId(1L).build();
+    this.loadableStudyService.deleteLoadableStudy(request, responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testDeleteLoadableStudyInvalidStatus() {
+    LoadableStudy entity = new LoadableStudy();
+    LoadableStudyStatus loadableStudyStatus = new LoadableStudyStatus();
+    loadableStudyStatus.setId(LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
+    entity.setLoadableStudyStatus(loadableStudyStatus);
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    LoadableStudyRequest request = LoadableStudyRequest.newBuilder().setLoadableStudyId(1L).build();
+    this.loadableStudyService.deleteLoadableStudy(request, responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testDeleteLoadableStudyRuntimeException() {
+    when(this.loadableStudyRepository.findById(anyLong())).thenThrow(RuntimeException.class);
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    LoadableStudyRequest request = LoadableStudyRequest.newBuilder().setLoadableStudyId(1L).build();
+    this.loadableStudyService.deleteLoadableStudy(request, responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
   }
 }

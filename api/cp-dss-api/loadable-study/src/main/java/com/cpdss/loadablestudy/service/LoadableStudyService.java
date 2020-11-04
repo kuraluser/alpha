@@ -118,6 +118,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
+  private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -290,7 +291,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<LoadableStudy> loadableStudyEntityList =
           this.loadableStudyRepository.findByVesselXIdAndVoyageAndIsActive(
               request.getVesselId(), voyageOpt.get(), true);
-      replyBuilder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT);
       for (LoadableStudy entity : loadableStudyEntityList) {
         com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail.Builder builder =
@@ -335,7 +336,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       replyBuilder =
           LoadableStudyReply.newBuilder()
               .setResponseStatus(
-                  StatusReply.newBuilder()
+                  ResponseStatus.newBuilder()
                       .setCode(e.getCode())
                       .setMessage(e.getMessage())
                       .setStatus(FAILED)
@@ -345,7 +346,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       replyBuilder =
           LoadableStudyReply.newBuilder()
               .setResponseStatus(
-                  StatusReply.newBuilder()
+                  ResponseStatus.newBuilder()
                       .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
                       .setMessage("Error fetching loadable studies")
                       .setStatus(FAILED)
@@ -414,12 +415,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.loadableStudyStatusRepository.getOne(LOADABLE_STUDY_INITIAL_STATUS_ID));
       entity = this.loadableStudyRepository.save(entity);
       replyBuilder
-          .setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build())
+          .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
           .setId(entity.getId());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable study", e);
       replyBuilder.setResponseStatus(
-          StatusReply.newBuilder()
+          ResponseStatus.newBuilder()
               .setCode(e.getCode())
               .setMessage(e.getMessage())
               .setStatus(FAILED)
@@ -429,7 +430,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       e.printStackTrace();
       log.error("Error saving loadable study", e);
       replyBuilder.setResponseStatus(
-          StatusReply.newBuilder()
+          ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .setMessage("Error saving loadable study")
               .setStatus(FAILED)
@@ -1032,8 +1033,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<LoadableStudyPortRotation> dischargingPorts =
           this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
               loadableStudyOpt.get(), discharging, true);
-      List<Long> portIds = new ArrayList<>();
-      portIds.addAll(request.getDischargingPortIdsList());
+      List<Long> portIds = new ArrayList<>(request.getDischargingPortIdsList());
       for (LoadableStudyPortRotation portRoation : dischargingPorts) {
         if (!request.getDischargingPortIdsList().contains(portRoation.getPortXId())) {
           portRoation.setActive(false);
@@ -1147,6 +1147,54 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       cargoNominationReplyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
     } finally {
       responseObserver.onNext(cargoNominationReplyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void deleteLoadableStudy(
+      LoadableStudyRequest request, StreamObserver<LoadableStudyReply> responseObserver) {
+    LoadableStudyReply.Builder replyBuilder = LoadableStudyReply.newBuilder();
+    try {
+      Optional<LoadableStudy> entityOpt =
+          this.loadableStudyRepository.findById(request.getLoadableStudyId());
+      if (!entityOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable study does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      LoadableStudy entity = entityOpt.get();
+      if (null != entity.getLoadableStudyStatus()
+          && LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID.equals(
+              entity.getLoadableStudyStatus().getId())) {
+        throw new GenericServiceException(
+            "Loadable study with status plan generated cannot be deleted",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      entity.setActive(false);
+      this.loadableStudyRepository.save(entity);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving loadable study - port data", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Exception when saving loadable study - port data", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when saving loadable study - port data")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
   }

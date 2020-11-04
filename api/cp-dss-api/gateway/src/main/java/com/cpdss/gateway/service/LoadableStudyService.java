@@ -81,13 +81,9 @@ public class LoadableStudyService {
   private PortInfoServiceBlockingStub portInfoServiceBlockingStub;
 
   private static final String SUCCESS = "SUCCESS";
-  private static final String VOYAGEEXISTS = "VOYAGEEXISTS";
-  private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
-
   private static final int LOADABLE_STUDY_ATTACHEMENT_MAX_SIZE = 1 * 1024 * 1024;
   private static final List<String> ATTACHMENT_ALLOWED_EXTENSIONS =
       Arrays.asList("docx", "pdf", "txt", "jpg", "png", "msg", "eml");
-
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGIN_OPERATION_ID = 2L;
 
@@ -965,5 +961,41 @@ public class LoadableStudyService {
    */
   public PortRotationReply saveDischargingPorts(PortRotationRequest grpcRequest) {
     return this.loadableStudyServiceBlockingStub.saveDischargingPorts(grpcRequest);
+  }
+
+  /**
+   * Delete loadable study by id
+   *
+   * @param loadableStudyId - The primary key for loadable study
+   * @param correlationId
+   * @return
+   * @throws NumberFormatException
+   * @throws GenericServiceException
+   */
+  public LoadableStudyResponse deleteLoadableStudy(
+      final Long loadableStudyId, final String correlationId) throws GenericServiceException {
+    LoadableStudyRequest request =
+        LoadableStudyRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
+    LoadableStudyReply grpcReply = this.deleteLoadableStudy(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to delete loadable study",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    LoadableStudyResponse response = new LoadableStudyResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatusCode.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * Call grpc service
+   *
+   * @param request
+   * @return
+   */
+  public LoadableStudyReply deleteLoadableStudy(LoadableStudyRequest request) {
+    return this.loadableStudyServiceBlockingStub.deleteLoadableStudy(request);
   }
 }
