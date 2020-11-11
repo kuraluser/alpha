@@ -35,6 +35,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   }
 
   dischargingPorts: IPort[] = [];//TODO to be populated form loadable study details
+  dischargingPortsNames: string;//TODO to be populated form loadable study details
   totalQuantity$: Observable<number>;
   ports: IPort[];
   cargoNominationComplete$: Observable<boolean>;
@@ -45,6 +46,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   voyages: Voyage[];
   loadableStudies: LoadableStudy[];
   _selectedLoadableStudy: LoadableStudy;
+  openSidePane = true;
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -60,7 +62,6 @@ export class LoadableStudyDetailsComponent implements OnInit {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));
-      this.getVoyages(this.vesselId, this.voyageId);
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
     });
   }
@@ -74,8 +75,9 @@ export class LoadableStudyDetailsComponent implements OnInit {
    */
   async getVoyages(vesselId: number, voyageId: number) {
     const result = await this.voyageService.getVoyagesByVesselId(vesselId).toPromise();
-    this.voyages = result ?? [];
-    this.selectedVoyage = this.voyages.find(voyage => voyage.id === voyageId);
+    const voyages = result ?? [];
+    this.selectedVoyage = voyages.find(voyage => voyage.id === voyageId);
+    return voyages;
   }
 
   /**
@@ -87,11 +89,13 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @memberof LoadableStudyDetailsComponent
    */
   async getLoadableStudies(vesselId: number, voyageId: number, loadableStudyId: number) {
+    this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
     this.ports = await this.getPorts();
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
     this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
+    this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).toString();
     this.loadableStudyId = this.selectedLoadableStudy?.id;
     if (!loadableStudyId) {
       this.router.navigate([`business/cargo-planning/loadable-study-details/${vesselId}/${voyageId}/${this.loadableStudyId}`]);

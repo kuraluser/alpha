@@ -27,6 +27,7 @@ export interface IDataTableColumn {
     fieldOptionLabel?: string;
     errorMessages?: IValidationErrorMessages;
     actions?: DATATABLE_ACTION[];
+    fieldHeaderClass?: string;
     fieldClass?: string;
 }
 

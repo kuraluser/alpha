@@ -149,6 +149,9 @@ export class CargoNominationComponent implements OnInit {
       if (event.data?.cargo?.value) {
         const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
         event.data.cargo.value.ports = result?.ports;
+        this.cargoNominations[event.index]['cargo'].value = event?.data?.cargo?.value;
+        this.updateField(event.index, 'cargo',  event?.data?.cargo?.value);
+        this.cargoNominations = [...this.cargoNominations];
       }
       this.loadingPopupData = <ILoadingPopupData>{
         originalEvent: event.originalEvent,
@@ -179,9 +182,11 @@ export class CargoNominationComponent implements OnInit {
       this.updateField(event.index, 'abbreviation', event.data.cargo.value.abbreviation);
       this.updateField(event.index, 'api', event.data.cargo.value.api);
       this.updateField(event.index, 'loadingPorts', null);
-      this.updateField(event.index, 'quantity', 0);
+      this.updateField(event.index, 'quantity', null);
       const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
       event.data.cargo.value.ports = result?.ports;
+      this.cargoNominations[event.index]['cargo'].value = event?.data?.cargo?.value;
+      this.updateField(event.index, 'cargo',  event?.data?.cargo?.value);
     } else if (event?.data?.isDelete) {
       this.cargoNominations = [...this.cargoNominations];
     }
@@ -287,11 +292,12 @@ export class CargoNominationComponent implements OnInit {
    * @memberof CargoNominationComponent
    */
   private async initCargoNominationArray(cargoNominations: ICargoNomination[]) {
-    let _cargoNominations = cargoNominations?.map((item) => {
+    const _cargoNominations = cargoNominations?.map((item) => {
       const cargoData = this.loadableStudyDetailsTransformationService.getCargoNominationAsValueObject(item, false, this.listData);
       return cargoData;
     });
-    _cargoNominations = await this.getCargoPortMapping(_cargoNominations);
+    //TODO: need to remove this. Instead of calling api for each cargo for cargo specific ports must be coming from cargo nomination api
+    // _cargoNominations = await this.getCargoPortMapping(_cargoNominations);
     const cargoNominationArray = _cargoNominations.map(cargoNomination => this.initCargoNominationFormGroup(cargoNomination));
     this.cargoNominationForm = this.fb.group({
       dataTable: this.fb.array([...cargoNominationArray])
@@ -354,7 +360,7 @@ export class CargoNominationComponent implements OnInit {
 
     navigator.serviceWorker.addEventListener('message', async event => {
       if (event.data.type === 'cargo_nomination_sync_finished') {
-        const index = this.cargoNominations.findIndex((item) => item.storeKey === event.data.storeKey);
+        const index = this.cargoNominations?.findIndex((item) => item.storeKey === event.data.storeKey);
         if (index !== -1) {
           this.cargoNominations[index].id = event.data.cargoNominationId;
           this.cargoNominations = [...this.cargoNominations];

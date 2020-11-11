@@ -10,5 +10,5 @@ export const cargoNominationLoadingPortValidator: ValidatorFn = (control: FormCo
   }
   const cargo = control.parent.value?.cargo;
 
-  return !cargo || !cargo?.ports ? { loadinPortCargoNotSelected: true } : null;
+  return !cargo && !cargo?.ports ? { loadinPortCargoNotSelected: true } : null;
 };

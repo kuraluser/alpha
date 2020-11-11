@@ -73,6 +73,10 @@ export class LoadableStudyDetailsTransformationService {
       const portObj = listData.ports.find(port => port.id === lport.id);
       return { ...lport, name: portObj.name };
     });
+    cargoNomination.quantity = 0;
+    cargoNomination?.loadingPorts?.map(port => {
+      cargoNomination.quantity += port.quantity;
+    });
     _cargoNomination.id = cargoNomination.id;
     _cargoNomination.priority = new ValueObject<number>(cargoNomination.priority, true, isNewValue, false);
     _cargoNomination.cargo = new ValueObject<ICargo>(cargoObj, true, isNewValue, false);
@@ -126,7 +130,7 @@ export class LoadableStudyDetailsTransformationService {
         header: 'SL',
         fieldType: DATATABLE_FIELD_TYPE.SLNO,
         sortable: true,
-        fieldClass: 'column-sl'
+        fieldHeaderClass: 'column-sl'
       },
       {
         field: 'priority',
@@ -147,7 +151,8 @@ export class LoadableStudyDetailsTransformationService {
         field: 'color',
         header: 'COLOR',
         fieldType: DATATABLE_FIELD_TYPE.COLORPICKER,
-        fieldClass: 'column-color',
+        fieldHeaderClass: 'column-color',
+        fieldClass: 'color',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'duplicateColor': 'CARGO_NOMINATION_COLOR_ALREADY_USED_ERROR'
@@ -260,6 +265,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldValueIcon: 'icon-api-temp',
         filterField: 'api.value',
         fieldPlaceholder: 'ENTER_API_EST',
+        fieldClass: 'api',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'min': 'CARGO_NOMINATION_API_MIN_ERROR'
@@ -276,6 +282,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldValueIcon: 'icon-api-temp',
         filterField: 'temperature.value',
         fieldPlaceholder: 'ENTER_TEMP_EST',
+        fieldClass: 'temperature',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR'
         }
@@ -299,7 +306,7 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'actions',
         header: '',
-        fieldClass: 'column-actions',
+        fieldHeaderClass: 'column-actions',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
         actions: [DATATABLE_ACTION.SAVE, DATATABLE_ACTION.DELETE, DATATABLE_ACTION.DUPLICATE]
       }

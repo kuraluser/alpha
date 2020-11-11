@@ -128,8 +128,9 @@ export class DatatableComponent implements OnInit {
    */
   onChange(event, rowData: Object, rowIndex: number, col: IDataTableColumn) {
     rowData[col.field].value = this.field(rowIndex, col.field).value;
-    this.editComplete.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
-    // this.onEditComplete({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
+    if(!event?.originalEvent?.target?.className?.includes('p-colorpicker')) {
+      this.editComplete.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
+    }
   }
 
   /**
@@ -347,7 +348,7 @@ export class DatatableComponent implements OnInit {
           _option = {
             id: DATATABLE_ACTION.SAVE,
             label: label,
-            icon: null,
+            icon: 'save-icon',
             command: () => {
               this.onRowSave();
             }
@@ -358,7 +359,7 @@ export class DatatableComponent implements OnInit {
           _option = {
             id: DATATABLE_ACTION.DUPLICATE,
             label: label,
-            icon: null,
+            icon: 'duplicate-icon',
             command: () => {
               this.onDuplicate();
             }
@@ -369,7 +370,7 @@ export class DatatableComponent implements OnInit {
           _option = {
             id: DATATABLE_ACTION.DELETE,
             label: label,
-            icon: null,
+            icon: 'delete-icon',
             command: () => {
               this.onDelete();
             }
@@ -380,7 +381,7 @@ export class DatatableComponent implements OnInit {
           _option = {
             id: DATATABLE_ACTION.VIEW,
             label: label,
-            icon: null,
+            icon: 'view-icon',
             command: () => {
               this.onView();
             }
