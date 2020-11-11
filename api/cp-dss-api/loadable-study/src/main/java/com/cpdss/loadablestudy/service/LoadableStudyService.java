@@ -428,7 +428,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .build());
       this.deleteFiles(entity);
     } catch (Exception e) {
-      e.printStackTrace();
       log.error("Error saving loadable study", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
@@ -661,7 +660,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setStatus(FAILED)
               .build());
     } catch (Exception e) {
-      e.printStackTrace();
       log.error("Exception when fetching port rotation data", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
@@ -747,7 +745,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       log.error("GenericServiceException when fetching loadable study - port data", e);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
     } catch (Exception e) {
-      e.printStackTrace();
       log.error("Exception when fetching loadable study - port data", e);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
     } finally {
@@ -1002,12 +999,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setStatus(FAILED)
               .build());
     } catch (Exception e) {
-      e.printStackTrace();
-      log.error("Exception when saving loadable study - port data", e);
+      log.error("Exception when saving loadable study port data", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .setMessage("Exception when saving loadable study - port data")
+              .setMessage("Exception when saving port data")
               .setStatus(FAILED)
               .build());
     } finally {
@@ -1055,7 +1051,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       this.loadableStudyPortRoationRepository.saveAll(dischargingPorts);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
-      log.error("GenericServiceException when saving loadable study - port data", e);
+      log.error("GenericServiceException when saving discharging ports", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(e.getCode())
@@ -1063,12 +1059,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setStatus(FAILED)
               .build());
     } catch (Exception e) {
-      e.printStackTrace();
-      log.error("Exception when saving loadable study - port data", e);
+      log.error("Exception when saving discharging ports data", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .setMessage("Exception when saving loadable study - port data")
+              .setMessage("Exception when saving discharging ports")
               .setStatus(FAILED)
               .build());
     } finally {
@@ -1186,7 +1181,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setStatus(FAILED)
               .build());
     } catch (Exception e) {
-      e.printStackTrace();
       log.error("Exception when saving loadable study - port data", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
@@ -1259,6 +1253,71 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR));
     } finally {
       responseObserver.onNext(portRotationReplyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /** Delete port rotation by id */
+  @Override
+  public void deletePortRotation(
+      PortRotationRequest request, StreamObserver<PortRotationReply> responseObserver) {
+    PortRotationReply.Builder replyBuilder = PortRotationReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findById(request.getLoadableStudyId());
+      if (!loadableStudyOpt.isPresent() || !loadableStudyOpt.get().isActive()) {
+        throw new GenericServiceException(
+            "Loadable study does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      LoadableStudy loadableStudy = loadableStudyOpt.get();
+      if (null != loadableStudy.getLoadableStudyStatus()
+          && LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID.equals(
+              loadableStudy.getLoadableStudyStatus().getId())) {
+        throw new GenericServiceException(
+            "Cannot delete ports for loadable study with status - plan generated",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      Optional<LoadableStudyPortRotation> entityOpt =
+          this.loadableStudyPortRoationRepository.findById(request.getId());
+      if (!entityOpt.isPresent()) {
+        throw new GenericServiceException(
+            "port rotation does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      LoadableStudyPortRotation entity = entityOpt.get();
+      if (null != entity.getOperation()
+          && (LOADING_OPERATION_ID.equals(entity.getOperation().getId())
+              || DISCHARGING_OPERATION_ID.equals(entity.getOperation().getId()))) {
+        throw new GenericServiceException(
+            "Cannot delete loading/discharging ports",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      entity.setActive(false);
+      this.loadableStudyPortRoationRepository.save(entity);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when deleting port rotation", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      log.error("Exception when deleting port rotation", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when deleting port rotation")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
   }

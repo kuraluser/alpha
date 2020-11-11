@@ -53,19 +53,6 @@ public final class Common {
      * @return The bytes for code.
      */
     com.google.protobuf.ByteString getCodeBytes();
-
-    /**
-     * <code>string errorCode = 4;</code>
-     *
-     * @return The errorCode.
-     */
-    java.lang.String getErrorCode();
-    /**
-     * <code>string errorCode = 4;</code>
-     *
-     * @return The bytes for errorCode.
-     */
-    com.google.protobuf.ByteString getErrorCodeBytes();
   }
   /** Protobuf type {@code ResponseStatus} */
   public static final class ResponseStatus extends com.google.protobuf.GeneratedMessageV3
@@ -82,7 +69,6 @@ public final class Common {
       status_ = "";
       message_ = "";
       code_ = "";
-      errorCode_ = "";
     }
 
     @java.lang.Override
@@ -133,13 +119,6 @@ public final class Common {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 code_ = s;
-                break;
-              }
-            case 34:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                errorCode_ = s;
                 break;
               }
             default:
@@ -279,41 +258,6 @@ public final class Common {
       }
     }
 
-    public static final int ERRORCODE_FIELD_NUMBER = 4;
-    private volatile java.lang.Object errorCode_;
-    /**
-     * <code>string errorCode = 4;</code>
-     *
-     * @return The errorCode.
-     */
-    public java.lang.String getErrorCode() {
-      java.lang.Object ref = errorCode_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        errorCode_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string errorCode = 4;</code>
-     *
-     * @return The bytes for errorCode.
-     */
-    public com.google.protobuf.ByteString getErrorCodeBytes() {
-      java.lang.Object ref = errorCode_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        errorCode_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -337,9 +281,6 @@ public final class Common {
       if (!getCodeBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, code_);
       }
-      if (!getErrorCodeBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, errorCode_);
-      }
       unknownFields.writeTo(output);
     }
 
@@ -357,9 +298,6 @@ public final class Common {
       }
       if (!getCodeBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, code_);
-      }
-      if (!getErrorCodeBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, errorCode_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -380,7 +318,6 @@ public final class Common {
       if (!getStatus().equals(other.getStatus())) return false;
       if (!getMessage().equals(other.getMessage())) return false;
       if (!getCode().equals(other.getCode())) return false;
-      if (!getErrorCode().equals(other.getErrorCode())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -398,8 +335,6 @@ public final class Common {
       hash = (53 * hash) + getMessage().hashCode();
       hash = (37 * hash) + CODE_FIELD_NUMBER;
       hash = (53 * hash) + getCode().hashCode();
-      hash = (37 * hash) + ERRORCODE_FIELD_NUMBER;
-      hash = (53 * hash) + getErrorCode().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -543,8 +478,6 @@ public final class Common {
 
         code_ = "";
 
-        errorCode_ = "";
-
         return this;
       }
 
@@ -574,7 +507,6 @@ public final class Common {
         result.status_ = status_;
         result.message_ = message_;
         result.code_ = code_;
-        result.errorCode_ = errorCode_;
         onBuilt();
         return result;
       }
@@ -637,10 +569,6 @@ public final class Common {
         }
         if (!other.getCode().isEmpty()) {
           code_ = other.code_;
-          onChanged();
-        }
-        if (!other.getErrorCode().isEmpty()) {
-          errorCode_ = other.errorCode_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -901,82 +829,6 @@ public final class Common {
         return this;
       }
 
-      private java.lang.Object errorCode_ = "";
-      /**
-       * <code>string errorCode = 4;</code>
-       *
-       * @return The errorCode.
-       */
-      public java.lang.String getErrorCode() {
-        java.lang.Object ref = errorCode_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          errorCode_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string errorCode = 4;</code>
-       *
-       * @return The bytes for errorCode.
-       */
-      public com.google.protobuf.ByteString getErrorCodeBytes() {
-        java.lang.Object ref = errorCode_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          errorCode_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string errorCode = 4;</code>
-       *
-       * @param value The errorCode to set.
-       * @return This builder for chaining.
-       */
-      public Builder setErrorCode(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        errorCode_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string errorCode = 4;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearErrorCode() {
-
-        errorCode_ = getDefaultInstance().getErrorCode();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string errorCode = 4;</code>
-       *
-       * @param value The bytes for errorCode to set.
-       * @return This builder for chaining.
-       */
-      public Builder setErrorCodeBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        errorCode_ = value;
-        onChanged();
-        return this;
-      }
-
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1042,10 +894,9 @@ public final class Common {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\014common.proto\"R\n\016ResponseStatus\022\016\n\006stat"
-          + "us\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\022\014\n\004code\030\003 \001(\t\022"
-          + "\021\n\terrorCode\030\004 \001(\tB\036\n\032com.cpdss.common.g"
-          + "eneratedP\000b\006proto3"
+      "\n\014common.proto\"?\n\016ResponseStatus\022\016\n\006stat"
+          + "us\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\022\014\n\004code\030\003 \001(\tB"
+          + "\036\n\032com.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -1055,7 +906,7 @@ public final class Common {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ResponseStatus_descriptor,
             new java.lang.String[] {
-              "Status", "Message", "Code", "ErrorCode",
+              "Status", "Message", "Code",
             });
   }
 

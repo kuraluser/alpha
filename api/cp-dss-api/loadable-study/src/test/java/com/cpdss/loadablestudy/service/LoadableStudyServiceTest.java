@@ -81,7 +81,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
  * <p>Class for writing test cases for loadable study
  */
 @SpringJUnitConfig(classes = {LoadableStudyService.class})
-public class LoadableStudyServiceTest {
+class LoadableStudyServiceTest {
 
   @Autowired private LoadableStudyService loadableStudyService;
   @MockBean private VoyageRepository voyageRepository;
@@ -118,6 +118,7 @@ public class LoadableStudyServiceTest {
   private static final Long ID_TEST_VALUE = 1L;
   private static final String DATE_TEST_VALUE = "2020-10-10";
   private static final String DATE_TIME_TEST_VALUE = "2020-10-10 12:20";
+  private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
 
@@ -1050,6 +1051,121 @@ public class LoadableStudyServiceTest {
     LoadableStudyRequest request = LoadableStudyRequest.newBuilder().setLoadableStudyId(1L).build();
     this.loadableStudyService.deleteLoadableStudy(request, responseObserver);
     List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testDeletePortRotation() {
+    LoadableStudyPortRotation entity = new LoadableStudyPortRotation();
+    LoadableStudy study = new LoadableStudy();
+    study.setActive(true);
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(study));
+    when(this.loadableStudyPortRoationRepository.findById(anyLong()))
+        .thenReturn(Optional.of(entity));
+    when(this.loadableStudyPortRoationRepository.save(any(LoadableStudyPortRotation.class)))
+        .thenReturn(entity);
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    PortRotationRequest request = PortRotationRequest.newBuilder().setId(1L).build();
+    this.loadableStudyService.deletePortRotation(request, responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {1, 2, 3})
+  void testDeletePortRotationInvalidLoadableStudy(int param) {
+    if (1 == param) {
+      when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.empty());
+    } else if (2 == param) {
+      when(this.loadableStudyRepository.findById(anyLong()))
+          .thenReturn(Optional.of(new LoadableStudy()));
+    } else {
+      LoadableStudy study = new LoadableStudy();
+      study.setActive(true);
+      LoadableStudyStatus status = new LoadableStudyStatus();
+      status.setId(LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
+      study.setLoadableStudyStatus(status);
+      when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(study));
+    }
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    PortRotationRequest request = PortRotationRequest.newBuilder().setId(1L).build();
+    this.loadableStudyService.deletePortRotation(request, responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @ValueSource(longs = {1L, 2L})
+  @ParameterizedTest
+  void testDeletePortRotationInvalidOperation(Long opId) {
+    LoadableStudyPortRotation entity = new LoadableStudyPortRotation();
+    CargoOperation operation = new CargoOperation();
+    operation.setId(opId);
+    entity.setOperation(operation);
+    LoadableStudy study = new LoadableStudy();
+    study.setActive(true);
+    LoadableStudyStatus status = new LoadableStudyStatus();
+    status.setId(100L);
+    study.setLoadableStudyStatus(status);
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(study));
+    when(this.loadableStudyPortRoationRepository.findById(anyLong()))
+        .thenReturn(Optional.of(entity));
+    when(this.loadableStudyPortRoationRepository.save(any(LoadableStudyPortRotation.class)))
+        .thenReturn(entity);
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    PortRotationRequest request = PortRotationRequest.newBuilder().setId(1L).build();
+    this.loadableStudyService.deletePortRotation(request, responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testDeletePortRotationInvalidId() {
+    LoadableStudyPortRotation entity = new LoadableStudyPortRotation();
+    CargoOperation operation = new CargoOperation();
+    operation.setId(100L);
+    entity.setOperation(operation);
+    LoadableStudy study = new LoadableStudy();
+    study.setActive(true);
+    LoadableStudyStatus status = new LoadableStudyStatus();
+    status.setId(100L);
+    study.setLoadableStudyStatus(status);
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(study));
+    when(this.loadableStudyPortRoationRepository.findById(anyLong())).thenReturn(Optional.empty());
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    PortRotationRequest request = PortRotationRequest.newBuilder().setId(1L).build();
+    this.loadableStudyService.deletePortRotation(request, responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testDeletePortRotationRuntimException() {
+    LoadableStudyPortRotation entity = new LoadableStudyPortRotation();
+    CargoOperation operation = new CargoOperation();
+    operation.setId(100L);
+    entity.setOperation(operation);
+    LoadableStudy study = new LoadableStudy();
+    study.setActive(true);
+    LoadableStudyStatus status = new LoadableStudyStatus();
+    status.setId(100L);
+    study.setLoadableStudyStatus(status);
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(study));
+    when(this.loadableStudyPortRoationRepository.findById(anyLong()))
+        .thenThrow(RuntimeException.class);
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    PortRotationRequest request = PortRotationRequest.newBuilder().setId(1L).build();
+    this.loadableStudyService.deletePortRotation(request, responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
     assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());

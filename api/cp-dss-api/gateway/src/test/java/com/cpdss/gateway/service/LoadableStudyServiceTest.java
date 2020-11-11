@@ -932,4 +932,46 @@ class LoadableStudyServiceTest {
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
+
+  @Test
+  void testDeletePortRotation() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.deletePortRotation(anyLong(), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.deletePortRotation(any(PortRotationRequest.class)))
+        .thenReturn(
+            PortRotationReply.newBuilder()
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    PortRotationResponse response =
+        this.loadableStudyService.deletePortRotation(1L, 1L, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "Invalid response status"));
+  }
+
+  @Test
+  void testDeletePortRotationGrpcFailure() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.deletePortRotation(anyLong(), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.deletePortRotation(any(PortRotationRequest.class)))
+        .thenReturn(
+            PortRotationReply.newBuilder()
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.deletePortRotation(1L, 1L, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
 }

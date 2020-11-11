@@ -999,6 +999,7 @@ public class LoadableStudyService {
   public LoadableStudyReply deleteLoadableStudy(LoadableStudyRequest request) {
     return this.loadableStudyServiceBlockingStub.deleteLoadableStudy(request);
   }
+
   /**
    * @param loadableStudyId
    * @param first
@@ -1039,5 +1040,41 @@ public class LoadableStudyService {
   public PortRotationReply getPortRotation(PortRotationRequest portRotationRequest) {
     return this.loadableStudyServiceBlockingStub.getPortRotationByLoadableStudyId(
         portRotationRequest);
+  }
+
+  /**
+   * Delete port rotation by id
+   *
+   * @param id
+   * @param id
+   * @param first
+   * @return
+   * @throws GenericServiceException
+   */
+  public PortRotationResponse deletePortRotation(
+      Long loadableStudyId, Long id, String correlationId) throws GenericServiceException {
+    PortRotationRequest request =
+        PortRotationRequest.newBuilder().setId(id).setLoadableStudyId(loadableStudyId).build();
+    PortRotationReply grpcReply = this.deletePortRotation(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to delete port rotation",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    PortRotationResponse response = new PortRotationResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * Call grpc service to delete port rotation
+   *
+   * @param request
+   * @return
+   */
+  public PortRotationReply deletePortRotation(PortRotationRequest request) {
+    return this.loadableStudyServiceBlockingStub.deletePortRotation(request);
   }
 }

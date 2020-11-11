@@ -537,4 +537,39 @@ public class LoadableStudyController {
           e);
     }
   }
+
+  /**
+   * Delete port rotation by id
+   *
+   * @param id
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @DeleteMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{id}",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public PortRotationResponse deletePortRotation(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long id,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.loadableStudyService.deletePortRotation(
+          loadableStudyId, id, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when deleting port rotation", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when deleting port rotation", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
 }

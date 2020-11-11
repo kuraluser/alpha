@@ -34,7 +34,6 @@ service LoadableStudyService {
 	rpc GetValveSegregation (ValveSegregationRequest) returns (ValveSegregationReply){
 	}
 
-
   	rpc getLoadableQuantity (LoadableQuantityReply) returns (LoadableQuantityResponse) {
 	}
 	
@@ -46,9 +45,14 @@ service LoadableStudyService {
 		
 	rpc SaveDischargingPorts(PortRotationRequest) returns (PortRotationReply){
 	}
+	
 	rpc GetPortRotationByLoadableStudyId (PortRotationRequest) returns (PortRotationReply){
 	}
+	
 	rpc DeleteLoadableStudy(LoadableStudyRequest) returns (LoadableStudyReply){
+	}
+	
+	rpc DeletePortRotation(PortRotationRequest) returns (PortRotationReply){
 	}
 	
 }
@@ -199,6 +203,7 @@ message PortRotationRequest{
 	int64 vesselId = 2;
 	int64 voyageId = 3;
 	repeated int64 dischargingPortIds = 4;
+	int64 id = 5;
 }
 
 message PortRotationDetail{

@@ -117,6 +117,13 @@ class LoadableStudyControllerTest {
   private static final String DELETE_LOADABLE_STUDY_SHIP_API_URL =
       SHIP_API_URL_PREFIX + DELETE_LOADABLE_STUDY_API_URL;
 
+  private static final String DELETE_PORT_ROTATION_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{id}";
+  private static final String DELETE_PORT_ROTATION_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + DELETE_PORT_ROTATION_API_URL;
+  private static final String DELETE_PORT_ROTATION_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + DELETE_PORT_ROTATION_API_URL;
+
   /**
    * Positive test case. Test method for positive response scenario
    *
@@ -534,6 +541,43 @@ class LoadableStudyControllerTest {
         .perform(
             MockMvcRequestBuilders.delete(
                     DELETE_LOADABLE_STUDY_CLOUD_API_URL, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  @ValueSource(strings = {DELETE_PORT_ROTATION_CLOUD_API_URL, DELETE_PORT_ROTATION_SHIP_API_URL})
+  @ParameterizedTest
+  void testDeletePortRotation(String url) throws Exception {
+    when(this.loadableStudyService.deletePortRotation(anyLong(), anyLong(), anyString()))
+        .thenReturn(new PortRotationResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.delete(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testDeletePortRotationException(Class<? extends Exception> exceptionClass) throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.loadableStudyService.deletePortRotation(anyLong(), anyLong(), anyString()))
+        .thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.delete(
+                    DELETE_PORT_ROTATION_CLOUD_API_URL, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 1)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
