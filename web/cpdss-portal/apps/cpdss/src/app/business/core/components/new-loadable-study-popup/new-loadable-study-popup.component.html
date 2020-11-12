@@ -1,6 +1,6 @@
 <p-dialog id="dialog_newLoadableStudyPopup" header="{{'NEW_LOADABLE_STUDY_POPUP_HEADER' | translate}}"
-    [(visible)]="display" [modal]="true" styleClass="new-loadable-study-pop-up" [draggable]="false" [responsive]="true" [minY]="70"
-     [closable]="false">
+    [(visible)]="display" [modal]="true" styleClass="new-loadable-study-pop-up" [draggable]="false" [responsive]="true"
+    [minY]="70" [closable]="false">
     <form [formGroup]="newLoadableStudyFormGroup" id="fg_newLoadableStudy" (submit)="saveLoadableStudy()">
         <div class="container-fluid">
             <div class="row">
@@ -26,7 +26,13 @@
                                 class="text-danger">
                                 {{'NEW_LOADABLE_STUDY_POPUP__NAME_REQUIRED' | translate}}!
                             </span>
-                            <span *ngIf="newLoadableStudyNameExist && !form.newLoadableStudyName.errors?.required" class="text-danger">
+                            <span
+                                *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && form.newLoadableStudyName.errors?.maxlength"
+                                class="text-danger">
+                                {{'NEW_LOADABLE_STUDY_POPUP_MAX_LENGTH' | translate}}!
+                            </span>
+                            <span *ngIf="newLoadableStudyNameExist && !form.newLoadableStudyName.errors?.required"
+                                class="text-danger">
                                 {{'NEW_LOADABLE_STUDY_POPUP__NAME_EXIST' | translate}}
                             </span>
                         </div>
@@ -37,7 +43,8 @@
                         <div class="col">
                             <textarea class="form-control" type="text" id="txt_enquiryDetails"
                                 formControlName="enquiryDetails"></textarea>
-                            <span *ngIf="(form.newLoadableStudyName.touched && form.enquiryDetails.errors?.maxLength)"
+                            <span
+                                *ngIf="form.enquiryDetails.invalid && form.enquiryDetails.touched && form.enquiryDetails.errors?.maxlength"
                                 class="text-danger">
                                 {{'NEW_LOADABLE_STUDY_POPUP_ENQUIRY_DETAIL_ERROR_MAXIMUM_LENGTH' | translate}}!
                             </span>
@@ -62,11 +69,14 @@
                         </div>
                     </div>
                     <div class="row" *ngIf="uploadedFiles.length > 0">
+                        <div class="col col-form-label"></div>
                         <div class="col">
-                            <ul>
-                                <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}}
-                                    {{'NEW_LOADABLE_STUDY_LIST_POPUP_BYTE' | translate}}</li>
-                            </ul>
+                            <ol class="pl-10">
+                                <li *ngFor="let file of uploadedFiles; let i = index" [pTooltip]="file.name">
+                                    <a (click)="openFile(i)" class="file-name">{{file.name}}</a>
+                                    <span class="pi pi-times text-secondary font-x-small ml-5 pointer" (click)="removeFile(i)"></span>
+                                </li>
+                            </ol>
                         </div>
                     </div>
                     <div class="row form-group">
@@ -82,6 +92,11 @@
                         <div class="col">
                             <input class="form-control" type="text" id="txt_subCharterer"
                                 formControlName="subCharterer">
+                            <span
+                                *ngIf="form.subCharterer.invalid && form.subCharterer.touched && form.subCharterer.errors?.maxlength"
+                                class="text-danger">
+                                {{'NEW_LOADABLE_STUDY_POPUP_MAX_LENGTH' | translate}}!
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -112,6 +127,11 @@
                         <div class="col">
                             <input class="form-control" type="number" id="txt_draftRestriction"
                                 formControlName="draftRestriction">
+                            <span
+                                *ngIf="form.draftRestriction.invalid && form.draftRestriction.touched && (form.draftRestriction.errors?.max || form.draftRestriction.errors?.min)"
+                                class="text-danger">
+                                {{'NEW_LOADABLE_STUDY_POPUP_MAX_DRAFT_DIGIT_LENGTH' | translate}}!
+                            </span>
                         </div>
                     </div>
 
@@ -121,6 +141,11 @@
                         <div class="col">
                             <input class="form-control" type="number" id="txt_maxAirTempExceeded"
                                 formControlName="maxAirTempExpected">
+                            <span
+                                *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && (form.maxAirTempExpected.errors?.max || form.maxAirTempExpected.errors?.min)"
+                                class="text-danger">
+                                {{'NEW_LOADABLE_STUDY_POPUP_MAX_TEMP_DIGIT_LENGTH' | translate}}!
+                            </span>
                         </div>
                     </div>
                     <div class="row form-group">
@@ -129,6 +154,11 @@
                         <div class="col">
                             <input class="form-control" type="number" id="txt_maxWaterTempExceeded"
                                 formControlName="maxWaterTempExpected">
+                            <span
+                                *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && (form.maxWaterTempExpected.errors?.max || form.maxWaterTempExpected.errors?.min)"
+                                class="text-danger">
+                                {{'NEW_LOADABLE_STUDY_POPUP_MAX_TEMP_DIGIT_LENGTH' | translate}}!
+                            </span>
                         </div>
                     </div>
                 </div>

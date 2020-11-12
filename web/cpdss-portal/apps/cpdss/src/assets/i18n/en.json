@@ -126,5 +126,8 @@
 	"LOADING_PORT_QUANTITY_PLACEHOLDER": "Enter quantity",
 	"NO_RECORDS_FOUND": "No records found",
 	"LOGOUT": "Logout",
-	"NO_VOYAGE_NO_SELECTED": "Please select a Voyage No"
+	"NO_VOYAGE_NO_SELECTED": "Please select a Voyage No",
+	"NEW_LOADABLE_STUDY_POPUP_MAX_LENGTH": "Maximum allowed character length is 100",
+	"NEW_LOADABLE_STUDY_POPUP_MAX_TEMP_DIGIT_LENGTH": "Maximum allowed 3 digits",
+	"NEW_LOADABLE_STUDY_POPUP_MAX_DRAFT_DIGIT_LENGTH": "Maximum allowed 2 digits"
 }

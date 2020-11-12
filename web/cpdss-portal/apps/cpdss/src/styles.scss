@@ -488,7 +488,7 @@ a {
 }
 
 .font-x-small {
-  font-size: $font-size-x-small;
+  font-size: $font-size-x-small!important;
 }
 .p-component{
   font-family: 'Play', sans-serif;
@@ -1037,4 +1037,7 @@ input[type=number] {
       }
     }
   }
+}
+.pointer{
+  cursor: pointer;
 }

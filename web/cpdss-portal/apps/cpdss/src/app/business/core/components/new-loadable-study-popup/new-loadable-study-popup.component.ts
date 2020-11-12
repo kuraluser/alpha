@@ -7,6 +7,7 @@ import { VesselDetailsModel } from '../../../model/vessel-details.model';
 import { LoadableStudyListApiService } from '../../../cargo-planning/services/loadable-study-list-api.service';
 import { LoadableStudy } from '../../../cargo-planning/models/loadable-study-list.model';
 import { Router } from '@angular/router';
+import { numberValidator } from '../../../cargo-planning/directives/validator/cargo-nomination-number-validator.directive'
 
 /**
  *  popup for creating / editing loadable-study
@@ -79,31 +80,31 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   //get summer loadline data
   getLoadlineSummer() {
     const result = this.loadlineLists.filter(e => e.name.toLowerCase() === 'summer');
-      if (result.length > 0) {
-        this.loadlineList = result[0];
-        const draftMarkSummer = Math.max(...this.loadlineList.draftMarks.map(Number));
-        this.newLoadableStudyFormGroup.patchValue({
-          loadLine: this.loadlineList,
-          draftMark :{ id: draftMarkSummer, name: draftMarkSummer }
-        });
-        this.onloadLineChange();
-      }
+    if (result.length > 0) {
+      this.loadlineList = result[0];
+      const draftMarkSummer = Math.max(...this.loadlineList.draftMarks.map(Number));
+      this.newLoadableStudyFormGroup.patchValue({
+        loadLine: this.loadlineList,
+        draftMark: { id: draftMarkSummer, name: draftMarkSummer }
+      });
+      this.onloadLineChange();
+    }
   }
 
   // creating form-group for new-loadable-study
   async createNewLoadableStudyFormGroup() {
     this.newLoadableStudyFormGroup = this.formBuilder.group({
       duplicateExisting: '',
-      newLoadableStudyName: ['', Validators.required],
-      enquiryDetails: ['', Validators.maxLength(1000)],
+      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100)]),
+      enquiryDetails: this.formBuilder.control('', [Validators.maxLength(1000)]),
       attachMail: null,
       charterer: this.vesselInfoList[0].charterer,
-      subCharterer: '',
+      subCharterer: this.formBuilder.control('', [Validators.maxLength(100)]),
       loadLine: '',
       draftMark: '',
-      draftRestriction: '',
-      maxAirTempExpected: '',
-      maxWaterTempExpected: ''
+      draftRestriction: this.formBuilder.control('', [Validators.min(-99.99), Validators.max(99.99)]),
+      maxAirTempExpected: this.formBuilder.control('', [Validators.min(-999.99), Validators.max(999.99), numberValidator(2)]),
+      maxWaterTempExpected: this.formBuilder.control('', [Validators.min(-999.99), Validators.max(999.99), numberValidator(2)])
     });
   }
 
@@ -157,20 +158,20 @@ export class NewLoadableStudyPopupComponent implements OnInit {
 
   // this function triggers when choosing the files in fileUpload (primeng)
   selectFilesToUpload() {
-    this.uploadedFiles = [];
-    const uploadedFile = this.fileUploadVariable.nativeElement.files;
+    let uploadFile = [];
+    const uploadedFileVar = this.fileUploadVariable.nativeElement.files;
     const extensions = ["docx", "pdf", "txt", "jpg", "jpeg", "png"];
-    if (uploadedFile.length <= 5) {
-      for (let i = 0; i < uploadedFile.length; i++) {
-        const fileExtension = uploadedFile[i].name.substr((uploadedFile[i].name.lastIndexOf('.') + 1));
+    if (this.uploadedFiles.length <= 5) {
+      for (let i = 0; i < uploadedFileVar.length; i++) {
+        const fileExtension = uploadedFileVar[i].name.substr((uploadedFileVar[i].name.lastIndexOf('.') + 1));
         if (extensions.includes(fileExtension.toLowerCase())) {
-          if (uploadedFile[i].size / 1024 / 1024 >= 1) {
+          if (uploadedFileVar[i].size / 1024 / 1024 >= 1) {
             this.showError = true;
             this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_SIZE_ERROR";
             break;
           } else {
             this.showError = false;
-            this.uploadedFiles.push(uploadedFile[i]);
+            uploadFile.push(uploadedFileVar[i]);
           }
         } else {
           this.showError = true;
@@ -182,6 +183,21 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       this.showError = true;
       this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_LIMIT_ERROR"
     }
+    this.uploadedFiles.push(...uploadFile);
+    uploadFile = [];
+    this.fileUploadVariable.nativeElement.value = "";
+  }
+
+  //open selected file
+  openFile(index) {
+    const blob = new Blob([this.uploadedFiles[index]], { type: this.uploadedFiles[index].type })
+    const fileurl = window.URL.createObjectURL(blob)
+    window.open(fileurl)
+  }
+
+  //remove selected file
+  removeFile(index) {
+    this.uploadedFiles.splice(index, 1);
   }
 
   // returns form-controls of newLoadableStudyFormGroup
@@ -202,6 +218,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     this.draftMarkList = loadLine.draftMarks.map(draftMarks => ({ id: draftMarks, name: draftMarks }));
   }
 
+  //for set selcted loadable study value in loadable study form
   onDuplicateExisting(event: IDropdownEvent) {
     this.getLoadableStudyDetailsForDuplicating(event.value);
   }

@@ -785,3 +785,9 @@ div{
     }
   }
 }
+a{
+  color: $link-color !important;
+  &:hover{
+    color: $text-secondary !important;
+  }
+}

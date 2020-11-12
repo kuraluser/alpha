@@ -6,6 +6,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FileUploadModule } from 'primeng/fileupload';
 import { TranslateModule } from '@ngx-translate/core';
 import { DialogModule } from 'primeng/dialog';
+import { TooltipModule } from 'primeng/tooltip';
 
 /**
  *  this module will load all the dependencies of new-loadable-study-popup component
@@ -18,7 +19,8 @@ import { DialogModule } from 'primeng/dialog';
     DropdownModule,
     FileUploadModule,
     TranslateModule,
-    DialogModule
+    DialogModule,
+    TooltipModule
   ],
   exports: [NewLoadableStudyPopupComponent]
 })

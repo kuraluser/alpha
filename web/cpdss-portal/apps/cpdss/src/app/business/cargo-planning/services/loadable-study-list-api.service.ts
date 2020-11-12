@@ -31,15 +31,15 @@ export class LoadableStudyListApiService {
   setLodableStudy(vesselId: number, voyageId: number, loadableStudy: INewLoadableStudy): Observable<ILoadableStudyResponse> {
     const formData: FormData = new FormData();
     formData.append('charterer', loadableStudy.charterer);
-    formData.append('createdFromId', loadableStudy.createdFromId !== undefined ? loadableStudy.createdFromId?.toString() : "");
+    formData.append('createdFromId', loadableStudy.createdFromId ? loadableStudy.createdFromId?.toString() : "");
     formData.append('detail', loadableStudy.detail);
-    formData.append('draftMark', loadableStudy.draftMark !== undefined ? loadableStudy.draftMark.toString() : "");
-    formData.append('draftRestriction', loadableStudy.draftRestriction?.toString());
-    formData.append('loadLineXId', loadableStudy.draftMark !== undefined ? loadableStudy.loadLineXId.toString() : "");
+    formData.append('draftMark', loadableStudy.draftMark ? loadableStudy.draftMark.toString() : "");
+    formData.append('draftRestriction', loadableStudy.draftRestriction ? loadableStudy.draftRestriction?.toString() : "");
+    formData.append('loadLineXId', loadableStudy.draftMark ? loadableStudy.loadLineXId.toString() : "");
     formData.append('name', loadableStudy.name);
     formData.append('subCharterer', loadableStudy.subCharterer);
-    formData.append('maxAirTemperature', loadableStudy.maxAirTempExpected?.toString());
-    formData.append('maxWaterTemperature', loadableStudy.maxWaterTempExpected?.toString());
+    formData.append('maxAirTemperature', loadableStudy.maxAirTempExpected ? loadableStudy.maxAirTempExpected?.toString() : "");
+    formData.append('maxWaterTemperature', loadableStudy.maxWaterTempExpected ? loadableStudy.maxWaterTempExpected?.toString() : "");
     for (let i = 0; i < loadableStudy.attachMail.length; i++) {
       formData.append('files', loadableStudy.attachMail[i]);
 
