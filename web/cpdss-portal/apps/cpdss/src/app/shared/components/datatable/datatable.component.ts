@@ -129,7 +129,7 @@ export class DatatableComponent implements OnInit {
    */
   onChange(event, rowData: Object, rowIndex: number, col: IDataTableColumn) {
     rowData[col.field].value = this.field(rowIndex, col.field).value;
-    if(!event?.originalEvent?.target?.className?.includes('p-colorpicker')) {
+    if (!event?.originalEvent?.target?.className?.includes('p-colorpicker')) {
       this.editComplete.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
     }
   }
@@ -424,7 +424,7 @@ export class DatatableComponent implements OnInit {
    * Method for filtering date on enter key press
    * @param value 
    */
-  onDateFilter(value){
+  onDateFilter(value) {
     this.datatable.filter(value, 'createdDate', 'equals');
   }
 }

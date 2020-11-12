@@ -19,7 +19,7 @@
                     <th *ngFor="let col of columns" [ngSwitch]="col.filterType">
                         <ng-container *ngIf="col.filter">
                             <input *ngSwitchCase="filterType.TEXT" type="text" id="{{col.field+'_filter'}}"
-                                (input)="datatable.filter($event.target.value, col?.filterField ? col?.filterField : col.field, col.filterMatchMode)"
+                                (input)="datatable.filter(($event.target.value).trim(), col?.filterField ? col?.filterField : col.field, col.filterMatchMode)"
                                 [placeholder]="col.filterPlaceholder| translate" class="p-column-filter">
                             <input *ngSwitchCase="filterType.NUMBER" type="number" id="{{col.field+'_filter'}}"
                                 (input)="datatable.filter($event.target.value, col?.filterField ? col?.filterField : col.field, col.filterMatchMode)"
@@ -27,7 +27,7 @@
                             <input *ngSwitchCase="filterType.ARRAY" type="text" id="{{col.field+'_filter'}}"
                                 (input)="datatable.filter($event.target.value, col.arrayFilterField, col.filterMatchMode)"
                                 [placeholder]="col.filterPlaceholder| translate" class="p-column-filter">
-                            <p-calendar appendTo="body" *ngSwitchCase="filterType.DATE" [maxDate]="dateTime" (onSelect)="onDateSelect($event)" (onInput)="onDateFilter($event.target.value)"
+                            <p-calendar appendTo="body" *ngSwitchCase="filterType.DATE" [maxDate]="col.filterFieldMaxvalue" (onSelect)="onDateSelect($event)" (onInput)="onDateFilter($event.target.value)"
                                 (onClearClick)="datatable.filter('', col.field, 'equals')" [showButtonBar]="true"
                                 styleClass="p-column-filter" [placeholder]="col.filterPlaceholder| translate" [readonlyInput]="false"
                                 dateFormat="dd-mm-yy" id="{{col.field+'_filter'}}"></p-calendar>

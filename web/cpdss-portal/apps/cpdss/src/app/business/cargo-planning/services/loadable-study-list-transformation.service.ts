@@ -56,6 +56,7 @@ export class LoadableStudyListTransformationService {
         filterType: DATATABLE_FILTER_TYPE.DATE,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'date',
+        filterFieldMaxvalue: new Date()
       },
       {
         field: '',

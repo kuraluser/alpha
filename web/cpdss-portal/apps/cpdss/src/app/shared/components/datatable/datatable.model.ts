@@ -29,6 +29,7 @@ export interface IDataTableColumn {
     actions?: DATATABLE_ACTION[];
     fieldHeaderClass?: string;
     fieldClass?: string;
+    filterFieldMaxvalue?: any;
 }
 
 /**
