@@ -79,7 +79,7 @@
             <a class="sidebar-collapse-btn" (click)="openSidePane=!openSidePane"></a>
             <div class="sidebar-content">
                 <cpdss-portal-side-panel-loadable-study-list [vesselId]="vesselId" [voyage]="selectedVoyage"
-                    [(selectedLoadableStudy)]="selectedLoadableStudy" [loadableStudies]="loadableStudies">
+                    [(selectedLoadableStudy)]="selectedLoadableStudy" [loadableStudies]="loadableStudies" (deleteLoadableStudy)="onDeleteLoadableStudy($event)">
                 </cpdss-portal-side-panel-loadable-study-list>
             </div>
         </div>

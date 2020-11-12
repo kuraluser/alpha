@@ -31,7 +31,7 @@ export class LoadableStudyListApiService {
   setLodableStudy(vesselId: number, voyageId: number, loadableStudy: INewLoadableStudy): Observable<ILoadableStudyResponse> {
     const formData: FormData = new FormData();
     formData.append('charterer', loadableStudy.charterer);
-    formData.append('createdFromId', loadableStudy.createdFromId.toString());
+    formData.append('createdFromId', loadableStudy.createdFromId !== undefined ? loadableStudy.createdFromId?.toString() : "");
     formData.append('detail', loadableStudy.detail);
     formData.append('draftMark', loadableStudy.draftMark !== undefined ? loadableStudy.draftMark.toString() : "");
     formData.append('draftRestriction', loadableStudy.draftRestriction?.toString());

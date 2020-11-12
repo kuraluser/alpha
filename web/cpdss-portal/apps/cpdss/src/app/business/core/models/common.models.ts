@@ -22,8 +22,8 @@ export interface INewLoadableStudyListNames {
  *  model for loadline-list
  */
 export interface ILoadLineList {
+    id: number;
     name: string;
-    value: string;
     draftMarks: IdraftMarks[]
 }
 

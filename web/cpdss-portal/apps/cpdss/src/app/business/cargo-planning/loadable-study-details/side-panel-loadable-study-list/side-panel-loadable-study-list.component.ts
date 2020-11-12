@@ -27,6 +27,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
   @Input() selectedLoadableStudy: LoadableStudy;
 
   @Output() selectedLoadableStudyChange = new EventEmitter<LoadableStudy>();
+  @Output() deleteLoadableStudy = new EventEmitter<Event>();
 
   columns: IDataTableColumn[];
   vesselInfo: VesselDetailsModel[];
@@ -84,6 +85,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
    */
   onDelete(event) {
     const result = this.loadableStudyListApiService.deleteLodableStudy(this.vesselId, this.voyage?.id, event?.data?.id).toPromise();
+    this.deleteLoadableStudy.emit(event);
   }
 
   /**

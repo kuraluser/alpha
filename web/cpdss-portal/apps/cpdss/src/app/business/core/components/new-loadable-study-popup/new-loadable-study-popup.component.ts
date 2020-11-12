@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FileUpload } from 'primeng/fileupload';
-import { IDropdownEvent, ILoadLineLists, INewLoadableStudy } from "./new-loadable-study-popup.model";
+import { IDropdownEvent, INewLoadableStudy } from "./new-loadable-study-popup.model";
 import { IdraftMarks, ILoadLineList, INewLoadableStudyListNames, Voyage } from "../../models/common.models";
 import { VesselDetailsModel } from '../../../model/vessel-details.model';
 import { LoadableStudyListApiService } from '../../../cargo-planning/services/loadable-study-list-api.service';
@@ -59,7 +59,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   loadlineList: ILoadLineList;
   draftMarkList: IdraftMarks[] = [];
   uploadedFiles: any[] = [];
-  loadlineLists: ILoadLineLists[];
+  loadlineLists: ILoadLineList[];
   showError = false;
   uploadError = "";
   newLoadableStudyNameExist = false;
@@ -69,13 +69,29 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     this.getVesselInfo();
   }
 
+  //get loadlines data and create form group
   async getVesselInfo() {
     this.loadlineLists = this.vesselInfoList[0].loadlines;
     this.createNewLoadableStudyFormGroup();
+    this.getLoadlineSummer();
+  }
+
+  //get summer loadline data
+  getLoadlineSummer() {
+    const result = this.loadlineLists.filter(e => e.name.toLowerCase() === 'summer');
+      if (result.length > 0) {
+        this.loadlineList = result[0];
+        const draftMarkSummer = Math.max(...this.loadlineList.draftMarks.map(Number));
+        this.newLoadableStudyFormGroup.patchValue({
+          loadLine: this.loadlineList,
+          draftMark :{ id: draftMarkSummer, name: draftMarkSummer }
+        });
+        this.onloadLineChange();
+      }
   }
 
   // creating form-group for new-loadable-study
-  createNewLoadableStudyFormGroup() {
+  async createNewLoadableStudyFormGroup() {
     this.newLoadableStudyFormGroup = this.formBuilder.group({
       duplicateExisting: '',
       newLoadableStudyName: ['', Validators.required],
@@ -112,12 +128,12 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   // post newLoadableStudyFormGroup for saving newly created loadable-study
   public async saveLoadableStudy() {
     if (this.newLoadableStudyFormGroup.valid) {
-      this.newLoadableStudyNameExist = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase());
+      this.newLoadableStudyNameExist = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
       if (!this.newLoadableStudyNameExist) {
         this.newLoadableStudyPopupModel = {
           id: 0,
           createdFromId: this.newLoadableStudyFormGroup.controls.duplicateExisting.value?.id,
-          name: this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value,
+          name: this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.trim(),
           detail: this.newLoadableStudyFormGroup.controls.enquiryDetails.value,
           attachMail: this.uploadedFiles,
           charterer: this.newLoadableStudyFormGroup.controls.charterer.value,
@@ -148,7 +164,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       for (let i = 0; i < uploadedFile.length; i++) {
         const fileExtension = uploadedFile[i].name.substr((uploadedFile[i].name.lastIndexOf('.') + 1));
         if (extensions.includes(fileExtension.toLowerCase())) {
-          if (uploadedFile[i].size > 125000) {
+          if (uploadedFile[i].size / 1024 / 1024 >= 1) {
             this.showError = true;
             this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_SIZE_ERROR";
             break;
@@ -175,6 +191,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   closeDialog() {
     this.newLoadableStudyFormGroup.reset();
     this.displayPopup.emit(false);
+    this.getVesselInfo();
   }
 
   /**

@@ -18,11 +18,6 @@ export interface INewLoadableStudy {
     attachMail: string[];
 }
 
-export interface ILoadLineLists {
-    id: number;
-    name: string;
-    draftMarks: string[];
-}
 
 /**
  * Interface for IDropdown Event

@@ -141,7 +141,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
    */
   async onDischargePortChange(event: Event) {
     this.selectedLoadableStudy.dischargingPortIds = this.dischargingPorts?.map(port => port.id);
-    const dischargingPortIds: IDischargingPortIds = { portIds: this.selectedLoadableStudy.dischargingPortIds};
+    const dischargingPortIds: IDischargingPortIds = { portIds: this.selectedLoadableStudy.dischargingPortIds };
     const res = await this.loadableStudyDetailsApiService.setLoadableStudyDischargingPorts(this.vesselId, this.voyageId, this.loadableStudyId, dischargingPortIds).toPromise();
   }
 
@@ -153,6 +153,16 @@ export class LoadableStudyDetailsComponent implements OnInit {
    */
   onVoyageChange(event) {
     this.voyageId = event?.value?.id;
+    this.getLoadableStudies(this.vesselId, this.voyageId, 0);
+  }
+
+  /**
+   * Handler for on delete event from side panel
+   *
+   * @param {*} event
+   * @memberof LoadableStudyDetailsComponent
+   */
+  onDeleteLoadableStudy(event) {
     this.getLoadableStudies(this.vesselId, this.voyageId, 0);
   }
 }

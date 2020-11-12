@@ -1,3 +1,5 @@
+import { IdraftMarks } from '../core/models/common.models';
+
 /**
  * Vessel details Model
  */
@@ -20,7 +22,7 @@ export class VesselDetailsModel {
 export class LoadLine {
     public id: number;
     public name: string;
-    public draftMarks: string[];
+    public draftMarks: IdraftMarks[];
 }
 
 /** Interface for vessel api response */

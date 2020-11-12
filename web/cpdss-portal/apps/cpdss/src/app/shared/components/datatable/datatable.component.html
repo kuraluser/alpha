@@ -1,7 +1,7 @@
 <div *ngIf="form" [formGroup]="form" class="row">
     <div formArrayName="dataTable" class="col">
         <p-table #datatable [columns]="columns" [value]="value" [editMode]="editMode" [selectionMode]="selectionMode"
-            (onEditComplete)="onEditComplete($event)" (onRowSelect)="onRowSelect($event)" [(selection)]="selection" (columnClick)="onClick($event)">
+            (onEditComplete)="onEditComplete($event)" (onRowSelect)="onRowSelect($event)" [(selection)]="selection" (columnClick)="onClick($event)" >
             <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
                     <col *ngFor="let col of columns" class="column-class" [class]="col.fieldHeaderClass">
