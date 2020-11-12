@@ -9,6 +9,7 @@ const routes: Routes = [
     component: CargoPlanningComponent,
     children: [
       { path: '', redirectTo: 'loadable-study-list/', pathMatch: 'full' },
+      { path: 'loadable-study-list', redirectTo: 'loadable-study-list/' },// TODO: Must be removed when the default route of cargo planning menu is chnged to loadable study details
       {
         path: 'loadable-study-list/:id',
         loadChildren: () => import('./loadable-study-list/loadable-study-list.module').then(m => m.LoadableStudyListModule)

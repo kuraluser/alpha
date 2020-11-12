@@ -4,7 +4,14 @@
   importScripts('dexie.min.js');
 
   const db = new Dexie("CPDSS");
-  const apiUrl = 'http://192.168.1.177:8085/api/cloud';
+  let apiUrl;
+  if(self.location.protocol === 'https:') {
+    apiUrl = `${self.location.protocol}//${self.location.hostname}:${self.location.port}/api/cloud`;
+  } else {
+    apiUrl = `${self.location.protocol}//192.168.1.177:8085/api/cloud`;
+  }
+  
+
 
   db.version(1).stores({
     cargoNominations: "++,storeKey"

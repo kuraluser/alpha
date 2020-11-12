@@ -256,7 +256,7 @@ export class DatatableComponent implements OnInit {
   onDelete() {
     this.selectedRowEvent.data.isDelete = true;
     this.deleteRow.emit(this.selectedRowEvent);
-    this.editComplete.emit(this.selectedRowEvent);
+    // this.editComplete.emit(this.selectedRowEvent);
   }
 
   /**

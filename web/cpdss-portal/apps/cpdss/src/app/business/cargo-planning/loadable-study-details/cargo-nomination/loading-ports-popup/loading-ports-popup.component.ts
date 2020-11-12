@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableEvent } from '../../../../../shared/components/datatable/datatable.model';
-import { numberValidator } from '../../../directives/validator/cargo-nomination-number-validator.directive';
 import { ILoadingPort, ILoadingPortValueObject, ILoadingPopupData, IPort } from '../../../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
 
@@ -35,6 +34,12 @@ export class LoadingPortsPopupComponent implements OnInit {
     this._popupData = popupData;
     this.ports = this.popupData.ports;
     this.updatePorts(popupData);
+    this.loadingPort = this.popupData.rowData.loadingPorts.value ? this.popupData.rowData.loadingPorts.value.map(port => this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortAsValueObject(port, false)) : [];
+    const loadingPortArray = this.loadingPort.map(port => this.initLoadingPortFormGroup(port));
+    this.loadingPortsFrom = this.fb.group({
+      dataTable: this.fb.array([...loadingPortArray]),
+      addPort: this.fb.control(null)
+    });
   }
 
   @Output() visibleChange = new EventEmitter<boolean>();
@@ -110,12 +115,19 @@ export class LoadingPortsPopupComponent implements OnInit {
    * @memberof LoadingPortsPopupComponent
    */
   onEditComplete(event: IDataTableEvent) {
-    if (event.data?.isDelete) {
-      this.popupData.rowData.loadingPorts.value.splice(event.index, 1);
-    } else {
-      this.popupData.rowData.loadingPorts.value[event.index][event.field] = event.data[event.field].value;
-    }
+    this.popupData.rowData.loadingPorts.value[event.index][event.field] = event.data[event.field].value;
     this.updatePorts(this.popupData);
+  }
+
+  /**
+   *
+   *
+   * @param {IDataTableEvent} event
+   * @memberof LoadingPortsPopupComponent
+   */
+  onDeleteRow(event: IDataTableEvent) {
+    this.popupData.rowData.loadingPorts.value.splice(event.index, 1);
+    this.popupData = {...this.popupData};
   }
 
   /**

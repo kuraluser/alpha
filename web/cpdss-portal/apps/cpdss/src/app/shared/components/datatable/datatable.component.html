@@ -37,7 +37,7 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
-                <tr formGroupName="{{rowIndex}}" *ngIf="!rowData?.isDelete" [pSelectableRow]="rowData"
+                <tr formGroupName="{{rowIndex}}" [pSelectableRow]="rowData"
                     [pSelectableRowIndex]="rowIndex" [pSelectableRowDisabled]="!selectionMode">
                     <td *ngFor="let col of columns; let colIndex = index" [class]="col.fieldClass" [ngSwitch]="col.fieldType"
                         [pEditableColumn]="rowData" [pEditableColumnField]="col.field"

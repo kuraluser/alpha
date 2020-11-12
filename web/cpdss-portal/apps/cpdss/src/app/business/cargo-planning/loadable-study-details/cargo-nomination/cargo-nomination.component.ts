@@ -38,6 +38,7 @@ export class CargoNominationComponent implements OnInit {
     });
     this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(totalQuantity);
     this.updatePriorityDropdown(this._cargoNominations.length);
+    this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
   }
 
   get loadingPopupData(): ILoadingPopupData {
@@ -150,16 +151,17 @@ export class CargoNominationComponent implements OnInit {
         const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
         event.data.cargo.value.ports = result?.ports;
         this.cargoNominations[event.index]['cargo'].value = event?.data?.cargo?.value;
-        this.updateField(event.index, 'cargo',  event?.data?.cargo?.value);
+        this.updateField(event.index, 'cargo', event?.data?.cargo?.value);
         this.cargoNominations = [...this.cargoNominations];
+        this.loadingPopupData = <ILoadingPopupData>{
+          originalEvent: event.originalEvent,
+          rowData: event.data,
+          rowIndex: event.index,
+          ports: event.data?.cargo?.value?.ports
+        }
+        this.openLoadingPopup = true;
       }
-      this.loadingPopupData = <ILoadingPopupData>{
-        originalEvent: event.originalEvent,
-        rowData: event.data,
-        rowIndex: event.index,
-        ports: event.data?.cargo?.value?.ports
-      }
-      this.openLoadingPopup = true;
+
     } else if (['api', 'temperature'].includes(event.field)) {
       this.openAPITemperatureHistoryPopup = true;
     }
@@ -186,16 +188,13 @@ export class CargoNominationComponent implements OnInit {
       const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
       event.data.cargo.value.ports = result?.ports;
       this.cargoNominations[event.index]['cargo'].value = event?.data?.cargo?.value;
-      this.updateField(event.index, 'cargo',  event?.data?.cargo?.value);
-    } else if (event?.data?.isDelete) {
-      this.cargoNominations = [...this.cargoNominations];
+      this.updateField(event.index, 'cargo', event?.data?.cargo?.value);
     }
-    this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid);
+    this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
     if (!event.data?.isAdd) {
       if (this.cargoNominationForm.valid) {
         const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
         if (res) {
-          this.cargoNominations[event.index].isAdd = false;
           for (const key in this.cargoNominations[event.index]) {
             if (this.cargoNominations[event.index].hasOwnProperty(key) && this.cargoNominations[event.index][key].hasOwnProperty('_isEditMode')) {
               this.cargoNominations[event.index][key].isEditMode = false;
@@ -217,14 +216,30 @@ export class CargoNominationComponent implements OnInit {
   }
 
   /**
+   *
+   *
+   * @param {ICargoNominationEvent} event
+   * @memberof CargoNominationComponent
+   */
+  async onDeleteRow(event: ICargoNominationEvent) {
+    if (event?.data?.isDelete) {
+      const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
+      if (res) {
+        this.cargoNominations.splice(event.index, 1);
+        this.cargoNominations = [...this.cargoNominations];
+      }
+    }
+  }
+
+  /**
    * Event handler for edit complete event
    *
    * @param {ICargoNominationEvent} event
    * @memberof CargoNominationComponent
    */
   async onRowSave(event: ICargoNominationEvent) {
-    this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid);
-    if (this.cargoNominationForm.valid) {
+    this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
+    if (this.row(event.index).valid) {
       const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
       if (res) {
         this.cargoNominations[event.index].isAdd = false;
@@ -303,7 +318,7 @@ export class CargoNominationComponent implements OnInit {
       dataTable: this.fb.array([...cargoNominationArray])
     });
     this.cargoNominations = _cargoNominations;
-    this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid);
+    this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
   }
 
 
@@ -378,7 +393,7 @@ export class CargoNominationComponent implements OnInit {
    */
   private updateLoadingPortData(loadingPopupData: ILoadingPopupData) {
     this.cargoNominations[loadingPopupData.rowIndex].loadingPorts.value = loadingPopupData.rowData.loadingPorts.value;
-    this.cargoNominations[loadingPopupData.rowIndex].loadingPorts.isEditMode = false;
+    this.cargoNominations[loadingPopupData.rowIndex].loadingPorts.isEditMode = this.cargoNominations[loadingPopupData.rowIndex]?.isAdd ? true : false;
     this.cargoNominations = [...this.cargoNominations];
     this.updateField(loadingPopupData.rowIndex, 'loadingPorts', loadingPopupData.rowData.loadingPorts.value);
     this.updateField(loadingPopupData.rowIndex, 'quantity', loadingPopupData.rowData.quantity.value);

@@ -109,6 +109,8 @@ export class LoadableStudyDetailsTransformationService {
           _cargoNomination.cargoId = cargoNomination[key].value?.id;
         } else if (key === 'segregation') {
           _cargoNomination.segregationId = cargoNomination[key].value?.id;
+        } else if (key === 'loadinPorts') {
+          _cargoNomination.segregationId = cargoNomination[key].value?.map(port => port.value);
         } else {
           _cargoNomination[key] = cargoNomination[key]?.value ?? cargoNomination[key];
         }
@@ -402,7 +404,7 @@ export class LoadableStudyDetailsTransformationService {
         filter: true,
         filterPlaceholder: 'LOADABLE_STUDY_DETAILS_LODABLE_STUDY_FILTER_NAME',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'name',
       },
       {

@@ -3,3 +3,8 @@
 .colorpicker{
     pointer-events: none;
 }
+
+// TODO: need to be removed when this colorpicker is removed
+p-colorpicker.ng-invalid.ng-pristine ::ng-deep input {
+    background-color: #000000 !important;
+}
