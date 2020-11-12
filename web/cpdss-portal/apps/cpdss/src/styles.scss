@@ -779,7 +779,9 @@ tr{
   &.p-menu .p-menuitem-link{
     padding: 5px 7px;
   }
- 
+ .delete-icon, .p-menuitem-icon{
+   display: none;
+ }
 }
 
 .row.no-wrap{
@@ -817,7 +819,7 @@ tr{
   width: 19px;
   height: 16px;
   vertical-align: bottom;
-
+  cursor: pointer;
 }
 
 input::-webkit-outer-spin-button,
@@ -965,11 +967,16 @@ input[type=number] {
       border-radius: 50%;
       line-height: 12px;
       text-align: center;
+      display: inline-block;
     }
     &.color{
       > div{
       position: static;
       padding-right: 0;
+      .error-icon{
+        position: static;
+        margin-left: 5px;
+      }
       }
     }
     &.api, &.temperature{
@@ -1013,4 +1020,21 @@ input[type=number] {
 .cargo-nomination-table .column-class{
   min-width: 150px;
   width: 150px;
+}
+
+.cargo-nomination-table{
+  .p-datatable-thead{
+    tr{
+      th{
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+      &:nth-child(2){
+        th{
+        top: 16px;
+        }
+      }
+    }
+  }
 }

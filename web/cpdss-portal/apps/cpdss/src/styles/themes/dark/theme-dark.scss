@@ -776,3 +776,12 @@ div{
   background: $validation-icon-bg;
   color: $text-secondary;
 }
+.cargo-nomination-table{
+  .p-datatable-thead{
+    tr{
+      th{
+        background: $body-bg!important;
+      }
+    }
+  }
+}
