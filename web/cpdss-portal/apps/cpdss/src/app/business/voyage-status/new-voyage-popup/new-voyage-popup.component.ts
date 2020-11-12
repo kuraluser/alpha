@@ -90,7 +90,7 @@ export class NewVoyagePopupComponent implements OnInit {
     this.newVoyageForm = this.fb.group({
       'captain': [this.vesselDetails[0].captainName],
       'chiefOfficer': [this.vesselDetails[0].chiefOfficerName],
-      'voyageNo': [null, [Validators.required, Validators.pattern('^[a-zA-Z0-9][ A-Za-z0-9_.()&,-]*$'), Validators.maxLength(100)]]
+      'voyageNo': [null, [Validators.required, Validators.pattern('^[a-zA-Z0-9 ][ A-Za-z0-9_.()&,-]*$'), Validators.maxLength(100)]]
     });
     this.showPopUp = true;
     this.isLoading = false;
@@ -109,4 +109,12 @@ export class NewVoyagePopupComponent implements OnInit {
     }
 
   }
+
+  /**
+   * Trim blank space entered as the first character in voyage no. field 
+   */
+  trimVoyageNo(){
+   this.newVoyageForm.controls['voyageNo'].setValue((this.newVoyageForm.get('voyageNo').value).trim());
+  }
+
 }

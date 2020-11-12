@@ -22,7 +22,7 @@
           <div class="form-group row">
             <label for="voyage_no" class="col-md-6 col-form-label text-secondary">{{'VOYAGE_NO' | translate}}</label>
             <div class="col-md-6">
-              <input type="text" class="form-control" id="voyage_no" formControlName="voyageNo">
+              <input type="text" class="form-control" id="voyage_no" formControlName="voyageNo" (change)="trimVoyageNo($event)">
               <div *ngIf="!newVoyageFormControl.voyageNo.valid && newVoyageFormControl.voyageNo.touched"
                 class="pt-5 text-danger">
                 <span *ngIf="newVoyageFormControl.voyageNo.errors?.required">
