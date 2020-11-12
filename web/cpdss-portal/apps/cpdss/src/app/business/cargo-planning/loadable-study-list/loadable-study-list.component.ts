@@ -65,19 +65,21 @@ export class LoadableStudyListComponent implements OnInit {
    * Get loadable study list
    */
   async getLoadableStudyInfo(vesselId: number, voyageId: number): Promise<LoadableStudy[]> {
+    if (voyageId !== 0) {
       const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
       this.loadableStudyList = result.loadableStudies;
       this.initLoadableStudyArray(this.loadableStudyList);
       return this.loadableStudyList;
+    }
+
   }
   // invoke popup which binds new-loadable-study-popup component
   callNewLoadableStudyPopup() {
-    if (this.voyageId !== 0)
+    if (this.selectedVoyage) {
       this.display = true;
+    }
     else
       this.isVoyageIdSelected = false;
-
-
   }
 
   // set visibility of popup (show/hide)
@@ -109,7 +111,8 @@ export class LoadableStudyListComponent implements OnInit {
    * Show loadable study list based on selected voyage id
    */
   showLoadableStudyList() {
-      this.getLoadableStudyInfo(this.vesselDetails[0].id, this.selectedVoyage.id);
+    this.isVoyageIdSelected = true;
+    this.getLoadableStudyInfo(this.vesselDetails[0].id, this.selectedVoyage.id);
   }
 
   /**

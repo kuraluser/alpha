@@ -27,7 +27,7 @@
                             <input *ngSwitchCase="filterType.ARRAY" type="text" id="{{col.field+'_filter'}}"
                                 (input)="datatable.filter($event.target.value, col.arrayFilterField, col.filterMatchMode)"
                                 [placeholder]="col.filterPlaceholder| translate" class="p-column-filter">
-                            <p-calendar appendTo="body" *ngSwitchCase="filterType.DATE" (onSelect)="onDateSelect($event)" (onInput)="onDateFilter($event.target.value)"
+                            <p-calendar appendTo="body" *ngSwitchCase="filterType.DATE" [maxDate]="dateTime" (onSelect)="onDateSelect($event)" (onInput)="onDateFilter($event.target.value)"
                                 (onClearClick)="datatable.filter('', col.field, 'equals')" [showButtonBar]="true"
                                 styleClass="p-column-filter" [placeholder]="col.filterPlaceholder| translate" [readonlyInput]="false"
                                 dateFormat="dd-mm-yy" id="{{col.field+'_filter'}}"></p-calendar>

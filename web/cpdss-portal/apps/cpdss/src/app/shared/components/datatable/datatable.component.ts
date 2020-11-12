@@ -82,6 +82,7 @@ export class DatatableComponent implements OnInit {
   readonly filterMatchMode = DATATABLE_FILTER_MATCHMODE;
   moreOptions: MenuItem[];
   selectedRowEvent: IDataTableEvent;
+  dateTime = new Date();
 
   // private fields
   private _columns: IDataTableColumn[];

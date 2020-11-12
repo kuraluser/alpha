@@ -41,7 +41,7 @@ export class LoadableStudyListApiService {
     formData.append('maxAirTemperature', loadableStudy.maxAirTempExpected?.toString());
     formData.append('maxWaterTemperature', loadableStudy.maxWaterTempExpected?.toString());
     for (let i = 0; i < loadableStudy.attachMail.length; i++) {
-      formData.append('files',loadableStudy.attachMail[i] );
+      formData.append('files', loadableStudy.attachMail[i]);
 
     }
     return this.commonApiService.postFormData<ILoadableStudyResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudy.id}`, formData);
