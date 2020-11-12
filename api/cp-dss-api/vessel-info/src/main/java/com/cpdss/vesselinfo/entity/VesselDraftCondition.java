@@ -32,6 +32,9 @@ public class VesselDraftCondition extends EntityDoc {
 
   @Column(name = "draftextreme")
   private BigDecimal draftExtreme;
+  
+  @Column(name = "displacement")
+  private BigDecimal displacement;
 
   @Column(name = "isactive")
   private Boolean isActive;

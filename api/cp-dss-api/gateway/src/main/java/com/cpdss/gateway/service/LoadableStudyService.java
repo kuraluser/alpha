@@ -154,32 +154,42 @@ public class LoadableStudyService {
       LoadableQuantity loadableQuantity, long loadableStudiesId, String correlationId)
       throws GenericServiceException {
     LoadableQuantityResponse loadableQuantityResponse = new LoadableQuantityResponse();
-    LoadableQuantityRequest loadableQuantityRequest =
-        LoadableQuantityRequest.newBuilder()
-            .setConstant(loadableQuantity.getConstant())
-            .setDisplacmentDraftRestriction(loadableQuantity.getDisplacmentDraftRestriction())
-            .setDistanceFromLastPort(loadableQuantity.getDistanceFromLastPort())
-            .setDwt(loadableQuantity.getDwt())
-            .setEstDOOnBoard(loadableQuantity.getEstDOOnBoard())
-            .setEstFOOnBoard(loadableQuantity.getEstFOOnBoard())
-            .setEstFreshWaterOnBoard(loadableQuantity.getEstFreshWaterOnBoard())
-            .setEstSagging(loadableQuantity.getEstSagging())
-            .setEstSeaDensity(loadableQuantity.getEstSeaDensity())
-            .setEstTotalFOConsumption(loadableQuantity.getEstTotalFOConsumption())
-            .setFoConsumptionPerDay(loadableQuantity.getFoConsumptionPerDay())
-            .setLimitingDraft(loadableQuantity.getLimitingDraft())
-            .setOtherIfAny(loadableQuantity.getOtherIfAny())
-            .setSaggingDeduction(loadableQuantity.getSaggingDeduction())
-            .setSgCorrection(loadableQuantity.getSgCorrection())
-            .setTotalQuantity(loadableQuantity.getTotalQuantity())
-            .setTpc(loadableQuantity.getTpc())
-            .setVesselAverageSpeed(loadableQuantity.getVesselAverageSpeed())
-            .setVesselLightWeight(loadableQuantity.getVesselLightWeight())
-            .setLoadableStudyId(loadableStudiesId)
-            .build();
+    LoadableQuantityRequest.Builder builder = LoadableQuantityRequest.newBuilder();
+    /*LoadableQuantityRequest loadableQuantityRequest =
+    LoadableQuantityRequest.newBuilder()*/
+    builder.setConstant(loadableQuantity.getConstant());
+    Optional.ofNullable(loadableQuantity.getDisplacmentDraftRestriction())
+        .ifPresent(builder::setDisplacmentDraftRestriction);
+    builder.setDistanceFromLastPort(loadableQuantity.getDistanceFromLastPort());
+    builder.setDwt(loadableQuantity.getDwt());
+    builder.setEstDOOnBoard(loadableQuantity.getEstDOOnBoard());
+    builder.setEstFOOnBoard(loadableQuantity.getEstFOOnBoard());
+    builder.setEstFreshWaterOnBoard(loadableQuantity.getEstFreshWaterOnBoard());
+    builder.setEstSagging(loadableQuantity.getEstSagging());
+    Optional.ofNullable(loadableQuantity.getEstSeaDensity()).ifPresent(builder::setEstSeaDensity);
+    builder.setEstTotalFOConsumption(loadableQuantity.getEstTotalFOConsumption());
+    builder.setFoConsumptionPerDay(loadableQuantity.getFoConsumptionPerDay());
+    builder.setLimitingDraft(loadableQuantity.getLimitingDraft());
+    builder.setOtherIfAny(loadableQuantity.getOtherIfAny());
+    builder.setSaggingDeduction(loadableQuantity.getSaggingDeduction());
+    Optional.ofNullable(loadableQuantity.getSgCorrection()).ifPresent(builder::setSgCorrection);
+    builder.setTotalQuantity(loadableQuantity.getTotalQuantity());
+    builder.setTpc(loadableQuantity.getTpc());
+    builder.setVesselAverageSpeed(loadableQuantity.getVesselAverageSpeed());
+    Optional.ofNullable(loadableQuantity.getVesselLightWeight())
+        .ifPresent(builder::setVesselLightWeight);
+    Optional.ofNullable(loadableQuantity.getPortId()).ifPresent(builder::setPortId);
+    Optional.ofNullable(loadableQuantity.getBoilerWaterOnBoard())
+        .ifPresent(builder::setBoilerWaterOnBoard);
+    Optional.ofNullable(loadableQuantity.getBallast()).ifPresent(builder::setBallast);
+    Optional.ofNullable(loadableQuantity.getRunningHours()).ifPresent(builder::setRunningHours);
+    Optional.ofNullable(loadableQuantity.getRunningDays()).ifPresent(builder::setRunningDays);
+    Optional.ofNullable(loadableQuantity.getFoConInSZ()).ifPresent(builder::setFoConInSZ);
+    Optional.ofNullable(loadableQuantity.getDraftRestriction())
+        .ifPresent(builder::setDraftRestriction);
+    builder.setLoadableStudyId(loadableStudiesId).build();
 
-    LoadableQuantityReply loadableQuantityReply =
-        this.saveLoadableQuantity(loadableQuantityRequest);
+    LoadableQuantityReply loadableQuantityReply = this.saveLoadableQuantity(builder.build());
     if (!SUCCESS.equalsIgnoreCase(loadableQuantityReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           loadableQuantityReply.getResponseStatus().getMessage(),
@@ -836,7 +846,22 @@ public class LoadableStudyService {
         loadableQuantityResponse.getLoadableQuantityRequest().getVesselAverageSpeed());
     loadableQuantity.setUpdateDateAndTime(
         loadableQuantityResponse.getLoadableQuantityRequest().getUpdateDateAndTime());
+    loadableQuantity.setPortId(
+        Integer.parseInt(
+            String.valueOf(loadableQuantityResponse.getLoadableQuantityRequest().getPortId())));
+    loadableQuantity.setBoilerWaterOnBoard(
+        loadableQuantityResponse.getLoadableQuantityRequest().getBoilerWaterOnBoard());
+    loadableQuantity.setBallast(loadableQuantityResponse.getLoadableQuantityRequest().getBallast());
+    loadableQuantity.setRunningHours(
+        loadableQuantityResponse.getLoadableQuantityRequest().getRunningHours());
+    loadableQuantity.setRunningDays(
+        loadableQuantityResponse.getLoadableQuantityRequest().getRunningDays());
+    loadableQuantity.setFoConInSZ(
+        loadableQuantityResponse.getLoadableQuantityRequest().getFoConInSZ());
+    loadableQuantity.setDraftRestriction(
+        loadableQuantityResponse.getLoadableQuantityRequest().getDraftRestriction());
     loadableQuantityResponseDto.setLoadableQuantity(loadableQuantity);
+    loadableQuantityResponseDto.setIsSummerZone(loadableQuantityResponse.getIsSummerZone());
 
     loadableQuantityResponseDto.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));

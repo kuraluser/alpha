@@ -84,8 +84,23 @@ public class LoadableQuantity extends EntityDoc {
   @Column(name = "isactive")
   private Boolean isActive;
 
-  @Column(name = "version")
-  private Long version;
+  @Column(name = "portxid")
+  private BigDecimal portId;
+
+  @Column(name = "boilerwateronboard")
+  private BigDecimal boilerWaterOnBoard;
+
+  @Column(name = "ballast")
+  private BigDecimal ballast;
+
+  @Column(name = "runninghours")
+  private BigDecimal runningHours;
+
+  @Column(name = "runningdays")
+  private BigDecimal runningDays;
+
+  @Column(name = "foconsumptioninsz")
+  private BigDecimal foConsumptionInSZ;
 
   @JoinColumn(name = "loadablestudyxid", referencedColumnName = "id")
   @ManyToOne

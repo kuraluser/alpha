@@ -4341,6 +4341,104 @@ public final class LoadableStudy {
      * @return The bytes for updateDateAndTime.
      */
     com.google.protobuf.ByteString getUpdateDateAndTimeBytes();
+
+    /**
+     * <code>string sg = 22;</code>
+     *
+     * @return The sg.
+     */
+    java.lang.String getSg();
+    /**
+     * <code>string sg = 22;</code>
+     *
+     * @return The bytes for sg.
+     */
+    com.google.protobuf.ByteString getSgBytes();
+
+    /**
+     * <code>string boilerWaterOnBoard = 23;</code>
+     *
+     * @return The boilerWaterOnBoard.
+     */
+    java.lang.String getBoilerWaterOnBoard();
+    /**
+     * <code>string boilerWaterOnBoard = 23;</code>
+     *
+     * @return The bytes for boilerWaterOnBoard.
+     */
+    com.google.protobuf.ByteString getBoilerWaterOnBoardBytes();
+
+    /**
+     * <code>string ballast = 24;</code>
+     *
+     * @return The ballast.
+     */
+    java.lang.String getBallast();
+    /**
+     * <code>string ballast = 24;</code>
+     *
+     * @return The bytes for ballast.
+     */
+    com.google.protobuf.ByteString getBallastBytes();
+
+    /**
+     * <code>string runningHours = 25;</code>
+     *
+     * @return The runningHours.
+     */
+    java.lang.String getRunningHours();
+    /**
+     * <code>string runningHours = 25;</code>
+     *
+     * @return The bytes for runningHours.
+     */
+    com.google.protobuf.ByteString getRunningHoursBytes();
+
+    /**
+     * <code>string runningDays = 26;</code>
+     *
+     * @return The runningDays.
+     */
+    java.lang.String getRunningDays();
+    /**
+     * <code>string runningDays = 26;</code>
+     *
+     * @return The bytes for runningDays.
+     */
+    com.google.protobuf.ByteString getRunningDaysBytes();
+
+    /**
+     * <code>string foConInSZ = 27;</code>
+     *
+     * @return The foConInSZ.
+     */
+    java.lang.String getFoConInSZ();
+    /**
+     * <code>string foConInSZ = 27;</code>
+     *
+     * @return The bytes for foConInSZ.
+     */
+    com.google.protobuf.ByteString getFoConInSZBytes();
+
+    /**
+     * <code>int64 portId = 28;</code>
+     *
+     * @return The portId.
+     */
+    long getPortId();
+
+    /**
+     * <code>string draftRestriction = 29;</code>
+     *
+     * @return The draftRestriction.
+     */
+    java.lang.String getDraftRestriction();
+    /**
+     * <code>string draftRestriction = 29;</code>
+     *
+     * @return The bytes for draftRestriction.
+     */
+    com.google.protobuf.ByteString getDraftRestrictionBytes();
   }
   /** Protobuf type {@code LoadableQuantityRequest} */
   public static final class LoadableQuantityRequest extends com.google.protobuf.GeneratedMessageV3
@@ -4374,6 +4472,13 @@ public final class LoadableStudy {
       foConsumptionPerDay_ = "";
       estTotalFOConsumption_ = "";
       updateDateAndTime_ = "";
+      sg_ = "";
+      boilerWaterOnBoard_ = "";
+      ballast_ = "";
+      runningHours_ = "";
+      runningDays_ = "";
+      foConInSZ_ = "";
+      draftRestriction_ = "";
     }
 
     @java.lang.Override
@@ -4548,6 +4653,60 @@ public final class LoadableStudy {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 updateDateAndTime_ = s;
+                break;
+              }
+            case 178:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                sg_ = s;
+                break;
+              }
+            case 186:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                boilerWaterOnBoard_ = s;
+                break;
+              }
+            case 194:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                ballast_ = s;
+                break;
+              }
+            case 202:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                runningHours_ = s;
+                break;
+              }
+            case 210:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                runningDays_ = s;
+                break;
+              }
+            case 218:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                foConInSZ_ = s;
+                break;
+              }
+            case 224:
+              {
+                portId_ = input.readInt64();
+                break;
+              }
+            case 234:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                draftRestriction_ = s;
                 break;
               }
             default:
@@ -5295,6 +5454,262 @@ public final class LoadableStudy {
       }
     }
 
+    public static final int SG_FIELD_NUMBER = 22;
+    private volatile java.lang.Object sg_;
+    /**
+     * <code>string sg = 22;</code>
+     *
+     * @return The sg.
+     */
+    public java.lang.String getSg() {
+      java.lang.Object ref = sg_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        sg_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string sg = 22;</code>
+     *
+     * @return The bytes for sg.
+     */
+    public com.google.protobuf.ByteString getSgBytes() {
+      java.lang.Object ref = sg_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        sg_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int BOILERWATERONBOARD_FIELD_NUMBER = 23;
+    private volatile java.lang.Object boilerWaterOnBoard_;
+    /**
+     * <code>string boilerWaterOnBoard = 23;</code>
+     *
+     * @return The boilerWaterOnBoard.
+     */
+    public java.lang.String getBoilerWaterOnBoard() {
+      java.lang.Object ref = boilerWaterOnBoard_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        boilerWaterOnBoard_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string boilerWaterOnBoard = 23;</code>
+     *
+     * @return The bytes for boilerWaterOnBoard.
+     */
+    public com.google.protobuf.ByteString getBoilerWaterOnBoardBytes() {
+      java.lang.Object ref = boilerWaterOnBoard_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        boilerWaterOnBoard_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int BALLAST_FIELD_NUMBER = 24;
+    private volatile java.lang.Object ballast_;
+    /**
+     * <code>string ballast = 24;</code>
+     *
+     * @return The ballast.
+     */
+    public java.lang.String getBallast() {
+      java.lang.Object ref = ballast_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        ballast_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string ballast = 24;</code>
+     *
+     * @return The bytes for ballast.
+     */
+    public com.google.protobuf.ByteString getBallastBytes() {
+      java.lang.Object ref = ballast_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        ballast_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int RUNNINGHOURS_FIELD_NUMBER = 25;
+    private volatile java.lang.Object runningHours_;
+    /**
+     * <code>string runningHours = 25;</code>
+     *
+     * @return The runningHours.
+     */
+    public java.lang.String getRunningHours() {
+      java.lang.Object ref = runningHours_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        runningHours_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string runningHours = 25;</code>
+     *
+     * @return The bytes for runningHours.
+     */
+    public com.google.protobuf.ByteString getRunningHoursBytes() {
+      java.lang.Object ref = runningHours_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        runningHours_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int RUNNINGDAYS_FIELD_NUMBER = 26;
+    private volatile java.lang.Object runningDays_;
+    /**
+     * <code>string runningDays = 26;</code>
+     *
+     * @return The runningDays.
+     */
+    public java.lang.String getRunningDays() {
+      java.lang.Object ref = runningDays_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        runningDays_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string runningDays = 26;</code>
+     *
+     * @return The bytes for runningDays.
+     */
+    public com.google.protobuf.ByteString getRunningDaysBytes() {
+      java.lang.Object ref = runningDays_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        runningDays_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int FOCONINSZ_FIELD_NUMBER = 27;
+    private volatile java.lang.Object foConInSZ_;
+    /**
+     * <code>string foConInSZ = 27;</code>
+     *
+     * @return The foConInSZ.
+     */
+    public java.lang.String getFoConInSZ() {
+      java.lang.Object ref = foConInSZ_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        foConInSZ_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string foConInSZ = 27;</code>
+     *
+     * @return The bytes for foConInSZ.
+     */
+    public com.google.protobuf.ByteString getFoConInSZBytes() {
+      java.lang.Object ref = foConInSZ_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        foConInSZ_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PORTID_FIELD_NUMBER = 28;
+    private long portId_;
+    /**
+     * <code>int64 portId = 28;</code>
+     *
+     * @return The portId.
+     */
+    public long getPortId() {
+      return portId_;
+    }
+
+    public static final int DRAFTRESTRICTION_FIELD_NUMBER = 29;
+    private volatile java.lang.Object draftRestriction_;
+    /**
+     * <code>string draftRestriction = 29;</code>
+     *
+     * @return The draftRestriction.
+     */
+    public java.lang.String getDraftRestriction() {
+      java.lang.Object ref = draftRestriction_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        draftRestriction_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string draftRestriction = 29;</code>
+     *
+     * @return The bytes for draftRestriction.
+     */
+    public com.google.protobuf.ByteString getDraftRestrictionBytes() {
+      java.lang.Object ref = draftRestriction_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        draftRestriction_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -5372,6 +5787,30 @@ public final class LoadableStudy {
       if (!getUpdateDateAndTimeBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 21, updateDateAndTime_);
       }
+      if (!getSgBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 22, sg_);
+      }
+      if (!getBoilerWaterOnBoardBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 23, boilerWaterOnBoard_);
+      }
+      if (!getBallastBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 24, ballast_);
+      }
+      if (!getRunningHoursBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 25, runningHours_);
+      }
+      if (!getRunningDaysBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 26, runningDays_);
+      }
+      if (!getFoConInSZBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 27, foConInSZ_);
+      }
+      if (portId_ != 0L) {
+        output.writeInt64(28, portId_);
+      }
+      if (!getDraftRestrictionBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 29, draftRestriction_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -5447,6 +5886,30 @@ public final class LoadableStudy {
       if (!getUpdateDateAndTimeBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(21, updateDateAndTime_);
       }
+      if (!getSgBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(22, sg_);
+      }
+      if (!getBoilerWaterOnBoardBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(23, boilerWaterOnBoard_);
+      }
+      if (!getBallastBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(24, ballast_);
+      }
+      if (!getRunningHoursBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(25, runningHours_);
+      }
+      if (!getRunningDaysBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(26, runningDays_);
+      }
+      if (!getFoConInSZBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(27, foConInSZ_);
+      }
+      if (portId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(28, portId_);
+      }
+      if (!getDraftRestrictionBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(29, draftRestriction_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -5485,6 +5948,14 @@ public final class LoadableStudy {
       if (!getEstTotalFOConsumption().equals(other.getEstTotalFOConsumption())) return false;
       if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
       if (!getUpdateDateAndTime().equals(other.getUpdateDateAndTime())) return false;
+      if (!getSg().equals(other.getSg())) return false;
+      if (!getBoilerWaterOnBoard().equals(other.getBoilerWaterOnBoard())) return false;
+      if (!getBallast().equals(other.getBallast())) return false;
+      if (!getRunningHours().equals(other.getRunningHours())) return false;
+      if (!getRunningDays().equals(other.getRunningDays())) return false;
+      if (!getFoConInSZ().equals(other.getFoConInSZ())) return false;
+      if (getPortId() != other.getPortId()) return false;
+      if (!getDraftRestriction().equals(other.getDraftRestriction())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -5538,6 +6009,22 @@ public final class LoadableStudy {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
       hash = (37 * hash) + UPDATEDATEANDTIME_FIELD_NUMBER;
       hash = (53 * hash) + getUpdateDateAndTime().hashCode();
+      hash = (37 * hash) + SG_FIELD_NUMBER;
+      hash = (53 * hash) + getSg().hashCode();
+      hash = (37 * hash) + BOILERWATERONBOARD_FIELD_NUMBER;
+      hash = (53 * hash) + getBoilerWaterOnBoard().hashCode();
+      hash = (37 * hash) + BALLAST_FIELD_NUMBER;
+      hash = (53 * hash) + getBallast().hashCode();
+      hash = (37 * hash) + RUNNINGHOURS_FIELD_NUMBER;
+      hash = (53 * hash) + getRunningHours().hashCode();
+      hash = (37 * hash) + RUNNINGDAYS_FIELD_NUMBER;
+      hash = (53 * hash) + getRunningDays().hashCode();
+      hash = (37 * hash) + FOCONINSZ_FIELD_NUMBER;
+      hash = (53 * hash) + getFoConInSZ().hashCode();
+      hash = (37 * hash) + PORTID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
+      hash = (37 * hash) + DRAFTRESTRICTION_FIELD_NUMBER;
+      hash = (53 * hash) + getDraftRestriction().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -5722,6 +6209,22 @@ public final class LoadableStudy {
 
         updateDateAndTime_ = "";
 
+        sg_ = "";
+
+        boilerWaterOnBoard_ = "";
+
+        ballast_ = "";
+
+        runningHours_ = "";
+
+        runningDays_ = "";
+
+        foConInSZ_ = "";
+
+        portId_ = 0L;
+
+        draftRestriction_ = "";
+
         return this;
       }
 
@@ -5772,6 +6275,14 @@ public final class LoadableStudy {
         result.estTotalFOConsumption_ = estTotalFOConsumption_;
         result.loadableStudyId_ = loadableStudyId_;
         result.updateDateAndTime_ = updateDateAndTime_;
+        result.sg_ = sg_;
+        result.boilerWaterOnBoard_ = boilerWaterOnBoard_;
+        result.ballast_ = ballast_;
+        result.runningHours_ = runningHours_;
+        result.runningDays_ = runningDays_;
+        result.foConInSZ_ = foConInSZ_;
+        result.portId_ = portId_;
+        result.draftRestriction_ = draftRestriction_;
         onBuilt();
         return result;
       }
@@ -5908,6 +6419,37 @@ public final class LoadableStudy {
         }
         if (!other.getUpdateDateAndTime().isEmpty()) {
           updateDateAndTime_ = other.updateDateAndTime_;
+          onChanged();
+        }
+        if (!other.getSg().isEmpty()) {
+          sg_ = other.sg_;
+          onChanged();
+        }
+        if (!other.getBoilerWaterOnBoard().isEmpty()) {
+          boilerWaterOnBoard_ = other.boilerWaterOnBoard_;
+          onChanged();
+        }
+        if (!other.getBallast().isEmpty()) {
+          ballast_ = other.ballast_;
+          onChanged();
+        }
+        if (!other.getRunningHours().isEmpty()) {
+          runningHours_ = other.runningHours_;
+          onChanged();
+        }
+        if (!other.getRunningDays().isEmpty()) {
+          runningDays_ = other.runningDays_;
+          onChanged();
+        }
+        if (!other.getFoConInSZ().isEmpty()) {
+          foConInSZ_ = other.foConInSZ_;
+          onChanged();
+        }
+        if (other.getPortId() != 0L) {
+          setPortId(other.getPortId());
+        }
+        if (!other.getDraftRestriction().isEmpty()) {
+          draftRestriction_ = other.draftRestriction_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -7490,6 +8032,571 @@ public final class LoadableStudy {
         checkByteStringIsUtf8(value);
 
         updateDateAndTime_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object sg_ = "";
+      /**
+       * <code>string sg = 22;</code>
+       *
+       * @return The sg.
+       */
+      public java.lang.String getSg() {
+        java.lang.Object ref = sg_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          sg_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string sg = 22;</code>
+       *
+       * @return The bytes for sg.
+       */
+      public com.google.protobuf.ByteString getSgBytes() {
+        java.lang.Object ref = sg_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          sg_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string sg = 22;</code>
+       *
+       * @param value The sg to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSg(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        sg_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string sg = 22;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearSg() {
+
+        sg_ = getDefaultInstance().getSg();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string sg = 22;</code>
+       *
+       * @param value The bytes for sg to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSgBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        sg_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object boilerWaterOnBoard_ = "";
+      /**
+       * <code>string boilerWaterOnBoard = 23;</code>
+       *
+       * @return The boilerWaterOnBoard.
+       */
+      public java.lang.String getBoilerWaterOnBoard() {
+        java.lang.Object ref = boilerWaterOnBoard_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          boilerWaterOnBoard_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string boilerWaterOnBoard = 23;</code>
+       *
+       * @return The bytes for boilerWaterOnBoard.
+       */
+      public com.google.protobuf.ByteString getBoilerWaterOnBoardBytes() {
+        java.lang.Object ref = boilerWaterOnBoard_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          boilerWaterOnBoard_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string boilerWaterOnBoard = 23;</code>
+       *
+       * @param value The boilerWaterOnBoard to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBoilerWaterOnBoard(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        boilerWaterOnBoard_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string boilerWaterOnBoard = 23;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearBoilerWaterOnBoard() {
+
+        boilerWaterOnBoard_ = getDefaultInstance().getBoilerWaterOnBoard();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string boilerWaterOnBoard = 23;</code>
+       *
+       * @param value The bytes for boilerWaterOnBoard to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBoilerWaterOnBoardBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        boilerWaterOnBoard_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object ballast_ = "";
+      /**
+       * <code>string ballast = 24;</code>
+       *
+       * @return The ballast.
+       */
+      public java.lang.String getBallast() {
+        java.lang.Object ref = ballast_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          ballast_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string ballast = 24;</code>
+       *
+       * @return The bytes for ballast.
+       */
+      public com.google.protobuf.ByteString getBallastBytes() {
+        java.lang.Object ref = ballast_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          ballast_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string ballast = 24;</code>
+       *
+       * @param value The ballast to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBallast(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        ballast_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ballast = 24;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearBallast() {
+
+        ballast_ = getDefaultInstance().getBallast();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ballast = 24;</code>
+       *
+       * @param value The bytes for ballast to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBallastBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        ballast_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object runningHours_ = "";
+      /**
+       * <code>string runningHours = 25;</code>
+       *
+       * @return The runningHours.
+       */
+      public java.lang.String getRunningHours() {
+        java.lang.Object ref = runningHours_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          runningHours_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string runningHours = 25;</code>
+       *
+       * @return The bytes for runningHours.
+       */
+      public com.google.protobuf.ByteString getRunningHoursBytes() {
+        java.lang.Object ref = runningHours_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          runningHours_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string runningHours = 25;</code>
+       *
+       * @param value The runningHours to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRunningHours(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        runningHours_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string runningHours = 25;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearRunningHours() {
+
+        runningHours_ = getDefaultInstance().getRunningHours();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string runningHours = 25;</code>
+       *
+       * @param value The bytes for runningHours to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRunningHoursBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        runningHours_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object runningDays_ = "";
+      /**
+       * <code>string runningDays = 26;</code>
+       *
+       * @return The runningDays.
+       */
+      public java.lang.String getRunningDays() {
+        java.lang.Object ref = runningDays_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          runningDays_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string runningDays = 26;</code>
+       *
+       * @return The bytes for runningDays.
+       */
+      public com.google.protobuf.ByteString getRunningDaysBytes() {
+        java.lang.Object ref = runningDays_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          runningDays_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string runningDays = 26;</code>
+       *
+       * @param value The runningDays to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRunningDays(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        runningDays_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string runningDays = 26;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearRunningDays() {
+
+        runningDays_ = getDefaultInstance().getRunningDays();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string runningDays = 26;</code>
+       *
+       * @param value The bytes for runningDays to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRunningDaysBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        runningDays_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object foConInSZ_ = "";
+      /**
+       * <code>string foConInSZ = 27;</code>
+       *
+       * @return The foConInSZ.
+       */
+      public java.lang.String getFoConInSZ() {
+        java.lang.Object ref = foConInSZ_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          foConInSZ_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string foConInSZ = 27;</code>
+       *
+       * @return The bytes for foConInSZ.
+       */
+      public com.google.protobuf.ByteString getFoConInSZBytes() {
+        java.lang.Object ref = foConInSZ_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          foConInSZ_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string foConInSZ = 27;</code>
+       *
+       * @param value The foConInSZ to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFoConInSZ(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        foConInSZ_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string foConInSZ = 27;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearFoConInSZ() {
+
+        foConInSZ_ = getDefaultInstance().getFoConInSZ();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string foConInSZ = 27;</code>
+       *
+       * @param value The bytes for foConInSZ to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFoConInSZBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        foConInSZ_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long portId_;
+      /**
+       * <code>int64 portId = 28;</code>
+       *
+       * @return The portId.
+       */
+      public long getPortId() {
+        return portId_;
+      }
+      /**
+       * <code>int64 portId = 28;</code>
+       *
+       * @param value The portId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortId(long value) {
+
+        portId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portId = 28;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortId() {
+
+        portId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object draftRestriction_ = "";
+      /**
+       * <code>string draftRestriction = 29;</code>
+       *
+       * @return The draftRestriction.
+       */
+      public java.lang.String getDraftRestriction() {
+        java.lang.Object ref = draftRestriction_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          draftRestriction_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string draftRestriction = 29;</code>
+       *
+       * @return The bytes for draftRestriction.
+       */
+      public com.google.protobuf.ByteString getDraftRestrictionBytes() {
+        java.lang.Object ref = draftRestriction_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          draftRestriction_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string draftRestriction = 29;</code>
+       *
+       * @param value The draftRestriction to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDraftRestriction(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        draftRestriction_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string draftRestriction = 29;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDraftRestriction() {
+
+        draftRestriction_ = getDefaultInstance().getDraftRestriction();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string draftRestriction = 29;</code>
+       *
+       * @param value The bytes for draftRestriction to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDraftRestrictionBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        draftRestriction_ = value;
         onChanged();
         return this;
       }
@@ -24292,6 +25399,13 @@ public final class LoadableStudy {
     com.cpdss.common.generated.LoadableStudy.StatusReply getResponseStatus();
     /** <code>.StatusReply responseStatus = 2;</code> */
     com.cpdss.common.generated.LoadableStudy.StatusReplyOrBuilder getResponseStatusOrBuilder();
+
+    /**
+     * <code>bool isSummerZone = 3;</code>
+     *
+     * @return The isSummerZone.
+     */
+    boolean getIsSummerZone();
   }
   /** Protobuf type {@code LoadableQuantityResponse} */
   public static final class LoadableQuantityResponse extends com.google.protobuf.GeneratedMessageV3
@@ -24368,6 +25482,11 @@ public final class LoadableStudy {
                   responseStatus_ = subBuilder.buildPartial();
                 }
 
+                break;
+              }
+            case 24:
+              {
+                isSummerZone_ = input.readBool();
                 break;
               }
             default:
@@ -24458,6 +25577,17 @@ public final class LoadableStudy {
       return getResponseStatus();
     }
 
+    public static final int ISSUMMERZONE_FIELD_NUMBER = 3;
+    private boolean isSummerZone_;
+    /**
+     * <code>bool isSummerZone = 3;</code>
+     *
+     * @return The isSummerZone.
+     */
+    public boolean getIsSummerZone() {
+      return isSummerZone_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -24478,6 +25608,9 @@ public final class LoadableStudy {
       if (responseStatus_ != null) {
         output.writeMessage(2, getResponseStatus());
       }
+      if (isSummerZone_ != false) {
+        output.writeBool(3, isSummerZone_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -24494,6 +25627,9 @@ public final class LoadableStudy {
       }
       if (responseStatus_ != null) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getResponseStatus());
+      }
+      if (isSummerZone_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(3, isSummerZone_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -24519,6 +25655,7 @@ public final class LoadableStudy {
       if (hasResponseStatus()) {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
+      if (getIsSummerZone() != other.getIsSummerZone()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -24538,6 +25675,8 @@ public final class LoadableStudy {
         hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
         hash = (53 * hash) + getResponseStatus().hashCode();
       }
+      hash = (37 * hash) + ISSUMMERZONE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsSummerZone());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -24692,6 +25831,8 @@ public final class LoadableStudy {
           responseStatus_ = null;
           responseStatusBuilder_ = null;
         }
+        isSummerZone_ = false;
+
         return this;
       }
 
@@ -24731,6 +25872,7 @@ public final class LoadableStudy {
         } else {
           result.responseStatus_ = responseStatusBuilder_.build();
         }
+        result.isSummerZone_ = isSummerZone_;
         onBuilt();
         return result;
       }
@@ -24791,6 +25933,9 @@ public final class LoadableStudy {
         }
         if (other.hasResponseStatus()) {
           mergeResponseStatus(other.getResponseStatus());
+        }
+        if (other.getIsSummerZone() != false) {
+          setIsSummerZone(other.getIsSummerZone());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -25070,6 +26215,39 @@ public final class LoadableStudy {
           responseStatus_ = null;
         }
         return responseStatusBuilder_;
+      }
+
+      private boolean isSummerZone_;
+      /**
+       * <code>bool isSummerZone = 3;</code>
+       *
+       * @return The isSummerZone.
+       */
+      public boolean getIsSummerZone() {
+        return isSummerZone_;
+      }
+      /**
+       * <code>bool isSummerZone = 3;</code>
+       *
+       * @param value The isSummerZone to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsSummerZone(boolean value) {
+
+        isSummerZone_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isSummerZone = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearIsSummerZone() {
+
+        isSummerZone_ = false;
+        onChanged();
+        return this;
       }
 
       @java.lang.Override
@@ -27397,7 +28575,7 @@ public final class LoadableStudy {
           + "geListReply\022$\n\016responseStatus\030\001 \001(\0132\014.St"
           + "atusReply\022\036\n\007voyages\030\002 \003(\0132\r.VoyageDetai"
           + "l\"<\n\013StatusReply\022\016\n\006status\030\001 \001(\t\022\014\n\004code"
-          + "\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\"\226\004\n\027LoadableQuan"
+          + "\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\"\267\005\n\027LoadableQuan"
           + "tityRequest\022\025\n\rlimitingDraft\030\001 \001(\t\022\025\n\res"
           + "tSeaDensity\030\002 \001(\t\022\013\n\003tpc\030\003 \001(\t\022\022\n\nestSag"
           + "ging\030\004 \001(\t\022#\n\033displacmentDraftRestrictio"
@@ -27411,99 +28589,104 @@ public final class LoadableStudy {
           + "ed\030\021 \001(\t\022\033\n\023foConsumptionPerDay\030\022 \001(\t\022\035\n"
           + "\025estTotalFOConsumption\030\023 \001(\t\022\027\n\017loadable"
           + "StudyId\030\024 \001(\003\022\031\n\021updateDateAndTime\030\025 \001(\t"
-          + "\"r\n\025LoadableQuantityReply\022$\n\016responseSta"
-          + "tus\030\001 \001(\0132\014.StatusReply\022\032\n\022loadableQuant"
-          + "ityId\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\"f\n\024"
-          + "LoadableStudyRequest\022\021\n\tcompanyId\030\001 \001(\003\022"
-          + "\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017l"
-          + "oadableStudyId\030\004 \001(\003\"?\n\027LoadableStudyAtt"
-          + "achment\022\022\n\nbyteString\030\001 \001(\014\022\020\n\010fileName\030"
-          + "\002 \001(\t\"\242\003\n\023LoadableStudyDetail\022\n\n\002id\030\001 \001("
-          + "\003\022\014\n\004name\030\002 \001(\t\022\016\n\006detail\030\003 \001(\t\022\020\n\010statu"
-          + "sId\030\004 \001(\003\022\016\n\006status\030\005 \001(\t\022\023\n\013createdDate"
-          + "\030\006 \001(\t\022\021\n\tcharterer\030\007 \001(\t\022\024\n\014subChartere"
-          + "r\030\010 \001(\t\022\021\n\tdraftMark\030\t \001(\t\022\023\n\013loadLineXI"
-          + "d\030\n \001(\003\022\030\n\020draftRestriction\030\013 \001(\t\022\031\n\021max"
-          + "AirTemperature\030\014 \001(\t\022\033\n\023maxWaterTemperat"
-          + "ure\030\r \001(\t\022\030\n\020duplicatedFromId\030\016 \001(\003\022\020\n\010v"
-          + "oyageId\030\017 \001(\003\022\020\n\010vesselId\030\020 \001(\003\022-\n\013attac"
-          + "hments\030\021 \003(\0132\030.LoadableStudyAttachment\022\032"
-          + "\n\022dischargingPortIds\030\022 \003(\003\"x\n\022LoadableSt"
-          + "udyReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
-          + "nseStatus\022-\n\017loadableStudies\030\002 \003(\0132\024.Loa"
-          + "dableStudyDetail\022\n\n\002id\030\003 \001(\003\"5\n\021LoadingP"
-          + "ortDetail\022\016\n\006portId\030\001 \001(\003\022\020\n\010quantity\030\002 "
-          + "\001(\t\".\n\021segregationDetail\022\n\n\002id\030\001 \001(\003\022\r\n\005"
-          + "value\030\002 \001(\t\"\252\002\n\025CargoNominationDetail\022\n\n"
-          + "\002id\030\001 \001(\003\022\027\n\017loadableStudyId\030\002 \001(\003\022\020\n\010pr"
-          + "iority\030\003 \001(\003\022\r\n\005color\030\004 \001(\t\022\017\n\007cargoId\030\005"
-          + " \001(\003\022\024\n\014abbreviation\030\006 \001(\t\022.\n\022loadingPor"
-          + "tDetails\030\007 \003(\0132\022.LoadingPortDetail\022\020\n\010qu"
-          + "antity\030\010 \001(\t\022\024\n\014maxTolerance\030\t \001(\t\022\024\n\014mi"
-          + "nTolerance\030\n \001(\t\022\016\n\006apiEst\030\013 \001(\t\022\017\n\007temp"
-          + "Est\030\014 \001(\t\022\025\n\rsegregationId\030\r \001(\003\"\247\001\n\026Car"
-          + "goNominationRequest\022\020\n\010vesselId\030\001 \001(\003\022\020\n"
-          + "\010voyageId\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003"
-          + "\022\031\n\021cargoNominationId\030\004 \001(\003\0225\n\025cargoNomi"
-          + "nationDetail\030\005 \001(\0132\026.CargoNominationDeta"
-          + "il\"\214\001\n\024CargoNominationReply\022\'\n\016responseS"
-          + "tatus\030\001 \001(\0132\017.ResponseStatus\022\031\n\021cargoNom"
-          + "inationId\030\002 \001(\003\0220\n\020cargoNominations\030\003 \003("
-          + "\0132\026.CargoNominationDetail\"z\n\023PortRotatio"
-          + "nRequest\022\027\n\017loadableStudyId\030\001 \001(\003\022\020\n\010ves"
-          + "selId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\032\n\022dischar"
-          + "gingPortIds\030\004 \003(\003\022\n\n\002id\030\005 \001(\003\"\241\002\n\022PortRo"
-          + "tationDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003"
-          + "\022\017\n\007berthId\030\003 \001(\003\022\023\n\013operationId\030\004 \001(\003\022\027"
-          + "\n\017seaWaterDensity\030\005 \001(\t\022\034\n\024distanceBetwe"
-          + "enPorts\030\006 \001(\t\022\022\n\ntimeOfStay\030\007 \001(\t\022\020\n\010max"
-          + "Draft\030\010 \001(\t\022\023\n\013maxAirDraft\030\t \001(\t\022\013\n\003eta\030"
-          + "\n \001(\t\022\013\n\003etd\030\013 \001(\t\022\022\n\nlayCanFrom\030\014 \001(\t\022\020"
-          + "\n\010layCanTo\030\r \001(\t\022\027\n\017loadableStudyId\030\016 \001("
-          + "\003\".\n\tOperation\022\n\n\002id\030\001 \001(\003\022\025\n\roperationN"
-          + "ame\030\002 \001(\t\"\230\001\n\021PortRotationReply\022\'\n\016respo"
-          + "nseStatus\030\001 \001(\0132\017.ResponseStatus\022\"\n\005port"
-          + "s\030\002 \003(\0132\023.PortRotationDetail\022\036\n\noperatio"
-          + "ns\030\003 \003(\0132\n.Operation\022\026\n\016portRotationId\030\004"
-          + " \001(\003\"{\n\030LoadableQuantityResponse\0229\n\027load"
-          + "ableQuantityRequest\030\001 \001(\0132\030.LoadableQuan"
-          + "tityRequest\022$\n\016responseStatus\030\002 \001(\0132\014.St"
-          + "atusReply\",\n\020ValveSegregation\022\n\n\002id\030\001 \001("
-          + "\003\022\014\n\004name\030\002 \001(\t\"2\n\027ValveSegregationReque"
-          + "st\022\027\n\017loadableStudyId\030\001 \001(\003\"m\n\025ValveSegr"
-          + "egationReply\022\'\n\016responseStatus\030\001 \001(\0132\017.R"
-          + "esponseStatus\022+\n\020valveSegregation\030\002 \003(\0132"
-          + "\021.ValveSegregation2\214\t\n\024LoadableStudyServ"
-          + "ice\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014.Voya"
-          + "geReply\"\000\0228\n\022GetVoyagesByVessel\022\016.Voyage"
-          + "Request\032\020.VoyageListReply\"\000\022J\n\024SaveLoada"
-          + "bleQuantity\022\030.LoadableQuantityRequest\032\026."
-          + "LoadableQuantityReply\"\000\022T\n$FindLoadableS"
-          + "tudiesByVesselAndVoyage\022\025.LoadableStudyR"
-          + "equest\032\023.LoadableStudyReply\"\000\022@\n\021SaveLoa"
-          + "dableStudy\022\024.LoadableStudyDetail\032\023.Loada"
-          + "bleStudyReply\"\000\022G\n\023SaveCargoNomination\022\027"
-          + ".CargoNominationRequest\032\025.CargoNominatio"
-          + "nReply\"\000\022J\n\034GetLoadableStudyPortRotation"
-          + "\022\024.PortRotationRequest\032\022.PortRotationRep"
-          + "ly\"\000\022J\n\026GetCargoNominationById\022\027.CargoNo"
-          + "minationRequest\032\025.CargoNominationReply\"\000"
-          + "\022I\n\023GetValveSegregation\022\030.ValveSegregati"
-          + "onRequest\032\026.ValveSegregationReply\"\000\022J\n\023g"
-          + "etLoadableQuantity\022\026.LoadableQuantityRep"
-          + "ly\032\031.LoadableQuantityResponse\"\000\022J\n\035SaveL"
-          + "oadableStudyPortRotation\022\023.PortRotationD"
-          + "etail\032\022.PortRotationReply\"\000\022I\n\025DeleteCar"
-          + "goNomination\022\027.CargoNominationRequest\032\025."
-          + "CargoNominationReply\"\000\022B\n\024SaveDischargin"
-          + "gPorts\022\024.PortRotationRequest\032\022.PortRotat"
-          + "ionReply\"\000\022N\n GetPortRotationByLoadableS"
-          + "tudyId\022\024.PortRotationRequest\032\022.PortRotat"
-          + "ionReply\"\000\022C\n\023DeleteLoadableStudy\022\025.Load"
-          + "ableStudyRequest\032\023.LoadableStudyReply\"\000\022"
-          + "@\n\022DeletePortRotation\022\024.PortRotationRequ"
-          + "est\032\022.PortRotationReply\"\000B\036\n\032com.cpdss.c"
-          + "ommon.generatedP\000b\006proto3"
+          + "\022\n\n\002sg\030\026 \001(\t\022\032\n\022boilerWaterOnBoard\030\027 \001(\t"
+          + "\022\017\n\007ballast\030\030 \001(\t\022\024\n\014runningHours\030\031 \001(\t\022"
+          + "\023\n\013runningDays\030\032 \001(\t\022\021\n\tfoConInSZ\030\033 \001(\t\022"
+          + "\016\n\006portId\030\034 \001(\003\022\030\n\020draftRestriction\030\035 \001("
+          + "\t\"r\n\025LoadableQuantityReply\022$\n\016responseSt"
+          + "atus\030\001 \001(\0132\014.StatusReply\022\032\n\022loadableQuan"
+          + "tityId\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\"f\n"
+          + "\024LoadableStudyRequest\022\021\n\tcompanyId\030\001 \001(\003"
+          + "\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017"
+          + "loadableStudyId\030\004 \001(\003\"?\n\027LoadableStudyAt"
+          + "tachment\022\022\n\nbyteString\030\001 \001(\014\022\020\n\010fileName"
+          + "\030\002 \001(\t\"\242\003\n\023LoadableStudyDetail\022\n\n\002id\030\001 \001"
+          + "(\003\022\014\n\004name\030\002 \001(\t\022\016\n\006detail\030\003 \001(\t\022\020\n\010stat"
+          + "usId\030\004 \001(\003\022\016\n\006status\030\005 \001(\t\022\023\n\013createdDat"
+          + "e\030\006 \001(\t\022\021\n\tcharterer\030\007 \001(\t\022\024\n\014subCharter"
+          + "er\030\010 \001(\t\022\021\n\tdraftMark\030\t \001(\t\022\023\n\013loadLineX"
+          + "Id\030\n \001(\003\022\030\n\020draftRestriction\030\013 \001(\t\022\031\n\021ma"
+          + "xAirTemperature\030\014 \001(\t\022\033\n\023maxWaterTempera"
+          + "ture\030\r \001(\t\022\030\n\020duplicatedFromId\030\016 \001(\003\022\020\n\010"
+          + "voyageId\030\017 \001(\003\022\020\n\010vesselId\030\020 \001(\003\022-\n\013atta"
+          + "chments\030\021 \003(\0132\030.LoadableStudyAttachment\022"
+          + "\032\n\022dischargingPortIds\030\022 \003(\003\"x\n\022LoadableS"
+          + "tudyReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp"
+          + "onseStatus\022-\n\017loadableStudies\030\002 \003(\0132\024.Lo"
+          + "adableStudyDetail\022\n\n\002id\030\003 \001(\003\"5\n\021Loading"
+          + "PortDetail\022\016\n\006portId\030\001 \001(\003\022\020\n\010quantity\030\002"
+          + " \001(\t\".\n\021segregationDetail\022\n\n\002id\030\001 \001(\003\022\r\n"
+          + "\005value\030\002 \001(\t\"\252\002\n\025CargoNominationDetail\022\n"
+          + "\n\002id\030\001 \001(\003\022\027\n\017loadableStudyId\030\002 \001(\003\022\020\n\010p"
+          + "riority\030\003 \001(\003\022\r\n\005color\030\004 \001(\t\022\017\n\007cargoId\030"
+          + "\005 \001(\003\022\024\n\014abbreviation\030\006 \001(\t\022.\n\022loadingPo"
+          + "rtDetails\030\007 \003(\0132\022.LoadingPortDetail\022\020\n\010q"
+          + "uantity\030\010 \001(\t\022\024\n\014maxTolerance\030\t \001(\t\022\024\n\014m"
+          + "inTolerance\030\n \001(\t\022\016\n\006apiEst\030\013 \001(\t\022\017\n\007tem"
+          + "pEst\030\014 \001(\t\022\025\n\rsegregationId\030\r \001(\003\"\247\001\n\026Ca"
+          + "rgoNominationRequest\022\020\n\010vesselId\030\001 \001(\003\022\020"
+          + "\n\010voyageId\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001("
+          + "\003\022\031\n\021cargoNominationId\030\004 \001(\003\0225\n\025cargoNom"
+          + "inationDetail\030\005 \001(\0132\026.CargoNominationDet"
+          + "ail\"\214\001\n\024CargoNominationReply\022\'\n\016response"
+          + "Status\030\001 \001(\0132\017.ResponseStatus\022\031\n\021cargoNo"
+          + "minationId\030\002 \001(\003\0220\n\020cargoNominations\030\003 \003"
+          + "(\0132\026.CargoNominationDetail\"z\n\023PortRotati"
+          + "onRequest\022\027\n\017loadableStudyId\030\001 \001(\003\022\020\n\010ve"
+          + "sselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\032\n\022discha"
+          + "rgingPortIds\030\004 \003(\003\022\n\n\002id\030\005 \001(\003\"\241\002\n\022PortR"
+          + "otationDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001("
+          + "\003\022\017\n\007berthId\030\003 \001(\003\022\023\n\013operationId\030\004 \001(\003\022"
+          + "\027\n\017seaWaterDensity\030\005 \001(\t\022\034\n\024distanceBetw"
+          + "eenPorts\030\006 \001(\t\022\022\n\ntimeOfStay\030\007 \001(\t\022\020\n\010ma"
+          + "xDraft\030\010 \001(\t\022\023\n\013maxAirDraft\030\t \001(\t\022\013\n\003eta"
+          + "\030\n \001(\t\022\013\n\003etd\030\013 \001(\t\022\022\n\nlayCanFrom\030\014 \001(\t\022"
+          + "\020\n\010layCanTo\030\r \001(\t\022\027\n\017loadableStudyId\030\016 \001"
+          + "(\003\".\n\tOperation\022\n\n\002id\030\001 \001(\003\022\025\n\roperation"
+          + "Name\030\002 \001(\t\"\230\001\n\021PortRotationReply\022\'\n\016resp"
+          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\022\"\n\005por"
+          + "ts\030\002 \003(\0132\023.PortRotationDetail\022\036\n\noperati"
+          + "ons\030\003 \003(\0132\n.Operation\022\026\n\016portRotationId\030"
+          + "\004 \001(\003\"\221\001\n\030LoadableQuantityResponse\0229\n\027lo"
+          + "adableQuantityRequest\030\001 \001(\0132\030.LoadableQu"
+          + "antityRequest\022$\n\016responseStatus\030\002 \001(\0132\014."
+          + "StatusReply\022\024\n\014isSummerZone\030\003 \001(\010\",\n\020Val"
+          + "veSegregation\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\""
+          + "2\n\027ValveSegregationRequest\022\027\n\017loadableSt"
+          + "udyId\030\001 \001(\003\"m\n\025ValveSegregationReply\022\'\n\016"
+          + "responseStatus\030\001 \001(\0132\017.ResponseStatus\022+\n"
+          + "\020valveSegregation\030\002 \003(\0132\021.ValveSegregati"
+          + "on2\214\t\n\024LoadableStudyService\022,\n\nSaveVoyag"
+          + "e\022\016.VoyageRequest\032\014.VoyageReply\"\000\0228\n\022Get"
+          + "VoyagesByVessel\022\016.VoyageRequest\032\020.Voyage"
+          + "ListReply\"\000\022J\n\024SaveLoadableQuantity\022\030.Lo"
+          + "adableQuantityRequest\032\026.LoadableQuantity"
+          + "Reply\"\000\022T\n$FindLoadableStudiesByVesselAn"
+          + "dVoyage\022\025.LoadableStudyRequest\032\023.Loadabl"
+          + "eStudyReply\"\000\022@\n\021SaveLoadableStudy\022\024.Loa"
+          + "dableStudyDetail\032\023.LoadableStudyReply\"\000\022"
+          + "G\n\023SaveCargoNomination\022\027.CargoNomination"
+          + "Request\032\025.CargoNominationReply\"\000\022J\n\034GetL"
+          + "oadableStudyPortRotation\022\024.PortRotationR"
+          + "equest\032\022.PortRotationReply\"\000\022J\n\026GetCargo"
+          + "NominationById\022\027.CargoNominationRequest\032"
+          + "\025.CargoNominationReply\"\000\022I\n\023GetValveSegr"
+          + "egation\022\030.ValveSegregationRequest\032\026.Valv"
+          + "eSegregationReply\"\000\022J\n\023getLoadableQuanti"
+          + "ty\022\026.LoadableQuantityReply\032\031.LoadableQua"
+          + "ntityResponse\"\000\022J\n\035SaveLoadableStudyPort"
+          + "Rotation\022\023.PortRotationDetail\032\022.PortRota"
+          + "tionReply\"\000\022I\n\025DeleteCargoNomination\022\027.C"
+          + "argoNominationRequest\032\025.CargoNominationR"
+          + "eply\"\000\022B\n\024SaveDischargingPorts\022\024.PortRot"
+          + "ationRequest\032\022.PortRotationReply\"\000\022N\n Ge"
+          + "tPortRotationByLoadableStudyId\022\024.PortRot"
+          + "ationRequest\032\022.PortRotationReply\"\000\022C\n\023De"
+          + "leteLoadableStudy\022\025.LoadableStudyRequest"
+          + "\032\023.LoadableStudyReply\"\000\022@\n\022DeletePortRot"
+          + "ation\022\024.PortRotationRequest\032\022.PortRotati"
+          + "onReply\"\000B\036\n\032com.cpdss.common.generatedP"
+          + "\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -27572,6 +28755,14 @@ public final class LoadableStudy {
               "EstTotalFOConsumption",
               "LoadableStudyId",
               "UpdateDateAndTime",
+              "Sg",
+              "BoilerWaterOnBoard",
+              "Ballast",
+              "RunningHours",
+              "RunningDays",
+              "FoConInSZ",
+              "PortId",
+              "DraftRestriction",
             });
     internal_static_LoadableQuantityReply_descriptor = getDescriptor().getMessageTypes().get(6);
     internal_static_LoadableQuantityReply_fieldAccessorTable =
@@ -27722,7 +28913,7 @@ public final class LoadableStudy {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableQuantityResponse_descriptor,
             new java.lang.String[] {
-              "LoadableQuantityRequest", "ResponseStatus",
+              "LoadableQuantityRequest", "ResponseStatus", "IsSummerZone",
             });
     internal_static_ValveSegregation_descriptor = getDescriptor().getMessageTypes().get(21);
     internal_static_ValveSegregation_fieldAccessorTable =

@@ -204,7 +204,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         loadableQuantity.setConstant(new BigDecimal(loadableQuantityRequest.getConstant()));
         loadableQuantity.setDeadWeight(new BigDecimal(loadableQuantityRequest.getDwt()));
         loadableQuantity.setDisplacementAtDraftRestriction(
-            new BigDecimal(loadableQuantityRequest.getDisplacmentDraftRestriction()));
+            StringUtils.isEmpty(loadableQuantityRequest.getDisplacmentDraftRestriction())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getDisplacmentDraftRestriction()));
         loadableQuantity.setDistanceFromLastPort(
             new BigDecimal(loadableQuantityRequest.getDistanceFromLastPort()));
         loadableQuantity.setEstimatedDOOnBoard(
@@ -217,17 +219,29 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             new BigDecimal(loadableQuantityRequest.getEstSagging()));
         loadableQuantity.setDraftRestriction(
             new BigDecimal(loadableQuantityRequest.getLimitingDraft()));
+
         loadableQuantity.setEstimatedSeaDensity(
-            new BigDecimal(loadableQuantityRequest.getEstSeaDensity()));
+            StringUtils.isEmpty(loadableQuantityRequest.getEstSeaDensity())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getEstSeaDensity()));
+
         loadableQuantity.setFoConsumptionPerDay(
             new BigDecimal(loadableQuantityRequest.getFoConsumptionPerDay()));
+
         loadableQuantity.setLightWeight(
-            new BigDecimal(loadableQuantityRequest.getVesselLightWeight()));
+            StringUtils.isEmpty(loadableQuantityRequest.getVesselLightWeight())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getVesselLightWeight()));
+
         loadableQuantity.setLoadableStudyXId(loadableStudy.get());
         loadableQuantity.setOtherIfAny(new BigDecimal(loadableQuantityRequest.getOtherIfAny()));
         loadableQuantity.setSaggingDeduction(
             new BigDecimal(loadableQuantityRequest.getSaggingDeduction()));
-        loadableQuantity.setSgCorrection(new BigDecimal(loadableQuantityRequest.getSgCorrection()));
+
+        loadableQuantity.setSgCorrection(
+            StringUtils.isEmpty(loadableQuantityRequest.getSgCorrection())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getSgCorrection()));
 
         loadableQuantity.setTotalFoConsumption(
             new BigDecimal(loadableQuantityRequest.getEstTotalFOConsumption()));
@@ -236,6 +250,36 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         loadableQuantity.setTpcatDraft(new BigDecimal(loadableQuantityRequest.getTpc()));
         loadableQuantity.setVesselAverageSpeed(
             new BigDecimal(loadableQuantityRequest.getVesselAverageSpeed()));
+
+        loadableQuantity.setPortId(
+            StringUtils.isEmpty(loadableQuantityRequest.getPortId())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getPortId()));
+        loadableQuantity.setPortId(
+            StringUtils.isEmpty(loadableQuantityRequest.getBoilerWaterOnBoard())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getBoilerWaterOnBoard()));
+        loadableQuantity.setPortId(
+            StringUtils.isEmpty(loadableQuantityRequest.getBallast())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getBallast()));
+        loadableQuantity.setPortId(
+            StringUtils.isEmpty(loadableQuantityRequest.getRunningHours())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getRunningHours()));
+        loadableQuantity.setPortId(
+            StringUtils.isEmpty(loadableQuantityRequest.getRunningDays())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getRunningDays()));
+        loadableQuantity.setPortId(
+            StringUtils.isEmpty(loadableQuantityRequest.getFoConInSZ())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getFoConInSZ()));
+        loadableQuantity.setPortId(
+            StringUtils.isEmpty(loadableQuantityRequest.getDraftRestriction())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getDraftRestriction()));
+
         loadableQuantity = loadableQuantityRepository.save(loadableQuantity);
 
         // when Db save is complete we return to client a success message
@@ -769,65 +813,139 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional<LoadableStudy> loadableStudy =
           this.loadableStudyRepository.findById(request.getLoadableStudyId());
       if (!loadableStudy.isPresent()) {
-        log.info("INVALID_STUDY_ID - ", request.getLoadableStudyId());
+        log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
         builder.setResponseStatus(
             StatusReply.newBuilder()
                 .setStatus(FAILED)
                 .setMessage(INVALID_LOADABLE_QUANTITY)
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else if (loadableQuantity.isEmpty()) {
-        String draftRestictoin = null;
+        String draftRestictoin = "";
+        String draftExtreme = "";
+        if (Optional.ofNullable(loadableStudy.get().getDraftMark()).isPresent()) {
+          draftExtreme = loadableStudy.get().getDraftMark().toString();
+        }
         VesselRequest replyBuilder =
             VesselRequest.newBuilder()
                 .setVesselId(loadableStudy.get().getVesselXId())
                 .setVesselDraftConditionId(loadableStudy.get().getLoadLineXId())
-                .setDraftExtreme(loadableStudy.get().getDraftMark().toString())
+                .setDraftExtreme(draftExtreme)
                 .build();
         VesselReply vesselReply = this.getVesselDetailsById(replyBuilder);
         if (Optional.ofNullable(loadableStudy.get().getDraftRestriction()).isPresent()) {
           draftRestictoin = loadableStudy.get().getDraftRestriction().toString();
-        } else {
-          draftRestictoin =
-              vesselReply.getVesselLoadableQuantityDetails().getDisplacmentDraftRestriction();
+        } else if (Optional.ofNullable(loadableStudy.get().getDraftMark()).isPresent()) {
+          draftRestictoin = loadableStudy.get().getDraftMark().toString();
         }
         LoadableQuantityRequest loadableQuantityRequest =
             LoadableQuantityRequest.newBuilder()
-                .setDisplacmentDraftRestriction(draftRestictoin)
+                .setDisplacmentDraftRestriction(
+                    vesselReply.getVesselLoadableQuantityDetails().getDisplacmentDraftRestriction())
                 .setVesselLightWeight(
                     vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight())
                 .setConstant(vesselReply.getVesselLoadableQuantityDetails().getConstant())
+                .setDraftRestriction(draftRestictoin)
                 .build();
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
       } else {
-        LoadableQuantityRequest loadableQuantityRequest =
-            LoadableQuantityRequest.newBuilder()
-                .setConstant(loadableQuantity.get(0).getConstant().toString())
-                .setDisplacmentDraftRestriction(
-                    loadableQuantity.get(0).getDisplacementAtDraftRestriction().toString())
-                .setDistanceFromLastPort(
-                    loadableQuantity.get(0).getDistanceFromLastPort().toString())
-                .setDwt(loadableQuantity.get(0).getDeadWeight().toString())
-                .setEstDOOnBoard(loadableQuantity.get(0).getEstimatedDOOnBoard().toString())
-                .setEstFOOnBoard(loadableQuantity.get(0).getEstimatedFOOnBoard().toString())
-                .setEstFreshWaterOnBoard(loadableQuantity.get(0).getEstimatedFWOnBoard().toString())
-                .setEstSagging(loadableQuantity.get(0).getEstimatedSagging().toString())
-                .setEstSeaDensity(loadableQuantity.get(0).getEstimatedSeaDensity().toString())
-                .setEstTotalFOConsumption(
-                    loadableQuantity.get(0).getTotalFoConsumption().toString())
-                .setFoConsumptionPerDay(loadableQuantity.get(0).getFoConsumptionPerDay().toString())
-                .setLimitingDraft(loadableQuantity.get(0).getDraftRestriction().toString())
-                .setOtherIfAny(loadableQuantity.get(0).getOtherIfAny().toString())
-                .setSaggingDeduction(loadableQuantity.get(0).getSaggingDeduction().toString())
-                .setSgCorrection(loadableQuantity.get(0).getSgCorrection().toString())
-                .setTotalQuantity(loadableQuantity.get(0).getTotalQuantity().toString())
-                .setTpc(loadableQuantity.get(0).getTpcatDraft().toString())
-                .setVesselAverageSpeed(loadableQuantity.get(0).getVesselAverageSpeed().toString())
-                .setVesselLightWeight(loadableQuantity.get(0).getLightWeight().toString())
-                .setUpdateDateAndTime(
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                        .format(loadableQuantity.get(0).getLastModifiedDateTime()))
-                .build();
+
+        LoadableQuantityRequest.Builder loadableQuantityRequest =
+            LoadableQuantityRequest.newBuilder();
+        Optional.ofNullable(loadableQuantity.get(0).getConstant())
+            .ifPresent(cons -> loadableQuantityRequest.setConstant(cons.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getDraftRestriction())
+            .ifPresent(
+                draftRestriction ->
+                    loadableQuantityRequest.setDraftRestriction(draftRestriction.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getDistanceFromLastPort())
+            .ifPresent(dist -> loadableQuantityRequest.setDistanceFromLastPort(dist.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getDeadWeight())
+            .ifPresent(deadWeight -> loadableQuantityRequest.setDwt(deadWeight.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getEstimatedDOOnBoard())
+            .ifPresent(
+                estDOOnBoard -> loadableQuantityRequest.setEstDOOnBoard(estDOOnBoard.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getEstimatedFOOnBoard())
+            .ifPresent(
+                estFOOnBoard -> loadableQuantityRequest.setEstFOOnBoard(estFOOnBoard.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getEstimatedFWOnBoard())
+            .ifPresent(
+                estFreshWaterOnBoard ->
+                    loadableQuantityRequest.setEstFreshWaterOnBoard(
+                        estFreshWaterOnBoard.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getEstimatedSagging())
+            .ifPresent(estSagging -> loadableQuantityRequest.setEstSagging(estSagging.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getEstimatedSeaDensity())
+            .ifPresent(
+                estSeaDensity ->
+                    loadableQuantityRequest.setEstSeaDensity(estSeaDensity.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getTotalFoConsumption())
+            .ifPresent(
+                estTotalFOConsumption ->
+                    loadableQuantityRequest.setEstTotalFOConsumption(
+                        estTotalFOConsumption.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getFoConsumptionPerDay())
+            .ifPresent(
+                foConsumptionPerDay ->
+                    loadableQuantityRequest.setFoConsumptionPerDay(foConsumptionPerDay.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getDraftRestriction())
+            .ifPresent(
+                limitingDraft ->
+                    loadableQuantityRequest.setLimitingDraft(limitingDraft.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getOtherIfAny())
+            .ifPresent(otherIfAny -> loadableQuantityRequest.setOtherIfAny(otherIfAny.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getSaggingDeduction())
+            .ifPresent(
+                saggingDeduction ->
+                    loadableQuantityRequest.setSaggingDeduction(saggingDeduction.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getSgCorrection())
+            .ifPresent(
+                sgCorrection -> loadableQuantityRequest.setSgCorrection(sgCorrection.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getTotalQuantity())
+            .ifPresent(
+                totalQuantity ->
+                    loadableQuantityRequest.setTotalQuantity(totalQuantity.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getTpcatDraft())
+            .ifPresent(tpc -> loadableQuantityRequest.setTpc(tpc.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getVesselAverageSpeed())
+            .ifPresent(
+                vesselAverageSpeed ->
+                    loadableQuantityRequest.setVesselAverageSpeed(vesselAverageSpeed.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getLightWeight())
+            .ifPresent(
+                vesselLightWeight ->
+                    loadableQuantityRequest.setVesselLightWeight(vesselLightWeight.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getLastModifiedDateTime())
+            .ifPresent(
+                updateDateAndTime ->
+                    loadableQuantityRequest.setUpdateDateAndTime(
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                            .format(updateDateAndTime)));
+        Optional.ofNullable(loadableQuantity.get(0).getPortId())
+            .ifPresent(portId -> loadableQuantityRequest.setPortId(portId.longValue()));
+        Optional.ofNullable(loadableQuantity.get(0).getBoilerWaterOnBoard())
+            .ifPresent(
+                boilerWaterOnBoard ->
+                    loadableQuantityRequest.setBoilerWaterOnBoard(boilerWaterOnBoard.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getBallast())
+            .ifPresent(ballast -> loadableQuantityRequest.setBallast(ballast.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getRunningHours())
+            .ifPresent(
+                runningHours -> loadableQuantityRequest.setRunningHours(runningHours.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getRunningDays())
+            .ifPresent(
+                runningDays -> loadableQuantityRequest.setRunningDays(runningDays.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getFoConsumptionInSZ())
+            .ifPresent(
+                foConsumptionInSZ ->
+                    loadableQuantityRequest.setFoConInSZ(foConsumptionInSZ.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getDraftRestriction())
+            .ifPresent(
+                draftRestriction ->
+                    loadableQuantityRequest.setDraftRestriction(draftRestriction.toString()));
+        builder.setIsSummerZone(true);
+        Optional.ofNullable(loadableStudy.get().getDraftRestriction())
+            .ifPresent(sz -> builder.setIsSummerZone(false));
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
       }
@@ -1207,7 +1325,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.loadableStudyRepository.findById(request.getLoadableStudyId());
 
       if (!loadableStudy.isPresent()) {
-        log.info("INVALID_STUDY_ID - ", request.getLoadableStudyId());
+        log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
         portRotationReplyBuilder.setResponseStatus(
             ResponseStatus.newBuilder()
                 .setStatus(FAILED)
@@ -1219,7 +1337,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
                 loadableStudy.get(), cargoOperationRepository.getOne(LOADING_OPERATION_ID), true);
         if (loadableStudyPortRotations.isEmpty()) {
-          log.info("INVALID_STUDY_ID - ", request.getLoadableStudyId());
+          log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
           portRotationReplyBuilder.setResponseStatus(
               ResponseStatus.newBuilder()
                   .setStatus(FAILED)

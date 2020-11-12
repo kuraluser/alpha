@@ -34,6 +34,7 @@ service LoadableStudyService {
 	rpc GetValveSegregation (ValveSegregationRequest) returns (ValveSegregationReply){
 	}
 
+
   	rpc getLoadableQuantity (LoadableQuantityReply) returns (LoadableQuantityResponse) {
 	}
 	
@@ -45,10 +46,9 @@ service LoadableStudyService {
 		
 	rpc SaveDischargingPorts(PortRotationRequest) returns (PortRotationReply){
 	}
-	
 	rpc GetPortRotationByLoadableStudyId (PortRotationRequest) returns (PortRotationReply){
 	}
-	
+		
 	rpc DeleteLoadableStudy(LoadableStudyRequest) returns (LoadableStudyReply){
 	}
 	
@@ -110,6 +110,14 @@ message LoadableQuantityRequest {
 	string estTotalFOConsumption = 19;
 	int64 loadableStudyId = 20;
 	string updateDateAndTime = 21;
+	string sg = 22;
+	string boilerWaterOnBoard = 23;
+	string ballast = 24;
+	string runningHours = 25;
+	string runningDays = 26;
+	string foConInSZ = 27;
+	int64 portId = 28;
+	string draftRestriction = 29;
 }
 
 message LoadableQuantityReply {
@@ -238,6 +246,7 @@ message PortRotationReply{
 message LoadableQuantityResponse {
 	LoadableQuantityRequest loadableQuantityRequest = 1;
 	StatusReply responseStatus = 2;
+	bool isSummerZone = 3;
 }
 
 message ValveSegregation{

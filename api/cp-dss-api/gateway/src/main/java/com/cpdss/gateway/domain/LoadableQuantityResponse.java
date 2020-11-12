@@ -11,4 +11,5 @@ public class LoadableQuantityResponse {
   private Long loadableQuantityId;
   private String message;
   private LoadableQuantity loadableQuantity;
+  private Boolean isSummerZone;
 }

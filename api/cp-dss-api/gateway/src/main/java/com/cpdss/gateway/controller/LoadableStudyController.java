@@ -108,7 +108,8 @@ public class LoadableStudyController {
       throws CommonRestException {
     try {
       log.info(
-          "save loadable quantity API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
+          "save loadable quantity API. correlationId: {} ",
+          headers.getFirst(CORRELATION_ID_HEADER));
       return loadableStudyService.saveLoadableQuantity(
           loadableQuantity, loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {

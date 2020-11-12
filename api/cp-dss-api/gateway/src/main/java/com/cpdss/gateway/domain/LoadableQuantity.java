@@ -11,7 +11,6 @@ public class LoadableQuantity {
   @NotBlank(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private String limitingDraft;
 
-  @NotBlank(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private String estSeaDensity;
 
   @NotBlank(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
@@ -20,16 +19,13 @@ public class LoadableQuantity {
   @NotBlank(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private String estSagging;
 
-  @NotBlank(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private String displacmentDraftRestriction;
 
-  @NotBlank(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private String vesselLightWeight;
 
   @NotBlank(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private String dwt;
 
-  @NotBlank(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private String sgCorrection;
 
   @NotBlank(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
@@ -68,4 +64,20 @@ public class LoadableQuantity {
   private Integer loadableStudyId;
 
   private String updateDateAndTime;
+
+  private Integer portId;
+
+  private String sg;
+
+  private String boilerWaterOnBoard;
+
+  private String ballast;
+
+  private String runningHours;
+
+  private String runningDays;
+
+  private String foConInSZ;
+
+  private String draftRestriction;
 }

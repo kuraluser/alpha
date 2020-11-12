@@ -121,6 +121,7 @@ class LoadableStudyServiceTest {
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
+  private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
 
   @BeforeAll
   public static void beforeAll() {
@@ -244,6 +245,13 @@ class LoadableStudyServiceTest {
             .setTpc(LOADABLE_QUANTITY_DUMMY)
             .setVesselAverageSpeed(LOADABLE_QUANTITY_DUMMY)
             .setVesselLightWeight(LOADABLE_QUANTITY_DUMMY)
+            .setPortId(1)
+            .setBoilerWaterOnBoard(LOADABLE_QUANTITY_DUMMY)
+            .setBallast(LOADABLE_QUANTITY_DUMMY)
+            .setRunningHours(LOADABLE_QUANTITY_DUMMY)
+            .setRunningDays(LOADABLE_QUANTITY_DUMMY)
+            .setFoConInSZ(LOADABLE_QUANTITY_DUMMY)
+            .setDraftRestriction(LOADABLE_QUANTITY_DUMMY)
             .setLoadableStudyId(1)
             .build();
 
@@ -699,7 +707,7 @@ class LoadableStudyServiceTest {
     loadableQuantity.setEstimatedSagging(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
     loadableQuantity.setEstimatedSeaDensity(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
     loadableQuantity.setTotalFoConsumption(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
-    ;
+
     loadableQuantity.setFoConsumptionPerDay(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
     loadableQuantity.setDraftRestriction(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
     loadableQuantity.setOtherIfAny(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
@@ -710,6 +718,13 @@ class LoadableStudyServiceTest {
     loadableQuantity.setVesselAverageSpeed(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
     loadableQuantity.setLightWeight(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
     loadableQuantity.setLastModifiedDateTime(LocalDateTime.now());
+    loadableQuantity.setPortId(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setBoilerWaterOnBoard(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setBallast(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setRunningHours(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setRunningDays(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+    loadableQuantity.setFoConsumptionInSZ(new BigDecimal(LOADABLE_QUANTITY_DUMMY_VALUE));
+
     Mockito.when(loadableStudyRepository.findById(ArgumentMatchers.anyLong()))
         .thenReturn(Optional.of(loadableStudy));
     List<LoadableQuantity> loadableQuantities = new ArrayList<LoadableQuantity>();
@@ -1169,5 +1184,169 @@ class LoadableStudyServiceTest {
     assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  /**
+   * positive test case
+   *
+   * @throws GenericServiceException void
+   */
+  @Test
+  public void testGetPortRotation() throws GenericServiceException {
+
+    PortRotationRequest portRotationRequest =
+        PortRotationRequest.newBuilder().setLoadableStudyId(1).build();
+
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+
+    LoadableStudy loadableStudy = Mockito.mock(LoadableStudy.class);
+    LoadableQuantity loadableQuantity = new LoadableQuantity();
+    loadableQuantity.setId((long) 1);
+
+    List<LoadableStudyPortRotation> loadableStudyPortRotations =
+        new ArrayList<LoadableStudyPortRotation>();
+
+    LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
+    loadableStudyPortRotation.setPortXId(1L);
+    loadableStudyPortRotations.add(loadableStudyPortRotation);
+
+    Mockito.when(this.loadableStudyRepository.findById(ArgumentMatchers.anyLong()))
+        .thenReturn(Optional.of(loadableStudy));
+    Mockito.when(this.cargoOperationRepository.getOne(ArgumentMatchers.anyLong()))
+        .thenReturn(new CargoOperation());
+    Mockito.when(
+            this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
+                ArgumentMatchers.any(LoadableStudy.class),
+                ArgumentMatchers.any(CargoOperation.class),
+                ArgumentMatchers.anyBoolean()))
+        .thenReturn(loadableStudyPortRotations);
+
+    loadableStudyService.getPortRotationByLoadableStudyId(portRotationRequest, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<PortRotationReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    PortRotationReply response = results.get(0);
+    assertEquals(
+        ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS).build(),
+        response.getResponseStatus());
+  }
+
+  /**
+   * negative test case
+   *
+   * @throws GenericServiceException void
+   */
+  @Test
+  public void testGetPortRotationInvalidLoadableStudy() throws GenericServiceException {
+
+    PortRotationRequest portRotationRequest =
+        PortRotationRequest.newBuilder().setLoadableStudyId(1).build();
+
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+
+    LoadableQuantity loadableQuantity = new LoadableQuantity();
+    loadableQuantity.setId((long) 1);
+
+    List<LoadableStudyPortRotation> loadableStudyPortRotations =
+        new ArrayList<LoadableStudyPortRotation>();
+
+    LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
+    loadableStudyPortRotation.setPortXId(1L);
+    loadableStudyPortRotations.add(loadableStudyPortRotation);
+
+    Mockito.when(this.loadableStudyRepository.findById(ArgumentMatchers.anyLong()))
+        .thenReturn(Optional.<LoadableStudy>empty());
+    Mockito.when(this.cargoOperationRepository.getOne(ArgumentMatchers.anyLong()))
+        .thenReturn(new CargoOperation());
+    Mockito.when(
+            this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
+                ArgumentMatchers.any(LoadableStudy.class),
+                ArgumentMatchers.any(CargoOperation.class),
+                ArgumentMatchers.anyBoolean()))
+        .thenReturn(loadableStudyPortRotations);
+
+    loadableStudyService.getPortRotationByLoadableStudyId(portRotationRequest, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<PortRotationReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    PortRotationReply response = results.get(0);
+    assertEquals(
+        ResponseStatus.newBuilder()
+            .setStatus(FAILED)
+            .setMessage(INVALID_LOADABLE_STUDY_ID)
+            .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+            .build(),
+        response.getResponseStatus());
+  }
+  /**
+   * negative test case
+   *
+   * @throws GenericServiceException void
+   */
+  @Test
+  public void testGetPortRotationEmptyPortRotation() throws GenericServiceException {
+
+    PortRotationRequest portRotationRequest =
+        PortRotationRequest.newBuilder().setLoadableStudyId(1).build();
+
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+
+    LoadableStudy loadableStudy = Mockito.mock(LoadableStudy.class);
+    LoadableQuantity loadableQuantity = new LoadableQuantity();
+    loadableQuantity.setId((long) 1);
+
+    Mockito.when(this.loadableStudyRepository.findById(ArgumentMatchers.anyLong()))
+        .thenReturn(Optional.of(loadableStudy));
+    Mockito.when(this.cargoOperationRepository.getOne(ArgumentMatchers.anyLong()))
+        .thenReturn(new CargoOperation());
+    Mockito.when(
+            this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
+                ArgumentMatchers.any(LoadableStudy.class),
+                ArgumentMatchers.any(CargoOperation.class),
+                ArgumentMatchers.anyBoolean()))
+        .thenReturn(new ArrayList<LoadableStudyPortRotation>());
+
+    loadableStudyService.getPortRotationByLoadableStudyId(portRotationRequest, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<PortRotationReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    PortRotationReply response = results.get(0);
+    assertEquals(
+        ResponseStatus.newBuilder()
+            .setStatus(FAILED)
+            .setMessage(INVALID_LOADABLE_STUDY_ID)
+            .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+            .build(),
+        response.getResponseStatus());
+  }
+
+  @Test
+  void testGetPortRotationException() {
+
+    PortRotationRequest portRotationRequest =
+        PortRotationRequest.newBuilder().setLoadableStudyId(1).build();
+
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+
+    Mockito.when(this.loadableStudyRepository.findById(ArgumentMatchers.anyLong()))
+        .thenThrow(RuntimeException.class);
+    Mockito.when(this.cargoOperationRepository.getOne(ArgumentMatchers.anyLong()))
+        .thenReturn(new CargoOperation());
+    Mockito.when(
+            this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
+                ArgumentMatchers.any(LoadableStudy.class),
+                ArgumentMatchers.any(CargoOperation.class),
+                ArgumentMatchers.anyBoolean()))
+        .thenReturn(new ArrayList<LoadableStudyPortRotation>());
+
+    loadableStudyService.getPortRotationByLoadableStudyId(portRotationRequest, responseObserver);
+
+    List<PortRotationReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
   }
 }
