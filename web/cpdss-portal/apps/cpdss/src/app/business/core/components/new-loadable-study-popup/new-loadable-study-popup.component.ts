@@ -72,6 +72,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
 
   //get loadlines data and create form group
   async getVesselInfo() {
+    this.uploadedFiles = [];
     this.loadlineLists = this.vesselInfoList[0].loadlines;
     this.createNewLoadableStudyFormGroup();
     this.getLoadlineSummer();
@@ -161,14 +162,14 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     let uploadFile = [];
     const uploadedFileVar = this.fileUploadVariable.nativeElement.files;
     const extensions = ["docx", "pdf", "txt", "jpg", "jpeg", "png"];
-    if (this.uploadedFiles.length <= 5) {
+    if (this.uploadedFiles.length < 5) {
       for (let i = 0; i < uploadedFileVar.length; i++) {
         const fileExtension = uploadedFileVar[i].name.substr((uploadedFileVar[i].name.lastIndexOf('.') + 1));
         if (extensions.includes(fileExtension.toLowerCase())) {
           if (uploadedFileVar[i].size / 1024 / 1024 >= 1) {
             this.showError = true;
             this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_SIZE_ERROR";
-            break;
+            continue;
           } else {
             this.showError = false;
             uploadFile.push(uploadedFileVar[i]);
@@ -176,7 +177,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
         } else {
           this.showError = true;
           this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_FORMAT_ERROR";
-          break;
+          continue;
         }
       }
     } else {
