@@ -21380,6 +21380,13 @@ public final class LoadableStudy {
      * @return The loadableStudyId.
      */
     long getLoadableStudyId();
+
+    /**
+     * <code>int64 portOrder = 15;</code>
+     *
+     * @return The portOrder.
+     */
+    long getPortOrder();
   }
   /** Protobuf type {@code PortRotationDetail} */
   public static final class PortRotationDetail extends com.google.protobuf.GeneratedMessageV3
@@ -21519,6 +21526,11 @@ public final class LoadableStudy {
             case 112:
               {
                 loadableStudyId_ = input.readInt64();
+                break;
+              }
+            case 120:
+              {
+                portOrder_ = input.readInt64();
                 break;
               }
             default:
@@ -21924,6 +21936,17 @@ public final class LoadableStudy {
       return loadableStudyId_;
     }
 
+    public static final int PORTORDER_FIELD_NUMBER = 15;
+    private long portOrder_;
+    /**
+     * <code>int64 portOrder = 15;</code>
+     *
+     * @return The portOrder.
+     */
+    public long getPortOrder() {
+      return portOrder_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -21980,6 +22003,9 @@ public final class LoadableStudy {
       if (loadableStudyId_ != 0L) {
         output.writeInt64(14, loadableStudyId_);
       }
+      if (portOrder_ != 0L) {
+        output.writeInt64(15, portOrder_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -22031,6 +22057,9 @@ public final class LoadableStudy {
       if (loadableStudyId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(14, loadableStudyId_);
       }
+      if (portOrder_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(15, portOrder_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -22061,6 +22090,7 @@ public final class LoadableStudy {
       if (!getLayCanFrom().equals(other.getLayCanFrom())) return false;
       if (!getLayCanTo().equals(other.getLayCanTo())) return false;
       if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
+      if (getPortOrder() != other.getPortOrder()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -22100,6 +22130,8 @@ public final class LoadableStudy {
       hash = (53 * hash) + getLayCanTo().hashCode();
       hash = (37 * hash) + LOADABLESTUDYID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
+      hash = (37 * hash) + PORTORDER_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortOrder());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -22268,6 +22300,8 @@ public final class LoadableStudy {
 
         loadableStudyId_ = 0L;
 
+        portOrder_ = 0L;
+
         return this;
       }
 
@@ -22310,6 +22344,7 @@ public final class LoadableStudy {
         result.layCanFrom_ = layCanFrom_;
         result.layCanTo_ = layCanTo_;
         result.loadableStudyId_ = loadableStudyId_;
+        result.portOrder_ = portOrder_;
         onBuilt();
         return result;
       }
@@ -22413,6 +22448,9 @@ public final class LoadableStudy {
         }
         if (other.getLoadableStudyId() != 0L) {
           setLoadableStudyId(other.getLoadableStudyId());
+        }
+        if (other.getPortOrder() != 0L) {
+          setPortOrder(other.getPortOrder());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -23290,6 +23328,39 @@ public final class LoadableStudy {
       public Builder clearLoadableStudyId() {
 
         loadableStudyId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long portOrder_;
+      /**
+       * <code>int64 portOrder = 15;</code>
+       *
+       * @return The portOrder.
+       */
+      public long getPortOrder() {
+        return portOrder_;
+      }
+      /**
+       * <code>int64 portOrder = 15;</code>
+       *
+       * @param value The portOrder to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortOrder(long value) {
+
+        portOrder_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portOrder = 15;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortOrder() {
+
+        portOrder_ = 0L;
         onChanged();
         return this;
       }
@@ -28634,7 +28705,7 @@ public final class LoadableStudy {
           + "(\0132\026.CargoNominationDetail\"z\n\023PortRotati"
           + "onRequest\022\027\n\017loadableStudyId\030\001 \001(\003\022\020\n\010ve"
           + "sselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\032\n\022discha"
-          + "rgingPortIds\030\004 \003(\003\022\n\n\002id\030\005 \001(\003\"\241\002\n\022PortR"
+          + "rgingPortIds\030\004 \003(\003\022\n\n\002id\030\005 \001(\003\"\264\002\n\022PortR"
           + "otationDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001("
           + "\003\022\017\n\007berthId\030\003 \001(\003\022\023\n\013operationId\030\004 \001(\003\022"
           + "\027\n\017seaWaterDensity\030\005 \001(\t\022\034\n\024distanceBetw"
@@ -28642,51 +28713,51 @@ public final class LoadableStudy {
           + "xDraft\030\010 \001(\t\022\023\n\013maxAirDraft\030\t \001(\t\022\013\n\003eta"
           + "\030\n \001(\t\022\013\n\003etd\030\013 \001(\t\022\022\n\nlayCanFrom\030\014 \001(\t\022"
           + "\020\n\010layCanTo\030\r \001(\t\022\027\n\017loadableStudyId\030\016 \001"
-          + "(\003\".\n\tOperation\022\n\n\002id\030\001 \001(\003\022\025\n\roperation"
-          + "Name\030\002 \001(\t\"\230\001\n\021PortRotationReply\022\'\n\016resp"
-          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\022\"\n\005por"
-          + "ts\030\002 \003(\0132\023.PortRotationDetail\022\036\n\noperati"
-          + "ons\030\003 \003(\0132\n.Operation\022\026\n\016portRotationId\030"
-          + "\004 \001(\003\"\221\001\n\030LoadableQuantityResponse\0229\n\027lo"
-          + "adableQuantityRequest\030\001 \001(\0132\030.LoadableQu"
-          + "antityRequest\022$\n\016responseStatus\030\002 \001(\0132\014."
-          + "StatusReply\022\024\n\014isSummerZone\030\003 \001(\010\",\n\020Val"
-          + "veSegregation\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\""
-          + "2\n\027ValveSegregationRequest\022\027\n\017loadableSt"
-          + "udyId\030\001 \001(\003\"m\n\025ValveSegregationReply\022\'\n\016"
-          + "responseStatus\030\001 \001(\0132\017.ResponseStatus\022+\n"
-          + "\020valveSegregation\030\002 \003(\0132\021.ValveSegregati"
-          + "on2\214\t\n\024LoadableStudyService\022,\n\nSaveVoyag"
-          + "e\022\016.VoyageRequest\032\014.VoyageReply\"\000\0228\n\022Get"
-          + "VoyagesByVessel\022\016.VoyageRequest\032\020.Voyage"
-          + "ListReply\"\000\022J\n\024SaveLoadableQuantity\022\030.Lo"
-          + "adableQuantityRequest\032\026.LoadableQuantity"
-          + "Reply\"\000\022T\n$FindLoadableStudiesByVesselAn"
-          + "dVoyage\022\025.LoadableStudyRequest\032\023.Loadabl"
-          + "eStudyReply\"\000\022@\n\021SaveLoadableStudy\022\024.Loa"
-          + "dableStudyDetail\032\023.LoadableStudyReply\"\000\022"
-          + "G\n\023SaveCargoNomination\022\027.CargoNomination"
-          + "Request\032\025.CargoNominationReply\"\000\022J\n\034GetL"
-          + "oadableStudyPortRotation\022\024.PortRotationR"
-          + "equest\032\022.PortRotationReply\"\000\022J\n\026GetCargo"
-          + "NominationById\022\027.CargoNominationRequest\032"
-          + "\025.CargoNominationReply\"\000\022I\n\023GetValveSegr"
-          + "egation\022\030.ValveSegregationRequest\032\026.Valv"
-          + "eSegregationReply\"\000\022J\n\023getLoadableQuanti"
-          + "ty\022\026.LoadableQuantityReply\032\031.LoadableQua"
-          + "ntityResponse\"\000\022J\n\035SaveLoadableStudyPort"
-          + "Rotation\022\023.PortRotationDetail\032\022.PortRota"
-          + "tionReply\"\000\022I\n\025DeleteCargoNomination\022\027.C"
-          + "argoNominationRequest\032\025.CargoNominationR"
-          + "eply\"\000\022B\n\024SaveDischargingPorts\022\024.PortRot"
-          + "ationRequest\032\022.PortRotationReply\"\000\022N\n Ge"
-          + "tPortRotationByLoadableStudyId\022\024.PortRot"
-          + "ationRequest\032\022.PortRotationReply\"\000\022C\n\023De"
-          + "leteLoadableStudy\022\025.LoadableStudyRequest"
-          + "\032\023.LoadableStudyReply\"\000\022@\n\022DeletePortRot"
-          + "ation\022\024.PortRotationRequest\032\022.PortRotati"
-          + "onReply\"\000B\036\n\032com.cpdss.common.generatedP"
-          + "\000b\006proto3"
+          + "(\003\022\021\n\tportOrder\030\017 \001(\003\".\n\tOperation\022\n\n\002id"
+          + "\030\001 \001(\003\022\025\n\roperationName\030\002 \001(\t\"\230\001\n\021PortRo"
+          + "tationReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Re"
+          + "sponseStatus\022\"\n\005ports\030\002 \003(\0132\023.PortRotati"
+          + "onDetail\022\036\n\noperations\030\003 \003(\0132\n.Operation"
+          + "\022\026\n\016portRotationId\030\004 \001(\003\"\221\001\n\030LoadableQua"
+          + "ntityResponse\0229\n\027loadableQuantityRequest"
+          + "\030\001 \001(\0132\030.LoadableQuantityRequest\022$\n\016resp"
+          + "onseStatus\030\002 \001(\0132\014.StatusReply\022\024\n\014isSumm"
+          + "erZone\030\003 \001(\010\",\n\020ValveSegregation\022\n\n\002id\030\001"
+          + " \001(\003\022\014\n\004name\030\002 \001(\t\"2\n\027ValveSegregationRe"
+          + "quest\022\027\n\017loadableStudyId\030\001 \001(\003\"m\n\025ValveS"
+          + "egregationReply\022\'\n\016responseStatus\030\001 \001(\0132"
+          + "\017.ResponseStatus\022+\n\020valveSegregation\030\002 \003"
+          + "(\0132\021.ValveSegregation2\214\t\n\024LoadableStudyS"
+          + "ervice\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014.V"
+          + "oyageReply\"\000\0228\n\022GetVoyagesByVessel\022\016.Voy"
+          + "ageRequest\032\020.VoyageListReply\"\000\022J\n\024SaveLo"
+          + "adableQuantity\022\030.LoadableQuantityRequest"
+          + "\032\026.LoadableQuantityReply\"\000\022T\n$FindLoadab"
+          + "leStudiesByVesselAndVoyage\022\025.LoadableStu"
+          + "dyRequest\032\023.LoadableStudyReply\"\000\022@\n\021Save"
+          + "LoadableStudy\022\024.LoadableStudyDetail\032\023.Lo"
+          + "adableStudyReply\"\000\022G\n\023SaveCargoNominatio"
+          + "n\022\027.CargoNominationRequest\032\025.CargoNomina"
+          + "tionReply\"\000\022J\n\034GetLoadableStudyPortRotat"
+          + "ion\022\024.PortRotationRequest\032\022.PortRotation"
+          + "Reply\"\000\022J\n\026GetCargoNominationById\022\027.Carg"
+          + "oNominationRequest\032\025.CargoNominationRepl"
+          + "y\"\000\022I\n\023GetValveSegregation\022\030.ValveSegreg"
+          + "ationRequest\032\026.ValveSegregationReply\"\000\022J"
+          + "\n\023getLoadableQuantity\022\026.LoadableQuantity"
+          + "Reply\032\031.LoadableQuantityResponse\"\000\022J\n\035Sa"
+          + "veLoadableStudyPortRotation\022\023.PortRotati"
+          + "onDetail\032\022.PortRotationReply\"\000\022I\n\025Delete"
+          + "CargoNomination\022\027.CargoNominationRequest"
+          + "\032\025.CargoNominationReply\"\000\022B\n\024SaveDischar"
+          + "gingPorts\022\024.PortRotationRequest\032\022.PortRo"
+          + "tationReply\"\000\022N\n GetPortRotationByLoadab"
+          + "leStudyId\022\024.PortRotationRequest\032\022.PortRo"
+          + "tationReply\"\000\022C\n\023DeleteLoadableStudy\022\025.L"
+          + "oadableStudyRequest\032\023.LoadableStudyReply"
+          + "\"\000\022@\n\022DeletePortRotation\022\024.PortRotationR"
+          + "equest\032\022.PortRotationReply\"\000B\036\n\032com.cpds"
+          + "s.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -28893,6 +28964,7 @@ public final class LoadableStudy {
               "LayCanFrom",
               "LayCanTo",
               "LoadableStudyId",
+              "PortOrder",
             });
     internal_static_Operation_descriptor = getDescriptor().getMessageTypes().get(18);
     internal_static_Operation_fieldAccessorTable =

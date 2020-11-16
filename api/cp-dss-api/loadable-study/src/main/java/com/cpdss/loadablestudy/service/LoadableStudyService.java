@@ -51,7 +51,7 @@ import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRoationRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
@@ -66,7 +66,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -93,7 +92,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private String rootFolder;
 
   @Autowired private VoyageRepository voyageRepository;
-  @Autowired private LoadableStudyPortRoationRepository loadableStudyPortRoationRepository;
+  @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRoationRepository;
   @Autowired private CargoOperationRepository cargoOperationRepository;
 
   @Autowired private LoadableStudyRepository loadableStudyRepository;
@@ -679,8 +678,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       CargoOperation dischargingOperation =
           this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID);
       List<LoadableStudyPortRotation> entityList =
-          this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationNotAndIsActive(
-              loadableStudyOpt.get(), dischargingOperation, true);
+          this.loadableStudyPortRoationRepository
+              .findByLoadableStudyAndOperationNotAndIsActiveOrderByPortOrder(
+                  loadableStudyOpt.get(), dischargingOperation, true);
       for (LoadableStudyPortRotation entity : entityList) {
         replyBuilder.addPorts(
             this.createPortDetail(
@@ -688,9 +688,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 DateTimeFormatter.ofPattern(ETA_ETD_FROMAT),
                 DateTimeFormatter.ofPattern(LAY_CAN_FROMAT)));
       }
-      List<CargoOperation> operationEntityList =
-          this.cargoOperationRepository.findByIdNotIn(
-              Arrays.asList(LOADING_OPERATION_ID, DISCHARGING_OPERATION_ID));
+      List<CargoOperation> operationEntityList = this.cargoOperationRepository.findAll();
       for (CargoOperation entity : operationEntityList) {
         replyBuilder.addOperations(this.createOperationDetail(entity));
       }
@@ -761,6 +759,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .ifPresent(layCanFrom -> builder.setLayCanFrom(layCanFormatter.format(layCanFrom)));
     Optional.ofNullable(entity.getLayCanTo())
         .ifPresent(layCanTo -> builder.setLayCanTo(layCanFormatter.format(layCanTo)));
+    Optional.ofNullable(entity.getPortOrder()).ifPresent(builder::setPortOrder);
     return builder.build();
   }
 
@@ -1235,6 +1234,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             : LocalDate.from(
                 DateTimeFormatter.ofPattern(LAY_CAN_FROMAT).parse(request.getLayCanTo())));
     entity.setOperation(this.cargoOperationRepository.getOne(request.getOperationId()));
+    entity.setPortOrder(0 == request.getPortOrder() ? null : request.getPortOrder());
     return entity;
   }
 
@@ -1311,6 +1311,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
   /**
    * @param request
    * @param responseObserver

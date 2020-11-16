@@ -229,6 +229,7 @@ message PortRotationDetail{
 	string layCanFrom=12;
 	string layCanTo=13;
 	int64 loadableStudyId=14;
+	int64 portOrder=15;
 }
 
 message Operation{

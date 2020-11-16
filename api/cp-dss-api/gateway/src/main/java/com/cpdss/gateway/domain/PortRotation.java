@@ -42,4 +42,6 @@ public class PortRotation {
   private String layCanFrom;
 
   private String layCanTo;
+
+  private Long portOrder;
 }

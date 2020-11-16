@@ -7,7 +7,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import java.util.List;
 
-public interface LoadableStudyPortRoationRepository
+public interface LoadableStudyPortRotationRepository
     extends CommonCrudRepository<LoadableStudyPortRotation, Long> {
 
   /**
@@ -18,8 +18,11 @@ public interface LoadableStudyPortRoationRepository
    * @param isActive
    * @return
    */
-  public List<LoadableStudyPortRotation> findByLoadableStudyAndOperationNotAndIsActive(
-      final LoadableStudy loadableStudy, final CargoOperation operation, final boolean isActive);
+  public List<LoadableStudyPortRotation>
+      findByLoadableStudyAndOperationNotAndIsActiveOrderByPortOrder(
+          final LoadableStudy loadableStudy,
+          final CargoOperation operation,
+          final boolean isActive);
 
   /**
    * Get active port rotation for discharging ports against a loadable study

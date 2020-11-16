@@ -648,6 +648,7 @@ public class LoadableStudyService {
       port.setId(portDetail.getId());
       port.setPortId(0 == portDetail.getPortId() ? null : portDetail.getPortId());
       port.setBerthId(0 == portDetail.getBerthId() ? null : portDetail.getBerthId());
+      port.setPortOrder(0 == portDetail.getPortOrder() ? null : portDetail.getPortOrder());
       port.setLoadableStudyId(loadableStudyId);
       port.setOperationId(0 == portDetail.getOperationId() ? null : portDetail.getOperationId());
       port.setSeaWaterDensity(
@@ -670,6 +671,7 @@ public class LoadableStudyService {
       port.setEtd(portDetail.getEtd());
       port.setLayCanFrom(portDetail.getLayCanFrom());
       port.setLayCanTo(portDetail.getLayCanTo());
+
       response.getPortList().add(port);
       response.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
@@ -705,7 +707,6 @@ public class LoadableStudyService {
   public PortRotationResponse savePortRotation(PortRotation request, String correlationId)
       throws GenericServiceException {
     log.info("Inside savePortRotation");
-    this.validatePortRotationSaveRequest(request);
     PortRotationReply grpcReply = this.savePortRotation(this.createPortRotationDetail(request));
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -728,25 +729,6 @@ public class LoadableStudyService {
    */
   public PortRotationReply savePortRotation(PortRotationDetail request) {
     return this.loadableStudyServiceBlockingStub.saveLoadableStudyPortRotation(request);
-  }
-
-  /**
-   * Validate port rotation request
-   *
-   * @param request - {@link PortRotation}
-   * @throws GenericServiceException
-   */
-  private void validatePortRotationSaveRequest(PortRotation request)
-      throws GenericServiceException {
-    log.debug("Validating portRoationRequest");
-    if (null != request.getOperationId()
-        && (request.getOperationId().equals(LOADING_OPERATION_ID)
-            || request.getOperationId().equals(DISCHARGIN_OPERATION_ID))) {
-      throw new GenericServiceException(
-          "Loading/Discharging operation not allowed",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
   }
 
   /**
@@ -782,6 +764,7 @@ public class LoadableStudyService {
         .ifPresent(item -> builder.setSeaWaterDensity(valueOf(request.getSeaWaterDensity())));
     Optional.ofNullable(request.getTimeOfStay())
         .ifPresent(item -> builder.setTimeOfStay(valueOf(request.getTimeOfStay())));
+    Optional.ofNullable(request.getPortOrder()).ifPresent(builder::setPortOrder);
     return builder.build();
   }
 

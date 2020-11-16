@@ -44,7 +44,7 @@ import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRoationRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
@@ -88,7 +88,7 @@ class LoadableStudyServiceTest {
   @MockBean private LoadableStudyRepository loadableStudyRepository;
   @MockBean private LoadableQuantityRepository loadableQuantityRepository;
   @MockBean private CargoNominationRepository cargoNominationRepository;
-  @MockBean private LoadableStudyPortRoationRepository loadableStudyPortRoationRepository;
+  @MockBean private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @MockBean private CargoOperationRepository cargoOperationRepository;
   @MockBean private LoadableStudyStatusRepository loadableStudyStatusRepository;
 
@@ -477,8 +477,9 @@ class LoadableStudyServiceTest {
     LoadableStudy loadableStudy = new LoadableStudy();
     loadableStudy.setId(1L);
     when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(loadableStudy));
-    when(this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationNotAndIsActive(
-            any(LoadableStudy.class), any(CargoOperation.class), anyBoolean()))
+    when(this.loadableStudyPortRotationRepository
+            .findByLoadableStudyAndOperationNotAndIsActiveOrderByPortOrder(
+                any(LoadableStudy.class), any(CargoOperation.class), anyBoolean()))
         .thenReturn(this.createPortEntityList());
     when(this.cargoOperationRepository.findAll()).thenReturn(this.createCargoOperationList());
     StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
@@ -884,11 +885,11 @@ class LoadableStudyServiceTest {
         .thenReturn(Optional.of(new LoadableStudy()));
     LoadableStudyPortRotation entity = new LoadableStudyPortRotation();
     entity.setId(1L);
-    when(this.loadableStudyPortRoationRepository.save(any(LoadableStudyPortRotation.class)))
+    when(this.loadableStudyPortRotationRepository.save(any(LoadableStudyPortRotation.class)))
         .thenReturn(entity);
     StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
     if (id.equals(1L)) {
-      when(this.loadableStudyPortRoationRepository.findById(id))
+      when(this.loadableStudyPortRotationRepository.findById(id))
           .thenReturn(Optional.of(new LoadableStudyPortRotation()));
     }
     this.loadableStudyService.saveLoadableStudyPortRotation(
@@ -916,7 +917,7 @@ class LoadableStudyServiceTest {
     when(this.loadableStudyRepository.findById(anyLong()))
         .thenReturn(Optional.of(new LoadableStudy()));
     StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
-    when(this.loadableStudyPortRoationRepository.findById(anyLong())).thenReturn(Optional.empty());
+    when(this.loadableStudyPortRotationRepository.findById(anyLong())).thenReturn(Optional.empty());
     this.loadableStudyService.saveLoadableStudyPortRotation(
         this.createPortRotationRequest().setId(1L).build(), responseObserver);
     List<PortRotationReply> replies = responseObserver.getValues();
@@ -942,10 +943,10 @@ class LoadableStudyServiceTest {
     when(this.loadableStudyRepository.findById(anyLong()))
         .thenReturn(Optional.of(new LoadableStudy()));
     when(this.cargoOperationRepository.getOne(anyLong())).thenReturn(new CargoOperation());
-    when(this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
             any(LoadableStudy.class), any(CargoOperation.class), anyBoolean()))
         .thenReturn(this.createPortRotationEntityList());
-    when(this.loadableStudyPortRoationRepository.saveAll(any()))
+    when(this.loadableStudyPortRotationRepository.saveAll(any()))
         .thenReturn(this.createPortRotationEntityList());
     StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
     this.loadableStudyService.saveDischargingPorts(
@@ -1077,9 +1078,9 @@ class LoadableStudyServiceTest {
     LoadableStudy study = new LoadableStudy();
     study.setActive(true);
     when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(study));
-    when(this.loadableStudyPortRoationRepository.findById(anyLong()))
+    when(this.loadableStudyPortRotationRepository.findById(anyLong()))
         .thenReturn(Optional.of(entity));
-    when(this.loadableStudyPortRoationRepository.save(any(LoadableStudyPortRotation.class)))
+    when(this.loadableStudyPortRotationRepository.save(any(LoadableStudyPortRotation.class)))
         .thenReturn(entity);
     StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
     PortRotationRequest request = PortRotationRequest.newBuilder().setId(1L).build();
@@ -1128,9 +1129,9 @@ class LoadableStudyServiceTest {
     status.setId(100L);
     study.setLoadableStudyStatus(status);
     when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(study));
-    when(this.loadableStudyPortRoationRepository.findById(anyLong()))
+    when(this.loadableStudyPortRotationRepository.findById(anyLong()))
         .thenReturn(Optional.of(entity));
-    when(this.loadableStudyPortRoationRepository.save(any(LoadableStudyPortRotation.class)))
+    when(this.loadableStudyPortRotationRepository.save(any(LoadableStudyPortRotation.class)))
         .thenReturn(entity);
     StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
     PortRotationRequest request = PortRotationRequest.newBuilder().setId(1L).build();
@@ -1153,7 +1154,7 @@ class LoadableStudyServiceTest {
     status.setId(100L);
     study.setLoadableStudyStatus(status);
     when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(study));
-    when(this.loadableStudyPortRoationRepository.findById(anyLong())).thenReturn(Optional.empty());
+    when(this.loadableStudyPortRotationRepository.findById(anyLong())).thenReturn(Optional.empty());
     StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
     PortRotationRequest request = PortRotationRequest.newBuilder().setId(1L).build();
     this.loadableStudyService.deletePortRotation(request, responseObserver);
@@ -1175,7 +1176,7 @@ class LoadableStudyServiceTest {
     status.setId(100L);
     study.setLoadableStudyStatus(status);
     when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(study));
-    when(this.loadableStudyPortRoationRepository.findById(anyLong()))
+    when(this.loadableStudyPortRotationRepository.findById(anyLong()))
         .thenThrow(RuntimeException.class);
     StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
     PortRotationRequest request = PortRotationRequest.newBuilder().setId(1L).build();
@@ -1215,7 +1216,7 @@ class LoadableStudyServiceTest {
     Mockito.when(this.cargoOperationRepository.getOne(ArgumentMatchers.anyLong()))
         .thenReturn(new CargoOperation());
     Mockito.when(
-            this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
                 ArgumentMatchers.any(LoadableStudy.class),
                 ArgumentMatchers.any(CargoOperation.class),
                 ArgumentMatchers.anyBoolean()))
@@ -1260,7 +1261,7 @@ class LoadableStudyServiceTest {
     Mockito.when(this.cargoOperationRepository.getOne(ArgumentMatchers.anyLong()))
         .thenReturn(new CargoOperation());
     Mockito.when(
-            this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
                 ArgumentMatchers.any(LoadableStudy.class),
                 ArgumentMatchers.any(CargoOperation.class),
                 ArgumentMatchers.anyBoolean()))
@@ -1302,7 +1303,7 @@ class LoadableStudyServiceTest {
     Mockito.when(this.cargoOperationRepository.getOne(ArgumentMatchers.anyLong()))
         .thenReturn(new CargoOperation());
     Mockito.when(
-            this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
                 ArgumentMatchers.any(LoadableStudy.class),
                 ArgumentMatchers.any(CargoOperation.class),
                 ArgumentMatchers.anyBoolean()))
@@ -1336,7 +1337,7 @@ class LoadableStudyServiceTest {
     Mockito.when(this.cargoOperationRepository.getOne(ArgumentMatchers.anyLong()))
         .thenReturn(new CargoOperation());
     Mockito.when(
-            this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
                 ArgumentMatchers.any(LoadableStudy.class),
                 ArgumentMatchers.any(CargoOperation.class),
                 ArgumentMatchers.anyBoolean()))
