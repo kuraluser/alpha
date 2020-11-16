@@ -12,6 +12,13 @@ service PortInfoService {
 	
 	rpc GetPortInfoByCargoId (GetPortInfoByCargoIdRequest) returns (GetPortInfoByCargoIdReply) {
 	}
+	
+	rpc GetPortInfoByPortIds (GetPortInfoByPortIdsRequest) returns (PortReply) {
+	}
+}
+
+message GetPortInfoByPortIdsRequest {
+	repeated int64 id = 1;
 }
 
 message PortRequest {

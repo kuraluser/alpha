@@ -32,6 +32,9 @@ public class PortInfo extends EntityDoc {
   @Column(name = "densityseawater")
   private BigDecimal densitySeaWater;
 
+  @Column(name = "isactive")
+  private Boolean isActive;
+
   @OneToMany(mappedBy = "portInfo")
   private Set<CargoPortMapping> cargoportmappingSet;
 

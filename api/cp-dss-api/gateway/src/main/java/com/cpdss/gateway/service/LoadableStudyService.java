@@ -609,7 +609,7 @@ public class LoadableStudyService {
       cargoNominationResponse.setCargoNominationId(cargoNominationReply.getCargoNominationId());
     } else {
       throw new GenericServiceException(
-          "Error in calling cargo service",
+          "Error in saving cargo nomination",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }

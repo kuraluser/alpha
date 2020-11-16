@@ -33,6 +33,8 @@ import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.entity.CargoNomination;
+import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
@@ -69,8 +71,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -87,6 +91,7 @@ class LoadableStudyServiceTest {
   @MockBean private VoyageRepository voyageRepository;
   @MockBean private LoadableStudyRepository loadableStudyRepository;
   @MockBean private LoadableQuantityRepository loadableQuantityRepository;
+
   @MockBean private CargoNominationRepository cargoNominationRepository;
   @MockBean private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @MockBean private CargoOperationRepository cargoOperationRepository;
@@ -98,12 +103,17 @@ class LoadableStudyServiceTest {
   @MockBean
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
 
+  @Mock private CargoNomination cargoNomination;
+
+  @Mock private CargoNominationPortDetails cargoNominationPortDetails;
+
   private static final String SUCCESS = "SUCCESS";
   private static final String VOYAGE = "VOYAGE";
   private static final String VOYAGEEXISTS = "VOYAGE_EXISTS";
   private static final String FAILED = "FAILED";
   private static final String LOADABLE_STUDY_NAME = "LS";
   private static final String LOADABLE_STUDY_DETAILS = "details";
+  private static final String LOADABLE_STUDY_STATUS = "pending";
 
   private static final String CHARTERER = "charterer";
   private static final String SUB_CHARTERER = "sub-chartere";
@@ -134,6 +144,7 @@ class LoadableStudyServiceTest {
         .when(() -> Files.deleteIfExists(any(Path.class)))
         .thenReturn(true)
         .thenThrow(IOException.class);
+    MockitoAnnotations.openMocks(LoadableStudyServiceTest.class);
   }
 
   /**
@@ -643,7 +654,51 @@ class LoadableStudyServiceTest {
 
   @Test
   void testSaveCargoNomination() throws Exception {
-    CargoNominationRequest cargoNominationRequest = createSaveCargoNominationRequest();
+    CargoNominationRequest cargoNominationRequest = createSaveCargoNominationRequest(false);
+    StreamRecorder<CargoNominationReply> responseObserver = StreamRecorder.create();
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.LoadableStudy()));
+    loadableStudyService.saveCargoNomination(cargoNominationRequest, responseObserver);
+    assertNull(responseObserver.getError());
+    // get results when no errors
+    List<CargoNominationReply> results = responseObserver.getValues();
+    assertEquals(true, results.size() > 0);
+    CargoNominationReply returnedCargoNominationReply = results.get(0);
+    CargoNominationReply.Builder cargoNominationReply = CargoNominationReply.newBuilder();
+    //    ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+    //    responseStatus.setStatus(SUCCESS);
+    //    cargoNominationReply.setResponseStatus(responseStatus);
+    //    assertEquals(
+    //        cargoNominationReply.getResponseStatus(),
+    // returnedCargoNominationReply.getResponseStatus());
+  }
+
+  @Test
+  void testSaveCargoNominationWithUpdate() throws Exception {
+    CargoNominationRequest cargoNominationRequest = createSaveCargoNominationRequest(true);
+    StreamRecorder<CargoNominationReply> responseObserver = StreamRecorder.create();
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.LoadableStudy()));
+    when(this.cargoNominationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.CargoNomination()));
+    loadableStudyService.saveCargoNomination(cargoNominationRequest, responseObserver);
+    assertNull(responseObserver.getError());
+    // get results when no errors
+    List<CargoNominationReply> results = responseObserver.getValues();
+    assertEquals(true, results.size() > 0);
+    //    CargoNominationReply returnedCargoNominationReply = results.get(0);
+    //    CargoNominationReply.Builder cargoNominationReply = CargoNominationReply.newBuilder();
+    //    ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+    //    responseStatus.setStatus(SUCCESS);
+    //    cargoNominationReply.setResponseStatus(responseStatus);
+    //    assertEquals(
+    //        cargoNominationReply.getResponseStatus(),
+    // returnedCargoNominationReply.getResponseStatus());
+  }
+
+  @Test
+  void testSaveCargoNominationWithInvalidLoadableStudy() throws Exception {
+    CargoNominationRequest cargoNominationRequest = createSaveCargoNominationRequest(true);
     StreamRecorder<CargoNominationReply> responseObserver = StreamRecorder.create();
     when(this.loadableStudyRepository.findById(anyLong()))
         .thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.LoadableStudy()));
@@ -654,23 +709,40 @@ class LoadableStudyServiceTest {
     assertEquals(true, results.size() > 0);
     CargoNominationReply returnedCargoNominationReply = results.get(0);
     CargoNominationReply.Builder cargoNominationReply = CargoNominationReply.newBuilder();
-    //		CargoDetail.Builder cargoDetail = CargoDetail.newBuilder();
-    //		cargoDetail.setAbbreviation("testAbbr");
-    //		cargoDetail.setApi("testApi");
-    //		cargoReply.addCargos(cargoDetail);
     ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-    responseStatus.setStatus("SUCCESS");
+    responseStatus.setStatus(FAILED);
     cargoNominationReply.setResponseStatus(responseStatus);
     assertEquals(
         cargoNominationReply.getResponseStatus(), returnedCargoNominationReply.getResponseStatus());
   }
 
-  private CargoNominationRequest createSaveCargoNominationRequest() {
+  @Test
+  void testSaveCargoNominationWithInvalidCargoNomination() throws Exception {
+    CargoNominationRequest cargoNominationRequest = createSaveCargoNominationRequest(true);
+    StreamRecorder<CargoNominationReply> responseObserver = StreamRecorder.create();
+    when(this.cargoNominationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.CargoNomination()));
+    loadableStudyService.saveCargoNomination(cargoNominationRequest, responseObserver);
+    assertNull(responseObserver.getError());
+    // get results when no errors
+    List<CargoNominationReply> results = responseObserver.getValues();
+    assertEquals(true, results.size() > 0);
+    CargoNominationReply returnedCargoNominationReply = results.get(0);
+    CargoNominationReply.Builder cargoNominationReply = CargoNominationReply.newBuilder();
+    ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+    responseStatus.setStatus(FAILED);
+    cargoNominationReply.setResponseStatus(responseStatus);
+    assertEquals(
+        cargoNominationReply.getResponseStatus(), returnedCargoNominationReply.getResponseStatus());
+  }
+
+  private CargoNominationRequest createSaveCargoNominationRequest(boolean existingRecord) {
     CargoNominationRequest request =
         CargoNominationRequest.newBuilder()
             .setLoadableStudyId(30)
             .setCargoNominationDetail(
                 CargoNominationDetail.newBuilder()
+                    .setId(existingRecord ? 15 : 0)
                     .setPriority(3L)
                     .setLoadableStudyId(30)
                     .setCargoId(1L)
@@ -686,6 +758,72 @@ class LoadableStudyServiceTest {
                     .build())
             .build();
     return request;
+  }
+
+  @Test
+  void testGetCargoNominationById() throws Exception {
+    CargoNominationRequest cargoNominationRequest = createSaveCargoNominationRequest(false);
+    StreamRecorder<CargoNominationReply> responseObserver = StreamRecorder.create();
+    when(this.loadableStudyRepository.findById(anyLong()))
+        .thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.LoadableStudy()));
+    // mock list creation
+    List<CargoNomination> cargoNominationList = new ArrayList<>();
+    Set<CargoNominationPortDetails> cargoPortDetails = new HashSet<CargoNominationPortDetails>();
+    cargoPortDetails.add(cargoNominationPortDetails);
+    cargoNomination.setCargoNominationPortDetails(cargoPortDetails);
+    cargoNominationList.add(cargoNomination);
+    when(this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(cargoNominationList);
+    loadableStudyService.getCargoNominationById(cargoNominationRequest, responseObserver);
+    assertNull(responseObserver.getError());
+    // get results when no errors
+    List<CargoNominationReply> results = responseObserver.getValues();
+    assertEquals(true, results.size() > 0);
+    CargoNominationReply returnedCargoNominationReply = results.get(0);
+    CargoNominationReply.Builder cargoNominationReply = CargoNominationReply.newBuilder();
+    ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+    responseStatus.setStatus(SUCCESS);
+    cargoNominationReply.setResponseStatus(responseStatus);
+    assertEquals(
+        cargoNominationReply.getResponseStatus(), returnedCargoNominationReply.getResponseStatus());
+  }
+
+  @Test
+  void testGetCargoNominationByIdWithInvalidLoadableStudy() throws Exception {
+    CargoNominationRequest cargoNominationRequest = createSaveCargoNominationRequest(false);
+    StreamRecorder<CargoNominationReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.getCargoNominationById(cargoNominationRequest, responseObserver);
+    assertNull(responseObserver.getError());
+    // get results when no errors
+    List<CargoNominationReply> results = responseObserver.getValues();
+    assertEquals(true, results.size() > 0);
+    CargoNominationReply returnedCargoNominationReply = results.get(0);
+    CargoNominationReply.Builder cargoNominationReply = CargoNominationReply.newBuilder();
+    ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+    responseStatus.setStatus(FAILED);
+    cargoNominationReply.setResponseStatus(responseStatus);
+    assertEquals(
+        cargoNominationReply.getResponseStatus(), returnedCargoNominationReply.getResponseStatus());
+  }
+
+  @Test
+  void testGetCargoNominationByIdWithException() throws Exception {
+    CargoNominationRequest cargoNominationRequest = createSaveCargoNominationRequest(false);
+    when(this.loadableStudyRepository.findById(anyLong()))
+        .thenThrow(new RuntimeException("Error calling loadable study service"));
+    StreamRecorder<CargoNominationReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.getCargoNominationById(cargoNominationRequest, responseObserver);
+    assertNull(responseObserver.getError());
+    // get results when no errors
+    List<CargoNominationReply> results = responseObserver.getValues();
+    assertEquals(true, results.size() > 0);
+    CargoNominationReply returnedCargoNominationReply = results.get(0);
+    CargoNominationReply.Builder cargoNominationReply = CargoNominationReply.newBuilder();
+    ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+    responseStatus.setStatus(FAILED);
+    cargoNominationReply.setResponseStatus(responseStatus);
+    assertEquals(
+        cargoNominationReply.getResponseStatus(), returnedCargoNominationReply.getResponseStatus());
   }
 
   /**

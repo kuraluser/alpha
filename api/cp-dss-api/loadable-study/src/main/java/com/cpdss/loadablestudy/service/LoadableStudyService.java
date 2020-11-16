@@ -31,7 +31,10 @@ import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceImplBase;
+import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
 import com.cpdss.common.generated.PortInfo.PortDetail;
+import com.cpdss.common.generated.PortInfo.PortReply;
+import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
@@ -68,8 +71,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -92,7 +97,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private String rootFolder;
 
   @Autowired private VoyageRepository voyageRepository;
-  @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRoationRepository;
+  @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @Autowired private CargoOperationRepository cargoOperationRepository;
 
   @Autowired private LoadableStudyRepository loadableStudyRepository;
@@ -122,6 +127,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @GrpcClient("portInfoService")
+  private PortInfoServiceBlockingStub portInfoGrpcService;
 
   /**
    * method for save voyage
@@ -561,7 +569,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     CargoNominationReply.Builder cargoNominationReplyBuilder = CargoNominationReply.newBuilder();
     try {
       Optional<LoadableStudy> loadableStudy =
-          this.loadableStudyRepository.findById(request.getLoadableStudyId());
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
       if (!loadableStudy.isPresent()) {
         throw new GenericServiceException(
             "Loadable Study does not exist",
@@ -588,18 +596,139 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         cargoNomination = buildCargoNomination(cargoNomination, request);
       }
       this.cargoNominationRepository.save(cargoNomination);
+      // update port rotation table with loading ports from cargo nomination
+      LoadableStudy loadableStudyRecord = loadableStudy.get();
+      this.updatePortRotationWithLoadingPorts(loadableStudyRecord, cargoNomination);
       cargoNominationReplyBuilder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS))
-          .setCargoNominationId(
-              (cargoNomination != null && cargoNomination.getId() != null)
-                  ? cargoNomination.getId()
-                  : 0);
+          .setCargoNominationId((cargoNomination.getId() != null) ? cargoNomination.getId() : 0);
     } catch (Exception e) {
       log.error("Error saving cargo nomination", e);
       cargoNominationReplyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
     } finally {
       responseObserver.onNext(cargoNominationReplyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Fetch ports for the specific loadableStudy already available in port rotation and update to
+   * port rotation along with port master fields water density, maxDraft, maxAirDraft only those
+   * ports that are not already available
+   *
+   * @param cargoNomination
+   * @throws GenericServiceException
+   */
+  private void updatePortRotationWithLoadingPorts(
+      LoadableStudy loadableStudy, CargoNomination cargoNomination) throws GenericServiceException {
+    List<LoadableStudyPortRotation> loadableStudyPortRotations =
+        this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
+            loadableStudy, cargoOperationRepository.getOne(LOADING_OPERATION_ID), true);
+    List<Long> requestedPortIds = null;
+    List<Long> existingPortIds = null;
+    if (!cargoNomination.getCargoNominationPortDetails().isEmpty()) {
+      requestedPortIds =
+          cargoNomination.getCargoNominationPortDetails().stream()
+              .map(CargoNominationPortDetails::getPortId)
+              .collect(Collectors.toList());
+    }
+    if (!loadableStudyPortRotations.isEmpty()) {
+      existingPortIds =
+          loadableStudyPortRotations.stream()
+              .map(LoadableStudyPortRotation::getPortXId)
+              .collect(Collectors.toList());
+    }
+    int existingPortsCount = 0;
+    // remove loading portIds from request which are already available in port rotation for the
+    // specific loadable study
+    if (!CollectionUtils.isEmpty(requestedPortIds) && !CollectionUtils.isEmpty(existingPortIds)) {
+      requestedPortIds.removeAll(existingPortIds);
+      existingPortsCount = existingPortIds.size();
+    }
+    // fetch the specific ports attributes like waterDensity and draft values from port master
+    if (!CollectionUtils.isEmpty(requestedPortIds)) {
+      GetPortInfoByPortIdsRequest.Builder reqBuilder = GetPortInfoByPortIdsRequest.newBuilder();
+      buildGetPortInfoByPortIdsRequest(reqBuilder, cargoNomination);
+      PortReply portReply = portInfoGrpcService.getPortInfoByPortIds(reqBuilder.build());
+      if (portReply != null
+          && portReply.getResponseStatus() != null
+          && !SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Error in calling port service",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
+      // update loadable-study-port-rotation with ports from cargoNomination and port attributes
+      buildAndSaveLoadableStudyPortRotationEntities(
+          loadableStudy, requestedPortIds, portReply, existingPortsCount);
+    }
+  }
+
+  /**
+   * Create Port rotation entities for each loading port from cargoNomination with pre-populate port
+   * master attributes
+   *
+   * @param request
+   * @return
+   */
+  private void buildAndSaveLoadableStudyPortRotationEntities(
+      LoadableStudy loadableStudy,
+      List<Long> requestedPortIds,
+      PortReply portReply,
+      int existingPortsCount) {
+    if (!CollectionUtils.isEmpty(requestedPortIds)
+        && portReply != null
+        && !CollectionUtils.isEmpty(portReply.getPortsList())) {
+      AtomicLong atomLong = new AtomicLong(existingPortsCount);
+      List<LoadableStudyPortRotation> portRotationList = new ArrayList<>();
+      requestedPortIds.stream()
+          .forEach(
+              requestedPortId ->
+                  portReply.getPortsList().stream()
+                      .filter(port -> Objects.equals(requestedPortId, port.getId()))
+                      .forEach(
+                          port -> {
+                            LoadableStudyPortRotation portRotationEntity =
+                                new LoadableStudyPortRotation();
+                            portRotationEntity.setLoadableStudy(loadableStudy);
+                            portRotationEntity.setPortXId(port.getId());
+                            portRotationEntity.setOperation(
+                                this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
+                            portRotationEntity.setSeaWaterDensity(
+                                !StringUtils.isEmpty(port.getWaterDensity())
+                                    ? new BigDecimal(port.getWaterDensity())
+                                    : null);
+                            portRotationEntity.setMaxDraft(
+                                !StringUtils.isEmpty(port.getMaxDraft())
+                                    ? new BigDecimal(port.getMaxDraft())
+                                    : null);
+                            portRotationEntity.setAirDraftRestriction(
+                                !StringUtils.isEmpty(port.getMaxAirDraft())
+                                    ? new BigDecimal(port.getMaxAirDraft())
+                                    : null);
+                            portRotationEntity.setPortOrder(atomLong.incrementAndGet());
+                            portRotationList.add(portRotationEntity);
+                          }));
+      loadableStudyPortRotationRepository.saveAll(portRotationList);
+    }
+  }
+
+  /**
+   * Builds the request for fetching the port attributes from port master
+   *
+   * @param cargoNomination
+   */
+  private void buildGetPortInfoByPortIdsRequest(
+      GetPortInfoByPortIdsRequest.Builder reqBuilder, CargoNomination cargoNomination) {
+    // build fetch port details request object
+    if (cargoNomination != null
+        && !CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
+      cargoNomination
+          .getCargoNominationPortDetails()
+          .forEach(
+              loadingPort -> {
+                Optional.ofNullable(loadingPort.getPortId()).ifPresent(reqBuilder::addId);
+              });
     }
   }
 
@@ -678,7 +807,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       CargoOperation dischargingOperation =
           this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID);
       List<LoadableStudyPortRotation> entityList =
-          this.loadableStudyPortRoationRepository
+          this.loadableStudyPortRotationRepository
               .findByLoadableStudyAndOperationNotAndIsActiveOrderByPortOrder(
                   loadableStudyOpt.get(), dischargingOperation, true);
       for (LoadableStudyPortRotation entity : entityList) {
@@ -1093,7 +1222,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         entity.setLoadableStudy(loadableStudyOpt.get());
       } else {
         Optional<LoadableStudyPortRotation> portRoationOpt =
-            this.loadableStudyPortRoationRepository.findById(request.getId());
+            this.loadableStudyPortRotationRepository.findById(request.getId());
         if (!portRoationOpt.isPresent()) {
           throw new GenericServiceException(
               "Port rotation does not exist",
@@ -1103,7 +1232,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         entity = portRoationOpt.get();
       }
       entity =
-          this.loadableStudyPortRoationRepository.save(
+          this.loadableStudyPortRotationRepository.save(
               this.createPortRotationEntity(entity, request));
       replyBuilder.setPortRotationId(entity.getId());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -1145,7 +1274,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       CargoOperation discharging = this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID);
       List<LoadableStudyPortRotation> dischargingPorts =
-          this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
+          this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
               loadableStudyOpt.get(), discharging, true);
       List<Long> portIds = new ArrayList<>(request.getDischargingPortIdsList());
       for (LoadableStudyPortRotation portRoation : dischargingPorts) {
@@ -1165,7 +1294,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               dischargingPorts.add(port);
             });
       }
-      this.loadableStudyPortRoationRepository.saveAll(dischargingPorts);
+      this.loadableStudyPortRotationRepository.saveAll(dischargingPorts);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving discharging ports", e);
@@ -1311,7 +1440,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
-
   /**
    * @param request
    * @param responseObserver
@@ -1335,7 +1463,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       } else {
 
         List<LoadableStudyPortRotation> loadableStudyPortRotations =
-            this.loadableStudyPortRoationRepository.findByLoadableStudyAndOperationAndIsActive(
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
                 loadableStudy.get(), cargoOperationRepository.getOne(LOADING_OPERATION_ID), true);
         if (loadableStudyPortRotations.isEmpty()) {
           log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
@@ -1346,7 +1474,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
         } else {
           List<LoadableStudyPortRotation> loadingPorts =
-              this.loadableStudyPortRoationRepository
+              this.loadableStudyPortRotationRepository
                   .findByLoadableStudyAndOperationAndIsActiveOrderByPortOrder(
                       loadableStudy.get(),
                       cargoOperationRepository.getOne(LOADING_OPERATION_ID),
@@ -1400,7 +1528,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       Optional<LoadableStudyPortRotation> entityOpt =
-          this.loadableStudyPortRoationRepository.findById(request.getId());
+          this.loadableStudyPortRotationRepository.findById(request.getId());
       if (!entityOpt.isPresent()) {
         throw new GenericServiceException(
             "port rotation does not exist",
@@ -1417,7 +1545,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       entity.setActive(false);
-      this.loadableStudyPortRoationRepository.save(entity);
+      this.loadableStudyPortRotationRepository.save(entity);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when deleting port rotation", e);

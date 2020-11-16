@@ -47,6 +47,8 @@ import java.util.stream.IntStream;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockMultipartFile;
@@ -797,6 +799,24 @@ class LoadableStudyServiceTest {
             () ->
                 this.loadableStudyService.savePortRotation(
                     this.createPortRotationRequest(), CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(longs = {1L, 2L})
+  void testSavePortRotationInvalidOperation(Long operationId) throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotationDetail.class)))
+        .thenReturn(this.generatePortRotationReply(false).build());
+    PortRotation request = this.createPortRotationRequest();
+    request.setOperationId(operationId);
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () -> this.loadableStudyService.savePortRotation(request, CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
