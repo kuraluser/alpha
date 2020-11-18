@@ -53,6 +53,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   loadableStudies: LoadableStudy[];
   _selectedLoadableStudy: LoadableStudy;
   openSidePane = true;
+  portsComplete$: Observable<boolean>;
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -134,6 +135,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   private initSubsciptions() {
     this.totalQuantity$ = this.loadableStudyDetailsTransformationService.totalQuantityCargoNomination$;
     this.cargoNominationComplete$ = this.loadableStudyDetailsTransformationService.cargoNominationValidity$;
+    this.portsComplete$ = this.loadableStudyDetailsTransformationService.portValidity$;
   }
 
   /**
@@ -174,6 +176,15 @@ export class LoadableStudyDetailsComponent implements OnInit {
   onVoyageChange(event) {
     this.voyageId = event?.value?.id;
     this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/0`]);
+  }
+
+   /**
+   * Triggering add port
+   *
+   * @memberof LoadableStudyDetailsComponent
+   */
+  addPort() {
+    this.loadableStudyDetailsTransformationService.addPort();
   }
 
   /**

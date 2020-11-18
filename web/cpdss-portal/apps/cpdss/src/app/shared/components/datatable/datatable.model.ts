@@ -30,6 +30,8 @@ export interface IDataTableColumn {
     fieldHeaderClass?: string;
     fieldClass?: string;
     filterFieldMaxvalue?: any;
+    minDate?: Date; 
+    dateFormat?: string;
 }
 
 /**
@@ -48,7 +50,9 @@ export enum DATATABLE_FIELD_TYPE {
     AUTOCOMPLETE = 'AUTOCOMPLETE',
     ARRAY = 'ARRAY',
     ACTION = 'ACTION',
-    DATE = 'DATE'
+    DATE = 'DATE',
+    DATERANGE = 'DATERANGE',
+    DATETIME = 'DATETIME'
 }
 
 /**

@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { IResponse } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, IPortsResponse, IPort } from '../models/cargo-planning.model';
+import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, IPortsResponse, IPort, IPortsDetailsResponse, IPortList, PortsDB } from '../models/cargo-planning.model';
 import { IDischargingPortIds } from '../models/loadable-study-list.model';
 
 /**
@@ -19,9 +19,11 @@ import { IDischargingPortIds } from '../models/loadable-study-list.model';
 export class LoadableStudyDetailsApiService {
   private _ports: IPort[];
   private _cargoNominationDb: CargoNominationDB;
+  private _portsDb: PortsDB;
 
   constructor(private commonApiService: CommonApiService) {
     this._cargoNominationDb = new CargoNominationDB();
+    this._portsDb = new PortsDB();
   }
 
   /**
@@ -86,5 +88,28 @@ export class LoadableStudyDetailsApiService {
    */
   setLoadableStudyDischargingPorts(vesselId: number, voyageId: number, loadableStudyId: number, dischargingPortIds: IDischargingPortIds): Observable<IResponse> {
     return this.commonApiService.post<IDischargingPortIds, IResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/discharging-ports`, dischargingPortIds);
+  }
+
+    /**
+   * Method to get all port details
+   *
+   * @returns {Observable<IPortsDetailsResponse>}
+   * @memberof LoadableStudyDetailsApiService
+   */
+  getPortsDetails(vesselId: number, voyageId: number, loadableStudyId: number): Observable<IPortsDetailsResponse> {
+    return this.commonApiService.get<IPortsDetailsResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports`);
+  }
+
+    /**
+   * Method to set Ports
+   *
+   * @returns {Observable<IPortsDetailsResponse>}
+   * @memberof LoadableStudyDetailsApiService
+   */
+  setPort(ports: IPortList, vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
+    ports.vesselId = vesselId;
+    ports.voyageId = voyageId;
+    ports.loadableStudyId = loadableStudyId;
+    return this._portsDb.ports.add(ports);
   }
 }

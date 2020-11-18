@@ -82,12 +82,15 @@ export class DatatableComponent implements OnInit {
   readonly filterMatchMode = DATATABLE_FILTER_MATCHMODE;
   moreOptions: MenuItem[];
   selectedRowEvent: IDataTableEvent;
+  dateRange = '';
   dateTime = new Date();
 
   // private fields
   private _columns: IDataTableColumn[];
   private _value: [];
   private _form: FormGroup;
+
+
 
   // public methods
   constructor(private translateService: TranslateService, private fb: FormBuilder) {
@@ -395,16 +398,22 @@ export class DatatableComponent implements OnInit {
     });
 
   }
+
   /**
- * Filter date
- */
-  onDateSelect(value) {
-    this.datatable.filter(this.formatDate(value), 'createdDate', 'equals');
+  * Filter date
+  */
+  onDateSelect(value, field, filterMatchMode, dateFormat) {
+    if (dateFormat === 'DD/MM/YYYY') {
+      value = this.formatDate(value);
+    } else {
+      value = this.formatDateTime(value);
+    }
+    this.datatable.filter(value, field, filterMatchMode);
   }
 
   /**
-   * Format date(dd-mm-yyyy)
-   */
+  * Format date(dd-mm-yyyy)
+  */
   formatDate(date) {
     let month = date.getMonth() + 1;
     let day = date.getDate();
@@ -424,8 +433,100 @@ export class DatatableComponent implements OnInit {
    * Method for filtering date on enter key press
    * @param value 
    */
-  onDateFilter(value) {
-    this.datatable.filter(value, 'createdDate', 'equals');
+  onDateFilter(value, field) {
+    this.datatable.filter(value, field, 'equals');
+  }
+
+
+  /**
+  * Format date time(yyyy-mm-dd hh:mm)
+  */
+  formatDateTime(date, isTime = false) {
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+
+    if (month < 10) {
+      month = '0' + month;
+    }
+
+    if (day < 10) {
+      day = '0' + day;
+    }
+
+    if (hour < 10) {
+      hour = '0' + hour;
+    }
+
+    if (minute < 10) {
+      minute = '0' + minute;
+    }
+    if (isTime) {
+      return date.getFullYear() + '-' + month + '-' + day + ' ' + hour + ':' + minute;
+    } else {
+      return date.getFullYear() + '-' + month + '-' + day;
+    }
+  }
+
+  /**
+  * Range date select
+  */
+  onDateRangeSelect(value) {
+    if (Array.isArray(value)) {
+      this.dateRange = this.formatDateTime(value[0]) + ' to ' + this.formatDateTime(value[1])
+    } else {
+      if (this.dateRange === '' || this.dateRange.includes("to")) {
+        this.dateRange = this.formatDateTime(value)
+      }
+      else {
+        this.dateRange = this.dateRange + ' to ' + this.formatDateTime(value)
+      }
+    }
+  }
+
+  /**
+  * Range date selected
+  */
+  onDateRangeSelected(event, formGroupIndex: number, formControlName: string, rowData: Object) {
+    const formControl = this.field(formGroupIndex, formControlName);
+    formControl.markAsTouched();
+    if (this.dateRange.includes("to")) {
+      formControl.setValue(this.dateRange)
+      rowData[formControlName].value = formControl.value;
+      this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
+    } else {
+      formControl.setErrors({ 'required': true });
+    }
+  }
+
+  /**
+  * Range date cleared
+  */
+  onClearDateRange(value) {
+    this.dateRange = '';
+  }
+
+  /**
+  * Date and time select
+  */
+  onDateTimeSelect(value, formGroupIndex: number, formControlName: string, rowData: Object) {
+    const formControl = this.field(formGroupIndex, formControlName);
+    formControl.markAsTouched();
+    formControl.setValue(this.formatDateTime(value, true))
+    rowData[formControlName].value = formControl.value;
+    this.editComplete.emit({ originalEvent: value, data: rowData, index: formGroupIndex, field: formControlName });
+  }
+
+  /**
+  * Not selcting Date and time 
+  */
+  onDateTimeNotSelected(value, formGroupIndex: number, formControlName: string, rowData: Object) {
+    const formControl = this.field(formGroupIndex, formControlName);
+    formControl.markAsTouched();
+    if (formControl.value === null) {
+      formControl.setErrors({ 'required': true });
+    }
   }
 }
 

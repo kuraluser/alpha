@@ -90,6 +90,7 @@ export interface IResponse extends IResponseStatus {
  */
 export class CPDSSDB extends Dexie {
     cargoNominations!: Dexie.Table<any, number>;
+    ports!: Dexie.Table<any, number>;
     constructor() {
         super('CPDSS');
     }

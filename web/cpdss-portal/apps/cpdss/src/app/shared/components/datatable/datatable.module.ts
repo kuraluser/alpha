@@ -20,7 +20,7 @@ import { CalendarModule } from 'primeng/calendar';
 @NgModule({
   declarations: [DatatableComponent],
   imports: [
-    CommonModule,
+    CommonModule,  
     ReactiveFormsModule,
     TableModule,
     DropdownModule,

@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { ValueObject } from '../../../shared/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, ISegregation } from '../models/cargo-planning.model';
+import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOperations, IPort, IPortAllDropdownData, IPortList, IPortsValueObject, ISegregation } from '../models/cargo-planning.model';
 import { v4 as uuid4 } from 'uuid';
 
 /**
@@ -20,11 +20,15 @@ export class LoadableStudyDetailsTransformationService {
   private _addCargoNominationSource = new Subject();
   private _totalQuantityCargoNominationSource: Subject<number> = new Subject();
   private _cargoNominationValiditySource: Subject<boolean> = new Subject();
+  private _addPortSource = new Subject();
+  private _portValiditySource: Subject<boolean> = new Subject();
 
   // public fields
   addCargoNomination$ = this._addCargoNominationSource.asObservable();
   totalQuantityCargoNomination$ = this._totalQuantityCargoNominationSource.asObservable();
   cargoNominationValidity$ = this._cargoNominationValiditySource.asObservable();
+  addPort$ = this._addPortSource.asObservable();
+  portValidity$ = this._portValiditySource.asObservable();
 
   constructor() { }
 
@@ -383,7 +387,7 @@ export class LoadableStudyDetailsTransformationService {
     return _loadingPort;
   }
 
-  
+
   /** Set cargonomination grid complete status */
   setCargoNominationValidity(isValid: boolean) {
     this._cargoNominationValiditySource.next(isValid);
@@ -421,4 +425,256 @@ export class LoadableStudyDetailsTransformationService {
       }
     ];
   }
+
+  /**
+   * Method for converting ports data to value object model
+   *
+   * @param {IPortList} port
+   * @param {boolean} [isNewValue=true]
+   * @param {IPortAllDropdownData} listData
+   * @returns {IPortsValueObject}
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  getPortAsValueObject(port: IPortList, isNewValue = true, listData: IPortAllDropdownData): IPortsValueObject {
+    const _port = <IPortsValueObject>{};
+    const portObj: IPort = listData.portList.find(portData => portData.id === port.portId);
+    const operationObj: IOperations = listData.operationListComplete.find(operation => operation.id === port.operationId);
+    const isEdit = operationObj ? !(operationObj.operationName.toLowerCase() === 'loading') : true;
+    const layCan = (port.layCanFrom && port.layCanTo) ? (port.layCanFrom + ' to ' + port.layCanTo) : '';
+    _port.id = port.id;
+    _port.portOrder = port.portOrder;
+    _port.portcode = new ValueObject<string>(portObj?.code, true, true, false, false);
+    _port.port = new ValueObject<IPort>(portObj, true, isNewValue, false);
+    _port.operation = new ValueObject<IOperations>(operationObj, true, isNewValue, false, isEdit);
+    _port.seaWaterDensity = new ValueObject<number>(port.seaWaterDensity, true, isNewValue, false, true);
+    _port.layCan = new ValueObject<string>(layCan, true, isNewValue, false);
+    _port.layCanFrom = new ValueObject<string>(port.layCanFrom?.trim(), true, isNewValue, false);
+    _port.layCanTo = new ValueObject<string>(port.layCanTo?.trim(), true, isNewValue, false);
+    _port.maxDraft = new ValueObject<number>(port.maxDraft, true, isNewValue, false);
+    _port.maxAirDraft = new ValueObject<number>(port.maxAirDraft, true, isNewValue, false);
+    _port.eta = new ValueObject<string>(port.eta, true, isNewValue, false);
+    _port.etd = new ValueObject<string>(port.etd, true, isNewValue, false);
+    _port.isAdd = isNewValue;
+    _port.isLoadable = !isEdit;
+    _port.isDelete = false;
+    return _port;
+  }
+
+
+  /**
+ * Method for setting ports grid columns
+ *
+ * @returns {IDataTableColumn[]}
+ * @memberof LoadableStudyDetailsTransformationService
+ */
+  getPortDatatableColumns(): IDataTableColumn[] {
+    const minDate = new Date();
+    return [
+      {
+        field: 'slNo',
+        header: 'SL',
+        fieldType: DATATABLE_FIELD_TYPE.SLNO,
+        sortable: true,
+        fieldClass: 'column-sl'
+      },
+      {
+        field: 'port',
+        header: 'PORT',
+        fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        filter: true,
+        filterPlaceholder: 'SEARCH_PORT',
+        filterType: DATATABLE_FILTER_TYPE.TEXT,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        listName: 'portList',
+        listFilter: true,
+        sortable: true,
+        filterField: 'port.value.name',
+        fieldOptionLabel: 'name',
+        fieldPlaceholder: 'SELECT_PORT',
+        errorMessages: {
+          'required': 'PORT_FIELD_REQUIRED_ERROR'
+        }
+      },
+      {
+        field: 'portcode',
+        header: 'PORT CODE',
+        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        filter: true,
+        filterPlaceholder: 'SEARCH_PORT_CODE',
+        filterType: DATATABLE_FILTER_TYPE.TEXT,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        filterField: 'portcode.value',
+        fieldPlaceholder: 'PORT_CODE',
+        errorMessages: {
+          'required': 'PORT_FIELD_REQUIRED_ERROR'
+        }
+      },
+      {
+        field: 'operation',
+        header: 'OPERATIONS',
+        fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        filter: true,
+        filterPlaceholder: 'SEARCH_PORT',
+        filterType: DATATABLE_FILTER_TYPE.TEXT,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        listName: 'operationList',
+        filterField: 'operation.value.operationName',
+        fieldOptionLabel: 'operationName',
+        fieldPlaceholder: 'SELECT_OPERATION',
+        errorMessages: {
+          'required': 'PORT_FIELD_REQUIRED_ERROR'
+        }
+      },
+      {
+        field: 'seaWaterDensity',
+        header: 'WATER DENSITY',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        filter: true,
+        filterPlaceholder: 'SEARCH_PORT_WATER_DENSITY',
+        filterType: DATATABLE_FILTER_TYPE.NUMBER,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        filterField: 'seaWaterDensity.value',
+        fieldPlaceholder: 'ENTER_WATER_DENSITY',
+        errorMessages: {
+          'required': 'PORT_FIELD_REQUIRED_ERROR'
+        }
+      },
+      {
+        field: 'layCan',
+        header: 'LAY-CAN',
+        fieldType: DATATABLE_FIELD_TYPE.DATERANGE,
+        filter: false,
+        minDate: minDate,
+        fieldPlaceholder: 'CHOOSE_LAY_CAN',
+        errorMessages: {
+          'required': 'PORT_FIELD_REQUIRED_ERROR'
+        }
+      },
+      {
+        field: 'maxDraft',
+        header: 'MAX-DRAFT',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        filter: true,
+        filterPlaceholder: 'SEARCH_PORT_MAX_DRAFT',
+        filterType: DATATABLE_FILTER_TYPE.NUMBER,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        filterField: 'maxDraft.value',
+        fieldPlaceholder: 'ENTER_MAX_DRAFT',
+        errorMessages: {
+          'required': 'PORT_FIELD_REQUIRED_ERROR'
+        }
+      },
+      {
+        field: 'maxAirDraft',
+        header: 'MAX AIR DRAFT (M)',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        filter: true,
+        filterPlaceholder: 'SEARCH_PORT_MAX_AIR_DRAFT',
+        filterType: DATATABLE_FILTER_TYPE.NUMBER,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        filterField: 'maxAirDraft.value',
+        fieldPlaceholder: 'ENTER_MAX_AIR_DRAFT',
+        errorMessages: {
+          'required': 'PORT_FIELD_REQUIRED_ERROR'
+        }
+      },
+      {
+        field: 'eta',
+        header: 'ETA',
+        fieldType: DATATABLE_FIELD_TYPE.DATETIME,
+        filter: true,
+        filterPlaceholder: 'SEARCH_PORT_ETA',
+        filterType: DATATABLE_FILTER_TYPE.DATE,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        filterField: 'eta.value',
+        fieldPlaceholder: 'CHOOSE_ETA',
+        minDate: minDate,
+        dateFormat: 'YYYY/MM/DD',
+        errorMessages: {
+          'required': 'PORT_FIELD_REQUIRED_ERROR'
+        }
+      },
+      {
+        field: 'etd',
+        header: 'ETD',
+        fieldType: DATATABLE_FIELD_TYPE.DATETIME,
+        filter: true,
+        filterPlaceholder: 'SEARCH_PORT_ETD',
+        filterType: DATATABLE_FILTER_TYPE.DATE,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        filterField: 'etd.value',
+        fieldPlaceholder: 'CHOOSE_ETD',
+        minDate: minDate,
+        dateFormat: 'YYYY/MM/DD',
+        errorMessages: {
+          'required': 'PORT_FIELD_REQUIRED_ERROR'
+        }
+      },
+      {
+        field: 'actions',
+        header: '',
+        fieldClass: 'column-actions',
+        fieldType: DATATABLE_FIELD_TYPE.ACTION,
+        actions: [DATATABLE_ACTION.SAVE, DATATABLE_ACTION.DELETE]
+      }
+
+    ]
+  }
+
+
+  /**
+   * Method for emitting observable for add port
+   *
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  addPort() {
+    this._addPortSource.next();
+  }
+
+  /** Set port grid complete status */
+  setPortValidity(isValid: boolean) {
+    this._portValiditySource.next(isValid);
+  }
+
+  /**
+  * Method for converting from port value object model
+  *
+  * @param {IPortsValueObject} cargoNomination
+  * @returns {IPortList}
+  * @memberof LoadableStudyDetailsTransformationService
+  */
+  getPortAsValue(port: IPortsValueObject): IPortList {
+    const _ports = <IPortList>{};
+    for (const key in port) {
+      if (Object.prototype.hasOwnProperty.call(port, key)) {
+        if (key === 'port') {
+          _ports.portId = port[key].value?.id;
+        } else if (key === 'operation') {
+          _ports.operationId = port[key].value?.id;
+        } else if (key === 'layCan') {
+          _ports.layCanFrom = port[key].value.split('to')[0].trim();
+          _ports.layCanTo = port[key].value.split('to')[1].trim();
+        }
+        else {
+          if (key !== 'layCanFrom' && key !== 'layCanTo') {
+            _ports[key] = port[key]?.value ?? port[key];
+          }
+        }
+      }
+    }
+    return _ports;
+  }
+
+  /**
+ * Method for formating cargo nomination data
+ *
+ * @param {IPortsValueObject} ports
+ * @returns {IPortsValueObject}
+ * @memberof LoadableStudyDetailsTransformationService
+ */
+  formatPorts(ports: IPortsValueObject): IPortsValueObject {
+    ports.storeKey = ports.storeKey ?? uuid4();
+    return ports;
+  }
+
 }

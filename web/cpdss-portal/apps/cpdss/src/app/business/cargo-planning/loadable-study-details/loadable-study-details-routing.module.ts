@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { CargoNominationComponent } from './cargo-nomination/cargo-nomination.component';
 
 import { LoadableStudyDetailsComponent } from './loadable-study-details.component';
+import { PortsComponent } from './ports/ports.component';
 
 const routes: Routes = [
     {
@@ -11,7 +12,7 @@ const routes: Routes = [
         children: [
             { path: '', redirectTo: 'cargo-nomination', pathMatch: 'full' },
             { path: 'cargo-nomination', component: CargoNominationComponent },
-            { path: 'ports' }
+            { path: 'ports', component: PortsComponent }
         ]
     },
 ];

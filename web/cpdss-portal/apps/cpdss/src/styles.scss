@@ -1041,3 +1041,18 @@ input[type=number] {
 .pointer{
   cursor: pointer;
 }
+
+.p-calendar .p-inputtext{
+  height: 25px;
+  border: 0;
+  outline: none;
+  box-shadow: none!important;
+}
+
+.table-responsive-custom{
+  width: 100%;
+  height: calc(100vh - 260px);
+  overflow: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}

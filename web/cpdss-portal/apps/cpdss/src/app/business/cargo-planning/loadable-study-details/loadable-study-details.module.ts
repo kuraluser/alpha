@@ -15,6 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { VesselInfoModule } from '../../core/components/vessel-info/vessel-info.module';
 import { SidePanelLoadableStudyListComponent } from './side-panel-loadable-study-list/side-panel-loadable-study-list.component';
 import { NewLoadableStudyPopupModule } from '../../core/components/new-loadable-study-popup/new-loadable-study-popup.module';
+import { PortsComponent } from './ports/ports.component';
 /**
  * Routing Module for Loadable Study Details Screen
  *
@@ -22,7 +23,7 @@ import { NewLoadableStudyPopupModule } from '../../core/components/new-loadable-
  * @class LoadableStudyDetailsModule
  */
 @NgModule({
-  declarations: [LoadableStudyDetailsComponent, CargoNominationComponent, LoadingPortsPopupComponent, ApiTemperatureHistoryPopupComponent, SidePanelLoadableStudyListComponent],
+  declarations: [LoadableStudyDetailsComponent, CargoNominationComponent, LoadingPortsPopupComponent, ApiTemperatureHistoryPopupComponent, SidePanelLoadableStudyListComponent, PortsComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,

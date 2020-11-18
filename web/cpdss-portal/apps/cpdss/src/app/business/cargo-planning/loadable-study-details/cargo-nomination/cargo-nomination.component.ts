@@ -8,7 +8,7 @@ import { LoadableStudyDetailsTransformationService } from '../../services/loadab
 import { cargoNominationColorValidator } from '../../directives/validator/cargo-nomination-color.directive'
 import { cargoNominationLoadingPortValidator } from '../../directives/validator/cargo-nomination-loading-port.directive'
 import { alphabetsOnlyValidator } from '../../directives/validator/cargo-nomination-alphabets-only.directive'
-import { numberValidator } from '../../directives/validator/cargo-nomination-number-validator.directive'
+import { numberValidator } from '../../directives/validator/number-validator.directive'
 import { NgxSpinnerService } from 'ngx-spinner';
 
 /**
