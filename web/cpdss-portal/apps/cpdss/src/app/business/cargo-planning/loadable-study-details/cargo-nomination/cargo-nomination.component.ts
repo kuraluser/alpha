@@ -9,6 +9,7 @@ import { cargoNominationColorValidator } from '../../directives/validator/cargo-
 import { cargoNominationLoadingPortValidator } from '../../directives/validator/cargo-nomination-loading-port.directive'
 import { alphabetsOnlyValidator } from '../../directives/validator/cargo-nomination-alphabets-only.directive'
 import { numberValidator } from '../../directives/validator/cargo-nomination-number-validator.directive'
+import { NgxSpinnerService } from 'ngx-spinner';
 
 /**
  * Component class of cargonomination screen
@@ -88,7 +89,8 @@ export class CargoNominationComponent implements OnInit {
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private fb: FormBuilder,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private ngxSpinnerService: NgxSpinnerService) {
 
   }
 
@@ -116,13 +118,17 @@ export class CargoNominationComponent implements OnInit {
    * @memberof CargoNominationComponent
    */
   async getCargoNominationDetails() {
+    this.ngxSpinnerService.show();
     this.listData = await this.getDropdownData();
     const cargoNominationFormData: ICargoNominationDetailsResponse = await this.loadableStudyDetailsApiService.getCargoNominationDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
-    cargoNominationFormData.cargoNominations = cargoNominationFormData.cargoNominations ?? [];
-    this.listData.cargoList = cargoNominationFormData?.cargos;
-    this.listData.segregationList = cargoNominationFormData?.segregations;
-    this.cargoNominationDetails = cargoNominationFormData;
-    this.initCargoNominationArray(this.cargoNominationDetails?.cargoNominations);
+    if (cargoNominationFormData?.responseStatus?.status === '200') {
+      cargoNominationFormData.cargoNominations = cargoNominationFormData.cargoNominations ?? [];
+      this.listData.cargoList = cargoNominationFormData?.cargos;
+      this.listData.segregationList = cargoNominationFormData?.segregations;
+      this.cargoNominationDetails = cargoNominationFormData;
+      this.initCargoNominationArray(this.cargoNominationDetails?.cargoNominations);
+    }
+    this.ngxSpinnerService.hide();
   }
 
   /**
@@ -146,6 +152,7 @@ export class CargoNominationComponent implements OnInit {
    * @memberof CargoNominationComponent
    */
   async onCellValueClick(event: ICargoNominationEvent) {
+    this.ngxSpinnerService.show();
     if (event.field === 'loadingPorts') {
       if (event.data?.cargo?.value) {
         const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
@@ -161,10 +168,10 @@ export class CargoNominationComponent implements OnInit {
         }
         this.openLoadingPopup = true;
       }
-
     } else if (['api', 'temperature'].includes(event.field)) {
       this.openAPITemperatureHistoryPopup = true;
     }
+    this.ngxSpinnerService.hide();
   }
 
   /**
@@ -307,6 +314,7 @@ export class CargoNominationComponent implements OnInit {
    * @memberof CargoNominationComponent
    */
   private async initCargoNominationArray(cargoNominations: ICargoNomination[]) {
+    this.ngxSpinnerService.show();
     const _cargoNominations = cargoNominations?.map((item) => {
       const cargoData = this.loadableStudyDetailsTransformationService.getCargoNominationAsValueObject(item, false, this.listData);
       return cargoData;
@@ -319,6 +327,7 @@ export class CargoNominationComponent implements OnInit {
     });
     this.cargoNominations = _cargoNominations;
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
+    this.ngxSpinnerService.hide();
   }
 
 

@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { VesselDetailsModel } from '../../../model/vessel-details.model';
-import { VesselsApiService } from '../../services/vessels-api.service';
 
 /**
  * Componnet for shareble Vessel Icon widget
@@ -15,10 +14,10 @@ import { VesselsApiService } from '../../services/vessels-api.service';
   styleUrls: ['./vessel-info.component.scss']
 })
 export class VesselInfoComponent implements OnInit {
-  vesselDetails: VesselDetailsModel[];
+  @Input() vesselDetails: VesselDetailsModel;
   vesselName: string;
   imoNumber: number;
-  constructor(private vesselApiService: VesselsApiService) { }
+  constructor() { }
 
   ngOnInit(): void {
     this.getVesselDetails();
@@ -28,9 +27,8 @@ export class VesselInfoComponent implements OnInit {
      * Get vessel details
      */
   async getVesselDetails() {
-    this.vesselDetails = await this.vesselApiService.getVesselsInfo().toPromise();
-    this.vesselName = this.vesselDetails[0].name;
-    this.imoNumber = Number(this.vesselDetails[0].imoNumber);
+    this.vesselName = this.vesselDetails.name;
+    this.imoNumber = Number(this.vesselDetails.imoNumber);
   }
 
 }

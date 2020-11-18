@@ -10,6 +10,7 @@ import { VoyageService } from '../../core/services/voyage.service';
 import { LoadableStudyListTransformationService } from '../services/loadable-study-list-transformation.service';
 import { IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 /**
  * Loadable study list
@@ -28,7 +29,7 @@ export class LoadableStudyListComponent implements OnInit {
   cols: TableColumns[];
   display = false;
   isDuplicateExistingLoadableStudy = true;
-  vesselDetails: VesselDetailsModel[];
+  vesselDetails: VesselDetailsModel;
   voyageId: number;
   columns: IDataTableColumn[];
   loadableStudyListForm: FormGroup;
@@ -40,14 +41,18 @@ export class LoadableStudyListComponent implements OnInit {
     private vesselsApiService: VesselsApiService, private router: Router,
     private translateService: TranslateService, private activatedRoute: ActivatedRoute,
     private voyageService: VoyageService, private loadableStudyListTransformationService: LoadableStudyListTransformationService,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder,
+    private ngxSpinnerService: NgxSpinnerService) { }
 
   async ngOnInit(): Promise<void> {
     this.activatedRoute.params.subscribe(async params => {
       this.voyageId = Number(params.id);
-      this.vesselDetails = await this.vesselsApiService.getVesselsInfo().toPromise();
-      this.voyages = await this.voyageService.getVoyagesByVesselId(this.vesselDetails[0].id).toPromise();
-      this.getLoadableStudyInfo(this.vesselDetails[0].id, this.voyageId);
+      this.ngxSpinnerService.show();
+      const res = await this.vesselsApiService.getVesselsInfo().toPromise();
+      this.vesselDetails = res[0] ?? <VesselDetailsModel>{};
+      this.voyages = await this.voyageService.getVoyagesByVesselId(this.vesselDetails?.id).toPromise();
+      this.ngxSpinnerService.hide();
+      this.getLoadableStudyInfo(this.vesselDetails?.id, this.voyageId);
       this.selectedVoyage = this.voyages.find(voyage => voyage.id === this.voyageId);
     })
     this.columns = this.loadableStudyListTransformationService.getLoadableStudyListDatatableColumns();
@@ -58,21 +63,22 @@ export class LoadableStudyListComponent implements OnInit {
    * Take the user to particular loadable study
    */
   onRowSelect(event: IDataTableEvent) {
-    this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.vesselDetails[0].id}/${this.selectedVoyage.id}/${event.data.id}`]);
+    this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
   }
 
   /**
    * Get loadable study list
    */
-  async getLoadableStudyInfo(vesselId: number, voyageId: number): Promise<LoadableStudy[]> {
+  async getLoadableStudyInfo(vesselId: number, voyageId: number) {
+    this.ngxSpinnerService.show();
     if (voyageId !== 0) {
       const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
       this.loadableStudyList = result.loadableStudies;
       this.initLoadableStudyArray(this.loadableStudyList);
-      return this.loadableStudyList;
     }
-
+    this.ngxSpinnerService.hide();
   }
+
   // invoke popup which binds new-loadable-study-popup component
   callNewLoadableStudyPopup() {
     if (this.selectedVoyage) {
@@ -112,7 +118,7 @@ export class LoadableStudyListComponent implements OnInit {
    */
   showLoadableStudyList() {
     this.isVoyageIdSelected = true;
-    this.getLoadableStudyInfo(this.vesselDetails[0].id, this.selectedVoyage.id);
+    this.getLoadableStudyInfo(this.vesselDetails?.id, this.selectedVoyage.id);
   }
 
   /**

@@ -21,7 +21,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 @Injectable()
 export class HttpAuthInterceptor implements HttpInterceptor {
 
-    constructor(private ngxSpinnerService: NgxSpinnerService) { }
+    constructor() { }
 
     /**
      *  initiates interceptor with http module
@@ -36,16 +36,12 @@ export class HttpAuthInterceptor implements HttpInterceptor {
             request = request.clone({ headers: request.headers.set('X-TenantID', localStorage.getItem('realm')) });
         }
 
-        this.ngxSpinnerService.show();
         return next.handle(request).pipe(
             map((event: HttpEvent<any>) => {
                 if (event instanceof HttpResponse) {
-                    // console.log('event--->>>', event);
-                    this.ngxSpinnerService.hide();
                 }
                 return event;
             }), catchError((error) => {
-                this.ngxSpinnerService.hide();
                 throw error;
             }));
     }

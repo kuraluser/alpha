@@ -8,6 +8,11 @@ import { Voyage } from '../../core/models/common.models';
 import { VoyageService } from '../../core/services/voyage.service';
 import { IDischargingPortIds, LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { VesselDetailsModel } from '../../model/vessel-details.model';
+import { VesselsApiService } from '../../core/services/vessels-api.service';
+import { TranslateService } from '@ngx-translate/core';
+import { MessageService } from 'primeng/api';
 
 /**
  * Component class for loadable study details component
@@ -42,6 +47,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   voyageId: number;
   loadableStudyId: number;
   vesselId: number;
+  vesselInfo: VesselDetailsModel;
   selectedVoyage: Voyage;
   voyages: Voyage[];
   loadableStudies: LoadableStudy[];
@@ -53,7 +59,11 @@ export class LoadableStudyDetailsComponent implements OnInit {
     private loadableStudyListApiService: LoadableStudyListApiService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private voyageService: VoyageService) {
+    private voyageService: VoyageService,
+    private vesselsApiService: VesselsApiService,
+    private ngxSpinnerService: NgxSpinnerService,
+    private translateService: TranslateService,
+    private messageService: MessageService) {
   }
 
   ngOnInit(): void {
@@ -89,6 +99,9 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @memberof LoadableStudyDetailsComponent
    */
   async getLoadableStudies(vesselId: number, voyageId: number, loadableStudyId: number) {
+    this.ngxSpinnerService.show();
+    const res = await this.vesselsApiService.getVesselsInfo().toPromise();
+    this.vesselInfo = res[0] ?? <VesselDetailsModel>{};
     this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
     this.ports = await this.getPorts();
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
@@ -97,6 +110,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).toString();
     this.loadableStudyId = this.selectedLoadableStudy?.id;
+    this.ngxSpinnerService.hide();
     if (!loadableStudyId) {
       this.router.navigate([`business/cargo-planning/loadable-study-details/${vesselId}/${voyageId}/${this.loadableStudyId}`]);
     }
@@ -140,9 +154,15 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @memberof LoadableStudyDetailsComponent
    */
   async onDischargePortChange(event: Event) {
+    this.ngxSpinnerService.show();
     this.selectedLoadableStudy.dischargingPortIds = this.dischargingPorts?.map(port => port.id);
     const dischargingPortIds: IDischargingPortIds = { portIds: this.selectedLoadableStudy.dischargingPortIds };
+    const translationKeys = await this.translateService.get(['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS', 'LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY']).toPromise();
     const res = await this.loadableStudyDetailsApiService.setLoadableStudyDischargingPorts(this.vesselId, this.voyageId, this.loadableStudyId, dischargingPortIds).toPromise();
+    if (res?.responseStatus?.status === "200") {
+      this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY'] });
+    }
+    this.ngxSpinnerService.hide();
   }
 
   /**
@@ -153,7 +173,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
    */
   onVoyageChange(event) {
     this.voyageId = event?.value?.id;
-    this.getLoadableStudies(this.vesselId, this.voyageId, 0);
+    this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/0`]);
   }
 
   /**
@@ -163,6 +183,6 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @memberof LoadableStudyDetailsComponent
    */
   onDeleteLoadableStudy(event) {
-    this.getLoadableStudies(this.vesselId, this.voyageId, 0);
+    this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/0`]);
   }
 }

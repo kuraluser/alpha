@@ -19,6 +19,7 @@ import { KeycloakService } from 'keycloak-angular';
 import { keycloakCPDSSInitializer } from "../app/shared/utils/keycloak.cpdss.init";
 import { HttpAuthInterceptor } from "../app/shared/services/interceptors/auth.interceptors";
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { ToastAlertModule } from './shared/components/toast-alert/toast-alert.module';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
         deps: [HttpClient]
       }
     }),
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    ToastAlertModule.forRoot()
   ],
   providers: [
     {

@@ -1,5 +1,5 @@
-<p-dialog header="{{vesselDetails? vesselDetails[0].name : ''}} - {{'NEW_VOYAGE_POPUP_HEADER' | translate}}"
-  [(visible)]="showPopUp" styleClass="new-voayge-pop-up" [closable]="false" [draggable]="false" [modal]="true">
+<p-dialog header="{{vesselDetails?.name}} - {{'NEW_VOYAGE_POPUP_HEADER' | translate}}" [(visible)]="showPopUp"
+  styleClass="new-voayge-pop-up" [closable]="false" [draggable]="false" [modal]="true">
   <form [formGroup]="newVoyageForm" (submit)="onSubmit()" *ngIf="newVoyageForm">
 
     <div class="container">

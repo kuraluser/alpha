@@ -129,5 +129,17 @@
 	"NO_VOYAGE_NO_SELECTED": "Please select a Voyage No",
 	"NEW_LOADABLE_STUDY_POPUP_MAX_LENGTH": "Maximum allowed character length is 100",
 	"NEW_LOADABLE_STUDY_POPUP_MAX_TEMP_DIGIT_LENGTH": "Maximum allowed 3 digits",
-	"NEW_LOADABLE_STUDY_POPUP_MAX_DRAFT_DIGIT_LENGTH": "Maximum allowed 2 digits"
+	"NEW_LOADABLE_STUDY_POPUP_MAX_DRAFT_DIGIT_LENGTH": "Maximum allowed 2 digits",
+	"VOYAGE_CREATE_SUCCESS": "Success",
+	"VOYAGE_CREATED_SUCCESSFULLY": "Voyage created successfully",
+	"VOYAGE_CREATE_ERROR": "Error",
+	"VOYAGE_ALREADY_EXIST": "Voyage No already exist",
+	"LOADABLE_STUDY_CREATE_SUCCESS": "Success",
+	"LOADABLE_STUDY_CREATED_SUCCESSFULLY": "Loadable study created successfully",
+	"LOADABLE_STUDY_CREATE_ERROR": "Error",
+	"LOADABLE_STUDY_ALREADY_EXIST": "Loadable study name already exist",
+	"LOADABLE_STUDY_DELETE_SUCCESS": "Success",
+	"LOADABLE_STUDY_DELETE_SUCCESSFULLY": "Loadable study delete successfully",
+	"LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS": "Success",
+	"LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY": "Loadable study discharging ports updated successfully"
 }

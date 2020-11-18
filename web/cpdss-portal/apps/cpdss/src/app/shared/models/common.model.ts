@@ -67,7 +67,7 @@ export class ValueObject<T = any> {
 export interface IResponseStatus {
     status: string;
     message?: string,
-    erroCode?: string,
+    errorCode?: string,
     correlationId?: string;
 }
 
@@ -77,8 +77,8 @@ export interface IResponseStatus {
  * @export
  * @interface IResponse
  */
-export interface IResponse {
-    responseStatus: IResponseStatus;
+export interface IResponse extends IResponseStatus {
+    responseStatus?: IResponseStatus;
 }
 
 /**

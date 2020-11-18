@@ -1,4 +1,4 @@
-import { ValueObject } from '../../../shared/models/common.model';
+import { IResponse } from '../../../shared/models/common.model';
 
 /**
  * Model for loadable study list 
@@ -43,8 +43,7 @@ export class TableColumns {
  * @export
  * @interface ILoadableStudyResponse
  */
-export interface ILoadableStudyResponse {
-    responseStatus: any;
+export interface ILoadableStudyResponse extends IResponse {
     loadableStudyId: number;
 }
 

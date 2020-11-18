@@ -8,6 +8,9 @@ import { LoadableStudyListApiService } from '../../../cargo-planning/services/lo
 import { LoadableStudy } from '../../../cargo-planning/models/loadable-study-list.model';
 import { Router } from '@angular/router';
 import { numberValidator } from '../../../cargo-planning/directives/validator/cargo-nomination-number-validator.directive'
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 /**
  *  popup for creating / editing loadable-study
@@ -22,8 +25,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   @ViewChild('fileUpload') fileUpload: FileUpload;
   @Input() display;
   @Input()
-  get vesselInfoList(): VesselDetailsModel[] { return this._vesselInfoList; }
-  set vesselInfoList(vesselInfoList: VesselDetailsModel[]) {
+  get vesselInfoList(): VesselDetailsModel { return this._vesselInfoList; }
+  set vesselInfoList(vesselInfoList: VesselDetailsModel) {
     this._vesselInfoList = vesselInfoList;
   }
   @Input()
@@ -49,7 +52,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
 
   @ViewChild('fileUpload') fileUploadVariable: ElementRef;
 
-  private _vesselInfoList: VesselDetailsModel[] = [];
+  private _vesselInfoList: VesselDetailsModel;
   private _voyage: Voyage;
   private _loadableStudyList: LoadableStudy[];
   private _duplicateLoadableStudy: LoadableStudy;
@@ -64,7 +67,12 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   showError = false;
   uploadError = "";
   newLoadableStudyNameExist = false;
-  constructor(private loadableStudyListApiService: LoadableStudyListApiService, private formBuilder: FormBuilder, private router: Router) { }
+  constructor(private loadableStudyListApiService: LoadableStudyListApiService,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private messageService: MessageService,
+    private translateService: TranslateService,
+    private ngxSpinnerService: NgxSpinnerService) { }
 
   ngOnInit(): void {
     this.getVesselInfo();
@@ -73,7 +81,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   //get loadlines data and create form group
   async getVesselInfo() {
     this.uploadedFiles = [];
-    this.loadlineLists = this.vesselInfoList[0].loadlines;
+    this.loadlineLists = this.vesselInfoList?.loadlines;
     this.createNewLoadableStudyFormGroup();
     this.getLoadlineSummer();
   }
@@ -99,7 +107,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100)]),
       enquiryDetails: this.formBuilder.control('', [Validators.maxLength(1000)]),
       attachMail: null,
-      charterer: this.vesselInfoList[0].charterer,
+      charterer: this.vesselInfoList?.charterer,
       subCharterer: this.formBuilder.control('', [Validators.maxLength(100)]),
       loadLine: '',
       draftMark: '',
@@ -131,6 +139,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   public async saveLoadableStudy() {
     if (this.newLoadableStudyFormGroup.valid) {
       this.newLoadableStudyNameExist = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
+      const translationKeys = await this.translateService.get(['LOADABLE_STUDY_CREATE_SUCCESS', 'LOADABLE_STUDY_CREATED_SUCCESSFULLY', 'LOADABLE_STUDY_CREATE_ERROR', 'LOADABLE_STUDY_ALREADY_EXIST']).toPromise();
       if (!this.newLoadableStudyNameExist) {
         this.newLoadableStudyPopupModel = {
           id: 0,
@@ -146,11 +155,22 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           maxAirTempExpected: this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value,
           maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value
         }
-        const result = await this.loadableStudyListApiService.setLodableStudy(this.vesselInfoList[0].id, this.voyage.id, this.newLoadableStudyPopupModel).toPromise();
-        if (result.responseStatus.status === "200") {
-          this.closeDialog();
-          this.router.navigate(['business/cargo-planning/loadable-study-details/' + this.vesselInfoList[0].id + '/' + this.voyage.id + '/' + result.loadableStudyId]);
+        this.ngxSpinnerService.show();
+        try {
+          const result = await this.loadableStudyListApiService.setLodableStudy(this.vesselInfoList?.id, this.voyage.id, this.newLoadableStudyPopupModel).toPromise();
+          if (result.responseStatus.status === "200") {
+            this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
+            this.closeDialog();
+            this.router.navigate(['business/cargo-planning/loadable-study-details/' + this.vesselInfoList?.id + '/' + this.voyage.id + '/' + result.loadableStudyId]);
+          }
+        } catch (error) {
+          //TODO: The validation error for lodable study with same name exist error should be given in api response
+          // this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: translationKeys['LOADABLE_STUDY_CREATION_FAILED'] });
         }
+        this.ngxSpinnerService.hide();
+      } else {
+        //TODO: This must be moved to above catch expression
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: translationKeys['LOADABLE_STUDY_ALREADY_EXIST'] });
       }
     } else {
       this.newLoadableStudyFormGroup.markAllAsTouched();

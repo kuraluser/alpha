@@ -3,7 +3,7 @@
         <div class="col vessel-info-wrapper">
             <div class="row">
                 <div class="col">
-                    <cpdss-portal-vessel-info></cpdss-portal-vessel-info>
+                    <cpdss-portal-vessel-info *ngIf="vesselInfo" [vesselDetails]="vesselInfo"></cpdss-portal-vessel-info>
                 </div>
             </div>
             <div class="row">
@@ -78,8 +78,9 @@
         <div class="sidebar  relative">
             <a class="sidebar-collapse-btn" (click)="openSidePane=!openSidePane"></a>
             <div class="sidebar-content">
-                <cpdss-portal-side-panel-loadable-study-list [vesselId]="vesselId" [voyage]="selectedVoyage"
-                    [(selectedLoadableStudy)]="selectedLoadableStudy" [loadableStudies]="loadableStudies" (deleteLoadableStudy)="onDeleteLoadableStudy($event)">
+                <cpdss-portal-side-panel-loadable-study-list [vesselInfo]="vesselInfo"
+                    [voyage]="selectedVoyage" [(selectedLoadableStudy)]="selectedLoadableStudy"
+                    [loadableStudies]="loadableStudies" (deleteLoadableStudy)="onDeleteLoadableStudy($event)">
                 </cpdss-portal-side-panel-loadable-study-list>
             </div>
         </div>

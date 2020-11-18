@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { IResponse } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { INewLoadableStudy } from '../../core/components/new-loadable-study-popup/new-loadable-study-popup.model';
 import { ILoadableStudiesResponse, ILoadableStudyResponse, LoadableStudy } from '../models/loadable-study-list.model'
@@ -56,7 +57,7 @@ export class LoadableStudyListApiService {
    * @returns {Observable<any>}
    * @memberof LoadableStudyListApiService
    */
-  deleteLodableStudy(vesselId: number, voyageId: number, loadableStudyId: number): Observable<any> {
-    return this.commonApiService.delete(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}`)
+  deleteLodableStudy(vesselId: number, voyageId: number, loadableStudyId: number): Observable<IResponse> {
+    return this.commonApiService.delete<IResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}`)
   }
 }  

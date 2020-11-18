@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { MessageService } from 'primeng/api';
 import { DATATABLE_SELECTIONMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { Voyage } from '../../../core/models/common.models';
-import { VesselsApiService } from '../../../core/services/vessels-api.service';
 import { VesselDetailsModel } from '../../../model/vessel-details.model';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
@@ -22,15 +24,14 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
     this._loadableStudies = loadableStudies;
   }
 
-  @Input() vesselId: number;
   @Input() voyage: Voyage;
   @Input() selectedLoadableStudy: LoadableStudy;
-
+  @Input() vesselInfo: VesselDetailsModel;
+  
   @Output() selectedLoadableStudyChange = new EventEmitter<LoadableStudy>();
   @Output() deleteLoadableStudy = new EventEmitter<Event>();
 
   columns: IDataTableColumn[];
-  vesselInfo: VesselDetailsModel[];
   display = false;
   duplicateLoadableStudy: LoadableStudy;
   selectionMode = DATATABLE_SELECTIONMODE.SINGLE;
@@ -38,23 +39,15 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
 
   private _loadableStudies: LoadableStudy[];
 
-  constructor(private vesselsApiService: VesselsApiService,
+  constructor(
     private loadableStudyListApiService: LoadableStudyListApiService,
-    private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService) { }
+    private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
+    private translateService: TranslateService,
+    private messageService: MessageService,
+    private ngxSpinnerService: NgxSpinnerService) { }
 
   ngOnInit(): void {
     this.getGridColumns();
-    this.getVesselInfo();
-  }
-
-  /**
-   * Get vessel info
-   *
-   * @memberof SidePanelLoadableStudyListComponent
-   */
-  async getVesselInfo() {
-    const result = await this.vesselsApiService.getVesselsInfo().toPromise();
-    this.vesselInfo = result ?? [];
   }
 
   /**
@@ -83,9 +76,15 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
    * @param {*} event
    * @memberof SidePanelLoadableStudyListComponent
    */
-  onDelete(event) {
-    const result = this.loadableStudyListApiService.deleteLodableStudy(this.vesselId, this.voyage?.id, event?.data?.id).toPromise();
-    this.deleteLoadableStudy.emit(event);
+  async onDelete(event) {
+    this.ngxSpinnerService.show();
+    const translationKeys = await this.translateService.get(['LOADABLE_STUDY_DELETE_SUCCESS', 'LOADABLE_STUDY_DELETE_SUCCESSFULLY']).toPromise();
+    const res = await this.loadableStudyListApiService.deleteLodableStudy(this.vesselInfo?.id, this.voyage?.id, event?.data?.id).toPromise();
+    if (res?.responseStatus?.status === "200") {
+      this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_DELETE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_DELETE_SUCCESSFULLY'] });
+      this.deleteLoadableStudy.emit(event);
+    }
+    this.ngxSpinnerService.hide();
   }
 
   /**
