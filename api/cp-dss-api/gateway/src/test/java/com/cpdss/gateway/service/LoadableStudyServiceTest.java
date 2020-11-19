@@ -538,9 +538,6 @@ class LoadableStudyServiceTest {
     loadableQuantity.setEstFreshWaterOnBoard(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setEstSagging(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setEstSeaDensity(LOADABLE_QUANTITY_DUMMY);
-    loadableQuantity.setEstTotalFOConsumption(LOADABLE_QUANTITY_DUMMY);
-    loadableQuantity.setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY);
-    loadableQuantity.setLimitingDraft(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setOtherIfAny(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setSaggingDeduction(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setSgCorrection(LOADABLE_QUANTITY_DUMMY);
@@ -548,6 +545,14 @@ class LoadableStudyServiceTest {
     loadableQuantity.setTpc(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setVesselAverageSpeed(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setVesselLightWeight(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setSubTotal(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setFoConInSZ(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setPortId(1);
+    loadableQuantity.setBoilerWaterOnBoard(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setBallast(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setRunningHours(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setRunningDays(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY);
 
     LoadableQuantityResponse loadableQuantityResponse =
         spy.saveLoadableQuantity(loadableQuantity, (long) 1, CORRELATION_ID_HEADER_VALUE);
@@ -594,9 +599,6 @@ class LoadableStudyServiceTest {
     loadableQuantity.setEstFreshWaterOnBoard(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setEstSagging(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setEstSeaDensity(LOADABLE_QUANTITY_DUMMY);
-    loadableQuantity.setEstTotalFOConsumption(LOADABLE_QUANTITY_DUMMY);
-    loadableQuantity.setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY);
-    loadableQuantity.setLimitingDraft(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setOtherIfAny(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setSaggingDeduction(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setSgCorrection(LOADABLE_QUANTITY_DUMMY);
@@ -604,6 +606,14 @@ class LoadableStudyServiceTest {
     loadableQuantity.setTpc(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setVesselAverageSpeed(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setVesselLightWeight(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setSubTotal(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setFoConInSZ(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setPortId(1);
+    loadableQuantity.setBoilerWaterOnBoard(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setBallast(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setRunningHours(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setRunningDays(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY);
 
     final GenericServiceException ex =
         assertThrows(
@@ -637,9 +647,6 @@ class LoadableStudyServiceTest {
             .setEstFreshWaterOnBoard(LOADABLE_QUANTITY_DUMMY)
             .setEstSagging(LOADABLE_QUANTITY_DUMMY)
             .setEstSeaDensity(LOADABLE_QUANTITY_DUMMY)
-            .setEstTotalFOConsumption(LOADABLE_QUANTITY_DUMMY)
-            .setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY)
-            .setLimitingDraft(LOADABLE_QUANTITY_DUMMY)
             .setOtherIfAny(LOADABLE_QUANTITY_DUMMY)
             .setSaggingDeduction(LOADABLE_QUANTITY_DUMMY)
             .setSgCorrection(LOADABLE_QUANTITY_DUMMY)
@@ -647,6 +654,14 @@ class LoadableStudyServiceTest {
             .setTpc(LOADABLE_QUANTITY_DUMMY)
             .setVesselAverageSpeed(LOADABLE_QUANTITY_DUMMY)
             .setVesselLightWeight(LOADABLE_QUANTITY_DUMMY)
+            .setSubTotal(LOADABLE_QUANTITY_DUMMY)
+            .setFoConInSZ(LOADABLE_QUANTITY_DUMMY)
+            .setPortId(1)
+            .setBoilerWaterOnBoard(LOADABLE_QUANTITY_DUMMY)
+            .setBallast(LOADABLE_QUANTITY_DUMMY)
+            .setRunningHours(LOADABLE_QUANTITY_DUMMY)
+            .setRunningDays(LOADABLE_QUANTITY_DUMMY)
+            .setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY)
             .build();
 
     Mockito.when(spy.getLoadableQuantity((anyLong()), anyString())).thenCallRealMethod();

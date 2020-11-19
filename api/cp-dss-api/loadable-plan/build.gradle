@@ -1,5 +1,5 @@
 appConfig {
-  grpcServer = 'y'
+  grpc = 'y'
   persistence = 'springData'
   dataBase = 'postgres'
   logging = 'y'
@@ -9,4 +9,5 @@ appConfig {
 
 dependencies {
     implementation project(':common')
+	compile group: 'org.modelmapper', name: 'modelmapper', version: '0.7.5'
 }

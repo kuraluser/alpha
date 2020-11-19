@@ -102,6 +102,9 @@ public class LoadableQuantity extends EntityDoc {
   @Column(name = "foconsumptioninsz")
   private BigDecimal foConsumptionInSZ;
 
+  @Column(name = "subtotal")
+  private BigDecimal subTotal;
+
   @JoinColumn(name = "loadablestudyxid", referencedColumnName = "id")
   @ManyToOne
   private LoadableStudy loadableStudyXId;

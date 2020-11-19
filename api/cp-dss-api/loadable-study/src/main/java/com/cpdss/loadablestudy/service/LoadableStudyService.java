@@ -224,16 +224,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             new BigDecimal(loadableQuantityRequest.getEstFreshWaterOnBoard()));
         loadableQuantity.setEstimatedSagging(
             new BigDecimal(loadableQuantityRequest.getEstSagging()));
-        loadableQuantity.setDraftRestriction(
-            new BigDecimal(loadableQuantityRequest.getLimitingDraft()));
 
         loadableQuantity.setEstimatedSeaDensity(
             StringUtils.isEmpty(loadableQuantityRequest.getEstSeaDensity())
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getEstSeaDensity()));
-
-        loadableQuantity.setFoConsumptionPerDay(
-            new BigDecimal(loadableQuantityRequest.getFoConsumptionPerDay()));
 
         loadableQuantity.setLightWeight(
             StringUtils.isEmpty(loadableQuantityRequest.getVesselLightWeight())
@@ -250,8 +245,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getSgCorrection()));
 
-        loadableQuantity.setTotalFoConsumption(
-            new BigDecimal(loadableQuantityRequest.getEstTotalFOConsumption()));
         loadableQuantity.setTotalQuantity(
             new BigDecimal(loadableQuantityRequest.getTotalQuantity()));
         loadableQuantity.setTpcatDraft(new BigDecimal(loadableQuantityRequest.getTpc()));
@@ -262,30 +255,39 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             StringUtils.isEmpty(loadableQuantityRequest.getPortId())
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getPortId()));
-        loadableQuantity.setPortId(
+        loadableQuantity.setBoilerWaterOnBoard(
             StringUtils.isEmpty(loadableQuantityRequest.getBoilerWaterOnBoard())
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getBoilerWaterOnBoard()));
-        loadableQuantity.setPortId(
+        loadableQuantity.setBallast(
             StringUtils.isEmpty(loadableQuantityRequest.getBallast())
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getBallast()));
-        loadableQuantity.setPortId(
+        loadableQuantity.setRunningHours(
             StringUtils.isEmpty(loadableQuantityRequest.getRunningHours())
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getRunningHours()));
-        loadableQuantity.setPortId(
+        loadableQuantity.setRunningDays(
             StringUtils.isEmpty(loadableQuantityRequest.getRunningDays())
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getRunningDays()));
-        loadableQuantity.setPortId(
+        loadableQuantity.setFoConsumptionInSZ(
             StringUtils.isEmpty(loadableQuantityRequest.getFoConInSZ())
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getFoConInSZ()));
-        loadableQuantity.setPortId(
+        loadableQuantity.setDraftRestriction(
             StringUtils.isEmpty(loadableQuantityRequest.getDraftRestriction())
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getDraftRestriction()));
+
+        loadableQuantity.setSubTotal(
+            StringUtils.isEmpty(loadableQuantityRequest.getSubTotal())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getSubTotal()));
+        loadableQuantity.setFoConsumptionPerDay(
+            StringUtils.isEmpty(loadableQuantityRequest.getFoConsumptionPerDay())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getFoConsumptionPerDay()));
 
         loadableQuantity = loadableQuantityRepository.save(loadableQuantity);
 
@@ -1007,19 +1009,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(
                 estSeaDensity ->
                     loadableQuantityRequest.setEstSeaDensity(estSeaDensity.toString()));
-        Optional.ofNullable(loadableQuantity.get(0).getTotalFoConsumption())
-            .ifPresent(
-                estTotalFOConsumption ->
-                    loadableQuantityRequest.setEstTotalFOConsumption(
-                        estTotalFOConsumption.toString()));
-        Optional.ofNullable(loadableQuantity.get(0).getFoConsumptionPerDay())
-            .ifPresent(
-                foConsumptionPerDay ->
-                    loadableQuantityRequest.setFoConsumptionPerDay(foConsumptionPerDay.toString()));
-        Optional.ofNullable(loadableQuantity.get(0).getDraftRestriction())
-            .ifPresent(
-                limitingDraft ->
-                    loadableQuantityRequest.setLimitingDraft(limitingDraft.toString()));
         Optional.ofNullable(loadableQuantity.get(0).getOtherIfAny())
             .ifPresent(otherIfAny -> loadableQuantityRequest.setOtherIfAny(otherIfAny.toString()));
         Optional.ofNullable(loadableQuantity.get(0).getSaggingDeduction())
@@ -1071,6 +1060,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(
                 draftRestriction ->
                     loadableQuantityRequest.setDraftRestriction(draftRestriction.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getSubTotal())
+            .ifPresent(subTotal -> loadableQuantityRequest.setSubTotal(subTotal.toString()));
+        Optional.ofNullable(loadableQuantity.get(0).getFoConsumptionPerDay())
+            .ifPresent(
+                foConsumptionPerDay ->
+                    loadableQuantityRequest.setFoConsumptionPerDay(foConsumptionPerDay.toString()));
+
         builder.setIsSummerZone(true);
         Optional.ofNullable(loadableStudy.get().getDraftRestriction())
             .ifPresent(sz -> builder.setIsSummerZone(false));

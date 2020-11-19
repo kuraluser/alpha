@@ -40,6 +40,7 @@ import com.cpdss.gateway.domain.Cargo;
 import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CargoNominationResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
+import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
@@ -155,8 +156,6 @@ public class LoadableStudyService {
       throws GenericServiceException {
     LoadableQuantityResponse loadableQuantityResponse = new LoadableQuantityResponse();
     LoadableQuantityRequest.Builder builder = LoadableQuantityRequest.newBuilder();
-    /*LoadableQuantityRequest loadableQuantityRequest =
-    LoadableQuantityRequest.newBuilder()*/
     builder.setConstant(loadableQuantity.getConstant());
     Optional.ofNullable(loadableQuantity.getDisplacmentDraftRestriction())
         .ifPresent(builder::setDisplacmentDraftRestriction);
@@ -167,9 +166,7 @@ public class LoadableStudyService {
     builder.setEstFreshWaterOnBoard(loadableQuantity.getEstFreshWaterOnBoard());
     builder.setEstSagging(loadableQuantity.getEstSagging());
     Optional.ofNullable(loadableQuantity.getEstSeaDensity()).ifPresent(builder::setEstSeaDensity);
-    builder.setEstTotalFOConsumption(loadableQuantity.getEstTotalFOConsumption());
     builder.setFoConsumptionPerDay(loadableQuantity.getFoConsumptionPerDay());
-    builder.setLimitingDraft(loadableQuantity.getLimitingDraft());
     builder.setOtherIfAny(loadableQuantity.getOtherIfAny());
     builder.setSaggingDeduction(loadableQuantity.getSaggingDeduction());
     Optional.ofNullable(loadableQuantity.getSgCorrection()).ifPresent(builder::setSgCorrection);
@@ -187,6 +184,9 @@ public class LoadableStudyService {
     Optional.ofNullable(loadableQuantity.getFoConInSZ()).ifPresent(builder::setFoConInSZ);
     Optional.ofNullable(loadableQuantity.getDraftRestriction())
         .ifPresent(builder::setDraftRestriction);
+    Optional.ofNullable(loadableQuantity.getSubTotal()).ifPresent(builder::setSubTotal);
+    Optional.ofNullable(loadableQuantity.getFoConsumptionPerDay())
+        .ifPresent(builder::setFoConsumptionPerDay);
     builder.setLoadableStudyId(loadableStudiesId).build();
 
     LoadableQuantityReply loadableQuantityReply = this.saveLoadableQuantity(builder.build());
@@ -805,12 +805,12 @@ public class LoadableStudyService {
         loadableQuantityResponse.getLoadableQuantityRequest().getEstFreshWaterOnBoard());
     loadableQuantity.setEstSagging(
         loadableQuantityResponse.getLoadableQuantityRequest().getEstSagging());
-    loadableQuantity.setLimitingDraft(
-        loadableQuantityResponse.getLoadableQuantityRequest().getLimitingDraft());
     loadableQuantity.setEstSeaDensity(
         loadableQuantityResponse.getLoadableQuantityRequest().getEstSeaDensity());
+
     loadableQuantity.setFoConsumptionPerDay(
         loadableQuantityResponse.getLoadableQuantityRequest().getFoConsumptionPerDay());
+
     loadableQuantity.setVesselLightWeight(
         loadableQuantityResponse.getLoadableQuantityRequest().getVesselLightWeight());
     loadableQuantity.setOtherIfAny(
@@ -819,9 +819,6 @@ public class LoadableStudyService {
         loadableQuantityResponse.getLoadableQuantityRequest().getSaggingDeduction());
     loadableQuantity.setSgCorrection(
         loadableQuantityResponse.getLoadableQuantityRequest().getSgCorrection());
-
-    loadableQuantity.setEstTotalFOConsumption(
-        loadableQuantityResponse.getLoadableQuantityRequest().getEstTotalFOConsumption());
     loadableQuantity.setTotalQuantity(
         loadableQuantityResponse.getLoadableQuantityRequest().getTotalQuantity());
     loadableQuantity.setTpc(loadableQuantityResponse.getLoadableQuantityRequest().getTpc());
@@ -843,6 +840,8 @@ public class LoadableStudyService {
         loadableQuantityResponse.getLoadableQuantityRequest().getFoConInSZ());
     loadableQuantity.setDraftRestriction(
         loadableQuantityResponse.getLoadableQuantityRequest().getDraftRestriction());
+    loadableQuantity.setSubTotal(
+        loadableQuantityResponse.getLoadableQuantityRequest().getSubTotal());
     loadableQuantityResponseDto.setLoadableQuantity(loadableQuantity);
     loadableQuantityResponseDto.setIsSummerZone(loadableQuantityResponse.getIsSummerZone());
 
@@ -1084,5 +1083,16 @@ public class LoadableStudyService {
    */
   public PortRotationReply deletePortRotation(PortRotationRequest request) {
     return this.loadableStudyServiceBlockingStub.deletePortRotation(request);
+  }
+
+  /**
+   * @param loadableStudiesId
+   * @param first
+   * @return LoadablePatternResponse
+   */
+  public LoadablePatternResponse getLoadablePattern(Long loadableStudiesId, String correlationId)
+      throws GenericServiceException {
+    // TODO Auto-generated method stub
+    return null;
   }
 }
