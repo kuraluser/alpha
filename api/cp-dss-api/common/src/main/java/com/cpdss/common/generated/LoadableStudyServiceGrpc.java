@@ -829,6 +829,55 @@ public final class LoadableStudyServiceGrpc {
     return getDeletePortRotationMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest,
+          com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>
+      getGetOnHandQuantityMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetOnHandQuantity",
+      requestType = com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest,
+          com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>
+      getGetOnHandQuantityMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest,
+            com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>
+        getGetOnHandQuantityMethod;
+    if ((getGetOnHandQuantityMethod = LoadableStudyServiceGrpc.getGetOnHandQuantityMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetOnHandQuantityMethod = LoadableStudyServiceGrpc.getGetOnHandQuantityMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetOnHandQuantityMethod =
+              getGetOnHandQuantityMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest,
+                          com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetOnHandQuantity"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("GetOnHandQuantity"))
+                      .build();
+        }
+      }
+    }
+    return getGetOnHandQuantityMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -1003,6 +1052,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getDeletePortRotationMethod(), responseObserver);
     }
 
+    /** */
+    public void getOnHandQuantity(
+        com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetOnHandQuantityMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1118,6 +1175,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
                       com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
                       this, METHODID_DELETE_PORT_ROTATION)))
+          .addMethod(
+              getGetOnHandQuantityMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest,
+                      com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>(
+                      this, METHODID_GET_ON_HAND_QUANTITY)))
           .build();
     }
   }
@@ -1309,6 +1373,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getOnHandQuantity(
+        com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetOnHandQuantityMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1436,6 +1511,13 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
       return blockingUnaryCall(
           getChannel(), getDeletePortRotationMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply getOnHandQuantity(
+        com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetOnHandQuantityMethod(), getCallOptions(), request);
     }
   }
 
@@ -1593,6 +1675,14 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getDeletePortRotationMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>
+        getOnHandQuantity(com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetOnHandQuantityMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -1611,6 +1701,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_PORT_ROTATION_BY_LOADABLE_STUDY_ID = 13;
   private static final int METHODID_DELETE_LOADABLE_STUDY = 14;
   private static final int METHODID_DELETE_PORT_ROTATION = 15;
+  private static final int METHODID_GET_ON_HAND_QUANTITY = 16;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1740,6 +1831,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.PortRotationReply>)
                   responseObserver);
           break;
+        case METHODID_GET_ON_HAND_QUANTITY:
+          serviceImpl.getOnHandQuantity(
+              (com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1820,6 +1918,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetPortRotationByLoadableStudyIdMethod())
                       .addMethod(getDeleteLoadableStudyMethod())
                       .addMethod(getDeletePortRotationMethod())
+                      .addMethod(getGetOnHandQuantityMethod())
                       .build();
         }
       }

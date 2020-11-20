@@ -17,6 +17,9 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.Operation;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
@@ -33,6 +36,7 @@ import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Voyage;
@@ -47,8 +51,6 @@ import java.util.stream.IntStream;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockMultipartFile;
@@ -819,24 +821,6 @@ class LoadableStudyServiceTest {
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
-  @ParameterizedTest
-  @ValueSource(longs = {1L, 2L})
-  void testSavePortRotationInvalidOperation(Long operationId) throws GenericServiceException {
-    Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotation.class), anyString()))
-        .thenCallRealMethod();
-    Mockito.when(this.loadableStudyService.savePortRotation(any(PortRotationDetail.class)))
-        .thenReturn(this.generatePortRotationReply(false).build());
-    PortRotation request = this.createPortRotationRequest();
-    request.setOperationId(operationId);
-    final GenericServiceException ex =
-        assertThrows(
-            GenericServiceException.class,
-            () -> this.loadableStudyService.savePortRotation(request, CORRELATION_ID_HEADER_VALUE));
-    assertAll(
-        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
-        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
-  }
-
   private PortRotation createPortRotationRequest() {
     PortRotation request = new PortRotation();
     request.setId(1L);
@@ -985,6 +969,72 @@ class LoadableStudyServiceTest {
             GenericServiceException.class,
             () ->
                 this.loadableStudyService.deletePortRotation(1L, 1L, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  @Test
+  void testGetOnHandQuantity() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.getOnHandQuantity(
+                anyLong(), anyLong(), anyLong(), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.getOnHandQuantity(any(OnHandQuantityRequest.class)))
+        .thenReturn(
+            OnHandQuantityReply.newBuilder()
+                .addAllOnHandQuantity(this.createOnhandQuantityDetail())
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    OnHandQuantityResponse response =
+        this.loadableStudyService.getOnHandQuantity(1L, 1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "Invalid response status"));
+  }
+
+  private List<OnHandQuantityDetail> createOnhandQuantityDetail() {
+    List<OnHandQuantityDetail> list = new ArrayList<>();
+    IntStream.range(1, 5)
+        .forEach(
+            i -> {
+              OnHandQuantityDetail detail =
+                  OnHandQuantityDetail.newBuilder()
+                      .setTankId(Long.valueOf(i))
+                      .setId(Long.valueOf(i))
+                      .setTankName("tank-" + i)
+                      .setFuelType("fuel-" + i)
+                      .setFuelTypeId(Long.valueOf(i))
+                      .build();
+              list.add(detail);
+            });
+    return list;
+  }
+
+  @Test
+  void testGetOnHandQuantityGrpcFailure() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.getOnHandQuantity(
+                anyLong(), anyLong(), anyLong(), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.getOnHandQuantity(any(OnHandQuantityRequest.class)))
+        .thenReturn(
+            OnHandQuantityReply.newBuilder()
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.getOnHandQuantity(
+                    1L, 1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));

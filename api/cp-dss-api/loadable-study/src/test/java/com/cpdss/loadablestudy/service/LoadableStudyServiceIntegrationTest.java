@@ -21,6 +21,7 @@ import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
+import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import io.grpc.internal.testing.StreamRecorder;
 import java.util.ArrayList;
@@ -64,6 +65,8 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private CargoNominationValveSegregationRepository valveSegregationRepository;
 
   @MockBean private LoadableStudyStatusRepository loadableStudyStatusRepository;
+
+  @MockBean private OnHandQuantityRepository onHandQuantityRepository;
 
   @MockBean
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;

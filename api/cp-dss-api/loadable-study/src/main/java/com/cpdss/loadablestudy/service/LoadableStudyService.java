@@ -18,6 +18,9 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.Operation;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
@@ -37,6 +40,7 @@ import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
+import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -48,6 +52,7 @@ import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
@@ -57,6 +62,7 @@ import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
+import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
@@ -99,26 +105,26 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @Autowired private CargoOperationRepository cargoOperationRepository;
-
   @Autowired private LoadableStudyRepository loadableStudyRepository;
-
   @Autowired private LoadableQuantityRepository loadableQuantityRepository;
-
   @Autowired private CargoNominationRepository cargoNominationRepository;
-
   @Autowired private CargoNominationValveSegregationRepository valveSegregationRepository;
   @Autowired private LoadableStudyStatusRepository loadableStudyStatusRepository;
 
   @Autowired
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
 
+  @Autowired private OnHandQuantityRepository onHandQuantityRepository;
+
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
   private static final String VOYAGEEXISTS = "VOYAGE_EXISTS";
   private static final String CREATED_DATE_FORMAT = "dd-MM-yyyy";
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
-  private static final String ETA_ETD_FROMAT = "yyyy-MM-dd HH:mm";
-  private static final String LAY_CAN_FROMAT = "yyyy-MM-dd";
+  private static final String ETA_ETD_FORMAT = "yyyy-MM-dd HH:mm";
+  private static final String LAY_CAN_FORMAT = "yyyy-MM-dd";
+  private static final String ETA_ETD_CLIENT_FORMAT = "dd-MM-yyyy HH:mm";
+  private static final String LAY_CAN_CLIENT_FORMAT = "dd-MM-yyyy";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
@@ -816,8 +822,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         replyBuilder.addPorts(
             this.createPortDetail(
                 entity,
-                DateTimeFormatter.ofPattern(ETA_ETD_FROMAT),
-                DateTimeFormatter.ofPattern(LAY_CAN_FROMAT)));
+                DateTimeFormatter.ofPattern(ETA_ETD_CLIENT_FORMAT),
+                DateTimeFormatter.ofPattern(LAY_CAN_CLIENT_FORMAT)));
       }
       List<CargoOperation> operationEntityList = this.cargoOperationRepository.findAll();
       for (CargoOperation entity : operationEntityList) {
@@ -1326,6 +1332,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     entity.setAirDraftRestriction(
         isEmpty(request.getMaxAirDraft()) ? null : new BigDecimal(request.getMaxAirDraft()));
     entity.setBerthXId(0 == request.getBerthId() ? null : request.getBerthId());
+    entity.setPortXId(0 == request.getPortId() ? null : request.getPortId());
     entity.setDistanceBetweenPorts(
         isEmpty(request.getDistanceBetweenPorts())
             ? null
@@ -1342,22 +1349,22 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         isEmpty(request.getEta())
             ? null
             : LocalDateTime.from(
-                DateTimeFormatter.ofPattern(ETA_ETD_FROMAT).parse(request.getEta())));
+                DateTimeFormatter.ofPattern(ETA_ETD_FORMAT).parse(request.getEta())));
     entity.setEtd(
         isEmpty(request.getEtd())
             ? null
             : LocalDateTime.from(
-                DateTimeFormatter.ofPattern(ETA_ETD_FROMAT).parse(request.getEtd())));
+                DateTimeFormatter.ofPattern(ETA_ETD_FORMAT).parse(request.getEtd())));
     entity.setLayCanFrom(
         isEmpty(request.getLayCanFrom())
             ? null
             : LocalDate.from(
-                DateTimeFormatter.ofPattern(LAY_CAN_FROMAT).parse(request.getLayCanFrom())));
+                DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).parse(request.getLayCanFrom())));
     entity.setLayCanTo(
         isEmpty(request.getLayCanTo())
             ? null
             : LocalDate.from(
-                DateTimeFormatter.ofPattern(LAY_CAN_FROMAT).parse(request.getLayCanTo())));
+                DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).parse(request.getLayCanTo())));
     entity.setOperation(this.cargoOperationRepository.getOne(request.getOperationId()));
     entity.setPortOrder(0 == request.getPortOrder() ? null : request.getPortOrder());
     return entity;
@@ -1563,5 +1570,92 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /** Get on hand quantity */
+  @Override
+  public void getOnHandQuantity(
+      OnHandQuantityRequest request, StreamObserver<OnHandQuantityReply> responseObserver) {
+    OnHandQuantityReply.Builder replyBuilder = OnHandQuantityReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+      if (!loadableStudyOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable study does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      VesselRequest.Builder vesselGrpcRequest = VesselRequest.newBuilder();
+      vesselGrpcRequest.setCompanyId(request.getCompanyId());
+      vesselGrpcRequest.setVesselId(request.getVesselId());
+      VesselReply vesselReply = this.getVesselFuelTanks(vesselGrpcRequest.build());
+      if (!SUCCESS.equals(vesselReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Failed to fetch vessel particualrs",
+            vesselReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(Integer.valueOf(vesselReply.getResponseStatus().getCode())));
+      }
+      List<OnHandQuantity> onHandQuantities =
+          this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
+              loadableStudyOpt.get(), request.getPortId(), true);
+      for (VesselTankDetail tankDetail : vesselReply.getVesselTanksList()) {
+        OnHandQuantityDetail.Builder detailBuilder = OnHandQuantityDetail.newBuilder();
+        detailBuilder.setFuelType(tankDetail.getTankCategoryName());
+        detailBuilder.setFuelTypeId(tankDetail.getTankCategoryId());
+        detailBuilder.setTankId(tankDetail.getTankId());
+        detailBuilder.setTankName(tankDetail.getShortName());
+        Optional<OnHandQuantity> qtyOpt =
+            onHandQuantities.stream()
+                .filter(
+                    entity ->
+                        entity.getFuelTypeXId().equals(tankDetail.getTankCategoryId())
+                            && entity.getTankXId().equals(tankDetail.getTankId()))
+                .findAny();
+        if (qtyOpt.isPresent()) {
+          OnHandQuantity qty = qtyOpt.get();
+          detailBuilder.setId(qty.getId());
+          Optional.ofNullable(qty.getArrivalQuantity())
+              .ifPresent(item -> detailBuilder.setArrivalQuantity(valueOf(item)));
+          Optional.ofNullable(qty.getArrivalVolume())
+              .ifPresent(item -> detailBuilder.setArrivalVolume(valueOf(item)));
+          Optional.ofNullable(qty.getDepartureQuantity())
+              .ifPresent(item -> detailBuilder.setDepartureQuantity(valueOf(item)));
+          Optional.ofNullable(qty.getDepartureVolume())
+              .ifPresent(item -> detailBuilder.setDepartureVolume(valueOf(item)));
+        }
+        replyBuilder.addOnHandQuantity(detailBuilder.build());
+      }
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching on hand quantities", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      log.error("Exception when fetching on hand quantities", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when fetching on hand quantities")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Get vessel fuel tanks from vessel micro service
+   *
+   * @param request
+   * @return
+   */
+  public VesselReply getVesselFuelTanks(VesselRequest request) {
+    return this.vesselInfoGrpcService.getVesselFuelTanks(request);
   }
 }

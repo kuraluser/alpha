@@ -7,9 +7,14 @@ option java_package = "com.cpdss.common.generated";
 import "common.proto";
 
 service VesselInfoService {
+
 	rpc GetAllVesselsByCompany (VesselRequest) returns (VesselReply) {
 	}
+	
 	rpc GetVesselDetailsById (VesselRequest) returns (VesselReply) {
+	}
+	
+	rpc GetVesselFuelTanks (VesselRequest) returns (VesselReply) {
 	}
 }
 
@@ -43,8 +48,20 @@ message VesselLoadableQuantityDetails {
 	string constant = 3;
 }
 
+message VesselTankDetail{
+	int64 tankId = 1;
+	int64 tankCategoryId = 2;
+	string tankCategoryName = 3;
+	string tankName = 4;
+	string frameNumberFrom = 5;
+	string frameNumberTo = 6;
+	string shortName = 7;
+}
+
 message VesselReply {
-	ResponseStatus responseStatus = 1;
-	repeated VesselDetail vessels = 2;
-	VesselLoadableQuantityDetails vesselLoadableQuantityDetails = 3;
+	int64 vesselId = 1;
+	repeated VesselTankDetail vesselTanks = 2;
+	ResponseStatus responseStatus = 3;
+	repeated VesselDetail vessels = 4;
+	VesselLoadableQuantityDetails vesselLoadableQuantityDetails = 5;
 }

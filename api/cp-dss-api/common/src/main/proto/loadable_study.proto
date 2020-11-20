@@ -55,6 +55,9 @@ service LoadableStudyService {
 	rpc DeletePortRotation(PortRotationRequest) returns (PortRotationReply){
 	}
 	
+	rpc GetOnHandQuantity(OnHandQuantityRequest) returns (OnHandQuantityReply){
+	}
+	
 }
 
 
@@ -261,4 +264,29 @@ message ValveSegregationRequest{
 message ValveSegregationReply{
 	ResponseStatus responseStatus = 1;
 	repeated ValveSegregation valveSegregation = 2;
+}
+
+message OnHandQuantityRequest{
+	int64 companyId = 1;
+	int64 vesselId = 2;
+	int64 loadableStudyId = 3;
+	int64 portId = 4;
+}
+
+message OnHandQuantityDetail{
+	int64 id = 1;
+	int64 portId = 2;
+	int64 fuelTypeId = 3;
+	string fuelType = 4;
+	int64 tankId = 5;
+	string tankName = 6;
+	string arrivalVolume = 7;
+	string arrivalQuantity = 8;
+	string departureVolume = 9;
+	string departureQuantity = 10;
+}
+
+message OnHandQuantityReply{
+	ResponseStatus responseStatus = 1;
+	repeated OnHandQuantityDetail onHandQuantity = 2;
 }

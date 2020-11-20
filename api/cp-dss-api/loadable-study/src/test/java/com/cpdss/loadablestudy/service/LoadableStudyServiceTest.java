@@ -21,6 +21,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
@@ -31,6 +33,7 @@ import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
+import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.CargoNomination;
@@ -40,6 +43,7 @@ import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.LoadableStudyStatus;
+import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
@@ -49,6 +53,7 @@ import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
+import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.google.protobuf.ByteString;
 import io.grpc.internal.testing.StreamRecorder;
@@ -103,6 +108,8 @@ class LoadableStudyServiceTest {
   @MockBean
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
 
+  @MockBean private OnHandQuantityRepository onHandQuantityRepository;
+
   @Mock private CargoNomination cargoNomination;
 
   @Mock private CargoNominationPortDetails cargoNominationPortDetails;
@@ -113,7 +120,6 @@ class LoadableStudyServiceTest {
   private static final String FAILED = "FAILED";
   private static final String LOADABLE_STUDY_NAME = "LS";
   private static final String LOADABLE_STUDY_DETAILS = "details";
-  private static final String LOADABLE_STUDY_STATUS = "pending";
 
   private static final String CHARTERER = "charterer";
   private static final String SUB_CHARTERER = "sub-chartere";
@@ -1460,7 +1466,6 @@ class LoadableStudyServiceTest {
 
   @Test
   void testGetPortRotationException() {
-
     PortRotationRequest portRotationRequest =
         PortRotationRequest.newBuilder().setLoadableStudyId(1).build();
 
@@ -1483,5 +1488,126 @@ class LoadableStudyServiceTest {
     assertEquals(1, results.size());
     assertNull(responseObserver.getError());
     assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetOnHandQuantity() {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    LoadableStudy loadableStudy = new LoadableStudy();
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(loadableStudy));
+    Mockito.doReturn(this.createVesselReply())
+        .when(spyService)
+        .getVesselFuelTanks(any(VesselRequest.class));
+    when(this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
+            any(LoadableStudy.class), anyLong(), anyBoolean()))
+        .thenReturn(this.prepareOnHandQuantities());
+    StreamRecorder<OnHandQuantityReply> responseObserver = StreamRecorder.create();
+    spyService.getOnHandQuantity(this.createOnHandQuantityRequest(), responseObserver);
+    List<OnHandQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetOnHandQuantityInvalidLoadableStudy() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    StreamRecorder<OnHandQuantityReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.getOnHandQuantity(
+        this.createOnHandQuantityRequest(), responseObserver);
+    List<OnHandQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetOnHandQuantityVesselServiceFailure() {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    LoadableStudy loadableStudy = new LoadableStudy();
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(loadableStudy));
+    Mockito.doReturn(
+            VesselReply.newBuilder()
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .setStatus(FAILED)
+                        .build())
+                .build())
+        .when(spyService)
+        .getVesselFuelTanks(any(VesselRequest.class));
+    StreamRecorder<OnHandQuantityReply> responseObserver = StreamRecorder.create();
+    spyService.getOnHandQuantity(this.createOnHandQuantityRequest(), responseObserver);
+    List<OnHandQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetOnHandQuantityRunTimeException() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(RuntimeException.class);
+    StreamRecorder<OnHandQuantityReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.getOnHandQuantity(
+        this.createOnHandQuantityRequest(), responseObserver);
+    List<OnHandQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /**
+   * Create on hand quantity request
+   *
+   * @return
+   */
+  private OnHandQuantityRequest createOnHandQuantityRequest() {
+    return OnHandQuantityRequest.newBuilder()
+        .setCompanyId(ID_TEST_VALUE)
+        .setVesselId(ID_TEST_VALUE)
+        .setLoadableStudyId(ID_TEST_VALUE)
+        .setPortId(ID_TEST_VALUE)
+        .build();
+  }
+
+  /**
+   * Create vessel reply
+   *
+   * @return
+   */
+  private VesselReply createVesselReply() {
+    VesselReply.Builder builder = VesselReply.newBuilder();
+    IntStream.range(1, 5)
+        .forEach(
+            i -> {
+              VesselTankDetail.Builder detailBuilder = VesselTankDetail.newBuilder();
+              detailBuilder.setTankId(Long.valueOf(i));
+              detailBuilder.setTankCategoryId(Long.valueOf(i));
+              detailBuilder.setTankCategoryName("category-" + i);
+              detailBuilder.setShortName("name" + i);
+              detailBuilder.setFrameNumberFrom("from-" + i);
+              detailBuilder.setFrameNumberTo("to" + i);
+              builder.addVesselTanks(detailBuilder.build());
+            });
+    builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    return builder.build();
+  }
+
+  private List<OnHandQuantity> prepareOnHandQuantities() {
+    List<OnHandQuantity> list = new ArrayList<>();
+    IntStream.range(1, 5)
+        .forEach(
+            i -> {
+              OnHandQuantity qty = new OnHandQuantity();
+              qty.setId(Long.valueOf(i));
+              qty.setFuelTypeXId(Long.valueOf(i));
+              qty.setTankXId(Long.valueOf(i));
+              list.add(qty);
+            });
+    return list;
   }
 }

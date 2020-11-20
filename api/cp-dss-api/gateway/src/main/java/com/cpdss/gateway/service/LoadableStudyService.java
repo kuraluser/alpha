@@ -19,6 +19,9 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.Operation;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
@@ -46,6 +49,8 @@ import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.LoadingPort;
+import com.cpdss.gateway.domain.OnHandQuantity;
+import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.ValveSegregation;
@@ -1094,5 +1099,89 @@ public class LoadableStudyService {
       throws GenericServiceException {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  /**
+   * Get on hand quantity details
+   *
+   * @param companyId
+   * @param vesselId
+   * @param loadableStudyId
+   * @param portId
+   * @return
+   * @throws GenericServiceException
+   */
+  public OnHandQuantityResponse getOnHandQuantity(
+      final Long companyId,
+      final Long vesselId,
+      final Long loadableStudyId,
+      final Long portId,
+      String correlationId)
+      throws GenericServiceException {
+    OnHandQuantityRequest request =
+        OnHandQuantityRequest.newBuilder()
+            .setCompanyId(companyId)
+            .setVesselId(vesselId)
+            .setLoadableStudyId(loadableStudyId)
+            .setPortId(portId)
+            .build();
+    OnHandQuantityReply grpcReply = this.getOnHandQuantity(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to fetch on hand quantities",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    return this.buildOnHandQuantityResponse(grpcReply, correlationId);
+  }
+
+  /**
+   * Build on hand quantity response
+   *
+   * @param grpcReply
+   * @return
+   */
+  private OnHandQuantityResponse buildOnHandQuantityResponse(
+      OnHandQuantityReply grpcReply, String correlationId) {
+    OnHandQuantityResponse response = new OnHandQuantityResponse();
+    response.setOnHandQuantities(new ArrayList<>());
+    for (OnHandQuantityDetail detail : grpcReply.getOnHandQuantityList()) {
+      OnHandQuantity onHandQuantity = new OnHandQuantity();
+      onHandQuantity.setId(detail.getId());
+      onHandQuantity.setTankId(detail.getTankId());
+      onHandQuantity.setTankName(detail.getTankName());
+      onHandQuantity.setFuelTypeId(detail.getFuelTypeId());
+      onHandQuantity.setFuelTypeName(detail.getFuelType());
+      onHandQuantity.setArrivalQuantity(
+          isEmpty(detail.getArrivalQuantity())
+              ? BigDecimal.ZERO
+              : new BigDecimal(detail.getArrivalQuantity()));
+      onHandQuantity.setArrivalVolume(
+          isEmpty(detail.getArrivalVolume())
+              ? BigDecimal.ZERO
+              : new BigDecimal(detail.getArrivalVolume()));
+      onHandQuantity.setDepartureQuantity(
+          isEmpty(detail.getDepartureQuantity())
+              ? BigDecimal.ZERO
+              : new BigDecimal(detail.getDepartureQuantity()));
+      onHandQuantity.setDepartureVolume(
+          isEmpty(detail.getDepartureVolume())
+              ? BigDecimal.ZERO
+              : new BigDecimal(detail.getDepartureVolume()));
+      response.getOnHandQuantities().add(onHandQuantity);
+    }
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * Call micro service over grpc
+   *
+   * @param request
+   * @return
+   */
+  public OnHandQuantityReply getOnHandQuantity(OnHandQuantityRequest request) {
+    return this.loadableStudyServiceBlockingStub.getOnHandQuantity(request);
   }
 }

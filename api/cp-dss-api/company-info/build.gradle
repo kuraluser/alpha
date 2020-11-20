@@ -5,7 +5,7 @@ appConfig {
   dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
-  docker {
+  /*docker {
    imageName = 'company-info'
    containerName = 'company-info-container'
    hostPortMapping {
@@ -24,7 +24,7 @@ appConfig {
      rollbackOnUpdateFailure = true
    }
    environment = ['MYVAR1': 'MYVALUE1', 'MYVAR2': 'MYVALUE2']
-  }
+  }*/
   
   javaMainClass = "com.cpdss.companyinfo.Application"
 }

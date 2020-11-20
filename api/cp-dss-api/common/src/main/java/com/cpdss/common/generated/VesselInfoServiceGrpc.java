@@ -120,6 +120,54 @@ public final class VesselInfoServiceGrpc {
     return getGetVesselDetailsByIdMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.VesselInfo.VesselRequest,
+          com.cpdss.common.generated.VesselInfo.VesselReply>
+      getGetVesselFuelTanksMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetVesselFuelTanks",
+      requestType = com.cpdss.common.generated.VesselInfo.VesselRequest.class,
+      responseType = com.cpdss.common.generated.VesselInfo.VesselReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.VesselInfo.VesselRequest,
+          com.cpdss.common.generated.VesselInfo.VesselReply>
+      getGetVesselFuelTanksMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.VesselInfo.VesselRequest,
+            com.cpdss.common.generated.VesselInfo.VesselReply>
+        getGetVesselFuelTanksMethod;
+    if ((getGetVesselFuelTanksMethod = VesselInfoServiceGrpc.getGetVesselFuelTanksMethod) == null) {
+      synchronized (VesselInfoServiceGrpc.class) {
+        if ((getGetVesselFuelTanksMethod = VesselInfoServiceGrpc.getGetVesselFuelTanksMethod)
+            == null) {
+          VesselInfoServiceGrpc.getGetVesselFuelTanksMethod =
+              getGetVesselFuelTanksMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.VesselInfo.VesselRequest,
+                          com.cpdss.common.generated.VesselInfo.VesselReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetVesselFuelTanks"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.VesselInfo.VesselRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.VesselInfo.VesselReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new VesselInfoServiceMethodDescriptorSupplier("GetVesselFuelTanks"))
+                      .build();
+        }
+      }
+    }
+    return getGetVesselFuelTanksMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static VesselInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<VesselInfoServiceStub> factory =
@@ -180,6 +228,14 @@ public final class VesselInfoServiceGrpc {
       asyncUnimplementedUnaryCall(getGetVesselDetailsByIdMethod(), responseObserver);
     }
 
+    /** */
+    public void getVesselFuelTanks(
+        com.cpdss.common.generated.VesselInfo.VesselRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetVesselFuelTanksMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -197,6 +253,13 @@ public final class VesselInfoServiceGrpc {
                       com.cpdss.common.generated.VesselInfo.VesselRequest,
                       com.cpdss.common.generated.VesselInfo.VesselReply>(
                       this, METHODID_GET_VESSEL_DETAILS_BY_ID)))
+          .addMethod(
+              getGetVesselFuelTanksMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.VesselInfo.VesselRequest,
+                      com.cpdss.common.generated.VesselInfo.VesselReply>(
+                      this, METHODID_GET_VESSEL_FUEL_TANKS)))
           .build();
     }
   }
@@ -235,6 +298,17 @@ public final class VesselInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getVesselFuelTanks(
+        com.cpdss.common.generated.VesselInfo.VesselRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetVesselFuelTanksMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -263,6 +337,13 @@ public final class VesselInfoServiceGrpc {
         com.cpdss.common.generated.VesselInfo.VesselRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetVesselDetailsByIdMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.VesselInfo.VesselReply getVesselFuelTanks(
+        com.cpdss.common.generated.VesselInfo.VesselRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetVesselFuelTanksMethod(), getCallOptions(), request);
     }
   }
 
@@ -294,10 +375,19 @@ public final class VesselInfoServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetVesselDetailsByIdMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.VesselInfo.VesselReply>
+        getVesselFuelTanks(com.cpdss.common.generated.VesselInfo.VesselRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetVesselFuelTanksMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_ALL_VESSELS_BY_COMPANY = 0;
   private static final int METHODID_GET_VESSEL_DETAILS_BY_ID = 1;
+  private static final int METHODID_GET_VESSEL_FUEL_TANKS = 2;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -324,6 +414,12 @@ public final class VesselInfoServiceGrpc {
           break;
         case METHODID_GET_VESSEL_DETAILS_BY_ID:
           serviceImpl.getVesselDetailsById(
+              (com.cpdss.common.generated.VesselInfo.VesselRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_VESSEL_FUEL_TANKS:
+          serviceImpl.getVesselFuelTanks(
               (com.cpdss.common.generated.VesselInfo.VesselRequest) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselReply>)
                   responseObserver);
@@ -394,6 +490,7 @@ public final class VesselInfoServiceGrpc {
                       .setSchemaDescriptor(new VesselInfoServiceFileDescriptorSupplier())
                       .addMethod(getGetAllVesselsByCompanyMethod())
                       .addMethod(getGetVesselDetailsByIdMethod())
+                      .addMethod(getGetVesselFuelTanksMethod())
                       .build();
         }
       }

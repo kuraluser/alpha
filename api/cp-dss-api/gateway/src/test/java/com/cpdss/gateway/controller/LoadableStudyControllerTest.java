@@ -14,6 +14,7 @@ import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.VoyageResponse;
@@ -123,6 +124,13 @@ class LoadableStudyControllerTest {
       CLOUD_API_URL_PREFIX + DELETE_PORT_ROTATION_API_URL;
   private static final String DELETE_PORT_ROTATION_SHIP_API_URL =
       SHIP_API_URL_PREFIX + DELETE_PORT_ROTATION_API_URL;
+
+  private static final String GET_ON_HAND_QUANTITIES_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{portId}/on-hand-quantities";
+  private static final String GET_ON_HAND_QUANTITIES_API_URL_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + GET_ON_HAND_QUANTITIES_API_URL;
+  private static final String GET_ON_HAND_QUANTITIES_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + GET_ON_HAND_QUANTITIES_API_URL;
 
   /**
    * Positive test case. Test method for positive response scenario
@@ -581,6 +589,47 @@ class LoadableStudyControllerTest {
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  @ValueSource(
+      strings = {GET_ON_HAND_QUANTITIES_API_URL_CLOUD_API_URL, GET_ON_HAND_QUANTITIES_SHIP_API_URL})
+  @ParameterizedTest
+  void testGetOnHandQuantity(String url) throws Exception {
+    when(this.loadableStudyService.getOnHandQuantity(
+            anyLong(), anyLong(), anyLong(), anyLong(), anyString()))
+        .thenReturn(new OnHandQuantityResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testGetOnHandQuantityRuntimeException(Class<? extends Exception> exceptionClass)
+      throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.loadableStudyService.getOnHandQuantity(
+            anyLong(), anyLong(), anyLong(), anyLong(), anyString()))
+        .thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(
+                    GET_ON_HAND_QUANTITIES_API_URL_CLOUD_API_URL,
+                    TEST_VESSEL_ID,
+                    TEST_VOYAGE_ID,
+                    1,
+                    1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
         .andExpect(status().isInternalServerError());
   }
 }

@@ -17,6 +17,8 @@ public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
 
   public List<Vessel> findByCompanyXIdAndIsActive(Long companyXId, boolean isActive);
 
+  public Vessel findByCompanyXIdAndIdAndIsActive(Long companyXId, Long vesselId, boolean isActive);
+
   @Query(
       "SELECT new com.cpdss.vesselinfo.domain.VesselDetails(VDC.displacement, V.lightWeight, V.deadWeightConstant) from Vessel V INNER JOIN VesselDraftCondition VDC on V.id = VDC.vessel.id AND V.id = ?1 AND VDC.draftCondition.id = ?2 AND VDC.draftExtreme = ?3")
   public VesselDetails findVesselDetailsById(
