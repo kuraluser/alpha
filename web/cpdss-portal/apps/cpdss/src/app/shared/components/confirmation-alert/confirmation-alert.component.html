@@ -1,0 +1,21 @@
+<p-toast id="confirmation_alert" position="center" key="confirmation-alert" (onClose)="onReject()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="p-flex p-flex-column" style="flex: 1">
+            <div class="p-text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message?.summary | translate}}</h4>
+                <p>{{message?.detail| translate}}</p>
+            </div>
+            <div class="p-grid p-fluid">
+                <div class="p-col-6">
+                    <button type="button" id="confirmation_alert_confirm_btn" (click)="onConfirm()"
+                        class="p-button-success">{{message?.data?.confirmLabel| translate}}</button>
+                </div>
+                <div class="p-col-6">
+                    <button type="button" id="confirmation_alert_reject_btn" (click)="onReject()"
+                        class="p-button-secondary">{{message?.data?.rejectLabel| translate}}</button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>

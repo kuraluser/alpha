@@ -8,6 +8,12 @@ export class LoginService {
 
   constructor(private commonApiService: CommonApiService) { }
 
+  /**
+   * Method for fetching user details
+   *
+   * @returns {Observable<IUserAuthorizationResponse>}
+   * @memberof LoginService
+   */
   getUserDetails(): Observable<IUserAuthorizationResponse> {
     return this.commonApiService.get<any>(`user-authorizations`);
   }

@@ -9,6 +9,7 @@ import { cargoNominationLoadingPortValidator } from '../../directives/validator/
 import { alphabetsOnlyValidator } from '../../directives/validator/cargo-nomination-alphabets-only.directive'
 import { numberValidator } from '../../directives/validator/number-validator.directive'
 import { NgxSpinnerService } from 'ngx-spinner';
+import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
 
 /**
  * Component class of cargonomination screen
@@ -88,7 +89,8 @@ export class CargoNominationComponent implements OnInit {
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private fb: FormBuilder,
-    private ngxSpinnerService: NgxSpinnerService) {
+    private ngxSpinnerService: NgxSpinnerService,
+    private confirmationAlertService: ConfirmationAlertService) {
   }
 
   /**
@@ -222,11 +224,16 @@ export class CargoNominationComponent implements OnInit {
    */
   async onDeleteRow(event: ICargoNominationEvent) {
     if (event?.data?.isDelete) {
-      const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
-      if (res) {
-        this.cargoNominations.splice(event.index, 1);
-        this.cargoNominations = [...this.cargoNominations];
-      }
+      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'CARGONOMINATION_DELETE_SUMMARY', detail: 'CARGONOMINATION_DELETE_SUMMARY', data:  { confirmLabel: 'CARGONOMINATION_DELETE_CONFIRM_LABEL', rejectLabel: 'CARGONOMINATION_DELETE_REJECT_LABEL'}});
+      this.confirmationAlertService.confirmAlert$.subscribe(async (response) => {
+        if (response) {
+          const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
+          if (res) {
+            this.cargoNominations.splice(event.index, 1);
+            this.cargoNominations = [...this.cargoNominations];
+          }
+        }
+      });
     }
   }
 

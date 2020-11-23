@@ -1,17 +1,11 @@
 import { Injectable } from '@angular/core';
-import {
-    HttpInterceptor,
-    HttpRequest,
-    HttpResponse,
-    HttpHandler,
-    HttpEvent,
-    HttpErrorResponse
+import { HttpInterceptor, HttpRequest, HttpResponse, HttpHandler, HttpEvent, HttpErrorResponse
 } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, retry } from 'rxjs/operators';
 import { SecurityService } from '../security/security.service';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { GlobalErrorHandler } from '../error-handlers/global-error-handler';
 
 /**
  *  interceptor for API calls
@@ -21,7 +15,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 @Injectable()
 export class HttpAuthInterceptor implements HttpInterceptor {
 
-    constructor() { }
+    constructor(private globalErrorHandler: GlobalErrorHandler) { }
 
     /**
      *  initiates interceptor with http module
@@ -37,11 +31,15 @@ export class HttpAuthInterceptor implements HttpInterceptor {
         }
 
         return next.handle(request).pipe(
+            retry(1),
             map((event: HttpEvent<any>) => {
                 if (event instanceof HttpResponse) {
                 }
                 return event;
             }), catchError((error) => {
+                if (error instanceof HttpErrorResponse) {
+                    this.globalErrorHandler.handleError(error);
+                }
                 throw error;
             }));
     }

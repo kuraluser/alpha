@@ -163,5 +163,13 @@
 	"PAGE_NOT_FOUND": "Page not found",
 	"PERMISSION_TO_VIEW_THIS_CONTENT": "You don't have permission to view this content",
 	"CONTACT_YOUR_ADMINISTRATOR": "Contact your administrator",
-	"BACK_TO_HOME": "Back to home page"
+	"BACK_TO_HOME": "Back to home page",
+	"CARGONOMINATION_DELETE_SUMMARY": "Are you sure?",
+	"CARGONOMINATION_DELETE_DETAILS": "Confirm to proceed",
+	"CARGONOMINATION_DELETE_CONFIRM_LABEL": "Yes",
+	"CARGONOMINATION_DELETE_REJECT_LABEL": "No",
+	"CONNECTION_TIMEOUT_ERROR": "Error",
+	"CONNECTION_TIMEOUT": "Connection timeout",
+	"SOMETHING_WENT_WRONG_ERROR": "Error",
+	"SOMETHING_WENT_WRONG": "Something went wrong"
 }

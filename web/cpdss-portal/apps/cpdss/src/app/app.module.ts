@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -22,6 +22,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastAlertModule } from './shared/components/toast-alert/toast-alert.module';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
+import { GlobalErrorHandler } from './shared/services/error-handlers/global-error-handler';
+import { ConfirmationAlertModule } from './shared/components/confirmation-alert/confirmation-alert.module';
 
 @NgModule({
   declarations: [
@@ -47,7 +49,8 @@ import { AccessDeniedComponent } from './access-denied/access-denied.component';
       }
     }),
     NgxSpinnerModule,
-    ToastAlertModule.forRoot()
+    ToastAlertModule.forRoot(),
+    ConfirmationAlertModule.forRoot(),
   ],
   providers: [
     {
@@ -58,6 +61,7 @@ import { AccessDeniedComponent } from './access-denied/access-denied.component';
     KeycloakService,
     { provide: APP_INITIALIZER, useFactory: keycloakCPDSSInitializer, multi: true, deps: [KeycloakService, HttpClient, AppConfigurationService, ActivatedRoute] },
     { provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true },
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
   ],
   bootstrap: [AppComponent]
 })
