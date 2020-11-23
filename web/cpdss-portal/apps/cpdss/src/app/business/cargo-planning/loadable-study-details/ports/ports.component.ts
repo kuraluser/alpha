@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { IPortAllDropdownData, IPortList, IPortsDetailsResponse, IPortsValueObject, IPortsEvent } from '../../models/cargo-planning.model';
-import { ActivatedRoute } from '@angular/router';
 import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import {  numberValidator } from '../../directives/validator/number-validator.directive';
 
@@ -20,6 +19,10 @@ import {  numberValidator } from '../../directives/validator/number-validator.di
   styleUrls: ['./ports.component.scss']
 })
 export class PortsComponent implements OnInit {
+
+  @Input() voyageId: number;
+  @Input() loadableStudyId: number;
+  @Input() vesselId: number;
   // properties
   get portsLists(): IPortsValueObject[] {
     return this._portsLists;
@@ -40,9 +43,6 @@ export class PortsComponent implements OnInit {
   portsForm: FormGroup;
   columns: IDataTableColumn[];
   listData = <IPortAllDropdownData>{};
-  voyageId: number;
-  loadableStudyId: number;
-  vesselId: number;
   portsDetails: IPortsDetailsResponse;
 
   // private fields
@@ -51,18 +51,12 @@ export class PortsComponent implements OnInit {
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
-    private fb: FormBuilder,
-    private activatedRoute: ActivatedRoute) { }
+    private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns();
     this.initSubscriptions();
-    this.activatedRoute.parent.paramMap.subscribe(params => {
-      this.vesselId = Number(params.get('vesselId'));
-      this.voyageId = Number(params.get('voyageId'));
-      this.loadableStudyId = Number(params.get('loadableStudyId'));
-      this.getPortDetails();
-    })
+    this.getPortDetails();
   }
 
   /**

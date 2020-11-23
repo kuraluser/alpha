@@ -326,6 +326,19 @@ export interface IPortsEvent {
 
 }
 
+/**
+ * ENUM for loadable study details page
+ *
+ * @export
+ * @enum {number}
+ */
+export enum LOADABLE_STUDY_DETAILS_TABS {
+    CARGONOMINATION = "CARGONOMINATION",
+    PORTS = "PORTS",
+    OHQ = "OHQ",
+    OBQ = "OBQ"
+}
+
 
 /**
  * Class for port Dexie db

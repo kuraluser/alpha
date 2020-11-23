@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UserProfile } from "../../models/user-profile.model";
+import { IUserProfile } from "../../models/user-profile.model";
 
 /**
  *  service class for setting auth-token and user details
@@ -14,43 +14,40 @@ export class SecurityService {
    *  static functions can be used in other classes without creating instance of the service
    */
 
-  private static token: string;
-  private static userProfile: UserProfile;
-  private static loggedIn = false;
+  private static _TOKEN: string;
+  private static _USER: IUserProfile;
+  private static _LOGGED_IN = false;
 
   constructor() { }
 
   // setting token
   static setAuthToken(jwtToken: string) {
-    SecurityService.token = jwtToken;
+    SecurityService._TOKEN = jwtToken;
   }
 
   // getting token
   static getAuthToken(): string {
-    return SecurityService.token;
+    return SecurityService._TOKEN;
   }
 
   // setting logged-in user details
-  static setUserProfile(userDetails: UserProfile) {
-    SecurityService.userProfile = {
-      email: userDetails.email,
-      userName: userDetails.userName
-    }
+  static setUserProfile(userDetails: IUserProfile) {
+    SecurityService._USER = userDetails;
   }
 
   // getting logged-in user details
-  static getUserProfile(): UserProfile {
-    return SecurityService.userProfile;
+  static getUserProfile(): IUserProfile {
+    return SecurityService._USER;
   }
 
   // setting current login status
   static setLoginStatus(status: boolean) {
-    SecurityService.loggedIn = status;
+    SecurityService._LOGGED_IN = status;
   }
 
   // getting current login status
   static getLoginStatus(): boolean {
-    return SecurityService.loggedIn;
+    return SecurityService._LOGGED_IN;
   }
 
   /**
@@ -60,9 +57,9 @@ export class SecurityService {
    * @memberof SecurityService
    */
   static userLogoutAction() {
-    SecurityService.token = null;
-    SecurityService.userProfile = null;
-    SecurityService.loggedIn = false;
+    SecurityService._TOKEN = null;
+    SecurityService._USER = null;
+    SecurityService._LOGGED_IN = false;
     window.localStorage.clear();
   }
 

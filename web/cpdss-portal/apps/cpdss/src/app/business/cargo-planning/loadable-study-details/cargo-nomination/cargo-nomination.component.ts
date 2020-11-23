@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { ICargoNominationValueObject, ICargoNominationAllDropdownData, ICargoNominationDetailsResponse, ICargoNominationEvent, ICargoNomination, ILoadingPopupData } from '../../models/cargo-planning.model';
@@ -25,6 +24,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 })
 export class CargoNominationComponent implements OnInit {
 
+  @Input() voyageId: number;
+  @Input() loadableStudyId: number;
+  @Input() vesselId: number;
   // properties
   get cargoNominations(): ICargoNominationValueObject[] {
     return this._cargoNominations;
@@ -74,9 +76,6 @@ export class CargoNominationComponent implements OnInit {
   listData = <ICargoNominationAllDropdownData>{};
   cargoNominationForm: FormGroup;
   cargoNominationDetails: ICargoNominationDetailsResponse;
-  voyageId: number;
-  loadableStudyId: number;
-  vesselId: number;
 
   // private fields
   private _loadingPopupData: ILoadingPopupData;
@@ -89,9 +88,7 @@ export class CargoNominationComponent implements OnInit {
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private fb: FormBuilder,
-    private activatedRoute: ActivatedRoute,
     private ngxSpinnerService: NgxSpinnerService) {
-
   }
 
   /**
@@ -103,12 +100,7 @@ export class CargoNominationComponent implements OnInit {
   ngOnInit() {
     this.columns = this.loadableStudyDetailsTransformationService.getCargoNominationDatatableColumns();
     this.initSubscriptions();
-    this.activatedRoute.parent.paramMap.subscribe(params => {
-      this.vesselId = Number(params.get('vesselId'));
-      this.voyageId = Number(params.get('voyageId'));
-      this.loadableStudyId = Number(params.get('loadableStudyId'));
-      this.getCargoNominationDetails();
-    })
+    this.getCargoNominationDetails();
   }
 
   /**

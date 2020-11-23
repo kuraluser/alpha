@@ -1,0 +1,6 @@
+{
+    "VoyageStatusComponent" : "STATUS",
+    "CargoPlanningComponent" : "CARGOPLANNING",
+    "CargoNominationComponent" : "CARGOPLANNING_CARGONOMINATION",
+    "PortsComponent" : "CARGOPLANNING_PORTS"
+}

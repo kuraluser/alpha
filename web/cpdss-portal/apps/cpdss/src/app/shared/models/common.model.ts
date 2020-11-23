@@ -65,7 +65,7 @@ export class ValueObject<T = any> {
  * @interface IResponseStatus
  */
 export interface IResponseStatus {
-    status: string;
+    status?: string;
     message?: string,
     errorCode?: string,
     correlationId?: string;
@@ -79,6 +79,42 @@ export interface IResponseStatus {
  */
 export interface IResponse extends IResponseStatus {
     responseStatus?: IResponseStatus;
+}
+
+/**
+ * Interface for generic dictionary type
+ *
+ * @export
+ * @interface IDictionary
+ * @template T
+ */
+export interface IDictionary<T> {
+    [key: string]: T;
+}
+
+/**
+ * Interface for permission context input params
+ *
+ * @export
+ * @interface IPermissionContext
+ */
+export interface IPermissionContext {
+    key: string;
+    actions: PERMISSION_ACTION[];
+    hideElementOnViewFalse?:boolean;
+}
+
+/**
+ * Permission actions
+ *
+ * @export
+ * @enum {number}
+ */
+export enum PERMISSION_ACTION {
+    ADD = 'ADD',
+    EDIT = 'EDIT',
+    DELETE = 'DELETE',
+    VIEW = 'VIEW'
 }
 
 /**

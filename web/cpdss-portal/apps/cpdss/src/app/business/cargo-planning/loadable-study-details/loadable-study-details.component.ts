@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IPort } from '../models/cargo-planning.model';
+import { IPort, LOADABLE_STUDY_DETAILS_TABS } from '../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../services/loadable-study-details-transformation.service';
 import { LoadableStudyDetailsApiService } from '../services/loadable-study-details-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,6 +13,9 @@ import { VesselDetailsModel } from '../../model/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/common.model';
 
 /**
  * Component class for loadable study details component
@@ -39,6 +42,9 @@ export class LoadableStudyDetailsComponent implements OnInit {
     }
   }
 
+  private _selectedLoadableStudy: LoadableStudy;
+
+  LOADABLE_STUDY_DETAILS_TABS = LOADABLE_STUDY_DETAILS_TABS;
   dischargingPorts: IPort[] = [];//TODO to be populated form loadable study details
   dischargingPortsNames: string;//TODO to be populated form loadable study details
   totalQuantity$: Observable<number>;
@@ -51,9 +57,13 @@ export class LoadableStudyDetailsComponent implements OnInit {
   selectedVoyage: Voyage;
   voyages: Voyage[];
   loadableStudies: LoadableStudy[];
-  _selectedLoadableStudy: LoadableStudy;
   openSidePane = true;
   portsComplete$: Observable<boolean>;
+  selectedTab: string;
+  cargoNominationTabPermissionContext: IPermissionContext;
+  portsTabPermissionContext: IPermissionContext;
+  addCargoBtnPermissionContext: IPermissionContext;
+  addPortBtnPermissionContext: IPermissionContext;
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -64,7 +74,8 @@ export class LoadableStudyDetailsComponent implements OnInit {
     private vesselsApiService: VesselsApiService,
     private ngxSpinnerService: NgxSpinnerService,
     private translateService: TranslateService,
-    private messageService: MessageService) {
+    private messageService: MessageService,
+    private permissionsService: PermissionsService) {
   }
 
   ngOnInit(): void {
@@ -75,6 +86,29 @@ export class LoadableStudyDetailsComponent implements OnInit {
       this.loadableStudyId = Number(params.get('loadableStudyId'));
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
     });
+    this.setPagePermissionContext();
+  }
+
+  /**
+   * Set page permission
+   *
+   * @memberof LoadableStudyDetailsComponent
+   */
+  setPagePermissionContext() {
+    const cargoNominationTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], false);
+    this.cargoNominationTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW] };
+
+    const portsTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['PortsComponent'], false);
+    this.portsTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW] };
+
+    if (cargoNominationTabPermission?.view) {
+      this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
+    } else if (portsTabPermission?.view) {
+      this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.PORTS
+    }
+
+    this.addCargoBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+    this.addPortBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
   }
 
   /**
@@ -178,11 +212,11 @@ export class LoadableStudyDetailsComponent implements OnInit {
     this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/0`]);
   }
 
-   /**
-   * Triggering add port
-   *
-   * @memberof LoadableStudyDetailsComponent
-   */
+  /**
+  * Triggering add port
+  *
+  * @memberof LoadableStudyDetailsComponent
+  */
   addPort() {
     this.loadableStudyDetailsTransformationService.addPort();
   }
@@ -195,5 +229,15 @@ export class LoadableStudyDetailsComponent implements OnInit {
    */
   onDeleteLoadableStudy(event) {
     this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/0`]);
+  }
+
+  /**
+   * On Click of tab in lodable study details page
+   *
+   * @param {string} selectedTab
+   * @memberof LoadableStudyDetailsComponent
+   */
+  onTabClick(selectedTab: string) {
+    this.selectedTab = selectedTab;
   }
 }

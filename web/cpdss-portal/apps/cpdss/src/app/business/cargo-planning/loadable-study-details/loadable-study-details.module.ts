@@ -16,6 +16,7 @@ import { VesselInfoModule } from '../../core/components/vessel-info/vessel-info.
 import { SidePanelLoadableStudyListComponent } from './side-panel-loadable-study-list/side-panel-loadable-study-list.component';
 import { NewLoadableStudyPopupModule } from '../../core/components/new-loadable-study-popup/new-loadable-study-popup.module';
 import { PortsComponent } from './ports/ports.component';
+import { PermissionDirectiveModule } from '../../../shared/directives/permission/permission-directive.module';
 /**
  * Routing Module for Loadable Study Details Screen
  *
@@ -35,7 +36,8 @@ import { PortsComponent } from './ports/ports.component';
     DropdownModule,
     TranslateModule,
     VesselInfoModule,
-    NewLoadableStudyPopupModule
+    NewLoadableStudyPopupModule,
+    PermissionDirectiveModule
   ]
 })
 export class LoadableStudyDetailsModule { }

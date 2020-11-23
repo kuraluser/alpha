@@ -3,7 +3,8 @@
         <div class="col vessel-info-wrapper">
             <div class="row">
                 <div class="col">
-                    <cpdss-portal-vessel-info *ngIf="vesselInfo" [vesselDetails]="vesselInfo"></cpdss-portal-vessel-info>
+                    <cpdss-portal-vessel-info *ngIf="vesselInfo" [vesselDetails]="vesselInfo">
+                    </cpdss-portal-vessel-info>
                 </div>
             </div>
             <div class="row">
@@ -18,8 +19,9 @@
             </div>
         </div>
         <div class="col cargo-nomiantion-tab text-center">
-            <a class="tab-btn active" [routerLink]="['cargo-nomination']" routerLinkActive="active" 
-                #rlaCargoNominationTab="routerLinkActive">{{'CARGO_NOMINATION' | translate}}
+            <a class="tab-btn" *cpdssPortalPermission="cargoNominationTabPermissionContext"
+                [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION}"
+                (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION)">{{'CARGO_NOMINATION' | translate}}
                 <div *ngIf="(cargoNominationComplete$|async) else incomplete" class="pt-5">
                     <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
                 </div>
@@ -29,8 +31,8 @@
                     </div>
                 </ng-template>
             </a>
-            <a class="tab-btn" [routerLink]="['ports']" routerLinkActive="active"
-                #rlaPortTab="routerLinkActive">{{'PORT' | translate}}
+            <a class="tab-btn" *cpdssPortalPermission="portsTabPermissionContext"
+                [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS}" (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.PORTS)">{{'PORT' | translate}}
                 <div *ngIf="(portsComplete$|async) else incomplete" class="pt-5">
                     <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
                 </div>
@@ -40,14 +42,14 @@
                     </div>
                 </ng-template>
             </a>
-            <a class="tab-btn" routerLinkActive="active">On Hand Quantities
+            <a class="tab-btn">On Hand Quantities
                 <div class="pt-5">
                     <div>
                         <div class="tab-status-icon pi pi-check"></div> Incomplete
                     </div>
                 </div>
             </a>
-            <a class="tab-btn" routerLinkActive="active">OBQ
+            <a class="tab-btn">OBQ
                 <div class="pt-5">
                     <div>
                         <div class="tab-status-icon pi pi-check"></div> Incomplete
@@ -73,39 +75,48 @@
                 <span class="ml-10 text-secondary">{{totalQuantity$|async}}</span></label>
         </div>
         <div class="pr-15">
-            <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
-                *ngIf="rlaCargoNominationTab.isActive"
-                (click)="addCargoNomination()">{{'ADD_CARGO_BUTTON_LABEL'| translate}}</a>
+            <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
+                <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
+                    *cpdssPortalPermission="addCargoBtnPermissionContext"
+                    (click)="addCargoNomination()">{{'ADD_CARGO_BUTTON_LABEL'| translate}}</a>
+            </ng-container>
         </div>
         <div class="pr-15">
-            <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
-                *ngIf="rlaPortTab.isActive" (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'| translate}}</a>
+            <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">
+                <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
+                    *cpdssPortalPermission="addPortBtnPermissionContext"
+                    (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'| translate}}</a>
+            </ng-container>
         </div>
     </div>
     <div class="content-outer" *ngIf="voyages" [ngClass]="{'sidebar-collapsed': !openSidePane}">
         <div class="sidebar  relative">
             <a class="sidebar-collapse-btn" (click)="openSidePane=!openSidePane"></a>
             <div class="sidebar-content">
-                <cpdss-portal-side-panel-loadable-study-list [vesselInfo]="vesselInfo"
-                    [voyage]="selectedVoyage" [(selectedLoadableStudy)]="selectedLoadableStudy"
-                    [loadableStudies]="loadableStudies" (deleteLoadableStudy)="onDeleteLoadableStudy($event)">
+                <cpdss-portal-side-panel-loadable-study-list [vesselInfo]="vesselInfo" [voyage]="selectedVoyage"
+                    [(selectedLoadableStudy)]="selectedLoadableStudy" [loadableStudies]="loadableStudies"
+                    (deleteLoadableStudy)="onDeleteLoadableStudy($event)">
                 </cpdss-portal-side-panel-loadable-study-list>
             </div>
         </div>
         <div class="pl-30">
             <div class="pl-10" *ngIf="ports && loadableStudies">
-                <router-outlet></router-outlet>
+                <div class="row">
+                    <cpdss-portal-cargo-nomination *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION" [vesselId]="vesselId"
+                        [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-cargo-nomination>
+                    <cpdss-portal-ports *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS" [vesselId]="vesselId" [voyageId]="voyageId"
+                        [loadableStudyId]="loadableStudyId"></cpdss-portal-ports>
+                </div>
 
                 <div class="row">
-
                     <div class="col-sm-12">
                         <label class="col-form-label pr-10">{{'DISCHARGE_DROPDOWN_LABEL' | translate}}</label>
                         <p-multiSelect id="discharge_ports" [(ngModel)]="dischargingPorts" [options]="ports"
-                            *ngIf="rlaCargoNominationTab.isActive" optionLabel="name"
+                            *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION" optionLabel="name"
                             placeholder="{{ 'DISCHARGE_DROPDOWN_SELECT_PORT'| translate }}"
                             (onChange)="onDischargePortChange($event)">
                         </p-multiSelect>
-                        <span *ngIf="!rlaCargoNominationTab.isActive">{{dischargingPortsNames}}</span>
+                        <span *ngIf="selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">{{dischargingPortsNames}}</span>
                     </div>
                 </div>
             </div>
