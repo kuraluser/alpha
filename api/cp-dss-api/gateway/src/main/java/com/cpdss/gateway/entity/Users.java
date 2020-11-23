@@ -4,8 +4,14 @@ package com.cpdss.gateway.entity;
 import com.cpdss.common.utils.EntityDoc;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -76,4 +82,15 @@ public class Users extends EntityDoc {
 
   @Column(name = "keycloakid", length = 100)
   private String keycloakId;
+
+  @OneToMany(
+      mappedBy = "users",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER)
+  private List<RoleUserMapping> roleUserMappings;
+
+  @ManyToOne
+  @JoinColumn(name = "rolexid")
+  private Roles roles;
 }

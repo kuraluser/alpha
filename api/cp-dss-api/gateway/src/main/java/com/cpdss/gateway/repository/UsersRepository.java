@@ -13,4 +13,6 @@ import java.util.List;
 public interface UsersRepository extends CommonCrudRepository<Users, Long> {
 
   public List<Users> findByIdIn(List<Long> idList);
+
+  public Users findByKeycloakIdAndIsActive(String keycloakId, Boolean isActive);
 }
