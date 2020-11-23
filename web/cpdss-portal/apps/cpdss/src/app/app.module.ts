@@ -20,10 +20,14 @@ import { keycloakCPDSSInitializer } from "../app/shared/utils/keycloak.cpdss.ini
 import { HttpAuthInterceptor } from "../app/shared/services/interceptors/auth.interceptors";
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastAlertModule } from './shared/components/toast-alert/toast-alert.module';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { AccessDeniedComponent } from './access-denied/access-denied.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    PageNotFoundComponent,
+    AccessDeniedComponent
   ],
   imports: [
     BrowserModule,

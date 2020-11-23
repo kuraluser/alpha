@@ -46,7 +46,7 @@ export class LoadableStudyListComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.activatedRoute.params.subscribe(async params => {
-      this.voyageId = Number(params.id);
+      this.voyageId = params.id ? Number(params.id): 0;
       this.ngxSpinnerService.show();
       const res = await this.vesselsApiService.getVesselsInfo().toPromise();
       this.vesselDetails = res[0] ?? <VesselDetailsModel>{};

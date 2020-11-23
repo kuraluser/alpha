@@ -159,5 +159,9 @@
 	"LOADABLE_STUDY_DELETE_SUCCESS": "Success",
 	"LOADABLE_STUDY_DELETE_SUCCESSFULLY": "Loadable study delete successfully",
 	"LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS": "Success",
-	"LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY": "Loadable study discharging ports updated successfully"
+	"LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY": "Loadable study discharging ports updated successfully",
+	"PAGE_NOT_FOUND": "Page not found",
+	"PERMISSION_TO_VIEW_THIS_CONTENT": "You don't have permission to view this content",
+	"CONTACT_YOUR_ADMINISTRATOR": "Contact your administrator",
+	"BACK_TO_HOME": "Back to home page"
 }
