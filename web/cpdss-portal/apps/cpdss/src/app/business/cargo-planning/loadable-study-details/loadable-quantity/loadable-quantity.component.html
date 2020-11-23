@@ -1,0 +1,413 @@
+<p-dialog [(visible)]="display" [draggable]="false" [closable]="false" [responsive]="true">
+    <p-header>
+        {{'LOADABLE_QUANTITY' | translate}}
+        <label>{{'LOADABLE_QUANTITY_LAST_UPDATED' | translate }} {{lastUpdatedDateAndTime}}
+            {{'LOADABLE_QUANTITY_TIME' | translate}}</label>
+    </p-header>
+    <span>{{'LOADABLE_QUANTITY_INFO' | translate}} </span>
+    <form [formGroup]="loadableQuantityForm" id="fg_loadableQunatity" (ngSubmit)="onSubmit()"
+        *ngIf="loadableQuantityForm">
+        <div class="container-fluid">
+            <div class="col-sm-12">
+                <div class="col-sm-6" style="float: left;">
+                    <div class="row form-group">
+                        <label for="loadable_quantity_port_dropdown"
+                            class="col-sm-4 col-form-label">{{'LOADABLE_QUANTITY_PORT_NAME' | translate}}</label>
+                        <div class="col-sm-2">
+                            <p-dropdown id="loadable_quantity_port_dropdown" [filter]="true" [options]="ports"
+                                formControlName="portName" optionLabel="name"
+                                placeholder="{{ 'LOADABLE_QUANTITY_SELECT_PORT_NAME'  | translate }}">
+                            </p-dropdown>
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['portName'].valid  && loadableQuantityForm.controls['portName'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['portName'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_PORTNAME_REQUIRED' | translate}} </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row  form-group">
+                        <label for="loadable_quantity_arrival_max_draft"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_ARRIVAL_MAX_DRAFT' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_arrival_max_draft"
+                                formControlName="arrivalMaxDraft">
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['arrivalMaxDraft'].valid  && loadableQuantityForm.controls['arrivalMaxDraft'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['arrivalMaxDraft'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_ARRIVAL_MAX_DRAFT_REQUIRED' | translate}} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_M' | translate }}</div>
+                    </div>
+                    <div class="row form-group" *ngIf="!isSummerZone">
+                        <label for="loadable_quantity_displacement"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_DISPLACEMENT' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_displacement" formControlName="displacement" readonly>
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['displacement'].valid  && loadableQuantityForm.controls['displacement'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['displacement'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_DISPLACEMENT_REQUIRED' | translate}} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group" *ngIf="!isSummerZone">
+                        <label for="loadable_quantity_lwt"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_LWT' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_lwt" formControlName="lwt" readonly>
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['lwt'].valid  && loadableQuantityForm.controls['lwt'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['lwt'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_LWT_REQUIRED' | translate }} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label *ngIf="!isSummerZone" for="loadable_quantity_dwt"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_DWT' | translate}}</label>
+                        <label for="loadable_quantity_dwt" class="col col-form-label"
+                            *ngIf="isSummerZone">{{'LOADABLE_QUANTITY_SUMMER_DWT' | translate }}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_dwt" formControlName="dwt" readonly>
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['dwt'].valid  && loadableQuantityForm.controls['dwt'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['dwt'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_DWT_REQUIRED' | translate }} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_tpc"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_TPC' | translate}}</label>
+                        <div class="col">
+                            <input type="text" id="loadable_quantity_tpc" formControlName="tpc">
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['tpc'].valid  && loadableQuantityForm.controls['tpc'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['tpc'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_TPC_REQUIRED' | translate }} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_CM' | translate }}</div>
+                    </div>
+                    <div class="row form-group" *ngIf="!isSummerZone">
+                        <label for="loadable_quantity_sea_water_density"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_SEA_WATER_DENSITY' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_sea_water_density"
+                                formControlName="estSeaDensity" (change)="getSgCorrectionOnChange()">
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['estSeaDensity'].valid  && loadableQuantityForm.controls['estSeaDensity'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['estSeaDensity'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_SEA_WATER_DENSITTY_REQUIRED' | translate }} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group" *ngIf="!isSummerZone">
+                        <label for="loadable_quantity_sg_correction"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_SG_CORRECTION' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_sg_correction" formControlName="sgCorrection"
+                                readonly>
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['sgCorrection'].valid  && loadableQuantityForm.controls['sgCorrection'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['sgCorrection'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_SG_CORRECTION_REQUIRED' | translate}} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_estimate_sag"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_ESTIMATE_SAG' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_estimate_sag" formControlName="estimateSag"
+                                (change)="getSagCorrectionOnChange()">
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['estimateSag'].valid  && loadableQuantityForm.controls['estimateSag'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['estimateSag'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_ESTIMATE_SAG_REQUIRED' | translate }} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_estimate_sag"
+                            class="col-form-label">{{'LOADABLE_QUANTITY_SAG_CORRECTION' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_estimate_sag" formControlName="safCorrection"
+                                readonly>
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['safCorrection'].valid  && loadableQuantityForm.controls['safCorrection'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['safCorrection'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_SAF_CORRECTION_REQUIRED' | translate}} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_CM' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_fo_onboard"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_FO_ONBOARD' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_fo_onboard" formControlName="foOnboard"
+                                (change)="getSubTotal()">
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['foOnboard'].valid  && loadableQuantityForm.controls['foOnboard'].touched">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['foOnboard'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_FO_ONBOARD_REQUIRED' | translate}} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_do_onboard"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_DO_ONBOARD' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_do_onboard" formControlName="doOnboard"
+                                (change)="getSubTotal()">
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['doOnboard'].valid  && loadableQuantityForm.controls['doOnboard'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['doOnboard'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_DO_ONBOARD_REQUIRED' | translate }} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+
+                    <div class="row form-group">
+                        <label for="loadable_quantity_fresh_water_onboard"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_FRESH_WATER_ON_BOARD' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_fresh_water_onboard"
+                                formControlName="freshWaterOnboard" (change)="getSubTotal()">
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['freshWaterOnboard'].valid  && loadableQuantityForm.controls['freshWaterOnboard'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['freshWaterOnboard'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_FRESH_WATER_REQUIRED' | translate }} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_boiler_water_onboard"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_BOILER_WATER_ON_BOARD' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_boiler_water_onboard"
+                                formControlName="boilerWaterOnboard" (change)="getSubTotal()">
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['boilerWaterOnboard'].valid  && loadableQuantityForm.controls['boilerWaterOnboard'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['boilerWaterOnboard'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_BOILER_WATER_ONBOARD_REQUIRED' | translate}} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_ballast"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_BALLAST' | translate }}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_ballast" formControlName="ballast"
+                                (change)="getSubTotal()">
+                            <div
+                                *ngIf="!loadableQuantityFormControl.ballast.valid  && loadableQuantityFormControl.ballast.touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityFormControl.ballast.errors?.required">
+                                        {{'LOADABLE_QUANTITY_BALLAST_REQUIRED' | translate }} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+
+                    <div class="row form-group">
+                        <label for="loadable_quantity_constant"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_CONSTANT' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_constant" formControlName="constant"
+                                (change)="getSubTotal()" readonly>
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['constant'].valid  && loadableQuantityForm.controls['constant'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['constant'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_CONSTANT_REQUIRED' | translate}} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_others"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_OTHERS' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_others" formControlName="others"
+                                (change)="getSubTotal()">
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['others'].valid  && loadableQuantityForm.controls['others'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['others'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_OTHERS_REQUIRED' | translate }} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_sub_total"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_SUB_TOTAL' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_sub_total" formControlName="subTotal" readonly>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <h5 *ngIf="!isSummerZone" style="position: fixed;bottom: 50px;">{{'LOADABLE_QUANTITY' | translate}}
+                        <input type="number" readonly id="loadable_quantity_do_onboard" formControlName="totalQuantity"
+                            class="form-control-plaintext"></h5>
+                </div>
+                <div class="col-sm-6" style="float: right;" *ngIf="isSummerZone">
+                    <div class="row form-group">
+                        <label for="loadable_quantity_dist_in_summery"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_DIST_IN_SUMMERZONE' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_dist_in_summery"
+                                formControlName="distanceInSummerzone" (change)="getRunningHours()">
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['distanceInSummerzone'].valid  && loadableQuantityForm.controls['distanceInSummerzone'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span
+                                        *ngIf="loadableQuantityForm.controls['distanceInSummerzone'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_DISATANCE_IN_SUMMERZONE_REQUIRED' | translate }} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_speed_in_sz"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_SPEED_IN_SZ' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_speed_in_sz" formControlName="speedInSz"
+                                (change)="getRunningHours()">
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['speedInSz'].valid  && loadableQuantityForm.controls['speedInSz'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['speedInSz'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_SPEED_IN_SZ_REQUIRED' | translate}} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_running_hours"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_RUNNING_HOURS' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_running_hours" formControlName="runningHours"
+                                (change)="getRunningDays()">
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['runningHours'].valid  && loadableQuantityForm.controls['runningHours'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['runningHours'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_RUNNING_HOURS_REQUIRED' | translate }} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_running_days"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_RUNNING_DAYS' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_running_days" formControlName="runningDays"
+                                (change)="getFoConsumptionInSz()" readonly>
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['runningDays'].valid  && loadableQuantityForm.controls['runningDays'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['runningDays'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_RUNNING_DAYS_REQUIRED' | translate }} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_fo_con_day"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_FO_CON_/_DAY' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_fo_con_day" formControlName="foConday"
+                                (change)="getFoConsumptionInSz()">
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['foConday'].valid  && loadableQuantityForm.controls['foConday'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['foConday'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_FO_CONS_PER_DAY_REQUIRED'  | translate }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_fo_cons_in_sz"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_FO_CONS_IN_SZ' | translate}}</label>
+                        <div class="col">
+                            <input type="number" id="loadable_quantity_fo_cons_in_sz" formControlName="foConsInSz"
+                                readonly>
+                            <div
+                                *ngIf="!loadableQuantityForm.controls['foConsInSz'].valid  && loadableQuantityForm.controls['foConsInSz'].touched ">
+                                <div class="pt-5 text-danger">
+                                    <span *ngIf="loadableQuantityForm.controls['foConsInSz'].errors?.required">
+                                        {{'LOADABLE_QUANTITY_FO_CONS_IN_SZ_REQUIRED' | translate}} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                    </div>
+                    <h5 style="position: fixed;bottom: 50px; float: right;">{{'LOADABLE_QUANTITY' | translate}} <input
+                            type="number" readonly id="loadable_quantity_do_onboard" formControlName="totalQuantity"
+                            class="form-control-plaintext"></h5>
+                </div>
+
+            </div>
+        </div>
+    </form>
+    <p-footer>
+        <div class="float-right">
+            <button class="btn btn-main mr-10" id="lodable_quantity_cancel"
+                (click)="cancel()">{{'LOADABLE_QUANTITY_CANCEL' | translate}}
+            </button>
+            <button class="btn btn-main" type="submit" id="lodable_quantity_submit"
+                form="fg_loadableQunatity">{{'LOADABLE_QUANTITY_SAVE' | translate}}</button>
+        </div>
+    </p-footer>
+</p-dialog>

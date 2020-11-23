@@ -68,7 +68,8 @@
 
 
             <label class="pr-20">{{'LOADABLE_STUDY_DETAILS_LOADABLE_QUANTITY_LABEL'| translate}}
-                <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10">1000000</button></label>
+                <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button"
+                    (click)="showLoadableQuantityPopup()">{{loadableQuantityNew}}</button></label>
 
 
             <label class="">{{'CARGO_NOMINATION_TOTAL_QUANTITY'| translate}}
@@ -123,3 +124,4 @@
         </div>
     </div>
 </div>
+<cpdss-portal-loadable-quantity *ngIf="displayLoadableQuntity" (displayPopUp)="displayPopUpTab($event)" (newLoadableQuantity)="loadableQuantity($event)" [vesselId]="vesselId" [voyage]="selectedVoyage"  [selectedLoadableStudy]="selectedLoadableStudy"></cpdss-portal-loadable-quantity>

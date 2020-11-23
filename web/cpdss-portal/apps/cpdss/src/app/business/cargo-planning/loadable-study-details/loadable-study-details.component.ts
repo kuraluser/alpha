@@ -16,6 +16,8 @@ import { MessageService } from 'primeng/api';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/common.model';
+import { LoadableQuantityModel } from '../models/loadable-quantity.model';
+import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
 
 /**
  * Component class for loadable study details component
@@ -64,6 +66,9 @@ export class LoadableStudyDetailsComponent implements OnInit {
   portsTabPermissionContext: IPermissionContext;
   addCargoBtnPermissionContext: IPermissionContext;
   addPortBtnPermissionContext: IPermissionContext;
+  displayLoadableQuntity: boolean;
+  loadableQuantityNew: string;
+  loadableQuantityModel: LoadableQuantityModel
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -75,7 +80,8 @@ export class LoadableStudyDetailsComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService,
     private translateService: TranslateService,
     private messageService: MessageService,
-    private permissionsService: PermissionsService) {
+    private permissionsService: PermissionsService,
+    private loadableQuantityApiService: LoadableQuantityApiService) {
   }
 
   ngOnInit(): void {
@@ -145,6 +151,11 @@ export class LoadableStudyDetailsComponent implements OnInit {
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).toString();
     this.loadableStudyId = this.selectedLoadableStudy?.id;
+    const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id).toPromise();
+    if (loadableQuantityResult.responseStatus.status === "200") {
+      loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.loadableQuantityNew = "0" : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity
+      this.loadableQuantityModel = loadableQuantityResult;
+    }
     this.ngxSpinnerService.hide();
     if (!loadableStudyId) {
       this.router.navigate([`business/cargo-planning/loadable-study-details/${vesselId}/${voyageId}/${this.loadableStudyId}`]);
@@ -239,5 +250,27 @@ export class LoadableStudyDetailsComponent implements OnInit {
    */
   onTabClick(selectedTab: string) {
     this.selectedTab = selectedTab;
+  }
+
+  /**
+   * Show loadable quantity popup
+   */
+  showLoadableQuantityPopup() {
+    this.displayLoadableQuntity = true;
+  }
+
+  /**
+   * Value from new-voyage
+   */
+  displayPopUpTab(displayNew_: boolean) {
+    this.displayLoadableQuntity = displayNew_;
+  }
+
+
+  /**
+   * Value from loadable quantity
+   */
+  loadableQuantity(newloadableQuantity: string) {
+    this.loadableQuantityNew = newloadableQuantity;
   }
 }

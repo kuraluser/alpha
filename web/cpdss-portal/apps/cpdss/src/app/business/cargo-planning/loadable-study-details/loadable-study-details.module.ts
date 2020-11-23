@@ -17,6 +17,8 @@ import { SidePanelLoadableStudyListComponent } from './side-panel-loadable-study
 import { NewLoadableStudyPopupModule } from '../../core/components/new-loadable-study-popup/new-loadable-study-popup.module';
 import { PortsComponent } from './ports/ports.component';
 import { PermissionDirectiveModule } from '../../../shared/directives/permission/permission-directive.module';
+import { LoadableQuantityComponent } from './loadable-quantity/loadable-quantity.component';
+import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
 /**
  * Routing Module for Loadable Study Details Screen
  *
@@ -24,7 +26,7 @@ import { PermissionDirectiveModule } from '../../../shared/directives/permission
  * @class LoadableStudyDetailsModule
  */
 @NgModule({
-  declarations: [LoadableStudyDetailsComponent, CargoNominationComponent, LoadingPortsPopupComponent, ApiTemperatureHistoryPopupComponent, SidePanelLoadableStudyListComponent, PortsComponent],
+  declarations: [LoadableStudyDetailsComponent, CargoNominationComponent, LoadingPortsPopupComponent, ApiTemperatureHistoryPopupComponent, SidePanelLoadableStudyListComponent, PortsComponent, LoadableQuantityComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -38,6 +40,9 @@ import { PermissionDirectiveModule } from '../../../shared/directives/permission
     VesselInfoModule,
     NewLoadableStudyPopupModule,
     PermissionDirectiveModule
+  ],
+  providers: [
+    LoadableQuantityApiService
   ]
 })
 export class LoadableStudyDetailsModule { }
