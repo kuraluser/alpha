@@ -2,5 +2,6 @@
     "VoyageStatusComponent" : "STATUS",
     "CargoPlanningComponent" : "CARGOPLANNING",
     "CargoNominationComponent" : "CARGOPLANNING_CARGONOMINATION",
-    "PortsComponent" : "CARGOPLANNING_PORTS"
+    "PortsComponent" : "CARGOPLANNING_PORTS",
+    "OnHandQuantityComponent" : "CARGOPLANNING_ONHANDQUANTITITES"
 }

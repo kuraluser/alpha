@@ -1,5 +1,5 @@
 import { SelectItem } from 'primeng/api';
-import { CPDSSDB, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
+import { CPDSSDB, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
 
 /**
  * Interface for cargo nomination value object
@@ -337,6 +337,56 @@ export enum LOADABLE_STUDY_DETAILS_TABS {
     PORTS = "PORTS",
     OHQ = "OHQ",
     OBQ = "OBQ"
+}
+
+/**
+ * Interface for ohq ports
+ *
+ * @export
+ * @interface IOHQPort
+ */
+export interface IOHQPort {
+    portId: number;
+}
+
+/**
+ * Interface for ohq ports api
+ *
+ * @export
+ * @interface IOHQPortRotationResponse
+ */
+export interface IOHQPortRotationResponse {
+    responseStatus: IResponse;
+    portList: IOHQPort[];
+}
+
+/**
+ * Interface for port ohq details api
+ *
+ * @export
+ * @interface IPortOHQResponse
+ */
+export interface IPortOHQResponse {
+    responseStatus: IResponse;
+    onHandQuantities: IPortOHQDetails[];
+}
+
+/**
+ * Interface for details ohq details of specific port
+ *
+ * @export
+ * @interface IPortOHQDetails
+ */
+export interface IPortOHQDetails {
+    id: number;
+    fuelTypeId: number;
+    fuelTypeName: string;
+    tankId: number;
+    tankName: string;
+    arrivalVolume: number;
+    arrivalQuantity: number;
+    departureVolume: number;
+    departureQuantity: number;
 }
 
 

@@ -795,3 +795,58 @@ a{
   background: $text-area-bg!important;
   color: $text-primary!important;
 }
+
+.tanks-inner-wrapper-ohq{
+  border: 2px solid $tank-ohq-border;  
+}
+
+.badge-custom{
+  color: $text-secondary;
+}
+.tanks-inner-outer-ohq{
+  border-color: $tank-ohq-border;  
+  .tanks-column-ohq{
+    >div{
+      border-color: $tank-ohq-border;  
+      .tank-name{
+        color: $text-secondary;
+      }
+    }
+  }
+}
+
+.rear-tank-wrapper-ohq{ 
+  border-left:2px solid $tank-ohq-border;
+  > div{
+  .tank-name{
+    color: $text-secondary;
+  }
+}
+}
+.tank-outer-ohq{
+  .rear-top-ohq{
+    border-top: 25px solid $tank-ohq-border;
+    &:after{
+      border-top: 25px solid $body-bg;
+    }
+  }
+  .rear-bottom-ohq{
+    border-bottom: 25px solid $tank-ohq-border;
+    &:after{
+      border-bottom: 25px solid $body-bg;
+    }
+  }
+}
+
+
+.port-list{
+  li{
+      &:after{
+          background: url($images-theme + 'arrow-right.png') no-repeat center center;
+      }
+      &.active{
+        background: $login-btn;
+        color: $text-secondary;
+      }
+  }
+}

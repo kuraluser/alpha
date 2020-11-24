@@ -5,12 +5,7 @@ import { LoadableStudyDetailsComponent } from './loadable-study-details.componen
 const routes: Routes = [
     {
         path: '',
-        component: LoadableStudyDetailsComponent,
-        /* children: [
-            // { path: '', redirectTo: 'cargo-nomination', pathMatch: 'full' },
-            // { path: 'cargo-nomination', component: CargoNominationComponent },
-            // { path: 'ports', component: PortsComponent }
-        ] */
+        component: LoadableStudyDetailsComponent
     },
 ];
 

@@ -15,6 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { VesselInfoModule } from '../../core/components/vessel-info/vessel-info.module';
 import { SidePanelLoadableStudyListComponent } from './side-panel-loadable-study-list/side-panel-loadable-study-list.component';
 import { NewLoadableStudyPopupModule } from '../../core/components/new-loadable-study-popup/new-loadable-study-popup.module';
+import { OnHandQuantityComponent } from './on-hand-quantity/on-hand-quantity.component';
 import { PortsComponent } from './ports/ports.component';
 import { PermissionDirectiveModule } from '../../../shared/directives/permission/permission-directive.module';
 import { LoadableQuantityComponent } from './loadable-quantity/loadable-quantity.component';
@@ -26,7 +27,7 @@ import { LoadableQuantityApiService } from '../services/loadable-quantity-api.se
  * @class LoadableStudyDetailsModule
  */
 @NgModule({
-  declarations: [LoadableStudyDetailsComponent, CargoNominationComponent, LoadingPortsPopupComponent, ApiTemperatureHistoryPopupComponent, SidePanelLoadableStudyListComponent, PortsComponent, LoadableQuantityComponent],
+  declarations: [LoadableStudyDetailsComponent, CargoNominationComponent, LoadingPortsPopupComponent, ApiTemperatureHistoryPopupComponent, SidePanelLoadableStudyListComponent, PortsComponent, LoadableQuantityComponent, OnHandQuantityComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,

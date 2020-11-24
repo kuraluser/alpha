@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { IResponse } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, IPortsResponse, IPort, IPortsDetailsResponse, IPortList, PortsDB } from '../models/cargo-planning.model';
+import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, IPortsResponse, IPort, IPortsDetailsResponse, IPortList, PortsDB, IOHQPortRotationResponse, IPortOHQResponse } from '../models/cargo-planning.model';
 import { IDischargingPortIds } from '../models/loadable-study-list.model';
 
 /**
@@ -90,26 +90,53 @@ export class LoadableStudyDetailsApiService {
     return this.commonApiService.post<IDischargingPortIds, IResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/discharging-ports`, dischargingPortIds);
   }
 
-    /**
-   * Method to get all port details
-   *
-   * @returns {Observable<IPortsDetailsResponse>}
-   * @memberof LoadableStudyDetailsApiService
-   */
+  /**
+ * Method to get all port details
+ *
+ * @returns {Observable<IPortsDetailsResponse>}
+ * @memberof LoadableStudyDetailsApiService
+ */
   getPortsDetails(vesselId: number, voyageId: number, loadableStudyId: number): Observable<IPortsDetailsResponse> {
     return this.commonApiService.get<IPortsDetailsResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports`);
   }
 
-    /**
-   * Method to set Ports
-   *
-   * @returns {Observable<IPortsDetailsResponse>}
-   * @memberof LoadableStudyDetailsApiService
-   */
+  /**
+ * Method to set Ports
+ *
+ * @returns {Observable<IPortsDetailsResponse>}
+ * @memberof LoadableStudyDetailsApiService
+ */
   setPort(ports: IPortList, vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
     ports.vesselId = vesselId;
     ports.voyageId = voyageId;
     ports.loadableStudyId = loadableStudyId;
     return this._portsDb.ports.add(ports);
+  }
+
+  /**
+   * Method for fetching port rotation for ohq
+   *
+   * @param {number} vesselId
+   * @param {number} voyageId
+   * @param {number} loadableStudyId
+   * @returns
+   * @memberof LoadableStudyDetailsApiService
+   */
+  getOHQPortRotation(vesselId: number, voyageId: number, loadableStudyId: number): Observable<IOHQPortRotationResponse> {
+    return this.commonApiService.get<IOHQPortRotationResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/port-rotation`);
+  }
+
+  /**
+   * Method for fetching port specific ohq
+   *
+   * @param {number} vesselId
+   * @param {number} voyageId
+   * @param {number} loadableStudyId
+   * @param {number} portId
+   * @returns {Observable<IPortOHQResponse>}
+   * @memberof LoadableStudyDetailsApiService
+   */
+  getPortOHQDetails(vesselId: number, voyageId: number, loadableStudyId: number, portId: number): Observable<IPortOHQResponse> {
+    return this.commonApiService.get<IPortOHQResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports/${portId}/on-hand-quantities`);
   }
 }

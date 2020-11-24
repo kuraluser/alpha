@@ -66,6 +66,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   portsTabPermissionContext: IPermissionContext;
   addCargoBtnPermissionContext: IPermissionContext;
   addPortBtnPermissionContext: IPermissionContext;
+  ohqTabPermissionContext: IPermissionContext;
   displayLoadableQuntity: boolean;
   loadableQuantityNew: string;
   loadableQuantityModel: LoadableQuantityModel
@@ -107,10 +108,17 @@ export class LoadableStudyDetailsComponent implements OnInit {
     const portsTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['PortsComponent'], false);
     this.portsTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW] };
 
+    const ohqTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OnHandQuantityComponent'], false);
+    this.ohqTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['OnHandQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
+
     if (cargoNominationTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
     } else if (portsTabPermission?.view) {
-      this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.PORTS
+      this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.PORTS;
+    } else if (ohqTabPermission?.view) {
+      this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.OHQ;
+    } else {
+      this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
     }
 
     this.addCargoBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
