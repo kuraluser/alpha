@@ -22,7 +22,7 @@
                             <input class="form-control" type="text" id="txt_newLoadableStudyName"
                                 formControlName="newLoadableStudyName">
                             <span
-                                *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && form.newLoadableStudyName.errors?.required"
+                                *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && (form.newLoadableStudyName.errors?.required || form.newLoadableStudyName.errors?.pattern)"
                                 class="text-danger">
                                 {{'NEW_LOADABLE_STUDY_POPUP__NAME_REQUIRED' | translate}}!
                             </span>

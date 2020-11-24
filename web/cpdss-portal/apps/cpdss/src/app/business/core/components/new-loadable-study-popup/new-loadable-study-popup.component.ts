@@ -104,7 +104,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   async createNewLoadableStudyFormGroup() {
     this.newLoadableStudyFormGroup = this.formBuilder.group({
       duplicateExisting: '',
-      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100)]),
+      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100), Validators.pattern('\S+')]),
       enquiryDetails: this.formBuilder.control('', [Validators.maxLength(1000)]),
       attachMail: null,
       charterer: this.vesselInfoList?.charterer,
