@@ -106,7 +106,7 @@
 	"LOADABLE_STUDY_LIST_SEARCH_BY_STATUS": "Search by Status",
 	"LOADABLE_STUDY_LIST_SEARCH_BY_DATE": "Search by Date",
 	"NEW_LOADABLE_STUDY_LIST_POPUP_FILE_SIZE_ERROR": "File size too large. Allowed maximum size per file is 1MB",
-	"NEW_LOADABLE_STUDY_LIST_POPUP_FILE_FORMAT_ERROR": "Only the files with following extensions are allowed : docx, pdf, txt, jpg, jpeg, png",
+	"NEW_LOADABLE_STUDY_LIST_POPUP_FILE_FORMAT_ERROR": "Only the files with following extensions are allowed : docx, pdf, txt, jpg, jpeg, png, eml",
 	"NEW_LOADABLE_STUDY_LIST_POPUP_FILE_LIMIT_ERROR": "File limit exceeds. Allowed maximum 5 files",
 	"NEW_LOADABLE_STUDY_POPUP_ATTACH_BUTTON": "Attach",
 	"CARGO_NOT_SELECTED": "Cargo not selected",
