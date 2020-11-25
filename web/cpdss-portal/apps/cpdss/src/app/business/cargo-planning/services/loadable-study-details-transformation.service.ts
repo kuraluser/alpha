@@ -5,6 +5,7 @@ import { ValueObject } from '../../../shared/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
 import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOperations, IPort, IPortAllDropdownData, IPortList, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
 import { v4 as uuid4 } from 'uuid';
+import { IPermission } from '../../../shared/models/user-profile.model';
 
 /**
  * Transformation Service for Lodable Study details module
@@ -436,7 +437,7 @@ export class LoadableStudyDetailsTransformationService {
    * @returns {IPortsValueObject}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getPortAsValueObject(port: IPortList, isNewValue = true, listData: IPortAllDropdownData): IPortsValueObject {
+  getPortAsValueObject(port: IPortList, isNewValue = true, isEditable = true, listData: IPortAllDropdownData): IPortsValueObject {
     const _port = <IPortsValueObject>{};
     const portObj: IPort = listData.portList.find(portData => portData.id === port.portId);
     const operationObj: IOperations = listData.operationListComplete.find(operation => operation.id === port.operationId);
@@ -445,16 +446,16 @@ export class LoadableStudyDetailsTransformationService {
     _port.id = port.id;
     _port.portOrder = port.portOrder;
     _port.portcode = new ValueObject<string>(portObj?.code, true, false, false, false);
-    _port.port = new ValueObject<IPort>(portObj, true, isNewValue, false);
-    _port.operation = new ValueObject<IOperations>(operationObj, true, isNewValue, false, isEdit);
-    _port.seaWaterDensity = new ValueObject<number>(port.seaWaterDensity, true, isNewValue, false, true);
-    _port.layCan = new ValueObject<string>(layCan, true, isNewValue, false);
-    _port.layCanFrom = new ValueObject<string>(port.layCanFrom?.trim(), true, isNewValue, false);
-    _port.layCanTo = new ValueObject<string>(port.layCanTo?.trim(), true, isNewValue, false);
-    _port.maxDraft = new ValueObject<number>(port.maxDraft, true, isNewValue, false);
-    _port.maxAirDraft = new ValueObject<number>(port.maxAirDraft, true, isNewValue, false);
-    _port.eta = new ValueObject<string>(port.eta, true, isNewValue, false);
-    _port.etd = new ValueObject<string>(port.etd, true, isNewValue, false);
+    _port.port = new ValueObject<IPort>(portObj, true, isNewValue, false, isEditable);
+    _port.operation = new ValueObject<IOperations>(operationObj, true, isNewValue, false, isEdit && isEditable);
+    _port.seaWaterDensity = new ValueObject<number>(port.seaWaterDensity, true, isNewValue, false, isEditable);
+    _port.layCan = new ValueObject<string>(layCan, true, isNewValue, false, isEditable);
+    _port.layCanFrom = new ValueObject<string>(port.layCanFrom?.trim(), true, isNewValue, false, isEditable);
+    _port.layCanTo = new ValueObject<string>(port.layCanTo?.trim(), true, isNewValue, false, isEditable);
+    _port.maxDraft = new ValueObject<number>(port.maxDraft, true, isNewValue, false, isEditable);
+    _port.maxAirDraft = new ValueObject<number>(port.maxAirDraft, true, isNewValue, false, isEditable);
+    _port.eta = new ValueObject<string>(port.eta, true, isNewValue, false, isEditable);
+    _port.etd = new ValueObject<string>(port.etd, true, isNewValue, false, isEditable);
     _port.isAdd = isNewValue;
     _port.isLoadable = !isEdit;
     _port.isDelete = false;
@@ -468,7 +469,7 @@ export class LoadableStudyDetailsTransformationService {
  * @returns {IDataTableColumn[]}
  * @memberof LoadableStudyDetailsTransformationService
  */
-  getPortDatatableColumns(): IDataTableColumn[] {
+  getPortDatatableColumns(permissions: IPermission): IDataTableColumn[] {
     const minDate = new Date();
     return [
       {
@@ -619,12 +620,20 @@ export class LoadableStudyDetailsTransformationService {
         }
       },
       {
+        ...(permissions ? {
+          field: 'actions',
+          header: '',
+          fieldHeaderClass: 'column-actions',
+          fieldType: DATATABLE_FIELD_TYPE.ACTION,
+          actions: [(permissions?.add ? DATATABLE_ACTION.SAVE : []),
+          (permissions?.delete ? DATATABLE_ACTION.DELETE : [])]
+        } : {}),
         field: 'actions',
         header: '',
         fieldHeaderClass: 'column-actions',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
         actions: [DATATABLE_ACTION.SAVE, DATATABLE_ACTION.DELETE]
-      }
+      },
 
     ]
   }
@@ -660,12 +669,12 @@ export class LoadableStudyDetailsTransformationService {
         } else if (key === 'operation') {
           _ports.operationId = port[key].value?.id;
         } else if (key === 'layCan') {
-          if(port[key].value){
+          if (port[key].value) {
             _ports.layCanFrom = port[key].value.split('to')[0].trim();
             _ports.layCanTo = port[key].value.split('to')[1].trim();
-          }else{
+          } else {
             _ports.layCanFrom = "";
-          _ports.layCanTo = "";
+            _ports.layCanTo = "";
           }
         }
         else {

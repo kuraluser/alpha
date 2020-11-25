@@ -18,6 +18,7 @@ import { PermissionsService } from '../../../shared/services/permissions/permiss
 import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/common.model';
 import { LoadableQuantityModel } from '../models/loadable-quantity.model';
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
+import { IPermission } from '../../../shared/models/user-profile.model';
 
 /**
  * Component class for loadable study details component
@@ -69,7 +70,8 @@ export class LoadableStudyDetailsComponent implements OnInit {
   ohqTabPermissionContext: IPermissionContext;
   displayLoadableQuntity: boolean;
   loadableQuantityNew: string;
-  loadableQuantityModel: LoadableQuantityModel
+  loadableQuantityModel: LoadableQuantityModel;
+  portsTabPermission: IPermission;
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -105,7 +107,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
     const cargoNominationTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], false);
     this.cargoNominationTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW] };
 
-    const portsTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['PortsComponent'], false);
+    this.portsTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['PortsComponent'], false);
     this.portsTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW] };
 
     const ohqTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OnHandQuantityComponent'], false);
@@ -113,7 +115,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
 
     if (cargoNominationTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
-    } else if (portsTabPermission?.view) {
+    } else if (this.portsTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.PORTS;
     } else if (ohqTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.OHQ;

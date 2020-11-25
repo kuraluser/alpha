@@ -110,7 +110,7 @@
                     <cpdss-portal-cargo-nomination *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION" [vesselId]="vesselId"
                         [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-cargo-nomination>
                     <cpdss-portal-ports *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS" [vesselId]="vesselId" [voyageId]="voyageId"
-                        [loadableStudyId]="loadableStudyId"></cpdss-portal-ports>
+                        [loadableStudyId]="loadableStudyId" [permission]="portsTabPermission"></cpdss-portal-ports>
                     <cpdss-portal-on-hand-quantity *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ" [vesselId]="vesselId"
                     [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-on-hand-quantity>
                 </div>

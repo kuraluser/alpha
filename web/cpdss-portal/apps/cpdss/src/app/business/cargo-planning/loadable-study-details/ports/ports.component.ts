@@ -8,6 +8,8 @@ import { numberValidator } from '../../directives/validator/number-validator.dir
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { OPERATIONS } from '../../models/cargo-planning.model';
+import { IPermission } from '../../../../shared/models/user-profile.model';
+
 
 /**
  * Component class of ports screen
@@ -26,6 +28,7 @@ export class PortsComponent implements OnInit {
   @Input() voyageId: number;
   @Input() loadableStudyId: number;
   @Input() vesselId: number;
+  @Input() permission: IPermission;
   // properties
   get portsLists(): IPortsValueObject[] {
     return this._portsLists;
@@ -62,7 +65,7 @@ export class PortsComponent implements OnInit {
     private confirmationAlertService: ConfirmationAlertService) { }
 
   ngOnInit(): void {
-    this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns();
+    this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns(this.permission);
     this.initSubscriptions();
     this.getPortDetails();
   }
@@ -107,8 +110,9 @@ export class PortsComponent implements OnInit {
  */
   private async initPortsArray(portsLists: IPortList[]) {
     this.ngxSpinnerService.show();
+    const isEditable = this.permission ? this.permission?.edit : true;
     const _portsLists = portsLists?.map((item) => {
-      const portData = this.loadableStudyDetailsTransformationService.getPortAsValueObject(item, false, this.listData);
+      const portData = this.loadableStudyDetailsTransformationService.getPortAsValueObject(item, false, isEditable, this.listData);
       return portData;
     });
     const portListArray = _portsLists.map(ports => this.initPortsFormGroup(ports));
@@ -178,7 +182,7 @@ export class PortsComponent implements OnInit {
    */
   private addPort(ports: IPortList = null) {
     ports = ports ?? <IPortList>{ id: 0, loadableStudyId: null, portOrder: 0, portId: null, operationId: null, seaWaterDensity: null, distanceBetweenPorts: null, timeOfStay: null, maxDraft: null, maxAirDraft: null, eta: null, etd: null, layCanFrom: null, layCanTo: null };
-    const _ports = this.loadableStudyDetailsTransformationService.getPortAsValueObject(ports, true, this.listData);
+    const _ports = this.loadableStudyDetailsTransformationService.getPortAsValueObject(ports, true, true, this.listData);
     this.portsLists = [_ports, ...this.portsLists];
     const dataTableControl = <FormArray>this.portsForm.get('dataTable');
     dataTableControl.insert(0, this.initPortsFormGroup(_ports));
