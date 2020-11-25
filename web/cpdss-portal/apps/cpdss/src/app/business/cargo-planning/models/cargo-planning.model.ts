@@ -408,3 +408,17 @@ export class PortsDB extends CPDSSDB {
     }
 
 }
+
+
+/**
+ * ENUM for operations
+ *
+ * @export
+ * @enum {number}
+ */
+export enum OPERATIONS {
+    LOADING = 1,
+    DISCHARGING = 2,
+    BUNKERING = 3,
+    TRANSIT = 4
+}

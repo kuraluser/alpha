@@ -2,14 +2,18 @@
     <div formArrayName="dataTable" class="col">
         <p-table #datatable [columns]="columns" [value]="value" [editMode]="editMode" [selectionMode]="selectionMode"
             (onEditComplete)="onEditComplete($event)" (onRowSelect)="onRowSelect($event)" [(selection)]="selection"
-            (columnClick)="onClick($event)">
+            (columnClick)="onClick($event)" [reorderableColumns]="tableRowReOrder" (onRowReorder)="onRowReorder($event)">
             <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
+                    <col *ngIf="tableRowReOrder" class="column-class re-order" >
                     <col *ngFor="let col of columns" class="column-class" [class]="col.fieldHeaderClass">
                 </colgroup>
             </ng-template>
             <ng-template pTemplate="header" let-columns>
                 <tr>
+                    <th *ngIf="tableRowReOrder">
+
+                    </th>
                     <th *ngFor="let col of columns" [pSortableColumn]="col.field"
                         [pSortableColumnDisabled]="!col.sortable">
                         <span>{{col.header| translate}}</span>
@@ -17,6 +21,9 @@
                     </th>
                 </tr>
                 <tr *ngIf="filterable">
+                    <th *ngIf="tableRowReOrder">
+
+                    </th>
                     <th *ngFor="let col of columns" [ngSwitch]="col.filterType">
                         <ng-container *ngIf="col.filter">
                             <input *ngSwitchCase="filterType.TEXT" type="text" id="{{col.field+'_filter'}}"
@@ -29,8 +36,8 @@
                                 (input)="datatable.filter($event.target.value, col.arrayFilterField, col.filterMatchMode)"
                                 [placeholder]="col.filterPlaceholder| translate" class="p-column-filter">
                             <p-calendar appendTo="body" *ngSwitchCase="filterType.DATE"
-                                [maxDate]="col.filterFieldMaxvalue" (onSelect)="onDateSelect($event, col?.filterField, col?.filterMatchMode, col?.dateFormat)"
-                                (onInput)="onDateFilter($event.target.value, col?.filterField, col?.filterMatchMode, col?.dateFormat)"
+                                [maxDate]="col.filterFieldMaxvalue" (onSelect)="onDateSelect($event, col?.filterField, col?.filterMatchMode)"
+                                (onInput)="onDateFilter($event.target.value, col?.filterField, col?.filterMatchMode)"
                                 (onClearClick)="datatable.filter('', col.field, 'contains')" [showButtonBar]="true"
                                 styleClass="p-column-filter" [placeholder]="col.filterPlaceholder| translate"
                                 [readonlyInput]="false" dateFormat="dd-mm-yy" id="{{col.field+'_filter'}}"></p-calendar>
@@ -41,7 +48,10 @@
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
                 <tr formGroupName="{{rowIndex}}" [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex"
-                    [pSelectableRowDisabled]="!selectionMode">
+                    [pSelectableRowDisabled]="!selectionMode" [pReorderableRow]="rowIndex">
+                    <td *ngIf="tableRowReOrder">
+                        <span class="pi pi-bars" pReorderableRowHandle></span>
+                    </td>
                     <td *ngFor="let col of columns; let colIndex = index" [class]="col.fieldClass"
                         [ngSwitch]="col.fieldType" [pEditableColumn]="rowData" [pEditableColumnField]="col.field"
                         [pEditableColumnRowIndex]="rowIndex" (click)="onClick($event, rowData, rowIndex, col)">

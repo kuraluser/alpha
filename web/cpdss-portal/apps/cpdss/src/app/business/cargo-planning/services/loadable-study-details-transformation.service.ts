@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { ValueObject } from '../../../shared/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOperations, IPort, IPortAllDropdownData, IPortList, IPortsValueObject, ISegregation } from '../models/cargo-planning.model';
+import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOperations, IPort, IPortAllDropdownData, IPortList, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
 import { v4 as uuid4 } from 'uuid';
 
 /**
@@ -22,6 +22,7 @@ export class LoadableStudyDetailsTransformationService {
   private _cargoNominationValiditySource: Subject<boolean> = new Subject();
   private _addPortSource = new Subject();
   private _portValiditySource: Subject<boolean> = new Subject();
+  private OPERATIONS: OPERATIONS;
 
   // public fields
   addCargoNomination$ = this._addCargoNominationSource.asObservable();
@@ -439,11 +440,11 @@ export class LoadableStudyDetailsTransformationService {
     const _port = <IPortsValueObject>{};
     const portObj: IPort = listData.portList.find(portData => portData.id === port.portId);
     const operationObj: IOperations = listData.operationListComplete.find(operation => operation.id === port.operationId);
-    const isEdit = operationObj ? !(operationObj.operationName.toLowerCase() === 'loading') : true;
+    const isEdit = operationObj ? !(operationObj.id === OPERATIONS.LOADING) : true;
     const layCan = (port.layCanFrom && port.layCanTo) ? (port.layCanFrom + ' to ' + port.layCanTo) : '';
     _port.id = port.id;
     _port.portOrder = port.portOrder;
-    _port.portcode = new ValueObject<string>(portObj?.code, true, true, false, false);
+    _port.portcode = new ValueObject<string>(portObj?.code, true, false, false, false);
     _port.port = new ValueObject<IPort>(portObj, true, isNewValue, false);
     _port.operation = new ValueObject<IOperations>(operationObj, true, isNewValue, false, isEdit);
     _port.seaWaterDensity = new ValueObject<number>(port.seaWaterDensity, true, isNewValue, false, true);
@@ -475,7 +476,7 @@ export class LoadableStudyDetailsTransformationService {
         header: 'SL',
         fieldType: DATATABLE_FIELD_TYPE.SLNO,
         sortable: true,
-        fieldClass: 'column-sl'
+        fieldHeaderClass: 'column-sl'
       },
       {
         field: 'port',
@@ -506,7 +507,7 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'portcode.value',
         fieldPlaceholder: 'PORT_CODE',
         errorMessages: {
-          'required': 'PORT_FIELD_REQUIRED_ERROR'
+          'required': 'PORT_CODE_REQUIRED_ERROR'
         }
       },
       {
@@ -522,7 +523,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldOptionLabel: 'operationName',
         fieldPlaceholder: 'SELECT_OPERATION',
         errorMessages: {
-          'required': 'PORT_FIELD_REQUIRED_ERROR'
+          'required': 'PORT_OPERATIONS_REQUIRED_ERROR'
         }
       },
       {
@@ -536,18 +537,21 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'seaWaterDensity.value',
         fieldPlaceholder: 'ENTER_WATER_DENSITY',
         errorMessages: {
-          'required': 'PORT_FIELD_REQUIRED_ERROR'
+          'required': 'PORT_WATER_DENSITY_REQUIRED_ERROR'
         }
       },
       {
         field: 'layCan',
         header: 'LAY-CAN',
+        fieldHeaderClass: 'column-laycan',
         fieldType: DATATABLE_FIELD_TYPE.DATERANGE,
         filter: false,
         minDate: minDate,
         fieldPlaceholder: 'CHOOSE_LAY_CAN',
+        fieldClass: 'lay-can',
+        dateFormat: 'DD-MM-YYYY',
         errorMessages: {
-          'required': 'PORT_FIELD_REQUIRED_ERROR'
+          'required': 'PORT_LAY_CAN_REQUIRED_ERROR'
         }
       },
       {
@@ -561,7 +565,7 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'maxDraft.value',
         fieldPlaceholder: 'ENTER_MAX_DRAFT',
         errorMessages: {
-          'required': 'PORT_FIELD_REQUIRED_ERROR'
+          'required': 'PORT_MAX_DRAFT_REQUIRED_ERROR'
         }
       },
       {
@@ -575,12 +579,13 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'maxAirDraft.value',
         fieldPlaceholder: 'ENTER_MAX_AIR_DRAFT',
         errorMessages: {
-          'required': 'PORT_FIELD_REQUIRED_ERROR'
+          'required': 'PORT_MAX_AIR_DRAFT_REQUIRED_ERROR'
         }
       },
       {
         field: 'eta',
         header: 'ETA',
+        fieldHeaderClass: 'column-eta',
         fieldType: DATATABLE_FIELD_TYPE.DATETIME,
         filter: true,
         filterPlaceholder: 'SEARCH_PORT_ETA',
@@ -589,14 +594,16 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'eta.value',
         fieldPlaceholder: 'CHOOSE_ETA',
         minDate: minDate,
-        dateFormat: 'YYYY/MM/DD',
+        dateFormat: 'DD-MM-YYYY',
+        fieldClass: 'eta',
         errorMessages: {
-          'required': 'PORT_FIELD_REQUIRED_ERROR'
+          'required': 'PORT_ETA_REQUIRED_ERROR'
         }
       },
       {
         field: 'etd',
         header: 'ETD',
+        fieldHeaderClass: 'column-etd',
         fieldType: DATATABLE_FIELD_TYPE.DATETIME,
         filter: true,
         filterPlaceholder: 'SEARCH_PORT_ETD',
@@ -605,15 +612,16 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'etd.value',
         fieldPlaceholder: 'CHOOSE_ETD',
         minDate: minDate,
-        dateFormat: 'YYYY/MM/DD',
+        dateFormat: 'DD-MM-YYYY',
+        fieldClass: 'etd',
         errorMessages: {
-          'required': 'PORT_FIELD_REQUIRED_ERROR'
+          'required': 'PORT_ETD_REQUIRED_ERROR'
         }
       },
       {
         field: 'actions',
         header: '',
-        fieldClass: 'column-actions',
+        fieldHeaderClass: 'column-actions',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
         actions: [DATATABLE_ACTION.SAVE, DATATABLE_ACTION.DELETE]
       }
@@ -652,8 +660,13 @@ export class LoadableStudyDetailsTransformationService {
         } else if (key === 'operation') {
           _ports.operationId = port[key].value?.id;
         } else if (key === 'layCan') {
-          _ports.layCanFrom = port[key].value.split('to')[0].trim();
-          _ports.layCanTo = port[key].value.split('to')[1].trim();
+          if(port[key].value){
+            _ports.layCanFrom = port[key].value.split('to')[0].trim();
+            _ports.layCanTo = port[key].value.split('to')[1].trim();
+          }else{
+            _ports.layCanFrom = "";
+          _ports.layCanTo = "";
+          }
         }
         else {
           if (key !== 'layCanFrom' && key !== 'layCanTo') {

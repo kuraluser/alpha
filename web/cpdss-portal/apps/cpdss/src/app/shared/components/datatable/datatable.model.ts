@@ -30,7 +30,7 @@ export interface IDataTableColumn {
     fieldHeaderClass?: string;
     fieldClass?: string;
     filterFieldMaxvalue?: any;
-    minDate?: Date; 
+    minDate?: Date;
     dateFormat?: string;
 }
 

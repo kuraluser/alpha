@@ -8,6 +8,7 @@ import { VesselDetailsModel } from '../../../model/vessel-details.model';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { LoadableStudyListApiService } from '../../services/loadable-study-list-api.service';
+import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
 
 @Component({
   selector: 'cpdss-portal-side-panel-loadable-study-list',
@@ -27,7 +28,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
   @Input() voyage: Voyage;
   @Input() selectedLoadableStudy: LoadableStudy;
   @Input() vesselInfo: VesselDetailsModel;
-  
+
   @Output() selectedLoadableStudyChange = new EventEmitter<LoadableStudy>();
   @Output() deleteLoadableStudy = new EventEmitter<Event>();
 
@@ -44,7 +45,8 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private translateService: TranslateService,
     private messageService: MessageService,
-    private ngxSpinnerService: NgxSpinnerService) { }
+    private ngxSpinnerService: NgxSpinnerService,
+    private confirmationAlertService: ConfirmationAlertService) { }
 
   ngOnInit(): void {
     this.getGridColumns();
@@ -77,14 +79,19 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
    * @memberof SidePanelLoadableStudyListComponent
    */
   async onDelete(event) {
-    this.ngxSpinnerService.show();
-    const translationKeys = await this.translateService.get(['LOADABLE_STUDY_DELETE_SUCCESS', 'LOADABLE_STUDY_DELETE_SUCCESSFULLY']).toPromise();
-    const res = await this.loadableStudyListApiService.deleteLodableStudy(this.vesselInfo?.id, this.voyage?.id, event?.data?.id).toPromise();
-    if (res?.responseStatus?.status === "200") {
-      this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_DELETE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_DELETE_SUCCESSFULLY'] });
-      this.deleteLoadableStudy.emit(event);
-    }
-    this.ngxSpinnerService.hide();
+    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_STUDY_DELETE_SUMMARY', detail: 'LOADABLE_STUDY_DELETE_SUMMARY', data: { confirmLabel: 'LOADABLE_STUDY_DELETE_CONFIRM_LABEL', rejectLabel: 'LOADABLE_STUDY_DELETE_REJECT_LABEL' } });
+    this.confirmationAlertService.confirmAlert$.subscribe(async (response) => {
+      if (response) {
+        this.ngxSpinnerService.show();
+        const translationKeys = await this.translateService.get(['LOADABLE_STUDY_DELETE_SUCCESS', 'LOADABLE_STUDY_DELETE_SUCCESSFULLY']).toPromise();
+        const res = await this.loadableStudyListApiService.deleteLodableStudy(this.vesselInfo?.id, this.voyage?.id, event?.data?.id).toPromise();
+        if (res?.responseStatus?.status === "200") {
+          this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_DELETE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_DELETE_SUCCESSFULLY'] });
+          this.deleteLoadableStudy.emit(event);
+        }
+        this.ngxSpinnerService.hide();
+      }
+    });
   }
 
   /**

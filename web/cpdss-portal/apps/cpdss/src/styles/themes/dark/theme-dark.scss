@@ -524,6 +524,10 @@ div{
   &:enabled:focus, &:enabled:hover{
     border-color:  $table-textarea-border;
   }
+  &.p-calendar .p-inputtext{
+    background: none!important;
+    height: 19px;
+  }
 }
 
 .p-column-filter .p-inputtext{

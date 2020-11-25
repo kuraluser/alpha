@@ -62,6 +62,8 @@ export class DatatableComponent implements OnInit {
 
   @Input() sortMode: boolean;
 
+  @Input() tableRowReOrder = false;
+
   get dataTable() {
     return this.form.get('dataTable') as FormArray;
   }
@@ -75,6 +77,7 @@ export class DatatableComponent implements OnInit {
   @Output() saveRow = new EventEmitter<IDataTableEvent>();
   @Output() rowSelection = new EventEmitter<IDataTableEvent>();
   @Output() columnClick = new EventEmitter<IDataTableEvent>();
+  @Output() rowReorder = new EventEmitter<IDataTableEvent>();
 
   // public fields
   readonly fieldType = DATATABLE_FIELD_TYPE;
@@ -402,31 +405,8 @@ export class DatatableComponent implements OnInit {
   /**
   * Filter date
   */
-  onDateSelect(value, field, filterMatchMode, dateFormat) {
-    if (dateFormat === 'DD/MM/YYYY') {
-      value = this.formatDate(value);
-    } else {
-      value = this.formatDateTime(value);
-    }
-    this.datatable.filter(value, field, filterMatchMode);
-  }
-
-  /**
-  * Format date(dd-mm-yyyy)
-  */
-  formatDate(date) {
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-
-    if (month < 10) {
-      month = '0' + month;
-    }
-
-    if (day < 10) {
-      day = '0' + day;
-    }
-
-    return day + '-' + month + '-' + date.getFullYear();
+  onDateSelect(value, field, filterMatchMode) {
+    this.datatable.filter(this.formatDateTime(value), field, filterMatchMode);
   }
 
   /**
@@ -438,8 +418,10 @@ export class DatatableComponent implements OnInit {
   }
 
 
+
   /**
-  * Format date time(yyyy-mm-dd hh:mm)
+  * Format date(dd-mm-yyyy)
+  * Format date time(dd-mm-yyyy hh:mm)
   */
   formatDateTime(date, isTime = false) {
     let month = date.getMonth() + 1;
@@ -462,10 +444,11 @@ export class DatatableComponent implements OnInit {
     if (minute < 10) {
       minute = '0' + minute;
     }
+
     if (isTime) {
-      return date.getFullYear() + '-' + month + '-' + day + ' ' + hour + ':' + minute;
+      return day + '-' + month + '-' + date.getFullYear() + ' ' + hour + ':' + minute;
     } else {
-      return date.getFullYear() + '-' + month + '-' + day;
+      return day + '-' + month + '-' + date.getFullYear();
     }
   }
 
@@ -527,6 +510,15 @@ export class DatatableComponent implements OnInit {
     if (formControl.value === null) {
       formControl.setErrors({ 'required': true });
     }
+  }
+
+  /**
+  * Handler for row re order
+  *
+  * @memberof DatatableComponent
+  */
+  onRowReorder(event) {
+    this.rowReorder.emit(event)
   }
 }
 

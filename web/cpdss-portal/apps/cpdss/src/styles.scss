@@ -806,10 +806,10 @@ tr{
   display: inline-block;
 }
 .column-class{
-  min-width: 150px;
+  min-width: 150px!important;
 }
 .column-sl{
-  width: 50px;
+  width: 50px!important;
 }
 .column-color{
   width: 70px;
@@ -1002,6 +1002,11 @@ input[type=number] {
       top: 5px;
       right: 5px;
     }
+    &.eta, &.etd{
+      div{
+        min-width: 130px;
+      }
+    }
   }
 }
 
@@ -1055,6 +1060,15 @@ input[type=number] {
   overflow: auto;
   padding-left: 15px;
   padding-right: 15px;
+}
+.column-class.column-laycan{
+  min-width: 220px!important;
+  width: 220px!important;
+}
+
+.column-class.column-actions{
+  min-width: 50px!important;
+  width: 50px!important;
 }
 
 
@@ -1131,3 +1145,12 @@ input[type=number] {
   background: $dsw-tank;
 }
 
+
+.re-order{
+width: 50px!important;
+}
+td.lay-can{
+  div{
+    min-width: 170px;
+  }
+}

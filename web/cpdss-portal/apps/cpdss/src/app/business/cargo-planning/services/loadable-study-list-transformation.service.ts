@@ -56,7 +56,6 @@ export class LoadableStudyListTransformationService {
         filterType: DATATABLE_FILTER_TYPE.DATE,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.EQUALS,
         filterField: 'createdDate',
-        dateFormat: 'DD/MM/YYYY',
         filterFieldMaxvalue: new Date()
       },
       {
