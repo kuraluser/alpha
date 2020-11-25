@@ -854,3 +854,20 @@ a{
       }
   }
 }
+.loadable-quantity-pop-up{ 
+ 
+.row.form-group{
+    border-bottom:1px solid $border-color;
+    margin: 0;
+  }
+}
+.header-right-content{
+  color: $text-primary;
+}
+.header-info-pop-up{
+  color: $text-secondary;
+}
+
+.info-icon{
+  border: 1px solid $text-secondary;
+}

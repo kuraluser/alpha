@@ -73,8 +73,8 @@
 
             <label class="pr-20">{{'LOADABLE_STUDY_DETAILS_LOADABLE_QUANTITY_LABEL'| translate}}
                 <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button"
-                    (click)="showLoadableQuantityPopup()">{{loadableQuantityNew}}</button></label>
-
+                    (click)="showLoadableQuantityPopup()" *cpdssPortalPermission="loadableQuantityPermissionContext">{{loadableQuantityNew}}</button></label>
+                    
 
             <label class="">{{'CARGO_NOMINATION_TOTAL_QUANTITY'| translate}}
                 <span class="ml-10 text-secondary">{{totalQuantity$|async}}</span></label>

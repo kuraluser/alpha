@@ -948,8 +948,11 @@ input[type=number] {
   z-index: 2;
 }
 .sidebar-content{
-  height: 100%;
+  height: calc(100vh - 220px);
   padding-right: 15px;
+  overflow-y: auto;
+  margin-right: 2px;
+  position: relative;
 }
 
 .p-datatable-wrapper{
@@ -1153,4 +1156,44 @@ td.lay-can{
   div{
     min-width: 170px;
   }
+}
+
+.loadable-quantity-pop-up{ 
+  .col-form-label{
+   min-width: 160px;
+  text-transform: uppercase;
+  padding-left: 0;
+}
+&.p-dialog{
+  /*max-width: 740px;*/
+}
+.row.form-group{
+  padding:2px 0;
+  .col:nth-child(2){
+    width: 120px;
+  }
+}
+}
+
+.header-right-content{
+  font-size: 11px;
+  position: absolute;
+  right: 20px;
+  top: 15px;
+}
+.header-info-pop-up{
+  display: block;
+  font-size: 11px;
+  padding-top: 5px;
+  font-style: italic;
+}
+.info-icon{
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 15px;
+  display: inline-block;
+  font-style: initial;
+  font-weight: bold;
 }

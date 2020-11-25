@@ -1,0 +1,16 @@
+.unit-column, .error-column{
+    width: 20px;
+    padding: 0;
+    max-width: 20px;
+    padding-top: 5px;
+}
+
+.dropdown-loadable-wuantity{
+    // width: 148px;
+    // max-width: 148px;
+}
+.item-row-wrapper{
+    > .col{
+        /*padding-right: 30px;*/
+    }
+}

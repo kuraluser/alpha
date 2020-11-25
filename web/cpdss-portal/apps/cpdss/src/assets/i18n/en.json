@@ -251,5 +251,11 @@
 	"PORT_ETA_REQUIRED_ERROR": "Please select ETA date",
 	"PORT_ETD_REQUIRED_ERROR": "Please select ETD date",
 	"ON_HAND_QUANTITIES": "On Hand Quantities",
-	"OHQ_SELECTED_PORT": "Selected Port"
+	"OHQ_SELECTED_PORT": "Selected Port",
+	"LOADABLE_QUANTITY_UNIT_MILES": "MILES",
+	"LOADABLE_QUANTITY_UNIT_KNOTS": "KNOTS",
+	"LOADABLE_QUANTITY_UNIT_HOURS": "HOURS",
+	"LOADABLE_QUANTITY_UNIT_DAYS": "DAYS",
+	"LOADABLE_QUANTITY_UNIT_MT/DAY": "MT/DAYS",
+	"LOADABLE_QUANTITY_NEGATIVE_VALUE": "Loadable quantity can not accept negative value.Please enter valid number"
 }

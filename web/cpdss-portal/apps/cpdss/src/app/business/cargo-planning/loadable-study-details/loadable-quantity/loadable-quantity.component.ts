@@ -10,6 +10,8 @@ import { numberValidator } from '../../directives/validator/number-validator.dir
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { AppConfigurationService } from 'apps/cpdss/src/app/shared/services/app-configuration/app-configuration.service';
+import { IPermissionContext, PERMISSION_ACTION } from 'apps/cpdss/src/app/shared/models/common.model';
 
 /**
  *  popup for loadable quantity
@@ -36,6 +38,8 @@ export class LoadableQuantityComponent implements OnInit {
   ports: IPort[];
   lastUpdatedDateAndTime: string;
   totalLoadableQuantity: number;
+  isNegative = false;
+  loadableQuantityBtnPermissionContext: IPermissionContext;
 
   private _loadableStudies: LoadableStudy[];
 
@@ -48,6 +52,7 @@ export class LoadableQuantityComponent implements OnInit {
   ) { }
 
   async ngOnInit(): Promise<void> {
+    this.loadableQuantityBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
     this.ports = await this.getPorts();
     this.getLoadableQuantity();
   }
@@ -57,7 +62,7 @@ export class LoadableQuantityComponent implements OnInit {
    */
   async getLoadableQuantity() {
     this.ngxSpinnerService.show();
-    const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyage.id, this.selectedLoadableStudy.id).toPromise();  
+    const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyage.id, this.selectedLoadableStudy.id).toPromise();
     if (loadableQuantityResult.responseStatus.status === '200') {
       this.isSummerZone = loadableQuantityResult.isSummerZone;
       this.loadableQuantity = loadableQuantityResult.loadableQuantity;
@@ -68,49 +73,49 @@ export class LoadableQuantityComponent implements OnInit {
         portName: [this.ports.find(port => port.id === this.loadableQuantity.portId), Validators.required],
         arrivalMaxDraft: ['', [Validators.required, numberValidator(2, 2)]],
         dwt: ['', [Validators.required]],
-        tpc: ['', [Validators.required, numberValidator(1, 1)]],
+        tpc: ['', [Validators.required]],
         estimateSag: ['', [Validators.required, numberValidator(2, 2)]],
-        safCorrection: ['', [Validators.required]],
-        foOnboard: ['', [Validators.required, numberValidator(0, 4)]],
-        doOnboard: ['', [Validators.required, numberValidator(0, 4)]],
-        freshWaterOnboard: ['', [Validators.required, numberValidator(0, 4)]],
-        boilerWaterOnboard: ['', [Validators.required, numberValidator(0, 4)]],
+        safCorrection: ['', [Validators.required, numberValidator(5, 7)]],
+        foOnboard: ['', [Validators.required, numberValidator(0, 7)]],
+        doOnboard: ['', [Validators.required, numberValidator(0, 7)]],
+        freshWaterOnboard: ['', [Validators.required, numberValidator(0, 7)]],
+        boilerWaterOnboard: ['', [Validators.required, numberValidator(0, 7)]],
 
         ballast: ['', [Validators.required, numberValidator(0, 2)]],
         constant: ['', [Validators.required]],
         others: ['', [Validators.required, numberValidator(0, 2)]],
         subTotal: ['', Validators.required],
-        totalQuantity: ['', Validators.required]
+        totalQuantity: ['']
 
       });
 
       if (this.isSummerZone) {
-        this.loadableQuantityForm.addControl('distanceInSummerzone', this.fb.control('',[ Validators.required, numberValidator(0, 2)]));
-        this.loadableQuantityForm.addControl('speedInSz', this.fb.control('',[ Validators.required, numberValidator(0, 2)]));
-        this.loadableQuantityForm.addControl('runningHours', this.fb.control('',[ Validators.required, numberValidator(0, 2)]));
-        this.loadableQuantityForm.addControl('runningDays', this.fb.control('',[ Validators.required, numberValidator(0, 2)]));
-        this.loadableQuantityForm.addControl('foConday', this.fb.control('',[ Validators.required, numberValidator(0, 2)]));
-        this.loadableQuantityForm.addControl('foConsInSz', this.fb.control('',[ Validators.required, numberValidator(0, 2)]));
+        this.loadableQuantityForm.addControl('distanceInSummerzone', this.fb.control('', [Validators.required, numberValidator(0, 2)]));
+        this.loadableQuantityForm.addControl('speedInSz', this.fb.control('', [Validators.required, numberValidator(0, 2)]));
+        this.loadableQuantityForm.addControl('runningHours', this.fb.control('', [Validators.required, numberValidator(5, 7)]));
+        this.loadableQuantityForm.addControl('runningDays', this.fb.control('', [Validators.required, numberValidator(5, 7)]));
+        this.loadableQuantityForm.addControl('foConday', this.fb.control('', [Validators.required, numberValidator(0, 2)]));
+        this.loadableQuantityForm.addControl('foConsInSz', this.fb.control('', [Validators.required, numberValidator(5, 7)]));
       }
       else {
-        this.loadableQuantityForm.addControl('displacement', this.fb.control('',[ Validators.required]));
-        this.loadableQuantityForm.addControl('lwt', this.fb.control('',[ Validators.required]));
-        this.loadableQuantityForm.addControl('estSeaDensity', this.fb.control('',[ Validators.required]));
-        this.loadableQuantityForm.addControl('sgCorrection', this.fb.control('',[ Validators.required]));
+        this.loadableQuantityForm.addControl('displacement', this.fb.control('', [Validators.required]));
+        this.loadableQuantityForm.addControl('lwt', this.fb.control('', [Validators.required]));
+        this.loadableQuantityForm.addControl('estSeaDensity', this.fb.control('', [Validators.required]));
+        this.loadableQuantityForm.addControl('sgCorrection', this.fb.control('', [Validators.required, numberValidator(5, 7)]));
       }
 
-     this.getLoadableQuantityData();
+      this.getLoadableQuantityData();
 
     }
     this.ngxSpinnerService.hide();
-    
+
   }
 
   /**
    * Populate loadable quantity data
    */
-  getLoadableQuantityData(){
- 
+  getLoadableQuantityData() {
+
     this.loadableQuantityForm.controls.portName.setValue(this.ports.find(port => port.id === this.loadableQuantity.portId));
     this.loadableQuantityForm.controls.arrivalMaxDraft.setValue(this.loadableQuantity.draftRestriction);
     this.loadableQuantityForm.controls.dwt.setValue(this.loadableQuantity.dwt);
@@ -128,7 +133,7 @@ export class LoadableQuantityComponent implements OnInit {
     this.loadableQuantityForm.controls.subTotal.setValue(this.loadableQuantity.subTotal);
     this.loadableQuantityForm.controls.totalQuantity.setValue(this.loadableQuantity.totalQuantity);
 
-    if(this.isSummerZone){
+    if (this.isSummerZone) {
       this.loadableQuantityForm.controls.distanceInSummerzone.setValue(this.loadableQuantity.distanceFromLastPort);
       this.loadableQuantityForm.controls.speedInSz.setValue(this.loadableQuantity.vesselAverageSpeed);
       this.loadableQuantityForm.controls.runningHours.setValue(this.loadableQuantity.runningHours);
@@ -140,7 +145,7 @@ export class LoadableQuantityComponent implements OnInit {
       this.getRunningDaysOnLoad();
       this.getSubTotalOnLoad();
     }
-    else{
+    else {
       this.loadableQuantityForm.controls.displacement.setValue(this.loadableQuantity.displacmentDraftRestriction);
       this.loadableQuantityForm.controls.lwt.setValue(this.loadableQuantity.vesselLightWeight);
       this.loadableQuantityForm.controls.estSeaDensity.setValue(this.loadableQuantity.estSeaDensity);
@@ -162,7 +167,7 @@ export class LoadableQuantityComponent implements OnInit {
    * save loadable quantity
    */
   async onSubmit() {
-    if (this.loadableQuantityForm.valid) {
+    if (this.loadableQuantityForm.valid && !this.isNegative) {
       this.ngxSpinnerService.show();
       if (this.isSummerZone) {
         this.loadableQuantity = {
@@ -351,12 +356,31 @@ export class LoadableQuantityComponent implements OnInit {
    */
   getTotalLoadableQuantity() {
     if (this.isSummerZone) {
-      this.loadableQuantityForm.controls['totalQuantity'].setValue((this.loadableQuantityForm.get('subTotal').value) - (this.loadableQuantityForm.get('foConsInSz').value));
+      const total = (this.loadableQuantityForm.get('subTotal').value) - (this.loadableQuantityForm.get('foConsInSz').value);
+      if (total < 0 ){
+        this.isNegative =true;
+        this.loadableQuantityForm.controls['totalQuantity'].setValue('');
+      }
+      else{
+        this.isNegative = false;
+        this.loadableQuantityForm.controls['totalQuantity'].setValue(total);
+      }
+        
+    }
+    else {
+      (this.loadableQuantityForm.get('subTotal').value) < 0 ? this.isNegative = true : this.isNegative = false;
+      if (this.isNegative) {
+        this.isNegative = true;
+        this.loadableQuantityForm.controls['totalQuantity'].setValue('');
+      }
+      else {
+        this.isNegative = false;
+        this.loadableQuantityForm.controls['totalQuantity'].setValue((this.loadableQuantityForm.get('subTotal').value));
+      }
+
     }
 
-    else {
-      this.loadableQuantityForm.controls['totalQuantity'].setValue((this.loadableQuantityForm.get('subTotal').value));
-    }
+   
   }
 
 }

@@ -67,12 +67,13 @@ export class LoadableStudyDetailsComponent implements OnInit {
   portsTabPermissionContext: IPermissionContext;
   addCargoBtnPermissionContext: IPermissionContext;
   addPortBtnPermissionContext: IPermissionContext;
-  ohqTabPermissionContext: IPermissionContext;
   displayLoadableQuntity: boolean;
   loadableQuantityNew: string;
   loadableQuantityModel: LoadableQuantityModel;
   portsTabPermission: IPermission;
-
+  ohqTabPermissionContext: IPermissionContext;
+  loadableQuantityPermissionContext: IPermissionContext;
+  
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private loadableStudyListApiService: LoadableStudyListApiService,
@@ -114,6 +115,8 @@ export class LoadableStudyDetailsComponent implements OnInit {
     const ohqTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OnHandQuantityComponent'], false);
     this.ohqTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['OnHandQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
 
+    this.loadableQuantityPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
+
     if (cargoNominationTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
     } else if (this.portsTabPermission?.view) {
@@ -125,7 +128,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
     }
 
     this.addCargoBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
-    this.addPortBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+    this.addPortBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };   
   }
 
   /**
