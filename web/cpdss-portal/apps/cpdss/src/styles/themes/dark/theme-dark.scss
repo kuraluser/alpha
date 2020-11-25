@@ -854,6 +854,19 @@ a{
       }
   }
 }
+
+.p-toast .p-toast-message.p-toast-message-error .p-toast-message-icon, .p-toast .p-toast-message.p-toast-message-error .p-toast-icon-close{
+  color: $red;
+}
+.p-toast .p-toast-message.p-toast-message-error{
+  color: $red;
+  border-color: $red;
+  background: $card-bg;
+} 
+.p-toast-icon-close-icon {
+  color: $text-primary; 
+} 
+
 .loadable-quantity-pop-up{ 
  
 .row.form-group{
