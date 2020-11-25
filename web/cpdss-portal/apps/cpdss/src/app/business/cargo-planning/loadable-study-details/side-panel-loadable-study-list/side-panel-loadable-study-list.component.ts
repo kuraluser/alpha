@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { DATATABLE_SELECTIONMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
@@ -8,7 +9,7 @@ import { VesselDetailsModel } from '../../../model/vessel-details.model';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { LoadableStudyListApiService } from '../../services/loadable-study-list-api.service';
-import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'cpdss-portal-side-panel-loadable-study-list',
@@ -79,8 +80,8 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
    * @memberof SidePanelLoadableStudyListComponent
    */
   async onDelete(event) {
-    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_STUDY_DELETE_SUMMARY', detail: 'LOADABLE_STUDY_DELETE_SUMMARY', data: { confirmLabel: 'LOADABLE_STUDY_DELETE_CONFIRM_LABEL', rejectLabel: 'LOADABLE_STUDY_DELETE_REJECT_LABEL' } });
-    this.confirmationAlertService.confirmAlert$.subscribe(async (response) => {
+    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_STUDY_DELETE_SUMMARY', detail: 'LOADABLE_STUDY_DELETE_DETAILS', data: { confirmLabel: 'LOADABLE_STUDY_DELETE_CONFIRM_LABEL', rejectLabel: 'LOADABLE_STUDY_DELETE_REJECT_LABEL' } });
+    this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
       if (response) {
         this.ngxSpinnerService.show();
         const translationKeys = await this.translateService.get(['LOADABLE_STUDY_DELETE_SUCCESS', 'LOADABLE_STUDY_DELETE_SUCCESSFULLY']).toPromise();

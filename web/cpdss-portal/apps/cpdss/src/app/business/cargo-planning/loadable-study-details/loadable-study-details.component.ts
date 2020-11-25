@@ -41,7 +41,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
     this._selectedLoadableStudy = selectedLoadableStudy;
     this.loadableStudyId = selectedLoadableStudy?.id;
     if (selectedLoadableStudy) {
-      this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
+      this.getLoadableStudyDetails(this.vesselId, this.voyageId, this.loadableStudyId);
     }
   }
 
@@ -93,6 +93,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));
+      this.loadableStudies = null;
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
     });
     this.setPagePermissionContext();
@@ -158,17 +159,30 @@ export class LoadableStudyDetailsComponent implements OnInit {
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
     this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
+    this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Fetch loadable study details
+   *
+   * @param {number} vesselId
+   * @param {number} voyageId
+   * @param {number} loadableStudyId
+   * @memberof LoadableStudyDetailsComponent
+   */
+  async getLoadableStudyDetails(vesselId: number, voyageId: number, loadableStudyId: number) {
+    this.ngxSpinnerService.show();
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).toString();
-    this.loadableStudyId = this.selectedLoadableStudy?.id;
-    const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id).toPromise();
-    if (loadableQuantityResult.responseStatus.status === "200") {
-      loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.loadableQuantityNew = "0" : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity
-      this.loadableQuantityModel = loadableQuantityResult;
-    }
-    this.ngxSpinnerService.hide();
+    // if no loadable study is selected set 1st loadable study as selected one and reload
     if (!loadableStudyId) {
       this.router.navigate([`business/cargo-planning/loadable-study-details/${vesselId}/${voyageId}/${this.loadableStudyId}`]);
+    } else {
+      const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id).toPromise();
+      if (loadableQuantityResult.responseStatus.status === "200") {
+        loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.loadableQuantityNew = "0" : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity
+        this.loadableQuantityModel = loadableQuantityResult;
+      }
     }
   }
 
@@ -249,7 +263,16 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @memberof LoadableStudyDetailsComponent
    */
   onDeleteLoadableStudy(event) {
-    this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/0`]);
+    //If deleted loadable study is equal to currently selected loadable study then we need reset the selection
+    if (event?.data?.id === this.loadableStudyId) {
+      const loadableStudies = this.loadableStudies?.filter(loadableStudy => event?.data?.id !== loadableStudy?.id);
+      if(loadableStudies && loadableStudies.length) {
+        this.selectedLoadableStudy = loadableStudies[0];
+      } else {
+        this.loadableStudyId = 0;
+      }     
+    }
+    this.loadableStudies.splice(event?.index, 1);
   }
 
   /**

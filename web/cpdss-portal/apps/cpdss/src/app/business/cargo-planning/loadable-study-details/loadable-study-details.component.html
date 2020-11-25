@@ -107,12 +107,9 @@
         <div class="pl-30">
             <div class="pl-10" *ngIf="ports && loadableStudies">
                 <div class="row">
-                    <cpdss-portal-cargo-nomination *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION" [vesselId]="vesselId"
-                        [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-cargo-nomination>
-                    <cpdss-portal-ports *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS" [vesselId]="vesselId" [voyageId]="voyageId"
-                        [loadableStudyId]="loadableStudyId" [permission]="portsTabPermission"></cpdss-portal-ports>
-                    <cpdss-portal-on-hand-quantity *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ" [vesselId]="vesselId"
-                    [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-on-hand-quantity>
+                    <cpdss-portal-cargo-nomination *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudyId && loadableStudies" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-cargo-nomination>
+                    <cpdss-portal-ports *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && loadableStudyId && loadableStudies" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-ports>
+                    <cpdss-portal-on-hand-quantity *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ && loadableStudyId && loadableStudies" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-on-hand-quantity>
                 </div>
 
                 <div class="row">

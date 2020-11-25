@@ -10,6 +10,7 @@ import { alphabetsOnlyValidator } from '../../directives/validator/cargo-nominat
 import { numberValidator } from '../../directives/validator/number-validator.directive'
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
+import { first } from 'rxjs/operators';
 
 /**
  * Component class of cargonomination screen
@@ -26,8 +27,19 @@ import { ConfirmationAlertService } from '../../../../shared/components/confirma
 export class CargoNominationComponent implements OnInit {
 
   @Input() voyageId: number;
-  @Input() loadableStudyId: number;
+
+  @Input()
+  get loadableStudyId() {
+    return this._loadableStudyId;
+  }
+  set loadableStudyId(value: number) {
+    this._loadableStudyId = value;
+    this.cargoNominationForm = null;
+    this.getCargoNominationDetails();
+  }
+
   @Input() vesselId: number;
+
   // properties
   get cargoNominations(): ICargoNominationValueObject[] {
     return this._cargoNominations;
@@ -79,6 +91,7 @@ export class CargoNominationComponent implements OnInit {
   cargoNominationDetails: ICargoNominationDetailsResponse;
 
   // private fields
+  private _loadableStudyId: number;
   private _loadingPopupData: ILoadingPopupData;
   private _cargoNominations: ICargoNominationValueObject[];
   private _openLoadingPopup = false;
@@ -102,7 +115,6 @@ export class CargoNominationComponent implements OnInit {
   ngOnInit() {
     this.columns = this.loadableStudyDetailsTransformationService.getCargoNominationDatatableColumns();
     this.initSubscriptions();
-    this.getCargoNominationDetails();
   }
 
   /**
@@ -224,10 +236,15 @@ export class CargoNominationComponent implements OnInit {
    */
   async onDeleteRow(event: ICargoNominationEvent) {
     if (event?.data?.isDelete) {
-      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'CARGONOMINATION_DELETE_SUMMARY', detail: 'CARGONOMINATION_DELETE_SUMMARY', data:  { confirmLabel: 'CARGONOMINATION_DELETE_CONFIRM_LABEL', rejectLabel: 'CARGONOMINATION_DELETE_REJECT_LABEL'}});
-      this.confirmationAlertService.confirmAlert$.subscribe(async (response) => {
+      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'CARGONOMINATION_DELETE_SUMMARY', detail: 'CARGONOMINATION_DELETE_SUMMARY', data: { confirmLabel: 'CARGONOMINATION_DELETE_CONFIRM_LABEL', rejectLabel: 'CARGONOMINATION_DELETE_REJECT_LABEL' } });
+      this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
         if (response) {
-          const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
+          let res;
+          if (!event?.data?.isAdd) {
+            res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
+          } else {
+            res = true;
+          }
           if (res) {
             this.cargoNominations.splice(event.index, 1);
             this.cargoNominations = [...this.cargoNominations];

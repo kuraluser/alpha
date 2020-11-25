@@ -86,8 +86,10 @@ export class GlobalErrorHandler implements ErrorHandler {
    * @private
    * @memberof GlobalErrorHandler
    */
-  private handlePageNotFound() {
+  private async handlePageNotFound() {
     this.ngxSpinnerService.hide();
+    const translationKeys = await this.translateService.get(['SOMETHING_WENT_WRONG_ERROR', 'SOMETHING_WENT_WRONG']).toPromise();
+    this.messageService.add({severity: 'error', summary: translationKeys['SOMETHING_WENT_WRONG_ERROR'], detail: translationKeys['SOMETHING_WENT_WRONG'], sticky: true});
     this.router.navigate(['page-not-found']);
   }
 
