@@ -19,6 +19,7 @@ import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -37,6 +38,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -71,6 +74,7 @@ public class LoadableStudyController {
       throws CommonRestException {
     try {
       log.info("save voyage API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
+      log.info("saveVoyage: {}", getClientIp());
       Long companyId = 1L; // TODO get the companyId from userContext in keycloak token
       return loadableStudyService.saveVoyage(
           voyage, companyId, vesselId, headers.getFirst(CORRELATION_ID_HEADER));
@@ -112,6 +116,7 @@ public class LoadableStudyController {
       log.info(
           "save loadable quantity API. correlationId: {} ",
           headers.getFirst(CORRELATION_ID_HEADER));
+      log.info("saveLoadableQuantity: {}", getClientIp());
       return loadableStudyService.saveLoadableQuantity(
           loadableQuantity, loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
@@ -144,6 +149,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+      log.info("getLoadableStudyByVoyage: {}", getClientIp());
       Long companyId = 1L; // TODO get the companyId from userContext in keycloak token
       return this.loadableStudyService.getLoadableStudies(
           companyId, vesselId, voyageId, headers.getFirst(CORRELATION_ID_HEADER));
@@ -185,6 +191,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+      log.info("saveLoadableStudy: {}", getClientIp());
       request.setVesselId(vesselId);
       request.setVoyageId(voyageId);
       request.setCompanyId(1L);
@@ -225,7 +232,7 @@ public class LoadableStudyController {
       throws CommonRestException {
     CargoNominationResponse response = null;
     try {
-      Long companyId = 1L; // TODO get the companyId from userContext in keycloak token
+      log.info("getCargoNomination: {}", getClientIp());
       response = loadableStudyService.getCargoNomination(loadableStudyId, headers);
     } catch (Exception e) {
       log.error("Error in getCargoNomination ", e);
@@ -254,7 +261,7 @@ public class LoadableStudyController {
       throws CommonRestException {
     CargoNominationResponse response = null;
     try {
-      Long companyId = 1L; // TODO get the companyId from userContext in keycloak token
+      log.info("saveCargoNomination: {}", getClientIp());
       response =
           loadableStudyService.saveCargoNomination(
               vesselId, voyageId, loadableStudyId, cargoNomination, headers);
@@ -290,6 +297,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+      log.info("getLoadableQuantity: {}", getClientIp());
       log.info(
           "get loadable quantity API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
       return loadableStudyService.getLoadableQuantity(
@@ -321,6 +329,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+      log.info("getVoyageListByVessel: {}", getClientIp());
       return this.loadableStudyService.getVoyageListByVessel(
           vesselId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
@@ -357,6 +366,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+      log.info("loadableStudyPortList: {}", getClientIp());
       return this.loadableStudyService.getLoadableStudyPortRotationList(
           vesselId, voyageId, loadableStudyId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
@@ -396,6 +406,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+      log.info("savePortRotation: {}", getClientIp());
       request.setId(id);
       request.setLoadableStudyId(loadableStudyId);
       return this.loadableStudyService.savePortRotation(
@@ -426,7 +437,7 @@ public class LoadableStudyController {
       throws CommonRestException {
     CargoNominationResponse response = null;
     try {
-      Long companyId = 1L; // TODO get the companyId from userContext in keycloak token
+      log.info("deleteCargoNomination: {}", getClientIp());
       response = loadableStudyService.deleteCargoNomination(id, headers);
     } catch (Exception e) {
       log.error("Error in deleteCargoNomination ", e);
@@ -461,6 +472,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+      log.info("saveDischargingPorts: {}", getClientIp());
       request.setLoadableStudyId(loadableStudyId);
       return this.loadableStudyService.saveDischargingPorts(
           request, headers.getFirst(CORRELATION_ID_HEADER));
@@ -487,6 +499,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+      log.info("deleteLoadableStudy: {}", getClientIp());
       return this.loadableStudyService.deleteLoadableStudy(
           loadableStudyId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
@@ -521,6 +534,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+      log.info("getPortRotation: {}", getClientIp());
       log.info(
           "Inside getPortRotation gateway controller with correlationId : "
               + headers.getFirst(CORRELATION_ID_HEADER));
@@ -560,6 +574,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+      log.info("deletePortRotation: {}", getClientIp());
       return this.loadableStudyService.deletePortRotation(
           loadableStudyId, id, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
@@ -594,6 +609,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+      log.info("saveLoadableQuantity loadable-pattern : {}", getClientIp());
       log.info(
           "get loadable pattern API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
       return loadableStudyService.getLoadablePattern(
@@ -633,6 +649,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+      log.info("getOnHandQuantity: {}", getClientIp());
       // TODO
       final Long companyId = 1L;
       return this.loadableStudyService.getOnHandQuantity(
@@ -649,5 +666,21 @@ public class LoadableStudyController {
           e.getMessage(),
           e);
     }
+  }
+
+  /**
+   * Returns the caller ip for debugging
+   *
+   * @return
+   */
+  private static String getClientIp() {
+    HttpServletRequest curRequest =
+        ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+    String remoteAddr = "";
+    remoteAddr = curRequest.getHeader("X-FORWARDED-FOR");
+    if (remoteAddr == null || "".equals(remoteAddr)) {
+      remoteAddr = curRequest.getRemoteAddr();
+    }
+    return remoteAddr;
   }
 }

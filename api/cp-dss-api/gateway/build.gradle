@@ -10,4 +10,5 @@ appConfig {
 
 dependencies {
     implementation project(':common')
+    testImplementation('net.devh:grpc-server-spring-boot-starter:2.10.1.RELEASE')
 }

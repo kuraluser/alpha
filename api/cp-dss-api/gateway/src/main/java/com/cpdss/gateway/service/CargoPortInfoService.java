@@ -2,6 +2,9 @@
 package com.cpdss.gateway.service;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.CargoInfo.CargoReply;
+import com.cpdss.common.generated.CargoInfo.CargoRequest;
+import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest;
 import com.cpdss.common.generated.PortInfo.PortReply;
@@ -10,6 +13,8 @@ import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStu
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.Cargo;
+import com.cpdss.gateway.domain.CargosResponse;
 import com.cpdss.gateway.domain.Port;
 import com.cpdss.gateway.domain.PortsResponse;
 import java.math.BigDecimal;
@@ -28,6 +33,9 @@ public class CargoPortInfoService {
 
   @GrpcClient("portInfoService")
   private PortInfoServiceBlockingStub portInfoServiceBlockingStub;
+
+  @GrpcClient("cargoInfoService")
+  private CargoInfoServiceBlockingStub cargoInfoServiceBlockingStub;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -94,12 +102,10 @@ public class CargoPortInfoService {
    * @return
    * @throws GenericServiceException
    */
-  public PortsResponse getPorts(Long companyId, HttpHeaders headers)
-      throws GenericServiceException {
+  public PortsResponse getPorts(HttpHeaders headers) throws GenericServiceException {
     PortsResponse portsResponse = new PortsResponse();
     // Retrieve port information from port master
-    PortRequest portRequest =
-        PortRequest.newBuilder().setCompanyId(companyId != null ? companyId : 0).build();
+    PortRequest portRequest = PortRequest.newBuilder().build();
     PortReply portReply = portInfoServiceBlockingStub.getPortInfo(portRequest);
     if (portReply != null
         && portReply.getResponseStatus() != null
@@ -150,5 +156,57 @@ public class CargoPortInfoService {
       portsResponse.setPorts(portList);
     }
     return portsResponse;
+  }
+
+  /**
+   * Retrieves the cargo information from cargo master
+   *
+   * @param headers
+   * @return
+   * @throws GenericServiceException
+   */
+  public CargosResponse getCargos(HttpHeaders headers) throws GenericServiceException {
+    CargosResponse cargosResponse = new CargosResponse();
+    // Retrieve cargo information from cargo master
+    CargoRequest cargoRequest = CargoRequest.newBuilder().build();
+    CargoReply cargoReply = cargoInfoServiceBlockingStub.getCargoInfo(cargoRequest);
+    if (cargoReply != null
+        && cargoReply.getResponseStatus() != null
+        && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
+      CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+      commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+      cargosResponse.setResponseStatus(commonSuccessResponse);
+      buildCargoResponse(cargosResponse, cargoReply);
+    } else {
+      throw new GenericServiceException(
+          "Error in calling cargo service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    return cargosResponse;
+  }
+
+  /**
+   * @param cargosResponse
+   * @param cargoReply
+   * @return
+   */
+  private CargosResponse buildCargoResponse(CargosResponse cargosResponse, CargoReply cargoReply) {
+    if (cargoReply != null && !cargoReply.getCargosList().isEmpty()) {
+      List<Cargo> cargoList = new ArrayList<>();
+      cargoReply
+          .getCargosList()
+          .forEach(
+              cargoDetail -> {
+                Cargo cargo = new Cargo();
+                cargo.setId(cargoDetail.getId());
+                cargo.setApi(cargoDetail.getApi());
+                cargo.setAbbreviation(cargoDetail.getAbbreviation());
+                cargo.setName(cargoDetail.getCrudeType());
+                cargoList.add(cargo);
+              });
+      cargosResponse.setCargos(cargoList);
+    }
+    return cargosResponse;
   }
 }
