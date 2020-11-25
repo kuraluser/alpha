@@ -34,7 +34,6 @@ service LoadableStudyService {
 	rpc GetValveSegregation (ValveSegregationRequest) returns (ValveSegregationReply){
 	}
 
-
   	rpc getLoadableQuantity (LoadableQuantityReply) returns (LoadableQuantityResponse) {
 	}
 	
@@ -56,6 +55,9 @@ service LoadableStudyService {
 	}
 	
 	rpc GetOnHandQuantity(OnHandQuantityRequest) returns (OnHandQuantityReply){
+	}
+	
+	rpc SaveOnHandQuantity(OnHandQuantityDetail) returns (OnHandQuantityReply){
 	}
 	
 }
@@ -284,9 +286,11 @@ message OnHandQuantityDetail{
 	string arrivalQuantity = 8;
 	string departureVolume = 9;
 	string departureQuantity = 10;
+	int64 loadableStudyId = 11;
 }
 
 message OnHandQuantityReply{
 	ResponseStatus responseStatus = 1;
 	repeated OnHandQuantityDetail onHandQuantity = 2;
+	int64 id = 3;
 }

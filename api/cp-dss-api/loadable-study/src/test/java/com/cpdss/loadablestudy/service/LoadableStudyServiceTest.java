@@ -21,6 +21,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
@@ -132,8 +133,8 @@ class LoadableStudyServiceTest {
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
   private static final String NUMERICAL_TEST_VALUE = "100";
   private static final Long ID_TEST_VALUE = 1L;
-  private static final String DATE_TEST_VALUE = "2020-10-10";
-  private static final String DATE_TIME_TEST_VALUE = "2020-10-10 12:20";
+  private static final String DATE_TEST_VALUE = "10-10-2020";
+  private static final String DATE_TIME_TEST_VALUE = "10-10-2020 12:20";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
@@ -1609,5 +1610,79 @@ class LoadableStudyServiceTest {
               list.add(qty);
             });
     return list;
+  }
+
+  @ParameterizedTest
+  @ValueSource(longs = {0L, 1L})
+  void testSaveOnHandQuantity(Long id) {
+    if (id.equals(1L)) {
+      when(this.onHandQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+          .thenReturn(new OnHandQuantity());
+    }
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadableStudy()));
+    OnHandQuantity entity = new OnHandQuantity();
+    entity.setId(1L);
+    when(this.onHandQuantityRepository.save(any(OnHandQuantity.class))).thenReturn(entity);
+    StreamRecorder<OnHandQuantityReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveOnHandQuantity(
+        this.createOnhandQuantitySaveRequest().setId(id).build(), responseObserver);
+    List<OnHandQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveOnHandQuantityInvalidLoadableStudy() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    StreamRecorder<OnHandQuantityReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveOnHandQuantity(
+        this.createOnhandQuantitySaveRequest().setId(0L).build(), responseObserver);
+    List<OnHandQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveOnHandQuantityInvalidId() {
+    when(this.onHandQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(null);
+    StreamRecorder<OnHandQuantityReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveOnHandQuantity(
+        this.createOnhandQuantitySaveRequest().setId(1L).build(), responseObserver);
+    List<OnHandQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveOnHandQuantityRuntimeException() {
+    when(this.onHandQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(RuntimeException.class);
+    StreamRecorder<OnHandQuantityReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveOnHandQuantity(
+        this.createOnhandQuantitySaveRequest().setId(1L).build(), responseObserver);
+    List<OnHandQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  private OnHandQuantityDetail.Builder createOnhandQuantitySaveRequest() {
+    OnHandQuantityDetail.Builder detail =
+        OnHandQuantityDetail.newBuilder()
+            .setTankId(1L)
+            .setTankName("tank-1")
+            .setFuelType("fuel-1")
+            .setFuelTypeId(1L)
+            .setArrivalQuantity(NUMERICAL_TEST_VALUE)
+            .setArrivalVolume(NUMERICAL_TEST_VALUE)
+            .setDepartureQuantity(NUMERICAL_TEST_VALUE)
+            .setDepartureVolume(NUMERICAL_TEST_VALUE);
+    return detail;
   }
 }

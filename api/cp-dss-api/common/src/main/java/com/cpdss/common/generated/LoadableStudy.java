@@ -29215,6 +29215,13 @@ public final class LoadableStudy {
      * @return The bytes for departureQuantity.
      */
     com.google.protobuf.ByteString getDepartureQuantityBytes();
+
+    /**
+     * <code>int64 loadableStudyId = 11;</code>
+     *
+     * @return The loadableStudyId.
+     */
+    long getLoadableStudyId();
   }
   /** Protobuf type {@code OnHandQuantityDetail} */
   public static final class OnHandQuantityDetail extends com.google.protobuf.GeneratedMessageV3
@@ -29325,6 +29332,11 @@ public final class LoadableStudy {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 departureQuantity_ = s;
+                break;
+              }
+            case 88:
+              {
+                loadableStudyId_ = input.readInt64();
                 break;
               }
             default:
@@ -29615,6 +29627,17 @@ public final class LoadableStudy {
       }
     }
 
+    public static final int LOADABLESTUDYID_FIELD_NUMBER = 11;
+    private long loadableStudyId_;
+    /**
+     * <code>int64 loadableStudyId = 11;</code>
+     *
+     * @return The loadableStudyId.
+     */
+    public long getLoadableStudyId() {
+      return loadableStudyId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -29659,6 +29682,9 @@ public final class LoadableStudy {
       if (!getDepartureQuantityBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 10, departureQuantity_);
       }
+      if (loadableStudyId_ != 0L) {
+        output.writeInt64(11, loadableStudyId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -29698,6 +29724,9 @@ public final class LoadableStudy {
       if (!getDepartureQuantityBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, departureQuantity_);
       }
+      if (loadableStudyId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(11, loadableStudyId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -29724,6 +29753,7 @@ public final class LoadableStudy {
       if (!getArrivalQuantity().equals(other.getArrivalQuantity())) return false;
       if (!getDepartureVolume().equals(other.getDepartureVolume())) return false;
       if (!getDepartureQuantity().equals(other.getDepartureQuantity())) return false;
+      if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -29755,6 +29785,8 @@ public final class LoadableStudy {
       hash = (53 * hash) + getDepartureVolume().hashCode();
       hash = (37 * hash) + DEPARTUREQUANTITY_FIELD_NUMBER;
       hash = (53 * hash) + getDepartureQuantity().hashCode();
+      hash = (37 * hash) + LOADABLESTUDYID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -29915,6 +29947,8 @@ public final class LoadableStudy {
 
         departureQuantity_ = "";
 
+        loadableStudyId_ = 0L;
+
         return this;
       }
 
@@ -29953,6 +29987,7 @@ public final class LoadableStudy {
         result.arrivalQuantity_ = arrivalQuantity_;
         result.departureVolume_ = departureVolume_;
         result.departureQuantity_ = departureQuantity_;
+        result.loadableStudyId_ = loadableStudyId_;
         onBuilt();
         return result;
       }
@@ -30042,6 +30077,9 @@ public final class LoadableStudy {
         if (!other.getDepartureQuantity().isEmpty()) {
           departureQuantity_ = other.departureQuantity_;
           onChanged();
+        }
+        if (other.getLoadableStudyId() != 0L) {
+          setLoadableStudyId(other.getLoadableStudyId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -30662,6 +30700,39 @@ public final class LoadableStudy {
         return this;
       }
 
+      private long loadableStudyId_;
+      /**
+       * <code>int64 loadableStudyId = 11;</code>
+       *
+       * @return The loadableStudyId.
+       */
+      public long getLoadableStudyId() {
+        return loadableStudyId_;
+      }
+      /**
+       * <code>int64 loadableStudyId = 11;</code>
+       *
+       * @param value The loadableStudyId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadableStudyId(long value) {
+
+        loadableStudyId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadableStudyId = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadableStudyId() {
+
+        loadableStudyId_ = 0L;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -30750,6 +30821,13 @@ public final class LoadableStudy {
     /** <code>repeated .OnHandQuantityDetail onHandQuantity = 2;</code> */
     com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetailOrBuilder
         getOnHandQuantityOrBuilder(int index);
+
+    /**
+     * <code>int64 id = 3;</code>
+     *
+     * @return The id.
+     */
+    long getId();
   }
   /** Protobuf type {@code OnHandQuantityReply} */
   public static final class OnHandQuantityReply extends com.google.protobuf.GeneratedMessageV3
@@ -30825,6 +30903,11 @@ public final class LoadableStudy {
                     input.readMessage(
                         com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail.parser(),
                         extensionRegistry));
+                break;
+              }
+            case 24:
+              {
+                id_ = input.readInt64();
                 break;
               }
             default:
@@ -30918,6 +31001,17 @@ public final class LoadableStudy {
       return onHandQuantity_.get(index);
     }
 
+    public static final int ID_FIELD_NUMBER = 3;
+    private long id_;
+    /**
+     * <code>int64 id = 3;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -30938,6 +31032,9 @@ public final class LoadableStudy {
       for (int i = 0; i < onHandQuantity_.size(); i++) {
         output.writeMessage(2, onHandQuantity_.get(i));
       }
+      if (id_ != 0L) {
+        output.writeInt64(3, id_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -30952,6 +31049,9 @@ public final class LoadableStudy {
       }
       for (int i = 0; i < onHandQuantity_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, onHandQuantity_.get(i));
+      }
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, id_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -30974,6 +31074,7 @@ public final class LoadableStudy {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
       if (!getOnHandQuantityList().equals(other.getOnHandQuantityList())) return false;
+      if (getId() != other.getId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -30993,6 +31094,8 @@ public final class LoadableStudy {
         hash = (37 * hash) + ONHANDQUANTITY_FIELD_NUMBER;
         hash = (53 * hash) + getOnHandQuantityList().hashCode();
       }
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -31147,6 +31250,8 @@ public final class LoadableStudy {
         } else {
           onHandQuantityBuilder_.clear();
         }
+        id_ = 0L;
+
         return this;
       }
 
@@ -31190,6 +31295,7 @@ public final class LoadableStudy {
         } else {
           result.onHandQuantity_ = onHandQuantityBuilder_.build();
         }
+        result.id_ = id_;
         onBuilt();
         return result;
       }
@@ -31272,6 +31378,9 @@ public final class LoadableStudy {
               onHandQuantityBuilder_.addAllMessages(other.onHandQuantity_);
             }
           }
+        }
+        if (other.getId() != 0L) {
+          setId(other.getId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -31653,6 +31762,39 @@ public final class LoadableStudy {
         return onHandQuantityBuilder_;
       }
 
+      private long id_;
+      /**
+       * <code>int64 id = 3;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 3;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -31918,47 +32060,50 @@ public final class LoadableStudy {
           + "\030\002 \003(\0132\021.ValveSegregation\"e\n\025OnHandQuant"
           + "ityRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselI"
           + "d\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\016\n\006port"
-          + "Id\030\004 \001(\003\"\336\001\n\024OnHandQuantityDetail\022\n\n\002id\030"
+          + "Id\030\004 \001(\003\"\367\001\n\024OnHandQuantityDetail\022\n\n\002id\030"
           + "\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\022\n\nfuelTypeId\030\003 \001("
           + "\003\022\020\n\010fuelType\030\004 \001(\t\022\016\n\006tankId\030\005 \001(\003\022\020\n\010t"
           + "ankName\030\006 \001(\t\022\025\n\rarrivalVolume\030\007 \001(\t\022\027\n\017"
           + "arrivalQuantity\030\010 \001(\t\022\027\n\017departureVolume"
-          + "\030\t \001(\t\022\031\n\021departureQuantity\030\n \001(\t\"m\n\023OnH"
-          + "andQuantityReply\022\'\n\016responseStatus\030\001 \001(\013"
-          + "2\017.ResponseStatus\022-\n\016onHandQuantity\030\002 \003("
-          + "\0132\025.OnHandQuantityDetail2\321\t\n\024LoadableStu"
-          + "dyService\022,\n\nSaveVoyage\022\016.VoyageRequest\032"
-          + "\014.VoyageReply\"\000\0228\n\022GetVoyagesByVessel\022\016."
-          + "VoyageRequest\032\020.VoyageListReply\"\000\022J\n\024Sav"
-          + "eLoadableQuantity\022\030.LoadableQuantityRequ"
-          + "est\032\026.LoadableQuantityReply\"\000\022T\n$FindLoa"
-          + "dableStudiesByVesselAndVoyage\022\025.Loadable"
-          + "StudyRequest\032\023.LoadableStudyReply\"\000\022@\n\021S"
-          + "aveLoadableStudy\022\024.LoadableStudyDetail\032\023"
-          + ".LoadableStudyReply\"\000\022G\n\023SaveCargoNomina"
-          + "tion\022\027.CargoNominationRequest\032\025.CargoNom"
-          + "inationReply\"\000\022J\n\034GetLoadableStudyPortRo"
-          + "tation\022\024.PortRotationRequest\032\022.PortRotat"
-          + "ionReply\"\000\022J\n\026GetCargoNominationById\022\027.C"
-          + "argoNominationRequest\032\025.CargoNominationR"
-          + "eply\"\000\022I\n\023GetValveSegregation\022\030.ValveSeg"
-          + "regationRequest\032\026.ValveSegregationReply\""
-          + "\000\022J\n\023getLoadableQuantity\022\026.LoadableQuant"
-          + "ityReply\032\031.LoadableQuantityResponse\"\000\022J\n"
-          + "\035SaveLoadableStudyPortRotation\022\023.PortRot"
-          + "ationDetail\032\022.PortRotationReply\"\000\022I\n\025Del"
-          + "eteCargoNomination\022\027.CargoNominationRequ"
-          + "est\032\025.CargoNominationReply\"\000\022B\n\024SaveDisc"
-          + "hargingPorts\022\024.PortRotationRequest\032\022.Por"
-          + "tRotationReply\"\000\022N\n GetPortRotationByLoa"
-          + "dableStudyId\022\024.PortRotationRequest\032\022.Por"
-          + "tRotationReply\"\000\022C\n\023DeleteLoadableStudy\022"
-          + "\025.LoadableStudyRequest\032\023.LoadableStudyRe"
-          + "ply\"\000\022@\n\022DeletePortRotation\022\024.PortRotati"
-          + "onRequest\032\022.PortRotationReply\"\000\022C\n\021GetOn"
-          + "HandQuantity\022\026.OnHandQuantityRequest\032\024.O"
-          + "nHandQuantityReply\"\000B\036\n\032com.cpdss.common"
-          + ".generatedP\000b\006proto3"
+          + "\030\t \001(\t\022\031\n\021departureQuantity\030\n \001(\t\022\027\n\017loa"
+          + "dableStudyId\030\013 \001(\003\"y\n\023OnHandQuantityRepl"
+          + "y\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStat"
+          + "us\022-\n\016onHandQuantity\030\002 \003(\0132\025.OnHandQuant"
+          + "ityDetail\022\n\n\002id\030\003 \001(\0032\226\n\n\024LoadableStudyS"
+          + "ervice\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014.V"
+          + "oyageReply\"\000\0228\n\022GetVoyagesByVessel\022\016.Voy"
+          + "ageRequest\032\020.VoyageListReply\"\000\022J\n\024SaveLo"
+          + "adableQuantity\022\030.LoadableQuantityRequest"
+          + "\032\026.LoadableQuantityReply\"\000\022T\n$FindLoadab"
+          + "leStudiesByVesselAndVoyage\022\025.LoadableStu"
+          + "dyRequest\032\023.LoadableStudyReply\"\000\022@\n\021Save"
+          + "LoadableStudy\022\024.LoadableStudyDetail\032\023.Lo"
+          + "adableStudyReply\"\000\022G\n\023SaveCargoNominatio"
+          + "n\022\027.CargoNominationRequest\032\025.CargoNomina"
+          + "tionReply\"\000\022J\n\034GetLoadableStudyPortRotat"
+          + "ion\022\024.PortRotationRequest\032\022.PortRotation"
+          + "Reply\"\000\022J\n\026GetCargoNominationById\022\027.Carg"
+          + "oNominationRequest\032\025.CargoNominationRepl"
+          + "y\"\000\022I\n\023GetValveSegregation\022\030.ValveSegreg"
+          + "ationRequest\032\026.ValveSegregationReply\"\000\022J"
+          + "\n\023getLoadableQuantity\022\026.LoadableQuantity"
+          + "Reply\032\031.LoadableQuantityResponse\"\000\022J\n\035Sa"
+          + "veLoadableStudyPortRotation\022\023.PortRotati"
+          + "onDetail\032\022.PortRotationReply\"\000\022I\n\025Delete"
+          + "CargoNomination\022\027.CargoNominationRequest"
+          + "\032\025.CargoNominationReply\"\000\022B\n\024SaveDischar"
+          + "gingPorts\022\024.PortRotationRequest\032\022.PortRo"
+          + "tationReply\"\000\022N\n GetPortRotationByLoadab"
+          + "leStudyId\022\024.PortRotationRequest\032\022.PortRo"
+          + "tationReply\"\000\022C\n\023DeleteLoadableStudy\022\025.L"
+          + "oadableStudyRequest\032\023.LoadableStudyReply"
+          + "\"\000\022@\n\022DeletePortRotation\022\024.PortRotationR"
+          + "equest\032\022.PortRotationReply\"\000\022C\n\021GetOnHan"
+          + "dQuantity\022\026.OnHandQuantityRequest\032\024.OnHa"
+          + "ndQuantityReply\"\000\022C\n\022SaveOnHandQuantity\022"
+          + "\025.OnHandQuantityDetail\032\024.OnHandQuantityR"
+          + "eply\"\000B\036\n\032com.cpdss.common.generatedP\000b\006"
+          + "proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -32230,13 +32375,14 @@ public final class LoadableStudy {
               "ArrivalQuantity",
               "DepartureVolume",
               "DepartureQuantity",
+              "LoadableStudyId",
             });
     internal_static_OnHandQuantityReply_descriptor = getDescriptor().getMessageTypes().get(26);
     internal_static_OnHandQuantityReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_OnHandQuantityReply_descriptor,
             new java.lang.String[] {
-              "ResponseStatus", "OnHandQuantity",
+              "ResponseStatus", "OnHandQuantity", "Id",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }

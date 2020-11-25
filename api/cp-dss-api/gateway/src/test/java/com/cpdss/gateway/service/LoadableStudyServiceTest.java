@@ -36,6 +36,7 @@ import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
@@ -1038,5 +1039,67 @@ class LoadableStudyServiceTest {
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  @Test
+  void testSaveOnHandQuantity() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.saveOnHandQuantity(any(OnHandQuantity.class), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.saveOnHandQuantity(any(OnHandQuantityDetail.class)))
+        .thenReturn(
+            OnHandQuantityReply.newBuilder()
+                .addAllOnHandQuantity(this.createOnhandQuantityDetail())
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    OnHandQuantityResponse response =
+        this.loadableStudyService.saveOnHandQuantity(
+            this.createOnHandQuantityRequest(), CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "Invalid response status"));
+  }
+
+  @Test
+  void testSaveOnHandQuantityGrpcFailure() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.saveOnHandQuantity(any(OnHandQuantity.class), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.saveOnHandQuantity(any(OnHandQuantityDetail.class)))
+        .thenReturn(
+            OnHandQuantityReply.newBuilder()
+                .addAllOnHandQuantity(this.createOnhandQuantityDetail())
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.saveOnHandQuantity(
+                    this.createOnHandQuantityRequest(), CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  private OnHandQuantity createOnHandQuantityRequest() {
+    OnHandQuantity request = new OnHandQuantity();
+    request.setArrivalVolume(TEST_BIGDECIMAL_VALUE);
+    request.setArrivalQuantity(TEST_BIGDECIMAL_VALUE);
+    request.setDepartureQuantity(TEST_BIGDECIMAL_VALUE);
+    request.setDepartureVolume(TEST_BIGDECIMAL_VALUE);
+    request.setFuelTypeId(1L);
+    request.setTankId(1L);
+    request.setLoadableStudyId(1L);
+    request.setPortId(1L);
+    request.setId(0L);
+    return request;
   }
 }

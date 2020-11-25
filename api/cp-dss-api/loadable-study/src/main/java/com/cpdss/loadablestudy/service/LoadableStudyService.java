@@ -121,10 +121,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String VOYAGEEXISTS = "VOYAGE_EXISTS";
   private static final String CREATED_DATE_FORMAT = "dd-MM-yyyy";
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
-  private static final String ETA_ETD_FORMAT = "yyyy-MM-dd HH:mm";
-  private static final String LAY_CAN_FORMAT = "yyyy-MM-dd";
-  private static final String ETA_ETD_CLIENT_FORMAT = "dd-MM-yyyy HH:mm";
-  private static final String LAY_CAN_CLIENT_FORMAT = "dd-MM-yyyy";
+  private static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
+  private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
@@ -826,8 +824,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         replyBuilder.addPorts(
             this.createPortDetail(
                 entity,
-                DateTimeFormatter.ofPattern(ETA_ETD_CLIENT_FORMAT),
-                DateTimeFormatter.ofPattern(LAY_CAN_CLIENT_FORMAT)));
+                DateTimeFormatter.ofPattern(ETA_ETD_FORMAT),
+                DateTimeFormatter.ofPattern(LAY_CAN_FORMAT)));
       }
       List<CargoOperation> operationEntityList = this.cargoOperationRepository.findAll();
       for (CargoOperation entity : operationEntityList) {
@@ -1668,5 +1666,89 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   public VesselReply getVesselFuelTanks(VesselRequest request) {
     return this.vesselInfoGrpcService.getVesselFuelTanks(request);
+  }
+
+  /** Save on hand quantity */
+  @Override
+  public void saveOnHandQuantity(
+      OnHandQuantityDetail request, StreamObserver<OnHandQuantityReply> responseObserver) {
+    OnHandQuantityReply.Builder replyBuilder = OnHandQuantityReply.newBuilder();
+    try {
+      OnHandQuantity entity = null;
+      if (request.getId() != 0) {
+        entity = this.onHandQuantityRepository.findByIdAndIsActive(request.getId(), true);
+        if (null == entity) {
+          throw new GenericServiceException(
+              "On hand quantity with given id does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+      } else {
+        entity = new OnHandQuantity();
+        Optional<LoadableStudy> loadableStudyOpt =
+            this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+        if (!loadableStudyOpt.isPresent()) {
+          throw new GenericServiceException(
+              "Loadable study does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        entity.setLoadableStudy(loadableStudyOpt.get());
+        entity.setPortXId(request.getPortId());
+      }
+      entity = this.buildOnHandQuantityEntity(entity, request);
+      entity = this.onHandQuantityRepository.save(entity);
+      replyBuilder
+          .setId(entity.getId())
+          .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving on hand quantities", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      log.error("Exception when saving on hand quantities", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when saving on hand quantities")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Build on hand quantity entity from request
+   *
+   * @param entity
+   * @param request
+   * @return
+   */
+  private OnHandQuantity buildOnHandQuantityEntity(
+      OnHandQuantity entity, OnHandQuantityDetail request) {
+    entity.setIsActive(true);
+    entity.setFuelTypeXId(0 == request.getFuelTypeId() ? null : request.getFuelTypeId());
+    entity.setTankXId(0 == request.getTankId() ? null : request.getTankId());
+    entity.setArrivalQuantity(
+        isEmpty(request.getArrivalQuantity())
+            ? null
+            : new BigDecimal(request.getArrivalQuantity()));
+    entity.setArrivalVolume(
+        isEmpty(request.getArrivalVolume()) ? null : new BigDecimal(request.getArrivalVolume()));
+    entity.setDepartureQuantity(
+        isEmpty(request.getDepartureQuantity())
+            ? null
+            : new BigDecimal(request.getDepartureQuantity()));
+    entity.setDepartureVolume(
+        isEmpty(request.getDepartureVolume())
+            ? null
+            : new BigDecimal(request.getDepartureVolume()));
+    return entity;
   }
 }

@@ -78,8 +78,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     log.info("inside grpc service: getAllVesselsByCompany");
     VesselReply.Builder replyBuilder = VesselReply.newBuilder();
     try {
-      List<Vessel> vesselEntities =
-          this.vesselRepository.findByCompanyXIdAndIsActive(request.getCompanyId(), true);
+      List<Vessel> vesselEntities = this.vesselRepository.findByIsActive(true);
       for (Vessel entity : vesselEntities) {
         VesselDetail.Builder builder = VesselDetail.newBuilder();
         builder.setId(entity.getId());

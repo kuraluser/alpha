@@ -15,7 +15,9 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
 
-  public List<Vessel> findByCompanyXIdAndIsActive(Long companyXId, boolean isActive);
+  public List<Vessel> findByIsActive(boolean isActive);
+
+  public Vessel findByIdAndIsActive(Long vesselId, boolean isActive);
 
   public Vessel findByCompanyXIdAndIdAndIsActive(Long companyXId, Long vesselId, boolean isActive);
 

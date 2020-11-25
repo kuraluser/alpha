@@ -42,8 +42,7 @@ class VesselInfoServiceTest {
   @Test
   void testGetVesselFuelTanks() {
     Vessel vessel = new Vessel();
-    when(this.vesselRepository.findByCompanyXIdAndIdAndIsActive(anyLong(), anyLong(), anyBoolean()))
-        .thenReturn(vessel);
+    when(this.vesselRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(vessel);
     when(this.tankCategoryRepository.getOne(anyLong())).thenReturn(new TankCategory());
     when(this.vesselTankRepository.findByVesselAndTankCategoryInAndIsActive(
             any(Vessel.class), anyList(), anyBoolean()))
@@ -60,8 +59,7 @@ class VesselInfoServiceTest {
 
   @Test
   void testGetVesselFuelTanksInvalidVessel() {
-    when(this.vesselRepository.findByCompanyXIdAndIdAndIsActive(anyLong(), anyLong(), anyBoolean()))
-        .thenReturn(null);
+    when(this.vesselRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(null);
     StreamRecorder<VesselReply> responseObserver = StreamRecorder.create();
     this.vesselInfoService.getVesselFuelTanks(
         VesselRequest.newBuilder().setCompanyId(TEST_ID).setVesselId(TEST_ID).build(),
@@ -74,7 +72,7 @@ class VesselInfoServiceTest {
 
   @Test
   void testGetVesselFuelTanksRunTimeException() {
-    when(this.vesselRepository.findByCompanyXIdAndIdAndIsActive(anyLong(), anyLong(), anyBoolean()))
+    when(this.vesselRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenThrow(RuntimeException.class);
     StreamRecorder<VesselReply> responseObserver = StreamRecorder.create();
     this.vesselInfoService.getVesselFuelTanks(

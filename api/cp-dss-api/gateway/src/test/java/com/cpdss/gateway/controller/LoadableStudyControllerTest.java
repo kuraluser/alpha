@@ -14,6 +14,7 @@ import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
@@ -131,6 +132,13 @@ class LoadableStudyControllerTest {
       CLOUD_API_URL_PREFIX + GET_ON_HAND_QUANTITIES_API_URL;
   private static final String GET_ON_HAND_QUANTITIES_SHIP_API_URL =
       SHIP_API_URL_PREFIX + GET_ON_HAND_QUANTITIES_API_URL;
+
+  private static final String SAVE_ON_HAND_QUANTITIES_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{portId}/on-hand-quantities/{id}";
+  private static final String SAVE_ON_HAND_QUANTITIES_API_URL_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + SAVE_ON_HAND_QUANTITIES_API_URL;
+  private static final String SAVE_ON_HAND_QUANTITIES_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + SAVE_ON_HAND_QUANTITIES_API_URL;
 
   /**
    * Positive test case. Test method for positive response scenario
@@ -631,5 +639,67 @@ class LoadableStudyControllerTest {
                     1)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
         .andExpect(status().isInternalServerError());
+  }
+
+  @ValueSource(
+      strings = {
+        SAVE_ON_HAND_QUANTITIES_API_URL_CLOUD_API_URL,
+        SAVE_ON_HAND_QUANTITIES_SHIP_API_URL
+      })
+  @ParameterizedTest
+  void testSaveOnHandQuantity(String url) throws Exception {
+    when(this.loadableStudyService.saveOnHandQuantity(any(OnHandQuantity.class), anyString()))
+        .thenReturn(new OnHandQuantityResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 1, 0)
+                .content(this.createOnHandQuantityRequest())
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testSaveOnHandQuantityRuntimeException(Class<? extends Exception> exceptionClass)
+      throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.loadableStudyService.saveOnHandQuantity(any(OnHandQuantity.class), anyString()))
+        .thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(
+                    SAVE_ON_HAND_QUANTITIES_API_URL_CLOUD_API_URL,
+                    TEST_VESSEL_ID,
+                    TEST_VOYAGE_ID,
+                    1,
+                    1,
+                    0)
+                .content(this.createOnHandQuantityRequest())
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  private String createOnHandQuantityRequest() throws JsonProcessingException {
+    OnHandQuantity request = new OnHandQuantity();
+    request.setArrivalVolume(TEST_BIGDECIMAL_VALUE);
+    request.setArrivalQuantity(TEST_BIGDECIMAL_VALUE);
+    request.setDepartureQuantity(TEST_BIGDECIMAL_VALUE);
+    request.setDepartureVolume(TEST_BIGDECIMAL_VALUE);
+    request.setFuelTypeId(1L);
+    request.setTankId(1L);
+    request.setLoadableStudyId(1L);
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.writeValueAsString(request);
   }
 }

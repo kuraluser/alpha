@@ -1188,4 +1188,53 @@ public class LoadableStudyService {
   public OnHandQuantityReply getOnHandQuantity(OnHandQuantityRequest request) {
     return this.loadableStudyServiceBlockingStub.getOnHandQuantity(request);
   }
+
+  /**
+   * Save on hand quantity
+   *
+   * @param request
+   * @param correlationId
+   * @return
+   * @throws GenericServiceException
+   * @throws NumberFormatException
+   */
+  public OnHandQuantityResponse saveOnHandQuantity(OnHandQuantity request, String correlationId)
+      throws GenericServiceException {
+    OnHandQuantityResponse response = new OnHandQuantityResponse();
+    OnHandQuantityDetail.Builder builder = OnHandQuantityDetail.newBuilder();
+    builder.setId(request.getId());
+    builder.setLoadableStudyId(request.getLoadableStudyId());
+    builder.setPortId(request.getPortId());
+    builder.setTankId(request.getTankId());
+    builder.setFuelTypeId(request.getFuelTypeId());
+    Optional.ofNullable(request.getArrivalQuantity())
+        .ifPresent(item -> builder.setArrivalQuantity(valueOf(item)));
+    Optional.ofNullable(request.getArrivalVolume())
+        .ifPresent(item -> builder.setArrivalVolume(valueOf(item)));
+    Optional.ofNullable(request.getDepartureQuantity())
+        .ifPresent(item -> builder.setDepartureQuantity(valueOf(item)));
+    Optional.ofNullable(request.getDepartureVolume())
+        .ifPresent(item -> builder.setDepartureVolume(valueOf(item)));
+    OnHandQuantityReply grpcReply = this.saveOnHandQuantity(builder.build());
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to save on hand quantities",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    response.setId(grpcReply.getId());
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * Call grpc service to save on hand quantity
+   *
+   * @param request
+   * @return
+   */
+  public OnHandQuantityReply saveOnHandQuantity(OnHandQuantityDetail request) {
+    return this.loadableStudyServiceBlockingStub.saveOnHandQuantity(request);
+  }
 }

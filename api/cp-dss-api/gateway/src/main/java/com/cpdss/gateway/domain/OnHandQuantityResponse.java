@@ -19,4 +19,6 @@ public class OnHandQuantityResponse {
   private CommonSuccessResponse responseStatus;
 
   private List<OnHandQuantity> onHandQuantities;
+
+  private Long id;
 }
