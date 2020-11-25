@@ -46,6 +46,7 @@ message VesselLoadableQuantityDetails {
 	string displacmentDraftRestriction = 1;
 	string vesselLightWeight = 2;
 	string constant = 3;
+	string tpc = 4;
 }
 
 message VesselTankDetail{

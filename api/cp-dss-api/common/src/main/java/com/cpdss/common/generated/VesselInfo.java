@@ -3282,6 +3282,19 @@ public final class VesselInfo {
      * @return The bytes for constant.
      */
     com.google.protobuf.ByteString getConstantBytes();
+
+    /**
+     * <code>string tpc = 4;</code>
+     *
+     * @return The tpc.
+     */
+    java.lang.String getTpc();
+    /**
+     * <code>string tpc = 4;</code>
+     *
+     * @return The bytes for tpc.
+     */
+    com.google.protobuf.ByteString getTpcBytes();
   }
   /** Protobuf type {@code VesselLoadableQuantityDetails} */
   public static final class VesselLoadableQuantityDetails
@@ -3300,6 +3313,7 @@ public final class VesselInfo {
       displacmentDraftRestriction_ = "";
       vesselLightWeight_ = "";
       constant_ = "";
+      tpc_ = "";
     }
 
     @java.lang.Override
@@ -3350,6 +3364,13 @@ public final class VesselInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 constant_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                tpc_ = s;
                 break;
               }
             default:
@@ -3491,6 +3512,41 @@ public final class VesselInfo {
       }
     }
 
+    public static final int TPC_FIELD_NUMBER = 4;
+    private volatile java.lang.Object tpc_;
+    /**
+     * <code>string tpc = 4;</code>
+     *
+     * @return The tpc.
+     */
+    public java.lang.String getTpc() {
+      java.lang.Object ref = tpc_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        tpc_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string tpc = 4;</code>
+     *
+     * @return The bytes for tpc.
+     */
+    public com.google.protobuf.ByteString getTpcBytes() {
+      java.lang.Object ref = tpc_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        tpc_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -3514,6 +3570,9 @@ public final class VesselInfo {
       if (!getConstantBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, constant_);
       }
+      if (!getTpcBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, tpc_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -3533,6 +3592,9 @@ public final class VesselInfo {
       }
       if (!getConstantBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, constant_);
+      }
+      if (!getTpcBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, tpc_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -3554,6 +3616,7 @@ public final class VesselInfo {
         return false;
       if (!getVesselLightWeight().equals(other.getVesselLightWeight())) return false;
       if (!getConstant().equals(other.getConstant())) return false;
+      if (!getTpc().equals(other.getTpc())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -3571,6 +3634,8 @@ public final class VesselInfo {
       hash = (53 * hash) + getVesselLightWeight().hashCode();
       hash = (37 * hash) + CONSTANT_FIELD_NUMBER;
       hash = (53 * hash) + getConstant().hashCode();
+      hash = (37 * hash) + TPC_FIELD_NUMBER;
+      hash = (53 * hash) + getTpc().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -3719,6 +3784,8 @@ public final class VesselInfo {
 
         constant_ = "";
 
+        tpc_ = "";
+
         return this;
       }
 
@@ -3751,6 +3818,7 @@ public final class VesselInfo {
         result.displacmentDraftRestriction_ = displacmentDraftRestriction_;
         result.vesselLightWeight_ = vesselLightWeight_;
         result.constant_ = constant_;
+        result.tpc_ = tpc_;
         onBuilt();
         return result;
       }
@@ -3816,6 +3884,10 @@ public final class VesselInfo {
         }
         if (!other.getConstant().isEmpty()) {
           constant_ = other.constant_;
+          onChanged();
+        }
+        if (!other.getTpc().isEmpty()) {
+          tpc_ = other.tpc_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -4073,6 +4145,82 @@ public final class VesselInfo {
         checkByteStringIsUtf8(value);
 
         constant_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object tpc_ = "";
+      /**
+       * <code>string tpc = 4;</code>
+       *
+       * @return The tpc.
+       */
+      public java.lang.String getTpc() {
+        java.lang.Object ref = tpc_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          tpc_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string tpc = 4;</code>
+       *
+       * @return The bytes for tpc.
+       */
+      public com.google.protobuf.ByteString getTpcBytes() {
+        java.lang.Object ref = tpc_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          tpc_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string tpc = 4;</code>
+       *
+       * @param value The tpc to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTpc(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        tpc_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tpc = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTpc() {
+
+        tpc_ = getDefaultInstance().getTpc();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tpc = 4;</code>
+       *
+       * @param value The bytes for tpc to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTpcBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        tpc_ = value;
         onChanged();
         return this;
       }
@@ -7074,25 +7222,26 @@ public final class VesselInfo {
           + "me\030\002 \001(\t\022\021\n\tcaptainId\030\003 \001(\003\022\026\n\016cheifOffi"
           + "cerId\030\004 \001(\003\022\021\n\timoNumber\030\005 \001(\t\022\014\n\004flag\030\006"
           + " \001(\t\022\021\n\tcharterer\030\007 \001(\t\022\"\n\tloadLines\030\010 \003"
-          + "(\0132\017.LoadLineDetail\"q\n\035VesselLoadableQua"
+          + "(\0132\017.LoadLineDetail\"~\n\035VesselLoadableQua"
           + "ntityDetails\022#\n\033displacmentDraftRestrict"
           + "ion\030\001 \001(\t\022\031\n\021vesselLightWeight\030\002 \001(\t\022\020\n\010"
-          + "constant\030\003 \001(\t\"\251\001\n\020VesselTankDetail\022\016\n\006t"
-          + "ankId\030\001 \001(\003\022\026\n\016tankCategoryId\030\002 \001(\003\022\030\n\020t"
-          + "ankCategoryName\030\003 \001(\t\022\020\n\010tankName\030\004 \001(\t\022"
-          + "\027\n\017frameNumberFrom\030\005 \001(\t\022\025\n\rframeNumberT"
-          + "o\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t\"\327\001\n\013VesselRep"
-          + "ly\022\020\n\010vesselId\030\001 \001(\003\022&\n\013vesselTanks\030\002 \003("
-          + "\0132\021.VesselTankDetail\022\'\n\016responseStatus\030\003"
-          + " \001(\0132\017.ResponseStatus\022\036\n\007vessels\030\004 \003(\0132\r"
-          + ".VesselDetail\022E\n\035vesselLoadableQuantityD"
-          + "etails\030\005 \001(\0132\036.VesselLoadableQuantityDet"
-          + "ails2\273\001\n\021VesselInfoService\0228\n\026GetAllVess"
-          + "elsByCompany\022\016.VesselRequest\032\014.VesselRep"
-          + "ly\"\000\0226\n\024GetVesselDetailsById\022\016.VesselReq"
-          + "uest\032\014.VesselReply\"\000\0224\n\022GetVesselFuelTan"
-          + "ks\022\016.VesselRequest\032\014.VesselReply\"\000B\036\n\032co"
-          + "m.cpdss.common.generatedP\000b\006proto3"
+          + "constant\030\003 \001(\t\022\013\n\003tpc\030\004 \001(\t\"\251\001\n\020VesselTa"
+          + "nkDetail\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tankCategory"
+          + "Id\030\002 \001(\003\022\030\n\020tankCategoryName\030\003 \001(\t\022\020\n\010ta"
+          + "nkName\030\004 \001(\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025\n"
+          + "\rframeNumberTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t\""
+          + "\327\001\n\013VesselReply\022\020\n\010vesselId\030\001 \001(\003\022&\n\013ves"
+          + "selTanks\030\002 \003(\0132\021.VesselTankDetail\022\'\n\016res"
+          + "ponseStatus\030\003 \001(\0132\017.ResponseStatus\022\036\n\007ve"
+          + "ssels\030\004 \003(\0132\r.VesselDetail\022E\n\035vesselLoad"
+          + "ableQuantityDetails\030\005 \001(\0132\036.VesselLoadab"
+          + "leQuantityDetails2\273\001\n\021VesselInfoService\022"
+          + "8\n\026GetAllVesselsByCompany\022\016.VesselReques"
+          + "t\032\014.VesselReply\"\000\0226\n\024GetVesselDetailsByI"
+          + "d\022\016.VesselRequest\032\014.VesselReply\"\000\0224\n\022Get"
+          + "VesselFuelTanks\022\016.VesselRequest\032\014.Vessel"
+          + "Reply\"\000B\036\n\032com.cpdss.common.generatedP\000b"
+          + "\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -7134,7 +7283,7 @@ public final class VesselInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselLoadableQuantityDetails_descriptor,
             new java.lang.String[] {
-              "DisplacmentDraftRestriction", "VesselLightWeight", "Constant",
+              "DisplacmentDraftRestriction", "VesselLightWeight", "Constant", "Tpc",
             });
     internal_static_VesselTankDetail_descriptor = getDescriptor().getMessageTypes().get(4);
     internal_static_VesselTankDetail_fieldAccessorTable =

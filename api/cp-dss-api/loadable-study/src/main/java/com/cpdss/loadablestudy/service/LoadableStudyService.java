@@ -150,7 +150,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       // validation for duplicate voyages
       if (!voyageRepository
-          .findByCompanyXIdAndVesselXIdAndVoyageNo(
+          .findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
               request.getCompanyId(), request.getVesselId(), request.getVoyageNo())
           .isEmpty()) {
         reply =
@@ -221,7 +221,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getDisplacmentDraftRestriction()));
         loadableQuantity.setDistanceFromLastPort(
-            new BigDecimal(loadableQuantityRequest.getDistanceFromLastPort()));
+            StringUtils.isEmpty(loadableQuantityRequest.getDistanceFromLastPort())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getDistanceFromLastPort()));
         loadableQuantity.setEstimatedDOOnBoard(
             new BigDecimal(loadableQuantityRequest.getEstDOOnBoard()));
         loadableQuantity.setEstimatedFOOnBoard(
@@ -255,7 +257,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             new BigDecimal(loadableQuantityRequest.getTotalQuantity()));
         loadableQuantity.setTpcatDraft(new BigDecimal(loadableQuantityRequest.getTpc()));
         loadableQuantity.setVesselAverageSpeed(
-            new BigDecimal(loadableQuantityRequest.getVesselAverageSpeed()));
+            StringUtils.isEmpty(loadableQuantityRequest.getVesselAverageSpeed())
+                ? null
+                : new BigDecimal(loadableQuantityRequest.getVesselAverageSpeed()));
 
         loadableQuantity.setPortId(
             StringUtils.isEmpty(loadableQuantityRequest.getPortId())
@@ -980,14 +984,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setVesselLightWeight(
                     vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight())
                 .setConstant(vesselReply.getVesselLoadableQuantityDetails().getConstant())
+                .setTpc(vesselReply.getVesselLoadableQuantityDetails().getTpc())
                 .setDraftRestriction(draftRestictoin)
                 .build();
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
+        builder.setIsSummerZone(true);
+        Optional.ofNullable(loadableStudy.get().getDraftRestriction())
+            .ifPresent(sz -> builder.setIsSummerZone(false));
       } else {
 
         LoadableQuantityRequest.Builder loadableQuantityRequest =
             LoadableQuantityRequest.newBuilder();
+        Optional.ofNullable(loadableQuantity.get(0).getDisplacementAtDraftRestriction())
+            .ifPresent(
+                disp -> loadableQuantityRequest.setDisplacmentDraftRestriction(disp.toString()));
         Optional.ofNullable(loadableQuantity.get(0).getConstant())
             .ifPresent(cons -> loadableQuantityRequest.setConstant(cons.toString()));
         Optional.ofNullable(loadableQuantity.get(0).getDraftRestriction())

@@ -175,7 +175,7 @@ class LoadableStudyServiceTest {
     voyage.setId((long) 1);
 
     Mockito.when(
-            this.voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNo(
+            this.voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
                 ArgumentMatchers.anyLong(),
                 ArgumentMatchers.anyLong(),
                 ArgumentMatchers.anyString()))
@@ -216,7 +216,7 @@ class LoadableStudyServiceTest {
     List<Voyage> voyages = new ArrayList<Voyage>();
     voyages.add(voyage);
     Mockito.when(
-            this.voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNo(
+            this.voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
                 ArgumentMatchers.anyLong(),
                 ArgumentMatchers.anyLong(),
                 ArgumentMatchers.anyString()))

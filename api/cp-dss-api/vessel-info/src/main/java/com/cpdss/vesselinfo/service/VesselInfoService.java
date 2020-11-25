@@ -18,6 +18,7 @@ import com.cpdss.vesselinfo.entity.Vessel;
 import com.cpdss.vesselinfo.entity.VesselChartererMapping;
 import com.cpdss.vesselinfo.entity.VesselDraftCondition;
 import com.cpdss.vesselinfo.entity.VesselTank;
+import com.cpdss.vesselinfo.repository.HydrostaticTableRepository;
 import com.cpdss.vesselinfo.repository.TankCategoryRepository;
 import com.cpdss.vesselinfo.repository.VesselChartererMappingRepository;
 import com.cpdss.vesselinfo.repository.VesselRepository;
@@ -51,6 +52,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired private VesselChartererMappingRepository chartererMappingRepository;
   @Autowired private TankCategoryRepository tankCategoryRepository;
   @Autowired private VesselTankRepository vesselTankRepository;
+  @Autowired private HydrostaticTableRepository hydrostaticTableRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -148,13 +150,19 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               new BigDecimal(request.getDraftExtreme()));
 
       VesselLoadableQuantityDetails.Builder builder = VesselLoadableQuantityDetails.newBuilder();
-
+      List<BigDecimal> tpc =
+          hydrostaticTableRepository.getTPCFromDraf(
+              request.getVesselId(), new BigDecimal(request.getDraftExtreme()), true);
       if (null != vesselDetails) {
         Optional.ofNullable(vesselDetails.getDisplacmentDraftRestriction().toString())
             .ifPresent(builder::setDisplacmentDraftRestriction);
         Optional.ofNullable(vesselDetails.getVesselLightWeight())
             .ifPresent(builder::setVesselLightWeight);
         Optional.ofNullable(vesselDetails.getConstant()).ifPresent(builder::setConstant);
+      }
+      if (!tpc.isEmpty()) {
+        Optional.ofNullable(tpc.get(0))
+            .ifPresent(tpcValue -> builder.setTpc(String.valueOf(tpcValue)));
       }
       replyBuilder.setVesselLoadableQuantityDetails(builder.build());
       replyBuilder.setResponseStatus(

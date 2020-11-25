@@ -164,20 +164,24 @@ public class LoadableStudyService {
     builder.setConstant(loadableQuantity.getConstant());
     Optional.ofNullable(loadableQuantity.getDisplacmentDraftRestriction())
         .ifPresent(builder::setDisplacmentDraftRestriction);
-    builder.setDistanceFromLastPort(loadableQuantity.getDistanceFromLastPort());
+    Optional.ofNullable(loadableQuantity.getDistanceFromLastPort())
+        .ifPresent(builder::setDistanceFromLastPort);
+
     builder.setDwt(loadableQuantity.getDwt());
     builder.setEstDOOnBoard(loadableQuantity.getEstDOOnBoard());
     builder.setEstFOOnBoard(loadableQuantity.getEstFOOnBoard());
     builder.setEstFreshWaterOnBoard(loadableQuantity.getEstFreshWaterOnBoard());
     builder.setEstSagging(loadableQuantity.getEstSagging());
     Optional.ofNullable(loadableQuantity.getEstSeaDensity()).ifPresent(builder::setEstSeaDensity);
-    builder.setFoConsumptionPerDay(loadableQuantity.getFoConsumptionPerDay());
+    Optional.ofNullable(loadableQuantity.getFoConsumptionPerDay())
+        .ifPresent(builder::setFoConsumptionPerDay);
     builder.setOtherIfAny(loadableQuantity.getOtherIfAny());
     builder.setSaggingDeduction(loadableQuantity.getSaggingDeduction());
     Optional.ofNullable(loadableQuantity.getSgCorrection()).ifPresent(builder::setSgCorrection);
     builder.setTotalQuantity(loadableQuantity.getTotalQuantity());
     builder.setTpc(loadableQuantity.getTpc());
-    builder.setVesselAverageSpeed(loadableQuantity.getVesselAverageSpeed());
+    Optional.ofNullable(loadableQuantity.getVesselAverageSpeed())
+        .ifPresent(builder::setVesselAverageSpeed);
     Optional.ofNullable(loadableQuantity.getVesselLightWeight())
         .ifPresent(builder::setVesselLightWeight);
     Optional.ofNullable(loadableQuantity.getPortId()).ifPresent(builder::setPortId);
