@@ -104,7 +104,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   async createNewLoadableStudyFormGroup() {
     this.newLoadableStudyFormGroup = this.formBuilder.group({
       duplicateExisting: '',
-      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100), Validators.pattern('\S+')]),
+      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100), Validators.pattern(/^\S+/)]),
       enquiryDetails: this.formBuilder.control('', [Validators.maxLength(1000)]),
       attachMail: null,
       charterer: this.vesselInfoList?.charterer,
@@ -192,7 +192,12 @@ export class NewLoadableStudyPopupComponent implements OnInit {
             continue;
           } else {
             this.showError = false;
-            uploadFile.push(uploadedFileVar[i]);
+            if(uploadFile.length < 5){
+              uploadFile.push(uploadedFileVar[i]);
+            }else{
+              this.showError = true;
+              this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_LIMIT_ERROR"
+            }   
           }
         } else {
           this.showError = true;
@@ -228,6 +233,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   closeDialog() {
     this.newLoadableStudyFormGroup.reset();
     this.displayPopup.emit(false);
+    this.uploadError = "";
     this.getVesselInfo();
   }
 
