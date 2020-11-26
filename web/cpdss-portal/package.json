@@ -9,7 +9,7 @@
     "build:login:ship:test": "ng build -c ship-test --project login",
     "start:login:shore": "ng serve -c shore-development --port 9002 --project login",
     "build:login:shore": "ng build -c shore-production --project login",
-    "build:login:shore:test": "ng build -c shore-production --project login",
+    "build:login:shore:test": "ng build -c shore-test --project login",
     "start:cpdss:ship": "ng serve -c ship-development --port 9003 --project cpdss",
     "build:cpdss:ship": "ng build -c ship-production --project cpdss",
     "build:cpdss:ship:test": "ng build -c ship-test --project cpdss",
@@ -84,12 +84,16 @@
     "@nrwl/cypress": "10.2.1",
     "@nrwl/jest": "10.2.1",
     "@nrwl/workspace": "10.2.1",
+    "@types/dockerode": "^3.2.1",
     "@types/jest": "26.0.8",
     "@types/node": "~8.9.4",
     "codelyzer": "~5.0.1",
+    "copyfiles": "^2.4.0",
     "cypress": "^4.1.0",
+    "dockerode": "^3.2.1",
     "dotenv": "6.2.0",
     "eslint": "6.8.0",
+    "gulp": "^4.0.2",
     "jest": "26.2.2",
     "jest-preset-angular": "8.3.1",
     "ngx-translate-testing": "^5.0.0",
@@ -97,6 +101,7 @@
     "ts-jest": "26.1.4",
     "ts-node": "~7.0.0",
     "tslint": "~6.0.0",
-    "typescript": "~3.9.7"
+    "typescript": "~3.9.7",
+    "yargs": "^16.1.1"
   }
 }
