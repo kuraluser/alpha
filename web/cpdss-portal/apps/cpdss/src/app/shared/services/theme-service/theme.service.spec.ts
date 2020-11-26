@@ -7,7 +7,6 @@ describe('ThemeService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    providers: [ThemeService]
     service = TestBed.inject(ThemeService);
   });
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { IAppConfiguration } from './app-configuration.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { IDictionary } from '../../models/common.model';
 
 /**
  * SERVICE FOR APP CONFIG
@@ -21,11 +22,11 @@ export class AppConfigurationService {
    */
   async load(): Promise<IAppConfiguration> {
     const jsonFile = `assets/config/config.${environment.name}.${environment.production ? 'prod' : 'dev'}.json`;
-    let result: IAppConfiguration;
     try {
-      result = (await this.http.get(jsonFile).toPromise()) as IAppConfiguration;
+      const result: IAppConfiguration = (await this.http.get(jsonFile).toPromise()) as IAppConfiguration;
       AppConfigurationService.settings = result;
-      return result;
+      result.permissionMapping = <IDictionary<string>>await this.http.get(`assets/config/permission-mapping.config.json`).toPromise();
+      return AppConfigurationService.settings;
     }
     catch (e) {
       console.error(e);

@@ -1,0 +1,11 @@
+
+.content-outer{
+    height: calc(100vh - 200px);
+    display: grid;
+    width: 100%;
+    grid-template-columns: 220px calc(100% - 220px);
+}
+
+a.disabled {
+    pointer-events: none;
+}

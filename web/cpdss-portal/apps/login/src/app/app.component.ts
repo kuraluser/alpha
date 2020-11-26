@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
+import { ThemeService } from './shared/services/theme-service/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -7,10 +9,22 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  isToggle: boolean = true;
+  darkMode$: Observable<boolean>;
 
-  constructor(private translateService: TranslateService) {
+  constructor(private translateService: TranslateService, private themeService: ThemeService) {
     this.initLanguageTranslator();
   }
+
+   /**
+   * Change theme on button click
+   */
+  setDarkMode() {
+    this.isToggle = !this.isToggle;
+    this.themeService.setDarkMode(this.isToggle);
+  }
+
+
 
   /**
    * INITIALISE TRANSLATION SERVICE

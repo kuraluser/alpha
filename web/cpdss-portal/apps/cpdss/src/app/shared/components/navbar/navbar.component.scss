@@ -75,7 +75,6 @@ header {
 
         .menu-item-text {
             text-align: center;
-            color: #cbeefd;
             font-size: 9px;
             text-transform: uppercase;
         }
@@ -95,48 +94,40 @@ a {
 
     &.status {
         &:before {
-            background: url("../../../../assets/images/menu-icons/status-icon.png") no-repeat;
             background-position: center center;
         }
 
         &:after {
-            background: url("../../../../assets/images/menu-icons/status-icon-hover.png") no-repeat;
             background-position: center center;
         }
     }
 
     &.cargo-planning {
         &:before {
-            background: url("../../../../assets/images/menu-icons/cargo-planning.png") no-repeat;
             background-position: center center;
         }
 
         &:after {
-            background: url("../../../../assets/images/menu-icons/cargo-planning-hover.png") no-repeat;
             background-position: center center;
         }
     }
 
     &.voyages {
         &:before {
-            background: url("../../../../assets/images/menu-icons/voyage-icon.png") no-repeat;
             background-position: center center;
         }
 
         &:after {
-            background: url("../../../../assets/images/menu-icons/voyage-icon-hover.png") no-repeat;
             background-position: center center;
         }
     }
 }
 
 header .header-nav .nav li.active {
-    background-image: url("../../../../assets/images/menu-icons/nav_selected.png");
     background-size: 100% 100%;
 }
 
 .sign-in-icon {
-    background: url("../../../../assets/images/menu-icons/user-icon.png") no-repeat;
 
 }
 

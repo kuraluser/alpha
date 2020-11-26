@@ -1,2 +1,903 @@
 @import 'theme-dark-variables.scss';
-html, body {  background-color:$background; color: $color; }
+
+body{
+    background: $body-bg;
+    color: $text-primary;
+}
+
+.plus-icon-rounded {
+     background: url($images-theme + 'plus-rounded-icon.png') no-repeat;
+}
+
+.pencil-icon {
+    background: url($images-theme + 'pencil-icon.png') no-repeat;
+  } 
+
+  .btn-link {
+    color: $link-color !important;
+    &:hover {
+      color: $text-secondary !important;
+    }
+  }
+
+  .tab-btn {
+    border-right: 1px solid $tab-border;
+    &.active {
+      background: $border-color;
+    }
+  }
+  .cargo-nomiantion-tab  .tab-btn{
+    color: $text-primary;
+    .tab-status-icon{
+      border: 1px solid $status-border;
+      color: $text-secondary;
+      &:before{
+        display: none;
+      }
+      &.completed{
+        background: $success-bg;
+        &:before{
+          display: inline-block;
+        }
+      }
+    }
+    
+  }
+
+  .two-column-list-sidebar {
+    border-bottom: 1px solid $border-color;
+    li {
+      &:last-child {
+        color: $text-secondary;
+      }
+    }
+  
+    &.heading {
+      border-bottom: 2px solid $border-color;
+      li {
+        color: $text-secondary;
+      }
+    }
+  }
+  
+
+  .tank-outer {
+    .tank-inner-wrapper {
+      background: url($images-theme + 'ship-tank-area.png') no-repeat;
+      >div {
+        >div {
+          >div {
+            background: $tank-bg;
+            border: 1px solid $tank-border;
+            .tank-info {
+              color: $text-secondary;
+            }
+          }
+        }
+      }
+    }
+  
+    &:after {
+      background: url($images-theme + 'ship-tank-rear.png') no-repeat;
+    }
+  
+    &:before {
+      background: url($images-theme + 'ship-tank-front.png') no-repeat;
+    }
+  }
+
+  .tank-info-btn {
+    border: 1px solid $tank-bg;
+    background: $tank-btn;
+  }
+  
+  .secondary-text {
+    color: $text-secondary;
+  }
+
+  
+a {
+    color: $link-text;
+    &:hover {
+      color: $text-secondary;
+    }
+  }
+
+  .menu-item-icon {
+    &.status {
+        &:before {
+            background: url($images-menu-icons + 'status-icon.png') no-repeat;
+        }
+
+        &:after {
+            background: url($images-menu-icons + 'status-icon-hover.png') no-repeat;
+        }
+    }
+
+    &.cargo-planning {
+        &:before {
+            background: url($images-menu-icons + 'cargo-planning.png') no-repeat;
+        }
+
+        &:after {
+            background: url($images-menu-icons + 'cargo-planning-hover.png') no-repeat;
+        }
+    }
+
+    &.voyages {
+        &:before {
+            background: url($images-menu-icons + 'voyage-icon.png') no-repeat;
+        }
+
+        &:after {
+            background: url($images-menu-icons + 'voyage-icon-hover.png') no-repeat;
+        }
+    }
+}
+
+header .header-nav .nav li.active {
+    background-image: url($images-menu-icons + 'nav_selected.png');
+}
+
+.sign-in-icon {
+    background: url($images-menu-icons + 'user-icon.png') no-repeat;
+
+}
+.p-dialog {
+  background:$body-bg;
+    border: 1px solid $outline-border;
+    .p-dialog-header{
+        background: $body-bg;
+        color:$heading-color;
+    }
+    .p-dialog-content {
+        color: $text-primary;
+        background: $body-bg;
+    }
+    .p-dialog-footer{
+      background: none;
+      border-top: 1px solid $tab-border;
+    }
+    
+}
+.p-dialog-mask.p-component-overlay {
+  background-color: rgba($body-bg, 0.4);
+}
+
+.form-control{
+  background: $text-area-bg;
+  color: $text-secondary;
+  &:focus{
+    background: $text-area-bg;
+    color: $text-secondary;
+  }
+}
+
+hr{
+  border-top: 1px solid $tab-border;
+}
+
+.form-control-plaintext {
+  color: $text-primary;
+}
+
+.text-secondary{
+  color: $text-secondary!important;
+}
+.btn{
+  color: $link-color;
+  &.btn-main{
+    border: 1px solid $outline-border;
+    &:hover{
+      color: $text-secondary;
+    }
+  }
+}
+.text-danger{
+  color:$red!important;
+}
+.logo{
+  background: url($images-theme + 'logo.png') no-repeat left center
+}
+.menu-item-text{
+  color: $link-color;
+}
+.vessel-info{
+  background: $card-bg;
+  h5{
+     color: $heading-color;
+  }
+}
+.dropdown-menu{
+  background:$dropdown-bg;
+  .dropdown-item{
+   color: $text-primary;
+    &:hover, &:focus{
+      background:$dropdown-menu-hover-bg;
+      color: $text-secondary;
+    }
+  }
+}
+
+.main-head{
+  color: $heading-color;
+}
+.p-datatable .p-datatable-thead{ 
+  border-bottom: 1px solid $table-border;
+  > tr > th{
+  color: $text-secondary;
+  border: 0;
+}
+}
+.p-datatable.p-datatable-hoverable-rows .p-datatable-tbody > tr:not(.p-highlight):hover{
+  color: $text-secondary;
+}
+.p-datatable .p-datatable-tbody > tr{
+  color: $text-primary;
+  &:hover{
+    background: $dropdown-menu-hover-bg!important;
+  }
+}
+.p-datatable .p-datatable-tbody > tr > td{
+  border-bottom: 1px solid $table-border;
+}
+
+.p-column-filter{
+  border-bottom: 1px solid $table-textarea-border;
+  color: $text-primary;
+  &:hover{
+    border-color:  $table-textarea-border;
+  }
+  &:enabled:focus, &:enabled:hover{
+    border-color:  $table-textarea-border;
+  }
+}
+
+.p-column-filter .p-inputtext{
+  color: $text-primary;
+  &:hover{
+    border-color:  $table-textarea-border;
+  }
+  &:enabled:focus, &:enabled:hover{
+    border-color:  $table-textarea-border;
+  }
+}
+
+::-webkit-input-placeholder { /* Edge */
+  color: $text-primary;
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: $text-primary;
+}
+
+::placeholder {
+  color: $text-primary;
+}
+
+.p-dropdown{
+  border-bottom: 1px solid $table-textarea-border;
+  &:not(.p-disabled).p-focus{
+    border-bottom: 1px solid $table-textarea-border;
+  }
+  &:not(.p-disabled):hover{
+    border-bottom: 1px solid $table-textarea-border;
+  }
+  .p-dropdown-trigger{
+    color: $text-primary;
+  }
+}
+
+.p-dropdown-panel{
+  background:$dropdown-bg;
+  max-width: 250px;
+  .p-dropdown-item{
+    background: $dropdown-bg!important;
+    color: $text-primary!important;
+    &:hover{
+      background:$dropdown-menu-hover-bg!important;
+      color: $text-secondary!important;
+    }
+  }
+}
+
+.p-datepicker:not(.p-datepicker-inline){
+  background:$dropdown-bg;
+}
+.p-datepicker:not(.p-datepicker-inline) .p-datepicker-header{
+  background:$dropdown-bg;
+}
+.p-datepicker .p-datepicker-header{
+  border-color: $table-border;
+  color: $text-secondary!important;
+}
+.p-datepicker .p-datepicker-buttonbar{
+  border-color: $table-border;
+}
+.p-datepicker:not(.p-disabled) table td span:not(.p-highlight):not(.p-disabled):hover{
+  background: $dropdown-bg!important;
+  color: $text-primary!important;
+}
+.p-datepicker{
+  color: $text-primary!important;
+}
+.p-datepicker:not(.p-disabled) table td span:not(.p-highlight):not(.p-disabled):hover{
+  background:$dropdown-menu-hover-bg!important;
+      color: $text-secondary!important;
+}
+.p-datepicker:not(.p-disabled) table td span:not(.p-highlight):not(.p-disabled):focus{
+  box-shadow: none;
+}
+.p-datepicker table td.p-datepicker-today > span{
+  background:$dropdown-menu-hover-bg!important;
+  color: $text-secondary!important;
+}
+.p-button.p-button-text{
+  color: $text-secondary!important;
+}
+
+
+/* Track */
+::-webkit-scrollbar-track {
+  background:$dropdown-bg; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $scrollbar;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $scrollbar; 
+}
+
+.upload-file {
+  border-color: $table-textarea-border;
+  background: url($images-theme + 'attach-icon.png') no-repeat 5px center
+}
+
+.form-control:disabled, .form-control[readonly]{
+  background: $text-area-bg;
+  color: $text-secondary;
+}
+
+.p-inputtext{
+  color: $text-primary;
+}
+
+.text-secondary{
+  color: $text-secondary!important;
+}
+.p-dropdown-filter-container .p-dropdown-filter{
+  background: $text-area-bg;
+  color: $text-secondary;
+}
+
+.grid-dropdown-icon .pi-chevron-down{
+  display: none;
+}
+
+.grid-dropdown-icon .p-splitbutton-menubutton{
+  background: url($images-theme + 'hamburger-menu-icon.png') no-repeat center center;
+  &:hover{
+    background: url($images-theme + 'hamburger-menu-icon.png') no-repeat center center;
+  }
+}
+
+.grid-dropdown-menu{
+  &.p-menu.p-menu-overlay{
+  background: $dropdown-bg!important;
+  color: $text-primary!important;
+  }
+  &.p-menu .p-menuitem-link:not(.p-disabled):hover .p-menuitem-text{
+    color: $text-secondary!important;
+  }
+  .p-menuitem-link .p-menuitem-text{
+    color: $text-primary!important;
+  }
+  &.p-menu .p-menuitem-link:not(.p-disabled):hover{
+    background:$dropdown-menu-hover-bg!important;
+    color: $text-secondary!important;
+  }
+  &.p-menu .p-menuitem-link:focus{
+    box-shadow: none;
+    outline: none;
+  }
+}
+.p-datatable .p-datatable-tbody > tr.p-highlight{
+  color: $text-secondary!important;
+  background:$dropdown-menu-hover-bg!important;
+}
+
+.sidebar{
+  border-right: 1px solid $table-border;
+}
+.icon-status-1{
+  background: url($images-theme + 'sidebar-table-status-1.png') no-repeat center center;
+}
+.icon-status-2{
+  background: url($images-theme + 'sidebar-table-status-2.png') no-repeat center center;
+}
+.icon-api-temp{
+  background: url($images-theme + 'history-icon-api-and-temp.png') no-repeat center center;
+}
+
+.p-multiselect{
+  background: $text-area-bg;
+  color: $text-secondary;
+  .p-multiselect-trigger{
+    color: $text-primary;
+  }
+}
+
+.p-datepicker table{
+  th{
+    color: $text-secondary!important;
+  }
+}
+
+.p-multiselect-panel{
+  .p-multiselect-header{
+    background: $dropdown-bg!important;
+    .p-inputtext{
+      background: $text-area-bg;
+      outline: none !important;
+      border: 0!important;
+      box-shadow: none;
+      min-width: 80px;
+    }
+  }
+  background: $dropdown-bg!important;
+  color: $text-primary!important;
+   .p-multiselect-items .p-multiselect-item{
+     color: $text-primary;
+     &:hover{
+      color: $text-secondary!important;
+      background:$dropdown-menu-hover-bg!important;
+     }
+     &.p-highlight{
+      color: $text-secondary!important;
+      background:$dropdown-menu-hover-bg!important;
+      &:focus{
+        outline: none;
+        box-shadow: none;
+      }
+     }
+   }
+}
+div{
+  outline: none!important;
+}
+
+
+.view-icon{
+  background: url($images-theme + 'view-icon.png') no-repeat center center;
+}
+
+.p-datatable .p-sortable-column.p-highlight:hover .p-sortable-column-icon{
+  color: $text-secondary!important;
+}
+.p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon{
+  color: $text-secondary!important;
+}
+
+.p-datatable .p-sortable-column.p-highlight{
+  color: $text-secondary!important;
+}
+.p-datatable .p-sortable-column:not(.p-highlight):hover{
+  color: $text-secondary!important;
+}
+.p-datatable .p-sortable-column .p-sortable-column-icon{
+  color: $text-secondary!important;
+}
+
+.main-head{
+  color: $heading-color;
+}
+.p-datatable .p-datatable-thead{ 
+  border-bottom: 1px solid $table-border;
+  > tr > th{
+  color: $text-secondary;
+  border: 0;
+}
+}
+.p-datatable.p-datatable-hoverable-rows .p-datatable-tbody > tr:not(.p-highlight):hover{
+  color: $text-secondary;
+}
+.p-datatable .p-datatable-tbody > tr{
+  color: $text-primary;
+  &:hover{
+    background: $dropdown-menu-hover-bg!important;
+  }
+}
+.p-datatable .p-datatable-tbody > tr > td{
+  border-bottom: 1px solid $table-border;
+}
+
+.p-column-filter{
+  border-bottom: 1px solid $table-textarea-border;
+  color: $text-primary;
+  &:hover{
+    border-color:  $table-textarea-border;
+  }
+  &:enabled:focus, &:enabled:hover{
+    border-color:  $table-textarea-border;
+  }
+  &.p-calendar .p-inputtext{
+    background: none!important;
+    height: 19px;
+  }
+}
+
+.p-column-filter .p-inputtext{
+  color: $text-primary;
+  &:hover{
+    border-color:  $table-textarea-border;
+  }
+  &:enabled:focus, &:enabled:hover{
+    border-color:  $table-textarea-border;
+  }
+}
+
+::-webkit-input-placeholder { /* Edge */
+  color: $text-primary;
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: $text-primary;
+}
+
+::placeholder {
+  color: $text-primary;
+}
+
+.p-dropdown{
+  border-bottom: 1px solid $table-textarea-border;
+  &:not(.p-disabled).p-focus{
+    border-bottom: 1px solid $table-textarea-border;
+  }
+  &:not(.p-disabled):hover{
+    border-bottom: 1px solid $table-textarea-border;
+  }
+  .p-dropdown-trigger{
+    color: $text-primary;
+  }
+}
+
+.p-dropdown-panel{
+  background:$dropdown-bg;
+  max-width: 250px;
+  .p-dropdown-item{
+    background: $dropdown-bg!important;
+    color: $text-primary!important;
+    &:hover{
+      background:$dropdown-menu-hover-bg!important;
+      color: $text-secondary!important;
+    }
+  }
+}
+
+.p-datepicker:not(.p-datepicker-inline){
+  background:$dropdown-bg;
+}
+.p-datepicker:not(.p-datepicker-inline) .p-datepicker-header{
+  background:$dropdown-bg;
+}
+.p-datepicker .p-datepicker-header{
+  border-color: $table-border;
+  color: $text-secondary!important;
+}
+.p-datepicker .p-datepicker-buttonbar{
+  border-color: $table-border;
+}
+.p-datepicker:not(.p-disabled) table td span:not(.p-highlight):not(.p-disabled):hover{
+  background: $dropdown-bg!important;
+  color: $text-primary!important;
+}
+.p-datepicker{
+  color: $text-primary!important;
+}
+.p-datepicker:not(.p-disabled) table td span:not(.p-highlight):not(.p-disabled):hover{
+  background:$dropdown-menu-hover-bg!important;
+      color: $text-secondary!important;
+}
+.p-datepicker:not(.p-disabled) table td span:not(.p-highlight):not(.p-disabled):focus{
+  box-shadow: none;
+}
+.p-datepicker table td.p-datepicker-today > span{
+  background:$dropdown-menu-hover-bg!important;
+  color: $text-secondary!important;
+}
+.p-button.p-button-text{
+  color: $text-secondary!important;
+}
+
+
+/* Track */
+::-webkit-scrollbar-track {
+  background:$dropdown-bg; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $scrollbar;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $scrollbar; 
+}
+
+.upload-file {
+  border-color: $table-textarea-border;
+  background: url($images-theme + 'attach-icon.png') no-repeat 5px center
+}
+
+.form-control:disabled, .form-control[readonly]{
+  background: $text-area-bg;
+  color: $text-secondary;
+}
+
+.p-inputtext{
+  color: $text-primary;
+}
+
+.text-secondary{
+  color: $text-secondary!important;
+}
+.p-dropdown-filter-container .p-dropdown-filter{
+  background: $text-area-bg;
+  color: $text-secondary;
+}
+
+.grid-dropdown-icon .pi-chevron-down{
+  display: none;
+}
+
+.grid-dropdown-icon .p-splitbutton-menubutton{
+  background: url($images-theme + 'hamburger-menu-icon.png') no-repeat center center;
+  &:hover{
+    background: url($images-theme + 'hamburger-menu-icon.png') no-repeat center center;
+  }
+}
+
+.grid-dropdown-menu{
+  &.p-menu.p-menu-overlay{
+  background: $dropdown-bg!important;
+  color: $text-primary!important;
+  }
+  &.p-menu .p-menuitem-link:not(.p-disabled):hover .p-menuitem-text{
+    color: $text-secondary!important;
+  }
+  .p-menuitem-link .p-menuitem-text{
+    color: $text-primary!important;
+  }
+  &.p-menu .p-menuitem-link:not(.p-disabled):hover{
+    background:$dropdown-menu-hover-bg!important;
+    color: $text-secondary!important;
+  }
+  &.p-menu .p-menuitem-link:focus{
+    box-shadow: none;
+    outline: none;
+  }
+}
+.p-datatable .p-datatable-tbody > tr.p-highlight{
+  color: $text-secondary!important;
+  background:$dropdown-menu-hover-bg!important;
+}
+
+.sidebar{
+  border-right: 1px solid $table-border;
+}
+.icon-status-1{
+  background: url($images-theme + 'sidebar-table-status-1.png') no-repeat center center;
+}
+.icon-status-2{
+  background: url($images-theme + 'sidebar-table-status-2.png') no-repeat center center;
+}
+.icon-api-temp{
+  background: url($images-theme + 'history-icon-api-and-temp.png') no-repeat center center;
+}
+
+.p-multiselect{
+  background: $text-area-bg;
+  color: $text-secondary;
+  .p-multiselect-trigger{
+    color: $text-primary;
+  }
+}
+
+.p-datepicker table{
+  th{
+    color: $text-secondary!important;
+  }
+}
+
+.p-multiselect-panel{
+  .p-multiselect-header{
+    background: $dropdown-bg!important;
+    .p-inputtext{
+      background: $text-area-bg;
+      outline: none !important;
+      border: 0!important;
+      box-shadow: none;
+      min-width: 80px;
+    }
+  }
+  background: $dropdown-bg!important;
+  color: $text-primary!important;
+   .p-multiselect-items .p-multiselect-item{
+     color: $text-primary;
+     &:hover{
+      color: $text-secondary!important;
+      background:$dropdown-menu-hover-bg!important;
+     }
+     &.p-highlight{
+      color: $text-secondary!important;
+      background:$dropdown-menu-hover-bg!important;
+      &:focus{
+        outline: none;
+        box-shadow: none;
+      }
+     }
+   }
+}
+div{
+  outline: none!important;
+}
+
+
+.view-icon{
+  background: url($images-theme + 'view-icon.png') no-repeat center center;
+}
+
+.delete-icon{
+  background: url($images-theme + 'delete-icon.png') no-repeat center center;
+}
+
+.p-datatable .p-sortable-column.p-highlight:hover .p-sortable-column-icon{
+  color: $text-secondary!important;
+}
+.p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon{
+  color: $text-secondary!important;
+}
+
+.p-datatable .p-sortable-column.p-highlight{
+  color: $text-secondary!important;
+}
+.p-datatable .p-sortable-column:not(.p-highlight):hover{
+  color: $text-secondary!important;
+}
+.p-datatable .p-sortable-column .p-sortable-column-icon{
+  color: $text-secondary!important;
+}
+
+.sidebar-collapse-btn{
+  background: url($images-theme + 'sidebar-collapse-button.jpg') no-repeat center center;
+}
+.error-icon{
+  background: $validation-icon-bg;
+  color: $text-secondary;
+}
+.cargo-nomination-table{
+  .p-datatable-thead{
+    tr{
+      th{
+        background: $body-bg!important;
+      }
+    }
+  }
+}
+a{
+  color: $link-color !important;
+  &:hover{
+    color: $text-secondary !important;
+  }
+}
+.p-calendar .p-inputtext{
+  background: $text-area-bg!important;
+  color: $text-primary!important;
+}
+
+.tanks-inner-wrapper-ohq{
+  border: 2px solid $tank-ohq-border;  
+}
+
+.badge-custom{
+  color: $text-secondary;
+}
+.tanks-inner-outer-ohq{
+  border-color: $tank-ohq-border;  
+  .tanks-column-ohq{
+    >div{
+      border-color: $tank-ohq-border;  
+      .tank-name{
+        color: $text-secondary;
+      }
+    }
+  }
+}
+
+.rear-tank-wrapper-ohq{ 
+  border-left:2px solid $tank-ohq-border;
+  > div{
+  .tank-name{
+    color: $text-secondary;
+  }
+}
+}
+.tank-outer-ohq{
+  .rear-top-ohq{
+    border-top: 25px solid $tank-ohq-border;
+    &:after{
+      border-top: 25px solid $body-bg;
+    }
+  }
+  .rear-bottom-ohq{
+    border-bottom: 25px solid $tank-ohq-border;
+    &:after{
+      border-bottom: 25px solid $body-bg;
+    }
+  }
+}
+
+
+.port-list{
+  li{
+      &:after{
+          background: url($images-theme + 'arrow-right.png') no-repeat center center;
+      }
+      &.active{
+        background: $login-btn;
+        color: $text-secondary;
+      }
+  }
+}
+.loadable-quantity-pop-up{ 
+ 
+.row.form-group{
+    border-bottom:1px solid $border-color;
+    margin: 0;
+  }
+}
+.header-right-content{
+  color: $text-primary;
+}
+.header-info-pop-up{
+  color: $text-secondary;
+}
+
+.info-icon{
+  border: 1px solid $text-secondary;
+}
+
+.p-toast .p-toast-message.p-toast-message-error .p-toast-message-icon, .p-toast .p-toast-message.p-toast-message-error .p-toast-icon-close{
+  color: $red;
+}
+.p-toast .p-toast-message.p-toast-message-error{
+  color: $red;
+  border-color: $red;
+  background: $card-bg;
+} 
+.p-toast-icon-close-icon {
+  color: $text-primary; 
+} 
+
+.loadable-quantity-pop-up{ 
+ 
+.row.form-group{
+    border-bottom:1px solid $border-color;
+    margin: 0;
+  }
+}
+.header-right-content{
+  color: $text-primary;
+}
+.header-info-pop-up{
+  color: $text-secondary;
+}
+
+.info-icon{
+  border: 1px solid $text-secondary;
+}

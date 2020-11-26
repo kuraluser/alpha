@@ -1,3 +1,17 @@
 <div class="container-fluid">
-    <p>voyage-status works!</p>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col vessel-info-wrapper">
+
+                <cpdss-portal-vessel-info *ngIf="vesselInfo" [vesselDetails]="vesselInfo"></cpdss-portal-vessel-info>
+            </div>
+            <div class="col">
+                <a class="btn btn-link icon-btn plus-icon-rounded" (click)="showDialog()"
+                    id="show-popup">{{'NEW_VOYAGE_BUTTON_VOYAGE_STATUS' | translate}}</a>
+            </div>
+        </div>
+        <cpdss-portal-new-voyage-popup [vesselDetails]="vesselInfo" *ngIf="display && vesselInfo"
+            (displayPopUp)="displayPopUpTab($event)">
+        </cpdss-portal-new-voyage-popup>
+    </div>
 </div>

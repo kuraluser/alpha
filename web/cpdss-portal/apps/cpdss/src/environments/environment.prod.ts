@@ -1,4 +1,6 @@
 export const environment = {
   production: true,
-  name: 'dev'
+  name: 'dev',
+  uriPath: 'api/cloud/'
+  
 };

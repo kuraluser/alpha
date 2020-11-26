@@ -1,0 +1,17 @@
+
+
+.upload-file-name {
+    position: absolute;
+    padding: 3px 10px;
+    width: 80%;
+    display: none;
+}
+
+.file-name{
+    white-space: nowrap;
+    max-width: 102px;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    text-overflow: ellipsis;
+}

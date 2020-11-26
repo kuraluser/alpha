@@ -1,0 +1,60 @@
+<p-dialog header="{{vesselDetails?.name}} - {{'NEW_VOYAGE_POPUP_HEADER' | translate}}" [(visible)]="showPopUp"
+  styleClass="new-voayge-pop-up" [closable]="false" [draggable]="false" [modal]="true">
+  <form [formGroup]="newVoyageForm" (submit)="onSubmit()" *ngIf="newVoyageForm">
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+
+          <div class="form-group row">
+            <label for="captain_name" class="col-md-6 col-form-label text-secondary">{{'CAPTAIN' | translate}}</label>
+            <div class="col-md-6">
+              <input type="text" readonly class="form-control-plaintext" formControlName="captain" id="captain_name">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="chief_name"
+              class="col-md-6 col-form-label text-secondary">{{'CHIEF_OFFICER' | translate}}</label>
+            <div class="col-md-6">
+              <input type="text" readonly class="form-control-plaintext" formControlName="chiefOfficer" id="chief_name">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="voyage_no" class="col-md-6 col-form-label text-secondary">{{'VOYAGE_NO' | translate}}</label>
+            <div class="col-md-6">
+              <input type="text" class="form-control" id="voyage_no" formControlName="voyageNo" (change)="trimVoyageNo($event)">
+              <div *ngIf="!newVoyageFormControl.voyageNo.valid && newVoyageFormControl.voyageNo.touched"
+                class="pt-5 text-danger">
+                <span *ngIf="newVoyageFormControl.voyageNo.errors?.required">
+                  {{ 'VOYAGE_POPUP_VOYAGE_NO_REQUIRED_ERROR' | translate}} </span>
+                <span *ngIf="newVoyageFormControl.voyageNo.errors?.pattern">
+                  {{ 'NEW_VOYAGE_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED' | translate }}</span>
+                <span *ngIf="newVoyageFormControl.voyageNo.errors?.maxlength">
+                  {{ 'NEW_VOYAGE_POPUP_CHARACTER_LIMIT' | translate }} </span>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div *ngIf="isSubmitted && newVoyageForm.valid && isExisting" class="pt-5 text-danger">
+                {{'NEW_VOYAGE_ALREADY_EXIST' | translate}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+  <p-footer>
+    <div class="row">
+      <div class="col text-right">
+        <button class="btn btn-main mr-10" id="voyage_popup_cancel"
+          (click)="cancel()">{{ 'CANCEL_BUTTON_NEW_VOYAGE_POPUP' | translate }}</button>
+        <button class="btn btn-main" type="submit" id="voyage_popup_submit"
+          (click)="saveNewVoyagePopup()">{{ 'SAVE_BUTTON_NEW_VOYAGE_POPUP' | translate }}</button>
+      </div>
+    </div>
+
+  </p-footer>
+</p-dialog>

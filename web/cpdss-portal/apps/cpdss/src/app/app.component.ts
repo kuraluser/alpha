@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -8,12 +8,13 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class AppComponent {
 
+
   constructor(private translateService: TranslateService) {
     this.initLanguageTranslator();
   }
 
   /**
-   * INITIALISE TRANSLATION SERVICE
+   * Initialize translation service
    */
   initLanguageTranslator(): void {
     const language = localStorage.getItem('language');

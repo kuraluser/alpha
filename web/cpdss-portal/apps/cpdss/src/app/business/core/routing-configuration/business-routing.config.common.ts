@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { VoyageStatusComponent } from '../../voyage-status/voyage-status.component';
 
 export class BusinessRoutingCommonConfig {
     static getRoutesForEnvironment(): Routes {
@@ -13,7 +12,7 @@ export class BusinessRoutingCommonConfig {
                 path: 'cargo-planning',
                 loadChildren: () => import('../../cargo-planning/cargo-planning.module').then(m => m.CargoPlanningModule)
             },
-            { path: 'operations', loadChildren: () => import('../../operations/operations.module').then(m => m.OperationsModule) },
+            { path: 'operations', loadChildren: () => import('../../operations/operations.module').then(m => m.OperationsModule) }
         ];
     }
 }

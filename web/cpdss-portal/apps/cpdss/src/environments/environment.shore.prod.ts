@@ -1,4 +1,6 @@
 export const environment = {
   production: true,
-  name: 'shore'
+  name: 'shore',
+  uriPath: 'api/cloud/',
+  serviceWorkerScript: 'sw-master.js'
 };
