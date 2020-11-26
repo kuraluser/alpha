@@ -1,82 +1,68 @@
-<p-dialog [(visible)]="display" [draggable]="false" [closable]="false" styleClass="loadable-quantity-pop-up" [responsive]="true">
+<p-dialog [(visible)]="display" [draggable]="false" [closable]="false" styleClass="loadable-quantity-pop-up"
+    [responsive]="true">
     <p-header>
         {{'LOADABLE_QUANTITY' | translate}}
-        <div class="header-right-content" *ngIf="lastUpdatedDateAndTime">{{'LOADABLE_QUANTITY_LAST_UPDATED' | translate }} {{lastUpdatedDateAndTime}}
+        <div class="header-right-content" *ngIf="lastUpdatedDateAndTime">
+            {{'LOADABLE_QUANTITY_LAST_UPDATED' | translate }} {{lastUpdatedDateAndTime}}
             {{'LOADABLE_QUANTITY_TIME' | translate}}</div>
-            <div class="header-info-pop-up"><span class="info-icon mr-5">!</span> {{'LOADABLE_QUANTITY_INFO' | translate}}</div>
+        <div class="header-info-pop-up"><span class="info-icon mr-5">!</span> {{'LOADABLE_QUANTITY_INFO' | translate}}
+        </div>
     </p-header>
     <form [formGroup]="loadableQuantityForm" id="fg_loadableQunatity" (ngSubmit)="onSubmit()"
         *ngIf="loadableQuantityForm">
         <div class="container-fluid">
             <div class="row item-row-wrapper">
-                <div class="col" >
+                <div class="col">
                     <div class="row form-group">
                         <label for="loadable_quantity_port_dropdown"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_PORT_NAME' | translate}}</label>
                         <div class="col dropdown-loadable-wuantity">
-                            <p-dropdown id="loadable_quantity_port_dropdown" styleClass="form-control" [filter]="true" [options]="ports"
-                                formControlName="portName" optionLabel="name"
+                            <p-dropdown id="loadable_quantity_port_dropdown" styleClass="form-control" [filter]="true"
+                                [options]="ports" formControlName="portName" optionLabel="name"
                                 placeholder="{{ 'LOADABLE_QUANTITY_SELECT_PORT_NAME'  | translate }}">
                             </p-dropdown>
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['portName'].valid  && loadableQuantityForm.controls['portName'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['portName'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_PORTNAME_REQUIRED' | translate}} </span>
-                                </div>
-                            </div>
                         </div>
-                        <!-- <div class="col unit-column"></div>
-                        <div class="col error-column"></div> -->
+                        <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('portName')"
+                                [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row  form-group">
                         <label for="loadable_quantity_arrival_max_draft"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_ARRIVAL_MAX_DRAFT' | translate}}</label>
                         <div class="col">
-                            <input type="number" class="form-control" id="loadable_quantity_arrival_max_draft"
-                                formControlName="arrivalMaxDraft" class="form-control" readonly>
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['arrivalMaxDraft'].valid  && loadableQuantityForm.controls['arrivalMaxDraft'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['arrivalMaxDraft'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_ARRIVAL_MAX_DRAFT_REQUIRED' | translate}} </span>
-                                </div>
-                            </div>
+                            <label
+                                id="loadable_quantity_arrival_max_draft">{{getControlLabel('arrivalMaxDraft')}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_M' | translate }}</div>
-                        <!-- <div class="col error-column text-center">!</div> -->
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('arrivalMaxDraft')"
+                                [errorMessages]="errorMesages.arrivalMaxDraft"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group" *ngIf="!isSummerZone">
                         <label for="loadable_quantity_displacement"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_DISPLACEMENT' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_displacement" class="form-control" formControlName="displacement" readonly>
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['displacement'].valid  && loadableQuantityForm.controls['displacement'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['displacement'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_DISPLACEMENT_REQUIRED' | translate}} </span>
-                                </div>
-                            </div>
+                            <label id="loadable_quantity_displacement">{{getControlLabel('displacement')}}</label>
                         </div>
                         <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <!-- <div class="col error-column text-center">!</div> -->
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('displacement')"
+                                [errorMessages]="errorMesages.displacement"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group" *ngIf="!isSummerZone">
                         <label for="loadable_quantity_lwt"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_LWT' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_lwt" class="form-control" formControlName="lwt" readonly>
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['lwt'].valid  && loadableQuantityForm.controls['lwt'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['lwt'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_LWT_REQUIRED' | translate }} </span>
-                                </div>
-                            </div>
+                            <label id="loadable_quantity_lwt">{{getControlLabel('lwt')}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <!-- <div class="error-column text-center">!</div> -->
+                        <div class="error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('lwt')"
+                                [errorMessages]="errorMesages.lwt"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label *ngIf="!isSummerZone" for="loadable_quantity_dwt"
@@ -85,32 +71,25 @@
                             *ngIf="isSummerZone">{{'LOADABLE_QUANTITY_SUMMER_DWT' | translate }}</label>
                         <div class="col">
                             <input type="number" id="loadable_quantity_dwt" class="form-control" formControlName="dwt">
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['dwt'].valid  && loadableQuantityForm.controls['dwt'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['dwt'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_DWT_REQUIRED' | translate }} </span>
-                                </div>
-                            </div>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <!-- <div class="error-column text-center">!</div> -->
+                        <div class="error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('dwt')"
+                                [errorMessages]="errorMesages.dwt"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_tpc"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_TPC' | translate}}</label>
                         <div class="col">
-                            <input type="text" id="loadable_quantity_tpc" class="form-control" formControlName="tpc" readonly> 
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['tpc'].valid  && loadableQuantityForm.controls['tpc'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['tpc'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_TPC_REQUIRED' | translate }} </span>
-                                </div>
-                            </div>
+                            <label id="loadable_quantity_tpc">{{getControlLabel('tpc')}}</label>
+
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_CM' | translate }}</div>
-                        <!-- <div class="error-column text-center">!</div> -->
+                        <div class="error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('tpc')"
+                                [errorMessages]="errorMesages.tpc"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group" *ngIf="!isSummerZone">
                         <label for="loadable_quantity_sea_water_density"
@@ -118,101 +97,75 @@
                         <div class="col">
                             <input type="number" class="form-control" id="loadable_quantity_sea_water_density"
                                 formControlName="estSeaDensity" (change)="getSgCorrectionOnChange()">
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['estSeaDensity'].valid  && loadableQuantityForm.controls['estSeaDensity'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['estSeaDensity'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_SEA_WATER_DENSITTY_REQUIRED' | translate }} </span>
-                                </div>
-                            </div>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <!-- <div class="col error-column text-center">!</div> -->
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('estSeaDensity')"
+                                [errorMessages]="errorMesages.estSeaDensity"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group" *ngIf="!isSummerZone">
                         <label for="loadable_quantity_sg_correction"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SG_CORRECTION' | translate}}</label>
                         <div class="col">
-                            <input type="number" class="form-control" id="loadable_quantity_sg_correction" formControlName="sgCorrection"
-                                readonly>
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['sgCorrection'].valid  && loadableQuantityForm.controls['sgCorrection'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['sgCorrection'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_SG_CORRECTION_REQUIRED' | translate}} </span>
-                                </div>
-                            </div>
+                            <label id="loadable_quantity_sg_correction">{{getControlLabel('sgCorrection')}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <!-- <div class="col error-column text-center">!</div> -->
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('sgCorrection')"
+                                [errorMessages]="errorMesages.sgCorrection"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_estimate_sag"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_ESTIMATE_SAG' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_estimate_sag" class="form-control" formControlName="estimateSag"
-                                (change)="getSagCorrectionOnChange()">
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['estimateSag'].valid  && loadableQuantityForm.controls['estimateSag'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['estimateSag'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_ESTIMATE_SAG_REQUIRED' | translate }} </span>
-                                </div>
-                            </div>
+                            <input type="number" id="loadable_quantity_estimate_sag" class="form-control"
+                                formControlName="estimateSag" (change)="getSagCorrectionOnChange()">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <!-- <div class="col error-column text-center">!</div> -->
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('estimateSag')"
+                                [errorMessages]="errorMesages.estimateSag"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_estimate_sag"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SAG_CORRECTION' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_estimate_sag" class="form-control" formControlName="safCorrection"
-                                readonly>
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['safCorrection'].valid  && loadableQuantityForm.controls['safCorrection'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['safCorrection'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_SAF_CORRECTION_REQUIRED' | translate}} </span>
-                                </div>
-                            </div>
+                            <label id="loadable_quantity_estimate_sag">{{getControlLabel('safCorrection')}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <!-- <div class="col error-column text-center">!</div> -->
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('safCorrection')"
+                                [errorMessages]="errorMesages.safCorrection"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_fo_onboard"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FO_ONBOARD' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_fo_onboard" class="form-control" formControlName="foOnboard"
-                                (change)="getSubTotal()">
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['foOnboard'].valid  && loadableQuantityForm.controls['foOnboard'].touched">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['foOnboard'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_FO_ONBOARD_REQUIRED' | translate}} </span>
-                                </div>
-                            </div>
+                            <input type="number" id="loadable_quantity_fo_onboard" class="form-control"
+                                formControlName="foOnboard" (change)="getSubTotal()">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <!-- <div class="col error-column text-center">!</div> -->
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('foOnboard')"
+                                [errorMessages]="errorMesages.foOnboard"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_do_onboard"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_DO_ONBOARD' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_do_onboard" class="form-control" formControlName="doOnboard"
-                                (change)="getSubTotal()">
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['doOnboard'].valid  && loadableQuantityForm.controls['doOnboard'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['doOnboard'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_DO_ONBOARD_REQUIRED' | translate }} </span>
-                                </div>
-                            </div>
+                            <input type="number" id="loadable_quantity_do_onboard" class="form-control"
+                                formControlName="doOnboard" (change)="getSubTotal()">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <!-- <div class="col error-column text-center">!</div> -->
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('doOnboard')"
+                                [errorMessages]="errorMesages.doOnboard"></cpdss-portal-validation-error>
+                        </div>
                     </div>
 
                     <div class="row form-group">
@@ -221,16 +174,12 @@
                         <div class="col">
                             <input type="number" class="form-control" id="loadable_quantity_fresh_water_onboard"
                                 formControlName="freshWaterOnboard" (change)="getSubTotal()">
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['freshWaterOnboard'].valid  && loadableQuantityForm.controls['freshWaterOnboard'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['freshWaterOnboard'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_FRESH_WATER_REQUIRED' | translate }} </span>
-                                </div>
-                            </div>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <!-- <div class="col error-column">!</div> -->
+                        <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('freshWaterOnboard')"
+                                [errorMessages]="errorMesages.freshWaterOnboard"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_boiler_water_onboard"
@@ -238,201 +187,168 @@
                         <div class="col">
                             <input type="number" class="form-control" id="loadable_quantity_boiler_water_onboard"
                                 formControlName="boilerWaterOnboard" (change)="getSubTotal()">
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['boilerWaterOnboard'].valid  && loadableQuantityForm.controls['boilerWaterOnboard'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['boilerWaterOnboard'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_BOILER_WATER_ONBOARD_REQUIRED' | translate}} </span>
-                                </div>
-                            </div>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <!-- <div class="col error-column text-center">!</div> -->
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('boilerWaterOnboard')"
+                                [errorMessages]="errorMesages.boilerWaterOnboard"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_ballast"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_BALLAST' | translate }}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_ballast" class="form-control" formControlName="ballast"
-                                (change)="getSubTotal()">
-                            <div
-                                *ngIf="!loadableQuantityFormControl.ballast.valid  && loadableQuantityFormControl.ballast.touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityFormControl.ballast.errors?.required">
-                                        {{'LOADABLE_QUANTITY_BALLAST_REQUIRED' | translate }} </span>
-                                </div>
-                            </div>
+                            <input type="number" id="loadable_quantity_ballast" class="form-control"
+                                formControlName="ballast" (change)="getSubTotal()">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <!-- <div class="col error-column text-center">!</div> -->
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('ballast')"
+                                [errorMessages]="errorMesages.ballast"></cpdss-portal-validation-error>
+                        </div>
                     </div>
 
                     <div class="row form-group">
                         <label for="loadable_quantity_constant"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_CONSTANT' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_constant" class="form-control" formControlName="constant"
-                                (change)="getSubTotal()" readonly>
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['constant'].valid  && loadableQuantityForm.controls['constant'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['constant'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_CONSTANT_REQUIRED' | translate}} </span>
-                                </div>
-                            </div>
+                            <label id="loadable_quantity_constant">{{getControlLabel('constant')}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <div class="col error-column text-center"></div>
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('constant')"
+                                [errorMessages]="errorMesages.constant"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_others"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_OTHERS' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_others" class="form-control" formControlName="others"
-                                (change)="getSubTotal()">
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['others'].valid  && loadableQuantityForm.controls['others'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['others'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_OTHERS_REQUIRED' | translate }} </span>
-                                </div>
-                            </div>
+                            <input type="number" id="loadable_quantity_others" class="form-control"
+                                formControlName="others" (change)="getSubTotal()">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <div class="col error-column"></div>
+                        <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('others')"
+                                [errorMessages]="errorMesages.others"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_sub_total"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SUB_TOTAL' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_sub_total" class="form-control" formControlName="subTotal" readonly>
+                            <label id="loadable_quantity_sub_total">{{getControlLabel('subTotal')}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <!-- <div class="col error-column text-center">!</div> -->
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('subTotal')"
+                                [errorMessages]="errorMesages.subTotal"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div *ngIf="!isSummerZone">{{'LOADABLE_QUANTITY' | translate}}
-                        <input type="number" readonly id="loadable_quantity_do_onboard" formControlName="totalQuantity"
-                            class="form-control-plaintext">{{'LOADABLE_QUANTITY_UNIT_MT' | translate}}
-                        <div class="pt-5 text-danger" *ngIf="isNegative">{{'LOADABLE_QUANTITY_NEGATIVE_VALUE' |   translate}}</div>
+                        <label id="loadable_quantity_totalQuantity">{{getControlLabel('totalQuantity')}}</label>
+                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('totalQuantity')"
+                                [errorMessages]="errorMesages.totalQuantity"></cpdss-portal-validation-error>
+                        </div>
+                        <div class="pt-5 text-danger" *ngIf="isNegative">
+                            {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' |   translate}}</div>
                     </div>
                 </div>
-                <div class="col"  *ngIf="isSummerZone">  
+                <div class="col" *ngIf="isSummerZone">
                     <div class="row form-group">
                         <label for="loadable_quantity_dist_in_summery"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_DIST_IN_SUMMERZONE' | translate}}</label>
                         <div class="col">
                             <input type="number" class="form-control" id="loadable_quantity_dist_in_summery"
                                 formControlName="distanceInSummerzone" (change)="getRunningHours()">
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['distanceInSummerzone'].valid  && loadableQuantityForm.controls['distanceInSummerzone'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span
-                                        *ngIf="loadableQuantityForm.controls['distanceInSummerzone'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_DISATANCE_IN_SUMMERZONE_REQUIRED' | translate }} </span>
-                                </div>
-                            </div>
                         </div>
-                        <div class="col ">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MILES' | translate }}</div>
-                        <!-- <div class="col error-column text-center">!</div> -->
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('distanceInSummerzone')"
+                                [errorMessages]="errorMesages.distanceInSummerzone"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_speed_in_sz"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SPEED_IN_SZ' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_speed_in_sz" class="form-control" formControlName="speedInSz"
-                                (change)="getRunningHours()">
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['speedInSz'].valid  && loadableQuantityForm.controls['speedInSz'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['speedInSz'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_SPEED_IN_SZ_REQUIRED' | translate}} </span>
-                                </div>
-                            </div>
+                            <input type="number" id="loadable_quantity_speed_in_sz" class="form-control"
+                                formControlName="speedInSz" (change)="getRunningHours()">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_KNOTS' | translate }}</div>
-                        <!-- <div class="col error-column text-center">!</div> -->
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('speedInSz')"
+                                [errorMessages]="errorMesages.speedInSz"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_running_hours"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_RUNNING_HOURS' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_running_hours" class="form-control" formControlName="runningHours"
-                                (change)="getRunningDays()" readonly>
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['runningHours'].valid  && loadableQuantityForm.controls['runningHours'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['runningHours'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_RUNNING_HOURS_REQUIRED' | translate }} </span>
-                                </div>
-                            </div>
+                            <input type="number" id="loadable_quantity_running_hours" class="form-control"
+                                formControlName="runningHours" (change)="getRunningDays()" readonly>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_HOURS' | translate }}</div>
-                        <!-- <div class="col error-column text-center">!</div> -->
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('runningHours')"
+                                [errorMessages]="errorMesages.runningHours"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_running_days"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_RUNNING_DAYS' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_running_days" class="form-control" formControlName="runningDays"
-                                (change)="getFoConsumptionInSz()" readonly>
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['runningDays'].valid  && loadableQuantityForm.controls['runningDays'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['runningDays'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_RUNNING_DAYS_REQUIRED' | translate }} </span>
-                                </div>
-                            </div>
+                            <input type="number" id="loadable_quantity_running_days" class="form-control"
+                                formControlName="runningDays" (change)="getFoConsumptionInSz()" readonly>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_DAYS' | translate }}</div>
-                        <div class="col error-column">!</div>
+                        <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('runningDays')"
+                                [errorMessages]="errorMesages.runningDays"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_fo_con_day"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FO_CON_/_DAY' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_fo_con_day" class="form-control" formControlName="foConday"
-                                (change)="getFoConsumptionInSz()">
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['foConday'].valid  && loadableQuantityForm.controls['foConday'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['foConday'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_FO_CONS_PER_DAY_REQUIRED'  | translate }}</span>
-                                </div>
-                            </div>
+                            <input type="number" id="loadable_quantity_fo_con_day" class="form-control"
+                                formControlName="foConday" (change)="getFoConsumptionInSz()">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT/DAY' | translate }}</div>
-                        <div class="col error-column">!</div>
+                        <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('foConday')"
+                                [errorMessages]="errorMesages.foConday"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_fo_cons_in_sz"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FO_CONS_IN_SZ' | translate}}</label>
                         <div class="col">
-                            <input type="number" class="form-control" id="loadable_quantity_fo_cons_in_sz" formControlName="foConsInSz"
-                                readonly>
-                            <div
-                                *ngIf="!loadableQuantityForm.controls['foConsInSz'].valid  && loadableQuantityForm.controls['foConsInSz'].touched ">
-                                <div class="pt-5 text-danger">
-                                    <span *ngIf="loadableQuantityForm.controls['foConsInSz'].errors?.required">
-                                        {{'LOADABLE_QUANTITY_FO_CONS_IN_SZ_REQUIRED' | translate}} </span>
-                                </div>
-                            </div>
+                            <input type="number" class="form-control" id="loadable_quantity_fo_cons_in_sz"
+                                formControlName="foConsInSz" readonly>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <div class="col error-column"></div>
+                        <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('foConsInSz')"
+                                [errorMessages]="errorMesages.foConsInSz"></cpdss-portal-validation-error>
+                        </div>
                     </div>
                     <div class="row form-group">
                         <label for="" class="col col-form-label">{{'LOADABLE_QUANTITY' | translate}} </label>
                         <div class="col">
-                            <input
-                            type="number" readonly id="loadable_quantity_do_onboard" formControlName="totalQuantity"
-                            class="form-control-plaintext">
-                    <div class="pt-5 text-danger" *ngIf="isNegative">{{'LOADABLE_QUANTITY_NEGATIVE_VALUE' |  translate}}</div>
+                            <label id="loadable_quantity_totalQuantity">{{getControlLabel('totalQuantity')}}</label>
+                            <div class="pt-5 text-danger" *ngIf="isNegative">
+                                {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' |  translate}}</div>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <!-- <div class="col error-column">!</div> -->
+                        <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('totalQuantity')"
+                                [errorMessages]="errorMesages.totalQuantity"></cpdss-portal-validation-error>
+                        </div>
                     </div>
-                    
+
                 </div>
 
             </div>

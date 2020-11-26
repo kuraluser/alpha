@@ -20,6 +20,7 @@ import { PortsComponent } from './ports/ports.component';
 import { PermissionDirectiveModule } from '../../../shared/directives/permission/permission-directive.module';
 import { LoadableQuantityComponent } from './loadable-quantity/loadable-quantity.component';
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
+import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
 /**
  * Routing Module for Loadable Study Details Screen
  *
@@ -40,7 +41,8 @@ import { LoadableQuantityApiService } from '../services/loadable-quantity-api.se
     TranslateModule,
     VesselInfoModule,
     NewLoadableStudyPopupModule,
-    PermissionDirectiveModule
+    PermissionDirectiveModule,
+    ValidationErrorModule
   ],
   providers: [
     LoadableQuantityApiService

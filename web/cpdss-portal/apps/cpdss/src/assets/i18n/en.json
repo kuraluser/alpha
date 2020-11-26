@@ -257,5 +257,6 @@
 	"LOADABLE_QUANTITY_UNIT_HOURS": "HOURS",
 	"LOADABLE_QUANTITY_UNIT_DAYS": "DAYS",
 	"LOADABLE_QUANTITY_UNIT_MT/DAY": "MT/DAYS",
-	"LOADABLE_QUANTITY_NEGATIVE_VALUE": "Loadable quantity can not accept negative value.Please enter valid number"
+	"LOADABLE_QUANTITY_NEGATIVE_VALUE": "System wont accept negative value for loadable quantity. Please enter correct figures.",
+	"LOADABLE_QUANTITY_TOTAL_QUANTITY_REQUIRED": "Loadable quantity is required"
 }

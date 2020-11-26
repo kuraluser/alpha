@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { LoadableQuantityApiService } from '../../services/loadable-quantity-api.service';
 import { LodadableQuantity } from '../../models/loadable-quantity.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
@@ -40,6 +40,7 @@ export class LoadableQuantityComponent implements OnInit {
   totalLoadableQuantity: number;
   isNegative = false;
   loadableQuantityBtnPermissionContext: IPermissionContext;
+  errorMesages: any;
 
   private _loadableStudies: LoadableStudy[];
 
@@ -51,8 +52,15 @@ export class LoadableQuantityComponent implements OnInit {
     private translateService: TranslateService,
   ) { }
 
+  /**
+   * Component lifecycle ngOnit
+   *
+   * @returns {Promise<void>}
+   * @memberof LoadableQuantityComponent
+   */
   async ngOnInit(): Promise<void> {
     this.loadableQuantityBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+    this.errorMesages = this.loadableQuantityApiService.setValidationErrorMessage();
     this.ports = await this.getPorts();
     this.getLoadableQuantity();
   }
@@ -85,7 +93,7 @@ export class LoadableQuantityComponent implements OnInit {
         constant: ['', [Validators.required]],
         others: ['', [Validators.required, numberValidator(0, 2)]],
         subTotal: ['', Validators.required],
-        totalQuantity: ['']
+        totalQuantity: ['', Validators.required]
 
       });
 
@@ -357,15 +365,15 @@ export class LoadableQuantityComponent implements OnInit {
   getTotalLoadableQuantity() {
     if (this.isSummerZone) {
       const total = (this.loadableQuantityForm.get('subTotal').value) - (this.loadableQuantityForm.get('foConsInSz').value);
-      if (total < 0 ){
-        this.isNegative =true;
+      if (total < 0) {
+        this.isNegative = true;
         this.loadableQuantityForm.controls['totalQuantity'].setValue('');
       }
-      else{
+      else {
         this.isNegative = false;
         this.loadableQuantityForm.controls['totalQuantity'].setValue(total);
       }
-        
+
     }
     else {
       (this.loadableQuantityForm.get('subTotal').value) < 0 ? this.isNegative = true : this.isNegative = false;
@@ -380,7 +388,41 @@ export class LoadableQuantityComponent implements OnInit {
 
     }
 
-   
+  }
+  /**
+   *
+   * @param type 
+   * Get form control value to label
+   */
+  getControlLabel(type: string) {
+    return this.loadableQuantityForm.controls[type].value;
+  }
+
+
+  /**
+   * Get field errors
+   *
+   *
+   * @param {string} formControlName
+   * @returns {ValidationErrors}
+   * @memberof LoadableQuantityComponent
+   */
+  fieldError(formControlName: string): ValidationErrors {
+    const formControl = this.field(formControlName);
+    return formControl.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
+  }
+
+  /**
+ * Get form control of loadableQuantityForm 
+ *
+ *
+ * @param {string} formControlName
+ * @returns {FormControl}
+ * @memberof LoadableQuantityComponent
+ */
+  field(formControlName: string): FormControl {
+    const formControl = <FormControl>this.loadableQuantityForm.get(formControlName);
+    return formControl;
   }
 
 }
