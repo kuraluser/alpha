@@ -291,8 +291,8 @@ export class PortsComponent implements OnInit {
  */
   async onRowSave(event: IPortsEvent) {
     this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
-
-    if (this.portsForm.valid) {
+    const form = this.row(event.index)
+    if (form.valid) {
       const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
       if (res) {
         this.portsLists[event.index].isAdd = false;

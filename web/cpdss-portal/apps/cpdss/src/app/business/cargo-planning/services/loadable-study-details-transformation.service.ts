@@ -550,7 +550,7 @@ export class LoadableStudyDetailsTransformationService {
         minDate: minDate,
         fieldPlaceholder: 'CHOOSE_LAY_CAN',
         fieldClass: 'lay-can',
-        dateFormat: 'DD-MM-YYYY',
+        dateFormat: 'dd-mm-yy',
         errorMessages: {
           'required': 'PORT_LAY_CAN_REQUIRED_ERROR'
         }
@@ -595,7 +595,7 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'eta.value',
         fieldPlaceholder: 'CHOOSE_ETA',
         minDate: minDate,
-        dateFormat: 'DD-MM-YYYY',
+        dateFormat: 'dd-mm-yy',
         fieldClass: 'eta',
         errorMessages: {
           'required': 'PORT_ETA_REQUIRED_ERROR'
@@ -613,7 +613,7 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'etd.value',
         fieldPlaceholder: 'CHOOSE_ETD',
         minDate: minDate,
-        dateFormat: 'DD-MM-YYYY',
+        dateFormat: 'dd-mm-yy',
         fieldClass: 'etd',
         errorMessages: {
           'required': 'PORT_ETD_REQUIRED_ERROR'

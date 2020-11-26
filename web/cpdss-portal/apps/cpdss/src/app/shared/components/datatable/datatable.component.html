@@ -166,7 +166,7 @@
                                         [readonlyInput]="false" (onSelect)="onDateRangeSelect($event)"
                                         (onBlur)="onDateRangeSelected($event, rowIndex, col.field,rowData)"
                                         (onClickOutside)="onDateRangeSelected($event, rowIndex, col.field,rowData)"
-                                        (onClearClick)="onClearDateRange($event)" dateFormat="dd-mm-yy"
+                                        (onClearClick)="onClearDateRange($event)" [dateFormat]="col.dateFormat"
                                         selectionMode="range" 
                                         [placeholder]="col.fieldPlaceholder| translate"
                                         [minDate]="col.minDate"
@@ -191,6 +191,7 @@
                                         [placeholder]="col.fieldPlaceholder| translate" 
                                         id="{{col.field+'_'+rowIndex}}"
                                         [minDate]="col.minDate"
+                                        [dateFormat]="col.dateFormat"
                                         (onClickOutside)="onDateTimeNotSelected($event, rowIndex, col.field,rowData)">
                                     </p-calendar>
                                     <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
