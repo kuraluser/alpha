@@ -20,7 +20,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "portinfo")
+@Table(name = "port_info")
 public class PortInfo extends EntityDoc {
 
   @Column(name = "name")
@@ -29,10 +29,10 @@ public class PortInfo extends EntityDoc {
   @Column(name = "code")
   private String code;
 
-  @Column(name = "densityseawater")
+  @Column(name = "density_seawater")
   private BigDecimal densitySeaWater;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private Boolean isActive;
 
   @OneToMany(mappedBy = "portInfo")

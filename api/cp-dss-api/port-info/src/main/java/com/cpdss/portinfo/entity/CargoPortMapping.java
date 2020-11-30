@@ -19,13 +19,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "cargoportmapping")
+@Table(name = "cargo_port_mapping")
 public class CargoPortMapping extends EntityDoc {
 
-  @Column(name = "cargoxid")
+  @Column(name = "cargo_xid")
   private Long cargoXId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "portxid")
+  @JoinColumn(name = "port_xid")
   private PortInfo portInfo;
 }

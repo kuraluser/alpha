@@ -18,17 +18,17 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "roleusermapping")
+@Table(name = "role_user_mapping")
 public class RoleUserMapping extends EntityDoc {
 
-  @Column(name = "IsActive")
+  @Column(name = "is_active")
   private Boolean isActive;
 
   @ManyToOne
-  @JoinColumn(name = "userxid")
+  @JoinColumn(name = "user_xid")
   private Users users;
 
   @ManyToOne
-  @JoinColumn(name = "rolexid")
+  @JoinColumn(name = "role_xid")
   private Roles roles;
 }

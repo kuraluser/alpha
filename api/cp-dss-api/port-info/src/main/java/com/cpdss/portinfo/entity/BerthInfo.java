@@ -19,19 +19,19 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "berthinfo")
+@Table(name = "berth_info")
 public class BerthInfo extends EntityDoc {
 
-  @Column(name = "berthname")
+  @Column(name = "berth_name")
   private String berthName;
 
-  @Column(name = "maximumdraft")
+  @Column(name = "maximum_draft")
   private BigDecimal maximumDraft;
 
-  @Column(name = "airdraft")
+  @Column(name = "air_draft")
   private BigDecimal airDraft;
 
   @ManyToOne
-  @JoinColumn(name = "portxid")
+  @JoinColumn(name = "port_xid")
   private PortInfo portInfo;
 }

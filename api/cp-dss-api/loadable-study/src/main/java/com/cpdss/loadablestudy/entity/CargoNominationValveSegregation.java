@@ -10,13 +10,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** Entity class for cargonominationvalvesegregation */
+/** Entity class for cargo_nomination_valve_segregation */
 @Entity
-@Table(name = "cargonominationvalvesegregation")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "cargo_nomination_valve_segregation")
 public class CargoNominationValveSegregation extends EntityDoc {
 
   @Column(name = "name")

@@ -12,6 +12,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,60 +29,61 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "users")
 public class Users extends EntityDoc {
 
-  @Column(name = "username", length = 100)
+  @Column(name = "user_name", length = 100)
   private String username;
 
-  @Column(name = "firstname", length = 100)
+  @Column(name = "first_name", length = 100)
   private String firstName;
 
-  @Column(name = "lastname", length = 100)
+  @Column(name = "last_name", length = 100)
   private String lastName;
 
   @Column(name = "email", length = 200)
   private String email;
 
-  @Column(name = "hintquestion", length = 100)
+  @Column(name = "hint_question", length = 100)
   private String hintQuestion;
 
-  @Column(name = "hintanswer", length = 100)
+  @Column(name = "hint_answer", length = 100)
   private String hintAnswer;
 
-  @Column(name = "lastattempteddate", columnDefinition = "TIMESTAMP")
+  @Column(name = "last_attempted_date", columnDefinition = "TIMESTAMP")
   private LocalDateTime lastAttemptedDate;
 
-  @Column(name = "lastlogindate", columnDefinition = "TIMESTAMP")
+  @Column(name = "last_login_date", columnDefinition = "TIMESTAMP")
   private LocalDateTime lastLoginDate;
 
-  @Column(name = "companyxid")
+  @Column(name = "company_xid")
   private Long companyXId;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private boolean isActive;
 
-  @Column(name = "branchxid")
+  @Column(name = "branch_xid")
   private Long branchXId;
 
-  @Column(name = "timezonexid")
+  @Column(name = "timezone_xid")
   private Long timezoneXId;
 
-  @Column(name = "designationxid")
+  @Column(name = "designation_xid")
   private Long designationXId;
 
-  @Column(name = "sessiontime")
+  @Column(name = "session_time")
   private Long sessionTime;
 
-  @Column(name = "profilepath", length = 500)
+  @Column(name = "profile_path", length = 500)
   private String profilePath;
 
   @Column(name = "token", columnDefinition = "TEXT")
   private String token;
 
-  @Column(name = "logintime", columnDefinition = "TIMESTAMP")
+  @Column(name = "login_time", columnDefinition = "TIMESTAMP")
   private LocalDate loginTime;
 
-  @Column(name = "keycloakid", length = 100)
+  @Column(name = "keycloak_id", length = 100)
   private String keycloakId;
 
   @OneToMany(

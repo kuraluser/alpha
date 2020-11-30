@@ -15,10 +15,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "cargomaster")
+@Table(name = "cargo_master")
 public class Cargo extends EntityDoc {
 
-  @Column(name = "crudetype")
+  @Column(name = "crude_type")
   private String crudeType;
 
   @Column(name = "abbreviation")
@@ -27,6 +27,6 @@ public class Cargo extends EntityDoc {
   @Column(name = "api")
   private String api;
 
-  @Column(name = "companyxid")
+  @Column(name = "company_xid")
   private String companyXId;
 }

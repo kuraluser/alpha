@@ -6,6 +6,8 @@ import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +18,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "screen")
 public class Screen extends EntityDoc {
 
   @Column(name = "name")
@@ -24,19 +27,19 @@ public class Screen extends EntityDoc {
   @Column(name = "description")
   private String description;
 
-  @Column(name = "languagekey")
+  @Column(name = "language_key")
   private String languageKey;
 
-  @Column(name = "isavailableadd")
+  @Column(name = "is_available_add")
   private Boolean isAvailableAdd;
 
-  @Column(name = "isavailableedit")
+  @Column(name = "is_available_edit")
   private Boolean isAvailableEdit;
 
-  @Column(name = "isavailabledelete")
+  @Column(name = "is_available_delete")
   private Boolean isAvailableDelete;
 
-  @Column(name = "isavailableview")
+  @Column(name = "is_available_view")
   private Boolean isAvailableView;
 
   @Column(name = "isactive")

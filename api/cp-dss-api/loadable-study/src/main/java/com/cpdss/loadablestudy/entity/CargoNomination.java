@@ -17,32 +17,32 @@ import lombok.Setter;
 
 /** Entity for Cargo Nomination */
 @Entity
-@Table(name = "cargonomination")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "cargo_nomination")
 public class CargoNomination extends EntityDoc {
 
-  @Column(name = "loadablestudyxid")
+  @Column(name = "loadable_study_xid")
   private Long loadableStudyXId;
 
   @Column(name = "priority")
   private Long priority;
 
-  @Column(name = "cargoxid")
+  @Column(name = "cargo_xid")
   private Long cargoXId;
 
   @Column(name = "abbreviation")
   private String abbreviation;
 
-  @Column(name = "cargocolor")
+  @Column(name = "cargo_color")
   private String color;
 
-  @Column(name = "maxtolerence")
+  @Column(name = "max_tolerence")
   private BigDecimal maxTolerance;
 
-  @Column(name = "mintolerence")
+  @Column(name = "min_tolerence")
   private BigDecimal minTolerance;
 
   @Column(name = "api")
@@ -51,10 +51,10 @@ public class CargoNomination extends EntityDoc {
   @Column(name = "temperature")
   private BigDecimal temperature;
 
-  @Column(name = "valvesegregationxid")
+  @Column(name = "valve_segregation_xid")
   private Long segregationXId;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private Boolean isActive;
 
   @Column(name = "quantity")

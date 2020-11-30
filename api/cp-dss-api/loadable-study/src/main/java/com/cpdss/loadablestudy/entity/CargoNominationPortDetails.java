@@ -15,21 +15,21 @@ import lombok.Setter;
 
 /** Entity for Cargo Nomination Port Details */
 @Entity
-@Table(name = "cargonominationoperationdetails")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "cargo_nomination_operation_details")
 public class CargoNominationPortDetails extends EntityDoc {
 
   @ManyToOne
-  @JoinColumn(name = "cargonominationxid")
+  @JoinColumn(name = "cargo_nomination_xid")
   private CargoNomination cargoNomination;
 
-  @Column(name = "portxid")
+  @Column(name = "port_xid")
   private Long portId;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private Boolean isActive;
 
   @Column(name = "quantity")

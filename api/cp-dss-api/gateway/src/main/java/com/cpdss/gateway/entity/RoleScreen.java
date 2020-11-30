@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,28 +18,29 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "role_screen")
 public class RoleScreen extends EntityDoc {
 
-  @Column(name = "canadd")
+  @Column(name = "can_add")
   private Boolean canAdd;
 
-  @Column(name = "canedit")
+  @Column(name = "can_edit")
   private Boolean canEdit;
 
-  @Column(name = "candelete")
+  @Column(name = "can_delete")
   private Boolean canDelete;
 
-  @Column(name = "canview")
+  @Column(name = "can_view")
   private Boolean canView;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private Boolean isActive;
 
   @ManyToOne
-  @JoinColumn(name = "rolexid")
+  @JoinColumn(name = "role_xid")
   private Roles roles;
 
   @ManyToOne
-  @JoinColumn(name = "screenxid")
+  @JoinColumn(name = "screen_xid")
   private Screen screen;
 }
