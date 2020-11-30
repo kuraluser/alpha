@@ -16,7 +16,7 @@ import lombok.Setter;
  * @author suhail.k
  */
 @Entity
-@Table(name = "cargooperation")
+@Table(name = "cargo_operation")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,6 +26,6 @@ public class CargoOperation extends EntityDoc {
   @Column(name = "name")
   private String name;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private Boolean isActive;
 }

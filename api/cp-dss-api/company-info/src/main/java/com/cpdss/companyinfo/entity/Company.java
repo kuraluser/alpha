@@ -4,6 +4,7 @@ package com.cpdss.companyinfo.entity;
 import com.cpdss.common.utils.EntityDoc;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import lombok.Setter;
  * @author suhail.k
  */
 @Entity
+@Table(name = "company")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -36,13 +38,10 @@ public class Company extends EntityDoc {
   @Column(name = "website", length = 50)
   private String website;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private boolean isActive;
 
-  @Column(name = "schemaname", length = 20)
-  private String schemaName;
-
-  @Column(name = "keycloakidp", length = 100)
+  @Column(name = "key_cloak_idp", length = 100)
   private String keycloakIdp;
 
   @Column(name = "realm", length = 50)
@@ -51,6 +50,6 @@ public class Company extends EntityDoc {
   @Column(name = "domain", length = 100)
   private String domain;
 
-  @Column(name = "companylogo", length = 200)
+  @Column(name = "company_logo", length = 200)
   private String companyLogo;
 }

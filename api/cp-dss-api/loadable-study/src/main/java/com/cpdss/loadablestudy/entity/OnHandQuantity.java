@@ -19,7 +19,7 @@ import lombok.Setter;
  * @author suhail.k
  */
 @Entity
-@Table(name = "onhandquantity")
+@Table(name = "on_hand_quantity")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,30 +27,30 @@ import lombok.Setter;
 public class OnHandQuantity extends EntityDoc {
 
   @ManyToOne
-  @JoinColumn(name = "loadablestudyxid")
+  @JoinColumn(name = "loadable_study_xid")
   private LoadableStudy loadableStudy;
 
-  @Column(name = "portxid")
+  @Column(name = "port_xid")
   private Long portXId;
 
-  @Column(name = "fueltypexid")
+  @Column(name = "fuel_type_xid")
   private Long fuelTypeXId;
 
-  @Column(name = "tankxid")
+  @Column(name = "tank_xid")
   private Long tankXId;
 
-  @Column(name = "arrivalvolume", precision = 10, scale = 4)
+  @Column(name = "arrival_volume", precision = 10, scale = 4)
   private BigDecimal arrivalVolume;
 
-  @Column(name = "arrivalquantity")
+  @Column(name = "arrival_quantity")
   private BigDecimal arrivalQuantity;
 
-  @Column(name = "departurevolume")
+  @Column(name = "departure_volume")
   private BigDecimal departureVolume;
 
-  @Column(name = "departurequantity")
+  @Column(name = "departure_quantity")
   private BigDecimal departureQuantity;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private Boolean isActive;
 }

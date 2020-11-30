@@ -23,7 +23,7 @@ import lombok.Setter;
  * @author suhail.k
  */
 @Entity
-@Table(name = "loadablestudyportrotation")
+@Table(name = "loadable_study_port_rotation")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -34,32 +34,32 @@ public class LoadableStudyPortRotation extends EntityDoc {
   private static final long serialVersionUID = 1L;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "loadablestudyxid")
+  @JoinColumn(name = "loadable_study_xid")
   private LoadableStudy loadableStudy;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "operationxid")
+  @JoinColumn(name = "operation_xid")
   private CargoOperation operation;
 
-  @Column(name = "portxid")
+  @Column(name = "port_xid")
   private Long portXId;
 
-  @Column(name = "berthxid")
+  @Column(name = "berth_xid")
   private Long berthXId;
 
-  @Column(name = "seawaterdensity")
+  @Column(name = "sea_water_density")
   private BigDecimal seaWaterDensity;
 
-  @Column(name = "distancebetweenports")
+  @Column(name = "distance_between_ports")
   private BigDecimal distanceBetweenPorts;
 
-  @Column(name = "timeofstay")
+  @Column(name = "time_of_stay")
   private BigDecimal timeOfStay;
 
-  @Column(name = "maxdraft")
+  @Column(name = "max_draft")
   private BigDecimal maxDraft;
 
-  @Column(name = "airdraftrestriction")
+  @Column(name = "air_draft_restriction")
   private BigDecimal airDraftRestriction;;
 
   @Column(name = "eta")
@@ -68,16 +68,16 @@ public class LoadableStudyPortRotation extends EntityDoc {
   @Column(name = "etd")
   private LocalDateTime etd;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private boolean isActive;
 
-  @Column(name = "laycanfrom")
+  @Column(name = "lay_can_from")
   private LocalDate layCanFrom;
 
-  @Column(name = "laycanto")
+  @Column(name = "lay_can_to")
   private LocalDate layCanTo;
 
-  @Column(name = "portorder")
+  @Column(name = "port_order")
   private Long portOrder;
 
   @PrePersist

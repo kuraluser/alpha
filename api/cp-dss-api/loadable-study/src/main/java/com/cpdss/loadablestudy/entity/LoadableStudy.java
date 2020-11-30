@@ -24,26 +24,26 @@ import lombok.Setter;
  * @author suhail.k
  */
 @Entity
-@Table(name = "loadablestudy")
+@Table(name = "loadable_study")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoadableStudy extends EntityDoc {
 
-  @Column(name = "vesselxid")
+  @Column(name = "vessel_xid")
   private Long vesselXId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "voyagexid")
+  @JoinColumn(name = "voyage_xid")
   private Voyage voyage;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "duplicatedfrom")
+  @JoinColumn(name = "duplicated_from")
   private LoadableStudy duplicatedFrom;
 
   @ManyToOne
-  @JoinColumn(name = "loadablestudystatusxid")
+  @JoinColumn(name = "loadable_study_status_xid")
   private LoadableStudyStatus loadableStudyStatus;
 
   @Column(name = "name", length = 100)
@@ -55,28 +55,28 @@ public class LoadableStudy extends EntityDoc {
   @Column(name = "charterer", length = 100)
   private String charterer;
 
-  @Column(name = "subcharterer", length = 100)
+  @Column(name = "sub_charterer", length = 100)
   private String subCharterer;
 
-  @Column(name = "draftmark")
+  @Column(name = "draft_mark")
   private BigDecimal draftMark;
 
-  @Column(name = "loadlinexid")
+  @Column(name = "loadline_xid")
   private Long loadLineXId;
 
-  @Column(name = "draftrestriction")
+  @Column(name = "draft_restriction")
   private BigDecimal draftRestriction;
 
-  @Column(name = "estimatedmaxsag")
+  @Column(name = "estimated_max_sag")
   private BigDecimal estimatedMaxSag;
 
-  @Column(name = "maxairtemperature")
+  @Column(name = "max_air_temperature")
   private BigDecimal maxAirTemperature;
 
-  @Column(name = "maxwatertemperature")
+  @Column(name = "max_water_temperature")
   private BigDecimal maxWaterTemperature;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private boolean isActive;
 
   @OneToMany(mappedBy = "loadableStudy", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)

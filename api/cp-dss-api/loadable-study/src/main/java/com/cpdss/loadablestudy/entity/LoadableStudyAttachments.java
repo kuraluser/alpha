@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "loadablestudyattachments")
+@Table(name = "loadable_study_attachments")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,15 +21,15 @@ import lombok.Setter;
 public class LoadableStudyAttachments extends EntityDoc {
 
   @ManyToOne
-  @JoinColumn(name = "loadablestudyxid")
+  @JoinColumn(name = "loadable_study_xid")
   private LoadableStudy loadableStudy;
 
-  @Column(name = "uploadedfilename", length = 500)
+  @Column(name = "uploaded_filename", length = 500)
   private String uploadedFileName;
 
-  @Column(name = "filepath", length = 500)
+  @Column(name = "file_path", length = 500)
   private String filePath;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private Boolean isActive;
 }
