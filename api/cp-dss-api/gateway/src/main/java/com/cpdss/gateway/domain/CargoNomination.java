@@ -2,6 +2,9 @@
 package com.cpdss.gateway.domain;
 
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import java.math.BigDecimal;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
@@ -9,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
+@JsonInclude(Include.NON_NULL)
 public class CargoNomination {
 
   private Long id;

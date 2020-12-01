@@ -70,7 +70,7 @@ public class CargoPortInfoController {
       log.info("getPorts: {}", getClientIp());
       response = cargoPortInfoService.getPorts(headers);
     } catch (Exception e) {
-      log.error("Error in getCargoNomination ", e);
+      log.error("Error in getPorts ", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

@@ -16,6 +16,9 @@ service VesselInfoService {
 	
 	rpc GetVesselFuelTanks (VesselRequest) returns (VesselReply) {
 	}
+	
+	rpc GetVesselCargoTanks (VesselRequest) returns (VesselReply) {
+	}
 }
 
 message VesselRequest {

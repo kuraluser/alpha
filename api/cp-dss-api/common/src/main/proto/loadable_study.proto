@@ -34,6 +34,7 @@ service LoadableStudyService {
 	rpc GetValveSegregation (ValveSegregationRequest) returns (ValveSegregationReply){
 	}
 
+
   	rpc getLoadableQuantity (LoadableQuantityReply) returns (LoadableQuantityResponse) {
 	}
 	
@@ -60,6 +61,8 @@ service LoadableStudyService {
 	rpc SaveOnHandQuantity(OnHandQuantityDetail) returns (OnHandQuantityReply){
 	}
 	
+	rpc GetPurposeOfCommingle (PurposeOfCommingleRequest) returns (PurposeOfCommingleReply){
+	}
 }
 
 
@@ -293,4 +296,18 @@ message OnHandQuantityReply{
 	ResponseStatus responseStatus = 1;
 	repeated OnHandQuantityDetail onHandQuantity = 2;
 	int64 id = 3;
+}
+
+message PurposeOfCommingle{
+	int64 id = 1;
+	string name = 2;
+}
+
+message PurposeOfCommingleRequest{
+	int64 loadableStudyId = 1;
+}
+
+message PurposeOfCommingleReply{
+	ResponseStatus responseStatus = 1;
+	repeated PurposeOfCommingle purposeOfCommingle = 2;
 }

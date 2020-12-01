@@ -927,6 +927,57 @@ public final class LoadableStudyServiceGrpc {
     return getSaveOnHandQuantityMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest,
+          com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>
+      getGetPurposeOfCommingleMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetPurposeOfCommingle",
+      requestType = com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest,
+          com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>
+      getGetPurposeOfCommingleMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest,
+            com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>
+        getGetPurposeOfCommingleMethod;
+    if ((getGetPurposeOfCommingleMethod = LoadableStudyServiceGrpc.getGetPurposeOfCommingleMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetPurposeOfCommingleMethod =
+                LoadableStudyServiceGrpc.getGetPurposeOfCommingleMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetPurposeOfCommingleMethod =
+              getGetPurposeOfCommingleMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest,
+                          com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetPurposeOfCommingle"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("GetPurposeOfCommingle"))
+                      .build();
+        }
+      }
+    }
+    return getGetPurposeOfCommingleMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -1117,6 +1168,15 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getSaveOnHandQuantityMethod(), responseObserver);
     }
 
+    /** */
+    public void getPurposeOfCommingle(
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetPurposeOfCommingleMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1246,6 +1306,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail,
                       com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>(
                       this, METHODID_SAVE_ON_HAND_QUANTITY)))
+          .addMethod(
+              getGetPurposeOfCommingleMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest,
+                      com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>(
+                      this, METHODID_GET_PURPOSE_OF_COMMINGLE)))
           .build();
     }
   }
@@ -1459,6 +1526,18 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getPurposeOfCommingle(
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetPurposeOfCommingleMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1600,6 +1679,13 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail request) {
       return blockingUnaryCall(
           getChannel(), getSaveOnHandQuantityMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply getPurposeOfCommingle(
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetPurposeOfCommingleMethod(), getCallOptions(), request);
     }
   }
 
@@ -1773,6 +1859,15 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getSaveOnHandQuantityMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>
+        getPurposeOfCommingle(
+            com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetPurposeOfCommingleMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -1793,6 +1888,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_DELETE_PORT_ROTATION = 15;
   private static final int METHODID_GET_ON_HAND_QUANTITY = 16;
   private static final int METHODID_SAVE_ON_HAND_QUANTITY = 17;
+  private static final int METHODID_GET_PURPOSE_OF_COMMINGLE = 18;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1936,6 +2032,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>)
                   responseObserver);
           break;
+        case METHODID_GET_PURPOSE_OF_COMMINGLE:
+          serviceImpl.getPurposeOfCommingle(
+              (com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -2018,6 +2121,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getDeletePortRotationMethod())
                       .addMethod(getGetOnHandQuantityMethod())
                       .addMethod(getSaveOnHandQuantityMethod())
+                      .addMethod(getGetPurposeOfCommingleMethod())
                       .build();
         }
       }

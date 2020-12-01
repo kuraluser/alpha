@@ -1,20 +1,26 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
+import com.cpdss.gateway.domain.CargoNomination;
+import com.cpdss.gateway.domain.CargoNominationResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
+import com.cpdss.gateway.domain.LoadingPort;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
@@ -27,8 +33,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -54,6 +62,8 @@ class LoadableStudyControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockBean private LoadableStudyService loadableStudyService;
+
+  @MockBean private CargoNominationResponse cargoNominationResponse;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
   private static final String CORRELATION_ID_HEADER_VALUE = "1234";
@@ -132,13 +142,13 @@ class LoadableStudyControllerTest {
       CLOUD_API_URL_PREFIX + GET_ON_HAND_QUANTITIES_API_URL;
   private static final String GET_ON_HAND_QUANTITIES_SHIP_API_URL =
       SHIP_API_URL_PREFIX + GET_ON_HAND_QUANTITIES_API_URL;
-
   private static final String SAVE_ON_HAND_QUANTITIES_API_URL =
       "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{portId}/on-hand-quantities/{id}";
   private static final String SAVE_ON_HAND_QUANTITIES_API_URL_CLOUD_API_URL =
       CLOUD_API_URL_PREFIX + SAVE_ON_HAND_QUANTITIES_API_URL;
   private static final String SAVE_ON_HAND_QUANTITIES_SHIP_API_URL =
       SHIP_API_URL_PREFIX + SAVE_ON_HAND_QUANTITIES_API_URL;
+  private static final String AUTHORIZATION_HEADER = "Authorization";
 
   /**
    * Positive test case. Test method for positive response scenario
@@ -699,6 +709,116 @@ class LoadableStudyControllerTest {
     request.setFuelTypeId(1L);
     request.setTankId(1L);
     request.setLoadableStudyId(1L);
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.writeValueAsString(request);
+  }
+  
+  @Test
+  void testGetCargoNomination() throws Exception {
+    when(loadableStudyService.getCargoNomination(Mockito.any(), Mockito.any()))
+        .thenReturn(cargoNominationResponse);
+    this.mockMvc
+        .perform(
+            get(
+                    "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/cargo-nominations",
+                    1,
+                    1,
+                    30)
+                .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa"))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  void testGetCargoNominationWithException() throws Exception {
+    when(loadableStudyService.getCargoNomination(Mockito.any(), Mockito.any()))
+        .thenThrow(
+            new GenericServiceException(
+                "Error in getCargoNomination",
+                CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                HttpStatusCode.INTERNAL_SERVER_ERROR));
+    this.mockMvc
+        .perform(
+            get(
+                    "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/cargo-nominations",
+                    1,
+                    1,
+                    30)
+                .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa"))
+        .andExpect(status().isInternalServerError())
+        .andExpect(
+            result ->
+                assertEquals(
+                    "Error in getCargoNomination", result.getResolvedException().getMessage()));
+  }
+
+  @Test
+  void testSaveCargoNomination() throws Exception {
+    when(loadableStudyService.saveCargoNomination(
+            Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+        .thenReturn(cargoNominationResponse);
+    this.mockMvc
+        .perform(
+            post(
+                    "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/cargo-nominations/{id}",
+                    1,
+                    1,
+                    30,
+                    0)
+                .content(createSaveCargoNominationRequest(false))
+                .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  void testSaveCargoNominationWithException() throws Exception {
+    when(loadableStudyService.saveCargoNomination(
+            Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+        .thenThrow(
+            new GenericServiceException(
+                "Error in saveCargoNomination",
+                CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                HttpStatusCode.INTERNAL_SERVER_ERROR));
+    this.mockMvc
+        .perform(
+            post(
+                    "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/cargo-nominations/{id}",
+                    1,
+                    1,
+                    30,
+                    1)
+                .content(createSaveCargoNominationRequest(true))
+                .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError())
+        .andExpect(
+            result ->
+                assertEquals(
+                    "Error in saveCargoNomination", result.getResolvedException().getMessage()));
+  }
+
+  private String createSaveCargoNominationRequest(boolean existingRecord)
+      throws JsonProcessingException {
+    CargoNomination request = new CargoNomination();
+    request.setLoadableStudyId(30L);
+    request.setId(existingRecord ? 15L : 0);
+    request.setPriority(3L);
+    request.setCargoId(1L);
+    request.setAbbreviation("ABBREV");
+    request.setColor("testColor");
+    request.setMaxTolerance(new BigDecimal("10.0"));
+    request.setMinTolerance(new BigDecimal("20.0"));
+    request.setApi(new BigDecimal("5.0"));
+    request.setTemperature(new BigDecimal("6.0"));
+    request.setSegregationId(2L);
+    List<LoadingPort> loadingPorts = new ArrayList<>();
+    LoadingPort loadingPort = new LoadingPort();
+    loadingPort.setId(1L);
+    loadingPort.setQuantity(new BigDecimal("100.0"));
+    loadingPorts.add(loadingPort);
+    request.setLoadingPorts(loadingPorts);
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(request);
   }

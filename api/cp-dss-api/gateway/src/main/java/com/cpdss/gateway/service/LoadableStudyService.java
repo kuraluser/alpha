@@ -26,6 +26,8 @@ import com.cpdss.common.generated.LoadableStudy.Operation;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
+import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
+import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationReply;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
@@ -36,12 +38,16 @@ import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceB
 import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfo.PortRequest;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
+import com.cpdss.common.generated.VesselInfo.VesselReply;
+import com.cpdss.common.generated.VesselInfo.VesselRequest;
+import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.Cargo;
 import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CargoNominationResponse;
+import com.cpdss.gateway.domain.CommingleCargoResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadableQuantity;
@@ -53,7 +59,9 @@ import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.Purpose;
 import com.cpdss.gateway.domain.ValveSegregation;
+import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.google.protobuf.ByteString;
@@ -62,7 +70,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -87,12 +101,13 @@ public class LoadableStudyService {
   @GrpcClient("portInfoService")
   private PortInfoServiceBlockingStub portInfoServiceBlockingStub;
 
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
   private static final String SUCCESS = "SUCCESS";
   private static final int LOADABLE_STUDY_ATTACHEMENT_MAX_SIZE = 1 * 1024 * 1024;
   private static final List<String> ATTACHMENT_ALLOWED_EXTENSIONS =
       Arrays.asList("docx", "pdf", "txt", "jpg", "png", "msg", "eml");
-  private static final Long LOADING_OPERATION_ID = 1L;
-  private static final Long DISCHARGIN_OPERATION_ID = 2L;
 
   /**
    * method for voyage save
@@ -1236,5 +1251,149 @@ public class LoadableStudyService {
    */
   public OnHandQuantityReply saveOnHandQuantity(OnHandQuantityDetail request) {
     return this.loadableStudyServiceBlockingStub.saveOnHandQuantity(request);
+  }
+  
+  /**
+   * Retrieves the commingle cargo information along with vessel cargo tanks lookup array
+   *
+   * @param loadableStudyId
+   * @param headers
+   * @return
+   * @throws GenericServiceException
+   */
+  public CommingleCargoResponse getCommingleCargo(Long loadableStudyId, Long vesselId)
+      throws GenericServiceException {
+    CommingleCargoResponse commingleCargoResponse = new CommingleCargoResponse();
+    // Build response with response status
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    commingleCargoResponse.setResponseStatus(commonSuccessResponse);
+    // Retrieve cargos nominated for the loadable study
+    CargoNominationRequest cargoNominationRequest =
+        CargoNominationRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
+    CargoNominationReply cargoNominationReply =
+        loadableStudyServiceBlockingStub.getCargoNominationById(cargoNominationRequest);
+    if (SUCCESS.equalsIgnoreCase(cargoNominationReply.getResponseStatus().getStatus())) {
+      buildCommingleCargoResponseWithCargos(commingleCargoResponse, cargoNominationReply);
+    } else {
+      throw new GenericServiceException(
+          "Error calling getCargoNominationById service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    // Retrieve cargo Nominations from cargo nomination table
+    VesselRequest vesselRequest = VesselRequest.newBuilder().setVesselId(vesselId).build();
+    VesselReply vesselReply = vesselInfoGrpcService.getVesselCargoTanks(vesselRequest);
+    if (SUCCESS.equalsIgnoreCase(vesselReply.getResponseStatus().getStatus())) {
+      buildCommingleCargoResponseWithVesselTanks(commingleCargoResponse, vesselReply);
+    } else {
+      throw new GenericServiceException(
+          "Error calling getVesselCargoTanks service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    // Retrieve purpose of commingle
+    PurposeOfCommingleRequest purposeOfCommingleRequest =
+        PurposeOfCommingleRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
+    PurposeOfCommingleReply purposeOfCommingleReply =
+        loadableStudyServiceBlockingStub.getPurposeOfCommingle(purposeOfCommingleRequest);
+    if (SUCCESS.equalsIgnoreCase(purposeOfCommingleReply.getResponseStatus().getStatus())) {
+      buildCommingleCargoResponseWithPurposeOfCommingle(
+          commingleCargoResponse, purposeOfCommingleReply);
+    } else {
+      throw new GenericServiceException(
+          "Error calling getPurposeOfCommingle service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    return commingleCargoResponse;
+  }
+  
+  /**
+   * builds commingleCargoResponse from the cargo nomination data
+   * for the specific loadable study
+   * @param commingleCargoResponse
+   * @param reply
+   * @return
+   */
+  private CommingleCargoResponse buildCommingleCargoResponseWithCargos(
+		  CommingleCargoResponse commingleCargoResponse, CargoNominationReply reply) {
+    if (reply != null && !reply.getCargoNominationsList().isEmpty()) {
+      List<CargoNomination> cargoNominationList = new ArrayList<>();
+      List<CargoNominationDetail> cargoNominationDetailsFiltered = reply.getCargoNominationsList().stream() 
+    		  .filter(distinctByKey(cargoNominationDetail -> cargoNominationDetail.getCargoId()))
+    		  .collect(Collectors.toList());
+      cargoNominationDetailsFiltered
+          .forEach(
+              cargoNominationDetail -> {
+                CargoNomination cargoNomination = new CargoNomination();
+                cargoNomination.setId(cargoNominationDetail.getId());
+                cargoNomination.setColor(cargoNominationDetail.getColor());
+                cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
+                cargoNominationList.add(cargoNomination);
+              });
+      commingleCargoResponse.setCargoNominations(cargoNominationList);
+    }
+    return commingleCargoResponse;
+  }
+  
+  /**
+   * Function to retrieve distinct objects by an attribute 
+   * of the object
+   * @param <T>
+   * @param keyExtractor
+   * @return
+   */
+  public static <T> Predicate<T> distinctByKey(
+		  Function<? super T, ?> keyExtractor) {
+	  Map<Object, Boolean> seen = new ConcurrentHashMap<>(); 
+	  return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null; 
+  }
+  
+  /**
+   * Builds commingle response with vessel tanks
+   *
+   * @param commingleCargoResponse
+   * @param vesselReply
+   */
+  private void buildCommingleCargoResponseWithVesselTanks(
+      CommingleCargoResponse commingleCargoResponse, VesselReply vesselReply) {
+    if (vesselReply != null && !vesselReply.getVesselTanksList().isEmpty()) {
+      List<VesselTank> vesselTankList = new ArrayList<>();
+      vesselReply
+          .getVesselTanksList()
+          .forEach(
+              vesselTankDetail -> {
+                VesselTank vesselTank = new VesselTank();
+                vesselTank.setId(vesselTankDetail.getTankId());
+                vesselTank.setName(vesselTankDetail.getTankName());
+                vesselTank.setShortName(vesselTankDetail.getShortName());
+                vesselTankList.add(vesselTank);
+              });
+      commingleCargoResponse.setVesselTanks(vesselTankList);
+    }
+  }
+
+  /**
+   * building commingle response with purpose of commingle
+   *
+   * @param commingleCargoResponse
+   * @param reply
+   */
+  private void buildCommingleCargoResponseWithPurposeOfCommingle(
+      CommingleCargoResponse commingleCargoResponse, PurposeOfCommingleReply reply) {
+    if (reply != null && !reply.getPurposeOfCommingleList().isEmpty()) {
+      List<Purpose> purposeList = new ArrayList<>();
+      reply
+          .getPurposeOfCommingleList()
+          .forEach(
+              purposeDetail -> {
+                Purpose purpose = new Purpose();
+                purpose.setId(purposeDetail.getId());
+                purpose.setName(purposeDetail.getName());
+                purposeList.add(purpose);
+              });
+      commingleCargoResponse.setPurposes(purposeList);
+    }
   }
 }

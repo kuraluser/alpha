@@ -7235,13 +7235,14 @@ public final class VesselInfo {
           + "ponseStatus\030\003 \001(\0132\017.ResponseStatus\022\036\n\007ve"
           + "ssels\030\004 \003(\0132\r.VesselDetail\022E\n\035vesselLoad"
           + "ableQuantityDetails\030\005 \001(\0132\036.VesselLoadab"
-          + "leQuantityDetails2\273\001\n\021VesselInfoService\022"
+          + "leQuantityDetails2\362\001\n\021VesselInfoService\022"
           + "8\n\026GetAllVesselsByCompany\022\016.VesselReques"
           + "t\032\014.VesselReply\"\000\0226\n\024GetVesselDetailsByI"
           + "d\022\016.VesselRequest\032\014.VesselReply\"\000\0224\n\022Get"
           + "VesselFuelTanks\022\016.VesselRequest\032\014.Vessel"
-          + "Reply\"\000B\036\n\032com.cpdss.common.generatedP\000b"
-          + "\006proto3"
+          + "Reply\"\000\0225\n\023GetVesselCargoTanks\022\016.VesselR"
+          + "equest\032\014.VesselReply\"\000B\036\n\032com.cpdss.comm"
+          + "on.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

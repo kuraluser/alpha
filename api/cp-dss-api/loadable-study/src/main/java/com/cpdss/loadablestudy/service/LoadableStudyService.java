@@ -25,6 +25,8 @@ import com.cpdss.common.generated.LoadableStudy.Operation;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
+import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
+import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregation;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationReply;
@@ -53,6 +55,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
+import com.cpdss.loadablestudy.entity.PurposeOfCommingle;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
@@ -63,6 +66,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
+import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
@@ -110,6 +114,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private CargoNominationRepository cargoNominationRepository;
   @Autowired private CargoNominationValveSegregationRepository valveSegregationRepository;
   @Autowired private LoadableStudyStatusRepository loadableStudyStatusRepository;
+  @Autowired private PurposeOfCommingleRepository purposeOfCommingleRepository;
 
   @Autowired
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
@@ -123,6 +128,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
   private static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
+  private static final String ETA_ETD_CLIENT_FORMAT = "dd-MM-yyyy HH:mm";
+  private static final String LAY_CAN_CLIENT_FORMAT = "dd-MM-yyyy";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
@@ -1667,7 +1674,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   public VesselReply getVesselFuelTanks(VesselRequest request) {
     return this.vesselInfoGrpcService.getVesselFuelTanks(request);
   }
-
+  
   /** Save on hand quantity */
   @Override
   public void saveOnHandQuantity(
@@ -1750,5 +1757,41 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ? null
             : new BigDecimal(request.getDepartureVolume()));
     return entity;
+  }
+  
+  /**
+   * get purpose of commingle look up
+   */
+  @Override
+  public void getPurposeOfCommingle(
+      PurposeOfCommingleRequest request, StreamObserver<PurposeOfCommingleReply> responseObserver) {
+	  PurposeOfCommingleReply.Builder reply = PurposeOfCommingleReply.newBuilder();
+	    try {
+	      Iterable<PurposeOfCommingle> purposeList =
+	    		  purposeOfCommingleRepository.findAll();
+	      purposeList.forEach(
+	          purposeEntity -> {
+	        	  com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder purpose = com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.newBuilder();
+	           
+	            if (purposeEntity.getId() != null) {
+	            	purpose.setId(purposeEntity.getId());
+	            }
+	            if (!StringUtils.isEmpty(purposeEntity.getPurpose())) {
+	            	purpose.setName(purposeEntity.getPurpose());
+	            }
+	            reply.addPurposeOfCommingle(purpose);
+	          });
+	      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+	      responseStatus.setStatus(SUCCESS);
+	      reply.setResponseStatus(responseStatus);
+	    } catch (Exception e) {
+	      log.error("Error in getPurposeOfCommingle method ", e);
+	      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+	      responseStatus.setStatus(FAILED);
+	      reply.setResponseStatus(responseStatus);
+	    } finally {
+	      responseObserver.onNext(reply.build());
+	      responseObserver.onCompleted();
+	    }
   }
 }

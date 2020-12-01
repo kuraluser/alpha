@@ -112,6 +112,7 @@ public class SpringDataConfig {
       ds.addDataSourceProperty("prepStmtCacheSize", 250);
       ds.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
       ds.addDataSourceProperty("useServerPrepStmts", true);
+      ds.addDataSourceProperty("maxLifetime", 30000);
       return ds;
     } catch (Exception e) {
       throw new RuntimeException("Failed to initialise datasource");

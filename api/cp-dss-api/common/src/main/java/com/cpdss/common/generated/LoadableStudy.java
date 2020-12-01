@@ -31850,6 +31850,2171 @@ public final class LoadableStudy {
     }
   }
 
+  public interface PurposeOfCommingleOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:PurposeOfCommingle)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string name = 2;</code>
+     *
+     * @return The name.
+     */
+    java.lang.String getName();
+    /**
+     * <code>string name = 2;</code>
+     *
+     * @return The bytes for name.
+     */
+    com.google.protobuf.ByteString getNameBytes();
+  }
+  /** Protobuf type {@code PurposeOfCommingle} */
+  public static final class PurposeOfCommingle extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:PurposeOfCommingle)
+      PurposeOfCommingleOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use PurposeOfCommingle.newBuilder() to construct.
+    private PurposeOfCommingle(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private PurposeOfCommingle() {
+      name_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new PurposeOfCommingle();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private PurposeOfCommingle(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                name_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_PurposeOfCommingle_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_PurposeOfCommingle_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.class,
+              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int NAME_FIELD_NUMBER = 2;
+    private volatile java.lang.Object name_;
+    /**
+     * <code>string name = 2;</code>
+     *
+     * @return The name.
+     */
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string name = 2;</code>
+     *
+     * @return The bytes for name.
+     */
+    public com.google.protobuf.ByteString getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, name_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (!getNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, name_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle other =
+          (com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle) obj;
+
+      if (getId() != other.getId()) return false;
+      if (!getName().equals(other.getName())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code PurposeOfCommingle} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:PurposeOfCommingle)
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_PurposeOfCommingle_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_PurposeOfCommingle_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.class,
+                com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        name_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_PurposeOfCommingle_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle build() {
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle result =
+            new com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle(this);
+        result.id_ = id_;
+        result.name_ = name_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle other) {
+        if (other
+            == com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.getDefaultInstance())
+          return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object name_ = "";
+      /**
+       * <code>string name = 2;</code>
+       *
+       * @return The name.
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string name = 2;</code>
+       *
+       * @return The bytes for name.
+       */
+      public com.google.protobuf.ByteString getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string name = 2;</code>
+       *
+       * @param value The name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearName() {
+
+        name_ = getDefaultInstance().getName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 2;</code>
+       *
+       * @param value The bytes for name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        name_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:PurposeOfCommingle)
+    }
+
+    // @@protoc_insertion_point(class_scope:PurposeOfCommingle)
+    private static final com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<PurposeOfCommingle> PARSER =
+        new com.google.protobuf.AbstractParser<PurposeOfCommingle>() {
+          @java.lang.Override
+          public PurposeOfCommingle parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new PurposeOfCommingle(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<PurposeOfCommingle> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<PurposeOfCommingle> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface PurposeOfCommingleRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:PurposeOfCommingleRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 loadableStudyId = 1;</code>
+     *
+     * @return The loadableStudyId.
+     */
+    long getLoadableStudyId();
+  }
+  /** Protobuf type {@code PurposeOfCommingleRequest} */
+  public static final class PurposeOfCommingleRequest extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:PurposeOfCommingleRequest)
+      PurposeOfCommingleRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use PurposeOfCommingleRequest.newBuilder() to construct.
+    private PurposeOfCommingleRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private PurposeOfCommingleRequest() {}
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new PurposeOfCommingleRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private PurposeOfCommingleRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                loadableStudyId_ = input.readInt64();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_PurposeOfCommingleRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_PurposeOfCommingleRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest.class,
+              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest.Builder.class);
+    }
+
+    public static final int LOADABLESTUDYID_FIELD_NUMBER = 1;
+    private long loadableStudyId_;
+    /**
+     * <code>int64 loadableStudyId = 1;</code>
+     *
+     * @return The loadableStudyId.
+     */
+    public long getLoadableStudyId() {
+      return loadableStudyId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (loadableStudyId_ != 0L) {
+        output.writeInt64(1, loadableStudyId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (loadableStudyId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, loadableStudyId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest other =
+          (com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest) obj;
+
+      if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + LOADABLESTUDYID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest parseFrom(
+        byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code PurposeOfCommingleRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:PurposeOfCommingleRequest)
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_PurposeOfCommingleRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_PurposeOfCommingleRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest.class,
+                com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest.Builder.class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        loadableStudyId_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_PurposeOfCommingleRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest build() {
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest result =
+            new com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest(this);
+        result.loadableStudyId_ = loadableStudyId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest) {
+          return mergeFrom(
+              (com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest other) {
+        if (other
+            == com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest
+                .getDefaultInstance()) return this;
+        if (other.getLoadableStudyId() != 0L) {
+          setLoadableStudyId(other.getLoadableStudyId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long loadableStudyId_;
+      /**
+       * <code>int64 loadableStudyId = 1;</code>
+       *
+       * @return The loadableStudyId.
+       */
+      public long getLoadableStudyId() {
+        return loadableStudyId_;
+      }
+      /**
+       * <code>int64 loadableStudyId = 1;</code>
+       *
+       * @param value The loadableStudyId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadableStudyId(long value) {
+
+        loadableStudyId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadableStudyId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadableStudyId() {
+
+        loadableStudyId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:PurposeOfCommingleRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:PurposeOfCommingleRequest)
+    private static final com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<PurposeOfCommingleRequest> PARSER =
+        new com.google.protobuf.AbstractParser<PurposeOfCommingleRequest>() {
+          @java.lang.Override
+          public PurposeOfCommingleRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new PurposeOfCommingleRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<PurposeOfCommingleRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<PurposeOfCommingleRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface PurposeOfCommingleReplyOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:PurposeOfCommingleReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+    java.util.List<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle>
+        getPurposeOfCommingleList();
+    /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+    com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle getPurposeOfCommingle(int index);
+    /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+    int getPurposeOfCommingleCount();
+    /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+    java.util.List<? extends com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleOrBuilder>
+        getPurposeOfCommingleOrBuilderList();
+    /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+    com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleOrBuilder
+        getPurposeOfCommingleOrBuilder(int index);
+  }
+  /** Protobuf type {@code PurposeOfCommingleReply} */
+  public static final class PurposeOfCommingleReply extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:PurposeOfCommingleReply)
+      PurposeOfCommingleReplyOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use PurposeOfCommingleReply.newBuilder() to construct.
+    private PurposeOfCommingleReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private PurposeOfCommingleReply() {
+      purposeOfCommingle_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new PurposeOfCommingleReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private PurposeOfCommingleReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            case 18:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  purposeOfCommingle_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                purposeOfCommingle_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.parser(),
+                        extensionRegistry));
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          purposeOfCommingle_ = java.util.Collections.unmodifiableList(purposeOfCommingle_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_PurposeOfCommingleReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_PurposeOfCommingleReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply.class,
+              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply.Builder.class);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    public static final int PURPOSEOFCOMMINGLE_FIELD_NUMBER = 2;
+    private java.util.List<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle>
+        purposeOfCommingle_;
+    /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+    public java.util.List<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle>
+        getPurposeOfCommingleList() {
+      return purposeOfCommingle_;
+    }
+    /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleOrBuilder>
+        getPurposeOfCommingleOrBuilderList() {
+      return purposeOfCommingle_;
+    }
+    /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+    public int getPurposeOfCommingleCount() {
+      return purposeOfCommingle_.size();
+    }
+    /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+    public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle getPurposeOfCommingle(
+        int index) {
+      return purposeOfCommingle_.get(index);
+    }
+    /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+    public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleOrBuilder
+        getPurposeOfCommingleOrBuilder(int index) {
+      return purposeOfCommingle_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (responseStatus_ != null) {
+        output.writeMessage(1, getResponseStatus());
+      }
+      for (int i = 0; i < purposeOfCommingle_.size(); i++) {
+        output.writeMessage(2, purposeOfCommingle_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
+      }
+      for (int i = 0; i < purposeOfCommingle_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(2, purposeOfCommingle_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply other =
+          (com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply) obj;
+
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (!getPurposeOfCommingleList().equals(other.getPurposeOfCommingleList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      if (getPurposeOfCommingleCount() > 0) {
+        hash = (37 * hash) + PURPOSEOFCOMMINGLE_FIELD_NUMBER;
+        hash = (53 * hash) + getPurposeOfCommingleList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply parseFrom(
+        byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code PurposeOfCommingleReply} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:PurposeOfCommingleReply)
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_PurposeOfCommingleReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_PurposeOfCommingleReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply.class,
+                com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply.Builder.class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getPurposeOfCommingleFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        if (purposeOfCommingleBuilder_ == null) {
+          purposeOfCommingle_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          purposeOfCommingleBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_PurposeOfCommingleReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply build() {
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply result =
+            new com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply(this);
+        int from_bitField0_ = bitField0_;
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        if (purposeOfCommingleBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            purposeOfCommingle_ = java.util.Collections.unmodifiableList(purposeOfCommingle_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.purposeOfCommingle_ = purposeOfCommingle_;
+        } else {
+          result.purposeOfCommingle_ = purposeOfCommingleBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply) {
+          return mergeFrom(
+              (com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply other) {
+        if (other
+            == com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply
+                .getDefaultInstance()) return this;
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        if (purposeOfCommingleBuilder_ == null) {
+          if (!other.purposeOfCommingle_.isEmpty()) {
+            if (purposeOfCommingle_.isEmpty()) {
+              purposeOfCommingle_ = other.purposeOfCommingle_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensurePurposeOfCommingleIsMutable();
+              purposeOfCommingle_.addAll(other.purposeOfCommingle_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.purposeOfCommingle_.isEmpty()) {
+            if (purposeOfCommingleBuilder_.isEmpty()) {
+              purposeOfCommingleBuilder_.dispose();
+              purposeOfCommingleBuilder_ = null;
+              purposeOfCommingle_ = other.purposeOfCommingle_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              purposeOfCommingleBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getPurposeOfCommingleFieldBuilder()
+                      : null;
+            } else {
+              purposeOfCommingleBuilder_.addAllMessages(other.purposeOfCommingle_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle>
+          purposeOfCommingle_ = java.util.Collections.emptyList();
+
+      private void ensurePurposeOfCommingleIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          purposeOfCommingle_ =
+              new java.util.ArrayList<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle>(
+                  purposeOfCommingle_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle,
+              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder,
+              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleOrBuilder>
+          purposeOfCommingleBuilder_;
+
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle>
+          getPurposeOfCommingleList() {
+        if (purposeOfCommingleBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(purposeOfCommingle_);
+        } else {
+          return purposeOfCommingleBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public int getPurposeOfCommingleCount() {
+        if (purposeOfCommingleBuilder_ == null) {
+          return purposeOfCommingle_.size();
+        } else {
+          return purposeOfCommingleBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle getPurposeOfCommingle(
+          int index) {
+        if (purposeOfCommingleBuilder_ == null) {
+          return purposeOfCommingle_.get(index);
+        } else {
+          return purposeOfCommingleBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public Builder setPurposeOfCommingle(
+          int index, com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle value) {
+        if (purposeOfCommingleBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePurposeOfCommingleIsMutable();
+          purposeOfCommingle_.set(index, value);
+          onChanged();
+        } else {
+          purposeOfCommingleBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public Builder setPurposeOfCommingle(
+          int index,
+          com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder builderForValue) {
+        if (purposeOfCommingleBuilder_ == null) {
+          ensurePurposeOfCommingleIsMutable();
+          purposeOfCommingle_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          purposeOfCommingleBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public Builder addPurposeOfCommingle(
+          com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle value) {
+        if (purposeOfCommingleBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePurposeOfCommingleIsMutable();
+          purposeOfCommingle_.add(value);
+          onChanged();
+        } else {
+          purposeOfCommingleBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public Builder addPurposeOfCommingle(
+          int index, com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle value) {
+        if (purposeOfCommingleBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePurposeOfCommingleIsMutable();
+          purposeOfCommingle_.add(index, value);
+          onChanged();
+        } else {
+          purposeOfCommingleBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public Builder addPurposeOfCommingle(
+          com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder builderForValue) {
+        if (purposeOfCommingleBuilder_ == null) {
+          ensurePurposeOfCommingleIsMutable();
+          purposeOfCommingle_.add(builderForValue.build());
+          onChanged();
+        } else {
+          purposeOfCommingleBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public Builder addPurposeOfCommingle(
+          int index,
+          com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder builderForValue) {
+        if (purposeOfCommingleBuilder_ == null) {
+          ensurePurposeOfCommingleIsMutable();
+          purposeOfCommingle_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          purposeOfCommingleBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public Builder addAllPurposeOfCommingle(
+          java.lang.Iterable<? extends com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle>
+              values) {
+        if (purposeOfCommingleBuilder_ == null) {
+          ensurePurposeOfCommingleIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, purposeOfCommingle_);
+          onChanged();
+        } else {
+          purposeOfCommingleBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public Builder clearPurposeOfCommingle() {
+        if (purposeOfCommingleBuilder_ == null) {
+          purposeOfCommingle_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          purposeOfCommingleBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public Builder removePurposeOfCommingle(int index) {
+        if (purposeOfCommingleBuilder_ == null) {
+          ensurePurposeOfCommingleIsMutable();
+          purposeOfCommingle_.remove(index);
+          onChanged();
+        } else {
+          purposeOfCommingleBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder
+          getPurposeOfCommingleBuilder(int index) {
+        return getPurposeOfCommingleFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleOrBuilder
+          getPurposeOfCommingleOrBuilder(int index) {
+        if (purposeOfCommingleBuilder_ == null) {
+          return purposeOfCommingle_.get(index);
+        } else {
+          return purposeOfCommingleBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleOrBuilder>
+          getPurposeOfCommingleOrBuilderList() {
+        if (purposeOfCommingleBuilder_ != null) {
+          return purposeOfCommingleBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(purposeOfCommingle_);
+        }
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder
+          addPurposeOfCommingleBuilder() {
+        return getPurposeOfCommingleFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.getDefaultInstance());
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder
+          addPurposeOfCommingleBuilder(int index) {
+        return getPurposeOfCommingleFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.getDefaultInstance());
+      }
+      /** <code>repeated .PurposeOfCommingle purposeOfCommingle = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder>
+          getPurposeOfCommingleBuilderList() {
+        return getPurposeOfCommingleFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle,
+              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder,
+              com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleOrBuilder>
+          getPurposeOfCommingleFieldBuilder() {
+        if (purposeOfCommingleBuilder_ == null) {
+          purposeOfCommingleBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle,
+                  com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder,
+                  com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleOrBuilder>(
+                  purposeOfCommingle_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          purposeOfCommingle_ = null;
+        }
+        return purposeOfCommingleBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:PurposeOfCommingleReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:PurposeOfCommingleReply)
+    private static final com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<PurposeOfCommingleReply> PARSER =
+        new com.google.protobuf.AbstractParser<PurposeOfCommingleReply>() {
+          @java.lang.Override
+          public PurposeOfCommingleReply parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new PurposeOfCommingleReply(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<PurposeOfCommingleReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<PurposeOfCommingleReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_VoyageRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -31958,6 +34123,18 @@ public final class LoadableStudy {
       internal_static_OnHandQuantityReply_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_OnHandQuantityReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_PurposeOfCommingle_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_PurposeOfCommingle_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_PurposeOfCommingleRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_PurposeOfCommingleRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_PurposeOfCommingleReply_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_PurposeOfCommingleReply_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -32069,41 +34246,48 @@ public final class LoadableStudy {
           + "dableStudyId\030\013 \001(\003\"y\n\023OnHandQuantityRepl"
           + "y\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStat"
           + "us\022-\n\016onHandQuantity\030\002 \003(\0132\025.OnHandQuant"
-          + "ityDetail\022\n\n\002id\030\003 \001(\0032\226\n\n\024LoadableStudyS"
-          + "ervice\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014.V"
-          + "oyageReply\"\000\0228\n\022GetVoyagesByVessel\022\016.Voy"
-          + "ageRequest\032\020.VoyageListReply\"\000\022J\n\024SaveLo"
-          + "adableQuantity\022\030.LoadableQuantityRequest"
-          + "\032\026.LoadableQuantityReply\"\000\022T\n$FindLoadab"
-          + "leStudiesByVesselAndVoyage\022\025.LoadableStu"
-          + "dyRequest\032\023.LoadableStudyReply\"\000\022@\n\021Save"
-          + "LoadableStudy\022\024.LoadableStudyDetail\032\023.Lo"
-          + "adableStudyReply\"\000\022G\n\023SaveCargoNominatio"
-          + "n\022\027.CargoNominationRequest\032\025.CargoNomina"
-          + "tionReply\"\000\022J\n\034GetLoadableStudyPortRotat"
+          + "ityDetail\022\n\n\002id\030\003 \001(\003\".\n\022PurposeOfCommin"
+          + "gle\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"4\n\031Purpose"
+          + "OfCommingleRequest\022\027\n\017loadableStudyId\030\001 "
+          + "\001(\003\"s\n\027PurposeOfCommingleReply\022\'\n\016respon"
+          + "seStatus\030\001 \001(\0132\017.ResponseStatus\022/\n\022purpo"
+          + "seOfCommingle\030\002 \003(\0132\023.PurposeOfCommingle"
+          + "2\347\n\n\024LoadableStudyService\022,\n\nSaveVoyage\022"
+          + "\016.VoyageRequest\032\014.VoyageReply\"\000\0228\n\022GetVo"
+          + "yagesByVessel\022\016.VoyageRequest\032\020.VoyageLi"
+          + "stReply\"\000\022J\n\024SaveLoadableQuantity\022\030.Load"
+          + "ableQuantityRequest\032\026.LoadableQuantityRe"
+          + "ply\"\000\022T\n$FindLoadableStudiesByVesselAndV"
+          + "oyage\022\025.LoadableStudyRequest\032\023.LoadableS"
+          + "tudyReply\"\000\022@\n\021SaveLoadableStudy\022\024.Loada"
+          + "bleStudyDetail\032\023.LoadableStudyReply\"\000\022G\n"
+          + "\023SaveCargoNomination\022\027.CargoNominationRe"
+          + "quest\032\025.CargoNominationReply\"\000\022J\n\034GetLoa"
+          + "dableStudyPortRotation\022\024.PortRotationReq"
+          + "uest\032\022.PortRotationReply\"\000\022J\n\026GetCargoNo"
+          + "minationById\022\027.CargoNominationRequest\032\025."
+          + "CargoNominationReply\"\000\022I\n\023GetValveSegreg"
+          + "ation\022\030.ValveSegregationRequest\032\026.ValveS"
+          + "egregationReply\"\000\022J\n\023getLoadableQuantity"
+          + "\022\026.LoadableQuantityReply\032\031.LoadableQuant"
+          + "ityResponse\"\000\022J\n\035SaveLoadableStudyPortRo"
+          + "tation\022\023.PortRotationDetail\032\022.PortRotati"
+          + "onReply\"\000\022I\n\025DeleteCargoNomination\022\027.Car"
+          + "goNominationRequest\032\025.CargoNominationRep"
+          + "ly\"\000\022B\n\024SaveDischargingPorts\022\024.PortRotat"
+          + "ionRequest\032\022.PortRotationReply\"\000\022N\n GetP"
+          + "ortRotationByLoadableStudyId\022\024.PortRotat"
+          + "ionRequest\032\022.PortRotationReply\"\000\022C\n\023Dele"
+          + "teLoadableStudy\022\025.LoadableStudyRequest\032\023"
+          + ".LoadableStudyReply\"\000\022@\n\022DeletePortRotat"
           + "ion\022\024.PortRotationRequest\032\022.PortRotation"
-          + "Reply\"\000\022J\n\026GetCargoNominationById\022\027.Carg"
-          + "oNominationRequest\032\025.CargoNominationRepl"
-          + "y\"\000\022I\n\023GetValveSegregation\022\030.ValveSegreg"
-          + "ationRequest\032\026.ValveSegregationReply\"\000\022J"
-          + "\n\023getLoadableQuantity\022\026.LoadableQuantity"
-          + "Reply\032\031.LoadableQuantityResponse\"\000\022J\n\035Sa"
-          + "veLoadableStudyPortRotation\022\023.PortRotati"
-          + "onDetail\032\022.PortRotationReply\"\000\022I\n\025Delete"
-          + "CargoNomination\022\027.CargoNominationRequest"
-          + "\032\025.CargoNominationReply\"\000\022B\n\024SaveDischar"
-          + "gingPorts\022\024.PortRotationRequest\032\022.PortRo"
-          + "tationReply\"\000\022N\n GetPortRotationByLoadab"
-          + "leStudyId\022\024.PortRotationRequest\032\022.PortRo"
-          + "tationReply\"\000\022C\n\023DeleteLoadableStudy\022\025.L"
-          + "oadableStudyRequest\032\023.LoadableStudyReply"
-          + "\"\000\022@\n\022DeletePortRotation\022\024.PortRotationR"
-          + "equest\032\022.PortRotationReply\"\000\022C\n\021GetOnHan"
-          + "dQuantity\022\026.OnHandQuantityRequest\032\024.OnHa"
-          + "ndQuantityReply\"\000\022C\n\022SaveOnHandQuantity\022"
-          + "\025.OnHandQuantityDetail\032\024.OnHandQuantityR"
-          + "eply\"\000B\036\n\032com.cpdss.common.generatedP\000b\006"
-          + "proto3"
+          + "Reply\"\000\022C\n\021GetOnHandQuantity\022\026.OnHandQua"
+          + "ntityRequest\032\024.OnHandQuantityReply\"\000\022C\n\022"
+          + "SaveOnHandQuantity\022\025.OnHandQuantityDetai"
+          + "l\032\024.OnHandQuantityReply\"\000\022O\n\025GetPurposeO"
+          + "fCommingle\022\032.PurposeOfCommingleRequest\032\030"
+          + ".PurposeOfCommingleReply\"\000B\036\n\032com.cpdss."
+          + "common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -32383,6 +34567,28 @@ public final class LoadableStudy {
             internal_static_OnHandQuantityReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "OnHandQuantity", "Id",
+            });
+    internal_static_PurposeOfCommingle_descriptor = getDescriptor().getMessageTypes().get(27);
+    internal_static_PurposeOfCommingle_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_PurposeOfCommingle_descriptor,
+            new java.lang.String[] {
+              "Id", "Name",
+            });
+    internal_static_PurposeOfCommingleRequest_descriptor =
+        getDescriptor().getMessageTypes().get(28);
+    internal_static_PurposeOfCommingleRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_PurposeOfCommingleRequest_descriptor,
+            new java.lang.String[] {
+              "LoadableStudyId",
+            });
+    internal_static_PurposeOfCommingleReply_descriptor = getDescriptor().getMessageTypes().get(29);
+    internal_static_PurposeOfCommingleReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_PurposeOfCommingleReply_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus", "PurposeOfCommingle",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }
