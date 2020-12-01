@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
+import { MessageService } from 'primeng/api';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableEvent } from '../../../../../shared/components/datatable/datatable.model';
 import { ILoadingPort, ILoadingPortValueObject, ILoadingPopupData, IPort } from '../../../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
@@ -33,11 +35,11 @@ export class LoadingPortsPopupComponent implements OnInit {
   set popupData(popupData: ILoadingPopupData) {
     this._popupData = popupData;
     this.ports = this.popupData.ports;
+    this.loadingPort = this.popupData.rowData.loadingPorts.value ? this.popupData.rowData.loadingPorts.value.reverse().map(port => this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortAsValueObject(port, false)) : [];
     this.updatePorts(popupData);
-    this.loadingPort = this.popupData.rowData.loadingPorts.value ? this.popupData.rowData.loadingPorts.value.map(port => this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortAsValueObject(port, false)) : [];
     const loadingPortArray = this.loadingPort.map(port => this.initLoadingPortFormGroup(port));
     this.loadingPortsFrom = this.fb.group({
-      dataTable: this.fb.array([...loadingPortArray]),
+      dataTable: this.fb.array([...loadingPortArray], Validators.required),
       addPort: this.fb.control(null)
     });
   }
@@ -55,15 +57,11 @@ export class LoadingPortsPopupComponent implements OnInit {
   private _visible: boolean;
 
   constructor(private fb: FormBuilder,
-    private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService) { }
+    private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
+    private messageService: MessageService,
+    private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.loadingPort = this.popupData.rowData.loadingPorts.value ? this.popupData.rowData.loadingPorts.value.map(port => this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortAsValueObject(port, false)) : [];
-    const loadingPortArray = this.loadingPort.map(port => this.initLoadingPortFormGroup(port));
-    this.loadingPortsFrom = this.fb.group({
-      dataTable: this.fb.array([...loadingPortArray]),
-      addPort: this.fb.control(null)
-    });
     this.columns = this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortDatatableColumns();
   }
 
@@ -73,6 +71,7 @@ export class LoadingPortsPopupComponent implements OnInit {
    * @memberof LoadingPortsPopupComponent
    */
   closePopup() {
+    this.loadingPort = null;
     this.visible = false;
     this.visibleChange.emit(this.visible);
   }
@@ -85,11 +84,6 @@ export class LoadingPortsPopupComponent implements OnInit {
    */
   addPort(port: ILoadingPort) {
     port.quantity = null;
-    if (this.popupData.rowData.loadingPorts.value) {
-      this.popupData.rowData.loadingPorts.value.unshift(port)
-    } else {
-      this.popupData.rowData.loadingPorts.value = [port];
-    }
     const loadingPort: ILoadingPortValueObject = this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortAsValueObject(port);
     this.loadingPort = [loadingPort, ...this.loadingPort];
     const dataTableControl = <FormArray>this.loadingPortsFrom.get('dataTable');
@@ -105,7 +99,7 @@ export class LoadingPortsPopupComponent implements OnInit {
    * @memberof LoadingPortsPopupComponent
    */
   updatePorts(popupData: ILoadingPopupData) {
-    popupData.ports = this.ports.filter(port => !popupData.rowData.loadingPorts.value?.some(lport => lport.id === port.id));
+    popupData.ports = this.ports.filter(port => !this.loadingPort?.some(lport => lport.id === port.id));
   }
 
   /**
@@ -115,7 +109,6 @@ export class LoadingPortsPopupComponent implements OnInit {
    * @memberof LoadingPortsPopupComponent
    */
   onEditComplete(event: IDataTableEvent) {
-    this.popupData.rowData.loadingPorts.value[event.index][event.field] = event.data[event.field].value;
     this.updatePorts(this.popupData);
   }
 
@@ -126,8 +119,10 @@ export class LoadingPortsPopupComponent implements OnInit {
    * @memberof LoadingPortsPopupComponent
    */
   onDeleteRow(event: IDataTableEvent) {
-    this.popupData.rowData.loadingPorts.value.splice(event.index, 1);
-    this.popupData = {...this.popupData};
+    this.loadingPort.splice(event.index, 1);
+    const dataTableControl = <FormArray>this.loadingPortsFrom.get('dataTable');
+    dataTableControl.removeAt(event.index);
+    this.updatePorts(this.popupData);
   }
 
   /**
@@ -136,12 +131,18 @@ export class LoadingPortsPopupComponent implements OnInit {
    * @param {IDataTableEvent} event
    * @memberof LoadingPortsPopupComponent
    */
-  savePopup() {
+  async savePopup() {
     if (this.loadingPortsFrom.valid) {
       this.popupData.isUpdate = true;
+      this.popupData.rowData.loadingPorts.value = this.loadingPort?.reverse().map(port => this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortAsValue(port));
       this.popupDataChange.emit(this.popupData);
       this.closePopup();
     } else {
+      if (this.loadingPortsFrom.controls.dataTable.errors.required) {
+        const detail = await this.translateService.get('CARGO_NOMINATION_FIELD_REQUIRED_ERROR').toPromise();
+        this.messageService.add({ severity: 'error', detail: detail });
+      }
+
       this.loadingPortsFrom.markAllAsTouched();
       this.loadingPortsFrom.updateValueAndValidity();
     }

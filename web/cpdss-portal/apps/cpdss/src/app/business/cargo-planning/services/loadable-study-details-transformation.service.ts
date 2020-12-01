@@ -382,11 +382,30 @@ export class LoadableStudyDetailsTransformationService {
    */
   getCargoNominationLoadingPortAsValueObject(loadingPort: ILoadingPort, isNewValue = true): ILoadingPortValueObject {
     const _loadingPort = <ILoadingPortValueObject>{};
+    _loadingPort.id = loadingPort?.id;
     _loadingPort.name = new ValueObject<string>(loadingPort.name, true, false, false);
     _loadingPort.quantity = new ValueObject<number>(loadingPort.quantity, true, isNewValue, false);
     _loadingPort.isAdd = isNewValue;
 
     return _loadingPort;
+  }
+
+  /**
+   * Method for converting loading port data as value
+   *
+   * @param {ILoadingPortValueObject} loadingPort
+   * @returns {ILoadingPort}
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  getCargoNominationLoadingPortAsValue(loadingPort: ILoadingPortValueObject): ILoadingPort {
+    const _loadingPorts: ILoadingPort = <ILoadingPort>{};
+    for (const key in loadingPort) {
+      if (Object.prototype.hasOwnProperty.call(loadingPort, key)) {
+        _loadingPorts[key] = loadingPort[key]?.value ?? loadingPort[key];
+      }
+    }
+
+    return _loadingPorts;
   }
 
 
