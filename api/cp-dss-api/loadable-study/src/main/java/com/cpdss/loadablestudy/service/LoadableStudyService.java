@@ -31,6 +31,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.TankDetail;
+import com.cpdss.common.generated.LoadableStudy.TankList;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregation;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationReply;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest;
@@ -86,8 +88,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -1654,7 +1660,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(item -> detailBuilder.setDepartureVolume(valueOf(item)));
         }
         replyBuilder.addOnHandQuantity(detailBuilder.build());
+        this.createVesselTankLayoutArray(vesselReply);
       }
+      replyBuilder.addAllVesselTanks(this.createVesselTankLayoutArray(vesselReply));
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching on hand quantities", e);
@@ -1676,6 +1684,60 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * Group tanks by tank group
+   *
+   * @param vesselReply
+   * @return
+   */
+  private List<TankList> createVesselTankLayoutArray(VesselReply vesselReply) {
+    Map<Integer, List<VesselTankDetail>> vesselTankMap = new HashMap<>();
+    for (VesselTankDetail tank : vesselReply.getVesselTanksList()) {
+      Integer tankGroup = tank.getTankGroup();
+      List<VesselTankDetail> list = null;
+      if (null == vesselTankMap.get(tankGroup)) {
+        list = new ArrayList<>();
+      } else {
+        list = vesselTankMap.get(tankGroup);
+      }
+      list.add(tank);
+      vesselTankMap.put(tankGroup, list);
+    }
+    List<TankList> tanks = new ArrayList<>();
+    List<TankDetail> tankGroup = null;
+    for (Map.Entry<Integer, List<VesselTankDetail>> entry : vesselTankMap.entrySet()) {
+      tankGroup = entry.getValue().stream().map(this::buildTankDetail).collect(Collectors.toList());
+      Collections.sort(tankGroup, Comparator.comparing(TankDetail::getTankOrder));
+      tanks.add(TankList.newBuilder().addAllVesselTank(tankGroup).build());
+    }
+    return tanks;
+  }
+
+  /**
+   * create tank detail
+   *
+   * @param detail
+   * @return
+   */
+  public TankDetail buildTankDetail(VesselTankDetail detail) {
+    TankDetail.Builder builder = TankDetail.newBuilder();
+    builder.setFrameNumberFrom(detail.getFrameNumberFrom());
+    builder.setFrameNumberTo(detail.getFrameNumberTo());
+    builder.setShortName(detail.getShortName());
+    builder.setTankCategoryId(detail.getTankCategoryId());
+    builder.setTankCategoryName(detail.getTankCategoryName());
+    builder.setTankId(detail.getTankId());
+    builder.setTankName(detail.getTankName());
+    builder.setIsSlopTank(detail.getIsSlopTank());
+    builder.setDensity(detail.getDensity());
+    builder.setFillCapacityCubm(detail.getFillCapacityCubm());
+    builder.setHeightFrom(detail.getHeightFrom());
+    builder.setHeightTo(detail.getHeightTo());
+    builder.setTankOrder(detail.getTankOrder());
+    builder.setTankGroup(detail.getTankGroup());
+    return builder.build();
   }
 
   /**

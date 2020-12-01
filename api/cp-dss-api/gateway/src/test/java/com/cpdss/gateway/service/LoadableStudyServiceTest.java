@@ -29,6 +29,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.TankDetail;
+import com.cpdss.common.generated.LoadableStudy.TankList;
 import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
 import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
@@ -990,6 +992,8 @@ class LoadableStudyServiceTest {
         .thenReturn(
             OnHandQuantityReply.newBuilder()
                 .addAllOnHandQuantity(this.createOnhandQuantityDetail())
+                .addVesselTanks(
+                    TankList.newBuilder().addAllVesselTank(this.createTankDetail()).build())
                 .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
                 .build());
     OnHandQuantityResponse response =
@@ -1014,6 +1018,37 @@ class LoadableStudyServiceTest {
                       .setTankName("tank-" + i)
                       .setFuelType("fuel-" + i)
                       .setFuelTypeId(Long.valueOf(i))
+                      .setArrivalQuantity(String.valueOf(i))
+                      .setDepartureQuantity(String.valueOf(i))
+                      .setArrivalVolume(String.valueOf(i))
+                      .setDepartureVolume(String.valueOf(i))
+                      .build();
+              list.add(detail);
+            });
+    return list;
+  }
+
+  private List<TankDetail> createTankDetail() {
+    List<TankDetail> list = new ArrayList<>();
+    IntStream.range(1, 5)
+        .forEach(
+            i -> {
+              TankDetail detail =
+                  TankDetail.newBuilder()
+                      .setTankId(Long.valueOf(i))
+                      .setTankName("tank-" + i)
+                      .setTankCategoryId(Long.valueOf(i))
+                      .setTankCategoryName("cat-" + i)
+                      .setFrameNumberFrom(String.valueOf(i))
+                      .setFrameNumberTo(String.valueOf(i))
+                      .setShortName("short-" + i)
+                      .setFillCapacityCubm(String.valueOf(i))
+                      .setDensity(String.valueOf(i))
+                      .setIsSlopTank(false)
+                      .setHeightFrom(String.valueOf(i))
+                      .setHeightTo(String.valueOf(i))
+                      .setTankOrder(i)
+                      .setTankGroup(i)
                       .build();
               list.add(detail);
             });

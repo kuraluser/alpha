@@ -293,10 +293,32 @@ message OnHandQuantityDetail{
 	int64 loadableStudyId = 11;
 }
 
+message TankDetail{
+	int64 tankId = 1;
+	int64 tankCategoryId = 2;
+	string tankCategoryName = 3;
+	string tankName = 4;
+	string frameNumberFrom = 5;
+	string frameNumberTo = 6;
+	string shortName = 7;
+	string fillCapacityCubm = 8;
+	string density = 9;
+	bool isSlopTank = 10;
+	string heightFrom = 11;
+	string heightTo = 12;
+	int32 tankOrder = 13;
+	int32 tankGroup = 14;
+}
+
+message TankList{
+	repeated TankDetail vesselTank = 1;
+}
+
 message OnHandQuantityReply{
 	ResponseStatus responseStatus = 1;
 	repeated OnHandQuantityDetail onHandQuantity = 2;
-	int64 id = 3;
+	repeated TankList vesselTanks = 3;
+	int64 id = 4;
 }
 
 message PurposeOfCommingle{

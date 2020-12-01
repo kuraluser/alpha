@@ -74,10 +74,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
           LUBRICANT_OIL_TANK_CATEGORY_ID);
 
   private static final List<Long> CARGO_TANK_CATEGORIES =
-	      Arrays.asList(
-	    		  CARGO_TANK_CATEGORY_ID,
-	          CARGO_SLOP_TANK_CATEGORY_ID);
-  
+      Arrays.asList(CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID);
+
   /** Get vessel for a company */
   @Override
   public void getAllVesselsByCompany(
@@ -193,9 +191,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       VesselRequest request, StreamObserver<VesselReply> responseObserver) {
     VesselReply.Builder replyBuilder = VesselReply.newBuilder();
     try {
-      Vessel vessel =
-          this.vesselRepository.findByCompanyXIdAndIdAndIsActive(
-              request.getCompanyId(), request.getVesselId(), true);
+      Vessel vessel = this.vesselRepository.findByIdAndIsActive(request.getVesselId(), true);
       if (null == vessel) {
         throw new GenericServiceException(
             "Vessel with given id does not exist",
@@ -217,6 +213,18 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         builder.setShortName(tank.getShortName());
         builder.setFrameNumberFrom(tank.getFrameNumberFrom());
         builder.setFrameNumberTo(tank.getFrameNumberTo());
+        builder.setTankName(tank.getTankName());
+        Optional.ofNullable(tank.getHeightFrom()).ifPresent(builder::setHeightFrom);
+        Optional.ofNullable(tank.getHeightTo()).ifPresent(builder::setHeightTo);
+        Optional.ofNullable(tank.getFillCapacityCubm())
+            .ifPresent(
+                capacity ->
+                    builder.setFillCapacityCubm(String.valueOf(tank.getFillCapacityCubm())));
+        Optional.ofNullable(tank.getDensity())
+            .ifPresent(density -> builder.setDensity(String.valueOf(tank.getDensity())));
+        Optional.ofNullable(tank.getTankGroup()).ifPresent(builder::setTankGroup);
+        Optional.ofNullable(tank.getTankOrder()).ifPresent(builder::setTankOrder);
+        Optional.ofNullable(tank.getIsSlopTank()).ifPresent(builder::setIsSlopTank);
         replyBuilder.addVesselTanks(builder.build());
       }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -241,62 +249,58 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       responseObserver.onCompleted();
     }
   }
-  
-  /** 
-   * Retrieve vessel cargo tanks for a vessel-id
-   */
+
+  /** Retrieve vessel cargo tanks for a vessel-id */
   @Override
   public void getVesselCargoTanks(
       VesselRequest request, StreamObserver<VesselReply> responseObserver) {
-	  VesselReply.Builder replyBuilder = VesselReply.newBuilder();
-	    try {
-	      Vessel vesselEntity =
-	          this.vesselRepository.findByIdAndIsActive(
-	              request.getVesselId(), true);
-	      if (vesselEntity == null) {
-	        throw new GenericServiceException(
-	            "Vessel with given id does not exist",
-	            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-	            HttpStatusCode.BAD_REQUEST);
-	      }
-	      List<TankCategory> tankCategoryEntities = new ArrayList<>();
-	      CARGO_TANK_CATEGORIES.forEach(
-	          tankCategoryId ->
-	          tankCategoryEntities.add(this.tankCategoryRepository.getOne(tankCategoryId)));
-	      List<VesselTank> vesselTanks =
-	          this.vesselTankRepository.findByVesselAndTankCategoryInAndIsActive(
-	        		  vesselEntity, tankCategoryEntities, true);
-	      for (VesselTank tank : vesselTanks) {
-	        VesselTankDetail.Builder builder = VesselTankDetail.newBuilder();
-	        builder.setTankId(tank.getId());
-	        builder.setTankName(tank.getTankName());
-	        builder.setShortName(tank.getShortName());
-//	        builder.setTankCategoryId(tank.getTankCategory().getId());
-//	        builder.setTankCategoryName(tank.getTankCategory().getName());
-//	        builder.setFrameNumberFrom(tank.getFrameNumberFrom());
-//	        builder.setFrameNumberTo(tank.getFrameNumberTo());
-	        replyBuilder.addVesselTanks(builder.build());
-	      }
-	      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-	    } catch (GenericServiceException e) {
-	      log.error("GenericServiceException when fetching cargo tanks", e);
-	      replyBuilder.setResponseStatus(
-	          ResponseStatus.newBuilder()
-	              .setCode(e.getCode())
-	              .setMessage("GenericServiceException when fetching cargo tanks")
-	              .setStatus(FAILED)
-	              .build());
-	    } catch (Exception e) {
-	      log.error("Exception when fetching cargo tanks", e);
-	      replyBuilder.setResponseStatus(
-	          ResponseStatus.newBuilder()
-	              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-	              .setMessage("Exception when fetching cargo tanks")
-	              .setStatus(FAILED)
-	              .build());
-	    } finally {
-	      responseObserver.onNext(replyBuilder.build());
-	      responseObserver.onCompleted();
-	    }
+    VesselReply.Builder replyBuilder = VesselReply.newBuilder();
+    try {
+      Vessel vesselEntity = this.vesselRepository.findByIdAndIsActive(request.getVesselId(), true);
+      if (vesselEntity == null) {
+        throw new GenericServiceException(
+            "Vessel with given id does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      List<TankCategory> tankCategoryEntities = new ArrayList<>();
+      CARGO_TANK_CATEGORIES.forEach(
+          tankCategoryId ->
+              tankCategoryEntities.add(this.tankCategoryRepository.getOne(tankCategoryId)));
+      List<VesselTank> vesselTanks =
+          this.vesselTankRepository.findByVesselAndTankCategoryInAndIsActive(
+              vesselEntity, tankCategoryEntities, true);
+      for (VesselTank tank : vesselTanks) {
+        VesselTankDetail.Builder builder = VesselTankDetail.newBuilder();
+        builder.setTankId(tank.getId());
+        builder.setTankName(tank.getTankName());
+        builder.setShortName(tank.getShortName());
+        //	        builder.setTankCategoryId(tank.getTankCategory().getId());
+        //	        builder.setTankCategoryName(tank.getTankCategory().getName());
+        //	        builder.setFrameNumberFrom(tank.getFrameNumberFrom());
+        //	        builder.setFrameNumberTo(tank.getFrameNumberTo());
+        replyBuilder.addVesselTanks(builder.build());
+      }
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching cargo tanks", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage("GenericServiceException when fetching cargo tanks")
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      log.error("Exception when fetching cargo tanks", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when fetching cargo tanks")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

@@ -5,10 +5,8 @@ import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -100,22 +98,13 @@ public class VesselTank extends EntityDoc {
   private BigDecimal fillingRatio;
 
   @Column(name = "is_sloptank")
-  private Boolean isSloptank;
+  private Boolean isSlopTank;
 
   @Column(name = "tank_group")
   private Integer tankGroup;
 
   @Column(name = "max_loading_limit")
   private BigDecimal maxLoadingLimit;
-
-  @Column(name = "heightfrom")
-  private String heightfrom;
-
-  @Column(name = "heightto")
-  private String heightto;
-
-  @Column(name = "tankorder")
-  private Integer tankorder;
 
   @JoinColumn(name = "fuel_type_xid", referencedColumnName = "id")
   @ManyToOne
@@ -141,4 +130,13 @@ public class VesselTank extends EntityDoc {
 
   @OneToMany(mappedBy = "vesselTank")
   private Collection<ConsumptionDetails> consumptionDetailsCollection;
+
+  @Column(name = "height_from")
+  private String heightFrom;
+
+  @Column(name = "height_to")
+  private String heightTo;
+
+  @Column(name = "tank_order")
+  private Integer tankOrder;
 }

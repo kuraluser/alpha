@@ -20,5 +20,7 @@ public class OnHandQuantityResponse {
 
   private List<OnHandQuantity> onHandQuantities;
 
+  private List<List<VesselTank>> vesselTanks;
+
   private Long id;
 }

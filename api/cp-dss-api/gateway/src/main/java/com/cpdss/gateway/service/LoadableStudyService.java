@@ -30,6 +30,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
+import com.cpdss.common.generated.LoadableStudy.TankDetail;
+import com.cpdss.common.generated.LoadableStudy.TankList;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationReply;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
@@ -1278,6 +1280,45 @@ public class LoadableStudyService {
     }
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return this.buildTankLayoutArray(response, grpcReply);
+  }
+
+  /**
+   * Build tank layout array
+   *
+   * @param response
+   * @param grpcReply
+   * @return
+   */
+  private OnHandQuantityResponse buildTankLayoutArray(
+      OnHandQuantityResponse response, OnHandQuantityReply grpcReply) {
+    List<List<VesselTank>> tanks = new ArrayList<>();
+    for (TankList list : grpcReply.getVesselTanksList()) {
+      List<VesselTank> tankGroup = new ArrayList<>();
+      for (TankDetail detail : list.getVesselTankList()) {
+        VesselTank tank = new VesselTank();
+        tank.setId(detail.getTankId());
+        tank.setCategoryId(detail.getTankCategoryId());
+        tank.setFrameNumberFrom(detail.getFrameNumberFrom());
+        tank.setFrameNumberTo(detail.getFrameNumberTo());
+        tank.setShortName(detail.getShortName());
+        tank.setCategoryName(detail.getTankCategoryName());
+        tank.setName(detail.getTankName());
+        tank.setDensity(isEmpty(detail.getDensity()) ? null : new BigDecimal(detail.getDensity()));
+        tank.setFillCapcityCubm(
+            isEmpty(detail.getFillCapacityCubm())
+                ? null
+                : new BigDecimal(detail.getFillCapacityCubm()));
+        tank.setSlopTank(detail.getIsSlopTank());
+        tank.setGroup(detail.getTankGroup());
+        tank.setOrder(detail.getTankOrder());
+        tank.setHeightFrom(detail.getHeightFrom());
+        tank.setHeightTo(detail.getHeightTo());
+        tankGroup.add(tank);
+      }
+      tanks.add(tankGroup);
+    }
+    response.setVesselTanks(tanks);
     return response;
   }
 

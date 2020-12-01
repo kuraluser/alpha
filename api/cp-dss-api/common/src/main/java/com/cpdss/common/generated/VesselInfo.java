@@ -4363,6 +4363,79 @@ public final class VesselInfo {
      * @return The bytes for shortName.
      */
     com.google.protobuf.ByteString getShortNameBytes();
+
+    /**
+     * <code>string fillCapacityCubm = 8;</code>
+     *
+     * @return The fillCapacityCubm.
+     */
+    java.lang.String getFillCapacityCubm();
+    /**
+     * <code>string fillCapacityCubm = 8;</code>
+     *
+     * @return The bytes for fillCapacityCubm.
+     */
+    com.google.protobuf.ByteString getFillCapacityCubmBytes();
+
+    /**
+     * <code>string density = 9;</code>
+     *
+     * @return The density.
+     */
+    java.lang.String getDensity();
+    /**
+     * <code>string density = 9;</code>
+     *
+     * @return The bytes for density.
+     */
+    com.google.protobuf.ByteString getDensityBytes();
+
+    /**
+     * <code>bool isSlopTank = 10;</code>
+     *
+     * @return The isSlopTank.
+     */
+    boolean getIsSlopTank();
+
+    /**
+     * <code>string heightFrom = 11;</code>
+     *
+     * @return The heightFrom.
+     */
+    java.lang.String getHeightFrom();
+    /**
+     * <code>string heightFrom = 11;</code>
+     *
+     * @return The bytes for heightFrom.
+     */
+    com.google.protobuf.ByteString getHeightFromBytes();
+
+    /**
+     * <code>string heightTo = 12;</code>
+     *
+     * @return The heightTo.
+     */
+    java.lang.String getHeightTo();
+    /**
+     * <code>string heightTo = 12;</code>
+     *
+     * @return The bytes for heightTo.
+     */
+    com.google.protobuf.ByteString getHeightToBytes();
+
+    /**
+     * <code>int32 tankOrder = 13;</code>
+     *
+     * @return The tankOrder.
+     */
+    int getTankOrder();
+
+    /**
+     * <code>int32 tankGroup = 14;</code>
+     *
+     * @return The tankGroup.
+     */
+    int getTankGroup();
   }
   /** Protobuf type {@code VesselTankDetail} */
   public static final class VesselTankDetail extends com.google.protobuf.GeneratedMessageV3
@@ -4381,6 +4454,10 @@ public final class VesselInfo {
       frameNumberFrom_ = "";
       frameNumberTo_ = "";
       shortName_ = "";
+      fillCapacityCubm_ = "";
+      density_ = "";
+      heightFrom_ = "";
+      heightTo_ = "";
     }
 
     @java.lang.Override
@@ -4455,6 +4532,49 @@ public final class VesselInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 shortName_ = s;
+                break;
+              }
+            case 66:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                fillCapacityCubm_ = s;
+                break;
+              }
+            case 74:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                density_ = s;
+                break;
+              }
+            case 80:
+              {
+                isSlopTank_ = input.readBool();
+                break;
+              }
+            case 90:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                heightFrom_ = s;
+                break;
+              }
+            case 98:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                heightTo_ = s;
+                break;
+              }
+            case 104:
+              {
+                tankOrder_ = input.readInt32();
+                break;
+              }
+            case 112:
+              {
+                tankGroup_ = input.readInt32();
                 break;
               }
             default:
@@ -4687,6 +4807,179 @@ public final class VesselInfo {
       }
     }
 
+    public static final int FILLCAPACITYCUBM_FIELD_NUMBER = 8;
+    private volatile java.lang.Object fillCapacityCubm_;
+    /**
+     * <code>string fillCapacityCubm = 8;</code>
+     *
+     * @return The fillCapacityCubm.
+     */
+    public java.lang.String getFillCapacityCubm() {
+      java.lang.Object ref = fillCapacityCubm_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        fillCapacityCubm_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string fillCapacityCubm = 8;</code>
+     *
+     * @return The bytes for fillCapacityCubm.
+     */
+    public com.google.protobuf.ByteString getFillCapacityCubmBytes() {
+      java.lang.Object ref = fillCapacityCubm_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        fillCapacityCubm_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DENSITY_FIELD_NUMBER = 9;
+    private volatile java.lang.Object density_;
+    /**
+     * <code>string density = 9;</code>
+     *
+     * @return The density.
+     */
+    public java.lang.String getDensity() {
+      java.lang.Object ref = density_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        density_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string density = 9;</code>
+     *
+     * @return The bytes for density.
+     */
+    public com.google.protobuf.ByteString getDensityBytes() {
+      java.lang.Object ref = density_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        density_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ISSLOPTANK_FIELD_NUMBER = 10;
+    private boolean isSlopTank_;
+    /**
+     * <code>bool isSlopTank = 10;</code>
+     *
+     * @return The isSlopTank.
+     */
+    public boolean getIsSlopTank() {
+      return isSlopTank_;
+    }
+
+    public static final int HEIGHTFROM_FIELD_NUMBER = 11;
+    private volatile java.lang.Object heightFrom_;
+    /**
+     * <code>string heightFrom = 11;</code>
+     *
+     * @return The heightFrom.
+     */
+    public java.lang.String getHeightFrom() {
+      java.lang.Object ref = heightFrom_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        heightFrom_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string heightFrom = 11;</code>
+     *
+     * @return The bytes for heightFrom.
+     */
+    public com.google.protobuf.ByteString getHeightFromBytes() {
+      java.lang.Object ref = heightFrom_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        heightFrom_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int HEIGHTTO_FIELD_NUMBER = 12;
+    private volatile java.lang.Object heightTo_;
+    /**
+     * <code>string heightTo = 12;</code>
+     *
+     * @return The heightTo.
+     */
+    public java.lang.String getHeightTo() {
+      java.lang.Object ref = heightTo_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        heightTo_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string heightTo = 12;</code>
+     *
+     * @return The bytes for heightTo.
+     */
+    public com.google.protobuf.ByteString getHeightToBytes() {
+      java.lang.Object ref = heightTo_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        heightTo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TANKORDER_FIELD_NUMBER = 13;
+    private int tankOrder_;
+    /**
+     * <code>int32 tankOrder = 13;</code>
+     *
+     * @return The tankOrder.
+     */
+    public int getTankOrder() {
+      return tankOrder_;
+    }
+
+    public static final int TANKGROUP_FIELD_NUMBER = 14;
+    private int tankGroup_;
+    /**
+     * <code>int32 tankGroup = 14;</code>
+     *
+     * @return The tankGroup.
+     */
+    public int getTankGroup() {
+      return tankGroup_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -4722,6 +5015,27 @@ public final class VesselInfo {
       if (!getShortNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 7, shortName_);
       }
+      if (!getFillCapacityCubmBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, fillCapacityCubm_);
+      }
+      if (!getDensityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, density_);
+      }
+      if (isSlopTank_ != false) {
+        output.writeBool(10, isSlopTank_);
+      }
+      if (!getHeightFromBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, heightFrom_);
+      }
+      if (!getHeightToBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, heightTo_);
+      }
+      if (tankOrder_ != 0) {
+        output.writeInt32(13, tankOrder_);
+      }
+      if (tankGroup_ != 0) {
+        output.writeInt32(14, tankGroup_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -4752,6 +5066,27 @@ public final class VesselInfo {
       if (!getShortNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, shortName_);
       }
+      if (!getFillCapacityCubmBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, fillCapacityCubm_);
+      }
+      if (!getDensityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, density_);
+      }
+      if (isSlopTank_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(10, isSlopTank_);
+      }
+      if (!getHeightFromBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, heightFrom_);
+      }
+      if (!getHeightToBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, heightTo_);
+      }
+      if (tankOrder_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(13, tankOrder_);
+      }
+      if (tankGroup_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(14, tankGroup_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -4775,6 +5110,13 @@ public final class VesselInfo {
       if (!getFrameNumberFrom().equals(other.getFrameNumberFrom())) return false;
       if (!getFrameNumberTo().equals(other.getFrameNumberTo())) return false;
       if (!getShortName().equals(other.getShortName())) return false;
+      if (!getFillCapacityCubm().equals(other.getFillCapacityCubm())) return false;
+      if (!getDensity().equals(other.getDensity())) return false;
+      if (getIsSlopTank() != other.getIsSlopTank()) return false;
+      if (!getHeightFrom().equals(other.getHeightFrom())) return false;
+      if (!getHeightTo().equals(other.getHeightTo())) return false;
+      if (getTankOrder() != other.getTankOrder()) return false;
+      if (getTankGroup() != other.getTankGroup()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -4800,6 +5142,20 @@ public final class VesselInfo {
       hash = (53 * hash) + getFrameNumberTo().hashCode();
       hash = (37 * hash) + SHORTNAME_FIELD_NUMBER;
       hash = (53 * hash) + getShortName().hashCode();
+      hash = (37 * hash) + FILLCAPACITYCUBM_FIELD_NUMBER;
+      hash = (53 * hash) + getFillCapacityCubm().hashCode();
+      hash = (37 * hash) + DENSITY_FIELD_NUMBER;
+      hash = (53 * hash) + getDensity().hashCode();
+      hash = (37 * hash) + ISSLOPTANK_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsSlopTank());
+      hash = (37 * hash) + HEIGHTFROM_FIELD_NUMBER;
+      hash = (53 * hash) + getHeightFrom().hashCode();
+      hash = (37 * hash) + HEIGHTTO_FIELD_NUMBER;
+      hash = (53 * hash) + getHeightTo().hashCode();
+      hash = (37 * hash) + TANKORDER_FIELD_NUMBER;
+      hash = (53 * hash) + getTankOrder();
+      hash = (37 * hash) + TANKGROUP_FIELD_NUMBER;
+      hash = (53 * hash) + getTankGroup();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4953,6 +5309,20 @@ public final class VesselInfo {
 
         shortName_ = "";
 
+        fillCapacityCubm_ = "";
+
+        density_ = "";
+
+        isSlopTank_ = false;
+
+        heightFrom_ = "";
+
+        heightTo_ = "";
+
+        tankOrder_ = 0;
+
+        tankGroup_ = 0;
+
         return this;
       }
 
@@ -4986,6 +5356,13 @@ public final class VesselInfo {
         result.frameNumberFrom_ = frameNumberFrom_;
         result.frameNumberTo_ = frameNumberTo_;
         result.shortName_ = shortName_;
+        result.fillCapacityCubm_ = fillCapacityCubm_;
+        result.density_ = density_;
+        result.isSlopTank_ = isSlopTank_;
+        result.heightFrom_ = heightFrom_;
+        result.heightTo_ = heightTo_;
+        result.tankOrder_ = tankOrder_;
+        result.tankGroup_ = tankGroup_;
         onBuilt();
         return result;
       }
@@ -5063,6 +5440,31 @@ public final class VesselInfo {
         if (!other.getShortName().isEmpty()) {
           shortName_ = other.shortName_;
           onChanged();
+        }
+        if (!other.getFillCapacityCubm().isEmpty()) {
+          fillCapacityCubm_ = other.fillCapacityCubm_;
+          onChanged();
+        }
+        if (!other.getDensity().isEmpty()) {
+          density_ = other.density_;
+          onChanged();
+        }
+        if (other.getIsSlopTank() != false) {
+          setIsSlopTank(other.getIsSlopTank());
+        }
+        if (!other.getHeightFrom().isEmpty()) {
+          heightFrom_ = other.heightFrom_;
+          onChanged();
+        }
+        if (!other.getHeightTo().isEmpty()) {
+          heightTo_ = other.heightTo_;
+          onChanged();
+        }
+        if (other.getTankOrder() != 0) {
+          setTankOrder(other.getTankOrder());
+        }
+        if (other.getTankGroup() != 0) {
+          setTankGroup(other.getTankGroup());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -5536,6 +5938,409 @@ public final class VesselInfo {
         checkByteStringIsUtf8(value);
 
         shortName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object fillCapacityCubm_ = "";
+      /**
+       * <code>string fillCapacityCubm = 8;</code>
+       *
+       * @return The fillCapacityCubm.
+       */
+      public java.lang.String getFillCapacityCubm() {
+        java.lang.Object ref = fillCapacityCubm_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          fillCapacityCubm_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string fillCapacityCubm = 8;</code>
+       *
+       * @return The bytes for fillCapacityCubm.
+       */
+      public com.google.protobuf.ByteString getFillCapacityCubmBytes() {
+        java.lang.Object ref = fillCapacityCubm_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          fillCapacityCubm_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string fillCapacityCubm = 8;</code>
+       *
+       * @param value The fillCapacityCubm to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFillCapacityCubm(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        fillCapacityCubm_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string fillCapacityCubm = 8;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearFillCapacityCubm() {
+
+        fillCapacityCubm_ = getDefaultInstance().getFillCapacityCubm();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string fillCapacityCubm = 8;</code>
+       *
+       * @param value The bytes for fillCapacityCubm to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFillCapacityCubmBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        fillCapacityCubm_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object density_ = "";
+      /**
+       * <code>string density = 9;</code>
+       *
+       * @return The density.
+       */
+      public java.lang.String getDensity() {
+        java.lang.Object ref = density_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          density_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string density = 9;</code>
+       *
+       * @return The bytes for density.
+       */
+      public com.google.protobuf.ByteString getDensityBytes() {
+        java.lang.Object ref = density_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          density_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string density = 9;</code>
+       *
+       * @param value The density to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDensity(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        density_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string density = 9;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDensity() {
+
+        density_ = getDefaultInstance().getDensity();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string density = 9;</code>
+       *
+       * @param value The bytes for density to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDensityBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        density_ = value;
+        onChanged();
+        return this;
+      }
+
+      private boolean isSlopTank_;
+      /**
+       * <code>bool isSlopTank = 10;</code>
+       *
+       * @return The isSlopTank.
+       */
+      public boolean getIsSlopTank() {
+        return isSlopTank_;
+      }
+      /**
+       * <code>bool isSlopTank = 10;</code>
+       *
+       * @param value The isSlopTank to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsSlopTank(boolean value) {
+
+        isSlopTank_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isSlopTank = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearIsSlopTank() {
+
+        isSlopTank_ = false;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object heightFrom_ = "";
+      /**
+       * <code>string heightFrom = 11;</code>
+       *
+       * @return The heightFrom.
+       */
+      public java.lang.String getHeightFrom() {
+        java.lang.Object ref = heightFrom_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          heightFrom_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string heightFrom = 11;</code>
+       *
+       * @return The bytes for heightFrom.
+       */
+      public com.google.protobuf.ByteString getHeightFromBytes() {
+        java.lang.Object ref = heightFrom_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          heightFrom_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string heightFrom = 11;</code>
+       *
+       * @param value The heightFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHeightFrom(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        heightFrom_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string heightFrom = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearHeightFrom() {
+
+        heightFrom_ = getDefaultInstance().getHeightFrom();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string heightFrom = 11;</code>
+       *
+       * @param value The bytes for heightFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHeightFromBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        heightFrom_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object heightTo_ = "";
+      /**
+       * <code>string heightTo = 12;</code>
+       *
+       * @return The heightTo.
+       */
+      public java.lang.String getHeightTo() {
+        java.lang.Object ref = heightTo_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          heightTo_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string heightTo = 12;</code>
+       *
+       * @return The bytes for heightTo.
+       */
+      public com.google.protobuf.ByteString getHeightToBytes() {
+        java.lang.Object ref = heightTo_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          heightTo_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string heightTo = 12;</code>
+       *
+       * @param value The heightTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHeightTo(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        heightTo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string heightTo = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearHeightTo() {
+
+        heightTo_ = getDefaultInstance().getHeightTo();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string heightTo = 12;</code>
+       *
+       * @param value The bytes for heightTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHeightToBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        heightTo_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int tankOrder_;
+      /**
+       * <code>int32 tankOrder = 13;</code>
+       *
+       * @return The tankOrder.
+       */
+      public int getTankOrder() {
+        return tankOrder_;
+      }
+      /**
+       * <code>int32 tankOrder = 13;</code>
+       *
+       * @param value The tankOrder to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTankOrder(int value) {
+
+        tankOrder_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 tankOrder = 13;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTankOrder() {
+
+        tankOrder_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int tankGroup_;
+      /**
+       * <code>int32 tankGroup = 14;</code>
+       *
+       * @return The tankGroup.
+       */
+      public int getTankGroup() {
+        return tankGroup_;
+      }
+      /**
+       * <code>int32 tankGroup = 14;</code>
+       *
+       * @param value The tankGroup to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTankGroup(int value) {
+
+        tankGroup_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 tankGroup = 14;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTankGroup() {
+
+        tankGroup_ = 0;
         onChanged();
         return this;
       }
@@ -7225,24 +8030,28 @@ public final class VesselInfo {
           + "(\0132\017.LoadLineDetail\"~\n\035VesselLoadableQua"
           + "ntityDetails\022#\n\033displacmentDraftRestrict"
           + "ion\030\001 \001(\t\022\031\n\021vesselLightWeight\030\002 \001(\t\022\020\n\010"
-          + "constant\030\003 \001(\t\022\013\n\003tpc\030\004 \001(\t\"\251\001\n\020VesselTa"
+          + "constant\030\003 \001(\t\022\013\n\003tpc\030\004 \001(\t\"\264\002\n\020VesselTa"
           + "nkDetail\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tankCategory"
           + "Id\030\002 \001(\003\022\030\n\020tankCategoryName\030\003 \001(\t\022\020\n\010ta"
           + "nkName\030\004 \001(\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025\n"
-          + "\rframeNumberTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t\""
-          + "\327\001\n\013VesselReply\022\020\n\010vesselId\030\001 \001(\003\022&\n\013ves"
-          + "selTanks\030\002 \003(\0132\021.VesselTankDetail\022\'\n\016res"
-          + "ponseStatus\030\003 \001(\0132\017.ResponseStatus\022\036\n\007ve"
-          + "ssels\030\004 \003(\0132\r.VesselDetail\022E\n\035vesselLoad"
-          + "ableQuantityDetails\030\005 \001(\0132\036.VesselLoadab"
-          + "leQuantityDetails2\362\001\n\021VesselInfoService\022"
-          + "8\n\026GetAllVesselsByCompany\022\016.VesselReques"
-          + "t\032\014.VesselReply\"\000\0226\n\024GetVesselDetailsByI"
-          + "d\022\016.VesselRequest\032\014.VesselReply\"\000\0224\n\022Get"
-          + "VesselFuelTanks\022\016.VesselRequest\032\014.Vessel"
-          + "Reply\"\000\0225\n\023GetVesselCargoTanks\022\016.VesselR"
-          + "equest\032\014.VesselReply\"\000B\036\n\032com.cpdss.comm"
-          + "on.generatedP\000b\006proto3"
+          + "\rframeNumberTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t\022"
+          + "\030\n\020fillCapacityCubm\030\010 \001(\t\022\017\n\007density\030\t \001"
+          + "(\t\022\022\n\nisSlopTank\030\n \001(\010\022\022\n\nheightFrom\030\013 \001"
+          + "(\t\022\020\n\010heightTo\030\014 \001(\t\022\021\n\ttankOrder\030\r \001(\005\022"
+          + "\021\n\ttankGroup\030\016 \001(\005\"\327\001\n\013VesselReply\022\020\n\010ve"
+          + "sselId\030\001 \001(\003\022&\n\013vesselTanks\030\002 \003(\0132\021.Vess"
+          + "elTankDetail\022\'\n\016responseStatus\030\003 \001(\0132\017.R"
+          + "esponseStatus\022\036\n\007vessels\030\004 \003(\0132\r.VesselD"
+          + "etail\022E\n\035vesselLoadableQuantityDetails\030\005"
+          + " \001(\0132\036.VesselLoadableQuantityDetails2\362\001\n"
+          + "\021VesselInfoService\0228\n\026GetAllVesselsByCom"
+          + "pany\022\016.VesselRequest\032\014.VesselReply\"\000\0226\n\024"
+          + "GetVesselDetailsById\022\016.VesselRequest\032\014.V"
+          + "esselReply\"\000\0224\n\022GetVesselFuelTanks\022\016.Ves"
+          + "selRequest\032\014.VesselReply\"\000\0225\n\023GetVesselC"
+          + "argoTanks\022\016.VesselRequest\032\014.VesselReply\""
+          + "\000B\036\n\032com.cpdss.common.generatedP\000b\006proto"
+          + "3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -7298,6 +8107,13 @@ public final class VesselInfo {
               "FrameNumberFrom",
               "FrameNumberTo",
               "ShortName",
+              "FillCapacityCubm",
+              "Density",
+              "IsSlopTank",
+              "HeightFrom",
+              "HeightTo",
+              "TankOrder",
+              "TankGroup",
             });
     internal_static_VesselReply_descriptor = getDescriptor().getMessageTypes().get(5);
     internal_static_VesselReply_fieldAccessorTable =

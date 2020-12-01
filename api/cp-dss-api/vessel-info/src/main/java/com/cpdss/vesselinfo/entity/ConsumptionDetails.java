@@ -2,10 +2,8 @@
 package com.cpdss.vesselinfo.entity;
 
 import com.cpdss.common.utils.EntityDoc;
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
