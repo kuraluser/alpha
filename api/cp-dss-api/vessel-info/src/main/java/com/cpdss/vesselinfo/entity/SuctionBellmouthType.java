@@ -16,27 +16,21 @@ import lombok.Setter;
 
 /** @author jerin.g */
 @Entity
-@Table(name = "tank_category")
+@Table(name = "suction_bellmouth_type")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TankCategory extends EntityDoc {
+public class SuctionBellmouthType extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 
   @Column(name = "name")
   private String name;
 
-  @Column(name = "remarks")
-  private String remarks;
-
-  @Column(name = "short_name")
-  private String shortName;
-
   @Column(name = "is_active")
   private Boolean isActive;
 
-  @OneToMany(mappedBy = "tankCategory")
-  private Collection<VesselTank> vesselTankCollection;
+  @OneToMany(mappedBy = "suctionBellmouthType")
+  private Collection<SuctionBellmouthMapping> suctionBellmouthMappingCollection;
 }

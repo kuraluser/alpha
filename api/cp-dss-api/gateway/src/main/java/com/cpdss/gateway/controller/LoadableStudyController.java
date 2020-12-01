@@ -602,8 +602,8 @@ public class LoadableStudyController {
    * @throws CommonRestException LoadablePatternResponse
    */
   @GetMapping(
-      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-pattern")
-  public LoadablePatternResponse saveLoadableQuantity(
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns")
+  public LoadablePatternResponse getLoadablePatterns(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
@@ -611,10 +611,10 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-      log.info("saveLoadableQuantity loadable-pattern : {}", getClientIp());
+      log.info("get loadable-patterns : {}", getClientIp());
       log.info(
           "get loadable pattern API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
-      return loadableStudyService.getLoadablePattern(
+      return loadableStudyService.getLoadablePatterns(
           loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in get loadable patterns ", e);

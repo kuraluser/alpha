@@ -16,27 +16,21 @@ import lombok.Setter;
 
 /** @author jerin.g */
 @Entity
-@Table(name = "tank_category")
+@Table(name = "fuel_master")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TankCategory extends EntityDoc {
+public class FuelMaster extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 
   @Column(name = "name")
   private String name;
 
-  @Column(name = "remarks")
-  private String remarks;
-
-  @Column(name = "short_name")
-  private String shortName;
-
-  @Column(name = "is_active")
-  private Boolean isActive;
-
-  @OneToMany(mappedBy = "tankCategory")
+  @OneToMany(mappedBy = "fuelMaster")
   private Collection<VesselTank> vesselTankCollection;
+
+  @OneToMany(mappedBy = "fuelMaster")
+  private Collection<ConsumptionDetails> consumptionDetailsCollection;
 }

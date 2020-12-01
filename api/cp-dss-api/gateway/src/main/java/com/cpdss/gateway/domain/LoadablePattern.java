@@ -6,6 +6,7 @@ import lombok.Data;
 
 /** @Author jerin.g */
 @Data
-public class TankList {
-  private List<Tank> tanks;
+public class LoadablePattern {
+  private Long loadablePatternId;
+  private List<LoadablePatternCargoDetails> loadablePatternCargoDetails;
 }

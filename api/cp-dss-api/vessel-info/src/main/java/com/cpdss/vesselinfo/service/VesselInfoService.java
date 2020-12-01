@@ -89,13 +89,13 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       for (Vessel entity : vesselEntities) {
         VesselDetail.Builder builder = VesselDetail.newBuilder();
         builder.setId(entity.getId());
-        Optional.ofNullable(entity.getCheifOfficerXId()).ifPresent(builder::setCheifOfficerId);
+        Optional.ofNullable(entity.getChiefofficerId()).ifPresent(builder::setCheifOfficerId);
         Optional.ofNullable(entity.getImoNumber()).ifPresent(builder::setImoNumber);
-        Optional.ofNullable(entity.getMasterXId()).ifPresent(builder::setCaptainId);
+        Optional.ofNullable(entity.getMasterId()).ifPresent(builder::setCaptainId);
         Optional.ofNullable(entity.getName()).ifPresent(builder::setName);
         Optional.ofNullable(entity.getVesselFlag())
             .ifPresent(flag -> builder.setFlag(flag.getFlagImagePath()));
-        Set<VesselDraftCondition> draftConditions = entity.getVesselDraftConditions();
+        Set<VesselDraftCondition> draftConditions = entity.getVesselDraftConditionCollection();
         List<LoadLineDetail.Builder> builderList = new ArrayList<>();
         Map<Long, Integer> indexMap = new HashMap<>();
         int index = 0;

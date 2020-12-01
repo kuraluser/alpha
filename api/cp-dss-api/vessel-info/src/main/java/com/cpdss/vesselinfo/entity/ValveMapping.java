@@ -2,6 +2,7 @@
 package com.cpdss.vesselinfo.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.math.BigDecimal;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,21 +17,24 @@ import lombok.Setter;
 
 /** @author jerin.g */
 @Entity
-@Table(name = "vessel_charterer_mapping")
+@Table(name = "valve_mapping")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class VesselChartererMapping extends EntityDoc {
+public class ValveMapping extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 
-  @Column(name = "is_active")
-  private Boolean isActive;
+  @Column(name = "valve_capacity")
+  private BigDecimal valveCapacity;
 
-  @JoinColumn(name = "chartterer_xid", referencedColumnName = "id")
+  @Column(name = "maximum_temperature")
+  private BigDecimal maximumTemperature;
+
+  @JoinColumn(name = "type_xid", referencedColumnName = "id")
   @ManyToOne
-  private Charterer charterer;
+  private ValveType valveType;
 
   @JoinColumn(name = "vessel_xid", referencedColumnName = "id")
   @ManyToOne

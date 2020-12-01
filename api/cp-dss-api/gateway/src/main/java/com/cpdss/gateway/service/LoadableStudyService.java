@@ -11,6 +11,8 @@ import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingS
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
@@ -49,6 +51,8 @@ import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CargoNominationResponse;
 import com.cpdss.gateway.domain.CommingleCargoResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
+import com.cpdss.gateway.domain.LoadablePattern;
+import com.cpdss.gateway.domain.LoadablePatternCargoDetails;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
@@ -76,7 +80,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -1114,10 +1117,94 @@ public class LoadableStudyService {
    * @param first
    * @return LoadablePatternResponse
    */
-  public LoadablePatternResponse getLoadablePattern(Long loadableStudiesId, String correlationId)
+  public LoadablePatternResponse getLoadablePatterns(Long loadableStudiesId, String correlationId)
       throws GenericServiceException {
-    // TODO Auto-generated method stub
-    return null;
+    LoadablePatternRequest loadablePatternRequest =
+        LoadablePatternRequest.newBuilder().setLoadableStudyId(loadableStudiesId).build();
+    LoadablePatternReply loadablePatternReply = this.getLoadablePattern(loadablePatternRequest);
+    if (!SUCCESS.equals(loadablePatternReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get  LoadablePattern ",
+          loadablePatternReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(loadablePatternReply.getResponseStatus().getCode())));
+    }
+    return this.buildLoadablePatternResponse(loadablePatternReply, correlationId);
+  }
+
+  /**
+   * @param loadablePatternReply
+   * @param correlationId
+   * @return LoadablePatternResponse
+   */
+  private LoadablePatternResponse buildLoadablePatternResponse(
+      LoadablePatternReply loadablePatternReply, String correlationId) {
+    LoadablePatternResponse loadablePatternResponse = new LoadablePatternResponse();
+    loadablePatternResponse.setLoadablePatterns(new ArrayList<LoadablePattern>());
+    loadablePatternReply
+        .getLoadablePatternList()
+        .forEach(
+            loadablePattern -> {
+              LoadablePattern loadablePatternDto = new LoadablePattern();
+              loadablePatternDto.setLoadablePatternId(loadablePattern.getLoadablePatternId());
+              loadablePatternDto.setLoadablePatternCargoDetails(
+                  new ArrayList<LoadablePatternCargoDetails>());
+              loadablePattern
+                  .getLoadablePatternCargoDetailsList()
+                  .forEach(
+                      loadablePatternCargoDetail -> {
+                        LoadablePatternCargoDetails loadablePatternCargoDetails =
+                            new LoadablePatternCargoDetails();
+                        Optional.ofNullable(loadablePatternCargoDetail.getPriority())
+                            .ifPresent(
+                                priority -> loadablePatternCargoDetails.setPriority(priority));
+                        Optional.ofNullable(loadablePatternCargoDetail.getQuantity())
+                            .ifPresent(
+                                quantity ->
+                                    loadablePatternCargoDetails.setQuantity(
+                                        String.valueOf(quantity)));
+                        Optional.ofNullable(loadablePatternCargoDetail.getTankId())
+                            .ifPresent(tankId -> loadablePatternCargoDetails.setTankId(tankId));
+                        Optional.ofNullable(loadablePatternCargoDetail.getCargoAbbreviation())
+                            .ifPresent(
+                                cargoAbbreviation ->
+                                    loadablePatternCargoDetails.setCargoAbbreviation(
+                                        cargoAbbreviation));
+                        Optional.ofNullable(loadablePatternCargoDetail.getCargoColor())
+                            .ifPresent(
+                                cargoColor ->
+                                    loadablePatternCargoDetails.setCargoColor(cargoColor));
+                        Optional.ofNullable(loadablePatternCargoDetail.getDifference())
+                            .ifPresent(
+                                difference ->
+                                    loadablePatternCargoDetails.setDifference(
+                                        String.valueOf(difference)));
+                        Optional.ofNullable(loadablePatternCargoDetail.getConstraints())
+                            .ifPresent(
+                                constraints ->
+                                    loadablePatternCargoDetails.setConstraints(constraints));
+                        Optional.ofNullable(loadablePatternCargoDetail.getDifferenceColor())
+                            .ifPresent(
+                                differenceColor ->
+                                    loadablePatternCargoDetails.setDifferenceColor(
+                                        differenceColor));
+                        loadablePatternDto
+                            .getLoadablePatternCargoDetails()
+                            .add(loadablePatternCargoDetails);
+                      });
+              loadablePatternResponse.getLoadablePatterns().add(loadablePatternDto);
+            });
+    loadablePatternResponse.setResponseStatus(
+        new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
+    return loadablePatternResponse;
+  }
+
+  /**
+   * @param loadablePatternRequest
+   * @return LoadablePatternReply
+   */
+  public LoadablePatternReply getLoadablePattern(LoadablePatternRequest loadablePatternRequest) {
+    return this.loadableStudyServiceBlockingStub.getLoadablePatternDetails(loadablePatternRequest);
   }
 
   /**
@@ -1252,7 +1339,7 @@ public class LoadableStudyService {
   public OnHandQuantityReply saveOnHandQuantity(OnHandQuantityDetail request) {
     return this.loadableStudyServiceBlockingStub.saveOnHandQuantity(request);
   }
-  
+
   /**
    * Retrieves the commingle cargo information along with vessel cargo tanks lookup array
    *
@@ -1308,48 +1395,47 @@ public class LoadableStudyService {
     }
     return commingleCargoResponse;
   }
-  
+
   /**
-   * builds commingleCargoResponse from the cargo nomination data
-   * for the specific loadable study
+   * builds commingleCargoResponse from the cargo nomination data for the specific loadable study
+   *
    * @param commingleCargoResponse
    * @param reply
    * @return
    */
   private CommingleCargoResponse buildCommingleCargoResponseWithCargos(
-		  CommingleCargoResponse commingleCargoResponse, CargoNominationReply reply) {
+      CommingleCargoResponse commingleCargoResponse, CargoNominationReply reply) {
     if (reply != null && !reply.getCargoNominationsList().isEmpty()) {
       List<CargoNomination> cargoNominationList = new ArrayList<>();
-      List<CargoNominationDetail> cargoNominationDetailsFiltered = reply.getCargoNominationsList().stream() 
-    		  .filter(distinctByKey(cargoNominationDetail -> cargoNominationDetail.getCargoId()))
-    		  .collect(Collectors.toList());
-      cargoNominationDetailsFiltered
-          .forEach(
-              cargoNominationDetail -> {
-                CargoNomination cargoNomination = new CargoNomination();
-                cargoNomination.setId(cargoNominationDetail.getId());
-                cargoNomination.setColor(cargoNominationDetail.getColor());
-                cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
-                cargoNominationList.add(cargoNomination);
-              });
+      List<CargoNominationDetail> cargoNominationDetailsFiltered =
+          reply.getCargoNominationsList().stream()
+              .filter(distinctByKey(cargoNominationDetail -> cargoNominationDetail.getCargoId()))
+              .collect(Collectors.toList());
+      cargoNominationDetailsFiltered.forEach(
+          cargoNominationDetail -> {
+            CargoNomination cargoNomination = new CargoNomination();
+            cargoNomination.setId(cargoNominationDetail.getId());
+            cargoNomination.setColor(cargoNominationDetail.getColor());
+            cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
+            cargoNominationList.add(cargoNomination);
+          });
       commingleCargoResponse.setCargoNominations(cargoNominationList);
     }
     return commingleCargoResponse;
   }
-  
+
   /**
-   * Function to retrieve distinct objects by an attribute 
-   * of the object
+   * Function to retrieve distinct objects by an attribute of the object
+   *
    * @param <T>
    * @param keyExtractor
    * @return
    */
-  public static <T> Predicate<T> distinctByKey(
-		  Function<? super T, ?> keyExtractor) {
-	  Map<Object, Boolean> seen = new ConcurrentHashMap<>(); 
-	  return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null; 
+  public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+    Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+    return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
   }
-  
+
   /**
    * Builds commingle response with vessel tanks
    *

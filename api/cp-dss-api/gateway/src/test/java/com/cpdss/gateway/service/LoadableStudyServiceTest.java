@@ -11,6 +11,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.LoadablePattern;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
@@ -32,6 +36,7 @@ import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.DischargingPortRequest;
+import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
@@ -1101,5 +1106,72 @@ class LoadableStudyServiceTest {
     request.setPortId(1L);
     request.setId(0L);
     return request;
+  }
+
+  @Test
+  void testGetLoadablePatterns() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.getLoadablePatterns(anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.getLoadablePattern(any(LoadablePatternRequest.class)))
+        .thenReturn(
+            LoadablePatternReply.newBuilder()
+                .addLoadablePattern(createLoadablePatternBuild())
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    LoadablePatternResponse response =
+        this.loadableStudyService.getLoadablePatterns(1L, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "response valid"));
+  }
+
+  /** @return LoadablePattern */
+  private LoadablePattern createLoadablePatternBuild() {
+    com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder loadablePatternBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
+
+    IntStream.range(1, 5)
+        .forEach(
+            i -> {
+              loadablePatternBuilder.setLoadablePatternId(Long.valueOf(i));
+              IntStream.range(1, 5)
+                  .forEach(
+                      j -> {
+                        LoadablePatternCargoDetails.Builder loadablePatternCargoDetailsBuilder =
+                            LoadablePatternCargoDetails.newBuilder();
+                        loadablePatternCargoDetailsBuilder.setPriority(Long.valueOf(j));
+                        loadablePatternBuilder.addLoadablePatternCargoDetails(
+                            loadablePatternCargoDetailsBuilder);
+                      });
+            });
+
+    return loadablePatternBuilder.build();
+  }
+
+  /** @throws GenericServiceException void */
+  @Test
+  void testGetLoadablePatternsGrpcFailure() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.getLoadablePatterns(anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.getLoadablePattern(any(LoadablePatternRequest.class)))
+        .thenReturn(
+            LoadablePatternReply.newBuilder()
+                .addLoadablePattern(createLoadablePatternBuild())
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () -> this.loadableStudyService.getLoadablePatterns(1L, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 }

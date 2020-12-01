@@ -12,6 +12,7 @@ import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.vesselinfo.entity.TankCategory;
 import com.cpdss.vesselinfo.entity.Vessel;
 import com.cpdss.vesselinfo.entity.VesselTank;
+import com.cpdss.vesselinfo.repository.HydrostaticTableRepository;
 import com.cpdss.vesselinfo.repository.TankCategoryRepository;
 import com.cpdss.vesselinfo.repository.VesselChartererMappingRepository;
 import com.cpdss.vesselinfo.repository.VesselRepository;
@@ -34,6 +35,7 @@ class VesselInfoServiceTest {
   @MockBean private VesselChartererMappingRepository chartererMappingRepository;
   @MockBean private TankCategoryRepository tankCategoryRepository;
   @MockBean private VesselTankRepository vesselTankRepository;
+  @MockBean private HydrostaticTableRepository hydrostaticTableRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";

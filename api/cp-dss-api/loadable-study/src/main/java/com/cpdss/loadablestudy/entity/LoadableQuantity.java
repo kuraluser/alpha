@@ -15,7 +15,7 @@ import lombok.Setter;
 
 /** @author jerin.g */
 @Entity
-@Table(name = "loadablequantity")
+@Table(name = "loadable_quantity")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,19 +24,19 @@ public class LoadableQuantity extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 
-  @Column(name = "draftrestriction")
+  @Column(name = "draft_restriction")
   private BigDecimal draftRestriction;
 
-  @Column(name = "estimatedseadensity")
+  @Column(name = "estimated_sea_density")
   private BigDecimal estimatedSeaDensity;
 
-  @Column(name = "tpcatdraft")
+  @Column(name = "tpc_at_draft")
   private BigDecimal tpcatDraft;
 
-  @Column(name = "estimatedsagging")
+  @Column(name = "estimated_sagging")
   private BigDecimal estimatedSagging;
 
-  @Column(name = "displacementatdraftrestriction")
+  @Column(name = "displacement_at_draft_restriction")
   private BigDecimal displacementAtDraftRestriction;
 
   @Column(name = "lightweight")
@@ -45,64 +45,64 @@ public class LoadableQuantity extends EntityDoc {
   @Column(name = "deadweight")
   private BigDecimal deadWeight;
 
-  @Column(name = "sgcorrection")
+  @Column(name = "sg_correction")
   private BigDecimal sgCorrection;
 
-  @Column(name = "saggingdeduction")
+  @Column(name = "sagging_deduction")
   private BigDecimal saggingDeduction;
 
-  @Column(name = "estimatedfoonboard")
+  @Column(name = "estimated_fo_onboard")
   private BigDecimal estimatedFOOnBoard;
 
-  @Column(name = "estimateddoonboard")
+  @Column(name = "estimated_do_onboard")
   private BigDecimal estimatedDOOnBoard;
 
-  @Column(name = "estimatedfwonboard")
+  @Column(name = "estimated_fw_onboard")
   private BigDecimal estimatedFWOnBoard;
 
   @Column(name = "constant")
   private BigDecimal constant;
 
-  @Column(name = "otherifany")
+  @Column(name = "other_if_any")
   private BigDecimal otherIfAny;
 
-  @Column(name = "totalquantity")
+  @Column(name = "total_quantity")
   private BigDecimal totalQuantity;
 
-  @Column(name = "distancefromlastport")
+  @Column(name = "distance_from_last_port")
   private BigDecimal distanceFromLastPort;
 
-  @Column(name = "vesselaveragespeed")
+  @Column(name = "vessel_average_speed")
   private BigDecimal vesselAverageSpeed;
 
-  @Column(name = "foconsumptionperday")
+  @Column(name = "fo_consumption_per_day")
   private BigDecimal foConsumptionPerDay;
 
-  @Column(name = "totalfoconsumption")
+  @Column(name = "total_fo_consumption")
   private BigDecimal totalFoConsumption;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private Boolean isActive;
 
-  @Column(name = "portxid")
+  @Column(name = "port_xid")
   private BigDecimal portId;
 
-  @Column(name = "boilerwateronboard")
+  @Column(name = "boiler_water_onboard")
   private BigDecimal boilerWaterOnBoard;
 
   @Column(name = "ballast")
   private BigDecimal ballast;
 
-  @Column(name = "runninghours")
+  @Column(name = "running_hours")
   private BigDecimal runningHours;
 
-  @Column(name = "runningdays")
+  @Column(name = "running_days")
   private BigDecimal runningDays;
 
-  @Column(name = "foconsumptioninsz")
+  @Column(name = "fo_consumption_in_sz")
   private BigDecimal foConsumptionInSZ;
 
-  @Column(name = "subtotal")
+  @Column(name = "sub_total")
   private BigDecimal subTotal;
 
   @JoinColumn(name = "loadablestudyxid", referencedColumnName = "id")

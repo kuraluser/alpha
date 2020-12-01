@@ -13,6 +13,8 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse;
@@ -40,6 +42,8 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.CargoOperation;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
+import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
@@ -50,11 +54,14 @@ import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsReposit
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
+import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.google.protobuf.ByteString;
 import io.grpc.internal.testing.StreamRecorder;
@@ -102,6 +109,11 @@ class LoadableStudyServiceTest {
   @MockBean private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @MockBean private CargoOperationRepository cargoOperationRepository;
   @MockBean private LoadableStudyStatusRepository loadableStudyStatusRepository;
+
+  @MockBean private LoadablePatternDetailsRepository loadablePatternDetailsRepository;
+  @MockBean private LoadablePatternRepository loadablePatternRepository;
+
+  @MockBean private PurposeOfCommingleRepository purposeOfCommingleRepository;
 
   @MockBean
   private CargoNominationValveSegregationRepository cargoNominationValveSegregationRepository;
@@ -1684,5 +1696,95 @@ class LoadableStudyServiceTest {
             .setDepartureQuantity(NUMERICAL_TEST_VALUE)
             .setDepartureVolume(NUMERICAL_TEST_VALUE);
     return detail;
+  }
+
+  /**
+   * test Get Loadable Pattern Details Invalid Loadable Study Id
+   *
+   * <p>void
+   */
+  @Test
+  void testGetLoadablePatternDetailsInvalidLoadableStudy() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    StreamRecorder<LoadablePatternReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.getLoadablePatternDetails(
+        this.createGetLoadablePatternDetails(), responseObserver);
+    List<LoadablePatternReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /** @return EntityDoc */
+  private LoadablePatternRequest createGetLoadablePatternDetails() {
+    return LoadablePatternRequest.newBuilder().setLoadableStudyId(0L).build();
+  }
+
+  @Test
+  void testGetLoadablePatternDetails() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadableStudy()));
+    when(this.loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
+            any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(prepareLoadablePatterns());
+    when(this.loadablePatternDetailsRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(prepareLoadablePatternDetails());
+    StreamRecorder<LoadablePatternReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.getLoadablePatternDetails(
+        this.createGetLoadablePatternDetails(), responseObserver);
+    List<LoadablePatternReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadablePatternDetailsRuntimeException() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(RuntimeException.class);
+    StreamRecorder<LoadablePatternReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.getLoadablePatternDetails(
+        this.createGetLoadablePatternDetails(), responseObserver);
+    List<LoadablePatternReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /** @return List<LoadablePatternDetails> */
+  private List<LoadablePatternDetails> prepareLoadablePatternDetails() {
+    List<LoadablePatternDetails> list = new ArrayList<LoadablePatternDetails>();
+    IntStream.range(1, 5)
+        .forEach(
+            i -> {
+              LoadablePatternDetails loadablePatternDetails = new LoadablePatternDetails();
+              loadablePatternDetails.setId(Long.valueOf(i));
+              loadablePatternDetails.setCargoAbbreviation("ABB");
+              loadablePatternDetails.setCargoColor("COL");
+              loadablePatternDetails.setCargoNominationId(Long.valueOf(i));
+              loadablePatternDetails.setConstraints("CON");
+              loadablePatternDetails.setDifference(new BigDecimal(i));
+              loadablePatternDetails.setDifferenceColor("DIFFCOL");
+              loadablePatternDetails.setPriority(i);
+              loadablePatternDetails.setQuantity(new BigDecimal(i));
+              loadablePatternDetails.setTankId(Long.valueOf(i));
+              list.add(loadablePatternDetails);
+            });
+    return list;
+  }
+
+  /** @return List<LoadablePattern> */
+  private List<LoadablePattern> prepareLoadablePatterns() {
+    List<LoadablePattern> list = new ArrayList<LoadablePattern>();
+    IntStream.range(1, 5)
+        .forEach(
+            i -> {
+              LoadablePattern loadablePattern = new LoadablePattern();
+              loadablePattern.setId(Long.valueOf(i));
+              list.add(loadablePattern);
+            });
+    return list;
   }
 }

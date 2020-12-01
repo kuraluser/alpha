@@ -16,7 +16,7 @@ import lombok.Setter;
 
 /** @author jerin.g */
 @Entity
-@Table(name = "loadablepattern")
+@Table(name = "loadable_pattern")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,22 +25,22 @@ public class LoadablePattern extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 
-  @Column(name = "casenumber")
+  @Column(name = "case_number")
   private Integer caseNumber;
 
   @Column(name = "constraints")
   private String constraints;
 
-  @Column(name = "loadablestudystatus")
+  @Column(name = "loadable_study_status")
   private Integer loadableStudyStatus;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private Boolean isActive;
 
   @OneToMany(mappedBy = "loadablePatternXId")
   private Collection<LoadablePlan> loadablePlanCollection;
 
-  @JoinColumn(name = "loadablestudyxid", referencedColumnName = "id")
+  @JoinColumn(name = "loadablestudy_xid", referencedColumnName = "id")
   @ManyToOne
-  private LoadableStudy loadableStudyXid;
+  private LoadableStudy loadableStudy;
 }

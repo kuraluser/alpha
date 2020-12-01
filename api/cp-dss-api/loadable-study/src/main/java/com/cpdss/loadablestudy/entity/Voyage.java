@@ -22,24 +22,24 @@ public class Voyage extends EntityDoc {
   /** */
   private static final long serialVersionUID = 1L;
 
-  @Column(name = "vesselxid")
+  @Column(name = "vessel_xid")
   private Long vesselXId;
 
-  @Column(name = "voyageno")
+  @Column(name = "voyage_no")
   private String voyageNo;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private Boolean isActive;
 
-  @Column(name = "companyxid")
+  @Column(name = "company_xid")
   private Long companyXId;
 
-  @Column(name = "voyagestatus")
+  @Column(name = "voyage_status")
   private Integer voyageStatus;
 
-  @Column(name = "captainxid")
+  @Column(name = "captain_xid")
   private Long captainXId;
 
-  @Column(name = "chiefofficerxid")
+  @Column(name = "chiefofficer_xid")
   private Long chiefOfficerXId;
 }

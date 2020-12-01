@@ -60,7 +60,8 @@ service LoadableStudyService {
 	
 	rpc SaveOnHandQuantity(OnHandQuantityDetail) returns (OnHandQuantityReply){
 	}
-	
+	rpc GetLoadablePatternDetails(LoadablePatternRequest) returns (LoadablePatternReply){
+	}
 	rpc GetPurposeOfCommingle (PurposeOfCommingleRequest) returns (PurposeOfCommingleReply){
 	}
 }
@@ -310,4 +311,28 @@ message PurposeOfCommingleRequest{
 message PurposeOfCommingleReply{
 	ResponseStatus responseStatus = 1;
 	repeated PurposeOfCommingle purposeOfCommingle = 2;
+}
+message LoadablePatternReply {
+ 	repeated LoadablePattern loadablePattern = 1;
+ 	ResponseStatus responseStatus = 2;
+}
+
+message LoadablePattern {
+	int64 loadablePatternId = 1;
+	repeated LoadablePatternCargoDetails loadablePatternCargoDetails = 2;
+}
+
+message LoadablePatternCargoDetails {
+ 	int64 priority = 1;
+  	string cargoAbbreviation = 2;
+  	string cargoColor = 3;
+ 	int64 tankId = 4;
+ 	string quantity = 5;
+ 	string difference = 6;
+ 	string constraints = 7;
+ 	string differenceColor = 8;
+}
+
+message LoadablePatternRequest {
+ 	int64 loadableStudyId = 1;
 }

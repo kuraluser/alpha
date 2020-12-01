@@ -19,8 +19,8 @@ import com.cpdss.gateway.domain.CargoNominationResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
-import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.LoadingPort;
+import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
@@ -712,7 +712,7 @@ class LoadableStudyControllerTest {
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(request);
   }
-  
+
   @Test
   void testGetCargoNomination() throws Exception {
     when(loadableStudyService.getCargoNomination(Mockito.any(), Mockito.any()))

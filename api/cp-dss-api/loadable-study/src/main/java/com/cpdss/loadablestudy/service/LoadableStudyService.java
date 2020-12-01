@@ -9,6 +9,9 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse;
@@ -50,6 +53,8 @@ import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.CargoNominationValveSegregation;
 import com.cpdss.loadablestudy.entity.CargoOperation;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
+import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
@@ -61,6 +66,8 @@ import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsReposit
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
@@ -115,6 +122,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private CargoNominationValveSegregationRepository valveSegregationRepository;
   @Autowired private LoadableStudyStatusRepository loadableStudyStatusRepository;
   @Autowired private PurposeOfCommingleRepository purposeOfCommingleRepository;
+  @Autowired private LoadablePatternDetailsRepository loadablePatternDetailsRepository;
+  @Autowired private LoadablePatternRepository loadablePatternRepository;
 
   @Autowired
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
@@ -656,13 +665,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .collect(Collectors.toList());
     }
     int existingPortsCount = 0;
-    // remove loading portIds from request which are already available in port rotation for the
+    // remove loading portIds from request which are already available in port
+    // rotation for the
     // specific loadable study
     if (!CollectionUtils.isEmpty(requestedPortIds) && !CollectionUtils.isEmpty(existingPortIds)) {
       requestedPortIds.removeAll(existingPortIds);
       existingPortsCount = existingPortIds.size();
     }
-    // fetch the specific ports attributes like waterDensity and draft values from port master
+    // fetch the specific ports attributes like waterDensity and draft values from
+    // port master
     if (!CollectionUtils.isEmpty(requestedPortIds)) {
       GetPortInfoByPortIdsRequest.Builder reqBuilder = GetPortInfoByPortIdsRequest.newBuilder();
       buildGetPortInfoByPortIdsRequest(reqBuilder, cargoNomination);
@@ -675,7 +686,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_GEN_INTERNAL_ERR,
             HttpStatusCode.INTERNAL_SERVER_ERROR);
       }
-      // update loadable-study-port-rotation with ports from cargoNomination and port attributes
+      // update loadable-study-port-rotation with ports from cargoNomination and port
+      // attributes
       buildAndSaveLoadableStudyPortRotationEntities(
           loadableStudy, requestedPortIds, portReply, existingPortsCount);
     }
@@ -1459,6 +1471,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
   /**
    * @param request
    * @param responseObserver
@@ -1674,7 +1687,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   public VesselReply getVesselFuelTanks(VesselRequest request) {
     return this.vesselInfoGrpcService.getVesselFuelTanks(request);
   }
-  
+
   /** Save on hand quantity */
   @Override
   public void saveOnHandQuantity(
@@ -1758,40 +1771,124 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             : new BigDecimal(request.getDepartureVolume()));
     return entity;
   }
-  
-  /**
-   * get purpose of commingle look up
-   */
+
+  /** get purpose of commingle look up */
   @Override
   public void getPurposeOfCommingle(
       PurposeOfCommingleRequest request, StreamObserver<PurposeOfCommingleReply> responseObserver) {
-	  PurposeOfCommingleReply.Builder reply = PurposeOfCommingleReply.newBuilder();
-	    try {
-	      Iterable<PurposeOfCommingle> purposeList =
-	    		  purposeOfCommingleRepository.findAll();
-	      purposeList.forEach(
-	          purposeEntity -> {
-	        	  com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder purpose = com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.newBuilder();
-	           
-	            if (purposeEntity.getId() != null) {
-	            	purpose.setId(purposeEntity.getId());
-	            }
-	            if (!StringUtils.isEmpty(purposeEntity.getPurpose())) {
-	            	purpose.setName(purposeEntity.getPurpose());
-	            }
-	            reply.addPurposeOfCommingle(purpose);
-	          });
-	      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-	      responseStatus.setStatus(SUCCESS);
-	      reply.setResponseStatus(responseStatus);
-	    } catch (Exception e) {
-	      log.error("Error in getPurposeOfCommingle method ", e);
-	      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-	      responseStatus.setStatus(FAILED);
-	      reply.setResponseStatus(responseStatus);
-	    } finally {
-	      responseObserver.onNext(reply.build());
-	      responseObserver.onCompleted();
-	    }
+    PurposeOfCommingleReply.Builder reply = PurposeOfCommingleReply.newBuilder();
+    try {
+      Iterable<PurposeOfCommingle> purposeList = purposeOfCommingleRepository.findAll();
+      purposeList.forEach(
+          purposeEntity -> {
+            com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder purpose =
+                com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.newBuilder();
+
+            if (purposeEntity.getId() != null) {
+              purpose.setId(purposeEntity.getId());
+            }
+            if (!StringUtils.isEmpty(purposeEntity.getPurpose())) {
+              purpose.setName(purposeEntity.getPurpose());
+            }
+            reply.addPurposeOfCommingle(purpose);
+          });
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      reply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getPurposeOfCommingle method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      reply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(reply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getLoadablePatternDetails(
+      LoadablePatternRequest request, StreamObserver<LoadablePatternReply> responseObserver) {
+    log.info("Inside get Loadable Pattern Details in loadable study micro service");
+    LoadablePatternReply.Builder builder = LoadablePatternReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudy =
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+      if (!loadableStudy.isPresent()) {
+        log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
+        builder.setResponseStatus(
+            ResponseStatus.newBuilder()
+                .setStatus(FAILED)
+                .setMessage(INVALID_LOADABLE_STUDY_ID)
+                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+      } else {
+        com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder loadablePatternBuilder =
+            com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
+        List<LoadablePattern> loadablePatterns =
+            loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
+                loadableStudy.get(), true);
+        loadablePatterns.forEach(
+            loadablePattern -> {
+              loadablePatternBuilder.setLoadablePatternId(loadablePattern.getId());
+              List<LoadablePatternDetails> loadablePatternDetails =
+                  loadablePatternDetailsRepository.findByLoadablePatternAndIsActive(
+                      loadablePattern, true);
+              loadablePatternBuilder.clearLoadablePatternCargoDetails();
+              loadablePatternDetails.forEach(
+                  loadablePatternDetail -> {
+                    LoadablePatternCargoDetails.Builder loadablePatternCargoDetailsBuilder =
+                        LoadablePatternCargoDetails.newBuilder();
+                    Optional.ofNullable(loadablePatternDetail.getPriority())
+                        .ifPresent(
+                            priority -> loadablePatternCargoDetailsBuilder.setPriority(priority));
+                    Optional.ofNullable(loadablePatternDetail.getQuantity())
+                        .ifPresent(
+                            quantity ->
+                                loadablePatternCargoDetailsBuilder.setQuantity(
+                                    String.valueOf(quantity)));
+                    Optional.ofNullable(loadablePatternDetail.getTankId())
+                        .ifPresent(tankId -> loadablePatternCargoDetailsBuilder.setTankId(tankId));
+                    Optional.ofNullable(loadablePatternDetail.getCargoAbbreviation())
+                        .ifPresent(
+                            cargoAbbreviation ->
+                                loadablePatternCargoDetailsBuilder.setCargoAbbreviation(
+                                    cargoAbbreviation));
+                    Optional.ofNullable(loadablePatternDetail.getCargoColor())
+                        .ifPresent(
+                            cargoColor ->
+                                loadablePatternCargoDetailsBuilder.setCargoColor(cargoColor));
+                    Optional.ofNullable(loadablePatternDetail.getDifference())
+                        .ifPresent(
+                            difference ->
+                                loadablePatternCargoDetailsBuilder.setDifference(
+                                    String.valueOf(difference)));
+                    Optional.ofNullable(loadablePatternDetail.getConstraints())
+                        .ifPresent(
+                            constraints ->
+                                loadablePatternCargoDetailsBuilder.setConstraints(constraints));
+                    Optional.ofNullable(loadablePatternDetail.getDifferenceColor())
+                        .ifPresent(
+                            differenceColor ->
+                                loadablePatternCargoDetailsBuilder.setDifferenceColor(
+                                    differenceColor));
+                    loadablePatternBuilder.addLoadablePatternCargoDetails(
+                        loadablePatternCargoDetailsBuilder);
+                  });
+              builder.addLoadablePattern(loadablePatternBuilder);
+            });
+        builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      }
+    } catch (Exception e) {
+      log.error("Exception when fetching get Loadable Pattern Details", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when fetching on hand quantities")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

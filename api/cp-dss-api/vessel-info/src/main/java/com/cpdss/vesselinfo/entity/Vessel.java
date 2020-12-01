@@ -2,65 +2,226 @@
 package com.cpdss.vesselinfo.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Vessel entity
- *
- * @author suhail.k
- */
+/** @author jerin.g */
 @Entity
+@Table(name = "vessel")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "vessel")
 public class Vessel extends EntityDoc {
 
-  /** */
   private static final long serialVersionUID = 1L;
 
   @Column(name = "name")
   private String name;
 
-  @Column(name = "masterxid")
-  private Long masterXId;
+  @Column(name = "code")
+  private String code;
 
-  @Column(name = "cheifofficerxid")
-  private Long cheifOfficerXId;
+  @Column(name = "port_of_registry")
+  private String portOfRegistry;
 
-  @ManyToOne
-  @JoinColumn(name = "flagxid")
-  private VesselFlag vesselFlag;
+  @Column(name = "owner_xid")
+  private Integer ownerXid;
 
-  @Column(name = "imonumber")
+  @Column(name = "builder")
+  private String builder;
+
+  @Column(name = "class")
+  private String class1;
+
+  @Column(name = "vessel_type_xid")
+  private Integer vesselTypeXid;
+
+  @Column(name = "official_number")
+  private String officialNumber;
+
+  @Column(name = "signal_letter")
+  private String signalLetter;
+
+  @Column(name = "imo_number")
   private String imoNumber;
 
-  @Column(name = "isactive")
-  private Boolean isActive;
+  @Column(name = "navigation_area_xid")
+  private Integer navigationAreaId;
 
-  @Column(name = "companyxid")
-  private Long companyXId;
+  @Column(name = "type_of_ship")
+  private String typeOfShip;
+
+  @Column(name = "date_keel_laid")
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date dateKeelLaid;
+
+  @Column(name = "date_of_launching")
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date dateOfLaunching;
+
+  @Column(name = "date_of_delivery")
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date dateOfDelivery;
+
+  @Column(name = "register_length")
+  private BigDecimal registerLength;
+
+  @Column(name = "length_overall")
+  private BigDecimal lengthOverall;
+
+  @Column(name = "length_between_perpendiculars")
+  private BigDecimal lengthBetweenPerpendiculars;
+
+  @Column(name = "breadth_molded")
+  private BigDecimal breadthMolded;
+
+  @Column(name = "depth_molded")
+  private BigDecimal depthMolded;
+
+  @Column(name = "designed_loaddraft")
+  private BigDecimal designedLoaddraft;
+
+  @Column(name = "draft_full_load_summer")
+  private BigDecimal draftFullLoadSummer;
+
+  @Column(name = "thickness_of_upper_deck_stringer_plate")
+  private BigDecimal thicknessOfUpperDeckStringerPlate;
+
+  @Column(name = "thickness_of_keelplate")
+  private BigDecimal thicknessOfKeelplate;
 
   @Column(name = "deadweight")
-  private String deadWeight;
-
-  @Column(name = "deadweightconstant")
-  private String deadWeightConstant;
+  private BigDecimal deadweight;
 
   @Column(name = "lightweight")
-  private String lightWeight;
+  private BigDecimal lightweight;
+
+  @Column(name = "company_xid")
+  private Long companyId;
+
+  @Column(name = "is_active")
+  private Boolean isActive;
+
+  @Column(name = "profile_image_path")
+  private String profileImagePath;
+
+  @Column(name = "lcg")
+  private BigDecimal lcg;
+
+  @Column(name = "keel_to_mast_height")
+  private BigDecimal keelToMastHeight;
+
+  @Column(name = "deadweight_constant")
+  private BigDecimal deadweightConstant;
+
+  @Column(name = "provisional_constant")
+  private BigDecimal provisionalConstant;
+
+  @Column(name = "deadweight_constant_lcg")
+  private BigDecimal deadweightConstantLcg;
+
+  @Column(name = "provisional_constant_lcg")
+  private BigDecimal provisionalConstantLcg;
+
+  @Column(name = "gross_tonnage")
+  private BigDecimal grossTonnage;
+
+  @Column(name = "net_tonnage")
+  private BigDecimal netTonnage;
+
+  @Column(name = "deadweight_constant_tcg")
+  private BigDecimal deadweightConstantTcg;
+
+  @Column(name = "has_center_cofferdam")
+  private Boolean hasCenterCofferdam;
+
+  @Column(name = "frame_space_3l")
+  private BigDecimal frameSpace3l;
+
+  @Column(name = "frame_space_7l")
+  private BigDecimal frameSpace7l;
+
+  @Column(name = "has_loadicator")
+  private Boolean hasLoadicator;
+
+  @Column(name = "master_xid")
+  private Long masterId;
+
+  @Column(name = "chiefofficer_xid")
+  private Long chiefofficerId;
+
+  @Column(name = "chiefengineer_xid")
+  private Long chiefengineerId;
 
   @OneToMany(mappedBy = "vessel")
-  private Set<VesselDraftCondition> vesselDraftConditions;
+  private Collection<SuctionBellmouthMapping> suctionBellmouthMappingCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<VesselTank> vesselTankCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<VesselPumps> vesselPumpsCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<VesselPipelineTankmapping> vesselPipelineTankmappingCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<BendingMoment> bendingMomentCollection;
+
+  @JoinColumn(name = "flag_xid", referencedColumnName = "id")
+  @ManyToOne
+  private VesselFlag vesselFlag;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<MinMaxValuesForBmsf> minMaxValuesForBmsfCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<ValveMapping> valveMappingCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<CalculationSheetTankgroup> calculationSheetTankgroupCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Set<VesselDraftCondition> vesselDraftConditionCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<TankCleaningMachineMapping> tankCleaningMachineMappingCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<CowMachineParticulars> cowMachineParticularsCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<VesselPipeLineDetails> vesselPipeLineDetailsCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<CalculationSheet> calculationSheetCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<ConsumptionDetails> consumptionDetailsCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<VesselChartererMapping> vesselChartererMappingCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<ShearingForce> shearingForceCollection;
+
+  @OneToMany(mappedBy = "vessel")
+  private Collection<HydrostaticTable> hydrostaticTableCollection;
 }

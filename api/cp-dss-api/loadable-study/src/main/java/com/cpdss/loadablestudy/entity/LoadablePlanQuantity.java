@@ -15,7 +15,7 @@ import lombok.Setter;
 
 /** @author jerin.g */
 @Entity
-@Table(name = "loadableplanquantity")
+@Table(name = "loadable_plan_quantity")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,25 +24,25 @@ public class LoadablePlanQuantity extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 
-  @Column(name = "cargonominationxid")
+  @Column(name = "cargo_nomination_xid")
   private Integer cargoNominationXId;
 
-  @Column(name = "estimatedapi")
+  @Column(name = "estimated_api")
   private BigDecimal estimatedApi;
 
-  @Column(name = "estimaltedtemperature")
+  @Column(name = "estimalted_temperature")
   private BigDecimal estimaltedTemperature;
 
-  @Column(name = "orderquantity")
+  @Column(name = "order_quantity")
   private BigDecimal orderQuantity;
 
-  @Column(name = "loadablequantity")
+  @Column(name = "loadable_quantity")
   private BigDecimal loadableQuantity;
 
-  @Column(name = "differencepercentage")
+  @Column(name = "difference_percentage")
   private BigDecimal differencePercentage;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private Boolean isActive;
 
   @JoinColumn(name = "loadableplanxid", referencedColumnName = "id")

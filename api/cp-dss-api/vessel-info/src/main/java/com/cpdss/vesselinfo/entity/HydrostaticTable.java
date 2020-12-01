@@ -17,7 +17,7 @@ import lombok.Setter;
 
 /** @author jerin.g */
 @Entity
-@Table(name = "hydrostatictable")
+@Table(name = "hydrostatic_table")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,11 +25,6 @@ import lombok.Setter;
 public class HydrostaticTable extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
-
-  @Id
-  @Basic(optional = false)
-  @Column(name = "id")
-  private Long id;
 
   @Column(name = "trim")
   private BigDecimal trim;
@@ -61,10 +56,10 @@ public class HydrostaticTable extends EntityDoc {
   @Column(name = "lkm")
   private BigDecimal lkm;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private Boolean isActive;
 
-  @JoinColumn(name = "vesselxid", referencedColumnName = "id")
+  @JoinColumn(name = "vessel_xid", referencedColumnName = "id")
   @ManyToOne
-  private Vessel vesselId;
+  private Vessel vessel;
 }

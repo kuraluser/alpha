@@ -928,6 +928,59 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>
+      getGetLoadablePatternDetailsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetLoadablePatternDetails",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadablePatternReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>
+      getGetLoadablePatternDetailsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>
+        getGetLoadablePatternDetailsMethod;
+    if ((getGetLoadablePatternDetailsMethod =
+            LoadableStudyServiceGrpc.getGetLoadablePatternDetailsMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadablePatternDetailsMethod =
+                LoadableStudyServiceGrpc.getGetLoadablePatternDetailsMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetLoadablePatternDetailsMethod =
+              getGetLoadablePatternDetailsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetLoadablePatternDetails"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadablePatternReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "GetLoadablePatternDetails"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadablePatternDetailsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest,
           com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>
       getGetPurposeOfCommingleMethod;
@@ -1169,6 +1222,14 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void getLoadablePatternDetails(
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetLoadablePatternDetailsMethod(), responseObserver);
+    }
+
+    /** */
     public void getPurposeOfCommingle(
         com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request,
         io.grpc.stub.StreamObserver<
@@ -1306,6 +1367,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail,
                       com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>(
                       this, METHODID_SAVE_ON_HAND_QUANTITY)))
+          .addMethod(
+              getGetLoadablePatternDetailsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>(
+                      this, METHODID_GET_LOADABLE_PATTERN_DETAILS)))
           .addMethod(
               getGetPurposeOfCommingleMethod(),
               asyncUnaryCall(
@@ -1528,6 +1596,17 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void getLoadablePatternDetails(
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetLoadablePatternDetailsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
     public void getPurposeOfCommingle(
         com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request,
         io.grpc.stub.StreamObserver<
@@ -1679,6 +1758,13 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail request) {
       return blockingUnaryCall(
           getChannel(), getSaveOnHandQuantityMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadablePatternReply getLoadablePatternDetails(
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetLoadablePatternDetailsMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -1862,6 +1948,15 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>
+        getLoadablePatternDetails(
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetLoadablePatternDetailsMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>
         getPurposeOfCommingle(
             com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request) {
@@ -1888,7 +1983,8 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_DELETE_PORT_ROTATION = 15;
   private static final int METHODID_GET_ON_HAND_QUANTITY = 16;
   private static final int METHODID_SAVE_ON_HAND_QUANTITY = 17;
-  private static final int METHODID_GET_PURPOSE_OF_COMMINGLE = 18;
+  private static final int METHODID_GET_LOADABLE_PATTERN_DETAILS = 18;
+  private static final int METHODID_GET_PURPOSE_OF_COMMINGLE = 19;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -2032,6 +2128,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>)
                   responseObserver);
           break;
+        case METHODID_GET_LOADABLE_PATTERN_DETAILS:
+          serviceImpl.getLoadablePatternDetails(
+              (com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>)
+                  responseObserver);
+          break;
         case METHODID_GET_PURPOSE_OF_COMMINGLE:
           serviceImpl.getPurposeOfCommingle(
               (com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest) request,
@@ -2121,6 +2224,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getDeletePortRotationMethod())
                       .addMethod(getGetOnHandQuantityMethod())
                       .addMethod(getSaveOnHandQuantityMethod())
+                      .addMethod(getGetLoadablePatternDetailsMethod())
                       .addMethod(getGetPurposeOfCommingleMethod())
                       .build();
         }
