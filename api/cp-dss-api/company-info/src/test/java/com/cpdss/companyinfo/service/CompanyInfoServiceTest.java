@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.companyinfo.domain.CompanyInfoResponse;
 import com.cpdss.companyinfo.entity.Company;
 import com.cpdss.companyinfo.repository.CompanyRepository;
@@ -25,7 +26,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /** Test class for {@link CompanyInfoService} */
@@ -64,7 +64,7 @@ class CompanyInfoServiceTest {
             () -> this.companyInfoService.findCompanyInfoByDomain(TEST_DOMAIN));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), INVALID_ERROR_CODE),
-        () -> assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus(), INVALID_HTTP_STATUS));
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), INVALID_HTTP_STATUS));
   }
 
   /**
@@ -90,6 +90,8 @@ class CompanyInfoServiceTest {
             () -> this.companyInfoService.findCompanyInfoByDomain(TEST_DOMAIN));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_GEN_INTERNAL_ERR, ex.getCode(), INVALID_ERROR_CODE),
-        () -> assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus(), INVALID_HTTP_STATUS));
+        () ->
+            assertEquals(
+                HttpStatusCode.INTERNAL_SERVER_ERROR, ex.getStatus(), INVALID_HTTP_STATUS));
   }
 }

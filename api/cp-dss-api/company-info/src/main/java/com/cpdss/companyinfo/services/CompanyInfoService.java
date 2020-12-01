@@ -5,9 +5,12 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.companyinfo.domain.CompanyInfoResponse;
+import com.cpdss.companyinfo.entity.Carousals;
 import com.cpdss.companyinfo.entity.Company;
 import com.cpdss.companyinfo.repository.CompanyRepository;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,6 +53,15 @@ public class CompanyInfoService {
     CompanyInfoResponse response = new CompanyInfoResponse();
     response.setRealm(company.getRealm());
     response.setProviders(Arrays.asList(company.getKeycloakIdp().split(",")));
+    response.setLogo(company.getCompanyLogo());
+    Set<Carousals> carousals = company.getCarousals();
+    if (null != carousals && !carousals.isEmpty()) {
+      response.setCarousals(new ArrayList<>());
+      carousals.forEach(
+          carousal -> {
+            response.getCarousals().add(carousal.getFilePath());
+          });
+    }
     log.debug("Found company by domain, company: {}", response);
     return response;
   }

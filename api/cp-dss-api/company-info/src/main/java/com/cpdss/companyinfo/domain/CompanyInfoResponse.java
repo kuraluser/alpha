@@ -15,4 +15,8 @@ public class CompanyInfoResponse {
   private String realm;
 
   private List<String> providers;
+
+  private List<String> carousals;
+
+  private String logo;
 }
