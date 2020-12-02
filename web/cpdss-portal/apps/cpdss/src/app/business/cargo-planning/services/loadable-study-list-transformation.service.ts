@@ -59,7 +59,7 @@ export class LoadableStudyListTransformationService {
         filterFieldMaxvalue: new Date()
       },
       {
-        field: '',
+        field: 'actions',
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
         fieldValueIcon: '##',

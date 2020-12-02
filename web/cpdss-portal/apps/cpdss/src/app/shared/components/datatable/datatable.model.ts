@@ -32,6 +32,7 @@ export interface IDataTableColumn {
     filterFieldMaxvalue?: any;
     minDate?: Date;
     dateFormat?: string;
+    columns?: IDataTableColumn[];
 }
 
 /**

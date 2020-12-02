@@ -65,6 +65,8 @@ export class DatatableComponent implements OnInit {
 
   @Input() tableRowReOrder = false;
 
+  @Input() tableId: string;
+
   get dataTable() {
     return this.form.get('dataTable') as FormArray;
   }

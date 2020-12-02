@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { IResponse } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, IPortsResponse, IPort, IPortsDetailsResponse, IPortList, PortsDB, IOHQPortRotationResponse, IPortOHQResponse } from '../models/cargo-planning.model';
+import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, IPortsResponse, IPort, IPortsDetailsResponse, IPortList, PortsDB, IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, OHQDB } from '../models/cargo-planning.model';
 import { IDischargingPortIds } from '../models/loadable-study-list.model';
 
 /**
@@ -20,10 +20,12 @@ export class LoadableStudyDetailsApiService {
   private _ports: IPort[];
   private _cargoNominationDb: CargoNominationDB;
   private _portsDb: PortsDB;
+  private _ohqDb: OHQDB;
 
   constructor(private commonApiService: CommonApiService) {
     this._cargoNominationDb = new CargoNominationDB();
     this._portsDb = new PortsDB();
+    this._ohqDb = new OHQDB();
   }
 
   /**
@@ -39,7 +41,11 @@ export class LoadableStudyDetailsApiService {
   /**
    * Method to set cargonomination
    *
-   * @returns {Observable<ICargoNominationDetailsResponse>}
+   * @param {ICargoNomination} cargoNomination
+   * @param {number} vesselId
+   * @param {number} voyageId
+   * @param {number} loadableStudyId
+   * @returns {Promise<number>}
    * @memberof LoadableStudyDetailsApiService
    */
   setCargoNomination(cargoNomination: ICargoNomination, vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
@@ -138,5 +144,22 @@ export class LoadableStudyDetailsApiService {
    */
   getPortOHQDetails(vesselId: number, voyageId: number, loadableStudyId: number, portId: number): Observable<IPortOHQResponse> {
     return this.commonApiService.get<IPortOHQResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports/${portId}/on-hand-quantities`);
+  }
+
+  /**
+   * Method to set ohq
+   *
+   * @param {IPortOHQTankDetail} ohqTankDetails
+   * @param {number} vesselId
+   * @param {number} voyageId
+   * @param {number} loadableStudyId
+   * @returns {Promise<number>}
+   * @memberof LoadableStudyDetailsApiService
+   */
+  setOHQTankDetails(ohqTankDetails: IPortOHQTankDetail, vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
+    ohqTankDetails.vesselId = vesselId;
+    ohqTankDetails.voyageId = voyageId;
+    ohqTankDetails.loadableStudyId = loadableStudyId;
+    return this._ohqDb.ohq.add(ohqTankDetails);
   }
 }

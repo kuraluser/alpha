@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { ValueObject } from '../../../shared/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOperations, IPort, IPortAllDropdownData, IPortList, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
+import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOHQPort, IOperations, IPort, IPortAllDropdownData, IPortList, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
 import { v4 as uuid4 } from 'uuid';
 import { IPermission } from '../../../shared/models/user-profile.model';
 
@@ -719,6 +719,154 @@ export class LoadableStudyDetailsTransformationService {
   formatPorts(ports: IPortsValueObject): IPortsValueObject {
     ports.storeKey = ports.storeKey ?? uuid4();
     return ports;
+  }
+
+  /**
+   * Method to get OHG grid colums
+   *
+   * @returns {IDataTableColumn[]}
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  getOHQDatatableColumns(): IDataTableColumn[] {
+    return [
+      {
+        field: 'slNo',
+        header: 'OHQ_SL',
+        fieldType: DATATABLE_FIELD_TYPE.SLNO,
+        sortable: true,
+        fieldHeaderClass: 'column-sl'
+      },
+      {
+        field: 'fuelTypeName',
+        header: 'OHQ_FUEL_TYPE',
+        editable: false,
+        filter: true,
+        filterField: 'fuelTypeName',
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        filterType: DATATABLE_FILTER_TYPE.TEXT,
+        filterPlaceholder: 'OHQ_SEARCH_FUEL_TYPE'
+      },
+      {
+        field: 'tankName',
+        header: 'OHQ_TANK',
+        editable: false,
+        filter: true,
+        filterField: 'tankName',
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        filterType: DATATABLE_FILTER_TYPE.TEXT,
+        filterPlaceholder: 'OHQ_SEARCH_TANK'
+      },
+      {
+        field: '',
+        header: 'OHQ_ARRIVAL',
+        columns: [
+          {
+            field: 'arrivalVolume',
+            header: 'OHQ_VOL',
+            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+            fieldPlaceholder: 'OHQ_PLACEHOLDER_VOL',
+            filter: true,
+            filterField: 'arrivalVolume.value',
+            filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+            filterType: DATATABLE_FILTER_TYPE.NUMBER,
+            filterPlaceholder: 'OHQ_SEARCH_VOL'
+          },
+          {
+            field: 'arrivalQuantity',
+            header: 'OHQ_WEIGHT',
+            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+            fieldPlaceholder: 'OHQ_PLACEHOLDER_WEIGHT',
+            filter: true,
+            filterField: 'arrivalQuantity.value',
+            filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+            filterType: DATATABLE_FILTER_TYPE.NUMBER,
+            filterPlaceholder: 'OHQ_SEARCH_WEIGHT'
+          }
+        ]
+      },
+      {
+        field: '',
+        header: 'OHQ_DEPARTURE',
+        columns: [
+          {
+            field: 'departureVolume',
+            header: 'OHQ_VOL',
+            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+            fieldPlaceholder: 'OHQ_PLACEHOLDER_VOL',
+            filter: true,
+            filterField: 'departureVolume.value',
+            filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+            filterType: DATATABLE_FILTER_TYPE.NUMBER,
+            filterPlaceholder: 'OHQ_SEARCH_VOL'
+          },
+          {
+            field: 'departureQuantity',
+            header: 'OHQ_WEIGHT',
+            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+            fieldPlaceholder: 'OHQ_PLACEHOLDER_WEIGHT',
+            filter: true,
+            filterField: 'departureQuantity.value',
+            filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+            filterType: DATATABLE_FILTER_TYPE.NUMBER,
+            filterPlaceholder: 'OHQ_SEARCH_WEIGHT'
+          }
+        ]
+      }
+    ]
+  }
+
+  /**
+   * Method to convert ohq tank details to value object
+   *
+   * @param {IPortOHQTankDetail} ohqTankDetail
+   * @param {boolean} [isNewValue=true]
+   * @returns {IPortOHQTankDetailValueObject}
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  getOHQTankDetailsAsValueObject(ohqTankDetail: IPortOHQTankDetail, isNewValue = true): IPortOHQTankDetailValueObject {
+    const _ohqTankDetail = <IPortOHQTankDetailValueObject>{};
+    _ohqTankDetail.id = ohqTankDetail.id;
+    _ohqTankDetail.portId = ohqTankDetail.portId;
+    _ohqTankDetail.fuelTypeName = ohqTankDetail.fuelTypeName;
+    _ohqTankDetail.fuelTypeId = ohqTankDetail.fuelTypeId;
+    _ohqTankDetail.tankId = ohqTankDetail.tankId;
+    _ohqTankDetail.tankName = ohqTankDetail.tankName;
+    _ohqTankDetail.arrivalVolume = new ValueObject<number>(ohqTankDetail.arrivalVolume, true, isNewValue);
+    _ohqTankDetail.arrivalQuantity = new ValueObject<number>(ohqTankDetail.arrivalQuantity, true, isNewValue);
+    _ohqTankDetail.departureVolume = new ValueObject<number>(ohqTankDetail.departureVolume, true, isNewValue);
+    _ohqTankDetail.departureQuantity = new ValueObject<number>(ohqTankDetail.departureQuantity, true, isNewValue);
+
+    return _ohqTankDetail;
+  }
+
+  /**
+   * Method for formating ohq tank details
+   *
+   * @param {IPortOHQTankDetailValueObject} ohqTankDetail
+   * @returns {IPortOHQTankDetailValueObject}
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  formatOHQTankDetail(ohqTankDetail: IPortOHQTankDetailValueObject): IPortOHQTankDetailValueObject {
+    ohqTankDetail.storeKey = ohqTankDetail.storeKey ?? uuid4();
+    return ohqTankDetail;
+  }
+
+  /**
+   * Method for converting ohq data as value
+   *
+   * @param {IPortOHQTankDetailValueObject} ohqTankDetail
+   * @returns {IPortOHQTankDetail}
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  getOHQTankDetailAsValue(ohqTankDetail: IPortOHQTankDetailValueObject): IPortOHQTankDetail {
+    const _ohqTankDetail: IPortOHQTankDetail = <IPortOHQTankDetail>{};
+    for (const key in ohqTankDetail) {
+      if (Object.prototype.hasOwnProperty.call(ohqTankDetail, key)) {
+        _ohqTankDetail[key] = ohqTankDetail[key]?.value ?? ohqTankDetail[key];
+      }
+    }
+
+    return _ohqTankDetail;
   }
 
 }

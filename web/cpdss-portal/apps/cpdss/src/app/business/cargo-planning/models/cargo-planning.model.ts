@@ -1,4 +1,5 @@
 import { SelectItem } from 'primeng/api';
+import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { CPDSSDB, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
 
 /**
@@ -192,7 +193,7 @@ export interface ILoadingPopupData {
  * @export
  * @interface ICargoNominationEvent
  */
-export interface ICargoNominationEvent {
+export interface ICargoNominationEvent extends IDataTableEvent {
     data: ICargoNominationValueObject;
     field: string;
     index: number;
@@ -368,16 +369,16 @@ export interface IOHQPortRotationResponse {
  */
 export interface IPortOHQResponse {
     responseStatus: IResponse;
-    onHandQuantities: IPortOHQDetails[];
+    onHandQuantities: IPortOHQTankDetail[];
 }
 
 /**
  * Interface for details ohq details of specific port
  *
  * @export
- * @interface IPortOHQDetails
+ * @interface IPortOHQTankDetail
  */
-export interface IPortOHQDetails {
+export interface IPortOHQTankDetail {
     id: number;
     fuelTypeId: number;
     fuelTypeName: string;
@@ -387,8 +388,66 @@ export interface IPortOHQDetails {
     arrivalQuantity: number;
     departureVolume: number;
     departureQuantity: number;
+    portId: number;
+    storeKey: number;
+    vesselId: number;
+    voyageId: number;
+    loadableStudyId: number;
 }
 
+/**
+ * Interface for OHQ port details
+ *
+ * @export
+ * @interface IPortOHQTankDetailValueObject
+ */
+export interface IPortOHQTankDetailValueObject {
+    slNo: number;
+    id: number;
+    fuelTypeId: number;
+    fuelTypeName: string;
+    tankId: number;
+    tankName: string;
+    arrivalVolume: ValueObject<number>;
+    arrivalQuantity: ValueObject<number>;
+    departureVolume: ValueObject<number>;
+    departureQuantity: ValueObject<number>;
+    portId: number;
+    storeKey: number;
+}
+
+/**
+ * Interface for OHQ grid events
+ *
+ * @export
+ * @interface IIPortOHQTankDetailEvent
+ * @extends {IDataTableEvent}
+ */
+export interface IIPortOHQTankDetailEvent extends IDataTableEvent {
+    data: IPortOHQTankDetailValueObject;
+    field: string;
+    index: number;
+    originalEvent: MouseEvent;
+}
+
+/**
+ * Class for OHQ Dexie db
+ *
+ * @export
+ * @class OHQDB
+ * @extends {CPDSSDB}
+ */
+export class OHQDB extends CPDSSDB {
+    ohq!: Dexie.Table<IPortOHQTankDetail, number>;
+
+    constructor() {
+        super();
+        this.version(1).stores({
+            ohq: '++,storeKey'
+        });
+    }
+
+}
 
 /**
  * Class for port Dexie db

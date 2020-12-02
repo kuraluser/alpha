@@ -1,7 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { IPort, IPortOHQDetails } from '../../models/cargo-planning.model';
+import { IIPortOHQTankDetailEvent, IPort, IPortOHQTankDetail, IPortOHQTankDetailValueObject } from '../../models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
+import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 
 /**
  * Compoent for OHQ tab
@@ -21,13 +24,33 @@ export class OnHandQuantityComponent implements OnInit {
   @Input() loadableStudyId: number;
   @Input() vesselId: number;
 
+  get selectedPortOHQTankDetails() {
+    return this._selectedPortOHQTankDetails;
+  }
+
+  set selectedPortOHQTankDetails(selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[]) {
+    this._selectedPortOHQTankDetails = selectedPortOHQTankDetails.map((ohqTankDetail, index) => {
+      const _ohqTankDetail = this.loadableStudyDetailsTransformationService.formatOHQTankDetail(ohqTankDetail);
+      _ohqTankDetail.slNo = index + 1;
+      console.log(_ohqTankDetail);
+      return _ohqTankDetail;
+    })
+  }
+
+  readonly editMode = DATATABLE_EDITMODE.CELL;
   ohqPorts: IPort[];
   selectedPort: IPort;
   ports: IPort[];
-  selectedPortOHQDetails: IPortOHQDetails[];
+  ohqForm: FormGroup;
+  columns: IDataTableColumn[];
+
+  private _selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[];
+
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
-    private ngxSpinnerService: NgxSpinnerService) { }
+    private ngxSpinnerService: NgxSpinnerService,
+    private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
+    private fb: FormBuilder,) { }
 
   /**
    * NgOnit init function for ohq component
@@ -35,7 +58,9 @@ export class OnHandQuantityComponent implements OnInit {
    * @memberof OnHandQuantityComponent
    */
   ngOnInit(): void {
+    this.columns = this.loadableStudyDetailsTransformationService.getOHQDatatableColumns();
     this.getPortRotation();
+    this.initSubscriptions();
   }
 
   /**
@@ -50,7 +75,7 @@ export class OnHandQuantityComponent implements OnInit {
     if (result?.portList) {
       this.ohqPorts = result?.portList?.map((ohqPort) => this.ports?.find((port) => port.id === ohqPort.portId));
       this.selectedPort = this.ohqPorts[0];
-      this.selectedPortOHQDetails = await this.getPortOHQDetails(this.selectedPort?.id);
+      this.selectedPortOHQTankDetails = await this.getPortOHQDetails(this.selectedPort?.id);
     }
     this.ngxSpinnerService.hide();
   }
@@ -61,9 +86,19 @@ export class OnHandQuantityComponent implements OnInit {
    * @param {number} portId
    * @memberof OnHandQuantityComponent
    */
-  async getPortOHQDetails(portId: number): Promise<IPortOHQDetails[]> {
+  async getPortOHQDetails(portId: number): Promise<IPortOHQTankDetailValueObject[]> {
     const result = await this.loadableStudyDetailsApiService.getPortOHQDetails(this.vesselId, this.voyageId, this.loadableStudyId, portId).toPromise();
-    return result?.onHandQuantities ?? [];
+    const selectedPortOHQTankDetails = result?.onHandQuantities ?? [];
+    const _selectedPortOHQTankDetails = selectedPortOHQTankDetails?.map((ohqTankDetail, index) => {
+      ohqTankDetail.portId = portId;
+      const _ohqTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailsAsValueObject(ohqTankDetail, false);
+      return _ohqTankDetail;
+    });
+    const ohqTankDetailsArray = _selectedPortOHQTankDetails?.map(ohqTankDetails => this.initOHQFormGroup(ohqTankDetails));
+    this.ohqForm = this.fb.group({
+      dataTable: this.fb.array([...ohqTankDetailsArray])
+    });
+    return [..._selectedPortOHQTankDetails];
   }
 
   /**
@@ -75,8 +110,112 @@ export class OnHandQuantityComponent implements OnInit {
   async onPortSelection(port: IPort) {
     this.ngxSpinnerService.show();
     this.selectedPort = port;
-    this.selectedPortOHQDetails = await this.getPortOHQDetails(this.selectedPort?.id);
+    this.selectedPortOHQTankDetails = await this.getPortOHQDetails(this.selectedPort?.id);
     this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Method for initializing onq row
+   *
+   * @private
+   * @param {IPortOHQTankDetailValueObject} ohqTankDetail
+   * @returns
+   * @memberof OnHandQuantityComponent
+   */
+  private initOHQFormGroup(ohqTankDetail: IPortOHQTankDetailValueObject) {
+    return this.fb.group({
+      fuelTypeName: this.fb.control(ohqTankDetail.fuelTypeId, Validators.required),
+      tankName: this.fb.control(ohqTankDetail.tankName, Validators.required),
+      arrivalVolume: this.fb.control(ohqTankDetail.arrivalVolume.value, Validators.required),
+      arrivalQuantity: this.fb.control(ohqTankDetail.arrivalQuantity.value, Validators.required),
+      departureVolume: this.fb.control(ohqTankDetail.departureVolume.value, Validators.required),
+      departureQuantity: this.fb.control(ohqTankDetail.departureQuantity.value, Validators.required),
+    });
+  }
+
+  /**
+   * Method to handle edit complete event
+   *
+   * @param {IIPortOHQTankDetailEvent} event
+   * @memberof OnHandQuantityComponent
+   */
+  async onEditComplete(event: IIPortOHQTankDetailEvent) {
+    if (this.ohqForm.valid) {
+      const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
+      if (res) {
+        for (const key in this.selectedPortOHQTankDetails[event.index]) {
+          if (this.selectedPortOHQTankDetails[event.index].hasOwnProperty(key) && this.selectedPortOHQTankDetails[event.index][key].hasOwnProperty('_isEditMode')) {
+            this.selectedPortOHQTankDetails[event.index][key].isEditMode = false;
+          }
+        }
+        this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
+      }
+
+    } else {
+      const fromGroup = this.row(event.index);
+      const invalidFormControls = this.findInvalidControlsRecursive(fromGroup);
+      invalidFormControls.forEach((key) => {
+        this.ohqForm[event.index][key].isEditMode = true;
+      });
+      fromGroup.markAllAsTouched();
+      this.ohqForm.updateValueAndValidity();
+    }
+  }
+
+  /**
+   * Initialization for all subscriptions
+   *
+   * @private
+   * @memberof OnHandQuantityComponent
+   */
+  private initSubscriptions() {
+    navigator.serviceWorker.addEventListener('message', async event => {
+      if (event.data.type === 'ohq_sync_finished') {
+        const index = this.selectedPortOHQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
+        if (index !== -1) {
+          this.selectedPortOHQTankDetails[index].id = event.data.id;
+          this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
+        }
+      }
+    });
+  }
+
+  /**
+   * Method for fetching form group
+   *
+   * @private
+   * @param {number} formGroupIndex
+   * @returns {FormGroup}
+   * @memberof OnHandQuantityComponent
+   */
+  private row(formGroupIndex: number): FormGroup {
+    const formGroup = <FormGroup>(<FormArray>this.ohqForm.get('dataTable')).at(formGroupIndex);
+    return formGroup;
+  }
+
+  /**
+   * Method get all invalid fields in a row
+   *
+   * @private
+   * @param {FormGroup} formToInvestigate
+   * @returns {string[]}
+   * @memberof OnHandQuantityComponent
+   */
+  private findInvalidControlsRecursive(formToInvestigate: FormGroup): string[] {
+    const invalidControls: string[] = [];
+    const recursiveFunc = (form: FormGroup | FormArray) => {
+      Object.keys(form.controls).forEach(field => {
+        const control = form.get(field);
+        if (control.invalid) invalidControls.push(field);
+        if (control instanceof FormGroup) {
+          recursiveFunc(control);
+        } else if (control instanceof FormArray) {
+          recursiveFunc(control);
+        }
+      });
+    }
+    recursiveFunc(formToInvestigate);
+    return invalidControls;
   }
 
 }

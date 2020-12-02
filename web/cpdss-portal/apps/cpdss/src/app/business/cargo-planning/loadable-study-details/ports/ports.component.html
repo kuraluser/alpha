@@ -3,7 +3,7 @@
         <div class="form-group row">
             <div class="col">
                 <div class="table-responsive-custom cargo-nomination-table">
-                <cpdss-portal-datatable [form]="portsForm" [columns]="columns" [value]="portsLists"
+                <cpdss-portal-datatable [tableId]="'ports'" [form]="portsForm" [columns]="columns" [value]="portsLists"
                     [editMode]="editMode" [listData]="listData"  [filterable]="true" (editComplete)="onEditComplete($event)" (saveRow)="onRowSave($event)" (deleteRow)="onDeleteRow($event)" [tableRowReOrder]="true" (rowReorder)="onRowReorder($event)">
                 </cpdss-portal-datatable>
             </div>
