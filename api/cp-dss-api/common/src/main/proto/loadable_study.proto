@@ -64,6 +64,9 @@ service LoadableStudyService {
 	}
 	rpc GetPurposeOfCommingle (PurposeOfCommingleRequest) returns (PurposeOfCommingleReply){
 	}
+	
+	rpc GetCommingleCargo (CommingleCargoRequest) returns (CommingleCargoReply){
+	}
 }
 
 
@@ -357,4 +360,25 @@ message LoadablePatternCargoDetails {
 
 message LoadablePatternRequest {
  	int64 loadableStudyId = 1;
+}
+
+message CommingleCargo{
+	int64 id = 1;
+	int64 purposeId = 2;
+	bool slopOnly = 3;
+	repeated int64 preferredTanks = 4;
+	int64 cargo1Id = 5;
+	string cargo1pct = 6;
+	int64 cargo2Id = 7;
+	string cargo2pct = 8;
+    string quantity = 9;
+}
+
+message CommingleCargoRequest{
+	int64 loadableStudyId = 1;
+}
+
+message CommingleCargoReply{
+	ResponseStatus responseStatus = 1;
+	repeated CommingleCargo commingleCargo = 2;
 }

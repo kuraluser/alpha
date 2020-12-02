@@ -1031,6 +1031,55 @@ public final class LoadableStudyServiceGrpc {
     return getGetPurposeOfCommingleMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest,
+          com.cpdss.common.generated.LoadableStudy.CommingleCargoReply>
+      getGetCommingleCargoMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetCommingleCargo",
+      requestType = com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.CommingleCargoReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest,
+          com.cpdss.common.generated.LoadableStudy.CommingleCargoReply>
+      getGetCommingleCargoMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest,
+            com.cpdss.common.generated.LoadableStudy.CommingleCargoReply>
+        getGetCommingleCargoMethod;
+    if ((getGetCommingleCargoMethod = LoadableStudyServiceGrpc.getGetCommingleCargoMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetCommingleCargoMethod = LoadableStudyServiceGrpc.getGetCommingleCargoMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetCommingleCargoMethod =
+              getGetCommingleCargoMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest,
+                          com.cpdss.common.generated.LoadableStudy.CommingleCargoReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetCommingleCargo"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.CommingleCargoReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("GetCommingleCargo"))
+                      .build();
+        }
+      }
+    }
+    return getGetCommingleCargoMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -1238,6 +1287,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetPurposeOfCommingleMethod(), responseObserver);
     }
 
+    /** */
+    public void getCommingleCargo(
+        com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetCommingleCargoMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1381,6 +1438,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest,
                       com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>(
                       this, METHODID_GET_PURPOSE_OF_COMMINGLE)))
+          .addMethod(
+              getGetCommingleCargoMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest,
+                      com.cpdss.common.generated.LoadableStudy.CommingleCargoReply>(
+                      this, METHODID_GET_COMMINGLE_CARGO)))
           .build();
     }
   }
@@ -1617,6 +1681,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getCommingleCargo(
+        com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetCommingleCargoMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1772,6 +1847,13 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetPurposeOfCommingleMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.CommingleCargoReply getCommingleCargo(
+        com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetCommingleCargoMethod(), getCallOptions(), request);
     }
   }
 
@@ -1963,6 +2045,14 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetPurposeOfCommingleMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.CommingleCargoReply>
+        getCommingleCargo(com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetCommingleCargoMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -1985,6 +2075,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_SAVE_ON_HAND_QUANTITY = 17;
   private static final int METHODID_GET_LOADABLE_PATTERN_DETAILS = 18;
   private static final int METHODID_GET_PURPOSE_OF_COMMINGLE = 19;
+  private static final int METHODID_GET_COMMINGLE_CARGO = 20;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -2142,6 +2233,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>)
                   responseObserver);
           break;
+        case METHODID_GET_COMMINGLE_CARGO:
+          serviceImpl.getCommingleCargo(
+              (com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.CommingleCargoReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -2226,6 +2324,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveOnHandQuantityMethod())
                       .addMethod(getGetLoadablePatternDetailsMethod())
                       .addMethod(getGetPurposeOfCommingleMethod())
+                      .addMethod(getGetCommingleCargoMethod())
                       .build();
         }
       }

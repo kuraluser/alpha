@@ -12,6 +12,8 @@ import lombok.Data;
 public class CommingleCargoResponse {
 
   private CommonSuccessResponse responseStatus;
+  
+  private CommingleCargo commingleCargo;
 
   private List<CargoNomination> cargoNominations;
 

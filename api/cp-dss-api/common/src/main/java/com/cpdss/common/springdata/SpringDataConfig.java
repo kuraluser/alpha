@@ -155,7 +155,7 @@ public class SpringDataConfig {
       throws SQLException {
     LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
     HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-    vendorAdapter.setGenerateDdl(true);
+    //    vendorAdapter.setGenerateDdl(true);
     if (this.isMultenant && dataBaseType.equals("postgres")) {
       Map<String, Object> jpaPropertiesMap = new HashMap<>();
       jpaPropertiesMap.put(Environment.MULTI_TENANT, MultiTenancyStrategy.SCHEMA);
