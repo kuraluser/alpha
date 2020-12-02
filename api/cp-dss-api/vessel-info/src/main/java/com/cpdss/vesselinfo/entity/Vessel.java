@@ -187,39 +187,10 @@ public class Vessel extends EntityDoc {
   @ManyToOne
   private VesselFlag vesselFlag;
 
-  @OneToMany(mappedBy = "vessel")
-  private Collection<MinMaxValuesForBmsf> minMaxValuesForBmsfCollection;
 
-  @OneToMany(mappedBy = "vessel")
-  private Collection<ValveMapping> valveMappingCollection;
-
-  @OneToMany(mappedBy = "vessel")
-  private Collection<CalculationSheetTankgroup> calculationSheetTankgroupCollection;
 
   @OneToMany(mappedBy = "vessel")
   private Set<VesselDraftCondition> vesselDraftConditionCollection;
 
-  @OneToMany(mappedBy = "vessel")
-  private Collection<TankCleaningMachineMapping> tankCleaningMachineMappingCollection;
 
-  @OneToMany(mappedBy = "vessel")
-  private Collection<CowMachineParticulars> cowMachineParticularsCollection;
-
-  @OneToMany(mappedBy = "vessel")
-  private Collection<VesselPipeLineDetails> vesselPipeLineDetailsCollection;
-
-  @OneToMany(mappedBy = "vessel")
-  private Collection<CalculationSheet> calculationSheetCollection;
-
-  @OneToMany(mappedBy = "vessel")
-  private Collection<ConsumptionDetails> consumptionDetailsCollection;
-
-  @OneToMany(mappedBy = "vessel")
-  private Collection<VesselChartererMapping> vesselChartererMappingCollection;
-
-  @OneToMany(mappedBy = "vessel")
-  private Collection<ShearingForce> shearingForceCollection;
-
-  @OneToMany(mappedBy = "vessel")
-  private Collection<HydrostaticTable> hydrostaticTableCollection;
 }

@@ -11,6 +11,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface HydrostaticTableRepository extends CommonCrudRepository<HydrostaticTable, Long> {
 
   @Query(
-      "SELECT HT.tpc FROM HydrostaticTable HT WHERE HT.vesselId.id  = ?1  ORDER BY ABS(HT.draft - ?2)")
+      "SELECT HT.tpc FROM HydrostaticTable HT WHERE HT.vessel.id  = ?1  ORDER BY ABS(HT.draft - ?2)")
   public List<BigDecimal> getTPCFromDraf(Long vesselId, BigDecimal draft, Boolean isActive);
 }

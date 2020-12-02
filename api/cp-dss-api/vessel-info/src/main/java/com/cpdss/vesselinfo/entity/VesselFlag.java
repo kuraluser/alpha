@@ -14,7 +14,7 @@ import lombok.Setter;
 
 /** @author jerin.g */
 @Entity
-@Table(name = "vesselflag")
+@Table(name = "vessel_flag")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,7 +28,5 @@ public class VesselFlag extends EntityDoc {
 
   @Column(name = "name")
   private String name;
-
-  @OneToMany(mappedBy = "vesselflag")
-  private Collection<Vessel> vesselCollection;
+  
 }

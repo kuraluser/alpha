@@ -162,9 +162,9 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       if (null != vesselDetails) {
         Optional.ofNullable(vesselDetails.getDisplacmentDraftRestriction().toString())
             .ifPresent(builder::setDisplacmentDraftRestriction);
-        Optional.ofNullable(vesselDetails.getVesselLightWeight())
+        Optional.ofNullable(vesselDetails.getVesselLightWeight().toString())
             .ifPresent(builder::setVesselLightWeight);
-        Optional.ofNullable(vesselDetails.getConstant()).ifPresent(builder::setConstant);
+        Optional.ofNullable(vesselDetails.getConstant().toString()).ifPresent(builder::setConstant);
       }
       if (!tpc.isEmpty()) {
         Optional.ofNullable(tpc.get(0))

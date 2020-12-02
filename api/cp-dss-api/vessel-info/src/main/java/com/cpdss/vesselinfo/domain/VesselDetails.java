@@ -10,6 +10,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class VesselDetails {
   private BigDecimal displacmentDraftRestriction;
-  private String vesselLightWeight;
-  private String constant;
+  private BigDecimal vesselLightWeight;
+  private BigDecimal constant;
 }
