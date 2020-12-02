@@ -613,11 +613,13 @@ export class LoadableStudyDetailsTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'eta.value',
         fieldPlaceholder: 'CHOOSE_ETA',
-        minDate: minDate,
         dateFormat: 'dd-mm-yy',
+        minDate: minDate,
         fieldClass: 'eta',
         errorMessages: {
-          'required': 'PORT_ETA_REQUIRED_ERROR'
+          'required': 'PORT_ETA_REQUIRED_ERROR',
+          'notInRange': 'PORT_ETA_NOT_IN_DATE_RANGE',
+          'failedCompare': 'PORT_ETA_COMPARE_ERROR'
         }
       },
       {
@@ -635,7 +637,8 @@ export class LoadableStudyDetailsTransformationService {
         dateFormat: 'dd-mm-yy',
         fieldClass: 'etd',
         errorMessages: {
-          'required': 'PORT_ETD_REQUIRED_ERROR'
+          'required': 'PORT_ETD_REQUIRED_ERROR',
+          'failedCompare': 'PORT_ETD_COMPARE_ERROR'
         }
       },
       {

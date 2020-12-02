@@ -176,7 +176,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   async getLoadableStudyDetails(vesselId: number, voyageId: number, loadableStudyId: number) {
     this.ngxSpinnerService.show();
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
-    this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).toString();
+    this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
     // if no loadable study is selected set 1st loadable study as selected one and reload
     if (!loadableStudyId) {
       this.router.navigate([`business/cargo-planning/loadable-study-details/${vesselId}/${voyageId}/${this.loadableStudyId}`]);

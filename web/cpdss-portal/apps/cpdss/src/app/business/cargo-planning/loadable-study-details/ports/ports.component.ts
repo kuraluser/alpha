@@ -9,6 +9,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { OPERATIONS } from '../../models/cargo-planning.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
+import { portDateRangeValidator } from '../../directives/validator/port-daterange-validator.directive';
+import { portDateCompareValidator } from '../../directives/validator/port-date-compare-validator.directive';
 
 
 /**
@@ -146,8 +148,8 @@ export class PortsComponent implements OnInit {
       layCanTo: this.fb.control(ports.layCan.value?.split('to')[1]?.trim(), Validators.required),
       maxDraft: this.fb.control(ports.maxDraft.value, [Validators.required, numberValidator(2, 2)]),
       maxAirDraft: this.fb.control(ports.maxAirDraft.value, [Validators.required, numberValidator(2, 2)]),
-      eta: this.fb.control(ports.eta.value, Validators.required),
-      etd: this.fb.control(ports.eta.value, Validators.required)
+      eta: this.fb.control(ports.eta.value, [Validators.required, portDateRangeValidator, portDateCompareValidator('etd', '<')]),
+      etd: this.fb.control(ports.eta.value, [Validators.required, portDateCompareValidator('eta', '>')])
 
     });
   }
@@ -243,6 +245,7 @@ export class PortsComponent implements OnInit {
       this.portsLists[event.index]['layCanTo'].value = event.data.layCan.value.split('to')[1].trim();
       this.updateField(event.index, 'layCanFrom', event.data.layCan.value.split('to')[0].trim());
       this.updateField(event.index, 'layCanTo', event.data.layCan.value.split('to')[1].trim());
+      this.updateField(event.index, 'eta', null);
     }
     this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
     if (!event.data?.isAdd) {
@@ -380,6 +383,9 @@ export class PortsComponent implements OnInit {
       const temp = this.portsLists[event.dragIndex].portOrder;
       this.portsLists[event.dragIndex].portOrder = this.portsLists[event.dropIndex].portOrder;
       this.portsLists[event.dropIndex].portOrder = temp;
+      const slNoTemp = this.portsLists[event.dragIndex].slNo;
+      this.portsLists[event.dragIndex].slNo = this.portsLists[event.dropIndex].slNo;
+      this.portsLists[event.dropIndex].slNo = slNoTemp;
       const dragRes = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[event.dragIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
       const dropRes = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[event.dropIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
       if (dragRes && dropRes) {

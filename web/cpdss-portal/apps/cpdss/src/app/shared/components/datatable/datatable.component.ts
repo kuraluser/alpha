@@ -20,6 +20,7 @@ import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_F
 export class DatatableComponent implements OnInit {
 
   @ViewChild('datatable') datatable: Table;
+  @ViewChild('dateRangeCalender') dateRangePicker;
 
   // properties
   @Input()
@@ -85,8 +86,6 @@ export class DatatableComponent implements OnInit {
   readonly filterMatchMode = DATATABLE_FILTER_MATCHMODE;
   moreOptions: MenuItem[];
   selectedRowEvent: IDataTableEvent;
-  dateRange = '';
-  dateTime = new Date();
 
   // private fields
   private _columns: IDataTableColumn[];
@@ -453,30 +452,16 @@ export class DatatableComponent implements OnInit {
   }
 
   /**
-  * Range date select
-  */
-  onDateRangeSelect(value) {
-    if (Array.isArray(value)) {
-      this.dateRange = this.formatDateTime(value[0]) + ' to ' + this.formatDateTime(value[1])
-    } else {
-      if (this.dateRange === '' || this.dateRange.includes("to")) {
-        this.dateRange = this.formatDateTime(value)
-      }
-      else {
-        this.dateRange = this.dateRange + ' to ' + this.formatDateTime(value)
-      }
-    }
-  }
-
-  /**
   * Range date selected
   */
   onDateRangeSelected(event, formGroupIndex: number, formControlName: string, rowData: Object) {
     const formControl = this.field(formGroupIndex, formControlName);
     formControl.markAsTouched();
-    if (this.dateRange.includes("to")) {
-      formControl.setValue(this.dateRange)
-      rowData[formControlName].value = formControl.value;
+    if (this.dateRangePicker.value[0] && this.dateRangePicker.value[1]) {
+      rowData[formControlName].value = this.formatDateTime(this.dateRangePicker.value[0]) + ' to ' + this.formatDateTime(this.dateRangePicker.value[1]);
+      formControl.setValue(rowData[formControlName].value);
+      formControl.markAllAsTouched();
+      this.dateRangePicker.hideOverlay();
       this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
     } else {
       formControl.setErrors({ 'required': true });
@@ -486,8 +471,16 @@ export class DatatableComponent implements OnInit {
   /**
   * Range date cleared
   */
-  onClearDateRange(value) {
-    this.dateRange = '';
+  onClearDateRange(event, formGroupIndex: number, formControlName: string, rowData: Object) {
+    this.dateRangePicker.value = null;
+    const formControl = this.field(formGroupIndex, formControlName);
+    if (formControl.value) {
+      rowData[formControlName].value = formControl.value;
+    } else {
+      formControl.setValue("");
+      formControl.setErrors({ 'required': true });
+    }
+
   }
 
   /**
