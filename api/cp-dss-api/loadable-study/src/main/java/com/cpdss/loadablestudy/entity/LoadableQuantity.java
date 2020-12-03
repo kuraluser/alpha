@@ -87,7 +87,7 @@ public class LoadableQuantity extends EntityDoc {
   @Column(name = "port_xid")
   private BigDecimal portId;
 
-  @Column(name = "boiler_water_onboard")
+  @Column(name = "boiler_water_on_board")
   private BigDecimal boilerWaterOnBoard;
 
   @Column(name = "ballast")
@@ -102,10 +102,10 @@ public class LoadableQuantity extends EntityDoc {
   @Column(name = "fo_consumption_in_sz")
   private BigDecimal foConsumptionInSZ;
 
-  @Column(name = "sub_total")
+  @Column(name = "subtotal")
   private BigDecimal subTotal;
 
-  @JoinColumn(name = "loadablestudyxid", referencedColumnName = "id")
+  @JoinColumn(name = "loadable_study_xid", referencedColumnName = "id")
   @ManyToOne
   private LoadableStudy loadableStudyXId;
 }
