@@ -2,7 +2,6 @@
 package com.cpdss.gateway.domain;
 
 import java.util.List;
-
 import lombok.Data;
 
 @Data

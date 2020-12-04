@@ -17,6 +17,7 @@ import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsReposit
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
+import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
@@ -70,6 +71,8 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private LoadableStudyStatusRepository loadableStudyStatusRepository;
 
   @MockBean private OnHandQuantityRepository onHandQuantityRepository;
+
+  @MockBean private CommingleCargoRepository commingleCargoRepository;
 
   @MockBean
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;

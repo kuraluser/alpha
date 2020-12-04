@@ -25323,11 +25323,24 @@ public final class LoadableStudy {
     com.cpdss.common.generated.LoadableStudy.StatusReplyOrBuilder getResponseStatusOrBuilder();
 
     /**
-     * <code>bool isSummerZone = 3;</code>
+     * <code>int32 caseNo = 3;</code>
      *
-     * @return The isSummerZone.
+     * @return The caseNo.
      */
-    boolean getIsSummerZone();
+    int getCaseNo();
+
+    /**
+     * <code>string selectedZone = 4;</code>
+     *
+     * @return The selectedZone.
+     */
+    java.lang.String getSelectedZone();
+    /**
+     * <code>string selectedZone = 4;</code>
+     *
+     * @return The bytes for selectedZone.
+     */
+    com.google.protobuf.ByteString getSelectedZoneBytes();
   }
   /** Protobuf type {@code LoadableQuantityResponse} */
   public static final class LoadableQuantityResponse extends com.google.protobuf.GeneratedMessageV3
@@ -25340,7 +25353,9 @@ public final class LoadableStudy {
       super(builder);
     }
 
-    private LoadableQuantityResponse() {}
+    private LoadableQuantityResponse() {
+      selectedZone_ = "";
+    }
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
@@ -25408,7 +25423,14 @@ public final class LoadableStudy {
               }
             case 24:
               {
-                isSummerZone_ = input.readBool();
+                caseNo_ = input.readInt32();
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                selectedZone_ = s;
                 break;
               }
             default:
@@ -25499,15 +25521,50 @@ public final class LoadableStudy {
       return getResponseStatus();
     }
 
-    public static final int ISSUMMERZONE_FIELD_NUMBER = 3;
-    private boolean isSummerZone_;
+    public static final int CASENO_FIELD_NUMBER = 3;
+    private int caseNo_;
     /**
-     * <code>bool isSummerZone = 3;</code>
+     * <code>int32 caseNo = 3;</code>
      *
-     * @return The isSummerZone.
+     * @return The caseNo.
      */
-    public boolean getIsSummerZone() {
-      return isSummerZone_;
+    public int getCaseNo() {
+      return caseNo_;
+    }
+
+    public static final int SELECTEDZONE_FIELD_NUMBER = 4;
+    private volatile java.lang.Object selectedZone_;
+    /**
+     * <code>string selectedZone = 4;</code>
+     *
+     * @return The selectedZone.
+     */
+    public java.lang.String getSelectedZone() {
+      java.lang.Object ref = selectedZone_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        selectedZone_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string selectedZone = 4;</code>
+     *
+     * @return The bytes for selectedZone.
+     */
+    public com.google.protobuf.ByteString getSelectedZoneBytes() {
+      java.lang.Object ref = selectedZone_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        selectedZone_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -25530,8 +25587,11 @@ public final class LoadableStudy {
       if (responseStatus_ != null) {
         output.writeMessage(2, getResponseStatus());
       }
-      if (isSummerZone_ != false) {
-        output.writeBool(3, isSummerZone_);
+      if (caseNo_ != 0) {
+        output.writeInt32(3, caseNo_);
+      }
+      if (!getSelectedZoneBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, selectedZone_);
       }
       unknownFields.writeTo(output);
     }
@@ -25550,8 +25610,11 @@ public final class LoadableStudy {
       if (responseStatus_ != null) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getResponseStatus());
       }
-      if (isSummerZone_ != false) {
-        size += com.google.protobuf.CodedOutputStream.computeBoolSize(3, isSummerZone_);
+      if (caseNo_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(3, caseNo_);
+      }
+      if (!getSelectedZoneBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, selectedZone_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -25577,7 +25640,8 @@ public final class LoadableStudy {
       if (hasResponseStatus()) {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
-      if (getIsSummerZone() != other.getIsSummerZone()) return false;
+      if (getCaseNo() != other.getCaseNo()) return false;
+      if (!getSelectedZone().equals(other.getSelectedZone())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -25597,8 +25661,10 @@ public final class LoadableStudy {
         hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
         hash = (53 * hash) + getResponseStatus().hashCode();
       }
-      hash = (37 * hash) + ISSUMMERZONE_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsSummerZone());
+      hash = (37 * hash) + CASENO_FIELD_NUMBER;
+      hash = (53 * hash) + getCaseNo();
+      hash = (37 * hash) + SELECTEDZONE_FIELD_NUMBER;
+      hash = (53 * hash) + getSelectedZone().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -25753,7 +25819,9 @@ public final class LoadableStudy {
           responseStatus_ = null;
           responseStatusBuilder_ = null;
         }
-        isSummerZone_ = false;
+        caseNo_ = 0;
+
+        selectedZone_ = "";
 
         return this;
       }
@@ -25794,7 +25862,8 @@ public final class LoadableStudy {
         } else {
           result.responseStatus_ = responseStatusBuilder_.build();
         }
-        result.isSummerZone_ = isSummerZone_;
+        result.caseNo_ = caseNo_;
+        result.selectedZone_ = selectedZone_;
         onBuilt();
         return result;
       }
@@ -25856,8 +25925,12 @@ public final class LoadableStudy {
         if (other.hasResponseStatus()) {
           mergeResponseStatus(other.getResponseStatus());
         }
-        if (other.getIsSummerZone() != false) {
-          setIsSummerZone(other.getIsSummerZone());
+        if (other.getCaseNo() != 0) {
+          setCaseNo(other.getCaseNo());
+        }
+        if (!other.getSelectedZone().isEmpty()) {
+          selectedZone_ = other.selectedZone_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -26139,35 +26212,111 @@ public final class LoadableStudy {
         return responseStatusBuilder_;
       }
 
-      private boolean isSummerZone_;
+      private int caseNo_;
       /**
-       * <code>bool isSummerZone = 3;</code>
+       * <code>int32 caseNo = 3;</code>
        *
-       * @return The isSummerZone.
+       * @return The caseNo.
        */
-      public boolean getIsSummerZone() {
-        return isSummerZone_;
+      public int getCaseNo() {
+        return caseNo_;
       }
       /**
-       * <code>bool isSummerZone = 3;</code>
+       * <code>int32 caseNo = 3;</code>
        *
-       * @param value The isSummerZone to set.
+       * @param value The caseNo to set.
        * @return This builder for chaining.
        */
-      public Builder setIsSummerZone(boolean value) {
+      public Builder setCaseNo(int value) {
 
-        isSummerZone_ = value;
+        caseNo_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>bool isSummerZone = 3;</code>
+       * <code>int32 caseNo = 3;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearIsSummerZone() {
+      public Builder clearCaseNo() {
 
-        isSummerZone_ = false;
+        caseNo_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object selectedZone_ = "";
+      /**
+       * <code>string selectedZone = 4;</code>
+       *
+       * @return The selectedZone.
+       */
+      public java.lang.String getSelectedZone() {
+        java.lang.Object ref = selectedZone_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          selectedZone_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string selectedZone = 4;</code>
+       *
+       * @return The bytes for selectedZone.
+       */
+      public com.google.protobuf.ByteString getSelectedZoneBytes() {
+        java.lang.Object ref = selectedZone_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          selectedZone_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string selectedZone = 4;</code>
+       *
+       * @param value The selectedZone to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSelectedZone(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        selectedZone_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string selectedZone = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearSelectedZone() {
+
+        selectedZone_ = getDefaultInstance().getSelectedZone();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string selectedZone = 4;</code>
+       *
+       * @param value The bytes for selectedZone to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSelectedZoneBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        selectedZone_ = value;
         onChanged();
         return this;
       }
@@ -44240,103 +44389,103 @@ public final class LoadableStudy {
           + "rtRotationReply\022\'\n\016responseStatus\030\001 \001(\0132"
           + "\017.ResponseStatus\022\"\n\005ports\030\002 \003(\0132\023.PortRo"
           + "tationDetail\022\036\n\noperations\030\003 \003(\0132\n.Opera"
-          + "tion\022\026\n\016portRotationId\030\004 \001(\003\"\221\001\n\030Loadabl"
+          + "tion\022\026\n\016portRotationId\030\004 \001(\003\"\241\001\n\030Loadabl"
           + "eQuantityResponse\0229\n\027loadableQuantityReq"
           + "uest\030\001 \001(\0132\030.LoadableQuantityRequest\022$\n\016"
-          + "responseStatus\030\002 \001(\0132\014.StatusReply\022\024\n\014is"
-          + "SummerZone\030\003 \001(\010\",\n\020ValveSegregation\022\n\n\002"
-          + "id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"2\n\027ValveSegregati"
-          + "onRequest\022\027\n\017loadableStudyId\030\001 \001(\003\"m\n\025Va"
-          + "lveSegregationReply\022\'\n\016responseStatus\030\001 "
-          + "\001(\0132\017.ResponseStatus\022+\n\020valveSegregation"
-          + "\030\002 \003(\0132\021.ValveSegregation\"e\n\025OnHandQuant"
-          + "ityRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselI"
-          + "d\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\016\n\006port"
-          + "Id\030\004 \001(\003\"\367\001\n\024OnHandQuantityDetail\022\n\n\002id\030"
-          + "\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\022\n\nfuelTypeId\030\003 \001("
-          + "\003\022\020\n\010fuelType\030\004 \001(\t\022\016\n\006tankId\030\005 \001(\003\022\020\n\010t"
-          + "ankName\030\006 \001(\t\022\025\n\rarrivalVolume\030\007 \001(\t\022\027\n\017"
-          + "arrivalQuantity\030\010 \001(\t\022\027\n\017departureVolume"
-          + "\030\t \001(\t\022\031\n\021departureQuantity\030\n \001(\t\022\027\n\017loa"
-          + "dableStudyId\030\013 \001(\003\"\256\002\n\nTankDetail\022\016\n\006tan"
-          + "kId\030\001 \001(\003\022\026\n\016tankCategoryId\030\002 \001(\003\022\030\n\020tan"
-          + "kCategoryName\030\003 \001(\t\022\020\n\010tankName\030\004 \001(\t\022\027\n"
-          + "\017frameNumberFrom\030\005 \001(\t\022\025\n\rframeNumberTo\030"
-          + "\006 \001(\t\022\021\n\tshortName\030\007 \001(\t\022\030\n\020fillCapacity"
-          + "Cubm\030\010 \001(\t\022\017\n\007density\030\t \001(\t\022\022\n\nisSlopTan"
-          + "k\030\n \001(\010\022\022\n\nheightFrom\030\013 \001(\t\022\020\n\010heightTo\030"
-          + "\014 \001(\t\022\021\n\ttankOrder\030\r \001(\005\022\021\n\ttankGroup\030\016 "
-          + "\001(\005\"+\n\010TankList\022\037\n\nvesselTank\030\001 \003(\0132\013.Ta"
-          + "nkDetail\"\231\001\n\023OnHandQuantityReply\022\'\n\016resp"
-          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\022-\n\016onH"
-          + "andQuantity\030\002 \003(\0132\025.OnHandQuantityDetail"
-          + "\022\036\n\013vesselTanks\030\003 \003(\0132\t.TankList\022\n\n\002id\030\004"
-          + " \001(\003\".\n\022PurposeOfCommingle\022\n\n\002id\030\001 \001(\003\022\014"
-          + "\n\004name\030\002 \001(\t\"4\n\031PurposeOfCommingleReques"
-          + "t\022\027\n\017loadableStudyId\030\001 \001(\003\"s\n\027PurposeOfC"
-          + "ommingleReply\022\'\n\016responseStatus\030\001 \001(\0132\017."
-          + "ResponseStatus\022/\n\022purposeOfCommingle\030\002 \003"
-          + "(\0132\023.PurposeOfCommingle\"j\n\024LoadablePatte"
-          + "rnReply\022)\n\017loadablePattern\030\001 \003(\0132\020.Loada"
-          + "blePattern\022\'\n\016responseStatus\030\002 \001(\0132\017.Res"
-          + "ponseStatus\"o\n\017LoadablePattern\022\031\n\021loadab"
-          + "lePatternId\030\001 \001(\003\022A\n\033loadablePatternCarg"
-          + "oDetails\030\002 \003(\0132\034.LoadablePatternCargoDet"
-          + "ails\"\302\001\n\033LoadablePatternCargoDetails\022\020\n\010"
-          + "priority\030\001 \001(\003\022\031\n\021cargoAbbreviation\030\002 \001("
-          + "\t\022\022\n\ncargoColor\030\003 \001(\t\022\016\n\006tankId\030\004 \001(\003\022\020\n"
-          + "\010quantity\030\005 \001(\t\022\022\n\ndifference\030\006 \001(\t\022\023\n\013c"
-          + "onstraints\030\007 \001(\t\022\027\n\017differenceColor\030\010 \001("
-          + "\t\"1\n\026LoadablePatternRequest\022\027\n\017loadableS"
-          + "tudyId\030\001 \001(\003\"\265\001\n\016CommingleCargo\022\n\n\002id\030\001 "
-          + "\001(\003\022\021\n\tpurposeId\030\002 \001(\003\022\020\n\010slopOnly\030\003 \001(\010"
-          + "\022\026\n\016preferredTanks\030\004 \003(\003\022\020\n\010cargo1Id\030\005 \001"
-          + "(\003\022\021\n\tcargo1pct\030\006 \001(\t\022\020\n\010cargo2Id\030\007 \001(\003\022"
-          + "\021\n\tcargo2pct\030\010 \001(\t\022\020\n\010quantity\030\t \001(\t\"0\n\025"
-          + "CommingleCargoRequest\022\027\n\017loadableStudyId"
-          + "\030\001 \001(\003\"g\n\023CommingleCargoReply\022\'\n\016respons"
-          + "eStatus\030\001 \001(\0132\017.ResponseStatus\022\'\n\016commin"
-          + "gleCargo\030\002 \003(\0132\017.CommingleCargo2\373\013\n\024Load"
-          + "ableStudyService\022,\n\nSaveVoyage\022\016.VoyageR"
-          + "equest\032\014.VoyageReply\"\000\0228\n\022GetVoyagesByVe"
-          + "ssel\022\016.VoyageRequest\032\020.VoyageListReply\"\000"
-          + "\022J\n\024SaveLoadableQuantity\022\030.LoadableQuant"
-          + "ityRequest\032\026.LoadableQuantityReply\"\000\022T\n$"
-          + "FindLoadableStudiesByVesselAndVoyage\022\025.L"
-          + "oadableStudyRequest\032\023.LoadableStudyReply"
-          + "\"\000\022@\n\021SaveLoadableStudy\022\024.LoadableStudyD"
-          + "etail\032\023.LoadableStudyReply\"\000\022G\n\023SaveCarg"
-          + "oNomination\022\027.CargoNominationRequest\032\025.C"
-          + "argoNominationReply\"\000\022J\n\034GetLoadableStud"
-          + "yPortRotation\022\024.PortRotationRequest\032\022.Po"
-          + "rtRotationReply\"\000\022J\n\026GetCargoNominationB"
-          + "yId\022\027.CargoNominationRequest\032\025.CargoNomi"
-          + "nationReply\"\000\022I\n\023GetValveSegregation\022\030.V"
-          + "alveSegregationRequest\032\026.ValveSegregatio"
-          + "nReply\"\000\022J\n\023getLoadableQuantity\022\026.Loadab"
-          + "leQuantityReply\032\031.LoadableQuantityRespon"
-          + "se\"\000\022J\n\035SaveLoadableStudyPortRotation\022\023."
-          + "PortRotationDetail\032\022.PortRotationReply\"\000"
-          + "\022I\n\025DeleteCargoNomination\022\027.CargoNominat"
-          + "ionRequest\032\025.CargoNominationReply\"\000\022B\n\024S"
-          + "aveDischargingPorts\022\024.PortRotationReques"
-          + "t\032\022.PortRotationReply\"\000\022N\n GetPortRotati"
-          + "onByLoadableStudyId\022\024.PortRotationReques"
-          + "t\032\022.PortRotationReply\"\000\022C\n\023DeleteLoadabl"
-          + "eStudy\022\025.LoadableStudyRequest\032\023.Loadable"
-          + "StudyReply\"\000\022@\n\022DeletePortRotation\022\024.Por"
-          + "tRotationRequest\032\022.PortRotationReply\"\000\022C"
-          + "\n\021GetOnHandQuantity\022\026.OnHandQuantityRequ"
-          + "est\032\024.OnHandQuantityReply\"\000\022C\n\022SaveOnHan"
-          + "dQuantity\022\025.OnHandQuantityDetail\032\024.OnHan"
-          + "dQuantityReply\"\000\022M\n\031GetLoadablePatternDe"
-          + "tails\022\027.LoadablePatternRequest\032\025.Loadabl"
-          + "ePatternReply\"\000\022O\n\025GetPurposeOfCommingle"
-          + "\022\032.PurposeOfCommingleRequest\032\030.PurposeOf"
-          + "CommingleReply\"\000\022C\n\021GetCommingleCargo\022\026."
-          + "CommingleCargoRequest\032\024.CommingleCargoRe"
-          + "ply\"\000B\036\n\032com.cpdss.common.generatedP\000b\006p"
-          + "roto3"
+          + "responseStatus\030\002 \001(\0132\014.StatusReply\022\016\n\006ca"
+          + "seNo\030\003 \001(\005\022\024\n\014selectedZone\030\004 \001(\t\",\n\020Valv"
+          + "eSegregation\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"2"
+          + "\n\027ValveSegregationRequest\022\027\n\017loadableStu"
+          + "dyId\030\001 \001(\003\"m\n\025ValveSegregationReply\022\'\n\016r"
+          + "esponseStatus\030\001 \001(\0132\017.ResponseStatus\022+\n\020"
+          + "valveSegregation\030\002 \003(\0132\021.ValveSegregatio"
+          + "n\"e\n\025OnHandQuantityRequest\022\021\n\tcompanyId\030"
+          + "\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\027\n\017loadableStudy"
+          + "Id\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\"\367\001\n\024OnHandQuant"
+          + "ityDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\022\n"
+          + "\nfuelTypeId\030\003 \001(\003\022\020\n\010fuelType\030\004 \001(\t\022\016\n\006t"
+          + "ankId\030\005 \001(\003\022\020\n\010tankName\030\006 \001(\t\022\025\n\rarrival"
+          + "Volume\030\007 \001(\t\022\027\n\017arrivalQuantity\030\010 \001(\t\022\027\n"
+          + "\017departureVolume\030\t \001(\t\022\031\n\021departureQuant"
+          + "ity\030\n \001(\t\022\027\n\017loadableStudyId\030\013 \001(\003\"\256\002\n\nT"
+          + "ankDetail\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tankCategor"
+          + "yId\030\002 \001(\003\022\030\n\020tankCategoryName\030\003 \001(\t\022\020\n\010t"
+          + "ankName\030\004 \001(\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025"
+          + "\n\rframeNumberTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t"
+          + "\022\030\n\020fillCapacityCubm\030\010 \001(\t\022\017\n\007density\030\t "
+          + "\001(\t\022\022\n\nisSlopTank\030\n \001(\010\022\022\n\nheightFrom\030\013 "
+          + "\001(\t\022\020\n\010heightTo\030\014 \001(\t\022\021\n\ttankOrder\030\r \001(\005"
+          + "\022\021\n\ttankGroup\030\016 \001(\005\"+\n\010TankList\022\037\n\nvesse"
+          + "lTank\030\001 \003(\0132\013.TankDetail\"\231\001\n\023OnHandQuant"
+          + "ityReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
+          + "nseStatus\022-\n\016onHandQuantity\030\002 \003(\0132\025.OnHa"
+          + "ndQuantityDetail\022\036\n\013vesselTanks\030\003 \003(\0132\t."
+          + "TankList\022\n\n\002id\030\004 \001(\003\".\n\022PurposeOfComming"
+          + "le\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"4\n\031PurposeO"
+          + "fCommingleRequest\022\027\n\017loadableStudyId\030\001 \001"
+          + "(\003\"s\n\027PurposeOfCommingleReply\022\'\n\016respons"
+          + "eStatus\030\001 \001(\0132\017.ResponseStatus\022/\n\022purpos"
+          + "eOfCommingle\030\002 \003(\0132\023.PurposeOfCommingle\""
+          + "j\n\024LoadablePatternReply\022)\n\017loadablePatte"
+          + "rn\030\001 \003(\0132\020.LoadablePattern\022\'\n\016responseSt"
+          + "atus\030\002 \001(\0132\017.ResponseStatus\"o\n\017LoadableP"
+          + "attern\022\031\n\021loadablePatternId\030\001 \001(\003\022A\n\033loa"
+          + "dablePatternCargoDetails\030\002 \003(\0132\034.Loadabl"
+          + "ePatternCargoDetails\"\302\001\n\033LoadablePattern"
+          + "CargoDetails\022\020\n\010priority\030\001 \001(\003\022\031\n\021cargoA"
+          + "bbreviation\030\002 \001(\t\022\022\n\ncargoColor\030\003 \001(\t\022\016\n"
+          + "\006tankId\030\004 \001(\003\022\020\n\010quantity\030\005 \001(\t\022\022\n\ndiffe"
+          + "rence\030\006 \001(\t\022\023\n\013constraints\030\007 \001(\t\022\027\n\017diff"
+          + "erenceColor\030\010 \001(\t\"1\n\026LoadablePatternRequ"
+          + "est\022\027\n\017loadableStudyId\030\001 \001(\003\"\265\001\n\016Comming"
+          + "leCargo\022\n\n\002id\030\001 \001(\003\022\021\n\tpurposeId\030\002 \001(\003\022\020"
+          + "\n\010slopOnly\030\003 \001(\010\022\026\n\016preferredTanks\030\004 \003(\003"
+          + "\022\020\n\010cargo1Id\030\005 \001(\003\022\021\n\tcargo1pct\030\006 \001(\t\022\020\n"
+          + "\010cargo2Id\030\007 \001(\003\022\021\n\tcargo2pct\030\010 \001(\t\022\020\n\010qu"
+          + "antity\030\t \001(\t\"0\n\025CommingleCargoRequest\022\027\n"
+          + "\017loadableStudyId\030\001 \001(\003\"g\n\023CommingleCargo"
+          + "Reply\022\'\n\016responseStatus\030\001 \001(\0132\017.Response"
+          + "Status\022\'\n\016commingleCargo\030\002 \003(\0132\017.Comming"
+          + "leCargo2\373\013\n\024LoadableStudyService\022,\n\nSave"
+          + "Voyage\022\016.VoyageRequest\032\014.VoyageReply\"\000\0228"
+          + "\n\022GetVoyagesByVessel\022\016.VoyageRequest\032\020.V"
+          + "oyageListReply\"\000\022J\n\024SaveLoadableQuantity"
+          + "\022\030.LoadableQuantityRequest\032\026.LoadableQua"
+          + "ntityReply\"\000\022T\n$FindLoadableStudiesByVes"
+          + "selAndVoyage\022\025.LoadableStudyRequest\032\023.Lo"
+          + "adableStudyReply\"\000\022@\n\021SaveLoadableStudy\022"
+          + "\024.LoadableStudyDetail\032\023.LoadableStudyRep"
+          + "ly\"\000\022G\n\023SaveCargoNomination\022\027.CargoNomin"
+          + "ationRequest\032\025.CargoNominationReply\"\000\022J\n"
+          + "\034GetLoadableStudyPortRotation\022\024.PortRota"
+          + "tionRequest\032\022.PortRotationReply\"\000\022J\n\026Get"
+          + "CargoNominationById\022\027.CargoNominationReq"
+          + "uest\032\025.CargoNominationReply\"\000\022I\n\023GetValv"
+          + "eSegregation\022\030.ValveSegregationRequest\032\026"
+          + ".ValveSegregationReply\"\000\022J\n\023getLoadableQ"
+          + "uantity\022\026.LoadableQuantityReply\032\031.Loadab"
+          + "leQuantityResponse\"\000\022J\n\035SaveLoadableStud"
+          + "yPortRotation\022\023.PortRotationDetail\032\022.Por"
+          + "tRotationReply\"\000\022I\n\025DeleteCargoNominatio"
+          + "n\022\027.CargoNominationRequest\032\025.CargoNomina"
+          + "tionReply\"\000\022B\n\024SaveDischargingPorts\022\024.Po"
+          + "rtRotationRequest\032\022.PortRotationReply\"\000\022"
+          + "N\n GetPortRotationByLoadableStudyId\022\024.Po"
+          + "rtRotationRequest\032\022.PortRotationReply\"\000\022"
+          + "C\n\023DeleteLoadableStudy\022\025.LoadableStudyRe"
+          + "quest\032\023.LoadableStudyReply\"\000\022@\n\022DeletePo"
+          + "rtRotation\022\024.PortRotationRequest\032\022.PortR"
+          + "otationReply\"\000\022C\n\021GetOnHandQuantity\022\026.On"
+          + "HandQuantityRequest\032\024.OnHandQuantityRepl"
+          + "y\"\000\022C\n\022SaveOnHandQuantity\022\025.OnHandQuanti"
+          + "tyDetail\032\024.OnHandQuantityReply\"\000\022M\n\031GetL"
+          + "oadablePatternDetails\022\027.LoadablePatternR"
+          + "equest\032\025.LoadablePatternReply\"\000\022O\n\025GetPu"
+          + "rposeOfCommingle\022\032.PurposeOfCommingleReq"
+          + "uest\032\030.PurposeOfCommingleReply\"\000\022C\n\021GetC"
+          + "ommingleCargo\022\026.CommingleCargoRequest\032\024."
+          + "CommingleCargoReply\"\000B\036\n\032com.cpdss.commo"
+          + "n.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -44563,7 +44712,7 @@ public final class LoadableStudy {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableQuantityResponse_descriptor,
             new java.lang.String[] {
-              "LoadableQuantityRequest", "ResponseStatus", "IsSummerZone",
+              "LoadableQuantityRequest", "ResponseStatus", "CaseNo", "SelectedZone",
             });
     internal_static_ValveSegregation_descriptor = getDescriptor().getMessageTypes().get(21);
     internal_static_ValveSegregation_fieldAccessorTable =

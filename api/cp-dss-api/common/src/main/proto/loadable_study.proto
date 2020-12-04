@@ -258,7 +258,8 @@ message PortRotationReply{
 message LoadableQuantityResponse {
 	LoadableQuantityRequest loadableQuantityRequest = 1;
 	StatusReply responseStatus = 2;
-	bool isSummerZone = 3;
+	int32 caseNo = 3;
+	string selectedZone = 4;
 }
 
 message ValveSegregation{

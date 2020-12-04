@@ -54,6 +54,7 @@ import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsReposit
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
+import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
@@ -114,6 +115,8 @@ class LoadableStudyServiceTest {
   @MockBean private LoadablePatternRepository loadablePatternRepository;
 
   @MockBean private PurposeOfCommingleRepository purposeOfCommingleRepository;
+
+  @MockBean private CommingleCargoRepository commingleCargoRepository;
 
   @MockBean
   private CargoNominationValveSegregationRepository cargoNominationValveSegregationRepository;
@@ -398,9 +401,14 @@ class LoadableStudyServiceTest {
   }
 
   /** Test loadable study saving */
-  @Test
-  void testSaveLoadableStudy() {
-    LoadableStudyDetail request = this.createLoadableStudySaveRequest();
+  @ParameterizedTest
+  @ValueSource(longs = {7L, 0L, 2L})
+  void testSaveLoadableStudy(Long loadlineXId) {
+    LoadableStudyDetail.Builder requestBuilder = this.createLoadableStudySaveRequest();
+    if (loadlineXId.equals(0L)) {
+      requestBuilder.setDraftRestriction(NUMERICAL_TEST_VALUE);
+    }
+    requestBuilder.setLoadLineXId(loadlineXId);
     LoadableStudy entity = new LoadableStudy();
     entity.setId(2L);
     when(this.voyageRepository.findById(anyLong()))
@@ -408,7 +416,7 @@ class LoadableStudyServiceTest {
     when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
     when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
     StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
-    this.loadableStudyService.saveLoadableStudy(request, responseObserver);
+    this.loadableStudyService.saveLoadableStudy(requestBuilder.build(), responseObserver);
     List<LoadableStudyReply> replies = responseObserver.getValues();
     assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
@@ -447,7 +455,7 @@ class LoadableStudyServiceTest {
 
   @Test
   void testSaveLoadableStudyInvalidVoyage() {
-    LoadableStudyDetail request = this.createLoadableStudySaveRequest();
+    LoadableStudyDetail request = this.createLoadableStudySaveRequest().build();
     when(this.voyageRepository.findById(anyLong())).thenReturn(Optional.empty());
     StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
     this.loadableStudyService.saveLoadableStudy(request, responseObserver);
@@ -462,7 +470,7 @@ class LoadableStudyServiceTest {
 
   @Test
   void testSaveLoadableStudyInvalidCreatedFromStudy() {
-    LoadableStudyDetail request = this.createLoadableStudySaveRequest();
+    LoadableStudyDetail request = this.createLoadableStudySaveRequest().build();
     when(this.voyageRepository.findById(anyLong()))
         .thenReturn(Optional.of(this.createVoyageEntity()));
     when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -479,7 +487,7 @@ class LoadableStudyServiceTest {
 
   @RepeatedTest(2)
   void testSaveLoadableStudyRuntimeException() {
-    LoadableStudyDetail request = this.createLoadableStudySaveRequest();
+    LoadableStudyDetail request = this.createLoadableStudySaveRequest().build();
     when(this.voyageRepository.findById(anyLong()))
         .thenReturn(Optional.of(this.createVoyageEntity()));
     LoadableStudy entity = new LoadableStudy();
@@ -597,8 +605,8 @@ class LoadableStudyServiceTest {
    *
    * @return {@link LoadableStudyDetail}
    */
-  private LoadableStudyDetail createLoadableStudySaveRequest() {
-    LoadableStudyDetail request =
+  private LoadableStudyDetail.Builder createLoadableStudySaveRequest() {
+    LoadableStudyDetail.Builder builder =
         LoadableStudyDetail.newBuilder()
             .setName(LOADABLE_STUDY_NAME)
             .setDetail(LOADABLE_STUDY_DETAILS)
@@ -607,7 +615,6 @@ class LoadableStudyServiceTest {
             .setVesselId(1L)
             .setVoyageId(1L)
             .setDraftMark(DRAFT_MARK)
-            .setDraftRestriction(DRAFT_RESTRICTION)
             .setMaxAirTemperature(MAX_TEMP_EXPECTED)
             .setMaxWaterTemperature(MAX_TEMP_EXPECTED)
             .setLoadLineXId(LOAD_LINE_ID)
@@ -616,9 +623,8 @@ class LoadableStudyServiceTest {
                 LoadableStudyAttachment.newBuilder()
                     .setByteString(ByteString.copyFrom("test content".getBytes()))
                     .setFileName("test name")
-                    .build())
-            .build();
-    return request;
+                    .build());
+    return builder;
   }
 
   private Voyage createVoyageEntity() {
@@ -922,6 +928,7 @@ class LoadableStudyServiceTest {
     loadableStudy.setLoadLineXId((long) 1);
     loadableStudy.setDraftMark(new BigDecimal(1));
     loadableStudy.setVesselXId((long) 1);
+    loadableStudy.setCaseNo(1);
 
     Mockito.when(loadableStudyRepository.findById(ArgumentMatchers.anyLong()))
         .thenReturn(Optional.of(loadableStudy));
