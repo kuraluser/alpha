@@ -1,4 +1,4 @@
-<p-dialog [(visible)]="display" [draggable]="false" [closable]="false" styleClass="loadable-quantity-pop-up"
+<p-dialog [(visible)]="display" [modal]="true" [draggable]="false" [closable]="false" styleClass="loadable-quantity-pop-up"
     [responsive]="true">
     <p-header>
         {{'LOADABLE_QUANTITY' | translate}}
@@ -15,11 +15,11 @@
                 <div class="col">
                     <div class="row form-group">
                         <label for="loadable_quantity_port_dropdown"
-                            class="col col-form-label">{{'LOADABLE_QUANTITY_PORT_NAME' | translate}}</label>
-                        <div class="col dropdown-loadable-wuantity">
+                            class="col no-left-padding">{{'LOADABLE_QUANTITY_PORT_NAME' | translate}}</label>
+                        <div class="col dropdown-loadable-quantity">
                             <p-dropdown id="loadable_quantity_port_dropdown" styleClass="form-control" [filter]="true"
                                 [options]="ports" formControlName="portName" optionLabel="name"
-                                placeholder="{{ 'LOADABLE_QUANTITY_SELECT_PORT_NAME'  | translate }}">
+                                placeholder="{{ 'LOADABLE_QUANTITY_SELECT_PORT_NAME'  | translate }}" [readonly]="isEditable">
                             </p-dropdown>
                         </div>
                         <div class="col error-column">
@@ -30,7 +30,7 @@
                     <div class="row  form-group">
                         <label for="loadable_quantity_arrival_max_draft"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_ARRIVAL_MAX_DRAFT' | translate}}</label>
-                        <div class="col">
+                        <div class="col text-right pt-5">
                             <label
                                 id="loadable_quantity_arrival_max_draft">{{getControlLabel('arrivalMaxDraft')}}</label>
                         </div>
@@ -40,22 +40,22 @@
                                 [errorMessages]="errorMesages.arrivalMaxDraft"></cpdss-portal-validation-error>
                         </div>
                     </div>
-                    <div class="row form-group" *ngIf="!isSummerZone">
+                        <div class="row form-group" *ngIf="caseNo == 3">
                         <label for="loadable_quantity_displacement"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_DISPLACEMENT' | translate}}</label>
-                        <div class="col">
+                        <div class="col pt-5">
                             <label id="loadable_quantity_displacement">{{getControlLabel('displacement')}}</label>
                         </div>
-                        <div class="col">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
                             <cpdss-portal-validation-error [errors]="fieldError('displacement')"
                                 [errorMessages]="errorMesages.displacement"></cpdss-portal-validation-error>
                         </div>
                     </div>
-                    <div class="row form-group" *ngIf="!isSummerZone">
+                        <div class="row form-group" *ngIf="caseNo === 3">
                         <label for="loadable_quantity_lwt"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_LWT' | translate}}</label>
-                        <div class="col">
+                        <div class="col pt-5">
                             <label id="loadable_quantity_lwt">{{getControlLabel('lwt')}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -64,15 +64,16 @@
                                 [errorMessages]="errorMesages.lwt"></cpdss-portal-validation-error>
                         </div>
                     </div>
-                    <div class="row form-group">
-                        <label *ngIf="!isSummerZone" for="loadable_quantity_dwt"
-                            class="col col-form-label">{{'LOADABLE_QUANTITY_DWT' | translate}}</label>
-                        <label for="loadable_quantity_dwt" class="col col-form-label"
-                            *ngIf="isSummerZone">{{'LOADABLE_QUANTITY_SUMMER_DWT' | translate }}</label>
+                    <div class="row form-group no-border mb-5 sub-heading-size strong">
+                            <label *ngIf="caseNo===3" for="loadable_quantity_dwt"
+                            class="col col-form-label strong ">{{'LOADABLE_QUANTITY_DWT' | translate}}</label>
+                            <label *ngIf="caseNo!==3" for="loadable_quantity_dwt"
+                            class="col col-form-label strong ">{{selectedZone}} {{'LOADABLE_QUANTITY_DWT' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_dwt" class="form-control" formControlName="dwt">
+                         
+                            <input type="number" id="loadable_quantity_dwt" class="form-control" formControlName="dwt" [readonly]="isEditable">
                         </div>
-                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col unit-column strong sub-heading-size">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="error-column text-center">
                             <cpdss-portal-validation-error [errors]="fieldError('dwt')"
                                 [errorMessages]="errorMesages.dwt"></cpdss-portal-validation-error>
@@ -81,22 +82,22 @@
                     <div class="row form-group">
                         <label for="loadable_quantity_tpc"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_TPC' | translate}}</label>
-                        <div class="col">
+                        <div class="col pt-5">
                             <label id="loadable_quantity_tpc">{{getControlLabel('tpc')}}</label>
 
                         </div>
-                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_CM' | translate }}</div>
+                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_TONNE' | translate }}</div>
                         <div class="error-column text-center">
                             <cpdss-portal-validation-error [errors]="fieldError('tpc')"
                                 [errorMessages]="errorMesages.tpc"></cpdss-portal-validation-error>
                         </div>
                     </div>
-                    <div class="row form-group" *ngIf="!isSummerZone">
+                        <div class="row form-group" *ngIf="caseNo === 3">
                         <label for="loadable_quantity_sea_water_density"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SEA_WATER_DENSITY' | translate}}</label>
                         <div class="col">
                             <input type="number" class="form-control" id="loadable_quantity_sea_water_density"
-                                formControlName="estSeaDensity" (change)="getSgCorrectionOnChange()">
+                                formControlName="estSeaDensity" (change)="getSgCorrectionOnChange()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -104,7 +105,7 @@
                                 [errorMessages]="errorMesages.estSeaDensity"></cpdss-portal-validation-error>
                         </div>
                     </div>
-                    <div class="row form-group" *ngIf="!isSummerZone">
+                        <div class="row form-group" *ngIf="caseNo === 3">
                         <label for="loadable_quantity_sg_correction"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SG_CORRECTION' | translate}}</label>
                         <div class="col">
@@ -121,9 +122,9 @@
                             class="col col-form-label">{{'LOADABLE_QUANTITY_ESTIMATE_SAG' | translate}}</label>
                         <div class="col">
                             <input type="number" id="loadable_quantity_estimate_sag" class="form-control"
-                                formControlName="estimateSag" (change)="getSagCorrectionOnChange()">
+                                formControlName="estimateSag" (change)="getSagCorrectionOnChange()" [readonly]="isEditable">
                         </div>
-                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_CM' | translate }}</div>
                         <div class="col error-column text-center">
                             <cpdss-portal-validation-error [errors]="fieldError('estimateSag')"
                                 [errorMessages]="errorMesages.estimateSag"></cpdss-portal-validation-error>
@@ -132,7 +133,7 @@
                     <div class="row form-group">
                         <label for="loadable_quantity_estimate_sag"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SAG_CORRECTION' | translate}}</label>
-                        <div class="col">
+                        <div class="col pt-5">
                             <label id="loadable_quantity_estimate_sag">{{getControlLabel('safCorrection')}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -146,7 +147,7 @@
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FO_ONBOARD' | translate}}</label>
                         <div class="col">
                             <input type="number" id="loadable_quantity_fo_onboard" class="form-control"
-                                formControlName="foOnboard" (change)="getSubTotal()">
+                                formControlName="foOnboard" (change)="getSubTotal()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -159,7 +160,7 @@
                             class="col col-form-label">{{'LOADABLE_QUANTITY_DO_ONBOARD' | translate}}</label>
                         <div class="col">
                             <input type="number" id="loadable_quantity_do_onboard" class="form-control"
-                                formControlName="doOnboard" (change)="getSubTotal()">
+                                formControlName="doOnboard" (change)="getSubTotal()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -173,7 +174,7 @@
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FRESH_WATER_ON_BOARD' | translate}}</label>
                         <div class="col">
                             <input type="number" class="form-control" id="loadable_quantity_fresh_water_onboard"
-                                formControlName="freshWaterOnboard" (change)="getSubTotal()">
+                                formControlName="freshWaterOnboard" (change)="getSubTotal()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column">
@@ -186,7 +187,7 @@
                             class="col col-form-label">{{'LOADABLE_QUANTITY_BOILER_WATER_ON_BOARD' | translate}}</label>
                         <div class="col">
                             <input type="number" class="form-control" id="loadable_quantity_boiler_water_onboard"
-                                formControlName="boilerWaterOnboard" (change)="getSubTotal()">
+                                formControlName="boilerWaterOnboard" (change)="getSubTotal()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -199,7 +200,7 @@
                             class="col col-form-label">{{'LOADABLE_QUANTITY_BALLAST' | translate }}</label>
                         <div class="col">
                             <input type="number" id="loadable_quantity_ballast" class="form-control"
-                                formControlName="ballast" (change)="getSubTotal()">
+                                formControlName="ballast" (change)="getSubTotal()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -211,7 +212,7 @@
                     <div class="row form-group">
                         <label for="loadable_quantity_constant"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_CONSTANT' | translate}}</label>
-                        <div class="col">
+                        <div class="col pt-5">
                             <label id="loadable_quantity_constant">{{getControlLabel('constant')}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -225,7 +226,7 @@
                             class="col col-form-label">{{'LOADABLE_QUANTITY_OTHERS' | translate}}</label>
                         <div class="col">
                             <input type="number" id="loadable_quantity_others" class="form-control"
-                                formControlName="others" (change)="getSubTotal()">
+                                formControlName="others" (change)="getSubTotal()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column">
@@ -233,36 +234,38 @@
                                 [errorMessages]="errorMesages.others"></cpdss-portal-validation-error>
                         </div>
                     </div>
-                    <div class="row form-group">
+                    <div class="row form-group no-border sub-heading-size strong text-secondary">
                         <label for="loadable_quantity_sub_total"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SUB_TOTAL' | translate}}</label>
-                        <div class="col">
+                        <div class="col pt-5">
                             <label id="loadable_quantity_sub_total">{{getControlLabel('subTotal')}}</label>
                         </div>
-                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col unit-column pt-5">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
                             <cpdss-portal-validation-error [errors]="fieldError('subTotal')"
                                 [errorMessages]="errorMesages.subTotal"></cpdss-portal-validation-error>
                         </div>
                     </div>
-                    <div *ngIf="!isSummerZone">{{'LOADABLE_QUANTITY' | translate}}
-                        <label id="loadable_quantity_totalQuantity">{{getControlLabel('totalQuantity')}}</label>
-                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <div class="col error-column">
-                            <cpdss-portal-validation-error [errors]="fieldError('totalQuantity')"
-                                [errorMessages]="errorMesages.totalQuantity"></cpdss-portal-validation-error>
-                        </div>
-                        <div class="pt-5 text-danger" *ngIf="isNegative">
-                            {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' |   translate}}</div>
+                        <div class="row form-group no-border sub-heading-size strong text-secondary" *ngIf="caseNo !== 1">
+                        <div class="col text-uppercase col-form-label">{{'LOADABLE_QUANTITY' | translate}}</div>
+                        <label id="loadable_quantity_totalQuantity"  class="col ">{{getControlLabel('totalQuantity')}}</label>
+                        <div class="col unit-column ">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>         
+                            <div class="col error-column">
+                                
+                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col"><div class="text-danger" *ngIf="isNegative">
+                            {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' |   translate}}</div></div>
                     </div>
                 </div>
-                <div class="col" *ngIf="isSummerZone">
+                    <div class="col second-column" *ngIf="caseNo === 1">
                     <div class="row form-group">
                         <label for="loadable_quantity_dist_in_summery"
-                            class="col col-form-label">{{'LOADABLE_QUANTITY_DIST_IN_SUMMERZONE' | translate}}</label>
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_DIST_IN' | translate}} {{selectedZone}}</label>
                         <div class="col">
                             <input type="number" class="form-control" id="loadable_quantity_dist_in_summery"
-                                formControlName="distanceInSummerzone" (change)="getRunningHours()">
+                                formControlName="distanceInSummerzone" (change)="getRunningHours()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MILES' | translate }}</div>
                         <div class="col error-column text-center">
@@ -272,10 +275,10 @@
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_speed_in_sz"
-                            class="col col-form-label">{{'LOADABLE_QUANTITY_SPEED_IN_SZ' | translate}}</label>
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_SPEED_IN' | translate}} {{selectedZone}}</label>
                         <div class="col">
                             <input type="number" id="loadable_quantity_speed_in_sz" class="form-control"
-                                formControlName="speedInSz" (change)="getRunningHours()">
+                                formControlName="speedInSz" (change)="getRunningHours()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_KNOTS' | translate }}</div>
                         <div class="col error-column text-center">
@@ -314,7 +317,7 @@
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FO_CON_/_DAY' | translate}}</label>
                         <div class="col">
                             <input type="number" id="loadable_quantity_fo_con_day" class="form-control"
-                                formControlName="foConday" (change)="getFoConsumptionInSz()">
+                                formControlName="foConday" (change)="getFoConsumptionInSz()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT/DAY' | translate }}</div>
                         <div class="col error-column">
@@ -324,7 +327,7 @@
                     </div>
                     <div class="row form-group">
                         <label for="loadable_quantity_fo_cons_in_sz"
-                            class="col col-form-label">{{'LOADABLE_QUANTITY_FO_CONS_IN_SZ' | translate}}</label>
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_FO_CONS_IN' | translate}} {{selectedZone}}</label>
                         <div class="col">
                             <input type="number" class="form-control" id="loadable_quantity_fo_cons_in_sz"
                                 formControlName="foConsInSz" readonly>
@@ -335,17 +338,22 @@
                                 [errorMessages]="errorMesages.foConsInSz"></cpdss-portal-validation-error>
                         </div>
                     </div>
-                    <div class="row form-group">
+                    <div class="row form-group sub-heading-size text-secondary no-border">
                         <label for="" class="col col-form-label">{{'LOADABLE_QUANTITY' | translate}} </label>
-                        <div class="col">
+                        <div class="col pt-5">
                             <label id="loadable_quantity_totalQuantity">{{getControlLabel('totalQuantity')}}</label>
-                            <div class="pt-5 text-danger" *ngIf="isNegative">
-                                {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' |  translate}}</div>
+                           
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column">
                             <cpdss-portal-validation-error [errors]="fieldError('totalQuantity')"
                                 [errorMessages]="errorMesages.totalQuantity"></cpdss-portal-validation-error>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="pt-5 text-danger" *ngIf="isNegative">
+                                {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' |  translate}}</div>
                         </div>
                     </div>
 

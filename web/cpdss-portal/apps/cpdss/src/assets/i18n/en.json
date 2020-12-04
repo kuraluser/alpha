@@ -182,12 +182,12 @@
 	"LOADABLE_QUANTITY_CONSTANT": "Constant",
 	"LOADABLE_QUANTITY_OTHERS": "Others",
 	"LOADABLE_QUANTITY_SUB_TOTAL": "Sub Total",
-	"LOADABLE_QUANTITY_DIST_IN_SUMMERZONE": "Dist. In Summerzone",
-	"LOADABLE_QUANTITY_SPEED_IN_SZ": "Speed In sz",
+	"LOADABLE_QUANTITY_DIST_IN": "Dist. In",
+	"LOADABLE_QUANTITY_SPEED_IN": "Speed In",
 	"LOADABLE_QUANTITY_RUNNING_HOURS": "Running Hours",
 	"LOADABLE_QUANTITY_RUNNING_DAYS": "Running Days",
 	"LOADABLE_QUANTITY_FO_CON_/_DAY": "FO Con/Day",
-	"LOADABLE_QUANTITY_FO_CONS_IN_SZ": "Fo Cons In Sz",
+	"LOADABLE_QUANTITY_FO_CONS_IN": "Fo Cons In",
 	"LOADABLE_QUANTITY_INFO": "The calculation below is on arrival condition at 1st discharging port ",
 	"LOADABLE_QUANTITY": "Loadable Quantity",
 	"LOADABLE_QUANTITY_CANCEL": "Cancel",
@@ -278,5 +278,8 @@
 	"LOADABLE_QUANTITY_TOTAL_QUANTITY_REQUIRED": "Loadable quantity is required",
 	"DATE_RANGE_CALENDER_OK_BUTTON_LABEL": "OK",
 	"PORT_ETA_COMPARE_ERROR": "ETA shoul be less than ETD",
-	"PORT_ETD_COMPARE_ERROR": "ETD should be greater than ETA"
+	"PORT_ETD_COMPARE_ERROR": "ETD should be greater than ETA",
+	"LOADABLE_QUANTITY_ERROR":"Please enter a valid number",
+	"TOTAL_QUANTITY_ERROR": "Total quantity should not be greater than loadable quantity",
+	"LOADABLE_QUANTITY_UNIT_TONNE": "TONNE"
 }

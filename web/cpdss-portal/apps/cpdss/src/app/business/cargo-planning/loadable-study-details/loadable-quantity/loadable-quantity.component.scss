@@ -10,7 +10,18 @@
     // max-width: 148px;
 }
 .item-row-wrapper{
+    flex-wrap: nowrap;
     > .col{
         /*padding-right: 30px;*/
     }
+}
+.second-column{
+    .unit-column{
+        max-width: 55px;
+        width: 55px;
+    }
+}
+.dropdown-loadable-quantity{
+    min-width: 180px;
+    text-align: left!important;
 }

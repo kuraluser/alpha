@@ -73,7 +73,8 @@ export class LoadableStudyDetailsComponent implements OnInit {
   portsTabPermission: IPermission;
   ohqTabPermissionContext: IPermissionContext;
   loadableQuantityPermissionContext: IPermissionContext;
-  
+  loadableQuantityPermission: IPermission;
+
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private loadableStudyListApiService: LoadableStudyListApiService,
@@ -115,6 +116,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
     const ohqTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OnHandQuantityComponent'], false);
     this.ohqTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['OnHandQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
 
+    this.loadableQuantityPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], false);
     this.loadableQuantityPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
 
     if (cargoNominationTabPermission?.view) {
@@ -174,6 +176,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @memberof LoadableStudyDetailsComponent
    */
   async getLoadableStudyDetails(vesselId: number, voyageId: number, loadableStudyId: number) {
+    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR']).toPromise();
     this.ngxSpinnerService.show();
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
@@ -183,7 +186,10 @@ export class LoadableStudyDetailsComponent implements OnInit {
     } else {
       const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id).toPromise();
       if (loadableQuantityResult.responseStatus.status === "200") {
-        loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.loadableQuantityNew = "0" : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity
+        loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.loadableQuantityNew = "0" : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
+        if (Number(this.totalQuantity$) > Number(this.loadableQuantityNew)) {
+          this.messageService.add({ severity: 'error', summary: translationKeys['TOTAL_QUANTITY_ERROR'], detail: translationKeys['TOTAL_QUANTITY_ERROR'] });
+        }
         this.loadableQuantityModel = loadableQuantityResult;
       }
     }
@@ -269,11 +275,11 @@ export class LoadableStudyDetailsComponent implements OnInit {
     //If deleted loadable study is equal to currently selected loadable study then we need reset the selection
     if (event?.data?.id === this.loadableStudyId) {
       const loadableStudies = this.loadableStudies?.filter(loadableStudy => event?.data?.id !== loadableStudy?.id);
-      if(loadableStudies && loadableStudies.length) {
+      if (loadableStudies && loadableStudies.length) {
         this.selectedLoadableStudy = loadableStudies[0];
       } else {
         this.loadableStudyId = 0;
-      }     
+      }
     }
     this.loadableStudies.splice(event?.index, 1);
   }
@@ -306,7 +312,11 @@ export class LoadableStudyDetailsComponent implements OnInit {
   /**
    * Value from loadable quantity
    */
-  loadableQuantity(newloadableQuantity: string) {
+  async loadableQuantity(newloadableQuantity: string) {
     this.loadableQuantityNew = newloadableQuantity;
+    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR']).toPromise();
+    if (Number(this.totalQuantity$) > Number(this.loadableQuantityNew)) {
+      this.messageService.add({ severity: 'error', summary: translationKeys['TOTAL_QUANTITY_ERROR'], detail: translationKeys['TOTAL_QUANTITY_ERROR'] });
+    }
   }
 }

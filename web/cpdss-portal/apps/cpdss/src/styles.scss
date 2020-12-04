@@ -665,6 +665,7 @@ h5{
   align-items: center;
   border-radius: 3px;
   border-bottom: 0;
+  padding-left: 3px;
   &:hover{
     border-bottom: 0!important;
   }
@@ -1168,15 +1169,19 @@ td.lay-can{
   text-transform: uppercase;
   padding-left: 0;
 }
-&.p-dialog{
-  /*max-width: 740px;*/
-}
-.row.form-group{
-  padding:2px 0;
-  .col:nth-child(2){
-    width: 120px;
+  &.p-dialog{
+    /*max-width: 740px;*/
   }
-}
+  .row.form-group{
+    padding:2px 0;
+    .col:nth-child(2){
+      width: 120px;
+      text-align: right;
+      input{
+        text-align: right;
+      }
+    }
+  }
 }
 
 .header-right-content{
@@ -1261,4 +1266,23 @@ top: 36px;
     width: 121px!important;
     max-width: 121px!important;
   }
+}
+.error-icon{
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  line-height: 12px;
+  text-align: center;
+  display: inline-block;
+  cursor: pointer;
+}
+.no-border{
+  border: 0!important;
+}
+.strong{
+  font-weight: bold;
+}
+
+.sub-heading-size{
+  font-size: $sub-heading-font-size;
 }
