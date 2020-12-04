@@ -144,7 +144,7 @@
 	"ENTER_MAX_AIR_DRAFT": "Enter max air draft",
 	"CHOOSE_ETA": "Choose ETA",
 	"CHOOSE_ETD": "Choose ETD",
-	"NEW_LOADABLE_STUDY_POPUP_MAX_LENGTH": "Maximum allowed character length is 100",
+	"NEW_LOADABLE_STUDY_POPUP_MAX_LENGTH": "Maximum allowed character length is 30",
 	"NEW_LOADABLE_STUDY_POPUP_MAX_TEMP_DIGIT_LENGTH": "Maximum allowed 3 digits",
 	"NEW_LOADABLE_STUDY_POPUP_MAX_DRAFT_DIGIT_LENGTH": "Maximum allowed 2 digits",
 	"VOYAGE_CREATE_SUCCESS": "Success",

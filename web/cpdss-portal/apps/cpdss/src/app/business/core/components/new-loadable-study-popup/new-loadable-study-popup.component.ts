@@ -108,7 +108,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       enquiryDetails: this.formBuilder.control('', [Validators.maxLength(1000)]),
       attachMail: null,
       charterer: this.vesselInfoList?.charterer,
-      subCharterer: this.formBuilder.control('', [Validators.maxLength(100)]),
+      subCharterer: this.formBuilder.control('', [Validators.maxLength(30)]),
       loadLine: '',
       draftMark: '',
       draftRestriction: this.formBuilder.control('', [Validators.min(-99.99), Validators.max(99.99)]),
@@ -241,8 +241,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
    * Load draft mark List based on selected loadLine vaule
    */
   onloadLineChange() {
-    const loadLine = this.newLoadableStudyFormGroup.get('loadLine').value
+    const loadLine = this.newLoadableStudyFormGroup.get('loadLine').value;
     this.draftMarkList = loadLine.draftMarks.map(draftMarks => ({ id: draftMarks, name: draftMarks }));
+    this.newLoadableStudyFormGroup.controls.draftMark.setValue(this.draftMarkList[0]);
   }
 
   //for set selcted loadable study value in loadable study form
