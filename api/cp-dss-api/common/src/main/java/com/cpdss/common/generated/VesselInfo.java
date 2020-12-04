@@ -3295,32 +3295,6 @@ public final class VesselInfo {
      * @return The bytes for tpc.
      */
     com.google.protobuf.ByteString getTpcBytes();
-
-    /**
-     * <code>string dwt = 5;</code>
-     *
-     * @return The dwt.
-     */
-    java.lang.String getDwt();
-    /**
-     * <code>string dwt = 5;</code>
-     *
-     * @return The bytes for dwt.
-     */
-    com.google.protobuf.ByteString getDwtBytes();
-
-    /**
-     * <code>string draftConditionName = 6;</code>
-     *
-     * @return The draftConditionName.
-     */
-    java.lang.String getDraftConditionName();
-    /**
-     * <code>string draftConditionName = 6;</code>
-     *
-     * @return The bytes for draftConditionName.
-     */
-    com.google.protobuf.ByteString getDraftConditionNameBytes();
   }
   /** Protobuf type {@code VesselLoadableQuantityDetails} */
   public static final class VesselLoadableQuantityDetails
@@ -3340,8 +3314,6 @@ public final class VesselInfo {
       vesselLightWeight_ = "";
       constant_ = "";
       tpc_ = "";
-      dwt_ = "";
-      draftConditionName_ = "";
     }
 
     @java.lang.Override
@@ -3399,20 +3371,6 @@ public final class VesselInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 tpc_ = s;
-                break;
-              }
-            case 42:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                dwt_ = s;
-                break;
-              }
-            case 50:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                draftConditionName_ = s;
                 break;
               }
             default:
@@ -3589,76 +3547,6 @@ public final class VesselInfo {
       }
     }
 
-    public static final int DWT_FIELD_NUMBER = 5;
-    private volatile java.lang.Object dwt_;
-    /**
-     * <code>string dwt = 5;</code>
-     *
-     * @return The dwt.
-     */
-    public java.lang.String getDwt() {
-      java.lang.Object ref = dwt_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        dwt_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string dwt = 5;</code>
-     *
-     * @return The bytes for dwt.
-     */
-    public com.google.protobuf.ByteString getDwtBytes() {
-      java.lang.Object ref = dwt_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        dwt_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int DRAFTCONDITIONNAME_FIELD_NUMBER = 6;
-    private volatile java.lang.Object draftConditionName_;
-    /**
-     * <code>string draftConditionName = 6;</code>
-     *
-     * @return The draftConditionName.
-     */
-    public java.lang.String getDraftConditionName() {
-      java.lang.Object ref = draftConditionName_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        draftConditionName_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string draftConditionName = 6;</code>
-     *
-     * @return The bytes for draftConditionName.
-     */
-    public com.google.protobuf.ByteString getDraftConditionNameBytes() {
-      java.lang.Object ref = draftConditionName_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        draftConditionName_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -3685,12 +3573,6 @@ public final class VesselInfo {
       if (!getTpcBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, tpc_);
       }
-      if (!getDwtBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, dwt_);
-      }
-      if (!getDraftConditionNameBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, draftConditionName_);
-      }
       unknownFields.writeTo(output);
     }
 
@@ -3714,12 +3596,6 @@ public final class VesselInfo {
       if (!getTpcBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, tpc_);
       }
-      if (!getDwtBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, dwt_);
-      }
-      if (!getDraftConditionNameBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, draftConditionName_);
-      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -3741,8 +3617,6 @@ public final class VesselInfo {
       if (!getVesselLightWeight().equals(other.getVesselLightWeight())) return false;
       if (!getConstant().equals(other.getConstant())) return false;
       if (!getTpc().equals(other.getTpc())) return false;
-      if (!getDwt().equals(other.getDwt())) return false;
-      if (!getDraftConditionName().equals(other.getDraftConditionName())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -3762,10 +3636,6 @@ public final class VesselInfo {
       hash = (53 * hash) + getConstant().hashCode();
       hash = (37 * hash) + TPC_FIELD_NUMBER;
       hash = (53 * hash) + getTpc().hashCode();
-      hash = (37 * hash) + DWT_FIELD_NUMBER;
-      hash = (53 * hash) + getDwt().hashCode();
-      hash = (37 * hash) + DRAFTCONDITIONNAME_FIELD_NUMBER;
-      hash = (53 * hash) + getDraftConditionName().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -3916,10 +3786,6 @@ public final class VesselInfo {
 
         tpc_ = "";
 
-        dwt_ = "";
-
-        draftConditionName_ = "";
-
         return this;
       }
 
@@ -3953,8 +3819,6 @@ public final class VesselInfo {
         result.vesselLightWeight_ = vesselLightWeight_;
         result.constant_ = constant_;
         result.tpc_ = tpc_;
-        result.dwt_ = dwt_;
-        result.draftConditionName_ = draftConditionName_;
         onBuilt();
         return result;
       }
@@ -4024,14 +3888,6 @@ public final class VesselInfo {
         }
         if (!other.getTpc().isEmpty()) {
           tpc_ = other.tpc_;
-          onChanged();
-        }
-        if (!other.getDwt().isEmpty()) {
-          dwt_ = other.dwt_;
-          onChanged();
-        }
-        if (!other.getDraftConditionName().isEmpty()) {
-          draftConditionName_ = other.draftConditionName_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -4365,158 +4221,6 @@ public final class VesselInfo {
         checkByteStringIsUtf8(value);
 
         tpc_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object dwt_ = "";
-      /**
-       * <code>string dwt = 5;</code>
-       *
-       * @return The dwt.
-       */
-      public java.lang.String getDwt() {
-        java.lang.Object ref = dwt_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          dwt_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string dwt = 5;</code>
-       *
-       * @return The bytes for dwt.
-       */
-      public com.google.protobuf.ByteString getDwtBytes() {
-        java.lang.Object ref = dwt_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          dwt_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string dwt = 5;</code>
-       *
-       * @param value The dwt to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDwt(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        dwt_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string dwt = 5;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearDwt() {
-
-        dwt_ = getDefaultInstance().getDwt();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string dwt = 5;</code>
-       *
-       * @param value The bytes for dwt to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDwtBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        dwt_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object draftConditionName_ = "";
-      /**
-       * <code>string draftConditionName = 6;</code>
-       *
-       * @return The draftConditionName.
-       */
-      public java.lang.String getDraftConditionName() {
-        java.lang.Object ref = draftConditionName_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          draftConditionName_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string draftConditionName = 6;</code>
-       *
-       * @return The bytes for draftConditionName.
-       */
-      public com.google.protobuf.ByteString getDraftConditionNameBytes() {
-        java.lang.Object ref = draftConditionName_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          draftConditionName_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string draftConditionName = 6;</code>
-       *
-       * @param value The draftConditionName to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDraftConditionName(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        draftConditionName_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string draftConditionName = 6;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearDraftConditionName() {
-
-        draftConditionName_ = getDefaultInstance().getDraftConditionName();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string draftConditionName = 6;</code>
-       *
-       * @param value The bytes for draftConditionName to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDraftConditionNameBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        draftConditionName_ = value;
         onChanged();
         return this;
       }
@@ -8323,32 +8027,31 @@ public final class VesselInfo {
           + "me\030\002 \001(\t\022\021\n\tcaptainId\030\003 \001(\003\022\026\n\016cheifOffi"
           + "cerId\030\004 \001(\003\022\021\n\timoNumber\030\005 \001(\t\022\014\n\004flag\030\006"
           + " \001(\t\022\021\n\tcharterer\030\007 \001(\t\022\"\n\tloadLines\030\010 \003"
-          + "(\0132\017.LoadLineDetail\"\247\001\n\035VesselLoadableQu"
-          + "antityDetails\022#\n\033displacmentDraftRestric"
-          + "tion\030\001 \001(\t\022\031\n\021vesselLightWeight\030\002 \001(\t\022\020\n"
-          + "\010constant\030\003 \001(\t\022\013\n\003tpc\030\004 \001(\t\022\013\n\003dwt\030\005 \001("
-          + "\t\022\032\n\022draftConditionName\030\006 \001(\t\"\264\002\n\020Vessel"
-          + "TankDetail\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tankCatego"
-          + "ryId\030\002 \001(\003\022\030\n\020tankCategoryName\030\003 \001(\t\022\020\n\010"
-          + "tankName\030\004 \001(\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022"
-          + "\025\n\rframeNumberTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001("
-          + "\t\022\030\n\020fillCapacityCubm\030\010 \001(\t\022\017\n\007density\030\t"
-          + " \001(\t\022\022\n\nisSlopTank\030\n \001(\010\022\022\n\nheightFrom\030\013"
-          + " \001(\t\022\020\n\010heightTo\030\014 \001(\t\022\021\n\ttankOrder\030\r \001("
-          + "\005\022\021\n\ttankGroup\030\016 \001(\005\"\327\001\n\013VesselReply\022\020\n\010"
-          + "vesselId\030\001 \001(\003\022&\n\013vesselTanks\030\002 \003(\0132\021.Ve"
-          + "sselTankDetail\022\'\n\016responseStatus\030\003 \001(\0132\017"
-          + ".ResponseStatus\022\036\n\007vessels\030\004 \003(\0132\r.Vesse"
-          + "lDetail\022E\n\035vesselLoadableQuantityDetails"
-          + "\030\005 \001(\0132\036.VesselLoadableQuantityDetails2\362"
-          + "\001\n\021VesselInfoService\0228\n\026GetAllVesselsByC"
-          + "ompany\022\016.VesselRequest\032\014.VesselReply\"\000\0226"
-          + "\n\024GetVesselDetailsById\022\016.VesselRequest\032\014"
-          + ".VesselReply\"\000\0224\n\022GetVesselFuelTanks\022\016.V"
-          + "esselRequest\032\014.VesselReply\"\000\0225\n\023GetVesse"
-          + "lCargoTanks\022\016.VesselRequest\032\014.VesselRepl"
-          + "y\"\000B\036\n\032com.cpdss.common.generatedP\000b\006pro"
-          + "to3"
+          + "(\0132\017.LoadLineDetail\"~\n\035VesselLoadableQua"
+          + "ntityDetails\022#\n\033displacmentDraftRestrict"
+          + "ion\030\001 \001(\t\022\031\n\021vesselLightWeight\030\002 \001(\t\022\020\n\010"
+          + "constant\030\003 \001(\t\022\013\n\003tpc\030\004 \001(\t\"\264\002\n\020VesselTa"
+          + "nkDetail\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tankCategory"
+          + "Id\030\002 \001(\003\022\030\n\020tankCategoryName\030\003 \001(\t\022\020\n\010ta"
+          + "nkName\030\004 \001(\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025\n"
+          + "\rframeNumberTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t\022"
+          + "\030\n\020fillCapacityCubm\030\010 \001(\t\022\017\n\007density\030\t \001"
+          + "(\t\022\022\n\nisSlopTank\030\n \001(\010\022\022\n\nheightFrom\030\013 \001"
+          + "(\t\022\020\n\010heightTo\030\014 \001(\t\022\021\n\ttankOrder\030\r \001(\005\022"
+          + "\021\n\ttankGroup\030\016 \001(\005\"\327\001\n\013VesselReply\022\020\n\010ve"
+          + "sselId\030\001 \001(\003\022&\n\013vesselTanks\030\002 \003(\0132\021.Vess"
+          + "elTankDetail\022\'\n\016responseStatus\030\003 \001(\0132\017.R"
+          + "esponseStatus\022\036\n\007vessels\030\004 \003(\0132\r.VesselD"
+          + "etail\022E\n\035vesselLoadableQuantityDetails\030\005"
+          + " \001(\0132\036.VesselLoadableQuantityDetails2\362\001\n"
+          + "\021VesselInfoService\0228\n\026GetAllVesselsByCom"
+          + "pany\022\016.VesselRequest\032\014.VesselReply\"\000\0226\n\024"
+          + "GetVesselDetailsById\022\016.VesselRequest\032\014.V"
+          + "esselReply\"\000\0224\n\022GetVesselFuelTanks\022\016.Ves"
+          + "selRequest\032\014.VesselReply\"\000\0225\n\023GetVesselC"
+          + "argoTanks\022\016.VesselRequest\032\014.VesselReply\""
+          + "\000B\036\n\032com.cpdss.common.generatedP\000b\006proto"
+          + "3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -8390,12 +8093,7 @@ public final class VesselInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselLoadableQuantityDetails_descriptor,
             new java.lang.String[] {
-              "DisplacmentDraftRestriction",
-              "VesselLightWeight",
-              "Constant",
-              "Tpc",
-              "Dwt",
-              "DraftConditionName",
+              "DisplacmentDraftRestriction", "VesselLightWeight", "Constant", "Tpc",
             });
     internal_static_VesselTankDetail_descriptor = getDescriptor().getMessageTypes().get(4);
     internal_static_VesselTankDetail_fieldAccessorTable =

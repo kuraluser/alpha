@@ -67,6 +67,9 @@ service LoadableStudyService {
 	
 	rpc GetCommingleCargo (CommingleCargoRequest) returns (CommingleCargoReply){
 	}
+	
+	rpc SaveCommingleCargo (CommingleCargoRequest) returns (CommingleCargoReply){
+	}
 }
 
 
@@ -377,6 +380,7 @@ message CommingleCargo{
 
 message CommingleCargoRequest{
 	int64 loadableStudyId = 1;
+	repeated CommingleCargo commingleCargo = 2;
 }
 
 message CommingleCargoReply{

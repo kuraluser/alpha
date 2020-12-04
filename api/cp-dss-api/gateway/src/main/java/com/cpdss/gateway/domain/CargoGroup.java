@@ -2,6 +2,7 @@
 package com.cpdss.gateway.domain;
 
 import java.math.BigDecimal;
+
 import lombok.Data;
 
 @Data

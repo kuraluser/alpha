@@ -150,6 +150,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
   private static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
+  private static final String ETA_ETD_CLIENT_FORMAT = "dd-MM-yyyy HH:mm";
+  private static final String LAY_CAN_CLIENT_FORMAT = "dd-MM-yyyy";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
@@ -2051,6 +2053,141 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
             replyBuilder.addCommingleCargo(builder);
           });
+    }
+  }
+
+  /** Save commingle cargo for the specific loadable study */
+  @Override
+  public void saveCommingleCargo(
+      CommingleCargoRequest request, StreamObserver<CommingleCargoReply> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.CommingleCargoReply.Builder replyBuilder =
+        CommingleCargoReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+      if (!loadableStudyOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+      }
+      if (!CollectionUtils.isEmpty(request.getCommingleCargoList())) {
+        Long loadableStudyId = request.getLoadableStudyId();
+        List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleEntities = new ArrayList<>();
+        // for id = 0 save as new commingle cargo
+        request
+            .getCommingleCargoList()
+            .forEach(
+                commingleCargo -> {
+                  try {
+                    com.cpdss.loadablestudy.entity.CommingleCargo commingleCargoEntity = null;
+                    if (commingleCargo != null && commingleCargo.getId() != 0) {
+                      Optional<com.cpdss.loadablestudy.entity.CommingleCargo>
+                          existingCommingleCargo =
+                              this.commingleCargoRepository.findById(commingleCargo.getId());
+                      if (!existingCommingleCargo.isPresent()) {
+                        throw new GenericServiceException(
+                            "commingle cargo does not exist",
+                            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                            HttpStatusCode.BAD_REQUEST);
+                      }
+                      commingleCargoEntity = existingCommingleCargo.get();
+                      commingleCargoEntity =
+                          buildCommingleCargo(
+                              commingleCargoEntity, commingleCargo, loadableStudyId);
+                    } else if (commingleCargo != null && commingleCargo.getId() == 0) {
+                      commingleCargoEntity = new com.cpdss.loadablestudy.entity.CommingleCargo();
+                      commingleCargoEntity =
+                          buildCommingleCargo(
+                              commingleCargoEntity, commingleCargo, loadableStudyId);
+                    }
+                    commingleEntities.add(commingleCargoEntity);
+                  } catch (Exception e) {
+                    log.error("Exception in creating entities for save commingle cargo", e);
+                    throw new RuntimeException(e);
+                  }
+                });
+        // save all entities
+        this.commingleCargoRepository.saveAll(commingleEntities);
+      }
+      // for existing commingle cargo find missing ids in request and delete them
+      deleteCommingleCargo(request);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving CommingleCargo", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } catch (Exception e) {
+      log.error("Exception when saving CommingleCargo", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * build entity to save in commingle cargo
+   *
+   * @param commingleCargoEntity
+   * @param commingleCargoRequestRecord
+   * @return
+   */
+  private com.cpdss.loadablestudy.entity.CommingleCargo buildCommingleCargo(
+      com.cpdss.loadablestudy.entity.CommingleCargo commingleCargoEntity,
+      CommingleCargo requestRecord,
+      Long loadableStudyId) {
+    commingleCargoEntity.setLoadableStudyXId(loadableStudyId);
+    commingleCargoEntity.setPurposeXid(requestRecord.getPurposeId());
+    commingleCargoEntity.setTankIds(
+        StringUtils.collectionToCommaDelimitedString(requestRecord.getPreferredTanksList()));
+    commingleCargoEntity.setCargo1Xid(requestRecord.getCargo1Id());
+    commingleCargoEntity.setCargo1Pct(
+        !StringUtils.isEmpty(requestRecord.getCargo1Pct())
+            ? new BigDecimal(requestRecord.getCargo1Pct())
+            : null);
+    commingleCargoEntity.setCargo2Xid(requestRecord.getCargo2Id());
+    commingleCargoEntity.setCargo2Pct(
+        !StringUtils.isEmpty(requestRecord.getCargo2Pct())
+            ? new BigDecimal(requestRecord.getCargo2Pct())
+            : null);
+    commingleCargoEntity.setQuantity(
+        !StringUtils.isEmpty(requestRecord.getQuantity())
+            ? new BigDecimal(requestRecord.getQuantity())
+            : null);
+    commingleCargoEntity.setIsActive(false);
+    commingleCargoEntity.setIsSlopOnly(requestRecord.getSlopOnly());
+    return commingleCargoEntity;
+  }
+
+  /**
+   * delete commingle cargo not available in the save request
+   *
+   * @param request
+   */
+  private void deleteCommingleCargo(CommingleCargoRequest request) {
+    List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargoEntityList =
+        this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
+            request.getLoadableStudyId(), true);
+    List<Long> requestedCommingleCargoIds = null;
+    List<Long> existingCommingleCargoIds = null;
+    if (!request.getCommingleCargoList().isEmpty()) {
+      requestedCommingleCargoIds =
+          request.getCommingleCargoList().stream()
+              .map(CommingleCargo::getId)
+              .collect(Collectors.toList());
+    }
+    if (!commingleCargoEntityList.isEmpty()) {
+      existingCommingleCargoIds =
+          commingleCargoEntityList.stream()
+              .map(com.cpdss.loadablestudy.entity.CommingleCargo::getId)
+              .collect(Collectors.toList());
+    }
+    /**
+     * find commingle ids available for the loadable study that are not available in save request so
+     * that they can be deleted
+     */
+    if (!CollectionUtils.isEmpty(requestedCommingleCargoIds)
+        && !CollectionUtils.isEmpty(existingCommingleCargoIds)) {
+      existingCommingleCargoIds.removeAll(requestedCommingleCargoIds);
+      commingleCargoRepository.deleteCommingleCargo(existingCommingleCargoIds);
     }
   }
 }

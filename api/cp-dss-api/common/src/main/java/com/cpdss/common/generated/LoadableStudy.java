@@ -42658,6 +42658,19 @@ public final class LoadableStudy {
      * @return The loadableStudyId.
      */
     long getLoadableStudyId();
+
+    /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+    java.util.List<com.cpdss.common.generated.LoadableStudy.CommingleCargo> getCommingleCargoList();
+    /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+    com.cpdss.common.generated.LoadableStudy.CommingleCargo getCommingleCargo(int index);
+    /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+    int getCommingleCargoCount();
+    /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+    java.util.List<? extends com.cpdss.common.generated.LoadableStudy.CommingleCargoOrBuilder>
+        getCommingleCargoOrBuilderList();
+    /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+    com.cpdss.common.generated.LoadableStudy.CommingleCargoOrBuilder getCommingleCargoOrBuilder(
+        int index);
   }
   /** Protobuf type {@code CommingleCargoRequest} */
   public static final class CommingleCargoRequest extends com.google.protobuf.GeneratedMessageV3
@@ -42670,7 +42683,9 @@ public final class LoadableStudy {
       super(builder);
     }
 
-    private CommingleCargoRequest() {}
+    private CommingleCargoRequest() {
+      commingleCargo_ = java.util.Collections.emptyList();
+    }
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
@@ -42691,6 +42706,7 @@ public final class LoadableStudy {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -42704,6 +42720,20 @@ public final class LoadableStudy {
             case 8:
               {
                 loadableStudyId_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  commingleCargo_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.LoadableStudy.CommingleCargo>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                commingleCargo_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.LoadableStudy.CommingleCargo.parser(),
+                        extensionRegistry));
                 break;
               }
             default:
@@ -42720,6 +42750,9 @@ public final class LoadableStudy {
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          commingleCargo_ = java.util.Collections.unmodifiableList(commingleCargo_);
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -42751,6 +42784,33 @@ public final class LoadableStudy {
       return loadableStudyId_;
     }
 
+    public static final int COMMINGLECARGO_FIELD_NUMBER = 2;
+    private java.util.List<com.cpdss.common.generated.LoadableStudy.CommingleCargo> commingleCargo_;
+    /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+    public java.util.List<com.cpdss.common.generated.LoadableStudy.CommingleCargo>
+        getCommingleCargoList() {
+      return commingleCargo_;
+    }
+    /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.LoadableStudy.CommingleCargoOrBuilder>
+        getCommingleCargoOrBuilderList() {
+      return commingleCargo_;
+    }
+    /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+    public int getCommingleCargoCount() {
+      return commingleCargo_.size();
+    }
+    /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+    public com.cpdss.common.generated.LoadableStudy.CommingleCargo getCommingleCargo(int index) {
+      return commingleCargo_.get(index);
+    }
+    /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+    public com.cpdss.common.generated.LoadableStudy.CommingleCargoOrBuilder
+        getCommingleCargoOrBuilder(int index) {
+      return commingleCargo_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -42768,6 +42828,9 @@ public final class LoadableStudy {
       if (loadableStudyId_ != 0L) {
         output.writeInt64(1, loadableStudyId_);
       }
+      for (int i = 0; i < commingleCargo_.size(); i++) {
+        output.writeMessage(2, commingleCargo_.get(i));
+      }
       unknownFields.writeTo(output);
     }
 
@@ -42779,6 +42842,9 @@ public final class LoadableStudy {
       size = 0;
       if (loadableStudyId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, loadableStudyId_);
+      }
+      for (int i = 0; i < commingleCargo_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, commingleCargo_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -42797,6 +42863,7 @@ public final class LoadableStudy {
           (com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest) obj;
 
       if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
+      if (!getCommingleCargoList().equals(other.getCommingleCargoList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -42810,6 +42877,10 @@ public final class LoadableStudy {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + LOADABLESTUDYID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
+      if (getCommingleCargoCount() > 0) {
+        hash = (37 * hash) + COMMINGLECARGO_FIELD_NUMBER;
+        hash = (53 * hash) + getCommingleCargoList().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -42944,7 +43015,9 @@ public final class LoadableStudy {
       }
 
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getCommingleCargoFieldBuilder();
+        }
       }
 
       @java.lang.Override
@@ -42952,6 +43025,12 @@ public final class LoadableStudy {
         super.clear();
         loadableStudyId_ = 0L;
 
+        if (commingleCargoBuilder_ == null) {
+          commingleCargo_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          commingleCargoBuilder_.clear();
+        }
         return this;
       }
 
@@ -42980,7 +43059,17 @@ public final class LoadableStudy {
       public com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest buildPartial() {
         com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest result =
             new com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest(this);
+        int from_bitField0_ = bitField0_;
         result.loadableStudyId_ = loadableStudyId_;
+        if (commingleCargoBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            commingleCargo_ = java.util.Collections.unmodifiableList(commingleCargo_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.commingleCargo_ = commingleCargo_;
+        } else {
+          result.commingleCargo_ = commingleCargoBuilder_.build();
+        }
         onBuilt();
         return result;
       }
@@ -43038,6 +43127,33 @@ public final class LoadableStudy {
         if (other.getLoadableStudyId() != 0L) {
           setLoadableStudyId(other.getLoadableStudyId());
         }
+        if (commingleCargoBuilder_ == null) {
+          if (!other.commingleCargo_.isEmpty()) {
+            if (commingleCargo_.isEmpty()) {
+              commingleCargo_ = other.commingleCargo_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureCommingleCargoIsMutable();
+              commingleCargo_.addAll(other.commingleCargo_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.commingleCargo_.isEmpty()) {
+            if (commingleCargoBuilder_.isEmpty()) {
+              commingleCargoBuilder_.dispose();
+              commingleCargoBuilder_ = null;
+              commingleCargo_ = other.commingleCargo_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              commingleCargoBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getCommingleCargoFieldBuilder()
+                      : null;
+            } else {
+              commingleCargoBuilder_.addAllMessages(other.commingleCargo_);
+            }
+          }
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -43068,6 +43184,8 @@ public final class LoadableStudy {
         }
         return this;
       }
+
+      private int bitField0_;
 
       private long loadableStudyId_;
       /**
@@ -43100,6 +43218,232 @@ public final class LoadableStudy {
         loadableStudyId_ = 0L;
         onChanged();
         return this;
+      }
+
+      private java.util.List<com.cpdss.common.generated.LoadableStudy.CommingleCargo>
+          commingleCargo_ = java.util.Collections.emptyList();
+
+      private void ensureCommingleCargoIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          commingleCargo_ =
+              new java.util.ArrayList<com.cpdss.common.generated.LoadableStudy.CommingleCargo>(
+                  commingleCargo_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.CommingleCargo,
+              com.cpdss.common.generated.LoadableStudy.CommingleCargo.Builder,
+              com.cpdss.common.generated.LoadableStudy.CommingleCargoOrBuilder>
+          commingleCargoBuilder_;
+
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.CommingleCargo>
+          getCommingleCargoList() {
+        if (commingleCargoBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(commingleCargo_);
+        } else {
+          return commingleCargoBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public int getCommingleCargoCount() {
+        if (commingleCargoBuilder_ == null) {
+          return commingleCargo_.size();
+        } else {
+          return commingleCargoBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.CommingleCargo getCommingleCargo(int index) {
+        if (commingleCargoBuilder_ == null) {
+          return commingleCargo_.get(index);
+        } else {
+          return commingleCargoBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public Builder setCommingleCargo(
+          int index, com.cpdss.common.generated.LoadableStudy.CommingleCargo value) {
+        if (commingleCargoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCommingleCargoIsMutable();
+          commingleCargo_.set(index, value);
+          onChanged();
+        } else {
+          commingleCargoBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public Builder setCommingleCargo(
+          int index,
+          com.cpdss.common.generated.LoadableStudy.CommingleCargo.Builder builderForValue) {
+        if (commingleCargoBuilder_ == null) {
+          ensureCommingleCargoIsMutable();
+          commingleCargo_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          commingleCargoBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public Builder addCommingleCargo(
+          com.cpdss.common.generated.LoadableStudy.CommingleCargo value) {
+        if (commingleCargoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCommingleCargoIsMutable();
+          commingleCargo_.add(value);
+          onChanged();
+        } else {
+          commingleCargoBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public Builder addCommingleCargo(
+          int index, com.cpdss.common.generated.LoadableStudy.CommingleCargo value) {
+        if (commingleCargoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCommingleCargoIsMutable();
+          commingleCargo_.add(index, value);
+          onChanged();
+        } else {
+          commingleCargoBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public Builder addCommingleCargo(
+          com.cpdss.common.generated.LoadableStudy.CommingleCargo.Builder builderForValue) {
+        if (commingleCargoBuilder_ == null) {
+          ensureCommingleCargoIsMutable();
+          commingleCargo_.add(builderForValue.build());
+          onChanged();
+        } else {
+          commingleCargoBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public Builder addCommingleCargo(
+          int index,
+          com.cpdss.common.generated.LoadableStudy.CommingleCargo.Builder builderForValue) {
+        if (commingleCargoBuilder_ == null) {
+          ensureCommingleCargoIsMutable();
+          commingleCargo_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          commingleCargoBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public Builder addAllCommingleCargo(
+          java.lang.Iterable<? extends com.cpdss.common.generated.LoadableStudy.CommingleCargo>
+              values) {
+        if (commingleCargoBuilder_ == null) {
+          ensureCommingleCargoIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, commingleCargo_);
+          onChanged();
+        } else {
+          commingleCargoBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public Builder clearCommingleCargo() {
+        if (commingleCargoBuilder_ == null) {
+          commingleCargo_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          commingleCargoBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public Builder removeCommingleCargo(int index) {
+        if (commingleCargoBuilder_ == null) {
+          ensureCommingleCargoIsMutable();
+          commingleCargo_.remove(index);
+          onChanged();
+        } else {
+          commingleCargoBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.CommingleCargo.Builder
+          getCommingleCargoBuilder(int index) {
+        return getCommingleCargoFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.CommingleCargoOrBuilder
+          getCommingleCargoOrBuilder(int index) {
+        if (commingleCargoBuilder_ == null) {
+          return commingleCargo_.get(index);
+        } else {
+          return commingleCargoBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.LoadableStudy.CommingleCargoOrBuilder>
+          getCommingleCargoOrBuilderList() {
+        if (commingleCargoBuilder_ != null) {
+          return commingleCargoBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(commingleCargo_);
+        }
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.CommingleCargo.Builder
+          addCommingleCargoBuilder() {
+        return getCommingleCargoFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.LoadableStudy.CommingleCargo.getDefaultInstance());
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.CommingleCargo.Builder
+          addCommingleCargoBuilder(int index) {
+        return getCommingleCargoFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.LoadableStudy.CommingleCargo.getDefaultInstance());
+      }
+      /** <code>repeated .CommingleCargo commingleCargo = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.CommingleCargo.Builder>
+          getCommingleCargoBuilderList() {
+        return getCommingleCargoFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.CommingleCargo,
+              com.cpdss.common.generated.LoadableStudy.CommingleCargo.Builder,
+              com.cpdss.common.generated.LoadableStudy.CommingleCargoOrBuilder>
+          getCommingleCargoFieldBuilder() {
+        if (commingleCargoBuilder_ == null) {
+          commingleCargoBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.LoadableStudy.CommingleCargo,
+                  com.cpdss.common.generated.LoadableStudy.CommingleCargo.Builder,
+                  com.cpdss.common.generated.LoadableStudy.CommingleCargoOrBuilder>(
+                  commingleCargo_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          commingleCargo_ = null;
+        }
+        return commingleCargoBuilder_;
       }
 
       @java.lang.Override
@@ -44442,50 +44786,53 @@ public final class LoadableStudy {
           + "\n\010slopOnly\030\003 \001(\010\022\026\n\016preferredTanks\030\004 \003(\003"
           + "\022\020\n\010cargo1Id\030\005 \001(\003\022\021\n\tcargo1pct\030\006 \001(\t\022\020\n"
           + "\010cargo2Id\030\007 \001(\003\022\021\n\tcargo2pct\030\010 \001(\t\022\020\n\010qu"
-          + "antity\030\t \001(\t\"0\n\025CommingleCargoRequest\022\027\n"
-          + "\017loadableStudyId\030\001 \001(\003\"g\n\023CommingleCargo"
-          + "Reply\022\'\n\016responseStatus\030\001 \001(\0132\017.Response"
-          + "Status\022\'\n\016commingleCargo\030\002 \003(\0132\017.Comming"
-          + "leCargo2\373\013\n\024LoadableStudyService\022,\n\nSave"
-          + "Voyage\022\016.VoyageRequest\032\014.VoyageReply\"\000\0228"
-          + "\n\022GetVoyagesByVessel\022\016.VoyageRequest\032\020.V"
-          + "oyageListReply\"\000\022J\n\024SaveLoadableQuantity"
-          + "\022\030.LoadableQuantityRequest\032\026.LoadableQua"
-          + "ntityReply\"\000\022T\n$FindLoadableStudiesByVes"
-          + "selAndVoyage\022\025.LoadableStudyRequest\032\023.Lo"
-          + "adableStudyReply\"\000\022@\n\021SaveLoadableStudy\022"
-          + "\024.LoadableStudyDetail\032\023.LoadableStudyRep"
-          + "ly\"\000\022G\n\023SaveCargoNomination\022\027.CargoNomin"
-          + "ationRequest\032\025.CargoNominationReply\"\000\022J\n"
-          + "\034GetLoadableStudyPortRotation\022\024.PortRota"
-          + "tionRequest\032\022.PortRotationReply\"\000\022J\n\026Get"
-          + "CargoNominationById\022\027.CargoNominationReq"
-          + "uest\032\025.CargoNominationReply\"\000\022I\n\023GetValv"
-          + "eSegregation\022\030.ValveSegregationRequest\032\026"
-          + ".ValveSegregationReply\"\000\022J\n\023getLoadableQ"
-          + "uantity\022\026.LoadableQuantityReply\032\031.Loadab"
-          + "leQuantityResponse\"\000\022J\n\035SaveLoadableStud"
-          + "yPortRotation\022\023.PortRotationDetail\032\022.Por"
-          + "tRotationReply\"\000\022I\n\025DeleteCargoNominatio"
-          + "n\022\027.CargoNominationRequest\032\025.CargoNomina"
-          + "tionReply\"\000\022B\n\024SaveDischargingPorts\022\024.Po"
-          + "rtRotationRequest\032\022.PortRotationReply\"\000\022"
-          + "N\n GetPortRotationByLoadableStudyId\022\024.Po"
-          + "rtRotationRequest\032\022.PortRotationReply\"\000\022"
-          + "C\n\023DeleteLoadableStudy\022\025.LoadableStudyRe"
-          + "quest\032\023.LoadableStudyReply\"\000\022@\n\022DeletePo"
-          + "rtRotation\022\024.PortRotationRequest\032\022.PortR"
-          + "otationReply\"\000\022C\n\021GetOnHandQuantity\022\026.On"
-          + "HandQuantityRequest\032\024.OnHandQuantityRepl"
-          + "y\"\000\022C\n\022SaveOnHandQuantity\022\025.OnHandQuanti"
-          + "tyDetail\032\024.OnHandQuantityReply\"\000\022M\n\031GetL"
-          + "oadablePatternDetails\022\027.LoadablePatternR"
-          + "equest\032\025.LoadablePatternReply\"\000\022O\n\025GetPu"
-          + "rposeOfCommingle\022\032.PurposeOfCommingleReq"
-          + "uest\032\030.PurposeOfCommingleReply\"\000\022C\n\021GetC"
-          + "ommingleCargo\022\026.CommingleCargoRequest\032\024."
-          + "CommingleCargoReply\"\000B\036\n\032com.cpdss.commo"
-          + "n.generatedP\000b\006proto3"
+          + "antity\030\t \001(\t\"Y\n\025CommingleCargoRequest\022\027\n"
+          + "\017loadableStudyId\030\001 \001(\003\022\'\n\016commingleCargo"
+          + "\030\002 \003(\0132\017.CommingleCargo\"g\n\023CommingleCarg"
+          + "oReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respons"
+          + "eStatus\022\'\n\016commingleCargo\030\002 \003(\0132\017.Commin"
+          + "gleCargo2\301\014\n\024LoadableStudyService\022,\n\nSav"
+          + "eVoyage\022\016.VoyageRequest\032\014.VoyageReply\"\000\022"
+          + "8\n\022GetVoyagesByVessel\022\016.VoyageRequest\032\020."
+          + "VoyageListReply\"\000\022J\n\024SaveLoadableQuantit"
+          + "y\022\030.LoadableQuantityRequest\032\026.LoadableQu"
+          + "antityReply\"\000\022T\n$FindLoadableStudiesByVe"
+          + "sselAndVoyage\022\025.LoadableStudyRequest\032\023.L"
+          + "oadableStudyReply\"\000\022@\n\021SaveLoadableStudy"
+          + "\022\024.LoadableStudyDetail\032\023.LoadableStudyRe"
+          + "ply\"\000\022G\n\023SaveCargoNomination\022\027.CargoNomi"
+          + "nationRequest\032\025.CargoNominationReply\"\000\022J"
+          + "\n\034GetLoadableStudyPortRotation\022\024.PortRot"
+          + "ationRequest\032\022.PortRotationReply\"\000\022J\n\026Ge"
+          + "tCargoNominationById\022\027.CargoNominationRe"
+          + "quest\032\025.CargoNominationReply\"\000\022I\n\023GetVal"
+          + "veSegregation\022\030.ValveSegregationRequest\032"
+          + "\026.ValveSegregationReply\"\000\022J\n\023getLoadable"
+          + "Quantity\022\026.LoadableQuantityReply\032\031.Loada"
+          + "bleQuantityResponse\"\000\022J\n\035SaveLoadableStu"
+          + "dyPortRotation\022\023.PortRotationDetail\032\022.Po"
+          + "rtRotationReply\"\000\022I\n\025DeleteCargoNominati"
+          + "on\022\027.CargoNominationRequest\032\025.CargoNomin"
+          + "ationReply\"\000\022B\n\024SaveDischargingPorts\022\024.P"
+          + "ortRotationRequest\032\022.PortRotationReply\"\000"
+          + "\022N\n GetPortRotationByLoadableStudyId\022\024.P"
+          + "ortRotationRequest\032\022.PortRotationReply\"\000"
+          + "\022C\n\023DeleteLoadableStudy\022\025.LoadableStudyR"
+          + "equest\032\023.LoadableStudyReply\"\000\022@\n\022DeleteP"
+          + "ortRotation\022\024.PortRotationRequest\032\022.Port"
+          + "RotationReply\"\000\022C\n\021GetOnHandQuantity\022\026.O"
+          + "nHandQuantityRequest\032\024.OnHandQuantityRep"
+          + "ly\"\000\022C\n\022SaveOnHandQuantity\022\025.OnHandQuant"
+          + "ityDetail\032\024.OnHandQuantityReply\"\000\022M\n\031Get"
+          + "LoadablePatternDetails\022\027.LoadablePattern"
+          + "Request\032\025.LoadablePatternReply\"\000\022O\n\025GetP"
+          + "urposeOfCommingle\022\032.PurposeOfCommingleRe"
+          + "quest\032\030.PurposeOfCommingleReply\"\000\022C\n\021Get"
+          + "CommingleCargo\022\026.CommingleCargoRequest\032\024"
+          + ".CommingleCargoReply\"\000\022D\n\022SaveCommingleC"
+          + "argo\022\026.CommingleCargoRequest\032\024.Commingle"
+          + "CargoReply\"\000B\036\n\032com.cpdss.common.generat"
+          + "edP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -44871,7 +45218,7 @@ public final class LoadableStudy {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CommingleCargoRequest_descriptor,
             new java.lang.String[] {
-              "LoadableStudyId",
+              "LoadableStudyId", "CommingleCargo",
             });
     internal_static_CommingleCargoReply_descriptor = getDescriptor().getMessageTypes().get(38);
     internal_static_CommingleCargoReply_fieldAccessorTable =
