@@ -53,7 +53,7 @@
                                     (input)="datatable.filter($event.target.value, col?.filterField ? col?.filterField : col.field, col.filterMatchMode)"
                                     [placeholder]="col.filterPlaceholder| translate" class="p-column-filter">
                                 <input *ngSwitchCase="filterType.ARRAY" type="text" id="{{col.field+'_filter'}}"
-                                    (input)="datatable.filter($event.target.value, col.arrayFilterField, col.filterMatchMode)"
+                                    (input)="datatable.filter($event.target.value.trim(), col.arrayFilterField, col.filterMatchMode)"
                                     [placeholder]="col.filterPlaceholder| translate" class="p-column-filter">
                                 <p-calendar appendTo="body" *ngSwitchCase="filterType.DATE"
                                     [maxDate]="col.filterFieldMaxvalue"
@@ -81,7 +81,7 @@
                                         (input)="datatable.filter($event.target.value, subCol?.filterField ? subCol?.filterField : subCol.field, subCol.filterMatchMode)"
                                         [placeholder]="subCol.filterPlaceholder| translate" class="p-column-filter">
                                     <input *ngSwitchCase="filterType.ARRAY" type="text" id="{{subCol.field+'_filter'}}"
-                                        (input)="datatable.filter($event.target.value, subCol.arrayFilterField, subCol.filterMatchMode)"
+                                        (input)="datatable.filter($event.target.value.trim(), subCol.arrayFilterField, subCol.filterMatchMode)"
                                         [placeholder]="subCol.filterPlaceholder| translate" class="p-column-filter">
                                     <p-calendar appendTo="body" *ngSwitchCase="filterType.DATE"
                                         [maxDate]="subCol.filterFieldMaxvalue"

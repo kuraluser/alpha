@@ -50,6 +50,7 @@ export class CargoNominationComponent implements OnInit {
       const _cargoNomination = this.loadableStudyDetailsTransformationService.formatCargoNomination(cargoNomination);
       totalQuantity += _cargoNomination?.isDelete ? 0 : _cargoNomination.quantity.value;
       _cargoNomination.slNo = index + 1;
+      _cargoNomination.priority.value = _cargoNomination.priority.value > cargoNominations.length ? this._cargoNominations.length : _cargoNomination.priority.value;
       return _cargoNomination
     });
     this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(totalQuantity);
@@ -206,6 +207,7 @@ export class CargoNominationComponent implements OnInit {
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
     if (!event.data?.isAdd) {
       if (this.cargoNominationForm.valid) {
+        this.ngxSpinnerService.show();
         const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
         if (res) {
           for (const key in this.cargoNominations[event.index]) {
@@ -215,7 +217,7 @@ export class CargoNominationComponent implements OnInit {
           }
           this.cargoNominations = [...this.cargoNominations];
         }
-
+        this.ngxSpinnerService.show();
       } else {
         const fromGroup = this.row(event.index);
         const invalidFormControls = this.findInvalidControlsRecursive(fromGroup);
@@ -239,6 +241,7 @@ export class CargoNominationComponent implements OnInit {
       this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'CARGONOMINATION_DELETE_SUMMARY', detail: 'CARGONOMINATION_DELETE_DETAILS', data: { confirmLabel: 'CARGONOMINATION_DELETE_CONFIRM_LABEL', rejectLabel: 'CARGONOMINATION_DELETE_REJECT_LABEL' } });
       this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
         if (response) {
+          this.ngxSpinnerService.show();
           let res;
           if (!event?.data?.isAdd) {
             res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
@@ -249,6 +252,7 @@ export class CargoNominationComponent implements OnInit {
             this.cargoNominations.splice(event.index, 1);
             this.cargoNominations = [...this.cargoNominations];
           }
+          this.ngxSpinnerService.hide();
         }
       });
     }
@@ -263,6 +267,7 @@ export class CargoNominationComponent implements OnInit {
   async onRowSave(event: ICargoNominationEvent) {
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
     if (this.row(event.index).valid) {
+      this.ngxSpinnerService.show();
       const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
       if (res) {
         this.cargoNominations[event.index].isAdd = false;
@@ -273,6 +278,7 @@ export class CargoNominationComponent implements OnInit {
         }
         this.cargoNominations = [...this.cargoNominations];
       }
+      this.ngxSpinnerService.hide();
 
     } else {
       this.row(event.index).markAllAsTouched();
