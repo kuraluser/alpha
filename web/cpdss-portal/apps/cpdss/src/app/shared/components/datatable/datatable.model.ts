@@ -18,6 +18,7 @@ export interface IDataTableColumn {
     filterPlaceholder?: string;
     filterMatchMode?: string;
     listName?: string;
+    filterListName?: string;
     listFilter?: boolean;
     arrayLabelField?: string;
     arrayFilterField?: string;
@@ -66,7 +67,8 @@ export enum DATATABLE_FILTER_TYPE {
     TEXT = 'TEXT',
     NUMBER = 'NUMBER',
     ARRAY = 'ARRAY',
-    DATE = 'DATE'
+    DATE = 'DATE',
+    SELECT = 'SELECT'
 }
 
 /**

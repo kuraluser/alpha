@@ -44,7 +44,7 @@
             </a>
             <a class="tab-btn" *cpdssPortalPermission="ohqTabPermissionContext"
                 [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ}" (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.OHQ)">{{'ON_HAND_QUANTITIES' | translate}}
-                <div class="pt-5">
+                <div class="pt-5" *ngIf="false else incomplete">
                     <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
                 </div>
                 <ng-template #incomplete>
@@ -106,11 +106,11 @@
         </div>
         <div class="pl-30">
             <div class="pl-10" *ngIf="ports && loadableStudies">
-                <div class="row">
+                
                     <cpdss-portal-cargo-nomination *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudyId && loadableStudies" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-cargo-nomination>
                     <cpdss-portal-ports *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && loadableStudyId && loadableStudies" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-ports>
                     <cpdss-portal-on-hand-quantity *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ && loadableStudyId && loadableStudies" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-on-hand-quantity>
-                </div>
+                
 
                 <div class="row">
                     <div class="col-sm-12">

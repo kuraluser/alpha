@@ -1026,8 +1026,7 @@ input[type=number] {
   }
 }
 .cargo-nomination-table .column-class{
-  min-width: 150px;
-  width: 150px;
+ /* width: 150px;*/
 }
 
 .cargo-nomination-table{
@@ -1072,6 +1071,11 @@ input[type=number] {
 .column-class.column-actions{
   min-width: 50px!important;
   width: 50px!important;
+}
+
+.column-class.column-weight{
+  width: 150px!important;
+  max-width: 150px!important;
 }
 
 
@@ -1196,4 +1200,47 @@ td.lay-can{
   display: inline-block;
   font-style: initial;
   font-weight: bold;
+}
+
+.p-datatable table th{
+  .p-dropdown-label.p-inputtext{
+  padding-top: 0;
+  padding-bottom: 2px;
+  padding-left: 1px;
+  }
+  .p-dropdown .p-dropdown-clear-icon {
+    color: #6c757d;
+    right: 17px;
+    font-size: 10px;
+    top: 11px;
+  }
+} 
+
+.cargo-nomination-table.ohq .p-datatable-thead tr:nth-child(2) th{
+top: 36px;
+}
+.cargo-nomination-table.ohq .p-datatable-thead tr th{
+  table{
+    th:last-child{
+      width: 150px;
+      max-width: 150px;
+    }
+  }
+  }
+
+ 
+
+  @media (max-width: 1400px){
+    .cargo-nomination-table.ohq .p-datatable-thead tr th{
+  table{
+    th:last-child{
+      width: 121px;
+      max-width: 121px;
+    }
+  }
+  }
+  .column-class.column-weight{
+    width: 121px!important;
+    max-width: 121px!important;
+  }
 }

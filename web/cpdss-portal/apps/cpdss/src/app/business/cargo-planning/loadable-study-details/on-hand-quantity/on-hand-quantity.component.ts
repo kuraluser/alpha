@@ -1,10 +1,12 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { IIPortOHQTankDetailEvent, IPort, IPortOHQTankDetail, IPortOHQTankDetailValueObject } from '../../models/cargo-planning.model';
+import { IPortOHQTankDetailEvent, IPort, IPortOHQListData, IPortOHQTankDetailValueObject } from '../../models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
+import { numberValidator } from '../../directives/validator/number-validator.directive';
+import { groupTotalValidator } from '../../directives/validator/group-total.directive';
 
 /**
  * Compoent for OHQ tab
@@ -32,7 +34,6 @@ export class OnHandQuantityComponent implements OnInit {
     this._selectedPortOHQTankDetails = selectedPortOHQTankDetails.map((ohqTankDetail, index) => {
       const _ohqTankDetail = this.loadableStudyDetailsTransformationService.formatOHQTankDetail(ohqTankDetail);
       _ohqTankDetail.slNo = index + 1;
-      console.log(_ohqTankDetail);
       return _ohqTankDetail;
     })
   }
@@ -43,6 +44,7 @@ export class OnHandQuantityComponent implements OnInit {
   ports: IPort[];
   ohqForm: FormGroup;
   columns: IDataTableColumn[];
+  listData = <IPortOHQListData>{};
 
   private _selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[];
 
@@ -89,7 +91,9 @@ export class OnHandQuantityComponent implements OnInit {
   async getPortOHQDetails(portId: number): Promise<IPortOHQTankDetailValueObject[]> {
     const result = await this.loadableStudyDetailsApiService.getPortOHQDetails(this.vesselId, this.voyageId, this.loadableStudyId, portId).toPromise();
     const selectedPortOHQTankDetails = result?.onHandQuantities ?? [];
-    const _selectedPortOHQTankDetails = selectedPortOHQTankDetails?.map((ohqTankDetail, index) => {
+    this.listData.fuelTypes = [...new Map(selectedPortOHQTankDetails.map(item =>
+      [item['fuelTypeId'], { id: item.fuelTypeId, name: item.fuelTypeName }])).values()];
+    const _selectedPortOHQTankDetails = selectedPortOHQTankDetails?.map((ohqTankDetail) => {
       ohqTankDetail.portId = portId;
       const _ohqTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailsAsValueObject(ohqTankDetail, false);
       return _ohqTankDetail;
@@ -124,23 +128,25 @@ export class OnHandQuantityComponent implements OnInit {
    */
   private initOHQFormGroup(ohqTankDetail: IPortOHQTankDetailValueObject) {
     return this.fb.group({
-      fuelTypeName: this.fb.control(ohqTankDetail.fuelTypeId, Validators.required),
+      fuelTypeId: this.fb.control(ohqTankDetail.fuelTypeId),
+      fuelTypeName: this.fb.control(ohqTankDetail.fuelTypeName, Validators.required),
       tankName: this.fb.control(ohqTankDetail.tankName, Validators.required),
-      arrivalVolume: this.fb.control(ohqTankDetail.arrivalVolume.value, Validators.required),
-      arrivalQuantity: this.fb.control(ohqTankDetail.arrivalQuantity.value, Validators.required),
-      departureVolume: this.fb.control(ohqTankDetail.departureVolume.value, Validators.required),
-      departureQuantity: this.fb.control(ohqTankDetail.departureQuantity.value, Validators.required),
+      arrivalVolume: this.fb.control(ohqTankDetail.arrivalVolume.value, [Validators.required, Validators.min(0), numberValidator(2, 7), groupTotalValidator('arrivalVolume', 'fuelTypeId')]),
+      arrivalQuantity: this.fb.control(ohqTankDetail.arrivalQuantity.value, [Validators.required, Validators.min(0), numberValidator(2, 7), groupTotalValidator('arrivalQuantity', 'fuelTypeId')]),
+      departureVolume: this.fb.control(ohqTankDetail.departureVolume.value, [Validators.required, Validators.min(0), numberValidator(2, 7), groupTotalValidator('departureVolume', 'fuelTypeId')]),
+      departureQuantity: this.fb.control(ohqTankDetail.departureQuantity.value, [Validators.required, Validators.min(0), numberValidator(2, 7), groupTotalValidator('departureQuantity', 'fuelTypeId')]),
     });
   }
 
   /**
    * Method to handle edit complete event
    *
-   * @param {IIPortOHQTankDetailEvent} event
+   * @param {IPortOHQTankDetailEvent} event
    * @memberof OnHandQuantityComponent
    */
-  async onEditComplete(event: IIPortOHQTankDetailEvent) {
-    if (this.ohqForm.valid) {
+  async onEditComplete(event: IPortOHQTankDetailEvent) {
+    const fromGroup = this.row(event.index);
+    if (fromGroup.valid) {
       const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
       if (res) {
         for (const key in this.selectedPortOHQTankDetails[event.index]) {
@@ -152,10 +158,9 @@ export class OnHandQuantityComponent implements OnInit {
       }
 
     } else {
-      const fromGroup = this.row(event.index);
       const invalidFormControls = this.findInvalidControlsRecursive(fromGroup);
       invalidFormControls.forEach((key) => {
-        this.ohqForm[event.index][key].isEditMode = true;
+        this.selectedPortOHQTankDetails[event.index][key].isEditMode = true;
       });
       fromGroup.markAllAsTouched();
       this.ohqForm.updateValueAndValidity();

@@ -741,9 +741,10 @@ export class LoadableStudyDetailsTransformationService {
         header: 'OHQ_FUEL_TYPE',
         editable: false,
         filter: true,
-        filterField: 'fuelTypeName',
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterType: DATATABLE_FILTER_TYPE.TEXT,
+        filterField: 'fuelTypeId',
+        filterListName: 'fuelTypes',
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.EQUALS,
+        filterType: DATATABLE_FILTER_TYPE.SELECT,
         filterPlaceholder: 'OHQ_SEARCH_FUEL_TYPE'
       },
       {
@@ -769,7 +770,12 @@ export class LoadableStudyDetailsTransformationService {
             filterField: 'arrivalVolume.value',
             filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
             filterType: DATATABLE_FILTER_TYPE.NUMBER,
-            filterPlaceholder: 'OHQ_SEARCH_VOL'
+            filterPlaceholder: 'OHQ_SEARCH_VOL',
+            errorMessages: {
+              'required': 'OHQ_VALUE_REQUIRED',
+              'min': 'OHQ_MIN_VALUE',
+              'groupTotal': 'OHQ_GROUP_TOTAL'
+            }
           },
           {
             field: 'arrivalQuantity',
@@ -780,7 +786,13 @@ export class LoadableStudyDetailsTransformationService {
             filterField: 'arrivalQuantity.value',
             filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
             filterType: DATATABLE_FILTER_TYPE.NUMBER,
-            filterPlaceholder: 'OHQ_SEARCH_WEIGHT'
+            filterPlaceholder: 'OHQ_SEARCH_WEIGHT',            
+            fieldHeaderClass: 'column-weight',
+            errorMessages: {
+              'required': 'OHQ_VALUE_REQUIRED',
+              'min': 'OHQ_MIN_VALUE',
+              'groupTotal': 'OHQ_GROUP_TOTAL'
+            }
           }
         ]
       },
@@ -797,7 +809,12 @@ export class LoadableStudyDetailsTransformationService {
             filterField: 'departureVolume.value',
             filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
             filterType: DATATABLE_FILTER_TYPE.NUMBER,
-            filterPlaceholder: 'OHQ_SEARCH_VOL'
+            filterPlaceholder: 'OHQ_SEARCH_VOL',
+            errorMessages: {
+              'required': 'OHQ_VALUE_REQUIRED',
+              'min': 'OHQ_MIN_VALUE',
+              'groupTotal': 'OHQ_GROUP_TOTAL'
+            }
           },
           {
             field: 'departureQuantity',
@@ -807,8 +824,14 @@ export class LoadableStudyDetailsTransformationService {
             filter: true,
             filterField: 'departureQuantity.value',
             filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
-            filterType: DATATABLE_FILTER_TYPE.NUMBER,
-            filterPlaceholder: 'OHQ_SEARCH_WEIGHT'
+            filterType: DATATABLE_FILTER_TYPE.NUMBER,            
+            fieldHeaderClass: 'column-weight',
+            filterPlaceholder: 'OHQ_SEARCH_WEIGHT',
+            errorMessages: {
+              'required': 'OHQ_VALUE_REQUIRED',
+              'min': 'OHQ_MIN_VALUE',
+              'groupTotal': 'OHQ_GROUP_TOTAL'
+            }
           }
         ]
       }

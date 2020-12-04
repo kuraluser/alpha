@@ -29,6 +29,11 @@ export class DatatableComponent implements OnInit {
   }
   set columns(columns: IDataTableColumn[]) {
     this._columns = columns;
+    const colsWithSubCol = columns.filter(col => col?.columns?.length);
+    this.totalColSpan = columns.length - colsWithSubCol?.length;
+    colsWithSubCol.forEach(col => {
+      this.totalColSpan += + col?.columns.length;
+    });
     this.setActions(columns);
   }
 
@@ -88,6 +93,7 @@ export class DatatableComponent implements OnInit {
   readonly filterMatchMode = DATATABLE_FILTER_MATCHMODE;
   moreOptions: MenuItem[];
   selectedRowEvent: IDataTableEvent;
+  totalColSpan: number;
 
   // private fields
   private _columns: IDataTableColumn[];

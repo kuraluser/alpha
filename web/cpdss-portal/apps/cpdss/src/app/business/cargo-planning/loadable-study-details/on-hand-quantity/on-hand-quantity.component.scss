@@ -124,6 +124,9 @@
         }
         &:last-child{
             border-bottom: 0;
+            .tank-name{
+                top: 4px;
+            }
         }
     }
     &:after{
@@ -150,5 +153,23 @@
                 display: none;
             }
         }
+    }
+}
+
+.content-outer-ohq{
+    display: grid;
+    grid-template-columns: calc(100% - 500px) 500px;
+    height: calc(100vh - 200px);
+}
+@media (max-width: 1400px){
+    .tank-outer-ohq{
+        height: 195px;
+    }
+    .tank-wrapper-ohq{
+        width: 100%;
+        max-width: 100%;
+    }
+    .content-outer-ohq{
+        grid-template-columns: calc(100% - 370px) 370px;
     }
 }

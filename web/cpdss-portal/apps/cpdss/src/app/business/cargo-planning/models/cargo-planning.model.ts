@@ -417,13 +417,33 @@ export interface IPortOHQTankDetailValueObject {
 }
 
 /**
+ * Interface for fuel type
+ *
+ * @export
+ * @interface IFuelType
+ */
+export interface IFuelType {
+    id: number;
+    name: string;
+}
+
+/**
+ * Interface for ohq grid list data
+ *
+ * @export
+ * @interface IPortOHQListData
+ */
+export interface IPortOHQListData {
+    fuelTypes: IFuelType[];
+}
+/**
  * Interface for OHQ grid events
  *
  * @export
- * @interface IIPortOHQTankDetailEvent
+ * @interface IPortOHQTankDetailEvent
  * @extends {IDataTableEvent}
  */
-export interface IIPortOHQTankDetailEvent extends IDataTableEvent {
+export interface IPortOHQTankDetailEvent extends IDataTableEvent {
     data: IPortOHQTankDetailValueObject;
     field: string;
     index: number;

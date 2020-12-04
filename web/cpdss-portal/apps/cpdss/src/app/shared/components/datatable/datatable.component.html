@@ -8,7 +8,8 @@
                 <colgroup>
                     <col *ngIf="tableRowReOrder" class="column-class re-order">
                     <ng-container *ngFor="let col of columns">
-                        <col *ngIf="!col?.columns?.length" class="column-class" [class]="col.fieldHeaderClass" [ngClass]="{'column-actions': col?.field === 'actions'}" >
+                        <col *ngIf="!col?.columns?.length" class="column-class" [class]="col.fieldHeaderClass"
+                            [ngClass]="{'column-actions': col?.field === 'actions'}">
                         <col *ngFor="let subCol of col?.columns" class="column-class" [class]="subCol.fieldHeaderClass">
                     </ng-container>
                 </colgroup>
@@ -62,6 +63,11 @@
                                     styleClass="p-column-filter" [placeholder]="col.filterPlaceholder| translate"
                                     [readonlyInput]="false" dateFormat="dd-mm-yy" id="{{col.field+'_filter'}}">
                                 </p-calendar>
+                                <p-dropdown *ngSwitchCase="filterType.SELECT" [options]="listData[col.filterListName]"
+                                    [showClear]="true" appendTo="body" optionLabel="name"
+                                    [placeholder]="col.filterPlaceholder| translate"
+                                    (onChange)="datatable.filter($event.value?.id, col?.filterField ? col?.filterField : col.field, col.filterMatchMode)">
+                                </p-dropdown>
                             </ng-container>
                         </th>
                         <ng-container *ngFor="let subCol of col?.columns">
@@ -86,6 +92,11 @@
                                         [placeholder]="subCol.filterPlaceholder| translate" [readonlyInput]="false"
                                         dateFormat="dd-mm-yy" id="{{subCol.field+'_filter'}}">
                                     </p-calendar>
+                                    <p-dropdown *ngSwitchCase="filterType.SELECT"
+                                        [options]="listData[col.filterListName]" [showClear]="true" appendTo="body"
+                                        optionLabel="name" [placeholder]="col.filterPlaceholder| translate"
+                                        (onChange)="datatable.filter($event.value?.id, col?.filterField ? col?.filterField : col.field, col.filterMatchMode)">
+                                    </p-dropdown>
                                 </ng-container>
                             </th>
                         </ng-container>
@@ -96,7 +107,7 @@
                 <tr formGroupName="{{rowIndex}}" [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex"
                     [pSelectableRowDisabled]="!selectionMode" [pReorderableRow]="row(rowIndex).valid && rowIndex">
                     <td *ngIf="tableRowReOrder">
-                        <span class="pi pi-bars" pReorderableRowHandle ></span>
+                        <span class="pi pi-bars" pReorderableRowHandle></span>
                     </td>
                     <ng-container *ngFor="let col of columns; let colIndex = index">
                         <td *ngIf="!col?.columns?.length" [class]="col.fieldClass" [ngSwitch]="col.fieldType"
@@ -212,16 +223,14 @@
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.DATERANGE">
                                     <ng-container *ngIf="rowData[col.field]?.isEditMode">
-                                    <p-calendar appendTo="body" [showButtonBar]="true"
-                                        [readonlyInput]="true" (onSelect)="onDateRangeSelected($event, rowIndex, col.field, rowData)"
-                                        (onBlur)="onClearDateRange($event, rowIndex, col.field,rowData)"
-                                        (onClickOutside)="onClearDateRange($event, rowIndex, col.field,rowData)"
-                                        [dateFormat]="col.dateFormat"
-                                        selectionMode="range" 
-                                        [placeholder]="col.fieldPlaceholder| translate"
-                                        [minDate]="col.minDate"
-                                        id="{{col.field+'_'+rowIndex}}" #dateRangeCalender>
-                                    </p-calendar>
+                                        <p-calendar appendTo="body" [showButtonBar]="true" [readonlyInput]="true"
+                                            (onSelect)="onDateRangeSelected($event, rowIndex, col.field, rowData)"
+                                            (onBlur)="onClearDateRange($event, rowIndex, col.field,rowData)"
+                                            (onClickOutside)="onClearDateRange($event, rowIndex, col.field,rowData)"
+                                            [dateFormat]="col.dateFormat" selectionMode="range"
+                                            [placeholder]="col.fieldPlaceholder| translate" [minDate]="col.minDate"
+                                            id="{{col.field+'_'+rowIndex}}" #dateRangeCalender>
+                                        </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>
@@ -371,16 +380,14 @@
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.DATERANGE">
                                     <ng-container *ngIf="rowData[col.field]?.isEditMode">
-                                    <p-calendar appendTo="body" [showButtonBar]="true"
-                                        [readonlyInput]="true" (onSelect)="onDateRangeSelected($event, rowIndex, col.field, rowData)"
-                                        (onBlur)="onClearDateRange($event, rowIndex, col.field,rowData)"
-                                        (onClickOutside)="onClearDateRange($event, rowIndex, col.field,rowData)"
-                                        [dateFormat]="col.dateFormat"
-                                        selectionMode="range" 
-                                        [placeholder]="col.fieldPlaceholder| translate"
-                                        [minDate]="col.minDate"
-                                        id="{{col.field+'_'+rowIndex}}" #dateRangeCalender>
-                                    </p-calendar>
+                                        <p-calendar appendTo="body" [showButtonBar]="true" [readonlyInput]="true"
+                                            (onSelect)="onDateRangeSelected($event, rowIndex, col.field, rowData)"
+                                            (onBlur)="onClearDateRange($event, rowIndex, col.field,rowData)"
+                                            (onClickOutside)="onClearDateRange($event, rowIndex, col.field,rowData)"
+                                            [dateFormat]="col.dateFormat" selectionMode="range"
+                                            [placeholder]="col.fieldPlaceholder| translate" [minDate]="col.minDate"
+                                            id="{{col.field+'_'+rowIndex}}" #dateRangeCalender>
+                                        </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>
@@ -421,7 +428,7 @@
             </ng-template>
             <ng-template pTemplate="emptymessage" let-columns>
                 <tr>
-                    <td [attr.colspan]="columns.length">
+                    <td [attr.colspan]="totalColSpan">
                         {{'NO_RECORDS_FOUND'| translate}}
                     </td>
                 </tr>

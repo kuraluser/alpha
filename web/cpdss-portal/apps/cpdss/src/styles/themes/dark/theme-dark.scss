@@ -901,3 +901,15 @@ a{
 .info-icon{
   border: 1px solid $text-secondary;
 }
+.p-dropdown .p-dropdown-label.p-placeholder{
+  color: $text-primary;
+}
+.cargo-nomination-table.ohq td:nth-child(3), .cargo-nomination-table.ohq td:nth-child(5){
+  border-right: 1px solid $table-border;
+}
+.cargo-nomination-table.ohq table > thead > tr > th:nth-child(3), .cargo-nomination-table.ohq table > thead > tr:first-child th:nth-child(4){
+  border-right: 1px solid $table-border;
+}
+.cargo-nomination-table.ohq table > thead > tr:nth-child(2)  th:nth-child(5){
+  border-right: 1px solid $table-border;
+}
