@@ -1202,6 +1202,24 @@ td.lay-can{
   font-weight: bold;
 }
 
+.confirmation-dialog{
+  &.p-toast .p-toast-message.p-toast-message-warn{
+    border: 0!important;
+     .p-toast-icon-close{
+      position: absolute;
+      right: 10px;
+      top: 5px;
+      z-index: 1;
+      &:hover{
+        background: none;
+      }
+    }
+  }
+}
+.p-toast{
+  opacity: 1!important;
+}
+
 .p-datatable table th{
   .p-dropdown-label.p-inputtext{
   padding-top: 0;

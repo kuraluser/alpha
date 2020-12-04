@@ -901,6 +901,25 @@ a{
 .info-icon{
   border: 1px solid $text-secondary;
 }
+.p-toast .p-toast-message.p-toast-message-success{
+  color: $text-secondary;
+  border-color:$green;
+  background: $card-bg;
+}
+.p-toast .p-toast-message.p-toast-message-success .p-toast-message-icon{
+  color: $green;
+}
+.p-toast .p-toast-message.p-toast-message-warn{
+  background: $card-bg;
+  color: $text-secondary;
+}
+
+.confirmation-dialog{
+  &.p-toast .p-toast-message.p-toast-message-warn{
+    border: 1px solid $border-color!important;
+    
+  }
+}}
 .p-dropdown .p-dropdown-label.p-placeholder{
   color: $text-primary;
 }
