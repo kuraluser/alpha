@@ -37,18 +37,18 @@ export interface ICargoNominationValueObject {
  */
 export interface ICargoNomination {
     id: number;
-    priority: number;
-    color: string;
+    priority?: number;
+    color?: string;
     cargoId: number;
-    abbreviation: string;
-    loadingPorts: ILoadingPort[];
-    quantity: number;
-    api: number;
-    temperature: number;
-    minTolerance: number;
-    maxTolerance: number;
-    segregationId: number;
-    loadableStudyId: number;
+    abbreviation?: string;
+    loadingPorts?: ILoadingPort[];
+    quantity?: number;
+    api?: number;
+    temperature?: number;
+    minTolerance?: number;
+    maxTolerance?: number;
+    segregationId?: number;
+    loadableStudyId?: number;
     isDelete?: boolean;
     isAdd?: boolean;
     storeKey?: number;

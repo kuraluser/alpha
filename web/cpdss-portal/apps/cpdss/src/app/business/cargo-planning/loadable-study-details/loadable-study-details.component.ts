@@ -73,6 +73,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   portsTabPermission: IPermission;
   ohqTabPermissionContext: IPermissionContext;
   loadableQuantityPermissionContext: IPermissionContext;
+  displayCommingle: boolean;
   loadableQuantityPermission: IPermission;
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
@@ -302,7 +303,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   }
 
   /**
-   * Value from new-voyage
+   * Value from Loadable Quantity Popup
    */
   displayPopUpTab(displayNew_: boolean) {
     this.displayLoadableQuntity = displayNew_;
@@ -310,7 +311,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
 
 
   /**
-   * Value from loadable quantity
+   * Loadable quantity  from loadable quantity popup
    */
   async loadableQuantity(newloadableQuantity: string) {
     this.loadableQuantityNew = newloadableQuantity;
@@ -318,5 +319,20 @@ export class LoadableStudyDetailsComponent implements OnInit {
     if (Number(this.totalQuantity$) > Number(this.loadableQuantityNew)) {
       this.messageService.add({ severity: 'error', summary: translationKeys['TOTAL_QUANTITY_ERROR'], detail: translationKeys['TOTAL_QUANTITY_ERROR'] });
     }
+  }
+
+  /**
+   * Display commingle popup
+   */
+  showComminglePopup() {
+    this.displayCommingle = true;
+  }
+
+  /**
+   * Value from commingle popup
+   */
+  displayComminglePopUpTab(displayNew_: boolean){
+    this.displayCommingle = displayNew_;
+
   }
 }

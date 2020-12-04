@@ -21,6 +21,10 @@ import { PermissionDirectiveModule } from '../../../shared/directives/permission
 import { LoadableQuantityComponent } from './loadable-quantity/loadable-quantity.component';
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
 import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
+import { CommingleComponent } from './commingle/commingle.component';
+import { CheckboxModule } from 'primeng/checkbox';
+import { ColorPickerModule } from 'primeng/colorpicker';
+import { CommingleApiService } from '../services/commingle-api.service';
 /**
  * Routing Module for Loadable Study Details Screen
  *
@@ -28,7 +32,7 @@ import { ValidationErrorModule } from '../../../shared/components/validation-err
  * @class LoadableStudyDetailsModule
  */
 @NgModule({
-  declarations: [LoadableStudyDetailsComponent, CargoNominationComponent, LoadingPortsPopupComponent, ApiTemperatureHistoryPopupComponent, SidePanelLoadableStudyListComponent, PortsComponent, LoadableQuantityComponent, OnHandQuantityComponent],
+  declarations: [LoadableStudyDetailsComponent, CargoNominationComponent, LoadingPortsPopupComponent, ApiTemperatureHistoryPopupComponent, SidePanelLoadableStudyListComponent, PortsComponent, LoadableQuantityComponent, OnHandQuantityComponent, CommingleComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -42,10 +46,12 @@ import { ValidationErrorModule } from '../../../shared/components/validation-err
     VesselInfoModule,
     NewLoadableStudyPopupModule,
     PermissionDirectiveModule,
-    ValidationErrorModule
+    ValidationErrorModule,
+    CheckboxModule,
+    ColorPickerModule 
   ],
   providers: [
-    LoadableQuantityApiService
+    LoadableQuantityApiService, CommingleApiService
   ]
 })
 export class LoadableStudyDetailsModule { }

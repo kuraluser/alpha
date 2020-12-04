@@ -1,0 +1,125 @@
+<p-dialog [(visible)]="display" [modal]="true" [draggable]="false" styleClass="commingle-pop-up" [closable]="false"
+    [responsive]="true">
+    <p-header>
+        {{'COMMINGLE_CARGO' | translate}}
+    </p-header>
+
+    <form [formGroup]="commingleForm" id="commingle_form" (submit)="saveVolumeMaximisation()">
+        <div class="row ">
+            <div class="col-6">
+                <div class="row form-group">
+                    <div class="col-5 no-right-padding"><label for="commingle_purpose_dropdown"
+                            class=" col-form-label">{{'COMMINGLE_PURPOSE' | translate}}</label></div>
+                    <div class="col-7">
+                        <p-dropdown id="commingle_purpose_dropdown" styleClass="form-control" appendTo="body"
+                            [filter]="true" [options]="purposeOfCommingle" optionLabel="name" id="purpose_commingle"
+                            (onChange)="selectPurpose()" formControlName="purpose">
+                        </p-dropdown>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="row" *ngIf="isVolumeMaximum">
+                    <div class="col no-left-padding pt-5">
+                        <label class="checkbox-custom">{{'COMMINGLE_SELECT_SLOP_ONLY' | translate}}
+                            <input type="checkbox" formControlName="slopOnly">
+
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-5" *ngIf="!isVolumeMaximum"><label for="commingle_preferred_tank"
+                            class=" col-form-label">{{'COMMINGLE_PREFERRED_TANK' | translate}}</label></div>
+                    <div class="col-7 " *ngIf="!isVolumeMaximum">
+                        <p-multiSelect [options]="preferredTank" styleClass="w-100" appendTo="body"
+                            id="commingle_preferred_tank" optionLabel="name">
+                        </p-multiSelect>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-5" *ngIf="!isVolumeMaximum">
+            <div class="col text-right">
+                <a id="add_new_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
+                    (click)="addNew()">{{'ADD_NEW_BUTTON_LABEL'| translate}}</a>
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col">
+                {{'COMMINGLE_CARGO_1' | translate}}
+            </div>
+            <div class="col-2" *ngIf="!isVolumeMaximum">
+                {{'COMMINGLE_CARGO_PERCENTAGE' | translate}}
+            </div>
+            <div class="col">
+                {{'COMMINGLE_CARGO_2' | translate}}
+            </div>
+            <div class="col-2" *ngIf="!isVolumeMaximum">
+                {{'COMMINGLE_CARGO_PERCENTAGE' | translate}}
+            </div>
+            <div class="col" *ngIf="!isVolumeMaximum">
+                {{'COMMINGLE_QTY' | translate}}
+            </div>
+        </div>
+        <div class="mb-10">
+            <hr class="hr-margin">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <p-dropdown id="commingle_cargo1_dropdown" styleClass="form-control" appendTo="body"
+                                [filter]="true" [options]="cargoNominationsCargo1" optionLabel="name"
+                                formControlName="cargo1" (onChange)="onChange($event, 1)"
+                                placeholder="{{'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER' | translate}}">
+                            </p-dropdown>
+                        </div>
+                        <div class="col no-left-padding" style="max-width: 20px;">
+                            <div class="color-rounded mt-5"
+                                [ngStyle]="selectedCargo1 && {'background' : selectedCargo1.color}"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2" *ngIf="!isVolumeMaximum">
+                    <p-dropdown id="commingle_cargo1_percentage_dropdown" appendTo="body" styleClass="form-control"
+                        [filter]="true" [options]="" optionLabel="name">
+                    </p-dropdown>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <p-dropdown id="commingle_cargo2_dropdown" appendTo="body" styleClass="form-control"
+                                [filter]="true" [options]="cargoNominationsCargo2" optionLabel="name"
+                                formControlName="cargo2" (onChange)="onChange($event, 2)"
+                                placeholder="{{'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER' | translate}}">
+                            </p-dropdown>
+                        </div>
+                        <div class="col no-left-padding" style="max-width: 20px;">
+                            <div class="color-rounded mt-5"
+                                [ngStyle]="selectedCargo2 && {'background' : selectedCargo2.color}"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-2" *ngIf="!isVolumeMaximum">
+                    <p-dropdown id="commingle_cargo1_percentage_dropdown" appendTo="body" styleClass="form-control"
+                        [filter]="true" [options]="percentage" optionLabel="name">
+                    </p-dropdown>
+                </div>
+                <div class="col" *ngIf="!isVolumeMaximum">
+                    <input type="number" class="form-control" id="commingle_qty_dropdown">
+                </div>
+            </div>
+            <hr class="hr-margin">
+        </div>
+    </form>
+    <p-footer>
+        <div class="float-right">
+            <button class="btn btn-main mr-10" id="lodable_quantity_cancel"
+                (click)="cancel()">{{'COMMINGLE_CANCEL' | translate}}
+            </button>
+            <button class="btn btn-main" type="submit" id="lodable_quantity_submit"
+                form="commingle_form">{{'COMMINGLE_SAVE' | translate}}</button>
+        </div>
+    </p-footer>
+</p-dialog>
