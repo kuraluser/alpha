@@ -2070,46 +2070,46 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       if (!CollectionUtils.isEmpty(request.getCommingleCargoList())) {
-        Long loadableStudyId = request.getLoadableStudyId();
-        List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleEntities = new ArrayList<>();
-        // for id = 0 save as new commingle cargo
-        request
-            .getCommingleCargoList()
-            .forEach(
-                commingleCargo -> {
-                  try {
-                    com.cpdss.loadablestudy.entity.CommingleCargo commingleCargoEntity = null;
-                    if (commingleCargo != null && commingleCargo.getId() != 0) {
-                      Optional<com.cpdss.loadablestudy.entity.CommingleCargo>
-                          existingCommingleCargo =
-                              this.commingleCargoRepository.findById(commingleCargo.getId());
-                      if (!existingCommingleCargo.isPresent()) {
-                        throw new GenericServiceException(
-                            "commingle cargo does not exist",
-                            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-                            HttpStatusCode.BAD_REQUEST);
-                      }
-                      commingleCargoEntity = existingCommingleCargo.get();
-                      commingleCargoEntity =
-                          buildCommingleCargo(
-                              commingleCargoEntity, commingleCargo, loadableStudyId);
-                    } else if (commingleCargo != null && commingleCargo.getId() == 0) {
-                      commingleCargoEntity = new com.cpdss.loadablestudy.entity.CommingleCargo();
-                      commingleCargoEntity =
-                          buildCommingleCargo(
-                              commingleCargoEntity, commingleCargo, loadableStudyId);
-                    }
-                    commingleEntities.add(commingleCargoEntity);
-                  } catch (Exception e) {
-                    log.error("Exception in creating entities for save commingle cargo", e);
-                    throw new RuntimeException(e);
-                  }
-                });
-        // save all entities
-        this.commingleCargoRepository.saveAll(commingleEntities);
+    	  // for existing commingle cargo find missing ids in request and delete them
+    	  deleteCommingleCargo(request);
+    	  Long loadableStudyId = request.getLoadableStudyId();
+    	  List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleEntities = new ArrayList<>();
+    	  // for id = 0 save as new commingle cargo
+    	  request
+    	  .getCommingleCargoList()
+    	  .forEach(
+    			  commingleCargo -> {
+    				  try {
+    					  com.cpdss.loadablestudy.entity.CommingleCargo commingleCargoEntity = null;
+    					  if (commingleCargo != null && commingleCargo.getId() != 0) {
+    						  Optional<com.cpdss.loadablestudy.entity.CommingleCargo>
+    						  existingCommingleCargo =
+    						  this.commingleCargoRepository.findByIdAndIsActive(commingleCargo.getId(), true);
+    						  if (!existingCommingleCargo.isPresent()) {
+    							  throw new GenericServiceException(
+    									  "commingle cargo does not exist",
+    									  CommonErrorCodes.E_HTTP_BAD_REQUEST,
+    									  HttpStatusCode.BAD_REQUEST);
+    						  }
+    						  commingleCargoEntity = existingCommingleCargo.get();
+    						  commingleCargoEntity =
+    								  buildCommingleCargo(
+    										  commingleCargoEntity, commingleCargo, loadableStudyId);
+    					  } else if (commingleCargo != null && commingleCargo.getId() == 0) {
+    						  commingleCargoEntity = new com.cpdss.loadablestudy.entity.CommingleCargo();
+    						  commingleCargoEntity =
+    								  buildCommingleCargo(
+    										  commingleCargoEntity, commingleCargo, loadableStudyId);
+    					  }
+    					  commingleEntities.add(commingleCargoEntity);
+    				  } catch (Exception e) {
+    					  log.error("Exception in creating entities for save commingle cargo", e);
+    					  throw new RuntimeException(e);
+    				  }
+    			  });
+    	  // save all entities
+    	  this.commingleCargoRepository.saveAll(commingleEntities);
       }
-      // for existing commingle cargo find missing ids in request and delete them
-      deleteCommingleCargo(request);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving CommingleCargo", e);
@@ -2152,7 +2152,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         !StringUtils.isEmpty(requestRecord.getQuantity())
             ? new BigDecimal(requestRecord.getQuantity())
             : null);
-    commingleCargoEntity.setIsActive(false);
+    commingleCargoEntity.setIsActive(true);
     commingleCargoEntity.setIsSlopOnly(requestRecord.getSlopOnly());
     return commingleCargoEntity;
   }
