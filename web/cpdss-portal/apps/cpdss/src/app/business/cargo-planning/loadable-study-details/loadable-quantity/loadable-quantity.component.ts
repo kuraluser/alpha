@@ -140,11 +140,11 @@ export class LoadableQuantityComponent implements OnInit {
     this.loadableQuantityForm.controls.tpc.setValue(this.loadableQuantity.tpc);
     this.loadableQuantityForm.controls.estimateSag.setValue(this.loadableQuantity.estSagging);
     this.loadableQuantityForm.controls.safCorrection.setValue(this.loadableQuantity.estFOOnBoard);
-    this.loadableQuantityForm.controls.foOnboard.setValue(this.loadableQuantity.estFOOnBoard);
-    this.loadableQuantityForm.controls.doOnboard.setValue(this.loadableQuantity.estDOOnBoard);
+    this.loadableQuantityForm.controls.foOnboard.setValue(Number(this.loadableQuantity.estFOOnBoard));
+    this.loadableQuantityForm.controls.doOnboard.setValue(Number(this.loadableQuantity.estDOOnBoard));
 
-    this.loadableQuantityForm.controls.freshWaterOnboard.setValue(this.loadableQuantity.estFreshWaterOnBoard);
-    this.loadableQuantityForm.controls.boilerWaterOnboard.setValue(this.loadableQuantity.boilerWaterOnBoard);
+    this.loadableQuantityForm.controls.freshWaterOnboard.setValue(Number(this.loadableQuantity.estFreshWaterOnBoard));
+    this.loadableQuantityForm.controls.boilerWaterOnboard.setValue(Number(this.loadableQuantity.boilerWaterOnBoard));
     this.loadableQuantityForm.controls.ballast.setValue(this.loadableQuantity.ballast);
     this.loadableQuantityForm.controls.constant.setValue(this.loadableQuantity.constant);
     this.loadableQuantityForm.controls.others.setValue(this.loadableQuantity.otherIfAny === '' ? 0 : this.loadableQuantity.otherIfAny);
@@ -302,14 +302,14 @@ export class LoadableQuantityComponent implements OnInit {
    * Calculation for sag correction
    */
   getSagCorrectionOnChange() {
-    this.loadableQuantityForm.controls['safCorrection'].setValue((this.loadableQuantityForm.get('estimateSag').value) * 1 / 4 * (this.loadableQuantityForm.get('tpc').value));
+    this.loadableQuantityForm.controls['safCorrection'].setValue(Number(this.loadableQuantityForm.get('estimateSag').value) * 1 / 4 * Number(this.loadableQuantityForm.get('tpc').value));
     this.getSubTotal();
   }
   /**
    * Calculation for sg correction
    */
   getSgCorrectionOnChange() {
-    this.loadableQuantityForm.controls['sgCorrection'].setValue(((this.loadableQuantityForm.get('estSeaDensity').value) - 1.025) / 1.025 * (this.loadableQuantityForm.get('displacement').value));
+    this.loadableQuantityForm.controls['sgCorrection'].setValue((Number(this.loadableQuantityForm.get('estSeaDensity').value) - 1.025) / 1.025 * Number(this.loadableQuantityForm.get('displacement').value));
     this.getSubTotal();
   }
 
@@ -318,7 +318,7 @@ export class LoadableQuantityComponent implements OnInit {
    */
   getRunningHours() {
     // Auto calculate (Distance/ Speed)
-    this.loadableQuantityForm.controls['runningHours'].setValue((this.loadableQuantityForm.get('distanceInSummerzone').value) / (this.loadableQuantityForm.get('speedInSz').value));
+    this.loadableQuantityForm.controls['runningHours'].setValue(Number(this.loadableQuantityForm.get('distanceInSummerzone').value) / Number(this.loadableQuantityForm.get('speedInSz').value));
     this.getRunningDays();
   }
 
@@ -336,7 +336,7 @@ export class LoadableQuantityComponent implements OnInit {
    */
   getRunningDays() {
     if (this.loadableQuantityForm?.get('runningHours')?.value) {
-      this.loadableQuantityForm.controls['runningDays'].setValue((this.loadableQuantityForm.get('runningHours').value) / 24);
+      this.loadableQuantityForm.controls['runningDays'].setValue(Number(this.loadableQuantityForm.get('runningHours').value) / 24);
       this.getFoConsumptionInSz();
     }
   }
@@ -345,7 +345,7 @@ export class LoadableQuantityComponent implements OnInit {
    */
   getRunningDaysOnLoad() {
     this.loadableQuantityForm.controls['runningDays'].setValue(Number(this.loadableQuantity.runningHours) / 24);
-    this.loadableQuantityForm.controls['foConsInSz'].setValue((this.loadableQuantityForm.get('foConday').value) * (this.loadableQuantityForm.get('runningDays').value));
+    this.loadableQuantityForm.controls['foConsInSz'].setValue(Number(this.loadableQuantityForm.get('foConday').value) * Number(this.loadableQuantityForm.get('runningDays').value));
     this.getSubTotalOnLoad();
   }
 
@@ -353,7 +353,7 @@ export class LoadableQuantityComponent implements OnInit {
    * Calculation for fo consumption in sz
    */
   getFoConsumptionInSz() {
-    this.loadableQuantityForm.controls['foConsInSz'].setValue((this.loadableQuantityForm.get('foConday').value) * (this.loadableQuantityForm.get('runningDays').value));
+    this.loadableQuantityForm.controls['foConsInSz'].setValue(Number(this.loadableQuantityForm.get('foConday').value) * (this.loadableQuantityForm.get('runningDays').value));
     this.getTotalLoadableQuantity();
 
   }
@@ -373,7 +373,7 @@ export class LoadableQuantityComponent implements OnInit {
       this.loadableQuantityForm.controls['subTotal'].setValue(subTotal);
       this.getTotalLoadableQuantity();
     }
-    else if (this.caseNo === 3) {
+    else  {
       subTotal = Number(this.loadableQuantityForm.get('dwt').value) + Number(this.loadableQuantityForm.get('safCorrection').value) + Number(this.loadableQuantityForm.get('sgCorrection').value)
         - Number(this.loadableQuantityForm.get('foOnboard').value) - Number(this.loadableQuantityForm.get('doOnboard').value) - Number(this.loadableQuantityForm.get('freshWaterOnboard').value) - Number(this.loadableQuantityForm.get('boilerWaterOnboard').value) - Number(this.loadableQuantityForm.get('ballast').value) - Number(this.loadableQuantityForm.get('constant').value) - Number(this.loadableQuantityForm.get('others').value);
       this.getTotalLoadableQuantity();
@@ -386,10 +386,10 @@ export class LoadableQuantityComponent implements OnInit {
    */
   getSubTotalOnLoad() {
     if (this.caseNo === 1) {
-      this.loadableQuantityForm.controls['subTotal'].setValue(Number(this.loadableQuantity.totalQuantity) + this.loadableQuantityForm.get('foConsInSz').value);
+      this.loadableQuantityForm.controls['subTotal'].setValue(Number(this.loadableQuantity.totalQuantity) + Number(this.loadableQuantityForm.get('foConsInSz').value));
     }
     else {
-      this.loadableQuantityForm.controls['subTotal'].setValue(this.loadableQuantity.totalQuantity);
+      this.loadableQuantityForm.controls['subTotal'].setValue(Number(this.loadableQuantity.totalQuantity));
     }
   }
 
@@ -398,7 +398,7 @@ export class LoadableQuantityComponent implements OnInit {
    */
   getTotalLoadableQuantity() {
     if (this.caseNo === 1) {
-      const total = (this.loadableQuantityForm.get('subTotal').value) - (this.loadableQuantityForm.get('foConsInSz').value);
+      const total = Number(this.loadableQuantityForm.get('subTotal').value) - Number(this.loadableQuantityForm.get('foConsInSz').value);
       if (total < 0) {
         this.isNegative = true;
         this.loadableQuantityForm.controls['totalQuantity'].setValue('');
@@ -410,7 +410,7 @@ export class LoadableQuantityComponent implements OnInit {
 
     }
     else {
-      (this.loadableQuantityForm.get('subTotal').value) < 0 ? this.isNegative = true : this.isNegative = false;
+      Number(this.loadableQuantityForm.get('subTotal').value) < 0 ? this.isNegative = true : this.isNegative = false;
       if (this.isNegative) {
         this.isNegative = true;
         this.loadableQuantityForm.controls['totalQuantity'].setValue('');
@@ -418,7 +418,6 @@ export class LoadableQuantityComponent implements OnInit {
       else {
         this.isNegative = false;
         this.loadableQuantityForm.controls['totalQuantity'].setValue(Number(this.loadableQuantityForm.get('subTotal').value));
-        console.log("123", (this.loadableQuantityForm.get('subTotal').value));
       }
 
     }
