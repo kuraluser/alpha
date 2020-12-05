@@ -708,13 +708,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .collect(Collectors.toList());
     }
     int existingPortsCount = 0;
-    // remove loading portIds from request which are already available in port rotation for the
+    // remove loading portIds from request which are already available in port
+    // rotation for the
     // specific loadable study
     if (!CollectionUtils.isEmpty(requestedPortIds) && !CollectionUtils.isEmpty(existingPortIds)) {
       requestedPortIds.removeAll(existingPortIds);
       existingPortsCount = existingPortIds.size();
     }
-    // fetch the specific ports attributes like waterDensity and draft values from port master
+    // fetch the specific ports attributes like waterDensity and draft values from
+    // port master
     if (!CollectionUtils.isEmpty(requestedPortIds)) {
       GetPortInfoByPortIdsRequest.Builder reqBuilder = GetPortInfoByPortIdsRequest.newBuilder();
       buildGetPortInfoByPortIdsRequest(reqBuilder, cargoNomination);
@@ -727,7 +729,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_GEN_INTERNAL_ERR,
             HttpStatusCode.INTERNAL_SERVER_ERROR);
       }
-      // update loadable-study-port-rotation with ports from cargoNomination and port attributes
+      // update loadable-study-port-rotation with ports from cargoNomination and port
+      // attributes
       buildAndSaveLoadableStudyPortRotationEntities(
           loadableStudy, requestedPortIds, portReply, existingPortsCount);
     }
@@ -1011,33 +1014,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.loadableStudyRepository.findById(request.getLoadableStudyId());
       if (!loadableStudy.isPresent()) {
         log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
-        builder.setResponseStatus(
-            StatusReply.newBuilder()
-                .setStatus(FAILED)
-                .setMessage(INVALID_LOADABLE_QUANTITY)
-                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
-      } else if (loadableQuantity.isEmpty()) {
+        throw new GenericServiceException(
+            INVALID_LOADABLE_QUANTITY,
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      VesselRequest replyBuilder =
+          VesselRequest.newBuilder()
+              .setVesselId(loadableStudy.get().getVesselXId())
+              .setVesselDraftConditionId(loadableStudy.get().getLoadLineXId())
+              .setDraftExtreme(loadableStudy.get().getDraftMark().toString())
+              .build();
+      VesselReply vesselReply = this.getVesselDetailsById(replyBuilder);
+      String selectedZone = "";
+      if (vesselReply.getVesselLoadableQuantityDetails().getDraftConditionName() != null) {
+        String[] array =
+            vesselReply.getVesselLoadableQuantityDetails().getDraftConditionName().split(" ");
+        selectedZone = array[array.length - 1];
+      }
+      builder.setCaseNo(loadableStudy.get().getCaseNo());
+      builder.setSelectedZone(selectedZone);
+      if (loadableQuantity.isEmpty()) {
         String draftRestictoin = "";
-        String draftExtreme = "";
-        if (Optional.ofNullable(loadableStudy.get().getDraftMark()).isPresent()) {
-          draftExtreme = loadableStudy.get().getDraftMark().toString();
-        }
-        VesselRequest replyBuilder =
-            VesselRequest.newBuilder()
-                .setVesselId(loadableStudy.get().getVesselXId())
-                .setVesselDraftConditionId(loadableStudy.get().getLoadLineXId())
-                .setDraftExtreme(draftExtreme)
-                .build();
-        VesselReply vesselReply = this.getVesselDetailsById(replyBuilder);
         if (Optional.ofNullable(loadableStudy.get().getDraftRestriction()).isPresent()) {
           draftRestictoin = loadableStudy.get().getDraftRestriction().toString();
         } else if (Optional.ofNullable(loadableStudy.get().getDraftMark()).isPresent()) {
           draftRestictoin = loadableStudy.get().getDraftMark().toString();
-        }
-        String selectedZone = "";
-        if (vesselReply.getVesselLoadableQuantityDetails().getDraftConditionName() != null) {
-          selectedZone =
-              vesselReply.getVesselLoadableQuantityDetails().getDraftConditionName().split(" ")[0];
         }
         LoadableQuantityRequest loadableQuantityRequest =
             LoadableQuantityRequest.newBuilder()
@@ -1051,8 +1053,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setDwt(vesselReply.getVesselLoadableQuantityDetails().getDwt())
                 .build();
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
-        builder.setCaseNo(loadableStudy.get().getCaseNo());
-        builder.setSelectedZone(selectedZone);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
       } else {
 
@@ -1149,6 +1149,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
       }
+    } catch (GenericServiceException e) {
+      log.error("Error getting loadable quantity ", e);
+      builder.setResponseStatus(
+          StatusReply.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(e.getCode()));
     } catch (Exception e) {
       log.error("Error getting loadable quantity ", e);
       builder.setResponseStatus(
@@ -1513,6 +1520,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
   /**
    * @param request
    * @param responseObserver
@@ -1988,6 +1996,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
   /** Get commingle cargo for a loadable study */
   @Override
   public void getCommingleCargo(

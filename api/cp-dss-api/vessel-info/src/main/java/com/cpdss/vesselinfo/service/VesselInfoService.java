@@ -13,6 +13,7 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceImplBas
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.vesselinfo.domain.VesselDetails;
+import com.cpdss.vesselinfo.entity.DraftCondition;
 import com.cpdss.vesselinfo.entity.TankCategory;
 import com.cpdss.vesselinfo.entity.Vessel;
 import com.cpdss.vesselinfo.entity.VesselChartererMapping;
@@ -27,13 +28,13 @@ import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -76,10 +77,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
           LUBRICANT_OIL_TANK_CATEGORY_ID);
 
   private static final List<Long> CARGO_TANK_CATEGORIES =
-	      Arrays.asList(
-	    		  CARGO_TANK_CATEGORY_ID,
-	          CARGO_SLOP_TANK_CATEGORY_ID);
-  
+      Arrays.asList(CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID);
+
   /** Get vessel for a company */
   @Override
   public void getAllVesselsByCompany(
@@ -98,33 +97,45 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         Optional.ofNullable(entity.getVesselFlag())
             .ifPresent(flag -> builder.setFlag(flag.getFlagImagePath()));
         Set<VesselDraftCondition> draftConditions = entity.getVesselDraftConditionCollection();
+
+        TreeMap<Long, TreeSet<BigDecimal>> map = new TreeMap<>();
+        Comparator<BigDecimal> draftMarkComparator =
+            (BigDecimal b1, BigDecimal b2) -> b2.compareTo(b1);
+        draftConditions.forEach(
+            condition -> {
+              if (condition.getDraftCondition().getIsActive()) {
+                if (null == map.get(condition.getDraftCondition().getId())) {
+                  TreeSet<BigDecimal> set = new TreeSet<>(draftMarkComparator);
+                  set.add(condition.getDraftExtreme());
+                  map.put(condition.getDraftCondition().getId(), set);
+                } else {
+                  map.get(condition.getDraftCondition().getId()).add(condition.getDraftExtreme());
+                }
+              }
+            });
+
         List<LoadLineDetail.Builder> builderList = new ArrayList<>();
-        Map<Long, Integer> indexMap = new HashMap<>();
-        int index = 0;
-        for (VesselDraftCondition condition : draftConditions) {
-          if (condition.getDraftCondition() != null
-              && condition.getDraftCondition().getIsActive() != null
-              && condition.getDraftCondition().getIsActive()) {
-            if (null == indexMap.get(condition.getDraftCondition().getId())) {
-              LoadLineDetail.Builder loadLineBuilder = LoadLineDetail.newBuilder();
-              loadLineBuilder.setId(condition.getDraftCondition().getId());
-              loadLineBuilder.setName(condition.getDraftCondition().getName());
-              loadLineBuilder.addDraftMarks(String.valueOf(condition.getDraftExtreme()));
-              builderList.add(loadLineBuilder);
-              indexMap.put(condition.getDraftCondition().getId(), index);
-              index++;
-            } else {
-              builderList
-                  .get(indexMap.get(condition.getDraftCondition().getId()))
-                  .addDraftMarks(String.valueOf(condition.getDraftExtreme()));
-            }
+        for (Map.Entry<Long, TreeSet<BigDecimal>> entry : map.entrySet()) {
+          Optional<VesselDraftCondition> condition =
+              draftConditions.stream()
+                  .filter(d -> d.getDraftCondition().getId().equals(entry.getKey()))
+                  .findFirst();
+          if (condition.isPresent()) {
+            DraftCondition draftCondition = condition.get().getDraftCondition();
+            LoadLineDetail.Builder loadLineBuilder = LoadLineDetail.newBuilder();
+            loadLineBuilder.setId(draftCondition.getId());
+            loadLineBuilder.setName(draftCondition.getName());
+            map.get(draftCondition.getId())
+                .forEach(
+                    draftExtreme -> {
+                      loadLineBuilder.addDraftMarks(String.valueOf(draftExtreme));
+                    });
+            builderList.add(loadLineBuilder);
           }
         }
-        List<LoadLineDetail> loadLine = new ArrayList<>();
-        loadLine.addAll(
+
+        builder.addAllLoadLines(
             builderList.stream().map(LoadLineDetail.Builder::build).collect(Collectors.toList()));
-        Collections.sort(loadLine, Comparator.comparing(LoadLineDetail::getId));
-        builder.addAllLoadLines(loadLine);
         VesselChartererMapping vesselChartererMapping =
             this.chartererMappingRepository.findByVesselAndIsActive(entity, true);
         if (null != vesselChartererMapping && null != vesselChartererMapping.getCharterer()) {
@@ -169,10 +180,10 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
           hydrostaticTableRepository.getTPCFromDraf(
               request.getVesselId(), new BigDecimal(request.getDraftExtreme()), true);
       if (null != vesselDetails) {
-        Optional.ofNullable(vesselDetails.getDisplacmentDraftRestriction().toString())
-            .ifPresent(builder::setDisplacmentDraftRestriction);
-        Optional.ofNullable(vesselDetails.getVesselLightWeight().toString())
-            .ifPresent(builder::setVesselLightWeight);
+        Optional.ofNullable(vesselDetails.getDisplacmentDraftRestriction())
+            .ifPresent(item -> builder.setDisplacmentDraftRestriction(item.toString()));
+        Optional.ofNullable(vesselDetails.getVesselLightWeight())
+            .ifPresent(item -> builder.setVesselLightWeight(item.toString()));
         Optional.ofNullable(vesselDetails.getDeadWeight())
             .ifPresent(dwt -> builder.setDwt(dwt.toString()));
         Optional.ofNullable(vesselDetails.getDraftConditionName())
