@@ -103,7 +103,7 @@ export class LoadableQuantityComponent implements OnInit {
         constant: ['', [Validators.required]],
         others: ['', [Validators.required, numberValidator(2, 7), Validators.min(0)]],
         subTotal: ['', numberValidator(2, 7)],
-        totalQuantity: ['',  numberValidator(2, 7)]
+        totalQuantity: ['', numberValidator(2, 7)]
 
       });
 
@@ -193,7 +193,7 @@ export class LoadableQuantityComponent implements OnInit {
       this.ngxSpinnerService.show();
       if (this.caseNo === 1) {
         this.loadableQuantity = {
-        
+
 
           portId: this.loadableQuantityForm.controls.portName.value.id,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
@@ -373,12 +373,12 @@ export class LoadableQuantityComponent implements OnInit {
       this.loadableQuantityForm.controls['subTotal'].setValue(subTotal);
       this.getTotalLoadableQuantity();
     }
-    else  {
+    else {
       subTotal = Number(this.loadableQuantityForm.get('dwt').value) + Number(this.loadableQuantityForm.get('safCorrection').value) + Number(this.loadableQuantityForm.get('sgCorrection').value)
         - Number(this.loadableQuantityForm.get('foOnboard').value) - Number(this.loadableQuantityForm.get('doOnboard').value) - Number(this.loadableQuantityForm.get('freshWaterOnboard').value) - Number(this.loadableQuantityForm.get('boilerWaterOnboard').value) - Number(this.loadableQuantityForm.get('ballast').value) - Number(this.loadableQuantityForm.get('constant').value) - Number(this.loadableQuantityForm.get('others').value);
+      this.loadableQuantityForm.controls['subTotal'].setValue(subTotal);
       this.getTotalLoadableQuantity();
     }
-    this.loadableQuantityForm.controls['subTotal'].setValue(subTotal);
   }
 
   /**
