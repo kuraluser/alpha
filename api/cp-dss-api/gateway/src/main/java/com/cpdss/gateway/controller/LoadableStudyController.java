@@ -739,7 +739,7 @@ public class LoadableStudyController {
           e);
     }
   }
-  
+
   /**
    * Save commingle cargo
    *

@@ -50,6 +50,8 @@ message VesselLoadableQuantityDetails {
 	string vesselLightWeight = 2;
 	string constant = 3;
 	string tpc = 4;
+	string dwt = 5;
+	string draftConditionName = 6;
 }
 
 message VesselTankDetail{

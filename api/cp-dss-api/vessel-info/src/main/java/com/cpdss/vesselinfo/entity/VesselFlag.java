@@ -21,10 +21,9 @@ public class VesselFlag extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 
-  @Column(name = "flag_image_path") 
+  @Column(name = "flag_image_path")
   private String flagImagePath;
 
   @Column(name = "name")
   private String name;
-  
 }
