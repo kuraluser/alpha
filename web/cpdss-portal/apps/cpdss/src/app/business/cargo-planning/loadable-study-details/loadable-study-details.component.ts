@@ -243,6 +243,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
     if (res?.responseStatus?.status === "200") {
       this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY'] });
     }
+    this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
     this.ngxSpinnerService.hide();
   }
 

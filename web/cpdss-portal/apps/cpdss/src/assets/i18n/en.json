@@ -297,5 +297,7 @@
 	"COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER": "Select Cargo 2",
 	"LOADABLE_QUANTITY_ERROR":"Please enter a valid number",
 	"TOTAL_QUANTITY_ERROR": "Total quantity should not be greater than loadable quantity",
-	"LOADABLE_QUANTITY_UNIT_TONNE": "TONNE"
+	"LOADABLE_QUANTITY_UNIT_TONNE": "TONNE",
+	"COMMINGLE_VOL_MAX_SAVE_SUCCESS": "Success",
+	"COMMINGLE_VOL_MAX_SAVE_SUCCESSFULLY": "Commingle vol maximisation added successfully"
 }

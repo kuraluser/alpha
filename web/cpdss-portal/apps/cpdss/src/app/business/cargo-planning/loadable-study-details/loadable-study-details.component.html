@@ -80,7 +80,7 @@
             <label class="">{{'CARGO_NOMINATION_TOTAL_QUANTITY'| translate}}
                 <span class="ml-10 text-secondary">{{totalQuantity$|async}}</span></label>
         </div>
-        <div class="pr-15">
+        <div class="pr-15"  *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
             <button id="commingle_btn" class="btn btn-main  ml-10" type="button"
                 (click)="showComminglePopup()">{{'COMMINGLE_BUTTON' | translate}}</button>
         </div>

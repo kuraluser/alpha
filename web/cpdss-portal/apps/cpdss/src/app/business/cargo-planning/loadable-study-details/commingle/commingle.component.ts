@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { MessageService } from 'primeng/api';
 import { ICargo, ICargoNomination } from '../../models/cargo-planning.model';
 import { ICommingleCargo, ICommingleResponseModel, IPurpose } from '../../models/commingle.model';
 import { CommingleApiService } from '../../services/commingle-api.service';
@@ -32,7 +34,7 @@ export class CommingleComponent implements OnInit {
   isVolumeMaximum = true;
   selectedTank: any;
   percentage: any;
-  cargos: ICargo;
+  cargos: ICargo[];
   commingleData: ICommingleResponseModel;
   commingleForm: FormGroup;
   cargoNominationsCargo: ICargoNomination[];
@@ -45,7 +47,9 @@ export class CommingleComponent implements OnInit {
 
   constructor(private commingleApiService: CommingleApiService,
     private ngxSpinnerService: NgxSpinnerService,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder,
+    private messageService: MessageService,
+    private translateService: TranslateService) { }
 
 
   /**
@@ -79,9 +83,21 @@ export class CommingleComponent implements OnInit {
       this.commingleForm.patchValue({
         purpose: this.purposeOfCommingle[0]
       });
+      this.cargoNominationsCargo = this.commingleData.cargoNominations.map(itm => ({
+        ...this.cargos.find((item) => (item.id === itm.cargoId) && item),
+        ...itm
+      }));
+      this.cargoNominationsCargo1 = this.cargoNominationsCargo;
+      this.cargoNominationsCargo2 = this.cargoNominationsCargo;
       if (this.commingleCargo) {
-        this.selectedCargo1 = this.cargoNominationsCargo.find(cargo => cargo.id === this.commingleCargo.cargoGroups[0].cargo1Id);
-        this.selectedCargo2 = this.cargoNominationsCargo.find(cargo => cargo.id === this.commingleCargo.cargoGroups[0].cargo2Id);
+        this.selectedCargo1 = this.cargoNominationsCargo.find(cargo => cargo.cargoId === this.commingleCargo.cargoGroups[0].cargo1Id);
+        this.selectedCargo2 = this.cargoNominationsCargo.find(cargo => cargo.cargoId === this.commingleCargo.cargoGroups[0].cargo2Id);
+        if (this.selectedCargo1) {
+          this.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.cargoId !== this.selectedCargo1.cargoId);
+        }
+        if (this.selectedCargo2) {
+          this.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.cargoId !== this.selectedCargo2.cargoId);
+        }
         this.commingleForm.patchValue({
           purpose: this.purposeOfCommingle.find(purpose => purpose.id === this.commingleCargo.purposeId),
           slopOnly: this.commingleCargo.slopOnly,
@@ -89,9 +105,6 @@ export class CommingleComponent implements OnInit {
           cargo2: this.selectedCargo2
         });
       }
-      this.cargoNominationsCargo = this.commingleData.cargoNominations.map((item, i) => Object.assign({}, item, this.cargos[i]));
-      this.cargoNominationsCargo1 = this.cargoNominationsCargo;
-      this.cargoNominationsCargo2 = this.cargoNominationsCargo;
       this.preferredTank = this.commingleData.vesselCargoTanks;
     }
     this.ngxSpinnerService.hide();
@@ -115,7 +128,7 @@ export class CommingleComponent implements OnInit {
   /**
    * Close commingle popup
    */
-  cancel() {
+  close() {
     this.displayPopUp.emit(false);
   }
 
@@ -138,10 +151,10 @@ export class CommingleComponent implements OnInit {
    */
   onChange(event, cargo) {
     if (cargo === 1) {
-      this.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.id !== event.value.id);
+      this.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.cargoId !== event.value.cargoId);
       this.selectedCargo1 = event.value;
     } else {
-      this.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.id !== event.value.id);
+      this.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.cargoId !== event.value.cargoId);
       this.selectedCargo2 = event.value;
     }
   }
@@ -152,19 +165,22 @@ export class CommingleComponent implements OnInit {
   async saveVolumeMaximisation() {
     if (this.commingleForm.valid) {
       this.ngxSpinnerService.show();
+      const translationKeys = await this.translateService.get(['COMMINGLE_VOL_MAX_SAVE_SUCCESS', 'COMMINGLE_VOL_MAX_SAVE_SUCCESSFULLY']).toPromise();
       const data = {
         purposeId: this.commingleForm.value.purpose.id,
         slopOnly: this.commingleForm.value.slopOnly,
         cargoGroups: [{
           id: 0,
-          cargo1Id: this.commingleForm.value.cargo1.id,
-          cargo2Id: this.commingleForm.value.cargo2.id
+          cargo1Id: this.commingleForm.value.cargo1.cargoId,
+          cargo2Id: this.commingleForm.value.cargo2.cargoId
         }]
       }
       const result = await this.commingleApiService.saveVolMaxCommingle(this.vesselId, this.voyageId, this.loadableStudyId, data).toPromise();
-      if (result) {
-        this.ngxSpinnerService.hide();
+      if (result.responseStatus.status === '200') {
+        this.messageService.add({ severity: 'success', summary: translationKeys['COMMINGLE_VOL_MAX_SAVE_SUCCESS'], detail: translationKeys['COMMINGLE_VOL_MAX_SAVE_SUCCESSFULLY'] });
+        this.close();
       }
+      this.ngxSpinnerService.hide();
     }
   }
 }

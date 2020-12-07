@@ -10,7 +10,7 @@ import { ICargo, ICargoNomination } from './cargo-planning.model';
  */
 export interface ICargoResponseModel {
     responseStatus: IResponseStatus;
-    cargos: ICargo;
+    cargos: ICargo[];
 }
 
 
