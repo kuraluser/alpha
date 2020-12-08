@@ -1129,6 +1129,117 @@ public final class LoadableStudyServiceGrpc {
     return getSaveCommingleCargoMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply>
+      getGetLoadablePatternCommingleDetailsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetLoadablePatternCommingleDetails",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest.class,
+      responseType =
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply>
+      getGetLoadablePatternCommingleDetailsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply>
+        getGetLoadablePatternCommingleDetailsMethod;
+    if ((getGetLoadablePatternCommingleDetailsMethod =
+            LoadableStudyServiceGrpc.getGetLoadablePatternCommingleDetailsMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadablePatternCommingleDetailsMethod =
+                LoadableStudyServiceGrpc.getGetLoadablePatternCommingleDetailsMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetLoadablePatternCommingleDetailsMethod =
+              getGetLoadablePatternCommingleDetailsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy
+                              .LoadablePatternCommingleDetailsRequest,
+                          com.cpdss.common.generated.LoadableStudy
+                              .LoadablePatternCommingleDetailsReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "GetLoadablePatternCommingleDetails"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadablePatternCommingleDetailsRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadablePatternCommingleDetailsReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "GetLoadablePatternCommingleDetails"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadablePatternCommingleDetailsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+      getGenerateLoadablePatternsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GenerateLoadablePatterns",
+      requestType = com.cpdss.common.generated.LoadableStudy.AlgoRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.AlgoReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+      getGenerateLoadablePatternsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.AlgoRequest,
+            com.cpdss.common.generated.LoadableStudy.AlgoReply>
+        getGenerateLoadablePatternsMethod;
+    if ((getGenerateLoadablePatternsMethod =
+            LoadableStudyServiceGrpc.getGenerateLoadablePatternsMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGenerateLoadablePatternsMethod =
+                LoadableStudyServiceGrpc.getGenerateLoadablePatternsMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGenerateLoadablePatternsMethod =
+              getGenerateLoadablePatternsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.AlgoRequest,
+                          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GenerateLoadablePatterns"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "GenerateLoadablePatterns"))
+                      .build();
+        }
+      }
+    }
+    return getGenerateLoadablePatternsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -1352,6 +1463,23 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getSaveCommingleCargoMethod(), responseObserver);
     }
 
+    /** */
+    public void getLoadablePatternCommingleDetails(
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetLoadablePatternCommingleDetailsMethod(), responseObserver);
+    }
+
+    /** */
+    public void generateLoadablePatterns(
+        com.cpdss.common.generated.LoadableStudy.AlgoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGenerateLoadablePatternsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1509,6 +1637,22 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest,
                       com.cpdss.common.generated.LoadableStudy.CommingleCargoReply>(
                       this, METHODID_SAVE_COMMINGLE_CARGO)))
+          .addMethod(
+              getGetLoadablePatternCommingleDetailsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadablePatternCommingleDetailsRequest,
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadablePatternCommingleDetailsReply>(
+                      this, METHODID_GET_LOADABLE_PATTERN_COMMINGLE_DETAILS)))
+          .addMethod(
+              getGenerateLoadablePatternsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.AlgoRequest,
+                      com.cpdss.common.generated.LoadableStudy.AlgoReply>(
+                      this, METHODID_GENERATE_LOADABLE_PATTERNS)))
           .build();
     }
   }
@@ -1767,6 +1911,29 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getLoadablePatternCommingleDetails(
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetLoadablePatternCommingleDetailsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void generateLoadablePatterns(
+        com.cpdss.common.generated.LoadableStudy.AlgoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGenerateLoadablePatternsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1936,6 +2103,22 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request) {
       return blockingUnaryCall(
           getChannel(), getSaveCommingleCargoMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        getLoadablePatternCommingleDetails(
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+                request) {
+      return blockingUnaryCall(
+          getChannel(), getGetLoadablePatternCommingleDetailsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.AlgoReply generateLoadablePatterns(
+        com.cpdss.common.generated.LoadableStudy.AlgoRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGenerateLoadablePatternsMethod(), getCallOptions(), request);
     }
   }
 
@@ -2143,6 +2326,25 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getSaveCommingleCargoMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply>
+        getLoadablePatternCommingleDetails(
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+                request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetLoadablePatternCommingleDetailsMethod(), getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.AlgoReply>
+        generateLoadablePatterns(com.cpdss.common.generated.LoadableStudy.AlgoRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGenerateLoadablePatternsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -2167,6 +2369,8 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_PURPOSE_OF_COMMINGLE = 19;
   private static final int METHODID_GET_COMMINGLE_CARGO = 20;
   private static final int METHODID_SAVE_COMMINGLE_CARGO = 21;
+  private static final int METHODID_GET_LOADABLE_PATTERN_COMMINGLE_DETAILS = 22;
+  private static final int METHODID_GENERATE_LOADABLE_PATTERNS = 23;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -2338,6 +2542,21 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.CommingleCargoReply>)
                   responseObserver);
           break;
+        case METHODID_GET_LOADABLE_PATTERN_COMMINGLE_DETAILS:
+          serviceImpl.getLoadablePatternCommingleDetails(
+              (com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadablePatternCommingleDetailsReply>)
+                  responseObserver);
+          break;
+        case METHODID_GENERATE_LOADABLE_PATTERNS:
+          serviceImpl.generateLoadablePatterns(
+              (com.cpdss.common.generated.LoadableStudy.AlgoRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -2424,6 +2643,8 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetPurposeOfCommingleMethod())
                       .addMethod(getGetCommingleCargoMethod())
                       .addMethod(getSaveCommingleCargoMethod())
+                      .addMethod(getGetLoadablePatternCommingleDetailsMethod())
+                      .addMethod(getGenerateLoadablePatternsMethod())
                       .build();
         }
       }

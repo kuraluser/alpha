@@ -23,7 +23,9 @@ import lombok.Setter;
 @Table(name = "port_info")
 public class PortInfo extends EntityDoc {
 
-  @Column(name = "name")
+private static final long serialVersionUID = 1L;
+
+@Column(name = "name")
   private String name;
 
   @Column(name = "code")
@@ -31,6 +33,12 @@ public class PortInfo extends EntityDoc {
 
   @Column(name = "density_seawater")
   private BigDecimal densitySeaWater;
+  
+  @Column(name = "average_tide_height")
+  private BigDecimal averageTideHeight;
+  
+  @Column(name = "tide_height")
+  private BigDecimal tideHeight;
 
   @Column(name = "is_active")
   private Boolean isActive;

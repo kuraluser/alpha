@@ -30,6 +30,9 @@ public class CalculationSheetTankgroup extends EntityDoc {
   @Column(name = "lcg")
   private BigDecimal lcg;
 
+  @Column(name = "frame_number")
+  private BigDecimal frameNumber;
+
   @Column(name = "is_active")
   private Boolean isActive;
 

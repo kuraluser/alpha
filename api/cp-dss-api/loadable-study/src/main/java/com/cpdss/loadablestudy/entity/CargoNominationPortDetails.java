@@ -22,6 +22,8 @@ import lombok.Setter;
 @Table(name = "cargo_nomination_operation_details")
 public class CargoNominationPortDetails extends EntityDoc {
 
+  private static final long serialVersionUID = 1L;
+
   @ManyToOne
   @JoinColumn(name = "cargo_nomination_xid")
   private CargoNomination cargoNomination;

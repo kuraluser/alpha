@@ -3,6 +3,8 @@ package com.cpdss.gateway.service;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
+import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
+import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
@@ -10,9 +12,19 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockin
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.BMAndSF;
+import com.cpdss.gateway.domain.BendingMoment;
+import com.cpdss.gateway.domain.CalculationSheet;
+import com.cpdss.gateway.domain.CalculationSheetTankGroup;
+import com.cpdss.gateway.domain.HydrostaticData;
 import com.cpdss.gateway.domain.LoadLine;
+import com.cpdss.gateway.domain.ShearingForce;
 import com.cpdss.gateway.domain.Vessel;
+import com.cpdss.gateway.domain.VesselDetailsResponse;
+import com.cpdss.gateway.domain.VesselDraftCondition;
 import com.cpdss.gateway.domain.VesselResponse;
+import com.cpdss.gateway.domain.VesselTank;
+import com.cpdss.gateway.domain.VesselTankTCG;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import java.math.BigDecimal;
@@ -139,5 +151,311 @@ public class VesselInfoService {
    */
   public VesselReply getVesselsByCompany(VesselRequest request) {
     return this.vesselInfoGrpcService.getAllVesselsByCompany(request);
+  }
+
+  /**
+   * @param vesselId
+   * @param first
+   * @return VesselDetailsResponse
+   */
+  public VesselDetailsResponse getVesselsDetails(Long vesselId, String correlationId)
+      throws GenericServiceException {
+    VesselDetailsResponse vesselDetailsResponse = new VesselDetailsResponse();
+    VesselAlgoRequest vesselAlgoRequest =
+        VesselAlgoRequest.newBuilder().setVesselId(vesselId).build();
+    VesselAlgoReply vesselAlgoReply = this.getVesselsDetails(vesselAlgoRequest);
+    if (!SUCCESS.equals(vesselAlgoReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get Vessel Details ",
+          vesselAlgoReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(vesselAlgoReply.getResponseStatus().getCode())));
+    }
+    vesselDetailsResponse.setVessel(
+        this.buildVesselDetailsResponse(vesselAlgoReply, correlationId));
+    vesselDetailsResponse.setVesselDraftCondition(
+        this.buildVesselDraftconditionResponse(vesselAlgoReply, correlationId));
+    vesselDetailsResponse.setVesselTanks(
+        this.buildVesselTankListResponse(vesselAlgoReply, correlationId));
+    vesselDetailsResponse.setHydrostaticDatas(
+        this.buildHydrostaticResponse(vesselAlgoReply, correlationId));
+    vesselDetailsResponse.setVesselTankTCGs(
+        this.buildVesselTankTcgResponse(vesselAlgoReply, correlationId));
+    BMAndSF bmAndSF = new BMAndSF();
+    bmAndSF.setBendingMoment(this.createBendingMomentResponse(vesselAlgoReply, correlationId));
+    bmAndSF.setShearingForce(this.createShearingForceResponse(vesselAlgoReply, correlationId));
+    bmAndSF.setCalculationSheet(
+        this.createCalculationSheetResponse(vesselAlgoReply, correlationId));
+    bmAndSF.setCalculationSheetTankGroup(
+        this.createCalculationSheetTankGroupResponse(vesselAlgoReply, correlationId));
+    vesselDetailsResponse.setBMAndSF(bmAndSF);
+    vesselDetailsResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+
+    return vesselDetailsResponse;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return List<CalculationSheetTankGroup>
+   */
+  private List<CalculationSheetTankGroup> createCalculationSheetTankGroupResponse(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<CalculationSheetTankGroup> calculationSheetTankGroups =
+        new ArrayList<CalculationSheetTankGroup>();
+    vesselAlgoReply
+        .getBMAndSF()
+        .getCalculationSheetTankGroupList()
+        .forEach(
+            calculationSheetTankGroup -> {
+              CalculationSheetTankGroup cstg = new CalculationSheetTankGroup();
+              cstg.setId(calculationSheetTankGroup.getId());
+              cstg.setTankGroup(calculationSheetTankGroup.getTankGroup());
+              cstg.setLcg(calculationSheetTankGroup.getLcg());
+              cstg.setFrameNumber(calculationSheetTankGroup.getFrameNumber());
+              calculationSheetTankGroups.add(cstg);
+            });
+    return calculationSheetTankGroups;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return List<CalculationSheet>
+   */
+  private List<CalculationSheet> createCalculationSheetResponse(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<CalculationSheet> calculationSheets = new ArrayList<CalculationSheet>();
+    vesselAlgoReply
+        .getBMAndSF()
+        .getCalculationSheetList()
+        .forEach(
+            calculationSheet -> {
+              CalculationSheet cs = new CalculationSheet();
+              cs.setId(calculationSheet.getId());
+              cs.setTankGroup(calculationSheet.getTankGroup());
+              cs.setTankId(calculationSheet.getTankId());
+              cs.setWeightRatio(calculationSheet.getWeightRatio());
+              cs.setLcg(calculationSheet.getLcg());
+
+              calculationSheets.add(cs);
+            });
+    return calculationSheets;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return List<ShearingForce>
+   */
+  private List<ShearingForce> createShearingForceResponse(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<ShearingForce> shearingForces = new ArrayList<ShearingForce>();
+    vesselAlgoReply
+        .getBMAndSF()
+        .getBendingMomentList()
+        .forEach(
+            shearingForce -> {
+              ShearingForce sf = new ShearingForce();
+              sf.setId(shearingForce.getId());
+              sf.setFrameNumber(shearingForce.getFrameNumber());
+              sf.setId(shearingForce.getId());
+              sf.setBaseValue(shearingForce.getBaseValue());
+              sf.setBaseDraft(shearingForce.getBaseDraft());
+              sf.setDraftCorrection(shearingForce.getDraftCorrection());
+              sf.setTrimCorrection(shearingForce.getTrimCorrection());
+              shearingForces.add(sf);
+            });
+    return shearingForces;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return List<BendingMoment>
+   */
+  private List<BendingMoment> createBendingMomentResponse(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<BendingMoment> bendingMoments = new ArrayList<BendingMoment>();
+    vesselAlgoReply
+        .getBMAndSF()
+        .getBendingMomentList()
+        .forEach(
+            bendingMoment -> {
+              BendingMoment bm = new BendingMoment();
+              bm.setId(bendingMoment.getId());
+              bm.setFrameNumber(bendingMoment.getFrameNumber());
+              bm.setId(bendingMoment.getId());
+              bm.setBaseValue(bendingMoment.getBaseValue());
+              bm.setBaseDraft(bendingMoment.getBaseDraft());
+              bm.setDraftCorrection(bendingMoment.getDraftCorrection());
+              bm.setTrimCorrection(bendingMoment.getTrimCorrection());
+              bendingMoments.add(bm);
+            });
+    return bendingMoments;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return List<VesselTankTCG>
+   */
+  private List<VesselTankTCG> buildVesselTankTcgResponse(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<VesselTankTCG> vesselTankTCGs = new ArrayList<VesselTankTCG>();
+    vesselAlgoReply
+        .getVesselTankTCGList()
+        .forEach(
+            vesselTankTCG -> {
+              VesselTankTCG tankTCG = new VesselTankTCG();
+              tankTCG.setCapacity(vesselTankTCG.getCapacity());
+              tankTCG.setId(vesselTankTCG.getId());
+              tankTCG.setTankId(vesselTankTCG.getTankId());
+              tankTCG.setTcg(vesselTankTCG.getTcg());
+              vesselTankTCGs.add(tankTCG);
+            });
+    return vesselTankTCGs;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return List<HydrostaticData>
+   */
+  private List<HydrostaticData> buildHydrostaticResponse(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+
+    List<HydrostaticData> hydrostaticDatas = new ArrayList<HydrostaticData>();
+    vesselAlgoReply
+        .getHydrostaticDataList()
+        .forEach(
+            data -> {
+              HydrostaticData hydrostaticData = new HydrostaticData();
+              hydrostaticData.setDisplacement(data.getDisplacement());
+              hydrostaticData.setDraft(data.getDraft());
+              hydrostaticData.setId(data.getId());
+              hydrostaticData.setLcb(data.getLcb());
+              hydrostaticData.setLcf(data.getLcf());
+              hydrostaticData.setLkm(data.getLkm());
+              hydrostaticData.setTkm(data.getTkm());
+              hydrostaticData.setTrim(data.getTrim());
+              hydrostaticData.setVcb(data.getVcb());
+              hydrostaticDatas.add(hydrostaticData);
+            });
+
+    return hydrostaticDatas;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return List<VesselTank>
+   */
+  private List<VesselTank> buildVesselTankListResponse(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<VesselTank> vesselTanks = new ArrayList<VesselTank>();
+    vesselAlgoReply
+        .getVesselTankDetailList()
+        .forEach(
+            vesselTank -> {
+              VesselTank tank = new VesselTank();
+              tank.setCategoryId(vesselTank.getTankCategoryId());
+              tank.setCategoryName(vesselTank.getTankCategoryName());
+              tank.setCoatingTypeId(vesselTank.getCoatingTypeId());
+              tank.setDensity(
+                  vesselTank.getDensity().equals("")
+                      ? null
+                      : new BigDecimal(vesselTank.getDensity()));
+              tank.setFillCapcityCubm(
+                  vesselTank.getFillCapacityCubm().equals("")
+                      ? new BigDecimal(0)
+                      : new BigDecimal(vesselTank.getFillCapacityCubm()));
+              tank.setFrameNumberFrom(vesselTank.getFrameNumberFrom());
+              tank.setFrameNumberTo(vesselTank.getFrameNumberTo());
+              tank.setId(vesselTank.getTankId());
+              tank.setLcg(vesselTank.getLcg());
+              tank.setName(vesselTank.getTankName());
+              tank.setShortName(vesselTank.getShortName());
+              tank.setTcg(vesselTank.getTcg());
+              tank.setVcg(vesselTank.getVcg());
+              vesselTanks.add(tank);
+            });
+    return vesselTanks;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return List<VesselDraftCondition>
+   */
+  private List<VesselDraftCondition> buildVesselDraftconditionResponse(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<VesselDraftCondition> vesselDraftConditions = new ArrayList<VesselDraftCondition>();
+    vesselAlgoReply
+        .getVesselDraftConditionList()
+        .forEach(
+            vesselDraftCondition -> {
+              VesselDraftCondition draftCondition = new VesselDraftCondition();
+              draftCondition.setDeadWeight(vesselDraftCondition.getDeadWeight());
+              draftCondition.setDepth(vesselDraftCondition.getDepth());
+              draftCondition.setDisplacement(vesselDraftCondition.getDisplacement());
+              draftCondition.setDraftConditionId(vesselDraftCondition.getDraftConditionId());
+              draftCondition.setDraftExtreme(vesselDraftCondition.getDraftExtreme());
+              draftCondition.setFreeboard(vesselDraftCondition.getFreeboard());
+              draftCondition.setId(vesselDraftCondition.getId());
+              vesselDraftConditions.add(draftCondition);
+            });
+    return vesselDraftConditions;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return VesselDetailsResponse
+   */
+  private Vessel buildVesselDetailsResponse(VesselAlgoReply vesselAlgoReply, String correlationId) {
+    Vessel vessel = new Vessel();
+    vessel.setName(vesselAlgoReply.getVesselDetail().getName());
+    vessel.setImoNumber(vesselAlgoReply.getVesselDetail().getImoNumber());
+    vessel.setCode(vesselAlgoReply.getVesselDetail().getCode());
+    vessel.setPortOfRegistry(vesselAlgoReply.getVesselDetail().getPortOfRegistry());
+    vessel.setBuilder(vesselAlgoReply.getVesselDetail().getBuilder());
+    vessel.setOfficialNumber(vesselAlgoReply.getVesselDetail().getOfficialNumber());
+    vessel.setSignalLetter(vesselAlgoReply.getVesselDetail().getSignalLetter());
+    vessel.setNavigationAreaId(vesselAlgoReply.getVesselDetail().getNavigationAreaId());
+    vessel.setTypeOfShip(vesselAlgoReply.getVesselDetail().getTypeOfShip());
+    vessel.setRegisterLength(vesselAlgoReply.getVesselDetail().getRegisterLength());
+    vessel.setLengthOverall(vesselAlgoReply.getVesselDetail().getLengthOverall());
+    vessel.setLengthBetweenPerpendiculars(
+        vesselAlgoReply.getVesselDetail().getLengthBetweenPerpendiculars());
+    vessel.setBreadthMolded(vesselAlgoReply.getVesselDetail().getBreadthMolded());
+    vessel.setDepthMolded(vesselAlgoReply.getVesselDetail().getDepthMolded());
+    vessel.setDesignedLoaddraft(vesselAlgoReply.getVesselDetail().getDesignedLoaddraft());
+    vessel.setDraftFullLoadSummer(vesselAlgoReply.getVesselDetail().getDraftFullLoadSummer());
+    vessel.setThicknessOfUpperDeckStringerPlate(
+        vesselAlgoReply.getVesselDetail().getThicknessOfUpperDeckStringerPlate());
+    vessel.setThicknessOfKeelplate(vesselAlgoReply.getVesselDetail().getThicknessOfKeelplate());
+    vessel.setDeadweight(vesselAlgoReply.getVesselDetail().getDeadweight());
+    vessel.setLightweight(vesselAlgoReply.getVesselDetail().getLightweight());
+    vessel.setLcg(vesselAlgoReply.getVesselDetail().getLcg());
+    vessel.setKeelToMastHeight(vesselAlgoReply.getVesselDetail().getKeelToMastHeight());
+    vessel.setDeadweightConstant(vesselAlgoReply.getVesselDetail().getDeadweightConstant());
+    vessel.setProvisionalConstant(vesselAlgoReply.getVesselDetail().getProvisionalConstant());
+    vessel.setDeadweightConstantLcg(vesselAlgoReply.getVesselDetail().getDeadweightConstantLcg());
+    vessel.setProvisionalConstantLcg(vesselAlgoReply.getVesselDetail().getProvisionalConstantLcg());
+    vessel.setGrossTonnage(vesselAlgoReply.getVesselDetail().getGrossTonnage());
+    vessel.setNetTonnage(vesselAlgoReply.getVesselDetail().getNetTonnage());
+    vessel.setDeadweightConstantTcg(vesselAlgoReply.getVesselDetail().getDeadweightConstantTcg());
+    vessel.setFrameSpace3l(vesselAlgoReply.getVesselDetail().getFrameSpace3L());
+    vessel.setFrameSpace7l(vesselAlgoReply.getVesselDetail().getFrameSpace7L());
+    return vessel;
+  }
+
+  /**
+   * @param vesselAlgoRequest
+   * @return VesselAlgoReply
+   */
+  private VesselAlgoReply getVesselsDetails(VesselAlgoRequest vesselAlgoRequest) {
+    return vesselInfoGrpcService.getVesselDetailsForAlgo(vesselAlgoRequest);
   }
 }

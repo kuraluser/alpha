@@ -3,7 +3,6 @@ package com.cpdss.vesselinfo.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.Column;
@@ -112,7 +111,7 @@ public class Vessel extends EntityDoc {
   private BigDecimal lightweight;
 
   @Column(name = "company_xid")
-  private Long companyId;
+  private Long companyXId;
 
   @Column(name = "is_active")
   private Boolean isActive;
@@ -167,21 +166,6 @@ public class Vessel extends EntityDoc {
 
   @Column(name = "chiefengineer_xid")
   private Long chiefengineerId;
-
-  @OneToMany(mappedBy = "vessel")
-  private Collection<SuctionBellmouthMapping> suctionBellmouthMappingCollection;
-
-  @OneToMany(mappedBy = "vessel")
-  private Collection<VesselTank> vesselTankCollection;
-
-  @OneToMany(mappedBy = "vessel")
-  private Collection<VesselPumps> vesselPumpsCollection;
-
-  @OneToMany(mappedBy = "vessel")
-  private Collection<VesselPipelineTankmapping> vesselPipelineTankmappingCollection;
-
-  @OneToMany(mappedBy = "vessel")
-  private Collection<BendingMoment> bendingMomentCollection;
 
   @JoinColumn(name = "flag_xid", referencedColumnName = "id")
   @ManyToOne

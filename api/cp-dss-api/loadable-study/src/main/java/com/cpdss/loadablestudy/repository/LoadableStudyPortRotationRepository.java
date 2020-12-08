@@ -6,6 +6,7 @@ import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import java.util.List;
+import org.springframework.data.jpa.repository.Query;
 
 public interface LoadableStudyPortRotationRepository
     extends CommonCrudRepository<LoadableStudyPortRotation, Long> {
@@ -45,4 +46,24 @@ public interface LoadableStudyPortRotationRepository
    */
   public List<LoadableStudyPortRotation> findByLoadableStudyAndOperationAndIsActiveOrderByPortOrder(
       final LoadableStudy loadableStudy, final CargoOperation operation, final boolean isActive);
+
+  /**
+   * @param loadableStudyId
+   * @param isActive
+   * @return List<LoadableStudyPortRotation>
+   */
+  @Query(
+      "FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy.id = ?1 AND LSPR.isActive = ?2")
+  public List<LoadableStudyPortRotation> findByLoadableStudyAndIsActive(
+      Long loadableStudyId, Boolean isActive);
+
+  /**
+   * @param loadableStudy
+   * @param isActive
+   * @return List<LoadableStudyPortRotation>
+   */
+  @Query(
+      "SELECT DISTINCT portXId FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy = ?1 AND LSPR.isActive = ?2")
+  public List<Long> findByLoadableStudyAndIsActive(
+      final LoadableStudy loadableStudy, final boolean isActive);
 }

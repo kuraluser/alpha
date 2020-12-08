@@ -1,13 +1,6 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.common.generated;
 
-import static io.grpc.MethodDescriptor.generateFullMethodName;
-import static io.grpc.stub.ClientCalls.asyncUnaryCall;
-import static io.grpc.stub.ClientCalls.blockingUnaryCall;
-import static io.grpc.stub.ClientCalls.futureUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
-
 /** */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.27.1)",
@@ -19,53 +12,6 @@ public final class LoadablePlanServiceGrpc {
   public static final String SERVICE_NAME = "LoadablePlanService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadablePlan.AlgoRequest,
-          com.cpdss.common.generated.LoadablePlan.AlgoReply>
-      getCallAlgoMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "CallAlgo",
-      requestType = com.cpdss.common.generated.LoadablePlan.AlgoRequest.class,
-      responseType = com.cpdss.common.generated.LoadablePlan.AlgoReply.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadablePlan.AlgoRequest,
-          com.cpdss.common.generated.LoadablePlan.AlgoReply>
-      getCallAlgoMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadablePlan.AlgoRequest,
-            com.cpdss.common.generated.LoadablePlan.AlgoReply>
-        getCallAlgoMethod;
-    if ((getCallAlgoMethod = LoadablePlanServiceGrpc.getCallAlgoMethod) == null) {
-      synchronized (LoadablePlanServiceGrpc.class) {
-        if ((getCallAlgoMethod = LoadablePlanServiceGrpc.getCallAlgoMethod) == null) {
-          LoadablePlanServiceGrpc.getCallAlgoMethod =
-              getCallAlgoMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadablePlan.AlgoRequest,
-                          com.cpdss.common.generated.LoadablePlan.AlgoReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "CallAlgo"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadablePlan.AlgoRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadablePlan.AlgoReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadablePlanServiceMethodDescriptorSupplier("CallAlgo"))
-                      .build();
-        }
-      }
-    }
-    return getCallAlgoMethod;
-  }
-
   /** Creates a new async stub that supports all call types for the service */
   public static LoadablePlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadablePlanServiceStub> factory =
@@ -110,24 +56,9 @@ public final class LoadablePlanServiceGrpc {
   /** */
   public abstract static class LoadablePlanServiceImplBase implements io.grpc.BindableService {
 
-    /** */
-    public void callAlgo(
-        com.cpdss.common.generated.LoadablePlan.AlgoRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadablePlan.AlgoReply>
-            responseObserver) {
-      asyncUnimplementedUnaryCall(getCallAlgoMethod(), responseObserver);
-    }
-
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
-      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
-          .addMethod(
-              getCallAlgoMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadablePlan.AlgoRequest,
-                      com.cpdss.common.generated.LoadablePlan.AlgoReply>(this, METHODID_CALL_ALGO)))
-          .build();
+      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor()).build();
     }
   }
 
@@ -142,15 +73,6 @@ public final class LoadablePlanServiceGrpc {
     protected LoadablePlanServiceStub build(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new LoadablePlanServiceStub(channel, callOptions);
-    }
-
-    /** */
-    public void callAlgo(
-        com.cpdss.common.generated.LoadablePlan.AlgoRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadablePlan.AlgoReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getCallAlgoMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -167,12 +89,6 @@ public final class LoadablePlanServiceGrpc {
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new LoadablePlanServiceBlockingStub(channel, callOptions);
     }
-
-    /** */
-    public com.cpdss.common.generated.LoadablePlan.AlgoReply callAlgo(
-        com.cpdss.common.generated.LoadablePlan.AlgoRequest request) {
-      return blockingUnaryCall(getChannel(), getCallAlgoMethod(), getCallOptions(), request);
-    }
   }
 
   /** */
@@ -188,16 +104,7 @@ public final class LoadablePlanServiceGrpc {
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new LoadablePlanServiceFutureStub(channel, callOptions);
     }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadablePlan.AlgoReply>
-        callAlgo(com.cpdss.common.generated.LoadablePlan.AlgoRequest request) {
-      return futureUnaryCall(getChannel().newCall(getCallAlgoMethod(), getCallOptions()), request);
-    }
   }
-
-  private static final int METHODID_CALL_ALGO = 0;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -216,12 +123,6 @@ public final class LoadablePlanServiceGrpc {
     @java.lang.SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
-        case METHODID_CALL_ALGO:
-          serviceImpl.callAlgo(
-              (com.cpdss.common.generated.LoadablePlan.AlgoRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadablePlan.AlgoReply>)
-                  responseObserver);
-          break;
         default:
           throw new AssertionError();
       }
@@ -286,7 +187,6 @@ public final class LoadablePlanServiceGrpc {
               result =
                   io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
                       .setSchemaDescriptor(new LoadablePlanServiceFileDescriptorSupplier())
-                      .addMethod(getCallAlgoMethod())
                       .build();
         }
       }

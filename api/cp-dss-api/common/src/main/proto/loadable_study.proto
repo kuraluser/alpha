@@ -70,7 +70,19 @@ service LoadableStudyService {
 	
 	rpc SaveCommingleCargo (CommingleCargoRequest) returns (CommingleCargoReply){
 	}
+	rpc GetLoadablePatternCommingleDetails (LoadablePatternCommingleDetailsRequest) returns (LoadablePatternCommingleDetailsReply) {
+	}
+	rpc GenerateLoadablePatterns (AlgoRequest) returns (AlgoReply) {
+	}
 }
+	message AlgoRequest {
+	int64 loadableStudyId = 1;
+	}
+
+	message AlgoReply {
+	ResponseStatus responseStatus = 1;
+ 	}
+
 
 
 message VoyageRequest {
@@ -360,6 +372,9 @@ message LoadablePatternCargoDetails {
  	string difference = 6;
  	string constraints = 7;
  	string differenceColor = 8;
+ 	int64 loadablePatternDetailsId = 9;
+ 	bool isCommingle = 10;
+ 	int64 loadablePatternCommingleDetailsId = 11;
 }
 
 message LoadablePatternRequest {
@@ -387,3 +402,25 @@ message CommingleCargoReply{
 	ResponseStatus responseStatus = 1;
 	repeated CommingleCargo commingleCargo = 2;
 }
+
+
+message LoadablePatternCommingleDetailsRequest {
+	int64 loadablePatternCommingleDetailsId = 1;
+}
+
+message LoadablePatternCommingleDetailsReply {
+	int64 id = 1;
+	string tankShortName = 2;
+	string cargo1Abbrivation = 3;
+	string cargo2Abbrivation = 4;
+	string grade = 5;
+	string quantity = 6;
+	string api = 7;
+	string temperature = 8;
+	string cargo1Quantity = 9;
+	string cargo2Quantity = 10;
+	string cargo1Percentage = 11;
+	string cargo2Percentage = 12;
+	ResponseStatus responseStatus = 13;
+}
+

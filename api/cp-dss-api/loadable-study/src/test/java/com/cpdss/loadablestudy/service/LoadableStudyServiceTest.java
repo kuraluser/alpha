@@ -43,6 +43,7 @@ import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
+import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
@@ -55,12 +56,14 @@ import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
+import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
@@ -119,6 +122,9 @@ class LoadableStudyServiceTest {
   @MockBean private CommingleCargoRepository commingleCargoRepository;
 
   @MockBean
+  private LoadablePatternComingleDetailsRepository loadablePatternComingleDetailsRepository;
+
+  @MockBean
   private CargoNominationValveSegregationRepository cargoNominationValveSegregationRepository;
 
   @MockBean
@@ -126,6 +132,7 @@ class LoadableStudyServiceTest {
 
   @MockBean private OnHandQuantityRepository onHandQuantityRepository;
 
+  @MockBean private OnBoardQuantityRepository onBoardQuantityRepository;
   @Mock private CargoNomination cargoNomination;
 
   @Mock private CargoNominationPortDetails cargoNominationPortDetails;
@@ -889,7 +896,9 @@ class LoadableStudyServiceTest {
         .thenReturn(Optional.of(loadableStudy));
     List<LoadableQuantity> loadableQuantities = new ArrayList<LoadableQuantity>();
     loadableQuantities.add(loadableQuantity);
-    Mockito.when(loadableQuantityRepository.findByLoadableStudyXId(ArgumentMatchers.anyLong()))
+    Mockito.when(
+            loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
+                ArgumentMatchers.anyLong(), anyBoolean()))
         .thenReturn(loadableQuantities);
 
     StreamRecorder<LoadableQuantityResponse> responseObserver = StreamRecorder.create();
@@ -932,7 +941,9 @@ class LoadableStudyServiceTest {
 
     Mockito.when(loadableStudyRepository.findById(ArgumentMatchers.anyLong()))
         .thenReturn(Optional.of(loadableStudy));
-    Mockito.when(loadableQuantityRepository.findByLoadableStudyXId(ArgumentMatchers.anyLong()))
+    Mockito.when(
+            loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
+                ArgumentMatchers.anyLong(), anyBoolean()))
         .thenReturn(new ArrayList<LoadableQuantity>());
     VesselReply.Builder replyBuilderVessel = VesselReply.newBuilder();
     VesselLoadableQuantityDetails.Builder builder = VesselLoadableQuantityDetails.newBuilder();
@@ -976,7 +987,9 @@ class LoadableStudyServiceTest {
   public void negativeTestCaseForGetLoadableQuantity() throws GenericServiceException {
     StreamRecorder<LoadableQuantityResponse> responseObserver = StreamRecorder.create();
 
-    Mockito.when(loadableQuantityRepository.findByLoadableStudyXId(ArgumentMatchers.anyLong()))
+    Mockito.when(
+            loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
+                ArgumentMatchers.anyLong(), anyBoolean()))
         .thenReturn((new ArrayList<LoadableQuantity>()));
     LoadableQuantityReply request =
         LoadableQuantityReply.newBuilder()
@@ -1732,6 +1745,9 @@ class LoadableStudyServiceTest {
   void testGetLoadablePatternDetails() {
     when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(Optional.of(new LoadableStudy()));
+    when(this.loadablePatternComingleDetailsRepository.findByLoadablePatternDetailsIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadablePatternComingleDetails()));
     when(this.loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
             any(LoadableStudy.class), anyBoolean()))
         .thenReturn(prepareLoadablePatterns());
@@ -1777,6 +1793,7 @@ class LoadableStudyServiceTest {
               loadablePatternDetails.setPriority(i);
               loadablePatternDetails.setQuantity(new BigDecimal(i));
               loadablePatternDetails.setTankId(Long.valueOf(i));
+              loadablePatternDetails.setIsCommingle(true);
               list.add(loadablePatternDetails);
             });
     return list;

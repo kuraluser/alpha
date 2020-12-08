@@ -7,13 +7,6 @@ option java_package = "com.cpdss.common.generated";
 import "common.proto";
 
 service LoadablePlanService {
-	rpc CallAlgo (AlgoRequest) returns (AlgoReply) {
-	}
-}	
-	message AlgoRequest {
-	int64 loadableStudyId = 1;
-	}
 
-	message AlgoReply {
-	ResponseStatus responseStatus = 1;
- 	}
+}	
+

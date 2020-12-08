@@ -15,6 +15,9 @@ service PortInfoService {
 	
 	rpc GetPortInfoByPortIds (GetPortInfoByPortIdsRequest) returns (PortReply) {
 	}
+	
+	rpc GetPortInfoDetailsForAlgo (GetPortInfoByPortIdsRequest) returns (PortReply) {
+	}
 }
 
 message GetPortInfoByPortIdsRequest {
@@ -35,6 +38,8 @@ message PortDetail {
 	string waterDensity = 4;
 	string maxDraft = 5;
 	string maxAirDraft = 6;
+	string averageTideHeight = 7;
+	string tideHeight = 8;
 }
 
 message PortReply {

@@ -1444,6 +1444,32 @@ public final class PortInfo {
      * @return The bytes for maxAirDraft.
      */
     com.google.protobuf.ByteString getMaxAirDraftBytes();
+
+    /**
+     * <code>string averageTideHeight = 7;</code>
+     *
+     * @return The averageTideHeight.
+     */
+    java.lang.String getAverageTideHeight();
+    /**
+     * <code>string averageTideHeight = 7;</code>
+     *
+     * @return The bytes for averageTideHeight.
+     */
+    com.google.protobuf.ByteString getAverageTideHeightBytes();
+
+    /**
+     * <code>string tideHeight = 8;</code>
+     *
+     * @return The tideHeight.
+     */
+    java.lang.String getTideHeight();
+    /**
+     * <code>string tideHeight = 8;</code>
+     *
+     * @return The bytes for tideHeight.
+     */
+    com.google.protobuf.ByteString getTideHeightBytes();
   }
   /** Protobuf type {@code PortDetail} */
   public static final class PortDetail extends com.google.protobuf.GeneratedMessageV3
@@ -1462,6 +1488,8 @@ public final class PortInfo {
       waterDensity_ = "";
       maxDraft_ = "";
       maxAirDraft_ = "";
+      averageTideHeight_ = "";
+      tideHeight_ = "";
     }
 
     @java.lang.Override
@@ -1531,6 +1559,20 @@ public final class PortInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 maxAirDraft_ = s;
+                break;
+              }
+            case 58:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                averageTideHeight_ = s;
+                break;
+              }
+            case 66:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                tideHeight_ = s;
                 break;
               }
             default:
@@ -1751,6 +1793,76 @@ public final class PortInfo {
       }
     }
 
+    public static final int AVERAGETIDEHEIGHT_FIELD_NUMBER = 7;
+    private volatile java.lang.Object averageTideHeight_;
+    /**
+     * <code>string averageTideHeight = 7;</code>
+     *
+     * @return The averageTideHeight.
+     */
+    public java.lang.String getAverageTideHeight() {
+      java.lang.Object ref = averageTideHeight_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        averageTideHeight_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string averageTideHeight = 7;</code>
+     *
+     * @return The bytes for averageTideHeight.
+     */
+    public com.google.protobuf.ByteString getAverageTideHeightBytes() {
+      java.lang.Object ref = averageTideHeight_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        averageTideHeight_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TIDEHEIGHT_FIELD_NUMBER = 8;
+    private volatile java.lang.Object tideHeight_;
+    /**
+     * <code>string tideHeight = 8;</code>
+     *
+     * @return The tideHeight.
+     */
+    public java.lang.String getTideHeight() {
+      java.lang.Object ref = tideHeight_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        tideHeight_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string tideHeight = 8;</code>
+     *
+     * @return The bytes for tideHeight.
+     */
+    public com.google.protobuf.ByteString getTideHeightBytes() {
+      java.lang.Object ref = tideHeight_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        tideHeight_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -1783,6 +1895,12 @@ public final class PortInfo {
       if (!getMaxAirDraftBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 6, maxAirDraft_);
       }
+      if (!getAverageTideHeightBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, averageTideHeight_);
+      }
+      if (!getTideHeightBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, tideHeight_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -1810,6 +1928,12 @@ public final class PortInfo {
       if (!getMaxAirDraftBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, maxAirDraft_);
       }
+      if (!getAverageTideHeightBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, averageTideHeight_);
+      }
+      if (!getTideHeightBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, tideHeight_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -1832,6 +1956,8 @@ public final class PortInfo {
       if (!getWaterDensity().equals(other.getWaterDensity())) return false;
       if (!getMaxDraft().equals(other.getMaxDraft())) return false;
       if (!getMaxAirDraft().equals(other.getMaxAirDraft())) return false;
+      if (!getAverageTideHeight().equals(other.getAverageTideHeight())) return false;
+      if (!getTideHeight().equals(other.getTideHeight())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -1855,6 +1981,10 @@ public final class PortInfo {
       hash = (53 * hash) + getMaxDraft().hashCode();
       hash = (37 * hash) + MAXAIRDRAFT_FIELD_NUMBER;
       hash = (53 * hash) + getMaxAirDraft().hashCode();
+      hash = (37 * hash) + AVERAGETIDEHEIGHT_FIELD_NUMBER;
+      hash = (53 * hash) + getAverageTideHeight().hashCode();
+      hash = (37 * hash) + TIDEHEIGHT_FIELD_NUMBER;
+      hash = (53 * hash) + getTideHeight().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2004,6 +2134,10 @@ public final class PortInfo {
 
         maxAirDraft_ = "";
 
+        averageTideHeight_ = "";
+
+        tideHeight_ = "";
+
         return this;
       }
 
@@ -2036,6 +2170,8 @@ public final class PortInfo {
         result.waterDensity_ = waterDensity_;
         result.maxDraft_ = maxDraft_;
         result.maxAirDraft_ = maxAirDraft_;
+        result.averageTideHeight_ = averageTideHeight_;
+        result.tideHeight_ = tideHeight_;
         onBuilt();
         return result;
       }
@@ -2109,6 +2245,14 @@ public final class PortInfo {
         }
         if (!other.getMaxAirDraft().isEmpty()) {
           maxAirDraft_ = other.maxAirDraft_;
+          onChanged();
+        }
+        if (!other.getAverageTideHeight().isEmpty()) {
+          averageTideHeight_ = other.averageTideHeight_;
+          onChanged();
+        }
+        if (!other.getTideHeight().isEmpty()) {
+          tideHeight_ = other.tideHeight_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -2549,6 +2693,158 @@ public final class PortInfo {
         checkByteStringIsUtf8(value);
 
         maxAirDraft_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object averageTideHeight_ = "";
+      /**
+       * <code>string averageTideHeight = 7;</code>
+       *
+       * @return The averageTideHeight.
+       */
+      public java.lang.String getAverageTideHeight() {
+        java.lang.Object ref = averageTideHeight_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          averageTideHeight_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string averageTideHeight = 7;</code>
+       *
+       * @return The bytes for averageTideHeight.
+       */
+      public com.google.protobuf.ByteString getAverageTideHeightBytes() {
+        java.lang.Object ref = averageTideHeight_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          averageTideHeight_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string averageTideHeight = 7;</code>
+       *
+       * @param value The averageTideHeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAverageTideHeight(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        averageTideHeight_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string averageTideHeight = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAverageTideHeight() {
+
+        averageTideHeight_ = getDefaultInstance().getAverageTideHeight();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string averageTideHeight = 7;</code>
+       *
+       * @param value The bytes for averageTideHeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAverageTideHeightBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        averageTideHeight_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object tideHeight_ = "";
+      /**
+       * <code>string tideHeight = 8;</code>
+       *
+       * @return The tideHeight.
+       */
+      public java.lang.String getTideHeight() {
+        java.lang.Object ref = tideHeight_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          tideHeight_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string tideHeight = 8;</code>
+       *
+       * @return The bytes for tideHeight.
+       */
+      public com.google.protobuf.ByteString getTideHeightBytes() {
+        java.lang.Object ref = tideHeight_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          tideHeight_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string tideHeight = 8;</code>
+       *
+       * @param value The tideHeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTideHeight(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        tideHeight_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tideHeight = 8;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTideHeight() {
+
+        tideHeight_ = getDefaultInstance().getTideHeight();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tideHeight = 8;</code>
+       *
+       * @param value The bytes for tideHeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTideHeightBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        tideHeight_ = value;
         onChanged();
         return this;
       }
@@ -5065,22 +5361,25 @@ public final class PortInfo {
           + "rtInfoByPortIdsRequest\022\n\n\002id\030\001 \003(\003\"]\n\013Po"
           + "rtRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId"
           + "\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017loadableStud"
-          + "yId\030\004 \001(\003\"q\n\nPortDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004n"
-          + "ame\030\002 \001(\t\022\014\n\004code\030\003 \001(\t\022\024\n\014waterDensity\030"
-          + "\004 \001(\t\022\020\n\010maxDraft\030\005 \001(\t\022\023\n\013maxAirDraft\030\006"
-          + " \001(\t\"P\n\tPortReply\022\'\n\016responseStatus\030\001 \001("
-          + "\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003(\0132\013.Port"
-          + "Detail\".\n\033GetPortInfoByCargoIdRequest\022\017\n"
-          + "\007cargoId\030\001 \001(\003\"`\n\031GetPortInfoByCargoIdRe"
-          + "ply\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSt"
-          + "atus\022\032\n\005ports\030\002 \003(\0132\013.PortDetail2\324\001\n\017Por"
-          + "tInfoService\022)\n\013GetPortInfo\022\014.PortReques"
-          + "t\032\n.PortReply\"\000\022R\n\024GetPortInfoByCargoId\022"
-          + "\034.GetPortInfoByCargoIdRequest\032\032.GetPortI"
-          + "nfoByCargoIdReply\"\000\022B\n\024GetPortInfoByPort"
-          + "Ids\022\034.GetPortInfoByPortIdsRequest\032\n.Port"
-          + "Reply\"\000B\036\n\032com.cpdss.common.generatedP\000b"
-          + "\006proto3"
+          + "yId\030\004 \001(\003\"\240\001\n\nPortDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004"
+          + "name\030\002 \001(\t\022\014\n\004code\030\003 \001(\t\022\024\n\014waterDensity"
+          + "\030\004 \001(\t\022\020\n\010maxDraft\030\005 \001(\t\022\023\n\013maxAirDraft\030"
+          + "\006 \001(\t\022\031\n\021averageTideHeight\030\007 \001(\t\022\022\n\ntide"
+          + "Height\030\010 \001(\t\"P\n\tPortReply\022\'\n\016responseSta"
+          + "tus\030\001 \001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003("
+          + "\0132\013.PortDetail\".\n\033GetPortInfoByCargoIdRe"
+          + "quest\022\017\n\007cargoId\030\001 \001(\003\"`\n\031GetPortInfoByC"
+          + "argoIdReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Re"
+          + "sponseStatus\022\032\n\005ports\030\002 \003(\0132\013.PortDetail"
+          + "2\235\002\n\017PortInfoService\022)\n\013GetPortInfo\022\014.Po"
+          + "rtRequest\032\n.PortReply\"\000\022R\n\024GetPortInfoBy"
+          + "CargoId\022\034.GetPortInfoByCargoIdRequest\032\032."
+          + "GetPortInfoByCargoIdReply\"\000\022B\n\024GetPortIn"
+          + "foByPortIds\022\034.GetPortInfoByPortIdsReques"
+          + "t\032\n.PortReply\"\000\022G\n\031GetPortInfoDetailsFor"
+          + "Algo\022\034.GetPortInfoByPortIdsRequest\032\n.Por"
+          + "tReply\"\000B\036\n\032com.cpdss.common.generatedP\000"
+          + "b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -5108,7 +5407,14 @@ public final class PortInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortDetail_descriptor,
             new java.lang.String[] {
-              "Id", "Name", "Code", "WaterDensity", "MaxDraft", "MaxAirDraft",
+              "Id",
+              "Name",
+              "Code",
+              "WaterDensity",
+              "MaxDraft",
+              "MaxAirDraft",
+              "AverageTideHeight",
+              "TideHeight",
             });
     internal_static_PortReply_descriptor = getDescriptor().getMessageTypes().get(3);
     internal_static_PortReply_fieldAccessorTable =

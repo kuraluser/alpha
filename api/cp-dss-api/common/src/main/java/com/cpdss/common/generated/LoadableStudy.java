@@ -10,6 +10,1135 @@ public final class LoadableStudy {
     registerAllExtensions((com.google.protobuf.ExtensionRegistryLite) registry);
   }
 
+  public interface AlgoRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:AlgoRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 loadableStudyId = 1;</code>
+     *
+     * @return The loadableStudyId.
+     */
+    long getLoadableStudyId();
+  }
+  /** Protobuf type {@code AlgoRequest} */
+  public static final class AlgoRequest extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:AlgoRequest)
+      AlgoRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use AlgoRequest.newBuilder() to construct.
+    private AlgoRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private AlgoRequest() {}
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new AlgoRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private AlgoRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                loadableStudyId_ = input.readInt64();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_AlgoRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_AlgoRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.AlgoRequest.class,
+              com.cpdss.common.generated.LoadableStudy.AlgoRequest.Builder.class);
+    }
+
+    public static final int LOADABLESTUDYID_FIELD_NUMBER = 1;
+    private long loadableStudyId_;
+    /**
+     * <code>int64 loadableStudyId = 1;</code>
+     *
+     * @return The loadableStudyId.
+     */
+    public long getLoadableStudyId() {
+      return loadableStudyId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (loadableStudyId_ != 0L) {
+        output.writeInt64(1, loadableStudyId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (loadableStudyId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, loadableStudyId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.AlgoRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.AlgoRequest other =
+          (com.cpdss.common.generated.LoadableStudy.AlgoRequest) obj;
+
+      if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + LOADABLESTUDYID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoRequest parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoRequest parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoRequest parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoRequest parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoRequest parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoRequest parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoRequest parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoRequest parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.AlgoRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code AlgoRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:AlgoRequest)
+        com.cpdss.common.generated.LoadableStudy.AlgoRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_AlgoRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_AlgoRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.AlgoRequest.class,
+                com.cpdss.common.generated.LoadableStudy.AlgoRequest.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.LoadableStudy.AlgoRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        loadableStudyId_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_AlgoRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.AlgoRequest getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.AlgoRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.AlgoRequest build() {
+        com.cpdss.common.generated.LoadableStudy.AlgoRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.AlgoRequest buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.AlgoRequest result =
+            new com.cpdss.common.generated.LoadableStudy.AlgoRequest(this);
+        result.loadableStudyId_ = loadableStudyId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.AlgoRequest) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.AlgoRequest) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.LoadableStudy.AlgoRequest other) {
+        if (other == com.cpdss.common.generated.LoadableStudy.AlgoRequest.getDefaultInstance())
+          return this;
+        if (other.getLoadableStudyId() != 0L) {
+          setLoadableStudyId(other.getLoadableStudyId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.AlgoRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.AlgoRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long loadableStudyId_;
+      /**
+       * <code>int64 loadableStudyId = 1;</code>
+       *
+       * @return The loadableStudyId.
+       */
+      public long getLoadableStudyId() {
+        return loadableStudyId_;
+      }
+      /**
+       * <code>int64 loadableStudyId = 1;</code>
+       *
+       * @param value The loadableStudyId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadableStudyId(long value) {
+
+        loadableStudyId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadableStudyId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadableStudyId() {
+
+        loadableStudyId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:AlgoRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:AlgoRequest)
+    private static final com.cpdss.common.generated.LoadableStudy.AlgoRequest DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.AlgoRequest();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<AlgoRequest> PARSER =
+        new com.google.protobuf.AbstractParser<AlgoRequest>() {
+          @java.lang.Override
+          public AlgoRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new AlgoRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<AlgoRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<AlgoRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.AlgoRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface AlgoReplyOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:AlgoReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+  }
+  /** Protobuf type {@code AlgoReply} */
+  public static final class AlgoReply extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:AlgoReply)
+      AlgoReplyOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use AlgoReply.newBuilder() to construct.
+    private AlgoReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private AlgoReply() {}
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new AlgoReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private AlgoReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_AlgoReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_AlgoReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.AlgoReply.class,
+              com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder.class);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (responseStatus_ != null) {
+        output.writeMessage(1, getResponseStatus());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.AlgoReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.AlgoReply other =
+          (com.cpdss.common.generated.LoadableStudy.AlgoReply) obj;
+
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoReply parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoReply parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoReply parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoReply parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoReply parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoReply parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoReply parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoReply parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoReply parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoReply parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoReply parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoReply parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.cpdss.common.generated.LoadableStudy.AlgoReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code AlgoReply} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:AlgoReply)
+        com.cpdss.common.generated.LoadableStudy.AlgoReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_AlgoReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_AlgoReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.AlgoReply.class,
+                com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_AlgoReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.AlgoReply getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.AlgoReply.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.AlgoReply build() {
+        com.cpdss.common.generated.LoadableStudy.AlgoReply result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.AlgoReply buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.AlgoReply result =
+            new com.cpdss.common.generated.LoadableStudy.AlgoReply(this);
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.AlgoReply) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.AlgoReply) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.LoadableStudy.AlgoReply other) {
+        if (other == com.cpdss.common.generated.LoadableStudy.AlgoReply.getDefaultInstance())
+          return this;
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.AlgoReply parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.AlgoReply) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:AlgoReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:AlgoReply)
+    private static final com.cpdss.common.generated.LoadableStudy.AlgoReply DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.AlgoReply();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.AlgoReply getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<AlgoReply> PARSER =
+        new com.google.protobuf.AbstractParser<AlgoReply>() {
+          @java.lang.Override
+          public AlgoReply parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new AlgoReply(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<AlgoReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<AlgoReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.AlgoReply getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   public interface VoyageRequestOrBuilder
       extends
       // @@protoc_insertion_point(interface_extends:VoyageRequest)
@@ -39317,6 +40446,27 @@ public final class LoadableStudy {
      * @return The bytes for differenceColor.
      */
     com.google.protobuf.ByteString getDifferenceColorBytes();
+
+    /**
+     * <code>int64 loadablePatternDetailsId = 9;</code>
+     *
+     * @return The loadablePatternDetailsId.
+     */
+    long getLoadablePatternDetailsId();
+
+    /**
+     * <code>bool isCommingle = 10;</code>
+     *
+     * @return The isCommingle.
+     */
+    boolean getIsCommingle();
+
+    /**
+     * <code>int64 loadablePatternCommingleDetailsId = 11;</code>
+     *
+     * @return The loadablePatternCommingleDetailsId.
+     */
+    long getLoadablePatternCommingleDetailsId();
   }
   /** Protobuf type {@code LoadablePatternCargoDetails} */
   public static final class LoadablePatternCargoDetails
@@ -39418,6 +40568,21 @@ public final class LoadableStudy {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 differenceColor_ = s;
+                break;
+              }
+            case 72:
+              {
+                loadablePatternDetailsId_ = input.readInt64();
+                break;
+              }
+            case 80:
+              {
+                isCommingle_ = input.readBool();
+                break;
+              }
+            case 88:
+              {
+                loadablePatternCommingleDetailsId_ = input.readInt64();
                 break;
               }
             default:
@@ -39686,6 +40851,39 @@ public final class LoadableStudy {
       }
     }
 
+    public static final int LOADABLEPATTERNDETAILSID_FIELD_NUMBER = 9;
+    private long loadablePatternDetailsId_;
+    /**
+     * <code>int64 loadablePatternDetailsId = 9;</code>
+     *
+     * @return The loadablePatternDetailsId.
+     */
+    public long getLoadablePatternDetailsId() {
+      return loadablePatternDetailsId_;
+    }
+
+    public static final int ISCOMMINGLE_FIELD_NUMBER = 10;
+    private boolean isCommingle_;
+    /**
+     * <code>bool isCommingle = 10;</code>
+     *
+     * @return The isCommingle.
+     */
+    public boolean getIsCommingle() {
+      return isCommingle_;
+    }
+
+    public static final int LOADABLEPATTERNCOMMINGLEDETAILSID_FIELD_NUMBER = 11;
+    private long loadablePatternCommingleDetailsId_;
+    /**
+     * <code>int64 loadablePatternCommingleDetailsId = 11;</code>
+     *
+     * @return The loadablePatternCommingleDetailsId.
+     */
+    public long getLoadablePatternCommingleDetailsId() {
+      return loadablePatternCommingleDetailsId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -39724,6 +40922,15 @@ public final class LoadableStudy {
       if (!getDifferenceColorBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 8, differenceColor_);
       }
+      if (loadablePatternDetailsId_ != 0L) {
+        output.writeInt64(9, loadablePatternDetailsId_);
+      }
+      if (isCommingle_ != false) {
+        output.writeBool(10, isCommingle_);
+      }
+      if (loadablePatternCommingleDetailsId_ != 0L) {
+        output.writeInt64(11, loadablePatternCommingleDetailsId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -39757,6 +40964,18 @@ public final class LoadableStudy {
       if (!getDifferenceColorBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, differenceColor_);
       }
+      if (loadablePatternDetailsId_ != 0L) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeInt64Size(9, loadablePatternDetailsId_);
+      }
+      if (isCommingle_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(10, isCommingle_);
+      }
+      if (loadablePatternCommingleDetailsId_ != 0L) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeInt64Size(
+                11, loadablePatternCommingleDetailsId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -39781,6 +41000,10 @@ public final class LoadableStudy {
       if (!getDifference().equals(other.getDifference())) return false;
       if (!getConstraints().equals(other.getConstraints())) return false;
       if (!getDifferenceColor().equals(other.getDifferenceColor())) return false;
+      if (getLoadablePatternDetailsId() != other.getLoadablePatternDetailsId()) return false;
+      if (getIsCommingle() != other.getIsCommingle()) return false;
+      if (getLoadablePatternCommingleDetailsId() != other.getLoadablePatternCommingleDetailsId())
+        return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -39808,6 +41031,14 @@ public final class LoadableStudy {
       hash = (53 * hash) + getConstraints().hashCode();
       hash = (37 * hash) + DIFFERENCECOLOR_FIELD_NUMBER;
       hash = (53 * hash) + getDifferenceColor().hashCode();
+      hash = (37 * hash) + LOADABLEPATTERNDETAILSID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadablePatternDetailsId());
+      hash = (37 * hash) + ISCOMMINGLE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsCommingle());
+      hash = (37 * hash) + LOADABLEPATTERNCOMMINGLEDETAILSID_FIELD_NUMBER;
+      hash =
+          (53 * hash)
+              + com.google.protobuf.Internal.hashLong(getLoadablePatternCommingleDetailsId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -39966,6 +41197,12 @@ public final class LoadableStudy {
 
         differenceColor_ = "";
 
+        loadablePatternDetailsId_ = 0L;
+
+        isCommingle_ = false;
+
+        loadablePatternCommingleDetailsId_ = 0L;
+
         return this;
       }
 
@@ -40004,6 +41241,9 @@ public final class LoadableStudy {
         result.difference_ = difference_;
         result.constraints_ = constraints_;
         result.differenceColor_ = differenceColor_;
+        result.loadablePatternDetailsId_ = loadablePatternDetailsId_;
+        result.isCommingle_ = isCommingle_;
+        result.loadablePatternCommingleDetailsId_ = loadablePatternCommingleDetailsId_;
         onBuilt();
         return result;
       }
@@ -40088,6 +41328,15 @@ public final class LoadableStudy {
         if (!other.getDifferenceColor().isEmpty()) {
           differenceColor_ = other.differenceColor_;
           onChanged();
+        }
+        if (other.getLoadablePatternDetailsId() != 0L) {
+          setLoadablePatternDetailsId(other.getLoadablePatternDetailsId());
+        }
+        if (other.getIsCommingle() != false) {
+          setIsCommingle(other.getIsCommingle());
+        }
+        if (other.getLoadablePatternCommingleDetailsId() != 0L) {
+          setLoadablePatternCommingleDetailsId(other.getLoadablePatternCommingleDetailsId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -40638,6 +41887,105 @@ public final class LoadableStudy {
         checkByteStringIsUtf8(value);
 
         differenceColor_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long loadablePatternDetailsId_;
+      /**
+       * <code>int64 loadablePatternDetailsId = 9;</code>
+       *
+       * @return The loadablePatternDetailsId.
+       */
+      public long getLoadablePatternDetailsId() {
+        return loadablePatternDetailsId_;
+      }
+      /**
+       * <code>int64 loadablePatternDetailsId = 9;</code>
+       *
+       * @param value The loadablePatternDetailsId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadablePatternDetailsId(long value) {
+
+        loadablePatternDetailsId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadablePatternDetailsId = 9;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadablePatternDetailsId() {
+
+        loadablePatternDetailsId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private boolean isCommingle_;
+      /**
+       * <code>bool isCommingle = 10;</code>
+       *
+       * @return The isCommingle.
+       */
+      public boolean getIsCommingle() {
+        return isCommingle_;
+      }
+      /**
+       * <code>bool isCommingle = 10;</code>
+       *
+       * @param value The isCommingle to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsCommingle(boolean value) {
+
+        isCommingle_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isCommingle = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearIsCommingle() {
+
+        isCommingle_ = false;
+        onChanged();
+        return this;
+      }
+
+      private long loadablePatternCommingleDetailsId_;
+      /**
+       * <code>int64 loadablePatternCommingleDetailsId = 11;</code>
+       *
+       * @return The loadablePatternCommingleDetailsId.
+       */
+      public long getLoadablePatternCommingleDetailsId() {
+        return loadablePatternCommingleDetailsId_;
+      }
+      /**
+       * <code>int64 loadablePatternCommingleDetailsId = 11;</code>
+       *
+       * @param value The loadablePatternCommingleDetailsId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadablePatternCommingleDetailsId(long value) {
+
+        loadablePatternCommingleDetailsId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadablePatternCommingleDetailsId = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadablePatternCommingleDetailsId() {
+
+        loadablePatternCommingleDetailsId_ = 0L;
         onChanged();
         return this;
       }
@@ -44487,6 +45835,2921 @@ public final class LoadableStudy {
     }
   }
 
+  public interface LoadablePatternCommingleDetailsRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:LoadablePatternCommingleDetailsRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 loadablePatternCommingleDetailsId = 1;</code>
+     *
+     * @return The loadablePatternCommingleDetailsId.
+     */
+    long getLoadablePatternCommingleDetailsId();
+  }
+  /** Protobuf type {@code LoadablePatternCommingleDetailsRequest} */
+  public static final class LoadablePatternCommingleDetailsRequest
+      extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:LoadablePatternCommingleDetailsRequest)
+      LoadablePatternCommingleDetailsRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use LoadablePatternCommingleDetailsRequest.newBuilder() to construct.
+    private LoadablePatternCommingleDetailsRequest(
+        com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private LoadablePatternCommingleDetailsRequest() {}
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new LoadablePatternCommingleDetailsRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private LoadablePatternCommingleDetailsRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                loadablePatternCommingleDetailsId_ = input.readInt64();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_LoadablePatternCommingleDetailsRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_LoadablePatternCommingleDetailsRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest.class,
+              com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+                  .Builder.class);
+    }
+
+    public static final int LOADABLEPATTERNCOMMINGLEDETAILSID_FIELD_NUMBER = 1;
+    private long loadablePatternCommingleDetailsId_;
+    /**
+     * <code>int64 loadablePatternCommingleDetailsId = 1;</code>
+     *
+     * @return The loadablePatternCommingleDetailsId.
+     */
+    public long getLoadablePatternCommingleDetailsId() {
+      return loadablePatternCommingleDetailsId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (loadablePatternCommingleDetailsId_ != 0L) {
+        output.writeInt64(1, loadablePatternCommingleDetailsId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (loadablePatternCommingleDetailsId_ != 0L) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeInt64Size(
+                1, loadablePatternCommingleDetailsId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj
+          instanceof
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest other =
+          (com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest) obj;
+
+      if (getLoadablePatternCommingleDetailsId() != other.getLoadablePatternCommingleDetailsId())
+        return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + LOADABLEPATTERNCOMMINGLEDETAILSID_FIELD_NUMBER;
+      hash =
+          (53 * hash)
+              + com.google.protobuf.Internal.hashLong(getLoadablePatternCommingleDetailsId());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+        parseFrom(java.nio.ByteBuffer data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+        parseFrom(
+            java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+        parseFrom(com.google.protobuf.ByteString data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+        parseFrom(
+            com.google.protobuf.ByteString data,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+        parseFrom(byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+        parseFrom(byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+        parseFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+        parseFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+        parseFrom(com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+        parseFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code LoadablePatternCommingleDetailsRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:LoadablePatternCommingleDetailsRequest)
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_LoadablePatternCommingleDetailsRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_LoadablePatternCommingleDetailsRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+                    .class,
+                com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+                    .Builder.class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        loadablePatternCommingleDetailsId_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_LoadablePatternCommingleDetailsRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+          build() {
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest result =
+            buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+          buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest result =
+            new com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest(
+                this);
+        result.loadablePatternCommingleDetailsId_ = loadablePatternCommingleDetailsId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other
+            instanceof
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest) {
+          return mergeFrom(
+              (com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest)
+                  other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest other) {
+        if (other
+            == com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+                .getDefaultInstance()) return this;
+        if (other.getLoadablePatternCommingleDetailsId() != 0L) {
+          setLoadablePatternCommingleDetailsId(other.getLoadablePatternCommingleDetailsId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+            parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long loadablePatternCommingleDetailsId_;
+      /**
+       * <code>int64 loadablePatternCommingleDetailsId = 1;</code>
+       *
+       * @return The loadablePatternCommingleDetailsId.
+       */
+      public long getLoadablePatternCommingleDetailsId() {
+        return loadablePatternCommingleDetailsId_;
+      }
+      /**
+       * <code>int64 loadablePatternCommingleDetailsId = 1;</code>
+       *
+       * @param value The loadablePatternCommingleDetailsId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadablePatternCommingleDetailsId(long value) {
+
+        loadablePatternCommingleDetailsId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadablePatternCommingleDetailsId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadablePatternCommingleDetailsId() {
+
+        loadablePatternCommingleDetailsId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:LoadablePatternCommingleDetailsRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:LoadablePatternCommingleDetailsRequest)
+    private static final com.cpdss.common.generated.LoadableStudy
+            .LoadablePatternCommingleDetailsRequest
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE =
+          new com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<LoadablePatternCommingleDetailsRequest> PARSER =
+        new com.google.protobuf.AbstractParser<LoadablePatternCommingleDetailsRequest>() {
+          @java.lang.Override
+          public LoadablePatternCommingleDetailsRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new LoadablePatternCommingleDetailsRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<LoadablePatternCommingleDetailsRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<LoadablePatternCommingleDetailsRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface LoadablePatternCommingleDetailsReplyOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:LoadablePatternCommingleDetailsReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string tankShortName = 2;</code>
+     *
+     * @return The tankShortName.
+     */
+    java.lang.String getTankShortName();
+    /**
+     * <code>string tankShortName = 2;</code>
+     *
+     * @return The bytes for tankShortName.
+     */
+    com.google.protobuf.ByteString getTankShortNameBytes();
+
+    /**
+     * <code>string cargo1Abbrivation = 3;</code>
+     *
+     * @return The cargo1Abbrivation.
+     */
+    java.lang.String getCargo1Abbrivation();
+    /**
+     * <code>string cargo1Abbrivation = 3;</code>
+     *
+     * @return The bytes for cargo1Abbrivation.
+     */
+    com.google.protobuf.ByteString getCargo1AbbrivationBytes();
+
+    /**
+     * <code>string cargo2Abbrivation = 4;</code>
+     *
+     * @return The cargo2Abbrivation.
+     */
+    java.lang.String getCargo2Abbrivation();
+    /**
+     * <code>string cargo2Abbrivation = 4;</code>
+     *
+     * @return The bytes for cargo2Abbrivation.
+     */
+    com.google.protobuf.ByteString getCargo2AbbrivationBytes();
+
+    /**
+     * <code>string grade = 5;</code>
+     *
+     * @return The grade.
+     */
+    java.lang.String getGrade();
+    /**
+     * <code>string grade = 5;</code>
+     *
+     * @return The bytes for grade.
+     */
+    com.google.protobuf.ByteString getGradeBytes();
+
+    /**
+     * <code>string quantity = 6;</code>
+     *
+     * @return The quantity.
+     */
+    java.lang.String getQuantity();
+    /**
+     * <code>string quantity = 6;</code>
+     *
+     * @return The bytes for quantity.
+     */
+    com.google.protobuf.ByteString getQuantityBytes();
+
+    /**
+     * <code>string api = 7;</code>
+     *
+     * @return The api.
+     */
+    java.lang.String getApi();
+    /**
+     * <code>string api = 7;</code>
+     *
+     * @return The bytes for api.
+     */
+    com.google.protobuf.ByteString getApiBytes();
+
+    /**
+     * <code>string temperature = 8;</code>
+     *
+     * @return The temperature.
+     */
+    java.lang.String getTemperature();
+    /**
+     * <code>string temperature = 8;</code>
+     *
+     * @return The bytes for temperature.
+     */
+    com.google.protobuf.ByteString getTemperatureBytes();
+
+    /**
+     * <code>string cargo1Quantity = 9;</code>
+     *
+     * @return The cargo1Quantity.
+     */
+    java.lang.String getCargo1Quantity();
+    /**
+     * <code>string cargo1Quantity = 9;</code>
+     *
+     * @return The bytes for cargo1Quantity.
+     */
+    com.google.protobuf.ByteString getCargo1QuantityBytes();
+
+    /**
+     * <code>string cargo2Quantity = 10;</code>
+     *
+     * @return The cargo2Quantity.
+     */
+    java.lang.String getCargo2Quantity();
+    /**
+     * <code>string cargo2Quantity = 10;</code>
+     *
+     * @return The bytes for cargo2Quantity.
+     */
+    com.google.protobuf.ByteString getCargo2QuantityBytes();
+
+    /**
+     * <code>string cargo1Percentage = 11;</code>
+     *
+     * @return The cargo1Percentage.
+     */
+    java.lang.String getCargo1Percentage();
+    /**
+     * <code>string cargo1Percentage = 11;</code>
+     *
+     * @return The bytes for cargo1Percentage.
+     */
+    com.google.protobuf.ByteString getCargo1PercentageBytes();
+
+    /**
+     * <code>string cargo2Percentage = 12;</code>
+     *
+     * @return The cargo2Percentage.
+     */
+    java.lang.String getCargo2Percentage();
+    /**
+     * <code>string cargo2Percentage = 12;</code>
+     *
+     * @return The bytes for cargo2Percentage.
+     */
+    com.google.protobuf.ByteString getCargo2PercentageBytes();
+
+    /**
+     * <code>.ResponseStatus responseStatus = 13;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 13;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 13;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+  }
+  /** Protobuf type {@code LoadablePatternCommingleDetailsReply} */
+  public static final class LoadablePatternCommingleDetailsReply
+      extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:LoadablePatternCommingleDetailsReply)
+      LoadablePatternCommingleDetailsReplyOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use LoadablePatternCommingleDetailsReply.newBuilder() to construct.
+    private LoadablePatternCommingleDetailsReply(
+        com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private LoadablePatternCommingleDetailsReply() {
+      tankShortName_ = "";
+      cargo1Abbrivation_ = "";
+      cargo2Abbrivation_ = "";
+      grade_ = "";
+      quantity_ = "";
+      api_ = "";
+      temperature_ = "";
+      cargo1Quantity_ = "";
+      cargo2Quantity_ = "";
+      cargo1Percentage_ = "";
+      cargo2Percentage_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new LoadablePatternCommingleDetailsReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private LoadablePatternCommingleDetailsReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                tankShortName_ = s;
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                cargo1Abbrivation_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                cargo2Abbrivation_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                grade_ = s;
+                break;
+              }
+            case 50:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                quantity_ = s;
+                break;
+              }
+            case 58:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                api_ = s;
+                break;
+              }
+            case 66:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                temperature_ = s;
+                break;
+              }
+            case 74:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                cargo1Quantity_ = s;
+                break;
+              }
+            case 82:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                cargo2Quantity_ = s;
+                break;
+              }
+            case 90:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                cargo1Percentage_ = s;
+                break;
+              }
+            case 98:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                cargo2Percentage_ = s;
+                break;
+              }
+            case 106:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_LoadablePatternCommingleDetailsReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_LoadablePatternCommingleDetailsReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply.class,
+              com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply.Builder
+                  .class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int TANKSHORTNAME_FIELD_NUMBER = 2;
+    private volatile java.lang.Object tankShortName_;
+    /**
+     * <code>string tankShortName = 2;</code>
+     *
+     * @return The tankShortName.
+     */
+    public java.lang.String getTankShortName() {
+      java.lang.Object ref = tankShortName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        tankShortName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string tankShortName = 2;</code>
+     *
+     * @return The bytes for tankShortName.
+     */
+    public com.google.protobuf.ByteString getTankShortNameBytes() {
+      java.lang.Object ref = tankShortName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        tankShortName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CARGO1ABBRIVATION_FIELD_NUMBER = 3;
+    private volatile java.lang.Object cargo1Abbrivation_;
+    /**
+     * <code>string cargo1Abbrivation = 3;</code>
+     *
+     * @return The cargo1Abbrivation.
+     */
+    public java.lang.String getCargo1Abbrivation() {
+      java.lang.Object ref = cargo1Abbrivation_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        cargo1Abbrivation_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string cargo1Abbrivation = 3;</code>
+     *
+     * @return The bytes for cargo1Abbrivation.
+     */
+    public com.google.protobuf.ByteString getCargo1AbbrivationBytes() {
+      java.lang.Object ref = cargo1Abbrivation_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        cargo1Abbrivation_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CARGO2ABBRIVATION_FIELD_NUMBER = 4;
+    private volatile java.lang.Object cargo2Abbrivation_;
+    /**
+     * <code>string cargo2Abbrivation = 4;</code>
+     *
+     * @return The cargo2Abbrivation.
+     */
+    public java.lang.String getCargo2Abbrivation() {
+      java.lang.Object ref = cargo2Abbrivation_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        cargo2Abbrivation_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string cargo2Abbrivation = 4;</code>
+     *
+     * @return The bytes for cargo2Abbrivation.
+     */
+    public com.google.protobuf.ByteString getCargo2AbbrivationBytes() {
+      java.lang.Object ref = cargo2Abbrivation_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        cargo2Abbrivation_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int GRADE_FIELD_NUMBER = 5;
+    private volatile java.lang.Object grade_;
+    /**
+     * <code>string grade = 5;</code>
+     *
+     * @return The grade.
+     */
+    public java.lang.String getGrade() {
+      java.lang.Object ref = grade_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        grade_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string grade = 5;</code>
+     *
+     * @return The bytes for grade.
+     */
+    public com.google.protobuf.ByteString getGradeBytes() {
+      java.lang.Object ref = grade_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        grade_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int QUANTITY_FIELD_NUMBER = 6;
+    private volatile java.lang.Object quantity_;
+    /**
+     * <code>string quantity = 6;</code>
+     *
+     * @return The quantity.
+     */
+    public java.lang.String getQuantity() {
+      java.lang.Object ref = quantity_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        quantity_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string quantity = 6;</code>
+     *
+     * @return The bytes for quantity.
+     */
+    public com.google.protobuf.ByteString getQuantityBytes() {
+      java.lang.Object ref = quantity_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        quantity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int API_FIELD_NUMBER = 7;
+    private volatile java.lang.Object api_;
+    /**
+     * <code>string api = 7;</code>
+     *
+     * @return The api.
+     */
+    public java.lang.String getApi() {
+      java.lang.Object ref = api_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        api_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string api = 7;</code>
+     *
+     * @return The bytes for api.
+     */
+    public com.google.protobuf.ByteString getApiBytes() {
+      java.lang.Object ref = api_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        api_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TEMPERATURE_FIELD_NUMBER = 8;
+    private volatile java.lang.Object temperature_;
+    /**
+     * <code>string temperature = 8;</code>
+     *
+     * @return The temperature.
+     */
+    public java.lang.String getTemperature() {
+      java.lang.Object ref = temperature_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        temperature_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string temperature = 8;</code>
+     *
+     * @return The bytes for temperature.
+     */
+    public com.google.protobuf.ByteString getTemperatureBytes() {
+      java.lang.Object ref = temperature_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        temperature_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CARGO1QUANTITY_FIELD_NUMBER = 9;
+    private volatile java.lang.Object cargo1Quantity_;
+    /**
+     * <code>string cargo1Quantity = 9;</code>
+     *
+     * @return The cargo1Quantity.
+     */
+    public java.lang.String getCargo1Quantity() {
+      java.lang.Object ref = cargo1Quantity_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        cargo1Quantity_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string cargo1Quantity = 9;</code>
+     *
+     * @return The bytes for cargo1Quantity.
+     */
+    public com.google.protobuf.ByteString getCargo1QuantityBytes() {
+      java.lang.Object ref = cargo1Quantity_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        cargo1Quantity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CARGO2QUANTITY_FIELD_NUMBER = 10;
+    private volatile java.lang.Object cargo2Quantity_;
+    /**
+     * <code>string cargo2Quantity = 10;</code>
+     *
+     * @return The cargo2Quantity.
+     */
+    public java.lang.String getCargo2Quantity() {
+      java.lang.Object ref = cargo2Quantity_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        cargo2Quantity_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string cargo2Quantity = 10;</code>
+     *
+     * @return The bytes for cargo2Quantity.
+     */
+    public com.google.protobuf.ByteString getCargo2QuantityBytes() {
+      java.lang.Object ref = cargo2Quantity_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        cargo2Quantity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CARGO1PERCENTAGE_FIELD_NUMBER = 11;
+    private volatile java.lang.Object cargo1Percentage_;
+    /**
+     * <code>string cargo1Percentage = 11;</code>
+     *
+     * @return The cargo1Percentage.
+     */
+    public java.lang.String getCargo1Percentage() {
+      java.lang.Object ref = cargo1Percentage_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        cargo1Percentage_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string cargo1Percentage = 11;</code>
+     *
+     * @return The bytes for cargo1Percentage.
+     */
+    public com.google.protobuf.ByteString getCargo1PercentageBytes() {
+      java.lang.Object ref = cargo1Percentage_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        cargo1Percentage_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CARGO2PERCENTAGE_FIELD_NUMBER = 12;
+    private volatile java.lang.Object cargo2Percentage_;
+    /**
+     * <code>string cargo2Percentage = 12;</code>
+     *
+     * @return The cargo2Percentage.
+     */
+    public java.lang.String getCargo2Percentage() {
+      java.lang.Object ref = cargo2Percentage_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        cargo2Percentage_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string cargo2Percentage = 12;</code>
+     *
+     * @return The bytes for cargo2Percentage.
+     */
+    public com.google.protobuf.ByteString getCargo2PercentageBytes() {
+      java.lang.Object ref = cargo2Percentage_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        cargo2Percentage_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 13;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 13;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 13;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 13;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getTankShortNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, tankShortName_);
+      }
+      if (!getCargo1AbbrivationBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, cargo1Abbrivation_);
+      }
+      if (!getCargo2AbbrivationBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, cargo2Abbrivation_);
+      }
+      if (!getGradeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, grade_);
+      }
+      if (!getQuantityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, quantity_);
+      }
+      if (!getApiBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, api_);
+      }
+      if (!getTemperatureBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, temperature_);
+      }
+      if (!getCargo1QuantityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, cargo1Quantity_);
+      }
+      if (!getCargo2QuantityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, cargo2Quantity_);
+      }
+      if (!getCargo1PercentageBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, cargo1Percentage_);
+      }
+      if (!getCargo2PercentageBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, cargo2Percentage_);
+      }
+      if (responseStatus_ != null) {
+        output.writeMessage(13, getResponseStatus());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (!getTankShortNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, tankShortName_);
+      }
+      if (!getCargo1AbbrivationBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, cargo1Abbrivation_);
+      }
+      if (!getCargo2AbbrivationBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, cargo2Abbrivation_);
+      }
+      if (!getGradeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, grade_);
+      }
+      if (!getQuantityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, quantity_);
+      }
+      if (!getApiBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, api_);
+      }
+      if (!getTemperatureBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, temperature_);
+      }
+      if (!getCargo1QuantityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, cargo1Quantity_);
+      }
+      if (!getCargo2QuantityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, cargo2Quantity_);
+      }
+      if (!getCargo1PercentageBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, cargo1Percentage_);
+      }
+      if (!getCargo2PercentageBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, cargo2Percentage_);
+      }
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(13, getResponseStatus());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj
+          instanceof
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply other =
+          (com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply) obj;
+
+      if (getId() != other.getId()) return false;
+      if (!getTankShortName().equals(other.getTankShortName())) return false;
+      if (!getCargo1Abbrivation().equals(other.getCargo1Abbrivation())) return false;
+      if (!getCargo2Abbrivation().equals(other.getCargo2Abbrivation())) return false;
+      if (!getGrade().equals(other.getGrade())) return false;
+      if (!getQuantity().equals(other.getQuantity())) return false;
+      if (!getApi().equals(other.getApi())) return false;
+      if (!getTemperature().equals(other.getTemperature())) return false;
+      if (!getCargo1Quantity().equals(other.getCargo1Quantity())) return false;
+      if (!getCargo2Quantity().equals(other.getCargo2Quantity())) return false;
+      if (!getCargo1Percentage().equals(other.getCargo1Percentage())) return false;
+      if (!getCargo2Percentage().equals(other.getCargo2Percentage())) return false;
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + TANKSHORTNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getTankShortName().hashCode();
+      hash = (37 * hash) + CARGO1ABBRIVATION_FIELD_NUMBER;
+      hash = (53 * hash) + getCargo1Abbrivation().hashCode();
+      hash = (37 * hash) + CARGO2ABBRIVATION_FIELD_NUMBER;
+      hash = (53 * hash) + getCargo2Abbrivation().hashCode();
+      hash = (37 * hash) + GRADE_FIELD_NUMBER;
+      hash = (53 * hash) + getGrade().hashCode();
+      hash = (37 * hash) + QUANTITY_FIELD_NUMBER;
+      hash = (53 * hash) + getQuantity().hashCode();
+      hash = (37 * hash) + API_FIELD_NUMBER;
+      hash = (53 * hash) + getApi().hashCode();
+      hash = (37 * hash) + TEMPERATURE_FIELD_NUMBER;
+      hash = (53 * hash) + getTemperature().hashCode();
+      hash = (37 * hash) + CARGO1QUANTITY_FIELD_NUMBER;
+      hash = (53 * hash) + getCargo1Quantity().hashCode();
+      hash = (37 * hash) + CARGO2QUANTITY_FIELD_NUMBER;
+      hash = (53 * hash) + getCargo2Quantity().hashCode();
+      hash = (37 * hash) + CARGO1PERCENTAGE_FIELD_NUMBER;
+      hash = (53 * hash) + getCargo1Percentage().hashCode();
+      hash = (37 * hash) + CARGO2PERCENTAGE_FIELD_NUMBER;
+      hash = (53 * hash) + getCargo2Percentage().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        parseFrom(java.nio.ByteBuffer data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        parseFrom(
+            java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        parseFrom(com.google.protobuf.ByteString data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        parseFrom(
+            com.google.protobuf.ByteString data,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        parseFrom(byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        parseFrom(byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        parseFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        parseFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        parseFrom(com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        parseFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code LoadablePatternCommingleDetailsReply} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:LoadablePatternCommingleDetailsReply)
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_LoadablePatternCommingleDetailsReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_LoadablePatternCommingleDetailsReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply.class,
+                com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+                    .Builder.class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        tankShortName_ = "";
+
+        cargo1Abbrivation_ = "";
+
+        cargo2Abbrivation_ = "";
+
+        grade_ = "";
+
+        quantity_ = "";
+
+        api_ = "";
+
+        temperature_ = "";
+
+        cargo1Quantity_ = "";
+
+        cargo2Quantity_ = "";
+
+        cargo1Percentage_ = "";
+
+        cargo2Percentage_ = "";
+
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_LoadablePatternCommingleDetailsReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply build() {
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply result =
+            buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+          buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply result =
+            new com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply(this);
+        result.id_ = id_;
+        result.tankShortName_ = tankShortName_;
+        result.cargo1Abbrivation_ = cargo1Abbrivation_;
+        result.cargo2Abbrivation_ = cargo2Abbrivation_;
+        result.grade_ = grade_;
+        result.quantity_ = quantity_;
+        result.api_ = api_;
+        result.temperature_ = temperature_;
+        result.cargo1Quantity_ = cargo1Quantity_;
+        result.cargo2Quantity_ = cargo2Quantity_;
+        result.cargo1Percentage_ = cargo1Percentage_;
+        result.cargo2Percentage_ = cargo2Percentage_;
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other
+            instanceof
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply) {
+          return mergeFrom(
+              (com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply)
+                  other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply other) {
+        if (other
+            == com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+                .getDefaultInstance()) return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getTankShortName().isEmpty()) {
+          tankShortName_ = other.tankShortName_;
+          onChanged();
+        }
+        if (!other.getCargo1Abbrivation().isEmpty()) {
+          cargo1Abbrivation_ = other.cargo1Abbrivation_;
+          onChanged();
+        }
+        if (!other.getCargo2Abbrivation().isEmpty()) {
+          cargo2Abbrivation_ = other.cargo2Abbrivation_;
+          onChanged();
+        }
+        if (!other.getGrade().isEmpty()) {
+          grade_ = other.grade_;
+          onChanged();
+        }
+        if (!other.getQuantity().isEmpty()) {
+          quantity_ = other.quantity_;
+          onChanged();
+        }
+        if (!other.getApi().isEmpty()) {
+          api_ = other.api_;
+          onChanged();
+        }
+        if (!other.getTemperature().isEmpty()) {
+          temperature_ = other.temperature_;
+          onChanged();
+        }
+        if (!other.getCargo1Quantity().isEmpty()) {
+          cargo1Quantity_ = other.cargo1Quantity_;
+          onChanged();
+        }
+        if (!other.getCargo2Quantity().isEmpty()) {
+          cargo2Quantity_ = other.cargo2Quantity_;
+          onChanged();
+        }
+        if (!other.getCargo1Percentage().isEmpty()) {
+          cargo1Percentage_ = other.cargo1Percentage_;
+          onChanged();
+        }
+        if (!other.getCargo2Percentage().isEmpty()) {
+          cargo2Percentage_ = other.cargo2Percentage_;
+          onChanged();
+        }
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+            parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object tankShortName_ = "";
+      /**
+       * <code>string tankShortName = 2;</code>
+       *
+       * @return The tankShortName.
+       */
+      public java.lang.String getTankShortName() {
+        java.lang.Object ref = tankShortName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          tankShortName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string tankShortName = 2;</code>
+       *
+       * @return The bytes for tankShortName.
+       */
+      public com.google.protobuf.ByteString getTankShortNameBytes() {
+        java.lang.Object ref = tankShortName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          tankShortName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string tankShortName = 2;</code>
+       *
+       * @param value The tankShortName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTankShortName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        tankShortName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tankShortName = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTankShortName() {
+
+        tankShortName_ = getDefaultInstance().getTankShortName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tankShortName = 2;</code>
+       *
+       * @param value The bytes for tankShortName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTankShortNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        tankShortName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object cargo1Abbrivation_ = "";
+      /**
+       * <code>string cargo1Abbrivation = 3;</code>
+       *
+       * @return The cargo1Abbrivation.
+       */
+      public java.lang.String getCargo1Abbrivation() {
+        java.lang.Object ref = cargo1Abbrivation_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          cargo1Abbrivation_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string cargo1Abbrivation = 3;</code>
+       *
+       * @return The bytes for cargo1Abbrivation.
+       */
+      public com.google.protobuf.ByteString getCargo1AbbrivationBytes() {
+        java.lang.Object ref = cargo1Abbrivation_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          cargo1Abbrivation_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string cargo1Abbrivation = 3;</code>
+       *
+       * @param value The cargo1Abbrivation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargo1Abbrivation(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        cargo1Abbrivation_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargo1Abbrivation = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargo1Abbrivation() {
+
+        cargo1Abbrivation_ = getDefaultInstance().getCargo1Abbrivation();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargo1Abbrivation = 3;</code>
+       *
+       * @param value The bytes for cargo1Abbrivation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargo1AbbrivationBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        cargo1Abbrivation_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object cargo2Abbrivation_ = "";
+      /**
+       * <code>string cargo2Abbrivation = 4;</code>
+       *
+       * @return The cargo2Abbrivation.
+       */
+      public java.lang.String getCargo2Abbrivation() {
+        java.lang.Object ref = cargo2Abbrivation_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          cargo2Abbrivation_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string cargo2Abbrivation = 4;</code>
+       *
+       * @return The bytes for cargo2Abbrivation.
+       */
+      public com.google.protobuf.ByteString getCargo2AbbrivationBytes() {
+        java.lang.Object ref = cargo2Abbrivation_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          cargo2Abbrivation_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string cargo2Abbrivation = 4;</code>
+       *
+       * @param value The cargo2Abbrivation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargo2Abbrivation(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        cargo2Abbrivation_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargo2Abbrivation = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargo2Abbrivation() {
+
+        cargo2Abbrivation_ = getDefaultInstance().getCargo2Abbrivation();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargo2Abbrivation = 4;</code>
+       *
+       * @param value The bytes for cargo2Abbrivation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargo2AbbrivationBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        cargo2Abbrivation_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object grade_ = "";
+      /**
+       * <code>string grade = 5;</code>
+       *
+       * @return The grade.
+       */
+      public java.lang.String getGrade() {
+        java.lang.Object ref = grade_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          grade_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string grade = 5;</code>
+       *
+       * @return The bytes for grade.
+       */
+      public com.google.protobuf.ByteString getGradeBytes() {
+        java.lang.Object ref = grade_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          grade_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string grade = 5;</code>
+       *
+       * @param value The grade to set.
+       * @return This builder for chaining.
+       */
+      public Builder setGrade(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        grade_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string grade = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearGrade() {
+
+        grade_ = getDefaultInstance().getGrade();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string grade = 5;</code>
+       *
+       * @param value The bytes for grade to set.
+       * @return This builder for chaining.
+       */
+      public Builder setGradeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        grade_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object quantity_ = "";
+      /**
+       * <code>string quantity = 6;</code>
+       *
+       * @return The quantity.
+       */
+      public java.lang.String getQuantity() {
+        java.lang.Object ref = quantity_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          quantity_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string quantity = 6;</code>
+       *
+       * @return The bytes for quantity.
+       */
+      public com.google.protobuf.ByteString getQuantityBytes() {
+        java.lang.Object ref = quantity_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          quantity_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string quantity = 6;</code>
+       *
+       * @param value The quantity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setQuantity(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        quantity_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string quantity = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearQuantity() {
+
+        quantity_ = getDefaultInstance().getQuantity();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string quantity = 6;</code>
+       *
+       * @param value The bytes for quantity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setQuantityBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        quantity_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object api_ = "";
+      /**
+       * <code>string api = 7;</code>
+       *
+       * @return The api.
+       */
+      public java.lang.String getApi() {
+        java.lang.Object ref = api_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          api_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string api = 7;</code>
+       *
+       * @return The bytes for api.
+       */
+      public com.google.protobuf.ByteString getApiBytes() {
+        java.lang.Object ref = api_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          api_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string api = 7;</code>
+       *
+       * @param value The api to set.
+       * @return This builder for chaining.
+       */
+      public Builder setApi(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        api_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string api = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearApi() {
+
+        api_ = getDefaultInstance().getApi();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string api = 7;</code>
+       *
+       * @param value The bytes for api to set.
+       * @return This builder for chaining.
+       */
+      public Builder setApiBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        api_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object temperature_ = "";
+      /**
+       * <code>string temperature = 8;</code>
+       *
+       * @return The temperature.
+       */
+      public java.lang.String getTemperature() {
+        java.lang.Object ref = temperature_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          temperature_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string temperature = 8;</code>
+       *
+       * @return The bytes for temperature.
+       */
+      public com.google.protobuf.ByteString getTemperatureBytes() {
+        java.lang.Object ref = temperature_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          temperature_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string temperature = 8;</code>
+       *
+       * @param value The temperature to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTemperature(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        temperature_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string temperature = 8;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTemperature() {
+
+        temperature_ = getDefaultInstance().getTemperature();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string temperature = 8;</code>
+       *
+       * @param value The bytes for temperature to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTemperatureBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        temperature_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object cargo1Quantity_ = "";
+      /**
+       * <code>string cargo1Quantity = 9;</code>
+       *
+       * @return The cargo1Quantity.
+       */
+      public java.lang.String getCargo1Quantity() {
+        java.lang.Object ref = cargo1Quantity_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          cargo1Quantity_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string cargo1Quantity = 9;</code>
+       *
+       * @return The bytes for cargo1Quantity.
+       */
+      public com.google.protobuf.ByteString getCargo1QuantityBytes() {
+        java.lang.Object ref = cargo1Quantity_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          cargo1Quantity_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string cargo1Quantity = 9;</code>
+       *
+       * @param value The cargo1Quantity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargo1Quantity(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        cargo1Quantity_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargo1Quantity = 9;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargo1Quantity() {
+
+        cargo1Quantity_ = getDefaultInstance().getCargo1Quantity();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargo1Quantity = 9;</code>
+       *
+       * @param value The bytes for cargo1Quantity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargo1QuantityBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        cargo1Quantity_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object cargo2Quantity_ = "";
+      /**
+       * <code>string cargo2Quantity = 10;</code>
+       *
+       * @return The cargo2Quantity.
+       */
+      public java.lang.String getCargo2Quantity() {
+        java.lang.Object ref = cargo2Quantity_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          cargo2Quantity_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string cargo2Quantity = 10;</code>
+       *
+       * @return The bytes for cargo2Quantity.
+       */
+      public com.google.protobuf.ByteString getCargo2QuantityBytes() {
+        java.lang.Object ref = cargo2Quantity_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          cargo2Quantity_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string cargo2Quantity = 10;</code>
+       *
+       * @param value The cargo2Quantity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargo2Quantity(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        cargo2Quantity_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargo2Quantity = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargo2Quantity() {
+
+        cargo2Quantity_ = getDefaultInstance().getCargo2Quantity();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargo2Quantity = 10;</code>
+       *
+       * @param value The bytes for cargo2Quantity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargo2QuantityBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        cargo2Quantity_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object cargo1Percentage_ = "";
+      /**
+       * <code>string cargo1Percentage = 11;</code>
+       *
+       * @return The cargo1Percentage.
+       */
+      public java.lang.String getCargo1Percentage() {
+        java.lang.Object ref = cargo1Percentage_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          cargo1Percentage_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string cargo1Percentage = 11;</code>
+       *
+       * @return The bytes for cargo1Percentage.
+       */
+      public com.google.protobuf.ByteString getCargo1PercentageBytes() {
+        java.lang.Object ref = cargo1Percentage_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          cargo1Percentage_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string cargo1Percentage = 11;</code>
+       *
+       * @param value The cargo1Percentage to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargo1Percentage(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        cargo1Percentage_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargo1Percentage = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargo1Percentage() {
+
+        cargo1Percentage_ = getDefaultInstance().getCargo1Percentage();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargo1Percentage = 11;</code>
+       *
+       * @param value The bytes for cargo1Percentage to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargo1PercentageBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        cargo1Percentage_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object cargo2Percentage_ = "";
+      /**
+       * <code>string cargo2Percentage = 12;</code>
+       *
+       * @return The cargo2Percentage.
+       */
+      public java.lang.String getCargo2Percentage() {
+        java.lang.Object ref = cargo2Percentage_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          cargo2Percentage_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string cargo2Percentage = 12;</code>
+       *
+       * @return The bytes for cargo2Percentage.
+       */
+      public com.google.protobuf.ByteString getCargo2PercentageBytes() {
+        java.lang.Object ref = cargo2Percentage_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          cargo2Percentage_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string cargo2Percentage = 12;</code>
+       *
+       * @param value The cargo2Percentage to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargo2Percentage(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        cargo2Percentage_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargo2Percentage = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargo2Percentage() {
+
+        cargo2Percentage_ = getDefaultInstance().getCargo2Percentage();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargo2Percentage = 12;</code>
+       *
+       * @param value The bytes for cargo2Percentage to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargo2PercentageBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        cargo2Percentage_ = value;
+        onChanged();
+        return this;
+      }
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 13;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 13;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 13;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 13;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 13;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 13;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 13;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 13;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 13;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:LoadablePatternCommingleDetailsReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:LoadablePatternCommingleDetailsReply)
+    private static final com.cpdss.common.generated.LoadableStudy
+            .LoadablePatternCommingleDetailsReply
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE =
+          new com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<LoadablePatternCommingleDetailsReply> PARSER =
+        new com.google.protobuf.AbstractParser<LoadablePatternCommingleDetailsReply>() {
+          @java.lang.Override
+          public LoadablePatternCommingleDetailsReply parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new LoadablePatternCommingleDetailsReply(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<LoadablePatternCommingleDetailsReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<LoadablePatternCommingleDetailsReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_AlgoRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_AlgoRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_AlgoReply_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_AlgoReply_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_VoyageRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -44643,6 +48906,14 @@ public final class LoadableStudy {
       internal_static_CommingleCargoReply_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_CommingleCargoReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_LoadablePatternCommingleDetailsRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadablePatternCommingleDetailsRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_LoadablePatternCommingleDetailsReply_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadablePatternCommingleDetailsReply_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -44652,187 +48923,207 @@ public final class LoadableStudy {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\024loadable_study.proto\032\014common.proto\"q\n\r"
-          + "VoyageRequest\022\021\n\tcaptainId\030\001 \001(\003\022\026\n\016chie"
-          + "fOfficerId\030\002 \001(\003\022\021\n\tcompanyId\030\003 \001(\003\022\020\n\010v"
-          + "esselId\030\004 \001(\003\022\020\n\010voyageNo\030\005 \001(\t\"E\n\013Voyag"
-          + "eReply\022\020\n\010voyageId\030\001 \001(\003\022$\n\016responseStat"
-          + "us\030\002 \001(\0132\014.StatusReply\"0\n\014VoyageDetail\022\n"
-          + "\n\002id\030\001 \001(\003\022\024\n\014voyageNumber\030\002 \001(\t\"W\n\017Voya"
-          + "geListReply\022$\n\016responseStatus\030\001 \001(\0132\014.St"
-          + "atusReply\022\036\n\007voyages\030\002 \003(\0132\r.VoyageDetai"
-          + "l\"<\n\013StatusReply\022\016\n\006status\030\001 \001(\t\022\014\n\004code"
-          + "\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\"\223\005\n\027LoadableQuan"
-          + "tityRequest\022\025\n\restSeaDensity\030\001 \001(\t\022\013\n\003tp"
-          + "c\030\002 \001(\t\022\022\n\nestSagging\030\003 \001(\t\022#\n\033displacme"
-          + "ntDraftRestriction\030\004 \001(\t\022\031\n\021vesselLightW"
-          + "eight\030\005 \001(\t\022\013\n\003dwt\030\006 \001(\t\022\024\n\014sgCorrection"
-          + "\030\007 \001(\t\022\030\n\020saggingDeduction\030\010 \001(\t\022\024\n\014estF"
-          + "OOnBoard\030\t \001(\t\022\024\n\014estDOOnBoard\030\n \001(\t\022\034\n\024"
-          + "estFreshWaterOnBoard\030\013 \001(\t\022\020\n\010constant\030\014"
-          + " \001(\t\022\022\n\notherIfAny\030\r \001(\t\022\025\n\rtotalQuantit"
-          + "y\030\016 \001(\t\022\034\n\024distanceFromLastPort\030\017 \001(\t\022\032\n"
-          + "\022vesselAverageSpeed\030\020 \001(\t\022\027\n\017loadableStu"
-          + "dyId\030\021 \001(\003\022\031\n\021updateDateAndTime\030\022 \001(\t\022\n\n"
-          + "\002sg\030\023 \001(\t\022\032\n\022boilerWaterOnBoard\030\024 \001(\t\022\017\n"
-          + "\007ballast\030\025 \001(\t\022\024\n\014runningHours\030\026 \001(\t\022\023\n\013"
-          + "runningDays\030\027 \001(\t\022\021\n\tfoConInSZ\030\030 \001(\t\022\016\n\006"
-          + "portId\030\031 \001(\003\022\030\n\020draftRestriction\030\032 \001(\t\022\020"
-          + "\n\010subTotal\030\033 \001(\t\022\033\n\023foConsumptionPerDay\030"
-          + "\034 \001(\t\"r\n\025LoadableQuantityReply\022$\n\016respon"
-          + "seStatus\030\001 \001(\0132\014.StatusReply\022\032\n\022loadable"
-          + "QuantityId\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001("
-          + "\003\"f\n\024LoadableStudyRequest\022\021\n\tcompanyId\030\001"
-          + " \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003"
-          + "\022\027\n\017loadableStudyId\030\004 \001(\003\"?\n\027LoadableStu"
-          + "dyAttachment\022\022\n\nbyteString\030\001 \001(\014\022\020\n\010file"
-          + "Name\030\002 \001(\t\"\242\003\n\023LoadableStudyDetail\022\n\n\002id"
-          + "\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\016\n\006detail\030\003 \001(\t\022\020\n\010"
-          + "statusId\030\004 \001(\003\022\016\n\006status\030\005 \001(\t\022\023\n\013create"
-          + "dDate\030\006 \001(\t\022\021\n\tcharterer\030\007 \001(\t\022\024\n\014subCha"
-          + "rterer\030\010 \001(\t\022\021\n\tdraftMark\030\t \001(\t\022\023\n\013loadL"
-          + "ineXId\030\n \001(\003\022\030\n\020draftRestriction\030\013 \001(\t\022\031"
-          + "\n\021maxAirTemperature\030\014 \001(\t\022\033\n\023maxWaterTem"
-          + "perature\030\r \001(\t\022\030\n\020duplicatedFromId\030\016 \001(\003"
-          + "\022\020\n\010voyageId\030\017 \001(\003\022\020\n\010vesselId\030\020 \001(\003\022-\n\013"
-          + "attachments\030\021 \003(\0132\030.LoadableStudyAttachm"
-          + "ent\022\032\n\022dischargingPortIds\030\022 \003(\003\"x\n\022Loada"
-          + "bleStudyReply\022\'\n\016responseStatus\030\001 \001(\0132\017."
-          + "ResponseStatus\022-\n\017loadableStudies\030\002 \003(\0132"
-          + "\024.LoadableStudyDetail\022\n\n\002id\030\003 \001(\003\"5\n\021Loa"
-          + "dingPortDetail\022\016\n\006portId\030\001 \001(\003\022\020\n\010quanti"
-          + "ty\030\002 \001(\t\".\n\021segregationDetail\022\n\n\002id\030\001 \001("
-          + "\003\022\r\n\005value\030\002 \001(\t\"\252\002\n\025CargoNominationDeta"
-          + "il\022\n\n\002id\030\001 \001(\003\022\027\n\017loadableStudyId\030\002 \001(\003\022"
-          + "\020\n\010priority\030\003 \001(\003\022\r\n\005color\030\004 \001(\t\022\017\n\007carg"
-          + "oId\030\005 \001(\003\022\024\n\014abbreviation\030\006 \001(\t\022.\n\022loadi"
-          + "ngPortDetails\030\007 \003(\0132\022.LoadingPortDetail\022"
-          + "\020\n\010quantity\030\010 \001(\t\022\024\n\014maxTolerance\030\t \001(\t\022"
-          + "\024\n\014minTolerance\030\n \001(\t\022\016\n\006apiEst\030\013 \001(\t\022\017\n"
-          + "\007tempEst\030\014 \001(\t\022\025\n\rsegregationId\030\r \001(\003\"\247\001"
-          + "\n\026CargoNominationRequest\022\020\n\010vesselId\030\001 \001"
-          + "(\003\022\020\n\010voyageId\030\002 \001(\003\022\027\n\017loadableStudyId\030"
-          + "\003 \001(\003\022\031\n\021cargoNominationId\030\004 \001(\003\0225\n\025carg"
-          + "oNominationDetail\030\005 \001(\0132\026.CargoNominatio"
-          + "nDetail\"\214\001\n\024CargoNominationReply\022\'\n\016resp"
-          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\022\031\n\021car"
-          + "goNominationId\030\002 \001(\003\0220\n\020cargoNominations"
-          + "\030\003 \003(\0132\026.CargoNominationDetail\"z\n\023PortRo"
-          + "tationRequest\022\027\n\017loadableStudyId\030\001 \001(\003\022\020"
-          + "\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\032\n\022di"
-          + "schargingPortIds\030\004 \003(\003\022\n\n\002id\030\005 \001(\003\"\264\002\n\022P"
-          + "ortRotationDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030"
-          + "\002 \001(\003\022\017\n\007berthId\030\003 \001(\003\022\023\n\013operationId\030\004 "
-          + "\001(\003\022\027\n\017seaWaterDensity\030\005 \001(\t\022\034\n\024distance"
-          + "BetweenPorts\030\006 \001(\t\022\022\n\ntimeOfStay\030\007 \001(\t\022\020"
-          + "\n\010maxDraft\030\010 \001(\t\022\023\n\013maxAirDraft\030\t \001(\t\022\013\n"
-          + "\003eta\030\n \001(\t\022\013\n\003etd\030\013 \001(\t\022\022\n\nlayCanFrom\030\014 "
-          + "\001(\t\022\020\n\010layCanTo\030\r \001(\t\022\027\n\017loadableStudyId"
-          + "\030\016 \001(\003\022\021\n\tportOrder\030\017 \001(\003\".\n\tOperation\022\n"
-          + "\n\002id\030\001 \001(\003\022\025\n\roperationName\030\002 \001(\t\"\230\001\n\021Po"
-          + "rtRotationReply\022\'\n\016responseStatus\030\001 \001(\0132"
-          + "\017.ResponseStatus\022\"\n\005ports\030\002 \003(\0132\023.PortRo"
-          + "tationDetail\022\036\n\noperations\030\003 \003(\0132\n.Opera"
-          + "tion\022\026\n\016portRotationId\030\004 \001(\003\"\241\001\n\030Loadabl"
-          + "eQuantityResponse\0229\n\027loadableQuantityReq"
-          + "uest\030\001 \001(\0132\030.LoadableQuantityRequest\022$\n\016"
-          + "responseStatus\030\002 \001(\0132\014.StatusReply\022\016\n\006ca"
-          + "seNo\030\003 \001(\005\022\024\n\014selectedZone\030\004 \001(\t\",\n\020Valv"
-          + "eSegregation\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"2"
-          + "\n\027ValveSegregationRequest\022\027\n\017loadableStu"
-          + "dyId\030\001 \001(\003\"m\n\025ValveSegregationReply\022\'\n\016r"
-          + "esponseStatus\030\001 \001(\0132\017.ResponseStatus\022+\n\020"
-          + "valveSegregation\030\002 \003(\0132\021.ValveSegregatio"
-          + "n\"e\n\025OnHandQuantityRequest\022\021\n\tcompanyId\030"
-          + "\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\027\n\017loadableStudy"
-          + "Id\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\"\367\001\n\024OnHandQuant"
-          + "ityDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\022\n"
-          + "\nfuelTypeId\030\003 \001(\003\022\020\n\010fuelType\030\004 \001(\t\022\016\n\006t"
-          + "ankId\030\005 \001(\003\022\020\n\010tankName\030\006 \001(\t\022\025\n\rarrival"
-          + "Volume\030\007 \001(\t\022\027\n\017arrivalQuantity\030\010 \001(\t\022\027\n"
-          + "\017departureVolume\030\t \001(\t\022\031\n\021departureQuant"
-          + "ity\030\n \001(\t\022\027\n\017loadableStudyId\030\013 \001(\003\"\256\002\n\nT"
-          + "ankDetail\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tankCategor"
-          + "yId\030\002 \001(\003\022\030\n\020tankCategoryName\030\003 \001(\t\022\020\n\010t"
-          + "ankName\030\004 \001(\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025"
-          + "\n\rframeNumberTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t"
-          + "\022\030\n\020fillCapacityCubm\030\010 \001(\t\022\017\n\007density\030\t "
-          + "\001(\t\022\022\n\nisSlopTank\030\n \001(\010\022\022\n\nheightFrom\030\013 "
-          + "\001(\t\022\020\n\010heightTo\030\014 \001(\t\022\021\n\ttankOrder\030\r \001(\005"
-          + "\022\021\n\ttankGroup\030\016 \001(\005\"+\n\010TankList\022\037\n\nvesse"
-          + "lTank\030\001 \003(\0132\013.TankDetail\"\231\001\n\023OnHandQuant"
-          + "ityReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
-          + "nseStatus\022-\n\016onHandQuantity\030\002 \003(\0132\025.OnHa"
-          + "ndQuantityDetail\022\036\n\013vesselTanks\030\003 \003(\0132\t."
-          + "TankList\022\n\n\002id\030\004 \001(\003\".\n\022PurposeOfComming"
-          + "le\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"4\n\031PurposeO"
-          + "fCommingleRequest\022\027\n\017loadableStudyId\030\001 \001"
-          + "(\003\"s\n\027PurposeOfCommingleReply\022\'\n\016respons"
-          + "eStatus\030\001 \001(\0132\017.ResponseStatus\022/\n\022purpos"
-          + "eOfCommingle\030\002 \003(\0132\023.PurposeOfCommingle\""
-          + "j\n\024LoadablePatternReply\022)\n\017loadablePatte"
-          + "rn\030\001 \003(\0132\020.LoadablePattern\022\'\n\016responseSt"
-          + "atus\030\002 \001(\0132\017.ResponseStatus\"o\n\017LoadableP"
-          + "attern\022\031\n\021loadablePatternId\030\001 \001(\003\022A\n\033loa"
-          + "dablePatternCargoDetails\030\002 \003(\0132\034.Loadabl"
-          + "ePatternCargoDetails\"\302\001\n\033LoadablePattern"
-          + "CargoDetails\022\020\n\010priority\030\001 \001(\003\022\031\n\021cargoA"
-          + "bbreviation\030\002 \001(\t\022\022\n\ncargoColor\030\003 \001(\t\022\016\n"
-          + "\006tankId\030\004 \001(\003\022\020\n\010quantity\030\005 \001(\t\022\022\n\ndiffe"
-          + "rence\030\006 \001(\t\022\023\n\013constraints\030\007 \001(\t\022\027\n\017diff"
-          + "erenceColor\030\010 \001(\t\"1\n\026LoadablePatternRequ"
-          + "est\022\027\n\017loadableStudyId\030\001 \001(\003\"\265\001\n\016Comming"
-          + "leCargo\022\n\n\002id\030\001 \001(\003\022\021\n\tpurposeId\030\002 \001(\003\022\020"
-          + "\n\010slopOnly\030\003 \001(\010\022\026\n\016preferredTanks\030\004 \003(\003"
-          + "\022\020\n\010cargo1Id\030\005 \001(\003\022\021\n\tcargo1pct\030\006 \001(\t\022\020\n"
-          + "\010cargo2Id\030\007 \001(\003\022\021\n\tcargo2pct\030\010 \001(\t\022\020\n\010qu"
-          + "antity\030\t \001(\t\"Y\n\025CommingleCargoRequest\022\027\n"
-          + "\017loadableStudyId\030\001 \001(\003\022\'\n\016commingleCargo"
-          + "\030\002 \003(\0132\017.CommingleCargo\"g\n\023CommingleCarg"
-          + "oReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respons"
-          + "eStatus\022\'\n\016commingleCargo\030\002 \003(\0132\017.Commin"
-          + "gleCargo2\301\014\n\024LoadableStudyService\022,\n\nSav"
-          + "eVoyage\022\016.VoyageRequest\032\014.VoyageReply\"\000\022"
-          + "8\n\022GetVoyagesByVessel\022\016.VoyageRequest\032\020."
-          + "VoyageListReply\"\000\022J\n\024SaveLoadableQuantit"
-          + "y\022\030.LoadableQuantityRequest\032\026.LoadableQu"
-          + "antityReply\"\000\022T\n$FindLoadableStudiesByVe"
-          + "sselAndVoyage\022\025.LoadableStudyRequest\032\023.L"
-          + "oadableStudyReply\"\000\022@\n\021SaveLoadableStudy"
-          + "\022\024.LoadableStudyDetail\032\023.LoadableStudyRe"
-          + "ply\"\000\022G\n\023SaveCargoNomination\022\027.CargoNomi"
-          + "nationRequest\032\025.CargoNominationReply\"\000\022J"
-          + "\n\034GetLoadableStudyPortRotation\022\024.PortRot"
-          + "ationRequest\032\022.PortRotationReply\"\000\022J\n\026Ge"
-          + "tCargoNominationById\022\027.CargoNominationRe"
-          + "quest\032\025.CargoNominationReply\"\000\022I\n\023GetVal"
-          + "veSegregation\022\030.ValveSegregationRequest\032"
-          + "\026.ValveSegregationReply\"\000\022J\n\023getLoadable"
-          + "Quantity\022\026.LoadableQuantityReply\032\031.Loada"
-          + "bleQuantityResponse\"\000\022J\n\035SaveLoadableStu"
-          + "dyPortRotation\022\023.PortRotationDetail\032\022.Po"
-          + "rtRotationReply\"\000\022I\n\025DeleteCargoNominati"
-          + "on\022\027.CargoNominationRequest\032\025.CargoNomin"
-          + "ationReply\"\000\022B\n\024SaveDischargingPorts\022\024.P"
-          + "ortRotationRequest\032\022.PortRotationReply\"\000"
-          + "\022N\n GetPortRotationByLoadableStudyId\022\024.P"
-          + "ortRotationRequest\032\022.PortRotationReply\"\000"
-          + "\022C\n\023DeleteLoadableStudy\022\025.LoadableStudyR"
-          + "equest\032\023.LoadableStudyReply\"\000\022@\n\022DeleteP"
-          + "ortRotation\022\024.PortRotationRequest\032\022.Port"
-          + "RotationReply\"\000\022C\n\021GetOnHandQuantity\022\026.O"
-          + "nHandQuantityRequest\032\024.OnHandQuantityRep"
-          + "ly\"\000\022C\n\022SaveOnHandQuantity\022\025.OnHandQuant"
-          + "ityDetail\032\024.OnHandQuantityReply\"\000\022M\n\031Get"
-          + "LoadablePatternDetails\022\027.LoadablePattern"
-          + "Request\032\025.LoadablePatternReply\"\000\022O\n\025GetP"
-          + "urposeOfCommingle\022\032.PurposeOfCommingleRe"
-          + "quest\032\030.PurposeOfCommingleReply\"\000\022C\n\021Get"
-          + "CommingleCargo\022\026.CommingleCargoRequest\032\024"
-          + ".CommingleCargoReply\"\000\022D\n\022SaveCommingleC"
-          + "argo\022\026.CommingleCargoRequest\032\024.Commingle"
-          + "CargoReply\"\000B\036\n\032com.cpdss.common.generat"
-          + "edP\000b\006proto3"
+      "\n\024loadable_study.proto\032\014common.proto\"&\n\013"
+          + "AlgoRequest\022\027\n\017loadableStudyId\030\001 \001(\003\"4\n\t"
+          + "AlgoReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp"
+          + "onseStatus\"q\n\rVoyageRequest\022\021\n\tcaptainId"
+          + "\030\001 \001(\003\022\026\n\016chiefOfficerId\030\002 \001(\003\022\021\n\tcompan"
+          + "yId\030\003 \001(\003\022\020\n\010vesselId\030\004 \001(\003\022\020\n\010voyageNo\030"
+          + "\005 \001(\t\"E\n\013VoyageReply\022\020\n\010voyageId\030\001 \001(\003\022$"
+          + "\n\016responseStatus\030\002 \001(\0132\014.StatusReply\"0\n\014"
+          + "VoyageDetail\022\n\n\002id\030\001 \001(\003\022\024\n\014voyageNumber"
+          + "\030\002 \001(\t\"W\n\017VoyageListReply\022$\n\016responseSta"
+          + "tus\030\001 \001(\0132\014.StatusReply\022\036\n\007voyages\030\002 \003(\013"
+          + "2\r.VoyageDetail\"<\n\013StatusReply\022\016\n\006status"
+          + "\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\"\223\005"
+          + "\n\027LoadableQuantityRequest\022\025\n\restSeaDensi"
+          + "ty\030\001 \001(\t\022\013\n\003tpc\030\002 \001(\t\022\022\n\nestSagging\030\003 \001("
+          + "\t\022#\n\033displacmentDraftRestriction\030\004 \001(\t\022\031"
+          + "\n\021vesselLightWeight\030\005 \001(\t\022\013\n\003dwt\030\006 \001(\t\022\024"
+          + "\n\014sgCorrection\030\007 \001(\t\022\030\n\020saggingDeduction"
+          + "\030\010 \001(\t\022\024\n\014estFOOnBoard\030\t \001(\t\022\024\n\014estDOOnB"
+          + "oard\030\n \001(\t\022\034\n\024estFreshWaterOnBoard\030\013 \001(\t"
+          + "\022\020\n\010constant\030\014 \001(\t\022\022\n\notherIfAny\030\r \001(\t\022\025"
+          + "\n\rtotalQuantity\030\016 \001(\t\022\034\n\024distanceFromLas"
+          + "tPort\030\017 \001(\t\022\032\n\022vesselAverageSpeed\030\020 \001(\t\022"
+          + "\027\n\017loadableStudyId\030\021 \001(\003\022\031\n\021updateDateAn"
+          + "dTime\030\022 \001(\t\022\n\n\002sg\030\023 \001(\t\022\032\n\022boilerWaterOn"
+          + "Board\030\024 \001(\t\022\017\n\007ballast\030\025 \001(\t\022\024\n\014runningH"
+          + "ours\030\026 \001(\t\022\023\n\013runningDays\030\027 \001(\t\022\021\n\tfoCon"
+          + "InSZ\030\030 \001(\t\022\016\n\006portId\030\031 \001(\003\022\030\n\020draftRestr"
+          + "iction\030\032 \001(\t\022\020\n\010subTotal\030\033 \001(\t\022\033\n\023foCons"
+          + "umptionPerDay\030\034 \001(\t\"r\n\025LoadableQuantityR"
+          + "eply\022$\n\016responseStatus\030\001 \001(\0132\014.StatusRep"
+          + "ly\022\032\n\022loadableQuantityId\030\002 \001(\003\022\027\n\017loadab"
+          + "leStudyId\030\003 \001(\003\"f\n\024LoadableStudyRequest\022"
+          + "\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010"
+          + "voyageId\030\003 \001(\003\022\027\n\017loadableStudyId\030\004 \001(\003\""
+          + "?\n\027LoadableStudyAttachment\022\022\n\nbyteString"
+          + "\030\001 \001(\014\022\020\n\010fileName\030\002 \001(\t\"\242\003\n\023LoadableStu"
+          + "dyDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\016\n\006de"
+          + "tail\030\003 \001(\t\022\020\n\010statusId\030\004 \001(\003\022\016\n\006status\030\005"
+          + " \001(\t\022\023\n\013createdDate\030\006 \001(\t\022\021\n\tcharterer\030\007"
+          + " \001(\t\022\024\n\014subCharterer\030\010 \001(\t\022\021\n\tdraftMark\030"
+          + "\t \001(\t\022\023\n\013loadLineXId\030\n \001(\003\022\030\n\020draftRestr"
+          + "iction\030\013 \001(\t\022\031\n\021maxAirTemperature\030\014 \001(\t\022"
+          + "\033\n\023maxWaterTemperature\030\r \001(\t\022\030\n\020duplicat"
+          + "edFromId\030\016 \001(\003\022\020\n\010voyageId\030\017 \001(\003\022\020\n\010vess"
+          + "elId\030\020 \001(\003\022-\n\013attachments\030\021 \003(\0132\030.Loadab"
+          + "leStudyAttachment\022\032\n\022dischargingPortIds\030"
+          + "\022 \003(\003\"x\n\022LoadableStudyReply\022\'\n\016responseS"
+          + "tatus\030\001 \001(\0132\017.ResponseStatus\022-\n\017loadable"
+          + "Studies\030\002 \003(\0132\024.LoadableStudyDetail\022\n\n\002i"
+          + "d\030\003 \001(\003\"5\n\021LoadingPortDetail\022\016\n\006portId\030\001"
+          + " \001(\003\022\020\n\010quantity\030\002 \001(\t\".\n\021segregationDet"
+          + "ail\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\"\252\002\n\025Cargo"
+          + "NominationDetail\022\n\n\002id\030\001 \001(\003\022\027\n\017loadable"
+          + "StudyId\030\002 \001(\003\022\020\n\010priority\030\003 \001(\003\022\r\n\005color"
+          + "\030\004 \001(\t\022\017\n\007cargoId\030\005 \001(\003\022\024\n\014abbreviation\030"
+          + "\006 \001(\t\022.\n\022loadingPortDetails\030\007 \003(\0132\022.Load"
+          + "ingPortDetail\022\020\n\010quantity\030\010 \001(\t\022\024\n\014maxTo"
+          + "lerance\030\t \001(\t\022\024\n\014minTolerance\030\n \001(\t\022\016\n\006a"
+          + "piEst\030\013 \001(\t\022\017\n\007tempEst\030\014 \001(\t\022\025\n\rsegregat"
+          + "ionId\030\r \001(\003\"\247\001\n\026CargoNominationRequest\022\020"
+          + "\n\010vesselId\030\001 \001(\003\022\020\n\010voyageId\030\002 \001(\003\022\027\n\017lo"
+          + "adableStudyId\030\003 \001(\003\022\031\n\021cargoNominationId"
+          + "\030\004 \001(\003\0225\n\025cargoNominationDetail\030\005 \001(\0132\026."
+          + "CargoNominationDetail\"\214\001\n\024CargoNominatio"
+          + "nReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respons"
+          + "eStatus\022\031\n\021cargoNominationId\030\002 \001(\003\0220\n\020ca"
+          + "rgoNominations\030\003 \003(\0132\026.CargoNominationDe"
+          + "tail\"z\n\023PortRotationRequest\022\027\n\017loadableS"
+          + "tudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyage"
+          + "Id\030\003 \001(\003\022\032\n\022dischargingPortIds\030\004 \003(\003\022\n\n\002"
+          + "id\030\005 \001(\003\"\264\002\n\022PortRotationDetail\022\n\n\002id\030\001 "
+          + "\001(\003\022\016\n\006portId\030\002 \001(\003\022\017\n\007berthId\030\003 \001(\003\022\023\n\013"
+          + "operationId\030\004 \001(\003\022\027\n\017seaWaterDensity\030\005 \001"
+          + "(\t\022\034\n\024distanceBetweenPorts\030\006 \001(\t\022\022\n\ntime"
+          + "OfStay\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t\022\023\n\013maxAir"
+          + "Draft\030\t \001(\t\022\013\n\003eta\030\n \001(\t\022\013\n\003etd\030\013 \001(\t\022\022\n"
+          + "\nlayCanFrom\030\014 \001(\t\022\020\n\010layCanTo\030\r \001(\t\022\027\n\017l"
+          + "oadableStudyId\030\016 \001(\003\022\021\n\tportOrder\030\017 \001(\003\""
+          + ".\n\tOperation\022\n\n\002id\030\001 \001(\003\022\025\n\roperationNam"
+          + "e\030\002 \001(\t\"\230\001\n\021PortRotationReply\022\'\n\016respons"
+          + "eStatus\030\001 \001(\0132\017.ResponseStatus\022\"\n\005ports\030"
+          + "\002 \003(\0132\023.PortRotationDetail\022\036\n\noperations"
+          + "\030\003 \003(\0132\n.Operation\022\026\n\016portRotationId\030\004 \001"
+          + "(\003\"\241\001\n\030LoadableQuantityResponse\0229\n\027loada"
+          + "bleQuantityRequest\030\001 \001(\0132\030.LoadableQuant"
+          + "ityRequest\022$\n\016responseStatus\030\002 \001(\0132\014.Sta"
+          + "tusReply\022\016\n\006caseNo\030\003 \001(\005\022\024\n\014selectedZone"
+          + "\030\004 \001(\t\",\n\020ValveSegregation\022\n\n\002id\030\001 \001(\003\022\014"
+          + "\n\004name\030\002 \001(\t\"2\n\027ValveSegregationRequest\022"
+          + "\027\n\017loadableStudyId\030\001 \001(\003\"m\n\025ValveSegrega"
+          + "tionReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp"
+          + "onseStatus\022+\n\020valveSegregation\030\002 \003(\0132\021.V"
+          + "alveSegregation\"e\n\025OnHandQuantityRequest"
+          + "\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\027\n"
+          + "\017loadableStudyId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\"\367"
+          + "\001\n\024OnHandQuantityDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006p"
+          + "ortId\030\002 \001(\003\022\022\n\nfuelTypeId\030\003 \001(\003\022\020\n\010fuelT"
+          + "ype\030\004 \001(\t\022\016\n\006tankId\030\005 \001(\003\022\020\n\010tankName\030\006 "
+          + "\001(\t\022\025\n\rarrivalVolume\030\007 \001(\t\022\027\n\017arrivalQua"
+          + "ntity\030\010 \001(\t\022\027\n\017departureVolume\030\t \001(\t\022\031\n\021"
+          + "departureQuantity\030\n \001(\t\022\027\n\017loadableStudy"
+          + "Id\030\013 \001(\003\"\256\002\n\nTankDetail\022\016\n\006tankId\030\001 \001(\003\022"
+          + "\026\n\016tankCategoryId\030\002 \001(\003\022\030\n\020tankCategoryN"
+          + "ame\030\003 \001(\t\022\020\n\010tankName\030\004 \001(\t\022\027\n\017frameNumb"
+          + "erFrom\030\005 \001(\t\022\025\n\rframeNumberTo\030\006 \001(\t\022\021\n\ts"
+          + "hortName\030\007 \001(\t\022\030\n\020fillCapacityCubm\030\010 \001(\t"
+          + "\022\017\n\007density\030\t \001(\t\022\022\n\nisSlopTank\030\n \001(\010\022\022\n"
+          + "\nheightFrom\030\013 \001(\t\022\020\n\010heightTo\030\014 \001(\t\022\021\n\tt"
+          + "ankOrder\030\r \001(\005\022\021\n\ttankGroup\030\016 \001(\005\"+\n\010Tan"
+          + "kList\022\037\n\nvesselTank\030\001 \003(\0132\013.TankDetail\"\231"
+          + "\001\n\023OnHandQuantityReply\022\'\n\016responseStatus"
+          + "\030\001 \001(\0132\017.ResponseStatus\022-\n\016onHandQuantit"
+          + "y\030\002 \003(\0132\025.OnHandQuantityDetail\022\036\n\013vessel"
+          + "Tanks\030\003 \003(\0132\t.TankList\022\n\n\002id\030\004 \001(\003\".\n\022Pu"
+          + "rposeOfCommingle\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001"
+          + "(\t\"4\n\031PurposeOfCommingleRequest\022\027\n\017loada"
+          + "bleStudyId\030\001 \001(\003\"s\n\027PurposeOfCommingleRe"
+          + "ply\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSt"
+          + "atus\022/\n\022purposeOfCommingle\030\002 \003(\0132\023.Purpo"
+          + "seOfCommingle\"j\n\024LoadablePatternReply\022)\n"
+          + "\017loadablePattern\030\001 \003(\0132\020.LoadablePattern"
+          + "\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseStatu"
+          + "s\"o\n\017LoadablePattern\022\031\n\021loadablePatternI"
+          + "d\030\001 \001(\003\022A\n\033loadablePatternCargoDetails\030\002"
+          + " \003(\0132\034.LoadablePatternCargoDetails\"\244\002\n\033L"
+          + "oadablePatternCargoDetails\022\020\n\010priority\030\001"
+          + " \001(\003\022\031\n\021cargoAbbreviation\030\002 \001(\t\022\022\n\ncargo"
+          + "Color\030\003 \001(\t\022\016\n\006tankId\030\004 \001(\003\022\020\n\010quantity\030"
+          + "\005 \001(\t\022\022\n\ndifference\030\006 \001(\t\022\023\n\013constraints"
+          + "\030\007 \001(\t\022\027\n\017differenceColor\030\010 \001(\t\022 \n\030loada"
+          + "blePatternDetailsId\030\t \001(\003\022\023\n\013isCommingle"
+          + "\030\n \001(\010\022)\n!loadablePatternCommingleDetail"
+          + "sId\030\013 \001(\003\"1\n\026LoadablePatternRequest\022\027\n\017l"
+          + "oadableStudyId\030\001 \001(\003\"\265\001\n\016CommingleCargo\022"
+          + "\n\n\002id\030\001 \001(\003\022\021\n\tpurposeId\030\002 \001(\003\022\020\n\010slopOn"
+          + "ly\030\003 \001(\010\022\026\n\016preferredTanks\030\004 \003(\003\022\020\n\010carg"
+          + "o1Id\030\005 \001(\003\022\021\n\tcargo1pct\030\006 \001(\t\022\020\n\010cargo2I"
+          + "d\030\007 \001(\003\022\021\n\tcargo2pct\030\010 \001(\t\022\020\n\010quantity\030\t"
+          + " \001(\t\"Y\n\025CommingleCargoRequest\022\027\n\017loadabl"
+          + "eStudyId\030\001 \001(\003\022\'\n\016commingleCargo\030\002 \003(\0132\017"
+          + ".CommingleCargo\"g\n\023CommingleCargoReply\022\'"
+          + "\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022"
+          + "\'\n\016commingleCargo\030\002 \003(\0132\017.CommingleCargo"
+          + "\"S\n&LoadablePatternCommingleDetailsReque"
+          + "st\022)\n!loadablePatternCommingleDetailsId\030"
+          + "\001 \001(\003\"\317\002\n$LoadablePatternCommingleDetail"
+          + "sReply\022\n\n\002id\030\001 \001(\003\022\025\n\rtankShortName\030\002 \001("
+          + "\t\022\031\n\021cargo1Abbrivation\030\003 \001(\t\022\031\n\021cargo2Ab"
+          + "brivation\030\004 \001(\t\022\r\n\005grade\030\005 \001(\t\022\020\n\010quanti"
+          + "ty\030\006 \001(\t\022\013\n\003api\030\007 \001(\t\022\023\n\013temperature\030\010 \001"
+          + "(\t\022\026\n\016cargo1Quantity\030\t \001(\t\022\026\n\016cargo2Quan"
+          + "tity\030\n \001(\t\022\030\n\020cargo1Percentage\030\013 \001(\t\022\030\n\020"
+          + "cargo2Percentage\030\014 \001(\t\022\'\n\016responseStatus"
+          + "\030\r \001(\0132\017.ResponseStatus2\361\r\n\024LoadableStud"
+          + "yService\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014"
+          + ".VoyageReply\"\000\0228\n\022GetVoyagesByVessel\022\016.V"
+          + "oyageRequest\032\020.VoyageListReply\"\000\022J\n\024Save"
+          + "LoadableQuantity\022\030.LoadableQuantityReque"
+          + "st\032\026.LoadableQuantityReply\"\000\022T\n$FindLoad"
+          + "ableStudiesByVesselAndVoyage\022\025.LoadableS"
+          + "tudyRequest\032\023.LoadableStudyReply\"\000\022@\n\021Sa"
+          + "veLoadableStudy\022\024.LoadableStudyDetail\032\023."
+          + "LoadableStudyReply\"\000\022G\n\023SaveCargoNominat"
+          + "ion\022\027.CargoNominationRequest\032\025.CargoNomi"
+          + "nationReply\"\000\022J\n\034GetLoadableStudyPortRot"
+          + "ation\022\024.PortRotationRequest\032\022.PortRotati"
+          + "onReply\"\000\022J\n\026GetCargoNominationById\022\027.Ca"
+          + "rgoNominationRequest\032\025.CargoNominationRe"
+          + "ply\"\000\022I\n\023GetValveSegregation\022\030.ValveSegr"
+          + "egationRequest\032\026.ValveSegregationReply\"\000"
+          + "\022J\n\023getLoadableQuantity\022\026.LoadableQuanti"
+          + "tyReply\032\031.LoadableQuantityResponse\"\000\022J\n\035"
+          + "SaveLoadableStudyPortRotation\022\023.PortRota"
+          + "tionDetail\032\022.PortRotationReply\"\000\022I\n\025Dele"
+          + "teCargoNomination\022\027.CargoNominationReque"
+          + "st\032\025.CargoNominationReply\"\000\022B\n\024SaveDisch"
+          + "argingPorts\022\024.PortRotationRequest\032\022.Port"
+          + "RotationReply\"\000\022N\n GetPortRotationByLoad"
+          + "ableStudyId\022\024.PortRotationRequest\032\022.Port"
+          + "RotationReply\"\000\022C\n\023DeleteLoadableStudy\022\025"
+          + ".LoadableStudyRequest\032\023.LoadableStudyRep"
+          + "ly\"\000\022@\n\022DeletePortRotation\022\024.PortRotatio"
+          + "nRequest\032\022.PortRotationReply\"\000\022C\n\021GetOnH"
+          + "andQuantity\022\026.OnHandQuantityRequest\032\024.On"
+          + "HandQuantityReply\"\000\022C\n\022SaveOnHandQuantit"
+          + "y\022\025.OnHandQuantityDetail\032\024.OnHandQuantit"
+          + "yReply\"\000\022M\n\031GetLoadablePatternDetails\022\027."
+          + "LoadablePatternRequest\032\025.LoadablePattern"
+          + "Reply\"\000\022O\n\025GetPurposeOfCommingle\022\032.Purpo"
+          + "seOfCommingleRequest\032\030.PurposeOfCommingl"
+          + "eReply\"\000\022C\n\021GetCommingleCargo\022\026.Commingl"
+          + "eCargoRequest\032\024.CommingleCargoReply\"\000\022D\n"
+          + "\022SaveCommingleCargo\022\026.CommingleCargoRequ"
+          + "est\032\024.CommingleCargoReply\"\000\022v\n\"GetLoadab"
+          + "lePatternCommingleDetails\022\'.LoadablePatt"
+          + "ernCommingleDetailsRequest\032%.LoadablePat"
+          + "ternCommingleDetailsReply\"\000\0226\n\030GenerateL"
+          + "oadablePatterns\022\014.AlgoRequest\032\n.AlgoRepl"
+          + "y\"\000B\036\n\032com.cpdss.common.generatedP\000b\006pro"
+          + "to3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -44840,42 +49131,56 @@ public final class LoadableStudy {
             new com.google.protobuf.Descriptors.FileDescriptor[] {
               com.cpdss.common.generated.Common.getDescriptor(),
             });
-    internal_static_VoyageRequest_descriptor = getDescriptor().getMessageTypes().get(0);
+    internal_static_AlgoRequest_descriptor = getDescriptor().getMessageTypes().get(0);
+    internal_static_AlgoRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_AlgoRequest_descriptor,
+            new java.lang.String[] {
+              "LoadableStudyId",
+            });
+    internal_static_AlgoReply_descriptor = getDescriptor().getMessageTypes().get(1);
+    internal_static_AlgoReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_AlgoReply_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus",
+            });
+    internal_static_VoyageRequest_descriptor = getDescriptor().getMessageTypes().get(2);
     internal_static_VoyageRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VoyageRequest_descriptor,
             new java.lang.String[] {
               "CaptainId", "ChiefOfficerId", "CompanyId", "VesselId", "VoyageNo",
             });
-    internal_static_VoyageReply_descriptor = getDescriptor().getMessageTypes().get(1);
+    internal_static_VoyageReply_descriptor = getDescriptor().getMessageTypes().get(3);
     internal_static_VoyageReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VoyageReply_descriptor,
             new java.lang.String[] {
               "VoyageId", "ResponseStatus",
             });
-    internal_static_VoyageDetail_descriptor = getDescriptor().getMessageTypes().get(2);
+    internal_static_VoyageDetail_descriptor = getDescriptor().getMessageTypes().get(4);
     internal_static_VoyageDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VoyageDetail_descriptor,
             new java.lang.String[] {
               "Id", "VoyageNumber",
             });
-    internal_static_VoyageListReply_descriptor = getDescriptor().getMessageTypes().get(3);
+    internal_static_VoyageListReply_descriptor = getDescriptor().getMessageTypes().get(5);
     internal_static_VoyageListReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VoyageListReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "Voyages",
             });
-    internal_static_StatusReply_descriptor = getDescriptor().getMessageTypes().get(4);
+    internal_static_StatusReply_descriptor = getDescriptor().getMessageTypes().get(6);
     internal_static_StatusReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_StatusReply_descriptor,
             new java.lang.String[] {
               "Status", "Code", "Message",
             });
-    internal_static_LoadableQuantityRequest_descriptor = getDescriptor().getMessageTypes().get(5);
+    internal_static_LoadableQuantityRequest_descriptor = getDescriptor().getMessageTypes().get(7);
     internal_static_LoadableQuantityRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableQuantityRequest_descriptor,
@@ -44909,28 +49214,28 @@ public final class LoadableStudy {
               "SubTotal",
               "FoConsumptionPerDay",
             });
-    internal_static_LoadableQuantityReply_descriptor = getDescriptor().getMessageTypes().get(6);
+    internal_static_LoadableQuantityReply_descriptor = getDescriptor().getMessageTypes().get(8);
     internal_static_LoadableQuantityReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableQuantityReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "LoadableQuantityId", "LoadableStudyId",
             });
-    internal_static_LoadableStudyRequest_descriptor = getDescriptor().getMessageTypes().get(7);
+    internal_static_LoadableStudyRequest_descriptor = getDescriptor().getMessageTypes().get(9);
     internal_static_LoadableStudyRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableStudyRequest_descriptor,
             new java.lang.String[] {
               "CompanyId", "VesselId", "VoyageId", "LoadableStudyId",
             });
-    internal_static_LoadableStudyAttachment_descriptor = getDescriptor().getMessageTypes().get(8);
+    internal_static_LoadableStudyAttachment_descriptor = getDescriptor().getMessageTypes().get(10);
     internal_static_LoadableStudyAttachment_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableStudyAttachment_descriptor,
             new java.lang.String[] {
               "ByteString", "FileName",
             });
-    internal_static_LoadableStudyDetail_descriptor = getDescriptor().getMessageTypes().get(9);
+    internal_static_LoadableStudyDetail_descriptor = getDescriptor().getMessageTypes().get(11);
     internal_static_LoadableStudyDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableStudyDetail_descriptor,
@@ -44954,28 +49259,28 @@ public final class LoadableStudy {
               "Attachments",
               "DischargingPortIds",
             });
-    internal_static_LoadableStudyReply_descriptor = getDescriptor().getMessageTypes().get(10);
+    internal_static_LoadableStudyReply_descriptor = getDescriptor().getMessageTypes().get(12);
     internal_static_LoadableStudyReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableStudyReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "LoadableStudies", "Id",
             });
-    internal_static_LoadingPortDetail_descriptor = getDescriptor().getMessageTypes().get(11);
+    internal_static_LoadingPortDetail_descriptor = getDescriptor().getMessageTypes().get(13);
     internal_static_LoadingPortDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadingPortDetail_descriptor,
             new java.lang.String[] {
               "PortId", "Quantity",
             });
-    internal_static_segregationDetail_descriptor = getDescriptor().getMessageTypes().get(12);
+    internal_static_segregationDetail_descriptor = getDescriptor().getMessageTypes().get(14);
     internal_static_segregationDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_segregationDetail_descriptor,
             new java.lang.String[] {
               "Id", "Value",
             });
-    internal_static_CargoNominationDetail_descriptor = getDescriptor().getMessageTypes().get(13);
+    internal_static_CargoNominationDetail_descriptor = getDescriptor().getMessageTypes().get(15);
     internal_static_CargoNominationDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoNominationDetail_descriptor,
@@ -44994,7 +49299,7 @@ public final class LoadableStudy {
               "TempEst",
               "SegregationId",
             });
-    internal_static_CargoNominationRequest_descriptor = getDescriptor().getMessageTypes().get(14);
+    internal_static_CargoNominationRequest_descriptor = getDescriptor().getMessageTypes().get(16);
     internal_static_CargoNominationRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoNominationRequest_descriptor,
@@ -45005,21 +49310,21 @@ public final class LoadableStudy {
               "CargoNominationId",
               "CargoNominationDetail",
             });
-    internal_static_CargoNominationReply_descriptor = getDescriptor().getMessageTypes().get(15);
+    internal_static_CargoNominationReply_descriptor = getDescriptor().getMessageTypes().get(17);
     internal_static_CargoNominationReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoNominationReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "CargoNominationId", "CargoNominations",
             });
-    internal_static_PortRotationRequest_descriptor = getDescriptor().getMessageTypes().get(16);
+    internal_static_PortRotationRequest_descriptor = getDescriptor().getMessageTypes().get(18);
     internal_static_PortRotationRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortRotationRequest_descriptor,
             new java.lang.String[] {
               "LoadableStudyId", "VesselId", "VoyageId", "DischargingPortIds", "Id",
             });
-    internal_static_PortRotationDetail_descriptor = getDescriptor().getMessageTypes().get(17);
+    internal_static_PortRotationDetail_descriptor = getDescriptor().getMessageTypes().get(19);
     internal_static_PortRotationDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortRotationDetail_descriptor,
@@ -45040,56 +49345,56 @@ public final class LoadableStudy {
               "LoadableStudyId",
               "PortOrder",
             });
-    internal_static_Operation_descriptor = getDescriptor().getMessageTypes().get(18);
+    internal_static_Operation_descriptor = getDescriptor().getMessageTypes().get(20);
     internal_static_Operation_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_Operation_descriptor,
             new java.lang.String[] {
               "Id", "OperationName",
             });
-    internal_static_PortRotationReply_descriptor = getDescriptor().getMessageTypes().get(19);
+    internal_static_PortRotationReply_descriptor = getDescriptor().getMessageTypes().get(21);
     internal_static_PortRotationReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortRotationReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "Ports", "Operations", "PortRotationId",
             });
-    internal_static_LoadableQuantityResponse_descriptor = getDescriptor().getMessageTypes().get(20);
+    internal_static_LoadableQuantityResponse_descriptor = getDescriptor().getMessageTypes().get(22);
     internal_static_LoadableQuantityResponse_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableQuantityResponse_descriptor,
             new java.lang.String[] {
               "LoadableQuantityRequest", "ResponseStatus", "CaseNo", "SelectedZone",
             });
-    internal_static_ValveSegregation_descriptor = getDescriptor().getMessageTypes().get(21);
+    internal_static_ValveSegregation_descriptor = getDescriptor().getMessageTypes().get(23);
     internal_static_ValveSegregation_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ValveSegregation_descriptor,
             new java.lang.String[] {
               "Id", "Name",
             });
-    internal_static_ValveSegregationRequest_descriptor = getDescriptor().getMessageTypes().get(22);
+    internal_static_ValveSegregationRequest_descriptor = getDescriptor().getMessageTypes().get(24);
     internal_static_ValveSegregationRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ValveSegregationRequest_descriptor,
             new java.lang.String[] {
               "LoadableStudyId",
             });
-    internal_static_ValveSegregationReply_descriptor = getDescriptor().getMessageTypes().get(23);
+    internal_static_ValveSegregationReply_descriptor = getDescriptor().getMessageTypes().get(25);
     internal_static_ValveSegregationReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ValveSegregationReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "ValveSegregation",
             });
-    internal_static_OnHandQuantityRequest_descriptor = getDescriptor().getMessageTypes().get(24);
+    internal_static_OnHandQuantityRequest_descriptor = getDescriptor().getMessageTypes().get(26);
     internal_static_OnHandQuantityRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_OnHandQuantityRequest_descriptor,
             new java.lang.String[] {
               "CompanyId", "VesselId", "LoadableStudyId", "PortId",
             });
-    internal_static_OnHandQuantityDetail_descriptor = getDescriptor().getMessageTypes().get(25);
+    internal_static_OnHandQuantityDetail_descriptor = getDescriptor().getMessageTypes().get(27);
     internal_static_OnHandQuantityDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_OnHandQuantityDetail_descriptor,
@@ -45106,7 +49411,7 @@ public final class LoadableStudy {
               "DepartureQuantity",
               "LoadableStudyId",
             });
-    internal_static_TankDetail_descriptor = getDescriptor().getMessageTypes().get(26);
+    internal_static_TankDetail_descriptor = getDescriptor().getMessageTypes().get(28);
     internal_static_TankDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_TankDetail_descriptor,
@@ -45126,21 +49431,21 @@ public final class LoadableStudy {
               "TankOrder",
               "TankGroup",
             });
-    internal_static_TankList_descriptor = getDescriptor().getMessageTypes().get(27);
+    internal_static_TankList_descriptor = getDescriptor().getMessageTypes().get(29);
     internal_static_TankList_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_TankList_descriptor,
             new java.lang.String[] {
               "VesselTank",
             });
-    internal_static_OnHandQuantityReply_descriptor = getDescriptor().getMessageTypes().get(28);
+    internal_static_OnHandQuantityReply_descriptor = getDescriptor().getMessageTypes().get(30);
     internal_static_OnHandQuantityReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_OnHandQuantityReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "OnHandQuantity", "VesselTanks", "Id",
             });
-    internal_static_PurposeOfCommingle_descriptor = getDescriptor().getMessageTypes().get(29);
+    internal_static_PurposeOfCommingle_descriptor = getDescriptor().getMessageTypes().get(31);
     internal_static_PurposeOfCommingle_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PurposeOfCommingle_descriptor,
@@ -45148,28 +49453,28 @@ public final class LoadableStudy {
               "Id", "Name",
             });
     internal_static_PurposeOfCommingleRequest_descriptor =
-        getDescriptor().getMessageTypes().get(30);
+        getDescriptor().getMessageTypes().get(32);
     internal_static_PurposeOfCommingleRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PurposeOfCommingleRequest_descriptor,
             new java.lang.String[] {
               "LoadableStudyId",
             });
-    internal_static_PurposeOfCommingleReply_descriptor = getDescriptor().getMessageTypes().get(31);
+    internal_static_PurposeOfCommingleReply_descriptor = getDescriptor().getMessageTypes().get(33);
     internal_static_PurposeOfCommingleReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PurposeOfCommingleReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "PurposeOfCommingle",
             });
-    internal_static_LoadablePatternReply_descriptor = getDescriptor().getMessageTypes().get(32);
+    internal_static_LoadablePatternReply_descriptor = getDescriptor().getMessageTypes().get(34);
     internal_static_LoadablePatternReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePatternReply_descriptor,
             new java.lang.String[] {
               "LoadablePattern", "ResponseStatus",
             });
-    internal_static_LoadablePattern_descriptor = getDescriptor().getMessageTypes().get(33);
+    internal_static_LoadablePattern_descriptor = getDescriptor().getMessageTypes().get(35);
     internal_static_LoadablePattern_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePattern_descriptor,
@@ -45177,7 +49482,7 @@ public final class LoadableStudy {
               "LoadablePatternId", "LoadablePatternCargoDetails",
             });
     internal_static_LoadablePatternCargoDetails_descriptor =
-        getDescriptor().getMessageTypes().get(34);
+        getDescriptor().getMessageTypes().get(36);
     internal_static_LoadablePatternCargoDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePatternCargoDetails_descriptor,
@@ -45190,15 +49495,18 @@ public final class LoadableStudy {
               "Difference",
               "Constraints",
               "DifferenceColor",
+              "LoadablePatternDetailsId",
+              "IsCommingle",
+              "LoadablePatternCommingleDetailsId",
             });
-    internal_static_LoadablePatternRequest_descriptor = getDescriptor().getMessageTypes().get(35);
+    internal_static_LoadablePatternRequest_descriptor = getDescriptor().getMessageTypes().get(37);
     internal_static_LoadablePatternRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePatternRequest_descriptor,
             new java.lang.String[] {
               "LoadableStudyId",
             });
-    internal_static_CommingleCargo_descriptor = getDescriptor().getMessageTypes().get(36);
+    internal_static_CommingleCargo_descriptor = getDescriptor().getMessageTypes().get(38);
     internal_static_CommingleCargo_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CommingleCargo_descriptor,
@@ -45213,19 +49521,47 @@ public final class LoadableStudy {
               "Cargo2Pct",
               "Quantity",
             });
-    internal_static_CommingleCargoRequest_descriptor = getDescriptor().getMessageTypes().get(37);
+    internal_static_CommingleCargoRequest_descriptor = getDescriptor().getMessageTypes().get(39);
     internal_static_CommingleCargoRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CommingleCargoRequest_descriptor,
             new java.lang.String[] {
               "LoadableStudyId", "CommingleCargo",
             });
-    internal_static_CommingleCargoReply_descriptor = getDescriptor().getMessageTypes().get(38);
+    internal_static_CommingleCargoReply_descriptor = getDescriptor().getMessageTypes().get(40);
     internal_static_CommingleCargoReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CommingleCargoReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "CommingleCargo",
+            });
+    internal_static_LoadablePatternCommingleDetailsRequest_descriptor =
+        getDescriptor().getMessageTypes().get(41);
+    internal_static_LoadablePatternCommingleDetailsRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_LoadablePatternCommingleDetailsRequest_descriptor,
+            new java.lang.String[] {
+              "LoadablePatternCommingleDetailsId",
+            });
+    internal_static_LoadablePatternCommingleDetailsReply_descriptor =
+        getDescriptor().getMessageTypes().get(42);
+    internal_static_LoadablePatternCommingleDetailsReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_LoadablePatternCommingleDetailsReply_descriptor,
+            new java.lang.String[] {
+              "Id",
+              "TankShortName",
+              "Cargo1Abbrivation",
+              "Cargo2Abbrivation",
+              "Grade",
+              "Quantity",
+              "Api",
+              "Temperature",
+              "Cargo1Quantity",
+              "Cargo2Quantity",
+              "Cargo1Percentage",
+              "Cargo2Percentage",
+              "ResponseStatus",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }

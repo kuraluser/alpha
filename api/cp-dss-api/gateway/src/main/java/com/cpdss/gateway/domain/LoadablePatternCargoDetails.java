@@ -14,4 +14,7 @@ public class LoadablePatternCargoDetails {
   private String difference;
   private String constraints;
   private String differenceColor;
+  private Long loadablePatternDetailsId;
+  private Boolean isCommingle;
+  private Long loadablePatternCommingleDetailsId;
 }

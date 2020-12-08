@@ -8,11 +8,15 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.LoadableStudy.AlgoReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
@@ -59,6 +63,7 @@ import com.cpdss.gateway.domain.CommingleCargoResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadablePattern;
 import com.cpdss.gateway.domain.LoadablePatternCargoDetails;
+import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
@@ -1196,6 +1201,21 @@ public class LoadableStudyService {
                                 differenceColor ->
                                     loadablePatternCargoDetails.setDifferenceColor(
                                         differenceColor));
+                        Optional.ofNullable(
+                                loadablePatternCargoDetail.getLoadablePatternDetailsId())
+                            .ifPresent(
+                                loadablePatternDetailsId ->
+                                    loadablePatternCargoDetails.setLoadablePatternDetailsId(
+                                        loadablePatternDetailsId));
+                        Optional.ofNullable(loadablePatternCargoDetail.getIsCommingle())
+                            .ifPresent(
+                                commingle -> loadablePatternCargoDetails.setIsCommingle(commingle));
+                        Optional.ofNullable(
+                                loadablePatternCargoDetail.getLoadablePatternCommingleDetailsId())
+                            .ifPresent(
+                                id ->
+                                    loadablePatternCargoDetails
+                                        .setLoadablePatternCommingleDetailsId(id));
                         loadablePatternDto
                             .getLoadablePatternCargoDetails()
                             .add(loadablePatternCargoDetails);
@@ -1659,5 +1679,97 @@ public class LoadableStudyService {
       }
     }
     return builder;
+  }
+  /**
+   * @param loadablePatternDetailsId
+   * @param first
+   * @return LoadablePatternDetailsResponse
+   */
+  public LoadablePatternDetailsResponse getLoadablePatternCommingleDetails(
+      Long loadablePatternCommingleDetailsId, String correlationId) throws GenericServiceException {
+    LoadablePatternCommingleDetailsRequest loadablePatternCommingleDetailsRequest =
+        LoadablePatternCommingleDetailsRequest.newBuilder()
+            .setLoadablePatternCommingleDetailsId(loadablePatternCommingleDetailsId)
+            .build();
+    LoadablePatternCommingleDetailsReply loadablePatternCommingleDetailsReply =
+        this.getLoadablePatternCommingleDetails(loadablePatternCommingleDetailsRequest);
+    if (!SUCCESS.equals(loadablePatternCommingleDetailsReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get Loadable Pattern Commingle Details ",
+          loadablePatternCommingleDetailsReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(loadablePatternCommingleDetailsReply.getResponseStatus().getCode())));
+    }
+    return this.buildLoadablePatternCommingleDetailsResponse(
+        loadablePatternCommingleDetailsReply, correlationId);
+  }
+
+  /**
+   * @param loadablePatternCommingleDetailsReply
+   * @param correlationId
+   * @return LoadablePatternDetailsResponse
+   */
+  private LoadablePatternDetailsResponse buildLoadablePatternCommingleDetailsResponse(
+      LoadablePatternCommingleDetailsReply loadablePatternCommingleDetailsReply,
+      String correlationId) {
+    LoadablePatternDetailsResponse loadablePatternDetailsResponse =
+        new LoadablePatternDetailsResponse();
+    loadablePatternDetailsResponse.setId(loadablePatternCommingleDetailsReply.getId());
+    loadablePatternDetailsResponse.setApi(loadablePatternCommingleDetailsReply.getApi());
+    loadablePatternDetailsResponse.setCargo1Abbrivation(
+        loadablePatternCommingleDetailsReply.getCargo1Abbrivation());
+    loadablePatternDetailsResponse.setCargo2Abbrivation(
+        loadablePatternCommingleDetailsReply.getCargo2Abbrivation());
+    loadablePatternDetailsResponse.setCargo1Percentage(
+        loadablePatternCommingleDetailsReply.getCargo1Percentage());
+    loadablePatternDetailsResponse.setCargo2Percentage(
+        loadablePatternCommingleDetailsReply.getCargo2Percentage());
+    loadablePatternDetailsResponse.setCargo1Quantity(
+        loadablePatternCommingleDetailsReply.getCargo1Quantity());
+    loadablePatternDetailsResponse.setCargo2Quantity(
+        loadablePatternCommingleDetailsReply.getCargo2Quantity());
+    loadablePatternDetailsResponse.setGrade(loadablePatternCommingleDetailsReply.getGrade());
+    loadablePatternDetailsResponse.setQuantity(loadablePatternCommingleDetailsReply.getQuantity());
+    loadablePatternDetailsResponse.setTankShortName(
+        loadablePatternCommingleDetailsReply.getTankShortName());
+    loadablePatternDetailsResponse.setTemperature(
+        loadablePatternCommingleDetailsReply.getTemperature());
+    loadablePatternDetailsResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return loadablePatternDetailsResponse;
+  }
+
+  /**
+   * @param loadablePatternCommingleDetailsRequest
+   * @return LoadablePatternCommingleDetailsReply
+   */
+  private LoadablePatternCommingleDetailsReply getLoadablePatternCommingleDetails(
+      LoadablePatternCommingleDetailsRequest loadablePatternCommingleDetailsRequest) {
+
+    return this.loadableStudyServiceBlockingStub.getLoadablePatternCommingleDetails(
+        loadablePatternCommingleDetailsRequest);
+  }
+
+  /**
+   * @param loadableStudiesId
+   * @param first
+   * @return Object
+   */
+  public void generateLoadablePatterns(Long loadableStudyId, String correlationId)
+      throws GenericServiceException {
+    log.info(
+        "Inside generateLoadablePatterns gateway service with correlationId : " + correlationId);
+    AlgoRequest request = AlgoRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
+    AlgoReply reply = this.generateLoadablePatterns(request);
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to call algo",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+    }
+  }
+
+  public AlgoReply generateLoadablePatterns(AlgoRequest request) {
+    return this.loadableStudyServiceBlockingStub.generateLoadablePatterns(request);
   }
 }

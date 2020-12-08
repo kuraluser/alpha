@@ -60,4 +60,7 @@ public class LoadablePatternDetails extends EntityDoc {
   @JoinColumn(name = "loadable_patternxid")
   @ManyToOne
   private LoadablePattern loadablePattern;
+
+  @Column(name = "is_commingle")
+  private Boolean isCommingle;
 }

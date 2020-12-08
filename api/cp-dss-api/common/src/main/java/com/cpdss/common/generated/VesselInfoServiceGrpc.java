@@ -218,6 +218,57 @@ public final class VesselInfoServiceGrpc {
     return getGetVesselCargoTanksMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.VesselInfo.VesselAlgoRequest,
+          com.cpdss.common.generated.VesselInfo.VesselAlgoReply>
+      getGetVesselDetailsForAlgoMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetVesselDetailsForAlgo",
+      requestType = com.cpdss.common.generated.VesselInfo.VesselAlgoRequest.class,
+      responseType = com.cpdss.common.generated.VesselInfo.VesselAlgoReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.VesselInfo.VesselAlgoRequest,
+          com.cpdss.common.generated.VesselInfo.VesselAlgoReply>
+      getGetVesselDetailsForAlgoMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.VesselInfo.VesselAlgoRequest,
+            com.cpdss.common.generated.VesselInfo.VesselAlgoReply>
+        getGetVesselDetailsForAlgoMethod;
+    if ((getGetVesselDetailsForAlgoMethod = VesselInfoServiceGrpc.getGetVesselDetailsForAlgoMethod)
+        == null) {
+      synchronized (VesselInfoServiceGrpc.class) {
+        if ((getGetVesselDetailsForAlgoMethod =
+                VesselInfoServiceGrpc.getGetVesselDetailsForAlgoMethod)
+            == null) {
+          VesselInfoServiceGrpc.getGetVesselDetailsForAlgoMethod =
+              getGetVesselDetailsForAlgoMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.VesselInfo.VesselAlgoRequest,
+                          com.cpdss.common.generated.VesselInfo.VesselAlgoReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetVesselDetailsForAlgo"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.VesselInfo.VesselAlgoRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.VesselInfo.VesselAlgoReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new VesselInfoServiceMethodDescriptorSupplier("GetVesselDetailsForAlgo"))
+                      .build();
+        }
+      }
+    }
+    return getGetVesselDetailsForAlgoMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static VesselInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<VesselInfoServiceStub> factory =
@@ -294,6 +345,14 @@ public final class VesselInfoServiceGrpc {
       asyncUnimplementedUnaryCall(getGetVesselCargoTanksMethod(), responseObserver);
     }
 
+    /** */
+    public void getVesselDetailsForAlgo(
+        com.cpdss.common.generated.VesselInfo.VesselAlgoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselAlgoReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetVesselDetailsForAlgoMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -325,6 +384,13 @@ public final class VesselInfoServiceGrpc {
                       com.cpdss.common.generated.VesselInfo.VesselRequest,
                       com.cpdss.common.generated.VesselInfo.VesselReply>(
                       this, METHODID_GET_VESSEL_CARGO_TANKS)))
+          .addMethod(
+              getGetVesselDetailsForAlgoMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.VesselInfo.VesselAlgoRequest,
+                      com.cpdss.common.generated.VesselInfo.VesselAlgoReply>(
+                      this, METHODID_GET_VESSEL_DETAILS_FOR_ALGO)))
           .build();
     }
   }
@@ -385,6 +451,17 @@ public final class VesselInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getVesselDetailsForAlgo(
+        com.cpdss.common.generated.VesselInfo.VesselAlgoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselAlgoReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetVesselDetailsForAlgoMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -427,6 +504,13 @@ public final class VesselInfoServiceGrpc {
         com.cpdss.common.generated.VesselInfo.VesselRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetVesselCargoTanksMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.VesselInfo.VesselAlgoReply getVesselDetailsForAlgo(
+        com.cpdss.common.generated.VesselInfo.VesselAlgoRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetVesselDetailsForAlgoMethod(), getCallOptions(), request);
     }
   }
 
@@ -474,12 +558,21 @@ public final class VesselInfoServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetVesselCargoTanksMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.VesselInfo.VesselAlgoReply>
+        getVesselDetailsForAlgo(com.cpdss.common.generated.VesselInfo.VesselAlgoRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetVesselDetailsForAlgoMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_ALL_VESSELS_BY_COMPANY = 0;
   private static final int METHODID_GET_VESSEL_DETAILS_BY_ID = 1;
   private static final int METHODID_GET_VESSEL_FUEL_TANKS = 2;
   private static final int METHODID_GET_VESSEL_CARGO_TANKS = 3;
+  private static final int METHODID_GET_VESSEL_DETAILS_FOR_ALGO = 4;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -520,6 +613,12 @@ public final class VesselInfoServiceGrpc {
           serviceImpl.getVesselCargoTanks(
               (com.cpdss.common.generated.VesselInfo.VesselRequest) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_VESSEL_DETAILS_FOR_ALGO:
+          serviceImpl.getVesselDetailsForAlgo(
+              (com.cpdss.common.generated.VesselInfo.VesselAlgoRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselAlgoReply>)
                   responseObserver);
           break;
         default:
@@ -590,6 +689,7 @@ public final class VesselInfoServiceGrpc {
                       .addMethod(getGetVesselDetailsByIdMethod())
                       .addMethod(getGetVesselFuelTanksMethod())
                       .addMethod(getGetVesselCargoTanksMethod())
+                      .addMethod(getGetVesselDetailsForAlgoMethod())
                       .build();
         }
       }
