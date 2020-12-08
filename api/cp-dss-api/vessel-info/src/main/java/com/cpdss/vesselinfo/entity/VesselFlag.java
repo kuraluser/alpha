@@ -26,5 +26,4 @@ public class VesselFlag extends EntityDoc {
 
   @Column(name = "name")
   private String name;
-  
 }

@@ -11,10 +11,10 @@ import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingS
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
-import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
-import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
@@ -79,6 +79,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -86,7 +87,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -876,9 +876,10 @@ public class LoadableStudyService {
         loadableQuantityResponse.getLoadableQuantityRequest().getDraftRestriction());
     loadableQuantity.setSubTotal(
         loadableQuantityResponse.getLoadableQuantityRequest().getSubTotal());
+    loadableQuantity.setDwt(loadableQuantityResponse.getLoadableQuantityRequest().getDwt());
     loadableQuantityResponseDto.setLoadableQuantity(loadableQuantity);
-    loadableQuantityResponseDto.setIsSummerZone(loadableQuantityResponse.getIsSummerZone());
-
+    loadableQuantityResponseDto.setSelectedZone(loadableQuantityResponse.getSelectedZone());
+    loadableQuantityResponseDto.setCaseNo(loadableQuantityResponse.getCaseNo());
     loadableQuantityResponseDto.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
 
@@ -1385,7 +1386,7 @@ public class LoadableStudyService {
   public OnHandQuantityReply saveOnHandQuantity(OnHandQuantityDetail request) {
     return this.loadableStudyServiceBlockingStub.saveOnHandQuantity(request);
   }
-  
+
   /**
    * Retrieves the commingle cargo information along with vessel cargo tanks lookup array
    *
@@ -1416,7 +1417,7 @@ public class LoadableStudyService {
     }
     // Retrieve commingle cargo information from commingle cargo table
     CommingleCargoRequest commingleCargoRequest =
-    		CommingleCargoRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
+        CommingleCargoRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
     CommingleCargoReply commingleCargoReply =
         loadableStudyServiceBlockingStub.getCommingleCargo(commingleCargoRequest);
     if (SUCCESS.equalsIgnoreCase(commingleCargoReply.getResponseStatus().getStatus())) {
@@ -1454,77 +1455,82 @@ public class LoadableStudyService {
     }
     return commingleCargoResponse;
   }
-  
-  private void buildCommingleCargoResponse(CommingleCargoResponse commingleCargoResponse, CommingleCargoReply commingleCargoReply){
-	  if (commingleCargoReply != null && !commingleCargoReply.getCommingleCargoList().isEmpty()) {
-		  CommingleCargo commingleCargo = new CommingleCargo();
-		  List<CargoGroup> cargoGroups = new ArrayList<>();
-		  commingleCargoReply.getCommingleCargoList()
-		  .forEach(commingleCargoGen -> {
-			  commingleCargo.setPurposeId(commingleCargoGen.getPurposeId());
-			  commingleCargo.setSlopOnly(commingleCargoGen.getSlopOnly());
-			  commingleCargo.setPreferredTanks(commingleCargoGen.getPreferredTanksList());
-			  CargoGroup cargoGroup = new CargoGroup();
-			  cargoGroup.setId(commingleCargoGen.getId());
-			  cargoGroup.setCargo1Id(commingleCargoGen.getCargo1Id());
-			  cargoGroup.setCargo1pct(!StringUtils.isEmpty(commingleCargoGen.getCargo1Pct())
-					  ? new BigDecimal(commingleCargoGen.getCargo1Pct())
-							  : new BigDecimal("0"));
-			  cargoGroup.setCargo2Id(commingleCargoGen.getCargo2Id());
-			  cargoGroup.setCargo2pct(!StringUtils.isEmpty(commingleCargoGen.getCargo2Pct())
-					  ? new BigDecimal(commingleCargoGen.getCargo2Pct())
-							  : new BigDecimal("0"));
-			  cargoGroup.setQuantity(!StringUtils.isEmpty(commingleCargoGen.getQuantity())
-					  ? new BigDecimal(commingleCargoGen.getQuantity())
-							  : new BigDecimal("0"));
-			  cargoGroups.add(cargoGroup);
-		  });
-		  commingleCargo.setCargoGroups(cargoGroups);
-		  commingleCargoResponse.setCommingleCargo(commingleCargo);
-	  }
+
+  private void buildCommingleCargoResponse(
+      CommingleCargoResponse commingleCargoResponse, CommingleCargoReply commingleCargoReply) {
+    if (commingleCargoReply != null && !commingleCargoReply.getCommingleCargoList().isEmpty()) {
+      CommingleCargo commingleCargo = new CommingleCargo();
+      List<CargoGroup> cargoGroups = new ArrayList<>();
+      commingleCargoReply
+          .getCommingleCargoList()
+          .forEach(
+              commingleCargoGen -> {
+                commingleCargo.setPurposeId(commingleCargoGen.getPurposeId());
+                commingleCargo.setSlopOnly(commingleCargoGen.getSlopOnly());
+                commingleCargo.setPreferredTanks(commingleCargoGen.getPreferredTanksList());
+                CargoGroup cargoGroup = new CargoGroup();
+                cargoGroup.setId(commingleCargoGen.getId());
+                cargoGroup.setCargo1Id(commingleCargoGen.getCargo1Id());
+                cargoGroup.setCargo1pct(
+                    !StringUtils.isEmpty(commingleCargoGen.getCargo1Pct())
+                        ? new BigDecimal(commingleCargoGen.getCargo1Pct())
+                        : new BigDecimal("0"));
+                cargoGroup.setCargo2Id(commingleCargoGen.getCargo2Id());
+                cargoGroup.setCargo2pct(
+                    !StringUtils.isEmpty(commingleCargoGen.getCargo2Pct())
+                        ? new BigDecimal(commingleCargoGen.getCargo2Pct())
+                        : new BigDecimal("0"));
+                cargoGroup.setQuantity(
+                    !StringUtils.isEmpty(commingleCargoGen.getQuantity())
+                        ? new BigDecimal(commingleCargoGen.getQuantity())
+                        : new BigDecimal("0"));
+                cargoGroups.add(cargoGroup);
+              });
+      commingleCargo.setCargoGroups(cargoGroups);
+      commingleCargoResponse.setCommingleCargo(commingleCargo);
+    }
   }
 
   /**
-   * builds commingleCargoResponse from the cargo nomination data
-   * for the specific loadable study
+   * builds commingleCargoResponse from the cargo nomination data for the specific loadable study
+   *
    * @param commingleCargoResponse
    * @param reply
    * @return
    */
   private CommingleCargoResponse buildCommingleCargoResponseWithCargos(
-		  CommingleCargoResponse commingleCargoResponse, CargoNominationReply reply) {
+      CommingleCargoResponse commingleCargoResponse, CargoNominationReply reply) {
     if (reply != null && !reply.getCargoNominationsList().isEmpty()) {
       List<CargoNomination> cargoNominationList = new ArrayList<>();
-      List<CargoNominationDetail> cargoNominationDetailsFiltered = reply.getCargoNominationsList().stream() 
-    		  .filter(distinctByKey(cargoNominationDetail -> cargoNominationDetail.getCargoId()))
-    		  .collect(Collectors.toList());
-      cargoNominationDetailsFiltered
-          .forEach(
-              cargoNominationDetail -> {
-                CargoNomination cargoNomination = new CargoNomination();
-                cargoNomination.setId(cargoNominationDetail.getId());
-                cargoNomination.setColor(cargoNominationDetail.getColor());
-                cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
-                cargoNominationList.add(cargoNomination);
-              });
+      List<CargoNominationDetail> cargoNominationDetailsFiltered =
+          reply.getCargoNominationsList().stream()
+              .filter(distinctByKey(cargoNominationDetail -> cargoNominationDetail.getCargoId()))
+              .collect(Collectors.toList());
+      cargoNominationDetailsFiltered.forEach(
+          cargoNominationDetail -> {
+            CargoNomination cargoNomination = new CargoNomination();
+            cargoNomination.setId(cargoNominationDetail.getId());
+            cargoNomination.setColor(cargoNominationDetail.getColor());
+            cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
+            cargoNominationList.add(cargoNomination);
+          });
       commingleCargoResponse.setCargoNominations(cargoNominationList);
     }
     return commingleCargoResponse;
   }
-  
+
   /**
-   * Function to retrieve distinct objects by an attribute 
-   * of the object
+   * Function to retrieve distinct objects by an attribute of the object
+   *
    * @param <T>
    * @param keyExtractor
    * @return
    */
-  public static <T> Predicate<T> distinctByKey(
-		  Function<? super T, ?> keyExtractor) {
-	  Map<Object, Boolean> seen = new ConcurrentHashMap<>(); 
-	  return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null; 
+  public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+    Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+    return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
   }
-  
+
   /**
    * Builds commingle response with vessel tanks
    *
@@ -1570,5 +1576,88 @@ public class LoadableStudyService {
               });
       commingleCargoResponse.setPurposes(purposeList);
     }
+  }
+
+  public CommingleCargoResponse saveCommingleCargo(
+      Long loadableStudyId, com.cpdss.gateway.domain.CommingleCargo commingleCargo)
+      throws GenericServiceException {
+    CommingleCargoResponse commingleCargoResponse = new CommingleCargoResponse();
+    // Build response with response status
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    commingleCargoResponse.setResponseStatus(commonSuccessResponse);
+    // Build commingle payload for grpc call
+    if (commingleCargo != null) {
+      com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.Builder builder =
+          buildSaveCommingleCargoRequest(loadableStudyId, commingleCargo);
+      CommingleCargoRequest commingleCargoRequest = builder.build();
+      CommingleCargoReply commingleCargoReply =
+          loadableStudyServiceBlockingStub.saveCommingleCargo(commingleCargoRequest);
+      if (commingleCargoReply != null
+          && commingleCargoReply.getResponseStatus() != null
+          && !SUCCESS.equalsIgnoreCase(commingleCargoReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Error in saving commingle cargo",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
+    }
+    return commingleCargoResponse;
+  }
+
+  /**
+   * build save commingle cargo request for grpc
+   *
+   * @param loadableStudyId
+   * @param commingleCargo
+   * @return
+   */
+  private com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.Builder
+      buildSaveCommingleCargoRequest(Long loadableStudyId, CommingleCargo commingleCargoRequest) {
+    com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.Builder builder =
+        CommingleCargoRequest.newBuilder();
+    if (commingleCargoRequest != null) {
+      Optional.ofNullable(loadableStudyId).ifPresent(builder::setLoadableStudyId);
+      // build inner commingleCargo object
+      Long purposeId =
+          commingleCargoRequest.getPurposeId() != null ? commingleCargoRequest.getPurposeId() : 0;
+      boolean slopOnly = commingleCargoRequest.isSlopOnly();
+      List<Long> preferredTanks =
+          !CollectionUtils.isEmpty(commingleCargoRequest.getPreferredTanks())
+              ? commingleCargoRequest.getPreferredTanks()
+              : Collections.emptyList();
+      if (!CollectionUtils.isEmpty(commingleCargoRequest.getCargoGroups())) {
+        commingleCargoRequest
+            .getCargoGroups()
+            .forEach(
+                cargoGroup -> {
+                  com.cpdss.common.generated.LoadableStudy.CommingleCargo.Builder
+                      commingleCargoBuilder =
+                          com.cpdss.common.generated.LoadableStudy.CommingleCargo.newBuilder();
+                  Optional.ofNullable(cargoGroup.getId()).ifPresent(commingleCargoBuilder::setId);
+                  Optional.ofNullable(purposeId).ifPresent(commingleCargoBuilder::setPurposeId);
+                  Optional.ofNullable(slopOnly).ifPresent(commingleCargoBuilder::setSlopOnly);
+                  Optional.ofNullable(preferredTanks)
+                      .ifPresent(commingleCargoBuilder::addAllPreferredTanks);
+                  Optional.ofNullable(cargoGroup.getCargo1Id())
+                      .ifPresent(commingleCargoBuilder::setCargo1Id);
+                  Optional.ofNullable(cargoGroup.getCargo1pct())
+                      .ifPresent(
+                          cargo1pct ->
+                              commingleCargoBuilder.setCargo1Pct(String.valueOf(cargo1pct)));
+                  Optional.ofNullable(cargoGroup.getCargo2Id())
+                      .ifPresent(commingleCargoBuilder::setCargo2Id);
+                  Optional.ofNullable(cargoGroup.getCargo2pct())
+                      .ifPresent(
+                          cargo2pct ->
+                              commingleCargoBuilder.setCargo2Pct(String.valueOf(cargo2pct)));
+                  Optional.ofNullable(cargoGroup.getQuantity())
+                      .ifPresent(
+                          quantity -> commingleCargoBuilder.setQuantity(String.valueOf(quantity)));
+                  builder.addCommingleCargo(commingleCargoBuilder);
+                });
+      }
+    }
+    return builder;
   }
 }

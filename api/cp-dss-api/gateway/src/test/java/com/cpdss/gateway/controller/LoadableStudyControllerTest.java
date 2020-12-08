@@ -21,7 +21,6 @@ import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.LoadingPort;
 import com.cpdss.gateway.domain.OnHandQuantity;
-import com.cpdss.gateway.domain.LoadingPort;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;

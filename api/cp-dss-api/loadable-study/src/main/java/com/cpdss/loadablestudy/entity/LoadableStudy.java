@@ -85,6 +85,9 @@ public class LoadableStudy extends EntityDoc {
   @OneToMany(mappedBy = "loadableStudy", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
   private Set<LoadableStudyPortRotation> portRotations;
 
+  @Column(name = "case_no")
+  private Integer caseNo;
+
   @PrePersist
   void prePersist() {
     this.isActive = true;

@@ -187,10 +187,6 @@ public class Vessel extends EntityDoc {
   @ManyToOne
   private VesselFlag vesselFlag;
 
-
-
   @OneToMany(mappedBy = "vessel")
   private Set<VesselDraftCondition> vesselDraftConditionCollection;
-
-
 }

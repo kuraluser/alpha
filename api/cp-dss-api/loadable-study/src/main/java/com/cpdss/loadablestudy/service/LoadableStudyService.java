@@ -9,12 +9,12 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
+import com.cpdss.common.generated.LoadableStudy.CommingleCargo;
+import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
+import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
-import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
-import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
-import com.cpdss.common.generated.LoadableStudy.CommingleCargo;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse;
@@ -71,9 +71,9 @@ import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsReposit
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
+import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
@@ -92,6 +92,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -104,7 +105,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -121,7 +121,6 @@ import org.springframework.util.StringUtils;
 @Service
 @Transactional
 public class LoadableStudyService extends LoadableStudyServiceImplBase {
-
 
   @Value("${loadablestudy.attachement.rooFolder}")
   private String rootFolder;
@@ -143,7 +142,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private CommingleCargoRepository commingleCargoRepository;
-  
+
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
   private static final String VOYAGEEXISTS = "VOYAGE_EXISTS";
@@ -158,6 +157,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
   private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
+  private static final int CASE_1 = 1;
+  private static final int CASE_2 = 2;
+  private static final int CASE_3 = 3;
+
+  private static final Long LOAD_LINE_TROPICAL_TO_SUMMER_ID = 7L;
+  private static final Long LOAD_LINE_TROPICAL_TO_WINTER_ID = 8L;
+  private static final Long LOAD_LINE_SUMMER_TO_WINTER_ID = 9L;
+
+  private static final List<Long> CASE_1_LOAD_LINES =
+      Arrays.asList(
+          LOAD_LINE_TROPICAL_TO_SUMMER_ID,
+          LOAD_LINE_TROPICAL_TO_WINTER_ID,
+          LOAD_LINE_SUMMER_TO_WINTER_ID);
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -503,6 +515,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
         entity.setAttachments(attachmentCollection);
       }
+      this.setCaseNo(entity);
       entity.setLoadableStudyStatus(
           this.loadableStudyStatusRepository.getOne(LOADABLE_STUDY_INITIAL_STATUS_ID));
       entity = this.loadableStudyRepository.save(entity);
@@ -530,6 +543,22 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * * Set case number in loadable study entity
+   *
+   * @param request
+   * @param entity
+   */
+  private void setCaseNo(LoadableStudy entity) {
+    if (null != entity.getDraftRestriction()) {
+      entity.setCaseNo(CASE_3);
+    } else if (CASE_1_LOAD_LINES.contains(entity.getLoadLineXId())) {
+      entity.setCaseNo(CASE_1);
+    } else {
+      entity.setCaseNo(CASE_2);
     }
   }
 
@@ -679,13 +708,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .collect(Collectors.toList());
     }
     int existingPortsCount = 0;
-    // remove loading portIds from request which are already available in port rotation for the
+    // remove loading portIds from request which are already available in port
+    // rotation for the
     // specific loadable study
     if (!CollectionUtils.isEmpty(requestedPortIds) && !CollectionUtils.isEmpty(existingPortIds)) {
       requestedPortIds.removeAll(existingPortIds);
       existingPortsCount = existingPortIds.size();
     }
-    // fetch the specific ports attributes like waterDensity and draft values from port master
+    // fetch the specific ports attributes like waterDensity and draft values from
+    // port master
     if (!CollectionUtils.isEmpty(requestedPortIds)) {
       GetPortInfoByPortIdsRequest.Builder reqBuilder = GetPortInfoByPortIdsRequest.newBuilder();
       buildGetPortInfoByPortIdsRequest(reqBuilder, cargoNomination);
@@ -698,7 +729,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_GEN_INTERNAL_ERR,
             HttpStatusCode.INTERNAL_SERVER_ERROR);
       }
-      // update loadable-study-port-rotation with ports from cargoNomination and port attributes
+      // update loadable-study-port-rotation with ports from cargoNomination and port
+      // attributes
       buildAndSaveLoadableStudyPortRotationEntities(
           loadableStudy, requestedPortIds, portReply, existingPortsCount);
     }
@@ -982,24 +1014,28 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.loadableStudyRepository.findById(request.getLoadableStudyId());
       if (!loadableStudy.isPresent()) {
         log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
-        builder.setResponseStatus(
-            StatusReply.newBuilder()
-                .setStatus(FAILED)
-                .setMessage(INVALID_LOADABLE_QUANTITY)
-                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
-      } else if (loadableQuantity.isEmpty()) {
+        throw new GenericServiceException(
+            INVALID_LOADABLE_QUANTITY,
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      VesselRequest replyBuilder =
+          VesselRequest.newBuilder()
+              .setVesselId(loadableStudy.get().getVesselXId())
+              .setVesselDraftConditionId(loadableStudy.get().getLoadLineXId())
+              .setDraftExtreme(loadableStudy.get().getDraftMark().toString())
+              .build();
+      VesselReply vesselReply = this.getVesselDetailsById(replyBuilder);
+      String selectedZone = "";
+      if (vesselReply.getVesselLoadableQuantityDetails().getDraftConditionName() != null) {
+        String[] array =
+            vesselReply.getVesselLoadableQuantityDetails().getDraftConditionName().split(" ");
+        selectedZone = array[array.length - 1];
+      }
+      builder.setCaseNo(loadableStudy.get().getCaseNo());
+      builder.setSelectedZone(selectedZone);
+      if (loadableQuantity.isEmpty()) {
         String draftRestictoin = "";
-        String draftExtreme = "";
-        if (Optional.ofNullable(loadableStudy.get().getDraftMark()).isPresent()) {
-          draftExtreme = loadableStudy.get().getDraftMark().toString();
-        }
-        VesselRequest replyBuilder =
-            VesselRequest.newBuilder()
-                .setVesselId(loadableStudy.get().getVesselXId())
-                .setVesselDraftConditionId(loadableStudy.get().getLoadLineXId())
-                .setDraftExtreme(draftExtreme)
-                .build();
-        VesselReply vesselReply = this.getVesselDetailsById(replyBuilder);
         if (Optional.ofNullable(loadableStudy.get().getDraftRestriction()).isPresent()) {
           draftRestictoin = loadableStudy.get().getDraftRestriction().toString();
         } else if (Optional.ofNullable(loadableStudy.get().getDraftMark()).isPresent()) {
@@ -1014,12 +1050,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setConstant(vesselReply.getVesselLoadableQuantityDetails().getConstant())
                 .setTpc(vesselReply.getVesselLoadableQuantityDetails().getTpc())
                 .setDraftRestriction(draftRestictoin)
+                .setDwt(vesselReply.getVesselLoadableQuantityDetails().getDwt())
                 .build();
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
-        builder.setIsSummerZone(true);
-        Optional.ofNullable(loadableStudy.get().getDraftRestriction())
-            .ifPresent(sz -> builder.setIsSummerZone(false));
       } else {
 
         LoadableQuantityRequest.Builder loadableQuantityRequest =
@@ -1112,12 +1146,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 foConsumptionPerDay ->
                     loadableQuantityRequest.setFoConsumptionPerDay(foConsumptionPerDay.toString()));
 
-        builder.setIsSummerZone(true);
-        Optional.ofNullable(loadableStudy.get().getDraftRestriction())
-            .ifPresent(sz -> builder.setIsSummerZone(false));
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
       }
+    } catch (GenericServiceException e) {
+      log.error("Error getting loadable quantity ", e);
+      builder.setResponseStatus(
+          StatusReply.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(e.getCode()));
     } catch (Exception e) {
       log.error("Error getting loadable quantity ", e);
       builder.setResponseStatus(
@@ -1482,6 +1520,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
   /**
    * @param request
    * @param responseObserver
@@ -1753,7 +1792,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   public VesselReply getVesselFuelTanks(VesselRequest request) {
     return this.vesselInfoGrpcService.getVesselFuelTanks(request);
   }
-  
+
   /** Save on hand quantity */
   @Override
   public void saveOnHandQuantity(
@@ -1871,6 +1910,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
   @Override
   public void getLoadablePatternDetails(
       LoadablePatternRequest request, StreamObserver<LoadablePatternReply> responseObserver) {
@@ -1956,64 +1996,207 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
-  /**
-   * Get commingle cargo for a loadable study
-   */
+
+  /** Get commingle cargo for a loadable study */
   @Override
   public void getCommingleCargo(
-		  CommingleCargoRequest request, StreamObserver<CommingleCargoReply> responseObserver) {
-	  com.cpdss.common.generated.LoadableStudy.CommingleCargoReply.Builder replyBuilder =
-			  CommingleCargoReply.newBuilder();
-	  try {
-		  Optional<LoadableStudy> loadableStudyOpt =
-				  this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
-		  if (!loadableStudyOpt.isPresent()) {
-			  throw new GenericServiceException(
-					  "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
-		  }
-		  List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargoList =
-				  this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
-						  request.getLoadableStudyId(), true);
-		  buildCommingleCargoReply(commingleCargoList, replyBuilder);
-		  replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
-	  } catch (GenericServiceException e) {
-		  log.error("GenericServiceException when fetching loadable study - getCommingleCargo", e);
-		  replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
-	  } catch (Exception e) {
-		  log.error("Exception when fetching loadable study - getCommingleCargo", e);
-		  replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
-	  } finally {
-		  responseObserver.onNext(replyBuilder.build());
-		  responseObserver.onCompleted();
-	  }
+      CommingleCargoRequest request, StreamObserver<CommingleCargoReply> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.CommingleCargoReply.Builder replyBuilder =
+        CommingleCargoReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+      if (!loadableStudyOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+      }
+      List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargoList =
+          this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
+              request.getLoadableStudyId(), true);
+      buildCommingleCargoReply(commingleCargoList, replyBuilder);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching loadable study - getCommingleCargo", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } catch (Exception e) {
+      log.error("Exception when fetching loadable study - getCommingleCargo", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
-  
+
   /**
    * build commingleCargo reply with commingle values from db
+   *
    * @param commingleCargoList
    * @param replyBuilder
    */
-  private void buildCommingleCargoReply(List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargoList, CommingleCargoReply.Builder replyBuilder){
-	  if (!CollectionUtils.isEmpty(commingleCargoList)) {
-		  commingleCargoList.forEach(
-				  commingleCargo -> {
-					  CommingleCargo.Builder builder = CommingleCargo.newBuilder();
-					  Optional.ofNullable(commingleCargo.getId()).ifPresent(builder::setId);
-					  Optional.ofNullable(commingleCargo.getPurposeXid()).ifPresent(builder::setPurposeId);
-					  Optional.ofNullable(commingleCargo.getIsSlopOnly()).ifPresent(builder::setSlopOnly);
-					  // Convert comma separated tank list to arrays
-					  if(commingleCargo.getTankIds() != null && !commingleCargo.getTankIds().isEmpty()) {
-						  List<Long> tankIdList = Stream.of(commingleCargo.getTankIds().split(",")).map(String::trim)
-								  .map(Long::parseLong).collect(Collectors.toList());
-						  builder.addAllPreferredTanks(tankIdList);
-					  }
-					  Optional.ofNullable(commingleCargo.getCargo1Xid()).ifPresent(builder::setCargo1Id);
-					  Optional.ofNullable(commingleCargo.getCargo1Pct()).ifPresent(cargo1Pct -> builder.setCargo1Pct(String.valueOf(cargo1Pct)));
-					  Optional.ofNullable(commingleCargo.getCargo2Xid()).ifPresent(builder::setCargo2Id);
-					  Optional.ofNullable(commingleCargo.getCargo2Pct()).ifPresent(cargo2Pct -> builder.setCargo2Pct(String.valueOf(cargo2Pct)));
-					  Optional.ofNullable(commingleCargo.getQuantity()).ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
-					  replyBuilder.addCommingleCargo(builder);
-				  });
-	  }
+  private void buildCommingleCargoReply(
+      List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargoList,
+      CommingleCargoReply.Builder replyBuilder) {
+    if (!CollectionUtils.isEmpty(commingleCargoList)) {
+      commingleCargoList.forEach(
+          commingleCargo -> {
+            CommingleCargo.Builder builder = CommingleCargo.newBuilder();
+            Optional.ofNullable(commingleCargo.getId()).ifPresent(builder::setId);
+            Optional.ofNullable(commingleCargo.getPurposeXid()).ifPresent(builder::setPurposeId);
+            Optional.ofNullable(commingleCargo.getIsSlopOnly()).ifPresent(builder::setSlopOnly);
+            // Convert comma separated tank list to arrays
+            if (commingleCargo.getTankIds() != null && !commingleCargo.getTankIds().isEmpty()) {
+              List<Long> tankIdList =
+                  Stream.of(commingleCargo.getTankIds().split(","))
+                      .map(String::trim)
+                      .map(Long::parseLong)
+                      .collect(Collectors.toList());
+              builder.addAllPreferredTanks(tankIdList);
+            }
+            Optional.ofNullable(commingleCargo.getCargo1Xid()).ifPresent(builder::setCargo1Id);
+            Optional.ofNullable(commingleCargo.getCargo1Pct())
+                .ifPresent(cargo1Pct -> builder.setCargo1Pct(String.valueOf(cargo1Pct)));
+            Optional.ofNullable(commingleCargo.getCargo2Xid()).ifPresent(builder::setCargo2Id);
+            Optional.ofNullable(commingleCargo.getCargo2Pct())
+                .ifPresent(cargo2Pct -> builder.setCargo2Pct(String.valueOf(cargo2Pct)));
+            Optional.ofNullable(commingleCargo.getQuantity())
+                .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
+            replyBuilder.addCommingleCargo(builder);
+          });
+    }
+  }
+
+  /** Save commingle cargo for the specific loadable study */
+  @Override
+  public void saveCommingleCargo(
+      CommingleCargoRequest request, StreamObserver<CommingleCargoReply> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.CommingleCargoReply.Builder replyBuilder =
+        CommingleCargoReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+      if (!loadableStudyOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+      }
+      if (!CollectionUtils.isEmpty(request.getCommingleCargoList())) {
+    	  // for existing commingle cargo find missing ids in request and delete them
+    	  deleteCommingleCargo(request);
+    	  Long loadableStudyId = request.getLoadableStudyId();
+    	  List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleEntities = new ArrayList<>();
+    	  // for id = 0 save as new commingle cargo
+    	  request
+    	  .getCommingleCargoList()
+    	  .forEach(
+    			  commingleCargo -> {
+    				  try {
+    					  com.cpdss.loadablestudy.entity.CommingleCargo commingleCargoEntity = null;
+    					  if (commingleCargo != null && commingleCargo.getId() != 0) {
+    						  Optional<com.cpdss.loadablestudy.entity.CommingleCargo>
+    						  existingCommingleCargo =
+    						  this.commingleCargoRepository.findByIdAndIsActive(commingleCargo.getId(), true);
+    						  if (!existingCommingleCargo.isPresent()) {
+    							  throw new GenericServiceException(
+    									  "commingle cargo does not exist",
+    									  CommonErrorCodes.E_HTTP_BAD_REQUEST,
+    									  HttpStatusCode.BAD_REQUEST);
+    						  }
+    						  commingleCargoEntity = existingCommingleCargo.get();
+    						  commingleCargoEntity =
+    								  buildCommingleCargo(
+    										  commingleCargoEntity, commingleCargo, loadableStudyId);
+    					  } else if (commingleCargo != null && commingleCargo.getId() == 0) {
+    						  commingleCargoEntity = new com.cpdss.loadablestudy.entity.CommingleCargo();
+    						  commingleCargoEntity =
+    								  buildCommingleCargo(
+    										  commingleCargoEntity, commingleCargo, loadableStudyId);
+    					  }
+    					  commingleEntities.add(commingleCargoEntity);
+    				  } catch (Exception e) {
+    					  log.error("Exception in creating entities for save commingle cargo", e);
+    					  throw new RuntimeException(e);
+    				  }
+    			  });
+    	  // save all entities
+    	  this.commingleCargoRepository.saveAll(commingleEntities);
+      }
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving CommingleCargo", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } catch (Exception e) {
+      log.error("Exception when saving CommingleCargo", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * build entity to save in commingle cargo
+   *
+   * @param commingleCargoEntity
+   * @param commingleCargoRequestRecord
+   * @return
+   */
+  private com.cpdss.loadablestudy.entity.CommingleCargo buildCommingleCargo(
+      com.cpdss.loadablestudy.entity.CommingleCargo commingleCargoEntity,
+      CommingleCargo requestRecord,
+      Long loadableStudyId) {
+    commingleCargoEntity.setLoadableStudyXId(loadableStudyId);
+    commingleCargoEntity.setPurposeXid(requestRecord.getPurposeId());
+    commingleCargoEntity.setTankIds(
+        StringUtils.collectionToCommaDelimitedString(requestRecord.getPreferredTanksList()));
+    commingleCargoEntity.setCargo1Xid(requestRecord.getCargo1Id());
+    commingleCargoEntity.setCargo1Pct(
+        !StringUtils.isEmpty(requestRecord.getCargo1Pct())
+            ? new BigDecimal(requestRecord.getCargo1Pct())
+            : null);
+    commingleCargoEntity.setCargo2Xid(requestRecord.getCargo2Id());
+    commingleCargoEntity.setCargo2Pct(
+        !StringUtils.isEmpty(requestRecord.getCargo2Pct())
+            ? new BigDecimal(requestRecord.getCargo2Pct())
+            : null);
+    commingleCargoEntity.setQuantity(
+        !StringUtils.isEmpty(requestRecord.getQuantity())
+            ? new BigDecimal(requestRecord.getQuantity())
+            : null);
+    commingleCargoEntity.setIsActive(true);
+    commingleCargoEntity.setIsSlopOnly(requestRecord.getSlopOnly());
+    return commingleCargoEntity;
+  }
+
+  /**
+   * delete commingle cargo not available in the save request
+   *
+   * @param request
+   */
+  private void deleteCommingleCargo(CommingleCargoRequest request) {
+    List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargoEntityList =
+        this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
+            request.getLoadableStudyId(), true);
+    List<Long> requestedCommingleCargoIds = null;
+    List<Long> existingCommingleCargoIds = null;
+    if (!request.getCommingleCargoList().isEmpty()) {
+      requestedCommingleCargoIds =
+          request.getCommingleCargoList().stream()
+              .map(CommingleCargo::getId)
+              .collect(Collectors.toList());
+    }
+    if (!commingleCargoEntityList.isEmpty()) {
+      existingCommingleCargoIds =
+          commingleCargoEntityList.stream()
+              .map(com.cpdss.loadablestudy.entity.CommingleCargo::getId)
+              .collect(Collectors.toList());
+    }
+    /**
+     * find commingle ids available for the loadable study that are not available in save request so
+     * that they can be deleted
+     */
+    if (!CollectionUtils.isEmpty(requestedCommingleCargoIds)
+        && !CollectionUtils.isEmpty(existingCommingleCargoIds)) {
+      existingCommingleCargoIds.removeAll(requestedCommingleCargoIds);
+      commingleCargoRepository.deleteCommingleCargo(existingCommingleCargoIds);
+    }
   }
 }

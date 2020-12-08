@@ -93,6 +93,6 @@ public class Users extends EntityDoc {
   private List<RoleUserMapping> roleUserMappings;
 
   @ManyToOne
-  @JoinColumn(name = "rolexid")
+  @JoinColumn(name = "role_xid")
   private Roles roles;
 }

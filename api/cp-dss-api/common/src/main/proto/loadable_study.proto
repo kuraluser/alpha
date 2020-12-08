@@ -67,6 +67,9 @@ service LoadableStudyService {
 	
 	rpc GetCommingleCargo (CommingleCargoRequest) returns (CommingleCargoReply){
 	}
+	
+	rpc SaveCommingleCargo (CommingleCargoRequest) returns (CommingleCargoReply){
+	}
 }
 
 
@@ -258,7 +261,8 @@ message PortRotationReply{
 message LoadableQuantityResponse {
 	LoadableQuantityRequest loadableQuantityRequest = 1;
 	StatusReply responseStatus = 2;
-	bool isSummerZone = 3;
+	int32 caseNo = 3;
+	string selectedZone = 4;
 }
 
 message ValveSegregation{
@@ -376,6 +380,7 @@ message CommingleCargo{
 
 message CommingleCargoRequest{
 	int64 loadableStudyId = 1;
+	repeated CommingleCargo commingleCargo = 2;
 }
 
 message CommingleCargoReply{
