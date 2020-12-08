@@ -27,29 +27,17 @@ public class BendingMoment extends EntityDoc {
   @Column(name = "frame_number")
   private BigDecimal frameNumber;
 
-  @Column(name = "draft")
-  private BigDecimal draft;
+  @Column(name = "base_draft")
+  private BigDecimal baseDraft;
 
-  @Column(name = "trim_m1")
-  private BigDecimal trimM1;
+  @Column(name = "base_value")
+  private BigDecimal baseValue;
 
-  @Column(name = "trim_0")
-  private BigDecimal trim0;
+  @Column(name = "draft_correction")
+  private BigDecimal draftCorrection;
 
-  @Column(name = "trim_1")
-  private BigDecimal trim1;
-
-  @Column(name = "trim_2")
-  private BigDecimal trim2;
-
-  @Column(name = "trim_3")
-  private BigDecimal trim3;
-
-  @Column(name = "trim_4")
-  private BigDecimal trim4;
-
-  @Column(name = "trim_5")
-  private BigDecimal trim5;
+  @Column(name = "trim_correction")
+  private BigDecimal trimCorrection;
 
   @Column(name = "is_active")
   private Boolean isActive;

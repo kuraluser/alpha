@@ -24,4 +24,11 @@ public interface VesselTankRepository extends CommonCrudRepository<VesselTank, L
    */
   public List<VesselTank> findByVesselAndTankCategoryInAndIsActive(
       Vessel vessel, List<TankCategory> categories, boolean isActive);
+
+  /**
+   * @param vessel
+   * @param isActive
+   * @return List<VesselTank>
+   */
+  public List<VesselTank> findByVesselAndIsActive(Vessel vessel, Boolean isActive);
 }

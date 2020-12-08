@@ -2,8 +2,6 @@
 package com.cpdss.loadableplan.service;
 
 import com.cpdss.common.generated.Common.ResponseStatus;
-import com.cpdss.common.generated.LoadablePlan.AlgoReply;
-import com.cpdss.common.generated.LoadablePlan.AlgoReply.Builder;
 import com.cpdss.common.generated.LoadablePlanServiceGrpc.LoadablePlanServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.loadableplan.domain.LoadableStudy;
@@ -40,77 +38,5 @@ public class LoadablePlanService extends LoadablePlanServiceImplBase {
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
 
-  @Override
-  public void callAlgo(
-      com.cpdss.common.generated.LoadablePlan.AlgoRequest request,
-      StreamObserver<com.cpdss.common.generated.LoadablePlan.AlgoReply> responseObserver) {
-    log.info("Inside callAlgo service");
-    Builder replyBuilder = AlgoReply.newBuilder();
-    try {
-      ModelMapper modelMapper = new ModelMapper();
-      LoadableStudy loadableStudy = new LoadableStudy();
-      List<CargoNomination> cargoNominations =
-          cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
-              request.getLoadableStudyId(), true);
-
-      loadableStudy.setCargoNomination(new ArrayList<>());
-      if (!cargoNominations.isEmpty()) {
-        cargoNominations.forEach(
-            cargoNomination -> {
-              com.cpdss.loadableplan.domain.CargoNomination cargoNominationDto =
-                  new com.cpdss.loadableplan.domain.CargoNomination();
-              cargoNominationDto =
-                  modelMapper.map(
-                      cargoNomination, com.cpdss.loadableplan.domain.CargoNomination.class);
-              loadableStudy.getCargoNomination().add(cargoNominationDto);
-            });
-      }
-      Optional<LoadableQuantity> loadableQuantity =
-          loadableQuantityRepository.findByLoadableStudyXId(request.getLoadableStudyId());
-      if (loadableQuantity.isPresent()) {
-        com.cpdss.loadableplan.domain.LoadableQuantity loadableQuantityDto =
-            new com.cpdss.loadableplan.domain.LoadableQuantity();
-        loadableQuantityDto =
-            modelMapper.map(
-                loadableQuantity.get(), com.cpdss.loadableplan.domain.LoadableQuantity.class);
-        loadableStudy.setLoadableQuantity(loadableQuantityDto);
-      }
-
-      List<LoadableStudyPortRotation> loadableStudyPortRotations =
-          loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
-              request.getLoadableStudyId(), true);
-
-      loadableStudy.setLoadableStudyPortRotation(new ArrayList<>());
-      if (!loadableStudyPortRotations.isEmpty()) {
-        loadableStudyPortRotations.forEach(
-            loadableStudyPortRotation -> {
-              com.cpdss.loadableplan.domain.LoadableStudyPortRotation loadableStudyPortRotationDto =
-                  new com.cpdss.loadableplan.domain.LoadableStudyPortRotation();
-              loadableStudyPortRotationDto =
-                  modelMapper.map(
-                      loadableStudyPortRotation,
-                      com.cpdss.loadableplan.domain.LoadableStudyPortRotation.class);
-              loadableStudy.getLoadableStudyPortRotation().add(loadableStudyPortRotationDto);
-            });
-      }
-
-      replyBuilder =
-          AlgoReply.newBuilder()
-              .setResponseStatus(
-                  ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
-    } catch (Exception e) {
-      log.error("Exception when when calling algo  ", e);
-      replyBuilder =
-          AlgoReply.newBuilder()
-              .setResponseStatus(
-                  ResponseStatus.newBuilder()
-                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-                      .setMessage("Error when calling algo ")
-                      .setStatus(FAILED)
-                      .build());
-    } finally {
-      responseObserver.onNext(replyBuilder.build());
-      responseObserver.onCompleted();
-    }
-  }
+  
 }

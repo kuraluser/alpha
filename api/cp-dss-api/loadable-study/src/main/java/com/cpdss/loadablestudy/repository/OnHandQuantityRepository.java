@@ -31,4 +31,12 @@ public interface OnHandQuantityRepository extends CommonCrudRepository<OnHandQua
    * @return
    */
   public OnHandQuantity findByIdAndIsActive(Long id, boolean isActive);
+
+  /**
+   * @param loadableStudy
+   * @param isActive
+   * @return List<OnHandQuantity>
+   */
+  public List<OnHandQuantity> findByLoadableStudyAndIsActive(
+      LoadableStudy loadableStudy, Boolean isActive);
 }

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 /** @Author jerin.g */
 public interface LoadableQuantityRepository extends CommonCrudRepository<LoadableQuantity, Long> {
-  @Query("FROM LoadableQuantity LQ WHERE LQ.loadableStudyXId.id = ?1")
-  public List<LoadableQuantity> findByLoadableStudyXId(Long loadableStudyXId);
+  @Query("FROM LoadableQuantity LQ WHERE LQ.loadableStudyXId.id = ?1 and isActive = ?2")
+  public List<LoadableQuantity> findByLoadableStudyXIdAndIsActive(
+      Long loadableStudyXId, Boolean isActive);
 }

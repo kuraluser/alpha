@@ -26,6 +26,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class OnHandQuantity extends EntityDoc {
 
+  private static final long serialVersionUID = 1L;
+
   @ManyToOne
   @JoinColumn(name = "loadable_study_xid")
   private LoadableStudy loadableStudy;

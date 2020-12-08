@@ -10,6 +10,7 @@ import com.cpdss.gateway.domain.CargoNominationResponse;
 import com.cpdss.gateway.domain.CommingleCargo;
 import com.cpdss.gateway.domain.CommingleCargoResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
+import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
@@ -632,6 +633,49 @@ public class LoadableStudyController {
   }
 
   /**
+   * @param vesselId
+   * @param voyageId
+   * @param loadableStudiesId
+   * @param loadablePatternId
+   * @param loadablePatternDetailsId
+   * @param headers
+   * @return
+   * @throws CommonRestException LoadablePatternDetailsResponse
+   */
+  @GetMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns/{loadablePatternId}/loadable-pattern-commingle-details/{loadablePatternCommingleDetailsId}")
+  public LoadablePatternDetailsResponse getLoadablePatternDetails(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudiesId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadablePatternId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadablePatternCommingleDetailsId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("get loadable-patterns : {}", getClientIp());
+      log.info(
+          "get loadable pattern API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+      return loadableStudyService.getLoadablePatternCommingleDetails(
+          loadablePatternCommingleDetailsId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in get loadable pattern details ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in get loadable pattern details ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
    * Get on hand quantity
    *
    * @param vesselId
@@ -772,6 +816,39 @@ public class LoadableStudyController {
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
           HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+  /**
+   * @param vesselId
+   * @param voyageId
+   * @param loadableStudiesId
+   * @param headers
+   * @throws CommonRestException void
+   */
+  @PostMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/generate-loadable-patterns")
+  public void generateLoadablePatterns(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudiesId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("call ALGO. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+      loadableStudyService.generateLoadablePatterns(
+          loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in calling ALGO ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in calling ALGO ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
           e.getMessage(),
           e);
     }

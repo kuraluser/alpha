@@ -30,6 +30,14 @@ public class VesselTank {
 
   private boolean isSlopTank;
 
+  private Long coatingTypeId;
+
+  private String lcg;
+
+  private String vcg;
+
+  private String tcg;
+
   private BigDecimal fillCapcityCubm;
 
   private BigDecimal density;

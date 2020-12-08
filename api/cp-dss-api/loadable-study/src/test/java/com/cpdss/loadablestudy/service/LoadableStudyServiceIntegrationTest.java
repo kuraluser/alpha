@@ -18,12 +18,14 @@ import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
+import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
@@ -72,8 +74,6 @@ public class LoadableStudyServiceIntegrationTest {
 
   @MockBean private OnHandQuantityRepository onHandQuantityRepository;
 
-  @MockBean private CommingleCargoRepository commingleCargoRepository;
-
   @MockBean
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
 
@@ -88,6 +88,12 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private LoadablePatternDetailsRepository loadablePatternDetailsRepository;
   @MockBean private LoadablePatternRepository loadablePatternRepository;
   @MockBean private PurposeOfCommingleRepository purposeOfCommingleRepository;
+  @MockBean private CommingleCargoRepository commingleCargoRepository;
+
+  @MockBean private OnBoardQuantityRepository onBoardQuantityRepository;
+
+  @MockBean
+  private LoadablePatternComingleDetailsRepository loadablePatternComingleDetailsRepository;
 
   @Test
   void testSaveCargoNomination() {
