@@ -228,6 +228,7 @@ export class PortsComponent implements OnInit {
    * @memberof PortsComponent
    */
   async onEditComplete(event: IPortsEvent) {
+    const form = this.row(event.index)
     if (event.field === 'port') {
       this.portsLists[event.index]['portcode'].value = event.data.port.value.code;
       this.portsLists[event.index]['maxDraft'].value = event.data.port.value.maxDraft;
@@ -241,15 +242,23 @@ export class PortsComponent implements OnInit {
       this.updateField(event.index, 'portOrder', this.portOrder);
     }
     if (event.field === 'layCan') {
-      this.portsLists[event.index]['layCanFrom'].value = event.data.layCan.value.split('to')[0].trim();
-      this.portsLists[event.index]['layCanTo'].value = event.data.layCan.value.split('to')[1].trim();
-      this.updateField(event.index, 'layCanFrom', event.data.layCan.value.split('to')[0].trim());
-      this.updateField(event.index, 'layCanTo', event.data.layCan.value.split('to')[1].trim());
-      this.updateField(event.index, 'eta', null);
+        this.portsLists[event.index]['layCanFrom'].value = event.data.layCan.value.split('to')[0].trim();
+        this.portsLists[event.index]['layCanTo'].value = event.data.layCan.value.split('to')[1].trim();
+        this.updateField(event.index, 'layCanFrom', event.data.layCan.value.split('to')[0].trim());
+        this.updateField(event.index, 'layCanTo', event.data.layCan.value.split('to')[1].trim());
+        form.controls.eta.updateValueAndValidity();
+        form.controls.etd.updateValueAndValidity();
+    }
+    if (event.field === 'eta' || event.field === 'etd') {
+      if (form.controls.eta.errors) {
+        form.controls.eta.updateValueAndValidity();
+      }
+      if (form.controls.etd.errors) {
+        form.controls.etd.updateValueAndValidity();
+      }
     }
     this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
     if (!event.data?.isAdd) {
-      const form = this.row(event.index)
       if (form.valid) {
         const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
         if (res) {
@@ -293,7 +302,6 @@ export class PortsComponent implements OnInit {
  * @memberof PortsComponent
  */
   async onRowSave(event: IPortsEvent) {
-    this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
     const form = this.row(event.index)
     if (form.valid) {
       const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
@@ -305,6 +313,8 @@ export class PortsComponent implements OnInit {
           }
         }
         this.portsLists = [...this.portsLists];
+        this.portsForm.updateValueAndValidity();
+        this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
       }
 
     } else {

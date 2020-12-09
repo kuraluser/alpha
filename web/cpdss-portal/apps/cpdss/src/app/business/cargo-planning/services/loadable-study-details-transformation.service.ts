@@ -468,7 +468,7 @@ export class LoadableStudyDetailsTransformationService {
     _port.port = new ValueObject<IPort>(portObj, true, isNewValue, false, isEditable);
     _port.operation = new ValueObject<IOperations>(operationObj, true, isNewValue, false, isEdit && isEditable);
     _port.seaWaterDensity = new ValueObject<number>(port.seaWaterDensity, true, isNewValue, false, isEditable);
-    _port.layCan = new ValueObject<string>(layCan, true, isNewValue, false, isEditable);
+    _port.layCan = new ValueObject<any>(layCan, true, isNewValue, false, isEditable);
     _port.layCanFrom = new ValueObject<string>(port.layCanFrom?.trim(), true, isNewValue, false, isEditable);
     _port.layCanTo = new ValueObject<string>(port.layCanTo?.trim(), true, isNewValue, false, isEditable);
     _port.maxDraft = new ValueObject<number>(port.maxDraft, true, isNewValue, false, isEditable);

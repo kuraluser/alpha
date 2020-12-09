@@ -20,7 +20,6 @@ import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_F
 export class DatatableComponent implements OnInit {
 
   @ViewChild('datatable') datatable: Table;
-  @ViewChild('dateRangeCalender') dateRangePicker;
 
   // properties
   @Input()
@@ -462,44 +461,42 @@ export class DatatableComponent implements OnInit {
   /**
   * Range date selected
   */
-  onDateRangeSelected(event, formGroupIndex: number, formControlName: string, rowData: Object) {
+  onDateRangeSelect(event, formGroupIndex: number, formControlName: string, rowData: Object) {
     const formControl = this.field(formGroupIndex, formControlName);
-    formControl.markAsTouched();
-    if (this.dateRangePicker.value[0] && this.dateRangePicker.value[1]) {
-      rowData[formControlName].value = this.formatDateTime(this.dateRangePicker.value[0]) + ' to ' + this.formatDateTime(this.dateRangePicker.value[1]);
-      formControl.setValue(rowData[formControlName].value);
-      formControl.markAllAsTouched();
-      this.dateRangePicker.hideOverlay();
+    if (rowData[formControlName].value.includes('to')) {
+      rowData[formControlName].value = this.formatDateTime(event);
+      formControl.setValue("");
+    }
+    else if (rowData[formControlName].value) {
+      rowData[formControlName].value = rowData[formControlName].value + ' to ' + this.formatDateTime(event);
+
+      formControl.setValue(rowData[formControlName].value.toString());
       this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
     } else {
-      formControl.setErrors({ 'required': true });
+      rowData[formControlName].value = this.formatDateTime(event);
+      formControl.setValue("");
     }
   }
+
 
   /**
   * Range date cleared
   */
   onClearDateRange(event, formGroupIndex: number, formControlName: string, rowData: Object) {
-    this.dateRangePicker.value = null;
     const formControl = this.field(formGroupIndex, formControlName);
-    if (formControl.value) {
-      rowData[formControlName].value = formControl.value;
-    } else {
-      formControl.setValue("");
-      formControl.setErrors({ 'required': true });
-    }
-
+    rowData[formControlName].value = "";
+    formControl.setErrors({ 'required': true });
   }
 
   /**
   * Date and time select
   */
-  onDateTimeSelect(value, formGroupIndex: number, formControlName: string, rowData: Object) {
+  onDateTimeSelect(event, formGroupIndex: number, formControlName: string, rowData: Object) {
     const formControl = this.field(formGroupIndex, formControlName);
     formControl.markAsTouched();
-    formControl.setValue(this.formatDateTime(value, true))
-    rowData[formControlName].value = formControl.value;
-    this.editComplete.emit({ originalEvent: value, data: rowData, index: formGroupIndex, field: formControlName });
+    rowData[formControlName].value = this.formatDateTime(event, true);
+    formControl.setValue(rowData[formControlName].value);
+    this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
   }
 
   /**
@@ -507,10 +504,9 @@ export class DatatableComponent implements OnInit {
   */
   onDateTimeNotSelected(value, formGroupIndex: number, formControlName: string, rowData: Object) {
     const formControl = this.field(formGroupIndex, formControlName);
-    formControl.markAsTouched();
-    if (formControl.value === null) {
-      formControl.setErrors({ 'required': true });
-    }
+    formControl.setValue(null);
+    rowData[formControlName].value = "";
+    formControl.setErrors({ 'required': true });
   }
 
   /**

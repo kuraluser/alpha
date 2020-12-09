@@ -299,7 +299,7 @@ export interface IPortsValueObject {
     portcode: ValueObject<string>;
     operation: ValueObject<IOperations>;
     seaWaterDensity: ValueObject<number>;
-    layCan: ValueObject<string>;
+    layCan: ValueObject<any>;
     layCanFrom: ValueObject<string>;
     layCanTo: ValueObject<string>;
     maxDraft: ValueObject<number>;

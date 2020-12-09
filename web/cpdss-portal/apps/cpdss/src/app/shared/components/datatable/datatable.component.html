@@ -224,12 +224,11 @@
                                 <ng-container *ngSwitchCase="fieldType.DATERANGE">
                                     <ng-container *ngIf="rowData[col.field]?.isEditMode">
                                         <p-calendar appendTo="body" [showButtonBar]="true" [readonlyInput]="true"
-                                            (onSelect)="onDateRangeSelected($event, rowIndex, col.field, rowData)"
-                                            (onBlur)="onClearDateRange($event, rowIndex, col.field,rowData)"
-                                            (onClickOutside)="onClearDateRange($event, rowIndex, col.field,rowData)"
+                                            (onSelect)="onDateRangeSelect($event, rowIndex, col.field, rowData)"
+                                            (onClearClick)="onClearDateRange($event, rowIndex, col.field,rowData)"
                                             [dateFormat]="col.dateFormat" selectionMode="range"
                                             [placeholder]="col.fieldPlaceholder| translate" [minDate]="col.minDate"
-                                            id="{{col.field+'_'+rowIndex}}" #dateRangeCalender>
+                                            id="{{col.field+'_'+rowIndex}}"  >
                                         </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
@@ -245,12 +244,13 @@
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
                                     <ng-container *ngIf="rowData[col.field]?.isEditMode">
                                         <p-calendar appendTo="body" [showTime]="true" [showButtonBar]="true"
-                                            dateRangeSelector [readonlyInput]="false"
+                                            [readonlyInput]="false"
                                             (onSelect)="onDateTimeSelect($event,rowIndex, col.field,rowData)"
-                                            dateFormat="yyyy-mm-dd" [placeholder]="col.fieldPlaceholder| translate"
+                                            [placeholder]="col.fieldPlaceholder| translate"
                                             id="{{col.field+'_'+rowIndex}}" [minDate]="col.minDate"
                                             [dateFormat]="col.dateFormat"
-                                            (onClickOutside)="onDateTimeNotSelected($event, rowIndex, col.field,rowData)">
+                                            (onClearClick)="onDateTimeNotSelected($event, rowIndex, col.field,rowData)"
+                                            >
                                         </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
@@ -379,35 +379,35 @@
                                     </ng-container>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.DATERANGE">
-                                    <ng-container *ngIf="rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="rowData[subCol.field]?.isEditMode">
                                         <p-calendar appendTo="body" [showButtonBar]="true" [readonlyInput]="true"
-                                            (onSelect)="onDateRangeSelected($event, rowIndex, col.field, rowData)"
-                                            (onBlur)="onClearDateRange($event, rowIndex, col.field,rowData)"
-                                            (onClickOutside)="onClearDateRange($event, rowIndex, col.field,rowData)"
-                                            [dateFormat]="col.dateFormat" selectionMode="range"
-                                            [placeholder]="col.fieldPlaceholder| translate" [minDate]="col.minDate"
-                                            id="{{col.field+'_'+rowIndex}}" #dateRangeCalender>
+                                            (onSelect)="onDateRangeSelect($event, rowIndex, subCol.field, rowData)"
+                                            (onClearClick)="onClearDateRange($event, rowIndex, subCol.field,rowData)"
+                                            [dateFormat]="subCol.dateFormat" selectionMode="range"
+                                            [placeholder]="subCol.fieldPlaceholder| translate" [minDate]="subCol.minDate"
+                                            id="{{subCol.field+'_'+rowIndex}}">
                                         </p-calendar>
-                                        <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
-                                            [errorMessages]="col.errorMessages">
+                                        <cpdss-portal-validation-error [errors]="fieldError(rowIndex, subCol.field)"
+                                            [errorMessages]="subCol.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="!rowData[subCol.field]?.isEditMode">
                                         <span
-                                            *ngIf="rowData[col.field]?.value?.name">{{ rowData[col.field]?.value?.name }}</span>
+                                            *ngIf="rowData[subCol.field]?.value?.name">{{ rowData[subCol.field]?.value?.name }}</span>
                                         <span
-                                            *ngIf="!rowData[col.field]?.value?.name">{{ rowData[col.field]?.value }}</span>
+                                            *ngIf="!rowData[subCol.field]?.value?.name">{{ rowData[subCol.field]?.value }}</span>
                                     </ng-container>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
                                     <ng-container *ngIf="rowData[subCol.field]?.isEditMode">
-                                        <p-calendar appendTo="body" [showTime]="true" [showButtonBar]="true"
-                                            dateRangeSelector [readonlyInput]="false"
-                                            (onSelect)="onDateTimeSelect($event,rowIndex, subCol.field,rowData)"
-                                            dateFormat="yyyy-mm-dd" [placeholder]="subCol.fieldPlaceholder| translate"
+                                        <p-calendar appendTo="body" [showButtonBar]="true" [showTime]="true"
+                                            inputId="time"
+                                            (onSelect)="onDateTimeSelect($event, rowIndex, subCol.field, rowData)"
+                                            [placeholder]="subCol.fieldPlaceholder| translate"
                                             id="{{subCol.field+'_'+rowIndex}}" [minDate]="subCol.minDate"
                                             [dateFormat]="subCol.dateFormat"
-                                            (onClickOutside)="onDateTimeNotSelected($event, rowIndex, subCol.field,rowData)">
+                                            (onClearClick)="onDateTimeNotSelected($event, rowIndex, subCol.field,rowData)"
+                                            >
                                         </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, subCol.field)"
                                             [errorMessages]="subCol.errorMessages">
