@@ -73,6 +73,10 @@
                                 formControlName="cargo1" (onChange)="onChange($event, 1)"
                                 placeholder="{{'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER' | translate}}">
                             </p-dropdown>
+                            <span *ngIf="form.cargo1.invalid && form.cargo1.touched && form.cargo1.errors?.required"
+                                class="text-danger">
+                                {{'COMMINGLE_CARGO_SELECT_ERROR' | translate}}
+                            </span>
                         </div>
                         <div class="col no-left-padding" style="max-width: 20px;">
                             <div class="color-rounded mt-5"
@@ -93,6 +97,10 @@
                                 formControlName="cargo2" (onChange)="onChange($event, 2)"
                                 placeholder="{{'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER' | translate}}">
                             </p-dropdown>
+                            <span *ngIf="form.cargo2.invalid && form.cargo2.touched && form.cargo2.errors?.required"
+                                class="text-danger">
+                                {{'COMMINGLE_CARGO_SELECT_ERROR' | translate}}
+                            </span>
                         </div>
                         <div class="col no-left-padding" style="max-width: 20px;">
                             <div class="color-rounded mt-5"

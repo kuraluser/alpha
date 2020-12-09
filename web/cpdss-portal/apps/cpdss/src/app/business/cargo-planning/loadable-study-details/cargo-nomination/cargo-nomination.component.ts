@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { ICargoNominationValueObject, ICargoNominationAllDropdownData, ICargoNominationDetailsResponse, ICargoNominationEvent, ICargoNomination, ILoadingPopupData } from '../../models/cargo-planning.model';
@@ -39,6 +39,8 @@ export class CargoNominationComponent implements OnInit {
   }
 
   @Input() vesselId: number;
+
+  @Output() cargoNominationUpdate = new EventEmitter<boolean>();
 
   // properties
   get cargoNominations(): ICargoNominationValueObject[] {
@@ -277,6 +279,7 @@ export class CargoNominationComponent implements OnInit {
           }
         }
         this.cargoNominations = [...this.cargoNominations];
+        this.updateCommingleButton();
       }
       this.ngxSpinnerService.hide();
 
@@ -348,6 +351,7 @@ export class CargoNominationComponent implements OnInit {
       dataTable: this.fb.array([...cargoNominationArray])
     });
     this.cargoNominations = _cargoNominations;
+    this.updateCommingleButton();
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
     this.ngxSpinnerService.hide();
   }
@@ -498,6 +502,20 @@ export class CargoNominationComponent implements OnInit {
     }
     recursiveFunc(formToInvestigate);
     return invalidControls;
+  }
+
+
+  /**
+   * Method for enable commingle button
+   *
+   * @memberof CargoNominationComponent
+   */
+  private updateCommingleButton() {
+    if (this.cargoNominations.length >= 2) {
+      this.cargoNominationUpdate.emit(false)
+    } else {
+      this.cargoNominationUpdate.emit(true)
+    }
   }
 
 }

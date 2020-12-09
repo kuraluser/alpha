@@ -82,7 +82,7 @@
         </div>
         <div class="pr-15"  *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
             <button id="commingle_btn" class="btn btn-main  ml-10" type="button"
-                (click)="showComminglePopup()">{{'COMMINGLE_BUTTON' | translate}}</button>
+                (click)="showComminglePopup()" [disabled]="showCommingleButton">{{'COMMINGLE_BUTTON' | translate}}</button>
         </div>
         <div class="pr-15">
             <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
@@ -112,7 +112,7 @@
         <div class="pl-30">
             <div class="pl-10" *ngIf="ports && loadableStudies">
                 
-                    <cpdss-portal-cargo-nomination *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudyId && loadableStudies && loadableQuantityNew" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-cargo-nomination>
+                    <cpdss-portal-cargo-nomination *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudyId && loadableStudies && loadableQuantityNew" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" (cargoNominationUpdate)="toggleCommingleButton($event)"></cpdss-portal-cargo-nomination>
                     <cpdss-portal-ports *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && loadableStudyId && loadableStudies && loadableQuantityNew" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-ports>
                     <cpdss-portal-on-hand-quantity *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ && loadableStudyId && loadableStudies && loadableQuantityNew" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-on-hand-quantity>
                 

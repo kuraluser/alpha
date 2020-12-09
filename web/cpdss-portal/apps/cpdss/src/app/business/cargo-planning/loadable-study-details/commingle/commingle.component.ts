@@ -181,6 +181,11 @@ export class CommingleComponent implements OnInit {
         this.close();
       }
       this.ngxSpinnerService.hide();
+    } else {
+      this.commingleForm.markAllAsTouched();
     }
   }
+
+   // returns form-controls of commingleForm
+   get form() { return this.commingleForm.controls; }
 }

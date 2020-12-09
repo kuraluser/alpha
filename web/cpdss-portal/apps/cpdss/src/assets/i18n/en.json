@@ -300,5 +300,6 @@
 	"LOADABLE_QUANTITY_UNIT_TONNE": "TONNE",
 	"ENTER_WATER_DENSITY": "Enter water density",
 	"COMMINGLE_VOL_MAX_SAVE_SUCCESS": "Success",
-	"COMMINGLE_VOL_MAX_SAVE_SUCCESSFULLY": "Commingle vol maximisation added successfully"
+	"COMMINGLE_VOL_MAX_SAVE_SUCCESSFULLY": "Commingle vol maximization added successfully",
+	"COMMINGLE_CARGO_SELECT_ERROR": "Required"
 }

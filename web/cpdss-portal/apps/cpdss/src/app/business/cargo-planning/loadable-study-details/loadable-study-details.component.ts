@@ -75,6 +75,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   loadableQuantityPermissionContext: IPermissionContext;
   displayCommingle: boolean;
   loadableQuantityPermission: IPermission;
+  showCommingleButton = false;
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -335,6 +336,12 @@ export class LoadableStudyDetailsComponent implements OnInit {
    */
   displayComminglePopUpTab(displayNew_: boolean){
     this.displayCommingle = displayNew_;
+  }
 
+    /**
+   * Value from commingle button
+   */
+  toggleCommingleButton(event){
+    this.showCommingleButton = event;
   }
 }
