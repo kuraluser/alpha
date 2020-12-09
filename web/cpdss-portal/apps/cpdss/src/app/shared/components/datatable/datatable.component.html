@@ -2,8 +2,8 @@
     <div formArrayName="dataTable" class="col">
         <p-table #datatable [columns]="columns" [value]="value" [editMode]="editMode" [selectionMode]="selectionMode"
             (onEditComplete)="onEditComplete($event)" (onRowSelect)="onRowSelect($event)" [(selection)]="selection"
-            (columnClick)="onClick($event)" [reorderableColumns]="tableRowReOrder"
-            (onRowReorder)="onRowReorder($event)">
+            (columnClick)="onClick($event)" [reorderableColumns]="tableRowReOrder" (onRowReorder)="onRowReorder($event)"
+            (onFilter)="onFilter($event)">
             <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
                     <col *ngIf="tableRowReOrder" class="column-class re-order">
@@ -266,12 +266,12 @@
                                 <span *ngSwitchDefault>{{rowData[col.field]}}</span>
                             </div>
                         </td>
-                        <td *ngFor="let subCol of col?.columns" [class]="subCol.fieldClass"
+                        <td *ngFor="let subCol of col?.columns; let subColIndex = index" [class]="subCol.fieldClass"
                             [ngSwitch]="subCol.fieldType" [pEditableColumn]="rowData"
                             [pEditableColumnField]="subCol.field" [pEditableColumnRowIndex]="rowIndex"
                             (click)="onClick($event, rowData, rowIndex, subCol)">
-                            <div [attr.tabindex]="subCol.field !== 'actions' && subCol.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+rowIndex : null"
-                                (keyup)="onFocus($event, rowData, rowIndex, subCol, colIndex)">
+                            <div [attr.tabindex]="subCol.field !== 'actions' && subCol.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+subColIndex+rowIndex : null"
+                                (keyup)="onFocus($event, rowData, rowIndex, subCol, colIndex+subColIndex)">
                                 <span *ngSwitchCase="fieldType.SLNO">{{rowData[subCol.field]}}</span>
                                 <span *ngSwitchCase="fieldType.ICON"><i
                                         class="{{subCol.fieldValueIcon+'-'+rowData[subCol.field]}}"></i></span>

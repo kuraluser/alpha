@@ -126,6 +126,17 @@ export interface IDataTableEvent {
 }
 
 /**
+ * Interface for datatable filter events
+ *
+ * @export
+ * @interface IDataTableFilterEvent
+ */
+export interface IDataTableFilterEvent {
+    filters: any;
+    filteredValue: [];
+}
+
+/**
  * Enum for Datatable action
  *
  * @export

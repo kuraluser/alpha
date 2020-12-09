@@ -214,7 +214,7 @@ export class CargoNominationDB extends CPDSSDB {
     constructor() {
         super();
         this.version(1).stores({
-            cargoNominations: '++,storeKey'
+            cargoNominations: '++,storeKey,timeStamp'
         });
     }
 
@@ -463,7 +463,7 @@ export class OHQDB extends CPDSSDB {
     constructor() {
         super();
         this.version(1).stores({
-            ohq: '++,storeKey'
+            ohq: '++,storeKey,timeStamp'
         });
     }
 

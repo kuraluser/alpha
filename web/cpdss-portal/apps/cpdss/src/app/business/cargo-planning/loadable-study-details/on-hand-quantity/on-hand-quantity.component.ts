@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { IPortOHQTankDetailEvent, IPort, IPortOHQListData, IPortOHQTankDetailValueObject } from '../../models/cargo-planning.model';
@@ -23,7 +23,17 @@ import { groupTotalValidator } from '../../directives/validator/group-total.dire
 export class OnHandQuantityComponent implements OnInit {
 
   @Input() voyageId: number;
-  @Input() loadableStudyId: number;
+
+  @Input()
+  get loadableStudyId() {
+    return this._loadableStudyId;
+  }
+  set loadableStudyId(value: number) {
+    this._loadableStudyId = value;
+    this.ohqForm = null;
+    this.getPortRotation();
+  }
+
   @Input() vesselId: number;
 
   get selectedPortOHQTankDetails() {
@@ -47,6 +57,7 @@ export class OnHandQuantityComponent implements OnInit {
   listData = <IPortOHQListData>{};
 
   private _selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[];
+  private _loadableStudyId: number;
 
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
@@ -61,7 +72,6 @@ export class OnHandQuantityComponent implements OnInit {
    */
   ngOnInit(): void {
     this.columns = this.loadableStudyDetailsTransformationService.getOHQDatatableColumns();
-    this.getPortRotation();
     this.initSubscriptions();
   }
 
@@ -145,6 +155,7 @@ export class OnHandQuantityComponent implements OnInit {
    * @memberof OnHandQuantityComponent
    */
   async onEditComplete(event: IPortOHQTankDetailEvent) {
+    this.ngxSpinnerService.show();
     const fromGroup = this.row(event.index);
     if (fromGroup.valid) {
       const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
@@ -158,13 +169,39 @@ export class OnHandQuantityComponent implements OnInit {
       }
 
     } else {
-      const invalidFormControls = this.findInvalidControlsRecursive(fromGroup);
-      invalidFormControls.forEach((key) => {
-        this.selectedPortOHQTankDetails[event.index][key].isEditMode = true;
-      });
+      for (const key in this.selectedPortOHQTankDetails[event.index]) {
+        if (this.selectedPortOHQTankDetails[event.index].hasOwnProperty(key) && this.selectedPortOHQTankDetails[event.index][key].hasOwnProperty('_isEditMode')) {
+          const formControl = this.field(event.index, key);
+          formControl.updateValueAndValidity();
+          this.selectedPortOHQTankDetails[event.index][key].isEditMode = formControl.invalid;
+        }
+      }
       fromGroup.markAllAsTouched();
       this.ohqForm.updateValueAndValidity();
     }
+
+    const formArray = (<FormArray>this.ohqForm.get('dataTable')).controls;
+    formArray.forEach(async (row: FormGroup, index) => {
+      if (row.invalid && row.touched) {
+        const invalidFormControls = this.findInvalidControlsRecursive(row);
+        invalidFormControls.forEach((key) => {
+          const formControl = this.field(index, key);
+          formControl.updateValueAndValidity();
+        });
+        if (row.valid) {
+          const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[index]), this.vesselId, this.voyageId, this.loadableStudyId);
+          if (res) {
+            for (const key in this.selectedPortOHQTankDetails[index]) {
+              if (this.selectedPortOHQTankDetails[index].hasOwnProperty(key) && this.selectedPortOHQTankDetails[index][key].hasOwnProperty('_isEditMode')) {
+                const formControl = this.field(index, key);
+                this.selectedPortOHQTankDetails[index][key].isEditMode = formControl.invalid;
+              }
+            }
+          }
+        }
+      }
+    });
+    this.ngxSpinnerService.hide();
   }
 
   /**
@@ -196,6 +233,19 @@ export class OnHandQuantityComponent implements OnInit {
   private row(formGroupIndex: number): FormGroup {
     const formGroup = <FormGroup>(<FormArray>this.ohqForm.get('dataTable')).at(formGroupIndex);
     return formGroup;
+  }
+
+  /**
+   * Get form control of form 
+   *
+   * @param {number} formGroupIndex
+   * @param {string} formControlName
+   * @returns {FormControl}
+   * @memberof OnHandQuantityComponent
+   */
+  field(formGroupIndex: number, formControlName: string): FormControl {
+    const formControl = <FormControl>(<FormArray>this.ohqForm.get('dataTable')).at(formGroupIndex).get(formControlName);
+    return formControl;
   }
 
   /**

@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors } from
 import { TranslateService } from '@ngx-translate/core';
 import { MenuItem } from 'primeng/api';
 import { Table } from 'primeng/table';
-import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableEvent } from './datatable.model';
+import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableEvent, IDataTableFilterEvent } from './datatable.model';
 
 /**
  * Compoent for Datatable
@@ -85,6 +85,7 @@ export class DatatableComponent implements OnInit {
   @Output() rowSelection = new EventEmitter<IDataTableEvent>();
   @Output() columnClick = new EventEmitter<IDataTableEvent>();
   @Output() rowReorder = new EventEmitter<IDataTableEvent>();
+  @Output() filter = new EventEmitter<IDataTableFilterEvent>();
 
   // public fields
   readonly fieldType = DATATABLE_FIELD_TYPE;
@@ -122,11 +123,11 @@ export class DatatableComponent implements OnInit {
   onEditComplete(event: IDataTableEvent): void {
     if (this.editMode && (!event.data.isAdd || !this.columns.some(col => col.fieldType === this.fieldType.ACTION)) && event.field !== 'actions') {
       const control = this.field(event.index, event.field);
+      event.data[event.field].isEditMode = control?.invalid;
       if (control?.dirty && control?.valid) {
         event.data[event.field].value = control.value;
         this.editComplete.emit(event);
       }
-      event.data[event.field].isEditMode = control?.invalid;
     }
   }
 
@@ -207,6 +208,25 @@ export class DatatableComponent implements OnInit {
       rowData[col.field].isEditMode = true;
     }
     this.columnClick.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
+  }
+
+  /**
+   * Handler for filter event
+   *
+   * @param {IDataTableFilterEvent} event
+   * @memberof DatatableComponent
+   */
+  onFilter(event: IDataTableFilterEvent) {
+    event?.filteredValue?.forEach((item: Object, index) => {
+      for (const key in item) {
+        if (item.hasOwnProperty(key) && item[key].hasOwnProperty('_isEditMode')) {
+          item[key].isEditMode = false;
+          const formControl = (<FormGroup>(<FormArray>this.form.get('dataTable')).at(index)).get(key);
+          formControl?.setValue(item[key].value);
+        }
+      }
+    });
+    this.filter.emit(event);
   }
 
   /**

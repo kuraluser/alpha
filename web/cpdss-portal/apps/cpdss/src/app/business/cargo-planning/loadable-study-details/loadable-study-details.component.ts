@@ -194,6 +194,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
         this.loadableQuantityModel = loadableQuantityResult;
       }
     }
+    this.ngxSpinnerService.hide();
   }
 
   /**
