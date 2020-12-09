@@ -274,7 +274,7 @@ a {
 }
 
 .left {
-  float: right;
+  float: left;
 }
 
 .vessel-info-wrapper {
@@ -459,7 +459,7 @@ a {
 }
 
 .aeh {
-  background: #5c9ea0;
+  background:$aeh;
 }
 
 .tank-info-btn {
@@ -1013,6 +1013,12 @@ input[type=number] {
     }
   }
 }
+.content-outer{
+  height: calc(100vh - 200px);
+  display: grid;
+  width: 100%;
+  grid-template-columns: 220px calc(100% - 220px);
+}
 
 .content-outer.sidebar-collapsed{
   grid-template-columns: 0px 100%!important;
@@ -1136,7 +1142,6 @@ input[type=number] {
     left: 0;
     height: 14px;
     width: 14px;
-    border: 1px solid #eee;
     border-radius: 2px;
     &:after {
       content: "";
@@ -1146,7 +1151,6 @@ input[type=number] {
       left: 4px;
       width: 4px;
       height: 8px;
-      border: solid white;
       border-width: 0 2px 2px 0;
       transform: rotate(45deg);
     }
@@ -1322,4 +1326,118 @@ top: 36px;
 
 .sub-heading-size{
   font-size: $sub-heading-font-size;
+}
+
+.tank-outer-pattern{
+  padding: 0 65px 0 38px;
+  min-width: 100%;
+  height: 21vh;
+  max-height: 500px;
+  position: relative;
+  .tank-inner-wrapper-pattern {
+    min-width: 100%;
+    height: 100%;
+    background-size: 100% 100%;
+    .tank-column-pattern{
+      display: block;
+      width: 16.66%;
+      height: 100%;
+      float: right;
+      position: relative;
+      > div{
+        height: 33.33%;
+        width: 100%;
+        border: 1px solid;
+        position: relative;
+        .tank-name{
+          position: absolute;
+          width: 100%;
+          text-align: center;
+          top: 50%;
+          margin-top: -13px;
+        }
+      }
+      &.two-column-tank{
+        width: 33.33%;
+        > div{
+
+          > div{
+            width: 50%;
+            height: 100%;
+            float: left;
+            position: relative;
+            &:first-child{
+              border-right: 2px solid;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.ship-front-pattern{
+  position: absolute;
+  width: 65px;
+  height: 100%;
+  right: 0;
+  top: 0;
+  background-size: 100% 100%!important;
+}
+
+.ship-rear-pattern{
+    position: absolute;
+    width: 38px;
+    height: 100%;
+    left: 0;
+    top: 0;
+  .rear-top-pattern{
+    width: 0;
+    height: 0;
+    border-left: 0px solid transparent;
+    border-right: 40px solid transparent;
+    position: absolute;
+    top: 0;
+    left: -2px;
+    &:after{
+        content: "";
+        width: 0;
+        height: 0;
+        border-left: 0px solid transparent;
+        border-right: 40px solid transparent;
+        position: absolute;
+        top: -26px;
+        left: -3px;
+        z-index: 1;
+    }
+  }
+  .rear-bottom-pattern{
+    width: 0;
+    height: 0;
+    border-left: 0px solid transparent;
+    border-right: 40px solid transparent;
+    position: absolute;
+    bottom: 0;
+    left: -2px;
+    z-index: 1;
+    &:after{
+        content: "";
+        width: 0;
+        height: 0;
+        border-left: 0px solid transparent;
+        border-right: 40px solid transparent;
+        position: absolute;
+        top: 3px;
+        left: 0px;
+        z-index: 1;
+    }
+  }
+}
+
+th{
+  font-weight: normal!important;
+}
+
+.p-dropdown-label.p-inputtext{
+  text-transform: none;
 }

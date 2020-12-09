@@ -18,9 +18,8 @@ const routes: Routes = [
         loadChildren: () => import('./loadable-study-details/loadable-study-details.module').then(m => m.LoadableStudyDetailsModule)
       },
       {
-        path: 'loadable-pattern-history',
-        loadChildren: () => import('./loadable-pattern-history/loadable-pattern-history.module')
-          .then(m => m.LoadablePatternHistoryModule)
+        path: 'loadable-pattern-history/:vesselId/:voyageId/:loadableStudyId',
+        loadChildren: () => import('./loadable-pattern-history/loadable-pattern-history.module').then(m => m.LoadablePatternHistoryModule)
       },
       {
         path: 'loadable-plan',

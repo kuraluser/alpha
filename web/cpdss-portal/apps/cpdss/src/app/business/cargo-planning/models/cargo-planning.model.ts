@@ -490,6 +490,14 @@ export class PortsDB extends CPDSSDB {
 
 
 /**
+ * Model for loadable study list 
+ */
+export class PatternHistory {
+    public name: string;
+    public statusId: number;
+}
+
+/**
  * ENUM for operations
  *
  * @export

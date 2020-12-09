@@ -932,3 +932,61 @@ a{
 .cargo-nomination-table.ohq table > thead > tr:nth-child(2)  th:nth-child(5){
   border-right: 1px solid $table-border;
 }
+
+.tank-inner-wrapper-pattern{
+  border: 2px solid $tank-ohq-border; 
+  .tank-column-pattern{
+    >div{
+      border-color: $tank-ohq-border; 
+      >div{
+        border-color: $tank-ohq-border; 
+      }
+    }
+  }
+}
+
+.ship-front-pattern{
+  background: url($images-theme + 'ship-front-pattern.png') no-repeat center center;
+}
+
+.checkbox-custom {
+  .checkmark {
+    border: 1px solid $text-secondary;
+    &:after {
+      border: solid $text-secondary;
+    }
+  }
+
+}
+
+.ship-rear-pattern{
+  border-left: 2px solid $tank-ohq-border; 
+  .rear-top-pattern{
+    border-top: 25px solid $tank-ohq-border;
+    &:after{
+      border-top: 25px solid $body-bg;
+    }
+  }
+  .rear-bottom-pattern{
+    border-bottom: 25px solid $tank-ohq-border;
+    &:after{
+      border-bottom: 25px solid $body-bg;
+    }
+  }
+}
+.tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div .tank-name{
+  color: $text-secondary;
+}
+
+.content-pattern:nth-child(odd){
+  border-right: 1px solid $border-color;
+  border-bottom: 1px solid $border-color;
+}
+.content-pattern:nth-child(2){
+  border-right: 0;
+  border-bottom: 1px solid $border-color;
+}
+.content-pattern:only-child{
+  border-right: 0;
+  border-bottom: 0;
+}

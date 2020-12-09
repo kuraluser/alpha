@@ -19,6 +19,7 @@ import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/co
 import { LoadableQuantityModel } from '../models/loadable-quantity.model';
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
+import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 
 /**
  * Component class for loadable study details component
@@ -343,5 +344,12 @@ export class LoadableStudyDetailsComponent implements OnInit {
    */
   toggleCommingleButton(event){
     this.showCommingleButton = event;
+  }
+
+    /**
+   * Take the user to particular pattern history
+   */
+  navigateToPatternHistory() {
+    this.router.navigate([`/business/cargo-planning/loadable-pattern-history/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
   }
 }
