@@ -85,22 +85,9 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
 
-  private static final Long FRESH_WATER_TANK_CATEGORY_ID = 3L;
-  private static final Long FUEL_OIL_TANK_CATEGORY_ID = 5L;
-  private static final Long DIESEL_OIL_TANK_CATEGORY_ID = 6L;
-  private static final Long LUBRICATING_OIL_TANK_CATEGORY_ID = 14L;
-  private static final Long LUBRICANT_OIL_TANK_CATEGORY_ID = 19L;
   private static final Long CARGO_TANK_CATEGORY_ID = 1L;
   private static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;
   private static final String INVALID_VESSEL_ID = "INVALID_VESSEL_ID";
-
-  private static final List<Long> OHQ_TANK_CATEGORIES =
-      Arrays.asList(
-          FRESH_WATER_TANK_CATEGORY_ID,
-          FUEL_OIL_TANK_CATEGORY_ID,
-          DIESEL_OIL_TANK_CATEGORY_ID,
-          LUBRICATING_OIL_TANK_CATEGORY_ID,
-          LUBRICANT_OIL_TANK_CATEGORY_ID);
 
   private static final List<Long> CARGO_TANK_CATEGORIES =
       Arrays.asList(CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID);
@@ -240,45 +227,13 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
 
   /** Get fuel tanks for a vessel by its id */
   @Override
-  public void getVesselFuelTanks(
-      VesselRequest request, StreamObserver<VesselReply> responseObserver) {
+  public void getVesselTanks(VesselRequest request, StreamObserver<VesselReply> responseObserver) {
     VesselReply.Builder replyBuilder = VesselReply.newBuilder();
     try {
-      Vessel vessel = this.vesselRepository.findByIdAndIsActive(request.getVesselId(), true);
-      if (null == vessel) {
-        throw new GenericServiceException(
-            "Vessel with given id does not exist",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      List<TankCategory> tankCaetgoryEntities = new ArrayList<>();
-      OHQ_TANK_CATEGORIES.forEach(
-          tankCategoryId ->
-              tankCaetgoryEntities.add(this.tankCategoryRepository.getOne(tankCategoryId)));
-      List<VesselTank> vesselTanks =
-          this.vesselTankRepository.findByVesselAndTankCategoryInAndIsActive(
-              vessel, tankCaetgoryEntities, true);
-      for (VesselTank tank : vesselTanks) {
-        VesselTankDetail.Builder builder = VesselTankDetail.newBuilder();
-        builder.setTankId(tank.getId());
-        builder.setTankCategoryId(tank.getTankCategory().getId());
-        builder.setTankCategoryName(tank.getTankCategory().getName());
-        builder.setShortName(tank.getShortName());
-        builder.setFrameNumberFrom(tank.getFrameNumberFrom());
-        builder.setFrameNumberTo(tank.getFrameNumberTo());
-        builder.setTankName(tank.getTankName());
-        Optional.ofNullable(tank.getHeightFrom()).ifPresent(builder::setHeightFrom);
-        Optional.ofNullable(tank.getHeightTo()).ifPresent(builder::setHeightTo);
-        Optional.ofNullable(tank.getFillCapacityCubm())
-            .ifPresent(
-                capacity ->
-                    builder.setFillCapacityCubm(String.valueOf(tank.getFillCapacityCubm())));
-        Optional.ofNullable(tank.getDensity())
-            .ifPresent(density -> builder.setDensity(String.valueOf(tank.getDensity())));
-        Optional.ofNullable(tank.getTankGroup()).ifPresent(builder::setTankGroup);
-        Optional.ofNullable(tank.getTankOrder()).ifPresent(builder::setTankOrder);
-        Optional.ofNullable(tank.getIsSlopTank()).ifPresent(builder::setIsSlopTank);
-        replyBuilder.addVesselTanks(builder.build());
+      List<VesselTankDetail> tankList =
+          this.findVesselTanksByCategory(request.getVesselId(), request.getTankCategoriesList());
+      if (null != tankList && !tankList.isEmpty()) {
+        replyBuilder.addAllVesselTanks(tankList);
       }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
@@ -301,6 +256,56 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * find tanks based on vessel and category
+   *
+   * @param vesselId
+   * @param tankCategoryIds
+   * @return
+   * @throws GenericServiceException
+   */
+  public List<VesselTankDetail> findVesselTanksByCategory(Long vesselId, List<Long> tankCategoryIds)
+      throws GenericServiceException {
+    Vessel vessel = this.vesselRepository.findByIdAndIsActive(vesselId, true);
+    if (null == vessel) {
+      throw new GenericServiceException(
+          "Vessel with given id does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    List<TankCategory> tankCategoryEntities = new ArrayList<>();
+    tankCategoryIds.forEach(
+        tankCategoryId ->
+            tankCategoryEntities.add(this.tankCategoryRepository.getOne(tankCategoryId)));
+    List<VesselTank> vesselTanks =
+        this.vesselTankRepository.findByVesselAndTankCategoryInAndIsActive(
+            vessel, tankCategoryEntities, true);
+    List<VesselTankDetail> tankDetailsList = new ArrayList<>();
+    for (VesselTank tank : vesselTanks) {
+      VesselTankDetail.Builder builder = VesselTankDetail.newBuilder();
+      builder.setTankId(tank.getId());
+      builder.setTankCategoryId(tank.getTankCategory().getId());
+      builder.setTankCategoryName(tank.getTankCategory().getName());
+      builder.setShortName(tank.getShortName());
+      builder.setFrameNumberFrom(tank.getFrameNumberFrom());
+      builder.setFrameNumberTo(tank.getFrameNumberTo());
+      builder.setTankName(tank.getTankName());
+      Optional.ofNullable(tank.getHeightFrom()).ifPresent(builder::setHeightFrom);
+      Optional.ofNullable(tank.getHeightTo()).ifPresent(builder::setHeightTo);
+      Optional.ofNullable(tank.getFillCapacityCubm())
+          .ifPresent(
+              capacity -> builder.setFillCapacityCubm(String.valueOf(tank.getFillCapacityCubm())));
+      Optional.ofNullable(tank.getDensity())
+          .ifPresent(density -> builder.setDensity(String.valueOf(tank.getDensity())));
+      Optional.ofNullable(tank.getTankGroup()).ifPresent(builder::setTankGroup);
+      Optional.ofNullable(tank.getTankOrder()).ifPresent(builder::setTankOrder);
+      Optional.ofNullable(tank.getIsSlopTank()).ifPresent(builder::setIsSlopTank);
+      Optional.ofNullable(tank.getTankCategory().getColorCode()).ifPresent(builder::setColourCode);
+      tankDetailsList.add(builder.build());
+    }
+    return tankDetailsList;
   }
 
   /** Retrieve vessel cargo tanks for a vessel-id */

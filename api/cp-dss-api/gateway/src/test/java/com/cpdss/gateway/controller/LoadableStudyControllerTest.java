@@ -65,7 +65,7 @@ class LoadableStudyControllerTest {
   @MockBean private LoadableStudyService loadableStudyService;
 
   @MockBean private CargoNominationResponse cargoNominationResponse;
-  
+
   @MockBean private CommingleCargoResponse commingleCargoResponse;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
@@ -825,7 +825,7 @@ class LoadableStudyControllerTest {
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(request);
   }
-  
+
   @Test
   void testGetCommingleCargo() throws Exception {
     when(loadableStudyService.getCommingleCargo(Mockito.any(), Mockito.any()))
@@ -840,11 +840,11 @@ class LoadableStudyControllerTest {
                 .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa"))
         .andExpect(status().isOk());
   }
-  
+
   @Test
   void testGetCommingleCargoWithGenericServiceException() throws Exception {
     when(loadableStudyService.getCommingleCargo(Mockito.any(), Mockito.any()))
-    .thenThrow(
+        .thenThrow(
             new GenericServiceException(
                 "Error in getCommingleCargo",
                 CommonErrorCodes.E_GEN_INTERNAL_ERR,
@@ -863,25 +863,23 @@ class LoadableStudyControllerTest {
                 assertEquals(
                     "Error in getCommingleCargo", result.getResolvedException().getMessage()));
   }
-  
+
   @Test
   void testGetCommingleCargoWithException() throws Exception {
-	  when(loadableStudyService.getCommingleCargo(Mockito.any(), Mockito.any()))
-	  .thenThrow(
-			  new NullPointerException(
-					  "Error in getCommingleCargo"));
-	  this.mockMvc
-	  .perform(
-			  get(
-					  "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/commingle-cargo",
-					  1,
-					  1,
-					  30)
-			  .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa"))
-	  .andExpect(status().isInternalServerError())
-	  .andExpect(
-			  result ->
-			  assertEquals(
-					  "Error in getCommingleCargo", result.getResolvedException().getMessage()));
+    when(loadableStudyService.getCommingleCargo(Mockito.any(), Mockito.any()))
+        .thenThrow(new NullPointerException("Error in getCommingleCargo"));
+    this.mockMvc
+        .perform(
+            get(
+                    "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/commingle-cargo",
+                    1,
+                    1,
+                    30)
+                .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa"))
+        .andExpect(status().isInternalServerError())
+        .andExpect(
+            result ->
+                assertEquals(
+                    "Error in getCommingleCargo", result.getResolvedException().getMessage()));
   }
 }

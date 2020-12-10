@@ -35,6 +35,9 @@ public class TankCategory extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
+  @Column(name = "color_code")
+  private String colorCode;
+
   @OneToMany(mappedBy = "tankCategory")
   private Collection<VesselTank> vesselTankCollection;
 }

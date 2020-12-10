@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
-@JsonInclude(Include.NON_NULL)
+@JsonInclude(Include.NON_EMPTY)
 public class VesselTank {
 
   private Long id;

@@ -9,41 +9,35 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * DTO for On hand quantity
+ * On hand quantity response
  *
  * @author suhail.k
  */
 @Data
 @JsonInclude(Include.NON_EMPTY)
-public class OnHandQuantity {
+public class OnBoardQuantity {
 
   private Long id;
 
   private Long portId;
 
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-  private Long fuelTypeId;
-
-  private String fuelTypeName;
-
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private Long tankId;
 
   private String tankName;
 
+  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+  private Long cargoId;
+
+  private String cargoName;
+
+  private BigDecimal sounding;
+
+  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+  private BigDecimal weight;
+
+  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+  private BigDecimal volume;
+
   private Long loadableStudyId;
-
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-  private BigDecimal arrivalVolume;
-
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-  private BigDecimal arrivalQuantity;
-
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-  private BigDecimal departureVolume;
-
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-  private BigDecimal departureQuantity;
-
-  private String colorCode;
 }

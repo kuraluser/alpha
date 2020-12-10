@@ -28,6 +28,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
@@ -166,8 +168,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
   private static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
-  private static final String ETA_ETD_CLIENT_FORMAT = "dd-MM-yyyy HH:mm";
-  private static final String LAY_CAN_CLIENT_FORMAT = "dd-MM-yyyy";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
@@ -187,6 +187,36 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           LOAD_LINE_TROPICAL_TO_SUMMER_ID,
           LOAD_LINE_TROPICAL_TO_WINTER_ID,
           LOAD_LINE_SUMMER_TO_WINTER_ID);
+
+  private static final Long FRESH_WATER_TANK_CATEGORY_ID = 3L;
+  private static final Long FUEL_OIL_TANK_CATEGORY_ID = 5L;
+  private static final Long DIESEL_OIL_TANK_CATEGORY_ID = 6L;
+  private static final Long LUBRICATING_OIL_TANK_CATEGORY_ID = 14L;
+  private static final Long LUBRICANT_OIL_TANK_CATEGORY_ID = 19L;
+  private static final Long FUEL_VOID_TANK_CATEGORY_ID = 22L;
+
+  private static final List<Long> OHQ_TANK_CATEGORIES =
+      Arrays.asList(
+          FRESH_WATER_TANK_CATEGORY_ID,
+          FUEL_OIL_TANK_CATEGORY_ID,
+          DIESEL_OIL_TANK_CATEGORY_ID,
+          LUBRICATING_OIL_TANK_CATEGORY_ID,
+          LUBRICANT_OIL_TANK_CATEGORY_ID,
+          FUEL_VOID_TANK_CATEGORY_ID);
+
+  private static final List<Long> OHQ_CENTER_TANK_CATEGORIES =
+      Arrays.asList(FUEL_OIL_TANK_CATEGORY_ID, DIESEL_OIL_TANK_CATEGORY_ID);
+
+  private static final List<Long> OHQ_REAR_TANK_CATEGORIES =
+      Arrays.asList(FRESH_WATER_TANK_CATEGORY_ID);
+
+  private static final Long CARGO_TANK_CATEGORY_ID = 1L;
+  private static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;
+  private static final Long CARGO_VOID_TANK_CATEGORY_ID = 15L;
+
+  private static final List<Long> OBQ_TANK_CATEGORIES =
+      Arrays.asList(
+          CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID, CARGO_VOID_TANK_CATEGORY_ID);
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -1682,16 +1712,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      VesselRequest.Builder vesselGrpcRequest = VesselRequest.newBuilder();
-      vesselGrpcRequest.setCompanyId(request.getCompanyId());
-      vesselGrpcRequest.setVesselId(request.getVesselId());
-      VesselReply vesselReply = this.getVesselFuelTanks(vesselGrpcRequest.build());
-      if (!SUCCESS.equals(vesselReply.getResponseStatus().getStatus())) {
-        throw new GenericServiceException(
-            "Failed to fetch vessel particualrs",
-            vesselReply.getResponseStatus().getCode(),
-            HttpStatusCode.valueOf(Integer.valueOf(vesselReply.getResponseStatus().getCode())));
-      }
+      VesselReply vesselReply = this.getOhqTanks(request);
       List<OnHandQuantity> onHandQuantities =
           this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
               loadableStudyOpt.get(), request.getPortId(), true);
@@ -1701,6 +1722,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         detailBuilder.setFuelTypeId(tankDetail.getTankCategoryId());
         detailBuilder.setTankId(tankDetail.getTankId());
         detailBuilder.setTankName(tankDetail.getShortName());
+        detailBuilder.setColorCode(tankDetail.getColourCode());
         Optional<OnHandQuantity> qtyOpt =
             onHandQuantities.stream()
                 .filter(
@@ -1721,9 +1743,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(item -> detailBuilder.setDepartureVolume(valueOf(item)));
         }
         replyBuilder.addOnHandQuantity(detailBuilder.build());
-        this.createVesselTankLayoutArray(vesselReply);
       }
-      replyBuilder.addAllVesselTanks(this.createVesselTankLayoutArray(vesselReply));
+      this.createOhqVesselTankLayoutArray(vesselReply, replyBuilder);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching on hand quantities", e);
@@ -1748,14 +1769,59 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
+   * Get On hand quantity tanks
+   *
+   * @param request
+   * @return
+   * @throws NumberFormatException
+   * @throws GenericServiceException
+   */
+  private VesselReply getOhqTanks(OnHandQuantityRequest request) throws GenericServiceException {
+    VesselRequest.Builder vesselGrpcRequest = VesselRequest.newBuilder();
+    vesselGrpcRequest.setCompanyId(request.getCompanyId());
+    vesselGrpcRequest.setVesselId(request.getVesselId());
+    vesselGrpcRequest.addAllTankCategories(OHQ_TANK_CATEGORIES);
+    VesselReply vesselReply = this.getVesselTanks(vesselGrpcRequest.build());
+    if (!SUCCESS.equals(vesselReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to fetch vessel particualrs",
+          vesselReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(vesselReply.getResponseStatus().getCode())));
+    }
+    return vesselReply;
+  }
+
+  /**
    * Group tanks by tank group
    *
    * @param vesselReply
    * @return
    */
-  private List<TankList> createVesselTankLayoutArray(VesselReply vesselReply) {
+  private void createOhqVesselTankLayoutArray(
+      VesselReply vesselReply, OnHandQuantityReply.Builder replyBuilder) {
+    List<VesselTankDetail> rearTanks = new ArrayList<>();
+    List<VesselTankDetail> centerTanks = new ArrayList<>();
+    rearTanks.addAll(
+        vesselReply.getVesselTanksList().stream()
+            .filter(tank -> OHQ_REAR_TANK_CATEGORIES.contains(tank.getTankCategoryId()))
+            .collect(Collectors.toList()));
+    centerTanks.addAll(
+        vesselReply.getVesselTanksList().stream()
+            .filter(tank -> OHQ_CENTER_TANK_CATEGORIES.contains(tank.getTankCategoryId()))
+            .collect(Collectors.toList()));
+    replyBuilder.addAllTanks(this.groupTanks(centerTanks));
+    replyBuilder.addAllRearTanks(this.groupTanks(rearTanks));
+  }
+
+  /**
+   * Group tanks based on tank group
+   *
+   * @param tankDetailList
+   * @return
+   */
+  private List<TankList> groupTanks(List<VesselTankDetail> tankDetailList) {
     Map<Integer, List<VesselTankDetail>> vesselTankMap = new HashMap<>();
-    for (VesselTankDetail tank : vesselReply.getVesselTanksList()) {
+    for (VesselTankDetail tank : tankDetailList) {
       Integer tankGroup = tank.getTankGroup();
       List<VesselTankDetail> list = null;
       if (null == vesselTankMap.get(tankGroup)) {
@@ -1766,14 +1832,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       list.add(tank);
       vesselTankMap.put(tankGroup, list);
     }
-    List<TankList> tanks = new ArrayList<>();
+    List<TankList> tankList = new ArrayList<>();
     List<TankDetail> tankGroup = null;
     for (Map.Entry<Integer, List<VesselTankDetail>> entry : vesselTankMap.entrySet()) {
       tankGroup = entry.getValue().stream().map(this::buildTankDetail).collect(Collectors.toList());
       Collections.sort(tankGroup, Comparator.comparing(TankDetail::getTankOrder));
-      tanks.add(TankList.newBuilder().addAllVesselTank(tankGroup).build());
+      tankList.add(TankList.newBuilder().addAllVesselTank(tankGroup).build());
     }
-    return tanks;
+    return tankList;
   }
 
   /**
@@ -1807,8 +1873,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param request
    * @return
    */
-  public VesselReply getVesselFuelTanks(VesselRequest request) {
-    return this.vesselInfoGrpcService.getVesselFuelTanks(request);
+  public VesselReply getVesselTanks(VesselRequest request) {
+    return this.vesselInfoGrpcService.getVesselTanks(request);
   }
 
   /** Save on hand quantity */
@@ -2640,5 +2706,58 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /** Get on board quantity details corresponding to a loadable study */
+  @Override
+  public void getOnBoardQuantity(
+      OnBoardQuantityRequest request, StreamObserver<OnBoardQuantityReply> responseObserver) {
+    OnBoardQuantityReply.Builder replyBuilder = OnBoardQuantityReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+      if (!loadableStudyOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable study does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      VesselReply vesselReply = this.getObqTanks(request);
+      replyBuilder.addAllTanks(this.groupTanks(vesselReply.getVesselTanksList()));
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      log.error("Exception when fetching on board quantities", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when fetching on board quantities")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Fetch vessel fuel and fresh water tanks
+   *
+   * @param request
+   * @return
+   * @throws GenericServiceException
+   */
+  private VesselReply getObqTanks(OnBoardQuantityRequest request) throws GenericServiceException {
+    VesselRequest.Builder vesselGrpcRequest = VesselRequest.newBuilder();
+    vesselGrpcRequest.setCompanyId(request.getCompanyId());
+    vesselGrpcRequest.setVesselId(request.getVesselId());
+    vesselGrpcRequest.addAllTankCategories(OBQ_TANK_CATEGORIES);
+    VesselReply vesselReply = this.getVesselTanks(vesselGrpcRequest.build());
+    if (!SUCCESS.equals(vesselReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to fetch vessel particualrs",
+          vesselReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(vesselReply.getResponseStatus().getCode())));
+    }
+    return vesselReply;
   }
 }

@@ -27,6 +27,9 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
@@ -70,6 +73,8 @@ import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.LoadingPort;
+import com.cpdss.gateway.domain.OnBoardQuantity;
+import com.cpdss.gateway.domain.OnBoardQuantityResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
@@ -1302,11 +1307,12 @@ public class LoadableStudyService {
           isEmpty(detail.getDepartureVolume())
               ? BigDecimal.ZERO
               : new BigDecimal(detail.getDepartureVolume()));
+      onHandQuantity.setColorCode(isEmpty(detail.getColorCode()) ? null : detail.getColorCode());
       response.getOnHandQuantities().add(onHandQuantity);
     }
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
-    return this.buildTankLayoutArray(response, grpcReply);
+    return this.buildOhqTankLayoutArray(response, grpcReply);
   }
 
   /**
@@ -1316,10 +1322,22 @@ public class LoadableStudyService {
    * @param grpcReply
    * @return
    */
-  private OnHandQuantityResponse buildTankLayoutArray(
+  private OnHandQuantityResponse buildOhqTankLayoutArray(
       OnHandQuantityResponse response, OnHandQuantityReply grpcReply) {
+    response.setTanks(this.createGroupWiseTankList(grpcReply.getTanksList()));
+    response.setRearTanks(this.createGroupWiseTankList(grpcReply.getRearTanksList()));
+    return response;
+  }
+
+  /**
+   * Group tanks based on tank group parameter
+   *
+   * @param tankList
+   * @return
+   */
+  private List<List<VesselTank>> createGroupWiseTankList(List<TankList> tankList) {
     List<List<VesselTank>> tanks = new ArrayList<>();
-    for (TankList list : grpcReply.getVesselTanksList()) {
+    for (TankList list : tankList) {
       List<VesselTank> tankGroup = new ArrayList<>();
       for (TankDetail detail : list.getVesselTankList()) {
         VesselTank tank = new VesselTank();
@@ -1344,8 +1362,7 @@ public class LoadableStudyService {
       }
       tanks.add(tankGroup);
     }
-    response.setVesselTanks(tanks);
-    return response;
+    return tanks;
   }
 
   /**
@@ -1771,5 +1788,75 @@ public class LoadableStudyService {
 
   public AlgoReply generateLoadablePatterns(AlgoRequest request) {
     return this.loadableStudyServiceBlockingStub.generateLoadablePatterns(request);
+  }
+
+  /**
+   * Get on board quantities
+   *
+   * @param vesselId
+   * @param loadableStudyId
+   * @param portId
+   * @param first
+   * @return
+   * @throws GenericServiceException
+   */
+  public OnBoardQuantityResponse getOnBoardQuantites(
+      Long vesselId, Long loadableStudyId, Long portId, String correlationId)
+      throws GenericServiceException {
+    log.info("LoadableStudyService - getOnBoardQuantites, correlationId:{}", correlationId);
+    log.debug(
+        "getOnBoardQuantites, vesselId:{}, loadableStudyId:{}, portId:{}",
+        vesselId,
+        loadableStudyId,
+        portId);
+    OnBoardQuantityRequest request =
+        OnBoardQuantityRequest.newBuilder()
+            .setLoadableStudyId(loadableStudyId)
+            .setVesselId(vesselId)
+            .setPortId(portId)
+            .build();
+    OnBoardQuantityReply grpcReply = this.getOnBoardQuantites(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Error calling getOnBoardQuantites grpc service",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    return this.buildOnBoardQuantityResponse(grpcReply);
+  }
+
+  /**
+   * Build on board quantity response
+   *
+   * @param grpcReply
+   * @return
+   */
+  private OnBoardQuantityResponse buildOnBoardQuantityResponse(OnBoardQuantityReply grpcReply) {
+    OnBoardQuantityResponse response = new OnBoardQuantityResponse();
+    response.setOnBoardQuantities(new ArrayList<>());
+    for (OnBoardQuantityDetail detail : grpcReply.getOnBoardQuantityList()) {
+      OnBoardQuantity dto = new OnBoardQuantity();
+      dto.setId(detail.getId());
+      dto.setCargoId(detail.getCargoId());
+      dto.setCargoName(detail.getCargoName());
+      dto.setSounding(isEmpty(detail.getSounding()) ? null : new BigDecimal(detail.getSounding()));
+      dto.setWeight(isEmpty(detail.getWeight()) ? null : new BigDecimal(detail.getWeight()));
+      dto.setVolume(isEmpty(detail.getVolume()) ? null : new BigDecimal(detail.getVolume()));
+      dto.setTankId(detail.getTankId());
+      dto.setTankName(detail.getTankName());
+      response.getOnBoardQuantities().add(dto);
+    }
+    response.setTanks(this.createGroupWiseTankList(grpcReply.getTanksList()));
+    return response;
+  }
+
+  /**
+   * Grpc call for fetching on board quantities
+   *
+   * @param request
+   * @return
+   */
+  public OnBoardQuantityReply getOnBoardQuantites(OnBoardQuantityRequest request) {
+    return this.loadableStudyServiceBlockingStub.getOnBoardQuantity(request);
   }
 }
