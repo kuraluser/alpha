@@ -197,7 +197,7 @@ hr{
   color:$red!important;
 }
 .logo{
-  background: url($images-theme + 'logo.png') no-repeat left center
+ /* background: url($images-theme + 'logo.png') no-repeat left center*/
 }
 .menu-item-text{
   color: $link-color;
@@ -989,4 +989,12 @@ a{
 .content-pattern:only-child{
   border-right: 0;
   border-bottom: 0;
+}
+.cpdss{
+  background: url($images-theme + 'cpdss.png') no-repeat;
+  display: inline-block;
+  width: 109px;
+  height: 12px;
+  margin-left: 10px;
+  vertical-align: middle;
 }

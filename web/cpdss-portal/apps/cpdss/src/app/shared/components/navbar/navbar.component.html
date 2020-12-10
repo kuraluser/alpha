@@ -1,5 +1,7 @@
 <header>
-    <div class="logo"></div>
+    <div class="logo">
+        <img [src]="companyLogo"><span class="cpdss"></span>
+    </div>
     <div class="header-nav">
         <ul class="nav">
             <li [ngClass]="{'nav-item dropdown':true ,'show': isSubMenu[i] }" (click)="showSubmenu(list.subMenu, i)"
