@@ -222,6 +222,7 @@ message VesselReply {
 		string frameNumberFrom = 3;
 		string frameNumberTo = 4;
 		string distance = 5;
+		int64 id = 6;
 	}
 		
 	message InnerBulkHeadSF {
@@ -231,10 +232,22 @@ message VesselReply {
 		string foreC1 = 4;
 		string foreWingTankIds = 5;
 		string foreC2 = 6;
-		string foreBallstTanks = 7;
+		string foreBallastTanks = 7;
 		string foreC3 = 8;
 		string foreBWCorrection = 9;
 		string foreC4 = 10;
 		string foreMaxAllowence = 11;
 		string foreMinAllowence = 12;
+		int64 id = 13;
+		string aftAlpha = 14;
+		int64 aftCenterCargoTankId = 15;
+		string aftC1 = 16;
+		string aftWingTankIds = 17;
+		string aftC2 = 18;
+		string aftBallastTanks = 19;
+		string aftC3 = 20;
+		string aftBWCorrection = 21;
+		string aftC4 = 22;
+		string aftMaxFlAllowence = 23;
+		string aftMinFlAllowence = 24;
 	}

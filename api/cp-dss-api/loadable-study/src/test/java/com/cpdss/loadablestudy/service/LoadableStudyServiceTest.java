@@ -1014,7 +1014,8 @@ class LoadableStudyServiceTest {
 
   @Test
   void testGetVoyagesByVessel() {
-    when(this.voyageRepository.findByVesselXIdAndIsActiveOrderByLastModifiedDateTimeDesc(anyLong(), anyBoolean()))
+    when(this.voyageRepository.findByVesselXIdAndIsActiveOrderByLastModifiedDateTimeDesc(
+            anyLong(), anyBoolean()))
         .thenReturn(this.createVoyageEntities());
     StreamRecorder<VoyageListReply> responseObserver = StreamRecorder.create();
     VoyageRequest request = VoyageRequest.newBuilder().setVesselId(1L).build();
@@ -1027,7 +1028,8 @@ class LoadableStudyServiceTest {
 
   @Test
   void testGetVoyagesByVesselRuntimeException() {
-    when(this.voyageRepository.findByVesselXIdAndIsActiveOrderByLastModifiedDateTimeDesc(anyLong(), anyBoolean()))
+    when(this.voyageRepository.findByVesselXIdAndIsActiveOrderByLastModifiedDateTimeDesc(
+            anyLong(), anyBoolean()))
         .thenThrow(RuntimeException.class);
     StreamRecorder<VoyageListReply> responseObserver = StreamRecorder.create();
     VoyageRequest request = VoyageRequest.newBuilder().setVesselId(1L).build();

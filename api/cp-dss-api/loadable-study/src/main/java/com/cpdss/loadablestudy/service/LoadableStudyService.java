@@ -1309,7 +1309,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     VoyageListReply.Builder builder = VoyageListReply.newBuilder();
     try {
       List<Voyage> entityList =
-          this.voyageRepository.findByVesselXIdAndIsActiveOrderByLastModifiedDateTimeDesc(request.getVesselId(), true);
+          this.voyageRepository.findByVesselXIdAndIsActiveOrderByLastModifiedDateTimeDesc(
+              request.getVesselId(), true);
       for (Voyage entity : entityList) {
         VoyageDetail.Builder detailbuilder = VoyageDetail.newBuilder();
         detailbuilder.setId(entity.getId());
