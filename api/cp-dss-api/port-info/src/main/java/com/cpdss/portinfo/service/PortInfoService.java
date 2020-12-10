@@ -137,9 +137,11 @@ public class PortInfoService extends PortInfoServiceImplBase {
           Optional.ofNullable(port.getDensitySeaWater())
               .ifPresent(waterDensity -> portDetail.setWaterDensity(String.valueOf(waterDensity)));
           Optional.ofNullable(port.getAverageTideHeight())
-          .ifPresent(averageTideHeight -> portDetail.setAverageTideHeight(String.valueOf(averageTideHeight)));
+              .ifPresent(
+                  averageTideHeight ->
+                      portDetail.setAverageTideHeight(String.valueOf(averageTideHeight)));
           Optional.ofNullable(port.getTideHeight())
-          .ifPresent(tideHeight -> portDetail.setTideHeight(String.valueOf(tideHeight)));
+              .ifPresent(tideHeight -> portDetail.setTideHeight(String.valueOf(tideHeight)));
           if (!port.getBerthInfoSet().isEmpty()) {
             BerthInfo maxDraftBerthInfo =
                 Collections.max(port.getBerthInfoSet(), byMaxDraftComparator);

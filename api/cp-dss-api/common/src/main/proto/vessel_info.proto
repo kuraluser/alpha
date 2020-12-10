@@ -14,7 +14,7 @@ service VesselInfoService {
 	rpc GetVesselDetailsById (VesselRequest) returns (VesselReply) {
 	}
 	
-	rpc GetVesselFuelTanks (VesselRequest) returns (VesselReply) {
+	rpc GetVesselTanks (VesselRequest) returns (VesselReply) {
 	}
 	
 	rpc GetVesselCargoTanks (VesselRequest) returns (VesselReply) {
@@ -29,6 +29,7 @@ message VesselRequest {
 	int64 vesselId = 2;
 	int64 vesselDraftConditionId = 3;
 	string draftExtreme = 4;
+	repeated int64 tankCategories = 5;
 }
 
 message LoadLineDetail {
@@ -107,6 +108,7 @@ message VesselTankDetail{
 	int64 coatingTypeId = 18;
 	int64 tankTypeId = 19;
 	string fullCapacityCubm = 20;
+	string colourCode = 21;
 }
 
 message VesselReply {

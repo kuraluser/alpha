@@ -46,6 +46,7 @@ service LoadableStudyService {
 		
 	rpc SaveDischargingPorts(PortRotationRequest) returns (PortRotationReply){
 	}
+	
 	rpc GetPortRotationByLoadableStudyId (PortRotationRequest) returns (PortRotationReply){
 	}
 		
@@ -60,8 +61,10 @@ service LoadableStudyService {
 	
 	rpc SaveOnHandQuantity(OnHandQuantityDetail) returns (OnHandQuantityReply){
 	}
+	
 	rpc GetLoadablePatternDetails(LoadablePatternRequest) returns (LoadablePatternReply){
 	}
+	
 	rpc GetPurposeOfCommingle (PurposeOfCommingleRequest) returns (PurposeOfCommingleReply){
 	}
 	
@@ -70,20 +73,24 @@ service LoadableStudyService {
 	
 	rpc SaveCommingleCargo (CommingleCargoRequest) returns (CommingleCargoReply){
 	}
+	
 	rpc GetLoadablePatternCommingleDetails (LoadablePatternCommingleDetailsRequest) returns (LoadablePatternCommingleDetailsReply) {
 	}
+	
 	rpc GenerateLoadablePatterns (AlgoRequest) returns (AlgoReply) {
 	}
-}
-	message AlgoRequest {
-	int64 loadableStudyId = 1;
+	
+	rpc GetOnBoardQuantity(OnBoardQuantityRequest) returns (OnBoardQuantityReply){
 	}
+}
 
-	message AlgoReply {
+message AlgoRequest {
+	int64 loadableStudyId = 1;
+}
+
+message AlgoReply {
 	ResponseStatus responseStatus = 1;
- 	}
-
-
+}
 
 message VoyageRequest {
 	int64 captainId = 1;
@@ -310,6 +317,7 @@ message OnHandQuantityDetail{
 	string departureVolume = 9;
 	string departureQuantity = 10;
 	int64 loadableStudyId = 11;
+	string colorCode = 12;
 }
 
 message TankDetail{
@@ -336,7 +344,34 @@ message TankList{
 message OnHandQuantityReply{
 	ResponseStatus responseStatus = 1;
 	repeated OnHandQuantityDetail onHandQuantity = 2;
-	repeated TankList vesselTanks = 3;
+	repeated TankList tanks = 3;
+	repeated TankList rearTanks = 4;
+	int64 id = 5;
+}
+
+message OnBoardQuantityRequest{
+	int64 companyId = 1;
+	int64 vesselId = 2;
+	int64 loadableStudyId = 3;
+	int64 portId = 4;
+}
+
+message OnBoardQuantityDetail{
+	int64 id = 1;
+	int64 portId = 2;
+	int64 tankId = 3;
+	string tankName = 4;
+	int64 cargoId = 5;
+	string cargoName = 6;
+	string sounding = 7;
+	string weight = 8;
+	string volume = 9;
+}
+
+message OnBoardQuantityReply{
+	ResponseStatus responseStatus = 1;
+	repeated OnBoardQuantityDetail onBoardQuantity = 2;
+	repeated TankList tanks = 3;
 	int64 id = 4;
 }
 

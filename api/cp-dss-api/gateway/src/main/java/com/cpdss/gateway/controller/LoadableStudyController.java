@@ -16,6 +16,7 @@ import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.OnBoardQuantityResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
@@ -849,6 +850,42 @@ public class LoadableStudyController {
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
           HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{portId}/on-board-quantities")
+  public OnBoardQuantityResponse getOnBoardQuantites(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info(
+          "getOnBoardQuantites: {}, correlationId: {}",
+          getClientIp(),
+          headers.getFirst(CORRELATION_ID_HEADER));
+      log.debug(
+          "getOnBoardQuantites, vesselId:{}, loadableStudyId:{}, portId:{}",
+          vesselId,
+          loadableStudyId,
+          portId);
+      return this.loadableStudyService.getOnBoardQuantites(
+          vesselId, loadableStudyId, portId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching on board quantities", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when fetching on board quantities", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
           e.getMessage(),
           e);
     }

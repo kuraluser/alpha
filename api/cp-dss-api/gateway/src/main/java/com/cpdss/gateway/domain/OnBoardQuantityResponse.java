@@ -14,13 +14,11 @@ import lombok.Data;
  */
 @Data
 @JsonInclude(Include.NON_EMPTY)
-public class OnHandQuantityResponse {
+public class OnBoardQuantityResponse {
 
   private CommonSuccessResponse responseStatus;
 
-  private List<OnHandQuantity> onHandQuantities;
-
-  private List<List<VesselTank>> rearTanks;
+  private List<OnBoardQuantity> onBoardQuantities;
 
   private List<List<VesselTank>> tanks;
 

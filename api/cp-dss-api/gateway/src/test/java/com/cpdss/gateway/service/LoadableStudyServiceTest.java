@@ -992,7 +992,7 @@ class LoadableStudyServiceTest {
         .thenReturn(
             OnHandQuantityReply.newBuilder()
                 .addAllOnHandQuantity(this.createOnhandQuantityDetail())
-                .addVesselTanks(
+                .addRearTanks(
                     TankList.newBuilder().addAllVesselTank(this.createTankDetail()).build())
                 .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
                 .build());

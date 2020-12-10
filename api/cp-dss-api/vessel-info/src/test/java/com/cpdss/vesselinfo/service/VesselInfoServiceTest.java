@@ -55,7 +55,7 @@ class VesselInfoServiceTest {
   private static final Long TEST_ID = 1L;
 
   @Test
-  void testGetVesselFuelTanks() {
+  void testGetVesselTanks() {
     Vessel vessel = new Vessel();
     when(this.vesselRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(vessel);
     when(this.tankCategoryRepository.getOne(anyLong())).thenReturn(new TankCategory());
@@ -63,7 +63,7 @@ class VesselInfoServiceTest {
             any(Vessel.class), anyList(), anyBoolean()))
         .thenReturn(this.prepareVesselTankEntities());
     StreamRecorder<VesselReply> responseObserver = StreamRecorder.create();
-    this.vesselInfoService.getVesselFuelTanks(
+    this.vesselInfoService.getVesselTanks(
         VesselRequest.newBuilder().setCompanyId(TEST_ID).setVesselId(TEST_ID).build(),
         responseObserver);
     List<VesselReply> replies = responseObserver.getValues();
@@ -73,10 +73,10 @@ class VesselInfoServiceTest {
   }
 
   @Test
-  void testGetVesselFuelTanksInvalidVessel() {
+  void testGetVesselTanksInvalidVessel() {
     when(this.vesselRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(null);
     StreamRecorder<VesselReply> responseObserver = StreamRecorder.create();
-    this.vesselInfoService.getVesselFuelTanks(
+    this.vesselInfoService.getVesselTanks(
         VesselRequest.newBuilder().setCompanyId(TEST_ID).setVesselId(TEST_ID).build(),
         responseObserver);
     List<VesselReply> replies = responseObserver.getValues();
@@ -86,11 +86,11 @@ class VesselInfoServiceTest {
   }
 
   @Test
-  void testGetVesselFuelTanksRunTimeException() {
+  void testGetVesselTanksRunTimeException() {
     when(this.vesselRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenThrow(RuntimeException.class);
     StreamRecorder<VesselReply> responseObserver = StreamRecorder.create();
-    this.vesselInfoService.getVesselFuelTanks(
+    this.vesselInfoService.getVesselTanks(
         VesselRequest.newBuilder().setCompanyId(TEST_ID).setVesselId(TEST_ID).build(),
         responseObserver);
     List<VesselReply> replies = responseObserver.getValues();

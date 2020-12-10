@@ -1531,7 +1531,7 @@ class LoadableStudyServiceTest {
         .thenReturn(Optional.of(loadableStudy));
     Mockito.doReturn(this.createVesselReply())
         .when(spyService)
-        .getVesselFuelTanks(any(VesselRequest.class));
+        .getVesselTanks(any(VesselRequest.class));
     when(this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
             any(LoadableStudy.class), anyLong(), anyBoolean()))
         .thenReturn(this.prepareOnHandQuantities());
@@ -1571,7 +1571,7 @@ class LoadableStudyServiceTest {
                         .build())
                 .build())
         .when(spyService)
-        .getVesselFuelTanks(any(VesselRequest.class));
+        .getVesselTanks(any(VesselRequest.class));
     StreamRecorder<OnHandQuantityReply> responseObserver = StreamRecorder.create();
     spyService.getOnHandQuantity(this.createOnHandQuantityRequest(), responseObserver);
     List<OnHandQuantityReply> results = responseObserver.getValues();
