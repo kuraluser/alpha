@@ -18,6 +18,7 @@ import com.cpdss.gateway.domain.CalculationSheet;
 import com.cpdss.gateway.domain.CalculationSheetTankGroup;
 import com.cpdss.gateway.domain.HydrostaticData;
 import com.cpdss.gateway.domain.LoadLine;
+import com.cpdss.gateway.domain.MinMaxValuesForBMAndSf;
 import com.cpdss.gateway.domain.ShearingForce;
 import com.cpdss.gateway.domain.Vessel;
 import com.cpdss.gateway.domain.VesselDetailsResponse;
@@ -187,11 +188,38 @@ public class VesselInfoService {
         this.createCalculationSheetResponse(vesselAlgoReply, correlationId));
     bmAndSF.setCalculationSheetTankGroup(
         this.createCalculationSheetTankGroupResponse(vesselAlgoReply, correlationId));
+    bmAndSF.setMinMaxValuesForBMAndSfs(
+        this.createMinMaxValuesForBMAndSfResponse(vesselAlgoReply, correlationId));
     vesselDetailsResponse.setBMAndSF(bmAndSF);
     vesselDetailsResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
 
     return vesselDetailsResponse;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return List<MinMaxValuesForBMAndSf>
+   */
+  private List<MinMaxValuesForBMAndSf> createMinMaxValuesForBMAndSfResponse(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<MinMaxValuesForBMAndSf> minMaxValuesForBMAndSfs = new ArrayList<MinMaxValuesForBMAndSf>();
+    vesselAlgoReply
+        .getBMAndSF()
+        .getMinMaxValuesForBMAndSfList()
+        .forEach(
+            minMaxValuesForBMAndSf -> {
+              MinMaxValuesForBMAndSf minMaxBmSf = new MinMaxValuesForBMAndSf();
+              minMaxBmSf.setId(minMaxValuesForBMAndSf.getId());
+              minMaxBmSf.setFrameNumber(minMaxValuesForBMAndSf.getFrameNumber());
+              minMaxBmSf.setMinBm(minMaxValuesForBMAndSf.getMinBm());
+              minMaxBmSf.setMinSf(minMaxValuesForBMAndSf.getMinSf());
+              minMaxBmSf.setMaxBm(minMaxValuesForBMAndSf.getMaxBm());
+              minMaxBmSf.setMaxSf(minMaxValuesForBMAndSf.getMaxSf());
+              minMaxValuesForBMAndSfs.add(minMaxBmSf);
+            });
+    return minMaxValuesForBMAndSfs;
   }
 
   /**
@@ -340,6 +368,7 @@ public class VesselInfoService {
               hydrostaticData.setTkm(data.getTkm());
               hydrostaticData.setTrim(data.getTrim());
               hydrostaticData.setVcb(data.getVcb());
+              hydrostaticData.setMtc(data.getMtc());
               hydrostaticDatas.add(hydrostaticData);
             });
 

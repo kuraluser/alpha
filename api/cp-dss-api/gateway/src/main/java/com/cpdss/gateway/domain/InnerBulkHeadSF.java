@@ -18,4 +18,15 @@ public class InnerBulkHeadSF {
   private String foreC4;
   private String foreMaxAllowence;
   private String foreMinAllowence;
+  private String aftAlpha;
+  private Long aftCenterCargoTankId;
+  private String aftC1;
+  private String aftWingTankIds;
+  private String aftC2;
+  private String aftBallstTanks;
+  private String aftC3;
+  private String aftBWCorrection;
+  private String aftC4;
+  private String aftMaxAllowence;
+  private String aftMinAllowence;
 }

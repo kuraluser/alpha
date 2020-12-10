@@ -15,4 +15,5 @@ public class HydrostaticData {
   private String vcb;
   private String tkm;
   private String lkm;
+  private String mtc;
 }

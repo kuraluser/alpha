@@ -8,8 +8,11 @@ import com.cpdss.common.generated.VesselInfo.BendingMoment;
 import com.cpdss.common.generated.VesselInfo.CalculationSheet;
 import com.cpdss.common.generated.VesselInfo.CalculationSheetTankGroup;
 import com.cpdss.common.generated.VesselInfo.HydrostaticData;
+import com.cpdss.common.generated.VesselInfo.InnerBulkHeadSF;
 import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
+import com.cpdss.common.generated.VesselInfo.MinMaxValuesForBMAndSf;
 import com.cpdss.common.generated.VesselInfo.ShearingForce;
+import com.cpdss.common.generated.VesselInfo.StationValues;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
@@ -26,6 +29,8 @@ import com.cpdss.vesselinfo.domain.VesselDetails;
 import com.cpdss.vesselinfo.entity.CalculationSheetTankgroup;
 import com.cpdss.vesselinfo.entity.DraftCondition;
 import com.cpdss.vesselinfo.entity.HydrostaticTable;
+import com.cpdss.vesselinfo.entity.InnerBulkHeadValues;
+import com.cpdss.vesselinfo.entity.MinMaxValuesForBmsf;
 import com.cpdss.vesselinfo.entity.TankCategory;
 import com.cpdss.vesselinfo.entity.Vessel;
 import com.cpdss.vesselinfo.entity.VesselChartererMapping;
@@ -36,7 +41,10 @@ import com.cpdss.vesselinfo.repository.BendingMomentRepository;
 import com.cpdss.vesselinfo.repository.CalculationSheetRepository;
 import com.cpdss.vesselinfo.repository.CalculationSheetTankgroupRepository;
 import com.cpdss.vesselinfo.repository.HydrostaticTableRepository;
+import com.cpdss.vesselinfo.repository.InnerBulkHeadValuesRepository;
+import com.cpdss.vesselinfo.repository.MinMaxValuesForBmsfRepository;
 import com.cpdss.vesselinfo.repository.ShearingForceRepository;
+import com.cpdss.vesselinfo.repository.StationValuesRepository;
 import com.cpdss.vesselinfo.repository.TankCategoryRepository;
 import com.cpdss.vesselinfo.repository.VesselChartererMappingRepository;
 import com.cpdss.vesselinfo.repository.VesselDraftConditionRepository;
@@ -81,6 +89,9 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired private ShearingForceRepository shearingForceRepository;
   @Autowired private CalculationSheetRepository calculationSheetRepository;
   @Autowired private CalculationSheetTankgroupRepository calculationSheetTankgroupRepository;
+  @Autowired private MinMaxValuesForBmsfRepository minMaxValuesForBmsfRepository;
+  @Autowired private StationValuesRepository stationValuesRepository;
+  @Autowired private InnerBulkHeadValuesRepository innerBulkHeadValuesRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -457,6 +468,35 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                           calculationSheetTankgroup, calculationSheetTankGroupBuilder));
                 });
 
+        minMaxValuesForBmsfRepository
+            .findByVessel(vessel)
+            .forEach(
+                minMaxValuesForBmsf -> {
+                  MinMaxValuesForBMAndSf.Builder minMaxValuesForBMAndSfBuilder =
+                      MinMaxValuesForBMAndSf.newBuilder();
+                  bMAndSFBuilder.addMinMaxValuesForBMAndSf(
+                      createMinMaxValuesForBMAndSfBuilder(
+                          minMaxValuesForBmsf, minMaxValuesForBMAndSfBuilder));
+                });
+
+        stationValuesRepository
+            .findByVessel(vessel.getId())
+            .forEach(
+                stationValue -> {
+                  StationValues.Builder stationValueBuilder = StationValues.newBuilder();
+                  bMAndSFBuilder.addStationValues(
+                      createStationValueBuilder(stationValue, stationValueBuilder));
+                });
+
+        innerBulkHeadValuesRepository
+            .findByVessel(vessel.getId())
+            .forEach(
+                innerBulkHeadSF -> {
+                  InnerBulkHeadSF.Builder innerBulkHeadSFBuilder = InnerBulkHeadSF.newBuilder();
+                  bMAndSFBuilder.addInnerBulkHeadSF(
+                      createInnerBulkHeadSFBuilder(innerBulkHeadSF, innerBulkHeadSFBuilder));
+                });
+
         replyBuilder.setBMAndSF(bMAndSFBuilder);
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
@@ -472,6 +512,163 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * @param innerBulkHeadSF
+   * @param innerBulkHeadSFBuilder
+   * @return InnerBulkHeadSF
+   */
+  private InnerBulkHeadSF createInnerBulkHeadSFBuilder(
+      InnerBulkHeadValues innerBulkHeadSF,
+      com.cpdss.common.generated.VesselInfo.InnerBulkHeadSF.Builder innerBulkHeadSFBuilder) {
+    innerBulkHeadSFBuilder.setId(innerBulkHeadSF.getId());
+    Optional.ofNullable(innerBulkHeadSF.getFrameNumber())
+        .ifPresent(
+            frameNumber -> innerBulkHeadSFBuilder.setFrameNumber(String.valueOf(frameNumber)));
+    Optional.ofNullable(innerBulkHeadSF.getForeAlpha())
+        .ifPresent(foreAlpha -> innerBulkHeadSFBuilder.setForeAlpha(String.valueOf(foreAlpha)));
+    Optional.ofNullable(innerBulkHeadSF.getForeCenterCargotankId())
+        .ifPresent(
+            foreCenterCargoTankId ->
+                innerBulkHeadSFBuilder.setForeCenterCargoTankId(
+                    Long.valueOf(foreCenterCargoTankId.toString())));
+    Optional.ofNullable(innerBulkHeadSF.getForeC1())
+        .ifPresent(foreC1 -> innerBulkHeadSFBuilder.setForeC1(String.valueOf(foreC1)));
+
+    Optional.ofNullable(innerBulkHeadSF.getForeWingTankId())
+        .ifPresent(
+            foreWingTankIds ->
+                innerBulkHeadSFBuilder.setForeWingTankIds(String.valueOf(foreWingTankIds)));
+
+    Optional.ofNullable(innerBulkHeadSF.getForeC2())
+        .ifPresent(foreC2 -> innerBulkHeadSFBuilder.setForeC2(String.valueOf(foreC2)));
+
+    Optional.ofNullable(innerBulkHeadSF.getForeBallastTank())
+        .ifPresent(
+            foreBallastTanks ->
+                innerBulkHeadSFBuilder.setForeBallastTanks(String.valueOf(foreBallastTanks)));
+
+    Optional.ofNullable(innerBulkHeadSF.getForeC3())
+        .ifPresent(foreC3 -> innerBulkHeadSFBuilder.setForeC3(String.valueOf(foreC3)));
+
+    Optional.ofNullable(innerBulkHeadSF.getForeBwCorrection())
+        .ifPresent(
+            foreBWCorrection ->
+                innerBulkHeadSFBuilder.setForeBWCorrection(String.valueOf(foreBWCorrection)));
+
+    Optional.ofNullable(innerBulkHeadSF.getForeC4())
+        .ifPresent(foreC4 -> innerBulkHeadSFBuilder.setForeC4(String.valueOf(foreC4)));
+
+    Optional.ofNullable(innerBulkHeadSF.getForeMaxAllowence())
+        .ifPresent(
+            foreMaxAllowence ->
+                innerBulkHeadSFBuilder.setForeMaxAllowence(String.valueOf(foreMaxAllowence)));
+
+    Optional.ofNullable(innerBulkHeadSF.getForeMinAllowence())
+        .ifPresent(
+            foreMinAllowence ->
+                innerBulkHeadSFBuilder.setForeMinAllowence(String.valueOf(foreMinAllowence)));
+
+    Optional.ofNullable(innerBulkHeadSF.getAftAlpha())
+        .ifPresent(aftAlpha -> innerBulkHeadSFBuilder.setAftAlpha(String.valueOf(aftAlpha)));
+    Optional.ofNullable(innerBulkHeadSF.getAftCenterCargotankId())
+        .ifPresent(
+            aftCenterCargoTankId ->
+                innerBulkHeadSFBuilder.setAftCenterCargoTankId(
+                    Long.valueOf(aftCenterCargoTankId.toString())));
+    Optional.ofNullable(innerBulkHeadSF.getAftC1())
+        .ifPresent(aftC1 -> innerBulkHeadSFBuilder.setAftC1(String.valueOf(aftC1)));
+
+    Optional.ofNullable(innerBulkHeadSF.getAftWingTankId())
+        .ifPresent(
+            aftWingTankIds ->
+                innerBulkHeadSFBuilder.setAftWingTankIds(String.valueOf(aftWingTankIds)));
+
+    Optional.ofNullable(innerBulkHeadSF.getAftC2())
+        .ifPresent(aftC2 -> innerBulkHeadSFBuilder.setAftC2(String.valueOf(aftC2)));
+
+    Optional.ofNullable(innerBulkHeadSF.getAftBallastTank())
+        .ifPresent(
+            aftBallastTanks ->
+                innerBulkHeadSFBuilder.setAftBallastTanks(String.valueOf(aftBallastTanks)));
+
+    Optional.ofNullable(innerBulkHeadSF.getAftC3())
+        .ifPresent(aftC3 -> innerBulkHeadSFBuilder.setAftC3(String.valueOf(aftC3)));
+
+    Optional.ofNullable(innerBulkHeadSF.getAftBwCorrection())
+        .ifPresent(
+            aftBWCorrection ->
+                innerBulkHeadSFBuilder.setAftBWCorrection(String.valueOf(aftBWCorrection)));
+
+    Optional.ofNullable(innerBulkHeadSF.getAftC4())
+        .ifPresent(aftC4 -> innerBulkHeadSFBuilder.setAftC4(String.valueOf(aftC4)));
+
+    Optional.ofNullable(innerBulkHeadSF.getAftMaxFlAllowence())
+        .ifPresent(
+            aftMaxFlAllowence ->
+                innerBulkHeadSFBuilder.setAftMaxFlAllowence(String.valueOf(aftMaxFlAllowence)));
+
+    Optional.ofNullable(innerBulkHeadSF.getAftMinFlAllowence())
+        .ifPresent(
+            aftMinFlAllowence ->
+                innerBulkHeadSFBuilder.setAftMinFlAllowence(String.valueOf(aftMinFlAllowence)));
+
+    return innerBulkHeadSFBuilder.build();
+  }
+
+  /**
+   * @param stationValue
+   * @param stationValueBuilder
+   * @return StationValues
+   */
+  private StationValues createStationValueBuilder(
+      com.cpdss.vesselinfo.entity.StationValues stationValue,
+      com.cpdss.common.generated.VesselInfo.StationValues.Builder stationValueBuilder) {
+    stationValueBuilder.setId(stationValue.getId());
+    Optional.ofNullable(stationValue.getFrameNumberFrom())
+        .ifPresent(
+            frameNumberFrom ->
+                stationValueBuilder.setFrameNumberFrom(String.valueOf(frameNumberFrom)));
+    Optional.ofNullable(stationValue.getFrameNumberTo())
+        .ifPresent(
+            frameNumberTo -> stationValueBuilder.setFrameNumberTo(String.valueOf(frameNumberTo)));
+    Optional.ofNullable(stationValue.getStattionFrom())
+        .ifPresent(stationFrom -> stationValueBuilder.setStationFrom(String.valueOf(stationFrom)));
+    Optional.ofNullable(stationValue.getStationTo())
+        .ifPresent(stationTo -> stationValueBuilder.setStationTo(String.valueOf(stationTo)));
+    Optional.ofNullable(stationValue.getDistance())
+        .ifPresent(distance -> stationValueBuilder.setDistance(String.valueOf(distance)));
+    return stationValueBuilder.build();
+  }
+
+  /**
+   * @param minMaxValuesForBmsf
+   * @param minMaxValuesForBMAndSfBuilder
+   * @return MinMaxValuesForBMAndSf
+   */
+  private MinMaxValuesForBMAndSf createMinMaxValuesForBMAndSfBuilder(
+      MinMaxValuesForBmsf minMaxValuesForBmsf,
+      com.cpdss.common.generated.VesselInfo.MinMaxValuesForBMAndSf.Builder
+          minMaxValuesForBMAndSfBuilder) {
+    minMaxValuesForBMAndSfBuilder.setId(minMaxValuesForBmsf.getId());
+    Optional.ofNullable(minMaxValuesForBmsf.getFrameNumber())
+        .ifPresent(
+            frameNumber ->
+                minMaxValuesForBMAndSfBuilder.setFrameNumber(String.valueOf(frameNumber)));
+    Optional.ofNullable(minMaxValuesForBmsf.getMinBm())
+        .ifPresent(minBm -> minMaxValuesForBMAndSfBuilder.setMinBm(String.valueOf(minBm)));
+
+    Optional.ofNullable(minMaxValuesForBmsf.getMaxBm())
+        .ifPresent(maxBm -> minMaxValuesForBMAndSfBuilder.setMaxBm(String.valueOf(maxBm)));
+
+    Optional.ofNullable(minMaxValuesForBmsf.getMinSf())
+        .ifPresent(minSf -> minMaxValuesForBMAndSfBuilder.setMinSf(String.valueOf(minSf)));
+
+    Optional.ofNullable(minMaxValuesForBmsf.getMaxSf())
+        .ifPresent(maxSf -> minMaxValuesForBMAndSfBuilder.setMaxSf(String.valueOf(maxSf)));
+
+    return minMaxValuesForBMAndSfBuilder.build();
   }
 
   /**
