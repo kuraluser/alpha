@@ -73,6 +73,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   loadableQuantityModel: LoadableQuantityModel;
   portsTabPermission: IPermission;
   ohqTabPermissionContext: IPermissionContext;
+  obqTabPermissionContext: IPermissionContext;
   loadableQuantityPermissionContext: IPermissionContext;
   displayCommingle: boolean;
   loadableQuantityPermission: IPermission;
@@ -121,6 +122,9 @@ export class LoadableStudyDetailsComponent implements OnInit {
 
     this.loadableQuantityPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], false);
     this.loadableQuantityPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
+
+    const obqTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OnBoardQuantityComponent'], false);
+    this.obqTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['OnBoardQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
 
     if (cargoNominationTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;

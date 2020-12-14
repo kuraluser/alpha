@@ -25,6 +25,7 @@ import { CommingleComponent } from './commingle/commingle.component';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { CommingleApiService } from '../services/commingle-api.service';
+import { OnBoardQuantityComponent } from './on-board-quantity/on-board-quantity.component';
 
 /**
  * Routing Module for Loadable Study Details Screen
@@ -33,7 +34,7 @@ import { CommingleApiService } from '../services/commingle-api.service';
  * @class LoadableStudyDetailsModule
  */
 @NgModule({
-  declarations: [LoadableStudyDetailsComponent, CargoNominationComponent, LoadingPortsPopupComponent, ApiTemperatureHistoryPopupComponent, PortsComponent, LoadableQuantityComponent, OnHandQuantityComponent, CommingleComponent],
+  declarations: [LoadableStudyDetailsComponent, CargoNominationComponent, LoadingPortsPopupComponent, ApiTemperatureHistoryPopupComponent, PortsComponent, LoadableQuantityComponent, OnHandQuantityComponent, CommingleComponent, OnBoardQuantityComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,

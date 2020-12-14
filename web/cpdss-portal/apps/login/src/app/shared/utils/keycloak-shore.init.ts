@@ -22,7 +22,7 @@ export function keycloakShoreInitializer(keycloak: KeycloakService, http: HttpCl
                     if (response) {
                         localStorage.setItem('keycloakIdpConfig', response.providers);
                         localStorage.setItem('realm', response.realm);
-                        localStorage.setItem('logo', response.logo);
+                        localStorage.setItem('logoUrl', response.logoUrl);
                         const keycloakUrl = appSettings.keycloakUrl;
                         const keycloakConfig = {
                             url: keycloakUrl,

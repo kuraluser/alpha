@@ -17,13 +17,11 @@ export class NavbarComponent implements OnInit {
   menuList: IMenuItem[];
   isSubMenu: boolean[] = [];
   showUserIconDropdown = false;
-  companyLogo = '';
 
   constructor(private themeService: ThemeService, private keycloakService: KeycloakService) { }
 
   ngOnInit(): void {
 
-    this.companyLogo = localStorage.getItem('companyLogo');
     /**
      * Array for showing nav
      */

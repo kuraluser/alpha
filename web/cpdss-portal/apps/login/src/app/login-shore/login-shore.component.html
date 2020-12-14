@@ -9,7 +9,7 @@
     <div>
         <div class="login-wrapper">
             <div class="login-inner-wrapper">
-                <div class="login-logo"><img [src]="logo"><span class="cpdss"></span></div>
+                <div class="login-logo"><img src="../../assets/images/themes/dark/mol-logo.png"><span class="cpdss"></span></div>
                 <div class="login-form text-center">
                   <span class="text-secondary mr-10">{{'SIGN_IN_WITH' | translate}} </span> <button id="btn_login_{{provider}}" (click)="login(provider)" class="login-btn btn" *ngFor="let provider of idpList">{{provider | translate}}</button>
                 </div>

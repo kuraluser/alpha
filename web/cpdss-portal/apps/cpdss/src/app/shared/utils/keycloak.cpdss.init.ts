@@ -17,9 +17,8 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
 
         return new Promise(async (resolve, reject) => {
             try {
-                const logoKey = 'logoUrl';
-                const imageIndex = window.location.search.indexOf(logoKey);
-                let imgUri = window.location.search.substring(imageIndex + logoKey.length + 1);
+                const imageIndex = window.location.search.indexOf('imgurl');
+                let imgUri = window.location.search.substring(imageIndex + 7);
                 if (localStorage.getItem('companyLogo') !== undefined && localStorage.getItem('companyLogo') !== 'undefined' && localStorage.getItem('companyLogo') !== '' && localStorage.getItem('companyLogo') !== null) {
                     imgUri = localStorage.getItem('companyLogo');
                 }

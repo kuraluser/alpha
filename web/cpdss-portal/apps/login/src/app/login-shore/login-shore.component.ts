@@ -33,14 +33,12 @@ export class LoginShoreComponent implements OnInit {
   }
   idpList = [];
   settings: IAppConfiguration;
-  realm = '';
-  logo = '';
+  realm: string = '';
 
   constructor(private kcService: KeycloakService, private appConfig: AppConfigurationService) { }
 
   ngOnInit(): void {
     this.settings = AppConfigurationService.settings;
-    this.logo = localStorage.getItem('logo');
     this.createIdpInput();
   }
 
@@ -55,9 +53,9 @@ export class LoginShoreComponent implements OnInit {
 
   // common login function for all identity-providers
   login(idp) {
-    const logoUrl = localStorage.getItem('logo');
+    let imageUrl = localStorage.getItem('logoUrl');
     this.kcService.login({
-      redirectUri: window.location.protocol + '//' + window.location.hostname + ':' + this.settings.targetPort + '/?realm=' + this.realm + '&logoUrl=' + logoUrl,
+      redirectUri: window.location.protocol + '//' + window.location.hostname + ':' + this.settings.targetPort + '/?realm=' + this.realm + '&imgurl=' + imageUrl,
       idpHint: idp
     });
   }

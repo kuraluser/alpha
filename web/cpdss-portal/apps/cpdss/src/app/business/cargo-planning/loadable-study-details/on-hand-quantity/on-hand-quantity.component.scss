@@ -134,27 +134,7 @@
     }
 }
 
-.port-list{
-    li{
-        margin-right: 40px;
-        padding: 2px 10px;
-        border-radius: 3px;
-        position: relative;
-        &:after{
-            content: "";
-            position: absolute;
-            right: -30px;
-            top: 5px;
-            width: 14px;
-            height: 11px;
-        }
-        &:last-child, &:only-child{
-            &:after{
-                display: none;
-            }
-        }
-    }
-}
+
 
 .content-outer-ohq{
     display: grid;
