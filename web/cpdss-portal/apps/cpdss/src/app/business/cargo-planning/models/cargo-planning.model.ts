@@ -509,3 +509,61 @@ export enum OPERATIONS {
     BUNKERING = 3,
     TRANSIT = 4
 }
+
+/**
+ * Interface for port obq details api
+ *
+ * @export
+ * @interface IPortOBQResponse
+ */
+export interface IPortOBQResponse {
+    responseStatus: IResponse;
+    onBoardQuantities: IPortOBQTankDetail[];
+}
+
+/**
+ * Interface for details ohq details of specific port
+ *
+ * @export
+ * @interface IPortOBQTankDetail
+ */
+export interface IPortOBQTankDetail {
+    id: number;
+    cargoId: number;
+    tankId: number;
+    tankName: string;
+    sounding: number;
+    weight: number;
+    volume: number;
+    colorCode: string;
+    portId: number;
+}
+
+/**
+ * Interface for OBQ port details
+ *
+ * @export
+ * @interface IPortOBQTankDetailValueObject
+ */
+export interface IPortOBQTankDetailValueObject {
+    slNo: number;
+    id: number;
+    tankId: number;
+    tankName: string;
+    cargo: ValueObject<ICargo>;
+    sounding: ValueObject<number>;
+    weight: ValueObject<number>;
+    volume: ValueObject<number>;
+    colorCode: string;
+    portId: number;
+}
+
+/**
+ * Interface for obq grid list data
+ *
+ * @export
+ * @interface IPortOBQListData
+ */
+export interface IPortOBQListData {
+    cargoList: ICargo[];
+}

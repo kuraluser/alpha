@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { ValueObject } from '../../../shared/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOHQPort, IOperations, IPort, IPortAllDropdownData, IPortList, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
+import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOHQPort, IOperations, IPort, IPortAllDropdownData, IPortList, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
 import { v4 as uuid4 } from 'uuid';
 import { IPermission } from '../../../shared/models/user-profile.model';
 
@@ -786,7 +786,7 @@ export class LoadableStudyDetailsTransformationService {
             filterField: 'arrivalQuantity.value',
             filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
             filterType: DATATABLE_FILTER_TYPE.NUMBER,
-            filterPlaceholder: 'OHQ_SEARCH_WEIGHT',            
+            filterPlaceholder: 'OHQ_SEARCH_WEIGHT',
             fieldHeaderClass: 'column-weight',
             errorMessages: {
               'required': 'OHQ_VALUE_REQUIRED',
@@ -824,7 +824,7 @@ export class LoadableStudyDetailsTransformationService {
             filter: true,
             filterField: 'departureQuantity.value',
             filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
-            filterType: DATATABLE_FILTER_TYPE.NUMBER,            
+            filterType: DATATABLE_FILTER_TYPE.NUMBER,
             fieldHeaderClass: 'column-weight',
             filterPlaceholder: 'OHQ_SEARCH_WEIGHT',
             errorMessages: {
@@ -890,6 +890,137 @@ export class LoadableStudyDetailsTransformationService {
     }
 
     return _ohqTankDetail;
+  }
+
+  /**
+  * Method to get OBQ grid colums
+  *
+  * @returns {IDataTableColumn[]}
+  * @memberof LoadableStudyDetailsTransformationService
+  */
+  getOBQDatatableColumns(): IDataTableColumn[] {
+    return [
+      {
+        field: 'slNo',
+        header: 'OBQ_SL',
+        fieldType: DATATABLE_FIELD_TYPE.SLNO,
+        sortable: true,
+        fieldHeaderClass: 'column-sl'
+      },
+      {
+        field: 'tankName',
+        header: 'OBQ_TANK',
+        editable: false,
+        filter: true,
+        filterField: 'tankName',
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        filterType: DATATABLE_FILTER_TYPE.TEXT,
+        filterPlaceholder: 'OBQ_SEARCH_TANK'
+      },      
+      {
+        field: 'cargo',
+        header: 'CARGO',
+        fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        filter: true,
+        filterPlaceholder: 'SEARCH_CARGO',
+        filterType: DATATABLE_FILTER_TYPE.TEXT,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        listName: 'cargoList',
+        listFilter: true,
+        filterField: 'cargo.value.name',
+        fieldPlaceholder: 'SELECT_CARGO',
+        fieldOptionLabel: 'name',
+        errorMessages: {
+          'required': 'OBQ_VALUE_REQUIRED'
+        }
+      },
+      {
+        field: 'sounding',
+        header: 'OBQ_SOUNDING',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: 'OBQ_PLACEHOLDER_SOUNDING',
+        filter: true,
+        filterField: 'sounding.value',
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+        filterType: DATATABLE_FILTER_TYPE.NUMBER,
+        filterPlaceholder: 'OBQ_SEARCH_SOUNDING',
+        errorMessages: {
+          'required': 'OBQ_VALUE_REQUIRED',
+          'min': 'OBQ_MIN_VALUE',
+          'groupTotal': 'OBQ_GROUP_TOTAL'
+        }
+
+      },
+      {
+        field: 'weight',
+        header: 'OBQ_WEIGHT',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: 'OBQ_PLACEHOLDER_WEIGHT',
+        filter: true,
+        filterField: 'weight.value',
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+        filterType: DATATABLE_FILTER_TYPE.NUMBER,
+        filterPlaceholder: 'OBQ_SEARCH_WEIGHT',
+        errorMessages: {
+          'required': 'OBQ_VALUE_REQUIRED',
+          'min': 'OBQ_MIN_VALUE',
+          'groupTotal': 'OBQ_GROUP_TOTAL'
+        }
+      },
+      {
+        field: 'volume',
+        header: 'OBQ_VOL',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: 'OBQ_PLACEHOLDER_VOL',
+        filter: true,
+        filterField: 'volume.value',
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+        filterType: DATATABLE_FILTER_TYPE.NUMBER,
+        filterPlaceholder: 'OBQ_SEARCH_VOL',
+        errorMessages: {
+          'required': 'OBQ_VALUE_REQUIRED',
+          'min': 'OBQ_MIN_VALUE',
+          'groupTotal': 'OBQ_GROUP_TOTAL'
+        }
+
+      },
+    ]
+  }
+
+  /**
+ * Method to convert obq tank details to value object
+ *
+ * @param {IPortOBQTankDetail} obqTankDetail
+ * @param {boolean} [isNewValue=true]
+ * @returns {IPortOBQTankDetailValueObject}
+ * @memberof LoadableStudyDetailsTransformationService
+ */
+  getOBQTankDetailsAsValueObject(obqTankDetail: IPortOBQTankDetail, isNewValue = true, listData: IPortOBQListData): IPortOBQTankDetailValueObject {
+    const _obqTankDetail = <IPortOBQTankDetailValueObject>{};
+    _obqTankDetail.id = obqTankDetail.id;
+    _obqTankDetail.portId = obqTankDetail.portId;
+    _obqTankDetail.tankId = obqTankDetail.tankId;
+    _obqTankDetail.tankName = obqTankDetail.tankName;
+    const cargoObj: ICargo = listData.cargoList.find(cargo => cargo.id === obqTankDetail.cargoId);
+    _obqTankDetail.cargo = new ValueObject<ICargo>(cargoObj, true, isNewValue, false);
+    _obqTankDetail.sounding = new ValueObject<number>(obqTankDetail.sounding, true, isNewValue);
+    _obqTankDetail.weight = new ValueObject<number>(obqTankDetail.weight, true, isNewValue);
+    _obqTankDetail.volume = new ValueObject<number>(obqTankDetail.volume, true, isNewValue);
+    _obqTankDetail.colorCode = obqTankDetail.colorCode;
+
+    return _obqTankDetail;
+  }
+
+  /**
+ * Method for formating obq tank details
+ *
+ * @param {IPortOBQTankDetailValueObject} obqTankDetail
+ * @returns {IPortOBQTankDetailValueObject}
+ * @memberof LoadableStudyDetailsTransformationService
+ */
+  formatOBQTankDetail(obqTankDetail: IPortOBQTankDetailValueObject): IPortOBQTankDetailValueObject {
+    // obqTankDetail.storeKey = obqTankDetail.storeKey ?? uuid4();
+    return obqTankDetail;
   }
 
 }
