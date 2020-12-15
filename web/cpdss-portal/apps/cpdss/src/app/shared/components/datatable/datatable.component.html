@@ -3,7 +3,7 @@
         <p-table #datatable [columns]="columns" [value]="value" [editMode]="editMode" [selectionMode]="selectionMode"
             (onEditComplete)="onEditComplete($event)" (onRowSelect)="onRowSelect($event)" [(selection)]="selection"
             (columnClick)="onClick($event)" [reorderableColumns]="tableRowReOrder" (onRowReorder)="onRowReorder($event)"
-            (onFilter)="onFilter($event)">
+            (onFilter)="onFilter($event)" >
             <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
                     <col *ngIf="tableRowReOrder" class="column-class re-order">

@@ -358,4 +358,16 @@ export class LoadableStudyDetailsComponent implements OnInit {
   navigateToPatternHistory() {
     this.router.navigate([`/business/cargo-planning/loadable-pattern-history/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
   }
+
+  /**
+   * Handler for loadable study chnage change
+   *
+   * @param {*} event
+   * @memberof LoadableStudyDetailsComponent
+   */
+  onLoadableStudyChange(event) {
+    this.loadableStudyId = event?.id;
+    this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
+    this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+  }
 }

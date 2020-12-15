@@ -323,6 +323,7 @@
 	"COMMINGLE_VOL_MAX_SAVE_SUCCESS": "Success",
 	"COMMINGLE_VOL_MAX_SAVE_SUCCESSFULLY": "Commingle vol maximization added successfully",
 	"COMMINGLE_CARGO_SELECT_ERROR": "Required",
+	"PORT_FIELD_DUPLICATE_ERROR": "Already added port with same operation",
 	"COMMINGLE_QTY_PLACEHOLDER": "Enter quantity",
 	"COMMINGLE_PREFERRED_TANK_REQUIRED":"Required",
 	"COMMINGLE_PREFERRED_TANK_PLACEHOLDER":"Select preferred Tank",

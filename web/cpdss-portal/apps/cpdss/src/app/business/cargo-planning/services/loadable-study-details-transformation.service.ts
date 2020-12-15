@@ -514,7 +514,8 @@ export class LoadableStudyDetailsTransformationService {
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'SELECT_PORT',
         errorMessages: {
-          'required': 'PORT_FIELD_REQUIRED_ERROR'
+          'required': 'PORT_FIELD_REQUIRED_ERROR',
+          'duplicate': 'PORT_FIELD_DUPLICATE_ERROR'
         }
       },
       {
@@ -544,7 +545,8 @@ export class LoadableStudyDetailsTransformationService {
         fieldOptionLabel: 'operationName',
         fieldPlaceholder: 'SELECT_OPERATION',
         errorMessages: {
-          'required': 'PORT_OPERATIONS_REQUIRED_ERROR'
+          'required': 'PORT_OPERATIONS_REQUIRED_ERROR',
+          'duplicate': 'PORT_FIELD_DUPLICATE_ERROR'
         }
       },
       {

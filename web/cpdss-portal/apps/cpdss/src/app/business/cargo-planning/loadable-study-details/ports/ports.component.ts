@@ -11,7 +11,7 @@ import { OPERATIONS } from '../../models/cargo-planning.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { portDateRangeValidator } from '../../directives/validator/port-daterange-validator.directive';
 import { portDateCompareValidator } from '../../directives/validator/port-date-compare-validator.directive';
-
+import { portDuplicationValidator } from '../../directives/validator/port-duplication-validator.directive';
 
 /**
  * Component class of ports screen
@@ -138,10 +138,10 @@ export class PortsComponent implements OnInit {
   */
   private initPortsFormGroup(ports: IPortsValueObject) {
     return this.fb.group({
-      port: this.fb.control(ports.port.value, Validators.required),
+      port: this.fb.control(ports.port.value, [Validators.required, portDuplicationValidator()]),
       portOrder: this.fb.control(ports.portOrder),
       portcode: this.fb.control(ports.portcode.value, [Validators.required]),
-      operation: this.fb.control(ports.operation.value, Validators.required),
+      operation: this.fb.control(ports.operation.value, [Validators.required, portDuplicationValidator()]),
       seaWaterDensity: this.fb.control(ports.seaWaterDensity.value, [Validators.required, numberValidator(4, 2)]),
       layCan: this.fb.control(ports.layCan.value, [Validators.required]),
       layCanFrom: this.fb.control(ports.layCan.value?.split('to')[0]?.trim(), Validators.required),
@@ -240,6 +240,10 @@ export class PortsComponent implements OnInit {
       this.updateField(event.index, 'maxAirDraft', event.data.port.value.maxAirDraft);
       this.updateField(event.index, 'seaWaterDensity', event.data.port.value.waterDensity);
       this.updateField(event.index, 'portOrder', this.portOrder);
+      form.controls.operation.updateValueAndValidity();
+    }
+    if (event.field === 'operation') {
+      form.controls.port.updateValueAndValidity();
     }
     if (event.field === 'layCan') {
         this.portsLists[event.index]['layCanFrom'].value = event.data.layCan.value.split('to')[0].trim();
