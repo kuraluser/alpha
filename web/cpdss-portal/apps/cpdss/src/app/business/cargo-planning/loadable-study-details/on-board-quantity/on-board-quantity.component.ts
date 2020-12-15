@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { groupTotalValidator } from '../../directives/validator/group-total.directive';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
@@ -49,15 +49,19 @@ export class OnBoardQuantityComponent implements OnInit {
     })
   }
 
-  private _loadableStudyId: number;
   selectedPort: IPort;
   obqForm: FormGroup;
   columns: IDataTableColumn[];
   listData = <IPortOBQListData>{};
+  selectionMode = DATATABLE_SELECTIONMODE.SINGLE;
+
+  private _loadableStudyId: number;
   private _selectedPortOBQTankDetails: IPortOBQTankDetailValueObject[];
   readonly editMode = DATATABLE_EDITMODE.CELL;
 
-  
+
+
+
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private ngxSpinnerService: NgxSpinnerService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -69,11 +73,11 @@ export class OnBoardQuantityComponent implements OnInit {
 
   }
 
-    /**
-   * Method for  fetching obq port
-   *
-   * @memberof OnBoardQuantityComponent
-   */
+  /**
+ * Method for  fetching obq port
+ *
+ * @memberof OnBoardQuantityComponent
+ */
   async getPortRotation() {
     this.ngxSpinnerService.show();
     const ports = await this.loadableStudyDetailsApiService.getPorts().toPromise();
@@ -86,12 +90,12 @@ export class OnBoardQuantityComponent implements OnInit {
     this.ngxSpinnerService.hide();
   }
 
-    /**
-   * Method for fetching obq details of selected port
-   *
-   * @param {number} portId
-   * @memberof OnBoardQuantityComponent
-   */
+  /**
+ * Method for fetching obq details of selected port
+ *
+ * @param {number} portId
+ * @memberof OnBoardQuantityComponent
+ */
   async getPortOBQDetails(portId: number): Promise<IPortOBQTankDetailValueObject[]> {
     this.listData = await this.getDropdownData();
     const result = await this.loadableStudyDetailsApiService.getPortOBQDetails(this.vesselId, this.voyageId, this.loadableStudyId, portId).toPromise();
@@ -103,19 +107,23 @@ export class OnBoardQuantityComponent implements OnInit {
     });
     const obqTankDetailsArray = _selectedPortOBQTankDetails?.map(obqTankDetails => this.initOBQFormGroup(obqTankDetails));
     this.obqForm = this.fb.group({
-      dataTable: this.fb.array([...obqTankDetailsArray])
+      dataTable: this.fb.array([...obqTankDetailsArray]),
+      cargo: new FormControl('', Validators.required),
+      sounding: new FormControl('', Validators.required),
+      weight: new FormControl('', Validators.required),
+      volume: new FormControl('', Validators.required)
     });
     return [..._selectedPortOBQTankDetails];
   }
 
-    /**
-   * Method for initializing obq row
-   *
-   * @private
-   * @param {IPortOBQTankDetailValueObject} obqTankDetail
-   * @returns
-   * @memberof OnBoardQuantityComponent
-   */
+  /**
+ * Method for initializing obq row
+ *
+ * @private
+ * @param {IPortOBQTankDetailValueObject} obqTankDetail
+ * @returns
+ * @memberof OnBoardQuantityComponent
+ */
   private initOBQFormGroup(obqTankDetail: IPortOBQTankDetailValueObject) {
     return this.fb.group({
       cargo: this.fb.control(obqTankDetail.cargo),
@@ -140,6 +148,26 @@ export class OnBoardQuantityComponent implements OnInit {
     return this.listData;
   }
 
-  onEditComplete(event){}
+  /**
+   * Method to handle edit complete event
+   *
+   * @param {IPortOBQTankDetailEvent} event
+   * @memberof OnBoardQuantityComponent
+   */
+  onEditComplete(event) { }
+
+  /**
+   * Method to handle row selection event
+   *
+   * @param {IPortOBQTankDetailEvent} event
+   * @memberof OnBoardQuantityComponent
+   */
+  onRowSelection(event) {
+    const data = event.data
+    this.obqForm.controls.cargo.setValue(data.cargo.value?.name)
+    this.obqForm.controls.sounding.setValue(data.sounding.value)
+    this.obqForm.controls.weight.setValue(data.weight.value)
+    this.obqForm.controls.volume.setValue(data.volume.value)
+  }
 
 }
