@@ -49,4 +49,16 @@ export class CommingleApiService {
   saveVolMaxCommingle(vesselId: number, voyageId: number, loadableStudyId: number, payload): Observable<ICommingleResponseModel> {
     return this.commonApiService.postFormData<ICommingleResponseModel>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/commingle-cargo`, payload);
   }
+
+  /**
+   * Set validation Error to form control
+   */
+  setValidationErrorMessage() {
+    return {
+
+      preferredTanks: {
+        'required': 'COMMINGLE_PREFERRED_TANK_REQUIRED',
+      }
+    }
+  }    
 }

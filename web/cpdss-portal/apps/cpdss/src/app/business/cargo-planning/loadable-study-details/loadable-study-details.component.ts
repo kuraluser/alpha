@@ -78,6 +78,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   displayCommingle: boolean;
   loadableQuantityPermission: IPermission;
   showCommingleButton = false;
+  addCommingleBtnPermissionContext: IPermissionContext;
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -137,7 +138,8 @@ export class LoadableStudyDetailsComponent implements OnInit {
     }
 
     this.addCargoBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
-    this.addPortBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };   
+    this.addPortBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };  
+    this.addCommingleBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.EDIT] }; 
   }
 
   /**

@@ -6,6 +6,7 @@ import { CargoPlanningModule } from '../cargo-planning.module';
 import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOHQPort, IOperations, IPort, IPortAllDropdownData, IPortList, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
 import { v4 as uuid4 } from 'uuid';
 import { IPermission } from '../../../shared/models/user-profile.model';
+import { ICargoGroup, ICommingleManual, ICommingleResponseModel, ICommingleValueObject, IPercentage } from '../models/commingle.model';
 
 /**
  * Transformation Service for Lodable Study details module
@@ -890,6 +891,146 @@ export class LoadableStudyDetailsTransformationService {
     }
 
     return _ohqTankDetail;
+  }
+  /**
+   * Method to get Manual Commingle grid colums
+   */
+  getManualCommingleDatatableColumns(): IDataTableColumn[] {
+    return [
+      {
+        field: 'cargo1',
+        header: 'COMMINGLE_CARGO1',
+        fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        listName: 'cargoNominationsCargo1',
+        fieldOptionLabel: 'name',
+        fieldPlaceholder: 'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER',
+        fieldHeaderClass:'column-cargo1',
+        fieldClass: 'commingle-cargo1',
+        errorMessages: {
+          'required': 'COMMINGLE_CARGO_SELECT_ERROR'
+        }
+      },
+      {
+        field: 'cargo1Color',
+        header: '',
+        fieldHeaderClass:'column-cargo1Color',
+        fieldClass: 'commingle-cargo1Color',
+        fieldType: DATATABLE_FIELD_TYPE.COLOR,
+
+      },
+      {
+        field: 'cargo1IdPct',
+        header: 'COMMINGLE_CARGO_PERCENTAGE',
+        fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        listName: 'percentage',
+        fieldOptionLabel: 'name',
+        fieldPlaceholder: 'COMMINGLE_PERCENTAGE_PLACEHOLDER',
+        fieldHeaderClass:'column-cargo1IdPct',
+        fieldClass: 'commingle-cargo1IdPct',
+        errorMessages: {
+          'required': 'COMMINGLE_PERCENTAGE_SELECT_ERROR'
+        }
+      },
+      {
+        field: 'cargo2',
+        header: 'COMMINGLE_CARGO2',
+        fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        listName: 'cargoNominationsCargo2',
+        fieldOptionLabel: 'name',
+        fieldPlaceholder: 'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER',
+        fieldHeaderClass:'column-cargo2',
+        fieldClass: 'commingle-cargo2',
+        errorMessages: {
+          'required': 'COMMINGLE_CARGO_SELECT_ERROR'
+        }
+      },
+      {
+        field: 'cargo2Color',
+        header: '',
+        fieldHeaderClass:'column-cargo2Color',
+        fieldClass: 'commingle-cargo2Color',
+        fieldType: DATATABLE_FIELD_TYPE.COLOR
+      },
+      {
+        field: 'cargo2IdPct',
+        header: 'COMMINGLE_CARGO_PERCENTAGE',
+        fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        listName: 'percentage',
+        fieldOptionLabel: 'name',
+        fieldPlaceholder: 'COMMINGLE_PERCENTAGE_PLACEHOLDER',
+        fieldHeaderClass:'column-cargo2IdPct',
+        fieldClass: 'commingle-cargo2IdPct',
+        errorMessages: {
+          'required': 'COMMINGLE_PERCENTAGE_SELECT_ERROR'
+        }
+      },
+      {
+        field: 'quantity',
+        header: 'COMMINGLE_QTY',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: 'COMMINGLE_QTY_PLACEHOLDER',
+        fieldHeaderClass:'column-quantity',
+        fieldClass: 'commingle-quantity',
+        errorMessages: {
+          'required': 'COMMINGLE_CARGO_SELECT_ERROR'
+        }
+      },
+      {
+        field: 'actions',
+        header: '',
+        fieldType: DATATABLE_FIELD_TYPE.ACTION,
+        actions: [DATATABLE_ACTION.DELETE,]
+      }
+    ]
+  }
+/**
+ * Method for converting commingle  data as value
+ * @param commingle 
+ */
+  getCommingleAsValue(commingle: ICommingleValueObject): ICargoGroup {
+    const _cargoList = <ICargoGroup>{};
+    for (const key in commingle) {
+      if (Object.prototype.hasOwnProperty.call(commingle, key)) {
+        if (key === 'cargo1') {
+          _cargoList.cargo1Id = commingle[key].value?.id;
+        } else if (key === 'cargo1pct') {
+          _cargoList.cargo1pct = commingle[key].value;
+        } else if (key === 'cargo2') {
+          _cargoList.cargo2Id = commingle[key].value?.id;
+        } else if (key === 'cargo2pct') {
+          _cargoList.cargo2pct = commingle[key].value;
+        } else if (key === 'quantity') {
+          _cargoList.quantity = commingle[key].value;
+        }
+      }
+    }
+    return _cargoList;
+  }
+  /**
+   * Method to convert commingle data to value object model
+   * @param commingleManual 
+   * @param isNewValue 
+   * @param isEditable 
+   * @param listData 
+   */
+  getCommingleValueObject(commingleManual: ICargoGroup, isNewValue = true, isEditable = true, listData: ICommingleManual): ICommingleValueObject {
+    const _commingleManual = <ICommingleValueObject>{};
+    const cargo1Obj: ICargoNomination = listData.cargoNominationsCargo1.find(cargo1Data => cargo1Data.id === commingleManual.cargo1Id);
+    const cargo2Obj: ICargoNomination = listData.cargoNominationsCargo2.find(cargo2Data => cargo2Data.id === commingleManual.cargo2Id);
+    const cargo1IdPctObj: IPercentage = listData.percentage.find(percent1 => percent1.id === commingleManual.cargo1pct);
+    const cargo2IdPctObj: IPercentage = listData.percentage.find(percent2 => percent2.id === commingleManual.cargo2pct);
+    _commingleManual.cargo1 = new ValueObject<ICargoNomination>(cargo1Obj, true, isNewValue, false, isEditable);
+    _commingleManual.cargo2 = new ValueObject<ICargoNomination>(cargo2Obj, true, isNewValue, false, isEditable);
+    _commingleManual.cargo1Id = new ValueObject<number>(cargo1Obj?.cargoId, true, isNewValue, false, false);
+    _commingleManual.cargo2Id = new ValueObject<number>(cargo2Obj?.cargoId, true, isNewValue, false, false);
+    _commingleManual.cargo1Color = new ValueObject<string>(cargo1Obj?.color, true, isNewValue, false, isEditable);
+    _commingleManual.cargo2Color = new ValueObject<string>(cargo2Obj?.color, true, isNewValue, false, isEditable);
+    _commingleManual.cargo1pct = new ValueObject<number>(cargo1IdPctObj?.id, true, isNewValue, false, isEditable);
+    _commingleManual.cargo2pct = new ValueObject<number>(cargo2IdPctObj?.id, true, isNewValue, false, isEditable);
+    _commingleManual.cargo1IdPct = new ValueObject<IPercentage>(cargo1IdPctObj, true, isNewValue, false, isEditable);
+    _commingleManual.cargo2IdPct = new ValueObject<IPercentage>(cargo2IdPctObj, true, isNewValue, false, isEditable);
+    _commingleManual.quantity = new ValueObject<number>(commingleManual.quantity, true, isNewValue, false, isEditable);
+    return _commingleManual;
   }
 
   /**

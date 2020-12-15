@@ -8,3 +8,10 @@
 p-colorpicker.ng-invalid.ng-pristine ::ng-deep input {
     background-color: #000d20 !important;
 }
+
+.color-rounded{
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: inline-block;
+}

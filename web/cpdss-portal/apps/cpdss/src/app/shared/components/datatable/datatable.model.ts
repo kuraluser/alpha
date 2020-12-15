@@ -54,7 +54,8 @@ export enum DATATABLE_FIELD_TYPE {
     ACTION = 'ACTION',
     DATE = 'DATE',
     DATERANGE = 'DATERANGE',
-    DATETIME = 'DATETIME'
+    DATETIME = 'DATETIME',
+    COLOR = 'COLOR'
 }
 
 /**

@@ -193,6 +193,11 @@
                                     </ng-container>
                                 </ng-container>
 
+                                
+                                <ng-container *ngSwitchCase="fieldType.COLOR"  class="col no-left-padding" style="max-width: 20px;">
+                                    <div class="color-rounded mt-5" [ngStyle]="rowData[col.field].value && {'background' : rowData[col.field].value}"></div>
+                                </ng-container>
+
                                 <ng-container *ngSwitchCase="fieldType.COLORPICKER">
                                     <ng-container *ngIf="rowData[col.field]?.isEditMode">
                                         <p-colorPicker [formControlName]="col.field"

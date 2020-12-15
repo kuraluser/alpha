@@ -1,4 +1,5 @@
-import { IResponseStatus } from '../../../shared/models/common.model';
+import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
+import { IResponseStatus, ValueObject } from '../../../shared/models/common.model';
 import { ICargo, ICargoNomination } from './cargo-planning.model';
 
 
@@ -25,7 +26,7 @@ export interface ICommingleResponseModel {
     commingleCargo: ICommingleCargo;
     cargoNominations: ICargoNomination[];
     purposes: IPurpose[];
-    vesselCargoTanks: IVesselCargoTank[];
+    vesselTanks: IVesselCargoTank[];
 }
 
 /**
@@ -37,7 +38,7 @@ export interface ICommingleResponseModel {
 export interface ICommingleCargo {
     purposeId: number;
     slopOnly?: boolean;
-    preferredTanks?: IPreferredTank[];
+    preferredTanks?: IVesselCargoTank[];
     cargoGroups?: ICargoGroup[];
 }
 
@@ -72,9 +73,9 @@ export interface IPurpose {
  */
 export interface IVesselCargoTank {
     id: number;
-    name: string;
-    shortName: string;
-    slopTank: boolean;
+    name?: string;
+    shortName?: string;
+    slopTank?: boolean;
 }
 
 
@@ -90,6 +91,51 @@ export interface ICargoGroup {
     cargo1Id?: number;
     cargo2Id?: number;
     quantity?: number;
-    cargo1IdPct?: number;
-    cargo2IdPct?: number;
+    cargo1pct?: number;
+    cargo2pct?: number;
+}
+/**
+ *Interface for listData 
+ */
+export interface ICommingleManual {
+    cargoNominationsCargo1: ICargoNomination[];
+    cargoNominationsCargo2: ICargoNomination[];
+    percentage: IPercentage[];
+}
+/**
+ * Interface for Percentage
+ */
+export interface IPercentage {
+    id: number;
+    name: string;
+}
+/**
+ * Interface for commingle value object
+ */
+export interface ICommingleValueObject {
+    id: number;
+    cargo1: ValueObject<ICargoNomination>;
+    cargo2: ValueObject<ICargoNomination>;
+    cargo1Id: ValueObject<number>;
+    cargo2Id: ValueObject<number>;
+    cargo1Color: ValueObject<string>;
+    cargo2Color:  ValueObject<string>;
+    cargo1pct: ValueObject<number>;
+    cargo2pct: ValueObject<number>;
+    cargo1IdPct: ValueObject<IPercentage>;
+    cargo2IdPct: ValueObject<IPercentage>;
+    quantity: ValueObject<number>;
+    isAdd: boolean;
+    isDelete?: boolean;
+    storeKey?: number;
+}
+/**
+ * Interface for all commingle  grid events
+ */
+ export interface ICommingleManualEvent extends IDataTableEvent {
+    data: ICommingleValueObject;
+    field: string;
+    index: number;
+    originalEvent: MouseEvent;
+
 }
