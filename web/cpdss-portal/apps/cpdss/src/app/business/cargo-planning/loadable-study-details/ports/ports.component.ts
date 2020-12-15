@@ -149,7 +149,7 @@ export class PortsComponent implements OnInit {
       maxDraft: this.fb.control(ports.maxDraft.value, [Validators.required, numberValidator(2, 2)]),
       maxAirDraft: this.fb.control(ports.maxAirDraft.value, [Validators.required, numberValidator(2, 2)]),
       eta: this.fb.control(ports.eta.value, [Validators.required, portDateRangeValidator, portDateCompareValidator('etd', '<')]),
-      etd: this.fb.control(ports.eta.value, [Validators.required, portDateCompareValidator('eta', '>')])
+      etd: this.fb.control(ports.etd.value, [Validators.required, portDateCompareValidator('eta', '>')])
 
     });
   }

@@ -482,7 +482,7 @@ export class PortsDB extends CPDSSDB {
     constructor() {
         super();
         this.version(1).stores({
-            ports: '++,storeKey'
+            ports: '++,storeKey,timeStamp'
         });
     }
 
