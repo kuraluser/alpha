@@ -32370,6 +32370,19 @@ public final class LoadableStudy {
      * @return The tankGroup.
      */
     int getTankGroup();
+
+    /**
+     * <code>string fullCapacityCubm = 15;</code>
+     *
+     * @return The fullCapacityCubm.
+     */
+    java.lang.String getFullCapacityCubm();
+    /**
+     * <code>string fullCapacityCubm = 15;</code>
+     *
+     * @return The bytes for fullCapacityCubm.
+     */
+    com.google.protobuf.ByteString getFullCapacityCubmBytes();
   }
   /** Protobuf type {@code TankDetail} */
   public static final class TankDetail extends com.google.protobuf.GeneratedMessageV3
@@ -32392,6 +32405,7 @@ public final class LoadableStudy {
       density_ = "";
       heightFrom_ = "";
       heightTo_ = "";
+      fullCapacityCubm_ = "";
     }
 
     @java.lang.Override
@@ -32509,6 +32523,13 @@ public final class LoadableStudy {
             case 112:
               {
                 tankGroup_ = input.readInt32();
+                break;
+              }
+            case 122:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                fullCapacityCubm_ = s;
                 break;
               }
             default:
@@ -32913,6 +32934,41 @@ public final class LoadableStudy {
       return tankGroup_;
     }
 
+    public static final int FULLCAPACITYCUBM_FIELD_NUMBER = 15;
+    private volatile java.lang.Object fullCapacityCubm_;
+    /**
+     * <code>string fullCapacityCubm = 15;</code>
+     *
+     * @return The fullCapacityCubm.
+     */
+    public java.lang.String getFullCapacityCubm() {
+      java.lang.Object ref = fullCapacityCubm_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        fullCapacityCubm_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string fullCapacityCubm = 15;</code>
+     *
+     * @return The bytes for fullCapacityCubm.
+     */
+    public com.google.protobuf.ByteString getFullCapacityCubmBytes() {
+      java.lang.Object ref = fullCapacityCubm_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        fullCapacityCubm_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -32969,6 +33025,9 @@ public final class LoadableStudy {
       if (tankGroup_ != 0) {
         output.writeInt32(14, tankGroup_);
       }
+      if (!getFullCapacityCubmBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 15, fullCapacityCubm_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -33020,6 +33079,9 @@ public final class LoadableStudy {
       if (tankGroup_ != 0) {
         size += com.google.protobuf.CodedOutputStream.computeInt32Size(14, tankGroup_);
       }
+      if (!getFullCapacityCubmBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, fullCapacityCubm_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -33050,6 +33112,7 @@ public final class LoadableStudy {
       if (!getHeightTo().equals(other.getHeightTo())) return false;
       if (getTankOrder() != other.getTankOrder()) return false;
       if (getTankGroup() != other.getTankGroup()) return false;
+      if (!getFullCapacityCubm().equals(other.getFullCapacityCubm())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -33089,6 +33152,8 @@ public final class LoadableStudy {
       hash = (53 * hash) + getTankOrder();
       hash = (37 * hash) + TANKGROUP_FIELD_NUMBER;
       hash = (53 * hash) + getTankGroup();
+      hash = (37 * hash) + FULLCAPACITYCUBM_FIELD_NUMBER;
+      hash = (53 * hash) + getFullCapacityCubm().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -33256,6 +33321,8 @@ public final class LoadableStudy {
 
         tankGroup_ = 0;
 
+        fullCapacityCubm_ = "";
+
         return this;
       }
 
@@ -33296,6 +33363,7 @@ public final class LoadableStudy {
         result.heightTo_ = heightTo_;
         result.tankOrder_ = tankOrder_;
         result.tankGroup_ = tankGroup_;
+        result.fullCapacityCubm_ = fullCapacityCubm_;
         onBuilt();
         return result;
       }
@@ -33398,6 +33466,10 @@ public final class LoadableStudy {
         }
         if (other.getTankGroup() != 0) {
           setTankGroup(other.getTankGroup());
+        }
+        if (!other.getFullCapacityCubm().isEmpty()) {
+          fullCapacityCubm_ = other.fullCapacityCubm_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -34274,6 +34346,82 @@ public final class LoadableStudy {
       public Builder clearTankGroup() {
 
         tankGroup_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object fullCapacityCubm_ = "";
+      /**
+       * <code>string fullCapacityCubm = 15;</code>
+       *
+       * @return The fullCapacityCubm.
+       */
+      public java.lang.String getFullCapacityCubm() {
+        java.lang.Object ref = fullCapacityCubm_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          fullCapacityCubm_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string fullCapacityCubm = 15;</code>
+       *
+       * @return The bytes for fullCapacityCubm.
+       */
+      public com.google.protobuf.ByteString getFullCapacityCubmBytes() {
+        java.lang.Object ref = fullCapacityCubm_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          fullCapacityCubm_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string fullCapacityCubm = 15;</code>
+       *
+       * @param value The fullCapacityCubm to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFullCapacityCubm(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        fullCapacityCubm_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string fullCapacityCubm = 15;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearFullCapacityCubm() {
+
+        fullCapacityCubm_ = getDefaultInstance().getFullCapacityCubm();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string fullCapacityCubm = 15;</code>
+       *
+       * @param value The bytes for fullCapacityCubm to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFullCapacityCubmBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        fullCapacityCubm_ = value;
         onChanged();
         return this;
       }
@@ -42557,6 +42705,18 @@ public final class LoadableStudy {
     com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
     /** <code>.ResponseStatus responseStatus = 2;</code> */
     com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /** <code>repeated .TankList tanks = 3;</code> */
+    java.util.List<com.cpdss.common.generated.LoadableStudy.TankList> getTanksList();
+    /** <code>repeated .TankList tanks = 3;</code> */
+    com.cpdss.common.generated.LoadableStudy.TankList getTanks(int index);
+    /** <code>repeated .TankList tanks = 3;</code> */
+    int getTanksCount();
+    /** <code>repeated .TankList tanks = 3;</code> */
+    java.util.List<? extends com.cpdss.common.generated.LoadableStudy.TankListOrBuilder>
+        getTanksOrBuilderList();
+    /** <code>repeated .TankList tanks = 3;</code> */
+    com.cpdss.common.generated.LoadableStudy.TankListOrBuilder getTanksOrBuilder(int index);
   }
   /** Protobuf type {@code LoadablePatternReply} */
   public static final class LoadablePatternReply extends com.google.protobuf.GeneratedMessageV3
@@ -42571,6 +42731,7 @@ public final class LoadableStudy {
 
     private LoadablePatternReply() {
       loadablePattern_ = java.util.Collections.emptyList();
+      tanks_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -42634,6 +42795,19 @@ public final class LoadableStudy {
 
                 break;
               }
+            case 26:
+              {
+                if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                  tanks_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.LoadableStudy.TankList>();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                tanks_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.LoadableStudy.TankList.parser(),
+                        extensionRegistry));
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -42650,6 +42824,9 @@ public final class LoadableStudy {
       } finally {
         if (((mutable_bitField0_ & 0x00000001) != 0)) {
           loadablePattern_ = java.util.Collections.unmodifiableList(loadablePattern_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) != 0)) {
+          tanks_ = java.util.Collections.unmodifiableList(tanks_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -42724,6 +42901,30 @@ public final class LoadableStudy {
       return getResponseStatus();
     }
 
+    public static final int TANKS_FIELD_NUMBER = 3;
+    private java.util.List<com.cpdss.common.generated.LoadableStudy.TankList> tanks_;
+    /** <code>repeated .TankList tanks = 3;</code> */
+    public java.util.List<com.cpdss.common.generated.LoadableStudy.TankList> getTanksList() {
+      return tanks_;
+    }
+    /** <code>repeated .TankList tanks = 3;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.LoadableStudy.TankListOrBuilder>
+        getTanksOrBuilderList() {
+      return tanks_;
+    }
+    /** <code>repeated .TankList tanks = 3;</code> */
+    public int getTanksCount() {
+      return tanks_.size();
+    }
+    /** <code>repeated .TankList tanks = 3;</code> */
+    public com.cpdss.common.generated.LoadableStudy.TankList getTanks(int index) {
+      return tanks_.get(index);
+    }
+    /** <code>repeated .TankList tanks = 3;</code> */
+    public com.cpdss.common.generated.LoadableStudy.TankListOrBuilder getTanksOrBuilder(int index) {
+      return tanks_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -42744,6 +42945,9 @@ public final class LoadableStudy {
       if (responseStatus_ != null) {
         output.writeMessage(2, getResponseStatus());
       }
+      for (int i = 0; i < tanks_.size(); i++) {
+        output.writeMessage(3, tanks_.get(i));
+      }
       unknownFields.writeTo(output);
     }
 
@@ -42759,6 +42963,9 @@ public final class LoadableStudy {
       }
       if (responseStatus_ != null) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getResponseStatus());
+      }
+      for (int i = 0; i < tanks_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, tanks_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -42781,6 +42988,7 @@ public final class LoadableStudy {
       if (hasResponseStatus()) {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
+      if (!getTanksList().equals(other.getTanksList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -42799,6 +43007,10 @@ public final class LoadableStudy {
       if (hasResponseStatus()) {
         hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
         hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      if (getTanksCount() > 0) {
+        hash = (37 * hash) + TANKS_FIELD_NUMBER;
+        hash = (53 * hash) + getTanksList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -42936,6 +43148,7 @@ public final class LoadableStudy {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
           getLoadablePatternFieldBuilder();
+          getTanksFieldBuilder();
         }
       }
 
@@ -42953,6 +43166,12 @@ public final class LoadableStudy {
         } else {
           responseStatus_ = null;
           responseStatusBuilder_ = null;
+        }
+        if (tanksBuilder_ == null) {
+          tanks_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        } else {
+          tanksBuilder_.clear();
         }
         return this;
       }
@@ -42996,6 +43215,15 @@ public final class LoadableStudy {
           result.responseStatus_ = responseStatus_;
         } else {
           result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        if (tanksBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0)) {
+            tanks_ = java.util.Collections.unmodifiableList(tanks_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.tanks_ = tanks_;
+        } else {
+          result.tanks_ = tanksBuilder_.build();
         }
         onBuilt();
         return result;
@@ -43080,6 +43308,33 @@ public final class LoadableStudy {
         }
         if (other.hasResponseStatus()) {
           mergeResponseStatus(other.getResponseStatus());
+        }
+        if (tanksBuilder_ == null) {
+          if (!other.tanks_.isEmpty()) {
+            if (tanks_.isEmpty()) {
+              tanks_ = other.tanks_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureTanksIsMutable();
+              tanks_.addAll(other.tanks_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.tanks_.isEmpty()) {
+            if (tanksBuilder_.isEmpty()) {
+              tanksBuilder_.dispose();
+              tanksBuilder_ = null;
+              tanks_ = other.tanks_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              tanksBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getTanksFieldBuilder()
+                      : null;
+            } else {
+              tanksBuilder_.addAllMessages(other.tanks_);
+            }
+          }
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -43460,6 +43715,215 @@ public final class LoadableStudy {
         return responseStatusBuilder_;
       }
 
+      private java.util.List<com.cpdss.common.generated.LoadableStudy.TankList> tanks_ =
+          java.util.Collections.emptyList();
+
+      private void ensureTanksIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          tanks_ =
+              new java.util.ArrayList<com.cpdss.common.generated.LoadableStudy.TankList>(tanks_);
+          bitField0_ |= 0x00000002;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.TankList,
+              com.cpdss.common.generated.LoadableStudy.TankList.Builder,
+              com.cpdss.common.generated.LoadableStudy.TankListOrBuilder>
+          tanksBuilder_;
+
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.TankList> getTanksList() {
+        if (tanksBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(tanks_);
+        } else {
+          return tanksBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public int getTanksCount() {
+        if (tanksBuilder_ == null) {
+          return tanks_.size();
+        } else {
+          return tanksBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public com.cpdss.common.generated.LoadableStudy.TankList getTanks(int index) {
+        if (tanksBuilder_ == null) {
+          return tanks_.get(index);
+        } else {
+          return tanksBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public Builder setTanks(int index, com.cpdss.common.generated.LoadableStudy.TankList value) {
+        if (tanksBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTanksIsMutable();
+          tanks_.set(index, value);
+          onChanged();
+        } else {
+          tanksBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public Builder setTanks(
+          int index, com.cpdss.common.generated.LoadableStudy.TankList.Builder builderForValue) {
+        if (tanksBuilder_ == null) {
+          ensureTanksIsMutable();
+          tanks_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          tanksBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public Builder addTanks(com.cpdss.common.generated.LoadableStudy.TankList value) {
+        if (tanksBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTanksIsMutable();
+          tanks_.add(value);
+          onChanged();
+        } else {
+          tanksBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public Builder addTanks(int index, com.cpdss.common.generated.LoadableStudy.TankList value) {
+        if (tanksBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTanksIsMutable();
+          tanks_.add(index, value);
+          onChanged();
+        } else {
+          tanksBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public Builder addTanks(
+          com.cpdss.common.generated.LoadableStudy.TankList.Builder builderForValue) {
+        if (tanksBuilder_ == null) {
+          ensureTanksIsMutable();
+          tanks_.add(builderForValue.build());
+          onChanged();
+        } else {
+          tanksBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public Builder addTanks(
+          int index, com.cpdss.common.generated.LoadableStudy.TankList.Builder builderForValue) {
+        if (tanksBuilder_ == null) {
+          ensureTanksIsMutable();
+          tanks_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          tanksBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public Builder addAllTanks(
+          java.lang.Iterable<? extends com.cpdss.common.generated.LoadableStudy.TankList> values) {
+        if (tanksBuilder_ == null) {
+          ensureTanksIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, tanks_);
+          onChanged();
+        } else {
+          tanksBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public Builder clearTanks() {
+        if (tanksBuilder_ == null) {
+          tanks_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          tanksBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public Builder removeTanks(int index) {
+        if (tanksBuilder_ == null) {
+          ensureTanksIsMutable();
+          tanks_.remove(index);
+          onChanged();
+        } else {
+          tanksBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public com.cpdss.common.generated.LoadableStudy.TankList.Builder getTanksBuilder(int index) {
+        return getTanksFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public com.cpdss.common.generated.LoadableStudy.TankListOrBuilder getTanksOrBuilder(
+          int index) {
+        if (tanksBuilder_ == null) {
+          return tanks_.get(index);
+        } else {
+          return tanksBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.LoadableStudy.TankListOrBuilder>
+          getTanksOrBuilderList() {
+        if (tanksBuilder_ != null) {
+          return tanksBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(tanks_);
+        }
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public com.cpdss.common.generated.LoadableStudy.TankList.Builder addTanksBuilder() {
+        return getTanksFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.LoadableStudy.TankList.getDefaultInstance());
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public com.cpdss.common.generated.LoadableStudy.TankList.Builder addTanksBuilder(int index) {
+        return getTanksFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.LoadableStudy.TankList.getDefaultInstance());
+      }
+      /** <code>repeated .TankList tanks = 3;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.TankList.Builder>
+          getTanksBuilderList() {
+        return getTanksFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.TankList,
+              com.cpdss.common.generated.LoadableStudy.TankList.Builder,
+              com.cpdss.common.generated.LoadableStudy.TankListOrBuilder>
+          getTanksFieldBuilder() {
+        if (tanksBuilder_ == null) {
+          tanksBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.LoadableStudy.TankList,
+                  com.cpdss.common.generated.LoadableStudy.TankList.Builder,
+                  com.cpdss.common.generated.LoadableStudy.TankListOrBuilder>(
+                  tanks_, ((bitField0_ & 0x00000002) != 0), getParentForChildren(), isClean());
+          tanks_ = null;
+        }
+        return tanksBuilder_;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -43542,6 +44006,32 @@ public final class LoadableStudy {
     /** <code>repeated .LoadablePatternCargoDetails loadablePatternCargoDetails = 2;</code> */
     com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetailsOrBuilder
         getLoadablePatternCargoDetailsOrBuilder(int index);
+
+    /**
+     * <code>string constraints = 3;</code>
+     *
+     * @return The constraints.
+     */
+    java.lang.String getConstraints();
+    /**
+     * <code>string constraints = 3;</code>
+     *
+     * @return The bytes for constraints.
+     */
+    com.google.protobuf.ByteString getConstraintsBytes();
+
+    /**
+     * <code>string totalDifferenceColor = 4;</code>
+     *
+     * @return The totalDifferenceColor.
+     */
+    java.lang.String getTotalDifferenceColor();
+    /**
+     * <code>string totalDifferenceColor = 4;</code>
+     *
+     * @return The bytes for totalDifferenceColor.
+     */
+    com.google.protobuf.ByteString getTotalDifferenceColorBytes();
   }
   /** Protobuf type {@code LoadablePattern} */
   public static final class LoadablePattern extends com.google.protobuf.GeneratedMessageV3
@@ -43556,6 +44046,8 @@ public final class LoadableStudy {
 
     private LoadablePattern() {
       loadablePatternCargoDetails_ = java.util.Collections.emptyList();
+      constraints_ = "";
+      totalDifferenceColor_ = "";
     }
 
     @java.lang.Override
@@ -43606,6 +44098,20 @@ public final class LoadableStudy {
                         com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails
                             .parser(),
                         extensionRegistry));
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                constraints_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                totalDifferenceColor_ = s;
                 break;
               }
             default:
@@ -43685,6 +44191,76 @@ public final class LoadableStudy {
       return loadablePatternCargoDetails_.get(index);
     }
 
+    public static final int CONSTRAINTS_FIELD_NUMBER = 3;
+    private volatile java.lang.Object constraints_;
+    /**
+     * <code>string constraints = 3;</code>
+     *
+     * @return The constraints.
+     */
+    public java.lang.String getConstraints() {
+      java.lang.Object ref = constraints_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        constraints_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string constraints = 3;</code>
+     *
+     * @return The bytes for constraints.
+     */
+    public com.google.protobuf.ByteString getConstraintsBytes() {
+      java.lang.Object ref = constraints_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        constraints_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TOTALDIFFERENCECOLOR_FIELD_NUMBER = 4;
+    private volatile java.lang.Object totalDifferenceColor_;
+    /**
+     * <code>string totalDifferenceColor = 4;</code>
+     *
+     * @return The totalDifferenceColor.
+     */
+    public java.lang.String getTotalDifferenceColor() {
+      java.lang.Object ref = totalDifferenceColor_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        totalDifferenceColor_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string totalDifferenceColor = 4;</code>
+     *
+     * @return The bytes for totalDifferenceColor.
+     */
+    public com.google.protobuf.ByteString getTotalDifferenceColorBytes() {
+      java.lang.Object ref = totalDifferenceColor_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        totalDifferenceColor_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -43705,6 +44281,12 @@ public final class LoadableStudy {
       for (int i = 0; i < loadablePatternCargoDetails_.size(); i++) {
         output.writeMessage(2, loadablePatternCargoDetails_.get(i));
       }
+      if (!getConstraintsBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, constraints_);
+      }
+      if (!getTotalDifferenceColorBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, totalDifferenceColor_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -43721,6 +44303,12 @@ public final class LoadableStudy {
         size +=
             com.google.protobuf.CodedOutputStream.computeMessageSize(
                 2, loadablePatternCargoDetails_.get(i));
+      }
+      if (!getConstraintsBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, constraints_);
+      }
+      if (!getTotalDifferenceColorBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, totalDifferenceColor_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -43741,6 +44329,8 @@ public final class LoadableStudy {
       if (getLoadablePatternId() != other.getLoadablePatternId()) return false;
       if (!getLoadablePatternCargoDetailsList().equals(other.getLoadablePatternCargoDetailsList()))
         return false;
+      if (!getConstraints().equals(other.getConstraints())) return false;
+      if (!getTotalDifferenceColor().equals(other.getTotalDifferenceColor())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -43758,6 +44348,10 @@ public final class LoadableStudy {
         hash = (37 * hash) + LOADABLEPATTERNCARGODETAILS_FIELD_NUMBER;
         hash = (53 * hash) + getLoadablePatternCargoDetailsList().hashCode();
       }
+      hash = (37 * hash) + CONSTRAINTS_FIELD_NUMBER;
+      hash = (53 * hash) + getConstraints().hashCode();
+      hash = (37 * hash) + TOTALDIFFERENCECOLOR_FIELD_NUMBER;
+      hash = (53 * hash) + getTotalDifferenceColor().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -43907,6 +44501,10 @@ public final class LoadableStudy {
         } else {
           loadablePatternCargoDetailsBuilder_.clear();
         }
+        constraints_ = "";
+
+        totalDifferenceColor_ = "";
+
         return this;
       }
 
@@ -43945,6 +44543,8 @@ public final class LoadableStudy {
         } else {
           result.loadablePatternCargoDetails_ = loadablePatternCargoDetailsBuilder_.build();
         }
+        result.constraints_ = constraints_;
+        result.totalDifferenceColor_ = totalDifferenceColor_;
         onBuilt();
         return result;
       }
@@ -44027,6 +44627,14 @@ public final class LoadableStudy {
                   other.loadablePatternCargoDetails_);
             }
           }
+        }
+        if (!other.getConstraints().isEmpty()) {
+          constraints_ = other.constraints_;
+          onChanged();
+        }
+        if (!other.getTotalDifferenceColor().isEmpty()) {
+          totalDifferenceColor_ = other.totalDifferenceColor_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -44330,6 +44938,158 @@ public final class LoadableStudy {
         return loadablePatternCargoDetailsBuilder_;
       }
 
+      private java.lang.Object constraints_ = "";
+      /**
+       * <code>string constraints = 3;</code>
+       *
+       * @return The constraints.
+       */
+      public java.lang.String getConstraints() {
+        java.lang.Object ref = constraints_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          constraints_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string constraints = 3;</code>
+       *
+       * @return The bytes for constraints.
+       */
+      public com.google.protobuf.ByteString getConstraintsBytes() {
+        java.lang.Object ref = constraints_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          constraints_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string constraints = 3;</code>
+       *
+       * @param value The constraints to set.
+       * @return This builder for chaining.
+       */
+      public Builder setConstraints(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        constraints_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string constraints = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearConstraints() {
+
+        constraints_ = getDefaultInstance().getConstraints();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string constraints = 3;</code>
+       *
+       * @param value The bytes for constraints to set.
+       * @return This builder for chaining.
+       */
+      public Builder setConstraintsBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        constraints_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object totalDifferenceColor_ = "";
+      /**
+       * <code>string totalDifferenceColor = 4;</code>
+       *
+       * @return The totalDifferenceColor.
+       */
+      public java.lang.String getTotalDifferenceColor() {
+        java.lang.Object ref = totalDifferenceColor_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          totalDifferenceColor_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string totalDifferenceColor = 4;</code>
+       *
+       * @return The bytes for totalDifferenceColor.
+       */
+      public com.google.protobuf.ByteString getTotalDifferenceColorBytes() {
+        java.lang.Object ref = totalDifferenceColor_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          totalDifferenceColor_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string totalDifferenceColor = 4;</code>
+       *
+       * @param value The totalDifferenceColor to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTotalDifferenceColor(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        totalDifferenceColor_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string totalDifferenceColor = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTotalDifferenceColor() {
+
+        totalDifferenceColor_ = getDefaultInstance().getTotalDifferenceColor();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string totalDifferenceColor = 4;</code>
+       *
+       * @param value The bytes for totalDifferenceColor to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTotalDifferenceColorBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        totalDifferenceColor_ = value;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -44454,47 +45214,34 @@ public final class LoadableStudy {
     com.google.protobuf.ByteString getDifferenceBytes();
 
     /**
-     * <code>string constraints = 7;</code>
-     *
-     * @return The constraints.
-     */
-    java.lang.String getConstraints();
-    /**
-     * <code>string constraints = 7;</code>
-     *
-     * @return The bytes for constraints.
-     */
-    com.google.protobuf.ByteString getConstraintsBytes();
-
-    /**
-     * <code>string differenceColor = 8;</code>
+     * <code>string differenceColor = 7;</code>
      *
      * @return The differenceColor.
      */
     java.lang.String getDifferenceColor();
     /**
-     * <code>string differenceColor = 8;</code>
+     * <code>string differenceColor = 7;</code>
      *
      * @return The bytes for differenceColor.
      */
     com.google.protobuf.ByteString getDifferenceColorBytes();
 
     /**
-     * <code>int64 loadablePatternDetailsId = 9;</code>
+     * <code>int64 loadablePatternDetailsId = 8;</code>
      *
      * @return The loadablePatternDetailsId.
      */
     long getLoadablePatternDetailsId();
 
     /**
-     * <code>bool isCommingle = 10;</code>
+     * <code>bool isCommingle = 9;</code>
      *
      * @return The isCommingle.
      */
     boolean getIsCommingle();
 
     /**
-     * <code>int64 loadablePatternCommingleDetailsId = 11;</code>
+     * <code>int64 loadablePatternCommingleDetailsId = 10;</code>
      *
      * @return The loadablePatternCommingleDetailsId.
      */
@@ -44517,7 +45264,6 @@ public final class LoadableStudy {
       cargoColor_ = "";
       quantity_ = "";
       difference_ = "";
-      constraints_ = "";
       differenceColor_ = "";
     }
 
@@ -44592,27 +45338,20 @@ public final class LoadableStudy {
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                constraints_ = s;
-                break;
-              }
-            case 66:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
                 differenceColor_ = s;
                 break;
               }
-            case 72:
+            case 64:
               {
                 loadablePatternDetailsId_ = input.readInt64();
                 break;
               }
-            case 80:
+            case 72:
               {
                 isCommingle_ = input.readBool();
                 break;
               }
-            case 88:
+            case 80:
               {
                 loadablePatternCommingleDetailsId_ = input.readInt64();
                 break;
@@ -44813,45 +45552,10 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int CONSTRAINTS_FIELD_NUMBER = 7;
-    private volatile java.lang.Object constraints_;
-    /**
-     * <code>string constraints = 7;</code>
-     *
-     * @return The constraints.
-     */
-    public java.lang.String getConstraints() {
-      java.lang.Object ref = constraints_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        constraints_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string constraints = 7;</code>
-     *
-     * @return The bytes for constraints.
-     */
-    public com.google.protobuf.ByteString getConstraintsBytes() {
-      java.lang.Object ref = constraints_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        constraints_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int DIFFERENCECOLOR_FIELD_NUMBER = 8;
+    public static final int DIFFERENCECOLOR_FIELD_NUMBER = 7;
     private volatile java.lang.Object differenceColor_;
     /**
-     * <code>string differenceColor = 8;</code>
+     * <code>string differenceColor = 7;</code>
      *
      * @return The differenceColor.
      */
@@ -44867,7 +45571,7 @@ public final class LoadableStudy {
       }
     }
     /**
-     * <code>string differenceColor = 8;</code>
+     * <code>string differenceColor = 7;</code>
      *
      * @return The bytes for differenceColor.
      */
@@ -44883,10 +45587,10 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int LOADABLEPATTERNDETAILSID_FIELD_NUMBER = 9;
+    public static final int LOADABLEPATTERNDETAILSID_FIELD_NUMBER = 8;
     private long loadablePatternDetailsId_;
     /**
-     * <code>int64 loadablePatternDetailsId = 9;</code>
+     * <code>int64 loadablePatternDetailsId = 8;</code>
      *
      * @return The loadablePatternDetailsId.
      */
@@ -44894,10 +45598,10 @@ public final class LoadableStudy {
       return loadablePatternDetailsId_;
     }
 
-    public static final int ISCOMMINGLE_FIELD_NUMBER = 10;
+    public static final int ISCOMMINGLE_FIELD_NUMBER = 9;
     private boolean isCommingle_;
     /**
-     * <code>bool isCommingle = 10;</code>
+     * <code>bool isCommingle = 9;</code>
      *
      * @return The isCommingle.
      */
@@ -44905,10 +45609,10 @@ public final class LoadableStudy {
       return isCommingle_;
     }
 
-    public static final int LOADABLEPATTERNCOMMINGLEDETAILSID_FIELD_NUMBER = 11;
+    public static final int LOADABLEPATTERNCOMMINGLEDETAILSID_FIELD_NUMBER = 10;
     private long loadablePatternCommingleDetailsId_;
     /**
-     * <code>int64 loadablePatternCommingleDetailsId = 11;</code>
+     * <code>int64 loadablePatternCommingleDetailsId = 10;</code>
      *
      * @return The loadablePatternCommingleDetailsId.
      */
@@ -44948,20 +45652,17 @@ public final class LoadableStudy {
       if (!getDifferenceBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 6, difference_);
       }
-      if (!getConstraintsBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, constraints_);
-      }
       if (!getDifferenceColorBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, differenceColor_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, differenceColor_);
       }
       if (loadablePatternDetailsId_ != 0L) {
-        output.writeInt64(9, loadablePatternDetailsId_);
+        output.writeInt64(8, loadablePatternDetailsId_);
       }
       if (isCommingle_ != false) {
-        output.writeBool(10, isCommingle_);
+        output.writeBool(9, isCommingle_);
       }
       if (loadablePatternCommingleDetailsId_ != 0L) {
-        output.writeInt64(11, loadablePatternCommingleDetailsId_);
+        output.writeInt64(10, loadablePatternCommingleDetailsId_);
       }
       unknownFields.writeTo(output);
     }
@@ -44990,23 +45691,20 @@ public final class LoadableStudy {
       if (!getDifferenceBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, difference_);
       }
-      if (!getConstraintsBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, constraints_);
-      }
       if (!getDifferenceColorBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, differenceColor_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, differenceColor_);
       }
       if (loadablePatternDetailsId_ != 0L) {
         size +=
-            com.google.protobuf.CodedOutputStream.computeInt64Size(9, loadablePatternDetailsId_);
+            com.google.protobuf.CodedOutputStream.computeInt64Size(8, loadablePatternDetailsId_);
       }
       if (isCommingle_ != false) {
-        size += com.google.protobuf.CodedOutputStream.computeBoolSize(10, isCommingle_);
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(9, isCommingle_);
       }
       if (loadablePatternCommingleDetailsId_ != 0L) {
         size +=
             com.google.protobuf.CodedOutputStream.computeInt64Size(
-                11, loadablePatternCommingleDetailsId_);
+                10, loadablePatternCommingleDetailsId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -45030,7 +45728,6 @@ public final class LoadableStudy {
       if (getTankId() != other.getTankId()) return false;
       if (!getQuantity().equals(other.getQuantity())) return false;
       if (!getDifference().equals(other.getDifference())) return false;
-      if (!getConstraints().equals(other.getConstraints())) return false;
       if (!getDifferenceColor().equals(other.getDifferenceColor())) return false;
       if (getLoadablePatternDetailsId() != other.getLoadablePatternDetailsId()) return false;
       if (getIsCommingle() != other.getIsCommingle()) return false;
@@ -45059,8 +45756,6 @@ public final class LoadableStudy {
       hash = (53 * hash) + getQuantity().hashCode();
       hash = (37 * hash) + DIFFERENCE_FIELD_NUMBER;
       hash = (53 * hash) + getDifference().hashCode();
-      hash = (37 * hash) + CONSTRAINTS_FIELD_NUMBER;
-      hash = (53 * hash) + getConstraints().hashCode();
       hash = (37 * hash) + DIFFERENCECOLOR_FIELD_NUMBER;
       hash = (53 * hash) + getDifferenceColor().hashCode();
       hash = (37 * hash) + LOADABLEPATTERNDETAILSID_FIELD_NUMBER;
@@ -45225,8 +45920,6 @@ public final class LoadableStudy {
 
         difference_ = "";
 
-        constraints_ = "";
-
         differenceColor_ = "";
 
         loadablePatternDetailsId_ = 0L;
@@ -45271,7 +45964,6 @@ public final class LoadableStudy {
         result.tankId_ = tankId_;
         result.quantity_ = quantity_;
         result.difference_ = difference_;
-        result.constraints_ = constraints_;
         result.differenceColor_ = differenceColor_;
         result.loadablePatternDetailsId_ = loadablePatternDetailsId_;
         result.isCommingle_ = isCommingle_;
@@ -45351,10 +46043,6 @@ public final class LoadableStudy {
         }
         if (!other.getDifference().isEmpty()) {
           difference_ = other.difference_;
-          onChanged();
-        }
-        if (!other.getConstraints().isEmpty()) {
-          constraints_ = other.constraints_;
           onChanged();
         }
         if (!other.getDifferenceColor().isEmpty()) {
@@ -45771,85 +46459,9 @@ public final class LoadableStudy {
         return this;
       }
 
-      private java.lang.Object constraints_ = "";
-      /**
-       * <code>string constraints = 7;</code>
-       *
-       * @return The constraints.
-       */
-      public java.lang.String getConstraints() {
-        java.lang.Object ref = constraints_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          constraints_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string constraints = 7;</code>
-       *
-       * @return The bytes for constraints.
-       */
-      public com.google.protobuf.ByteString getConstraintsBytes() {
-        java.lang.Object ref = constraints_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          constraints_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string constraints = 7;</code>
-       *
-       * @param value The constraints to set.
-       * @return This builder for chaining.
-       */
-      public Builder setConstraints(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        constraints_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string constraints = 7;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearConstraints() {
-
-        constraints_ = getDefaultInstance().getConstraints();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string constraints = 7;</code>
-       *
-       * @param value The bytes for constraints to set.
-       * @return This builder for chaining.
-       */
-      public Builder setConstraintsBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        constraints_ = value;
-        onChanged();
-        return this;
-      }
-
       private java.lang.Object differenceColor_ = "";
       /**
-       * <code>string differenceColor = 8;</code>
+       * <code>string differenceColor = 7;</code>
        *
        * @return The differenceColor.
        */
@@ -45865,7 +46477,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string differenceColor = 8;</code>
+       * <code>string differenceColor = 7;</code>
        *
        * @return The bytes for differenceColor.
        */
@@ -45881,7 +46493,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string differenceColor = 8;</code>
+       * <code>string differenceColor = 7;</code>
        *
        * @param value The differenceColor to set.
        * @return This builder for chaining.
@@ -45896,7 +46508,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string differenceColor = 8;</code>
+       * <code>string differenceColor = 7;</code>
        *
        * @return This builder for chaining.
        */
@@ -45907,7 +46519,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string differenceColor = 8;</code>
+       * <code>string differenceColor = 7;</code>
        *
        * @param value The bytes for differenceColor to set.
        * @return This builder for chaining.
@@ -45925,7 +46537,7 @@ public final class LoadableStudy {
 
       private long loadablePatternDetailsId_;
       /**
-       * <code>int64 loadablePatternDetailsId = 9;</code>
+       * <code>int64 loadablePatternDetailsId = 8;</code>
        *
        * @return The loadablePatternDetailsId.
        */
@@ -45933,7 +46545,7 @@ public final class LoadableStudy {
         return loadablePatternDetailsId_;
       }
       /**
-       * <code>int64 loadablePatternDetailsId = 9;</code>
+       * <code>int64 loadablePatternDetailsId = 8;</code>
        *
        * @param value The loadablePatternDetailsId to set.
        * @return This builder for chaining.
@@ -45945,7 +46557,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>int64 loadablePatternDetailsId = 9;</code>
+       * <code>int64 loadablePatternDetailsId = 8;</code>
        *
        * @return This builder for chaining.
        */
@@ -45958,7 +46570,7 @@ public final class LoadableStudy {
 
       private boolean isCommingle_;
       /**
-       * <code>bool isCommingle = 10;</code>
+       * <code>bool isCommingle = 9;</code>
        *
        * @return The isCommingle.
        */
@@ -45966,7 +46578,7 @@ public final class LoadableStudy {
         return isCommingle_;
       }
       /**
-       * <code>bool isCommingle = 10;</code>
+       * <code>bool isCommingle = 9;</code>
        *
        * @param value The isCommingle to set.
        * @return This builder for chaining.
@@ -45978,7 +46590,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>bool isCommingle = 10;</code>
+       * <code>bool isCommingle = 9;</code>
        *
        * @return This builder for chaining.
        */
@@ -45991,7 +46603,7 @@ public final class LoadableStudy {
 
       private long loadablePatternCommingleDetailsId_;
       /**
-       * <code>int64 loadablePatternCommingleDetailsId = 11;</code>
+       * <code>int64 loadablePatternCommingleDetailsId = 10;</code>
        *
        * @return The loadablePatternCommingleDetailsId.
        */
@@ -45999,7 +46611,7 @@ public final class LoadableStudy {
         return loadablePatternCommingleDetailsId_;
       }
       /**
-       * <code>int64 loadablePatternCommingleDetailsId = 11;</code>
+       * <code>int64 loadablePatternCommingleDetailsId = 10;</code>
        *
        * @param value The loadablePatternCommingleDetailsId to set.
        * @return This builder for chaining.
@@ -46011,7 +46623,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>int64 loadablePatternCommingleDetailsId = 11;</code>
+       * <code>int64 loadablePatternCommingleDetailsId = 10;</code>
        *
        * @return This builder for chaining.
        */
@@ -53069,7 +53681,7 @@ public final class LoadableStudy {
           + "\001(\t\022\025\n\rarrivalVolume\030\007 \001(\t\022\027\n\017arrivalQua"
           + "ntity\030\010 \001(\t\022\027\n\017departureVolume\030\t \001(\t\022\031\n\021"
           + "departureQuantity\030\n \001(\t\022\027\n\017loadableStudy"
-          + "Id\030\013 \001(\003\022\021\n\tcolorCode\030\014 \001(\t\"\256\002\n\nTankDeta"
+          + "Id\030\013 \001(\003\022\021\n\tcolorCode\030\014 \001(\t\"\310\002\n\nTankDeta"
           + "il\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tankCategoryId\030\002 \001"
           + "(\003\022\030\n\020tankCategoryName\030\003 \001(\t\022\020\n\010tankName"
           + "\030\004 \001(\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025\n\rframe"
@@ -53077,110 +53689,112 @@ public final class LoadableStudy {
           + "lCapacityCubm\030\010 \001(\t\022\017\n\007density\030\t \001(\t\022\022\n\n"
           + "isSlopTank\030\n \001(\010\022\022\n\nheightFrom\030\013 \001(\t\022\020\n\010"
           + "heightTo\030\014 \001(\t\022\021\n\ttankOrder\030\r \001(\005\022\021\n\ttan"
-          + "kGroup\030\016 \001(\005\"+\n\010TankList\022\037\n\nvesselTank\030\001"
-          + " \003(\0132\013.TankDetail\"\261\001\n\023OnHandQuantityRepl"
-          + "y\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStat"
-          + "us\022-\n\016onHandQuantity\030\002 \003(\0132\025.OnHandQuant"
-          + "ityDetail\022\030\n\005tanks\030\003 \003(\0132\t.TankList\022\034\n\tr"
-          + "earTanks\030\004 \003(\0132\t.TankList\022\n\n\002id\030\005 \001(\003\"f\n"
-          + "\026OnBoardQuantityRequest\022\021\n\tcompanyId\030\001 \001"
-          + "(\003\022\020\n\010vesselId\030\002 \001(\003\022\027\n\017loadableStudyId\030"
-          + "\003 \001(\003\022\016\n\006portId\030\004 \001(\003\"\253\001\n\025OnBoardQuantit"
-          + "yDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\016\n\006t"
-          + "ankId\030\003 \001(\003\022\020\n\010tankName\030\004 \001(\t\022\017\n\007cargoId"
-          + "\030\005 \001(\003\022\021\n\tcargoName\030\006 \001(\t\022\020\n\010sounding\030\007 "
-          + "\001(\t\022\016\n\006weight\030\010 \001(\t\022\016\n\006volume\030\t \001(\t\"\226\001\n\024"
-          + "OnBoardQuantityReply\022\'\n\016responseStatus\030\001"
-          + " \001(\0132\017.ResponseStatus\022/\n\017onBoardQuantity"
-          + "\030\002 \003(\0132\026.OnBoardQuantityDetail\022\030\n\005tanks\030"
-          + "\003 \003(\0132\t.TankList\022\n\n\002id\030\004 \001(\003\".\n\022PurposeO"
-          + "fCommingle\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"4\n\031"
-          + "PurposeOfCommingleRequest\022\027\n\017loadableStu"
-          + "dyId\030\001 \001(\003\"s\n\027PurposeOfCommingleReply\022\'\n"
-          + "\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022/"
-          + "\n\022purposeOfCommingle\030\002 \003(\0132\023.PurposeOfCo"
-          + "mmingle\"j\n\024LoadablePatternReply\022)\n\017loada"
-          + "blePattern\030\001 \003(\0132\020.LoadablePattern\022\'\n\016re"
-          + "sponseStatus\030\002 \001(\0132\017.ResponseStatus\"o\n\017L"
-          + "oadablePattern\022\031\n\021loadablePatternId\030\001 \001("
-          + "\003\022A\n\033loadablePatternCargoDetails\030\002 \003(\0132\034"
-          + ".LoadablePatternCargoDetails\"\244\002\n\033Loadabl"
-          + "ePatternCargoDetails\022\020\n\010priority\030\001 \001(\003\022\031"
-          + "\n\021cargoAbbreviation\030\002 \001(\t\022\022\n\ncargoColor\030"
-          + "\003 \001(\t\022\016\n\006tankId\030\004 \001(\003\022\020\n\010quantity\030\005 \001(\t\022"
-          + "\022\n\ndifference\030\006 \001(\t\022\023\n\013constraints\030\007 \001(\t"
-          + "\022\027\n\017differenceColor\030\010 \001(\t\022 \n\030loadablePat"
-          + "ternDetailsId\030\t \001(\003\022\023\n\013isCommingle\030\n \001(\010"
-          + "\022)\n!loadablePatternCommingleDetailsId\030\013 "
-          + "\001(\003\"1\n\026LoadablePatternRequest\022\027\n\017loadabl"
-          + "eStudyId\030\001 \001(\003\"\265\001\n\016CommingleCargo\022\n\n\002id\030"
-          + "\001 \001(\003\022\021\n\tpurposeId\030\002 \001(\003\022\020\n\010slopOnly\030\003 \001"
-          + "(\010\022\026\n\016preferredTanks\030\004 \003(\003\022\020\n\010cargo1Id\030\005"
-          + " \001(\003\022\021\n\tcargo1pct\030\006 \001(\t\022\020\n\010cargo2Id\030\007 \001("
-          + "\003\022\021\n\tcargo2pct\030\010 \001(\t\022\020\n\010quantity\030\t \001(\t\"Y"
-          + "\n\025CommingleCargoRequest\022\027\n\017loadableStudy"
-          + "Id\030\001 \001(\003\022\'\n\016commingleCargo\030\002 \003(\0132\017.Commi"
-          + "ngleCargo\"g\n\023CommingleCargoReply\022\'\n\016resp"
-          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\022\'\n\016com"
-          + "mingleCargo\030\002 \003(\0132\017.CommingleCargo\"S\n&Lo"
-          + "adablePatternCommingleDetailsRequest\022)\n!"
-          + "loadablePatternCommingleDetailsId\030\001 \001(\003\""
-          + "\317\002\n$LoadablePatternCommingleDetailsReply"
-          + "\022\n\n\002id\030\001 \001(\003\022\025\n\rtankShortName\030\002 \001(\t\022\031\n\021c"
-          + "argo1Abbrivation\030\003 \001(\t\022\031\n\021cargo2Abbrivat"
-          + "ion\030\004 \001(\t\022\r\n\005grade\030\005 \001(\t\022\020\n\010quantity\030\006 \001"
-          + "(\t\022\013\n\003api\030\007 \001(\t\022\023\n\013temperature\030\010 \001(\t\022\026\n\016"
-          + "cargo1Quantity\030\t \001(\t\022\026\n\016cargo2Quantity\030\n"
-          + " \001(\t\022\030\n\020cargo1Percentage\030\013 \001(\t\022\030\n\020cargo2"
-          + "Percentage\030\014 \001(\t\022\'\n\016responseStatus\030\r \001(\013"
-          + "2\017.ResponseStatus2\271\016\n\024LoadableStudyServi"
-          + "ce\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014.Voyag"
-          + "eReply\"\000\0228\n\022GetVoyagesByVessel\022\016.VoyageR"
-          + "equest\032\020.VoyageListReply\"\000\022J\n\024SaveLoadab"
-          + "leQuantity\022\030.LoadableQuantityRequest\032\026.L"
-          + "oadableQuantityReply\"\000\022T\n$FindLoadableSt"
-          + "udiesByVesselAndVoyage\022\025.LoadableStudyRe"
-          + "quest\032\023.LoadableStudyReply\"\000\022@\n\021SaveLoad"
-          + "ableStudy\022\024.LoadableStudyDetail\032\023.Loadab"
-          + "leStudyReply\"\000\022G\n\023SaveCargoNomination\022\027."
-          + "CargoNominationRequest\032\025.CargoNomination"
-          + "Reply\"\000\022J\n\034GetLoadableStudyPortRotation\022"
-          + "\024.PortRotationRequest\032\022.PortRotationRepl"
-          + "y\"\000\022J\n\026GetCargoNominationById\022\027.CargoNom"
-          + "inationRequest\032\025.CargoNominationReply\"\000\022"
-          + "I\n\023GetValveSegregation\022\030.ValveSegregatio"
-          + "nRequest\032\026.ValveSegregationReply\"\000\022J\n\023ge"
-          + "tLoadableQuantity\022\026.LoadableQuantityRepl"
-          + "y\032\031.LoadableQuantityResponse\"\000\022J\n\035SaveLo"
-          + "adableStudyPortRotation\022\023.PortRotationDe"
-          + "tail\032\022.PortRotationReply\"\000\022I\n\025DeleteCarg"
-          + "oNomination\022\027.CargoNominationRequest\032\025.C"
-          + "argoNominationReply\"\000\022B\n\024SaveDischarging"
-          + "Ports\022\024.PortRotationRequest\032\022.PortRotati"
-          + "onReply\"\000\022N\n GetPortRotationByLoadableSt"
-          + "udyId\022\024.PortRotationRequest\032\022.PortRotati"
-          + "onReply\"\000\022C\n\023DeleteLoadableStudy\022\025.Loada"
-          + "bleStudyRequest\032\023.LoadableStudyReply\"\000\022@"
-          + "\n\022DeletePortRotation\022\024.PortRotationReque"
-          + "st\032\022.PortRotationReply\"\000\022C\n\021GetOnHandQua"
-          + "ntity\022\026.OnHandQuantityRequest\032\024.OnHandQu"
-          + "antityReply\"\000\022C\n\022SaveOnHandQuantity\022\025.On"
-          + "HandQuantityDetail\032\024.OnHandQuantityReply"
-          + "\"\000\022M\n\031GetLoadablePatternDetails\022\027.Loadab"
-          + "lePatternRequest\032\025.LoadablePatternReply\""
-          + "\000\022O\n\025GetPurposeOfCommingle\022\032.PurposeOfCo"
-          + "mmingleRequest\032\030.PurposeOfCommingleReply"
-          + "\"\000\022C\n\021GetCommingleCargo\022\026.CommingleCargo"
-          + "Request\032\024.CommingleCargoReply\"\000\022D\n\022SaveC"
-          + "ommingleCargo\022\026.CommingleCargoRequest\032\024."
-          + "CommingleCargoReply\"\000\022v\n\"GetLoadablePatt"
-          + "ernCommingleDetails\022\'.LoadablePatternCom"
-          + "mingleDetailsRequest\032%.LoadablePatternCo"
-          + "mmingleDetailsReply\"\000\0226\n\030GenerateLoadabl"
-          + "ePatterns\022\014.AlgoRequest\032\n.AlgoReply\"\000\022F\n"
-          + "\022GetOnBoardQuantity\022\027.OnBoardQuantityReq"
-          + "uest\032\025.OnBoardQuantityReply\"\000B\036\n\032com.cpd"
-          + "ss.common.generatedP\000b\006proto3"
+          + "kGroup\030\016 \001(\005\022\030\n\020fullCapacityCubm\030\017 \001(\t\"+"
+          + "\n\010TankList\022\037\n\nvesselTank\030\001 \003(\0132\013.TankDet"
+          + "ail\"\261\001\n\023OnHandQuantityReply\022\'\n\016responseS"
+          + "tatus\030\001 \001(\0132\017.ResponseStatus\022-\n\016onHandQu"
+          + "antity\030\002 \003(\0132\025.OnHandQuantityDetail\022\030\n\005t"
+          + "anks\030\003 \003(\0132\t.TankList\022\034\n\trearTanks\030\004 \003(\013"
+          + "2\t.TankList\022\n\n\002id\030\005 \001(\003\"f\n\026OnBoardQuanti"
+          + "tyRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId"
+          + "\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\016\n\006portI"
+          + "d\030\004 \001(\003\"\253\001\n\025OnBoardQuantityDetail\022\n\n\002id\030"
+          + "\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\016\n\006tankId\030\003 \001(\003\022\020\n"
+          + "\010tankName\030\004 \001(\t\022\017\n\007cargoId\030\005 \001(\003\022\021\n\tcarg"
+          + "oName\030\006 \001(\t\022\020\n\010sounding\030\007 \001(\t\022\016\n\006weight\030"
+          + "\010 \001(\t\022\016\n\006volume\030\t \001(\t\"\226\001\n\024OnBoardQuantit"
+          + "yReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respons"
+          + "eStatus\022/\n\017onBoardQuantity\030\002 \003(\0132\026.OnBoa"
+          + "rdQuantityDetail\022\030\n\005tanks\030\003 \003(\0132\t.TankLi"
+          + "st\022\n\n\002id\030\004 \001(\003\".\n\022PurposeOfCommingle\022\n\n\002"
+          + "id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"4\n\031PurposeOfCommi"
+          + "ngleRequest\022\027\n\017loadableStudyId\030\001 \001(\003\"s\n\027"
+          + "PurposeOfCommingleReply\022\'\n\016responseStatu"
+          + "s\030\001 \001(\0132\017.ResponseStatus\022/\n\022purposeOfCom"
+          + "mingle\030\002 \003(\0132\023.PurposeOfCommingle\"\204\001\n\024Lo"
+          + "adablePatternReply\022)\n\017loadablePattern\030\001 "
+          + "\003(\0132\020.LoadablePattern\022\'\n\016responseStatus\030"
+          + "\002 \001(\0132\017.ResponseStatus\022\030\n\005tanks\030\003 \003(\0132\t."
+          + "TankList\"\242\001\n\017LoadablePattern\022\031\n\021loadable"
+          + "PatternId\030\001 \001(\003\022A\n\033loadablePatternCargoD"
+          + "etails\030\002 \003(\0132\034.LoadablePatternCargoDetai"
+          + "ls\022\023\n\013constraints\030\003 \001(\t\022\034\n\024totalDifferen"
+          + "ceColor\030\004 \001(\t\"\217\002\n\033LoadablePatternCargoDe"
+          + "tails\022\020\n\010priority\030\001 \001(\003\022\031\n\021cargoAbbrevia"
+          + "tion\030\002 \001(\t\022\022\n\ncargoColor\030\003 \001(\t\022\016\n\006tankId"
+          + "\030\004 \001(\003\022\020\n\010quantity\030\005 \001(\t\022\022\n\ndifference\030\006"
+          + " \001(\t\022\027\n\017differenceColor\030\007 \001(\t\022 \n\030loadabl"
+          + "ePatternDetailsId\030\010 \001(\003\022\023\n\013isCommingle\030\t"
+          + " \001(\010\022)\n!loadablePatternCommingleDetailsI"
+          + "d\030\n \001(\003\"1\n\026LoadablePatternRequest\022\027\n\017loa"
+          + "dableStudyId\030\001 \001(\003\"\265\001\n\016CommingleCargo\022\n\n"
+          + "\002id\030\001 \001(\003\022\021\n\tpurposeId\030\002 \001(\003\022\020\n\010slopOnly"
+          + "\030\003 \001(\010\022\026\n\016preferredTanks\030\004 \003(\003\022\020\n\010cargo1"
+          + "Id\030\005 \001(\003\022\021\n\tcargo1pct\030\006 \001(\t\022\020\n\010cargo2Id\030"
+          + "\007 \001(\003\022\021\n\tcargo2pct\030\010 \001(\t\022\020\n\010quantity\030\t \001"
+          + "(\t\"Y\n\025CommingleCargoRequest\022\027\n\017loadableS"
+          + "tudyId\030\001 \001(\003\022\'\n\016commingleCargo\030\002 \003(\0132\017.C"
+          + "ommingleCargo\"g\n\023CommingleCargoReply\022\'\n\016"
+          + "responseStatus\030\001 \001(\0132\017.ResponseStatus\022\'\n"
+          + "\016commingleCargo\030\002 \003(\0132\017.CommingleCargo\"S"
+          + "\n&LoadablePatternCommingleDetailsRequest"
+          + "\022)\n!loadablePatternCommingleDetailsId\030\001 "
+          + "\001(\003\"\317\002\n$LoadablePatternCommingleDetailsR"
+          + "eply\022\n\n\002id\030\001 \001(\003\022\025\n\rtankShortName\030\002 \001(\t\022"
+          + "\031\n\021cargo1Abbrivation\030\003 \001(\t\022\031\n\021cargo2Abbr"
+          + "ivation\030\004 \001(\t\022\r\n\005grade\030\005 \001(\t\022\020\n\010quantity"
+          + "\030\006 \001(\t\022\013\n\003api\030\007 \001(\t\022\023\n\013temperature\030\010 \001(\t"
+          + "\022\026\n\016cargo1Quantity\030\t \001(\t\022\026\n\016cargo2Quanti"
+          + "ty\030\n \001(\t\022\030\n\020cargo1Percentage\030\013 \001(\t\022\030\n\020ca"
+          + "rgo2Percentage\030\014 \001(\t\022\'\n\016responseStatus\030\r"
+          + " \001(\0132\017.ResponseStatus2\271\016\n\024LoadableStudyS"
+          + "ervice\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014.V"
+          + "oyageReply\"\000\0228\n\022GetVoyagesByVessel\022\016.Voy"
+          + "ageRequest\032\020.VoyageListReply\"\000\022J\n\024SaveLo"
+          + "adableQuantity\022\030.LoadableQuantityRequest"
+          + "\032\026.LoadableQuantityReply\"\000\022T\n$FindLoadab"
+          + "leStudiesByVesselAndVoyage\022\025.LoadableStu"
+          + "dyRequest\032\023.LoadableStudyReply\"\000\022@\n\021Save"
+          + "LoadableStudy\022\024.LoadableStudyDetail\032\023.Lo"
+          + "adableStudyReply\"\000\022G\n\023SaveCargoNominatio"
+          + "n\022\027.CargoNominationRequest\032\025.CargoNomina"
+          + "tionReply\"\000\022J\n\034GetLoadableStudyPortRotat"
+          + "ion\022\024.PortRotationRequest\032\022.PortRotation"
+          + "Reply\"\000\022J\n\026GetCargoNominationById\022\027.Carg"
+          + "oNominationRequest\032\025.CargoNominationRepl"
+          + "y\"\000\022I\n\023GetValveSegregation\022\030.ValveSegreg"
+          + "ationRequest\032\026.ValveSegregationReply\"\000\022J"
+          + "\n\023getLoadableQuantity\022\026.LoadableQuantity"
+          + "Reply\032\031.LoadableQuantityResponse\"\000\022J\n\035Sa"
+          + "veLoadableStudyPortRotation\022\023.PortRotati"
+          + "onDetail\032\022.PortRotationReply\"\000\022I\n\025Delete"
+          + "CargoNomination\022\027.CargoNominationRequest"
+          + "\032\025.CargoNominationReply\"\000\022B\n\024SaveDischar"
+          + "gingPorts\022\024.PortRotationRequest\032\022.PortRo"
+          + "tationReply\"\000\022N\n GetPortRotationByLoadab"
+          + "leStudyId\022\024.PortRotationRequest\032\022.PortRo"
+          + "tationReply\"\000\022C\n\023DeleteLoadableStudy\022\025.L"
+          + "oadableStudyRequest\032\023.LoadableStudyReply"
+          + "\"\000\022@\n\022DeletePortRotation\022\024.PortRotationR"
+          + "equest\032\022.PortRotationReply\"\000\022C\n\021GetOnHan"
+          + "dQuantity\022\026.OnHandQuantityRequest\032\024.OnHa"
+          + "ndQuantityReply\"\000\022C\n\022SaveOnHandQuantity\022"
+          + "\025.OnHandQuantityDetail\032\024.OnHandQuantityR"
+          + "eply\"\000\022M\n\031GetLoadablePatternDetails\022\027.Lo"
+          + "adablePatternRequest\032\025.LoadablePatternRe"
+          + "ply\"\000\022O\n\025GetPurposeOfCommingle\022\032.Purpose"
+          + "OfCommingleRequest\032\030.PurposeOfCommingleR"
+          + "eply\"\000\022C\n\021GetCommingleCargo\022\026.CommingleC"
+          + "argoRequest\032\024.CommingleCargoReply\"\000\022D\n\022S"
+          + "aveCommingleCargo\022\026.CommingleCargoReques"
+          + "t\032\024.CommingleCargoReply\"\000\022v\n\"GetLoadable"
+          + "PatternCommingleDetails\022\'.LoadablePatter"
+          + "nCommingleDetailsRequest\032%.LoadablePatte"
+          + "rnCommingleDetailsReply\"\000\0226\n\030GenerateLoa"
+          + "dablePatterns\022\014.AlgoRequest\032\n.AlgoReply\""
+          + "\000\022F\n\022GetOnBoardQuantity\022\027.OnBoardQuantit"
+          + "yRequest\032\025.OnBoardQuantityReply\"\000B\036\n\032com"
+          + ".cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -53488,6 +54102,7 @@ public final class LoadableStudy {
               "HeightTo",
               "TankOrder",
               "TankGroup",
+              "FullCapacityCubm",
             });
     internal_static_TankList_descriptor = getDescriptor().getMessageTypes().get(29);
     internal_static_TankList_fieldAccessorTable =
@@ -53559,14 +54174,17 @@ public final class LoadableStudy {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePatternReply_descriptor,
             new java.lang.String[] {
-              "LoadablePattern", "ResponseStatus",
+              "LoadablePattern", "ResponseStatus", "Tanks",
             });
     internal_static_LoadablePattern_descriptor = getDescriptor().getMessageTypes().get(38);
     internal_static_LoadablePattern_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePattern_descriptor,
             new java.lang.String[] {
-              "LoadablePatternId", "LoadablePatternCargoDetails",
+              "LoadablePatternId",
+              "LoadablePatternCargoDetails",
+              "Constraints",
+              "TotalDifferenceColor",
             });
     internal_static_LoadablePatternCargoDetails_descriptor =
         getDescriptor().getMessageTypes().get(39);
@@ -53580,7 +54198,6 @@ public final class LoadableStudy {
               "TankId",
               "Quantity",
               "Difference",
-              "Constraints",
               "DifferenceColor",
               "LoadablePatternDetailsId",
               "IsCommingle",

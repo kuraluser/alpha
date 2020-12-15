@@ -1531,7 +1531,7 @@ class LoadableStudyServiceTest {
     LoadableStudy loadableStudy = new LoadableStudy();
     when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(Optional.of(loadableStudy));
-    Mockito.doReturn(this.createVesselReply())
+    Mockito.doReturn(this.createVesselReply().build())
         .when(spyService)
         .getVesselTanks(any(VesselRequest.class));
     when(this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
@@ -1614,7 +1614,7 @@ class LoadableStudyServiceTest {
    *
    * @return
    */
-  private VesselReply createVesselReply() {
+  private VesselReply.Builder createVesselReply() {
     VesselReply.Builder builder = VesselReply.newBuilder();
     IntStream.range(1, 5)
         .forEach(
@@ -1629,7 +1629,7 @@ class LoadableStudyServiceTest {
               builder.addVesselTanks(detailBuilder.build());
             });
     builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-    return builder.build();
+    return builder;
   }
 
   private List<OnHandQuantity> prepareOnHandQuantities() {
@@ -1745,8 +1745,14 @@ class LoadableStudyServiceTest {
 
   @Test
   void testGetLoadablePatternDetails() {
+    Optional<LoadableStudy> optional = Optional.of(new LoadableStudy());
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    optional.get().setVesselXId(1L);
+    Mockito.doReturn(this.createVesselReply().build())
+        .when(spyService)
+        .getVesselTanks(any(VesselRequest.class));
     when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
-        .thenReturn(Optional.of(new LoadableStudy()));
+        .thenReturn(optional);
     when(this.loadablePatternComingleDetailsRepository.findByLoadablePatternDetailsIdAndIsActive(
             anyLong(), anyBoolean()))
         .thenReturn(Optional.of(new LoadablePatternComingleDetails()));
@@ -1757,12 +1763,41 @@ class LoadableStudyServiceTest {
             any(LoadablePattern.class), anyBoolean()))
         .thenReturn(prepareLoadablePatternDetails());
     StreamRecorder<LoadablePatternReply> responseObserver = StreamRecorder.create();
-    this.loadableStudyService.getLoadablePatternDetails(
-        this.createGetLoadablePatternDetails(), responseObserver);
+    spyService.getLoadablePatternDetails(this.createGetLoadablePatternDetails(), responseObserver);
     List<LoadablePatternReply> results = responseObserver.getValues();
     assertEquals(1, results.size());
     assertNull(responseObserver.getError());
     assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadablePatternDetailsInvalidTankDetails() {
+    Optional<LoadableStudy> optional = Optional.of(new LoadableStudy());
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    optional.get().setVesselXId(1L);
+    Mockito.doReturn(
+            this.createVesselReply()
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build())
+                .build())
+        .when(spyService)
+        .getVesselTanks(any(VesselRequest.class));
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(optional);
+    when(this.loadablePatternComingleDetailsRepository.findByLoadablePatternDetailsIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadablePatternComingleDetails()));
+    when(this.loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
+            any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(prepareLoadablePatterns());
+    when(this.loadablePatternDetailsRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(prepareLoadablePatternDetails());
+    StreamRecorder<LoadablePatternReply> responseObserver = StreamRecorder.create();
+    spyService.getLoadablePatternDetails(this.createGetLoadablePatternDetails(), responseObserver);
+    List<LoadablePatternReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
   }
 
   @Test

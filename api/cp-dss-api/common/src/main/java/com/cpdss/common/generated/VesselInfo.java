@@ -29074,6 +29074,13 @@ public final class VesselInfo {
      * @return The bytes for distance.
      */
     com.google.protobuf.ByteString getDistanceBytes();
+
+    /**
+     * <code>int64 id = 6;</code>
+     *
+     * @return The id.
+     */
+    long getId();
   }
   /** Protobuf type {@code StationValues} */
   public static final class StationValues extends com.google.protobuf.GeneratedMessageV3
@@ -29156,6 +29163,11 @@ public final class VesselInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 distance_ = s;
+                break;
+              }
+            case 48:
+              {
+                id_ = input.readInt64();
                 break;
               }
             default:
@@ -29365,6 +29377,17 @@ public final class VesselInfo {
       }
     }
 
+    public static final int ID_FIELD_NUMBER = 6;
+    private long id_;
+    /**
+     * <code>int64 id = 6;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -29394,6 +29417,9 @@ public final class VesselInfo {
       if (!getDistanceBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, distance_);
       }
+      if (id_ != 0L) {
+        output.writeInt64(6, id_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -29418,6 +29444,9 @@ public final class VesselInfo {
       if (!getDistanceBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, distance_);
       }
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(6, id_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -29439,6 +29468,7 @@ public final class VesselInfo {
       if (!getFrameNumberFrom().equals(other.getFrameNumberFrom())) return false;
       if (!getFrameNumberTo().equals(other.getFrameNumberTo())) return false;
       if (!getDistance().equals(other.getDistance())) return false;
+      if (getId() != other.getId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -29460,6 +29490,8 @@ public final class VesselInfo {
       hash = (53 * hash) + getFrameNumberTo().hashCode();
       hash = (37 * hash) + DISTANCE_FIELD_NUMBER;
       hash = (53 * hash) + getDistance().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -29609,6 +29641,8 @@ public final class VesselInfo {
 
         distance_ = "";
 
+        id_ = 0L;
+
         return this;
       }
 
@@ -29640,6 +29674,7 @@ public final class VesselInfo {
         result.frameNumberFrom_ = frameNumberFrom_;
         result.frameNumberTo_ = frameNumberTo_;
         result.distance_ = distance_;
+        result.id_ = id_;
         onBuilt();
         return result;
       }
@@ -29711,6 +29746,9 @@ public final class VesselInfo {
         if (!other.getDistance().isEmpty()) {
           distance_ = other.distance_;
           onChanged();
+        }
+        if (other.getId() != 0L) {
+          setId(other.getId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -30122,6 +30160,39 @@ public final class VesselInfo {
         return this;
       }
 
+      private long id_;
+      /**
+       * <code>int64 id = 6;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 6;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -30252,17 +30323,17 @@ public final class VesselInfo {
     com.google.protobuf.ByteString getForeC2Bytes();
 
     /**
-     * <code>string foreBallstTanks = 7;</code>
+     * <code>string foreBallastTanks = 7;</code>
      *
-     * @return The foreBallstTanks.
+     * @return The foreBallastTanks.
      */
-    java.lang.String getForeBallstTanks();
+    java.lang.String getForeBallastTanks();
     /**
-     * <code>string foreBallstTanks = 7;</code>
+     * <code>string foreBallastTanks = 7;</code>
      *
-     * @return The bytes for foreBallstTanks.
+     * @return The bytes for foreBallastTanks.
      */
-    com.google.protobuf.ByteString getForeBallstTanksBytes();
+    com.google.protobuf.ByteString getForeBallastTanksBytes();
 
     /**
      * <code>string foreC3 = 8;</code>
@@ -30328,6 +30399,150 @@ public final class VesselInfo {
      * @return The bytes for foreMinAllowence.
      */
     com.google.protobuf.ByteString getForeMinAllowenceBytes();
+
+    /**
+     * <code>int64 id = 13;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string aftAlpha = 14;</code>
+     *
+     * @return The aftAlpha.
+     */
+    java.lang.String getAftAlpha();
+    /**
+     * <code>string aftAlpha = 14;</code>
+     *
+     * @return The bytes for aftAlpha.
+     */
+    com.google.protobuf.ByteString getAftAlphaBytes();
+
+    /**
+     * <code>int64 aftCenterCargoTankId = 15;</code>
+     *
+     * @return The aftCenterCargoTankId.
+     */
+    long getAftCenterCargoTankId();
+
+    /**
+     * <code>string aftC1 = 16;</code>
+     *
+     * @return The aftC1.
+     */
+    java.lang.String getAftC1();
+    /**
+     * <code>string aftC1 = 16;</code>
+     *
+     * @return The bytes for aftC1.
+     */
+    com.google.protobuf.ByteString getAftC1Bytes();
+
+    /**
+     * <code>string aftWingTankIds = 17;</code>
+     *
+     * @return The aftWingTankIds.
+     */
+    java.lang.String getAftWingTankIds();
+    /**
+     * <code>string aftWingTankIds = 17;</code>
+     *
+     * @return The bytes for aftWingTankIds.
+     */
+    com.google.protobuf.ByteString getAftWingTankIdsBytes();
+
+    /**
+     * <code>string aftC2 = 18;</code>
+     *
+     * @return The aftC2.
+     */
+    java.lang.String getAftC2();
+    /**
+     * <code>string aftC2 = 18;</code>
+     *
+     * @return The bytes for aftC2.
+     */
+    com.google.protobuf.ByteString getAftC2Bytes();
+
+    /**
+     * <code>string aftBallastTanks = 19;</code>
+     *
+     * @return The aftBallastTanks.
+     */
+    java.lang.String getAftBallastTanks();
+    /**
+     * <code>string aftBallastTanks = 19;</code>
+     *
+     * @return The bytes for aftBallastTanks.
+     */
+    com.google.protobuf.ByteString getAftBallastTanksBytes();
+
+    /**
+     * <code>string aftC3 = 20;</code>
+     *
+     * @return The aftC3.
+     */
+    java.lang.String getAftC3();
+    /**
+     * <code>string aftC3 = 20;</code>
+     *
+     * @return The bytes for aftC3.
+     */
+    com.google.protobuf.ByteString getAftC3Bytes();
+
+    /**
+     * <code>string aftBWCorrection = 21;</code>
+     *
+     * @return The aftBWCorrection.
+     */
+    java.lang.String getAftBWCorrection();
+    /**
+     * <code>string aftBWCorrection = 21;</code>
+     *
+     * @return The bytes for aftBWCorrection.
+     */
+    com.google.protobuf.ByteString getAftBWCorrectionBytes();
+
+    /**
+     * <code>string aftC4 = 22;</code>
+     *
+     * @return The aftC4.
+     */
+    java.lang.String getAftC4();
+    /**
+     * <code>string aftC4 = 22;</code>
+     *
+     * @return The bytes for aftC4.
+     */
+    com.google.protobuf.ByteString getAftC4Bytes();
+
+    /**
+     * <code>string aftMaxFlAllowence = 23;</code>
+     *
+     * @return The aftMaxFlAllowence.
+     */
+    java.lang.String getAftMaxFlAllowence();
+    /**
+     * <code>string aftMaxFlAllowence = 23;</code>
+     *
+     * @return The bytes for aftMaxFlAllowence.
+     */
+    com.google.protobuf.ByteString getAftMaxFlAllowenceBytes();
+
+    /**
+     * <code>string aftMinFlAllowence = 24;</code>
+     *
+     * @return The aftMinFlAllowence.
+     */
+    java.lang.String getAftMinFlAllowence();
+    /**
+     * <code>string aftMinFlAllowence = 24;</code>
+     *
+     * @return The bytes for aftMinFlAllowence.
+     */
+    com.google.protobuf.ByteString getAftMinFlAllowenceBytes();
   }
   /** Protobuf type {@code InnerBulkHeadSF} */
   public static final class InnerBulkHeadSF extends com.google.protobuf.GeneratedMessageV3
@@ -30346,12 +30561,22 @@ public final class VesselInfo {
       foreC1_ = "";
       foreWingTankIds_ = "";
       foreC2_ = "";
-      foreBallstTanks_ = "";
+      foreBallastTanks_ = "";
       foreC3_ = "";
       foreBWCorrection_ = "";
       foreC4_ = "";
       foreMaxAllowence_ = "";
       foreMinAllowence_ = "";
+      aftAlpha_ = "";
+      aftC1_ = "";
+      aftWingTankIds_ = "";
+      aftC2_ = "";
+      aftBallastTanks_ = "";
+      aftC3_ = "";
+      aftBWCorrection_ = "";
+      aftC4_ = "";
+      aftMaxFlAllowence_ = "";
+      aftMinFlAllowence_ = "";
     }
 
     @java.lang.Override
@@ -30427,7 +30652,7 @@ public final class VesselInfo {
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                foreBallstTanks_ = s;
+                foreBallastTanks_ = s;
                 break;
               }
             case 66:
@@ -30463,6 +30688,86 @@ public final class VesselInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 foreMinAllowence_ = s;
+                break;
+              }
+            case 104:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 114:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                aftAlpha_ = s;
+                break;
+              }
+            case 120:
+              {
+                aftCenterCargoTankId_ = input.readInt64();
+                break;
+              }
+            case 130:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                aftC1_ = s;
+                break;
+              }
+            case 138:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                aftWingTankIds_ = s;
+                break;
+              }
+            case 146:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                aftC2_ = s;
+                break;
+              }
+            case 154:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                aftBallastTanks_ = s;
+                break;
+              }
+            case 162:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                aftC3_ = s;
+                break;
+              }
+            case 170:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                aftBWCorrection_ = s;
+                break;
+              }
+            case 178:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                aftC4_ = s;
+                break;
+              }
+            case 186:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                aftMaxFlAllowence_ = s;
+                break;
+              }
+            case 194:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                aftMinFlAllowence_ = s;
                 break;
               }
             default:
@@ -30684,35 +30989,35 @@ public final class VesselInfo {
       }
     }
 
-    public static final int FOREBALLSTTANKS_FIELD_NUMBER = 7;
-    private volatile java.lang.Object foreBallstTanks_;
+    public static final int FOREBALLASTTANKS_FIELD_NUMBER = 7;
+    private volatile java.lang.Object foreBallastTanks_;
     /**
-     * <code>string foreBallstTanks = 7;</code>
+     * <code>string foreBallastTanks = 7;</code>
      *
-     * @return The foreBallstTanks.
+     * @return The foreBallastTanks.
      */
-    public java.lang.String getForeBallstTanks() {
-      java.lang.Object ref = foreBallstTanks_;
+    public java.lang.String getForeBallastTanks() {
+      java.lang.Object ref = foreBallastTanks_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        foreBallstTanks_ = s;
+        foreBallastTanks_ = s;
         return s;
       }
     }
     /**
-     * <code>string foreBallstTanks = 7;</code>
+     * <code>string foreBallastTanks = 7;</code>
      *
-     * @return The bytes for foreBallstTanks.
+     * @return The bytes for foreBallastTanks.
      */
-    public com.google.protobuf.ByteString getForeBallstTanksBytes() {
-      java.lang.Object ref = foreBallstTanks_;
+    public com.google.protobuf.ByteString getForeBallastTanksBytes() {
+      java.lang.Object ref = foreBallastTanks_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        foreBallstTanks_ = b;
+        foreBallastTanks_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -30894,6 +31199,378 @@ public final class VesselInfo {
       }
     }
 
+    public static final int ID_FIELD_NUMBER = 13;
+    private long id_;
+    /**
+     * <code>int64 id = 13;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int AFTALPHA_FIELD_NUMBER = 14;
+    private volatile java.lang.Object aftAlpha_;
+    /**
+     * <code>string aftAlpha = 14;</code>
+     *
+     * @return The aftAlpha.
+     */
+    public java.lang.String getAftAlpha() {
+      java.lang.Object ref = aftAlpha_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        aftAlpha_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string aftAlpha = 14;</code>
+     *
+     * @return The bytes for aftAlpha.
+     */
+    public com.google.protobuf.ByteString getAftAlphaBytes() {
+      java.lang.Object ref = aftAlpha_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        aftAlpha_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int AFTCENTERCARGOTANKID_FIELD_NUMBER = 15;
+    private long aftCenterCargoTankId_;
+    /**
+     * <code>int64 aftCenterCargoTankId = 15;</code>
+     *
+     * @return The aftCenterCargoTankId.
+     */
+    public long getAftCenterCargoTankId() {
+      return aftCenterCargoTankId_;
+    }
+
+    public static final int AFTC1_FIELD_NUMBER = 16;
+    private volatile java.lang.Object aftC1_;
+    /**
+     * <code>string aftC1 = 16;</code>
+     *
+     * @return The aftC1.
+     */
+    public java.lang.String getAftC1() {
+      java.lang.Object ref = aftC1_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        aftC1_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string aftC1 = 16;</code>
+     *
+     * @return The bytes for aftC1.
+     */
+    public com.google.protobuf.ByteString getAftC1Bytes() {
+      java.lang.Object ref = aftC1_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        aftC1_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int AFTWINGTANKIDS_FIELD_NUMBER = 17;
+    private volatile java.lang.Object aftWingTankIds_;
+    /**
+     * <code>string aftWingTankIds = 17;</code>
+     *
+     * @return The aftWingTankIds.
+     */
+    public java.lang.String getAftWingTankIds() {
+      java.lang.Object ref = aftWingTankIds_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        aftWingTankIds_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string aftWingTankIds = 17;</code>
+     *
+     * @return The bytes for aftWingTankIds.
+     */
+    public com.google.protobuf.ByteString getAftWingTankIdsBytes() {
+      java.lang.Object ref = aftWingTankIds_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        aftWingTankIds_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int AFTC2_FIELD_NUMBER = 18;
+    private volatile java.lang.Object aftC2_;
+    /**
+     * <code>string aftC2 = 18;</code>
+     *
+     * @return The aftC2.
+     */
+    public java.lang.String getAftC2() {
+      java.lang.Object ref = aftC2_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        aftC2_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string aftC2 = 18;</code>
+     *
+     * @return The bytes for aftC2.
+     */
+    public com.google.protobuf.ByteString getAftC2Bytes() {
+      java.lang.Object ref = aftC2_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        aftC2_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int AFTBALLASTTANKS_FIELD_NUMBER = 19;
+    private volatile java.lang.Object aftBallastTanks_;
+    /**
+     * <code>string aftBallastTanks = 19;</code>
+     *
+     * @return The aftBallastTanks.
+     */
+    public java.lang.String getAftBallastTanks() {
+      java.lang.Object ref = aftBallastTanks_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        aftBallastTanks_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string aftBallastTanks = 19;</code>
+     *
+     * @return The bytes for aftBallastTanks.
+     */
+    public com.google.protobuf.ByteString getAftBallastTanksBytes() {
+      java.lang.Object ref = aftBallastTanks_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        aftBallastTanks_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int AFTC3_FIELD_NUMBER = 20;
+    private volatile java.lang.Object aftC3_;
+    /**
+     * <code>string aftC3 = 20;</code>
+     *
+     * @return The aftC3.
+     */
+    public java.lang.String getAftC3() {
+      java.lang.Object ref = aftC3_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        aftC3_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string aftC3 = 20;</code>
+     *
+     * @return The bytes for aftC3.
+     */
+    public com.google.protobuf.ByteString getAftC3Bytes() {
+      java.lang.Object ref = aftC3_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        aftC3_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int AFTBWCORRECTION_FIELD_NUMBER = 21;
+    private volatile java.lang.Object aftBWCorrection_;
+    /**
+     * <code>string aftBWCorrection = 21;</code>
+     *
+     * @return The aftBWCorrection.
+     */
+    public java.lang.String getAftBWCorrection() {
+      java.lang.Object ref = aftBWCorrection_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        aftBWCorrection_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string aftBWCorrection = 21;</code>
+     *
+     * @return The bytes for aftBWCorrection.
+     */
+    public com.google.protobuf.ByteString getAftBWCorrectionBytes() {
+      java.lang.Object ref = aftBWCorrection_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        aftBWCorrection_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int AFTC4_FIELD_NUMBER = 22;
+    private volatile java.lang.Object aftC4_;
+    /**
+     * <code>string aftC4 = 22;</code>
+     *
+     * @return The aftC4.
+     */
+    public java.lang.String getAftC4() {
+      java.lang.Object ref = aftC4_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        aftC4_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string aftC4 = 22;</code>
+     *
+     * @return The bytes for aftC4.
+     */
+    public com.google.protobuf.ByteString getAftC4Bytes() {
+      java.lang.Object ref = aftC4_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        aftC4_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int AFTMAXFLALLOWENCE_FIELD_NUMBER = 23;
+    private volatile java.lang.Object aftMaxFlAllowence_;
+    /**
+     * <code>string aftMaxFlAllowence = 23;</code>
+     *
+     * @return The aftMaxFlAllowence.
+     */
+    public java.lang.String getAftMaxFlAllowence() {
+      java.lang.Object ref = aftMaxFlAllowence_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        aftMaxFlAllowence_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string aftMaxFlAllowence = 23;</code>
+     *
+     * @return The bytes for aftMaxFlAllowence.
+     */
+    public com.google.protobuf.ByteString getAftMaxFlAllowenceBytes() {
+      java.lang.Object ref = aftMaxFlAllowence_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        aftMaxFlAllowence_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int AFTMINFLALLOWENCE_FIELD_NUMBER = 24;
+    private volatile java.lang.Object aftMinFlAllowence_;
+    /**
+     * <code>string aftMinFlAllowence = 24;</code>
+     *
+     * @return The aftMinFlAllowence.
+     */
+    public java.lang.String getAftMinFlAllowence() {
+      java.lang.Object ref = aftMinFlAllowence_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        aftMinFlAllowence_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string aftMinFlAllowence = 24;</code>
+     *
+     * @return The bytes for aftMinFlAllowence.
+     */
+    public com.google.protobuf.ByteString getAftMinFlAllowenceBytes() {
+      java.lang.Object ref = aftMinFlAllowence_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        aftMinFlAllowence_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -30926,8 +31603,8 @@ public final class VesselInfo {
       if (!getForeC2Bytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 6, foreC2_);
       }
-      if (!getForeBallstTanksBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, foreBallstTanks_);
+      if (!getForeBallastTanksBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, foreBallastTanks_);
       }
       if (!getForeC3Bytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 8, foreC3_);
@@ -30943,6 +31620,42 @@ public final class VesselInfo {
       }
       if (!getForeMinAllowenceBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 12, foreMinAllowence_);
+      }
+      if (id_ != 0L) {
+        output.writeInt64(13, id_);
+      }
+      if (!getAftAlphaBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 14, aftAlpha_);
+      }
+      if (aftCenterCargoTankId_ != 0L) {
+        output.writeInt64(15, aftCenterCargoTankId_);
+      }
+      if (!getAftC1Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 16, aftC1_);
+      }
+      if (!getAftWingTankIdsBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 17, aftWingTankIds_);
+      }
+      if (!getAftC2Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 18, aftC2_);
+      }
+      if (!getAftBallastTanksBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 19, aftBallastTanks_);
+      }
+      if (!getAftC3Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 20, aftC3_);
+      }
+      if (!getAftBWCorrectionBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 21, aftBWCorrection_);
+      }
+      if (!getAftC4Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 22, aftC4_);
+      }
+      if (!getAftMaxFlAllowenceBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 23, aftMaxFlAllowence_);
+      }
+      if (!getAftMinFlAllowenceBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 24, aftMinFlAllowence_);
       }
       unknownFields.writeTo(output);
     }
@@ -30971,8 +31684,8 @@ public final class VesselInfo {
       if (!getForeC2Bytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, foreC2_);
       }
-      if (!getForeBallstTanksBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, foreBallstTanks_);
+      if (!getForeBallastTanksBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, foreBallastTanks_);
       }
       if (!getForeC3Bytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, foreC3_);
@@ -30988,6 +31701,42 @@ public final class VesselInfo {
       }
       if (!getForeMinAllowenceBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, foreMinAllowence_);
+      }
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(13, id_);
+      }
+      if (!getAftAlphaBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, aftAlpha_);
+      }
+      if (aftCenterCargoTankId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(15, aftCenterCargoTankId_);
+      }
+      if (!getAftC1Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(16, aftC1_);
+      }
+      if (!getAftWingTankIdsBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(17, aftWingTankIds_);
+      }
+      if (!getAftC2Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(18, aftC2_);
+      }
+      if (!getAftBallastTanksBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(19, aftBallastTanks_);
+      }
+      if (!getAftC3Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(20, aftC3_);
+      }
+      if (!getAftBWCorrectionBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(21, aftBWCorrection_);
+      }
+      if (!getAftC4Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(22, aftC4_);
+      }
+      if (!getAftMaxFlAllowenceBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(23, aftMaxFlAllowence_);
+      }
+      if (!getAftMinFlAllowenceBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(24, aftMinFlAllowence_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -31011,12 +31760,24 @@ public final class VesselInfo {
       if (!getForeC1().equals(other.getForeC1())) return false;
       if (!getForeWingTankIds().equals(other.getForeWingTankIds())) return false;
       if (!getForeC2().equals(other.getForeC2())) return false;
-      if (!getForeBallstTanks().equals(other.getForeBallstTanks())) return false;
+      if (!getForeBallastTanks().equals(other.getForeBallastTanks())) return false;
       if (!getForeC3().equals(other.getForeC3())) return false;
       if (!getForeBWCorrection().equals(other.getForeBWCorrection())) return false;
       if (!getForeC4().equals(other.getForeC4())) return false;
       if (!getForeMaxAllowence().equals(other.getForeMaxAllowence())) return false;
       if (!getForeMinAllowence().equals(other.getForeMinAllowence())) return false;
+      if (getId() != other.getId()) return false;
+      if (!getAftAlpha().equals(other.getAftAlpha())) return false;
+      if (getAftCenterCargoTankId() != other.getAftCenterCargoTankId()) return false;
+      if (!getAftC1().equals(other.getAftC1())) return false;
+      if (!getAftWingTankIds().equals(other.getAftWingTankIds())) return false;
+      if (!getAftC2().equals(other.getAftC2())) return false;
+      if (!getAftBallastTanks().equals(other.getAftBallastTanks())) return false;
+      if (!getAftC3().equals(other.getAftC3())) return false;
+      if (!getAftBWCorrection().equals(other.getAftBWCorrection())) return false;
+      if (!getAftC4().equals(other.getAftC4())) return false;
+      if (!getAftMaxFlAllowence().equals(other.getAftMaxFlAllowence())) return false;
+      if (!getAftMinFlAllowence().equals(other.getAftMinFlAllowence())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -31040,8 +31801,8 @@ public final class VesselInfo {
       hash = (53 * hash) + getForeWingTankIds().hashCode();
       hash = (37 * hash) + FOREC2_FIELD_NUMBER;
       hash = (53 * hash) + getForeC2().hashCode();
-      hash = (37 * hash) + FOREBALLSTTANKS_FIELD_NUMBER;
-      hash = (53 * hash) + getForeBallstTanks().hashCode();
+      hash = (37 * hash) + FOREBALLASTTANKS_FIELD_NUMBER;
+      hash = (53 * hash) + getForeBallastTanks().hashCode();
       hash = (37 * hash) + FOREC3_FIELD_NUMBER;
       hash = (53 * hash) + getForeC3().hashCode();
       hash = (37 * hash) + FOREBWCORRECTION_FIELD_NUMBER;
@@ -31052,6 +31813,30 @@ public final class VesselInfo {
       hash = (53 * hash) + getForeMaxAllowence().hashCode();
       hash = (37 * hash) + FOREMINALLOWENCE_FIELD_NUMBER;
       hash = (53 * hash) + getForeMinAllowence().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + AFTALPHA_FIELD_NUMBER;
+      hash = (53 * hash) + getAftAlpha().hashCode();
+      hash = (37 * hash) + AFTCENTERCARGOTANKID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getAftCenterCargoTankId());
+      hash = (37 * hash) + AFTC1_FIELD_NUMBER;
+      hash = (53 * hash) + getAftC1().hashCode();
+      hash = (37 * hash) + AFTWINGTANKIDS_FIELD_NUMBER;
+      hash = (53 * hash) + getAftWingTankIds().hashCode();
+      hash = (37 * hash) + AFTC2_FIELD_NUMBER;
+      hash = (53 * hash) + getAftC2().hashCode();
+      hash = (37 * hash) + AFTBALLASTTANKS_FIELD_NUMBER;
+      hash = (53 * hash) + getAftBallastTanks().hashCode();
+      hash = (37 * hash) + AFTC3_FIELD_NUMBER;
+      hash = (53 * hash) + getAftC3().hashCode();
+      hash = (37 * hash) + AFTBWCORRECTION_FIELD_NUMBER;
+      hash = (53 * hash) + getAftBWCorrection().hashCode();
+      hash = (37 * hash) + AFTC4_FIELD_NUMBER;
+      hash = (53 * hash) + getAftC4().hashCode();
+      hash = (37 * hash) + AFTMAXFLALLOWENCE_FIELD_NUMBER;
+      hash = (53 * hash) + getAftMaxFlAllowence().hashCode();
+      hash = (37 * hash) + AFTMINFLALLOWENCE_FIELD_NUMBER;
+      hash = (53 * hash) + getAftMinFlAllowence().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -31203,7 +31988,7 @@ public final class VesselInfo {
 
         foreC2_ = "";
 
-        foreBallstTanks_ = "";
+        foreBallastTanks_ = "";
 
         foreC3_ = "";
 
@@ -31214,6 +31999,30 @@ public final class VesselInfo {
         foreMaxAllowence_ = "";
 
         foreMinAllowence_ = "";
+
+        id_ = 0L;
+
+        aftAlpha_ = "";
+
+        aftCenterCargoTankId_ = 0L;
+
+        aftC1_ = "";
+
+        aftWingTankIds_ = "";
+
+        aftC2_ = "";
+
+        aftBallastTanks_ = "";
+
+        aftC3_ = "";
+
+        aftBWCorrection_ = "";
+
+        aftC4_ = "";
+
+        aftMaxFlAllowence_ = "";
+
+        aftMinFlAllowence_ = "";
 
         return this;
       }
@@ -31247,12 +32056,24 @@ public final class VesselInfo {
         result.foreC1_ = foreC1_;
         result.foreWingTankIds_ = foreWingTankIds_;
         result.foreC2_ = foreC2_;
-        result.foreBallstTanks_ = foreBallstTanks_;
+        result.foreBallastTanks_ = foreBallastTanks_;
         result.foreC3_ = foreC3_;
         result.foreBWCorrection_ = foreBWCorrection_;
         result.foreC4_ = foreC4_;
         result.foreMaxAllowence_ = foreMaxAllowence_;
         result.foreMinAllowence_ = foreMinAllowence_;
+        result.id_ = id_;
+        result.aftAlpha_ = aftAlpha_;
+        result.aftCenterCargoTankId_ = aftCenterCargoTankId_;
+        result.aftC1_ = aftC1_;
+        result.aftWingTankIds_ = aftWingTankIds_;
+        result.aftC2_ = aftC2_;
+        result.aftBallastTanks_ = aftBallastTanks_;
+        result.aftC3_ = aftC3_;
+        result.aftBWCorrection_ = aftBWCorrection_;
+        result.aftC4_ = aftC4_;
+        result.aftMaxFlAllowence_ = aftMaxFlAllowence_;
+        result.aftMinFlAllowence_ = aftMinFlAllowence_;
         onBuilt();
         return result;
       }
@@ -31328,8 +32149,8 @@ public final class VesselInfo {
           foreC2_ = other.foreC2_;
           onChanged();
         }
-        if (!other.getForeBallstTanks().isEmpty()) {
-          foreBallstTanks_ = other.foreBallstTanks_;
+        if (!other.getForeBallastTanks().isEmpty()) {
+          foreBallastTanks_ = other.foreBallastTanks_;
           onChanged();
         }
         if (!other.getForeC3().isEmpty()) {
@@ -31350,6 +32171,52 @@ public final class VesselInfo {
         }
         if (!other.getForeMinAllowence().isEmpty()) {
           foreMinAllowence_ = other.foreMinAllowence_;
+          onChanged();
+        }
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getAftAlpha().isEmpty()) {
+          aftAlpha_ = other.aftAlpha_;
+          onChanged();
+        }
+        if (other.getAftCenterCargoTankId() != 0L) {
+          setAftCenterCargoTankId(other.getAftCenterCargoTankId());
+        }
+        if (!other.getAftC1().isEmpty()) {
+          aftC1_ = other.aftC1_;
+          onChanged();
+        }
+        if (!other.getAftWingTankIds().isEmpty()) {
+          aftWingTankIds_ = other.aftWingTankIds_;
+          onChanged();
+        }
+        if (!other.getAftC2().isEmpty()) {
+          aftC2_ = other.aftC2_;
+          onChanged();
+        }
+        if (!other.getAftBallastTanks().isEmpty()) {
+          aftBallastTanks_ = other.aftBallastTanks_;
+          onChanged();
+        }
+        if (!other.getAftC3().isEmpty()) {
+          aftC3_ = other.aftC3_;
+          onChanged();
+        }
+        if (!other.getAftBWCorrection().isEmpty()) {
+          aftBWCorrection_ = other.aftBWCorrection_;
+          onChanged();
+        }
+        if (!other.getAftC4().isEmpty()) {
+          aftC4_ = other.aftC4_;
+          onChanged();
+        }
+        if (!other.getAftMaxFlAllowence().isEmpty()) {
+          aftMaxFlAllowence_ = other.aftMaxFlAllowence_;
+          onChanged();
+        }
+        if (!other.getAftMinFlAllowence().isEmpty()) {
+          aftMinFlAllowence_ = other.aftMinFlAllowence_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -31795,78 +32662,78 @@ public final class VesselInfo {
         return this;
       }
 
-      private java.lang.Object foreBallstTanks_ = "";
+      private java.lang.Object foreBallastTanks_ = "";
       /**
-       * <code>string foreBallstTanks = 7;</code>
+       * <code>string foreBallastTanks = 7;</code>
        *
-       * @return The foreBallstTanks.
+       * @return The foreBallastTanks.
        */
-      public java.lang.String getForeBallstTanks() {
-        java.lang.Object ref = foreBallstTanks_;
+      public java.lang.String getForeBallastTanks() {
+        java.lang.Object ref = foreBallastTanks_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          foreBallstTanks_ = s;
+          foreBallastTanks_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string foreBallstTanks = 7;</code>
+       * <code>string foreBallastTanks = 7;</code>
        *
-       * @return The bytes for foreBallstTanks.
+       * @return The bytes for foreBallastTanks.
        */
-      public com.google.protobuf.ByteString getForeBallstTanksBytes() {
-        java.lang.Object ref = foreBallstTanks_;
+      public com.google.protobuf.ByteString getForeBallastTanksBytes() {
+        java.lang.Object ref = foreBallastTanks_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          foreBallstTanks_ = b;
+          foreBallastTanks_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string foreBallstTanks = 7;</code>
+       * <code>string foreBallastTanks = 7;</code>
        *
-       * @param value The foreBallstTanks to set.
+       * @param value The foreBallastTanks to set.
        * @return This builder for chaining.
        */
-      public Builder setForeBallstTanks(java.lang.String value) {
+      public Builder setForeBallastTanks(java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
 
-        foreBallstTanks_ = value;
+        foreBallastTanks_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string foreBallstTanks = 7;</code>
+       * <code>string foreBallastTanks = 7;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearForeBallstTanks() {
+      public Builder clearForeBallastTanks() {
 
-        foreBallstTanks_ = getDefaultInstance().getForeBallstTanks();
+        foreBallastTanks_ = getDefaultInstance().getForeBallastTanks();
         onChanged();
         return this;
       }
       /**
-       * <code>string foreBallstTanks = 7;</code>
+       * <code>string foreBallastTanks = 7;</code>
        *
-       * @param value The bytes for foreBallstTanks to set.
+       * @param value The bytes for foreBallastTanks to set.
        * @return This builder for chaining.
        */
-      public Builder setForeBallstTanksBytes(com.google.protobuf.ByteString value) {
+      public Builder setForeBallastTanksBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
 
-        foreBallstTanks_ = value;
+        foreBallastTanks_ = value;
         onChanged();
         return this;
       }
@@ -32251,6 +33118,832 @@ public final class VesselInfo {
         return this;
       }
 
+      private long id_;
+      /**
+       * <code>int64 id = 13;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 13;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 13;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object aftAlpha_ = "";
+      /**
+       * <code>string aftAlpha = 14;</code>
+       *
+       * @return The aftAlpha.
+       */
+      public java.lang.String getAftAlpha() {
+        java.lang.Object ref = aftAlpha_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          aftAlpha_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string aftAlpha = 14;</code>
+       *
+       * @return The bytes for aftAlpha.
+       */
+      public com.google.protobuf.ByteString getAftAlphaBytes() {
+        java.lang.Object ref = aftAlpha_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          aftAlpha_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string aftAlpha = 14;</code>
+       *
+       * @param value The aftAlpha to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftAlpha(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        aftAlpha_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftAlpha = 14;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAftAlpha() {
+
+        aftAlpha_ = getDefaultInstance().getAftAlpha();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftAlpha = 14;</code>
+       *
+       * @param value The bytes for aftAlpha to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftAlphaBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        aftAlpha_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long aftCenterCargoTankId_;
+      /**
+       * <code>int64 aftCenterCargoTankId = 15;</code>
+       *
+       * @return The aftCenterCargoTankId.
+       */
+      public long getAftCenterCargoTankId() {
+        return aftCenterCargoTankId_;
+      }
+      /**
+       * <code>int64 aftCenterCargoTankId = 15;</code>
+       *
+       * @param value The aftCenterCargoTankId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftCenterCargoTankId(long value) {
+
+        aftCenterCargoTankId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 aftCenterCargoTankId = 15;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAftCenterCargoTankId() {
+
+        aftCenterCargoTankId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object aftC1_ = "";
+      /**
+       * <code>string aftC1 = 16;</code>
+       *
+       * @return The aftC1.
+       */
+      public java.lang.String getAftC1() {
+        java.lang.Object ref = aftC1_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          aftC1_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string aftC1 = 16;</code>
+       *
+       * @return The bytes for aftC1.
+       */
+      public com.google.protobuf.ByteString getAftC1Bytes() {
+        java.lang.Object ref = aftC1_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          aftC1_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string aftC1 = 16;</code>
+       *
+       * @param value The aftC1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftC1(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        aftC1_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftC1 = 16;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAftC1() {
+
+        aftC1_ = getDefaultInstance().getAftC1();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftC1 = 16;</code>
+       *
+       * @param value The bytes for aftC1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftC1Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        aftC1_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object aftWingTankIds_ = "";
+      /**
+       * <code>string aftWingTankIds = 17;</code>
+       *
+       * @return The aftWingTankIds.
+       */
+      public java.lang.String getAftWingTankIds() {
+        java.lang.Object ref = aftWingTankIds_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          aftWingTankIds_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string aftWingTankIds = 17;</code>
+       *
+       * @return The bytes for aftWingTankIds.
+       */
+      public com.google.protobuf.ByteString getAftWingTankIdsBytes() {
+        java.lang.Object ref = aftWingTankIds_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          aftWingTankIds_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string aftWingTankIds = 17;</code>
+       *
+       * @param value The aftWingTankIds to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftWingTankIds(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        aftWingTankIds_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftWingTankIds = 17;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAftWingTankIds() {
+
+        aftWingTankIds_ = getDefaultInstance().getAftWingTankIds();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftWingTankIds = 17;</code>
+       *
+       * @param value The bytes for aftWingTankIds to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftWingTankIdsBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        aftWingTankIds_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object aftC2_ = "";
+      /**
+       * <code>string aftC2 = 18;</code>
+       *
+       * @return The aftC2.
+       */
+      public java.lang.String getAftC2() {
+        java.lang.Object ref = aftC2_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          aftC2_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string aftC2 = 18;</code>
+       *
+       * @return The bytes for aftC2.
+       */
+      public com.google.protobuf.ByteString getAftC2Bytes() {
+        java.lang.Object ref = aftC2_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          aftC2_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string aftC2 = 18;</code>
+       *
+       * @param value The aftC2 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftC2(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        aftC2_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftC2 = 18;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAftC2() {
+
+        aftC2_ = getDefaultInstance().getAftC2();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftC2 = 18;</code>
+       *
+       * @param value The bytes for aftC2 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftC2Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        aftC2_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object aftBallastTanks_ = "";
+      /**
+       * <code>string aftBallastTanks = 19;</code>
+       *
+       * @return The aftBallastTanks.
+       */
+      public java.lang.String getAftBallastTanks() {
+        java.lang.Object ref = aftBallastTanks_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          aftBallastTanks_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string aftBallastTanks = 19;</code>
+       *
+       * @return The bytes for aftBallastTanks.
+       */
+      public com.google.protobuf.ByteString getAftBallastTanksBytes() {
+        java.lang.Object ref = aftBallastTanks_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          aftBallastTanks_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string aftBallastTanks = 19;</code>
+       *
+       * @param value The aftBallastTanks to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftBallastTanks(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        aftBallastTanks_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftBallastTanks = 19;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAftBallastTanks() {
+
+        aftBallastTanks_ = getDefaultInstance().getAftBallastTanks();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftBallastTanks = 19;</code>
+       *
+       * @param value The bytes for aftBallastTanks to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftBallastTanksBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        aftBallastTanks_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object aftC3_ = "";
+      /**
+       * <code>string aftC3 = 20;</code>
+       *
+       * @return The aftC3.
+       */
+      public java.lang.String getAftC3() {
+        java.lang.Object ref = aftC3_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          aftC3_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string aftC3 = 20;</code>
+       *
+       * @return The bytes for aftC3.
+       */
+      public com.google.protobuf.ByteString getAftC3Bytes() {
+        java.lang.Object ref = aftC3_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          aftC3_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string aftC3 = 20;</code>
+       *
+       * @param value The aftC3 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftC3(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        aftC3_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftC3 = 20;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAftC3() {
+
+        aftC3_ = getDefaultInstance().getAftC3();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftC3 = 20;</code>
+       *
+       * @param value The bytes for aftC3 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftC3Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        aftC3_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object aftBWCorrection_ = "";
+      /**
+       * <code>string aftBWCorrection = 21;</code>
+       *
+       * @return The aftBWCorrection.
+       */
+      public java.lang.String getAftBWCorrection() {
+        java.lang.Object ref = aftBWCorrection_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          aftBWCorrection_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string aftBWCorrection = 21;</code>
+       *
+       * @return The bytes for aftBWCorrection.
+       */
+      public com.google.protobuf.ByteString getAftBWCorrectionBytes() {
+        java.lang.Object ref = aftBWCorrection_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          aftBWCorrection_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string aftBWCorrection = 21;</code>
+       *
+       * @param value The aftBWCorrection to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftBWCorrection(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        aftBWCorrection_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftBWCorrection = 21;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAftBWCorrection() {
+
+        aftBWCorrection_ = getDefaultInstance().getAftBWCorrection();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftBWCorrection = 21;</code>
+       *
+       * @param value The bytes for aftBWCorrection to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftBWCorrectionBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        aftBWCorrection_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object aftC4_ = "";
+      /**
+       * <code>string aftC4 = 22;</code>
+       *
+       * @return The aftC4.
+       */
+      public java.lang.String getAftC4() {
+        java.lang.Object ref = aftC4_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          aftC4_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string aftC4 = 22;</code>
+       *
+       * @return The bytes for aftC4.
+       */
+      public com.google.protobuf.ByteString getAftC4Bytes() {
+        java.lang.Object ref = aftC4_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          aftC4_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string aftC4 = 22;</code>
+       *
+       * @param value The aftC4 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftC4(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        aftC4_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftC4 = 22;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAftC4() {
+
+        aftC4_ = getDefaultInstance().getAftC4();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftC4 = 22;</code>
+       *
+       * @param value The bytes for aftC4 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftC4Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        aftC4_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object aftMaxFlAllowence_ = "";
+      /**
+       * <code>string aftMaxFlAllowence = 23;</code>
+       *
+       * @return The aftMaxFlAllowence.
+       */
+      public java.lang.String getAftMaxFlAllowence() {
+        java.lang.Object ref = aftMaxFlAllowence_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          aftMaxFlAllowence_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string aftMaxFlAllowence = 23;</code>
+       *
+       * @return The bytes for aftMaxFlAllowence.
+       */
+      public com.google.protobuf.ByteString getAftMaxFlAllowenceBytes() {
+        java.lang.Object ref = aftMaxFlAllowence_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          aftMaxFlAllowence_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string aftMaxFlAllowence = 23;</code>
+       *
+       * @param value The aftMaxFlAllowence to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftMaxFlAllowence(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        aftMaxFlAllowence_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftMaxFlAllowence = 23;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAftMaxFlAllowence() {
+
+        aftMaxFlAllowence_ = getDefaultInstance().getAftMaxFlAllowence();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftMaxFlAllowence = 23;</code>
+       *
+       * @param value The bytes for aftMaxFlAllowence to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftMaxFlAllowenceBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        aftMaxFlAllowence_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object aftMinFlAllowence_ = "";
+      /**
+       * <code>string aftMinFlAllowence = 24;</code>
+       *
+       * @return The aftMinFlAllowence.
+       */
+      public java.lang.String getAftMinFlAllowence() {
+        java.lang.Object ref = aftMinFlAllowence_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          aftMinFlAllowence_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string aftMinFlAllowence = 24;</code>
+       *
+       * @return The bytes for aftMinFlAllowence.
+       */
+      public com.google.protobuf.ByteString getAftMinFlAllowenceBytes() {
+        java.lang.Object ref = aftMinFlAllowence_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          aftMinFlAllowence_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string aftMinFlAllowence = 24;</code>
+       *
+       * @param value The aftMinFlAllowence to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftMinFlAllowence(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        aftMinFlAllowence_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftMinFlAllowence = 24;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAftMinFlAllowence() {
+
+        aftMinFlAllowence_ = getDefaultInstance().getAftMinFlAllowence();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string aftMinFlAllowence = 24;</code>
+       *
+       * @param value The bytes for aftMinFlAllowence to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAftMinFlAllowenceBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        aftMinFlAllowence_ = value;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -32478,26 +34171,33 @@ public final class VesselInfo {
           + "\005\022\013\n\003lcg\030\003 \001(\t\022\023\n\013frameNumber\030\004 \001(\t\"u\n\026M"
           + "inMaxValuesForBMAndSf\022\n\n\002id\030\001 \001(\003\022\023\n\013fra"
           + "meNumber\030\002 \001(\t\022\r\n\005minBm\030\003 \001(\t\022\r\n\005maxBm\030\004"
-          + " \001(\t\022\r\n\005minSf\030\005 \001(\t\022\r\n\005maxSf\030\006 \001(\t\"y\n\rSt"
-          + "ationValues\022\023\n\013stationFrom\030\001 \001(\t\022\021\n\tstat"
-          + "ionTo\030\002 \001(\t\022\027\n\017frameNumberFrom\030\003 \001(\t\022\025\n\r"
-          + "frameNumberTo\030\004 \001(\t\022\020\n\010distance\030\005 \001(\t\"\230\002"
-          + "\n\017InnerBulkHeadSF\022\023\n\013frameNumber\030\001 \001(\t\022\021"
-          + "\n\tforeAlpha\030\002 \001(\t\022\035\n\025foreCenterCargoTank"
-          + "Id\030\003 \001(\003\022\016\n\006foreC1\030\004 \001(\t\022\027\n\017foreWingTank"
-          + "Ids\030\005 \001(\t\022\016\n\006foreC2\030\006 \001(\t\022\027\n\017foreBallstT"
-          + "anks\030\007 \001(\t\022\016\n\006foreC3\030\010 \001(\t\022\030\n\020foreBWCorr"
-          + "ection\030\t \001(\t\022\016\n\006foreC4\030\n \001(\t\022\030\n\020foreMaxA"
-          + "llowence\030\013 \001(\t\022\030\n\020foreMinAllowence\030\014 \001(\t"
-          + "2\261\002\n\021VesselInfoService\0228\n\026GetAllVesselsB"
-          + "yCompany\022\016.VesselRequest\032\014.VesselReply\"\000"
-          + "\0226\n\024GetVesselDetailsById\022\016.VesselRequest"
-          + "\032\014.VesselReply\"\000\0220\n\016GetVesselTanks\022\016.Ves"
-          + "selRequest\032\014.VesselReply\"\000\0225\n\023GetVesselC"
-          + "argoTanks\022\016.VesselRequest\032\014.VesselReply\""
-          + "\000\022A\n\027GetVesselDetailsForAlgo\022\022.VesselAlg"
-          + "oRequest\032\020.VesselAlgoReply\"\000B\036\n\032com.cpds"
-          + "s.common.generatedP\000b\006proto3"
+          + " \001(\t\022\r\n\005minSf\030\005 \001(\t\022\r\n\005maxSf\030\006 \001(\t\"\205\001\n\rS"
+          + "tationValues\022\023\n\013stationFrom\030\001 \001(\t\022\021\n\tsta"
+          + "tionTo\030\002 \001(\t\022\027\n\017frameNumberFrom\030\003 \001(\t\022\025\n"
+          + "\rframeNumberTo\030\004 \001(\t\022\020\n\010distance\030\005 \001(\t\022\n"
+          + "\n\002id\030\006 \001(\003\"\221\004\n\017InnerBulkHeadSF\022\023\n\013frameN"
+          + "umber\030\001 \001(\t\022\021\n\tforeAlpha\030\002 \001(\t\022\035\n\025foreCe"
+          + "nterCargoTankId\030\003 \001(\003\022\016\n\006foreC1\030\004 \001(\t\022\027\n"
+          + "\017foreWingTankIds\030\005 \001(\t\022\016\n\006foreC2\030\006 \001(\t\022\030"
+          + "\n\020foreBallastTanks\030\007 \001(\t\022\016\n\006foreC3\030\010 \001(\t"
+          + "\022\030\n\020foreBWCorrection\030\t \001(\t\022\016\n\006foreC4\030\n \001"
+          + "(\t\022\030\n\020foreMaxAllowence\030\013 \001(\t\022\030\n\020foreMinA"
+          + "llowence\030\014 \001(\t\022\n\n\002id\030\r \001(\003\022\020\n\010aftAlpha\030\016"
+          + " \001(\t\022\034\n\024aftCenterCargoTankId\030\017 \001(\003\022\r\n\005af"
+          + "tC1\030\020 \001(\t\022\026\n\016aftWingTankIds\030\021 \001(\t\022\r\n\005aft"
+          + "C2\030\022 \001(\t\022\027\n\017aftBallastTanks\030\023 \001(\t\022\r\n\005aft"
+          + "C3\030\024 \001(\t\022\027\n\017aftBWCorrection\030\025 \001(\t\022\r\n\005aft"
+          + "C4\030\026 \001(\t\022\031\n\021aftMaxFlAllowence\030\027 \001(\t\022\031\n\021a"
+          + "ftMinFlAllowence\030\030 \001(\t2\261\002\n\021VesselInfoSer"
+          + "vice\0228\n\026GetAllVesselsByCompany\022\016.VesselR"
+          + "equest\032\014.VesselReply\"\000\0226\n\024GetVesselDetai"
+          + "lsById\022\016.VesselRequest\032\014.VesselReply\"\000\0220"
+          + "\n\016GetVesselTanks\022\016.VesselRequest\032\014.Vesse"
+          + "lReply\"\000\0225\n\023GetVesselCargoTanks\022\016.Vessel"
+          + "Request\032\014.VesselReply\"\000\022A\n\027GetVesselDeta"
+          + "ilsForAlgo\022\022.VesselAlgoRequest\032\020.VesselA"
+          + "lgoReply\"\000B\036\n\032com.cpdss.common.generated"
+          + "P\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -32724,7 +34424,7 @@ public final class VesselInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_StationValues_descriptor,
             new java.lang.String[] {
-              "StationFrom", "StationTo", "FrameNumberFrom", "FrameNumberTo", "Distance",
+              "StationFrom", "StationTo", "FrameNumberFrom", "FrameNumberTo", "Distance", "Id",
             });
     internal_static_InnerBulkHeadSF_descriptor = getDescriptor().getMessageTypes().get(18);
     internal_static_InnerBulkHeadSF_fieldAccessorTable =
@@ -32737,12 +34437,24 @@ public final class VesselInfo {
               "ForeC1",
               "ForeWingTankIds",
               "ForeC2",
-              "ForeBallstTanks",
+              "ForeBallastTanks",
               "ForeC3",
               "ForeBWCorrection",
               "ForeC4",
               "ForeMaxAllowence",
               "ForeMinAllowence",
+              "Id",
+              "AftAlpha",
+              "AftCenterCargoTankId",
+              "AftC1",
+              "AftWingTankIds",
+              "AftC2",
+              "AftBallastTanks",
+              "AftC3",
+              "AftBWCorrection",
+              "AftC4",
+              "AftMaxFlAllowence",
+              "AftMinFlAllowence",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }

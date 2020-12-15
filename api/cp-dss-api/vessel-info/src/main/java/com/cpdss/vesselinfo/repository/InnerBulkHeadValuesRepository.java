@@ -8,5 +8,5 @@ import java.util.List;
 /** @Author jerin.g */
 public interface InnerBulkHeadValuesRepository
     extends CommonCrudRepository<InnerBulkHeadValues, Long> {
-  public List<InnerBulkHeadValues> findByVessel(Long vesselId);
+  public List<InnerBulkHeadValues> findByVesselId(Long vesselId);
 }

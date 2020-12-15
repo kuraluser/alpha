@@ -335,6 +335,7 @@ message TankDetail{
 	string heightTo = 12;
 	int32 tankOrder = 13;
 	int32 tankGroup = 14;
+	string fullCapacityCubm = 15;
 }
 
 message TankList{
@@ -391,11 +392,14 @@ message PurposeOfCommingleReply{
 message LoadablePatternReply {
  	repeated LoadablePattern loadablePattern = 1;
  	ResponseStatus responseStatus = 2;
+ 	repeated TankList tanks = 3;
 }
 
 message LoadablePattern {
 	int64 loadablePatternId = 1;
 	repeated LoadablePatternCargoDetails loadablePatternCargoDetails = 2;
+	string constraints = 3;
+	string totalDifferenceColor = 4;
 }
 
 message LoadablePatternCargoDetails {
@@ -405,11 +409,10 @@ message LoadablePatternCargoDetails {
  	int64 tankId = 4;
  	string quantity = 5;
  	string difference = 6;
- 	string constraints = 7;
- 	string differenceColor = 8;
- 	int64 loadablePatternDetailsId = 9;
- 	bool isCommingle = 10;
- 	int64 loadablePatternCommingleDetailsId = 11;
+ 	string differenceColor = 7;
+ 	int64 loadablePatternDetailsId = 8;
+ 	bool isCommingle = 9;
+ 	int64 loadablePatternCommingleDetailsId = 10;
 }
 
 message LoadablePatternRequest {

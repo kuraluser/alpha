@@ -31,6 +31,9 @@ public class LoadablePattern extends EntityDoc {
   @Column(name = "constraints")
   private String constraints;
 
+  @Column(name = "difference_color")
+  private String differenceColor;
+
   @Column(name = "loadable_study_status")
   private Integer loadableStudyStatus;
 

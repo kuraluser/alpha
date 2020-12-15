@@ -7,5 +7,5 @@ import java.util.List;
 
 /** @Author jerin.g */
 public interface StationValuesRepository extends CommonCrudRepository<StationValues, Long> {
-  public List<StationValues> findByVessel(Long vesselId);
+  public List<StationValues> findByVesselId(Long vesselId);
 }

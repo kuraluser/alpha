@@ -15,7 +15,7 @@ import lombok.Setter;
 
 /** @author jerin.g */
 @Entity
-@Table(name = "calculation_sheet_tankgroup")
+@Table(name = "calculation_sheet_tank_group")
 @Getter
 @Setter
 @NoArgsConstructor

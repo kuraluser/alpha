@@ -1142,7 +1142,7 @@ public class LoadableStudyService {
     LoadablePatternReply loadablePatternReply = this.getLoadablePattern(loadablePatternRequest);
     if (!SUCCESS.equals(loadablePatternReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
-          "failed to get  LoadablePattern ",
+          "failed to get LoadablePattern ",
           loadablePatternReply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(
               Integer.valueOf(loadablePatternReply.getResponseStatus().getCode())));
@@ -1159,12 +1159,16 @@ public class LoadableStudyService {
       LoadablePatternReply loadablePatternReply, String correlationId) {
     LoadablePatternResponse loadablePatternResponse = new LoadablePatternResponse();
     loadablePatternResponse.setLoadablePatterns(new ArrayList<LoadablePattern>());
+    loadablePatternResponse.setTankLists(
+        createGroupWiseTankList(loadablePatternReply.getTanksList()));
     loadablePatternReply
         .getLoadablePatternList()
         .forEach(
             loadablePattern -> {
               LoadablePattern loadablePatternDto = new LoadablePattern();
               loadablePatternDto.setLoadablePatternId(loadablePattern.getLoadablePatternId());
+              loadablePatternDto.setConstraints(loadablePattern.getConstraints());
+              loadablePatternDto.setTotalDifferenceColor(loadablePattern.getTotalDifferenceColor());
               loadablePatternDto.setLoadablePatternCargoDetails(
                   new ArrayList<LoadablePatternCargoDetails>());
               loadablePattern
@@ -1197,10 +1201,7 @@ public class LoadableStudyService {
                                 difference ->
                                     loadablePatternCargoDetails.setDifference(
                                         String.valueOf(difference)));
-                        Optional.ofNullable(loadablePatternCargoDetail.getConstraints())
-                            .ifPresent(
-                                constraints ->
-                                    loadablePatternCargoDetails.setConstraints(constraints));
+
                         Optional.ofNullable(loadablePatternCargoDetail.getDifferenceColor())
                             .ifPresent(
                                 differenceColor ->
@@ -1353,6 +1354,8 @@ public class LoadableStudyService {
             isEmpty(detail.getFillCapacityCubm())
                 ? null
                 : new BigDecimal(detail.getFillCapacityCubm()));
+        tank.setFullCapacityCubm(
+            isEmpty(detail.getFillCapacityCubm()) ? null : detail.getFullCapacityCubm());
         tank.setSlopTank(detail.getIsSlopTank());
         tank.setGroup(detail.getTankGroup());
         tank.setOrder(detail.getTankOrder());

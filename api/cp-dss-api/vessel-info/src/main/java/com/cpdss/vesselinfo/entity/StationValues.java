@@ -38,5 +38,5 @@ public class StationValues extends EntityDoc {
   private BigDecimal distance;
 
   @Column(name = "vessel_xid")
-  private Integer vesselId;
+  private Long vesselId;
 }
