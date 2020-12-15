@@ -23,7 +23,7 @@ public class InnerBulkHeadValues extends EntityDoc {
   private static final long serialVersionUID = 1L;
 
   @Column(name = "vessel_xid")
-  private Integer vesselId;
+  private Long vesselId;
 
   @Column(name = "frame_number")
   private BigDecimal frameNumber;

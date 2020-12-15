@@ -12,7 +12,6 @@ public class LoadablePatternCargoDetails {
   private Long tankId;
   private String quantity;
   private String difference;
-  private String constraints;
   private String differenceColor;
   private Long loadablePatternDetailsId;
   private Boolean isCommingle;

@@ -214,7 +214,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;
   private static final Long CARGO_VOID_TANK_CATEGORY_ID = 15L;
 
-  private static final List<Long> OBQ_TANK_CATEGORIES =
+  private static final List<Long> CARGO_TANK_CATEGORIES =
       Arrays.asList(
           CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID, CARGO_VOID_TANK_CATEGORY_ID);
 
@@ -1865,6 +1865,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     builder.setHeightTo(detail.getHeightTo());
     builder.setTankOrder(detail.getTankOrder());
     builder.setTankGroup(detail.getTankGroup());
+    builder.setFullCapacityCubm(detail.getFullCapacityCubm());
     return builder.build();
   }
 
@@ -2020,6 +2021,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         loadablePatterns.forEach(
             loadablePattern -> {
               loadablePatternBuilder.setLoadablePatternId(loadablePattern.getId());
+              Optional.ofNullable(loadablePattern.getConstraints())
+                  .ifPresent(loadablePatternBuilder::setConstraints);
+              Optional.ofNullable(loadablePattern.getDifferenceColor())
+                  .ifPresent(loadablePatternBuilder::setTotalDifferenceColor);
               List<LoadablePatternDetails> loadablePatternDetails =
                   loadablePatternDetailsRepository.findByLoadablePatternAndIsActive(
                       loadablePattern, true);
@@ -2052,10 +2057,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             difference ->
                                 loadablePatternCargoDetailsBuilder.setDifference(
                                     String.valueOf(difference)));
-                    Optional.ofNullable(loadablePatternDetail.getConstraints())
-                        .ifPresent(
-                            constraints ->
-                                loadablePatternCargoDetailsBuilder.setConstraints(constraints));
+
                     Optional.ofNullable(loadablePatternDetail.getDifferenceColor())
                         .ifPresent(
                             differenceColor ->
@@ -2076,7 +2078,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                               .findByLoadablePatternDetailsIdAndIsActive(
                                   loadablePatternDetail.getId(), true);
                       if (loadablePatternComingleDetails.isPresent()) {
-                        Optional.ofNullable(loadablePatternDetail.getId())
+                        Optional.ofNullable(loadablePatternComingleDetails.get().getId())
                             .ifPresent(
                                 id ->
                                     loadablePatternCargoDetailsBuilder
@@ -2088,7 +2090,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   });
               builder.addLoadablePattern(loadablePatternBuilder);
             });
-        builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+        VesselReply vesselReply = this.getTankListForPattern(loadableStudy.get().getVesselXId());
+        if (!SUCCESS.equals(vesselReply.getResponseStatus().getStatus())) {
+          builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+        } else {
+          builder.addAllTanks(this.groupTanks(vesselReply.getVesselTanksList()));
+          builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+        }
       }
     } catch (Exception e) {
       log.error("Exception when fetching get Loadable Pattern Details", e);
@@ -2102,6 +2110,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * @param vesselXId
+   * @return VesselReply
+   */
+  private VesselReply getTankListForPattern(Long vesselId) {
+    VesselRequest.Builder vesselGrpcRequest = VesselRequest.newBuilder();
+    vesselGrpcRequest.setVesselId(vesselId);
+    vesselGrpcRequest.addAllTankCategories(CARGO_TANK_CATEGORIES);
+    VesselReply vesselReply = this.getVesselTanks(vesselGrpcRequest.build());
+    return vesselReply;
   }
 
   /** Get commingle cargo for a loadable study */
@@ -2751,7 +2771,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     VesselRequest.Builder vesselGrpcRequest = VesselRequest.newBuilder();
     vesselGrpcRequest.setCompanyId(request.getCompanyId());
     vesselGrpcRequest.setVesselId(request.getVesselId());
-    vesselGrpcRequest.addAllTankCategories(OBQ_TANK_CATEGORIES);
+    vesselGrpcRequest.addAllTankCategories(CARGO_TANK_CATEGORIES);
     VesselReply vesselReply = this.getVesselTanks(vesselGrpcRequest.build());
     if (!SUCCESS.equals(vesselReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(

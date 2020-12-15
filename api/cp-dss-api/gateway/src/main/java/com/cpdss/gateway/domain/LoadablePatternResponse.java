@@ -9,6 +9,6 @@ import lombok.Data;
 @Data
 public class LoadablePatternResponse {
   private CommonSuccessResponse responseStatus;
-  private List<List<Tank>> tankLists;
+  private List<List<VesselTank>> tankLists;
   private List<LoadablePattern> loadablePatterns;
 }

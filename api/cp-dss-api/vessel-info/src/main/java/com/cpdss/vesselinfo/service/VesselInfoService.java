@@ -314,6 +314,9 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       Optional.ofNullable(tank.getTankOrder()).ifPresent(builder::setTankOrder);
       Optional.ofNullable(tank.getIsSlopTank()).ifPresent(builder::setIsSlopTank);
       Optional.ofNullable(tank.getTankCategory().getColorCode()).ifPresent(builder::setColourCode);
+      Optional.ofNullable(tank.getFullCapacityCubm())
+          .ifPresent(
+              capacity -> builder.setFullCapacityCubm(String.valueOf(tank.getFullCapacityCubm())));
       tankDetailsList.add(builder.build());
     }
     return tankDetailsList;
@@ -480,7 +483,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                 });
 
         stationValuesRepository
-            .findByVessel(vessel.getId())
+            .findByVesselId(vessel.getId())
             .forEach(
                 stationValue -> {
                   StationValues.Builder stationValueBuilder = StationValues.newBuilder();
@@ -489,7 +492,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                 });
 
         innerBulkHeadValuesRepository
-            .findByVessel(vessel.getId())
+            .findByVesselId(vessel.getId())
             .forEach(
                 innerBulkHeadSF -> {
                   InnerBulkHeadSF.Builder innerBulkHeadSFBuilder = InnerBulkHeadSF.newBuilder();

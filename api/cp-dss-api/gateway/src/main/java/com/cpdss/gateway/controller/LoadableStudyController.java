@@ -627,7 +627,7 @@ public class LoadableStudyController {
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
-          HttpStatusCode.SERVICE_UNAVAILABLE,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
           e.getMessage(),
           e);
     }
@@ -645,7 +645,7 @@ public class LoadableStudyController {
    */
   @GetMapping(
       "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns/{loadablePatternId}/loadable-pattern-commingle-details/{loadablePatternCommingleDetailsId}")
-  public LoadablePatternDetailsResponse getLoadablePatternDetails(
+  public LoadablePatternDetailsResponse getLoadablePatternCommingleDetails(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
@@ -670,7 +670,7 @@ public class LoadableStudyController {
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
-          HttpStatusCode.SERVICE_UNAVAILABLE,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
           e.getMessage(),
           e);
     }

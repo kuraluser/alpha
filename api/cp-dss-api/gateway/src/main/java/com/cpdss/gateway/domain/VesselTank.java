@@ -40,6 +40,8 @@ public class VesselTank {
 
   private BigDecimal fillCapcityCubm;
 
+  private String fullCapacityCubm;
+
   private BigDecimal density;
 
   private Integer group;
