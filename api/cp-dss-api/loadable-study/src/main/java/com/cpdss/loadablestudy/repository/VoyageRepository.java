@@ -3,6 +3,7 @@ package com.cpdss.loadablestudy.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.Voyage;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /** @Author jerin.g */
@@ -13,4 +14,9 @@ public interface VoyageRepository extends CommonCrudRepository<Voyage, Long> {
 
   public List<Voyage> findByVesselXIdAndIsActiveOrderByLastModifiedDateTimeDesc(
       Long vesselXId, boolean isActive);
+
+  public Voyage findByIdAndIsActive(Long id, boolean isActive);
+
+  public Voyage findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveOrderByVoyageEndDateDesc(
+      LocalDateTime currentVoyageStartDate, Long vesselId, boolean isActive);
 }

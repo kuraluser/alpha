@@ -16,6 +16,7 @@ import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.OnBoardQuantity;
 import com.cpdss.gateway.domain.OnBoardQuantityResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
@@ -860,6 +861,7 @@ public class LoadableStudyController {
           "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{portId}/on-board-quantities")
   public OnBoardQuantityResponse getOnBoardQuantites(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudyId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portId,
@@ -876,12 +878,52 @@ public class LoadableStudyController {
           loadableStudyId,
           portId);
       return this.loadableStudyService.getOnBoardQuantites(
-          vesselId, loadableStudyId, portId, headers.getFirst(CORRELATION_ID_HEADER));
+          vesselId, voyageId, loadableStudyId, portId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching on board quantities", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when fetching on board quantities", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @PostMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{portId}/on-board-quantities/{id}")
+  public OnBoardQuantityResponse saveOnBoardQuantites(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long id,
+      @RequestBody @Valid OnBoardQuantity request,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      request.setId(id);
+      request.setLoadableStudyId(loadableStudyId);
+      request.setPortId(portId);
+      log.info(
+          "saveOnBoardQuantites: {}, correlationId: {}",
+          getClientIp(),
+          headers.getFirst(CORRELATION_ID_HEADER));
+      log.debug(
+          "saveOnBoardQuantites, loadableStudyId:{}, portId:{}, id: {}",
+          loadableStudyId,
+          portId,
+          id);
+      return this.loadableStudyService.saveOnBoardQuantites(
+          request, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving on board quantities", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when fetching on saving quantities", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

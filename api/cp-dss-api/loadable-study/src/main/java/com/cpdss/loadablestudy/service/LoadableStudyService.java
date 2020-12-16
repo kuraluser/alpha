@@ -28,6 +28,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
@@ -60,6 +61,7 @@ import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.domain.CargoHistory;
 import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
@@ -76,6 +78,8 @@ import com.cpdss.loadablestudy.entity.OnBoardQuantity;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.PurposeOfCommingle;
 import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.entity.VoyageHistory;
+import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
@@ -91,6 +95,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
+import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
@@ -158,8 +163,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private CommingleCargoRepository commingleCargoRepository;
-
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
+  @Autowired private CargoHistoryRepository cargoHistoryRepository;
+  @Autowired private VoyageHistoryRepository voyageHistoryRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -936,7 +942,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 DateTimeFormatter.ofPattern(ETA_ETD_FORMAT),
                 DateTimeFormatter.ofPattern(LAY_CAN_FORMAT)));
       }
-      List<CargoOperation> operationEntityList = this.cargoOperationRepository.findAll();
+      List<CargoOperation> operationEntityList =
+          this.cargoOperationRepository.findByIdNotAndIsActiveOrderById(
+              DISCHARGING_OPERATION_ID, true);
       for (CargoOperation entity : operationEntityList) {
         replyBuilder.addOperations(this.createOperationDetail(entity));
       }
@@ -1720,6 +1728,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       for (VesselTankDetail tankDetail : vesselReply.getVesselTanksList()) {
         OnHandQuantityDetail.Builder detailBuilder = OnHandQuantityDetail.newBuilder();
         detailBuilder.setFuelType(tankDetail.getTankCategoryName());
+        detailBuilder.setFuelTypeShortName(tankDetail.getTankCategoryShortName());
         detailBuilder.setFuelTypeId(tankDetail.getTankCategoryId());
         detailBuilder.setTankId(tankDetail.getTankId());
         detailBuilder.setTankName(tankDetail.getShortName());
@@ -2735,6 +2744,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       OnBoardQuantityRequest request, StreamObserver<OnBoardQuantityReply> responseObserver) {
     OnBoardQuantityReply.Builder replyBuilder = OnBoardQuantityReply.newBuilder();
     try {
+      Voyage voyage = this.voyageRepository.findByIdAndIsActive(request.getVoyageId(), true);
+      if (null == voyage) {
+        throw new GenericServiceException(
+            "Voyage does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
       Optional<LoadableStudy> loadableStudyOpt =
           this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
       if (!loadableStudyOpt.isPresent()) {
@@ -2744,6 +2760,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       VesselReply vesselReply = this.getObqTanks(request);
+      this.buildOnBoardQuantity(
+          request, loadableStudyOpt.get(), voyage, vesselReply.getVesselTanksList(), replyBuilder);
       replyBuilder.addAllTanks(this.groupTanks(vesselReply.getVesselTanksList()));
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
@@ -2758,6 +2776,83 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * Build obq detail objects
+   *
+   * @param request
+   * @param loadableStudy
+   * @param vesselTanksList
+   * @param replyBuilder
+   */
+  private void buildOnBoardQuantity(
+      OnBoardQuantityRequest request,
+      LoadableStudy loadableStudy,
+      Voyage voyage,
+      List<VesselTankDetail> vesselTanksList,
+      OnBoardQuantityReply.Builder replyBuilder) {
+    List<OnBoardQuantity> obqEntities =
+        this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
+            loadableStudy, request.getPortId(), true);
+    List<CargoHistory> cargoHistories = this.findCargoHistoryForPrvsVoyage(voyage);
+    for (VesselTankDetail tank : vesselTanksList) {
+      OnBoardQuantityDetail.Builder builder = OnBoardQuantityDetail.newBuilder();
+      builder.setTankId(tank.getTankId());
+      builder.setTankName(tank.getShortName());
+      Optional<OnBoardQuantity> entityOpt =
+          obqEntities.stream().filter(e -> e.getTankId().equals(tank.getTankId())).findAny();
+      Optional<CargoHistory> cargoHistoryOpt =
+          cargoHistories.stream().filter(e -> e.getTankId().equals(tank.getTankId())).findAny();
+      if (entityOpt.isPresent()) {
+        OnBoardQuantity entity = entityOpt.get();
+        builder.setId(entity.getId());
+        Optional.ofNullable(entity.getCargoId()).ifPresent(builder::setCargoId);
+        Optional.ofNullable(entity.getSounding())
+            .ifPresent(item -> builder.setSounding(item.toString()));
+        Optional.ofNullable(entity.getWeight())
+            .ifPresent(item -> builder.setWeight(item.toString()));
+        Optional.ofNullable(entity.getVolume())
+            .ifPresent(item -> builder.setVolume(item.toString()));
+        if (cargoHistoryOpt.isPresent()) {
+          Optional.ofNullable(cargoHistoryOpt.get().getCargoColor())
+              .ifPresent(builder::setColorCode);
+        }
+      } else {
+        if (cargoHistoryOpt.isPresent()) {
+          CargoHistory dto = cargoHistoryOpt.get();
+          Optional.ofNullable(dto.getCargoId()).ifPresent(builder::setCargoId);
+          Optional.ofNullable(dto.getCargoColor()).ifPresent(builder::setColorCode);
+        }
+      }
+      replyBuilder.addOnBoardQuantity(builder.build());
+    }
+  }
+
+  /**
+   * find voyage history for previous voyage
+   *
+   * @param voyage
+   * @return
+   */
+  private List<CargoHistory> findCargoHistoryForPrvsVoyage(Voyage voyage) {
+    Voyage previousVoyage =
+        this.voyageRepository
+            .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveOrderByVoyageEndDateDesc(
+                voyage.getVoyageStartDate(), voyage.getVesselXId(), true);
+    if (null == previousVoyage) {
+      log.error("Could not find previous voyage");
+    } else {
+      VoyageHistory voyageHistory =
+          this.voyageHistoryRepository.findFirstByVoyageOrderByPortOrderDesc(previousVoyage);
+      if (null == voyageHistory) {
+        log.error("Could not find voyage history for voyage: {}", previousVoyage.getVoyageNo());
+      } else {
+        return this.cargoHistoryRepository.findCargoHistory(
+            previousVoyage.getId(), voyageHistory.getLoadingPortId());
+      }
+    }
+    return new ArrayList<>();
   }
 
   /**
@@ -2780,5 +2875,75 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           HttpStatusCode.valueOf(Integer.valueOf(vesselReply.getResponseStatus().getCode())));
     }
     return vesselReply;
+  }
+
+  /** Save On board quantity details */
+  @Override
+  public void saveOnBoardQuantity(
+      OnBoardQuantityDetail request, StreamObserver<OnBoardQuantityReply> responseObserver) {
+    OnBoardQuantityReply.Builder replyBuilder = OnBoardQuantityReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+      if (!loadableStudyOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable study does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      OnBoardQuantity entity = null;
+      if (request.getId() == 0) {
+        entity = new OnBoardQuantity();
+        entity.setLoadableStudy(loadableStudyOpt.get());
+      } else {
+        entity = this.onBoardQuantityRepository.findByIdAndIsActive(request.getId(), true);
+        if (null == entity) {
+          throw new GenericServiceException(
+              "On hand quantity does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+      }
+      this.buildOnBoardQuantityEntity(entity, request);
+      entity = this.onBoardQuantityRepository.save(entity);
+      replyBuilder.setId(entity.getId());
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving on board quantities", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage("GenericServiceException when saving on board quantities")
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      log.error("Exception when saving on board quantities", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when saving on board quantities")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Build on board quantity entity
+   *
+   * @param entity
+   * @param request
+   */
+  private void buildOnBoardQuantityEntity(OnBoardQuantity entity, OnBoardQuantityDetail request) {
+    entity.setCargoId(request.getCargoId());
+    entity.setTankId(request.getTankId());
+    entity.setPortId(request.getPortId());
+    entity.setSounding(
+        isEmpty(request.getSounding()) ? null : new BigDecimal(request.getSounding()));
+    entity.setWeight(isEmpty(request.getWeight()) ? null : new BigDecimal(request.getWeight()));
+    entity.setVolume(isEmpty(request.getVolume()) ? null : new BigDecimal(request.getVolume()));
+    entity.setIsActive(true);
   }
 }

@@ -82,6 +82,9 @@ service LoadableStudyService {
 	
 	rpc GetOnBoardQuantity(OnBoardQuantityRequest) returns (OnBoardQuantityReply){
 	}
+	
+	rpc SaveOnBoardQuantity(OnBoardQuantityDetail) returns (OnBoardQuantityReply){
+	}
 }
 
 message AlgoRequest {
@@ -318,6 +321,7 @@ message OnHandQuantityDetail{
 	string departureQuantity = 10;
 	int64 loadableStudyId = 11;
 	string colorCode = 12;
+	string fuelTypeShortName = 13;
 }
 
 message TankDetail{
@@ -355,6 +359,7 @@ message OnBoardQuantityRequest{
 	int64 vesselId = 2;
 	int64 loadableStudyId = 3;
 	int64 portId = 4;
+	int64 voyageId = 5;
 }
 
 message OnBoardQuantityDetail{
@@ -367,6 +372,8 @@ message OnBoardQuantityDetail{
 	string sounding = 7;
 	string weight = 8;
 	string volume = 9;
+	int64 loadableStudyId = 10;
+	string colorCode = 11;
 }
 
 message OnBoardQuantityReply{

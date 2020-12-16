@@ -29,8 +29,6 @@ public class OnBoardQuantity {
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private Long cargoId;
 
-  private String cargoName;
-
   private BigDecimal sounding;
 
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
@@ -38,6 +36,8 @@ public class OnBoardQuantity {
 
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal volume;
+
+  private String colorCode;
 
   private Long loadableStudyId;
 }

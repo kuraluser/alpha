@@ -1292,6 +1292,7 @@ public class LoadableStudyService {
       onHandQuantity.setTankName(detail.getTankName());
       onHandQuantity.setFuelTypeId(detail.getFuelTypeId());
       onHandQuantity.setFuelTypeName(detail.getFuelType());
+      onHandQuantity.setFuelTypeShortName(detail.getFuelTypeShortName());
       onHandQuantity.setArrivalQuantity(
           isEmpty(detail.getArrivalQuantity())
               ? BigDecimal.ZERO
@@ -1552,6 +1553,22 @@ public class LoadableStudyService {
             cargoNomination.setId(cargoNominationDetail.getId());
             cargoNomination.setColor(cargoNominationDetail.getColor());
             cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
+            if (!CollectionUtils.isEmpty(cargoNominationDetail.getLoadingPortDetailsList())) {
+              List<LoadingPort> loadingPortList = new ArrayList<>();
+              cargoNominationDetail
+                  .getLoadingPortDetailsList()
+                  .forEach(
+                      port -> {
+                        LoadingPort loadingPort = new LoadingPort();
+                        loadingPort.setId(port.getPortId());
+                        loadingPort.setQuantity(
+                            port.getQuantity() != null
+                                ? new BigDecimal(port.getQuantity())
+                                : new BigDecimal("0"));
+                        loadingPortList.add(loadingPort);
+                      });
+              cargoNomination.setLoadingPorts(loadingPortList);
+            }
             cargoNominationList.add(cargoNomination);
           });
       commingleCargoResponse.setCargoNominations(cargoNominationList);
@@ -1799,12 +1816,13 @@ public class LoadableStudyService {
    * @param vesselId
    * @param loadableStudyId
    * @param portId
+   * @param portId2
    * @param first
    * @return
    * @throws GenericServiceException
    */
   public OnBoardQuantityResponse getOnBoardQuantites(
-      Long vesselId, Long loadableStudyId, Long portId, String correlationId)
+      Long vesselId, Long voyageId, Long loadableStudyId, Long portId, String correlationId)
       throws GenericServiceException {
     log.info("LoadableStudyService - getOnBoardQuantites, correlationId:{}", correlationId);
     log.debug(
@@ -1814,6 +1832,7 @@ public class LoadableStudyService {
         portId);
     OnBoardQuantityRequest request =
         OnBoardQuantityRequest.newBuilder()
+            .setVoyageId(voyageId)
             .setLoadableStudyId(loadableStudyId)
             .setVesselId(vesselId)
             .setPortId(portId)
@@ -1841,7 +1860,7 @@ public class LoadableStudyService {
       OnBoardQuantity dto = new OnBoardQuantity();
       dto.setId(detail.getId());
       dto.setCargoId(detail.getCargoId());
-      dto.setCargoName(detail.getCargoName());
+      dto.setColorCode(detail.getColorCode());
       dto.setSounding(isEmpty(detail.getSounding()) ? null : new BigDecimal(detail.getSounding()));
       dto.setWeight(isEmpty(detail.getWeight()) ? null : new BigDecimal(detail.getWeight()));
       dto.setVolume(isEmpty(detail.getVolume()) ? null : new BigDecimal(detail.getVolume()));
@@ -1861,5 +1880,66 @@ public class LoadableStudyService {
    */
   public OnBoardQuantityReply getOnBoardQuantites(OnBoardQuantityRequest request) {
     return this.loadableStudyServiceBlockingStub.getOnBoardQuantity(request);
+  }
+
+  /**
+   * Save on board quantity
+   *
+   * @param request
+   * @param first
+   * @return
+   * @throws GenericServiceException
+   */
+  public OnBoardQuantityResponse saveOnBoardQuantites(OnBoardQuantity request, String correlationId)
+      throws GenericServiceException {
+    log.info("saveOnBoardQuantites, correlationId: {}", correlationId);
+    log.debug("saveOnBoardQuantites, request: {}", request);
+    OnBoardQuantityResponse response = new OnBoardQuantityResponse();
+    OnBoardQuantityReply grpcReply =
+        this.saveOnBoardQuantites(this.buildObqRequest(request, correlationId), correlationId);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to save on board quantities",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    response.setId(grpcReply.getId());
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * Build on board quantity save grpc call request
+   *
+   * @param request
+   * @param correlationId
+   * @return
+   */
+  private OnBoardQuantityDetail buildObqRequest(OnBoardQuantity request, String correlationId) {
+    log.info("buildObqRequest, correlationId: {}", correlationId);
+    OnBoardQuantityDetail.Builder builder = OnBoardQuantityDetail.newBuilder();
+    builder.setId(request.getId());
+    builder.setCargoId(request.getCargoId());
+    builder.setPortId(request.getPortId());
+    builder.setLoadableStudyId(request.getLoadableStudyId());
+    builder.setTankId(request.getTankId());
+    builder.setWeight(valueOf(request.getWeight()));
+    builder.setVolume(valueOf(request.getVolume()));
+    Optional.ofNullable(request.getSounding())
+        .ifPresent(sounding -> builder.setSounding(valueOf(request.getSounding())));
+    return builder.build();
+  }
+
+  /**
+   * Save on board quantity grpc service call
+   *
+   * @param request
+   * @return
+   */
+  public OnBoardQuantityReply saveOnBoardQuantites(
+      OnBoardQuantityDetail request, String correlationId) {
+    log.info("saveOnBoardQuantites grpc call, correlationId: {}", correlationId);
+    return this.loadableStudyServiceBlockingStub.saveOnBoardQuantity(request);
   }
 }
