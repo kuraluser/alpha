@@ -1063,6 +1063,7 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'cargo',
         header: 'CARGO',
+        editable: false,
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
         filter: true,
         filterPlaceholder: 'SEARCH_CARGO',

@@ -109,10 +109,11 @@ export class OnBoardQuantityComponent implements OnInit {
     this.obqForm = this.fb.group({
       dataTable: this.fb.array([...obqTankDetailsArray]),
       cargo: new FormControl('', Validators.required),
-      sounding: new FormControl('', Validators.required),
-      weight: new FormControl('', Validators.required),
-      volume: new FormControl('', Validators.required)
+      sounding: this.fb.control('', [Validators.required, Validators.min(0), numberValidator(2, 4)]),
+      volume: this.fb.control('', [Validators.required, Validators.min(0), numberValidator(2, 7)]),
+      weight: this.fb.control('', [Validators.required, Validators.min(0), numberValidator(2, 7)]),
     });
+    this.enableOrDisableControls(this.obqForm, ['sounding', 'weight', 'volume'], false);
     return [..._selectedPortOBQTankDetails];
   }
 
@@ -128,9 +129,9 @@ export class OnBoardQuantityComponent implements OnInit {
     return this.fb.group({
       cargo: this.fb.control(obqTankDetail.cargo),
       tankName: this.fb.control(obqTankDetail.tankName, Validators.required),
-      sounding: this.fb.control(obqTankDetail.sounding.value, [Validators.required, Validators.min(0), numberValidator(2, 7), groupTotalValidator('arrivalVolume', 'fuelTypeId')]),
-      volume: this.fb.control(obqTankDetail.volume.value, [Validators.required, Validators.min(0), numberValidator(2, 7), groupTotalValidator('arrivalQuantity', 'fuelTypeId')]),
-      weight: this.fb.control(obqTankDetail.weight.value, [Validators.required, Validators.min(0), numberValidator(2, 7), groupTotalValidator('departureVolume', 'fuelTypeId')]),
+      sounding: this.fb.control(obqTankDetail.sounding.value, [Validators.required, Validators.min(0), numberValidator(2, 4)]),
+      volume: this.fb.control(obqTankDetail.volume.value, [Validators.required, Validators.min(0), numberValidator(2, 7)]),
+      weight: this.fb.control(obqTankDetail.weight.value, [Validators.required, Validators.min(0), numberValidator(2, 7)]),
     });
   }
 
@@ -163,11 +164,28 @@ export class OnBoardQuantityComponent implements OnInit {
    * @memberof OnBoardQuantityComponent
    */
   onRowSelection(event) {
+    this.enableOrDisableControls(this.obqForm, ['sounding', 'weight', 'volume']);
     const data = event.data
     this.obqForm.controls.cargo.setValue(data.cargo.value?.name)
     this.obqForm.controls.sounding.setValue(data.sounding.value)
     this.obqForm.controls.weight.setValue(data.weight.value)
     this.obqForm.controls.volume.setValue(data.volume.value)
   }
+
+  /**
+ * Method to disable or enable a list of form controls in a formGroup
+ *
+ * @memberof OnBoardQuantityComponent
+ */
+  enableOrDisableControls(form: FormGroup, controls: string[], enable: boolean = true) {
+    controls.forEach(control => {
+      if (form.controls[control]) {
+        if (enable) form.controls[control].enable();
+        else form.controls[control].disable();
+      }
+    });
+  }
+
+
 
 }
