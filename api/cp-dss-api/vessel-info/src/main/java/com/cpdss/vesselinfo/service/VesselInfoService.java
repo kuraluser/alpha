@@ -527,17 +527,17 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   private InnerBulkHeadSF createInnerBulkHeadSFBuilder(
       InnerBulkHeadValues innerBulkHeadSF,
       com.cpdss.common.generated.VesselInfo.InnerBulkHeadSF.Builder innerBulkHeadSFBuilder) {
-    innerBulkHeadSFBuilder.setId(innerBulkHeadSF.getId());
-    Optional.ofNullable(innerBulkHeadSF.getFrameNumber())
-        .ifPresent(
-            frameNumber -> innerBulkHeadSFBuilder.setFrameNumber(String.valueOf(frameNumber)));
+
+    Optional.ofNullable(innerBulkHeadSF.getId()).ifPresent(id -> innerBulkHeadSFBuilder.setId(id));
+    Optional.ofNullable(String.valueOf(innerBulkHeadSF.getFrameNumber()))
+        .ifPresent(innerBulkHeadSFBuilder::setFrameNumber);
+
     Optional.ofNullable(innerBulkHeadSF.getForeAlpha())
         .ifPresent(foreAlpha -> innerBulkHeadSFBuilder.setForeAlpha(String.valueOf(foreAlpha)));
     Optional.ofNullable(innerBulkHeadSF.getForeCenterCargotankId())
         .ifPresent(
             foreCenterCargoTankId ->
-                innerBulkHeadSFBuilder.setForeCenterCargoTankId(
-                    Long.valueOf(foreCenterCargoTankId.toString())));
+                innerBulkHeadSFBuilder.setForeCenterCargoTankId(foreCenterCargoTankId.longValue()));
     Optional.ofNullable(innerBulkHeadSF.getForeC1())
         .ifPresent(foreC1 -> innerBulkHeadSFBuilder.setForeC1(String.valueOf(foreC1)));
 
@@ -580,8 +580,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     Optional.ofNullable(innerBulkHeadSF.getAftCenterCargotankId())
         .ifPresent(
             aftCenterCargoTankId ->
-                innerBulkHeadSFBuilder.setAftCenterCargoTankId(
-                    Long.valueOf(aftCenterCargoTankId.toString())));
+                innerBulkHeadSFBuilder.setAftCenterCargoTankId(aftCenterCargoTankId.longValue()));
     Optional.ofNullable(innerBulkHeadSF.getAftC1())
         .ifPresent(aftC1 -> innerBulkHeadSFBuilder.setAftC1(String.valueOf(aftC1)));
 
@@ -630,7 +629,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   private StationValues createStationValueBuilder(
       com.cpdss.vesselinfo.entity.StationValues stationValue,
       com.cpdss.common.generated.VesselInfo.StationValues.Builder stationValueBuilder) {
-    stationValueBuilder.setId(stationValue.getId());
+    Optional.ofNullable(stationValue.getId()).ifPresent(id -> stationValueBuilder.setId(id));
     Optional.ofNullable(stationValue.getFrameNumberFrom())
         .ifPresent(
             frameNumberFrom ->
@@ -656,7 +655,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       MinMaxValuesForBmsf minMaxValuesForBmsf,
       com.cpdss.common.generated.VesselInfo.MinMaxValuesForBMAndSf.Builder
           minMaxValuesForBMAndSfBuilder) {
-    minMaxValuesForBMAndSfBuilder.setId(minMaxValuesForBmsf.getId());
+    Optional.ofNullable(minMaxValuesForBmsf.getId())
+        .ifPresent(id -> minMaxValuesForBMAndSfBuilder.setId(id));
     Optional.ofNullable(minMaxValuesForBmsf.getFrameNumber())
         .ifPresent(
             frameNumber ->
@@ -685,7 +685,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       CalculationSheetTankgroup calculationSheetTankgroup,
       com.cpdss.common.generated.VesselInfo.CalculationSheetTankGroup.Builder
           calculationSheetTankGroupBuilder) {
-    calculationSheetTankGroupBuilder.setId(calculationSheetTankgroup.getId());
+    Optional.ofNullable(calculationSheetTankgroup.getId())
+        .ifPresent(id -> calculationSheetTankGroupBuilder.setId(id));
     Optional.ofNullable(calculationSheetTankgroup.getTankGroup())
         .ifPresent(tankGroup -> calculationSheetTankGroupBuilder.setTankGroup(tankGroup));
     Optional.ofNullable(calculationSheetTankgroup.getLcg())
@@ -706,7 +707,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   private CalculationSheet createCalculationSheet(
       com.cpdss.vesselinfo.entity.CalculationSheet calculationSheet,
       com.cpdss.common.generated.VesselInfo.CalculationSheet.Builder calculationSheetBuilder) {
-    calculationSheetBuilder.setId(calculationSheet.getId());
+    Optional.ofNullable(calculationSheet.getId())
+        .ifPresent(id -> calculationSheetBuilder.setId(id));
     Optional.ofNullable(calculationSheet.getTankGroup())
         .ifPresent(tankGroup -> calculationSheetBuilder.setTankGroup(tankGroup));
     Optional.ofNullable(calculationSheet.getTankId())
@@ -798,24 +800,25 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       HydrostaticTable hydrostaticTable,
       com.cpdss.common.generated.VesselInfo.HydrostaticData.Builder hydrostaticDataBuilder) {
     Optional.ofNullable(hydrostaticTable.getId()).ifPresent(id -> hydrostaticDataBuilder.setId(id));
-    Optional.ofNullable(hydrostaticTable.getTrim().toString())
-        .ifPresent(trim -> hydrostaticDataBuilder.setTrim(trim));
-    Optional.ofNullable(hydrostaticTable.getDraft().toString())
-        .ifPresent(draft -> hydrostaticDataBuilder.setDraft(draft));
-    Optional.ofNullable(hydrostaticTable.getDisplacement().toString())
-        .ifPresent(displacement -> hydrostaticDataBuilder.setDisplacement(displacement));
-    Optional.ofNullable(hydrostaticTable.getLcb().toString())
-        .ifPresent(lcb -> hydrostaticDataBuilder.setLcb(lcb));
-    Optional.ofNullable(hydrostaticTable.getLcf().toString())
-        .ifPresent(lcf -> hydrostaticDataBuilder.setLcf(lcf));
-    Optional.ofNullable(hydrostaticTable.getMtc().toString())
-        .ifPresent(mtc -> hydrostaticDataBuilder.setMtc(mtc));
-    Optional.ofNullable(hydrostaticTable.getTpc().toString())
-        .ifPresent(tpc -> hydrostaticDataBuilder.setTpc(tpc));
+    Optional.ofNullable(hydrostaticTable.getTrim())
+        .ifPresent(trim -> hydrostaticDataBuilder.setTrim(String.valueOf(trim)));
+    Optional.ofNullable(hydrostaticTable.getDraft())
+        .ifPresent(draft -> hydrostaticDataBuilder.setDraft(String.valueOf(draft)));
+    Optional.ofNullable(hydrostaticTable.getDisplacement())
+        .ifPresent(
+            displacement -> hydrostaticDataBuilder.setDisplacement(String.valueOf(displacement)));
+    Optional.ofNullable(hydrostaticTable.getLcb())
+        .ifPresent(lcb -> hydrostaticDataBuilder.setLcb(String.valueOf(lcb)));
+    Optional.ofNullable(hydrostaticTable.getLcf())
+        .ifPresent(lcf -> hydrostaticDataBuilder.setLcf(String.valueOf(lcf)));
+    Optional.ofNullable(hydrostaticTable.getMtc())
+        .ifPresent(mtc -> hydrostaticDataBuilder.setMtc(String.valueOf(mtc)));
+    Optional.ofNullable(hydrostaticTable.getTpc())
+        .ifPresent(tpc -> hydrostaticDataBuilder.setTpc(String.valueOf(tpc)));
     Optional.ofNullable(hydrostaticTable.getVcb())
         .ifPresent(vcb -> hydrostaticDataBuilder.setVcb(String.valueOf(vcb)));
-    Optional.ofNullable(hydrostaticTable.getTkm().toString())
-        .ifPresent(tkm -> hydrostaticDataBuilder.setTkm(tkm));
+    Optional.ofNullable(hydrostaticTable.getTkm())
+        .ifPresent(tkm -> hydrostaticDataBuilder.setTkm(String.valueOf(tkm)));
     Optional.ofNullable(hydrostaticTable.getLkm())
         .ifPresent(lkm -> hydrostaticDataBuilder.setLkm(String.valueOf(lkm)));
     return hydrostaticDataBuilder.build();
@@ -842,16 +845,20 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         .ifPresent(frameNumberFrom -> vesselTankBuilder.setFrameNumberFrom(frameNumberFrom));
     Optional.ofNullable(vesselTank.getFrameNumberTo())
         .ifPresent(frameNumberTo -> vesselTankBuilder.setFrameNumberTo(frameNumberTo));
-    Optional.ofNullable(vesselTank.getFullCapacityCubm().toString())
-        .ifPresent(fullCapacityCubm -> vesselTankBuilder.setFullCapacityCubm(fullCapacityCubm));
-    Optional.ofNullable(vesselTank.getLcg().toString())
-        .ifPresent(lcg -> vesselTankBuilder.setLcg(lcg));
-    Optional.ofNullable(vesselTank.getVcg().toString())
-        .ifPresent(vcg -> vesselTankBuilder.setVcg(vcg));
-    Optional.ofNullable(vesselTank.getTcg().toString())
-        .ifPresent(tcg -> vesselTankBuilder.setTcg(tcg));
-    Optional.ofNullable(vesselTank.getFillCapacityCubm().toString())
-        .ifPresent(fillCapacityCubm -> vesselTankBuilder.setFillCapacityCubm(fillCapacityCubm));
+    Optional.ofNullable(vesselTank.getFullCapacityCubm())
+        .ifPresent(
+            fullCapacityCubm ->
+                vesselTankBuilder.setFullCapacityCubm(String.valueOf(fullCapacityCubm)));
+    Optional.ofNullable(vesselTank.getLcg())
+        .ifPresent(lcg -> vesselTankBuilder.setLcg(String.valueOf(lcg)));
+    Optional.ofNullable(vesselTank.getVcg())
+        .ifPresent(vcg -> vesselTankBuilder.setVcg(String.valueOf(vcg)));
+    Optional.ofNullable(vesselTank.getTcg())
+        .ifPresent(tcg -> vesselTankBuilder.setTcg(String.valueOf(tcg)));
+    Optional.ofNullable(vesselTank.getFillCapacityCubm())
+        .ifPresent(
+            fillCapacityCubm ->
+                vesselTankBuilder.setFillCapacityCubm(String.valueOf(fillCapacityCubm)));
     Optional.ofNullable(vesselTank.getShortName())
         .ifPresent(shortName -> vesselTankBuilder.setShortName(shortName));
     return vesselTankBuilder.build();
@@ -868,22 +875,27 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
           vesselDraftConditionBuilder) {
     Optional.ofNullable(vesselDraftCondition.getId())
         .ifPresent(id -> vesselDraftConditionBuilder.setId(id));
-    Optional.ofNullable(vesselDraftCondition.getDraftCondition().getId())
+    Optional.ofNullable(vesselDraftCondition.getDraftCondition())
         .ifPresent(
-            draftConditionId -> vesselDraftConditionBuilder.setDraftConditionId(draftConditionId));
+            draftCondition ->
+                vesselDraftConditionBuilder.setDraftConditionId(draftCondition.getId()));
 
-    Optional.ofNullable(vesselDraftCondition.getDepth().toString())
-        .ifPresent(depth -> vesselDraftConditionBuilder.setDepth(depth));
-    Optional.ofNullable(vesselDraftCondition.getFreeboard().toString())
-        .ifPresent(freeBoard -> vesselDraftConditionBuilder.setFreeboard(freeBoard));
-    Optional.ofNullable(vesselDraftCondition.getDraftExtreme().toString())
-        .ifPresent(draftExtreme -> vesselDraftConditionBuilder.setDraftExtreme(draftExtreme));
+    Optional.ofNullable(vesselDraftCondition.getDepth())
+        .ifPresent(depth -> vesselDraftConditionBuilder.setDepth(String.valueOf(depth)));
+    Optional.ofNullable(vesselDraftCondition.getFreeboard())
+        .ifPresent(
+            freeBoard -> vesselDraftConditionBuilder.setFreeboard(String.valueOf(freeBoard)));
+    Optional.ofNullable(vesselDraftCondition.getDraftExtreme())
+        .ifPresent(
+            draftExtreme ->
+                vesselDraftConditionBuilder.setDraftExtreme(String.valueOf(draftExtreme)));
     Optional.ofNullable(vesselDraftCondition.getDisplacement())
         .ifPresent(
             displacement ->
                 vesselDraftConditionBuilder.setDisplacement(String.valueOf(displacement)));
-    Optional.ofNullable(vesselDraftCondition.getDeadweight().toString())
-        .ifPresent(deadweight -> vesselDraftConditionBuilder.setDeadWeight(deadweight));
+    Optional.ofNullable(vesselDraftCondition.getDeadweight())
+        .ifPresent(
+            deadweight -> vesselDraftConditionBuilder.setDeadWeight(String.valueOf(deadweight)));
     return vesselDraftConditionBuilder.build();
   }
 
@@ -912,69 +924,80 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     Optional.ofNullable(vessel.getTypeOfShip())
         .ifPresent(typeOfShip -> vesselDetailBuilder.setTypeOfShip(typeOfShip));
 
-    Optional.ofNullable(vessel.getRegisterLength().toString())
-        .ifPresent(registerLength -> vesselDetailBuilder.setRegisterLength(registerLength));
+    Optional.ofNullable(vessel.getRegisterLength())
+        .ifPresent(
+            registerLength ->
+                vesselDetailBuilder.setRegisterLength(String.valueOf(registerLength)));
 
-    Optional.ofNullable(vessel.getLengthOverall().toString())
-        .ifPresent(lenthOverall -> vesselDetailBuilder.setLengthOverall(lenthOverall));
+    Optional.ofNullable(vessel.getLengthOverall())
+        .ifPresent(
+            lenthOverall -> vesselDetailBuilder.setLengthOverall(String.valueOf(lenthOverall)));
 
-    Optional.ofNullable(vessel.getLengthBetweenPerpendiculars().toString())
+    Optional.ofNullable(vessel.getLengthBetweenPerpendiculars())
         .ifPresent(
             lengthBetweenPerpendiculars ->
-                vesselDetailBuilder.setLengthBetweenPerpendiculars(lengthBetweenPerpendiculars));
+                vesselDetailBuilder.setLengthBetweenPerpendiculars(
+                    String.valueOf(lengthBetweenPerpendiculars)));
 
-    Optional.ofNullable(vessel.getDepthMolded().toString())
-        .ifPresent(depthMolded -> vesselDetailBuilder.setDepthMolded(depthMolded));
+    Optional.ofNullable(vessel.getDepthMolded())
+        .ifPresent(depthMolded -> vesselDetailBuilder.setDepthMolded(String.valueOf(depthMolded)));
 
     Optional.ofNullable(vessel.getDesignedLoaddraft())
         .ifPresent(
             designedLoaddraft ->
                 vesselDetailBuilder.setDesignedLoaddraft(String.valueOf(designedLoaddraft)));
 
-    Optional.ofNullable(vessel.getDraftFullLoadSummer().toString())
+    Optional.ofNullable(vessel.getDraftFullLoadSummer())
         .ifPresent(
-            draftFullLoadSummer -> vesselDetailBuilder.setDraftFullLoadSummer(draftFullLoadSummer));
+            draftFullLoadSummer ->
+                vesselDetailBuilder.setDraftFullLoadSummer(String.valueOf(draftFullLoadSummer)));
 
-    Optional.ofNullable(vessel.getThicknessOfUpperDeckStringerPlate().toString())
+    Optional.ofNullable(vessel.getThicknessOfUpperDeckStringerPlate())
         .ifPresent(
             thicknessOfUpperDeckStringerPlate ->
                 vesselDetailBuilder.setThicknessOfUpperDeckStringerPlate(
-                    thicknessOfUpperDeckStringerPlate));
+                    String.valueOf(thicknessOfUpperDeckStringerPlate)));
 
-    Optional.ofNullable(vessel.getThicknessOfKeelplate().toString())
+    Optional.ofNullable(vessel.getThicknessOfKeelplate())
         .ifPresent(
             thicknessOfKeelplate ->
-                vesselDetailBuilder.setThicknessOfKeelplate(thicknessOfKeelplate));
+                vesselDetailBuilder.setThicknessOfKeelplate(String.valueOf(thicknessOfKeelplate)));
 
     Optional.ofNullable(vessel.getDeadweight())
         .ifPresent(deadweight -> vesselDetailBuilder.setDeadweight(String.valueOf(deadweight)));
 
-    Optional.ofNullable(vessel.getLightweight().toString())
-        .ifPresent(lightweight -> vesselDetailBuilder.setLightweight(lightweight));
+    Optional.ofNullable(vessel.getLightweight())
+        .ifPresent(lightweight -> vesselDetailBuilder.setLightweight(String.valueOf(lightweight)));
 
-    Optional.ofNullable(vessel.getLcg().toString())
-        .ifPresent(lcg -> vesselDetailBuilder.setLcg(lcg));
+    Optional.ofNullable(vessel.getLcg())
+        .ifPresent(lcg -> vesselDetailBuilder.setLcg(String.valueOf(lcg)));
 
-    Optional.ofNullable(vessel.getKeelToMastHeight().toString())
-        .ifPresent(keelToMastHeight -> vesselDetailBuilder.setKeelToMastHeight(keelToMastHeight));
-
-    Optional.ofNullable(vessel.getDeadweightConstant().toString())
+    Optional.ofNullable(vessel.getKeelToMastHeight())
         .ifPresent(
-            deadweightConstant -> vesselDetailBuilder.setDeadweightConstant(deadweightConstant));
+            keelToMastHeight ->
+                vesselDetailBuilder.setKeelToMastHeight(String.valueOf(keelToMastHeight)));
 
-    Optional.ofNullable(vessel.getProvisionalConstant().toString())
+    Optional.ofNullable(vessel.getDeadweightConstant())
         .ifPresent(
-            provisionalConstant -> vesselDetailBuilder.setProvisionalConstant(provisionalConstant));
+            deadweightConstant ->
+                vesselDetailBuilder.setDeadweightConstant(String.valueOf(deadweightConstant)));
 
-    Optional.ofNullable(vessel.getDeadweightConstantLcg().toString())
+    Optional.ofNullable(vessel.getProvisionalConstant())
+        .ifPresent(
+            provisionalConstant ->
+                vesselDetailBuilder.setProvisionalConstant(String.valueOf(provisionalConstant)));
+
+    Optional.ofNullable(vessel.getDeadweightConstantLcg())
         .ifPresent(
             deadweightConstantLcg ->
-                vesselDetailBuilder.setDeadweightConstantLcg(deadweightConstantLcg));
+                vesselDetailBuilder.setDeadweightConstantLcg(
+                    String.valueOf(deadweightConstantLcg)));
 
-    Optional.ofNullable(vessel.getProvisionalConstantLcg().toString())
+    Optional.ofNullable(vessel.getProvisionalConstantLcg())
         .ifPresent(
             provisionalConstantLcg ->
-                vesselDetailBuilder.setProvisionalConstantLcg(provisionalConstantLcg));
+                vesselDetailBuilder.setProvisionalConstantLcg(
+                    String.valueOf(provisionalConstantLcg)));
 
     Optional.ofNullable(vessel.getGrossTonnage())
         .ifPresent(
@@ -983,10 +1006,11 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     Optional.ofNullable(vessel.getNetTonnage())
         .ifPresent(netTonnage -> vesselDetailBuilder.setNetTonnage(String.valueOf(netTonnage)));
 
-    Optional.ofNullable(vessel.getDeadweightConstantTcg().toString())
+    Optional.ofNullable(vessel.getDeadweightConstantTcg())
         .ifPresent(
             deadweightConstantTcg ->
-                vesselDetailBuilder.setDeadweightConstantTcg(deadweightConstantTcg));
+                vesselDetailBuilder.setDeadweightConstantTcg(
+                    String.valueOf(deadweightConstantTcg)));
 
     return vesselDetailBuilder.build();
   }

@@ -5,7 +5,8 @@ import lombok.Data;
 
 /** @Author jerin.g */
 @Data
-public class InnerBulkHeadSF {
+public class InnerBulkHeadValues {
+  private Long id;
   private String frameNumber;
   private String foreAlpha;
   private Long foreCenterCargoTankId;
@@ -27,6 +28,6 @@ public class InnerBulkHeadSF {
   private String aftC3;
   private String aftBWCorrection;
   private String aftC4;
-  private String aftMaxAllowence;
-  private String aftMinAllowence;
+  private String aftMaxFlAllowence;
+  private String aftMinFlAllowence;
 }
