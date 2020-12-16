@@ -17,9 +17,11 @@ import com.cpdss.gateway.domain.BendingMoment;
 import com.cpdss.gateway.domain.CalculationSheet;
 import com.cpdss.gateway.domain.CalculationSheetTankGroup;
 import com.cpdss.gateway.domain.HydrostaticData;
+import com.cpdss.gateway.domain.InnerBulkHeadValues;
 import com.cpdss.gateway.domain.LoadLine;
 import com.cpdss.gateway.domain.MinMaxValuesForBMAndSf;
 import com.cpdss.gateway.domain.ShearingForce;
+import com.cpdss.gateway.domain.StationValues;
 import com.cpdss.gateway.domain.Vessel;
 import com.cpdss.gateway.domain.VesselDetailsResponse;
 import com.cpdss.gateway.domain.VesselDraftCondition;
@@ -190,11 +192,81 @@ public class VesselInfoService {
         this.createCalculationSheetTankGroupResponse(vesselAlgoReply, correlationId));
     bmAndSF.setMinMaxValuesForBMAndSfs(
         this.createMinMaxValuesForBMAndSfResponse(vesselAlgoReply, correlationId));
+    bmAndSF.setStationValues(this.createStationValues(vesselAlgoReply, correlationId));
+    bmAndSF.setInnerBulkHeadValues(this.createInnerBulkHeadValues(vesselAlgoReply, correlationId));
     vesselDetailsResponse.setBMAndSF(bmAndSF);
     vesselDetailsResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
 
     return vesselDetailsResponse;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return Object
+   */
+  private List<InnerBulkHeadValues> createInnerBulkHeadValues(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<InnerBulkHeadValues> innerBulkHeadSFValues = new ArrayList<InnerBulkHeadValues>();
+    vesselAlgoReply
+        .getBMAndSF()
+        .getInnerBulkHeadSFList()
+        .forEach(
+            innerBulkHeadSFValue -> {
+              InnerBulkHeadValues values = new InnerBulkHeadValues();
+              values.setId(innerBulkHeadSFValue.getId());
+              values.setFrameNumber(innerBulkHeadSFValue.getFrameNumber());
+              values.setForeAlpha(innerBulkHeadSFValue.getForeAlpha());
+              values.setForeCenterCargoTankId(innerBulkHeadSFValue.getForeCenterCargoTankId());
+              values.setForeC1(innerBulkHeadSFValue.getForeC1());
+              values.setForeWingTankIds(innerBulkHeadSFValue.getForeWingTankIds());
+              values.setForeC2(innerBulkHeadSFValue.getForeC2());
+              values.setForeBallstTanks(innerBulkHeadSFValue.getForeBallastTanks());
+              values.setForeC3(innerBulkHeadSFValue.getForeC3());
+              values.setForeBWCorrection(innerBulkHeadSFValue.getForeBWCorrection());
+              values.setForeC4(innerBulkHeadSFValue.getForeC4());
+              values.setForeMaxAllowence(innerBulkHeadSFValue.getForeMaxAllowence());
+              values.setForeMinAllowence(innerBulkHeadSFValue.getForeMinAllowence());
+              values.setAftAlpha(innerBulkHeadSFValue.getAftAlpha());
+              values.setAftCenterCargoTankId(innerBulkHeadSFValue.getAftCenterCargoTankId());
+              values.setAftC1(innerBulkHeadSFValue.getAftC1());
+              values.setAftWingTankIds(innerBulkHeadSFValue.getAftWingTankIds());
+              values.setAftC2(innerBulkHeadSFValue.getAftC2());
+              values.setAftBallstTanks(innerBulkHeadSFValue.getAftBallastTanks());
+              values.setAftC3(innerBulkHeadSFValue.getAftC3());
+              values.setAftBWCorrection(innerBulkHeadSFValue.getAftBWCorrection());
+              values.setAftC4(innerBulkHeadSFValue.getAftC4());
+              values.setAftMaxFlAllowence(innerBulkHeadSFValue.getAftMaxFlAllowence());
+              values.setAftMinFlAllowence(innerBulkHeadSFValue.getAftMinFlAllowence());
+              innerBulkHeadSFValues.add(values);
+            });
+    return innerBulkHeadSFValues;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @param correlationId
+   * @return Object
+   */
+  private List<StationValues> createStationValues(
+      VesselAlgoReply vesselAlgoReply, String correlationId) {
+    List<StationValues> stationValues = new ArrayList<StationValues>();
+    vesselAlgoReply
+        .getBMAndSF()
+        .getStationValuesList()
+        .forEach(
+            stationValue -> {
+              StationValues values = new StationValues();
+              values.setId(stationValue.getId());
+              values.setFrameNumberFrom(stationValue.getFrameNumberFrom());
+              values.setFrameNumberTo(stationValue.getFrameNumberTo());
+              values.setStationFrom(stationValue.getStationFrom());
+              values.setStationTo(stationValue.getStationTo());
+              values.setDistance(stationValue.getDistance());
+              stationValues.add(values);
+            });
+    return stationValues;
   }
 
   /**
@@ -399,6 +471,10 @@ public class VesselInfoService {
                   vesselTank.getFillCapacityCubm().equals("")
                       ? new BigDecimal(0)
                       : new BigDecimal(vesselTank.getFillCapacityCubm()));
+              tank.setFullCapcityCubm(
+                  vesselTank.getFullCapacityCubm().equals("")
+                      ? null
+                      : new BigDecimal(vesselTank.getFullCapacityCubm()));
               tank.setFrameNumberFrom(vesselTank.getFrameNumberFrom());
               tank.setFrameNumberTo(vesselTank.getFrameNumberTo());
               tank.setId(vesselTank.getTankId());
@@ -484,7 +560,7 @@ public class VesselInfoService {
    * @param vesselAlgoRequest
    * @return VesselAlgoReply
    */
-  private VesselAlgoReply getVesselsDetails(VesselAlgoRequest vesselAlgoRequest) {
+  public VesselAlgoReply getVesselsDetails(VesselAlgoRequest vesselAlgoRequest) {
     return vesselInfoGrpcService.getVesselDetailsForAlgo(vesselAlgoRequest);
   }
 }

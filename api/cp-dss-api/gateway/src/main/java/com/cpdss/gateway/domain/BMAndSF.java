@@ -12,6 +12,6 @@ public class BMAndSF {
   private List<CalculationSheet> calculationSheet;
   private List<CalculationSheetTankGroup> calculationSheetTankGroup;
   private List<MinMaxValuesForBMAndSf> minMaxValuesForBMAndSfs;
-  private List<StationValues> stationValue;
-  private List<InnerBulkHeadSF> innerBulkHeadSF;
+  private List<StationValues> stationValues;
+  private List<InnerBulkHeadValues> innerBulkHeadValues;
 }

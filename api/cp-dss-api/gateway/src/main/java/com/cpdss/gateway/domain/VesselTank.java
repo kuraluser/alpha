@@ -47,4 +47,6 @@ public class VesselTank {
   private Integer group;
 
   private Integer order;
+
+  private BigDecimal fullCapcityCubm;
 }
