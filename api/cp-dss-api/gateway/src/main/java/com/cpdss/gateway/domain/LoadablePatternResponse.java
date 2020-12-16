@@ -11,4 +11,6 @@ public class LoadablePatternResponse {
   private CommonSuccessResponse responseStatus;
   private List<List<VesselTank>> tankLists;
   private List<LoadablePattern> loadablePatterns;
+  private String loadablePatternCreatedDate;
+  private String loadableStudyName;
 }

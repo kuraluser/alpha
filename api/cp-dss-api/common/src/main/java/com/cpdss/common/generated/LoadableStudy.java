@@ -43155,6 +43155,32 @@ public final class LoadableStudy {
         getTanksOrBuilderList();
     /** <code>repeated .TankList tanks = 3;</code> */
     com.cpdss.common.generated.LoadableStudy.TankListOrBuilder getTanksOrBuilder(int index);
+
+    /**
+     * <code>string loadablePatternCreatedDate = 4;</code>
+     *
+     * @return The loadablePatternCreatedDate.
+     */
+    java.lang.String getLoadablePatternCreatedDate();
+    /**
+     * <code>string loadablePatternCreatedDate = 4;</code>
+     *
+     * @return The bytes for loadablePatternCreatedDate.
+     */
+    com.google.protobuf.ByteString getLoadablePatternCreatedDateBytes();
+
+    /**
+     * <code>string loadableStudyName = 5;</code>
+     *
+     * @return The loadableStudyName.
+     */
+    java.lang.String getLoadableStudyName();
+    /**
+     * <code>string loadableStudyName = 5;</code>
+     *
+     * @return The bytes for loadableStudyName.
+     */
+    com.google.protobuf.ByteString getLoadableStudyNameBytes();
   }
   /** Protobuf type {@code LoadablePatternReply} */
   public static final class LoadablePatternReply extends com.google.protobuf.GeneratedMessageV3
@@ -43170,6 +43196,8 @@ public final class LoadableStudy {
     private LoadablePatternReply() {
       loadablePattern_ = java.util.Collections.emptyList();
       tanks_ = java.util.Collections.emptyList();
+      loadablePatternCreatedDate_ = "";
+      loadableStudyName_ = "";
     }
 
     @java.lang.Override
@@ -43244,6 +43272,20 @@ public final class LoadableStudy {
                     input.readMessage(
                         com.cpdss.common.generated.LoadableStudy.TankList.parser(),
                         extensionRegistry));
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                loadablePatternCreatedDate_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                loadableStudyName_ = s;
                 break;
               }
             default:
@@ -43363,6 +43405,76 @@ public final class LoadableStudy {
       return tanks_.get(index);
     }
 
+    public static final int LOADABLEPATTERNCREATEDDATE_FIELD_NUMBER = 4;
+    private volatile java.lang.Object loadablePatternCreatedDate_;
+    /**
+     * <code>string loadablePatternCreatedDate = 4;</code>
+     *
+     * @return The loadablePatternCreatedDate.
+     */
+    public java.lang.String getLoadablePatternCreatedDate() {
+      java.lang.Object ref = loadablePatternCreatedDate_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        loadablePatternCreatedDate_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string loadablePatternCreatedDate = 4;</code>
+     *
+     * @return The bytes for loadablePatternCreatedDate.
+     */
+    public com.google.protobuf.ByteString getLoadablePatternCreatedDateBytes() {
+      java.lang.Object ref = loadablePatternCreatedDate_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        loadablePatternCreatedDate_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LOADABLESTUDYNAME_FIELD_NUMBER = 5;
+    private volatile java.lang.Object loadableStudyName_;
+    /**
+     * <code>string loadableStudyName = 5;</code>
+     *
+     * @return The loadableStudyName.
+     */
+    public java.lang.String getLoadableStudyName() {
+      java.lang.Object ref = loadableStudyName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        loadableStudyName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string loadableStudyName = 5;</code>
+     *
+     * @return The bytes for loadableStudyName.
+     */
+    public com.google.protobuf.ByteString getLoadableStudyNameBytes() {
+      java.lang.Object ref = loadableStudyName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        loadableStudyName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -43386,6 +43498,12 @@ public final class LoadableStudy {
       for (int i = 0; i < tanks_.size(); i++) {
         output.writeMessage(3, tanks_.get(i));
       }
+      if (!getLoadablePatternCreatedDateBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, loadablePatternCreatedDate_);
+      }
+      if (!getLoadableStudyNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, loadableStudyName_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -43404,6 +43522,14 @@ public final class LoadableStudy {
       }
       for (int i = 0; i < tanks_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, tanks_.get(i));
+      }
+      if (!getLoadablePatternCreatedDateBytes().isEmpty()) {
+        size +=
+            com.google.protobuf.GeneratedMessageV3.computeStringSize(
+                4, loadablePatternCreatedDate_);
+      }
+      if (!getLoadableStudyNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, loadableStudyName_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -43427,6 +43553,9 @@ public final class LoadableStudy {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
       if (!getTanksList().equals(other.getTanksList())) return false;
+      if (!getLoadablePatternCreatedDate().equals(other.getLoadablePatternCreatedDate()))
+        return false;
+      if (!getLoadableStudyName().equals(other.getLoadableStudyName())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -43450,6 +43579,10 @@ public final class LoadableStudy {
         hash = (37 * hash) + TANKS_FIELD_NUMBER;
         hash = (53 * hash) + getTanksList().hashCode();
       }
+      hash = (37 * hash) + LOADABLEPATTERNCREATEDDATE_FIELD_NUMBER;
+      hash = (53 * hash) + getLoadablePatternCreatedDate().hashCode();
+      hash = (37 * hash) + LOADABLESTUDYNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getLoadableStudyName().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -43611,6 +43744,10 @@ public final class LoadableStudy {
         } else {
           tanksBuilder_.clear();
         }
+        loadablePatternCreatedDate_ = "";
+
+        loadableStudyName_ = "";
+
         return this;
       }
 
@@ -43663,6 +43800,8 @@ public final class LoadableStudy {
         } else {
           result.tanks_ = tanksBuilder_.build();
         }
+        result.loadablePatternCreatedDate_ = loadablePatternCreatedDate_;
+        result.loadableStudyName_ = loadableStudyName_;
         onBuilt();
         return result;
       }
@@ -43773,6 +43912,14 @@ public final class LoadableStudy {
               tanksBuilder_.addAllMessages(other.tanks_);
             }
           }
+        }
+        if (!other.getLoadablePatternCreatedDate().isEmpty()) {
+          loadablePatternCreatedDate_ = other.loadablePatternCreatedDate_;
+          onChanged();
+        }
+        if (!other.getLoadableStudyName().isEmpty()) {
+          loadableStudyName_ = other.loadableStudyName_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -44360,6 +44507,158 @@ public final class LoadableStudy {
           tanks_ = null;
         }
         return tanksBuilder_;
+      }
+
+      private java.lang.Object loadablePatternCreatedDate_ = "";
+      /**
+       * <code>string loadablePatternCreatedDate = 4;</code>
+       *
+       * @return The loadablePatternCreatedDate.
+       */
+      public java.lang.String getLoadablePatternCreatedDate() {
+        java.lang.Object ref = loadablePatternCreatedDate_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          loadablePatternCreatedDate_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string loadablePatternCreatedDate = 4;</code>
+       *
+       * @return The bytes for loadablePatternCreatedDate.
+       */
+      public com.google.protobuf.ByteString getLoadablePatternCreatedDateBytes() {
+        java.lang.Object ref = loadablePatternCreatedDate_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          loadablePatternCreatedDate_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string loadablePatternCreatedDate = 4;</code>
+       *
+       * @param value The loadablePatternCreatedDate to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadablePatternCreatedDate(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        loadablePatternCreatedDate_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string loadablePatternCreatedDate = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadablePatternCreatedDate() {
+
+        loadablePatternCreatedDate_ = getDefaultInstance().getLoadablePatternCreatedDate();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string loadablePatternCreatedDate = 4;</code>
+       *
+       * @param value The bytes for loadablePatternCreatedDate to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadablePatternCreatedDateBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        loadablePatternCreatedDate_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object loadableStudyName_ = "";
+      /**
+       * <code>string loadableStudyName = 5;</code>
+       *
+       * @return The loadableStudyName.
+       */
+      public java.lang.String getLoadableStudyName() {
+        java.lang.Object ref = loadableStudyName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          loadableStudyName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string loadableStudyName = 5;</code>
+       *
+       * @return The bytes for loadableStudyName.
+       */
+      public com.google.protobuf.ByteString getLoadableStudyNameBytes() {
+        java.lang.Object ref = loadableStudyName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          loadableStudyName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string loadableStudyName = 5;</code>
+       *
+       * @param value The loadableStudyName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadableStudyName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        loadableStudyName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string loadableStudyName = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadableStudyName() {
+
+        loadableStudyName_ = getDefaultInstance().getLoadableStudyName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string loadableStudyName = 5;</code>
+       *
+       * @param value The bytes for loadableStudyName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadableStudyNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        loadableStudyName_ = value;
+        onChanged();
+        return this;
       }
 
       @java.lang.Override
@@ -54152,91 +54451,93 @@ public final class LoadableStudy {
           + "\001 \001(\003\"s\n\027PurposeOfCommingleReply\022\'\n\016resp"
           + "onseStatus\030\001 \001(\0132\017.ResponseStatus\022/\n\022pur"
           + "poseOfCommingle\030\002 \003(\0132\023.PurposeOfComming"
-          + "le\"\204\001\n\024LoadablePatternReply\022)\n\017loadableP"
+          + "le\"\303\001\n\024LoadablePatternReply\022)\n\017loadableP"
           + "attern\030\001 \003(\0132\020.LoadablePattern\022\'\n\016respon"
           + "seStatus\030\002 \001(\0132\017.ResponseStatus\022\030\n\005tanks"
-          + "\030\003 \003(\0132\t.TankList\"\242\001\n\017LoadablePattern\022\031\n"
-          + "\021loadablePatternId\030\001 \001(\003\022A\n\033loadablePatt"
-          + "ernCargoDetails\030\002 \003(\0132\034.LoadablePatternC"
-          + "argoDetails\022\023\n\013constraints\030\003 \001(\t\022\034\n\024tota"
-          + "lDifferenceColor\030\004 \001(\t\"\217\002\n\033LoadablePatte"
-          + "rnCargoDetails\022\020\n\010priority\030\001 \001(\003\022\031\n\021carg"
-          + "oAbbreviation\030\002 \001(\t\022\022\n\ncargoColor\030\003 \001(\t\022"
-          + "\016\n\006tankId\030\004 \001(\003\022\020\n\010quantity\030\005 \001(\t\022\022\n\ndif"
-          + "ference\030\006 \001(\t\022\027\n\017differenceColor\030\007 \001(\t\022 "
-          + "\n\030loadablePatternDetailsId\030\010 \001(\003\022\023\n\013isCo"
-          + "mmingle\030\t \001(\010\022)\n!loadablePatternCommingl"
-          + "eDetailsId\030\n \001(\003\"1\n\026LoadablePatternReque"
-          + "st\022\027\n\017loadableStudyId\030\001 \001(\003\"\265\001\n\016Commingl"
-          + "eCargo\022\n\n\002id\030\001 \001(\003\022\021\n\tpurposeId\030\002 \001(\003\022\020\n"
-          + "\010slopOnly\030\003 \001(\010\022\026\n\016preferredTanks\030\004 \003(\003\022"
-          + "\020\n\010cargo1Id\030\005 \001(\003\022\021\n\tcargo1pct\030\006 \001(\t\022\020\n\010"
-          + "cargo2Id\030\007 \001(\003\022\021\n\tcargo2pct\030\010 \001(\t\022\020\n\010qua"
-          + "ntity\030\t \001(\t\"Y\n\025CommingleCargoRequest\022\027\n\017"
-          + "loadableStudyId\030\001 \001(\003\022\'\n\016commingleCargo\030"
-          + "\002 \003(\0132\017.CommingleCargo\"g\n\023CommingleCargo"
-          + "Reply\022\'\n\016responseStatus\030\001 \001(\0132\017.Response"
-          + "Status\022\'\n\016commingleCargo\030\002 \003(\0132\017.Comming"
-          + "leCargo\"S\n&LoadablePatternCommingleDetai"
-          + "lsRequest\022)\n!loadablePatternCommingleDet"
-          + "ailsId\030\001 \001(\003\"\317\002\n$LoadablePatternCommingl"
-          + "eDetailsReply\022\n\n\002id\030\001 \001(\003\022\025\n\rtankShortNa"
-          + "me\030\002 \001(\t\022\031\n\021cargo1Abbrivation\030\003 \001(\t\022\031\n\021c"
-          + "argo2Abbrivation\030\004 \001(\t\022\r\n\005grade\030\005 \001(\t\022\020\n"
-          + "\010quantity\030\006 \001(\t\022\013\n\003api\030\007 \001(\t\022\023\n\013temperat"
-          + "ure\030\010 \001(\t\022\026\n\016cargo1Quantity\030\t \001(\t\022\026\n\016car"
-          + "go2Quantity\030\n \001(\t\022\030\n\020cargo1Percentage\030\013 "
-          + "\001(\t\022\030\n\020cargo2Percentage\030\014 \001(\t\022\'\n\016respons"
-          + "eStatus\030\r \001(\0132\017.ResponseStatus2\201\017\n\024Loada"
-          + "bleStudyService\022,\n\nSaveVoyage\022\016.VoyageRe"
-          + "quest\032\014.VoyageReply\"\000\0228\n\022GetVoyagesByVes"
-          + "sel\022\016.VoyageRequest\032\020.VoyageListReply\"\000\022"
-          + "J\n\024SaveLoadableQuantity\022\030.LoadableQuanti"
-          + "tyRequest\032\026.LoadableQuantityReply\"\000\022T\n$F"
-          + "indLoadableStudiesByVesselAndVoyage\022\025.Lo"
-          + "adableStudyRequest\032\023.LoadableStudyReply\""
-          + "\000\022@\n\021SaveLoadableStudy\022\024.LoadableStudyDe"
-          + "tail\032\023.LoadableStudyReply\"\000\022G\n\023SaveCargo"
-          + "Nomination\022\027.CargoNominationRequest\032\025.Ca"
-          + "rgoNominationReply\"\000\022J\n\034GetLoadableStudy"
-          + "PortRotation\022\024.PortRotationRequest\032\022.Por"
-          + "tRotationReply\"\000\022J\n\026GetCargoNominationBy"
-          + "Id\022\027.CargoNominationRequest\032\025.CargoNomin"
-          + "ationReply\"\000\022I\n\023GetValveSegregation\022\030.Va"
-          + "lveSegregationRequest\032\026.ValveSegregation"
-          + "Reply\"\000\022J\n\023getLoadableQuantity\022\026.Loadabl"
-          + "eQuantityReply\032\031.LoadableQuantityRespons"
-          + "e\"\000\022J\n\035SaveLoadableStudyPortRotation\022\023.P"
-          + "ortRotationDetail\032\022.PortRotationReply\"\000\022"
-          + "I\n\025DeleteCargoNomination\022\027.CargoNominati"
-          + "onRequest\032\025.CargoNominationReply\"\000\022B\n\024Sa"
-          + "veDischargingPorts\022\024.PortRotationRequest"
-          + "\032\022.PortRotationReply\"\000\022N\n GetPortRotatio"
-          + "nByLoadableStudyId\022\024.PortRotationRequest"
-          + "\032\022.PortRotationReply\"\000\022C\n\023DeleteLoadable"
-          + "Study\022\025.LoadableStudyRequest\032\023.LoadableS"
-          + "tudyReply\"\000\022@\n\022DeletePortRotation\022\024.Port"
-          + "RotationRequest\032\022.PortRotationReply\"\000\022C\n"
-          + "\021GetOnHandQuantity\022\026.OnHandQuantityReque"
-          + "st\032\024.OnHandQuantityReply\"\000\022C\n\022SaveOnHand"
-          + "Quantity\022\025.OnHandQuantityDetail\032\024.OnHand"
-          + "QuantityReply\"\000\022M\n\031GetLoadablePatternDet"
-          + "ails\022\027.LoadablePatternRequest\032\025.Loadable"
-          + "PatternReply\"\000\022O\n\025GetPurposeOfCommingle\022"
-          + "\032.PurposeOfCommingleRequest\032\030.PurposeOfC"
-          + "ommingleReply\"\000\022C\n\021GetCommingleCargo\022\026.C"
-          + "ommingleCargoRequest\032\024.CommingleCargoRep"
-          + "ly\"\000\022D\n\022SaveCommingleCargo\022\026.CommingleCa"
-          + "rgoRequest\032\024.CommingleCargoReply\"\000\022v\n\"Ge"
-          + "tLoadablePatternCommingleDetails\022\'.Loada"
-          + "blePatternCommingleDetailsRequest\032%.Load"
-          + "ablePatternCommingleDetailsReply\"\000\0226\n\030Ge"
-          + "nerateLoadablePatterns\022\014.AlgoRequest\032\n.A"
-          + "lgoReply\"\000\022F\n\022GetOnBoardQuantity\022\027.OnBoa"
-          + "rdQuantityRequest\032\025.OnBoardQuantityReply"
-          + "\"\000\022F\n\023SaveOnBoardQuantity\022\026.OnBoardQuant"
-          + "ityDetail\032\025.OnBoardQuantityReply\"\000B\036\n\032co"
-          + "m.cpdss.common.generatedP\000b\006proto3"
+          + "\030\003 \003(\0132\t.TankList\022\"\n\032loadablePatternCrea"
+          + "tedDate\030\004 \001(\t\022\031\n\021loadableStudyName\030\005 \001(\t"
+          + "\"\242\001\n\017LoadablePattern\022\031\n\021loadablePatternI"
+          + "d\030\001 \001(\003\022A\n\033loadablePatternCargoDetails\030\002"
+          + " \003(\0132\034.LoadablePatternCargoDetails\022\023\n\013co"
+          + "nstraints\030\003 \001(\t\022\034\n\024totalDifferenceColor\030"
+          + "\004 \001(\t\"\217\002\n\033LoadablePatternCargoDetails\022\020\n"
+          + "\010priority\030\001 \001(\003\022\031\n\021cargoAbbreviation\030\002 \001"
+          + "(\t\022\022\n\ncargoColor\030\003 \001(\t\022\016\n\006tankId\030\004 \001(\003\022\020"
+          + "\n\010quantity\030\005 \001(\t\022\022\n\ndifference\030\006 \001(\t\022\027\n\017"
+          + "differenceColor\030\007 \001(\t\022 \n\030loadablePattern"
+          + "DetailsId\030\010 \001(\003\022\023\n\013isCommingle\030\t \001(\010\022)\n!"
+          + "loadablePatternCommingleDetailsId\030\n \001(\003\""
+          + "1\n\026LoadablePatternRequest\022\027\n\017loadableStu"
+          + "dyId\030\001 \001(\003\"\265\001\n\016CommingleCargo\022\n\n\002id\030\001 \001("
+          + "\003\022\021\n\tpurposeId\030\002 \001(\003\022\020\n\010slopOnly\030\003 \001(\010\022\026"
+          + "\n\016preferredTanks\030\004 \003(\003\022\020\n\010cargo1Id\030\005 \001(\003"
+          + "\022\021\n\tcargo1pct\030\006 \001(\t\022\020\n\010cargo2Id\030\007 \001(\003\022\021\n"
+          + "\tcargo2pct\030\010 \001(\t\022\020\n\010quantity\030\t \001(\t\"Y\n\025Co"
+          + "mmingleCargoRequest\022\027\n\017loadableStudyId\030\001"
+          + " \001(\003\022\'\n\016commingleCargo\030\002 \003(\0132\017.Commingle"
+          + "Cargo\"g\n\023CommingleCargoReply\022\'\n\016response"
+          + "Status\030\001 \001(\0132\017.ResponseStatus\022\'\n\016comming"
+          + "leCargo\030\002 \003(\0132\017.CommingleCargo\"S\n&Loadab"
+          + "lePatternCommingleDetailsRequest\022)\n!load"
+          + "ablePatternCommingleDetailsId\030\001 \001(\003\"\317\002\n$"
+          + "LoadablePatternCommingleDetailsReply\022\n\n\002"
+          + "id\030\001 \001(\003\022\025\n\rtankShortName\030\002 \001(\t\022\031\n\021cargo"
+          + "1Abbrivation\030\003 \001(\t\022\031\n\021cargo2Abbrivation\030"
+          + "\004 \001(\t\022\r\n\005grade\030\005 \001(\t\022\020\n\010quantity\030\006 \001(\t\022\013"
+          + "\n\003api\030\007 \001(\t\022\023\n\013temperature\030\010 \001(\t\022\026\n\016carg"
+          + "o1Quantity\030\t \001(\t\022\026\n\016cargo2Quantity\030\n \001(\t"
+          + "\022\030\n\020cargo1Percentage\030\013 \001(\t\022\030\n\020cargo2Perc"
+          + "entage\030\014 \001(\t\022\'\n\016responseStatus\030\r \001(\0132\017.R"
+          + "esponseStatus2\201\017\n\024LoadableStudyService\022,"
+          + "\n\nSaveVoyage\022\016.VoyageRequest\032\014.VoyageRep"
+          + "ly\"\000\0228\n\022GetVoyagesByVessel\022\016.VoyageReque"
+          + "st\032\020.VoyageListReply\"\000\022J\n\024SaveLoadableQu"
+          + "antity\022\030.LoadableQuantityRequest\032\026.Loada"
+          + "bleQuantityReply\"\000\022T\n$FindLoadableStudie"
+          + "sByVesselAndVoyage\022\025.LoadableStudyReques"
+          + "t\032\023.LoadableStudyReply\"\000\022@\n\021SaveLoadable"
+          + "Study\022\024.LoadableStudyDetail\032\023.LoadableSt"
+          + "udyReply\"\000\022G\n\023SaveCargoNomination\022\027.Carg"
+          + "oNominationRequest\032\025.CargoNominationRepl"
+          + "y\"\000\022J\n\034GetLoadableStudyPortRotation\022\024.Po"
+          + "rtRotationRequest\032\022.PortRotationReply\"\000\022"
+          + "J\n\026GetCargoNominationById\022\027.CargoNominat"
+          + "ionRequest\032\025.CargoNominationReply\"\000\022I\n\023G"
+          + "etValveSegregation\022\030.ValveSegregationReq"
+          + "uest\032\026.ValveSegregationReply\"\000\022J\n\023getLoa"
+          + "dableQuantity\022\026.LoadableQuantityReply\032\031."
+          + "LoadableQuantityResponse\"\000\022J\n\035SaveLoadab"
+          + "leStudyPortRotation\022\023.PortRotationDetail"
+          + "\032\022.PortRotationReply\"\000\022I\n\025DeleteCargoNom"
+          + "ination\022\027.CargoNominationRequest\032\025.Cargo"
+          + "NominationReply\"\000\022B\n\024SaveDischargingPort"
+          + "s\022\024.PortRotationRequest\032\022.PortRotationRe"
+          + "ply\"\000\022N\n GetPortRotationByLoadableStudyI"
+          + "d\022\024.PortRotationRequest\032\022.PortRotationRe"
+          + "ply\"\000\022C\n\023DeleteLoadableStudy\022\025.LoadableS"
+          + "tudyRequest\032\023.LoadableStudyReply\"\000\022@\n\022De"
+          + "letePortRotation\022\024.PortRotationRequest\032\022"
+          + ".PortRotationReply\"\000\022C\n\021GetOnHandQuantit"
+          + "y\022\026.OnHandQuantityRequest\032\024.OnHandQuanti"
+          + "tyReply\"\000\022C\n\022SaveOnHandQuantity\022\025.OnHand"
+          + "QuantityDetail\032\024.OnHandQuantityReply\"\000\022M"
+          + "\n\031GetLoadablePatternDetails\022\027.LoadablePa"
+          + "tternRequest\032\025.LoadablePatternReply\"\000\022O\n"
+          + "\025GetPurposeOfCommingle\022\032.PurposeOfCommin"
+          + "gleRequest\032\030.PurposeOfCommingleReply\"\000\022C"
+          + "\n\021GetCommingleCargo\022\026.CommingleCargoRequ"
+          + "est\032\024.CommingleCargoReply\"\000\022D\n\022SaveCommi"
+          + "ngleCargo\022\026.CommingleCargoRequest\032\024.Comm"
+          + "ingleCargoReply\"\000\022v\n\"GetLoadablePatternC"
+          + "ommingleDetails\022\'.LoadablePatternComming"
+          + "leDetailsRequest\032%.LoadablePatternCommin"
+          + "gleDetailsReply\"\000\0226\n\030GenerateLoadablePat"
+          + "terns\022\014.AlgoRequest\032\n.AlgoReply\"\000\022F\n\022Get"
+          + "OnBoardQuantity\022\027.OnBoardQuantityRequest"
+          + "\032\025.OnBoardQuantityReply\"\000\022F\n\023SaveOnBoard"
+          + "Quantity\022\026.OnBoardQuantityDetail\032\025.OnBoa"
+          + "rdQuantityReply\"\000B\036\n\032com.cpdss.common.ge"
+          + "neratedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -54619,7 +54920,11 @@ public final class LoadableStudy {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePatternReply_descriptor,
             new java.lang.String[] {
-              "LoadablePattern", "ResponseStatus", "Tanks",
+              "LoadablePattern",
+              "ResponseStatus",
+              "Tanks",
+              "LoadablePatternCreatedDate",
+              "LoadableStudyName",
             });
     internal_static_LoadablePattern_descriptor = getDescriptor().getMessageTypes().get(38);
     internal_static_LoadablePattern_fieldAccessorTable =

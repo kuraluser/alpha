@@ -400,6 +400,8 @@ message LoadablePatternReply {
  	repeated LoadablePattern loadablePattern = 1;
  	ResponseStatus responseStatus = 2;
  	repeated TankList tanks = 3;
+ 	string loadablePatternCreatedDate = 4;
+    string loadableStudyName = 5;
 }
 
 message LoadablePattern {

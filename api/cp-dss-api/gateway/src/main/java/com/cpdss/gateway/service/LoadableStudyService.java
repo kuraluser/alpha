@@ -1158,6 +1158,8 @@ public class LoadableStudyService {
   private LoadablePatternResponse buildLoadablePatternResponse(
       LoadablePatternReply loadablePatternReply, String correlationId) {
     LoadablePatternResponse loadablePatternResponse = new LoadablePatternResponse();
+    loadablePatternResponse.setLoadableStudyName(loadablePatternReply.getLoadableStudyName());
+    loadablePatternResponse.setLoadablePatternCreatedDate(loadablePatternReply.getLoadablePatternCreatedDate());
     loadablePatternResponse.setLoadablePatterns(new ArrayList<LoadablePattern>());
     loadablePatternResponse.setTankLists(
         createGroupWiseTankList(loadablePatternReply.getTanksList()));

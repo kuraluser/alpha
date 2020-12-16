@@ -2030,6 +2030,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         loadablePatterns.forEach(
             loadablePattern -> {
               loadablePatternBuilder.setLoadablePatternId(loadablePattern.getId());
+              Optional.ofNullable(loadableStudy.get().getName())
+                  .ifPresent(builder::setLoadableStudyName);
+              DateTimeFormatter dateTimeFormatter =
+                  DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT);
+
+              Optional.ofNullable(dateTimeFormatter.format(loadablePattern.getCreatedDate()))
+                  .ifPresent(builder::setLoadablePatternCreatedDate);
               Optional.ofNullable(loadablePattern.getConstraints())
                   .ifPresent(loadablePatternBuilder::setConstraints);
               Optional.ofNullable(loadablePattern.getDifferenceColor())
