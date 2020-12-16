@@ -51,6 +51,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.LoadableStudyStatus;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
@@ -66,6 +67,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
+import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.google.protobuf.ByteString;
 import io.grpc.internal.testing.StreamRecorder;
@@ -133,6 +135,8 @@ class LoadableStudyServiceTest {
   @MockBean private OnHandQuantityRepository onHandQuantityRepository;
 
   @MockBean private OnBoardQuantityRepository onBoardQuantityRepository;
+  @MockBean private CargoHistoryRepository cargoHistoryRepository;
+  @MockBean private VoyageHistoryRepository voyageHistoryRepository;
   @Mock private CargoNomination cargoNomination;
 
   @Mock private CargoNominationPortDetails cargoNominationPortDetails;
@@ -1844,6 +1848,7 @@ class LoadableStudyServiceTest {
             i -> {
               LoadablePattern loadablePattern = new LoadablePattern();
               loadablePattern.setId(Long.valueOf(i));
+              loadablePattern.setCreatedDate(LocalDate.now());
               list.add(loadablePattern);
             });
     return list;
