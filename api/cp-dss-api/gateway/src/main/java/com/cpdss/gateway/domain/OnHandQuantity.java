@@ -26,6 +26,8 @@ public class OnHandQuantity {
 
   private String fuelTypeName;
 
+  private String fuelTypeShortName;
+
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private Long tankId;
 

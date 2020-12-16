@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CargoOperationRepository extends CommonCrudRepository<CargoOperation, Long> {
 
-  public List<CargoOperation> findByIdNotIn(List<Long> idsExcluded);
+  public List<CargoOperation> findByIdNotAndIsActiveOrderById(Long id, boolean isActive);
 }

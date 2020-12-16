@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -42,4 +43,10 @@ public class Voyage extends EntityDoc {
 
   @Column(name = "chiefofficer_xid")
   private Long chiefOfficerXId;
+
+  @Column(name = "voyage_start_date")
+  private LocalDateTime voyageStartDate;
+
+  @Column(name = "voyage_end_date")
+  private LocalDateTime voyageEndDate;
 }

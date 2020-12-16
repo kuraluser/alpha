@@ -1289,6 +1289,56 @@ public final class LoadableStudyServiceGrpc {
     return getGetOnBoardQuantityMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail,
+          com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>
+      getSaveOnBoardQuantityMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveOnBoardQuantity",
+      requestType = com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail,
+          com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>
+      getSaveOnBoardQuantityMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail,
+            com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>
+        getSaveOnBoardQuantityMethod;
+    if ((getSaveOnBoardQuantityMethod = LoadableStudyServiceGrpc.getSaveOnBoardQuantityMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveOnBoardQuantityMethod = LoadableStudyServiceGrpc.getSaveOnBoardQuantityMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getSaveOnBoardQuantityMethod =
+              getSaveOnBoardQuantityMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail,
+                          com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveOnBoardQuantity"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("SaveOnBoardQuantity"))
+                      .build();
+        }
+      }
+    }
+    return getSaveOnBoardQuantityMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -1537,6 +1587,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetOnBoardQuantityMethod(), responseObserver);
     }
 
+    /** */
+    public void saveOnBoardQuantity(
+        com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveOnBoardQuantityMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1717,6 +1775,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest,
                       com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>(
                       this, METHODID_GET_ON_BOARD_QUANTITY)))
+          .addMethod(
+              getSaveOnBoardQuantityMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail,
+                      com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>(
+                      this, METHODID_SAVE_ON_BOARD_QUANTITY)))
           .build();
     }
   }
@@ -2009,6 +2074,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void saveOnBoardQuantity(
+        com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveOnBoardQuantityMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -2201,6 +2277,13 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetOnBoardQuantityMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply saveOnBoardQuantity(
+        com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail request) {
+      return blockingUnaryCall(
+          getChannel(), getSaveOnBoardQuantityMethod(), getCallOptions(), request);
     }
   }
 
@@ -2436,6 +2519,15 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetOnBoardQuantityMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>
+        saveOnBoardQuantity(
+            com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveOnBoardQuantityMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -2463,6 +2555,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_LOADABLE_PATTERN_COMMINGLE_DETAILS = 22;
   private static final int METHODID_GENERATE_LOADABLE_PATTERNS = 23;
   private static final int METHODID_GET_ON_BOARD_QUANTITY = 24;
+  private static final int METHODID_SAVE_ON_BOARD_QUANTITY = 25;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -2656,6 +2749,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>)
                   responseObserver);
           break;
+        case METHODID_SAVE_ON_BOARD_QUANTITY:
+          serviceImpl.saveOnBoardQuantity(
+              (com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -2745,6 +2845,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetLoadablePatternCommingleDetailsMethod())
                       .addMethod(getGenerateLoadablePatternsMethod())
                       .addMethod(getGetOnBoardQuantityMethod())
+                      .addMethod(getSaveOnBoardQuantityMethod())
                       .build();
         }
       }

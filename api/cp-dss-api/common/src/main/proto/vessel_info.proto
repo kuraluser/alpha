@@ -109,6 +109,7 @@ message VesselTankDetail{
 	int64 tankTypeId = 19;
 	string fullCapacityCubm = 20;
 	string colourCode = 21;
+	string tankCategoryShortName = 22;
 }
 
 message VesselReply {

@@ -28,10 +28,10 @@ public class OnBoardQuantity extends EntityDoc {
   private Long portId;
 
   @Column(name = "tank_xid")
-  private Integer tankId;
+  private Long tankId;
 
   @Column(name = "cargo_xid")
-  private Integer cargoId;
+  private Long cargoId;
 
   @Column(name = "sounding")
   private BigDecimal sounding;
