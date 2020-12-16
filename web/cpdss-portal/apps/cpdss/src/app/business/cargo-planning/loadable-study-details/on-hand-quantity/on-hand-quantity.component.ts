@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
+import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { IPortOHQTankDetailEvent, IPort, IPortOHQListData, IPortOHQTankDetailValueObject } from '../../models/cargo-planning.model';
+import { IPortOHQTankDetailEvent, IPort, IPortOHQListData, IPortOHQTankDetailValueObject, OHQ_MODE, IOHQTank } from '../../models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
@@ -48,16 +48,60 @@ export class OnHandQuantityComponent implements OnInit {
     })
   }
 
+  get tanks(): IOHQTank[][] {
+    return this._tanks;
+  }
+
+  set tanks(tanks: IOHQTank[][]) {
+    this._tanks = this.getTankFuelMapping(tanks, this.selectedPortOHQTankDetails, this.ohqForm.get('mode').value);
+  }
+
+  get rearTanks(): IOHQTank[][] {
+    return this._rearTanks;
+  }
+
+  set rearTanks(rearTanks: IOHQTank[][]) {
+    this._rearTanks = this.getTankFuelMapping(rearTanks, this.selectedPortOHQTankDetails, this.ohqForm.get('mode').value);
+  }
+
+  get selectedTankId(): number {
+    return this._selectedTankId;
+  }
+
+  set selectedTankId(tankId: number) {
+    this._selectedTankId = tankId;
+    this.selectedTankFormGroupIndex = this.selectedPortOHQTankDetails.findIndex(tank => tank.tankId === tankId);
+    this.selectedTankFormGroup = this.row(this.selectedTankFormGroupIndex);
+    this.selectedTank = this.selectedPortOHQTankDetails[this.selectedTankFormGroupIndex];
+    this.setFillingPercentage(this.selectedTankId);
+  }
+
+  get selectedTank(): IPortOHQTankDetailValueObject {
+    return this._selectedTank;
+  }
+
+  set selectedTank(selectedTank: IPortOHQTankDetailValueObject) {
+    this._selectedTank = selectedTank;
+  }
+
   readonly editMode = DATATABLE_EDITMODE.CELL;
+  readonly OHQ_MODE = OHQ_MODE;
+  readonly selectionMode = DATATABLE_SELECTIONMODE.SINGLE;
   ohqPorts: IPort[];
   selectedPort: IPort;
   ports: IPort[];
   ohqForm: FormGroup;
   columns: IDataTableColumn[];
   listData = <IPortOHQListData>{};
+  selectedTankFormGroup: FormGroup;
+  selectedTankFormGroupIndex: number;
 
   private _selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[];
   private _loadableStudyId: number;
+  private _tanks: IOHQTank[][];
+  private _rearTanks: IOHQTank[][];
+  private _selectedTankId: number;
+  private _selectedTank: IPortOHQTankDetailValueObject;
 
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
@@ -87,7 +131,7 @@ export class OnHandQuantityComponent implements OnInit {
     if (result?.portList) {
       this.ohqPorts = result?.portList?.map((ohqPort) => this.ports?.find((port) => port.id === ohqPort.portId));
       this.selectedPort = this.ohqPorts[0];
-      this.selectedPortOHQTankDetails = await this.getPortOHQDetails(this.selectedPort?.id);
+      await this.getPortOHQDetails(this.selectedPort?.id);
     }
     this.ngxSpinnerService.hide();
   }
@@ -98,11 +142,11 @@ export class OnHandQuantityComponent implements OnInit {
    * @param {number} portId
    * @memberof OnHandQuantityComponent
    */
-  async getPortOHQDetails(portId: number): Promise<IPortOHQTankDetailValueObject[]> {
+  async getPortOHQDetails(portId: number) {
     const result = await this.loadableStudyDetailsApiService.getPortOHQDetails(this.vesselId, this.voyageId, this.loadableStudyId, portId).toPromise();
     const selectedPortOHQTankDetails = result?.onHandQuantities ?? [];
     this.listData.fuelTypes = [...new Map(selectedPortOHQTankDetails.map(item =>
-      [item['fuelTypeId'], { id: item.fuelTypeId, name: item.fuelTypeName }])).values()];
+      [item['fuelTypeId'], { id: item?.fuelTypeId, name: item?.fuelTypeName, colorCode: item?.colorCode, shortName: item?.fuelTypeShortName }])).values()];
     const _selectedPortOHQTankDetails = selectedPortOHQTankDetails?.map((ohqTankDetail) => {
       ohqTankDetail.portId = portId;
       const _ohqTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailsAsValueObject(ohqTankDetail, false);
@@ -110,9 +154,37 @@ export class OnHandQuantityComponent implements OnInit {
     });
     const ohqTankDetailsArray = _selectedPortOHQTankDetails?.map(ohqTankDetails => this.initOHQFormGroup(ohqTankDetails));
     this.ohqForm = this.fb.group({
-      dataTable: this.fb.array([...ohqTankDetailsArray])
+      dataTable: this.fb.array([...ohqTankDetailsArray]),
+      mode: this.fb.control(OHQ_MODE.ARRIVAL)
     });
-    return [..._selectedPortOHQTankDetails];
+    this.selectedPortOHQTankDetails = [..._selectedPortOHQTankDetails];
+    this.tanks = result?.tanks ?? [];
+    this.rearTanks = result?.rearTanks ?? [];
+  }
+
+  /**
+   * Method to map tank and fuel details
+   *
+   * @param {IOHQTank[][]} tanks
+   * @param {IPortOHQTankDetailValueObject[]} selectedPortOHQTankDetails
+   * @param {OHQ_MODE} mode
+   * @returns {IOHQTank[][]}
+   * @memberof OnHandQuantityComponent
+   */
+  getTankFuelMapping(tanks: IOHQTank[][], selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[], mode: OHQ_MODE): IOHQTank[][] {
+    for (let groupIndex = 0; groupIndex < tanks.length; groupIndex++) {
+      for (let tankIndex = 0; tankIndex < tanks[groupIndex].length; tankIndex++) {
+        for (let index = 0; index < selectedPortOHQTankDetails.length; index++) {
+          if (selectedPortOHQTankDetails[index]?.tankId === tanks[groupIndex][tankIndex]?.id) {
+            tanks[groupIndex][tankIndex].commodity = selectedPortOHQTankDetails[index];
+            tanks[groupIndex][tankIndex].commodity.quantity = mode === OHQ_MODE.ARRIVAL ? tanks[groupIndex][tankIndex]?.commodity?.arrivalQuantity?.value : tanks[groupIndex][tankIndex]?.commodity?.departureQuantity?.value;
+            tanks[groupIndex][tankIndex].commodity.volume = mode === OHQ_MODE.ARRIVAL ? tanks[groupIndex][tankIndex]?.commodity?.arrivalVolume?.value : tanks[groupIndex][tankIndex]?.commodity?.departureVolume?.value;
+            break;
+          }
+        }
+      }
+    }
+    return tanks;
   }
 
   /**
@@ -124,7 +196,7 @@ export class OnHandQuantityComponent implements OnInit {
   async onPortSelection(port: IPort) {
     this.ngxSpinnerService.show();
     this.selectedPort = port;
-    this.selectedPortOHQTankDetails = await this.getPortOHQDetails(this.selectedPort?.id);
+    await this.getPortOHQDetails(this.selectedPort?.id);
     this.ngxSpinnerService.hide();
   }
 
@@ -157,15 +229,45 @@ export class OnHandQuantityComponent implements OnInit {
   async onEditComplete(event: IPortOHQTankDetailEvent) {
     this.ngxSpinnerService.show();
     const fromGroup = this.row(event.index);
+    //TODO: START need to be removed after latest validation
+    if (event?.data[event?.field].value) {
+      let dependentKey;
+      switch (event?.field) {
+        case 'arrivalVolume':
+          dependentKey = 'arrivalQuantity'
+          break;
+        case 'arrivalQuantity':
+          dependentKey = 'arrivalVolume'
+          break;
+        case 'departureQuantity':
+          dependentKey = 'departureVolume'
+          break;
+        case 'departureVolume':
+          dependentKey = 'departureQuantity'
+          break;
+
+        default:
+          break;
+      }
+      if (dependentKey) {
+        const formControl = this.field(event?.index, dependentKey);
+        if (!formControl.value) {
+          formControl.setValue(null);
+        }
+      }
+    }
+    //TODO: END need to be removed after latest validation
     if (fromGroup.valid) {
       const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
       if (res) {
         for (const key in this.selectedPortOHQTankDetails[event.index]) {
-          if (this.selectedPortOHQTankDetails[event.index].hasOwnProperty(key) && this.selectedPortOHQTankDetails[event.index][key].hasOwnProperty('_isEditMode')) {
+          if (this.selectedPortOHQTankDetails[event.index]?.hasOwnProperty(key) && this.selectedPortOHQTankDetails[event.index][key]?.hasOwnProperty('_isEditMode')) {
             this.selectedPortOHQTankDetails[event.index][key].isEditMode = false;
           }
         }
         this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
+        this.setFillingPercentage(this.selectedTankId);
+        this.selectedTankFormGroup.get(event?.field).setValue((event?.data[event?.field]).value);
       }
 
     } else {
@@ -197,10 +299,13 @@ export class OnHandQuantityComponent implements OnInit {
                 this.selectedPortOHQTankDetails[index][key].isEditMode = formControl.invalid;
               }
             }
+            this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
           }
         }
       }
     });
+    this.tanks = [...this.tanks];
+    this.rearTanks = [...this.rearTanks];
     this.ngxSpinnerService.hide();
   }
 
@@ -271,6 +376,87 @@ export class OnHandQuantityComponent implements OnInit {
     }
     recursiveFunc(formToInvestigate);
     return invalidControls;
+  }
+
+  /**
+   *  Handler for change of mode
+   *
+   * @param {*} event
+   * @memberof OnHandQuantityComponent
+   */
+  onModeChange(mode: OHQ_MODE) {
+    this.tanks = [...this.tanks];
+    this.rearTanks = [...this.rearTanks];
+  }
+
+  /**
+   * Handler for on row selection of ohq grid
+   *
+   * @param {IPortOHQTankDetailEvent} event
+   * @memberof OnHandQuantityComponent
+   */
+  onRowSelection(event: IPortOHQTankDetailEvent) {
+    this.selectedTank = event?.data;
+    this.selectedTankId = this.selectedTank?.tankId;
+  }
+
+  /**
+   * Set filling percentage label value
+   *
+   * @param {number} selectedTankId
+   * @memberof OnHandQuantityComponent
+   */
+  setFillingPercentage(selectedTankId: number) {
+    const tanks = [...this.tanks, ...this.rearTanks];
+    for (let index = 0; index < tanks.length; index++) {
+      const tank = tanks[index]?.find(tank => tank.id === selectedTankId);
+      this.selectedTank.percentageFilled = tank?.percentageFilled ?? '';
+      break;
+    }
+  }
+
+
+  /**
+   * Handler for change event of fields of tank layout form
+   *
+   * @param {*} event
+   * @param {number} selectedTankFormGroupIndex
+   * @param {string} field
+   * @memberof OnHandQuantityComponent
+   */
+  onChange(event, selectedTankFormGroupIndex: number, field: string) {
+    if (this.selectedTankFormGroup.valid) {
+      this.selectedTank[field].value = event?.target.value;
+      this.onEditComplete({ originalEvent: event, data: this.selectedTank, field: field, index: selectedTankFormGroupIndex });
+    } else {
+      this.selectedTankFormGroup.markAllAsTouched();
+      this.ohqForm.updateValueAndValidity();
+    }
+  }
+
+  /**
+   * Get field errors
+   *
+   * @param {number} formGroupIndex
+   * @param {string} formControlName
+   * @returns {ValidationErrors}
+   * @memberof OnHandQuantityComponent
+   */
+  fieldError(formGroupIndex: number, formControlName: string): ValidationErrors {
+    const formControl = this.field(formGroupIndex, formControlName);
+    return formControl.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
+  }
+
+  /**
+   *  Fetch error messages for fields
+   *
+   * @param {string} field
+   * @memberof OnHandQuantityComponent
+   */
+  getErrorMessages(field: string) {
+    this.columns.forEach(column => {
+      return column?.columns?.find(subColumn => subColumn?.field === field)?.errorMessages;
+    });
   }
 
 }

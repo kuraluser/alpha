@@ -1,5 +1,3 @@
-import { IdraftMarks } from '../../models/common.models';
-
 /**
  *  model for new-loadable-study
  */

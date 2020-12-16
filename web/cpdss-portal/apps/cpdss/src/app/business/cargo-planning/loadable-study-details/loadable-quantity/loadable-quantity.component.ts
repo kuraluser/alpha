@@ -5,7 +5,7 @@ import { LodadableQuantity } from '../../models/loadable-quantity.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { IPort } from '../../models/cargo-planning.model';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
-import { Voyage } from '../../../core/models/common.models';
+import { Voyage } from '../../../core/models/common.model';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';

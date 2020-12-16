@@ -56,7 +56,39 @@ export class Voyage {
     public id: number;
 }
 
+/**
+ * Interface for voyage response
+ *
+ * @export
+ * @interface IVoyageResponse
+ */
 export interface IVoyageResponse {
     responseStatus: IResponseStatus;
     voyages: Voyage[];
+}
+
+/**
+ * Interface for tank data
+ *
+ * @export
+ * @interface ITank
+ */
+export interface ITank {
+    id: number;
+    categoryId: number;
+    categoryName: string;
+    name: string;
+    frameNumberFrom: number;
+    frameNumberTo: number;
+    shortName: string;
+    heightFrom: number;
+    heightTo: number;
+    fillCapcityCubm: number;
+    density: number;
+    group: number;
+    order: number;
+    slopTank: boolean;
+    commodity: any;
+    gridColumn?: string;
+    percentageFilled?: string;
 }

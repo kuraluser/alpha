@@ -1,199 +1,155 @@
-<div class="content-outer-ohq">
-    <div class="">
-        <div class="container-fluid">
-            <div class="row h-100 no-wrap">
-                <div class="col">
-                    <div class="row">
-                        <div class="col" style="max-width: 120px;">
-                            <span class="text-secondary text-uppercase">{{'OHQ_SELECTED_PORT'| translate}}</span>
+<form *ngIf="ohqForm" [formGroup]="ohqForm">
+    <div class="content-outer-ohq">
+        <div class="">
+            <div class="container-fluid">
+                <div class="row h-100 no-wrap">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col" style="max-width: 120px;">
+                                <span class="text-secondary text-uppercase">{{'OHQ_SELECTED_PORT'| translate}}</span>
+                            </div>
+                            <div class="col pl-0">
+                                <ul class="list-unstyled list-inline port-list mb-0">
+                                    <li class="list-inline-item" [ngClass]="{'active': selectedPort.id === port.id}"
+                                        *ngFor="let port of ohqPorts" (click)="onPortSelection(port)">{{port?.name}}
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="col pl-0">
-                            <ul class="list-unstyled list-inline port-list mb-0">
-                                <li class="list-inline-item" [ngClass]="{'active': selectedPort.id === port.id}" *ngFor="let port of ohqPorts" (click)="onPortSelection(port)">{{port?.name}}</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col" *ngIf="ohqForm">
-                            <form [formGroup]="ohqForm">
+                        <div class="row">
+                            <div class="col">
                                 <div class="form-group row">
                                     <div class="col">
                                         <div class="table-responsive-custom cargo-nomination-table ohq">
-                                        <cpdss-portal-datatable [tableId]="'ohq'" [form]="ohqForm" [columns]="columns" [value]="selectedPortOHQTankDetails"
-                                            [editMode]="editMode" [filterable]="true" [listData]="listData" (editComplete)="onEditComplete($event)">
-                                        </cpdss-portal-datatable>
-                                    </div>
+                                            <cpdss-portal-datatable [tableId]="'ohq'" [form]="ohqForm"
+                                                [columns]="columns" [value]="selectedPortOHQTankDetails"
+                                                [editMode]="editMode" [filterable]="true" [listData]="listData"
+                                                [selectionMode]="selectionMode" [selection]="selectedTank"
+                                                (editComplete)="onEditComplete($event)"
+                                                (rowSelection)="onRowSelection($event)">
+                                            </cpdss-portal-datatable>
+                                        </div>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-               
             </div>
-            </div>
-    </div>
-    <div class="pr-15">
-        <div class=" tank-wrapper-ohq">
-            <div class="row">
-                <div class="col">
-                    <p class="text-uppercase text-center text-secondary">Tank Fills</p>
-                    <div class="text-center mb-10">
-                        <button class="" type="submit" class="btn btn-main">Save Changes</button>
+        </div>
+        <div class="pr-15">
+            <div class=" tank-wrapper-ohq">
+                <div class="row">
+                    <div class="col">
+                        <p class="text-uppercase text-center text-secondary">{{'OHQ_TANK_FILLS' | translate}}</p>
+                        <!-- TODO:Need confirmation for removing button -->
+                        <!-- <div class="text-center mb-10">
+                            <button id="ohq_save_btn" class="btn btn-main">{{'OHQ_SAVE_CHANGES' | translate}}</button>
+                        </div> -->
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col text-center text-uppercase pt-10">
+                <div class="row">
+                    <div class="col text-center text-uppercase pt-10">
                         <label class="radio-custom">
-                            Arrival
-                            <input type="radio" name="customRadioInline1" class="custom-control-input">
+                            {{'OHQ_ARRIVAL' | translate}}
+                            <input type="radio" id="ohq_arrival_btn" name="mode" class="custom-control-input"
+                                formControlName="mode" [value]="OHQ_MODE.ARRIVAL"
+                                (change)="onModeChange(OHQ_MODE.ARRIVAL)">
                             <span class="checkmark"></span>
                         </label>
-                      
+
                         <label class="radio-custom">
-                            Departure
-                            <input type="radio" name="customRadioInline1" class="custom-control-input">
+                            {{'OHQ_DEPARTURE' | translate}}
+                            <input type="radio" id="ohq_departure_btn" name="mode" class="custom-control-input"
+                                formControlName="mode" [value]="OHQ_MODE.DEPARTURE"
+                                (change)="onModeChange(OHQ_MODE.DEPARTURE)">
                             <span class="checkmark"></span>
                         </label>
+                    </div>
                 </div>
-            </div>
-            <div class="row mb-10">
-                <div class="col text-center">
-                    <span class="mr-10 text-uppercase text-secondary">Type</span> <span class="badge-custom fo mr-5">FO</span> <span class="badge-custom do mr-5">DO</span> <span class="badge-custom dsw mr-5">DSW</span> 
+                <div class="row mb-10">
+                    <div class="col text-center">
+                        <span class="mr-10 text-uppercase text-secondary">{{'OHQ_TYPE'| translate}}</span>
+                        <ng-container *ngFor="let fuelType of listData.fuelTypes">
+                            <span class="badge-custom mr-5" *ngIf="fuelType?.shortName"
+                                [ngStyle]="{'background-color': fuelType?.colorCode}">{{fuelType?.shortName}}</span>
+                        </ng-container>
+
+                    </div>
+                    <div class="col" *ngIf="selectedTankId">{{selectedTank?.percentageFilled}}
+                        {{'OHQ_FILLED'| translate}}</div>
                 </div>
-                <div class="col">66.7% FILLED</div>
-            </div>
-            <div class="row">
-                <div class="col tank-outer-ohq">
-                    <div class="rear-top-ohq"></div>
-                    <div class="rear-bottom-ohq"></div>
-                    <div class="rear-tank-wrapper-ohq">
-                        <div>
-                            <div class="tank-level dsw"></div>
-                            <div class="tank-name">
-                                DRW
-                            </div>
-                        </div>
-                        <div>
-                            <div class="tank-level dsw"></div>
-                            <div class="tank-name">
-                                DSW P
-                            </div>
-                        </div>
-                        <div>
-                            <div class="tank-name">
-                                A.P.T
-                            </div>
-                        </div>
-                        <div>
-                            <div class="tank-level dsw"></div>
-                            <div class="tank-name">
-                                DSW S
-                            </div>
-                        </div>
-                        <div>
-                            <div class="tank-level dsw"></div>
-                            <div class="tank-name">
-                                FRW
+                <div class="row">
+                    <div class="col">
+                        <cpdss-portal-bunkering-layout [tanks]="tanks" [rearTanks]="rearTanks"
+                            [(selectedTankId)]="selectedTankId">
+                        </cpdss-portal-bunkering-layout>
+                    </div>
+                </div>
+                <div class="row text-uppercase text-secondary mt-10" *ngIf="selectedTankFormGroup"
+                    [formGroup]="selectedTankFormGroup">
+                    <div class="col-4">
+                        <div class="row mb-15">
+                            <label for="" class="col-12 text-center">{{'OHQ_FUEL_TYPE'| translate}}</label>
+                            <div class="col">
+                                <input type="text" class="form-control" formControlName="fuelTypeName" readonly>
                             </div>
                         </div>
                     </div>
-                    <div class="tanks-inner-wrapper-ohq">
-                        <div class="tanks-inner-outer-ohq">
-                            <div class="tanks-column-ohq">
-                                <div>
-                                    <div class="tank-level"></div>
-                                    <div class="tank-name">AWB P</div>
-                                </div>
-                                <div style="visibility: hidden;">
-                                    <div class="tank-level fo"></div>
-                                    <div class="tank-name">FO 1P</div>
-                                </div>
-                                <div>
-                                    <div class="tank-level fo"></div>
-                                    <div class="tank-name">FO 2P</div>
-                                </div>
-                            </div>
-                            <div class="tanks-column-ohq">
-                                <div>
-                                    <div class="tank-level"></div>
-                                    <div class="tank-name">AWB S</div>
-                                </div>
-                                <div>
-                                    <div class="tank-level fo"></div>
-                                    <div class="tank-name">FO 2S</div>
-                                </div>
-                                <div>
-                                    <div class="tank-level fo"></div>
-                                    <div class="tank-name">FO 1S</div>
+                    <div class="col-8">
+                        <div class="row">
+                            <div class="col-6" *ngIf="ohqForm.controls.mode.value === OHQ_MODE.ARRIVAL">
+                                <div class="row mb-15">
+                                    <label for="" class="col-12 text-center">{{'OHQ_ARRIVAL'| translate}}
+                                        {{'OHQ_VOL'| translate}}</label>
+                                    <div class="col">
+                                        <input type="number" class="form-control" formControlName="arrivalVolume"
+                                            (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalVolume')">
+                                        <cpdss-portal-validation-error
+                                            [errors]="fieldError(selectedTankFormGroupIndex, 'arrivalVolume')"
+                                            [errorMessages]="getErrorMessages('arrivalVolume')">
+                                        </cpdss-portal-validation-error>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="tanks-column-ohq">
-                                <div>
-                                    <div class="tank-level do"></div>
-                                    <div class="tank-name">DO2S</div>
-                                </div>
-                                <div>
-                                    <div class="tank-level do"></div>
-                                    <div class="tank-name">DO1S</div>
-                                </div>
-                                <div>
-                                    <div class="tank-level fo"></div>
-                                    <div class="tank-name">BFOSV</div>
+                            <div class="col-6" *ngIf="ohqForm.controls.mode.value === OHQ_MODE.ARRIVAL">
+                                <div class="row mb-15">
+                                    <label for="" class="col-12 text-center">{{'OHQ_ARRIVAL'| translate}}
+                                        {{'OHQ_WEIGHT'| translate}}</label>
+                                    <div class="col">
+                                        <input type="number" class="form-control" formControlName="arrivalQuantity"
+                                            (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalQuantity')">
+                                        <cpdss-portal-validation-error
+                                            [errors]="fieldError(selectedTankFormGroupIndex, 'arrivalQuantity')"
+                                            [errorMessages]="getErrorMessages('arrivalQuantity')">
+                                        </cpdss-portal-validation-error>
+                                    </div>
                                 </div>
                             </div>
-                            
+                            <div class="col-6" *ngIf="ohqForm.controls.mode.value === OHQ_MODE.DEPARTURE">
+                                <div class="row mb-15">
+                                    <label for="" class="col-12 text-center">{{'OHQ_DEPARTURE'| translate}}
+                                        {{'OHQ_VOL'| translate}}</label>
+                                    <div class="col">
+                                        <input type="number" class="form-control" formControlName="departureVolume"
+                                            (change)="onChange($event, selectedTankFormGroupIndex, 'departureVolume')">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6" *ngIf="ohqForm.controls.mode.value === OHQ_MODE.DEPARTURE">
+                                <div class="row mb-15">
+                                    <label for="" class="col-12 text-center">{{'OHQ_DEPARTURE'| translate}}
+                                        {{'OHQ_WEIGHT'| translate}}</label>
+                                    <div class="col">
+                                        <input type="number" class="form-control" formControlName="departureQuantity"
+                                            (change)="onChange($event, selectedTankFormGroupIndex, 'departureQuantity')">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row text-uppercase text-secondary mt-10">
-                <div class="col-4">
-                   <div class="row mb-15">
-                       <label for="" class="col-12 text-center">Fuel Type</label>
-                       <div class="col">
-                           <input type="text" class="form-control" >
-                       </div>
-                   </div>
-                </div>
-                <div class="col-4">
-                    <div class="row mb-15">
-                        <label for="" class="col-12 text-center">Arrival Vol</label>
-                        <div class="col">
-                            <input type="text" class="form-control" >
-                        </div>
-                    </div>
-                 </div>
-                 <div class="col-4">
-                    <div class="row mb-15">
-                        <label for="" class="col-12 text-center">Arrival MT</label>
-                        <div class="col">
-                            <input type="text" class="form-control" >
-                        </div>
-                    </div>
-                 </div>
-            </div>
-            <div class="row text-uppercase text-secondary">
-                
-                <div class="col-4 ml-auto">
-                    <div class="row mb-15">
-                        <label for="" class="col-12 text-center">Departure VOL</label>
-                        <div class="col">
-                            <input type="text" class="form-control" >
-                        </div>
-                    </div>
-                 </div>
-                 <div class="col-4">
-                    <div class="row mb-15">
-                        <label for="" class="col-12 text-center">Departure MT</label>
-                        <div class="col">
-                            <input type="text" class="form-control" >
-                        </div>
-                    </div>
-                 </div>
             </div>
         </div>
     </div>
-</div>
-
+</form>

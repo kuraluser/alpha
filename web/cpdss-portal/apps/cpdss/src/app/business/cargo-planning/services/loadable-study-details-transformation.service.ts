@@ -851,12 +851,13 @@ export class LoadableStudyDetailsTransformationService {
    */
   getOHQTankDetailsAsValueObject(ohqTankDetail: IPortOHQTankDetail, isNewValue = true): IPortOHQTankDetailValueObject {
     const _ohqTankDetail = <IPortOHQTankDetailValueObject>{};
-    _ohqTankDetail.id = ohqTankDetail.id;
-    _ohqTankDetail.portId = ohqTankDetail.portId;
-    _ohqTankDetail.fuelTypeName = ohqTankDetail.fuelTypeName;
-    _ohqTankDetail.fuelTypeId = ohqTankDetail.fuelTypeId;
-    _ohqTankDetail.tankId = ohqTankDetail.tankId;
-    _ohqTankDetail.tankName = ohqTankDetail.tankName;
+    _ohqTankDetail.id = ohqTankDetail?.id;
+    _ohqTankDetail.portId = ohqTankDetail?.portId;
+    _ohqTankDetail.fuelTypeName = ohqTankDetail?.fuelTypeName;
+    _ohqTankDetail.fuelTypeId = ohqTankDetail?.fuelTypeId;
+    _ohqTankDetail.tankId = ohqTankDetail?.tankId;
+    _ohqTankDetail.tankName = ohqTankDetail?.tankName;
+    _ohqTankDetail.colorCode = ohqTankDetail?.colorCode;
     _ohqTankDetail.arrivalVolume = new ValueObject<number>(ohqTankDetail.arrivalVolume, true, isNewValue);
     _ohqTankDetail.arrivalQuantity = new ValueObject<number>(ohqTankDetail.arrivalQuantity, true, isNewValue);
     _ohqTankDetail.departureVolume = new ValueObject<number>(ohqTankDetail.departureVolume, true, isNewValue);

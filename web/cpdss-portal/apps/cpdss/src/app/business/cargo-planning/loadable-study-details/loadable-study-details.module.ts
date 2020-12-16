@@ -26,6 +26,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { CommingleApiService } from '../services/commingle-api.service';
 import { OnBoardQuantityComponent } from './on-board-quantity/on-board-quantity.component';
+import { BunkeringLayoutModule } from '../../core/components/bunkering-layout/bunkering-layout.module';
 
 /**
  * Routing Module for Loadable Study Details Screen
@@ -51,7 +52,8 @@ import { OnBoardQuantityComponent } from './on-board-quantity/on-board-quantity.
     PermissionDirectiveModule,
     ValidationErrorModule,
     CheckboxModule,
-    ColorPickerModule 
+    ColorPickerModule,
+    BunkeringLayoutModule 
   ],
   providers: [
     LoadableQuantityApiService, CommingleApiService

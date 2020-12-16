@@ -7,7 +7,7 @@ import { DATATABLE_SELECTIONMODE, IDataTableColumn } from '../../../../shared/co
 import { LoadableStudy } from '../../../cargo-planning/models/loadable-study-list.model';
 import { LoadableStudyDetailsTransformationService } from '../../../cargo-planning/services/loadable-study-details-transformation.service';
 import { LoadableStudyListApiService } from '../../../cargo-planning/services/loadable-study-list-api.service';
-import { Voyage } from '../../../core/models/common.models';
+import { Voyage } from '../../../core/models/common.model';
 import { VesselDetailsModel } from '../../../model/vessel-details.model';
 import { first } from 'rxjs/operators';
 

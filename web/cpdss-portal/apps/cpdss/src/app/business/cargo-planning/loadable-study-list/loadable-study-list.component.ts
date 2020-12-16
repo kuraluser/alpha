@@ -5,7 +5,7 @@ import { VesselDetailsModel } from '../../model/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { LoadableStudy, TableColumns } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
-import { Voyage } from '../../core/models/common.models';
+import { Voyage } from '../../core/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
 import { LoadableStudyListTransformationService } from '../services/loadable-study-list-transformation.service';
 import { IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';

@@ -219,7 +219,7 @@ export class CargoNominationComponent implements OnInit {
           }
           this.cargoNominations = [...this.cargoNominations];
         }
-        this.ngxSpinnerService.show();
+        this.ngxSpinnerService.hide();
       } else {
         const fromGroup = this.row(event.index);
         const invalidFormControls = this.findInvalidControlsRecursive(fromGroup);

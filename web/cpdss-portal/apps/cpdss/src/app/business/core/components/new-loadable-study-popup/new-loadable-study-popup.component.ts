@@ -2,7 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FileUpload } from 'primeng/fileupload';
 import { IDropdownEvent, INewLoadableStudy } from "./new-loadable-study-popup.model";
-import { IdraftMarks, ILoadLineList, INewLoadableStudyListNames, Voyage } from "../../models/common.models";
+import { IdraftMarks, ILoadLineList, INewLoadableStudyListNames, Voyage } from "../../models/common.model";
 import { VesselDetailsModel } from '../../../model/vessel-details.model';
 import { LoadableStudyListApiService } from '../../../cargo-planning/services/loadable-study-list-api.service';
 import { LoadableStudy } from '../../../cargo-planning/models/loadable-study-list.model';

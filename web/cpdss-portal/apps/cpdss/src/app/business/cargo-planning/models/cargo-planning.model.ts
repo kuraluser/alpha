@@ -1,6 +1,7 @@
 import { SelectItem } from 'primeng/api';
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { CPDSSDB, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
+import { ITank } from '../../core/models/common.model';
 
 /**
  * Interface for cargo nomination value object
@@ -370,6 +371,19 @@ export interface IOHQPortRotationResponse {
 export interface IPortOHQResponse {
     responseStatus: IResponse;
     onHandQuantities: IPortOHQTankDetail[];
+    tanks: ITank[][];
+    rearTanks: ITank[][];
+}
+
+/**
+ * Enum for ohq voyage mode
+ *
+ * @export
+ * @enum {number}
+ */
+export enum OHQ_MODE {
+    ARRIVAL = "ARRIVAL",
+    DEPARTURE = "DEPARTURE"
 }
 
 /**
@@ -393,6 +407,8 @@ export interface IPortOHQTankDetail {
     vesselId: number;
     voyageId: number;
     loadableStudyId: number;
+    colorCode: string;
+    fuelTypeShortName: string;
 }
 
 /**
@@ -414,6 +430,10 @@ export interface IPortOHQTankDetailValueObject {
     departureQuantity: ValueObject<number>;
     portId: number;
     storeKey: number;
+    colorCode: string;
+    quantity: number;
+    volume: number;
+    percentageFilled: string;
 }
 
 /**
@@ -425,6 +445,8 @@ export interface IPortOHQTankDetailValueObject {
 export interface IFuelType {
     id: number;
     name: string;
+    colorCode: string;
+    shortName: string;
 }
 
 /**
@@ -448,6 +470,33 @@ export interface IPortOHQTankDetailEvent extends IDataTableEvent {
     field: string;
     index: number;
     originalEvent: MouseEvent;
+}
+
+/**
+ * Interface for ohq tanks
+ *
+ * @export
+ * @interface IOHQTank
+ * @extends {ITank}
+ */
+export interface IOHQTank extends ITank {
+    id: number;
+    categoryId: number;
+    categoryName: string;
+    name: string;
+    frameNumberFrom: number;
+    frameNumberTo: number;
+    shortName: string;
+    heightFrom: number;
+    heightTo: number;
+    fillCapcityCubm: number;
+    density: number;
+    group: number;
+    order: number;
+    slopTank: boolean;
+    commodity: IPortOHQTankDetailValueObject;
+    gridColumn?: string;
+    percentageFilled?: string;
 }
 
 /**

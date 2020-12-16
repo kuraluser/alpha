@@ -1,4 +1,4 @@
-import { IdraftMarks } from '../core/models/common.models';
+import { IdraftMarks } from '../core/models/common.model';
 
 /**
  * Vessel details Model
