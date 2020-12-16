@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ILoadablePatternCargoDetail } from '../../../models/loadable-pattern.model';
 
 
 /**
@@ -14,10 +15,26 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./cargo-priority-grid.component.scss']
 })
 export class CargoPriorityGridComponent implements OnInit {
-
+  @Input() loadablePatternCargoDetails: ILoadablePatternCargoDetail[];
+  @Input() totalDifferenceColor: string;
+  totalQuantity = 0;
+  totalDifference = 0;
   constructor() { }
 
+  /**
+  * Component lifecycle ngOnit
+  *
+  * @returns {Promise<void>}
+  * @memberof CargoPriorityGridComponent
+  */
   ngOnInit(): void {
+    this.totalQuantity = this.loadablePatternCargoDetails.map(a => Number(a.quantity)).reduce(function (a, b) {
+      return Number(a) + Number(b);
+    });
+    this.totalDifference = this.loadablePatternCargoDetails.map(a => Number(a.difference)).reduce(function (a, b) {
+      return Number(a) + Number(b);
+    });
   }
+
 
 }

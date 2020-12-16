@@ -4,22 +4,23 @@
             <cpdss-portal-vessel-info *ngIf="vesselInfo" [vesselDetails]="vesselInfo"></cpdss-portal-vessel-info>
         </div>
         <div class="col">
-            <h5 class="main-head inline-block">LOADABLE STUDY - LOADABLE PATTERN</h5>
-            <span class="ml-20 mr-10">
-                1234</span>
+            <h5 class="main-head inline-block">{{'LOADABLE_PATTERN_HISTORY_HEADER_FIRST' | translate}} {{loadableStudyName | uppercase}} {{'LOADABLE_PATTERN_HISTORY_HEADER_SECOND' | translate}}</h5>
+            <div class=" mr-10 text-secondary">
+                {{loadablePatternCreatedDate}}</div>
 
         </div>
 
         <div class="ml-auto pr-15">
             <span class="ml-20 mr-10">
-                UNIT</span>
-            <p-dropdown id="pattern_history_dropdown" [filter]="true" class="mr-10 " styleClass="form-control dropdown-w-100" [options]="units" optionLabel="name"
-                placeholder="Unit">
+                {{'LOADABLE_PATTERN_HISTORY_UNIT_LABEL' | translate}}</span>
+            <p-dropdown id="pattern_history_dropdown" [filter]="true" class="mr-10 "
+                styleClass="form-control dropdown-w-100" [options]="units" optionLabel="name" placeholder="Unit" [disabled]="true">
             </p-dropdown>
             <button class="btn btn-main mr-10" id="btn_callNewLoadableStudyPopup"
                 (click)="openSidePane=!openSidePane">{{'LOADABLE_PATTERN_HISTORY_BUTTON_LABEL' | translate}}</button>
-            <button class="btn btn-main" id="btn_callNewLoadableStudyPopup" (click)="backToLoadableStudy()">Back to
-                Loadable studies</button>
+            <button class="btn btn-main" id="btn_callNewLoadableStudyPopup"
+                (click)="backToLoadableStudy()">{{'LOADABLE_PATTERN_HISTORY_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
+                translate}}</button>
         </div>
 
     </div>
@@ -29,18 +30,22 @@
             <div class="sidebar-content">
                 <cpdss-portal-side-panel-loadable-study-list [vesselInfo]="vesselInfo" [voyage]="selectedVoyage"
                     [(selectedLoadableStudy)]="selectedLoadableStudy" [loadableStudies]="loadableStudies"
-                    (deleteLoadableStudy)="onDeleteLoadableStudy($event)">
+                    (deleteLoadableStudy)="onDeleteLoadableStudy($event)"
+                    (selectedLoadableStudyChange)="onLoadableStudyChange($event)">
                 </cpdss-portal-side-panel-loadable-study-list>
             </div>
         </div>
         <div class="pl-30">
             <div class="row">
-                <div *ngFor="let item of [1,2,3]" class="col-6 pb-15 pt-10 content-pattern">
-                    <cpdss-portal-pattern-case></cpdss-portal-pattern-case>
+                <div *ngFor="let loadablePattern of loadablePatterns; let i = index" class="col-6 pb-15 pt-10 content-pattern">
+                    <cpdss-portal-pattern-case [loadablePattern]="loadablePattern" [tankList]="tankLists" [index]="i + 1">
+                    </cpdss-portal-pattern-case>
                     <div class="row">
-                        <div class="col-8 text-center pt-20">
-                            <button class="btn btn-main mr-10">View Plan</button>
-                            <button class="btn btn-main">Confirm Plan</button>
+                        <div class="col-7 text-center pt-20">
+                            <button class="btn btn-main mr-10">{{'LOADABLE_PATTERN_HISTORY_VIEW_PLAN_BUTTON_LABEL' |
+                                translate}}</button>
+                            <button class="btn btn-main">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL' |
+                                translate}}</button>
                         </div>
                     </div>
                 </div>

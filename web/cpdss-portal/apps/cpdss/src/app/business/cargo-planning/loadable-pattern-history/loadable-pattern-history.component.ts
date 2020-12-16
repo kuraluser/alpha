@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Voyage } from '../../core/models/common.model';
+import { ICargoTank, Voyage } from '../../core/models/common.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
 import { VesselDetailsModel } from '../../model/vessel-details.model';
-import { PatternHistory } from '../models/cargo-planning.model';
 import { LoadableStudy } from '../models/loadable-study-list.model';
-import { LoadableStudyDetailsTransformationService } from '../services/loadable-study-details-transformation.service';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
+import { LoadablePatternHistoryApiService } from '../services/loadable-pattern-history-api.service';
+import { ILoadablePattern, ILoadablePatternResponse } from '../models/loadable-pattern.model';
 
 /**
  * Component class of pattern history screen
@@ -43,22 +43,34 @@ export class LoadablePatternHistoryComponent implements OnInit {
   vesselInfo: VesselDetailsModel;
   voyages: Voyage[];
   loadableStudies: LoadableStudy[];
-  demoData: PatternHistory[] = [{ name: '2020-20-22', statusId: 1 }, { name: '2020-20-22', statusId: 2 }];
-  selectedData = { name: '2020-20-22', statusId: 1 };
+  loadablePatternResponse: ILoadablePatternResponse;
+  loadablePatterns: ILoadablePattern[];
+  tankLists: ICargoTank[][];
   units = [{ name: '2020-20-22', statusId: 1 }];
+  loadablePatternCreatedDate: string;
+  loadableStudyName: string;
+
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private voyageService: VoyageService,
     private ngxSpinnerService: NgxSpinnerService,
-    private loadableStudyListApiService: LoadableStudyListApiService) { }
+    private loadableStudyListApiService: LoadableStudyListApiService,
+    private loadablePatternApiService: LoadablePatternHistoryApiService) { }
 
+  /**
+   * Component lifecycle ngOnit
+   *
+   * @returns {Promise<void>}
+   * @memberof LoadablePatternHistoryComponent
+   */
   async ngOnInit(): Promise<void> {
     this.activatedRoute.paramMap.subscribe(params => {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+      this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
     });
   }
 
@@ -123,6 +135,32 @@ export class LoadablePatternHistoryComponent implements OnInit {
     this.loadableStudies.splice(event?.index, 1);
   }
 
+  /**
+   * Fetch loadable study details
+   *
+   * @param {number} vesselId
+   * @param {number} voyageId
+   * @param {number} loadableStudyId
+   * @memberof LoadablePatternHistoryComponent
+   */
+  async getLoadablePatterns(vesselId: number, voyageId: number, loadableStudyId: number){
+    this.loadablePatternResponse = await this.loadablePatternApiService.getLoadablePatterns(vesselId, voyageId, loadableStudyId).toPromise(); 
+    this.loadablePatterns = this.loadablePatternResponse.loadablePatterns;
+    this.tankLists = this.loadablePatternResponse.tankLists;
+    this.loadablePatternCreatedDate = this.loadablePatternResponse.loadablePatternCreatedDate;
+    this.loadableStudyName = this.loadablePatternResponse.loadableStudyName;
+  }
 
+  /**
+   * Handler for loadable study chnage change
+   *
+   * @param {*} event
+   * @memberof LoadablePatternHistoryComponent
+   */
+  onLoadableStudyChange(event) {
+    this.loadableStudyId = event?.id;
+    this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+    this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
+  }
 
 }

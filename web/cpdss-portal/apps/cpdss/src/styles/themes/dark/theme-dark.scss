@@ -640,7 +640,7 @@ div{
 }
 
 .p-inputtext{
-  color: $text-primary;
+  color: $text-secondary;
 }
 
 .text-secondary{
@@ -984,7 +984,8 @@ a{
 }
 .content-pattern:nth-child(2){
   border-right: 0;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $border-color!important;
+  border-left: 1px solid $border-color!important;
 }
 .content-pattern:only-child{
   border-right: 0;
@@ -992,9 +993,25 @@ a{
 }
 .cpdss{
   background: url($images-theme + 'cpdss.png') no-repeat;
-  display: inline-block;
-  width: 109px;
-  height: 12px;
-  margin-left: 10px;
-  vertical-align: middle;
 }
+
+.table-pattern{
+  &.p-datatable .p-datatable-tbody > tr > td{
+    border-right: 1px solid $table-border;
+  }
+  &.p-datatable .p-datatable-thead > tr > th{
+    border-right: 1px solid $table-border;
+  }
+  &.p-datatable .p-datatable-tfoot > tr > td{
+    color: $text-secondary;
+    border-bottom: 1px solid $table-border;
+    &:nth-last-child(2){
+      border-right: 1px solid $table-border;
+      border-left: 1px solid $table-border;
+    }
+    &:last-child(2){
+      border-left: 1px solid $table-border;
+    }
+  }
+}
+

@@ -121,7 +121,7 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   onEditComplete(event: IDataTableEvent): void {
-    if (this.editMode && event.data[event.field].isEditMode && (!event.data.isAdd || !this.columns.some(col => col.fieldType === this.fieldType.ACTION)) && event.field !== 'actions') {
+    if (this.editMode && event.data[event.field].isEditable && (!event.data.isAdd || !this.columns.some(col => col.fieldType === this.fieldType.ACTION)) && event.field !== 'actions') {
       const control = this.field(event.index, event.field);
       event.data[event.field].isEditMode = control?.invalid;
       if (control?.dirty && control?.valid) {

@@ -9,9 +9,13 @@ import { SidePanelLoadableStudyListModule } from '../../core/components/side-pan
 import { PatternCaseComponent } from './pattern-case/pattern-case.component';
 import { GradeLoadingOrderComponent } from './pattern-case/grade-loading-order/grade-loading-order.component';
 import { CargoPriorityGridComponent } from './pattern-case/cargo-priority-grid/cargo-priority-grid.component';
-import { CargoTankLayoutComponent } from './cargo-tank-layout/cargo-tank-layout.component';
 import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule } from '@ngx-translate/core';
+import { TableModule } from 'primeng/table';
+import { DatatableModule } from '../../../shared/components/datatable/datatable.module';
+import { DialogModule } from 'primeng/dialog';
+import { ConstraintComponent } from './pattern-case/constraint/constraint.component';
+import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/cargo-tank-layout.module';
 
 /**
  * Routing Module for Loadable Pattern History Screen
@@ -20,7 +24,7 @@ import { TranslateModule } from '@ngx-translate/core';
  * @class LoadablePatternHistoryModule
  */
 @NgModule({
-  declarations: [LoadablePatternHistoryComponent, PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, CargoTankLayoutComponent ],
+  declarations: [LoadablePatternHistoryComponent, PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, ConstraintComponent ],
   imports: [
     CommonModule,
     FormsModule,
@@ -28,7 +32,12 @@ import { TranslateModule } from '@ngx-translate/core';
     VesselInfoModule,
     SidePanelLoadableStudyListModule,
     DropdownModule,
-    TranslateModule
-  ]
+    TranslateModule,
+    TableModule,
+    DatatableModule,
+    DialogModule,
+    CargoTankLayoutModule
+  ],
+  exports : [PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, ConstraintComponent]
 })
 export class LoadablePatternHistoryModule { }

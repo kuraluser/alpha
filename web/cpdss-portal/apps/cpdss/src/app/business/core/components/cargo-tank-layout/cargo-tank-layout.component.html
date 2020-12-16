@@ -1,0 +1,21 @@
+<div class="tank-outer-pattern">
+    <div class="ship-front-pattern"></div>
+    <div class="ship-rear-pattern">
+        <div class="rear-top-pattern"></div>
+        <div class="rear-bottom-pattern">
+
+        </div>
+    </div>
+    <div class="tank-inner-wrapper-pattern">
+        <div class="tank-column-pattern" *ngFor="let group of tanks"
+            [ngStyle]="{'width':getTankGroupWidthPercentage(tanks[0],group,tanks[tanks.length-1])}">
+            <div *ngFor="let tank of group" [ngStyle]="{'grid-column': tank?.gridColumn}">
+                <div [ngStyle]="{'background':tank.commodity?.cargoColor, 'height': tank.percentageFilled}"
+                    class="tank-level-pattern">
+
+                </div>
+                <h5 class="tank-name">{{tank?.shortName}}</h5>
+            </div>
+        </div>
+    </div>
+</div>

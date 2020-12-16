@@ -1,4 +1,5 @@
 import { IResponseStatus } from '../../../shared/models/common.model';
+import { ILoadablePatternCargoDetail } from '../../cargo-planning/models/loadable-pattern.model';
 
 /**
  *  vessel-info model
@@ -81,14 +82,42 @@ export interface ITank {
     frameNumberFrom: number;
     frameNumberTo: number;
     shortName: string;
-    heightFrom: number;
-    heightTo: number;
+    heightFrom?: number;
+    heightTo?: number;
     fillCapcityCubm: number;
+    fullCapacityCubm?: string;
     density: number;
     group: number;
     order: number;
     slopTank: boolean;
-    commodity: any;
+    commodity?: any;
+    gridColumn?: string;
+    percentageFilled?: string;
+}
+
+/**
+ * Interface for  cargo tank layout tank
+ *
+ * @export
+ * @interface ICargoTank
+ */
+export interface ICargoTank extends ITank {
+    id: number;
+    categoryId: number;
+    categoryName: string;
+    name: string;
+    frameNumberFrom: number;
+    frameNumberTo: number;
+    shortName: string;
+    heightFrom?: number;
+    heightTo?: number;
+    fillCapcityCubm: number;
+    fullCapacityCubm?: string;
+    density: number;
+    group: number;
+    order: number;
+    slopTank: boolean;
+    commodity?: ILoadablePatternCargoDetail;
     gridColumn?: string;
     percentageFilled?: string;
 }

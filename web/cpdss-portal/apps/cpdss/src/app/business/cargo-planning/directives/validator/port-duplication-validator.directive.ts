@@ -10,7 +10,7 @@ export function portDuplicationValidator(): ValidatorFn {
             return null;
         }
         let found = false;
-        const dataTableArray = control.root.value.dataTable;
+        const dataTableArray = control.root.value.dataTable.filter((dataValue) => (dataValue?.portOrder !== control.parent?.value?.portOrder) && (dataValue?.portcode !== control.parent?.value?.portcode));
         if(control.parent?.value.port){
             if(control?.value){
                found = dataTableArray.some(portData => portData.port.id === control.parent?.value.port?.id &&  portData.operation?.id === control.value?.id);

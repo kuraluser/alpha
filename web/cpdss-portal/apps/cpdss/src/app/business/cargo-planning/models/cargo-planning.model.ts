@@ -487,14 +487,14 @@ export interface IOHQTank extends ITank {
     frameNumberFrom: number;
     frameNumberTo: number;
     shortName: string;
-    heightFrom: number;
-    heightTo: number;
+    heightFrom?: number;
+    heightTo?: number;
     fillCapcityCubm: number;
     density: number;
     group: number;
     order: number;
     slopTank: boolean;
-    commodity: IPortOHQTankDetailValueObject;
+    commodity?: IPortOHQTankDetailValueObject;
     gridColumn?: string;
     percentageFilled?: string;
 }

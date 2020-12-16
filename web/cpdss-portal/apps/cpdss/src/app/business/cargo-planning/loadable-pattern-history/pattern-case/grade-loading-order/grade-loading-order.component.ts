@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ILoadablePatternCargoDetail } from '../../../models/loadable-pattern.model';
 
 /**
  * Component for loading grade
@@ -13,7 +14,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./grade-loading-order.component.scss']
 })
 export class GradeLoadingOrderComponent implements OnInit {
-
+  @Input() loadablePatternCargoDetails: ILoadablePatternCargoDetail[];
+  @Input() index: number;
   constructor() { }
 
   ngOnInit(): void {
