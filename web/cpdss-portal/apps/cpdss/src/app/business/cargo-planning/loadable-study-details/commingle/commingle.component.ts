@@ -64,6 +64,10 @@ export class CommingleComponent implements OnInit {
   cargoNominationPermissionContext: IPermissionContext;
   permission: IPermission;
   isEditable = false;
+  cargo1Total: number;
+  cargo2Total: number;
+  loadingPortsTotal: number;
+  isMaxQuantity = false;
 
   constructor(private commingleApiService: CommingleApiService,
     private ngxSpinnerService: NgxSpinnerService,
@@ -81,10 +85,10 @@ export class CommingleComponent implements OnInit {
  * @memberof CommingleComponent
  */
   ngOnInit() {
-    this.cargoNominationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [ PERMISSION_ACTION.EDIT,PERMISSION_ACTION.ADD ] };
-    this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], false);
+    this.cargoNominationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.EDIT, PERMISSION_ACTION.ADD] };
+    this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], true);
     this.isEditable = this.permission ? this.permission?.edit : true;
-    this.percentage = [ { id: 10, name: "10%" }, { id: 20, name: "20%" }, { id: 30, name: "30%" }, { id: 40, name: "40%" }, { id: 30, name: "50%" }, { id: 60, name: "60%" }, { id: 70, name: "70%" }, { id: 80, name: "80%" }, { id: 90, name: "90%" }, { id: 100, name: "100%" }];
+    this.percentage = [{ id: 10, name: "10%" }, { id: 20, name: "20%" }, { id: 30, name: "30%" }, { id: 40, name: "40%" }, { id: 30, name: "50%" }, { id: 60, name: "60%" }, { id: 70, name: "70%" }, { id: 80, name: "80%" }, { id: 90, name: "90%" }, { id: 100, name: "100%" }];
     this.columns = this.loadableStudyDetailsTransformationService.getManualCommingleDatatableColumns();
     this.createVolumeMaximisationFormGroup();
     this.getCommingle();
@@ -122,19 +126,19 @@ export class CommingleComponent implements OnInit {
       this.listData.percentage = this.percentage;
       if (this.commingleCargo) {
         this.isVolumeMaximum = this.commingleCargo.purposeId === 1 ? true : false;
-        this.selectedCargo1 = this.cargoNominationsCargo.find(cargo => cargo.id === this.commingleCargo.cargoGroups[0].cargo1Id);
-        this.selectedCargo2 = this.cargoNominationsCargo.find(cargo => cargo.id === this.commingleCargo.cargoGroups[0].cargo2Id);
+        this.selectedCargo1 = this.cargoNominationsCargo.find(cargo => cargo.cargoId === this.commingleCargo.cargoGroups[0].cargo1Id);
+        this.selectedCargo2 = this.cargoNominationsCargo.find(cargo => cargo.cargoId === this.commingleCargo.cargoGroups[0].cargo2Id);
         if (this.selectedCargo1) {
-          this.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.id !== this.selectedCargo1.id);
+          this.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.cargoId !== this.selectedCargo1.id);
         }
         if (this.selectedCargo2) {
-          this.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.id !== this.selectedCargo2.id);
+          this.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.cargoId !== this.selectedCargo2.id);
         }
-        this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos =>  (this.commingleCargo.cargoGroups.some(group => group.cargo2Id === cargos.id)) !== true);
-        this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2.filter(cargos =>  (this.commingleCargo.cargoGroups.some(group => group.cargo1Id === cargos.id)) !== true);
+        this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => (this.commingleCargo.cargoGroups.some(group => group.cargo2Id === cargos.cargoId)) !== true);
+        this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2.filter(cargos => (this.commingleCargo.cargoGroups.some(group => group.cargo1Id === cargos.cargoId)) !== true);
         this.selectPurpose(null);
       }
-      const cargoGroups = this.commingleData.commingleCargo?.cargoGroups ?? [];
+      const cargoGroups = this.commingleCargo.purposeId === 2 ? this.commingleData.commingleCargo?.cargoGroups ?? [] : [];
       this.initCommingleManualArray(cargoGroups);
       this.preferredTankList = this.commingleData.vesselTanks;
     }
@@ -168,7 +172,7 @@ export class CommingleComponent implements OnInit {
    * select purpose of commingle
    */
   selectPurpose(event) {
-    if(event){
+    if (event) {
       event?.value?.id === 1 ? this.isVolumeMaximum = true : this.isVolumeMaximum = false;
     }
     this.updateCommingleFormValue();
@@ -218,16 +222,16 @@ export class CommingleComponent implements OnInit {
   // returns form-controls of commingleForm
   get form() { return this.commingleForm.controls; }
 
-/**
- * Event handler for edit complete event
- * @param event 
- */
+  /**
+   * Event handler for edit complete event
+   * @param event 
+   */
   async onEditComplete(event: ICommingleManualEvent) {
-    if (event.field === 'cargo1'){
+    if (event.field === 'cargo1') {
       this.manualCommingleList[event.index]['cargo1Color'].value = event?.data?.cargo1?.value?.color
       this.updateField(event.index, 'cargo1Color', event?.data?.cargo1?.value?.color);
     }
-    if (event.field === 'cargo2'){
+    if (event.field === 'cargo2') {
       this.manualCommingleList[event.index]['cargo2Color'].value = event?.data?.cargo2?.value?.color
       this.updateField(event.index, 'cargo2Color', event?.data?.cargo2?.value?.color);
     }
@@ -239,6 +243,25 @@ export class CommingleComponent implements OnInit {
       this.manualCommingleList[event.index]['cargo2pct'].value = event.data.cargo2IdPct.value.id;
       this.updateField(event.index, 'cargo2pct', event.data.cargo2IdPct.value.id);
     }
+    if (event.field === 'quantity') {
+      this.loadingPortsTotal = 0;
+      this.cargo1Total = 0
+      this.cargo2Total = 0
+      for (let i = 0; i < event?.data?.cargo1?.value?.loadingPorts.length; i++) {
+        this.cargo1Total = event?.data?.cargo1?.value?.loadingPorts[i].quantity + this.loadingPortsTotal;
+      }
+      for (let j = 0; j < event?.data?.cargo2?.value?.loadingPorts.length; j++) {
+        this.cargo2Total = event?.data?.cargo1?.value?.loadingPorts[j].quantity + this.loadingPortsTotal;
+      }
+      this.loadingPortsTotal = this.cargo1Total + this.cargo2Total;
+      if (this.loadingPortsTotal < event?.data?.quantity?.value) {
+        this.isMaxQuantity = true;
+      }
+      else{
+        this.isMaxQuantity = false;
+      }
+    }
+
 
   }
 
@@ -265,7 +288,7 @@ export class CommingleComponent implements OnInit {
   private initCommingleManualFormGroup(commingle: ICommingleValueObject) {
     return this.fb.group({
       cargo1: this.fb.control(commingle?.cargo1?.value, Validators.required),
-      cargo2: this.fb.control(commingle?.cargo2?.value, Validators.required),
+      cargo2: this.fb.control( commingle?.cargo2?.value, Validators.required),
       cargo1pct: this.fb.control(commingle?.cargo1IdPct?.value?.id, Validators.required),
       cargo2pct: this.fb.control(commingle?.cargo2IdPct?.value?.id, Validators.required),
       cargo1IdPct: this.fb.control(commingle?.cargo1IdPct?.value, Validators.required),
@@ -331,9 +354,9 @@ export class CommingleComponent implements OnInit {
 
     }
   }
-/**
- * Checking case for saving Commingle
- */
+  /**
+   * Checking case for saving Commingle
+   */
   saveCommingle() {
     this.isVolumeMaximum ? this.saveVolumeMaximisation() : this.saveManuals();
   }
@@ -343,20 +366,20 @@ export class CommingleComponent implements OnInit {
    */
   async saveManuals() {
     this.commingleForm.markAllAsTouched();
-    if (this.commingleForm.valid && this.commingleManualForm.valid) {
+    if (this.commingleForm.valid && this.commingleManualForm.valid && !this.isMaxQuantity) {
       this.ngxSpinnerService.show();
       const translationKeys = await this.translateService.get(['COMMINGLE_MANUAL_SAVE_SUCCESS', 'COMMINGLE_COMPLETED_SUCCESSFULLY']).toPromise();
       const _commingleList = Array<ICargoGroup>();
       if (this.commingleManualForm.value.dataTable.length > 0) {
         for (let i = 0; i < this.manualCommingleList.length; i++) {
           _commingleList[i] = this.loadableStudyDetailsTransformationService.getCommingleAsValue(this.manualCommingleList[i]);
-        } 
+        }
       }
       const _preferred = Array<number[]>();
       if (this.commingleForm.value?.preferredTanks?.length > 0) {
         for (let i = 0; i < this.commingleForm.value.preferredTanks.length; i++) {
           _preferred[i] = this.commingleForm.value.preferredTanks[i].id;
-  
+
         }
       }
       const data = {
@@ -364,7 +387,7 @@ export class CommingleComponent implements OnInit {
         slopOnly: false,
         preferredTanks: _preferred,
         cargoGroups: _commingleList
-  
+
       }
       const result = await this.commingleApiService.saveVolMaxCommingle(this.vesselId, this.voyageId, this.loadableStudyId, data).toPromise();
       if (result.responseStatus.status === '200') {
@@ -377,7 +400,7 @@ export class CommingleComponent implements OnInit {
       this.commingleForm.markAllAsTouched();
       this.commingleManualForm.markAllAsTouched();
     }
-   
+
   }
 
   /**
@@ -393,20 +416,34 @@ export class CommingleComponent implements OnInit {
     return formGroup;
   }
 
-/**
- * Method for updating form field
- */
-  updateCommingleFormValue(){
+  /**
+   * Method for updating form field
+   */
+  updateCommingleFormValue() {
     if (this.isVolumeMaximum) {
-      this.commingleForm.controls['preferredTanks'].clearValidators();
-      this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
+      if (this.commingleCargo.purposeId === 1) {
+        this.commingleForm.controls['preferredTanks'].clearValidators();
+        this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
         this.commingleForm.patchValue({
           purpose: this.purposeOfCommingle.find(purpose => purpose.id === 1),
           slopOnly: this.commingleCargo.slopOnly,
           cargo1: this.selectedCargo1,
           cargo2: this.selectedCargo2
         });
+      }
+      else {
+        this.selectedCargo1 = null;
+        this.selectedCargo2 = null;
+        this.commingleForm.controls['preferredTanks'].clearValidators();
+        this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
+        this.commingleForm.patchValue({
+          purpose: this.purposeOfCommingle.find(purpose => purpose.id === 1),
+          slopOnly: this.commingleCargo.slopOnly,
+          cargo1: '',
+          cargo2: ''
+        });
 
+      }
     }
     else {
       this.commingleForm.controls['preferredTanks'].setValidators([Validators.required]);
@@ -415,17 +452,19 @@ export class CommingleComponent implements OnInit {
       this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
       this.commingleForm.controls['cargo1'].updateValueAndValidity();
       this.commingleForm.controls['cargo2'].updateValueAndValidity();
-     this.selectedTanks = this.commingleCargo.preferredTanks.map(itm => ({
-        ...this.preferredTankList.find((item) => (item.id === Number(itm)) && item),
-        ...itm
+      this.selectedTanks = this.commingleCargo.preferredTanks.map(preferredTank => ({
+        ...this.preferredTankList.find((item) => (item.id === Number(preferredTank)) && item),
+        ...preferredTank
       }));
       this.commingleForm.get('preferredTanks').setValue(this.commingleCargo.preferredTanks);
       this.commingleForm.patchValue({
         purpose: this.purposeOfCommingle.find(purpose => purpose.id === 2),
         preferredTanks: this.selectedTanks
       })
+
+
     }
-   }
+  }
 
 
   /**

@@ -916,8 +916,8 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'cargo1Color',
         header: '',
-        fieldHeaderClass:'column-cargo1Color',
-        fieldClass: 'commingle-cargo1Color',
+        fieldHeaderClass:'column-cargo1-color',
+        fieldClass: 'commingle-cargo1-color',
         fieldType: DATATABLE_FIELD_TYPE.COLOR,
 
       },
@@ -928,8 +928,8 @@ export class LoadableStudyDetailsTransformationService {
         listName: 'percentage',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_PERCENTAGE_PLACEHOLDER',
-        fieldHeaderClass:'column-cargo1IdPct',
-        fieldClass: 'commingle-cargo1IdPct',
+        fieldHeaderClass:'column-cargo1-pct',
+        fieldClass: 'commingle-cargo1-pct',
         errorMessages: {
           'required': 'COMMINGLE_PERCENTAGE_SELECT_ERROR'
         }
@@ -950,8 +950,8 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'cargo2Color',
         header: '',
-        fieldHeaderClass:'column-cargo2Color',
-        fieldClass: 'commingle-cargo2Color',
+        fieldHeaderClass:'column-cargo2-color',
+        fieldClass: 'commingle-cargo2-color',
         fieldType: DATATABLE_FIELD_TYPE.COLOR
       },
       {
@@ -961,8 +961,8 @@ export class LoadableStudyDetailsTransformationService {
         listName: 'percentage',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_PERCENTAGE_PLACEHOLDER',
-        fieldHeaderClass:'column-cargo2IdPct',
-        fieldClass: 'commingle-cargo2IdPct',
+        fieldHeaderClass:'column-cargo2-pct',
+        fieldClass: 'commingle-cargo2-pct',
         errorMessages: {
           'required': 'COMMINGLE_PERCENTAGE_SELECT_ERROR'
         }
@@ -975,7 +975,8 @@ export class LoadableStudyDetailsTransformationService {
         fieldHeaderClass:'column-quantity',
         fieldClass: 'commingle-quantity',
         errorMessages: {
-          'required': 'COMMINGLE_CARGO_SELECT_ERROR'
+          'required': 'COMMINGLE_CARGO_SELECT_ERROR',
+          'max': 'COMMINGLE_QUANTITY_MAX_LIMIT'
         }
       },
       {
@@ -995,11 +996,11 @@ export class LoadableStudyDetailsTransformationService {
     for (const key in commingle) {
       if (Object.prototype.hasOwnProperty.call(commingle, key)) {
         if (key === 'cargo1') {
-          _cargoList.cargo1Id = commingle[key].value?.id;
+          _cargoList.cargo1Id = commingle[key].value?.cargoId;
         } else if (key === 'cargo1pct') {
           _cargoList.cargo1pct = commingle[key].value;
         } else if (key === 'cargo2') {
-          _cargoList.cargo2Id = commingle[key].value?.id;
+          _cargoList.cargo2Id = commingle[key].value?.cargoId;
         } else if (key === 'cargo2pct') {
           _cargoList.cargo2pct = commingle[key].value;
         } else if (key === 'quantity') {
@@ -1018,8 +1019,8 @@ export class LoadableStudyDetailsTransformationService {
    */
   getCommingleValueObject(commingleManual: ICargoGroup, isNewValue = true, isEditable = true, listData: ICommingleManual): ICommingleValueObject {
     const _commingleManual = <ICommingleValueObject>{};
-    const cargo1Obj: ICargoNomination = listData.cargoNominationsCargo1.find(cargo1Data => cargo1Data.id === commingleManual.cargo1Id);
-    const cargo2Obj: ICargoNomination = listData.cargoNominationsCargo2.find(cargo2Data => cargo2Data.id === commingleManual.cargo2Id);
+    const cargo1Obj: ICargoNomination = listData.cargoNominationsCargo1.find(cargo1Data => cargo1Data.cargoId === commingleManual.cargo1Id);
+    const cargo2Obj: ICargoNomination = listData.cargoNominationsCargo2.find(cargo2Data => cargo2Data.cargoId === commingleManual.cargo2Id);
     const cargo1IdPctObj: IPercentage = listData.percentage.find(percent1 => percent1.id === commingleManual.cargo1pct);
     const cargo2IdPctObj: IPercentage = listData.percentage.find(percent2 => percent2.id === commingleManual.cargo2pct);
     _commingleManual.cargo1 = new ValueObject<ICargoNomination>(cargo1Obj, true, isNewValue, false, isEditable);
@@ -1033,6 +1034,7 @@ export class LoadableStudyDetailsTransformationService {
     _commingleManual.cargo1IdPct = new ValueObject<IPercentage>(cargo1IdPctObj, true, isNewValue, false, isEditable);
     _commingleManual.cargo2IdPct = new ValueObject<IPercentage>(cargo2IdPctObj, true, isNewValue, false, isEditable);
     _commingleManual.quantity = new ValueObject<number>(commingleManual.quantity, true, isNewValue, false, isEditable);
+    console.log("_commingleManual", _commingleManual);
     return _commingleManual;
   }
 

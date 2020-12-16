@@ -1509,3 +1509,38 @@ th{
     background: none;
     font-weight: normal;
   }
+
+.commingle-pop-up{
+  .p-datatable table{
+    table-layout: auto!important;
+    
+  }
+  .column-class{
+    min-width: 5%!important;
+    &.column-actions{
+      min-width: 30px !important;
+      width: 30px !important;
+      max-width: 30px;
+    }
+  }
+  
+}
+.column-class.commingle-cargo1-color{
+  min-width:25px;
+  width: 25px;
+  max-width:25px;
+}
+.commingle-cargo1-pct.p-editable-column, .commingle-cargo2-pct.p-editable-column{
+  width: 100px;
+   max-width: 100px;
+}
+.commingle-cargo2-color.p-editable-column, .commingle-cargo1-color.p-editable-column{
+  width: 25px;
+  min-width: 25px;
+  max-width: 25px;
+}
+.commingle-cargo1.p-editable-column, .commingle-cargo2.p-editable-column{
+  width: 140px;
+  min-width: 140px;
+  max-width: 140px;
+}
