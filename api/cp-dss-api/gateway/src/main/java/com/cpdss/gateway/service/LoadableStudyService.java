@@ -1552,6 +1552,22 @@ public class LoadableStudyService {
             cargoNomination.setId(cargoNominationDetail.getId());
             cargoNomination.setColor(cargoNominationDetail.getColor());
             cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
+            if (!CollectionUtils.isEmpty(cargoNominationDetail.getLoadingPortDetailsList())) {
+                List<LoadingPort> loadingPortList = new ArrayList<>();
+                cargoNominationDetail
+                    .getLoadingPortDetailsList()
+                    .forEach(
+                        port -> {
+                          LoadingPort loadingPort = new LoadingPort();
+                          loadingPort.setId(port.getPortId());
+                          loadingPort.setQuantity(
+                              port.getQuantity() != null
+                                  ? new BigDecimal(port.getQuantity())
+                                  : new BigDecimal("0"));
+                          loadingPortList.add(loadingPort);
+                        });
+                cargoNomination.setLoadingPorts(loadingPortList);
+              }
             cargoNominationList.add(cargoNomination);
           });
       commingleCargoResponse.setCargoNominations(cargoNominationList);
