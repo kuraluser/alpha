@@ -138,7 +138,7 @@ export class CommingleComponent implements OnInit {
         this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2.filter(cargos => (this.commingleCargo.cargoGroups.some(group => group.cargo1Id === cargos.cargoId)) !== true);
         this.selectPurpose(null);
       }
-      const cargoGroups = this.commingleCargo.purposeId === 2 ? this.commingleData.commingleCargo?.cargoGroups ?? [] : [];
+      const cargoGroups =  this.commingleCargo?.purposeId === 2 ? this.commingleData?.commingleCargo?.cargoGroups  ?? [] : [];
       this.initCommingleManualArray(cargoGroups);
       this.preferredTankList = this.commingleData.vesselTanks;
     }
