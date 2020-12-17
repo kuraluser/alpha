@@ -200,6 +200,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LUBRICATING_OIL_TANK_CATEGORY_ID = 14L;
   private static final Long LUBRICANT_OIL_TANK_CATEGORY_ID = 19L;
   private static final Long FUEL_VOID_TANK_CATEGORY_ID = 22L;
+  private static final Long FRESH_WATER_VOID_TANK_CATEGORY_ID = 23L;
 
   private static final List<Long> OHQ_TANK_CATEGORIES =
       Arrays.asList(
@@ -208,13 +209,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           DIESEL_OIL_TANK_CATEGORY_ID,
           LUBRICATING_OIL_TANK_CATEGORY_ID,
           LUBRICANT_OIL_TANK_CATEGORY_ID,
-          FUEL_VOID_TANK_CATEGORY_ID);
+          FUEL_VOID_TANK_CATEGORY_ID,
+          FRESH_WATER_VOID_TANK_CATEGORY_ID);
 
   private static final List<Long> OHQ_CENTER_TANK_CATEGORIES =
-      Arrays.asList(FUEL_OIL_TANK_CATEGORY_ID, DIESEL_OIL_TANK_CATEGORY_ID);
+      Arrays.asList(
+          FUEL_OIL_TANK_CATEGORY_ID, DIESEL_OIL_TANK_CATEGORY_ID, FUEL_VOID_TANK_CATEGORY_ID);
 
   private static final List<Long> OHQ_REAR_TANK_CATEGORIES =
-      Arrays.asList(FRESH_WATER_TANK_CATEGORY_ID);
+      Arrays.asList(FRESH_WATER_TANK_CATEGORY_ID, FRESH_WATER_VOID_TANK_CATEGORY_ID);
 
   private static final Long CARGO_TANK_CATEGORY_ID = 1L;
   private static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;
@@ -1726,6 +1729,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
               loadableStudyOpt.get(), request.getPortId(), true);
       for (VesselTankDetail tankDetail : vesselReply.getVesselTanksList()) {
+        if (!tankDetail.getShowInOhqObq()) {
+          continue;
+        }
         OnHandQuantityDetail.Builder detailBuilder = OnHandQuantityDetail.newBuilder();
         detailBuilder.setFuelType(tankDetail.getTankCategoryName());
         detailBuilder.setFuelTypeShortName(tankDetail.getTankCategoryShortName());
@@ -1813,11 +1819,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     List<VesselTankDetail> centerTanks = new ArrayList<>();
     rearTanks.addAll(
         vesselReply.getVesselTanksList().stream()
-            .filter(tank -> OHQ_REAR_TANK_CATEGORIES.contains(tank.getTankCategoryId()))
+            .filter(
+                tank ->
+                    OHQ_REAR_TANK_CATEGORIES.contains(tank.getTankCategoryId())
+                        && tank.getShowInOhqObq())
             .collect(Collectors.toList()));
     centerTanks.addAll(
         vesselReply.getVesselTanksList().stream()
-            .filter(tank -> OHQ_CENTER_TANK_CATEGORIES.contains(tank.getTankCategoryId()))
+            .filter(
+                tank ->
+                    OHQ_CENTER_TANK_CATEGORIES.contains(tank.getTankCategoryId())
+                        && tank.getShowInOhqObq())
             .collect(Collectors.toList()));
     replyBuilder.addAllTanks(this.groupTanks(centerTanks));
     replyBuilder.addAllRearTanks(this.groupTanks(rearTanks));

@@ -319,6 +319,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       Optional.ofNullable(tank.getFullCapacityCubm())
           .ifPresent(
               capacity -> builder.setFullCapacityCubm(String.valueOf(tank.getFullCapacityCubm())));
+      Optional.ofNullable(tank.getShowInOhqObq()).ifPresent(builder::setShowInOhqObq);
       tankDetailsList.add(builder.build());
     }
     return tankDetailsList;

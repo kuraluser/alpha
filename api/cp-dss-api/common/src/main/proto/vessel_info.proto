@@ -47,7 +47,7 @@ message VesselDetail {
 	string flag = 6;
 	string charterer = 7;
 	repeated LoadLineDetail loadLines = 8;
-	  string code = 9;
+	string code = 9;
   string portOfRegistry = 10;
   string builder = 11;
   string officialNumber = 12;
@@ -110,6 +110,7 @@ message VesselTankDetail{
 	string fullCapacityCubm = 20;
 	string colourCode = 21;
 	string tankCategoryShortName = 22;
+	bool showInOhqObq = 23;
 }
 
 message VesselReply {
