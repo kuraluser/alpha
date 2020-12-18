@@ -1339,6 +1339,59 @@ public final class LoadableStudyServiceGrpc {
     return getSaveOnBoardQuantityMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
+      getSaveAlgoLoadableStudyStatusMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveAlgoLoadableStudyStatus",
+      requestType = com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.AlgoStatusReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
+      getSaveAlgoLoadableStudyStatusMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
+            com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
+        getSaveAlgoLoadableStudyStatusMethod;
+    if ((getSaveAlgoLoadableStudyStatusMethod =
+            LoadableStudyServiceGrpc.getSaveAlgoLoadableStudyStatusMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveAlgoLoadableStudyStatusMethod =
+                LoadableStudyServiceGrpc.getSaveAlgoLoadableStudyStatusMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getSaveAlgoLoadableStudyStatusMethod =
+              getSaveAlgoLoadableStudyStatusMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
+                          com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveAlgoLoadableStudyStatus"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoStatusReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "SaveAlgoLoadableStudyStatus"))
+                      .build();
+        }
+      }
+    }
+    return getSaveAlgoLoadableStudyStatusMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -1595,6 +1648,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getSaveOnBoardQuantityMethod(), responseObserver);
     }
 
+    /** */
+    public void saveAlgoLoadableStudyStatus(
+        com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveAlgoLoadableStudyStatusMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1782,6 +1843,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail,
                       com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>(
                       this, METHODID_SAVE_ON_BOARD_QUANTITY)))
+          .addMethod(
+              getSaveAlgoLoadableStudyStatusMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
+                      com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>(
+                      this, METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS)))
           .build();
     }
   }
@@ -2085,6 +2153,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void saveAlgoLoadableStudyStatus(
+        com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveAlgoLoadableStudyStatusMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -2284,6 +2363,13 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail request) {
       return blockingUnaryCall(
           getChannel(), getSaveOnBoardQuantityMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.AlgoStatusReply saveAlgoLoadableStudyStatus(
+        com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getSaveAlgoLoadableStudyStatusMethod(), getCallOptions(), request);
     }
   }
 
@@ -2528,6 +2614,15 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getSaveOnBoardQuantityMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
+        saveAlgoLoadableStudyStatus(
+            com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveAlgoLoadableStudyStatusMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -2556,6 +2651,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GENERATE_LOADABLE_PATTERNS = 23;
   private static final int METHODID_GET_ON_BOARD_QUANTITY = 24;
   private static final int METHODID_SAVE_ON_BOARD_QUANTITY = 25;
+  private static final int METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS = 26;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -2756,6 +2852,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>)
                   responseObserver);
           break;
+        case METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS:
+          serviceImpl.saveAlgoLoadableStudyStatus(
+              (com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -2846,6 +2949,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGenerateLoadablePatternsMethod())
                       .addMethod(getGetOnBoardQuantityMethod())
                       .addMethod(getSaveOnBoardQuantityMethod())
+                      .addMethod(getSaveAlgoLoadableStudyStatusMethod())
                       .build();
         }
       }

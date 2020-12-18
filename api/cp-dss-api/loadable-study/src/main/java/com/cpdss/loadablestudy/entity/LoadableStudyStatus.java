@@ -23,9 +23,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LoadableStudyStatus extends EntityDoc {
 
+  private static final long serialVersionUID = 1L;
+
   @Column(name = "name")
   private String name;
 
   @Column(name = "is_active")
-  private boolean isActive;
+  private Boolean isActive;
 }

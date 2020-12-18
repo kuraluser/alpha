@@ -14,6 +14,8 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
+import com.cpdss.gateway.domain.AlgoStatusRequest;
+import com.cpdss.gateway.domain.AlgoStatusResponse;
 import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CargoNominationResponse;
 import com.cpdss.gateway.domain.CommingleCargoResponse;
@@ -159,6 +161,13 @@ class LoadableStudyControllerTest {
       CLOUD_API_URL_PREFIX + GET_LOADABLE_PATTERN_API_URL;
   private static final String GET_LOADABLE_PATTERN_SHIP_API_URL =
       SHIP_API_URL_PREFIX + GET_LOADABLE_PATTERN_API_URL;
+
+  private static final String GET_LOADABLE_STUDY_ALGO_STATUS_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-study-status/{loadableStudystatusId}";
+  private static final String GET_LOADABLE_STUDY_ALGO_STATUS_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + GET_LOADABLE_STUDY_ALGO_STATUS_API_URL;
+  private static final String GET_LOADABLE_STUDY_ALGO_STATUS_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + GET_LOADABLE_STUDY_ALGO_STATUS_API_URL;
 
   private static final String AUTHORIZATION_HEADER = "Authorization";
 
@@ -923,5 +932,63 @@ class LoadableStudyControllerTest {
                     GET_LOADABLE_PATTERN_CLOUD_API_URL, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
         .andExpect(status().isInternalServerError());
+  }
+
+  @ValueSource(
+      strings = {
+        GET_LOADABLE_STUDY_ALGO_STATUS_CLOUD_API_URL,
+        GET_LOADABLE_STUDY_ALGO_STATUS_SHIP_API_URL
+      })
+  @ParameterizedTest
+  void testUpdateLoadableStudyStatus(String url) throws Exception {
+    when(this.loadableStudyService.saveAlgoLoadableStudyStatus(
+            any(AlgoStatusRequest.class), anyString()))
+        .thenReturn(new AlgoStatusResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 1)
+                .content(this.createAlgoStatusRequest())
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testUpdateLoadableStudyStatusRuntimeException(Class<? extends Exception> exceptionClass)
+      throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.loadableStudyService.saveAlgoLoadableStudyStatus(
+            any(AlgoStatusRequest.class), anyString()))
+        .thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(
+                    GET_LOADABLE_STUDY_ALGO_STATUS_CLOUD_API_URL,
+                    TEST_VESSEL_ID,
+                    TEST_VOYAGE_ID,
+                    1,
+                    1)
+                .content(this.createAlgoStatusRequest())
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  private String createAlgoStatusRequest() throws JsonProcessingException {
+    AlgoStatusRequest request = new AlgoStatusRequest();
+    request.setProcessId("ID");
+    request.setLoadableStudystatusId(1L);
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.writeValueAsString(request);
   }
 }

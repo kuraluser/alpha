@@ -10,6 +10,7 @@ import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
@@ -57,6 +58,8 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockin
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.AlgoStatusRequest;
+import com.cpdss.gateway.domain.AlgoStatusResponse;
 import com.cpdss.gateway.domain.Cargo;
 import com.cpdss.gateway.domain.CargoGroup;
 import com.cpdss.gateway.domain.CargoNomination;
@@ -1159,7 +1162,8 @@ public class LoadableStudyService {
       LoadablePatternReply loadablePatternReply, String correlationId) {
     LoadablePatternResponse loadablePatternResponse = new LoadablePatternResponse();
     loadablePatternResponse.setLoadableStudyName(loadablePatternReply.getLoadableStudyName());
-    loadablePatternResponse.setLoadablePatternCreatedDate(loadablePatternReply.getLoadablePatternCreatedDate());
+    loadablePatternResponse.setLoadablePatternCreatedDate(
+        loadablePatternReply.getLoadablePatternCreatedDate());
     loadablePatternResponse.setLoadablePatterns(new ArrayList<LoadablePattern>());
     loadablePatternResponse.setTankLists(
         createGroupWiseTankList(loadablePatternReply.getTanksList()));
@@ -1943,5 +1947,53 @@ public class LoadableStudyService {
       OnBoardQuantityDetail request, String correlationId) {
     log.info("saveOnBoardQuantites grpc call, correlationId: {}", correlationId);
     return this.loadableStudyServiceBlockingStub.saveOnBoardQuantity(request);
+  }
+
+  /**
+   * @param request
+   * @param correlationId
+   * @return AlgoStatusResponse
+   */
+  public AlgoStatusResponse saveAlgoLoadableStudyStatus(
+      AlgoStatusRequest request, String correlationId) throws GenericServiceException {
+    log.info(
+        "Inside updateLoadableStudyStatus gateway service with correlationId : " + correlationId);
+    AlgoStatusResponse response = new AlgoStatusResponse();
+    AlgoStatusReply grpcReply =
+        this.saveAlgoLoadableStudyStatus(
+            this.buildAlgoLoadableStudyStatusRequest(request, correlationId));
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to update Loadable Study Status",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * @param request
+   * @param correlationId
+   * @return AlgoStatusRequest
+   */
+  private com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest
+      buildAlgoLoadableStudyStatusRequest(AlgoStatusRequest request, String correlationId) {
+    com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.newBuilder();
+    builder.setProcesssId(request.getProcessId());
+    builder.setLoadableStudystatusId(request.getLoadableStudystatusId());
+    return builder.build();
+  }
+
+  /**
+   * @param request
+   * @param correlationId
+   * @return AlgoStatusRequest
+   */
+  public com.cpdss.common.generated.LoadableStudy.AlgoStatusReply saveAlgoLoadableStudyStatus(
+      com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request) {
+    return this.loadableStudyServiceBlockingStub.saveAlgoLoadableStudyStatus(request);
   }
 }

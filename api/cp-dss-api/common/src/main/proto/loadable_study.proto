@@ -85,6 +85,18 @@ service LoadableStudyService {
 	
 	rpc SaveOnBoardQuantity(OnBoardQuantityDetail) returns (OnBoardQuantityReply){
 	}
+	
+	rpc SaveAlgoLoadableStudyStatus(AlgoStatusRequest) returns (AlgoStatusReply) {
+	}
+}
+
+message AlgoStatusRequest {
+string processsId = 1;
+int64 loadableStudystatusId = 2;
+}
+
+message AlgoStatusReply {
+	ResponseStatus responseStatus = 1;
 }
 
 message AlgoRequest {
