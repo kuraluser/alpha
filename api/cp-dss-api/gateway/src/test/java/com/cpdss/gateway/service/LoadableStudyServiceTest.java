@@ -1230,7 +1230,7 @@ class LoadableStudyServiceTest {
                 .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
                 .build());
     AlgoStatusRequest request = new AlgoStatusRequest();
-    request.setLoadableStudystatusId(1L);
+    request.setLoadableStudyStatusId(1L);
     request.setProcessId("ID");
     AlgoStatusResponse response =
         this.loadableStudyService.saveAlgoLoadableStudyStatus(request, CORRELATION_ID_HEADER_VALUE);
@@ -1261,7 +1261,7 @@ class LoadableStudyServiceTest {
                         .build())
                 .build());
     AlgoStatusRequest request = new AlgoStatusRequest();
-    request.setLoadableStudystatusId(1L);
+    request.setLoadableStudyStatusId(1L);
     request.setProcessId("ID");
     final GenericServiceException ex =
         assertThrows(

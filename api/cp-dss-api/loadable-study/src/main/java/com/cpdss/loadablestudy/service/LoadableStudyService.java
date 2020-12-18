@@ -3048,7 +3048,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       AlgoStatusRequest request, StreamObserver<AlgoStatusReply> responseObserver) {
     AlgoStatusReply.Builder replyBuilder = AlgoStatusReply.newBuilder();
     try {
-
       Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOpt =
           loadableStudyAlgoStatusRepository.findByProcessIdAndIsActive(
               request.getProcesssId(), true);
