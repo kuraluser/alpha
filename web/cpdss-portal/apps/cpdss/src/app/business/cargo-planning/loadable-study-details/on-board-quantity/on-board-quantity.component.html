@@ -40,8 +40,8 @@
 
     <div class="pr-15">
         <div class=" tank-wrapper-ohq">
-            <form *ngIf="obqForm" [formGroup]="obqForm">
-                <div class="row text-uppercase text-secondary mt-10" >
+            <form *ngIf="obqForm && selectedIndex >= 0" [formGroup]="obqForm">
+                <div class="row text-uppercase text-secondary mt-10">
                     <div class="col-3">
                         <div class="row mb-15">
                             <label for="" class="col-12 text-center">CARGO</label>
@@ -55,6 +55,10 @@
                             <label for="" class="col-12 text-center">SOUNDING</label>
                             <div class="col">
                                 <input type="number" class="form-control" formControlName="sounding">
+                                <cpdss-portal-validation-error
+                                    [errors]="fieldError(selectedIndex, 'sounding')"
+                                    [errorMessages]="getErrorMessages('sounding')">
+                                </cpdss-portal-validation-error>
                             </div>
                         </div>
                     </div>
@@ -63,6 +67,10 @@
                             <label for="" class="col-12 text-center">WEIGHT</label>
                             <div class="col">
                                 <input type="number" class="form-control" formControlName="weight">
+                                <cpdss-portal-validation-error
+                                    [errors]="fieldError(selectedIndex, 'weight')"
+                                    [errorMessages]="getErrorMessages('weight')">
+                                </cpdss-portal-validation-error>
                             </div>
                         </div>
                     </div>
@@ -71,6 +79,10 @@
                             <label for="" class="col-12 text-center">VOLUME</label>
                             <div class="col">
                                 <input type="number" class="form-control" formControlName="volume">
+                                <cpdss-portal-validation-error
+                                    [errors]="fieldError(selectedIndex, 'volume')"
+                                    [errorMessages]="getErrorMessages('volume')">
+                                </cpdss-portal-validation-error>
                             </div>
                         </div>
                     </div>

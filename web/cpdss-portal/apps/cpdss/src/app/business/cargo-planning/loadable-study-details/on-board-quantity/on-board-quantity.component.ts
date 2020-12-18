@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { groupTotalValidator } from '../../directives/validator/group-total.directive';
@@ -54,6 +54,7 @@ export class OnBoardQuantityComponent implements OnInit {
   columns: IDataTableColumn[];
   listData = <IPortOBQListData>{};
   selectionMode = DATATABLE_SELECTIONMODE.SINGLE;
+  selectedIndex: number = -1;
 
   private _loadableStudyId: number;
   private _selectedPortOBQTankDetails: IPortOBQTankDetailValueObject[];
@@ -70,7 +71,7 @@ export class OnBoardQuantityComponent implements OnInit {
 
   ngOnInit(): void {
     this.columns = this.loadableStudyDetailsTransformationService.getOBQDatatableColumns();
-
+    this.initSubscriptions();
   }
 
   /**
@@ -155,7 +156,23 @@ export class OnBoardQuantityComponent implements OnInit {
    * @param {IPortOBQTankDetailEvent} event
    * @memberof OnBoardQuantityComponent
    */
-  onEditComplete(event) { }
+  async onEditComplete(event) {
+    this.ngxSpinnerService.show();
+    const formGroup = this.row(event.index);
+    if (formGroup.valid) {
+      const tankDetails = this.loadableStudyDetailsTransformationService.getOBQTankDetailAsValue(this.selectedPortOBQTankDetails[event.index]);
+      const res = await this.loadableStudyDetailsApiService.setOBQTankDetails(tankDetails, this.vesselId, this.voyageId, this.loadableStudyId);
+    } else{
+      Object.keys(formGroup.controls).forEach(key => {
+        const control = formGroup.get(key);
+        if(control.invalid){
+          this.selectedPortOBQTankDetails[event.index][key].isEditMode = true;
+          control.markAsTouched()
+        }
+      });
+    }
+    this.ngxSpinnerService.hide();
+  }
 
   /**
    * Method to handle row selection event
@@ -166,6 +183,7 @@ export class OnBoardQuantityComponent implements OnInit {
   onRowSelection(event) {
     this.enableOrDisableControls(this.obqForm, ['sounding', 'weight', 'volume']);
     const data = event.data
+    this.selectedIndex = event.index
     this.obqForm.controls.cargo.setValue(data.cargo.value?.name)
     this.obqForm.controls.sounding.setValue(data.sounding.value)
     this.obqForm.controls.weight.setValue(data.weight.value)
@@ -186,6 +204,74 @@ export class OnBoardQuantityComponent implements OnInit {
     });
   }
 
+  /**
+   * Initialization for all subscriptions
+   *
+   * @private
+   * @memberof OnHandQuantityComponent
+   */
+  private initSubscriptions() {
+    navigator.serviceWorker.addEventListener('message', async event => {
+      if (event.data.type === 'ohq_sync_finished') {
+        const index = this.selectedPortOBQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
+        if (index !== -1) {
+          this.selectedPortOBQTankDetails[index].id = event.data.id;
+          this.selectedPortOBQTankDetails = [...this.selectedPortOBQTankDetails];
+        }
+      }
+    });
+  }
+  
+  /**
+   * Method for fetching form group
+   *
+   * @private
+   * @param {number} formGroupIndex
+   * @returns {FormGroup}
+   * @memberof OnHandQuantityComponent
+   */
+  private row(formGroupIndex: number): FormGroup {
+    const formGroup = <FormGroup>(<FormArray>this.obqForm.get('dataTable')).at(formGroupIndex);
+    return formGroup;
+  }
 
+    /**
+   * Get field errors
+   *
+   * @param {number} formGroupIndex
+   * @param {string} formControlName
+   * @returns {ValidationErrors}
+   * @memberof OnHandQuantityComponent
+   */
+  fieldError(formGroupIndex: number, formControlName: string): ValidationErrors {
+    const formControl = this.field(formGroupIndex, formControlName);
+    return formControl.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
+  }
 
+    /**
+   * Get form control of form 
+   *
+   * @param {number} formGroupIndex
+   * @param {string} formControlName
+   * @returns {FormControl}
+   * @memberof OnHandQuantityComponent
+   */
+  field(formGroupIndex: number, formControlName: string): FormControl {
+    const formControl = <FormControl>this.obqForm.get(formControlName);
+    return formControl;
+  }
+
+  /**
+   *  Fetch error messages for fields
+   *
+   * @param {string} field
+   * @memberof OnHandQuantityComponent
+   */
+  getErrorMessages(field: string) {
+    const column = this.columns.find(column => {
+     return column.field === field
+    });
+    return column?.errorMessages;
+  }
+  
 }

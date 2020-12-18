@@ -1166,8 +1166,27 @@ export class LoadableStudyDetailsTransformationService {
  * @memberof LoadableStudyDetailsTransformationService
  */
   formatOBQTankDetail(obqTankDetail: IPortOBQTankDetailValueObject): IPortOBQTankDetailValueObject {
-    // obqTankDetail.storeKey = obqTankDetail.storeKey ?? uuid4();
+    obqTankDetail.storeKey = obqTankDetail.storeKey ?? uuid4();
     return obqTankDetail;
+  }
+
+    /**
+   * Method for converting obq data as value
+   *
+   * @param {IPortOBQTankDetailValueObject} obqTankDetail
+   * @returns {IPortOBQTankDetail}
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  getOBQTankDetailAsValue(obqTankDetail: IPortOBQTankDetailValueObject): IPortOBQTankDetail {
+    const _obqTankDetail: IPortOBQTankDetail = <IPortOBQTankDetail>{};
+    for (const key in obqTankDetail) {
+      if (Object.prototype.hasOwnProperty.call(obqTankDetail, key)) {
+        _obqTankDetail[key] = obqTankDetail[key]?.value ?? obqTankDetail[key];
+      }
+    }
+    _obqTankDetail.cargoId = obqTankDetail.cargo?.value?.id;
+
+    return _obqTankDetail;
   }
 
 }

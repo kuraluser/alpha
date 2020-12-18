@@ -577,6 +577,7 @@ export interface IPortOBQResponse {
  * @interface IPortOBQTankDetail
  */
 export interface IPortOBQTankDetail {
+    storeKey?: number;
     id: number;
     cargoId: number;
     tankId: number;
@@ -586,6 +587,9 @@ export interface IPortOBQTankDetail {
     volume: number;
     colorCode: string;
     portId: number;
+    vesselId: number;
+    voyageId: number;
+    loadableStudyId: number;
 }
 
 /**
@@ -595,6 +599,7 @@ export interface IPortOBQTankDetail {
  * @interface IPortOBQTankDetailValueObject
  */
 export interface IPortOBQTankDetailValueObject {
+    storeKey: number;
     slNo: number;
     id: number;
     tankId: number;
@@ -615,4 +620,23 @@ export interface IPortOBQTankDetailValueObject {
  */
 export interface IPortOBQListData {
     cargoList: ICargo[];
+}
+
+/**
+ * Class for OBQ Dexie db
+ *
+ * @export
+ * @class OBQDB
+ * @extends {CPDSSDB}
+ */
+export class OBQDB extends CPDSSDB {
+    obq!: Dexie.Table<IPortOBQTankDetail, number>;
+
+    constructor() {
+        super();
+        this.version(1).stores({
+            obq: '++,storeKey,timeStamp'
+        });
+    }
+
 }

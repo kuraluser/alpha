@@ -16,7 +16,8 @@
   db.version(1).stores({
     cargoNominations: "++,storeKey,timeStamp",
     ports: "++,storeKey,timeStamp",
-    ohq: "++,storeKey"
+    ohq: "++,storeKey",
+    obq: "++,storeKey,timeStamp",
   });
   db.open();
 
@@ -25,6 +26,7 @@
     serverSyncCargoNomination();
     serverSyncPorts();
     serverSyncOHQ();
+    serverSyncOBQ();
   }, 5000);
 
   /**
@@ -214,6 +216,54 @@
       });
 
     });
+  }
+
+  /**
+ * Fuction for sync of indexdb and server for obq
+ *
+ */
+  async function serverSyncOBQ() {
+    //Get all store keys
+      await db.obq.orderBy('storeKey').uniqueKeys((storeKeys) => {
+        storeKeys.forEach(async (key) => {
+          const timeStamp = Date.now - 60000;
+          //Get all primary keys with storekey
+          const primaryKey = await db.obq.where({ 'storeKey': key }).and(data => !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
+
+          if (primaryKey?.length) {
+            //Get last update record of particular store key
+            const obq = await db.obq.where({ ':id': primaryKey.sort((a, b) => a > b ? a : b)[0] }).first();
+            if (obq) {
+              const updated = await db.obq.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now() });
+              if (updated) {
+                // send update or add sync request to the server
+                var headers = {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                }
+                const syncResponse = await fetch(`${apiUrl}/vessels/${obq?.vesselId}/voyages/${obq?.voyageId}/loadable-studies/${obq?.loadableStudyId}/ports/${obq?.portId}/on-board-quantities/${obq?.id}`, {
+                  method: 'POST',
+                  body: JSON.stringify(obq),
+                  headers: headers
+                });
+
+                if (syncResponse.status === 200) {
+                  const sync = await syncResponse.json();
+                  sync.storeKey = obq.storeKey;
+                  sync.type = 'obq_sync_finished';
+
+                  //on success of api call remove all rows of selected primary keys
+                  primaryKey.forEach(async (primaryKey) => await db.obq.delete(primaryKey))
+                  return notifyClients(sync);
+                }
+
+                return Promise.reject('sync failed: ' + syncResponse.status);
+              }
+            }
+          }
+        });
+
+      });
   }
 
   /**
