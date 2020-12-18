@@ -6,10 +6,13 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
@@ -47,6 +50,7 @@ import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.LoadableStudyStatus;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
@@ -61,6 +65,7 @@ import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsReposito
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
@@ -137,6 +142,7 @@ class LoadableStudyServiceTest {
   @MockBean private OnBoardQuantityRepository onBoardQuantityRepository;
   @MockBean private CargoHistoryRepository cargoHistoryRepository;
   @MockBean private VoyageHistoryRepository voyageHistoryRepository;
+  @MockBean private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
   @Mock private CargoNomination cargoNomination;
 
   @Mock private CargoNominationPortDetails cargoNominationPortDetails;
@@ -1852,5 +1858,42 @@ class LoadableStudyServiceTest {
               list.add(loadablePattern);
             });
     return list;
+  }
+
+  @Test
+  void testSaveAlgoLoadableStudyStatus() {
+    when(this.loadableStudyAlgoStatusRepository.findByProcessIdAndIsActive(
+            anyString(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadableStudyAlgoStatus()));
+
+    StreamRecorder<AlgoStatusReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.saveAlgoLoadableStudyStatus(
+        this.createAlgoStatusRequest(), responseObserver);
+    List<AlgoStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveAlgoLoadableStudyStatusRuntimeException() {
+    when(this.loadableStudyAlgoStatusRepository.findByProcessIdAndIsActive(
+            anyString(), anyBoolean()))
+        .thenThrow(RuntimeException.class);
+    StreamRecorder<AlgoStatusReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.saveAlgoLoadableStudyStatus(
+        this.createAlgoStatusRequest(), responseObserver);
+    List<AlgoStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /** @return AlgoStatusRequest */
+  private AlgoStatusRequest createAlgoStatusRequest() {
+    AlgoStatusRequest.Builder builder = AlgoStatusRequest.newBuilder();
+    builder.setLoadableStudystatusId(1L);
+    builder.setProcesssId("ID");
+    return builder.build();
   }
 }

@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePattern;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
@@ -37,6 +38,8 @@ import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.AlgoStatusRequest;
+import com.cpdss.gateway.domain.AlgoStatusResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadableQuantity;
@@ -1205,6 +1208,64 @@ class LoadableStudyServiceTest {
         assertThrows(
             GenericServiceException.class,
             () -> this.loadableStudyService.getLoadablePatterns(1L, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  @Test
+  void testSaveAlgoLoadableStudyStatus() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.saveAlgoLoadableStudyStatus(
+                any(AlgoStatusRequest.class), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(
+            this.loadableStudyService.saveAlgoLoadableStudyStatus(
+                any(com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.class)))
+        .thenReturn(
+            AlgoStatusReply.newBuilder()
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    AlgoStatusRequest request = new AlgoStatusRequest();
+    request.setLoadableStudystatusId(1L);
+    request.setProcessId("ID");
+    AlgoStatusResponse response =
+        this.loadableStudyService.saveAlgoLoadableStudyStatus(request, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "response valid"));
+  }
+
+  /** @throws GenericServiceException void */
+  @Test
+  void testSaveAlgoLoadableStudyStatusGrpcFailure() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.saveAlgoLoadableStudyStatus(
+                any(AlgoStatusRequest.class), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(
+            this.loadableStudyService.saveAlgoLoadableStudyStatus(
+                any(com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.class)))
+        .thenReturn(
+            AlgoStatusReply.newBuilder()
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+    AlgoStatusRequest request = new AlgoStatusRequest();
+    request.setLoadableStudystatusId(1L);
+    request.setProcessId("ID");
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.saveAlgoLoadableStudyStatus(
+                    request, CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));

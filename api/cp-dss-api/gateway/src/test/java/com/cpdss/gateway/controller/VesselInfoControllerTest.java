@@ -39,7 +39,7 @@ public class VesselInfoControllerTest {
 
   private static final String CLOUD_API_URL_PREFIX = "/api/cloud";
   private static final String SHIP_API_URL_PREFIX = "/api/cloud";
-  private static final String GET_VESSEL_DETAILS_API_URL = "/vesselDetails/{vesselId}";
+  private static final String GET_VESSEL_DETAILS_API_URL = "/vessel-details/{vesselId}";
   private static final String GET_VESSEL_DETAILS_API_URL_CLOUD_API_URL =
       CLOUD_API_URL_PREFIX + GET_VESSEL_DETAILS_API_URL;
   private static final String GET_VESSEL_DETAILS_SHIP_API_URL =

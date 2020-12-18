@@ -8,6 +8,8 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
@@ -72,6 +74,7 @@ import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
 import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnBoardQuantity;
@@ -89,6 +92,7 @@ import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsReposito
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
@@ -166,6 +170,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
   @Autowired private CargoHistoryRepository cargoHistoryRepository;
   @Autowired private VoyageHistoryRepository voyageHistoryRepository;
+  @Autowired private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -188,6 +193,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOAD_LINE_TROPICAL_TO_WINTER_ID = 8L;
   private static final Long LOAD_LINE_SUMMER_TO_WINTER_ID = 9L;
 
+  private static final String INVALID_PROCESS_ID = "INVALID_PROCESS_ID";
+
   private static final List<Long> CASE_1_LOAD_LINES =
       Arrays.asList(
           LOAD_LINE_TROPICAL_TO_SUMMER_ID,
@@ -200,6 +207,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LUBRICATING_OIL_TANK_CATEGORY_ID = 14L;
   private static final Long LUBRICANT_OIL_TANK_CATEGORY_ID = 19L;
   private static final Long FUEL_VOID_TANK_CATEGORY_ID = 22L;
+  private static final Long FRESH_WATER_VOID_TANK_CATEGORY_ID = 23L;
 
   private static final List<Long> OHQ_TANK_CATEGORIES =
       Arrays.asList(
@@ -208,13 +216,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           DIESEL_OIL_TANK_CATEGORY_ID,
           LUBRICATING_OIL_TANK_CATEGORY_ID,
           LUBRICANT_OIL_TANK_CATEGORY_ID,
-          FUEL_VOID_TANK_CATEGORY_ID);
+          FUEL_VOID_TANK_CATEGORY_ID,
+          FRESH_WATER_VOID_TANK_CATEGORY_ID);
 
   private static final List<Long> OHQ_CENTER_TANK_CATEGORIES =
-      Arrays.asList(FUEL_OIL_TANK_CATEGORY_ID, DIESEL_OIL_TANK_CATEGORY_ID);
+      Arrays.asList(
+          FUEL_OIL_TANK_CATEGORY_ID, DIESEL_OIL_TANK_CATEGORY_ID, FUEL_VOID_TANK_CATEGORY_ID);
 
   private static final List<Long> OHQ_REAR_TANK_CATEGORIES =
-      Arrays.asList(FRESH_WATER_TANK_CATEGORY_ID);
+      Arrays.asList(FRESH_WATER_TANK_CATEGORY_ID, FRESH_WATER_VOID_TANK_CATEGORY_ID);
 
   private static final Long CARGO_TANK_CATEGORY_ID = 1L;
   private static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;
@@ -1726,6 +1736,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
               loadableStudyOpt.get(), request.getPortId(), true);
       for (VesselTankDetail tankDetail : vesselReply.getVesselTanksList()) {
+        if (!tankDetail.getShowInOhqObq()) {
+          continue;
+        }
         OnHandQuantityDetail.Builder detailBuilder = OnHandQuantityDetail.newBuilder();
         detailBuilder.setFuelType(tankDetail.getTankCategoryName());
         detailBuilder.setFuelTypeShortName(tankDetail.getTankCategoryShortName());
@@ -1813,11 +1826,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     List<VesselTankDetail> centerTanks = new ArrayList<>();
     rearTanks.addAll(
         vesselReply.getVesselTanksList().stream()
-            .filter(tank -> OHQ_REAR_TANK_CATEGORIES.contains(tank.getTankCategoryId()))
+            .filter(
+                tank ->
+                    OHQ_REAR_TANK_CATEGORIES.contains(tank.getTankCategoryId())
+                        && tank.getShowInOhqObq())
             .collect(Collectors.toList()));
     centerTanks.addAll(
         vesselReply.getVesselTanksList().stream()
-            .filter(tank -> OHQ_CENTER_TANK_CATEGORIES.contains(tank.getTankCategoryId()))
+            .filter(
+                tank ->
+                    OHQ_CENTER_TANK_CATEGORIES.contains(tank.getTankCategoryId())
+                        && tank.getShowInOhqObq())
             .collect(Collectors.toList()));
     replyBuilder.addAllTanks(this.groupTanks(centerTanks));
     replyBuilder.addAllRearTanks(this.groupTanks(rearTanks));
@@ -2952,5 +2971,38 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     entity.setWeight(isEmpty(request.getWeight()) ? null : new BigDecimal(request.getWeight()));
     entity.setVolume(isEmpty(request.getVolume()) ? null : new BigDecimal(request.getVolume()));
     entity.setIsActive(true);
+  }
+
+  /**
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void saveAlgoLoadableStudyStatus(
+      AlgoStatusRequest request, StreamObserver<AlgoStatusReply> responseObserver) {
+    AlgoStatusReply.Builder replyBuilder = AlgoStatusReply.newBuilder();
+    try {
+
+      Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOpt =
+          loadableStudyAlgoStatusRepository.findByProcessIdAndIsActive(
+              request.getProcesssId(), true);
+      if (loadableStudyAlgoStatusOpt.isPresent()) {
+        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+            request.getLoadableStudystatusId(), request.getProcesssId(), true);
+        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      }
+
+    } catch (Exception e) {
+      log.error("Exception when saving Algo Loadable Study Status ", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when saving Algo Loadable Study Status")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

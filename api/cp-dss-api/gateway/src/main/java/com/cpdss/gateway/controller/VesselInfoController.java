@@ -56,7 +56,7 @@ public class VesselInfoController {
     }
   }
 
-  @GetMapping(value = "/vesselDetails/{vesselId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/vessel-details/{vesselId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public VesselDetailsResponse getVesselsDetails(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @RequestHeader HttpHeaders headers)
