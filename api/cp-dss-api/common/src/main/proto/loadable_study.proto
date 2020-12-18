@@ -85,8 +85,10 @@ service LoadableStudyService {
 	
 	rpc SaveOnBoardQuantity(OnBoardQuantityDetail) returns (OnBoardQuantityReply){
 	}
-	
 	rpc SaveAlgoLoadableStudyStatus(AlgoStatusRequest) returns (AlgoStatusReply) {
+	}
+	
+	rpc GetSynopticalTable (SynopticalTableRequest) returns (SynopticalTableReply){
 	}
 }
 
@@ -483,3 +485,33 @@ message LoadablePatternCommingleDetailsReply {
 	ResponseStatus responseStatus = 13;
 }
 
+message SynopticalRecord{
+	int64 id = 1;
+	int64 portId = 2;
+	string portName = 3;
+	string operationType = 4;
+	string distance = 5;
+	string speed = 6;
+	string runningHours = 7;
+	string inPortHours = 8;
+	string timeOfSunrise = 9;
+	string timeOfSunset = 10;
+	string hwTideFrom = 11;
+	string hwTideTo = 12;
+	string hwTideTimeFrom = 13;
+	string hwTideTimeTo = 14;
+	string lwTideFrom = 15;
+	string lwTideTo = 16;
+	string lwTideTimeFrom = 17;
+	string lwTideTimeTo = 18;
+	string specificGravity = 19;
+}
+
+message SynopticalTableRequest{
+	int64 loadableStudyId = 1;
+}
+
+message SynopticalTableReply{
+	ResponseStatus responseStatus = 1;
+	repeated SynopticalRecord synopticalRecords = 2;
+}

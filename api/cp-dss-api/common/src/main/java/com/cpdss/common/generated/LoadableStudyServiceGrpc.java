@@ -1392,6 +1392,55 @@ public final class LoadableStudyServiceGrpc {
     return getSaveAlgoLoadableStudyStatusMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+      getGetSynopticalTableMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetSynopticalTable",
+      requestType = com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+      getGetSynopticalTableMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+            com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+        getGetSynopticalTableMethod;
+    if ((getGetSynopticalTableMethod = LoadableStudyServiceGrpc.getGetSynopticalTableMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetSynopticalTableMethod = LoadableStudyServiceGrpc.getGetSynopticalTableMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetSynopticalTableMethod =
+              getGetSynopticalTableMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+                          com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetSynopticalTable"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.SynopticalTableReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("GetSynopticalTable"))
+                      .build();
+        }
+      }
+    }
+    return getGetSynopticalTableMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -1656,6 +1705,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getSaveAlgoLoadableStudyStatusMethod(), responseObserver);
     }
 
+    /** */
+    public void getSynopticalTable(
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetSynopticalTableMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1850,6 +1907,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
                       com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>(
                       this, METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS)))
+          .addMethod(
+              getGetSynopticalTableMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+                      com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>(
+                      this, METHODID_GET_SYNOPTICAL_TABLE)))
           .build();
     }
   }
@@ -2164,6 +2228,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getSynopticalTable(
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetSynopticalTableMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -2370,6 +2445,13 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request) {
       return blockingUnaryCall(
           getChannel(), getSaveAlgoLoadableStudyStatusMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.SynopticalTableReply getSynopticalTable(
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetSynopticalTableMethod(), getCallOptions(), request);
     }
   }
 
@@ -2623,6 +2705,15 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getSaveAlgoLoadableStudyStatusMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>
+        getSynopticalTable(
+            com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetSynopticalTableMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -2652,6 +2743,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_ON_BOARD_QUANTITY = 24;
   private static final int METHODID_SAVE_ON_BOARD_QUANTITY = 25;
   private static final int METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS = 26;
+  private static final int METHODID_GET_SYNOPTICAL_TABLE = 27;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -2859,6 +2951,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>)
                   responseObserver);
           break;
+        case METHODID_GET_SYNOPTICAL_TABLE:
+          serviceImpl.getSynopticalTable(
+              (com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -2950,6 +3049,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetOnBoardQuantityMethod())
                       .addMethod(getSaveOnBoardQuantityMethod())
                       .addMethod(getSaveAlgoLoadableStudyStatusMethod())
+                      .addMethod(getGetSynopticalTableMethod())
                       .build();
         }
       }
