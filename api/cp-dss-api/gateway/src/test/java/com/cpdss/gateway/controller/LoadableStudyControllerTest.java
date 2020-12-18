@@ -1015,7 +1015,7 @@ class LoadableStudyControllerTest {
   private String createAlgoStatusRequest() throws JsonProcessingException {
     AlgoStatusRequest request = new AlgoStatusRequest();
     request.setProcessId("ID");
-    request.setLoadableStudystatusId(1L);
+    request.setLoadableStudyStatusId(1L);
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(request);
   }

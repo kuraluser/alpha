@@ -1983,7 +1983,7 @@ public class LoadableStudyService {
     com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.Builder builder =
         com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.newBuilder();
     builder.setProcesssId(request.getProcessId());
-    builder.setLoadableStudystatusId(request.getLoadableStudystatusId());
+    builder.setLoadableStudystatusId(request.getLoadableStudyStatusId());
     return builder.build();
   }
 

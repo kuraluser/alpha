@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class AlgoStatusRequest {
   private String processId;
-  private Long loadableStudystatusId;
+  private Long loadableStudyStatusId;
 }
