@@ -56,7 +56,6 @@ export class CommingleComponent implements OnInit {
   commingleManualForm: FormGroup;
   manualCommingleList: ICommingleValueObject[];
   readonly editMode = DATATABLE_EDITMODE.CELL;
-  cargoListLength = 0;
   preferredTanks: number[];
   commingleList: ICargoGroup[];
   errorMesages: any;
@@ -248,10 +247,10 @@ export class CommingleComponent implements OnInit {
       this.cargo1Total = 0
       this.cargo2Total = 0
       for (let i = 0; i < event?.data?.cargo1?.value?.loadingPorts.length; i++) {
-        this.cargo1Total = event?.data?.cargo1?.value?.loadingPorts[i].quantity + this.loadingPortsTotal;
+        this.cargo1Total = event?.data?.cargo1?.value?.loadingPorts[i].quantity + this.cargo1Total;
       }
       for (let j = 0; j < event?.data?.cargo2?.value?.loadingPorts.length; j++) {
-        this.cargo2Total = event?.data?.cargo1?.value?.loadingPorts[j].quantity + this.loadingPortsTotal;
+        this.cargo2Total = event?.data?.cargo2?.value?.loadingPorts[j].quantity + this.cargo2Total;
       }
       this.loadingPortsTotal = this.cargo1Total + this.cargo2Total;
       if (this.loadingPortsTotal < event?.data?.quantity?.value) {
@@ -324,8 +323,7 @@ export class CommingleComponent implements OnInit {
  * @memberof CommingleComponent
  */
   private addNew(commingle: ICargoGroup = null) {
-    if (this.cargoListLength <= 2) {
-      this.cargoListLength++;
+    if (this.manualCommingleList.length <= 2) {
       commingle = commingle ?? <ICargoGroup>{
         id: 0,
         cargo1Id: null,

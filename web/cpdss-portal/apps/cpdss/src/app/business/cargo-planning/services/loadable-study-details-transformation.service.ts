@@ -1034,7 +1034,6 @@ export class LoadableStudyDetailsTransformationService {
     _commingleManual.cargo1IdPct = new ValueObject<IPercentage>(cargo1IdPctObj, true, isNewValue, false, isEditable);
     _commingleManual.cargo2IdPct = new ValueObject<IPercentage>(cargo2IdPctObj, true, isNewValue, false, isEditable);
     _commingleManual.quantity = new ValueObject<number>(commingleManual.quantity, true, isNewValue, false, isEditable);
-    console.log("_commingleManual", _commingleManual);
     return _commingleManual;
   }
 
