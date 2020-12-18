@@ -14,6 +14,7 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePattern;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
@@ -41,6 +42,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.AlgoStatusResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
+import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
@@ -1213,6 +1215,7 @@ class LoadableStudyServiceTest {
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
+  /** @throws GenericServiceException void */
   @Test
   void testSaveAlgoLoadableStudyStatus() throws GenericServiceException {
     Mockito.when(
@@ -1266,6 +1269,63 @@ class LoadableStudyServiceTest {
             () ->
                 this.loadableStudyService.saveAlgoLoadableStudyStatus(
                     request, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  /** @throws GenericServiceException void */
+  @Test
+  void testGetLoadablePatternCommingleDetails() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.getLoadablePatternCommingleDetails(anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(
+            this.loadableStudyService.getLoadablePatternCommingleDetails(
+                any(
+                    com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+                        .class)))
+        .thenReturn(
+            LoadablePatternCommingleDetailsReply.newBuilder()
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    LoadablePatternDetailsResponse response =
+        this.loadableStudyService.getLoadablePatternCommingleDetails(
+            1L, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "response valid"));
+  }
+
+  /** @throws GenericServiceException void */
+  @Test
+  void testGetLoadablePatternCommingleDetailsGrpcFailure() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.getLoadablePatternCommingleDetails(anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(
+            this.loadableStudyService.getLoadablePatternCommingleDetails(
+                any(
+                    com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest
+                        .class)))
+        .thenReturn(
+            LoadablePatternCommingleDetailsReply.newBuilder()
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.getLoadablePatternCommingleDetails(
+                    1L, CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));

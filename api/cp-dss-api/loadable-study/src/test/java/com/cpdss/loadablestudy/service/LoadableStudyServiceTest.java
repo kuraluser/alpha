@@ -16,6 +16,8 @@ import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
@@ -1860,6 +1862,11 @@ class LoadableStudyServiceTest {
     return list;
   }
 
+  /**
+   * test Save Algo Loadable Study Status
+   *
+   * <p>void
+   */
   @Test
   void testSaveAlgoLoadableStudyStatus() {
     when(this.loadableStudyAlgoStatusRepository.findByProcessIdAndIsActive(
@@ -1875,6 +1882,11 @@ class LoadableStudyServiceTest {
     assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
   }
 
+  /**
+   * test Save Algo Loadable Study Status
+   *
+   * <p>void
+   */
   @Test
   void testSaveAlgoLoadableStudyStatusRuntimeException() {
     when(this.loadableStudyAlgoStatusRepository.findByProcessIdAndIsActive(
@@ -1894,6 +1906,68 @@ class LoadableStudyServiceTest {
     AlgoStatusRequest.Builder builder = AlgoStatusRequest.newBuilder();
     builder.setLoadableStudystatusId(1L);
     builder.setProcesssId("ID");
+    return builder.build();
+  }
+  /**
+   * test Get Loadable Pattern Commingle Details
+   *
+   * <p>void
+   */
+  @Test
+  void testGetLoadablePatternCommingleDetails() {
+    when(this.loadablePatternComingleDetailsRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadablePatternComingleDetails()));
+
+    StreamRecorder<LoadablePatternCommingleDetailsReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.getLoadablePatternCommingleDetails(
+        this.createLoadablePatternCommingleDetails(), responseObserver);
+    List<LoadablePatternCommingleDetailsReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /**
+   * test Get Loadable Pattern Commingle Details Invalid Loadable Pattern Id
+   *
+   * <p>void
+   */
+  @Test
+  void testGetLoadablePatternCommingleDetailsInvalidLoadablePatternId() {
+    when(this.loadablePatternComingleDetailsRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    StreamRecorder<LoadablePatternCommingleDetailsReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.getLoadablePatternCommingleDetails(
+        this.createLoadablePatternCommingleDetails(), responseObserver);
+    List<LoadablePatternCommingleDetailsReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /**
+   * run time exception
+   *
+   * <p>void
+   */
+  @Test
+  void testGetLoadablePatternCommingleDetailsRuntimeException() {
+    when(this.loadablePatternComingleDetailsRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(RuntimeException.class);
+    StreamRecorder<LoadablePatternCommingleDetailsReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.getLoadablePatternCommingleDetails(
+        this.createLoadablePatternCommingleDetails(), responseObserver);
+    List<LoadablePatternCommingleDetailsReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /** @return LoadablePatternCommingleDetailsRequest */
+  private LoadablePatternCommingleDetailsRequest createLoadablePatternCommingleDetails() {
+    LoadablePatternCommingleDetailsRequest.Builder builder =
+        LoadablePatternCommingleDetailsRequest.newBuilder();
+    builder.setLoadablePatternCommingleDetailsId(1L);
     return builder.build();
   }
 }

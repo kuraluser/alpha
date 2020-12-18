@@ -1786,7 +1786,7 @@ public class LoadableStudyService {
    * @param loadablePatternCommingleDetailsRequest
    * @return LoadablePatternCommingleDetailsReply
    */
-  private LoadablePatternCommingleDetailsReply getLoadablePatternCommingleDetails(
+  public LoadablePatternCommingleDetailsReply getLoadablePatternCommingleDetails(
       LoadablePatternCommingleDetailsRequest loadablePatternCommingleDetailsRequest) {
 
     return this.loadableStudyServiceBlockingStub.getLoadablePatternCommingleDetails(

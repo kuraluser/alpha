@@ -935,21 +935,27 @@ public class LoadableStudyController {
     }
   }
 
+  /**
+   * @param vesselId
+   * @param voyageId
+   * @param loadableStudyId
+   * @param request
+   * @param headers
+   * @return
+   * @throws CommonRestException AlgoStatusResponse
+   */
   @PostMapping(
       value =
-          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-study-status/{loadableStudystatusId}")
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-study-status")
   public AlgoStatusResponse updateLoadableStudyStatus(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudyId,
-      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-          Long loadableStudystatusId,
       @RequestBody AlgoStatusRequest request,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-      request.setLoadableStudystatusId(loadableStudystatusId);
       return this.loadableStudyService.saveAlgoLoadableStudyStatus(
           request, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
