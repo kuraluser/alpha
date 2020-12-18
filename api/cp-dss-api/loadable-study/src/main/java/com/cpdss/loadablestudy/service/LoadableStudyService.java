@@ -80,6 +80,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnBoardQuantity;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.PurposeOfCommingle;
+import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.entity.VoyageHistory;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
@@ -167,6 +168,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private CommingleCargoRepository commingleCargoRepository;
+
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
   @Autowired private CargoHistoryRepository cargoHistoryRepository;
   @Autowired private VoyageHistoryRepository voyageHistoryRepository;
@@ -181,6 +183,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
+  private static final Long BUNKERING_OPERATION_ID = 3L;
+  private static final Long TRANSIT_OPERATION_ID = 4L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
   private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
@@ -233,6 +237,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final List<Long> CARGO_TANK_CATEGORIES =
       Arrays.asList(
           CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID, CARGO_VOID_TANK_CATEGORY_ID);
+
+  private static final List<Long> CARGO_OPERATION_ARR_DEP_SYNOPTICAL =
+      Arrays.asList(LOADING_OPERATION_ID, DISCHARGING_OPERATION_ID, BUNKERING_OPERATION_ID);
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -842,6 +849,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                                     ? new BigDecimal(port.getMaxAirDraft())
                                     : null);
                             portRotationEntity.setPortOrder(atomLong.incrementAndGet());
+                            // add ports to synoptical table by reusing the function called by
+                            // port-rotation flow
+                            buildPortsInfoSynopticalTable(
+                                portRotationEntity, LOADING_OPERATION_ID, port.getId());
                             portRotationList.add(portRotationEntity);
                           }));
       loadableStudyPortRotationRepository.saveAll(portRotationList);
@@ -1366,6 +1377,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       if (request.getId() == 0) {
         entity = new LoadableStudyPortRotation();
         entity.setLoadableStudy(loadableStudyOpt.get());
+        // Add ports to synoptical table
+        buildPortsInfoSynopticalTable(entity, request.getOperationId(), request.getPortId());
       } else {
         Optional<LoadableStudyPortRotation> portRoationOpt =
             this.loadableStudyPortRotationRepository.findById(request.getId());
@@ -1512,6 +1525,55 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     entity.setOperation(this.cargoOperationRepository.getOne(request.getOperationId()));
     entity.setPortOrder(0 == request.getPortOrder() ? null : request.getPortOrder());
     return entity;
+  }
+
+  /**
+   * Builds the port info in synoptical table
+   *
+   * @param entity
+   * @param request
+   */
+  private void buildPortsInfoSynopticalTable(
+      LoadableStudyPortRotation entity, Long requestedOperationId, Long requestedPortId) {
+    // build ports information to update synoptical table
+    if (requestedOperationId != 0
+        && !StringUtils.isEmpty(
+            com.cpdss.loadablestudy.domain.CargoOperation.getOperation(requestedOperationId))) {
+      Set<SynopticalTable> synopticalTableEntityList = new HashSet<>();
+      if (CARGO_OPERATION_ARR_DEP_SYNOPTICAL.contains(requestedOperationId)) {
+        buildSynopticalTableRecord(requestedPortId, entity, synopticalTableEntityList, "ARR");
+        buildSynopticalTableRecord(requestedPortId, entity, synopticalTableEntityList, "DEP");
+      } else if (TRANSIT_OPERATION_ID.equals(requestedOperationId)) {
+        buildSynopticalTableRecord(requestedPortId, entity, synopticalTableEntityList, "TRANSIT");
+      }
+      if (!CollectionUtils.isEmpty(entity.getSynopticalTable())) {
+        entity.getSynopticalTable().addAll(synopticalTableEntityList);
+      } else {
+        entity.setSynopticalTable(synopticalTableEntityList);
+      }
+    }
+  }
+
+  /**
+   * Builds the synoptical table records
+   *
+   * @param request
+   * @param entity
+   * @param synopticalTableList
+   * @param portStage
+   */
+  private void buildSynopticalTableRecord(
+      Long portId,
+      LoadableStudyPortRotation entity,
+      Set<SynopticalTable> synopticalTableList,
+      String portStage) {
+    SynopticalTable synopticalTable = new SynopticalTable();
+    synopticalTable.setLoadableStudyPortRotation(entity);
+    synopticalTable.setLoadableStudyXId(entity.getLoadableStudy().getId());
+    synopticalTable.setOperationType(portStage);
+    synopticalTable.setPortXid(0 == portId ? null : portId);
+    synopticalTable.setIsActive(true);
+    synopticalTableList.add(synopticalTable);
   }
 
   /** Delete specific cargo nomination */
@@ -1693,6 +1755,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       entity.setActive(false);
+      // delete ports from synoptical table
+      if (!CollectionUtils.isEmpty(entity.getSynopticalTable())) {
+        entity.getSynopticalTable().forEach(portRecord -> portRecord.setIsActive(false));
+      }
       this.loadableStudyPortRotationRepository.save(entity);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {

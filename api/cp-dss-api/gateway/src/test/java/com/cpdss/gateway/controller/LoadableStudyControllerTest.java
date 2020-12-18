@@ -20,6 +20,7 @@ import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CargoNominationResponse;
 import com.cpdss.gateway.domain.CommingleCargoResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
+import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
@@ -168,6 +169,13 @@ class LoadableStudyControllerTest {
       CLOUD_API_URL_PREFIX + GET_LOADABLE_STUDY_ALGO_STATUS_API_URL;
   private static final String GET_LOADABLE_STUDY_ALGO_STATUS_SHIP_API_URL =
       SHIP_API_URL_PREFIX + GET_LOADABLE_STUDY_ALGO_STATUS_API_URL;
+
+  private static final String GET_LOADABLE_PATTERN_COMMINGLE_DETAILS_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-patterns/{loadablePatternId}/loadable-pattern-commingle-details/{loadablePatternCommingleDetailsId}";
+  private static final String GET_LOADABLE_PATTERN_COMMINGLE_DETAILS_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + GET_LOADABLE_PATTERN_COMMINGLE_DETAILS_API_URL;
+  private static final String GET_LOADABLE_PATTERN_COMMINGLE_DETAILS_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + GET_LOADABLE_PATTERN_COMMINGLE_DETAILS_API_URL;
 
   private static final String AUTHORIZATION_HEADER = "Authorization";
 
@@ -901,6 +909,10 @@ class LoadableStudyControllerTest {
                     "Error in getCommingleCargo", result.getResolvedException().getMessage()));
   }
 
+  /**
+   * @param url
+   * @throws Exception void
+   */
   @ValueSource(strings = {GET_LOADABLE_PATTERN_CLOUD_API_URL, GET_LOADABLE_PATTERN_SHIP_API_URL})
   @ParameterizedTest
   void testGetLoadablePatternDetails(String url) throws Exception {
@@ -913,6 +925,10 @@ class LoadableStudyControllerTest {
         .andExpect(status().isOk());
   }
 
+  /**
+   * @param exceptionClass
+   * @throws Exception void
+   */
   @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
   @ParameterizedTest
   void testGetLoadablePatternDetailsRuntimeException(Class<? extends Exception> exceptionClass)
@@ -934,6 +950,10 @@ class LoadableStudyControllerTest {
         .andExpect(status().isInternalServerError());
   }
 
+  /**
+   * @param url
+   * @throws Exception void
+   */
   @ValueSource(
       strings = {
         GET_LOADABLE_STUDY_ALGO_STATUS_CLOUD_API_URL,
@@ -954,6 +974,10 @@ class LoadableStudyControllerTest {
         .andExpect(status().isOk());
   }
 
+  /**
+   * @param exceptionClass
+   * @throws Exception void
+   */
   @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
   @ParameterizedTest
   void testUpdateLoadableStudyStatusRuntimeException(Class<? extends Exception> exceptionClass)
@@ -984,11 +1008,66 @@ class LoadableStudyControllerTest {
         .andExpect(status().isInternalServerError());
   }
 
+  /**
+   * @return
+   * @throws JsonProcessingException String
+   */
   private String createAlgoStatusRequest() throws JsonProcessingException {
     AlgoStatusRequest request = new AlgoStatusRequest();
     request.setProcessId("ID");
     request.setLoadableStudystatusId(1L);
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(request);
+  }
+
+  /**
+   * @param url
+   * @throws Exception void
+   */
+  @ValueSource(
+      strings = {
+        GET_LOADABLE_PATTERN_COMMINGLE_DETAILS_CLOUD_API_URL,
+        GET_LOADABLE_PATTERN_COMMINGLE_DETAILS_SHIP_API_URL
+      })
+  @ParameterizedTest
+  void testGetLoadablePatternCommingleDetails(String url) throws Exception {
+    when(this.loadableStudyService.getLoadablePatternCommingleDetails(anyLong(), anyString()))
+        .thenReturn(new LoadablePatternDetailsResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 1, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  /**
+   * @param exceptionClass
+   * @throws Exception void
+   */
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testGetLoadablePatternCommingleDetailsRuntimeException(
+      Class<? extends Exception> exceptionClass) throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.loadableStudyService.getLoadablePatternCommingleDetails(anyLong(), anyString()))
+        .thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(
+                    GET_LOADABLE_PATTERN_COMMINGLE_DETAILS_CLOUD_API_URL,
+                    TEST_VESSEL_ID,
+                    TEST_VOYAGE_ID,
+                    1,
+                    1,
+                    1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
+        .andExpect(status().isInternalServerError());
   }
 }
