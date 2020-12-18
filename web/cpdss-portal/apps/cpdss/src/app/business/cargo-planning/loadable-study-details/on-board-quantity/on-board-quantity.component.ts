@@ -8,6 +8,7 @@ import { IPort, IPortOBQListData, IPortOBQTankDetailValueObject } from '../../mo
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { CommingleApiService } from '../../services/commingle-api.service';
+import { ITank } from '../../../core/models/common.model';
 
 /**
  * Component for OBQ tab
@@ -55,6 +56,7 @@ export class OnBoardQuantityComponent implements OnInit {
   listData = <IPortOBQListData>{};
   selectionMode = DATATABLE_SELECTIONMODE.SINGLE;
   selectedIndex: number = -1;
+  tanks: ITank[][] = [];
 
   private _loadableStudyId: number;
   private _selectedPortOBQTankDetails: IPortOBQTankDetailValueObject[];
@@ -87,6 +89,7 @@ export class OnBoardQuantityComponent implements OnInit {
       const obqPorts = result?.portList?.map((obqPort) => ports?.find((port) => port.id === obqPort.portId));
       this.selectedPort = obqPorts[0];
       this.selectedPortOBQTankDetails = await this.getPortOBQDetails(this.selectedPort?.id);
+      this.updateTankList();
     }
     this.ngxSpinnerService.hide();
   }
@@ -101,6 +104,7 @@ export class OnBoardQuantityComponent implements OnInit {
     this.listData = await this.getDropdownData();
     const result = await this.loadableStudyDetailsApiService.getPortOBQDetails(this.vesselId, this.voyageId, this.loadableStudyId, portId).toPromise();
     const selectedPortOBQTankDetails = result?.onBoardQuantities ?? [];
+    this.tanks = result?.tanks;
     const _selectedPortOBQTankDetails = selectedPortOBQTankDetails?.map((obqTankDetail) => {
       obqTankDetail.portId = portId;
       const _obqTankDetail = this.loadableStudyDetailsTransformationService.getOBQTankDetailsAsValueObject(obqTankDetail, false, this.listData);
@@ -162,10 +166,10 @@ export class OnBoardQuantityComponent implements OnInit {
     if (formGroup.valid) {
       const tankDetails = this.loadableStudyDetailsTransformationService.getOBQTankDetailAsValue(this.selectedPortOBQTankDetails[event.index]);
       const res = await this.loadableStudyDetailsApiService.setOBQTankDetails(tankDetails, this.vesselId, this.voyageId, this.loadableStudyId);
-    } else{
+    } else {
       Object.keys(formGroup.controls).forEach(key => {
         const control = formGroup.get(key);
-        if(control.invalid){
+        if (control.invalid) {
           this.selectedPortOBQTankDetails[event.index][key].isEditMode = true;
           control.markAsTouched()
         }
@@ -208,54 +212,55 @@ export class OnBoardQuantityComponent implements OnInit {
    * Initialization for all subscriptions
    *
    * @private
-   * @memberof OnHandQuantityComponent
+   * @memberof OnBoardQuantityComponent
    */
   private initSubscriptions() {
     navigator.serviceWorker.addEventListener('message', async event => {
-      if (event.data.type === 'ohq_sync_finished') {
+      if (event.data.type === 'obq_sync_finished') {
         const index = this.selectedPortOBQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
         if (index !== -1) {
           this.selectedPortOBQTankDetails[index].id = event.data.id;
           this.selectedPortOBQTankDetails = [...this.selectedPortOBQTankDetails];
         }
+        this.updateTankList()
       }
     });
   }
-  
+
   /**
    * Method for fetching form group
    *
    * @private
    * @param {number} formGroupIndex
    * @returns {FormGroup}
-   * @memberof OnHandQuantityComponent
+   * @memberof OnBoardQuantityComponent
    */
   private row(formGroupIndex: number): FormGroup {
     const formGroup = <FormGroup>(<FormArray>this.obqForm.get('dataTable')).at(formGroupIndex);
     return formGroup;
   }
 
-    /**
-   * Get field errors
-   *
-   * @param {number} formGroupIndex
-   * @param {string} formControlName
-   * @returns {ValidationErrors}
-   * @memberof OnHandQuantityComponent
-   */
+  /**
+ * Get field errors
+ *
+ * @param {number} formGroupIndex
+ * @param {string} formControlName
+ * @returns {ValidationErrors}
+ * @memberof OnBoardQuantityComponent
+ */
   fieldError(formGroupIndex: number, formControlName: string): ValidationErrors {
     const formControl = this.field(formGroupIndex, formControlName);
     return formControl.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
   }
 
-    /**
-   * Get form control of form 
-   *
-   * @param {number} formGroupIndex
-   * @param {string} formControlName
-   * @returns {FormControl}
-   * @memberof OnHandQuantityComponent
-   */
+  /**
+ * Get form control of form 
+ *
+ * @param {number} formGroupIndex
+ * @param {string} formControlName
+ * @returns {FormControl}
+ * @memberof OnBoardQuantityComponent
+ */
   field(formGroupIndex: number, formControlName: string): FormControl {
     const formControl = <FormControl>this.obqForm.get(formControlName);
     return formControl;
@@ -265,13 +270,32 @@ export class OnBoardQuantityComponent implements OnInit {
    *  Fetch error messages for fields
    *
    * @param {string} field
-   * @memberof OnHandQuantityComponent
+   * @memberof OnBoardQuantityComponent
    */
   getErrorMessages(field: string) {
     const column = this.columns.find(column => {
-     return column.field === field
+      return column.field === field
     });
     return column?.errorMessages;
   }
-  
+
+  /**
+ * Method to update commodity in tank list
+ *
+ * @memberof OnBoardQuantityComponent
+ */
+  updateTankList() {
+      this.tanks = this.tanks.map(group => {
+        const newGroup = group.map((groupItem) => {
+          const tank = Object.assign({}, groupItem);
+          const selectedPortOBQTankDetail = this.selectedPortOBQTankDetails.find((item) => (item.tankId === groupItem.id) && item);
+          tank.commodity = {
+            cargoColor: selectedPortOBQTankDetail?.colorCode ?? '',
+            volume: selectedPortOBQTankDetail?.volume?.value ?? 0
+          }
+          return tank;
+        });
+        return newGroup;
+      })
+  }
 }

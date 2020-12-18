@@ -568,6 +568,7 @@ export enum OPERATIONS {
 export interface IPortOBQResponse {
     responseStatus: IResponse;
     onBoardQuantities: IPortOBQTankDetail[];
+    tanks: ITank[][];
 }
 
 /**

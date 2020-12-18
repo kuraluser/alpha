@@ -9,10 +9,10 @@
     }
 }
 
-.tank-outer-ohq{
+.tank-outer-obq{
     height: 300px;
     position: relative;
-    .rear-top-ohq{
+    .rear-top-obq{
         width: 0;
         height: 0;
         border-left: 0px solid transparent;
@@ -32,7 +32,7 @@
             z-index: 1;
         }
     }
-    .rear-bottom-ohq{
+    .rear-bottom-obq{
         width: 0;
         height: 0;
         border-left: 0px solid transparent;
@@ -54,22 +54,22 @@
         }
     }
 }
-.tank-wrapper-ohq{
+.tank-wrapper-obq{
     width: 500px;
     max-width: 500px;
 }
 
-.tanks-inner-wrapper-ohq{
+.tanks-inner-wrapper-obq{
     height: 100%;
     position: relative;
     margin-left: 50px;
     border-right: 0;
 }
-.tanks-inner-outer-ohq{
+.tanks-inner-outer-obq{
     width: 70%;
     height: 100%;
     position: relative;
-    .tanks-column-ohq{
+    .tanks-column-obq{
         display: block;
         width: 33.33%;
         height: 100%;
@@ -106,7 +106,7 @@
         
     } 
 }
-.rear-tank-wrapper-ohq{
+.rear-tank-wrapper-obq{
     position: absolute;
     left: 15px;
     bottom: 0;
@@ -143,10 +143,10 @@
 }
 
 @media (max-width: 1400px){
-    .tank-outer-ohq{
+    .tank-outer-obq{
         height: 195px;
     }
-    .tank-wrapper-ohq{
+    .tank-wrapper-obq{
         width: 100%;
         max-width: 100%;
     }

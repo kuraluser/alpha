@@ -27,6 +27,7 @@ import { ColorPickerModule } from 'primeng/colorpicker';
 import { CommingleApiService } from '../services/commingle-api.service';
 import { OnBoardQuantityComponent } from './on-board-quantity/on-board-quantity.component';
 import { BunkeringLayoutModule } from '../../core/components/bunkering-layout/bunkering-layout.module';
+import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/cargo-tank-layout.module';
 
 /**
  * Routing Module for Loadable Study Details Screen
@@ -53,7 +54,8 @@ import { BunkeringLayoutModule } from '../../core/components/bunkering-layout/bu
     ValidationErrorModule,
     CheckboxModule,
     ColorPickerModule,
-    BunkeringLayoutModule 
+    BunkeringLayoutModule ,
+    CargoTankLayoutModule
   ],
   providers: [
     LoadableQuantityApiService, CommingleApiService

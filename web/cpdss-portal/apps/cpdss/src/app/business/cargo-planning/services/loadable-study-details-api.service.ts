@@ -175,7 +175,7 @@ export class LoadableStudyDetailsApiService {
     * @returns {Observable<IPortOBQResponse>}
     * @memberof LoadableStudyDetailsApiService
     */
-    getPortOBQDetails(vesselId: number, voyageId: number, loadableStudyId: number, portId: number): Observable<any> {
+    getPortOBQDetails(vesselId: number, voyageId: number, loadableStudyId: number, portId: number): Observable<IPortOBQResponse> {
         voyageId = 33;
         loadableStudyId = 174;
         portId = 1;
