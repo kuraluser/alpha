@@ -8,6 +8,7 @@ import { LoadableStudyDetailsApiService } from '../../services/loadable-study-de
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { CommingleApiService } from '../../services/commingle-api.service';
 import { ITank } from '../../../core/models/common.model';
+import { IPermission } from 'apps/cpdss/src/app/shared/models/user-profile.model';
 
 /**
  * Component for OBQ tab
@@ -36,6 +37,7 @@ export class OnBoardQuantityComponent implements OnInit {
   }
   
   @Input() vesselId: number;
+  @Input() permission: IPermission;
   
   get selectedPortOBQTankDetails() {
     return this._selectedPortOBQTankDetails;
@@ -76,6 +78,7 @@ export class OnBoardQuantityComponent implements OnInit {
   selectionMode = DATATABLE_SELECTIONMODE.SINGLE;
   selectedIndex: number = -1;
   tanks: ITank[][] = [];
+  isEditable = false;
 
   private _selectedTank: IPortOBQTankDetailValueObject;
   private _loadableStudyId: number;
@@ -96,6 +99,7 @@ export class OnBoardQuantityComponent implements OnInit {
  * @memberof OnBoardQuantityComponent
  */
   ngOnInit(): void {
+     this.isEditable = this.permission ? this.permission?.edit : false;
     this.columns = this.loadableStudyDetailsTransformationService.getOBQDatatableColumns();
     this.initSubscriptions();
   }

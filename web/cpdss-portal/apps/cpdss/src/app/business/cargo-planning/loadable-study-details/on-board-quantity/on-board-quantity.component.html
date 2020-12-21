@@ -78,7 +78,7 @@
                             <label for="" class="col-12 text-center">{{'OBQ_SOUNDING'| translate}}</label>
                             <div class="col">
                                 <input type="number" class="form-control" formControlName="sounding"
-                                    (change)="onChange($event,'sounding')">
+                                    (change)="onChange($event,'sounding')" [readonly]="isEditable">
                                 <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'sounding')"
                                     [errorMessages]="getErrorMessages('sounding')">
                                 </cpdss-portal-validation-error>
@@ -90,7 +90,7 @@
                             <label for="" class="col-12 text-center">{{'OBQ_WEIGHT'| translate}}</label>
                             <div class="col">
                                 <input type="number" class="form-control" formControlName="weight"
-                                    (change)="onChange($event,'weight')">
+                                    (change)="onChange($event,'weight')" [readonly]="isEditable">
                                 <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'weight')"
                                     [errorMessages]="getErrorMessages('weight')">
                                 </cpdss-portal-validation-error>
@@ -99,10 +99,10 @@
                     </div>
                     <div class="col-3">
                         <div class="row mb-15">
-                            <label for="" class="col-12 text-center">{{'OBQ_VOLUME'| translate}}</label>
+                            <label for="" class="col-12 text-center">{{'OBQ_VOL'| translate}}</label>
                             <div class="col">
                                 <input type="number" class="form-control" formControlName="volume"
-                                    (change)="onChange($event,'volume')">
+                                    (change)="onChange($event,'volume')" [readonly]="isEditable">
                                 <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'volume')"
                                     [errorMessages]="getErrorMessages('volume')">
                                 </cpdss-portal-validation-error>

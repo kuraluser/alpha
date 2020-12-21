@@ -79,6 +79,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   loadableQuantityPermission: IPermission;
   showCommingleButton = false;
   addCommingleBtnPermissionContext: IPermissionContext;
+  obqComplete$: Observable<boolean>;
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -133,6 +134,8 @@ export class LoadableStudyDetailsComponent implements OnInit {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.PORTS;
     } else if (ohqTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.OHQ;
+    } else if (obqTabPermission?.view) {
+      this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.OBQ;
     } else {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
     }
@@ -224,6 +227,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
     this.totalQuantity$ = this.loadableStudyDetailsTransformationService.totalQuantityCargoNomination$;
     this.cargoNominationComplete$ = this.loadableStudyDetailsTransformationService.cargoNominationValidity$;
     this.portsComplete$ = this.loadableStudyDetailsTransformationService.portValidity$;
+    this.obqComplete$ = this.loadableStudyDetailsTransformationService.obqValidity$;
   }
 
   /**

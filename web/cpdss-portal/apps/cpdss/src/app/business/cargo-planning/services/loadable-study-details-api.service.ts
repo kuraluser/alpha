@@ -176,9 +176,6 @@ export class LoadableStudyDetailsApiService {
     * @memberof LoadableStudyDetailsApiService
     */
     getPortOBQDetails(vesselId: number, voyageId: number, loadableStudyId: number, portId: number): Observable<IPortOBQResponse> {
-        voyageId = 33;
-        loadableStudyId = 174;
-        portId = 1;
         return this.commonApiService.get<IPortOBQResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports/${portId}/on-board-quantities`);
     }
 
@@ -193,10 +190,6 @@ export class LoadableStudyDetailsApiService {
    * @memberof LoadableStudyDetailsApiService
    */
     setOBQTankDetails(obqTankDetails: IPortOBQTankDetail, vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
-        // Hard Coded values need to be removed
-        obqTankDetails.vesselId = 1;
-        obqTankDetails.voyageId = 33;
-        obqTankDetails.loadableStudyId = 174;
         return this._obqDb.obq.add(obqTankDetails);
     }
 }

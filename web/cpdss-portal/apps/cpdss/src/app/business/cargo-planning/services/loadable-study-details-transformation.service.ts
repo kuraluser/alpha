@@ -24,6 +24,7 @@ export class LoadableStudyDetailsTransformationService {
   private _cargoNominationValiditySource: Subject<boolean> = new Subject();
   private _addPortSource = new Subject();
   private _portValiditySource: Subject<boolean> = new Subject();
+  private _obqValiditySource: Subject<boolean> = new Subject();
   private OPERATIONS: OPERATIONS;
 
   // public fields
@@ -32,6 +33,7 @@ export class LoadableStudyDetailsTransformationService {
   cargoNominationValidity$ = this._cargoNominationValiditySource.asObservable();
   addPort$ = this._addPortSource.asObservable();
   portValidity$ = this._portValiditySource.asObservable();
+  obqValidity$ = this._obqValiditySource.asObservable();
 
   constructor() { }
 
@@ -1144,17 +1146,17 @@ export class LoadableStudyDetailsTransformationService {
  * @returns {IPortOBQTankDetailValueObject}
  * @memberof LoadableStudyDetailsTransformationService
  */
-  getOBQTankDetailsAsValueObject(obqTankDetail: IPortOBQTankDetail, isNewValue = true, listData: IPortOBQListData): IPortOBQTankDetailValueObject {
+  getOBQTankDetailsAsValueObject(obqTankDetail: IPortOBQTankDetail, isNewValue = true, listData: IPortOBQListData, isEditable=true): IPortOBQTankDetailValueObject {
     const _obqTankDetail = <IPortOBQTankDetailValueObject>{};
     _obqTankDetail.id = obqTankDetail.id;
-    _obqTankDetail.portId = obqTankDetail.portId;
+    _obqTankDetail.portId = obqTankDetail.portId; 
     _obqTankDetail.tankId = obqTankDetail.tankId;
     _obqTankDetail.tankName = obqTankDetail.tankName;
     const cargoObj: ICargo = listData.cargoList.find(cargo => cargo.id === obqTankDetail.cargoId);
     _obqTankDetail.cargo = new ValueObject<ICargo>(cargoObj, true, isNewValue, false);
-    _obqTankDetail.sounding = new ValueObject<number>(obqTankDetail.sounding, true, isNewValue);
-    _obqTankDetail.weight = new ValueObject<number>(obqTankDetail.weight, true, isNewValue);
-    _obqTankDetail.volume = new ValueObject<number>(obqTankDetail.volume, true, isNewValue);
+    _obqTankDetail.sounding = new ValueObject<number>(obqTankDetail.sounding, true, isNewValue, isEditable);
+    _obqTankDetail.weight = new ValueObject<number>(obqTankDetail.weight, true, isNewValue, isEditable);
+    _obqTankDetail.volume = new ValueObject<number>(obqTankDetail.volume, true, isNewValue, isEditable);
     _obqTankDetail.colorCode = obqTankDetail.colorCode;
 
     return _obqTankDetail;
@@ -1190,5 +1192,10 @@ export class LoadableStudyDetailsTransformationService {
 
     return _obqTankDetail;
   }
+
+    /** Set port grid complete status */
+    setObqValidity(isValid: boolean) {
+      this._obqValiditySource.next(isValid);
+    }
 
 }
