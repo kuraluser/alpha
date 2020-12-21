@@ -33,7 +33,7 @@
                             class=" col-form-label">{{'COMMINGLE_PREFERRED_TANK' | translate}}</label></div>
                     <div class="col pr-10" *ngIf="!isVolumeMaximum">
                         <p-multiSelect [options]="preferredTankList" styleClass="w-100" appendTo="body" defaultLabel="{{'COMMINGLE_SELECT_PREFERRED_TANK' | translate}}"
-                            id="commingle_preferred_tank" optionLabel="shortName" formControlName="preferredTanks" [readonly]="!isEditable">
+                            id="commingle_preferred_tank" optionLabel="shortName" formControlName="preferredTanks" [readonly]="!isEditable" [selectionLimit]="5">
                         </p-multiSelect>
                         
                     </div>
