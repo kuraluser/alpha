@@ -24,7 +24,7 @@
                                                 [columns]="columns" [value]="selectedPortOBQTankDetails"
                                                 [editMode]="editMode" [filterable]="true" [listData]="listData"
                                                 [selectionMode]="selectionMode" (editComplete)="onEditComplete($event)"
-                                                (rowSelection)="onRowSelection($event)">
+                                                (rowSelection)="onRowSelection($event)" [selection]="selectedTank">
                                             </cpdss-portal-datatable>
                                         </div>
                                     </div>
@@ -39,13 +39,35 @@
     </div>
 
     <div class="pr-15">
-        <cpdss-portal-cargo-tank-layout [tanks]="tanks"></cpdss-portal-cargo-tank-layout>
         <div class=" tank-wrapper-obq">
+            <div class="row">
+                <div class="col">
+                    <p class="text-uppercase text-center text-secondary">{{'OBQ_TANK_FILLS' | translate}}</p>
+                </div>
+            </div>
+            <div class="row mb-10">
+                <div class="col text-center">
+                    <span class="mr-10 text-uppercase text-secondary">{{'OBQ_GRADE'| translate}}</span>
+                    <ng-container *ngFor="let cargo of cargoList">
+                        <span class="badge-custom mr-5" *ngIf="cargo?.id"
+                            [ngStyle]="{'background-color': cargo?.colorCode}">{{cargo?.id}}</span>
+                    </ng-container>
+
+                </div>
+                <div class="col" *ngIf="selectedTankId">{{selectedTank?.percentageFilled}}
+                    {{'OHQ_FILLED'| translate}}</div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <cpdss-portal-cargo-tank-layout [tanks]="tanks" [(selectedTankId)]="selectedTankId">
+                    </cpdss-portal-cargo-tank-layout>
+                </div>
+            </div>
             <form *ngIf="obqForm && selectedIndex >= 0" [formGroup]="obqForm">
                 <div class="row text-uppercase text-secondary mt-10">
                     <div class="col-3">
                         <div class="row mb-15">
-                            <label for="" class="col-12 text-center">CARGO</label>
+                            <label for="" class="col-12 text-center">{{'OBQ_CARGO'| translate}}</label>
                             <div class="col">
                                 <input type="text" readonly class="form-control" formControlName="cargo">
                             </div>
@@ -53,11 +75,11 @@
                     </div>
                     <div class="col-3">
                         <div class="row mb-15">
-                            <label for="" class="col-12 text-center">SOUNDING</label>
+                            <label for="" class="col-12 text-center">{{'OBQ_SOUNDING'| translate}}</label>
                             <div class="col">
-                                <input type="number" class="form-control" formControlName="sounding">
-                                <cpdss-portal-validation-error
-                                    [errors]="fieldError(selectedIndex, 'sounding')"
+                                <input type="number" class="form-control" formControlName="sounding"
+                                    (change)="onChange($event,'sounding')">
+                                <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'sounding')"
                                     [errorMessages]="getErrorMessages('sounding')">
                                 </cpdss-portal-validation-error>
                             </div>
@@ -65,11 +87,11 @@
                     </div>
                     <div class="col-3">
                         <div class="row mb-15">
-                            <label for="" class="col-12 text-center">WEIGHT</label>
+                            <label for="" class="col-12 text-center">{{'OBQ_WEIGHT'| translate}}</label>
                             <div class="col">
-                                <input type="number" class="form-control" formControlName="weight">
-                                <cpdss-portal-validation-error
-                                    [errors]="fieldError(selectedIndex, 'weight')"
+                                <input type="number" class="form-control" formControlName="weight"
+                                    (change)="onChange($event,'weight')">
+                                <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'weight')"
                                     [errorMessages]="getErrorMessages('weight')">
                                 </cpdss-portal-validation-error>
                             </div>
@@ -77,11 +99,11 @@
                     </div>
                     <div class="col-3">
                         <div class="row mb-15">
-                            <label for="" class="col-12 text-center">VOLUME</label>
+                            <label for="" class="col-12 text-center">{{'OBQ_VOLUME'| translate}}</label>
                             <div class="col">
-                                <input type="number" class="form-control" formControlName="volume">
-                                <cpdss-portal-validation-error
-                                    [errors]="fieldError(selectedIndex, 'volume')"
+                                <input type="number" class="form-control" formControlName="volume"
+                                    (change)="onChange($event,'volume')">
+                                <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'volume')"
                                     [errorMessages]="getErrorMessages('volume')">
                                 </cpdss-portal-validation-error>
                             </div>

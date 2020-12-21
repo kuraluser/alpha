@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ICargoTank, ITank } from '../../../core/models/common.model';
 
 
@@ -31,6 +31,10 @@ export class CargoTankLayoutComponent implements OnInit {
     }));
   }
 
+  @Input() selectedTankId: number;
+
+  @Output() selectedTankIdChange = new EventEmitter<number>();
+  
   private _tanks: ICargoTank[][];
   constructor() { }
 
@@ -120,5 +124,17 @@ export class CargoTankLayoutComponent implements OnInit {
     const currentTankStart = (Number(tank.frameNumberFrom) - min) + 1;
     const currentTankEnd = Number(tank.frameNumberTo) - min ? (Number(tank.frameNumberTo) - min) + 1 : totalSpan;
     return `${currentTankStart} / ${currentTankEnd}`;
+  }
+
+    /**
+   * Method for tank selection event
+   *
+   * @param {*} $event
+   * @param {*} tankId
+   * @memberof CargoTankLayoutComponent
+   */
+  onTankSelect($event, tankId) {
+    this.selectedTankId = tankId;
+    this.selectedTankIdChange.emit(tankId);
   }
 }

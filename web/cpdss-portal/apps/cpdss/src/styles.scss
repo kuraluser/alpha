@@ -1350,6 +1350,10 @@ top: 36px;
         width: 100%;
         border: 1px solid;
         position: relative;
+        &.active {
+          border-width: 3px;
+          border-color: #ffffff;
+        }
         .tank-level-pattern{
           position: absolute;
           bottom: 0;

@@ -282,6 +282,8 @@
 	"OHQ_SAVE_CHANGES": "Save Changes",
 	"OHQ_TYPE": "Type",
 	"OHQ_FILLED": "Filled",
+	"OBQ_TANK_FILLS": "Tank Fills",
+	"OBQ_GRADE": "Grade",
 	"OBQ_SL": "SL",
 	"OBQ_CARGO": "Cargo",
 	"OBQ_SEARCH_CARGO": "Search Cargo",
