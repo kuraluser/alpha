@@ -7,5 +7,5 @@
 
 <cpdss-portal-new-loadable-study-popup *ngIf="loadableStudies && voyage && vesselInfo" [display]="display"
     (displayPopup)="closeLoadableStudyPopup($event)" [loadableStudyList]="loadableStudies" [vesselInfoList]="vesselInfo"
-    [voyage]="voyage" [duplicateLoadableStudy]="duplicateLoadableStudy">
+    [voyage]="voyage" [duplicateLoadableStudy]="duplicateLoadableStudy" (addedNewLoadableStudy)="onNewLoadableStudyAdded($event)">
 </cpdss-portal-new-loadable-study-popup>

@@ -130,4 +130,14 @@ export class LoadableStudyListComponent implements OnInit {
     }
   }
 
+    /**
+   * Handler for added new loadable study
+   *
+   * @param {*} event
+   * @memberof LoadableStudyListComponent
+   */
+  onNewLoadableStudyAdded(event) {
+    this.router.navigate(['business/cargo-planning/loadable-study-details/' + this.vesselDetails?.id + '/' + this.selectedVoyage.id + '/' + event]);
+  }
+
 }

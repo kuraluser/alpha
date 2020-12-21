@@ -49,6 +49,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   }
 
   @Output() displayPopup = new EventEmitter();
+  @Output() addedNewLoadableStudy = new EventEmitter<number>();
 
   @ViewChild('fileUpload') fileUploadVariable: ElementRef;
 
@@ -111,9 +112,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       subCharterer: this.formBuilder.control('', [Validators.maxLength(30)]),
       loadLine: '',
       draftMark: '',
-      draftRestriction: this.formBuilder.control('', [Validators.min(-99.99), Validators.max(99.99)]),
-      maxAirTempExpected: this.formBuilder.control('', [Validators.min(-999.99), Validators.max(999.99), numberValidator(2)]),
-      maxWaterTempExpected: this.formBuilder.control('', [Validators.min(-999.99), Validators.max(999.99), numberValidator(2)])
+      draftRestriction: this.formBuilder.control('', [ numberValidator(2, 2) ]),
+      maxAirTempExpected: this.formBuilder.control('', [ numberValidator(2, 3) ]),
+      maxWaterTempExpected: this.formBuilder.control('', [ numberValidator(2, 3) ])
     });
   }
 
@@ -161,7 +162,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           if (result.responseStatus.status === "200") {
             this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
             this.closeDialog();
-            this.router.navigate(['business/cargo-planning/loadable-study-details/' + this.vesselInfoList?.id + '/' + this.voyage.id + '/' + result.loadableStudyId]);
+            this.addedNewLoadableStudy.emit(result.loadableStudyId)
+            // this.router.navigate(['business/cargo-planning/loadable-study-details/' + this.vesselInfoList?.id + '/' + this.voyage.id + '/' + result.loadableStudyId]);
           }
         } catch (error) {
           //TODO: The validation error for lodable study with same name exist error should be given in api response

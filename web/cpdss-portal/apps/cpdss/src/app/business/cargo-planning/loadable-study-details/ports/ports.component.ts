@@ -142,12 +142,12 @@ export class PortsComponent implements OnInit {
       portOrder: this.fb.control(ports.portOrder),
       portcode: this.fb.control(ports.portcode.value, [Validators.required]),
       operation: this.fb.control(ports.operation.value, [Validators.required, portDuplicationValidator()]),
-      seaWaterDensity: this.fb.control(ports.seaWaterDensity.value, [Validators.required, numberValidator(4, 2)]),
+      seaWaterDensity: this.fb.control(ports.seaWaterDensity.value, [Validators.required, Validators.min(0), numberValidator(4, 2)]),
       layCan: this.fb.control(ports.layCan.value, [Validators.required]),
       layCanFrom: this.fb.control(ports.layCan.value?.split('to')[0]?.trim(), Validators.required),
       layCanTo: this.fb.control(ports.layCan.value?.split('to')[1]?.trim(), Validators.required),
-      maxDraft: this.fb.control(ports.maxDraft.value, [Validators.required, numberValidator(2, 2)]),
-      maxAirDraft: this.fb.control(ports.maxAirDraft.value, [Validators.required, numberValidator(2, 2)]),
+      maxDraft: this.fb.control(ports.maxDraft.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
+      maxAirDraft: this.fb.control(ports.maxAirDraft.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
       eta: this.fb.control(ports.eta.value, [Validators.required, portDateRangeValidator, portDateCompareValidator('etd', '<')]),
       etd: this.fb.control(ports.etd.value, [Validators.required, portDateCompareValidator('eta', '>')])
 
@@ -360,7 +360,7 @@ export class PortsComponent implements OnInit {
   */
   async onDeleteRow(event: IPortsEvent) {
     if (event?.data?.isDelete) {
-      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORTS_DELETE_SUMMARY', detail: 'PORTS_DELETE_SUMMARY', data: { confirmLabel: 'PORTS_DELETE_CONFIRM_LABEL', rejectLabel: 'PORTS_DELETE_REJECT_LABEL' } });
+      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORTS_DELETE_SUMMARY', detail: 'PORTS_DELETE_DETAILS', data: { confirmLabel: 'PORTS_DELETE_CONFIRM_LABEL', rejectLabel: 'PORTS_DELETE_REJECT_LABEL' } });
       this.confirmationAlertService.confirmAlert$.subscribe(async (response) => {
         if (response) {
           const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);

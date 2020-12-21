@@ -366,8 +366,13 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @memberof LoadableStudyDetailsComponent
    */
   onLoadableStudyChange(event) {
-    this.loadableStudyId = event?.id;
-    this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
-    this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+    if(event){
+      this.loadableStudyId = event;
+      this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
+      this.loadableStudyDetailsTransformationService.setPortValidity(false);
+      this.initSubsciptions();
+      this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
+      this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+    }
   }
 }

@@ -45,5 +45,5 @@
 </div>
 <cpdss-portal-new-loadable-study-popup *ngIf="loadableStudyList && selectedVoyage" [display]="display"
     (displayPopup)="setPopupVisibility($event)" [loadableStudyList]="loadableStudyList" [vesselInfoList]="vesselDetails"
-    [voyage]="selectedVoyage">
+    [voyage]="selectedVoyage" (addedNewLoadableStudy)="onNewLoadableStudyAdded($event)">
 </cpdss-portal-new-loadable-study-popup>

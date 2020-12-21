@@ -127,11 +127,6 @@
                         <div class="col">
                             <input class="form-control" type="number" id="txt_draftRestriction"
                                 formControlName="draftRestriction">
-                            <span
-                                *ngIf="form.draftRestriction.invalid && form.draftRestriction.touched && (form.draftRestriction.errors?.max || form.draftRestriction.errors?.min)"
-                                class="text-danger">
-                                {{'NEW_LOADABLE_STUDY_POPUP_MAX_DRAFT_DIGIT_LENGTH' | translate}}!
-                            </span>
                         </div>
                     </div>
 
@@ -141,11 +136,6 @@
                         <div class="col">
                             <input class="form-control" type="number" id="txt_maxAirTempExceeded"
                                 formControlName="maxAirTempExpected">
-                            <span
-                                *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && (form.maxAirTempExpected.errors?.max || form.maxAirTempExpected.errors?.min)"
-                                class="text-danger">
-                                {{'NEW_LOADABLE_STUDY_POPUP_MAX_TEMP_DIGIT_LENGTH' | translate}}!
-                            </span>
                         </div>
                     </div>
                     <div class="row form-group">
@@ -154,11 +144,6 @@
                         <div class="col">
                             <input class="form-control" type="number" id="txt_maxWaterTempExceeded"
                                 formControlName="maxWaterTempExpected">
-                            <span
-                                *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && (form.maxWaterTempExpected.errors?.max || form.maxWaterTempExpected.errors?.min)"
-                                class="text-danger">
-                                {{'NEW_LOADABLE_STUDY_POPUP_MAX_TEMP_DIGIT_LENGTH' | translate}}!
-                            </span>
                         </div>
                     </div>
                 </div>

@@ -59,7 +59,7 @@
                                     [maxDate]="col.filterFieldMaxvalue"
                                     (onSelect)="onDateSelect($event, col?.filterField, col?.filterMatchMode)"
                                     (onInput)="onDateFilter($event.target.value, col?.filterField, col?.filterMatchMode)"
-                                    (onClearClick)="datatable.filter('', col.field, 'contains')" [showButtonBar]="true"
+                                    (onClearClick)="datatable.filter('', col?.filterField, 'contains')" [showButtonBar]="true"
                                     styleClass="p-column-filter" [placeholder]="col.filterPlaceholder| translate"
                                     [readonlyInput]="false" dateFormat="dd-mm-yy" id="{{col.field+'_filter'}}">
                                 </p-calendar>

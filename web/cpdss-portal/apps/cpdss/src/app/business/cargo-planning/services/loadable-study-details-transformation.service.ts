@@ -537,7 +537,7 @@ export class LoadableStudyDetailsTransformationService {
         header: 'OPERATIONS',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
         filter: true,
-        filterPlaceholder: 'SEARCH_PORT',
+        filterPlaceholder: 'SEARCH_PORT_OPERATIONS',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         listName: 'operationList',
@@ -560,7 +560,8 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'seaWaterDensity.value',
         fieldPlaceholder: 'ENTER_WATER_DENSITY',
         errorMessages: {
-          'required': 'PORT_WATER_DENSITY_REQUIRED_ERROR'
+          'required': 'PORT_WATER_DENSITY_REQUIRED_ERROR',
+          'min': 'PORT_WATER_DENSITY_MIN_ERROR'
         }
       },
       {
@@ -588,7 +589,8 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'maxDraft.value',
         fieldPlaceholder: 'ENTER_MAX_DRAFT',
         errorMessages: {
-          'required': 'PORT_MAX_DRAFT_REQUIRED_ERROR'
+          'required': 'PORT_MAX_DRAFT_REQUIRED_ERROR',
+          'min': 'PORT_MAX_DRAFT_MIN_ERROR'
         }
       },
       {
@@ -602,7 +604,8 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'maxAirDraft.value',
         fieldPlaceholder: 'ENTER_MAX_AIR_DRAFT',
         errorMessages: {
-          'required': 'PORT_MAX_AIR_DRAFT_REQUIRED_ERROR'
+          'required': 'PORT_MAX_AIR_DRAFT_REQUIRED_ERROR',
+          'min': 'PORT_MAX_AIR_DRAFT_MIN_ERROR'
         }
       },
       {
