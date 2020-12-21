@@ -1151,7 +1151,7 @@ input[type=number] {
       left: 4px;
       width: 4px;
       height: 8px;
-      border-width: 0 2px 2px 0;
+      border-width: 0 2px 2px 0!important;
       transform: rotate(45deg);
     }
   }
@@ -1543,4 +1543,8 @@ th{
   width: 140px;
   min-width: 140px;
   max-width: 140px;
+}
+
+th .p-calendar .p-inputtext{
+  min-width: 130px;
 }
