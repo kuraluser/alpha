@@ -1,0 +1,27 @@
+<p-table [columns]="synopticalRecords" [value]="cols" dataKey="name">
+    <ng-template pTemplate="header" let-columns let-rowData>
+        <tr>
+            <th>{{cols[0].header}}</th>
+            <th></th>
+            <th *ngFor="let col of columns">{{col[cols[0].field]}}</th>
+
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
+        <tr *ngIf="rowIndex!=0">
+       
+            <td style="font-weight: 600;">{{rowData.header}}</td>
+            <td></td>
+
+            <ng-container *ngFor="let col of columns">
+                <td>
+                    {{col[rowData?.field]}}
+
+                </td>
+            </ng-container>
+
+
+        </tr>
+    </ng-template>
+
+</p-table>

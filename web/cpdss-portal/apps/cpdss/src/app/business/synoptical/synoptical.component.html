@@ -1,0 +1,34 @@
+<div class="container-fluid">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col vessel-info-wrapper">
+                <cpdss-portal-vessel-info *ngIf="vesselInfo" [vesselDetails]="vesselInfo"></cpdss-portal-vessel-info>
+            </div>
+            <div class="col">
+                <h5 class="main-head inline-block">{{'SYNOPTICAL_TABLE' | translate }}
+                </h5>
+                <span class="ml-20 mr-10">
+                    {{'SYNOPTICAL_VOYAGE_LABEL' | translate }}</span>
+
+                <p-dropdown styleClass="dropdown-w-100" [options]="voyages" [(ngModel)]="selectedVoyage"
+                    optionLabel="voyageNo" [filter]="true"
+                    placeholder="{{ 'LOADABLE_STUDY_LIST_VOYAGE_NO_PLACEHOLDER' | translate }}"
+                    (onChange)="showLoadableStudyList()">
+                </p-dropdown>
+                <span class="pl-15 text-danger" *ngIf="!isVoyageIdSelected">
+                    {{'NO_VOYAGE_NO_SELECTED' | translate }}</span>
+
+                <span class="ml-20 mr-10">
+                    {{'SYNOPTICAL_LOADABLE_STUDY_LABEL' | translate }}</span>
+                <p-dropdown styleClass="dropdown-w-100" [options]="loadableStudyList"
+                    [(ngModel)]="selectedLoadableStudy" optionLabel="name" [filter]="true"
+                    placeholder="{{'SYNOPTICAL_LOADABLESTUDY_PLACEHOLDER' | translate }}">
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="row">
+            <cpdss-portal-synoptical-table *ngIf="selectedLoadableStudy" [vesselId]="vesselInfo?.id" [voyage]="selectedVoyage" [selectedLoadableStudy]="selectedLoadableStudy"></cpdss-portal-synoptical-table>
+        </div>
+
+    </div>
+</div>

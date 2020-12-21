@@ -352,6 +352,10 @@
 	"CARGO_PRIORITY_GRID_FOOTER_TOTAL": "Total",
 	"CARGO_PRIORITY_GRID_EMPTY_DATA": "No data found.",
 	"CARGO_PRIORITY_GRID_MORE_BUTTON_LABEL": "More",
+	"SYNOPTICAL_TABLE":"Synoptical Table",
+	"SYNOPTICAL_LOADABLE_STUDY_LABEL": "Loadable study",
+	"SYNOPTICAL_VOYAGE_LABEL": "Voyage",
+	"SYNOPTICAL_LOADABLESTUDY_PLACEHOLDER":"Select loadable study",
 	"PORT_WATER_DENSITY_MIN_ERROR": "Sea water density must be greater than or equal to 0",
 	"PORT_MAX_DRAFT_MIN_ERROR": "Max draft must be greater than or equal to 0",
 	"PORT_MAX_AIR_DRAFT_MIN_ERROR": "Max air draft must be greater than or equal to 0"

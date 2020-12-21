@@ -40,6 +40,12 @@ export class NavbarComponent implements OnInit {
         'menuLink': 'cargo-planning',
         'subMenu': []
       },
+      {
+        'menu': 'SYNOPTICAL',
+        'menuIcon': 'voyages',
+        'menuLink': 'synoptical',
+        'subMenu': []
+      },
       /* {
         'menu': 'OPERATIONS',
         'menuIcon': 'voyages',
