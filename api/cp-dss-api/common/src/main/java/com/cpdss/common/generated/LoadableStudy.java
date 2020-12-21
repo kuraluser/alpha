@@ -55410,6 +55410,4598 @@ public final class LoadableStudy {
     }
   }
 
+  public interface SynopticalRecordOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:SynopticalRecord)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>int64 portId = 2;</code>
+     *
+     * @return The portId.
+     */
+    long getPortId();
+
+    /**
+     * <code>string portName = 3;</code>
+     *
+     * @return The portName.
+     */
+    java.lang.String getPortName();
+    /**
+     * <code>string portName = 3;</code>
+     *
+     * @return The bytes for portName.
+     */
+    com.google.protobuf.ByteString getPortNameBytes();
+
+    /**
+     * <code>string operationType = 4;</code>
+     *
+     * @return The operationType.
+     */
+    java.lang.String getOperationType();
+    /**
+     * <code>string operationType = 4;</code>
+     *
+     * @return The bytes for operationType.
+     */
+    com.google.protobuf.ByteString getOperationTypeBytes();
+
+    /**
+     * <code>string distance = 5;</code>
+     *
+     * @return The distance.
+     */
+    java.lang.String getDistance();
+    /**
+     * <code>string distance = 5;</code>
+     *
+     * @return The bytes for distance.
+     */
+    com.google.protobuf.ByteString getDistanceBytes();
+
+    /**
+     * <code>string speed = 6;</code>
+     *
+     * @return The speed.
+     */
+    java.lang.String getSpeed();
+    /**
+     * <code>string speed = 6;</code>
+     *
+     * @return The bytes for speed.
+     */
+    com.google.protobuf.ByteString getSpeedBytes();
+
+    /**
+     * <code>string runningHours = 7;</code>
+     *
+     * @return The runningHours.
+     */
+    java.lang.String getRunningHours();
+    /**
+     * <code>string runningHours = 7;</code>
+     *
+     * @return The bytes for runningHours.
+     */
+    com.google.protobuf.ByteString getRunningHoursBytes();
+
+    /**
+     * <code>string inPortHours = 8;</code>
+     *
+     * @return The inPortHours.
+     */
+    java.lang.String getInPortHours();
+    /**
+     * <code>string inPortHours = 8;</code>
+     *
+     * @return The bytes for inPortHours.
+     */
+    com.google.protobuf.ByteString getInPortHoursBytes();
+
+    /**
+     * <code>string timeOfSunrise = 9;</code>
+     *
+     * @return The timeOfSunrise.
+     */
+    java.lang.String getTimeOfSunrise();
+    /**
+     * <code>string timeOfSunrise = 9;</code>
+     *
+     * @return The bytes for timeOfSunrise.
+     */
+    com.google.protobuf.ByteString getTimeOfSunriseBytes();
+
+    /**
+     * <code>string timeOfSunset = 10;</code>
+     *
+     * @return The timeOfSunset.
+     */
+    java.lang.String getTimeOfSunset();
+    /**
+     * <code>string timeOfSunset = 10;</code>
+     *
+     * @return The bytes for timeOfSunset.
+     */
+    com.google.protobuf.ByteString getTimeOfSunsetBytes();
+
+    /**
+     * <code>string hwTideFrom = 11;</code>
+     *
+     * @return The hwTideFrom.
+     */
+    java.lang.String getHwTideFrom();
+    /**
+     * <code>string hwTideFrom = 11;</code>
+     *
+     * @return The bytes for hwTideFrom.
+     */
+    com.google.protobuf.ByteString getHwTideFromBytes();
+
+    /**
+     * <code>string hwTideTo = 12;</code>
+     *
+     * @return The hwTideTo.
+     */
+    java.lang.String getHwTideTo();
+    /**
+     * <code>string hwTideTo = 12;</code>
+     *
+     * @return The bytes for hwTideTo.
+     */
+    com.google.protobuf.ByteString getHwTideToBytes();
+
+    /**
+     * <code>string hwTideTimeFrom = 13;</code>
+     *
+     * @return The hwTideTimeFrom.
+     */
+    java.lang.String getHwTideTimeFrom();
+    /**
+     * <code>string hwTideTimeFrom = 13;</code>
+     *
+     * @return The bytes for hwTideTimeFrom.
+     */
+    com.google.protobuf.ByteString getHwTideTimeFromBytes();
+
+    /**
+     * <code>string hwTideTimeTo = 14;</code>
+     *
+     * @return The hwTideTimeTo.
+     */
+    java.lang.String getHwTideTimeTo();
+    /**
+     * <code>string hwTideTimeTo = 14;</code>
+     *
+     * @return The bytes for hwTideTimeTo.
+     */
+    com.google.protobuf.ByteString getHwTideTimeToBytes();
+
+    /**
+     * <code>string lwTideFrom = 15;</code>
+     *
+     * @return The lwTideFrom.
+     */
+    java.lang.String getLwTideFrom();
+    /**
+     * <code>string lwTideFrom = 15;</code>
+     *
+     * @return The bytes for lwTideFrom.
+     */
+    com.google.protobuf.ByteString getLwTideFromBytes();
+
+    /**
+     * <code>string lwTideTo = 16;</code>
+     *
+     * @return The lwTideTo.
+     */
+    java.lang.String getLwTideTo();
+    /**
+     * <code>string lwTideTo = 16;</code>
+     *
+     * @return The bytes for lwTideTo.
+     */
+    com.google.protobuf.ByteString getLwTideToBytes();
+
+    /**
+     * <code>string lwTideTimeFrom = 17;</code>
+     *
+     * @return The lwTideTimeFrom.
+     */
+    java.lang.String getLwTideTimeFrom();
+    /**
+     * <code>string lwTideTimeFrom = 17;</code>
+     *
+     * @return The bytes for lwTideTimeFrom.
+     */
+    com.google.protobuf.ByteString getLwTideTimeFromBytes();
+
+    /**
+     * <code>string lwTideTimeTo = 18;</code>
+     *
+     * @return The lwTideTimeTo.
+     */
+    java.lang.String getLwTideTimeTo();
+    /**
+     * <code>string lwTideTimeTo = 18;</code>
+     *
+     * @return The bytes for lwTideTimeTo.
+     */
+    com.google.protobuf.ByteString getLwTideTimeToBytes();
+
+    /**
+     * <code>string specificGravity = 19;</code>
+     *
+     * @return The specificGravity.
+     */
+    java.lang.String getSpecificGravity();
+    /**
+     * <code>string specificGravity = 19;</code>
+     *
+     * @return The bytes for specificGravity.
+     */
+    com.google.protobuf.ByteString getSpecificGravityBytes();
+  }
+  /** Protobuf type {@code SynopticalRecord} */
+  public static final class SynopticalRecord extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:SynopticalRecord)
+      SynopticalRecordOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use SynopticalRecord.newBuilder() to construct.
+    private SynopticalRecord(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private SynopticalRecord() {
+      portName_ = "";
+      operationType_ = "";
+      distance_ = "";
+      speed_ = "";
+      runningHours_ = "";
+      inPortHours_ = "";
+      timeOfSunrise_ = "";
+      timeOfSunset_ = "";
+      hwTideFrom_ = "";
+      hwTideTo_ = "";
+      hwTideTimeFrom_ = "";
+      hwTideTimeTo_ = "";
+      lwTideFrom_ = "";
+      lwTideTo_ = "";
+      lwTideTimeFrom_ = "";
+      lwTideTimeTo_ = "";
+      specificGravity_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new SynopticalRecord();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private SynopticalRecord(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 16:
+              {
+                portId_ = input.readInt64();
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                portName_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                operationType_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                distance_ = s;
+                break;
+              }
+            case 50:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                speed_ = s;
+                break;
+              }
+            case 58:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                runningHours_ = s;
+                break;
+              }
+            case 66:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                inPortHours_ = s;
+                break;
+              }
+            case 74:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                timeOfSunrise_ = s;
+                break;
+              }
+            case 82:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                timeOfSunset_ = s;
+                break;
+              }
+            case 90:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                hwTideFrom_ = s;
+                break;
+              }
+            case 98:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                hwTideTo_ = s;
+                break;
+              }
+            case 106:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                hwTideTimeFrom_ = s;
+                break;
+              }
+            case 114:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                hwTideTimeTo_ = s;
+                break;
+              }
+            case 122:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                lwTideFrom_ = s;
+                break;
+              }
+            case 130:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                lwTideTo_ = s;
+                break;
+              }
+            case 138:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                lwTideTimeFrom_ = s;
+                break;
+              }
+            case 146:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                lwTideTimeTo_ = s;
+                break;
+              }
+            case 154:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                specificGravity_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_SynopticalRecord_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_SynopticalRecord_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.SynopticalRecord.class,
+              com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int PORTID_FIELD_NUMBER = 2;
+    private long portId_;
+    /**
+     * <code>int64 portId = 2;</code>
+     *
+     * @return The portId.
+     */
+    public long getPortId() {
+      return portId_;
+    }
+
+    public static final int PORTNAME_FIELD_NUMBER = 3;
+    private volatile java.lang.Object portName_;
+    /**
+     * <code>string portName = 3;</code>
+     *
+     * @return The portName.
+     */
+    public java.lang.String getPortName() {
+      java.lang.Object ref = portName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        portName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string portName = 3;</code>
+     *
+     * @return The bytes for portName.
+     */
+    public com.google.protobuf.ByteString getPortNameBytes() {
+      java.lang.Object ref = portName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        portName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int OPERATIONTYPE_FIELD_NUMBER = 4;
+    private volatile java.lang.Object operationType_;
+    /**
+     * <code>string operationType = 4;</code>
+     *
+     * @return The operationType.
+     */
+    public java.lang.String getOperationType() {
+      java.lang.Object ref = operationType_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        operationType_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string operationType = 4;</code>
+     *
+     * @return The bytes for operationType.
+     */
+    public com.google.protobuf.ByteString getOperationTypeBytes() {
+      java.lang.Object ref = operationType_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        operationType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DISTANCE_FIELD_NUMBER = 5;
+    private volatile java.lang.Object distance_;
+    /**
+     * <code>string distance = 5;</code>
+     *
+     * @return The distance.
+     */
+    public java.lang.String getDistance() {
+      java.lang.Object ref = distance_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        distance_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string distance = 5;</code>
+     *
+     * @return The bytes for distance.
+     */
+    public com.google.protobuf.ByteString getDistanceBytes() {
+      java.lang.Object ref = distance_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        distance_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SPEED_FIELD_NUMBER = 6;
+    private volatile java.lang.Object speed_;
+    /**
+     * <code>string speed = 6;</code>
+     *
+     * @return The speed.
+     */
+    public java.lang.String getSpeed() {
+      java.lang.Object ref = speed_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        speed_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string speed = 6;</code>
+     *
+     * @return The bytes for speed.
+     */
+    public com.google.protobuf.ByteString getSpeedBytes() {
+      java.lang.Object ref = speed_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        speed_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int RUNNINGHOURS_FIELD_NUMBER = 7;
+    private volatile java.lang.Object runningHours_;
+    /**
+     * <code>string runningHours = 7;</code>
+     *
+     * @return The runningHours.
+     */
+    public java.lang.String getRunningHours() {
+      java.lang.Object ref = runningHours_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        runningHours_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string runningHours = 7;</code>
+     *
+     * @return The bytes for runningHours.
+     */
+    public com.google.protobuf.ByteString getRunningHoursBytes() {
+      java.lang.Object ref = runningHours_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        runningHours_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int INPORTHOURS_FIELD_NUMBER = 8;
+    private volatile java.lang.Object inPortHours_;
+    /**
+     * <code>string inPortHours = 8;</code>
+     *
+     * @return The inPortHours.
+     */
+    public java.lang.String getInPortHours() {
+      java.lang.Object ref = inPortHours_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        inPortHours_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string inPortHours = 8;</code>
+     *
+     * @return The bytes for inPortHours.
+     */
+    public com.google.protobuf.ByteString getInPortHoursBytes() {
+      java.lang.Object ref = inPortHours_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        inPortHours_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TIMEOFSUNRISE_FIELD_NUMBER = 9;
+    private volatile java.lang.Object timeOfSunrise_;
+    /**
+     * <code>string timeOfSunrise = 9;</code>
+     *
+     * @return The timeOfSunrise.
+     */
+    public java.lang.String getTimeOfSunrise() {
+      java.lang.Object ref = timeOfSunrise_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        timeOfSunrise_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string timeOfSunrise = 9;</code>
+     *
+     * @return The bytes for timeOfSunrise.
+     */
+    public com.google.protobuf.ByteString getTimeOfSunriseBytes() {
+      java.lang.Object ref = timeOfSunrise_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        timeOfSunrise_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TIMEOFSUNSET_FIELD_NUMBER = 10;
+    private volatile java.lang.Object timeOfSunset_;
+    /**
+     * <code>string timeOfSunset = 10;</code>
+     *
+     * @return The timeOfSunset.
+     */
+    public java.lang.String getTimeOfSunset() {
+      java.lang.Object ref = timeOfSunset_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        timeOfSunset_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string timeOfSunset = 10;</code>
+     *
+     * @return The bytes for timeOfSunset.
+     */
+    public com.google.protobuf.ByteString getTimeOfSunsetBytes() {
+      java.lang.Object ref = timeOfSunset_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        timeOfSunset_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int HWTIDEFROM_FIELD_NUMBER = 11;
+    private volatile java.lang.Object hwTideFrom_;
+    /**
+     * <code>string hwTideFrom = 11;</code>
+     *
+     * @return The hwTideFrom.
+     */
+    public java.lang.String getHwTideFrom() {
+      java.lang.Object ref = hwTideFrom_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hwTideFrom_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string hwTideFrom = 11;</code>
+     *
+     * @return The bytes for hwTideFrom.
+     */
+    public com.google.protobuf.ByteString getHwTideFromBytes() {
+      java.lang.Object ref = hwTideFrom_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        hwTideFrom_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int HWTIDETO_FIELD_NUMBER = 12;
+    private volatile java.lang.Object hwTideTo_;
+    /**
+     * <code>string hwTideTo = 12;</code>
+     *
+     * @return The hwTideTo.
+     */
+    public java.lang.String getHwTideTo() {
+      java.lang.Object ref = hwTideTo_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hwTideTo_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string hwTideTo = 12;</code>
+     *
+     * @return The bytes for hwTideTo.
+     */
+    public com.google.protobuf.ByteString getHwTideToBytes() {
+      java.lang.Object ref = hwTideTo_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        hwTideTo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int HWTIDETIMEFROM_FIELD_NUMBER = 13;
+    private volatile java.lang.Object hwTideTimeFrom_;
+    /**
+     * <code>string hwTideTimeFrom = 13;</code>
+     *
+     * @return The hwTideTimeFrom.
+     */
+    public java.lang.String getHwTideTimeFrom() {
+      java.lang.Object ref = hwTideTimeFrom_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hwTideTimeFrom_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string hwTideTimeFrom = 13;</code>
+     *
+     * @return The bytes for hwTideTimeFrom.
+     */
+    public com.google.protobuf.ByteString getHwTideTimeFromBytes() {
+      java.lang.Object ref = hwTideTimeFrom_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        hwTideTimeFrom_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int HWTIDETIMETO_FIELD_NUMBER = 14;
+    private volatile java.lang.Object hwTideTimeTo_;
+    /**
+     * <code>string hwTideTimeTo = 14;</code>
+     *
+     * @return The hwTideTimeTo.
+     */
+    public java.lang.String getHwTideTimeTo() {
+      java.lang.Object ref = hwTideTimeTo_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hwTideTimeTo_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string hwTideTimeTo = 14;</code>
+     *
+     * @return The bytes for hwTideTimeTo.
+     */
+    public com.google.protobuf.ByteString getHwTideTimeToBytes() {
+      java.lang.Object ref = hwTideTimeTo_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        hwTideTimeTo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LWTIDEFROM_FIELD_NUMBER = 15;
+    private volatile java.lang.Object lwTideFrom_;
+    /**
+     * <code>string lwTideFrom = 15;</code>
+     *
+     * @return The lwTideFrom.
+     */
+    public java.lang.String getLwTideFrom() {
+      java.lang.Object ref = lwTideFrom_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lwTideFrom_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string lwTideFrom = 15;</code>
+     *
+     * @return The bytes for lwTideFrom.
+     */
+    public com.google.protobuf.ByteString getLwTideFromBytes() {
+      java.lang.Object ref = lwTideFrom_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lwTideFrom_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LWTIDETO_FIELD_NUMBER = 16;
+    private volatile java.lang.Object lwTideTo_;
+    /**
+     * <code>string lwTideTo = 16;</code>
+     *
+     * @return The lwTideTo.
+     */
+    public java.lang.String getLwTideTo() {
+      java.lang.Object ref = lwTideTo_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lwTideTo_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string lwTideTo = 16;</code>
+     *
+     * @return The bytes for lwTideTo.
+     */
+    public com.google.protobuf.ByteString getLwTideToBytes() {
+      java.lang.Object ref = lwTideTo_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lwTideTo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LWTIDETIMEFROM_FIELD_NUMBER = 17;
+    private volatile java.lang.Object lwTideTimeFrom_;
+    /**
+     * <code>string lwTideTimeFrom = 17;</code>
+     *
+     * @return The lwTideTimeFrom.
+     */
+    public java.lang.String getLwTideTimeFrom() {
+      java.lang.Object ref = lwTideTimeFrom_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lwTideTimeFrom_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string lwTideTimeFrom = 17;</code>
+     *
+     * @return The bytes for lwTideTimeFrom.
+     */
+    public com.google.protobuf.ByteString getLwTideTimeFromBytes() {
+      java.lang.Object ref = lwTideTimeFrom_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lwTideTimeFrom_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LWTIDETIMETO_FIELD_NUMBER = 18;
+    private volatile java.lang.Object lwTideTimeTo_;
+    /**
+     * <code>string lwTideTimeTo = 18;</code>
+     *
+     * @return The lwTideTimeTo.
+     */
+    public java.lang.String getLwTideTimeTo() {
+      java.lang.Object ref = lwTideTimeTo_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lwTideTimeTo_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string lwTideTimeTo = 18;</code>
+     *
+     * @return The bytes for lwTideTimeTo.
+     */
+    public com.google.protobuf.ByteString getLwTideTimeToBytes() {
+      java.lang.Object ref = lwTideTimeTo_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lwTideTimeTo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SPECIFICGRAVITY_FIELD_NUMBER = 19;
+    private volatile java.lang.Object specificGravity_;
+    /**
+     * <code>string specificGravity = 19;</code>
+     *
+     * @return The specificGravity.
+     */
+    public java.lang.String getSpecificGravity() {
+      java.lang.Object ref = specificGravity_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        specificGravity_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string specificGravity = 19;</code>
+     *
+     * @return The bytes for specificGravity.
+     */
+    public com.google.protobuf.ByteString getSpecificGravityBytes() {
+      java.lang.Object ref = specificGravity_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        specificGravity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (portId_ != 0L) {
+        output.writeInt64(2, portId_);
+      }
+      if (!getPortNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, portName_);
+      }
+      if (!getOperationTypeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, operationType_);
+      }
+      if (!getDistanceBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, distance_);
+      }
+      if (!getSpeedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, speed_);
+      }
+      if (!getRunningHoursBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, runningHours_);
+      }
+      if (!getInPortHoursBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, inPortHours_);
+      }
+      if (!getTimeOfSunriseBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, timeOfSunrise_);
+      }
+      if (!getTimeOfSunsetBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, timeOfSunset_);
+      }
+      if (!getHwTideFromBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, hwTideFrom_);
+      }
+      if (!getHwTideToBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, hwTideTo_);
+      }
+      if (!getHwTideTimeFromBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 13, hwTideTimeFrom_);
+      }
+      if (!getHwTideTimeToBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 14, hwTideTimeTo_);
+      }
+      if (!getLwTideFromBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 15, lwTideFrom_);
+      }
+      if (!getLwTideToBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 16, lwTideTo_);
+      }
+      if (!getLwTideTimeFromBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 17, lwTideTimeFrom_);
+      }
+      if (!getLwTideTimeToBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 18, lwTideTimeTo_);
+      }
+      if (!getSpecificGravityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 19, specificGravity_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (portId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, portId_);
+      }
+      if (!getPortNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, portName_);
+      }
+      if (!getOperationTypeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, operationType_);
+      }
+      if (!getDistanceBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, distance_);
+      }
+      if (!getSpeedBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, speed_);
+      }
+      if (!getRunningHoursBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, runningHours_);
+      }
+      if (!getInPortHoursBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, inPortHours_);
+      }
+      if (!getTimeOfSunriseBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, timeOfSunrise_);
+      }
+      if (!getTimeOfSunsetBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, timeOfSunset_);
+      }
+      if (!getHwTideFromBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, hwTideFrom_);
+      }
+      if (!getHwTideToBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, hwTideTo_);
+      }
+      if (!getHwTideTimeFromBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, hwTideTimeFrom_);
+      }
+      if (!getHwTideTimeToBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, hwTideTimeTo_);
+      }
+      if (!getLwTideFromBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, lwTideFrom_);
+      }
+      if (!getLwTideToBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(16, lwTideTo_);
+      }
+      if (!getLwTideTimeFromBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(17, lwTideTimeFrom_);
+      }
+      if (!getLwTideTimeToBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(18, lwTideTimeTo_);
+      }
+      if (!getSpecificGravityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(19, specificGravity_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.SynopticalRecord)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord other =
+          (com.cpdss.common.generated.LoadableStudy.SynopticalRecord) obj;
+
+      if (getId() != other.getId()) return false;
+      if (getPortId() != other.getPortId()) return false;
+      if (!getPortName().equals(other.getPortName())) return false;
+      if (!getOperationType().equals(other.getOperationType())) return false;
+      if (!getDistance().equals(other.getDistance())) return false;
+      if (!getSpeed().equals(other.getSpeed())) return false;
+      if (!getRunningHours().equals(other.getRunningHours())) return false;
+      if (!getInPortHours().equals(other.getInPortHours())) return false;
+      if (!getTimeOfSunrise().equals(other.getTimeOfSunrise())) return false;
+      if (!getTimeOfSunset().equals(other.getTimeOfSunset())) return false;
+      if (!getHwTideFrom().equals(other.getHwTideFrom())) return false;
+      if (!getHwTideTo().equals(other.getHwTideTo())) return false;
+      if (!getHwTideTimeFrom().equals(other.getHwTideTimeFrom())) return false;
+      if (!getHwTideTimeTo().equals(other.getHwTideTimeTo())) return false;
+      if (!getLwTideFrom().equals(other.getLwTideFrom())) return false;
+      if (!getLwTideTo().equals(other.getLwTideTo())) return false;
+      if (!getLwTideTimeFrom().equals(other.getLwTideTimeFrom())) return false;
+      if (!getLwTideTimeTo().equals(other.getLwTideTimeTo())) return false;
+      if (!getSpecificGravity().equals(other.getSpecificGravity())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + PORTID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
+      hash = (37 * hash) + PORTNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getPortName().hashCode();
+      hash = (37 * hash) + OPERATIONTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getOperationType().hashCode();
+      hash = (37 * hash) + DISTANCE_FIELD_NUMBER;
+      hash = (53 * hash) + getDistance().hashCode();
+      hash = (37 * hash) + SPEED_FIELD_NUMBER;
+      hash = (53 * hash) + getSpeed().hashCode();
+      hash = (37 * hash) + RUNNINGHOURS_FIELD_NUMBER;
+      hash = (53 * hash) + getRunningHours().hashCode();
+      hash = (37 * hash) + INPORTHOURS_FIELD_NUMBER;
+      hash = (53 * hash) + getInPortHours().hashCode();
+      hash = (37 * hash) + TIMEOFSUNRISE_FIELD_NUMBER;
+      hash = (53 * hash) + getTimeOfSunrise().hashCode();
+      hash = (37 * hash) + TIMEOFSUNSET_FIELD_NUMBER;
+      hash = (53 * hash) + getTimeOfSunset().hashCode();
+      hash = (37 * hash) + HWTIDEFROM_FIELD_NUMBER;
+      hash = (53 * hash) + getHwTideFrom().hashCode();
+      hash = (37 * hash) + HWTIDETO_FIELD_NUMBER;
+      hash = (53 * hash) + getHwTideTo().hashCode();
+      hash = (37 * hash) + HWTIDETIMEFROM_FIELD_NUMBER;
+      hash = (53 * hash) + getHwTideTimeFrom().hashCode();
+      hash = (37 * hash) + HWTIDETIMETO_FIELD_NUMBER;
+      hash = (53 * hash) + getHwTideTimeTo().hashCode();
+      hash = (37 * hash) + LWTIDEFROM_FIELD_NUMBER;
+      hash = (53 * hash) + getLwTideFrom().hashCode();
+      hash = (37 * hash) + LWTIDETO_FIELD_NUMBER;
+      hash = (53 * hash) + getLwTideTo().hashCode();
+      hash = (37 * hash) + LWTIDETIMEFROM_FIELD_NUMBER;
+      hash = (53 * hash) + getLwTideTimeFrom().hashCode();
+      hash = (37 * hash) + LWTIDETIMETO_FIELD_NUMBER;
+      hash = (53 * hash) + getLwTideTimeTo().hashCode();
+      hash = (37 * hash) + SPECIFICGRAVITY_FIELD_NUMBER;
+      hash = (53 * hash) + getSpecificGravity().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalRecord parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalRecord parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalRecord parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalRecord parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalRecord parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalRecord parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalRecord parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalRecord parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalRecord parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalRecord parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalRecord parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalRecord parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.SynopticalRecord prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code SynopticalRecord} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:SynopticalRecord)
+        com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_SynopticalRecord_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SynopticalRecord_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.SynopticalRecord.class,
+                com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.LoadableStudy.SynopticalRecord.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        portId_ = 0L;
+
+        portName_ = "";
+
+        operationType_ = "";
+
+        distance_ = "";
+
+        speed_ = "";
+
+        runningHours_ = "";
+
+        inPortHours_ = "";
+
+        timeOfSunrise_ = "";
+
+        timeOfSunset_ = "";
+
+        hwTideFrom_ = "";
+
+        hwTideTo_ = "";
+
+        hwTideTimeFrom_ = "";
+
+        hwTideTimeTo_ = "";
+
+        lwTideFrom_ = "";
+
+        lwTideTo_ = "";
+
+        lwTideTimeFrom_ = "";
+
+        lwTideTimeTo_ = "";
+
+        specificGravity_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_SynopticalRecord_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalRecord getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.SynopticalRecord.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalRecord build() {
+        com.cpdss.common.generated.LoadableStudy.SynopticalRecord result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalRecord buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.SynopticalRecord result =
+            new com.cpdss.common.generated.LoadableStudy.SynopticalRecord(this);
+        result.id_ = id_;
+        result.portId_ = portId_;
+        result.portName_ = portName_;
+        result.operationType_ = operationType_;
+        result.distance_ = distance_;
+        result.speed_ = speed_;
+        result.runningHours_ = runningHours_;
+        result.inPortHours_ = inPortHours_;
+        result.timeOfSunrise_ = timeOfSunrise_;
+        result.timeOfSunset_ = timeOfSunset_;
+        result.hwTideFrom_ = hwTideFrom_;
+        result.hwTideTo_ = hwTideTo_;
+        result.hwTideTimeFrom_ = hwTideTimeFrom_;
+        result.hwTideTimeTo_ = hwTideTimeTo_;
+        result.lwTideFrom_ = lwTideFrom_;
+        result.lwTideTo_ = lwTideTo_;
+        result.lwTideTimeFrom_ = lwTideTimeFrom_;
+        result.lwTideTimeTo_ = lwTideTimeTo_;
+        result.specificGravity_ = specificGravity_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.SynopticalRecord) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.SynopticalRecord) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.LoadableStudy.SynopticalRecord other) {
+        if (other == com.cpdss.common.generated.LoadableStudy.SynopticalRecord.getDefaultInstance())
+          return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (other.getPortId() != 0L) {
+          setPortId(other.getPortId());
+        }
+        if (!other.getPortName().isEmpty()) {
+          portName_ = other.portName_;
+          onChanged();
+        }
+        if (!other.getOperationType().isEmpty()) {
+          operationType_ = other.operationType_;
+          onChanged();
+        }
+        if (!other.getDistance().isEmpty()) {
+          distance_ = other.distance_;
+          onChanged();
+        }
+        if (!other.getSpeed().isEmpty()) {
+          speed_ = other.speed_;
+          onChanged();
+        }
+        if (!other.getRunningHours().isEmpty()) {
+          runningHours_ = other.runningHours_;
+          onChanged();
+        }
+        if (!other.getInPortHours().isEmpty()) {
+          inPortHours_ = other.inPortHours_;
+          onChanged();
+        }
+        if (!other.getTimeOfSunrise().isEmpty()) {
+          timeOfSunrise_ = other.timeOfSunrise_;
+          onChanged();
+        }
+        if (!other.getTimeOfSunset().isEmpty()) {
+          timeOfSunset_ = other.timeOfSunset_;
+          onChanged();
+        }
+        if (!other.getHwTideFrom().isEmpty()) {
+          hwTideFrom_ = other.hwTideFrom_;
+          onChanged();
+        }
+        if (!other.getHwTideTo().isEmpty()) {
+          hwTideTo_ = other.hwTideTo_;
+          onChanged();
+        }
+        if (!other.getHwTideTimeFrom().isEmpty()) {
+          hwTideTimeFrom_ = other.hwTideTimeFrom_;
+          onChanged();
+        }
+        if (!other.getHwTideTimeTo().isEmpty()) {
+          hwTideTimeTo_ = other.hwTideTimeTo_;
+          onChanged();
+        }
+        if (!other.getLwTideFrom().isEmpty()) {
+          lwTideFrom_ = other.lwTideFrom_;
+          onChanged();
+        }
+        if (!other.getLwTideTo().isEmpty()) {
+          lwTideTo_ = other.lwTideTo_;
+          onChanged();
+        }
+        if (!other.getLwTideTimeFrom().isEmpty()) {
+          lwTideTimeFrom_ = other.lwTideTimeFrom_;
+          onChanged();
+        }
+        if (!other.getLwTideTimeTo().isEmpty()) {
+          lwTideTimeTo_ = other.lwTideTimeTo_;
+          onChanged();
+        }
+        if (!other.getSpecificGravity().isEmpty()) {
+          specificGravity_ = other.specificGravity_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.SynopticalRecord parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.SynopticalRecord) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long portId_;
+      /**
+       * <code>int64 portId = 2;</code>
+       *
+       * @return The portId.
+       */
+      public long getPortId() {
+        return portId_;
+      }
+      /**
+       * <code>int64 portId = 2;</code>
+       *
+       * @param value The portId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortId(long value) {
+
+        portId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portId = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortId() {
+
+        portId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object portName_ = "";
+      /**
+       * <code>string portName = 3;</code>
+       *
+       * @return The portName.
+       */
+      public java.lang.String getPortName() {
+        java.lang.Object ref = portName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          portName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string portName = 3;</code>
+       *
+       * @return The bytes for portName.
+       */
+      public com.google.protobuf.ByteString getPortNameBytes() {
+        java.lang.Object ref = portName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          portName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string portName = 3;</code>
+       *
+       * @param value The portName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        portName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string portName = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortName() {
+
+        portName_ = getDefaultInstance().getPortName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string portName = 3;</code>
+       *
+       * @param value The bytes for portName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        portName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object operationType_ = "";
+      /**
+       * <code>string operationType = 4;</code>
+       *
+       * @return The operationType.
+       */
+      public java.lang.String getOperationType() {
+        java.lang.Object ref = operationType_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          operationType_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string operationType = 4;</code>
+       *
+       * @return The bytes for operationType.
+       */
+      public com.google.protobuf.ByteString getOperationTypeBytes() {
+        java.lang.Object ref = operationType_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          operationType_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string operationType = 4;</code>
+       *
+       * @param value The operationType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOperationType(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        operationType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string operationType = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearOperationType() {
+
+        operationType_ = getDefaultInstance().getOperationType();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string operationType = 4;</code>
+       *
+       * @param value The bytes for operationType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOperationTypeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        operationType_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object distance_ = "";
+      /**
+       * <code>string distance = 5;</code>
+       *
+       * @return The distance.
+       */
+      public java.lang.String getDistance() {
+        java.lang.Object ref = distance_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          distance_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string distance = 5;</code>
+       *
+       * @return The bytes for distance.
+       */
+      public com.google.protobuf.ByteString getDistanceBytes() {
+        java.lang.Object ref = distance_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          distance_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string distance = 5;</code>
+       *
+       * @param value The distance to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDistance(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        distance_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string distance = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDistance() {
+
+        distance_ = getDefaultInstance().getDistance();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string distance = 5;</code>
+       *
+       * @param value The bytes for distance to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDistanceBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        distance_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object speed_ = "";
+      /**
+       * <code>string speed = 6;</code>
+       *
+       * @return The speed.
+       */
+      public java.lang.String getSpeed() {
+        java.lang.Object ref = speed_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          speed_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string speed = 6;</code>
+       *
+       * @return The bytes for speed.
+       */
+      public com.google.protobuf.ByteString getSpeedBytes() {
+        java.lang.Object ref = speed_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          speed_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string speed = 6;</code>
+       *
+       * @param value The speed to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSpeed(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        speed_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string speed = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearSpeed() {
+
+        speed_ = getDefaultInstance().getSpeed();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string speed = 6;</code>
+       *
+       * @param value The bytes for speed to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSpeedBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        speed_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object runningHours_ = "";
+      /**
+       * <code>string runningHours = 7;</code>
+       *
+       * @return The runningHours.
+       */
+      public java.lang.String getRunningHours() {
+        java.lang.Object ref = runningHours_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          runningHours_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string runningHours = 7;</code>
+       *
+       * @return The bytes for runningHours.
+       */
+      public com.google.protobuf.ByteString getRunningHoursBytes() {
+        java.lang.Object ref = runningHours_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          runningHours_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string runningHours = 7;</code>
+       *
+       * @param value The runningHours to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRunningHours(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        runningHours_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string runningHours = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearRunningHours() {
+
+        runningHours_ = getDefaultInstance().getRunningHours();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string runningHours = 7;</code>
+       *
+       * @param value The bytes for runningHours to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRunningHoursBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        runningHours_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object inPortHours_ = "";
+      /**
+       * <code>string inPortHours = 8;</code>
+       *
+       * @return The inPortHours.
+       */
+      public java.lang.String getInPortHours() {
+        java.lang.Object ref = inPortHours_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          inPortHours_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string inPortHours = 8;</code>
+       *
+       * @return The bytes for inPortHours.
+       */
+      public com.google.protobuf.ByteString getInPortHoursBytes() {
+        java.lang.Object ref = inPortHours_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          inPortHours_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string inPortHours = 8;</code>
+       *
+       * @param value The inPortHours to set.
+       * @return This builder for chaining.
+       */
+      public Builder setInPortHours(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        inPortHours_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string inPortHours = 8;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearInPortHours() {
+
+        inPortHours_ = getDefaultInstance().getInPortHours();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string inPortHours = 8;</code>
+       *
+       * @param value The bytes for inPortHours to set.
+       * @return This builder for chaining.
+       */
+      public Builder setInPortHoursBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        inPortHours_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object timeOfSunrise_ = "";
+      /**
+       * <code>string timeOfSunrise = 9;</code>
+       *
+       * @return The timeOfSunrise.
+       */
+      public java.lang.String getTimeOfSunrise() {
+        java.lang.Object ref = timeOfSunrise_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          timeOfSunrise_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string timeOfSunrise = 9;</code>
+       *
+       * @return The bytes for timeOfSunrise.
+       */
+      public com.google.protobuf.ByteString getTimeOfSunriseBytes() {
+        java.lang.Object ref = timeOfSunrise_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          timeOfSunrise_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string timeOfSunrise = 9;</code>
+       *
+       * @param value The timeOfSunrise to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTimeOfSunrise(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        timeOfSunrise_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string timeOfSunrise = 9;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTimeOfSunrise() {
+
+        timeOfSunrise_ = getDefaultInstance().getTimeOfSunrise();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string timeOfSunrise = 9;</code>
+       *
+       * @param value The bytes for timeOfSunrise to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTimeOfSunriseBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        timeOfSunrise_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object timeOfSunset_ = "";
+      /**
+       * <code>string timeOfSunset = 10;</code>
+       *
+       * @return The timeOfSunset.
+       */
+      public java.lang.String getTimeOfSunset() {
+        java.lang.Object ref = timeOfSunset_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          timeOfSunset_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string timeOfSunset = 10;</code>
+       *
+       * @return The bytes for timeOfSunset.
+       */
+      public com.google.protobuf.ByteString getTimeOfSunsetBytes() {
+        java.lang.Object ref = timeOfSunset_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          timeOfSunset_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string timeOfSunset = 10;</code>
+       *
+       * @param value The timeOfSunset to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTimeOfSunset(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        timeOfSunset_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string timeOfSunset = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTimeOfSunset() {
+
+        timeOfSunset_ = getDefaultInstance().getTimeOfSunset();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string timeOfSunset = 10;</code>
+       *
+       * @param value The bytes for timeOfSunset to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTimeOfSunsetBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        timeOfSunset_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object hwTideFrom_ = "";
+      /**
+       * <code>string hwTideFrom = 11;</code>
+       *
+       * @return The hwTideFrom.
+       */
+      public java.lang.String getHwTideFrom() {
+        java.lang.Object ref = hwTideFrom_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hwTideFrom_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string hwTideFrom = 11;</code>
+       *
+       * @return The bytes for hwTideFrom.
+       */
+      public com.google.protobuf.ByteString getHwTideFromBytes() {
+        java.lang.Object ref = hwTideFrom_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          hwTideFrom_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string hwTideFrom = 11;</code>
+       *
+       * @param value The hwTideFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideFrom(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        hwTideFrom_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideFrom = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearHwTideFrom() {
+
+        hwTideFrom_ = getDefaultInstance().getHwTideFrom();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideFrom = 11;</code>
+       *
+       * @param value The bytes for hwTideFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideFromBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        hwTideFrom_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object hwTideTo_ = "";
+      /**
+       * <code>string hwTideTo = 12;</code>
+       *
+       * @return The hwTideTo.
+       */
+      public java.lang.String getHwTideTo() {
+        java.lang.Object ref = hwTideTo_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hwTideTo_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string hwTideTo = 12;</code>
+       *
+       * @return The bytes for hwTideTo.
+       */
+      public com.google.protobuf.ByteString getHwTideToBytes() {
+        java.lang.Object ref = hwTideTo_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          hwTideTo_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string hwTideTo = 12;</code>
+       *
+       * @param value The hwTideTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideTo(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        hwTideTo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideTo = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearHwTideTo() {
+
+        hwTideTo_ = getDefaultInstance().getHwTideTo();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideTo = 12;</code>
+       *
+       * @param value The bytes for hwTideTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideToBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        hwTideTo_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object hwTideTimeFrom_ = "";
+      /**
+       * <code>string hwTideTimeFrom = 13;</code>
+       *
+       * @return The hwTideTimeFrom.
+       */
+      public java.lang.String getHwTideTimeFrom() {
+        java.lang.Object ref = hwTideTimeFrom_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hwTideTimeFrom_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string hwTideTimeFrom = 13;</code>
+       *
+       * @return The bytes for hwTideTimeFrom.
+       */
+      public com.google.protobuf.ByteString getHwTideTimeFromBytes() {
+        java.lang.Object ref = hwTideTimeFrom_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          hwTideTimeFrom_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string hwTideTimeFrom = 13;</code>
+       *
+       * @param value The hwTideTimeFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideTimeFrom(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        hwTideTimeFrom_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideTimeFrom = 13;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearHwTideTimeFrom() {
+
+        hwTideTimeFrom_ = getDefaultInstance().getHwTideTimeFrom();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideTimeFrom = 13;</code>
+       *
+       * @param value The bytes for hwTideTimeFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideTimeFromBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        hwTideTimeFrom_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object hwTideTimeTo_ = "";
+      /**
+       * <code>string hwTideTimeTo = 14;</code>
+       *
+       * @return The hwTideTimeTo.
+       */
+      public java.lang.String getHwTideTimeTo() {
+        java.lang.Object ref = hwTideTimeTo_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hwTideTimeTo_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string hwTideTimeTo = 14;</code>
+       *
+       * @return The bytes for hwTideTimeTo.
+       */
+      public com.google.protobuf.ByteString getHwTideTimeToBytes() {
+        java.lang.Object ref = hwTideTimeTo_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          hwTideTimeTo_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string hwTideTimeTo = 14;</code>
+       *
+       * @param value The hwTideTimeTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideTimeTo(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        hwTideTimeTo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideTimeTo = 14;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearHwTideTimeTo() {
+
+        hwTideTimeTo_ = getDefaultInstance().getHwTideTimeTo();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideTimeTo = 14;</code>
+       *
+       * @param value The bytes for hwTideTimeTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideTimeToBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        hwTideTimeTo_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lwTideFrom_ = "";
+      /**
+       * <code>string lwTideFrom = 15;</code>
+       *
+       * @return The lwTideFrom.
+       */
+      public java.lang.String getLwTideFrom() {
+        java.lang.Object ref = lwTideFrom_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lwTideFrom_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string lwTideFrom = 15;</code>
+       *
+       * @return The bytes for lwTideFrom.
+       */
+      public com.google.protobuf.ByteString getLwTideFromBytes() {
+        java.lang.Object ref = lwTideFrom_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          lwTideFrom_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string lwTideFrom = 15;</code>
+       *
+       * @param value The lwTideFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideFrom(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        lwTideFrom_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideFrom = 15;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLwTideFrom() {
+
+        lwTideFrom_ = getDefaultInstance().getLwTideFrom();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideFrom = 15;</code>
+       *
+       * @param value The bytes for lwTideFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideFromBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        lwTideFrom_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lwTideTo_ = "";
+      /**
+       * <code>string lwTideTo = 16;</code>
+       *
+       * @return The lwTideTo.
+       */
+      public java.lang.String getLwTideTo() {
+        java.lang.Object ref = lwTideTo_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lwTideTo_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string lwTideTo = 16;</code>
+       *
+       * @return The bytes for lwTideTo.
+       */
+      public com.google.protobuf.ByteString getLwTideToBytes() {
+        java.lang.Object ref = lwTideTo_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          lwTideTo_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string lwTideTo = 16;</code>
+       *
+       * @param value The lwTideTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideTo(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        lwTideTo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideTo = 16;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLwTideTo() {
+
+        lwTideTo_ = getDefaultInstance().getLwTideTo();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideTo = 16;</code>
+       *
+       * @param value The bytes for lwTideTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideToBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        lwTideTo_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lwTideTimeFrom_ = "";
+      /**
+       * <code>string lwTideTimeFrom = 17;</code>
+       *
+       * @return The lwTideTimeFrom.
+       */
+      public java.lang.String getLwTideTimeFrom() {
+        java.lang.Object ref = lwTideTimeFrom_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lwTideTimeFrom_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string lwTideTimeFrom = 17;</code>
+       *
+       * @return The bytes for lwTideTimeFrom.
+       */
+      public com.google.protobuf.ByteString getLwTideTimeFromBytes() {
+        java.lang.Object ref = lwTideTimeFrom_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          lwTideTimeFrom_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string lwTideTimeFrom = 17;</code>
+       *
+       * @param value The lwTideTimeFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideTimeFrom(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        lwTideTimeFrom_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideTimeFrom = 17;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLwTideTimeFrom() {
+
+        lwTideTimeFrom_ = getDefaultInstance().getLwTideTimeFrom();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideTimeFrom = 17;</code>
+       *
+       * @param value The bytes for lwTideTimeFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideTimeFromBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        lwTideTimeFrom_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lwTideTimeTo_ = "";
+      /**
+       * <code>string lwTideTimeTo = 18;</code>
+       *
+       * @return The lwTideTimeTo.
+       */
+      public java.lang.String getLwTideTimeTo() {
+        java.lang.Object ref = lwTideTimeTo_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lwTideTimeTo_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string lwTideTimeTo = 18;</code>
+       *
+       * @return The bytes for lwTideTimeTo.
+       */
+      public com.google.protobuf.ByteString getLwTideTimeToBytes() {
+        java.lang.Object ref = lwTideTimeTo_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          lwTideTimeTo_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string lwTideTimeTo = 18;</code>
+       *
+       * @param value The lwTideTimeTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideTimeTo(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        lwTideTimeTo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideTimeTo = 18;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLwTideTimeTo() {
+
+        lwTideTimeTo_ = getDefaultInstance().getLwTideTimeTo();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideTimeTo = 18;</code>
+       *
+       * @param value The bytes for lwTideTimeTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideTimeToBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        lwTideTimeTo_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object specificGravity_ = "";
+      /**
+       * <code>string specificGravity = 19;</code>
+       *
+       * @return The specificGravity.
+       */
+      public java.lang.String getSpecificGravity() {
+        java.lang.Object ref = specificGravity_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          specificGravity_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string specificGravity = 19;</code>
+       *
+       * @return The bytes for specificGravity.
+       */
+      public com.google.protobuf.ByteString getSpecificGravityBytes() {
+        java.lang.Object ref = specificGravity_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          specificGravity_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string specificGravity = 19;</code>
+       *
+       * @param value The specificGravity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSpecificGravity(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        specificGravity_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string specificGravity = 19;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearSpecificGravity() {
+
+        specificGravity_ = getDefaultInstance().getSpecificGravity();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string specificGravity = 19;</code>
+       *
+       * @param value The bytes for specificGravity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSpecificGravityBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        specificGravity_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:SynopticalRecord)
+    }
+
+    // @@protoc_insertion_point(class_scope:SynopticalRecord)
+    private static final com.cpdss.common.generated.LoadableStudy.SynopticalRecord DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.SynopticalRecord();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalRecord getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<SynopticalRecord> PARSER =
+        new com.google.protobuf.AbstractParser<SynopticalRecord>() {
+          @java.lang.Override
+          public SynopticalRecord parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new SynopticalRecord(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<SynopticalRecord> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<SynopticalRecord> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.SynopticalRecord getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface SynopticalTableRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:SynopticalTableRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 loadableStudyId = 1;</code>
+     *
+     * @return The loadableStudyId.
+     */
+    long getLoadableStudyId();
+  }
+  /** Protobuf type {@code SynopticalTableRequest} */
+  public static final class SynopticalTableRequest extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:SynopticalTableRequest)
+      SynopticalTableRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use SynopticalTableRequest.newBuilder() to construct.
+    private SynopticalTableRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private SynopticalTableRequest() {}
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new SynopticalTableRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private SynopticalTableRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                loadableStudyId_ = input.readInt64();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_SynopticalTableRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_SynopticalTableRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class,
+              com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.Builder.class);
+    }
+
+    public static final int LOADABLESTUDYID_FIELD_NUMBER = 1;
+    private long loadableStudyId_;
+    /**
+     * <code>int64 loadableStudyId = 1;</code>
+     *
+     * @return The loadableStudyId.
+     */
+    public long getLoadableStudyId() {
+      return loadableStudyId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (loadableStudyId_ != 0L) {
+        output.writeInt64(1, loadableStudyId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (loadableStudyId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, loadableStudyId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest other =
+          (com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest) obj;
+
+      if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + LOADABLESTUDYID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest parseFrom(
+        byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code SynopticalTableRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:SynopticalTableRequest)
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SynopticalTableRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SynopticalTableRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class,
+                com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.Builder.class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        loadableStudyId_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SynopticalTableRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest build() {
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest result =
+            new com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest(this);
+        result.loadableStudyId_ = loadableStudyId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest other) {
+        if (other
+            == com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.getDefaultInstance())
+          return this;
+        if (other.getLoadableStudyId() != 0L) {
+          setLoadableStudyId(other.getLoadableStudyId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long loadableStudyId_;
+      /**
+       * <code>int64 loadableStudyId = 1;</code>
+       *
+       * @return The loadableStudyId.
+       */
+      public long getLoadableStudyId() {
+        return loadableStudyId_;
+      }
+      /**
+       * <code>int64 loadableStudyId = 1;</code>
+       *
+       * @param value The loadableStudyId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadableStudyId(long value) {
+
+        loadableStudyId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadableStudyId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadableStudyId() {
+
+        loadableStudyId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:SynopticalTableRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:SynopticalTableRequest)
+    private static final com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<SynopticalTableRequest> PARSER =
+        new com.google.protobuf.AbstractParser<SynopticalTableRequest>() {
+          @java.lang.Override
+          public SynopticalTableRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new SynopticalTableRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<SynopticalTableRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<SynopticalTableRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface SynopticalTableReplyOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:SynopticalTableReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+    java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalRecord>
+        getSynopticalRecordsList();
+    /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+    com.cpdss.common.generated.LoadableStudy.SynopticalRecord getSynopticalRecords(int index);
+    /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+    int getSynopticalRecordsCount();
+    /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+    java.util.List<? extends com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder>
+        getSynopticalRecordsOrBuilderList();
+    /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+    com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder
+        getSynopticalRecordsOrBuilder(int index);
+  }
+  /** Protobuf type {@code SynopticalTableReply} */
+  public static final class SynopticalTableReply extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:SynopticalTableReply)
+      SynopticalTableReplyOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use SynopticalTableReply.newBuilder() to construct.
+    private SynopticalTableReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private SynopticalTableReply() {
+      synopticalRecords_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new SynopticalTableReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private SynopticalTableReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            case 18:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  synopticalRecords_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.LoadableStudy.SynopticalRecord>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                synopticalRecords_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.LoadableStudy.SynopticalRecord.parser(),
+                        extensionRegistry));
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          synopticalRecords_ = java.util.Collections.unmodifiableList(synopticalRecords_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_SynopticalTableReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_SynopticalTableReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.class,
+              com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.Builder.class);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    public static final int SYNOPTICALRECORDS_FIELD_NUMBER = 2;
+    private java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalRecord>
+        synopticalRecords_;
+    /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+    public java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalRecord>
+        getSynopticalRecordsList() {
+      return synopticalRecords_;
+    }
+    /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder>
+        getSynopticalRecordsOrBuilderList() {
+      return synopticalRecords_;
+    }
+    /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+    public int getSynopticalRecordsCount() {
+      return synopticalRecords_.size();
+    }
+    /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+    public com.cpdss.common.generated.LoadableStudy.SynopticalRecord getSynopticalRecords(
+        int index) {
+      return synopticalRecords_.get(index);
+    }
+    /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+    public com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder
+        getSynopticalRecordsOrBuilder(int index) {
+      return synopticalRecords_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (responseStatus_ != null) {
+        output.writeMessage(1, getResponseStatus());
+      }
+      for (int i = 0; i < synopticalRecords_.size(); i++) {
+        output.writeMessage(2, synopticalRecords_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
+      }
+      for (int i = 0; i < synopticalRecords_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(2, synopticalRecords_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.SynopticalTableReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.SynopticalTableReply other =
+          (com.cpdss.common.generated.LoadableStudy.SynopticalTableReply) obj;
+
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (!getSynopticalRecordsList().equals(other.getSynopticalRecordsList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      if (getSynopticalRecordsCount() > 0) {
+        hash = (37 * hash) + SYNOPTICALRECORDS_FIELD_NUMBER;
+        hash = (53 * hash) + getSynopticalRecordsList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableReply parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableReply parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableReply parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableReply parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableReply parseFrom(
+        byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableReply parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableReply parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableReply parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableReply parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableReply parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableReply parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableReply parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code SynopticalTableReply} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:SynopticalTableReply)
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SynopticalTableReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SynopticalTableReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.class,
+                com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getSynopticalRecordsFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        if (synopticalRecordsBuilder_ == null) {
+          synopticalRecords_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          synopticalRecordsBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SynopticalTableReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalTableReply
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalTableReply build() {
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableReply result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalTableReply buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableReply result =
+            new com.cpdss.common.generated.LoadableStudy.SynopticalTableReply(this);
+        int from_bitField0_ = bitField0_;
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        if (synopticalRecordsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            synopticalRecords_ = java.util.Collections.unmodifiableList(synopticalRecords_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.synopticalRecords_ = synopticalRecords_;
+        } else {
+          result.synopticalRecords_ = synopticalRecordsBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.SynopticalTableReply) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.SynopticalTableReply) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableReply other) {
+        if (other
+            == com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.getDefaultInstance())
+          return this;
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        if (synopticalRecordsBuilder_ == null) {
+          if (!other.synopticalRecords_.isEmpty()) {
+            if (synopticalRecords_.isEmpty()) {
+              synopticalRecords_ = other.synopticalRecords_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureSynopticalRecordsIsMutable();
+              synopticalRecords_.addAll(other.synopticalRecords_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.synopticalRecords_.isEmpty()) {
+            if (synopticalRecordsBuilder_.isEmpty()) {
+              synopticalRecordsBuilder_.dispose();
+              synopticalRecordsBuilder_ = null;
+              synopticalRecords_ = other.synopticalRecords_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              synopticalRecordsBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getSynopticalRecordsFieldBuilder()
+                      : null;
+            } else {
+              synopticalRecordsBuilder_.addAllMessages(other.synopticalRecords_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableReply parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.SynopticalTableReply)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalRecord>
+          synopticalRecords_ = java.util.Collections.emptyList();
+
+      private void ensureSynopticalRecordsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          synopticalRecords_ =
+              new java.util.ArrayList<com.cpdss.common.generated.LoadableStudy.SynopticalRecord>(
+                  synopticalRecords_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.SynopticalRecord,
+              com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder,
+              com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder>
+          synopticalRecordsBuilder_;
+
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalRecord>
+          getSynopticalRecordsList() {
+        if (synopticalRecordsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(synopticalRecords_);
+        } else {
+          return synopticalRecordsBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public int getSynopticalRecordsCount() {
+        if (synopticalRecordsBuilder_ == null) {
+          return synopticalRecords_.size();
+        } else {
+          return synopticalRecordsBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalRecord getSynopticalRecords(
+          int index) {
+        if (synopticalRecordsBuilder_ == null) {
+          return synopticalRecords_.get(index);
+        } else {
+          return synopticalRecordsBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public Builder setSynopticalRecords(
+          int index, com.cpdss.common.generated.LoadableStudy.SynopticalRecord value) {
+        if (synopticalRecordsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureSynopticalRecordsIsMutable();
+          synopticalRecords_.set(index, value);
+          onChanged();
+        } else {
+          synopticalRecordsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public Builder setSynopticalRecords(
+          int index,
+          com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builderForValue) {
+        if (synopticalRecordsBuilder_ == null) {
+          ensureSynopticalRecordsIsMutable();
+          synopticalRecords_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          synopticalRecordsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public Builder addSynopticalRecords(
+          com.cpdss.common.generated.LoadableStudy.SynopticalRecord value) {
+        if (synopticalRecordsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureSynopticalRecordsIsMutable();
+          synopticalRecords_.add(value);
+          onChanged();
+        } else {
+          synopticalRecordsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public Builder addSynopticalRecords(
+          int index, com.cpdss.common.generated.LoadableStudy.SynopticalRecord value) {
+        if (synopticalRecordsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureSynopticalRecordsIsMutable();
+          synopticalRecords_.add(index, value);
+          onChanged();
+        } else {
+          synopticalRecordsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public Builder addSynopticalRecords(
+          com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builderForValue) {
+        if (synopticalRecordsBuilder_ == null) {
+          ensureSynopticalRecordsIsMutable();
+          synopticalRecords_.add(builderForValue.build());
+          onChanged();
+        } else {
+          synopticalRecordsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public Builder addSynopticalRecords(
+          int index,
+          com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builderForValue) {
+        if (synopticalRecordsBuilder_ == null) {
+          ensureSynopticalRecordsIsMutable();
+          synopticalRecords_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          synopticalRecordsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public Builder addAllSynopticalRecords(
+          java.lang.Iterable<? extends com.cpdss.common.generated.LoadableStudy.SynopticalRecord>
+              values) {
+        if (synopticalRecordsBuilder_ == null) {
+          ensureSynopticalRecordsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, synopticalRecords_);
+          onChanged();
+        } else {
+          synopticalRecordsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public Builder clearSynopticalRecords() {
+        if (synopticalRecordsBuilder_ == null) {
+          synopticalRecords_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          synopticalRecordsBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public Builder removeSynopticalRecords(int index) {
+        if (synopticalRecordsBuilder_ == null) {
+          ensureSynopticalRecordsIsMutable();
+          synopticalRecords_.remove(index);
+          onChanged();
+        } else {
+          synopticalRecordsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder
+          getSynopticalRecordsBuilder(int index) {
+        return getSynopticalRecordsFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder
+          getSynopticalRecordsOrBuilder(int index) {
+        if (synopticalRecordsBuilder_ == null) {
+          return synopticalRecords_.get(index);
+        } else {
+          return synopticalRecordsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder>
+          getSynopticalRecordsOrBuilderList() {
+        if (synopticalRecordsBuilder_ != null) {
+          return synopticalRecordsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(synopticalRecords_);
+        }
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder
+          addSynopticalRecordsBuilder() {
+        return getSynopticalRecordsFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.LoadableStudy.SynopticalRecord.getDefaultInstance());
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder
+          addSynopticalRecordsBuilder(int index) {
+        return getSynopticalRecordsFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.LoadableStudy.SynopticalRecord.getDefaultInstance());
+      }
+      /** <code>repeated .SynopticalRecord synopticalRecords = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder>
+          getSynopticalRecordsBuilderList() {
+        return getSynopticalRecordsFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.SynopticalRecord,
+              com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder,
+              com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder>
+          getSynopticalRecordsFieldBuilder() {
+        if (synopticalRecordsBuilder_ == null) {
+          synopticalRecordsBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.LoadableStudy.SynopticalRecord,
+                  com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder,
+                  com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder>(
+                  synopticalRecords_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          synopticalRecords_ = null;
+        }
+        return synopticalRecordsBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:SynopticalTableReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:SynopticalTableReply)
+    private static final com.cpdss.common.generated.LoadableStudy.SynopticalTableReply
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.SynopticalTableReply();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableReply
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<SynopticalTableReply> PARSER =
+        new com.google.protobuf.AbstractParser<SynopticalTableReply>() {
+          @java.lang.Override
+          public SynopticalTableReply parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new SynopticalTableReply(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<SynopticalTableReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<SynopticalTableReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.SynopticalTableReply
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_AlgoStatusRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -55602,6 +60194,18 @@ public final class LoadableStudy {
       internal_static_LoadablePatternCommingleDetailsReply_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_LoadablePatternCommingleDetailsReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_SynopticalRecord_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_SynopticalRecord_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_SynopticalTableRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_SynopticalTableRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_SynopticalTableReply_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_SynopticalTableReply_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -55786,58 +60390,74 @@ public final class LoadableStudy {
           + " \001(\t\022\026\n\016cargo1Quantity\030\t \001(\t\022\026\n\016cargo2Qu"
           + "antity\030\n \001(\t\022\030\n\020cargo1Percentage\030\013 \001(\t\022\030"
           + "\n\020cargo2Percentage\030\014 \001(\t\022\'\n\016responseStat"
-          + "us\030\r \001(\0132\017.ResponseStatus2\310\017\n\024LoadableSt"
-          + "udyService\022,\n\nSaveVoyage\022\016.VoyageRequest"
-          + "\032\014.VoyageReply\"\000\0228\n\022GetVoyagesByVessel\022\016"
-          + ".VoyageRequest\032\020.VoyageListReply\"\000\022J\n\024Sa"
-          + "veLoadableQuantity\022\030.LoadableQuantityReq"
-          + "uest\032\026.LoadableQuantityReply\"\000\022T\n$FindLo"
-          + "adableStudiesByVesselAndVoyage\022\025.Loadabl"
-          + "eStudyRequest\032\023.LoadableStudyReply\"\000\022@\n\021"
-          + "SaveLoadableStudy\022\024.LoadableStudyDetail\032"
-          + "\023.LoadableStudyReply\"\000\022G\n\023SaveCargoNomin"
-          + "ation\022\027.CargoNominationRequest\032\025.CargoNo"
-          + "minationReply\"\000\022J\n\034GetLoadableStudyPortR"
-          + "otation\022\024.PortRotationRequest\032\022.PortRota"
-          + "tionReply\"\000\022J\n\026GetCargoNominationById\022\027."
-          + "CargoNominationRequest\032\025.CargoNomination"
-          + "Reply\"\000\022I\n\023GetValveSegregation\022\030.ValveSe"
-          + "gregationRequest\032\026.ValveSegregationReply"
-          + "\"\000\022J\n\023getLoadableQuantity\022\026.LoadableQuan"
-          + "tityReply\032\031.LoadableQuantityResponse\"\000\022J"
-          + "\n\035SaveLoadableStudyPortRotation\022\023.PortRo"
-          + "tationDetail\032\022.PortRotationReply\"\000\022I\n\025De"
-          + "leteCargoNomination\022\027.CargoNominationReq"
-          + "uest\032\025.CargoNominationReply\"\000\022B\n\024SaveDis"
-          + "chargingPorts\022\024.PortRotationRequest\032\022.Po"
-          + "rtRotationReply\"\000\022N\n GetPortRotationByLo"
-          + "adableStudyId\022\024.PortRotationRequest\032\022.Po"
-          + "rtRotationReply\"\000\022C\n\023DeleteLoadableStudy"
-          + "\022\025.LoadableStudyRequest\032\023.LoadableStudyR"
-          + "eply\"\000\022@\n\022DeletePortRotation\022\024.PortRotat"
-          + "ionRequest\032\022.PortRotationReply\"\000\022C\n\021GetO"
-          + "nHandQuantity\022\026.OnHandQuantityRequest\032\024."
-          + "OnHandQuantityReply\"\000\022C\n\022SaveOnHandQuant"
-          + "ity\022\025.OnHandQuantityDetail\032\024.OnHandQuant"
-          + "ityReply\"\000\022M\n\031GetLoadablePatternDetails\022"
-          + "\027.LoadablePatternRequest\032\025.LoadablePatte"
-          + "rnReply\"\000\022O\n\025GetPurposeOfCommingle\022\032.Pur"
-          + "poseOfCommingleRequest\032\030.PurposeOfCommin"
-          + "gleReply\"\000\022C\n\021GetCommingleCargo\022\026.Commin"
-          + "gleCargoRequest\032\024.CommingleCargoReply\"\000\022"
-          + "D\n\022SaveCommingleCargo\022\026.CommingleCargoRe"
-          + "quest\032\024.CommingleCargoReply\"\000\022v\n\"GetLoad"
-          + "ablePatternCommingleDetails\022\'.LoadablePa"
-          + "tternCommingleDetailsRequest\032%.LoadableP"
-          + "atternCommingleDetailsReply\"\000\0226\n\030Generat"
-          + "eLoadablePatterns\022\014.AlgoRequest\032\n.AlgoRe"
-          + "ply\"\000\022F\n\022GetOnBoardQuantity\022\027.OnBoardQua"
-          + "ntityRequest\032\025.OnBoardQuantityReply\"\000\022F\n"
-          + "\023SaveOnBoardQuantity\022\026.OnBoardQuantityDe"
-          + "tail\032\025.OnBoardQuantityReply\"\000\022E\n\033SaveAlg"
-          + "oLoadableStudyStatus\022\022.AlgoStatusRequest"
-          + "\032\020.AlgoStatusReply\"\000B\036\n\032com.cpdss.common"
-          + ".generatedP\000b\006proto3"
+          + "us\030\r \001(\0132\017.ResponseStatus\"\221\003\n\020Synoptical"
+          + "Record\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\020\n\010po"
+          + "rtName\030\003 \001(\t\022\025\n\roperationType\030\004 \001(\t\022\020\n\010d"
+          + "istance\030\005 \001(\t\022\r\n\005speed\030\006 \001(\t\022\024\n\014runningH"
+          + "ours\030\007 \001(\t\022\023\n\013inPortHours\030\010 \001(\t\022\025\n\rtimeO"
+          + "fSunrise\030\t \001(\t\022\024\n\014timeOfSunset\030\n \001(\t\022\022\n\n"
+          + "hwTideFrom\030\013 \001(\t\022\020\n\010hwTideTo\030\014 \001(\t\022\026\n\016hw"
+          + "TideTimeFrom\030\r \001(\t\022\024\n\014hwTideTimeTo\030\016 \001(\t"
+          + "\022\022\n\nlwTideFrom\030\017 \001(\t\022\020\n\010lwTideTo\030\020 \001(\t\022\026"
+          + "\n\016lwTideTimeFrom\030\021 \001(\t\022\024\n\014lwTideTimeTo\030\022"
+          + " \001(\t\022\027\n\017specificGravity\030\023 \001(\t\"1\n\026Synopti"
+          + "calTableRequest\022\027\n\017loadableStudyId\030\001 \001(\003"
+          + "\"m\n\024SynopticalTableReply\022\'\n\016responseStat"
+          + "us\030\001 \001(\0132\017.ResponseStatus\022,\n\021synopticalR"
+          + "ecords\030\002 \003(\0132\021.SynopticalRecord2\220\020\n\024Load"
+          + "ableStudyService\022,\n\nSaveVoyage\022\016.VoyageR"
+          + "equest\032\014.VoyageReply\"\000\0228\n\022GetVoyagesByVe"
+          + "ssel\022\016.VoyageRequest\032\020.VoyageListReply\"\000"
+          + "\022J\n\024SaveLoadableQuantity\022\030.LoadableQuant"
+          + "ityRequest\032\026.LoadableQuantityReply\"\000\022T\n$"
+          + "FindLoadableStudiesByVesselAndVoyage\022\025.L"
+          + "oadableStudyRequest\032\023.LoadableStudyReply"
+          + "\"\000\022@\n\021SaveLoadableStudy\022\024.LoadableStudyD"
+          + "etail\032\023.LoadableStudyReply\"\000\022G\n\023SaveCarg"
+          + "oNomination\022\027.CargoNominationRequest\032\025.C"
+          + "argoNominationReply\"\000\022J\n\034GetLoadableStud"
+          + "yPortRotation\022\024.PortRotationRequest\032\022.Po"
+          + "rtRotationReply\"\000\022J\n\026GetCargoNominationB"
+          + "yId\022\027.CargoNominationRequest\032\025.CargoNomi"
+          + "nationReply\"\000\022I\n\023GetValveSegregation\022\030.V"
+          + "alveSegregationRequest\032\026.ValveSegregatio"
+          + "nReply\"\000\022J\n\023getLoadableQuantity\022\026.Loadab"
+          + "leQuantityReply\032\031.LoadableQuantityRespon"
+          + "se\"\000\022J\n\035SaveLoadableStudyPortRotation\022\023."
+          + "PortRotationDetail\032\022.PortRotationReply\"\000"
+          + "\022I\n\025DeleteCargoNomination\022\027.CargoNominat"
+          + "ionRequest\032\025.CargoNominationReply\"\000\022B\n\024S"
+          + "aveDischargingPorts\022\024.PortRotationReques"
+          + "t\032\022.PortRotationReply\"\000\022N\n GetPortRotati"
+          + "onByLoadableStudyId\022\024.PortRotationReques"
+          + "t\032\022.PortRotationReply\"\000\022C\n\023DeleteLoadabl"
+          + "eStudy\022\025.LoadableStudyRequest\032\023.Loadable"
+          + "StudyReply\"\000\022@\n\022DeletePortRotation\022\024.Por"
+          + "tRotationRequest\032\022.PortRotationReply\"\000\022C"
+          + "\n\021GetOnHandQuantity\022\026.OnHandQuantityRequ"
+          + "est\032\024.OnHandQuantityReply\"\000\022C\n\022SaveOnHan"
+          + "dQuantity\022\025.OnHandQuantityDetail\032\024.OnHan"
+          + "dQuantityReply\"\000\022M\n\031GetLoadablePatternDe"
+          + "tails\022\027.LoadablePatternRequest\032\025.Loadabl"
+          + "ePatternReply\"\000\022O\n\025GetPurposeOfCommingle"
+          + "\022\032.PurposeOfCommingleRequest\032\030.PurposeOf"
+          + "CommingleReply\"\000\022C\n\021GetCommingleCargo\022\026."
+          + "CommingleCargoRequest\032\024.CommingleCargoRe"
+          + "ply\"\000\022D\n\022SaveCommingleCargo\022\026.CommingleC"
+          + "argoRequest\032\024.CommingleCargoReply\"\000\022v\n\"G"
+          + "etLoadablePatternCommingleDetails\022\'.Load"
+          + "ablePatternCommingleDetailsRequest\032%.Loa"
+          + "dablePatternCommingleDetailsReply\"\000\0226\n\030G"
+          + "enerateLoadablePatterns\022\014.AlgoRequest\032\n."
+          + "AlgoReply\"\000\022F\n\022GetOnBoardQuantity\022\027.OnBo"
+          + "ardQuantityRequest\032\025.OnBoardQuantityRepl"
+          + "y\"\000\022F\n\023SaveOnBoardQuantity\022\026.OnBoardQuan"
+          + "tityDetail\032\025.OnBoardQuantityReply\"\000\022E\n\033S"
+          + "aveAlgoLoadableStudyStatus\022\022.AlgoStatusR"
+          + "equest\032\020.AlgoStatusReply\"\000\022F\n\022GetSynopti"
+          + "calTable\022\027.SynopticalTableRequest\032\025.Syno"
+          + "pticalTableReply\"\000B\036\n\032com.cpdss.common.g"
+          + "eneratedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -56330,6 +60950,45 @@ public final class LoadableStudy {
               "Cargo1Percentage",
               "Cargo2Percentage",
               "ResponseStatus",
+            });
+    internal_static_SynopticalRecord_descriptor = getDescriptor().getMessageTypes().get(48);
+    internal_static_SynopticalRecord_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_SynopticalRecord_descriptor,
+            new java.lang.String[] {
+              "Id",
+              "PortId",
+              "PortName",
+              "OperationType",
+              "Distance",
+              "Speed",
+              "RunningHours",
+              "InPortHours",
+              "TimeOfSunrise",
+              "TimeOfSunset",
+              "HwTideFrom",
+              "HwTideTo",
+              "HwTideTimeFrom",
+              "HwTideTimeTo",
+              "LwTideFrom",
+              "LwTideTo",
+              "LwTideTimeFrom",
+              "LwTideTimeTo",
+              "SpecificGravity",
+            });
+    internal_static_SynopticalTableRequest_descriptor = getDescriptor().getMessageTypes().get(49);
+    internal_static_SynopticalTableRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_SynopticalTableRequest_descriptor,
+            new java.lang.String[] {
+              "LoadableStudyId",
+            });
+    internal_static_SynopticalTableReply_descriptor = getDescriptor().getMessageTypes().get(50);
+    internal_static_SynopticalTableReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_SynopticalTableReply_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus", "SynopticalRecords",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }

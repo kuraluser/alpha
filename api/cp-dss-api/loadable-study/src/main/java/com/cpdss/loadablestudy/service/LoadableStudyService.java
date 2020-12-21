@@ -43,6 +43,9 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.TankDetail;
 import com.cpdss.common.generated.LoadableStudy.TankList;
 import com.cpdss.common.generated.LoadableStudy.ValveSegregation;
@@ -100,6 +103,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -173,6 +177,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private CargoHistoryRepository cargoHistoryRepository;
   @Autowired private VoyageHistoryRepository voyageHistoryRepository;
   @Autowired private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
+  @Autowired private SynopticalTableRepository synopticalTableRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -180,6 +185,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String CREATED_DATE_FORMAT = "dd-MM-yyyy";
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
   private static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
+  private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String LAY_CAN_FORMAT = "dd-MM-yyyy";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
@@ -3069,5 +3075,101 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+  
+  @Override 
+  public void getSynopticalTable(SynopticalTableRequest request, StreamObserver<SynopticalTableReply> responseObserver){
+	  SynopticalTableReply.Builder replyBuilder = SynopticalTableReply.newBuilder();
+	  try {
+		  Optional<LoadableStudy> loadableStudyOpt =
+				  this.loadableStudyRepository.findById(request.getLoadableStudyId());
+		  if (!loadableStudyOpt.isPresent()) {
+			  throw new GenericServiceException(
+					  "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+		  }
+		  List<SynopticalTable> synopticalTableList =
+				  this.synopticalTableRepository.findByLoadableStudyXIdAndIsActive(
+						  request.getLoadableStudyId(), true);
+		  // fetch port master details from port master
+		  GetPortInfoByPortIdsRequest.Builder portReqBuilder = GetPortInfoByPortIdsRequest.newBuilder();
+		  buildPortIdsRequestSynoptical(portReqBuilder, synopticalTableList);
+		  PortReply portReply = portInfoGrpcService.getPortInfoByPortIds(portReqBuilder.build());
+		  if (portReply != null
+				  && portReply.getResponseStatus() != null
+				  && !SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
+			  throw new GenericServiceException(
+					  "Error in calling port service within getSynopticalTable",
+					  CommonErrorCodes.E_GEN_INTERNAL_ERR,
+					  HttpStatusCode.INTERNAL_SERVER_ERROR);
+		  }
+		  buildSynopticalTableReply(synopticalTableList, portReply, replyBuilder);
+		  replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+	  } catch (GenericServiceException e) {
+		  log.error("GenericServiceException when fetching loadable study - port data", e);
+		  replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+	  } catch (Exception e) {
+		  log.error("Exception when fetching loadable study - port data", e);
+		  replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+	  } finally {
+		  responseObserver.onNext(replyBuilder.build());
+		  responseObserver.onCompleted();
+	  }
+  }
+
+  /**
+   * Build port request to fetch port related fields from port master
+   * @param portReqBuilder
+   * @param synopticalTableList
+   */
+  private void buildPortIdsRequestSynoptical(com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest.Builder portReqBuilder, List<SynopticalTable> synopticalTableList){
+	  // build fetch port details request object
+	  if (!CollectionUtils.isEmpty(synopticalTableList)) {
+		  synopticalTableList.forEach(
+				  synopticalRecord -> Optional.ofNullable(synopticalRecord.getPortXid()).ifPresent(portReqBuilder::addId)
+				  );
+	  }
+  }
+  
+  /**
+   * Build Synoptical records for synoptical table
+   * @param synopticalTableList
+   * @param portReply
+   * @param replyBuilder
+   */
+  private void buildSynopticalTableReply(List<SynopticalTable> synopticalTableList, PortReply portReply, com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.Builder replyBuilder){
+	  if (!CollectionUtils.isEmpty(synopticalTableList)) {
+		  synopticalTableList.forEach(
+	          synopticalEntity -> {
+	            SynopticalRecord.Builder builder = SynopticalRecord.newBuilder();
+	            Optional.ofNullable(synopticalEntity.getId()).ifPresent(builder::setId);
+	            Optional.ofNullable(synopticalEntity.getPortXid()).ifPresent(builder::setPortId);
+	            if (portReply != null) {
+	            	 portReply.getPortsList().stream()
+	            	 .forEach( port -> {
+	            		 Optional.ofNullable(port.getName()).ifPresent(builder::setPortName);
+	            		 Optional.ofNullable(port.getWaterDensity()).ifPresent(builder::setSpecificGravity);
+	            	 	});
+	            }
+	            Optional.ofNullable(synopticalEntity.getOperationType()).ifPresent(builder::setOperationType);
+	            Optional.ofNullable(synopticalEntity.getDistance()).ifPresent(distance -> builder.setDistance(String.valueOf(distance)));
+	            Optional.ofNullable(synopticalEntity.getSpeed()).ifPresent(speed -> builder.setSpeed(String.valueOf(speed)));
+	            Optional.ofNullable(synopticalEntity.getRunningHours()).ifPresent(runningHours -> builder.setRunningHours(String.valueOf(runningHours)));
+	            Optional.ofNullable(synopticalEntity.getInPortHours()).ifPresent(inPortHours -> builder.setInPortHours(String.valueOf(inPortHours)));
+	            Optional.ofNullable(synopticalEntity.getTimeOfSunrise()).ifPresent(builder::setTimeOfSunrise);
+	            Optional.ofNullable(synopticalEntity.getTimeOfSunset()).ifPresent(builder::setTimeOfSunset);
+	            // If specific gravity is available in database then replace the port master value 
+	            Optional.ofNullable(synopticalEntity.getSpecificGravity()).ifPresent(builder::setSpecificGravity);
+	            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+	            Optional.ofNullable(synopticalEntity.getHwTideFrom()).ifPresent(hwTideFrom -> builder.setHwTideFrom(String.valueOf(hwTideFrom)));
+	            builder.setHwTideTimeFrom(formatter.format(synopticalEntity.getHwTideTimeFrom()));
+	            Optional.ofNullable(synopticalEntity.getHwTideTo()).ifPresent(hwTideTo -> builder.setHwTideTo(String.valueOf(hwTideTo)));
+	            builder.setHwTideTimeTo(formatter.format(synopticalEntity.getHwTideTimeTo()));
+	            Optional.ofNullable(synopticalEntity.getLwTideFrom()).ifPresent(lwTideFrom -> builder.setLwTideFrom(String.valueOf(lwTideFrom)));
+	            builder.setLwTideTimeFrom(formatter.format(synopticalEntity.getLwTideTimeFrom()));
+	            Optional.ofNullable(synopticalEntity.getLwTideTo()).ifPresent(lwTideTo -> builder.setLwTideTo(String.valueOf(lwTideTo)));
+	            builder.setLwTideTimeTo(formatter.format(synopticalEntity.getLwTideTimeTo()));
+	            replyBuilder.addSynopticalRecords(builder);
+	          });
+	    }
   }
 }

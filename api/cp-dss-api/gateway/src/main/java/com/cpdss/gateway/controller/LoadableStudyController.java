@@ -24,6 +24,7 @@ import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.SynopticalTableResponse;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
@@ -934,7 +935,7 @@ public class LoadableStudyController {
           e);
     }
   }
-
+  
   /**
    * @param vesselId
    * @param voyageId
@@ -971,6 +972,32 @@ public class LoadableStudyController {
           e);
     }
   }
+  
+  @GetMapping(
+	      value =
+	          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/synoptical-table")
+	  public SynopticalTableResponse getSynopticalTable(
+	      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+	      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+	          Long loadableStudyId,
+	      @RequestHeader HttpHeaders headers)
+	      throws CommonRestException {
+	    try {
+	      log.info("getSynopticalTable: {}", getClientIp());
+	      return this.loadableStudyService.getSynopticalTable(loadableStudyId);
+	    } catch (GenericServiceException e) {
+	      log.error("GenericServiceException getSynopticalTable", e);
+	      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+	    } catch (Exception e) {
+	      log.error("Exception getSynopticalTable", e);
+	      throw new CommonRestException(
+	          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+	          headers,
+	          HttpStatusCode.INTERNAL_SERVER_ERROR,
+	          e.getMessage(),
+	          e);
+	    }
+	  }
 
   /**
    * Returns the caller ip for debugging
