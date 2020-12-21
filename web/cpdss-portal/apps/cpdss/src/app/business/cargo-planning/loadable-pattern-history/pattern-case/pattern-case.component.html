@@ -7,6 +7,6 @@
     </div>
     <div class="col-5">
         <cpdss-portal-cargo-priority-grid [loadablePatternCargoDetails]="loadablePattern.loadablePatternCargoDetails"
-            [totalDifferenceColor]="loadablePattern.totalDifferenceColor"></cpdss-portal-cargo-priority-grid>
+            [totalDifferenceColor]="loadablePattern.totalDifferenceColor" (isCommingle)="showComminglePopup($event)"></cpdss-portal-cargo-priority-grid>
     </div>
 </div>

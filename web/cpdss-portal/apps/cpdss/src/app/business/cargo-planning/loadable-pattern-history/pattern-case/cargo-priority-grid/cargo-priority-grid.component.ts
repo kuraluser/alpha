@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ILoadablePatternCargoDetail } from '../../../models/loadable-pattern.model';
 
 
@@ -15,6 +15,9 @@ import { ILoadablePatternCargoDetail } from '../../../models/loadable-pattern.mo
   styleUrls: ['./cargo-priority-grid.component.scss']
 })
 export class CargoPriorityGridComponent implements OnInit {
+
+  @Output() isCommingle = new EventEmitter();
+
   @Input() loadablePatternCargoDetails: ILoadablePatternCargoDetail[];
   @Input() totalDifferenceColor: string;
   totalQuantity = 0;
@@ -34,6 +37,15 @@ export class CargoPriorityGridComponent implements OnInit {
     this.totalDifference = this.loadablePatternCargoDetails.map(a => Number(a.difference)).reduce(function (a, b) {
       return Number(a) + Number(b);
     });
+  }
+
+  /**
+  * Method to check seleted cargo is comminglr.
+  *
+  * @memberof CargoPriorityGridComponent
+  */
+  onRowSelect(priorityData) {
+    this.isCommingle.emit(priorityData)
   }
 
 

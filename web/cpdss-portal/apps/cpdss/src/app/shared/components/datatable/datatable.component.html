@@ -105,7 +105,7 @@
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
                 <tr formGroupName="{{rowIndex}}" [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex"
-                    [pSelectableRowDisabled]="!selectionMode" [pReorderableRow]="row(rowIndex).valid && rowIndex">
+                    [pSelectableRowDisabled]="!selectionMode" [pReorderableRow]="row(rowIndex)?.valid && rowIndex">
                     <td *ngIf="tableRowReOrder">
                         <span class="pi pi-bars" pReorderableRowHandle></span>
                     </td>

@@ -38,7 +38,7 @@
         <div class="pl-30">
             <div class="row">
                 <div *ngFor="let loadablePattern of loadablePatterns; let i = index" class="col-6 pb-15 pt-10 content-pattern">
-                    <cpdss-portal-pattern-case [loadablePattern]="loadablePattern" [tankList]="tankLists" [index]="i + 1">
+                    <cpdss-portal-pattern-case [loadablePattern]="loadablePattern" [tankList]="tankLists" [index]="i + 1" (displayCommingleDetailPopup)="displayCommingleDetailPopup($event)">
                     </cpdss-portal-pattern-case>
                     <div class="row">
                         <div class="col-7 text-center pt-20">
@@ -53,3 +53,4 @@
         </div>
     </div>
 </div>
+<cpdss-portal-commingle-cargo-details-pop-up [display]="display" [selectedLoadablePatterns]="selectedLoadablePatterns" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" (displayPopup)="setPopupVisibility($event)" *ngIf="display"></cpdss-portal-commingle-cargo-details-pop-up>

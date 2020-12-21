@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ICargoTank } from '../../../core/models/common.model';
 import { ILoadablePattern } from '../../models/loadable-pattern.model';
 
@@ -15,6 +15,9 @@ import { ILoadablePattern } from '../../models/loadable-pattern.model';
   styleUrls: ['./pattern-case.component.scss']
 })
 export class PatternCaseComponent implements OnInit {
+
+  @Output() displayCommingleDetailPopup = new EventEmitter();
+
   @Input() index: number;
   @Input() loadablePattern: ILoadablePattern;
   @Input() tankList: ICargoTank[][];
@@ -45,5 +48,14 @@ export class PatternCaseComponent implements OnInit {
       });
       return newGroup;
     })
+  }
+
+    /**
+   * Method to show commingle cargo details pop up
+   *
+   * @memberof PatternCaseComponent
+   */
+  showComminglePopup(event) {
+    this.displayCommingleDetailPopup.emit(event)
   }
 }

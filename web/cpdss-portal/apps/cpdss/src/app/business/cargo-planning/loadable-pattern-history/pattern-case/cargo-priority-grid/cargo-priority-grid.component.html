@@ -11,7 +11,7 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-priorityData>
-                <tr class="p-selectable-row">
+                <tr class="p-selectable-row" (click)="onRowSelect(priorityData)">
                     <td>
                         {{priorityData.priority}}
                     </td>

@@ -15,6 +15,7 @@ import { TableModule } from 'primeng/table';
 import { DatatableModule } from '../../../shared/components/datatable/datatable.module';
 import { DialogModule } from 'primeng/dialog';
 import { ConstraintComponent } from './pattern-case/constraint/constraint.component';
+import { CommingleCargoDetailsPopUpComponent } from './commingle-cargo-details-pop-up/commingle-cargo-details-pop-up.component';
 import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/cargo-tank-layout.module';
 
 /**
@@ -24,7 +25,7 @@ import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/c
  * @class LoadablePatternHistoryModule
  */
 @NgModule({
-  declarations: [LoadablePatternHistoryComponent, PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, ConstraintComponent ],
+  declarations: [LoadablePatternHistoryComponent, PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, ConstraintComponent, CommingleCargoDetailsPopUpComponent ],
   imports: [
     CommonModule,
     FormsModule,
@@ -38,6 +39,6 @@ import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/c
     DialogModule,
     CargoTankLayoutModule
   ],
-  exports : [PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, ConstraintComponent]
+  exports : [PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, ConstraintComponent, CommingleCargoDetailsPopUpComponent]
 })
 export class LoadablePatternHistoryModule { }

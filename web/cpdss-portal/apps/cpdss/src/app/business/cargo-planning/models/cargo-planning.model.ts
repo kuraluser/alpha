@@ -560,6 +560,61 @@ export enum OPERATIONS {
 }
 
 /**
+ * Interface for commingle cargo details 
+ *
+ * @export
+ * @interface ICommingleDetails
+ */
+export interface ICommingleDetails {
+    id: number;
+    tankShortName: string;
+    cargo1Abbrivation: string;
+    cargo2Abbrivation: string;
+    grade: string;
+    quantity: string;
+    api: string;
+    temperature: string;
+    cargo1Quantity: string;
+    cargo2Quantity: string;
+    cargo1Percentage: string;
+    cargo2Percentage: string;
+}
+
+/**
+ * Interface for commingle cargo details value object
+ *
+ * @export
+ * @interface ICommingleDetailValueObject
+ */
+export interface ICommingleDetailValueObject {
+    id: number;
+    tankShortName: ValueObject<string>;
+    cargo1Abbrivation: ValueObject<string>;
+    cargo2Abbrivation: ValueObject<string>;
+    grade: ValueObject<string>;
+    quantity: ValueObject<string>;
+    api: ValueObject<string>;
+    temperature: ValueObject<string>;
+    cargo1Quantity: ValueObject<string>;
+    cargo2Quantity: ValueObject<string>;
+    cargo1Percentage: ValueObject<string>;
+    cargo2Percentage: ValueObject<string>
+    cargoQuantity: ValueObject<string>;
+    cargoTotalQuantity: ValueObject<number>;
+    cargoPercentage: ValueObject<string>;
+}
+
+/**
+ * Interface for commingle cargo details api reponse
+ *
+ * @export
+ * @interface ICommingleCargoDetailsResponse
+ */
+export interface ICommingleCargoDetailsResponse extends ICommingleDetails {
+    responseStatus: IResponse;
+}
+
+/**
  * Interface for port obq details api
  *
  * @export

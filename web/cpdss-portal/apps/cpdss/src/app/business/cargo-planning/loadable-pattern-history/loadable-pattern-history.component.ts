@@ -8,7 +8,7 @@ import { VesselDetailsModel } from '../../model/vessel-details.model';
 import { LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
 import { LoadablePatternHistoryApiService } from '../services/loadable-pattern-history-api.service';
-import { ILoadablePattern, ILoadablePatternResponse } from '../models/loadable-pattern.model';
+import { ILoadablePattern, ILoadablePatternCargoDetail, ILoadablePatternResponse } from '../models/loadable-pattern.model';
 
 /**
  * Component class of pattern history screen
@@ -49,6 +49,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
   units = [{ name: '2020-20-22', statusId: 1 }];
   loadablePatternCreatedDate: string;
   loadableStudyName: string;
+  display = false;
+  selectedLoadablePatterns: ILoadablePatternCargoDetail;
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -143,12 +145,38 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @param {number} loadableStudyId
    * @memberof LoadablePatternHistoryComponent
    */
-  async getLoadablePatterns(vesselId: number, voyageId: number, loadableStudyId: number){
-    this.loadablePatternResponse = await this.loadablePatternApiService.getLoadablePatterns(vesselId, voyageId, loadableStudyId).toPromise(); 
-    this.loadablePatterns = this.loadablePatternResponse.loadablePatterns;
-    this.tankLists = this.loadablePatternResponse.tankLists;
-    this.loadablePatternCreatedDate = this.loadablePatternResponse.loadablePatternCreatedDate;
-    this.loadableStudyName = this.loadablePatternResponse.loadableStudyName;
+  async getLoadablePatterns(vesselId: number, voyageId: number, loadableStudyId: number) {
+    this.ngxSpinnerService.show();
+    this.loadablePatternResponse = await this.loadablePatternApiService.getLoadablePatterns(vesselId, voyageId, loadableStudyId).toPromise();
+    if(this.loadablePatternResponse.responseStatus.status === '200'){
+      this.loadablePatterns = this.loadablePatternResponse.loadablePatterns;
+      this.tankLists = this.loadablePatternResponse.tankLists;
+      this.loadablePatternCreatedDate = this.loadablePatternResponse.loadablePatternCreatedDate;
+      this.loadableStudyName = this.loadablePatternResponse.loadableStudyName;
+    }
+    this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * set visibility of popup (show/hide)
+   *
+   * @param {*} event
+   * @memberof LoadablePatternHistoryComponent
+   */
+  setPopupVisibility(emittedValue) {
+    this.selectedLoadablePatterns = null;
+    this.display = emittedValue;
+  }
+
+  /**
+   * set visibility of popup (show/hide)
+   *
+   * @param {*} event
+   * @memberof LoadablePatternHistoryComponent
+   */
+  displayCommingleDetailPopup(emittedValue) {
+    this.selectedLoadablePatterns = emittedValue.isCommingle ? emittedValue : null;
+    this.display = emittedValue.isCommingle;
   }
 
   /**
