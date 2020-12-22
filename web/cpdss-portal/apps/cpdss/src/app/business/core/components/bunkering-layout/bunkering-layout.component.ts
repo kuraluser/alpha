@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { IOHQTank } from '../../../cargo-planning/models/cargo-planning.model';
+import { ITank } from '../../models/common.model';
 
 /**
  * Class for bunkering layout component
@@ -16,11 +16,11 @@ import { IOHQTank } from '../../../cargo-planning/models/cargo-planning.model';
 export class BunkeringLayoutComponent implements OnInit {
 
   @Input()
-  get tanks(): IOHQTank[][] {
+  get tanks(): ITank[][] {
     return this._tanks;
   }
 
-  set tanks(tanks: IOHQTank[][]) {
+  set tanks(tanks: ITank[][]) {
     this._tanks = tanks.map(group => group.map(tank => {
       tank.gridColumn = this.gridColumn(group, tank);
       tank.percentageFilled = this.getFillingPercentage(tank);
@@ -29,11 +29,11 @@ export class BunkeringLayoutComponent implements OnInit {
   }
 
   @Input()
-  get rearTanks(): IOHQTank[][] {
+  get rearTanks(): ITank[][] {
     return this._rearTanks;
   }
 
-  set rearTanks(rearTanks: IOHQTank[][]) {
+  set rearTanks(rearTanks: ITank[][]) {
     this._rearTanks = rearTanks.map(group => group.map(tank => {
       tank.percentageFilled = this.getFillingPercentage(tank);
       return tank;
@@ -44,8 +44,8 @@ export class BunkeringLayoutComponent implements OnInit {
 
   @Output() selectedTankIdChange = new EventEmitter<number>();
 
-  private _tanks: IOHQTank[][];
-  private _rearTanks: IOHQTank[][];
+  private _tanks: ITank[][];
+  private _rearTanks: ITank[][];
 
   constructor() { }
 
@@ -61,7 +61,7 @@ export class BunkeringLayoutComponent implements OnInit {
    * @returns
    * @memberof BunkeringLayoutComponent
    */
-  getTankGroupWidthPercentage(firstGroup: IOHQTank[], currentGroup: IOHQTank[], lastGroup: IOHQTank[]) {
+  getTankGroupWidthPercentage(firstGroup: ITank[], currentGroup: ITank[], lastGroup: ITank[]) {
     let firstTankData: any = null;
     let currentGroupData: any = null;
     let lastGroupData: any = null;
@@ -101,7 +101,7 @@ export class BunkeringLayoutComponent implements OnInit {
    * @returns
    * @memberof BunkeringLayoutComponent
    */
-  gridColumn(currentGroup: IOHQTank[], tank: IOHQTank) {
+  gridColumn(currentGroup: ITank[], tank: ITank) {
     const columns = [];
     currentGroup.forEach(element => {
       columns.push({
@@ -120,16 +120,16 @@ export class BunkeringLayoutComponent implements OnInit {
   /**
    * Method to get percentage filled in tank
    *
-   * @param {IOHQTank} tank
+   * @param {ITank} tank
    * @returns
    * @memberof BunkeringLayoutComponent
    */
-  getFillingPercentage(tank: IOHQTank) {
-    let fillingratio: any = ((tank?.commodity?.volume / Number(tank?.fillCapcityCubm)) * 100).toFixed(3);
+  getFillingPercentage(tank: ITank) {
+    let fillingratio: any = ((tank?.commodity?.volume / Number(tank?.fullCapacityCubm)) * 100).toFixed(2);
     if (Number(fillingratio) >= 100) {
       fillingratio = 100;
     }
-    if (isNaN(fillingratio)) {
+    if (isNaN(fillingratio) || !fillingratio) {
       fillingratio = 0;
     }
     return ((fillingratio).toString() + '%');

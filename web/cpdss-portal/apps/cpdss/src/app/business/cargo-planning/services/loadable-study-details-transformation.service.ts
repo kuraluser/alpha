@@ -24,6 +24,7 @@ export class LoadableStudyDetailsTransformationService {
   private _cargoNominationValiditySource: Subject<boolean> = new Subject();
   private _addPortSource = new Subject();
   private _portValiditySource: Subject<boolean> = new Subject();
+  private _ohqValiditySource: Subject<boolean> = new Subject();
   private _obqValiditySource: Subject<boolean> = new Subject();
   private OPERATIONS: OPERATIONS;
 
@@ -33,6 +34,7 @@ export class LoadableStudyDetailsTransformationService {
   cargoNominationValidity$ = this._cargoNominationValiditySource.asObservable();
   addPort$ = this._addPortSource.asObservable();
   portValidity$ = this._portValiditySource.asObservable();
+  ohqValidity$ = this._ohqValiditySource.asObservable();
   obqValidity$ = this._obqValiditySource.asObservable();
 
   constructor() { }
@@ -782,7 +784,8 @@ export class LoadableStudyDetailsTransformationService {
             errorMessages: {
               'required': 'OHQ_VALUE_REQUIRED',
               'min': 'OHQ_MIN_VALUE',
-              'groupTotal': 'OHQ_GROUP_TOTAL'
+              'groupTotal': 'OHQ_GROUP_TOTAL',
+              'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY"
             }
           },
           {
@@ -821,7 +824,8 @@ export class LoadableStudyDetailsTransformationService {
             errorMessages: {
               'required': 'OHQ_VALUE_REQUIRED',
               'min': 'OHQ_MIN_VALUE',
-              'groupTotal': 'OHQ_GROUP_TOTAL'
+              'groupTotal': 'OHQ_GROUP_TOTAL',
+              'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY"
             }
           },
           {
@@ -863,6 +867,7 @@ export class LoadableStudyDetailsTransformationService {
     _ohqTankDetail.tankId = ohqTankDetail?.tankId;
     _ohqTankDetail.tankName = ohqTankDetail?.tankName;
     _ohqTankDetail.colorCode = ohqTankDetail?.colorCode;
+    _ohqTankDetail.fullCapacityCubm = ohqTankDetail?.fullCapacityCubm;
     _ohqTankDetail.arrivalVolume = new ValueObject<number>(ohqTankDetail.arrivalVolume, true, isNewValue);
     _ohqTankDetail.arrivalQuantity = new ValueObject<number>(ohqTankDetail.arrivalQuantity, true, isNewValue);
     _ohqTankDetail.departureVolume = new ValueObject<number>(ohqTankDetail.departureVolume, true, isNewValue);
@@ -900,6 +905,17 @@ export class LoadableStudyDetailsTransformationService {
 
     return _ohqTankDetail;
   }
+
+  /**
+   * Set ohq grid complete status
+   *
+   * @param {boolean} isValid
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  setOHQValidity(isValid: boolean) {
+    this._ohqValiditySource.next(isValid);
+  }
+
   /**
    * Method to get Manual Commingle grid colums
    */
@@ -912,7 +928,7 @@ export class LoadableStudyDetailsTransformationService {
         listName: 'cargoNominationsCargo1',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER',
-        fieldHeaderClass:'column-cargo1',
+        fieldHeaderClass: 'column-cargo1',
         fieldClass: 'commingle-cargo1',
         errorMessages: {
           'required': 'COMMINGLE_CARGO_SELECT_ERROR'
@@ -946,7 +962,7 @@ export class LoadableStudyDetailsTransformationService {
         listName: 'cargoNominationsCargo2',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER',
-        fieldHeaderClass:'column-cargo2',
+        fieldHeaderClass: 'column-cargo2',
         fieldClass: 'commingle-cargo2',
         errorMessages: {
           'required': 'COMMINGLE_CARGO_SELECT_ERROR'
@@ -977,7 +993,7 @@ export class LoadableStudyDetailsTransformationService {
         header: 'COMMINGLE_QTY',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'COMMINGLE_QTY_PLACEHOLDER',
-        fieldHeaderClass:'column-quantity',
+        fieldHeaderClass: 'column-quantity',
         fieldClass: 'commingle-quantity',
         errorMessages: {
           'required': 'COMMINGLE_CARGO_SELECT_ERROR',
@@ -992,10 +1008,10 @@ export class LoadableStudyDetailsTransformationService {
       }
     ]
   }
-/**
- * Method for converting commingle  data as value
- * @param commingle 
- */
+  /**
+   * Method for converting commingle  data as value
+   * @param commingle 
+   */
   getCommingleAsValue(commingle: ICommingleValueObject): ICargoGroup {
     const _cargoList = <ICargoGroup>{};
     for (const key in commingle) {
@@ -1066,7 +1082,7 @@ export class LoadableStudyDetailsTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterPlaceholder: 'OBQ_SEARCH_TANK'
-      },      
+      },
       {
         field: 'cargo',
         header: 'CARGO',

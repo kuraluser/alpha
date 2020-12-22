@@ -19,7 +19,6 @@ import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/co
 import { LoadableQuantityModel } from '../models/loadable-quantity.model';
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
-import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 
 /**
  * Component class for loadable study details component
@@ -54,6 +53,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   totalQuantity$: Observable<number>;
   ports: IPort[];
   cargoNominationComplete$: Observable<boolean>;
+  ohqComplete$: Observable<boolean>;
   voyageId: number;
   loadableStudyId: number;
   vesselId: number;
@@ -73,6 +73,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   loadableQuantityModel: LoadableQuantityModel;
   portsTabPermission: IPermission;
   ohqTabPermissionContext: IPermissionContext;
+  ohqTabPermission: IPermission;
   obqTabPermissionContext: IPermissionContext;
   loadableQuantityPermissionContext: IPermissionContext;
   displayCommingle: boolean;
@@ -119,7 +120,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
     this.portsTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['PortsComponent'], false);
     this.portsTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW] };
 
-    const ohqTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OnHandQuantityComponent'], false);
+    this.ohqTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OnHandQuantityComponent'], false);
     this.ohqTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['OnHandQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
 
     this.loadableQuantityPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], false);
@@ -128,11 +129,11 @@ export class LoadableStudyDetailsComponent implements OnInit {
     const obqTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OnBoardQuantityComponent'], false);
     this.obqTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['OnBoardQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
 
-    if (cargoNominationTabPermission?.view) {
+    if (cargoNominationTabPermission === undefined || cargoNominationTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
     } else if (this.portsTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.PORTS;
-    } else if (ohqTabPermission?.view) {
+    } else if (this.ohqTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.OHQ;
     } else if (obqTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.OBQ;
@@ -141,8 +142,8 @@ export class LoadableStudyDetailsComponent implements OnInit {
     }
 
     this.addCargoBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
-    this.addPortBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };  
-    this.addCommingleBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.EDIT] }; 
+    this.addPortBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+    this.addCommingleBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.EDIT] };
   }
 
   /**
@@ -227,6 +228,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
     this.totalQuantity$ = this.loadableStudyDetailsTransformationService.totalQuantityCargoNomination$;
     this.cargoNominationComplete$ = this.loadableStudyDetailsTransformationService.cargoNominationValidity$;
     this.portsComplete$ = this.loadableStudyDetailsTransformationService.portValidity$;
+    this.ohqComplete$ = this.loadableStudyDetailsTransformationService.ohqValidity$;
     this.obqComplete$ = this.loadableStudyDetailsTransformationService.obqValidity$;
   }
 
@@ -345,20 +347,20 @@ export class LoadableStudyDetailsComponent implements OnInit {
   /**
    * Value from commingle popup
    */
-  displayComminglePopUpTab(displayNew_: boolean){
+  displayComminglePopUpTab(displayNew_: boolean) {
     this.displayCommingle = displayNew_;
   }
 
-    /**
-   * Value from commingle button
-   */
-  toggleCommingleButton(event){
+  /**
+ * Value from commingle button
+ */
+  toggleCommingleButton(event) {
     this.showCommingleButton = event;
   }
 
-    /**
-   * Take the user to particular pattern history
-   */
+  /**
+ * Take the user to particular pattern history
+ */
   navigateToPatternHistory() {
     this.router.navigate([`/business/cargo-planning/loadable-pattern-history/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
   }

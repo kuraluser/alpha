@@ -16,7 +16,7 @@
   db.version(1).stores({
     cargoNominations: "++,storeKey,timeStamp",
     ports: "++,storeKey,timeStamp",
-    ohq: "++,storeKey",
+    ohq: "++,storeKey,timeStamp",
     obq: "++,storeKey,timeStamp",
   });
   db.open();

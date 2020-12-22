@@ -409,6 +409,7 @@ export interface IPortOHQTankDetail {
     loadableStudyId: number;
     colorCode: string;
     fuelTypeShortName: string;
+    fullCapacityCubm: string;
 }
 
 /**
@@ -434,6 +435,7 @@ export interface IPortOHQTankDetailValueObject {
     quantity: number;
     volume: number;
     percentageFilled: string;
+    fullCapacityCubm: string;
 }
 
 /**
@@ -479,7 +481,7 @@ export interface IPortOHQTankDetailEvent extends IDataTableEvent {
  * @interface IOHQTank
  * @extends {ITank}
  */
-export interface IOHQTank extends ITank {
+export interface IBunkerTank extends ITank {
     id: number;
     categoryId: number;
     categoryName: string;
@@ -489,7 +491,7 @@ export interface IOHQTank extends ITank {
     shortName: string;
     heightFrom?: number;
     heightTo?: number;
-    fillCapcityCubm: number;
+    fullCapacityCubm?: string;
     density: number;
     group: number;
     order: number;

@@ -26,7 +26,7 @@
                                                 [editMode]="editMode" [filterable]="true" [listData]="listData"
                                                 [selectionMode]="selectionMode" [selection]="selectedTank"
                                                 (editComplete)="onEditComplete($event)"
-                                                (rowSelection)="onRowSelection($event)">
+                                                (rowSelection)="onRowSelection($event)" (filter)="onFilter($event)">
                                             </cpdss-portal-datatable>
                                         </div>
                                     </div>
@@ -76,8 +76,9 @@
                         </ng-container>
 
                     </div>
-                    <div class="col" *ngIf="selectedTankId">{{selectedTank?.percentageFilled}}
-                        {{'OHQ_FILLED'| translate}}</div>
+                    <div class="col" [ngStyle]="{'visibility':selectedTankId ? 'visible': 'hidden'}">
+                        {{selectedTank?.percentageFilled}}
+                        {{('OHQ_FILLED'| translate)}}</div>
                 </div>
                 <div class="row">
                     <div class="col">
@@ -104,7 +105,8 @@
                                         {{'OHQ_VOL'| translate}}</label>
                                     <div class="col">
                                         <input type="number" class="form-control" formControlName="arrivalVolume"
-                                            (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalVolume')">
+                                            (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalVolume')"
+                                            [readOnly]="!permission?.edit">
                                         <cpdss-portal-validation-error
                                             [errors]="fieldError(selectedTankFormGroupIndex, 'arrivalVolume')"
                                             [errorMessages]="getErrorMessages('arrivalVolume')">
@@ -118,7 +120,8 @@
                                         {{'OHQ_WEIGHT'| translate}}</label>
                                     <div class="col">
                                         <input type="number" class="form-control" formControlName="arrivalQuantity"
-                                            (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalQuantity')">
+                                            (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalQuantity')"
+                                            [readOnly]="!permission?.edit">
                                         <cpdss-portal-validation-error
                                             [errors]="fieldError(selectedTankFormGroupIndex, 'arrivalQuantity')"
                                             [errorMessages]="getErrorMessages('arrivalQuantity')">
@@ -132,7 +135,12 @@
                                         {{'OHQ_VOL'| translate}}</label>
                                     <div class="col">
                                         <input type="number" class="form-control" formControlName="departureVolume"
-                                            (change)="onChange($event, selectedTankFormGroupIndex, 'departureVolume')">
+                                            (change)="onChange($event, selectedTankFormGroupIndex, 'departureVolume')"
+                                            [readOnly]="!permission?.edit">
+                                        <cpdss-portal-validation-error
+                                            [errors]="fieldError(selectedTankFormGroupIndex, 'departureVolume')"
+                                            [errorMessages]="getErrorMessages('departureVolume')">
+                                        </cpdss-portal-validation-error>
                                     </div>
                                 </div>
                             </div>
@@ -142,7 +150,12 @@
                                         {{'OHQ_WEIGHT'| translate}}</label>
                                     <div class="col">
                                         <input type="number" class="form-control" formControlName="departureQuantity"
-                                            (change)="onChange($event, selectedTankFormGroupIndex, 'departureQuantity')">
+                                            (change)="onChange($event, selectedTankFormGroupIndex, 'departureQuantity')"
+                                            [readOnly]="!permission?.edit">
+                                        <cpdss-portal-validation-error
+                                            [errors]="fieldError(selectedTankFormGroupIndex, 'departureQuantity')"
+                                            [errorMessages]="getErrorMessages('departureQuantity')">
+                                        </cpdss-portal-validation-error>
                                     </div>
                                 </div>
                             </div>

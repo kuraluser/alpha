@@ -37,10 +37,10 @@ export class DatatableComponent implements OnInit {
   }
 
   @Input()
-  get value(): [] {
+  get value(): Array<any> {
     return this._value;
   }
-  set value(value: []) {
+  set value(value: Array<any>) {
     if (value)
       this._value = value;
   }
@@ -97,7 +97,7 @@ export class DatatableComponent implements OnInit {
 
   // private fields
   private _columns: IDataTableColumn[];
-  private _value: [];
+  private _value: Array<any>;
   private _form: FormGroup;
 
 
@@ -121,7 +121,19 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   onEditComplete(event: IDataTableEvent): void {
-    if (this.editMode && event.data[event.field].isEditable && (!event.data.isAdd || !this.columns.some(col => col.fieldType === this.fieldType.ACTION)) && event.field !== 'actions') {
+    let colEditable;
+    for (let index = 0; index < this.columns.length; index++) {
+      if (this.columns[index].field === event?.field) {
+        colEditable = this.columns[index]?.editable;
+        break;
+      } else {
+        colEditable = this.columns[index]?.columns?.find(col => col?.field === event?.field)?.editable;
+        if (colEditable !== undefined) {
+          break;
+        }
+      }
+    }
+    if (this.editMode && (colEditable === undefined || colEditable) && event.data[event.field].isEditable && (!event.data.isAdd || !this.columns.some(col => col.fieldType === this.fieldType.ACTION)) && event.field !== 'actions') {
       const control = this.field(event.index, event.field);
       event.data[event.field].isEditMode = control?.invalid;
       if (control?.dirty && control?.valid) {
@@ -135,12 +147,12 @@ export class DatatableComponent implements OnInit {
    * Hadler for table cell edit change event
    *
    * @param event
-   * @param {Object} rowData
+   * @param {any} rowData
    * @param {number} rowIndex
    * @param {IDataTableColumn} col
    * @memberof DatatableComponent
    */
-  onChange(event, rowData: Object, rowIndex: number, col: IDataTableColumn) {
+  onChange(event, rowData: any, rowIndex: number, col: IDataTableColumn) {
     rowData[col.field].value = this.field(rowIndex, col.field).value;
     if (!event?.originalEvent?.target?.className?.includes('p-colorpicker')) {
       this.editComplete.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
@@ -151,12 +163,12 @@ export class DatatableComponent implements OnInit {
    * Hadler for table cell value click event
    *
    * @param {MouseEvent} event
-   * @param {Object} rowData
+   * @param {any} rowData
    * @param {number} rowIndex
    * @param {IDataTableColumn} col
    * @memberof DatatableComponent
    */
-  onCellValueClick(event: MouseEvent, rowData: Object, rowIndex: number, col: IDataTableColumn) {
+  onCellValueClick(event: MouseEvent, rowData: any, rowIndex: number, col: IDataTableColumn) {
     event.stopPropagation(); // Please dont remove this line
     const control = this.field(rowIndex, col.field);
     control.markAsTouched();
@@ -184,7 +196,7 @@ export class DatatableComponent implements OnInit {
    * @param col 
    * @param colIndex 
    */
-  onFocus(event, rowData: Object, rowIndex: number, col: IDataTableColumn, colIndex: number) {
+  onFocus(event, rowData: any, rowIndex: number, col: IDataTableColumn, colIndex: number) {
     const code = (event.keyCode ? event.keyCode : event.which);
     if (code === 9 && col.fieldType !== this.fieldType.ACTION && (col.editable === undefined || col.editable) && rowData[col.field]?.isEditable) {
       const prevField = this.columns[colIndex - 1].field;
@@ -217,15 +229,6 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   onFilter(event: IDataTableFilterEvent) {
-    event?.filteredValue?.forEach((item: Object, index) => {
-      for (const key in item) {
-        if (item.hasOwnProperty(key) && item[key].hasOwnProperty('_isEditMode')) {
-          item[key].isEditMode = false;
-          const formControl = (<FormGroup>(<FormArray>this.form.get('dataTable')).at(index)).get(key);
-          formControl?.setValue(item[key].value);
-        }
-      }
-    });
     this.filter.emit(event);
   }
 
@@ -250,7 +253,7 @@ export class DatatableComponent implements OnInit {
    * @returns {ValidationErrors}
    * @memberof DatatableComponent
    */
-  fieldError(formGroupIndex: number, formControlName: string): ValidationErrors {
+  fieldError(formGroupIndex: number, formControlName: string, formGroupData: any): ValidationErrors {
     const formControl = this.field(formGroupIndex, formControlName);
     return formControl.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
   }
@@ -271,12 +274,12 @@ export class DatatableComponent implements OnInit {
    * Handler for actions dropdown button
    *
    * @param {MouseEvent} event
-   * @param {object} rowData
+   * @param {any} rowData
    * @param {number} rowIndex
    * @param {IDataTableColumn} col
    * @memberof DatatableComponent
    */
-  onDropdownClick(event: MouseEvent, rowData: object, rowIndex: number, col: IDataTableColumn) {
+  onDropdownClick(event: MouseEvent, rowData: any, rowIndex: number, col: IDataTableColumn) {
     this.selectedRowEvent = { originalEvent: event, data: rowData, index: rowIndex, field: col.field };
   }
 
@@ -313,13 +316,13 @@ export class DatatableComponent implements OnInit {
    * Handler for option click
    *
    * @param {MouseEvent} event
-   * @param {object} rowData
+   * @param {any} rowData
    * @param {number} rowIndex
    * @param {IDataTableColumn} col
    * @param {MenuItem} option
    * @memberof DatatableComponent
    */
-  onOptionClick(event: MouseEvent, rowData: object, rowIndex: number, col: IDataTableColumn, option: MenuItem) {
+  onOptionClick(event: MouseEvent, rowData: any, rowIndex: number, col: IDataTableColumn, option: MenuItem) {
     this.selectedRowEvent = { originalEvent: event, data: rowData, index: rowIndex, field: col.field };
     option.command();
   }
@@ -511,7 +514,7 @@ export class DatatableComponent implements OnInit {
   /**
   * Date and time select
   */
-  onDateTimeSelect(event, formGroupIndex: number, formControlName: string, rowData: Object) {
+  onDateTimeSelect(event, formGroupIndex: number, formControlName: string, rowData: any) {
     const formControl = this.field(formGroupIndex, formControlName);
     formControl.markAsTouched();
     rowData[formControlName].value = this.formatDateTime(event, true);

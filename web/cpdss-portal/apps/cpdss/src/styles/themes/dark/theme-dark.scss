@@ -993,6 +993,19 @@ a{
 }
 .cpdss{
   background: url($images-theme + 'cpdss.png') no-repeat;
+  display: inline-block;
+  width: 109px;
+  height: 12px;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.tanks-column-ohq, .rear-tank-wrapper-ohq{
+  > div{
+    &.active{
+      outline:3px solid $text-secondary!important;
+    }
+  }
 }
 
 .table-pattern{

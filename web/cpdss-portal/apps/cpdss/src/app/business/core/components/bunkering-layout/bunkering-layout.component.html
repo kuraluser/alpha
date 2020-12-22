@@ -3,7 +3,9 @@
     <div class="rear-bottom-ohq"></div>
     <div class="rear-tank-wrapper-ohq">
         <ng-container *ngFor="let group of rearTanks">
-            <div *ngFor="let tank of group" [ngClass]="{'active': tank?.id === selectedTankId}" (click)="onTankSelect($event, tank?.id)">
+            <div *ngFor="let tank of group" [ngClass]="{'active': tank?.id === selectedTankId}"
+                [ngStyle]="{'visibility': tank?.categoryId === 23? 'hidden': 'visible'}"
+                (click)="onTankSelect($event, tank?.id)">
                 <div class="tank-level"
                     [ngStyle]="{'height': tank?.percentageFilled, 'background-color': tank?.commodity?.colorCode}">
                 </div>
@@ -16,7 +18,8 @@
             <div class="tanks-column-ohq" *ngFor="let group of tanks"
                 [ngStyle]="{'width': getTankGroupWidthPercentage(tanks[0], group, tanks[tanks.length-1])}">
                 <div *ngFor="let tank of group" [ngClass]="{'active': tank?.id === selectedTankId}"
-                    [ngStyle]="{'grid-column': tank?.gridColumn}"  (click)="onTankSelect($event, tank?.id)">
+                    [ngStyle]="{'grid-column': tank?.gridColumn, 'visibility': tank?.categoryId === 22? 'hidden': 'visible'}"
+                    (click)="onTankSelect($event, tank?.id)">
                     <div class="tank-level"
                         [ngStyle]="{'height':  tank?.percentageFilled, 'background-color': tank?.commodity?.colorCode}">
                     </div>

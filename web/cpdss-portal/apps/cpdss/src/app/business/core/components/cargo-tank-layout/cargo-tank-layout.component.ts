@@ -91,7 +91,7 @@ export class CargoTankLayoutComponent implements OnInit {
    * @memberof CargoTankLayoutComponent
    */
   getFillingPercentage(tank: ITank) {
-    let fillingratio: any = ((tank?.commodity?.volume / Number(tank?.fillCapcityCubm)) * 100).toFixed(3);
+    let fillingratio: any = ((tank?.commodity?.volume / Number(tank?.fullCapacityCubm)) * 100).toFixed(3);
     if (Number(fillingratio) >= 100) {
       fillingratio = 100;
     }

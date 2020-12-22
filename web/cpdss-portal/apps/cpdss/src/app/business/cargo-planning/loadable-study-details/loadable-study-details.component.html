@@ -46,7 +46,7 @@
             <a class="tab-btn" *cpdssPortalPermission="ohqTabPermissionContext"
                 [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ}"
                 (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.OHQ)">{{'ON_HAND_QUANTITIES' | translate}}
-                <div class="pt-5" *ngIf="false else incomplete">
+                <div class="pt-5" *ngIf="(ohqComplete$|async)  else incomplete">
                     <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
                 </div>
                 <ng-template #incomplete>
@@ -132,7 +132,8 @@
                 </cpdss-portal-ports>
                 <cpdss-portal-on-hand-quantity
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ && loadableStudyId && loadableStudies && loadableQuantityNew"
-                    [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId">
+                    [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
+                    [permission]="ohqTabPermission">
                 </cpdss-portal-on-hand-quantity>
                 <cpdss-portal-on-board-quantity
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ && loadableStudyId && loadableStudies && loadableQuantityNew"
@@ -148,8 +149,7 @@
                             placeholder="{{ 'DISCHARGE_DROPDOWN_SELECT_PORT'| translate }}"
                             (onChange)="onDischargePortChange($event)">
                         </p-multiSelect>
-                        <span
-                            *ngIf="selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">{{dischargingPortsNames}}</span>
+                        <span *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">{{dischargingPortsNames}}</span>
                     </div>
                 </div>
             </div>
