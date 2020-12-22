@@ -505,6 +505,11 @@ message SynopticalRecord{
 	string lwTideTimeFrom = 17;
 	string lwTideTimeTo = 18;
 	string specificGravity = 19;
+	string etaActual = 20;
+	string etdActual = 21;
+	string etaEstimated = 22;
+	string etdEstimated = 23;
+	int64 portOrder = 24;
 }
 
 message SynopticalTableRequest{

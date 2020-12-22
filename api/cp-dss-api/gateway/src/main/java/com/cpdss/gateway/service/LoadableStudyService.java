@@ -94,7 +94,6 @@ import com.cpdss.gateway.domain.VoyageResponse;
 import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1870,8 +1869,8 @@ public class LoadableStudyService {
     for (OnBoardQuantityDetail detail : grpcReply.getOnBoardQuantityList()) {
       OnBoardQuantity dto = new OnBoardQuantity();
       dto.setId(detail.getId());
-      dto.setCargoId(detail.getCargoId());
-      dto.setColorCode(detail.getColorCode());
+      dto.setCargoId(0 == detail.getCargoId() ? null : detail.getCargoId());
+      dto.setColorCode(isEmpty(detail.getColorCode()) ? null : detail.getColorCode());
       dto.setSounding(isEmpty(detail.getSounding()) ? null : new BigDecimal(detail.getSounding()));
       dto.setWeight(isEmpty(detail.getWeight()) ? null : new BigDecimal(detail.getWeight()));
       dto.setVolume(isEmpty(detail.getVolume()) ? null : new BigDecimal(detail.getVolume()));
@@ -1999,93 +1998,99 @@ public class LoadableStudyService {
       com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request) {
     return this.loadableStudyServiceBlockingStub.saveAlgoLoadableStudyStatus(request);
   }
-  
+
   /**
    * Get synoptical table information
+   *
    * @param loadableStudyId
    * @return
    * @throws GenericServiceException
    */
   public SynopticalTableResponse getSynopticalTable(Long loadableStudyId)
-	      throws GenericServiceException {
-	    SynopticalTableResponse synopticalTableResponse = new SynopticalTableResponse();
-	    // Build response with response status
-	    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
-	    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
-	    synopticalTableResponse.setResponseStatus(commonSuccessResponse);
-	    // Retrieve synoptical table for the loadable study
-	    SynopticalTableRequest synopticalTableRequest =
-	        SynopticalTableRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
-	    SynopticalTableReply synopticalTableReply =
-	        loadableStudyServiceBlockingStub.getSynopticalTable(synopticalTableRequest);
-	    if (SUCCESS.equalsIgnoreCase(synopticalTableReply.getResponseStatus().getStatus())) {
-	      buildSynopticalTableResponse(synopticalTableResponse, synopticalTableReply);
-	    } else {
-	      throw new GenericServiceException(
-	          "Error calling getSynopticalTable service",
-	          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-	          HttpStatusCode.INTERNAL_SERVER_ERROR);
-	    }
-	    return synopticalTableResponse;
-	  }
+      throws GenericServiceException {
+    SynopticalTableResponse synopticalTableResponse = new SynopticalTableResponse();
+    // Build response with response status
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    synopticalTableResponse.setResponseStatus(commonSuccessResponse);
+    // Retrieve synoptical table for the loadable study
+    SynopticalTableRequest synopticalTableRequest =
+        SynopticalTableRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
+    SynopticalTableReply synopticalTableReply =
+        loadableStudyServiceBlockingStub.getSynopticalTable(synopticalTableRequest);
+    if (SUCCESS.equalsIgnoreCase(synopticalTableReply.getResponseStatus().getStatus())) {
+      buildSynopticalTableResponse(synopticalTableResponse, synopticalTableReply);
+    } else {
+      throw new GenericServiceException(
+          "Error calling getSynopticalTable service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    return synopticalTableResponse;
+  }
 
-  private void buildSynopticalTableResponse(SynopticalTableResponse synopticalTableResponse, SynopticalTableReply reply){
-	  if (!CollectionUtils.isEmpty(reply.getSynopticalRecordsList())) {
-		  List<SynopticalRecord> synopticalTableList = new ArrayList<>();
-		  reply
-		  .getSynopticalRecordsList()
-		  .forEach(
-				  synopticalProtoRecord -> {
-					  SynopticalRecord synopticalRecord = new SynopticalRecord();
-					  synopticalRecord.setId(synopticalProtoRecord.getId());
-					  synopticalRecord.setPortId(synopticalProtoRecord.getPortId());
-					  synopticalRecord.setPortName(synopticalProtoRecord.getPortName());
-					  synopticalRecord.setSpecificGravity(
-							  synopticalProtoRecord.getSpecificGravity() != null
-							  ? new BigDecimal(synopticalProtoRecord.getSpecificGravity())
-									  : new BigDecimal("0"));
-					  synopticalRecord.setOperationType(synopticalProtoRecord.getOperationType());
-					  synopticalRecord.setDistance(
-							  synopticalProtoRecord.getDistance() != null
-							  ? new BigDecimal(synopticalProtoRecord.getDistance())
-									  : new BigDecimal("0"));
-					  synopticalRecord.setSpeed(
-							  synopticalProtoRecord.getSpeed() != null
-							  ? new BigDecimal(synopticalProtoRecord.getSpeed())
-									  : new BigDecimal("0"));
-					  synopticalRecord.setRunningHours(
-							  synopticalProtoRecord.getRunningHours() != null
-							  ? new BigDecimal(synopticalProtoRecord.getRunningHours())
-									  : new BigDecimal("0")); 
-					  synopticalRecord.setInPortHours(
-							  synopticalProtoRecord.getInPortHours() != null
-							  ? new BigDecimal(synopticalProtoRecord.getInPortHours())
-									  : new BigDecimal("0")); 
-					  synopticalRecord.setTimeOfSunrise(synopticalProtoRecord.getTimeOfSunrise());
-					  synopticalRecord.setTimeOfSunset(synopticalProtoRecord.getTimeOfSunset());
-					  synopticalRecord.setHwTideFrom(
-							  synopticalProtoRecord.getHwTideFrom() != null
-							  ? new BigDecimal(synopticalProtoRecord.getHwTideFrom())
-									  : new BigDecimal("0"));
-					  synopticalRecord.setHwTideTimeFrom(synopticalProtoRecord.getHwTideTimeFrom());
-					  synopticalRecord.setHwTideTo(
-							  synopticalProtoRecord.getHwTideTo() != null
-							  ? new BigDecimal(synopticalProtoRecord.getHwTideTo())
-									  : new BigDecimal("0"));
-					  synopticalRecord.setHwTideTimeTo(synopticalProtoRecord.getHwTideTimeTo());
-					  synopticalRecord.setLwTideFrom(
-							  synopticalProtoRecord.getLwTideFrom() != null
-							  ? new BigDecimal(synopticalProtoRecord.getLwTideFrom())
-									  : new BigDecimal("0"));
-					  synopticalRecord.setLwTideTimeFrom(synopticalProtoRecord.getLwTideTimeFrom());
-					  synopticalRecord.setLwTideTo(
-							  synopticalProtoRecord.getLwTideTo() != null
-							  ? new BigDecimal(synopticalProtoRecord.getLwTideTo())
-									  : new BigDecimal("0"));
-					  synopticalRecord.setLwTideTimeTo(synopticalProtoRecord.getLwTideTimeTo());
-					  synopticalTableList.add(synopticalRecord);
-				  });
-		  synopticalTableResponse.setSynopticalRecords(synopticalTableList);
-	  }
+  private void buildSynopticalTableResponse(
+      SynopticalTableResponse synopticalTableResponse, SynopticalTableReply reply) {
+    if (!CollectionUtils.isEmpty(reply.getSynopticalRecordsList())) {
+      List<SynopticalRecord> synopticalTableList = new ArrayList<>();
+      reply
+          .getSynopticalRecordsList()
+          .forEach(
+              synopticalProtoRecord -> {
+                SynopticalRecord synopticalRecord = new SynopticalRecord();
+                synopticalRecord.setId(synopticalProtoRecord.getId());
+                synopticalRecord.setPortId(synopticalProtoRecord.getPortId());
+                synopticalRecord.setPortName(synopticalProtoRecord.getPortName());
+                synopticalRecord.setSpecificGravity(
+                    !isEmpty(synopticalProtoRecord.getSpecificGravity())
+                        ? new BigDecimal(synopticalProtoRecord.getSpecificGravity())
+                        : new BigDecimal("0"));
+                synopticalRecord.setOperationType(synopticalProtoRecord.getOperationType());
+                synopticalRecord.setDistance(
+                    !isEmpty(synopticalProtoRecord.getDistance())
+                        ? new BigDecimal(synopticalProtoRecord.getDistance())
+                        : new BigDecimal("0"));
+                synopticalRecord.setSpeed(
+                    !isEmpty(synopticalProtoRecord.getSpeed())
+                        ? new BigDecimal(synopticalProtoRecord.getSpeed())
+                        : new BigDecimal("0"));
+                synopticalRecord.setRunningHours(
+                    !isEmpty(synopticalProtoRecord.getRunningHours())
+                        ? new BigDecimal(synopticalProtoRecord.getRunningHours())
+                        : new BigDecimal("0"));
+                synopticalRecord.setInPortHours(
+                    !isEmpty(synopticalProtoRecord.getInPortHours())
+                        ? new BigDecimal(synopticalProtoRecord.getInPortHours())
+                        : new BigDecimal("0"));
+                synopticalRecord.setTimeOfSunrise(synopticalProtoRecord.getTimeOfSunrise());
+                synopticalRecord.setTimeOfSunset(synopticalProtoRecord.getTimeOfSunset());
+                synopticalRecord.setHwTideFrom(
+                    !isEmpty(synopticalProtoRecord.getHwTideFrom())
+                        ? new BigDecimal(synopticalProtoRecord.getHwTideFrom())
+                        : new BigDecimal("0"));
+                synopticalRecord.setHwTideTimeFrom(synopticalProtoRecord.getHwTideTimeFrom());
+                synopticalRecord.setHwTideTo(
+                    !isEmpty(synopticalProtoRecord.getHwTideTo())
+                        ? new BigDecimal(synopticalProtoRecord.getHwTideTo())
+                        : new BigDecimal("0"));
+                synopticalRecord.setHwTideTimeTo(synopticalProtoRecord.getHwTideTimeTo());
+                synopticalRecord.setLwTideFrom(
+                    !isEmpty(synopticalProtoRecord.getLwTideFrom())
+                        ? new BigDecimal(synopticalProtoRecord.getLwTideFrom())
+                        : new BigDecimal("0"));
+                synopticalRecord.setLwTideTimeFrom(synopticalProtoRecord.getLwTideTimeFrom());
+                synopticalRecord.setLwTideTo(
+                    !isEmpty(synopticalProtoRecord.getLwTideTo())
+                        ? new BigDecimal(synopticalProtoRecord.getLwTideTo())
+                        : new BigDecimal("0"));
+                synopticalRecord.setLwTideTimeTo(synopticalProtoRecord.getLwTideTimeTo());
+                synopticalRecord.setEtaActual(synopticalProtoRecord.getEtaActual());
+                synopticalRecord.setEtdActual(synopticalProtoRecord.getEtdActual());
+                synopticalRecord.setEtaPlanned(synopticalProtoRecord.getEtaEstimated());
+                synopticalRecord.setEtdPlanned(synopticalProtoRecord.getEtdEstimated());
+                synopticalTableList.add(synopticalRecord);
+              });
+      synopticalTableResponse.setSynopticalRecords(synopticalTableList);
+    }
   }
 }
