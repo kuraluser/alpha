@@ -94,13 +94,14 @@ export class LoadableQuantityComponent implements OnInit {
         tpc: ['', [Validators.required, numberValidator(1, 3)]],
         estimateSag: ['', [Validators.required, numberValidator(2, 2), , Validators.min(0)]],
         safCorrection: ['', [Validators.required, numberValidator(5, 7), Validators.min(0)]],
-        foOnboard: ['', [Validators.required, Validators.pattern(/^[0-9]\d{0,6}$/)]],
-        doOnboard: ['', [Validators.required, numberValidator(0, 7), Validators.pattern(/^[0-9]\d{0,6}$/)]],
-        freshWaterOnboard: ['', [Validators.required, numberValidator(0, 7), Validators.pattern(/^[0-9]\d{0,6}$/)]],
+        foOnboard: ['', [Validators.required, numberValidator(2, 7)]],
+        doOnboard: ['', [Validators.required, numberValidator(2, 7)]],
+        freshWaterOnboard: ['', [Validators.required, numberValidator(2, 7)]],
+
         boilerWaterOnboard: ['', [Validators.required, numberValidator(0, 7), Validators.pattern(/^[0-9]\d{0,6}$/)]],
 
         ballast: ['', [Validators.required, numberValidator(2, 7), Validators.min(0)]],
-        constant: ['', [Validators.required]],
+        constant: ['', [Validators.required , numberValidator(2)]],
         others: ['', [Validators.required, numberValidator(2, 7), Validators.min(0)]],
         subTotal: ['', numberValidator(2, 7)],
         totalQuantity: ['', numberValidator(2, 7)]
@@ -110,8 +111,8 @@ export class LoadableQuantityComponent implements OnInit {
       if (this.caseNo === 1) {
         this.loadableQuantityForm.addControl('distanceInSummerzone', this.fb.control('', [Validators.required, numberValidator(2, 2), Validators.min(0)]));
         this.loadableQuantityForm.addControl('speedInSz', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
-        this.loadableQuantityForm.addControl('runningHours', this.fb.control('', [Validators.required, numberValidator(5, 7), Validators.min(0)]));
-        this.loadableQuantityForm.addControl('runningDays', this.fb.control('', [Validators.required, numberValidator(5, 7), Validators.min(0)]));
+        this.loadableQuantityForm.addControl('runningHours', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
+        this.loadableQuantityForm.addControl('runningDays', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
         this.loadableQuantityForm.addControl('foConday', this.fb.control('', [Validators.required, numberValidator(0, 2), Validators.min(0)]));
         this.loadableQuantityForm.addControl('foConsInSz', this.fb.control('', [Validators.required, numberValidator(5, 7), Validators.min(0)]));
       }
