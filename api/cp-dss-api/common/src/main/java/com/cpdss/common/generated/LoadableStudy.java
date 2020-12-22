@@ -55649,6 +55649,65 @@ public final class LoadableStudy {
      * @return The bytes for specificGravity.
      */
     com.google.protobuf.ByteString getSpecificGravityBytes();
+
+    /**
+     * <code>string etaActual = 20;</code>
+     *
+     * @return The etaActual.
+     */
+    java.lang.String getEtaActual();
+    /**
+     * <code>string etaActual = 20;</code>
+     *
+     * @return The bytes for etaActual.
+     */
+    com.google.protobuf.ByteString getEtaActualBytes();
+
+    /**
+     * <code>string etdActual = 21;</code>
+     *
+     * @return The etdActual.
+     */
+    java.lang.String getEtdActual();
+    /**
+     * <code>string etdActual = 21;</code>
+     *
+     * @return The bytes for etdActual.
+     */
+    com.google.protobuf.ByteString getEtdActualBytes();
+
+    /**
+     * <code>string etaEstimated = 22;</code>
+     *
+     * @return The etaEstimated.
+     */
+    java.lang.String getEtaEstimated();
+    /**
+     * <code>string etaEstimated = 22;</code>
+     *
+     * @return The bytes for etaEstimated.
+     */
+    com.google.protobuf.ByteString getEtaEstimatedBytes();
+
+    /**
+     * <code>string etdEstimated = 23;</code>
+     *
+     * @return The etdEstimated.
+     */
+    java.lang.String getEtdEstimated();
+    /**
+     * <code>string etdEstimated = 23;</code>
+     *
+     * @return The bytes for etdEstimated.
+     */
+    com.google.protobuf.ByteString getEtdEstimatedBytes();
+
+    /**
+     * <code>int64 portOrder = 24;</code>
+     *
+     * @return The portOrder.
+     */
+    long getPortOrder();
   }
   /** Protobuf type {@code SynopticalRecord} */
   public static final class SynopticalRecord extends com.google.protobuf.GeneratedMessageV3
@@ -55679,6 +55738,10 @@ public final class LoadableStudy {
       lwTideTimeFrom_ = "";
       lwTideTimeTo_ = "";
       specificGravity_ = "";
+      etaActual_ = "";
+      etdActual_ = "";
+      etaEstimated_ = "";
+      etdEstimated_ = "";
     }
 
     @java.lang.Override
@@ -55837,6 +55900,39 @@ public final class LoadableStudy {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 specificGravity_ = s;
+                break;
+              }
+            case 162:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                etaActual_ = s;
+                break;
+              }
+            case 170:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                etdActual_ = s;
+                break;
+              }
+            case 178:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                etaEstimated_ = s;
+                break;
+              }
+            case 186:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                etdEstimated_ = s;
+                break;
+              }
+            case 192:
+              {
+                portOrder_ = input.readInt64();
                 break;
               }
             default:
@@ -56489,6 +56585,157 @@ public final class LoadableStudy {
       }
     }
 
+    public static final int ETAACTUAL_FIELD_NUMBER = 20;
+    private volatile java.lang.Object etaActual_;
+    /**
+     * <code>string etaActual = 20;</code>
+     *
+     * @return The etaActual.
+     */
+    public java.lang.String getEtaActual() {
+      java.lang.Object ref = etaActual_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        etaActual_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string etaActual = 20;</code>
+     *
+     * @return The bytes for etaActual.
+     */
+    public com.google.protobuf.ByteString getEtaActualBytes() {
+      java.lang.Object ref = etaActual_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        etaActual_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ETDACTUAL_FIELD_NUMBER = 21;
+    private volatile java.lang.Object etdActual_;
+    /**
+     * <code>string etdActual = 21;</code>
+     *
+     * @return The etdActual.
+     */
+    public java.lang.String getEtdActual() {
+      java.lang.Object ref = etdActual_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        etdActual_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string etdActual = 21;</code>
+     *
+     * @return The bytes for etdActual.
+     */
+    public com.google.protobuf.ByteString getEtdActualBytes() {
+      java.lang.Object ref = etdActual_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        etdActual_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ETAESTIMATED_FIELD_NUMBER = 22;
+    private volatile java.lang.Object etaEstimated_;
+    /**
+     * <code>string etaEstimated = 22;</code>
+     *
+     * @return The etaEstimated.
+     */
+    public java.lang.String getEtaEstimated() {
+      java.lang.Object ref = etaEstimated_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        etaEstimated_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string etaEstimated = 22;</code>
+     *
+     * @return The bytes for etaEstimated.
+     */
+    public com.google.protobuf.ByteString getEtaEstimatedBytes() {
+      java.lang.Object ref = etaEstimated_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        etaEstimated_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ETDESTIMATED_FIELD_NUMBER = 23;
+    private volatile java.lang.Object etdEstimated_;
+    /**
+     * <code>string etdEstimated = 23;</code>
+     *
+     * @return The etdEstimated.
+     */
+    public java.lang.String getEtdEstimated() {
+      java.lang.Object ref = etdEstimated_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        etdEstimated_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string etdEstimated = 23;</code>
+     *
+     * @return The bytes for etdEstimated.
+     */
+    public com.google.protobuf.ByteString getEtdEstimatedBytes() {
+      java.lang.Object ref = etdEstimated_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        etdEstimated_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PORTORDER_FIELD_NUMBER = 24;
+    private long portOrder_;
+    /**
+     * <code>int64 portOrder = 24;</code>
+     *
+     * @return The portOrder.
+     */
+    public long getPortOrder() {
+      return portOrder_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -56560,6 +56807,21 @@ public final class LoadableStudy {
       if (!getSpecificGravityBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 19, specificGravity_);
       }
+      if (!getEtaActualBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 20, etaActual_);
+      }
+      if (!getEtdActualBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 21, etdActual_);
+      }
+      if (!getEtaEstimatedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 22, etaEstimated_);
+      }
+      if (!getEtdEstimatedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 23, etdEstimated_);
+      }
+      if (portOrder_ != 0L) {
+        output.writeInt64(24, portOrder_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -56626,6 +56888,21 @@ public final class LoadableStudy {
       if (!getSpecificGravityBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(19, specificGravity_);
       }
+      if (!getEtaActualBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(20, etaActual_);
+      }
+      if (!getEtdActualBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(21, etdActual_);
+      }
+      if (!getEtaEstimatedBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(22, etaEstimated_);
+      }
+      if (!getEtdEstimatedBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(23, etdEstimated_);
+      }
+      if (portOrder_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(24, portOrder_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -56661,6 +56938,11 @@ public final class LoadableStudy {
       if (!getLwTideTimeFrom().equals(other.getLwTideTimeFrom())) return false;
       if (!getLwTideTimeTo().equals(other.getLwTideTimeTo())) return false;
       if (!getSpecificGravity().equals(other.getSpecificGravity())) return false;
+      if (!getEtaActual().equals(other.getEtaActual())) return false;
+      if (!getEtdActual().equals(other.getEtdActual())) return false;
+      if (!getEtaEstimated().equals(other.getEtaEstimated())) return false;
+      if (!getEtdEstimated().equals(other.getEtdEstimated())) return false;
+      if (getPortOrder() != other.getPortOrder()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -56710,6 +56992,16 @@ public final class LoadableStudy {
       hash = (53 * hash) + getLwTideTimeTo().hashCode();
       hash = (37 * hash) + SPECIFICGRAVITY_FIELD_NUMBER;
       hash = (53 * hash) + getSpecificGravity().hashCode();
+      hash = (37 * hash) + ETAACTUAL_FIELD_NUMBER;
+      hash = (53 * hash) + getEtaActual().hashCode();
+      hash = (37 * hash) + ETDACTUAL_FIELD_NUMBER;
+      hash = (53 * hash) + getEtdActual().hashCode();
+      hash = (37 * hash) + ETAESTIMATED_FIELD_NUMBER;
+      hash = (53 * hash) + getEtaEstimated().hashCode();
+      hash = (37 * hash) + ETDESTIMATED_FIELD_NUMBER;
+      hash = (53 * hash) + getEtdEstimated().hashCode();
+      hash = (37 * hash) + PORTORDER_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortOrder());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -56887,6 +57179,16 @@ public final class LoadableStudy {
 
         specificGravity_ = "";
 
+        etaActual_ = "";
+
+        etdActual_ = "";
+
+        etaEstimated_ = "";
+
+        etdEstimated_ = "";
+
+        portOrder_ = 0L;
+
         return this;
       }
 
@@ -56932,6 +57234,11 @@ public final class LoadableStudy {
         result.lwTideTimeFrom_ = lwTideTimeFrom_;
         result.lwTideTimeTo_ = lwTideTimeTo_;
         result.specificGravity_ = specificGravity_;
+        result.etaActual_ = etaActual_;
+        result.etdActual_ = etdActual_;
+        result.etaEstimated_ = etaEstimated_;
+        result.etdEstimated_ = etdEstimated_;
+        result.portOrder_ = portOrder_;
         onBuilt();
         return result;
       }
@@ -57057,6 +57364,25 @@ public final class LoadableStudy {
         if (!other.getSpecificGravity().isEmpty()) {
           specificGravity_ = other.specificGravity_;
           onChanged();
+        }
+        if (!other.getEtaActual().isEmpty()) {
+          etaActual_ = other.etaActual_;
+          onChanged();
+        }
+        if (!other.getEtdActual().isEmpty()) {
+          etdActual_ = other.etdActual_;
+          onChanged();
+        }
+        if (!other.getEtaEstimated().isEmpty()) {
+          etaEstimated_ = other.etaEstimated_;
+          onChanged();
+        }
+        if (!other.getEtdEstimated().isEmpty()) {
+          etdEstimated_ = other.etdEstimated_;
+          onChanged();
+        }
+        if (other.getPortOrder() != 0L) {
+          setPortOrder(other.getPortOrder());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -58442,6 +58768,343 @@ public final class LoadableStudy {
         checkByteStringIsUtf8(value);
 
         specificGravity_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object etaActual_ = "";
+      /**
+       * <code>string etaActual = 20;</code>
+       *
+       * @return The etaActual.
+       */
+      public java.lang.String getEtaActual() {
+        java.lang.Object ref = etaActual_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          etaActual_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string etaActual = 20;</code>
+       *
+       * @return The bytes for etaActual.
+       */
+      public com.google.protobuf.ByteString getEtaActualBytes() {
+        java.lang.Object ref = etaActual_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          etaActual_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string etaActual = 20;</code>
+       *
+       * @param value The etaActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEtaActual(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        etaActual_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string etaActual = 20;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearEtaActual() {
+
+        etaActual_ = getDefaultInstance().getEtaActual();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string etaActual = 20;</code>
+       *
+       * @param value The bytes for etaActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEtaActualBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        etaActual_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object etdActual_ = "";
+      /**
+       * <code>string etdActual = 21;</code>
+       *
+       * @return The etdActual.
+       */
+      public java.lang.String getEtdActual() {
+        java.lang.Object ref = etdActual_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          etdActual_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string etdActual = 21;</code>
+       *
+       * @return The bytes for etdActual.
+       */
+      public com.google.protobuf.ByteString getEtdActualBytes() {
+        java.lang.Object ref = etdActual_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          etdActual_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string etdActual = 21;</code>
+       *
+       * @param value The etdActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEtdActual(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        etdActual_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string etdActual = 21;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearEtdActual() {
+
+        etdActual_ = getDefaultInstance().getEtdActual();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string etdActual = 21;</code>
+       *
+       * @param value The bytes for etdActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEtdActualBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        etdActual_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object etaEstimated_ = "";
+      /**
+       * <code>string etaEstimated = 22;</code>
+       *
+       * @return The etaEstimated.
+       */
+      public java.lang.String getEtaEstimated() {
+        java.lang.Object ref = etaEstimated_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          etaEstimated_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string etaEstimated = 22;</code>
+       *
+       * @return The bytes for etaEstimated.
+       */
+      public com.google.protobuf.ByteString getEtaEstimatedBytes() {
+        java.lang.Object ref = etaEstimated_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          etaEstimated_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string etaEstimated = 22;</code>
+       *
+       * @param value The etaEstimated to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEtaEstimated(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        etaEstimated_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string etaEstimated = 22;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearEtaEstimated() {
+
+        etaEstimated_ = getDefaultInstance().getEtaEstimated();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string etaEstimated = 22;</code>
+       *
+       * @param value The bytes for etaEstimated to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEtaEstimatedBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        etaEstimated_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object etdEstimated_ = "";
+      /**
+       * <code>string etdEstimated = 23;</code>
+       *
+       * @return The etdEstimated.
+       */
+      public java.lang.String getEtdEstimated() {
+        java.lang.Object ref = etdEstimated_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          etdEstimated_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string etdEstimated = 23;</code>
+       *
+       * @return The bytes for etdEstimated.
+       */
+      public com.google.protobuf.ByteString getEtdEstimatedBytes() {
+        java.lang.Object ref = etdEstimated_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          etdEstimated_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string etdEstimated = 23;</code>
+       *
+       * @param value The etdEstimated to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEtdEstimated(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        etdEstimated_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string etdEstimated = 23;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearEtdEstimated() {
+
+        etdEstimated_ = getDefaultInstance().getEtdEstimated();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string etdEstimated = 23;</code>
+       *
+       * @param value The bytes for etdEstimated to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEtdEstimatedBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        etdEstimated_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long portOrder_;
+      /**
+       * <code>int64 portOrder = 24;</code>
+       *
+       * @return The portOrder.
+       */
+      public long getPortOrder() {
+        return portOrder_;
+      }
+      /**
+       * <code>int64 portOrder = 24;</code>
+       *
+       * @param value The portOrder to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortOrder(long value) {
+
+        portOrder_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portOrder = 24;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortOrder() {
+
+        portOrder_ = 0L;
         onChanged();
         return this;
       }
@@ -60390,7 +61053,7 @@ public final class LoadableStudy {
           + " \001(\t\022\026\n\016cargo1Quantity\030\t \001(\t\022\026\n\016cargo2Qu"
           + "antity\030\n \001(\t\022\030\n\020cargo1Percentage\030\013 \001(\t\022\030"
           + "\n\020cargo2Percentage\030\014 \001(\t\022\'\n\016responseStat"
-          + "us\030\r \001(\0132\017.ResponseStatus\"\221\003\n\020Synoptical"
+          + "us\030\r \001(\0132\017.ResponseStatus\"\366\003\n\020Synoptical"
           + "Record\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\020\n\010po"
           + "rtName\030\003 \001(\t\022\025\n\roperationType\030\004 \001(\t\022\020\n\010d"
           + "istance\030\005 \001(\t\022\r\n\005speed\030\006 \001(\t\022\024\n\014runningH"
@@ -60400,64 +61063,66 @@ public final class LoadableStudy {
           + "TideTimeFrom\030\r \001(\t\022\024\n\014hwTideTimeTo\030\016 \001(\t"
           + "\022\022\n\nlwTideFrom\030\017 \001(\t\022\020\n\010lwTideTo\030\020 \001(\t\022\026"
           + "\n\016lwTideTimeFrom\030\021 \001(\t\022\024\n\014lwTideTimeTo\030\022"
-          + " \001(\t\022\027\n\017specificGravity\030\023 \001(\t\"1\n\026Synopti"
-          + "calTableRequest\022\027\n\017loadableStudyId\030\001 \001(\003"
-          + "\"m\n\024SynopticalTableReply\022\'\n\016responseStat"
-          + "us\030\001 \001(\0132\017.ResponseStatus\022,\n\021synopticalR"
-          + "ecords\030\002 \003(\0132\021.SynopticalRecord2\220\020\n\024Load"
-          + "ableStudyService\022,\n\nSaveVoyage\022\016.VoyageR"
-          + "equest\032\014.VoyageReply\"\000\0228\n\022GetVoyagesByVe"
-          + "ssel\022\016.VoyageRequest\032\020.VoyageListReply\"\000"
-          + "\022J\n\024SaveLoadableQuantity\022\030.LoadableQuant"
-          + "ityRequest\032\026.LoadableQuantityReply\"\000\022T\n$"
-          + "FindLoadableStudiesByVesselAndVoyage\022\025.L"
-          + "oadableStudyRequest\032\023.LoadableStudyReply"
-          + "\"\000\022@\n\021SaveLoadableStudy\022\024.LoadableStudyD"
-          + "etail\032\023.LoadableStudyReply\"\000\022G\n\023SaveCarg"
-          + "oNomination\022\027.CargoNominationRequest\032\025.C"
-          + "argoNominationReply\"\000\022J\n\034GetLoadableStud"
-          + "yPortRotation\022\024.PortRotationRequest\032\022.Po"
-          + "rtRotationReply\"\000\022J\n\026GetCargoNominationB"
-          + "yId\022\027.CargoNominationRequest\032\025.CargoNomi"
-          + "nationReply\"\000\022I\n\023GetValveSegregation\022\030.V"
-          + "alveSegregationRequest\032\026.ValveSegregatio"
-          + "nReply\"\000\022J\n\023getLoadableQuantity\022\026.Loadab"
-          + "leQuantityReply\032\031.LoadableQuantityRespon"
-          + "se\"\000\022J\n\035SaveLoadableStudyPortRotation\022\023."
-          + "PortRotationDetail\032\022.PortRotationReply\"\000"
-          + "\022I\n\025DeleteCargoNomination\022\027.CargoNominat"
-          + "ionRequest\032\025.CargoNominationReply\"\000\022B\n\024S"
-          + "aveDischargingPorts\022\024.PortRotationReques"
-          + "t\032\022.PortRotationReply\"\000\022N\n GetPortRotati"
-          + "onByLoadableStudyId\022\024.PortRotationReques"
-          + "t\032\022.PortRotationReply\"\000\022C\n\023DeleteLoadabl"
-          + "eStudy\022\025.LoadableStudyRequest\032\023.Loadable"
-          + "StudyReply\"\000\022@\n\022DeletePortRotation\022\024.Por"
-          + "tRotationRequest\032\022.PortRotationReply\"\000\022C"
-          + "\n\021GetOnHandQuantity\022\026.OnHandQuantityRequ"
-          + "est\032\024.OnHandQuantityReply\"\000\022C\n\022SaveOnHan"
-          + "dQuantity\022\025.OnHandQuantityDetail\032\024.OnHan"
-          + "dQuantityReply\"\000\022M\n\031GetLoadablePatternDe"
-          + "tails\022\027.LoadablePatternRequest\032\025.Loadabl"
-          + "ePatternReply\"\000\022O\n\025GetPurposeOfCommingle"
-          + "\022\032.PurposeOfCommingleRequest\032\030.PurposeOf"
-          + "CommingleReply\"\000\022C\n\021GetCommingleCargo\022\026."
-          + "CommingleCargoRequest\032\024.CommingleCargoRe"
-          + "ply\"\000\022D\n\022SaveCommingleCargo\022\026.CommingleC"
-          + "argoRequest\032\024.CommingleCargoReply\"\000\022v\n\"G"
-          + "etLoadablePatternCommingleDetails\022\'.Load"
-          + "ablePatternCommingleDetailsRequest\032%.Loa"
-          + "dablePatternCommingleDetailsReply\"\000\0226\n\030G"
-          + "enerateLoadablePatterns\022\014.AlgoRequest\032\n."
-          + "AlgoReply\"\000\022F\n\022GetOnBoardQuantity\022\027.OnBo"
-          + "ardQuantityRequest\032\025.OnBoardQuantityRepl"
-          + "y\"\000\022F\n\023SaveOnBoardQuantity\022\026.OnBoardQuan"
-          + "tityDetail\032\025.OnBoardQuantityReply\"\000\022E\n\033S"
-          + "aveAlgoLoadableStudyStatus\022\022.AlgoStatusR"
-          + "equest\032\020.AlgoStatusReply\"\000\022F\n\022GetSynopti"
-          + "calTable\022\027.SynopticalTableRequest\032\025.Syno"
-          + "pticalTableReply\"\000B\036\n\032com.cpdss.common.g"
-          + "eneratedP\000b\006proto3"
+          + " \001(\t\022\027\n\017specificGravity\030\023 \001(\t\022\021\n\tetaActu"
+          + "al\030\024 \001(\t\022\021\n\tetdActual\030\025 \001(\t\022\024\n\014etaEstima"
+          + "ted\030\026 \001(\t\022\024\n\014etdEstimated\030\027 \001(\t\022\021\n\tportO"
+          + "rder\030\030 \001(\003\"1\n\026SynopticalTableRequest\022\027\n\017"
+          + "loadableStudyId\030\001 \001(\003\"m\n\024SynopticalTable"
+          + "Reply\022\'\n\016responseStatus\030\001 \001(\0132\017.Response"
+          + "Status\022,\n\021synopticalRecords\030\002 \003(\0132\021.Syno"
+          + "pticalRecord2\220\020\n\024LoadableStudyService\022,\n"
+          + "\nSaveVoyage\022\016.VoyageRequest\032\014.VoyageRepl"
+          + "y\"\000\0228\n\022GetVoyagesByVessel\022\016.VoyageReques"
+          + "t\032\020.VoyageListReply\"\000\022J\n\024SaveLoadableQua"
+          + "ntity\022\030.LoadableQuantityRequest\032\026.Loadab"
+          + "leQuantityReply\"\000\022T\n$FindLoadableStudies"
+          + "ByVesselAndVoyage\022\025.LoadableStudyRequest"
+          + "\032\023.LoadableStudyReply\"\000\022@\n\021SaveLoadableS"
+          + "tudy\022\024.LoadableStudyDetail\032\023.LoadableStu"
+          + "dyReply\"\000\022G\n\023SaveCargoNomination\022\027.Cargo"
+          + "NominationRequest\032\025.CargoNominationReply"
+          + "\"\000\022J\n\034GetLoadableStudyPortRotation\022\024.Por"
+          + "tRotationRequest\032\022.PortRotationReply\"\000\022J"
+          + "\n\026GetCargoNominationById\022\027.CargoNominati"
+          + "onRequest\032\025.CargoNominationReply\"\000\022I\n\023Ge"
+          + "tValveSegregation\022\030.ValveSegregationRequ"
+          + "est\032\026.ValveSegregationReply\"\000\022J\n\023getLoad"
+          + "ableQuantity\022\026.LoadableQuantityReply\032\031.L"
+          + "oadableQuantityResponse\"\000\022J\n\035SaveLoadabl"
+          + "eStudyPortRotation\022\023.PortRotationDetail\032"
+          + "\022.PortRotationReply\"\000\022I\n\025DeleteCargoNomi"
+          + "nation\022\027.CargoNominationRequest\032\025.CargoN"
+          + "ominationReply\"\000\022B\n\024SaveDischargingPorts"
+          + "\022\024.PortRotationRequest\032\022.PortRotationRep"
+          + "ly\"\000\022N\n GetPortRotationByLoadableStudyId"
+          + "\022\024.PortRotationRequest\032\022.PortRotationRep"
+          + "ly\"\000\022C\n\023DeleteLoadableStudy\022\025.LoadableSt"
+          + "udyRequest\032\023.LoadableStudyReply\"\000\022@\n\022Del"
+          + "etePortRotation\022\024.PortRotationRequest\032\022."
+          + "PortRotationReply\"\000\022C\n\021GetOnHandQuantity"
+          + "\022\026.OnHandQuantityRequest\032\024.OnHandQuantit"
+          + "yReply\"\000\022C\n\022SaveOnHandQuantity\022\025.OnHandQ"
+          + "uantityDetail\032\024.OnHandQuantityReply\"\000\022M\n"
+          + "\031GetLoadablePatternDetails\022\027.LoadablePat"
+          + "ternRequest\032\025.LoadablePatternReply\"\000\022O\n\025"
+          + "GetPurposeOfCommingle\022\032.PurposeOfComming"
+          + "leRequest\032\030.PurposeOfCommingleReply\"\000\022C\n"
+          + "\021GetCommingleCargo\022\026.CommingleCargoReque"
+          + "st\032\024.CommingleCargoReply\"\000\022D\n\022SaveCommin"
+          + "gleCargo\022\026.CommingleCargoRequest\032\024.Commi"
+          + "ngleCargoReply\"\000\022v\n\"GetLoadablePatternCo"
+          + "mmingleDetails\022\'.LoadablePatternCommingl"
+          + "eDetailsRequest\032%.LoadablePatternComming"
+          + "leDetailsReply\"\000\0226\n\030GenerateLoadablePatt"
+          + "erns\022\014.AlgoRequest\032\n.AlgoReply\"\000\022F\n\022GetO"
+          + "nBoardQuantity\022\027.OnBoardQuantityRequest\032"
+          + "\025.OnBoardQuantityReply\"\000\022F\n\023SaveOnBoardQ"
+          + "uantity\022\026.OnBoardQuantityDetail\032\025.OnBoar"
+          + "dQuantityReply\"\000\022E\n\033SaveAlgoLoadableStud"
+          + "yStatus\022\022.AlgoStatusRequest\032\020.AlgoStatus"
+          + "Reply\"\000\022F\n\022GetSynopticalTable\022\027.Synoptic"
+          + "alTableRequest\032\025.SynopticalTableReply\"\000B"
+          + "\036\n\032com.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -60975,6 +61640,11 @@ public final class LoadableStudy {
               "LwTideTimeFrom",
               "LwTideTimeTo",
               "SpecificGravity",
+              "EtaActual",
+              "EtdActual",
+              "EtaEstimated",
+              "EtdEstimated",
+              "PortOrder",
             });
     internal_static_SynopticalTableRequest_descriptor = getDescriptor().getMessageTypes().get(49);
     internal_static_SynopticalTableRequest_fieldAccessorTable =
