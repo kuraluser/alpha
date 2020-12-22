@@ -468,7 +468,7 @@ export class LoadableStudyDetailsTransformationService {
     _port.id = port.id;
     _port.portOrder = port.portOrder;
     _port.portcode = new ValueObject<string>(portObj?.code, true, false, false, false);
-    _port.port = new ValueObject<IPort>(portObj, true, isNewValue, false, isEditable);
+    _port.port = new ValueObject<IPort>(portObj, true, isNewValue, false, isEdit && isEditable);
     _port.operation = new ValueObject<IOperations>(operationObj, true, isNewValue, false, isEdit && isEditable);
     _port.seaWaterDensity = new ValueObject<number>(port.seaWaterDensity, true, isNewValue, false, isEditable);
     _port.layCan = new ValueObject<any>(layCan, true, isNewValue, false, isEditable);
@@ -553,7 +553,7 @@ export class LoadableStudyDetailsTransformationService {
       },
       {
         field: 'seaWaterDensity',
-        header: 'WATER DENSITY',
+        header: 'WATER DENSITY (T/M3)',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         filter: true,
         filterPlaceholder: 'SEARCH_PORT_WATER_DENSITY',
@@ -582,7 +582,7 @@ export class LoadableStudyDetailsTransformationService {
       },
       {
         field: 'maxDraft',
-        header: 'MAX-DRAFT',
+        header: 'MAX-DRAFT (M)',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         filter: true,
         filterPlaceholder: 'SEARCH_PORT_MAX_DRAFT',

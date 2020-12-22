@@ -3,7 +3,7 @@
         <p-table #datatable [columns]="columns" [value]="value" [editMode]="editMode" [selectionMode]="selectionMode"
             (onEditComplete)="onEditComplete($event)" (onRowSelect)="onRowSelect($event)" [(selection)]="selection"
             (columnClick)="onClick($event)" [reorderableColumns]="tableRowReOrder" (onRowReorder)="onRowReorder($event)"
-            (onFilter)="onFilter($event)" >
+            (onFilter)="onFilter($event)">
             <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
                     <col *ngIf="tableRowReOrder" class="column-class re-order">
@@ -59,9 +59,10 @@
                                     [maxDate]="col.filterFieldMaxvalue"
                                     (onSelect)="onDateSelect($event, col?.filterField, col?.filterMatchMode)"
                                     (onInput)="onDateFilter($event.target.value, col?.filterField, col?.filterMatchMode)"
-                                    (onClearClick)="datatable.filter('', col?.filterField, 'contains')" [showButtonBar]="true"
-                                    styleClass="p-column-filter" [placeholder]="col.filterPlaceholder| translate"
-                                    [readonlyInput]="false" dateFormat="dd-mm-yy" id="{{col.field+'_filter'}}">
+                                    (onClearClick)="datatable.filter('', col?.filterField, 'contains')"
+                                    [showButtonBar]="true" styleClass="p-column-filter"
+                                    [placeholder]="col.filterPlaceholder| translate" [readonlyInput]="false"
+                                    dateFormat="dd-mm-yy" id="{{col.field+'_filter'}}">
                                 </p-calendar>
                                 <p-dropdown *ngSwitchCase="filterType.SELECT" [options]="listData[col.filterListName]"
                                     [showClear]="true" appendTo="body" optionLabel="name"
@@ -163,7 +164,8 @@
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!rowData[col.field]?.isEditMode">
-                                        <span>{{rowData[col.field]?.value}}{{rowData[col.field]?.value? col.fieldSuffix : ''}}
+                                        <span>{{rowData[col.field]?.value}}{{rowData[col.field]?.value? col.fieldSuffix
+                                            : ''}}
                                             <i *ngIf="rowData[col.field]?.value && col.fieldValueIcon"
                                                 class="{{col.fieldValueIcon}}"
                                                 (click)="onCellValueClick($event, rowData, rowIndex, col)"></i></span>
@@ -184,18 +186,22 @@
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!rowData[col.field]?.isEditMode">
+                                        <span *ngIf="rowData[col.field]?.value?.name">{{ rowData[col.field]?.value?.name
+                                            }}</span>
+                                        <span *ngIf="rowData[col.field]?.value?.operationName">{{
+                                            rowData[col.field]?.value?.operationName }}</span>
                                         <span
-                                            *ngIf="rowData[col.field]?.value?.name">{{ rowData[col.field]?.value?.name }}</span>
-                                        <span
-                                            *ngIf="rowData[col.field]?.value?.operationName">{{ rowData[col.field]?.value?.operationName }}</span>
-                                        <span
-                                            *ngIf="!rowData[col.field]?.value?.name && !rowData[col.field]?.value?.operationName">{{ rowData[col.field]?.value }}</span>
+                                            *ngIf="!rowData[col.field]?.value?.name && !rowData[col.field]?.value?.operationName">{{
+                                            rowData[col.field]?.value }}</span>
                                     </ng-container>
                                 </ng-container>
 
-                                
-                                <ng-container *ngSwitchCase="fieldType.COLOR"  class="col no-left-padding" style="max-width: 20px;">
-                                    <div class="color-rounded mt-5" [ngStyle]="rowData[col.field].value && {'background' : rowData[col.field].value}"></div>
+
+                                <ng-container *ngSwitchCase="fieldType.COLOR" class="col no-left-padding"
+                                    style="max-width: 20px;">
+                                    <div class="color-rounded mt-5"
+                                        [ngStyle]="rowData[col.field].value && {'background' : rowData[col.field].value}">
+                                    </div>
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.COLORPICKER">
@@ -217,7 +223,8 @@
                                     <ng-container *ngIf="rowData[col.field]?.isEditMode">
                                         <a class="btn btn-secondary"
                                             (click)="onCellValueClick($event, rowData, rowIndex, col)"
-                                            id="{{col.field+'_'+rowIndex}}">{{rowData[col.arrayLabelField] ? rowData[col.arrayLabelField]: col.fieldPlaceholder| translate}}</a>
+                                            id="{{col.field+'_'+rowIndex}}">{{rowData[col.arrayLabelField] ?
+                                            rowData[col.arrayLabelField]: col.fieldPlaceholder| translate}}</a>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>
@@ -233,17 +240,21 @@
                                             (onClearClick)="onClearDateRange($event, rowIndex, col.field,rowData)"
                                             [dateFormat]="col.dateFormat" selectionMode="range"
                                             [placeholder]="col.fieldPlaceholder| translate" [minDate]="col.minDate"
-                                            id="{{col.field+'_'+rowIndex}}"  >
+                                            id="{{col.field+'_'+rowIndex}}" #coldaterange>
+                                            <p-footer><button class="btn btn-main"
+                                                    (click)="coldaterange.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                                                    |
+                                                    translate}}</button></p-footer>
                                         </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!rowData[col.field]?.isEditMode">
-                                        <span
-                                            *ngIf="rowData[col.field]?.value?.name">{{ rowData[col.field]?.value?.name }}</span>
-                                        <span
-                                            *ngIf="!rowData[col.field]?.value?.name">{{ rowData[col.field]?.value }}</span>
+                                        <span *ngIf="rowData[col.field]?.value?.name">{{ rowData[col.field]?.value?.name
+                                            }}</span>
+                                        <span *ngIf="!rowData[col.field]?.value?.name">{{ rowData[col.field]?.value
+                                            }}</span>
                                     </ng-container>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
@@ -255,17 +266,20 @@
                                             id="{{col.field+'_'+rowIndex}}" [minDate]="col.minDate"
                                             [dateFormat]="col.dateFormat"
                                             (onClearClick)="onDateTimeNotSelected($event, rowIndex, col.field,rowData)"
-                                            >
+                                            [hideOnDateTimeSelect]="false" #coldatetime>
+                                            <p-footer><button class="btn btn-main"
+                                                    (click)="coldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
+                                                    translate}}</button></p-footer>
                                         </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!rowData[col.field]?.isEditMode">
-                                        <span
-                                            *ngIf="rowData[col.field]?.value?.name">{{ rowData[col.field]?.value?.name }}</span>
-                                        <span
-                                            *ngIf="!rowData[col.field]?.value?.name">{{ rowData[col.field]?.value }}</span>
+                                        <span *ngIf="rowData[col.field]?.value?.name">{{ rowData[col.field]?.value?.name
+                                            }}</span>
+                                        <span *ngIf="!rowData[col.field]?.value?.name">{{ rowData[col.field]?.value
+                                            }}</span>
                                     </ng-container>
                                 </ng-container>
                                 <span *ngSwitchDefault>{{rowData[col.field]}}</span>
@@ -325,7 +339,8 @@
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!rowData[subCol.field]?.isEditMode">
-                                        <span>{{rowData[subCol.field]?.value}}{{rowData[subCol.field]?.value? subCol.fieldSuffix : ''}}
+                                        <span>{{rowData[subCol.field]?.value}}{{rowData[subCol.field]?.value?
+                                            subCol.fieldSuffix : ''}}
                                             <i *ngIf="rowData[subCol.field]?.value && subCol.fieldValueIcon"
                                                 class="{{subCol.fieldValueIcon}}"
                                                 (click)="onCellValueClick($event, rowData, rowIndex, subCol)"></i></span>
@@ -346,12 +361,13 @@
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!rowData[subCol.field]?.isEditMode">
+                                        <span *ngIf="rowData[subCol.field]?.value?.name">{{
+                                            rowData[subCol.field]?.value?.name }}</span>
+                                        <span *ngIf="rowData[subCol.field]?.value?.operationName">{{
+                                            rowData[subCol.field]?.value?.operationName }}</span>
                                         <span
-                                            *ngIf="rowData[subCol.field]?.value?.name">{{ rowData[subCol.field]?.value?.name }}</span>
-                                        <span
-                                            *ngIf="rowData[subCol.field]?.value?.operationName">{{ rowData[subCol.field]?.value?.operationName }}</span>
-                                        <span
-                                            *ngIf="!rowData[subCol.field]?.value?.name && !rowData[subCol.field]?.value?.operationName">{{ rowData[subCol.field]?.value }}</span>
+                                            *ngIf="!rowData[subCol.field]?.value?.name && !rowData[subCol.field]?.value?.operationName">{{
+                                            rowData[subCol.field]?.value }}</span>
                                     </ng-container>
                                 </ng-container>
 
@@ -374,7 +390,8 @@
                                     <ng-container *ngIf="rowData[subCol.field]?.isEditMode">
                                         <a class="btn btn-secondary"
                                             (click)="onCellValueClick($event, rowData, rowIndex, subCol)"
-                                            id="{{subCol.field+'_'+rowIndex}}">{{rowData[subCol.arrayLabelField] ? rowData[subCol.arrayLabelField]: subCol.fieldPlaceholder| translate}}</a>
+                                            id="{{subCol.field+'_'+rowIndex}}">{{rowData[subCol.arrayLabelField] ?
+                                            rowData[subCol.arrayLabelField]: subCol.fieldPlaceholder| translate}}</a>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, subCol.field)"
                                             [errorMessages]="subCol.errorMessages">
                                         </cpdss-portal-validation-error>
@@ -389,18 +406,23 @@
                                             (onSelect)="onDateRangeSelect($event, rowIndex, subCol.field, rowData)"
                                             (onClearClick)="onClearDateRange($event, rowIndex, subCol.field,rowData)"
                                             [dateFormat]="subCol.dateFormat" selectionMode="range"
-                                            [placeholder]="subCol.fieldPlaceholder| translate" [minDate]="subCol.minDate"
-                                            id="{{subCol.field+'_'+rowIndex}}">
+                                            [placeholder]="subCol.fieldPlaceholder| translate"
+                                            [minDate]="subCol.minDate" id="{{subCol.field+'_'+rowIndex}}"
+                                            #subcoldaterange>
+                                            <p-footer><button class="btn btn-main"
+                                                    (click)="subcoldaterange.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                                                    |
+                                                    translate}}</button></p-footer>
                                         </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, subCol.field)"
                                             [errorMessages]="subCol.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!rowData[subCol.field]?.isEditMode">
-                                        <span
-                                            *ngIf="rowData[subCol.field]?.value?.name">{{ rowData[subCol.field]?.value?.name }}</span>
-                                        <span
-                                            *ngIf="!rowData[subCol.field]?.value?.name">{{ rowData[subCol.field]?.value }}</span>
+                                        <span *ngIf="rowData[subCol.field]?.value?.name">{{
+                                            rowData[subCol.field]?.value?.name }}</span>
+                                        <span *ngIf="!rowData[subCol.field]?.value?.name">{{
+                                            rowData[subCol.field]?.value }}</span>
                                     </ng-container>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
@@ -412,17 +434,21 @@
                                             id="{{subCol.field+'_'+rowIndex}}" [minDate]="subCol.minDate"
                                             [dateFormat]="subCol.dateFormat"
                                             (onClearClick)="onDateTimeNotSelected($event, rowIndex, subCol.field,rowData)"
-                                            >
+                                            [hideOnDateTimeSelect]="false" #subcoldatetime>
+                                            <p-footer><button class="btn btn-main"
+                                                    (click)="subcoldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                                                    |
+                                                    translate}}</button></p-footer>
                                         </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, subCol.field)"
                                             [errorMessages]="subCol.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!rowData[subCol.field]?.isEditMode">
-                                        <span
-                                            *ngIf="rowData[subCol.field]?.value?.name">{{ rowData[subCol.field]?.value?.name }}</span>
-                                        <span
-                                            *ngIf="!rowData[subCol.field]?.value?.name">{{ rowData[subCol.field]?.value }}</span>
+                                        <span *ngIf="rowData[subCol.field]?.value?.name">{{
+                                            rowData[subCol.field]?.value?.name }}</span>
+                                        <span *ngIf="!rowData[subCol.field]?.value?.name">{{
+                                            rowData[subCol.field]?.value }}</span>
                                     </ng-container>
                                 </ng-container>
                                 <span *ngSwitchDefault>{{rowData[subCol.field]}}</span>

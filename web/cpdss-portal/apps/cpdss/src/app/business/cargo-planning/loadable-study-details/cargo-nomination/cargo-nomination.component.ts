@@ -511,7 +511,8 @@ export class CargoNominationComponent implements OnInit {
    * @memberof CargoNominationComponent
    */
   private updateCommingleButton() {
-    if (this.cargoNominations.length >= 2) {
+    const addedCargoNominations = this.cargoNominations.filter((cargoNomination) => !cargoNomination.isAdd);
+    if (addedCargoNominations.length >= 2) {
       this.cargoNominationUpdate.emit(false)
     } else {
       this.cargoNominationUpdate.emit(true)
