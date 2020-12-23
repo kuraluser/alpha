@@ -29,6 +29,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
@@ -2592,6 +2594,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       cargoNomination, com.cpdss.loadablestudy.domain.CargoNomination.class);
               loadableStudy.getCargoNomination().add(cargoNominationDto);
             });
+
+        loadableStudy.setCommingleCargos(new ArrayList<>());
+        List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargos =
+            commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
+                loadableStudyOpt.get().getId(), true);
+        commingleCargos.forEach(
+            commingleCargo -> {
+              com.cpdss.loadablestudy.domain.CommingleCargo commingleCargoDto =
+                  new com.cpdss.loadablestudy.domain.CommingleCargo();
+              commingleCargoDto =
+                  modelMapper.map(
+                      commingleCargo, com.cpdss.loadablestudy.domain.CommingleCargo.class);
+              commingleCargoDto.setCargo1Id(commingleCargo.getCargo1Xid());
+              commingleCargoDto.setCargo2Id(commingleCargo.getCargo2Xid());
+              commingleCargoDto.setCargo1Percentage(commingleCargo.getCargo1Pct().toString());
+              commingleCargoDto.setCargo2Percentage(commingleCargo.getCargo2Pct().toString());
+              loadableStudy.getCommingleCargos().add(commingleCargoDto);
+            });
+
         List<LoadableQuantity> loadableQuantity =
             loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
                 request.getLoadableStudyId(), true);
@@ -3067,12 +3088,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOpt =
           loadableStudyAlgoStatusRepository.findByProcessIdAndIsActive(
               request.getProcesssId(), true);
-      if (loadableStudyAlgoStatusOpt.isPresent()) {
+      if (!loadableStudyAlgoStatusOpt.isPresent()) {
+        replyBuilder.setResponseStatus(
+            ResponseStatus.newBuilder()
+                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                .setMessage("Invalid process Id")
+                .build());
+      } else {
+
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
             request.getLoadableStudystatusId(), request.getProcesssId(), true);
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
-
     } catch (Exception e) {
       log.error("Exception when saving Algo Loadable Study Status ", e);
       replyBuilder.setResponseStatus(
@@ -3271,6 +3298,44 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional.ofNullable(portRotation.get().getEtd())
           .ifPresent(etd -> builder.setEtdEstimated(formatter.format(etd)));
       Optional.ofNullable(portRotation.get().getPortOrder()).ifPresent(builder::setPortOrder);
+    }
+  }
+
+  /**
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void getLoadableStudyStatus(
+      LoadableStudyStatusRequest request,
+      StreamObserver<LoadableStudyStatusReply> responseObserver) {
+    LoadableStudyStatusReply.Builder replyBuilder = LoadableStudyStatusReply.newBuilder();
+    try {
+      Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOpt =
+          loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
+              request.getLoadableStudyId(), true);
+      if (!loadableStudyAlgoStatusOpt.isPresent()) {
+        replyBuilder.setResponseStatus(
+            ResponseStatus.newBuilder()
+                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                .setMessage("Invalid loadable study Id")
+                .build());
+      } else {
+        replyBuilder.setLoadableStudystatusId(
+            loadableStudyAlgoStatusOpt.get().getLoadableStudyStatus().getId());
+        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      }
+    } catch (Exception e) {
+      log.error("Exception when getLoadableStudyStatus ", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when saving Algo Loadable Study Status")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
     }
   }
 }

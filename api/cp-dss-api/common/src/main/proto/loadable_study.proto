@@ -90,11 +90,23 @@ service LoadableStudyService {
 	
 	rpc GetSynopticalTable (SynopticalTableRequest) returns (SynopticalTableReply){
 	}
+
+	rpc GetLoadableStudyStatus(LoadableStudyStatusRequest) returns (LoadableStudyStatusReply) {
+	}
+}
+
+message LoadableStudyStatusRequest {
+	int64 loadableStudyId = 1;
+}
+
+message LoadableStudyStatusReply {
+	ResponseStatus responseStatus = 1;
+	int64 loadableStudystatusId = 2;
 }
 
 message AlgoStatusRequest {
-string processsId = 1;
-int64 loadableStudystatusId = 2;
+	string processsId = 1;
+	int64 loadableStudystatusId = 2;
 }
 
 message AlgoStatusReply {

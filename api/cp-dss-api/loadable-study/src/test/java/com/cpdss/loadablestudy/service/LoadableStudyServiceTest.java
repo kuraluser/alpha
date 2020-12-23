@@ -27,6 +27,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
@@ -74,6 +76,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.google.protobuf.ByteString;
@@ -145,6 +148,7 @@ class LoadableStudyServiceTest {
   @MockBean private CargoHistoryRepository cargoHistoryRepository;
   @MockBean private VoyageHistoryRepository voyageHistoryRepository;
   @MockBean private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
+  @MockBean private SynopticalTableRepository synopticalTableRepository;
   @Mock private CargoNomination cargoNomination;
 
   @Mock private CargoNominationPortDetails cargoNominationPortDetails;
@@ -1882,6 +1886,21 @@ class LoadableStudyServiceTest {
     assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
   }
 
+  /** void */
+  @Test
+  void testSaveAlgoLoadableStudyStatusInvalidProcessId() {
+    when(this.loadableStudyAlgoStatusRepository.findByProcessIdAndIsActive(
+            anyString(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    StreamRecorder<AlgoStatusReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveAlgoLoadableStudyStatus(
+        this.createAlgoStatusRequest(), responseObserver);
+    List<AlgoStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, results.get(0).getResponseStatus().getCode());
+  }
+
   /**
    * test Save Algo Loadable Study Status
    *
@@ -1908,6 +1927,82 @@ class LoadableStudyServiceTest {
     builder.setProcesssId("ID");
     return builder.build();
   }
+
+  /**
+   * test GetLoadable Study Status
+   *
+   * <p>void
+   */
+  @Test
+  void testGetLoadableStudyStatus() {
+
+    when(this.loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(createLoadableStudyAlgoStatus()));
+
+    StreamRecorder<LoadableStudyStatusReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.getLoadableStudyStatus(
+        this.createGetLoadableStudyStatus(), responseObserver);
+    List<LoadableStudyStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /** @return Object */
+  private LoadableStudyAlgoStatus createLoadableStudyAlgoStatus() {
+    LoadableStudyStatus loadableStudyStatus = new LoadableStudyStatus();
+    loadableStudyStatus.setId(4L);
+    LoadableStudyAlgoStatus loadableStudyAlgoStatus = new LoadableStudyAlgoStatus();
+    loadableStudyAlgoStatus.setLoadableStudyStatus(loadableStudyStatus);
+    return loadableStudyAlgoStatus;
+  }
+
+  /**
+   * test GetLoadable Study Status Invalid Loadable Study Id
+   *
+   * <p>void
+   */
+  @Test
+  void testGetLoadableStudyStatusInvalidLoadableStudyId() {
+    when(this.loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    StreamRecorder<LoadableStudyStatusReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.getLoadableStudyStatus(
+        this.createGetLoadableStudyStatus(), responseObserver);
+    List<LoadableStudyStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, results.get(0).getResponseStatus().getCode());
+  }
+
+  /** @return LoadableStudyStatusRequest */
+  private LoadableStudyStatusRequest createGetLoadableStudyStatus() {
+    LoadableStudyStatusRequest.Builder builder = LoadableStudyStatusRequest.newBuilder();
+    builder.setLoadableStudyId(1L);
+    return builder.build();
+  }
+
+  /**
+   * test GetLoadable Study Status Runtime Exception
+   *
+   * <p>void
+   */
+  @Test
+  void testGetLoadableStudyStatusRuntimeException() {
+    when(this.loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenThrow(RuntimeException.class);
+    StreamRecorder<LoadableStudyStatusReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.getLoadableStudyStatus(
+        this.createGetLoadableStudyStatus(), responseObserver);
+    List<LoadableStudyStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
   /**
    * test Get Loadable Pattern Commingle Details
    *

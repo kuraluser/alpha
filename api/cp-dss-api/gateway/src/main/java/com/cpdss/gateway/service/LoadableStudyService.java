@@ -27,6 +27,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
@@ -60,6 +62,7 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockin
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.AlgoPatternResponse;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.AlgoStatusResponse;
 import com.cpdss.gateway.domain.Cargo;
@@ -77,6 +80,7 @@ import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.LoadableStudyStatusResponse;
 import com.cpdss.gateway.domain.LoadingPort;
 import com.cpdss.gateway.domain.OnBoardQuantity;
 import com.cpdss.gateway.domain.OnBoardQuantityResponse;
@@ -1802,11 +1806,12 @@ public class LoadableStudyService {
    * @param first
    * @return Object
    */
-  public void generateLoadablePatterns(Long loadableStudyId, String correlationId)
+  public AlgoPatternResponse generateLoadablePatterns(Long loadableStudyId, String correlationId)
       throws GenericServiceException {
     log.info(
         "Inside generateLoadablePatterns gateway service with correlationId : " + correlationId);
     AlgoRequest request = AlgoRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
+    AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     AlgoReply reply = this.generateLoadablePatterns(request);
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -1814,6 +1819,9 @@ public class LoadableStudyService {
           reply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
     }
+    algoPatternResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return algoPatternResponse;
   }
 
   public AlgoReply generateLoadablePatterns(AlgoRequest request) {
@@ -2092,5 +2100,50 @@ public class LoadableStudyService {
               });
       synopticalTableResponse.setSynopticalRecords(synopticalTableList);
     }
+  }
+
+  /**
+   * @param loadableStudyId
+   * @param first
+   * @return LoadableStudyStatusResponse
+   */
+  public LoadableStudyStatusResponse getLoadableStudyStatus(
+      Long loadableStudyId, String correlationId) throws GenericServiceException {
+    log.info("Inside getLoadableStudyStatus gateway service with correlationId : " + correlationId);
+    LoadableStudyStatusResponse response = new LoadableStudyStatusResponse();
+    LoadableStudyStatusReply grpcReply =
+        this.getLoadableStudyStatus(
+            this.buildLoadableStudyStatusRequest(loadableStudyId, correlationId));
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to get Loadable Study Status",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    response.setLoadableStudyStatusId(grpcReply.getLoadableStudystatusId());
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * @param buildLoadableStudyStatusRequest
+   * @return LoadableStudyStatusReply
+   */
+  LoadableStudyStatusReply getLoadableStudyStatus(
+      LoadableStudyStatusRequest loadableStudyStatusRequest) {
+    return this.loadableStudyServiceBlockingStub.getLoadableStudyStatus(loadableStudyStatusRequest);
+  }
+
+  /**
+   * @param loadableStudyId
+   * @param correlationId
+   * @return Long
+   */
+  private LoadableStudyStatusRequest buildLoadableStudyStatusRequest(
+      Long loadableStudyId, String correlationId) {
+    LoadableStudyStatusRequest.Builder builder = LoadableStudyStatusRequest.newBuilder();
+    builder.setLoadableStudyId(loadableStudyId);
+    return builder.build();
   }
 }
