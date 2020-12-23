@@ -668,6 +668,7 @@ export interface IPortOBQTankDetailValueObject {
     volume: ValueObject<number>;
     colorCode: string;
     portId: number;
+    percentageFilled: string;
 }
 
 /**

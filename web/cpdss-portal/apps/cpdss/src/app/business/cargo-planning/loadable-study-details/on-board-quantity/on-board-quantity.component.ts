@@ -8,10 +8,10 @@ import { LoadableStudyDetailsApiService } from '../../services/loadable-study-de
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { CommingleApiService } from '../../services/commingle-api.service';
 import { ITank } from '../../../core/models/common.model';
-import { IPermission } from 'apps/cpdss/src/app/shared/models/user-profile.model';
+import { IPermission } from '../../../../shared/models/user-profile.model';
 
 /**
- * Component for OBQ tab
+ * Component for OBQ tab 
  *
  * @export
  * @class OnBoardQuantityComponent
@@ -25,7 +25,7 @@ import { IPermission } from 'apps/cpdss/src/app/shared/models/user-profile.model
 export class OnBoardQuantityComponent implements OnInit {
 
   @Input() voyageId: number;
-  
+
   @Input()
   get loadableStudyId() {
     return this._loadableStudyId;
@@ -35,14 +35,15 @@ export class OnBoardQuantityComponent implements OnInit {
     this.obqForm = null;
     this.getPortRotation();
   }
-  
+
   @Input() vesselId: number;
   @Input() permission: IPermission;
   
   get selectedPortOBQTankDetails() {
     return this._selectedPortOBQTankDetails;
+
   }
-  
+
   set selectedPortOBQTankDetails(selectedPortOBQTankDetails: IPortOBQTankDetailValueObject[]) {
     this._selectedPortOBQTankDetails = selectedPortOBQTankDetails.map((obqTankDetail, index) => {
       const _obqTankDetail = this.loadableStudyDetailsTransformationService.formatOBQTankDetail(obqTankDetail);
@@ -50,26 +51,27 @@ export class OnBoardQuantityComponent implements OnInit {
       return _obqTankDetail;
     })
   }
-  
+
   get selectedTank(): IPortOBQTankDetailValueObject {
     return this._selectedTank;
   }
-  
+
   set selectedTank(selectedTank: IPortOBQTankDetailValueObject) {
     this._selectedTank = selectedTank;
   }
-  
+
   get selectedTankId(): number {
     return this.selectedTank?.tankId;
   }
-  
+
   set selectedTankId(id: number) {
-    this.selectedIndex = this.selectedPortOBQTankDetails.findIndex( obqDetails => obqDetails.tankId == id);
+    this.selectedIndex = this.selectedPortOBQTankDetails.findIndex(obqDetails => obqDetails.tankId === id);
     this.selectedTank = this.selectedPortOBQTankDetails[this.selectedIndex];
-    this.onRowSelection({data: this.selectedTank, index: this.selectedIndex});
+    this.setFillingPercentage(this.selectedTankId);
+    this.onRowSelection({ data: this.selectedTank, index: this.selectedIndex });
   }
-  
-  
+
+
   cargoList = [];
   selectedPort: IPort;
   obqForm: FormGroup;
@@ -93,11 +95,11 @@ export class OnBoardQuantityComponent implements OnInit {
     private commingleApiService: CommingleApiService,
     private fb: FormBuilder,) { }
 
-/**
- * Method called on intialization of the component
- *
- * @memberof OnBoardQuantityComponent
- */
+  /**
+   * Method called on intialization of the component
+   *
+   * @memberof OnBoardQuantityComponent
+   */
   ngOnInit(): void {
      this.isEditable = this.permission ? this.permission?.edit : false;
     this.columns = this.loadableStudyDetailsTransformationService.getOBQDatatableColumns();
@@ -113,10 +115,12 @@ export class OnBoardQuantityComponent implements OnInit {
     this.ngxSpinnerService.show();
     const ports = await this.loadableStudyDetailsApiService.getPorts().toPromise();
     const result = await this.loadableStudyDetailsApiService.getOHQPortRotation(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
+
     if (result?.portList) {
       const obqPorts = result?.portList?.map((obqPort) => ports?.find((port) => port.id === obqPort.portId));
       this.selectedPort = obqPorts[0];
       this.selectedPortOBQTankDetails = await this.getPortOBQDetails(this.selectedPort?.id);
+      this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
       this.getGradeData();
       this.updateTankList();
     }
@@ -148,6 +152,7 @@ export class OnBoardQuantityComponent implements OnInit {
       weight: this.fb.control('', [Validators.required, Validators.min(0), numberValidator(2, 7)]),
     });
     this.enableOrDisableControls(this.obqForm, ['sounding', 'weight', 'volume'], false);
+    this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
     return [..._selectedPortOBQTankDetails];
   }
 
@@ -194,6 +199,9 @@ export class OnBoardQuantityComponent implements OnInit {
     if (formGroup.valid) {
       const tankDetails = this.loadableStudyDetailsTransformationService.getOBQTankDetailAsValue(event.data);
       const res = await this.loadableStudyDetailsApiService.setOBQTankDetails(tankDetails, this.vesselId, this.voyageId, this.loadableStudyId);
+      this.updateTankList();
+      this.setFillingPercentage(this.selectedTankId);
+      this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
     } else {
       Object.keys(formGroup.controls).forEach(key => {
         const control = formGroup.get(key);
@@ -222,6 +230,8 @@ export class OnBoardQuantityComponent implements OnInit {
     this.obqForm.controls.sounding.setValue(data.sounding.value)
     this.obqForm.controls.weight.setValue(data.weight.value)
     this.obqForm.controls.volume.setValue(data.volume.value)
+    this.setFillingPercentage(this.selectedTankId);
+    this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
   }
 
   /**
@@ -317,31 +327,30 @@ export class OnBoardQuantityComponent implements OnInit {
  * @memberof OnBoardQuantityComponent
  */
   updateTankList() {
-      this.tanks = this.tanks.map(group => {
-        const newGroup = group.map((groupItem) => {
-          const tank = Object.assign({}, groupItem);
-          const selectedPortOBQTankDetail = this.selectedPortOBQTankDetails.find((item) => (item.tankId === groupItem.id) && item);
-          tank.commodity = {
-            cargoColor: selectedPortOBQTankDetail?.colorCode ?? '',
-            volume: selectedPortOBQTankDetail?.volume?.value ?? 0
-          }
-          return tank;
-        });
-        return newGroup;
-      })
+    this.tanks = this.tanks.map(group => {
+      const newGroup = group.map((groupItem) => {
+        const tank = Object.assign({}, groupItem);
+        const selectedPortOBQTankDetail = this.selectedPortOBQTankDetails.find((item) => (item.tankId === groupItem.id) && item);
+        tank.commodity = {
+          cargoColor: selectedPortOBQTankDetail?.colorCode ?? '',
+          volume: selectedPortOBQTankDetail?.volume?.value ?? 0
+        }
+        return tank;
+      });
+      return newGroup;
+    })
   }
 
-   /**
-   * Handler for change event of fields of tank layout form
-   *
-   * @param {*} event
-   * @param {number} selectedTankFormGroupIndex
-   * @param {string} field
-   * @memberof OnHandQuantityComponent
-   */
+  /**
+  * Handler for change event of fields of tank layout form
+  *
+  * @param {*} event
+  * @param {string} field
+  * @memberof OnBoardQuantityComponent
+  */
   onChange(event, field: string) {
     const controls = this.obqForm.controls;
-    if(controls[field].valid){
+    if (controls[field].valid) {
       this.selectedTank[field].value = event?.target.value;
       const formGroup = this.row(this.selectedIndex);
       formGroup.controls[field]?.setValue(event?.target.value);
@@ -356,17 +365,35 @@ export class OnBoardQuantityComponent implements OnInit {
     }
   }
 
- /**
- * Method to get grades to show on top of tank layout
- *
- * @memberof OnBoardQuantityComponent
- */
-  getGradeData(){
-    this.selectedPortOBQTankDetails.forEach( obqDetails => {
-      if(this.cargoList.findIndex(cargo => cargo.id == obqDetails?.cargo?.value?.id) == -1){
-        this.cargoList.push({colorCode: obqDetails.colorCode,...obqDetails.cargo.value})
+  /**
+  * Method to get grades to show on top of tank layout
+  *
+  * @memberof OnBoardQuantityComponent
+  */
+  getGradeData() {
+    this.selectedPortOBQTankDetails.forEach(obqDetails => {
+      if (this.cargoList.findIndex(cargo => cargo.id == obqDetails?.cargo?.value?.id) == -1) {
+        this.cargoList.push({ colorCode: obqDetails.colorCode, ...obqDetails.cargo.value })
       }
     })
+  }
+
+  /**
+ * Set filling percentage label value
+ *
+ * @param {number} selectedTankId
+ * @memberof OnBoardQuantityComponent
+ */
+  setFillingPercentage(selectedTankId: number) {
+    const tanks = [...this.tanks];
+    for (let index = 0; index < tanks.length; index++) {
+      const tank = tanks[index]?.find(tank => tank.id === selectedTankId);
+      if (tank) {
+        this.selectedTank.percentageFilled = tank?.percentageFilled ?? '';
+        break;
+      }
+
+    }
   }
 
 }

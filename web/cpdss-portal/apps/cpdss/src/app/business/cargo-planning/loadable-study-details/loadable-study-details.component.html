@@ -58,7 +58,7 @@
             <a class="tab-btn" *cpdssPortalPermission="obqTabPermissionContext"
                 [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ}"
                 (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.OBQ)">{{'ON_BOARD_QUANTITIES' | translate}}
-                <div class="pt-5" *ngIf="false else incomplete">
+                <div class="pt-5" *ngIf="(obqComplete$|async) else incomplete">
                     <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
                 </div>
                 <ng-template #incomplete>

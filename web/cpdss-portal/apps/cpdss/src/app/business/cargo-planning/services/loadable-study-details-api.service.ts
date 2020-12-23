@@ -190,6 +190,9 @@ export class LoadableStudyDetailsApiService {
    * @memberof LoadableStudyDetailsApiService
    */
     setOBQTankDetails(obqTankDetails: IPortOBQTankDetail, vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
+        obqTankDetails.vesselId = vesselId;
+        obqTankDetails.voyageId = voyageId;
+        obqTankDetails.loadableStudyId = loadableStudyId;
         return this._obqDb.obq.add(obqTankDetails);
     }
 }
