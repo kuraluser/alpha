@@ -143,7 +143,8 @@ export class LoadableStudyDetailsTransformationService {
         header: 'SL',
         fieldType: DATATABLE_FIELD_TYPE.SLNO,
         sortable: true,
-        fieldHeaderClass: 'column-sl'
+        fieldHeaderClass: 'column-sl',
+        fieldClass: 'sl'
       },
       {
         field: 'priority',
@@ -501,7 +502,8 @@ export class LoadableStudyDetailsTransformationService {
         header: 'SL',
         fieldType: DATATABLE_FIELD_TYPE.SLNO,
         sortable: true,
-        fieldHeaderClass: 'column-sl'
+        fieldHeaderClass: 'column-sl',
+        fieldClass: 'sl'
       },
       {
         field: 'port',

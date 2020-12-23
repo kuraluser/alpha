@@ -1190,10 +1190,14 @@ input[type=number] {
 .re-order{
 width: 50px!important;
 }
-td.lay-can{
+td.lay-can {
   div{
     min-width: 170px;
   }
+}
+
+td.sl div{
+  width: 40px;
 }
 
 .loadable-quantity-pop-up{ 
