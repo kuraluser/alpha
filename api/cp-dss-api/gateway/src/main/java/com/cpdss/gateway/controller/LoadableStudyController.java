@@ -986,7 +986,7 @@ public class LoadableStudyController {
       throws CommonRestException {
     try {
       log.info("getSynopticalTable: {}", getClientIp());
-      return this.loadableStudyService.getSynopticalTable(loadableStudyId);
+      return this.loadableStudyService.getSynopticalTable(vesselId, loadableStudyId);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException getSynopticalTable", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

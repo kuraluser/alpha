@@ -14,4 +14,6 @@ public class SynopticalTableResponse {
   private CommonSuccessResponse responseStatus;
 
   private List<SynopticalRecord> synopticalRecords;
+
+  private List<VesselTank> cargoTanks;
 }

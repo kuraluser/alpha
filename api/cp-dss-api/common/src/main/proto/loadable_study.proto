@@ -85,6 +85,7 @@ service LoadableStudyService {
 	
 	rpc SaveOnBoardQuantity(OnBoardQuantityDetail) returns (OnBoardQuantityReply){
 	}
+	
 	rpc SaveAlgoLoadableStudyStatus(AlgoStatusRequest) returns (AlgoStatusReply) {
 	}
 	
@@ -521,14 +522,25 @@ message SynopticalRecord{
 	string etdActual = 21;
 	string etaEstimated = 22;
 	string etdEstimated = 23;
-	int64 portOrder = 24;
+	repeated SynopticalCargoRecord cargo = 24; 
+}
+
+message SynopticalCargoRecord{
+	int64 tankId = 1;
+	string tankName = 2;
+	string plannedArrivalWeight = 3;
+	string actualArrivalWeight = 4;
+	string plannedDepartureWeight = 5;
+	string actualDepartureWeight = 6;
 }
 
 message SynopticalTableRequest{
 	int64 loadableStudyId = 1;
+	int64 vesselId = 2;
 }
 
 message SynopticalTableReply{
 	ResponseStatus responseStatus = 1;
 	repeated SynopticalRecord synopticalRecords = 2;
+	repeated TankDetail vesselTank = 3;
 }

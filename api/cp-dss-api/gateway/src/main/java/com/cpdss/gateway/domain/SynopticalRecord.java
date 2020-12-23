@@ -4,6 +4,7 @@ package com.cpdss.gateway.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -34,4 +35,5 @@ public class SynopticalRecord {
   private Long portId;
   private String portName;
   private Long portOrder;
+  private List<SynopticalCargoRecord> cargos;
 }
