@@ -357,7 +357,7 @@
 	"SYNOPTICAL_LOADABLE_STUDY_LABEL": "Loadable study",
 	"SYNOPTICAL_VOYAGE_LABEL": "Voyage",
 	"SYNOPTICAL_LOADABLESTUDY_PLACEHOLDER": "Select loadable study",
-	"PORT_WATER_DENSITY_MIN_ERROR": "Sea water density must be greater than or equal to 0",
+	"PORT_WATER_DENSITY_MIN_ERROR": "Water density must be greater than or equal to 0",
 	"PORT_MAX_DRAFT_MIN_ERROR": "Max draft must be greater than or equal to 0",
 	"PORT_MAX_AIR_DRAFT_MIN_ERROR": "Max air draft must be greater than or equal to 0",
 	"DATA_TABLE_OK_BUTTON_LABEL": "OK"
