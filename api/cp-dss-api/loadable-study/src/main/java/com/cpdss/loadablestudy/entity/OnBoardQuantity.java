@@ -36,9 +36,6 @@ public class OnBoardQuantity extends EntityDoc {
   @Column(name = "sounding")
   private BigDecimal sounding;
 
-  @Column(name = "weight")
-  private BigDecimal weight;
-
   @Column(name = "volume")
   private BigDecimal volume;
 
@@ -51,4 +48,19 @@ public class OnBoardQuantity extends EntityDoc {
   @JoinColumn(name = "loadable_study_xid", referencedColumnName = "id")
   @ManyToOne
   private LoadableStudy loadableStudy;
+
+  @Column(name = "planned_arrival_weight")
+  private BigDecimal plannedArrivalWeight;
+
+  @Column(name = "actual_arrival_weight")
+  private BigDecimal actualArrivalWeight;
+
+  @Column(name = "planned_departure_weight")
+  private BigDecimal plannedDepartureWeight;
+
+  @Column(name = "actual_departure_weight")
+  private BigDecimal actualDepartureWeight;
+
+  @Column(name = "color_code")
+  private String colorCode;
 }

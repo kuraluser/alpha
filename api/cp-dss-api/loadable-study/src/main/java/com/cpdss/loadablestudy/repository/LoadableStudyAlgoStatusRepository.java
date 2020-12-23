@@ -21,4 +21,7 @@ public interface LoadableStudyAlgoStatusRepository
       "UPDATE LoadableStudyAlgoStatus SET loadableStudyStatus.id = ?1 WHERE processId = ?2 and isActive = ?3")
   public void updateLoadableStudyAlgoStatus(
       Long loadableStudyStatusId, String processId, Boolean isActive);
+
+  public Optional<LoadableStudyAlgoStatus> findByLoadableStudyIdAndIsActive(
+      Long loadableStudyId, Boolean isActive);
 }

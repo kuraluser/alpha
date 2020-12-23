@@ -22,6 +22,7 @@ public class LoadableStudy {
   private String maxAirTemp;
   private String maxWaterTemp;
   private LoadableQuantity loadableQuantity;
+  private List<CommingleCargo> commingleCargos;
   private List<LoadableStudyPortRotation> loadableStudyPortRotation;
   private List<CargoNomination> cargoNomination;
   private List<CargoNominationOperationDetails> cargoNominationOperationDetails;
