@@ -3,7 +3,7 @@ import { LoadableStudyDetailsApiService } from '../../services/loadable-study-de
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { IPortAllDropdownData, IPortList, IPortsDetailsResponse, IPortsValueObject, IPortsEvent } from '../../models/cargo-planning.model';
-import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
+import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
@@ -228,13 +228,14 @@ export class PortsComponent implements OnInit {
    * @memberof PortsComponent
    */
   async onEditComplete(event: IPortsEvent) {
-    const form = this.row(event.index)
+    const form = this.row(event.index);
+    const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
     if (event.field === 'port') {
-      this.portsLists[event.index]['portcode'].value = event.data.port.value.code;
-      this.portsLists[event.index]['maxDraft'].value = event.data.port.value.maxDraft;
-      this.portsLists[event.index]['maxAirDraft'].value = event.data.port.value.maxAirDraft;
-      this.portsLists[event.index]['seaWaterDensity'].value = event.data.port.value.waterDensity;
-      this.portsLists[event.index]['portOrder'] = this.portOrder;
+      this.portsLists[valueIndex]['portcode'].value = event.data.port.value.code;
+      this.portsLists[valueIndex]['maxDraft'].value = event.data.port.value.maxDraft;
+      this.portsLists[valueIndex]['maxAirDraft'].value = event.data.port.value.maxAirDraft;
+      this.portsLists[valueIndex]['seaWaterDensity'].value = event.data.port.value.waterDensity;
+      this.portsLists[valueIndex]['portOrder'] = this.portOrder;
       this.updateField(event.index, 'portcode', event.data.port.value.code);
       this.updateField(event.index, 'maxDraft', event.data.port.value.maxDraft);
       this.updateField(event.index, 'maxAirDraft', event.data.port.value.maxAirDraft);
@@ -246,8 +247,8 @@ export class PortsComponent implements OnInit {
       form.controls.port.updateValueAndValidity();
     }
     if (event.field === 'layCan') {
-        this.portsLists[event.index]['layCanFrom'].value = event.data.layCan.value.split('to')[0].trim();
-        this.portsLists[event.index]['layCanTo'].value = event.data.layCan.value.split('to')[1].trim();
+        this.portsLists[valueIndex]['layCanFrom'].value = event.data.layCan.value.split('to')[0].trim();
+        this.portsLists[valueIndex]['layCanTo'].value = event.data.layCan.value.split('to')[1].trim();
         this.updateField(event.index, 'layCanFrom', event.data.layCan.value.split('to')[0].trim());
         this.updateField(event.index, 'layCanTo', event.data.layCan.value.split('to')[1].trim());
         form.controls.eta.updateValueAndValidity();
@@ -264,11 +265,11 @@ export class PortsComponent implements OnInit {
     this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
     if (!event.data?.isAdd) {
       if (form.valid) {
-        const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
+        const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
         if (res) {
-          for (const key in this.portsLists[event.index]) {
-            if (this.portsLists[event.index].hasOwnProperty(key) && this.portsLists[event.index][key].hasOwnProperty('_isEditMode')) {
-              this.portsLists[event.index][key].isEditMode = false;
+          for (const key in this.portsLists[valueIndex]) {
+            if (this.portsLists[valueIndex].hasOwnProperty(key) && this.portsLists[valueIndex][key].hasOwnProperty('_isEditMode')) {
+              this.portsLists[valueIndex][key].isEditMode = false;
             }
           }
           this.portsLists = [...this.portsLists];
@@ -278,7 +279,7 @@ export class PortsComponent implements OnInit {
         const fromGroup = this.row(event.index);
         const invalidFormControls = this.findInvalidControlsRecursive(fromGroup);
         invalidFormControls.forEach((key) => {
-          this.portsLists[event.index][key].isEditMode = true;
+          this.portsLists[valueIndex][key].isEditMode = true;
         });
         fromGroup.markAllAsTouched();
         this.portsForm.updateValueAndValidity();
@@ -306,14 +307,16 @@ export class PortsComponent implements OnInit {
  * @memberof PortsComponent
  */
   async onRowSave(event: IPortsEvent) {
-    const form = this.row(event.index)
+    const form = this.row(event.index);
+    const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
     if (form.valid) {
-      const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
+      const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
       if (res) {
-        this.portsLists[event.index].isAdd = false;
-        for (const key in this.portsLists[event.index]) {
-          if (this.portsLists[event.index].hasOwnProperty(key) && this.portsLists[event.index][key].hasOwnProperty('_isEditMode')) {
-            this.portsLists[event.index][key].isEditMode = false;
+        this.portsLists[valueIndex].isAdd = false;
+
+        for (const key in this.portsLists[valueIndex]) {
+          if (this.portsLists[valueIndex].hasOwnProperty(key) && this.portsLists[valueIndex][key].hasOwnProperty('_isEditMode')) {
+            this.portsLists[valueIndex][key].isEditMode = false;
           }
         }
         this.portsLists = [...this.portsLists];
@@ -360,10 +363,11 @@ export class PortsComponent implements OnInit {
   */
   async onDeleteRow(event: IPortsEvent) {
     if (event?.data?.isDelete) {
+      const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
       this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORTS_DELETE_SUMMARY', detail: 'PORTS_DELETE_DETAILS', data: { confirmLabel: 'PORTS_DELETE_CONFIRM_LABEL', rejectLabel: 'PORTS_DELETE_REJECT_LABEL' } });
       this.confirmationAlertService.confirmAlert$.subscribe(async (response) => {
         if (response) {
-          const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[event.index]), this.vesselId, this.voyageId, this.loadableStudyId);
+          const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
           if (res) {
             this.portsLists.splice(event.index, 1);
             this.portsLists = [...this.portsLists];
@@ -416,6 +420,32 @@ export class PortsComponent implements OnInit {
         this.portsLists = [...this.portsLists];
       }
     }
+  }
+
+  /**
+   * Handler for filter event
+   *
+   * @param {IDataTableFilterEvent} event
+   * @memberof PortsComponent
+   */
+  onFilter(event: IDataTableFilterEvent) {
+    this.ngxSpinnerService.show();
+    const portListArray = event?.filteredValue?.map(ports => this.initPortsFormGroup(ports));
+    this.portsForm.controls.dataTable = this.fb.array([...portListArray]);
+    this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Handler for datatable sort event
+   *
+   * @param {IDataTableSortEvent} event
+   * @memberof PortsComponent
+   */
+  onSort(event: IDataTableSortEvent) {
+    this.ngxSpinnerService.show();
+    const portListArray = event?.data?.map(ports => this.initPortsFormGroup(ports));
+    this.portsForm.controls.dataTable = this.fb.array([...portListArray]);
+    this.ngxSpinnerService.hide();
   }
 }
 

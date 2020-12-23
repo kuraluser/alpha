@@ -4,7 +4,7 @@
             <div class="col">
                 <div class="table-responsive-custom cargo-nomination-table">
                 <cpdss-portal-datatable [tableId]="'ports'" [form]="portsForm" [columns]="columns" [value]="portsLists"
-                    [editMode]="editMode" [listData]="listData"  [filterable]="true" (editComplete)="onEditComplete($event)" (saveRow)="onRowSave($event)" (deleteRow)="onDeleteRow($event)" [tableRowReOrder]="true" (rowReorder)="onRowReorder($event)">
+                    [editMode]="editMode" [listData]="listData"  [filterable]="true" (editComplete)="onEditComplete($event)" (saveRow)="onRowSave($event)" (deleteRow)="onDeleteRow($event)" [tableRowReOrder]="true" (rowReorder)="onRowReorder($event)" (sort)="onSort($event)" (filter)="onFilter($event)">
                 </cpdss-portal-datatable>
             </div>
         </div>

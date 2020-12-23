@@ -366,7 +366,8 @@ export class LoadableStudyDetailsTransformationService {
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'LOADING_PORT_QUANTITY_PLACEHOLDER',
         errorMessages: {
-          'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR'
+          'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
+          'min': 'CARGO_NOMINATION_LOADING_PORT_MIN_ERROR'
         }
       },
       {
@@ -516,6 +517,7 @@ export class LoadableStudyDetailsTransformationService {
         listName: 'portList',
         listFilter: true,
         sortable: true,
+        sortField: 'port.value.name',
         filterField: 'port.value.name',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'SELECT_PORT',

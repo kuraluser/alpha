@@ -1,3 +1,4 @@
+import { SortEvent } from 'primeng/api';
 import { IValidationErrorMessages } from '../validation-error/validation-error.model';
 
 /**
@@ -11,6 +12,7 @@ export interface IDataTableColumn {
     header: string;
     fieldType?: DATATABLE_FIELD_TYPE;
     sortable?: boolean;
+    sortField?: string;
     editable?: boolean;
     filter?: boolean;
     filterType?: DATATABLE_FILTER_TYPE;
@@ -135,6 +137,20 @@ export interface IDataTableEvent {
 export interface IDataTableFilterEvent {
     filters: any;
     filteredValue: [];
+}
+
+/**
+ * Interface for datatable sort event
+ *
+ * @export
+ * @interface IDataTableSortEvent
+ * @extends {SortEvent}
+ */
+export interface IDataTableSortEvent extends SortEvent {
+    data?: any[];
+    mode?: string;
+    field?: string;
+    order?: number;
 }
 
 /**

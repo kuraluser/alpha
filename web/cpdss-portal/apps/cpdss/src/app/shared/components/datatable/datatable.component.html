@@ -3,7 +3,7 @@
         <p-table #datatable [columns]="columns" [value]="value" [editMode]="editMode" [selectionMode]="selectionMode"
             (onEditComplete)="onEditComplete($event)" (onRowSelect)="onRowSelect($event)" [(selection)]="selection"
             (columnClick)="onClick($event)" [reorderableColumns]="tableRowReOrder" (onRowReorder)="onRowReorder($event)"
-            (onFilter)="onFilter($event)">
+            (onFilter)="onFilter($event)" [customSort]="customSort" (sortFunction)="sortFunction($event)">
             <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
                     <col *ngIf="tableRowReOrder" class="column-class re-order">
@@ -17,24 +17,27 @@
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th *ngIf="tableRowReOrder"></th>
-                    <th *ngFor="let col of columns" [pSortableColumn]="col.field"
+                    <th *ngFor="let col of columns" [pSortableColumn]="col?.sortField ? col?.sortField : col.field"
                         [pSortableColumnDisabled]="!col.sortable" [colSpan]="col?.columns?.length">
                         <ng-container *ngIf="!col?.columns?.length else colGrouping">
                             <span>{{col.header| translate}}</span>
-                            <p-sortIcon [field]="col.field" *ngIf="col.sortable"></p-sortIcon>
+                            <p-sortIcon [field]="col?.sortField ? col?.sortField : col.field" *ngIf="col.sortable">
+                            </p-sortIcon>
                         </ng-container>
                         <ng-template #colGrouping>
                             <table>
                                 <tr>
                                     <th [colSpan]="col?.columns?.length">
                                         <span>{{col.header| translate}}</span>
-                                        <p-sortIcon [field]="col.field" *ngIf="col.sortable"></p-sortIcon>
+                                        <p-sortIcon [field]="col?.sortField ? col?.sortField : col.field"
+                                            *ngIf="col.sortable"></p-sortIcon>
                                     </th>
                                 </tr>
                                 <tr>
                                     <th *ngFor="let subCol of col?.columns">
                                         <span>{{subCol.header| translate}}</span>
-                                        <p-sortIcon [field]="subCol.field" *ngIf="subCol.sortable"></p-sortIcon>
+                                        <p-sortIcon [field]="subCol?.sortField ? subCol?.sortField : subCol.field"
+                                            *ngIf="subCol.sortable"></p-sortIcon>
                                     </th>
                                 </tr>
                             </table>
@@ -207,6 +210,7 @@
                                 <ng-container *ngSwitchCase="fieldType.COLORPICKER">
                                     <ng-container *ngIf="rowData[col.field]?.isEditMode">
                                         <p-colorPicker [formControlName]="col.field"
+                                            [ngClass]="{'empty': !rowData[col.field]?.value}"
                                             (onChange)="onChange($event, rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}"></p-colorPicker>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
@@ -214,8 +218,9 @@
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!rowData[col.field]?.isEditMode">
-                                        <p-colorPicker class="colorpicker" [formControlName]="col.field">
-                                        </p-colorPicker>
+                                        <div class="colorpicker p-colorpicker-preview p-inputtext"
+                                            [style.background-color]="rowData[col.field]?.value">
+                                        </div>
                                     </ng-container>
                                 </ng-container>
 
@@ -242,7 +247,7 @@
                                             [placeholder]="col.fieldPlaceholder| translate" [minDate]="col.minDate"
                                             id="{{col.field+'_'+rowIndex}}" #coldaterange>
                                             <p-footer><button class="btn btn-main"
-                                                    (click)="coldaterange.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                                                (click)="coldaterange.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
                                                     |
                                                     translate}}</button></p-footer>
                                         </p-calendar>
@@ -268,7 +273,7 @@
                                             (onClearClick)="onDateTimeNotSelected($event, rowIndex, col.field,rowData)"
                                             [hideOnDateTimeSelect]="false" #coldatetime>
                                             <p-footer><button class="btn btn-main"
-                                                    (click)="coldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
+                                                (click)="coldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
                                                     translate}}</button></p-footer>
                                         </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
@@ -374,6 +379,7 @@
                                 <ng-container *ngSwitchCase="fieldType.COLORPICKER">
                                     <ng-container *ngIf="rowData[subCol.field]?.isEditMode">
                                         <p-colorPicker [formControlName]="subCol.field"
+                                        [ngClass]="{'empty': !rowData[subCol.field]?.value}"
                                             (onChange)="onChange($event, rowData, rowIndex, subCol)"
                                             id="{{subCol.field+'_'+rowIndex}}"></p-colorPicker>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, subCol.field)"
@@ -381,8 +387,9 @@
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!rowData[subCol.field]?.isEditMode">
-                                        <p-colorPicker class="colorpicker" [formControlName]="subCol.field">
-                                        </p-colorPicker>
+                                        <div class="colorpicker p-colorpicker-preview p-inputtext"
+                                            [style.background-color]="rowData[subCol.field]?.value">
+                                        </div>
                                     </ng-container>
                                 </ng-container>
 

@@ -18,8 +18,8 @@ export function numberValidator(decimalPlaces, digitLength = null, isNegativeAcc
           }
         }
       }
-      if (number[0].includes('-') > 0 && !isNegativeAccept) {
-        let value = control.value.toString().replace('-', '');
+      if (control?.value?.toString()?.includes('-') && !isNegativeAccept) {
+        let value = Math.abs(control.value);
         control.setValue(Number(value));
         if (!value) {
           return { required: true };

@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableEvent } from '../../../../../shared/components/datatable/datatable.model';
+import { numberValidator } from '../../../directives/validator/number-validator.directive';
 import { ILoadingPort, ILoadingPortValueObject, ILoadingPopupData, IPort } from '../../../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
 
@@ -138,8 +139,8 @@ export class LoadingPortsPopupComponent implements OnInit {
       this.popupDataChange.emit(this.popupData);
       this.closePopup();
     } else {
-      if (this.loadingPortsFrom.controls.dataTable.errors.required) {
-        const detail = await this.translateService.get('CARGO_NOMINATION_FIELD_REQUIRED_ERROR').toPromise();
+      if (this.loadingPortsFrom.controls.dataTable?.errors?.required) {
+        const detail = await this.translateService.get('CARGO_NOMINATION_LOADING_PORT_REQUIRED_ERROR').toPromise();
         this.messageService.add({ severity: 'error', detail: detail });
       }
 
@@ -160,7 +161,7 @@ export class LoadingPortsPopupComponent implements OnInit {
   private initLoadingPortFormGroup(loadingPort: ILoadingPortValueObject) {
     return this.fb.group({
       name: this.fb.control(loadingPort.name.value, Validators.required),
-      quantity: this.fb.control(loadingPort.quantity.value, [Validators.required])
+      quantity: this.fb.control(loadingPort.quantity.value, [Validators.required, Validators.min(1), numberValidator(2, 7, false)])
     });
   }
 

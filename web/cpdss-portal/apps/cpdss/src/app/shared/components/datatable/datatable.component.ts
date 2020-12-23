@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, SortEvent } from 'primeng/api';
 import { Table } from 'primeng/table';
-import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableEvent, IDataTableFilterEvent } from './datatable.model';
+import { ObjectUtils } from 'primeng/utils';
+import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableEvent, IDataTableFilterEvent, IDataTableSortEvent } from './datatable.model';
 
 /**
  * Compoent for Datatable
@@ -59,7 +60,15 @@ export class DatatableComponent implements OnInit {
 
   @Input() selectionMode: DATATABLE_SELECTIONMODE;
 
-  @Input() editMode: DATATABLE_EDITMODE;
+  @Input()
+  get editMode(): DATATABLE_EDITMODE {
+    return this._editMode;
+  }
+
+  set editMode(editMode: DATATABLE_EDITMODE) {
+    this.customSort = editMode ? true : false;
+    this._editMode = editMode;
+  }
 
   @Input() filterable: boolean;
 
@@ -86,6 +95,7 @@ export class DatatableComponent implements OnInit {
   @Output() columnClick = new EventEmitter<IDataTableEvent>();
   @Output() rowReorder = new EventEmitter<IDataTableEvent>();
   @Output() filter = new EventEmitter<IDataTableFilterEvent>();
+  @Output() sort = new EventEmitter<IDataTableSortEvent>();
 
   // public fields
   readonly fieldType = DATATABLE_FIELD_TYPE;
@@ -94,11 +104,13 @@ export class DatatableComponent implements OnInit {
   moreOptions: MenuItem[];
   selectedRowEvent: IDataTableEvent;
   totalColSpan: number;
+  customSort: boolean;
 
   // private fields
   private _columns: IDataTableColumn[];
   private _value: Array<any>;
   private _form: FormGroup;
+  private _editMode: DATATABLE_EDITMODE;
 
 
 
@@ -133,7 +145,7 @@ export class DatatableComponent implements OnInit {
         }
       }
     }
-    if (this.editMode && (colEditable === undefined || colEditable) && event.data[event.field].isEditable && (!event.data.isAdd || !this.columns.some(col => col.fieldType === this.fieldType.ACTION)) && event.field !== 'actions') {
+    if (this.editMode && (colEditable === undefined || colEditable) && event?.data[event.field]?.isEditable && (!event.data.isAdd || !this.columns.some(col => col.fieldType === this.fieldType.ACTION)) && event.field !== 'actions') {
       const control = this.field(event.index, event.field);
       event.data[event.field].isEditMode = control?.invalid;
       if (control?.dirty && control?.valid) {
@@ -539,6 +551,32 @@ export class DatatableComponent implements OnInit {
   */
   onRowReorder(event) {
     this.rowReorder.emit(event)
+  }
+
+  /**
+   * Custom sort function
+   *
+   * @param {SortEvent} event
+   * @memberof DatatableComponent
+   */
+  sortFunction(event: SortEvent) {
+    event.data.sort((data1, data2) => {
+      let value1 = ObjectUtils.resolveFieldData(data1, event?.field);
+      let value2 = ObjectUtils.resolveFieldData(data2, event?.field);
+      let result = null;
+      if (value1 == null && value2 != null)
+        result = -1;
+      else if (value1 != null && value2 == null)
+        result = 1;
+      else if (value1 == null && value2 == null)
+        result = 0;
+      else if (typeof value1 === 'string' && typeof value2 === 'string')
+        result = value1.localeCompare(value2);
+      else
+        result = (value1 < value2) ? -1 : (value1 > value2) ? 1 : 0;
+      return (event?.order * result);
+    });
+    this.sort.emit(event);
   }
 }
 

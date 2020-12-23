@@ -5,7 +5,7 @@
                 <div class="table-responsive-custom cargo-nomination-table">
                 <cpdss-portal-datatable [tableId]="'cargo_nomination'" [form]="cargoNominationForm" [columns]="columns" [value]="cargoNominations"
                     [editMode]="editMode" [listData]="listData" (cellValueClick)="onCellValueClick($event)"
-                    (editComplete)="onEditComplete($event)" [filterable]="true" (duplicateRow)="onDuplicate($event)" (saveRow)="onRowSave($event)" (deleteRow)="onDeleteRow($event)">
+                    (editComplete)="onEditComplete($event)" [filterable]="true" (duplicateRow)="onDuplicate($event)" (saveRow)="onRowSave($event)" (deleteRow)="onDeleteRow($event)" (sort)="onSort($event)" (filter)="onFilter($event)">
                 </cpdss-portal-datatable>
             </div>
             </div>

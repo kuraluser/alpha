@@ -376,6 +376,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
       this.loadableStudyId = event;
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
       this.loadableStudyDetailsTransformationService.setPortValidity(false);
+      this.loadableStudyDetailsTransformationService.setOHQValidity(false);
       this.loadableStudyDetailsTransformationService.setObqValidity(false);
       this.initSubsciptions();
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
