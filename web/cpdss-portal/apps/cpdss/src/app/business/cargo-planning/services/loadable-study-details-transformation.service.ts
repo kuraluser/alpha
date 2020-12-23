@@ -1149,7 +1149,7 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'OBQ_VALUE_REQUIRED',
           'min': 'OBQ_MIN_VALUE',
-          'groupTotal': 'OBQ_GROUP_TOTAL'
+          'max': "OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY"
         }
 
       },
@@ -1172,6 +1172,7 @@ export class LoadableStudyDetailsTransformationService {
     _obqTankDetail.tankName = obqTankDetail.tankName;
     const cargoObj: ICargo = listData.cargoList.find(cargo => cargo.id === obqTankDetail.cargoId);
     _obqTankDetail.cargo = new ValueObject<ICargo>(cargoObj, true, isNewValue, false);
+    _obqTankDetail.fullCapacityCubm = obqTankDetail?.fullCapacityCubm;
     _obqTankDetail.sounding = new ValueObject<number>(obqTankDetail.sounding, true, isNewValue, isEditable);
     _obqTankDetail.weight = new ValueObject<number>(obqTankDetail.weight, true, isNewValue, isEditable);
     _obqTankDetail.volume = new ValueObject<number>(obqTankDetail.volume, true, isNewValue, isEditable);

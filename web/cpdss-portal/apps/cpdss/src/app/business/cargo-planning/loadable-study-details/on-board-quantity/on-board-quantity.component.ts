@@ -140,6 +140,11 @@ export class OnBoardQuantityComponent implements OnInit {
     this.tanks = result?.tanks;
     const _selectedPortOBQTankDetails = selectedPortOBQTankDetails?.map((obqTankDetail) => {
       obqTankDetail.portId = portId;
+      [...result?.tanks].forEach(group => group.find(tank => {
+        if (tank.id === obqTankDetail.tankId) {
+          obqTankDetail.fullCapacityCubm = tank.fullCapacityCubm;
+        }
+      }));
       const _obqTankDetail = this.loadableStudyDetailsTransformationService.getOBQTankDetailsAsValueObject(obqTankDetail, false, this.listData);
       return _obqTankDetail;
     });
@@ -169,7 +174,7 @@ export class OnBoardQuantityComponent implements OnInit {
       cargo: this.fb.control(obqTankDetail.cargo),
       tankName: this.fb.control(obqTankDetail.tankName, Validators.required),
       sounding: this.fb.control(obqTankDetail.sounding.value, [Validators.required, Validators.min(0), numberValidator(2, 4)]),
-      volume: this.fb.control(obqTankDetail.volume.value, [Validators.required, Validators.min(0), numberValidator(2, 7)]),
+      volume: this.fb.control(obqTankDetail.volume.value, [Validators.required, Validators.min(0), numberValidator(2, 7), Validators.max(Number(obqTankDetail?.fullCapacityCubm))]),  
       weight: this.fb.control(obqTankDetail.weight.value, [Validators.required, Validators.min(0), numberValidator(2, 7)]),
     });
   }
