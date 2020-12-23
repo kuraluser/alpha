@@ -18,4 +18,6 @@ public class CargoHistory {
   private Long cargoId;
 
   private String cargoColor;
+
+  private String abbreviation;
 }

@@ -44,8 +44,8 @@ public interface LoadableStudyPortRotationRepository
    * @param isActive
    * @return List<LoadableStudyPortRotation>
    */
-  public List<LoadableStudyPortRotation> findByLoadableStudyAndOperationAndIsActiveOrderByPortOrder(
-      final LoadableStudy loadableStudy, final CargoOperation operation, final boolean isActive);
+  public List<LoadableStudyPortRotation> findByLoadableStudyAndIsActiveOrderByPortOrder(
+      final LoadableStudy loadableStudy, final boolean isActive);
 
   /**
    * @param loadableStudyId

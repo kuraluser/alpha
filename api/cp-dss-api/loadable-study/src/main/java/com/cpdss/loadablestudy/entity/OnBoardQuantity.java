@@ -63,4 +63,7 @@ public class OnBoardQuantity extends EntityDoc {
 
   @Column(name = "color_code")
   private String colorCode;
+
+  @Column(name = "abbreviation")
+  private String abbreviation;
 }

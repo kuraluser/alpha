@@ -11,11 +11,7 @@ public class SynopticalCargoRecord {
 
   private String tankName;
 
-  private BigDecimal actualArrivalWeight;
+  private BigDecimal actualWeight;
 
-  private BigDecimal actualDepartureWeight;
-
-  private BigDecimal plannedArrivalWeight;
-
-  private BigDecimal plannedDepartureWeight;
+  private BigDecimal plannedWeight;
 }
