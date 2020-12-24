@@ -22,12 +22,13 @@
                     {{'SYNOPTICAL_LOADABLE_STUDY_LABEL' | translate }}</span>
                 <p-dropdown styleClass="dropdown-w-100" [options]="loadableStudyList"
                     [(ngModel)]="selectedLoadableStudy" optionLabel="name" [filter]="true"
-                    placeholder="{{'SYNOPTICAL_LOADABLESTUDY_PLACEHOLDER' | translate }}">
+                    placeholder="{{'SYNOPTICAL_LOADABLESTUDY_PLACEHOLDER' | translate }}"
+                    (onChange)="onSelectLoadableStudy($event)">
                 </p-dropdown>
             </div>
         </div>
         <div class="row">
-            <cpdss-portal-synoptical-table *ngIf="selectedLoadableStudy" [vesselId]="vesselInfo?.id" [voyage]="selectedVoyage" [selectedLoadableStudy]="selectedLoadableStudy"></cpdss-portal-synoptical-table>
+            <router-outlet></router-outlet>
         </div>
 
     </div>

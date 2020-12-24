@@ -1,3 +1,11 @@
-.firstRow>td{
+.row-header{
  font-weight: 600;
+}
+
+cpdss-portal-synoptical-table-row {
+    display: table-row;
+}
+
+.row-group{
+    display: table-row-group;
 }

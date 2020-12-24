@@ -6,6 +6,7 @@ import { VesselDetailsModel } from '../model/vessel-details.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { LoadableStudyListApiService } from '../cargo-planning/services/loadable-study-list-api.service';
 import { LoadableStudy } from '../cargo-planning/models/loadable-study-list.model';
+import { Router } from '@angular/router';
 
 /**
  * Component class of synoptical
@@ -29,7 +30,8 @@ export class SynopticalComponent implements OnInit {
 
   constructor(private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService, private ngxSpinnerService: NgxSpinnerService,
-    private loadableStudyListApiService: LoadableStudyListApiService
+    private loadableStudyListApiService: LoadableStudyListApiService,
+    private router: Router
   ) { }
 
   /**
@@ -66,6 +68,17 @@ export class SynopticalComponent implements OnInit {
     else{
       this.isVoyageIdSelected = false;
     }
+  }
+
+  /**
+   * On selecting the loadable study
+   *
+   * @param event
+   * @memberof SynopticalComponent
+   */
+
+  onSelectLoadableStudy(event){
+    this.router.navigateByUrl('/business/synoptical/'+ this.vesselInfo.id + '/'+ this.selectedVoyage.id + '/' + this.selectedLoadableStudy.id)
   }
 
 

@@ -1,27 +1,55 @@
-<p-table [columns]="synopticalRecords" [value]="cols" dataKey="name">
+<p-table *ngIf="synopticalRecords.length; else empty" [columns]="synopticalRecords" [value]="cols" dataKey="header">
     <ng-template pTemplate="header" let-columns let-rowData>
         <tr>
-            <th>{{cols[0].header}}</th>
+            <th>{{headerColumn.header}}</th>
             <th></th>
-            <th *ngFor="let col of columns">{{col[cols[0].field]}}</th>
-
+            <th></th>
+            <th *ngFor="let col of columns">{{col[headerColumn.field]}}</th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
-        <tr *ngIf="rowIndex!=0">
-       
-            <td style="font-weight: 600;">{{rowData.header}}</td>
-            <td></td>
-
-            <ng-container *ngFor="let col of columns">
-                <td>
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex" let-expanded="expanded">
+        <ng-container
+            *ngTemplateOutlet="row;context:{rowData:rowData, columns:columns, rowIndex:rowIndex, expanded: expanded, subRowLevel: 0, headers: []}">
+        </ng-container>
+    </ng-template>
+    <ng-template #row let-rowData="rowData" let-columns="columns" let-rowIndex="rowIndex" let-expanded="expanded"
+        let-subRowLevel="subRowLevel" let-headers="headers">
+        <ng-container *ngIf="!rowData.subHeaders">
+            <tr>
+                <ng-container *ngFor="let header of headers; let headerIndex = index">
+                    <th [attr.rowspan]="calculateRowSpan(header)">
+                        <button type="button" *ngIf="header.expandable" pButton pRipple [pRowToggler]="header"
+                            class="p-button-text p-button-rounded p-button-plain"
+                            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                        <span class="row-header">{{header.header}}</span>
+                    </th>
+                </ng-container>
+                <th [attr.rowspan]="calculateRowSpan(rowData)">
+                    <button type="button" *ngIf="rowData.expandable" pButton pRipple [pRowToggler]="rowData"
+                        class="p-button-text p-button-rounded p-button-plain"
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                    <span class="row-header">{{rowData.header}}</span>
+                </th>
+                <th *ngFor="let x of getBlanks(subRowLevel)"></th>
+                <td *ngFor="let col of columns">
                     {{col[rowData?.field]}}
-
                 </td>
+            </tr>
+        </ng-container>
+        <ng-container *ngFor="let subRow of rowData?.subHeaders; let subIndex = index">
+            <ng-container
+                *ngTemplateOutlet="row;context:{rowData:subRow, columns:columns, rowIndex:subIndex, expanded: expanded, subRowLevel: subRowLevel + 1, headers: getRowHeaders(headers,rowData,subIndex) }">
             </ng-container>
-
-
-        </tr>
+        </ng-container>
     </ng-template>
-
+    <ng-template pTemplate="rowexpansion" let-rowData>
+        <ng-container *ngFor="let expandedRow of rowData.expandedFields; let subIndex = index">
+            <ng-container
+                *ngTemplateOutlet="row;context:{rowData:expandedRow, columns:synopticalRecords, rowIndex:subIndex, expanded: false, subRowLevel: 0, headers: [] }">
+            </ng-container>
+        </ng-container>
+    </ng-template>
 </p-table>
+<ng-template #empty>
+    {{'NO_RECORDS_FOUND'| translate}}
+</ng-template>

@@ -4,7 +4,8 @@ import { IResponse } from "../../../shared/models/common.model";
  * Model for synoptical table records
  */
 export interface ISynopticalRecords {
-    portName: number
+    cargos: any[];
+    portName: string
     id: number,
     operationType: string,
     distance: number,
@@ -32,3 +33,25 @@ export interface ISynopticalRecords {
     responseStatus: IResponse;
     synopticalRecords : ISynopticalRecords[];
  }
+
+ /**
+ * Model for synoptical column 
+ */
+export interface SynopticalColumn{
+    field?: string;
+    header: string;
+    expandable?: boolean;
+    subHeaders?: SynopticalColumn[];
+    expandedFields?: SynopticalColumn[];
+}
+
+ /**
+ * Model for synoptical dynamic column 
+ */
+export interface SynopticalDynamicColumn{
+    listKey: string;
+    fieldKey: string;
+    primaryKey: string;
+    subHeaders?: SynopticalColumn[];
+    column: SynopticalColumn;
+}
