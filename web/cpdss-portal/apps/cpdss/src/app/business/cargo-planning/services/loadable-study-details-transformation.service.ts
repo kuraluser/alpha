@@ -1002,7 +1002,8 @@ export class LoadableStudyDetailsTransformationService {
         fieldClass: 'commingle-quantity',
         errorMessages: {
           'required': 'COMMINGLE_CARGO_SELECT_ERROR',
-          'max': 'COMMINGLE_QUANTITY_MAX_LIMIT'
+          'max': 'COMMINGLE_QUANTITY_MAX_LIMIT',
+          'min': 'COMMINGLE_MANUAL_QUANTITY_MIN_VALUE'
         }
       },
       {

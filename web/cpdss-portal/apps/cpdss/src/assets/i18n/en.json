@@ -339,7 +339,7 @@
 	"COMMINGLE_PERCENTAGE_PLACEHOLDER": "Select percentage",
 	"COMMINGLE_MANUAL_SAVE_SUCCESS": "Success",
 	"COMMINGLE_COMPLETED_SUCCESSFULLY": "Commingle details saved successfully",
-	"COMMINGLE_QUANTITY_MAX_LIMIT": "Total quantity entered is more than the loadable qunatity. Please correct.",
+	"COMMINGLE_QUANTITY_MAX_LIMIT": "Total quantity is greater than commingable limit.",
 	"COMMINGLE_SELECT_PREFERRED_TANK": "Select preferred Tank",
 	"LOADABLE_PATTERN_HISTORY_HEADER_FIRST": "LOADABLE STUDY",
 	"LOADABLE_PATTERN_HISTORY_HEADER_SECOND": "- LOADABLE PATTERN",
@@ -363,5 +363,6 @@
 	"PORT_MAX_DRAFT_MIN_ERROR": "Max draft must be greater than or equal to 0",
 	"PORT_MAX_AIR_DRAFT_MIN_ERROR": "Max air draft must be greater than or equal to 0",
 	"DATA_TABLE_OK_BUTTON_LABEL": "OK",
-	"OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY": "Volume loaded in tank must not exceed capacity of tank."
+	"OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY": "Volume loaded in tank must not exceed capacity of tank.",
+	"COMMINGLE_MANUAL_QUANTITY_MIN_VALUE": "Quantity must be greater than 0"
 }

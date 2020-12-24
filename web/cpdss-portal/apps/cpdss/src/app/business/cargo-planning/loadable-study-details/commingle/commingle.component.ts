@@ -87,7 +87,7 @@ export class CommingleComponent implements OnInit {
     this.cargoNominationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.EDIT, PERMISSION_ACTION.ADD] };
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], true);
     this.isEditable = this.permission ? this.permission?.edit : true;
-    this.percentage = [{ id: 10, name: "10%" }, { id: 20, name: "20%" }, { id: 30, name: "30%" }, { id: 40, name: "40%" }, { id: 30, name: "50%" }, { id: 60, name: "60%" }, { id: 70, name: "70%" }, { id: 80, name: "80%" }, { id: 90, name: "90%" }, { id: 100, name: "100%" }];
+    this.percentage = [{ id: 10, name: "10%" }, { id: 20, name: "20%" }, { id: 30, name: "30%" }, { id: 40, name: "40%" }, { id: 50, name: "50%" }, { id: 60, name: "60%" }, { id: 70, name: "70%" }, { id: 80, name: "80%" }, { id: 90, name: "90%" }, { id: 100, name: "100%" }];
     this.columns = this.loadableStudyDetailsTransformationService.getManualCommingleDatatableColumns();
     this.createVolumeMaximisationFormGroup();
     this.getCommingle();
@@ -292,7 +292,7 @@ export class CommingleComponent implements OnInit {
       cargo2pct: this.fb.control(commingle?.cargo2IdPct?.value?.id, Validators.required),
       cargo1IdPct: this.fb.control(commingle?.cargo1IdPct?.value, Validators.required),
       cargo2IdPct: this.fb.control(commingle?.cargo2IdPct?.value, Validators.required),
-      quantity: this.fb.control(commingle?.quantity?.value, [Validators.required, numberValidator(2, 7)]),
+      quantity: this.fb.control(commingle?.quantity?.value, [Validators.required, numberValidator(2, 7),Validators.min(1)]),
 
     });
   }

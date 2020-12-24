@@ -256,6 +256,7 @@ export class CargoNominationComponent implements OnInit {
           if (res) {
             this.cargoNominations.splice(event.index, 1);
             this.cargoNominations = [...this.cargoNominations];
+            this.updateCommingleButton();
           }
           this.ngxSpinnerService.hide();
         }
