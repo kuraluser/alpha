@@ -169,7 +169,7 @@ export class PortsComponent implements OnInit {
       if (event.data.type === 'ports_sync_finished') {
         const index = this.portsLists.findIndex((item) => item.storeKey === event.data.storeKey);
         if (index !== -1) {
-          this.portsLists[index].id = event.data.portId;
+          this.portsLists[index].id = event.data.id;
           this.portsLists = [...this.portsLists];
         }
       }
@@ -398,6 +398,7 @@ export class PortsComponent implements OnInit {
     const dragform = this.row(event.dragIndex)
     const dropform = this.row(event.dropIndex)
     if (dragform.valid && dropform.valid) {
+      this.ngxSpinnerService.show();
       const temp = this.portsLists[event.dragIndex].portOrder;
       this.portsLists[event.dragIndex].portOrder = this.portsLists[event.dropIndex].portOrder;
       this.portsLists[event.dropIndex].portOrder = temp;
@@ -419,6 +420,7 @@ export class PortsComponent implements OnInit {
         }
         this.portsLists = [...this.portsLists];
       }
+      this.ngxSpinnerService.hide();
     }
   }
 

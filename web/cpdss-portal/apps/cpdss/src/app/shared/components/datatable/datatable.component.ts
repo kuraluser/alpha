@@ -561,8 +561,8 @@ export class DatatableComponent implements OnInit {
    */
   sortFunction(event: SortEvent) {
     event.data.sort((data1, data2) => {
-      let value1 = ObjectUtils.resolveFieldData(data1, event?.field);
-      let value2 = ObjectUtils.resolveFieldData(data2, event?.field);
+      const value1 = ObjectUtils.resolveFieldData(data1, event?.field);
+      const value2 = ObjectUtils.resolveFieldData(data2, event?.field);
       let result = null;
       if (value1 == null && value2 != null)
         result = -1;

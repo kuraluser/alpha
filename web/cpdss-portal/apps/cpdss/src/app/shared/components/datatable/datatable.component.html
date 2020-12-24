@@ -359,7 +359,7 @@
                                             [filter]="subCol.listFilter" optionLabel="{{subCol.fieldOptionLabel}}"
                                             [placeholder]="subCol.fieldPlaceholder| translate"
                                             (onChange)="onChange($event, rowData, rowIndex, subCol)"
-                                            id="{{subCol.field+'_'+rowIndex}}">
+                                            id="{{subCol.field+'_'+rowIndex}}" [virtualScroll]="true" itemSize="30">
                                         </p-dropdown>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, subCol.field)"
                                             [errorMessages]="subCol.errorMessages">

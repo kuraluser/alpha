@@ -134,7 +134,7 @@
 	"SEARCH_PORT_WATER_DENSITY": "Search water density",
 	"SEARCH_PORT_LAY_CAN": "Search Lay-can",
 	"SEARCH_PORT_MAX_DRAFT": "Search max-draft",
-	"SEARCH_PORT_MAX_AIR_DRAFT": "Search air max-draft",
+	"SEARCH_PORT_MAX_AIR_DRAFT": "Search max air draft",
 	"SEARCH_PORT_ETA": "Search ETA",
 	"SEARCH_PORT_ETD": "Search ETD",
 	"ADD_PORT_BUTTON_LABEL": "Add port",
