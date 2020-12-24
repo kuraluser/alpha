@@ -649,6 +649,7 @@ export interface IPortOBQTankDetail {
     voyageId: number;
     loadableStudyId: number;
     fullCapacityCubm: string;
+    abbreviation: string;
 }
 
 /**
@@ -671,6 +672,7 @@ export interface IPortOBQTankDetailValueObject {
     portId: number;
     percentageFilled: string;
     fullCapacityCubm: string;
+    abbreviation: string;
 }
 
 /**

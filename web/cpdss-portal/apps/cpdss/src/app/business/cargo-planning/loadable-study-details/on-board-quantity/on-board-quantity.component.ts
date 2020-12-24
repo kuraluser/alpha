@@ -38,7 +38,7 @@ export class OnBoardQuantityComponent implements OnInit {
 
   @Input() vesselId: number;
   @Input() permission: IPermission;
-  
+
   get selectedPortOBQTankDetails() {
     return this._selectedPortOBQTankDetails;
 
@@ -101,7 +101,7 @@ export class OnBoardQuantityComponent implements OnInit {
    * @memberof OnBoardQuantityComponent
    */
   ngOnInit(): void {
-     this.isEditable = this.permission ? this.permission?.edit : false;
+    this.isEditable = this.permission ? this.permission?.edit : false;
     this.columns = this.loadableStudyDetailsTransformationService.getOBQDatatableColumns();
     this.initSubscriptions();
   }
@@ -153,7 +153,7 @@ export class OnBoardQuantityComponent implements OnInit {
       dataTable: this.fb.array([...obqTankDetailsArray]),
       cargo: new FormControl('', Validators.required),
       sounding: this.fb.control('', [Validators.required, Validators.min(0), numberValidator(2, 4)]),
-      volume: this.fb.control('', [Validators.required, Validators.min(0), numberValidator(2, 7)]),
+      volume: this.fb.control(''),
       weight: this.fb.control('', [Validators.required, Validators.min(0), numberValidator(2, 7)]),
     });
     this.enableOrDisableControls(this.obqForm, ['sounding', 'weight', 'volume'], false);
@@ -174,7 +174,7 @@ export class OnBoardQuantityComponent implements OnInit {
       cargo: this.fb.control(obqTankDetail.cargo),
       tankName: this.fb.control(obqTankDetail.tankName, Validators.required),
       sounding: this.fb.control(obqTankDetail.sounding.value, [Validators.required, Validators.min(0), numberValidator(2, 4)]),
-      volume: this.fb.control(obqTankDetail.volume.value, [Validators.required, Validators.min(0), numberValidator(2, 7), Validators.max(Number(obqTankDetail?.fullCapacityCubm))]),  
+      volume: this.fb.control(obqTankDetail.volume.value, [Validators.required, Validators.min(0), numberValidator(2, 7), Validators.max(Number(obqTankDetail?.fullCapacityCubm))]),
       weight: this.fb.control(obqTankDetail.weight.value, [Validators.required, Validators.min(0), numberValidator(2, 7)]),
     });
   }
@@ -235,6 +235,7 @@ export class OnBoardQuantityComponent implements OnInit {
     this.obqForm.controls.sounding.setValue(data.sounding.value)
     this.obqForm.controls.weight.setValue(data.weight.value)
     this.obqForm.controls.volume.setValue(data.volume.value)
+    this.obqForm.controls.volume.setValidators([Validators.required, Validators.min(0), numberValidator(2, 7), Validators.max(Number(event.data?.fullCapacityCubm))])
     this.setFillingPercentage(this.selectedTankId);
     this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
   }
@@ -378,6 +379,7 @@ export class OnBoardQuantityComponent implements OnInit {
   getGradeData() {
     this.selectedPortOBQTankDetails.forEach(obqDetails => {
       if (this.cargoList.findIndex(cargo => cargo.id == obqDetails?.cargo?.value?.id) == -1) {
+        obqDetails.cargo.value.abbreviation = obqDetails?.abbreviation;
         this.cargoList.push({ colorCode: obqDetails.colorCode, ...obqDetails.cargo.value })
       }
     })

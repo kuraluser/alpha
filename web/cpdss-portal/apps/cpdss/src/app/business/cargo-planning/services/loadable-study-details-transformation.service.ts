@@ -1179,6 +1179,7 @@ export class LoadableStudyDetailsTransformationService {
     _obqTankDetail.weight = new ValueObject<number>(obqTankDetail.weight, true, isNewValue, isEditable);
     _obqTankDetail.volume = new ValueObject<number>(obqTankDetail.volume, true, isNewValue, isEditable);
     _obqTankDetail.colorCode = obqTankDetail.colorCode;
+    _obqTankDetail.abbreviation = obqTankDetail.abbreviation;
 
     return _obqTankDetail;
   }

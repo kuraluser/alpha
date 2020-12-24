@@ -50,7 +50,7 @@
                     <span class="mr-10 text-uppercase text-secondary">{{'OBQ_GRADE'| translate}}</span>
                     <ng-container *ngFor="let cargo of cargoList">
                         <span class="badge-custom mr-5" *ngIf="cargo?.id"
-                            [ngStyle]="{'background-color': cargo?.colorCode}">{{cargo?.id}}</span>
+                            [ngStyle]="{'background-color': cargo?.colorCode}">{{cargo?.abbreviation}}</span>
                     </ng-container>
 
                 </div>
