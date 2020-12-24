@@ -212,7 +212,7 @@
                         <label for="loadable_quantity_constant"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_CONSTANT' | translate}}</label>
                         <div class="col pt-5">
-                            <label id="loadable_quantity_constant">{{getControlLabel('constant')}}</label>
+                            <label id="loadable_quantity_constant">{{getControlLabel('constant') | number : '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -340,7 +340,7 @@
                     <div class="row form-group sub-heading-size text-secondary no-border">
                         <label for="" class="col col-form-label">{{'LOADABLE_QUANTITY' | translate}} </label>
                         <div class="col pt-5">
-                            <label id="loadable_quantity_totalQuantity">{{getControlLabel('totalQuantity')}}</label>
+                            <label id="loadable_quantity_totalQuantity">{{getControlLabel('totalQuantity') | number : '1.2-2'}}</label>
                            
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
