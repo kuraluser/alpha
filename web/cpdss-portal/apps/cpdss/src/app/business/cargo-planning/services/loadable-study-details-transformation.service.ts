@@ -748,7 +748,8 @@ export class LoadableStudyDetailsTransformationService {
         header: 'OHQ_SL',
         fieldType: DATATABLE_FIELD_TYPE.SLNO,
         sortable: true,
-        fieldHeaderClass: 'column-sl'
+        fieldHeaderClass: 'column-sl',
+        fieldClass: 'sl'
       },
       {
         field: 'fuelTypeName',
@@ -1075,7 +1076,8 @@ export class LoadableStudyDetailsTransformationService {
         header: 'OBQ_SL',
         fieldType: DATATABLE_FIELD_TYPE.SLNO,
         sortable: true,
-        fieldHeaderClass: 'column-sl'
+        fieldHeaderClass: 'column-sl',
+        fieldClass: 'sl'
       },
       {
         field: 'tankName',
