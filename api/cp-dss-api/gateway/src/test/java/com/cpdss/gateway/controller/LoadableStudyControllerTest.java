@@ -19,6 +19,7 @@ import com.cpdss.gateway.domain.AlgoStatusResponse;
 import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CargoNominationResponse;
 import com.cpdss.gateway.domain.CommingleCargoResponse;
+import com.cpdss.gateway.domain.CommonResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
@@ -176,6 +177,13 @@ class LoadableStudyControllerTest {
       CLOUD_API_URL_PREFIX + GET_LOADABLE_PATTERN_COMMINGLE_DETAILS_API_URL;
   private static final String GET_LOADABLE_PATTERN_COMMINGLE_DETAILS_SHIP_API_URL =
       SHIP_API_URL_PREFIX + GET_LOADABLE_PATTERN_COMMINGLE_DETAILS_API_URL;
+
+  private static final String GET_CONFIRM_PLAN_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/confirm-plan/{loadablePatternId}";
+  private static final String GET_CONFIRM_PLAN_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + GET_CONFIRM_PLAN_API_URL;
+  private static final String GET_CONFIRM_PLAN_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + GET_CONFIRM_PLAN_API_URL;
 
   private static final String AUTHORIZATION_HEADER = "Authorization";
 
@@ -1018,6 +1026,50 @@ class LoadableStudyControllerTest {
     request.setLoadableStudyStatusId(1L);
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(request);
+  }
+
+  /**
+   * @param url
+   * @throws Exception void
+   */
+  @ValueSource(strings = {GET_CONFIRM_PLAN_CLOUD_API_URL, GET_CONFIRM_PLAN_SHIP_API_URL})
+  @ParameterizedTest
+  void testConfirmPlan(String url) throws Exception {
+    when(this.loadableStudyService.confirmPlan(anyLong(), anyString()))
+        .thenReturn(new CommonResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  /**
+   * @param exceptionClass
+   * @throws Exception void
+   */
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testConfirmPlanRuntimeException(Class<? extends Exception> exceptionClass) throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.loadableStudyService.confirmPlan(anyLong(), anyString())).thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(
+                    GET_CONFIRM_PLAN_CLOUD_API_URL, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
   }
 
   /**

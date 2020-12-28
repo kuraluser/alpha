@@ -16,6 +16,8 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
+import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
+import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
@@ -71,6 +73,7 @@ import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CargoNominationResponse;
 import com.cpdss.gateway.domain.CommingleCargo;
 import com.cpdss.gateway.domain.CommingleCargoResponse;
+import com.cpdss.gateway.domain.CommonResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadablePattern;
 import com.cpdss.gateway.domain.LoadablePatternCargoDetails;
@@ -1184,6 +1187,8 @@ public class LoadableStudyService {
               loadablePatternDto.setLoadablePatternId(loadablePattern.getLoadablePatternId());
               loadablePatternDto.setConstraints(loadablePattern.getConstraints());
               loadablePatternDto.setTotalDifferenceColor(loadablePattern.getTotalDifferenceColor());
+              loadablePatternDto.setLoadableStudyStatusId(
+                  loadablePattern.getLoadableStudyStatusId());
               loadablePatternDto.setLoadablePatternCargoDetails(
                   new ArrayList<LoadablePatternCargoDetails>());
               loadablePattern
@@ -2162,6 +2167,38 @@ public class LoadableStudyService {
       list.add(rec);
     }
     return list;
+  }
+
+  /**
+   * @param loadablePatternId
+   * @param first
+   * @return CommonResponse
+   */
+  public CommonResponse confirmPlan(Long loadablePatternId, String correlationId)
+      throws GenericServiceException {
+    log.info("Inside confirmPlan gateway service with correlationId : " + correlationId);
+    CommonResponse response = new CommonResponse();
+    ConfirmPlanRequest.Builder request = ConfirmPlanRequest.newBuilder();
+    request.setLoadablePatternId(loadablePatternId);
+    ConfirmPlanReply grpcReply = this.confirmPlan(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to confirm plan",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * @param request
+   * @return ConfirmPlanReply
+   */
+  public ConfirmPlanReply confirmPlan(
+      com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.Builder request) {
+    return this.loadableStudyServiceBlockingStub.confirmPlan(request.build());
   }
 
   /**

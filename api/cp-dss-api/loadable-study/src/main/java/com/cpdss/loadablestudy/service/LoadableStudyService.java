@@ -16,6 +16,8 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargo;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
+import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
+import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
@@ -196,12 +198,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long TRANSIT_OPERATION_ID = 4L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
+  private static final Long LOADABLE_STUDY_CONFIRMED_STATUS_ID = 2L;
   private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
   private static final int CASE_1 = 1;
   private static final int CASE_2 = 2;
   private static final int CASE_3 = 3;
   private static final String INVALID_LOADABLE_PATTERN_COMMINGLE_DETAIL_ID =
       "INVALID_LOADABLE_PATTERN_COMMINGLE_DETAIL_ID";
+  private static final String INVALID_LOADABLE_PATTERN_ID = "INVALID_LOADABLE_PATTERN_ID";
   private static final Long LOAD_LINE_TROPICAL_TO_SUMMER_ID = 7L;
   private static final Long LOAD_LINE_TROPICAL_TO_WINTER_ID = 8L;
   private static final Long LOAD_LINE_SUMMER_TO_WINTER_ID = 9L;
@@ -2143,6 +2147,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
               Optional.ofNullable(dateTimeFormatter.format(loadablePattern.getCreatedDate()))
                   .ifPresent(builder::setLoadablePatternCreatedDate);
+              Optional.ofNullable(loadablePattern.getLoadableStudyStatus())
+                  .ifPresent(loadablePatternBuilder::setLoadableStudyStatusId);
+
               Optional.ofNullable(loadablePattern.getConstraints())
                   .ifPresent(loadablePatternBuilder::setConstraints);
               Optional.ofNullable(loadablePattern.getDifferenceColor())
@@ -3424,6 +3431,49 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           HttpStatusCode.valueOf(Integer.valueOf(vesselReply.getResponseStatus().getCode())));
     }
     return vesselReply;
+  }
+
+  @Override
+  public void confirmPlan(
+      ConfirmPlanRequest request, StreamObserver<ConfirmPlanReply> responseObserver) {
+    ConfirmPlanReply.Builder replyBuilder = ConfirmPlanReply.newBuilder();
+    try {
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+      if (!loadablePatternOpt.isPresent()) {
+        log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
+        replyBuilder.setResponseStatus(
+            ResponseStatus.newBuilder()
+                .setStatus(FAILED)
+                .setMessage(INVALID_LOADABLE_PATTERN_ID)
+                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+      } else {
+        List<LoadablePattern> loadablePatternConfirmedOpt =
+            loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
+                loadablePatternOpt.get().getLoadableStudy().getVoyage().getId(),
+                LOADABLE_STUDY_CONFIRMED_STATUS_ID,
+                true);
+        if (!loadablePatternConfirmedOpt.isEmpty()) {
+          loadablePatternRepository.updateLoadablePatternStatus(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadablePatternConfirmedOpt.get(0).getId());
+          loadablePatternRepository.updateLoadableStudyStatus(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
+              loadablePatternConfirmedOpt.get(0).getLoadableStudy().getId());
+        }
+        loadablePatternRepository.updateLoadablePatternStatus(
+            LOADABLE_STUDY_CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
+        loadableStudyRepository.updateLoadableStudyStatus(
+            LOADABLE_STUDY_CONFIRMED_STATUS_ID,
+            loadablePatternOpt.get().getLoadableStudy().getId());
+        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      }
+    } catch (Exception e) {
+      log.error("Exception when confirmPlan ", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
 
   /**

@@ -1493,6 +1493,53 @@ public final class LoadableStudyServiceGrpc {
     return getGetLoadableStudyStatusMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+          com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+      getConfirmPlanMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ConfirmPlan",
+      requestType = com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+          com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+      getConfirmPlanMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+            com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+        getConfirmPlanMethod;
+    if ((getConfirmPlanMethod = LoadableStudyServiceGrpc.getConfirmPlanMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getConfirmPlanMethod = LoadableStudyServiceGrpc.getConfirmPlanMethod) == null) {
+          LoadableStudyServiceGrpc.getConfirmPlanMethod =
+              getConfirmPlanMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+                          com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ConfirmPlan"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("ConfirmPlan"))
+                      .build();
+        }
+      }
+    }
+    return getConfirmPlanMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -1774,6 +1821,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetLoadableStudyStatusMethod(), responseObserver);
     }
 
+    /** */
+    public void confirmPlan(
+        com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getConfirmPlanMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1982,6 +2037,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest,
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply>(
                       this, METHODID_GET_LOADABLE_STUDY_STATUS)))
+          .addMethod(
+              getConfirmPlanMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+                      com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>(
+                      this, METHODID_CONFIRM_PLAN)))
           .build();
     }
   }
@@ -2319,6 +2381,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void confirmPlan(
+        com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getConfirmPlanMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -2539,6 +2612,12 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetLoadableStudyStatusMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply confirmPlan(
+        com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
+      return blockingUnaryCall(getChannel(), getConfirmPlanMethod(), getCallOptions(), request);
     }
   }
 
@@ -2810,6 +2889,14 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetLoadableStudyStatusMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+        confirmPlan(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getConfirmPlanMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -2841,6 +2928,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS = 26;
   private static final int METHODID_GET_SYNOPTICAL_TABLE = 27;
   private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 28;
+  private static final int METHODID_CONFIRM_PLAN = 29;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -3062,6 +3150,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply>)
                   responseObserver);
           break;
+        case METHODID_CONFIRM_PLAN:
+          serviceImpl.confirmPlan(
+              (com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -3155,6 +3250,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveAlgoLoadableStudyStatusMethod())
                       .addMethod(getGetSynopticalTableMethod())
                       .addMethod(getGetLoadableStudyStatusMethod())
+                      .addMethod(getConfirmPlanMethod())
                       .build();
         }
       }
