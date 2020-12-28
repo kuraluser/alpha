@@ -142,7 +142,7 @@ export class OnBoardQuantityComponent implements OnInit {
       obqTankDetail.portId = portId;
       [...result?.tanks].forEach(group => group.find(tank => {
         if (tank.id === obqTankDetail.tankId) {
-          obqTankDetail.fullCapacityCubm = tank.fullCapacityCubm;
+          obqTankDetail.fullCapacityCubm = tank?.fullCapacityCubm;
         }
       }));
       const _obqTankDetail = this.loadableStudyDetailsTransformationService.getOBQTankDetailsAsValueObject(obqTankDetail, false, this.listData);
@@ -379,8 +379,10 @@ export class OnBoardQuantityComponent implements OnInit {
   getGradeData() {
     this.selectedPortOBQTankDetails.forEach(obqDetails => {
       if (this.cargoList.findIndex(cargo => cargo.id == obqDetails?.cargo?.value?.id) == -1) {
-        obqDetails.cargo.value.abbreviation = obqDetails?.abbreviation;
-        this.cargoList.push({ colorCode: obqDetails.colorCode, ...obqDetails.cargo.value })
+        if (obqDetails.cargo.value !== undefined) {
+          obqDetails.cargo.value.abbreviation = obqDetails?.abbreviation;
+        }
+        this.cargoList.push({ colorCode: obqDetails?.colorCode, ...obqDetails?.cargo?.value })
       }
     })
   }
