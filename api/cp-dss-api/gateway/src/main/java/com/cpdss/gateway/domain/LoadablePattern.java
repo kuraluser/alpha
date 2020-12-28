@@ -11,4 +11,5 @@ public class LoadablePattern {
   private String constraints;
   private String totalDifferenceColor;
   private List<LoadablePatternCargoDetails> loadablePatternCargoDetails;
+  private Long loadableStudyStatusId;
 }

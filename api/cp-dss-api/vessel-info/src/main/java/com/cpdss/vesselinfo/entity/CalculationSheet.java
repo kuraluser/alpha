@@ -27,7 +27,7 @@ public class CalculationSheet extends EntityDoc {
   @Column(name = "tank_group")
   private Integer tankGroup;
 
-  @Column(name = "tankx_id")
+  @Column(name = "tank_xid")
   private Integer tankId;
 
   @Column(name = "weight_ratio")

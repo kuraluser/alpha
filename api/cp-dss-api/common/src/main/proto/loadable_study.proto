@@ -94,6 +94,17 @@ service LoadableStudyService {
 
 	rpc GetLoadableStudyStatus(LoadableStudyStatusRequest) returns (LoadableStudyStatusReply) {
 	}
+	
+	rpc ConfirmPlan(ConfirmPlanRequest) returns (ConfirmPlanReply) {
+	}
+}
+
+message ConfirmPlanRequest {
+	int64 loadablePatternId = 1;
+}
+
+message ConfirmPlanReply {
+	ResponseStatus responseStatus = 1;
 }
 
 message LoadableStudyStatusRequest {
@@ -437,6 +448,7 @@ message LoadablePattern {
 	repeated LoadablePatternCargoDetails loadablePatternCargoDetails = 2;
 	string constraints = 3;
 	string totalDifferenceColor = 4;
+	int64 loadableStudyStatusId = 5;
 }
 
 message LoadablePatternCargoDetails {

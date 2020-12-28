@@ -16,6 +16,8 @@ import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
+import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
+import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
@@ -1929,13 +1931,78 @@ class LoadableStudyServiceTest {
   }
 
   /**
+   * test Confirm Plan
+   *
+   * <p>void
+   */
+  @Test
+  void testConfirmPlan() {
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(createLoadablePattern()));
+    List<LoadablePattern> loadablePatterns = new ArrayList<LoadablePattern>();
+    loadablePatterns.add(createLoadablePattern());
+    when(this.loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
+            anyLong(), anyLong(), anyBoolean()))
+        .thenReturn(loadablePatterns);
+    StreamRecorder<ConfirmPlanReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.confirmPlan(this.createConfirmPlan(), responseObserver);
+    List<ConfirmPlanReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testConfirmPlanInvalidLoadablePatternId() {
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    StreamRecorder<ConfirmPlanReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.confirmPlan(this.createConfirmPlan(), responseObserver);
+    List<ConfirmPlanReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, results.get(0).getResponseStatus().getCode());
+  }
+
+  @Test
+  void testConfirmPlanRuntimeException() {
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(RuntimeException.class);
+    StreamRecorder<ConfirmPlanReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.confirmPlan(this.createConfirmPlan(), responseObserver);
+    List<ConfirmPlanReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /** @return ConfirmPlanRequest */
+  private ConfirmPlanRequest createConfirmPlan() {
+    ConfirmPlanRequest.Builder builder = ConfirmPlanRequest.newBuilder();
+    builder.setLoadablePatternId(1L);
+    return builder.build();
+  }
+
+  /** @return Object */
+  private LoadablePattern createLoadablePattern() {
+    LoadablePattern loadablePattern = new LoadablePattern();
+    loadablePattern.setId(1L);
+    LoadableStudy loadableStudy = new LoadableStudy();
+    loadableStudy.setId(1L);
+    Voyage voyage = new Voyage();
+    voyage.setId(1L);
+    loadableStudy.setVoyage(voyage);
+    loadablePattern.setLoadableStudy(loadableStudy);
+    return loadablePattern;
+  }
+
+  /**
    * test GetLoadable Study Status
    *
    * <p>void
    */
   @Test
   void testGetLoadableStudyStatus() {
-
     when(this.loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
             anyLong(), anyBoolean()))
         .thenReturn(Optional.of(createLoadableStudyAlgoStatus()));

@@ -35,7 +35,7 @@ public class LoadablePattern extends EntityDoc {
   private String differenceColor;
 
   @Column(name = "loadable_study_status")
-  private Integer loadableStudyStatus;
+  private Long loadableStudyStatus;
 
   @Column(name = "is_active")
   private Boolean isActive;

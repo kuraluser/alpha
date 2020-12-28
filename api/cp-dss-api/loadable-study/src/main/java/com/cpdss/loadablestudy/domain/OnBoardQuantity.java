@@ -11,6 +11,6 @@ public class OnBoardQuantity {
   private Long tankId;
   private Long cargoId;
   private String sounding;
-  private String weight;
+  private String plannedArrivalWeight;
   private String volume;
 }
