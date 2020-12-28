@@ -3,7 +3,7 @@ import { EventEmitter } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { VesselDetailsModel } from '../../model/vessel-details.model';
+import { IVessel } from '../../core/models/vessel-details.model';
 import { NewVoyageModel } from '../models/new-voyage.model';
 import { VoyageApiService } from '../services/voyage-api.service';
 import { MessageService } from 'primeng/api';
@@ -19,7 +19,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
   styleUrls: ['./new-voyage-popup.component.scss']
 })
 export class NewVoyagePopupComponent implements OnInit {
-  @Input() vesselDetails: VesselDetailsModel;
+  @Input() vesselDetails: IVessel;
   @Output() displayPopUp = new EventEmitter<boolean>();
   showPopUp: boolean;
   newVoyageForm!: FormGroup;

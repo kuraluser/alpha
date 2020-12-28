@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { VesselsApiService } from '../core/services/vessels-api.service';
-import { VesselDetailsModel } from '../model/vessel-details.model';
+import { IVessel } from '../core/models/vessel-details.model';
 
 @Component({
   selector: 'cpdss-portal-voyage-status',
@@ -10,7 +10,7 @@ import { VesselDetailsModel } from '../model/vessel-details.model';
 export class VoyageStatusComponent implements OnInit {
   display: boolean;
   showData: boolean;
-  vesselInfo: VesselDetailsModel;
+  vesselInfo: IVessel;
 
   constructor(private vesselsApiService: VesselsApiService) { }
 
@@ -27,7 +27,7 @@ export class VoyageStatusComponent implements OnInit {
    */
   async getVesselInfo() {
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
-    this.vesselInfo = res[0] ?? <VesselDetailsModel>{};
+    this.vesselInfo = res[0] ?? <IVessel>{};
   }
 
   /**

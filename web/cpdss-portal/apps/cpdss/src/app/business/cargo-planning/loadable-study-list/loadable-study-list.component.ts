@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { VesselDetailsModel } from '../../model/vessel-details.model';
+import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { LoadableStudy, TableColumns } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
@@ -29,7 +29,7 @@ export class LoadableStudyListComponent implements OnInit {
   cols: TableColumns[];
   display = false;
   isDuplicateExistingLoadableStudy = true;
-  vesselDetails: VesselDetailsModel;
+  vesselDetails: IVessel;
   voyageId: number;
   columns: IDataTableColumn[];
   loadableStudyListForm: FormGroup;
@@ -49,7 +49,7 @@ export class LoadableStudyListComponent implements OnInit {
       this.voyageId = params.id ? Number(params.id): 0;
       this.ngxSpinnerService.show();
       const res = await this.vesselsApiService.getVesselsInfo().toPromise();
-      this.vesselDetails = res[0] ?? <VesselDetailsModel>{};
+      this.vesselDetails = res[0] ?? <IVessel>{};
       this.voyages = await this.voyageService.getVoyagesByVesselId(this.vesselDetails?.id).toPromise();
       this.ngxSpinnerService.hide();
       this.getLoadableStudyInfo(this.vesselDetails?.id, this.voyageId);

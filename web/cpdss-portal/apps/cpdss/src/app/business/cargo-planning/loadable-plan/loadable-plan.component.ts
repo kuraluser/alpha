@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
-import { VesselDetailsModel } from '../../model/vessel-details.model';
+import { IVessel } from '../../core/models/vessel-details.model';
 
 /**
  * Component class of loadable plan
@@ -21,7 +21,7 @@ export class LoadablePlanComponent implements OnInit {
   voyageId: number;
   loadableStudyId: number;
   vesselId: number;
-  vesselInfo: VesselDetailsModel;
+  vesselInfo: IVessel;
   constructor(private vesselsApiService: VesselsApiService, private ngxSpinnerService: NgxSpinnerService, private activatedRoute: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
@@ -42,7 +42,7 @@ export class LoadablePlanComponent implements OnInit {
   async getVesselInfo() {
     this.ngxSpinnerService.show();
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
-    this.vesselInfo = res[0] ?? <VesselDetailsModel>{};
+    this.vesselInfo = res[0] ?? <IVessel>{};
     this.ngxSpinnerService.hide();
   }
 

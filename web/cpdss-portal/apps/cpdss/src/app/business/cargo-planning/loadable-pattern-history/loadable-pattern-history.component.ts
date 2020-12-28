@@ -4,7 +4,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ICargoTank, Voyage } from '../../core/models/common.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
-import { VesselDetailsModel } from '../../model/vessel-details.model';
+import { IVessel } from '../../core/models/vessel-details.model';
 import { LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
 import { LoadablePatternHistoryApiService } from '../services/loadable-pattern-history-api.service';
@@ -40,7 +40,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   vesselId: number;
   openSidePane = true;
   selectedVoyage: Voyage;
-  vesselInfo: VesselDetailsModel;
+  vesselInfo: IVessel;
   voyages: Voyage[];
   loadableStudies: LoadableStudy[];
   loadablePatternResponse: ILoadablePatternResponse;
@@ -96,7 +96,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   async getLoadableStudies(vesselId: number, voyageId: number, loadableStudyId: number) {
     this.ngxSpinnerService.show();
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
-    this.vesselInfo = res[0] ?? <VesselDetailsModel>{};
+    this.vesselInfo = res[0] ?? <IVessel>{};
     this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];

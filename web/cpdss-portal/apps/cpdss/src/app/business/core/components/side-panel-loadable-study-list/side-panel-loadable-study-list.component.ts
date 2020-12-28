@@ -8,7 +8,7 @@ import { LoadableStudy } from '../../../cargo-planning/models/loadable-study-lis
 import { LoadableStudyDetailsTransformationService } from '../../../cargo-planning/services/loadable-study-details-transformation.service';
 import { LoadableStudyListApiService } from '../../../cargo-planning/services/loadable-study-list-api.service';
 import { Voyage } from '../../../core/models/common.model';
-import { VesselDetailsModel } from '../../../model/vessel-details.model';
+import { IVessel } from '../../../core/models/vessel-details.model';
 import { first } from 'rxjs/operators';
 
 @Component({
@@ -28,7 +28,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
 
   @Input() voyage: Voyage;
   @Input() selectedLoadableStudy: LoadableStudy;
-  @Input() vesselInfo: VesselDetailsModel;
+  @Input() vesselInfo: IVessel;
 
   @Output() selectedLoadableStudyChange = new EventEmitter<LoadableStudy>();
   @Output() deleteLoadableStudy = new EventEmitter<Event>();

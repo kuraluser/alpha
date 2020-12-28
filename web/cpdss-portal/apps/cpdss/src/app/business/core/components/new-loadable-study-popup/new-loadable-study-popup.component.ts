@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FileUpload } from 'primeng/fileupload';
 import { IDropdownEvent, INewLoadableStudy } from "./new-loadable-study-popup.model";
 import { IdraftMarks, ILoadLineList, INewLoadableStudyListNames, Voyage } from "../../models/common.model";
-import { VesselDetailsModel } from '../../../model/vessel-details.model';
+import { IVessel } from '../../../core/models/vessel-details.model';
 import { LoadableStudyListApiService } from '../../../cargo-planning/services/loadable-study-list-api.service';
 import { LoadableStudy } from '../../../cargo-planning/models/loadable-study-list.model';
 import { Router } from '@angular/router';
@@ -25,8 +25,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   @ViewChild('fileUpload') fileUpload: FileUpload;
   @Input() display;
   @Input()
-  get vesselInfoList(): VesselDetailsModel { return this._vesselInfoList; }
-  set vesselInfoList(vesselInfoList: VesselDetailsModel) {
+  get vesselInfoList(): IVessel { return this._vesselInfoList; }
+  set vesselInfoList(vesselInfoList: IVessel) {
     this._vesselInfoList = vesselInfoList;
   }
   @Input()
@@ -53,7 +53,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
 
   @ViewChild('fileUpload') fileUploadVariable: ElementRef;
 
-  private _vesselInfoList: VesselDetailsModel;
+  private _vesselInfoList: IVessel;
   private _voyage: Voyage;
   private _loadableStudyList: LoadableStudy[];
   private _duplicateLoadableStudy: LoadableStudy;

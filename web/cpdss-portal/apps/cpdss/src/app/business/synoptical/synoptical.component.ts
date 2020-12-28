@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Voyage } from '../core/models/common.model';
 import { VesselsApiService } from '../core/services/vessels-api.service';
 import { VoyageService } from '../core/services/voyage.service';
-import { VesselDetailsModel } from '../model/vessel-details.model';
+import { IVessel } from '../core/models/vessel-details.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { LoadableStudyListApiService } from '../cargo-planning/services/loadable-study-list-api.service';
 import { LoadableStudy } from '../cargo-planning/models/loadable-study-list.model';
@@ -21,7 +21,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./synoptical.component.scss']
 })
 export class SynopticalComponent implements OnInit {
-  vesselInfo: VesselDetailsModel;
+  vesselInfo: IVessel;
   voyages: Voyage[];
   selectedVoyage: Voyage;
   loadableStudyList: LoadableStudy[];
@@ -43,7 +43,7 @@ export class SynopticalComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.ngxSpinnerService.show();
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
-    this.vesselInfo = res[0] ?? <VesselDetailsModel>{};
+    this.vesselInfo = res[0] ?? <IVessel>{};
     this.voyages = await this.voyageService.getVoyagesByVesselId(this.vesselInfo?.id).toPromise();
     this.ngxSpinnerService.hide();
 
