@@ -1880,6 +1880,7 @@ public class LoadableStudyService {
       dto.setId(detail.getId());
       dto.setCargoId(0 == detail.getCargoId() ? null : detail.getCargoId());
       dto.setColorCode(isEmpty(detail.getColorCode()) ? null : detail.getColorCode());
+      dto.setAbbreviation(isEmpty(detail.getAbbreviation()) ? null : detail.getAbbreviation());
       dto.setSounding(isEmpty(detail.getSounding()) ? null : new BigDecimal(detail.getSounding()));
       dto.setWeight(isEmpty(detail.getWeight()) ? null : new BigDecimal(detail.getWeight()));
       dto.setVolume(isEmpty(detail.getVolume()) ? null : new BigDecimal(detail.getVolume()));
@@ -1939,7 +1940,7 @@ public class LoadableStudyService {
     log.info("buildObqRequest, correlationId: {}", correlationId);
     OnBoardQuantityDetail.Builder builder = OnBoardQuantityDetail.newBuilder();
     builder.setId(request.getId());
-    builder.setCargoId(request.getCargoId());
+    Optional.ofNullable(request.getCargoId()).ifPresent(builder::setCargoId);
     builder.setPortId(request.getPortId());
     builder.setLoadableStudyId(request.getLoadableStudyId());
     builder.setTankId(request.getTankId());
@@ -1947,6 +1948,8 @@ public class LoadableStudyService {
     builder.setVolume(valueOf(request.getVolume()));
     Optional.ofNullable(request.getSounding())
         .ifPresent(sounding -> builder.setSounding(valueOf(request.getSounding())));
+    Optional.ofNullable(request.getColorCode()).ifPresent(builder::setColorCode);
+    Optional.ofNullable(request.getAbbreviation()).ifPresent(builder::setAbbreviation);
     return builder.build();
   }
 
@@ -2102,6 +2105,14 @@ public class LoadableStudyService {
                 synopticalRecord.setEtaPlanned(synopticalProtoRecord.getEtaEstimated());
                 synopticalRecord.setEtdPlanned(synopticalProtoRecord.getEtdEstimated());
                 synopticalRecord.setCargos(this.buildSynopticalTableCargos(synopticalProtoRecord));
+                synopticalRecord.setCargoPlannedTotal(
+                    isEmpty(synopticalProtoRecord.getCargoPlannedTotal())
+                        ? BigDecimal.ZERO
+                        : new BigDecimal(synopticalProtoRecord.getCargoPlannedTotal()));
+                synopticalRecord.setCargoActualTotal(
+                    isEmpty(synopticalProtoRecord.getCargoActualTotal())
+                        ? BigDecimal.ZERO
+                        : new BigDecimal(synopticalProtoRecord.getCargoActualTotal()));
                 synopticalTableList.add(synopticalRecord);
               });
       synopticalTableResponse.setCargoTanks(this.buildSynopticalTableCargoTanks(reply));
@@ -2140,22 +2151,14 @@ public class LoadableStudyService {
       SynopticalCargoRecord rec = new SynopticalCargoRecord();
       rec.setTankId(protoRec.getTankId());
       rec.setTankName(protoRec.getTankName());
-      rec.setActualArrivalWeight(
-          isEmpty(protoRec.getActualArrivalWeight())
+      rec.setActualWeight(
+          isEmpty(protoRec.getActualWeight())
               ? BigDecimal.ZERO
-              : new BigDecimal(protoRec.getActualArrivalWeight()));
-      rec.setActualDepartureWeight(
-          isEmpty(protoRec.getActualDepartureWeight())
+              : new BigDecimal(protoRec.getActualWeight()));
+      rec.setPlannedWeight(
+          isEmpty(protoRec.getPlannedWeight())
               ? BigDecimal.ZERO
-              : new BigDecimal(protoRec.getActualDepartureWeight()));
-      rec.setPlannedArrivalWeight(
-          isEmpty(protoRec.getPlannedArrivalWeight())
-              ? BigDecimal.ZERO
-              : new BigDecimal(protoRec.getPlannedArrivalWeight()));
-      rec.setPlannedDepartureWeight(
-          isEmpty(protoRec.getPlannedDepartureWeight())
-              ? BigDecimal.ZERO
-              : new BigDecimal(protoRec.getPlannedDepartureWeight()));
+              : new BigDecimal(protoRec.getPlannedWeight()));
       list.add(rec);
     }
     return list;

@@ -1698,8 +1698,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       } else {
 
         List<LoadableStudyPortRotation> loadableStudyPortRotations =
-            this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
-                loadableStudy.get(), cargoOperationRepository.getOne(LOADING_OPERATION_ID), true);
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+                loadableStudy.get(), true);
         if (loadableStudyPortRotations.isEmpty()) {
           log.info(INVALID_LOADABLE_STUDY_ID, request.getLoadableStudyId());
           portRotationReplyBuilder.setResponseStatus(
@@ -1708,16 +1708,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .setMessage(INVALID_LOADABLE_STUDY_ID)
                   .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
         } else {
-          List<LoadableStudyPortRotation> loadingPorts =
-              this.loadableStudyPortRotationRepository
-                  .findByLoadableStudyAndOperationAndIsActiveOrderByPortOrder(
-                      loadableStudy.get(),
-                      cargoOperationRepository.getOne(LOADING_OPERATION_ID),
-                      true);
-          loadingPorts.forEach(
-              loadingPort -> {
+
+          loadableStudyPortRotations.forEach(
+              port -> {
                 PortRotationDetail.Builder builder = PortRotationDetail.newBuilder();
-                builder.setPortId(loadingPort.getPortXId());
+                builder.setPortId(port.getPortXId());
                 portRotationReplyBuilder.addPorts(builder);
               });
 
@@ -2934,7 +2929,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             loadableStudy, request.getPortId(), true);
     List<CargoHistory> cargoHistories = null;
     List<OnBoardQuantityDetail> obqDetailList = new ArrayList<>();
-    for (VesselTankDetail tank : vesselTanksList) {
+    List<VesselTankDetail> modifieableList = new ArrayList<>(vesselTanksList);
+    Collections.sort(modifieableList, Comparator.comparing(VesselTankDetail::getTankDisplayOrder));
+    for (VesselTankDetail tank : modifieableList) {
       OnBoardQuantityDetail.Builder builder = OnBoardQuantityDetail.newBuilder();
       builder.setTankId(tank.getTankId());
       builder.setTankName(tank.getShortName());
@@ -2951,6 +2948,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         Optional.ofNullable(entity.getVolume())
             .ifPresent(item -> builder.setVolume(item.toString()));
         Optional.ofNullable(entity.getColorCode()).ifPresent(builder::setColorCode);
+        Optional.ofNullable(entity.getAbbreviation()).ifPresent(builder::setAbbreviation);
       } else {
         // lazy loading the cargo history
         if (null == cargoHistories) {
@@ -2962,6 +2960,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           CargoHistory dto = cargoHistoryOpt.get();
           Optional.ofNullable(dto.getCargoId()).ifPresent(builder::setCargoId);
           Optional.ofNullable(dto.getCargoColor()).ifPresent(builder::setColorCode);
+          Optional.ofNullable(dto.getAbbreviation()).ifPresent(builder::setAbbreviation);
         }
       }
       obqDetailList.add(builder.build());
@@ -3083,7 +3082,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param request
    */
   private void buildOnBoardQuantityEntity(OnBoardQuantity entity, OnBoardQuantityDetail request) {
-    entity.setCargoId(request.getCargoId());
+    entity.setCargoId(0 == request.getCargoId() ? null : request.getCargoId());
     entity.setTankId(request.getTankId());
     entity.setPortId(request.getPortId());
     entity.setSounding(
@@ -3092,6 +3091,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         isEmpty(request.getWeight()) ? null : new BigDecimal(request.getWeight()));
     entity.setVolume(isEmpty(request.getVolume()) ? null : new BigDecimal(request.getVolume()));
     entity.setColorCode(isEmpty(request.getColorCode()) ? null : request.getColorCode());
+    entity.setAbbreviation(isEmpty(request.getAbbreviation()) ? null : request.getAbbreviation());
     entity.setIsActive(true);
   }
 
@@ -3279,6 +3279,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         obqEntities.stream()
             .filter(entity -> entity.getPortId().equals(synopticalEntity.getPortXid()))
             .collect(Collectors.toList());
+    BigDecimal cargoActualTotal = BigDecimal.ZERO, cargoPlannedTotal = BigDecimal.ZERO;
     for (VesselTankDetail tank : vesselReply.getVesselTanksList()) {
       if (!CARGO_TANK_CATEGORIES.contains(tank.getTankCategoryId())) {
         continue;
@@ -3292,15 +3293,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .findAny();
       if (obqOpt.isPresent()) {
         OnBoardQuantity obqEntity = obqOpt.get();
-        Optional.ofNullable(obqEntity.getActualArrivalWeight())
-            .ifPresent(item -> cargoBuilder.setActualArrivalWeight(valueOf(item)));
-        Optional.ofNullable(obqEntity.getActualDepartureWeight())
-            .ifPresent(item -> cargoBuilder.setActualDepartureWeight(valueOf(item)));
-        Optional.ofNullable(obqEntity.getPlannedArrivalWeight())
-            .ifPresent(item -> cargoBuilder.setPlannedArrivalWeight(valueOf(item)));
-        Optional.ofNullable(obqEntity.getPlannedDepartureWeight())
-            .ifPresent(item -> cargoBuilder.setPlannedDepartureWeight(valueOf(item)));
+        if (synopticalEntity.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL)) {
+          Optional.ofNullable(obqEntity.getActualArrivalWeight())
+              .ifPresent(item -> cargoBuilder.setActualWeight(valueOf(item)));
+          Optional.ofNullable(obqEntity.getPlannedArrivalWeight())
+              .ifPresent(item -> cargoBuilder.setActualWeight(valueOf(item)));
+          if (null != obqEntity.getActualArrivalWeight()) {
+            cargoActualTotal = cargoActualTotal.add(obqEntity.getActualArrivalWeight());
+          }
+          if (null != obqEntity.getPlannedArrivalWeight()) {
+            cargoPlannedTotal = cargoPlannedTotal.add(obqEntity.getPlannedArrivalWeight());
+          }
+        } else if (synopticalEntity.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)) {
+          Optional.ofNullable(obqEntity.getActualDepartureWeight())
+              .ifPresent(item -> cargoBuilder.setActualWeight(valueOf(item)));
+          Optional.ofNullable(obqEntity.getPlannedDepartureWeight())
+              .ifPresent(item -> cargoBuilder.setPlannedWeight(valueOf(item)));
+          if (null != obqEntity.getActualDepartureWeight()) {
+            cargoActualTotal = cargoActualTotal.add(obqEntity.getActualDepartureWeight());
+          }
+          if (null != obqEntity.getPlannedDepartureWeight()) {
+            cargoPlannedTotal = cargoPlannedTotal.add(obqEntity.getPlannedDepartureWeight());
+          }
+        }
       }
+      builder.setCargoActualTotal(valueOf(cargoActualTotal));
+      builder.setCargoPlannedTotal(valueOf(cargoPlannedTotal));
       builder.addCargo(cargoBuilder.build());
     }
   }

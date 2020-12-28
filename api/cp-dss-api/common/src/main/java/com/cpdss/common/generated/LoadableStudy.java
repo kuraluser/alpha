@@ -40516,6 +40516,19 @@ public final class LoadableStudy {
      * @return The bytes for colorCode.
      */
     com.google.protobuf.ByteString getColorCodeBytes();
+
+    /**
+     * <code>string abbreviation = 12;</code>
+     *
+     * @return The abbreviation.
+     */
+    java.lang.String getAbbreviation();
+    /**
+     * <code>string abbreviation = 12;</code>
+     *
+     * @return The bytes for abbreviation.
+     */
+    com.google.protobuf.ByteString getAbbreviationBytes();
   }
   /** Protobuf type {@code OnBoardQuantityDetail} */
   public static final class OnBoardQuantityDetail extends com.google.protobuf.GeneratedMessageV3
@@ -40535,6 +40548,7 @@ public final class LoadableStudy {
       weight_ = "";
       volume_ = "";
       colorCode_ = "";
+      abbreviation_ = "";
     }
 
     @java.lang.Override
@@ -40631,6 +40645,13 @@ public final class LoadableStudy {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 colorCode_ = s;
+                break;
+              }
+            case 98:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                abbreviation_ = s;
                 break;
               }
             default:
@@ -40932,6 +40953,41 @@ public final class LoadableStudy {
       }
     }
 
+    public static final int ABBREVIATION_FIELD_NUMBER = 12;
+    private volatile java.lang.Object abbreviation_;
+    /**
+     * <code>string abbreviation = 12;</code>
+     *
+     * @return The abbreviation.
+     */
+    public java.lang.String getAbbreviation() {
+      java.lang.Object ref = abbreviation_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        abbreviation_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string abbreviation = 12;</code>
+     *
+     * @return The bytes for abbreviation.
+     */
+    public com.google.protobuf.ByteString getAbbreviationBytes() {
+      java.lang.Object ref = abbreviation_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        abbreviation_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -40979,6 +41035,9 @@ public final class LoadableStudy {
       if (!getColorCodeBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 11, colorCode_);
       }
+      if (!getAbbreviationBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, abbreviation_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -41021,6 +41080,9 @@ public final class LoadableStudy {
       if (!getColorCodeBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, colorCode_);
       }
+      if (!getAbbreviationBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, abbreviation_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -41048,6 +41110,7 @@ public final class LoadableStudy {
       if (!getVolume().equals(other.getVolume())) return false;
       if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
       if (!getColorCode().equals(other.getColorCode())) return false;
+      if (!getAbbreviation().equals(other.getAbbreviation())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -41081,6 +41144,8 @@ public final class LoadableStudy {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
       hash = (37 * hash) + COLORCODE_FIELD_NUMBER;
       hash = (53 * hash) + getColorCode().hashCode();
+      hash = (37 * hash) + ABBREVIATION_FIELD_NUMBER;
+      hash = (53 * hash) + getAbbreviation().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -41243,6 +41308,8 @@ public final class LoadableStudy {
 
         colorCode_ = "";
 
+        abbreviation_ = "";
+
         return this;
       }
 
@@ -41282,6 +41349,7 @@ public final class LoadableStudy {
         result.volume_ = volume_;
         result.loadableStudyId_ = loadableStudyId_;
         result.colorCode_ = colorCode_;
+        result.abbreviation_ = abbreviation_;
         onBuilt();
         return result;
       }
@@ -41373,6 +41441,10 @@ public final class LoadableStudy {
         }
         if (!other.getColorCode().isEmpty()) {
           colorCode_ = other.colorCode_;
+          onChanged();
+        }
+        if (!other.getAbbreviation().isEmpty()) {
+          abbreviation_ = other.abbreviation_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -42023,6 +42095,82 @@ public final class LoadableStudy {
         checkByteStringIsUtf8(value);
 
         colorCode_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object abbreviation_ = "";
+      /**
+       * <code>string abbreviation = 12;</code>
+       *
+       * @return The abbreviation.
+       */
+      public java.lang.String getAbbreviation() {
+        java.lang.Object ref = abbreviation_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          abbreviation_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string abbreviation = 12;</code>
+       *
+       * @return The bytes for abbreviation.
+       */
+      public com.google.protobuf.ByteString getAbbreviationBytes() {
+        java.lang.Object ref = abbreviation_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          abbreviation_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string abbreviation = 12;</code>
+       *
+       * @param value The abbreviation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAbbreviation(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        abbreviation_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string abbreviation = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAbbreviation() {
+
+        abbreviation_ = getDefaultInstance().getAbbreviation();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string abbreviation = 12;</code>
+       *
+       * @param value The bytes for abbreviation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAbbreviationBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        abbreviation_ = value;
         onChanged();
         return this;
       }
@@ -56948,6 +57096,32 @@ public final class LoadableStudy {
     /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
     com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecordOrBuilder getCargoOrBuilder(
         int index);
+
+    /**
+     * <code>string cargoPlannedTotal = 25;</code>
+     *
+     * @return The cargoPlannedTotal.
+     */
+    java.lang.String getCargoPlannedTotal();
+    /**
+     * <code>string cargoPlannedTotal = 25;</code>
+     *
+     * @return The bytes for cargoPlannedTotal.
+     */
+    com.google.protobuf.ByteString getCargoPlannedTotalBytes();
+
+    /**
+     * <code>string cargoActualTotal = 26;</code>
+     *
+     * @return The cargoActualTotal.
+     */
+    java.lang.String getCargoActualTotal();
+    /**
+     * <code>string cargoActualTotal = 26;</code>
+     *
+     * @return The bytes for cargoActualTotal.
+     */
+    com.google.protobuf.ByteString getCargoActualTotalBytes();
   }
   /** Protobuf type {@code SynopticalRecord} */
   public static final class SynopticalRecord extends com.google.protobuf.GeneratedMessageV3
@@ -56983,6 +57157,8 @@ public final class LoadableStudy {
       etaEstimated_ = "";
       etdEstimated_ = "";
       cargo_ = java.util.Collections.emptyList();
+      cargoPlannedTotal_ = "";
+      cargoActualTotal_ = "";
     }
 
     @java.lang.Override
@@ -57184,6 +57360,20 @@ public final class LoadableStudy {
                     input.readMessage(
                         com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord.parser(),
                         extensionRegistry));
+                break;
+              }
+            case 202:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                cargoPlannedTotal_ = s;
+                break;
+              }
+            case 210:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                cargoActualTotal_ = s;
                 break;
               }
             default:
@@ -58006,6 +58196,76 @@ public final class LoadableStudy {
       return cargo_.get(index);
     }
 
+    public static final int CARGOPLANNEDTOTAL_FIELD_NUMBER = 25;
+    private volatile java.lang.Object cargoPlannedTotal_;
+    /**
+     * <code>string cargoPlannedTotal = 25;</code>
+     *
+     * @return The cargoPlannedTotal.
+     */
+    public java.lang.String getCargoPlannedTotal() {
+      java.lang.Object ref = cargoPlannedTotal_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        cargoPlannedTotal_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string cargoPlannedTotal = 25;</code>
+     *
+     * @return The bytes for cargoPlannedTotal.
+     */
+    public com.google.protobuf.ByteString getCargoPlannedTotalBytes() {
+      java.lang.Object ref = cargoPlannedTotal_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        cargoPlannedTotal_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CARGOACTUALTOTAL_FIELD_NUMBER = 26;
+    private volatile java.lang.Object cargoActualTotal_;
+    /**
+     * <code>string cargoActualTotal = 26;</code>
+     *
+     * @return The cargoActualTotal.
+     */
+    public java.lang.String getCargoActualTotal() {
+      java.lang.Object ref = cargoActualTotal_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        cargoActualTotal_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string cargoActualTotal = 26;</code>
+     *
+     * @return The bytes for cargoActualTotal.
+     */
+    public com.google.protobuf.ByteString getCargoActualTotalBytes() {
+      java.lang.Object ref = cargoActualTotal_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        cargoActualTotal_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -58092,6 +58352,12 @@ public final class LoadableStudy {
       for (int i = 0; i < cargo_.size(); i++) {
         output.writeMessage(24, cargo_.get(i));
       }
+      if (!getCargoPlannedTotalBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 25, cargoPlannedTotal_);
+      }
+      if (!getCargoActualTotalBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 26, cargoActualTotal_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -58173,6 +58439,12 @@ public final class LoadableStudy {
       for (int i = 0; i < cargo_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(24, cargo_.get(i));
       }
+      if (!getCargoPlannedTotalBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(25, cargoPlannedTotal_);
+      }
+      if (!getCargoActualTotalBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(26, cargoActualTotal_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -58213,6 +58485,8 @@ public final class LoadableStudy {
       if (!getEtaEstimated().equals(other.getEtaEstimated())) return false;
       if (!getEtdEstimated().equals(other.getEtdEstimated())) return false;
       if (!getCargoList().equals(other.getCargoList())) return false;
+      if (!getCargoPlannedTotal().equals(other.getCargoPlannedTotal())) return false;
+      if (!getCargoActualTotal().equals(other.getCargoActualTotal())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -58274,6 +58548,10 @@ public final class LoadableStudy {
         hash = (37 * hash) + CARGO_FIELD_NUMBER;
         hash = (53 * hash) + getCargoList().hashCode();
       }
+      hash = (37 * hash) + CARGOPLANNEDTOTAL_FIELD_NUMBER;
+      hash = (53 * hash) + getCargoPlannedTotal().hashCode();
+      hash = (37 * hash) + CARGOACTUALTOTAL_FIELD_NUMBER;
+      hash = (53 * hash) + getCargoActualTotal().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -58467,6 +58745,10 @@ public final class LoadableStudy {
         } else {
           cargoBuilder_.clear();
         }
+        cargoPlannedTotal_ = "";
+
+        cargoActualTotal_ = "";
+
         return this;
       }
 
@@ -58526,6 +58808,8 @@ public final class LoadableStudy {
         } else {
           result.cargo_ = cargoBuilder_.build();
         }
+        result.cargoPlannedTotal_ = cargoPlannedTotal_;
+        result.cargoActualTotal_ = cargoActualTotal_;
         onBuilt();
         return result;
       }
@@ -58694,6 +58978,14 @@ public final class LoadableStudy {
               cargoBuilder_.addAllMessages(other.cargo_);
             }
           }
+        }
+        if (!other.getCargoPlannedTotal().isEmpty()) {
+          cargoPlannedTotal_ = other.cargoPlannedTotal_;
+          onChanged();
+        }
+        if (!other.getCargoActualTotal().isEmpty()) {
+          cargoActualTotal_ = other.cargoActualTotal_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -60615,6 +60907,158 @@ public final class LoadableStudy {
         return cargoBuilder_;
       }
 
+      private java.lang.Object cargoPlannedTotal_ = "";
+      /**
+       * <code>string cargoPlannedTotal = 25;</code>
+       *
+       * @return The cargoPlannedTotal.
+       */
+      public java.lang.String getCargoPlannedTotal() {
+        java.lang.Object ref = cargoPlannedTotal_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          cargoPlannedTotal_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string cargoPlannedTotal = 25;</code>
+       *
+       * @return The bytes for cargoPlannedTotal.
+       */
+      public com.google.protobuf.ByteString getCargoPlannedTotalBytes() {
+        java.lang.Object ref = cargoPlannedTotal_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          cargoPlannedTotal_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string cargoPlannedTotal = 25;</code>
+       *
+       * @param value The cargoPlannedTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoPlannedTotal(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        cargoPlannedTotal_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargoPlannedTotal = 25;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargoPlannedTotal() {
+
+        cargoPlannedTotal_ = getDefaultInstance().getCargoPlannedTotal();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargoPlannedTotal = 25;</code>
+       *
+       * @param value The bytes for cargoPlannedTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoPlannedTotalBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        cargoPlannedTotal_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object cargoActualTotal_ = "";
+      /**
+       * <code>string cargoActualTotal = 26;</code>
+       *
+       * @return The cargoActualTotal.
+       */
+      public java.lang.String getCargoActualTotal() {
+        java.lang.Object ref = cargoActualTotal_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          cargoActualTotal_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string cargoActualTotal = 26;</code>
+       *
+       * @return The bytes for cargoActualTotal.
+       */
+      public com.google.protobuf.ByteString getCargoActualTotalBytes() {
+        java.lang.Object ref = cargoActualTotal_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          cargoActualTotal_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string cargoActualTotal = 26;</code>
+       *
+       * @param value The cargoActualTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoActualTotal(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        cargoActualTotal_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargoActualTotal = 26;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargoActualTotal() {
+
+        cargoActualTotal_ = getDefaultInstance().getCargoActualTotal();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargoActualTotal = 26;</code>
+       *
+       * @param value The bytes for cargoActualTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoActualTotalBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        cargoActualTotal_ = value;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -60693,56 +61137,30 @@ public final class LoadableStudy {
     com.google.protobuf.ByteString getTankNameBytes();
 
     /**
-     * <code>string plannedArrivalWeight = 3;</code>
+     * <code>string plannedWeight = 3;</code>
      *
-     * @return The plannedArrivalWeight.
+     * @return The plannedWeight.
      */
-    java.lang.String getPlannedArrivalWeight();
+    java.lang.String getPlannedWeight();
     /**
-     * <code>string plannedArrivalWeight = 3;</code>
+     * <code>string plannedWeight = 3;</code>
      *
-     * @return The bytes for plannedArrivalWeight.
+     * @return The bytes for plannedWeight.
      */
-    com.google.protobuf.ByteString getPlannedArrivalWeightBytes();
+    com.google.protobuf.ByteString getPlannedWeightBytes();
 
     /**
-     * <code>string actualArrivalWeight = 4;</code>
+     * <code>string actualWeight = 4;</code>
      *
-     * @return The actualArrivalWeight.
+     * @return The actualWeight.
      */
-    java.lang.String getActualArrivalWeight();
+    java.lang.String getActualWeight();
     /**
-     * <code>string actualArrivalWeight = 4;</code>
+     * <code>string actualWeight = 4;</code>
      *
-     * @return The bytes for actualArrivalWeight.
+     * @return The bytes for actualWeight.
      */
-    com.google.protobuf.ByteString getActualArrivalWeightBytes();
-
-    /**
-     * <code>string plannedDepartureWeight = 5;</code>
-     *
-     * @return The plannedDepartureWeight.
-     */
-    java.lang.String getPlannedDepartureWeight();
-    /**
-     * <code>string plannedDepartureWeight = 5;</code>
-     *
-     * @return The bytes for plannedDepartureWeight.
-     */
-    com.google.protobuf.ByteString getPlannedDepartureWeightBytes();
-
-    /**
-     * <code>string actualDepartureWeight = 6;</code>
-     *
-     * @return The actualDepartureWeight.
-     */
-    java.lang.String getActualDepartureWeight();
-    /**
-     * <code>string actualDepartureWeight = 6;</code>
-     *
-     * @return The bytes for actualDepartureWeight.
-     */
-    com.google.protobuf.ByteString getActualDepartureWeightBytes();
+    com.google.protobuf.ByteString getActualWeightBytes();
   }
   /** Protobuf type {@code SynopticalCargoRecord} */
   public static final class SynopticalCargoRecord extends com.google.protobuf.GeneratedMessageV3
@@ -60757,10 +61175,8 @@ public final class LoadableStudy {
 
     private SynopticalCargoRecord() {
       tankName_ = "";
-      plannedArrivalWeight_ = "";
-      actualArrivalWeight_ = "";
-      plannedDepartureWeight_ = "";
-      actualDepartureWeight_ = "";
+      plannedWeight_ = "";
+      actualWeight_ = "";
     }
 
     @java.lang.Override
@@ -60808,28 +61224,14 @@ public final class LoadableStudy {
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                plannedArrivalWeight_ = s;
+                plannedWeight_ = s;
                 break;
               }
             case 34:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                actualArrivalWeight_ = s;
-                break;
-              }
-            case 42:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                plannedDepartureWeight_ = s;
-                break;
-              }
-            case 50:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                actualDepartureWeight_ = s;
+                actualWeight_ = s;
                 break;
               }
             default:
@@ -60912,140 +61314,70 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int PLANNEDARRIVALWEIGHT_FIELD_NUMBER = 3;
-    private volatile java.lang.Object plannedArrivalWeight_;
+    public static final int PLANNEDWEIGHT_FIELD_NUMBER = 3;
+    private volatile java.lang.Object plannedWeight_;
     /**
-     * <code>string plannedArrivalWeight = 3;</code>
+     * <code>string plannedWeight = 3;</code>
      *
-     * @return The plannedArrivalWeight.
+     * @return The plannedWeight.
      */
-    public java.lang.String getPlannedArrivalWeight() {
-      java.lang.Object ref = plannedArrivalWeight_;
+    public java.lang.String getPlannedWeight() {
+      java.lang.Object ref = plannedWeight_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        plannedArrivalWeight_ = s;
+        plannedWeight_ = s;
         return s;
       }
     }
     /**
-     * <code>string plannedArrivalWeight = 3;</code>
+     * <code>string plannedWeight = 3;</code>
      *
-     * @return The bytes for plannedArrivalWeight.
+     * @return The bytes for plannedWeight.
      */
-    public com.google.protobuf.ByteString getPlannedArrivalWeightBytes() {
-      java.lang.Object ref = plannedArrivalWeight_;
+    public com.google.protobuf.ByteString getPlannedWeightBytes() {
+      java.lang.Object ref = plannedWeight_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        plannedArrivalWeight_ = b;
+        plannedWeight_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
 
-    public static final int ACTUALARRIVALWEIGHT_FIELD_NUMBER = 4;
-    private volatile java.lang.Object actualArrivalWeight_;
+    public static final int ACTUALWEIGHT_FIELD_NUMBER = 4;
+    private volatile java.lang.Object actualWeight_;
     /**
-     * <code>string actualArrivalWeight = 4;</code>
+     * <code>string actualWeight = 4;</code>
      *
-     * @return The actualArrivalWeight.
+     * @return The actualWeight.
      */
-    public java.lang.String getActualArrivalWeight() {
-      java.lang.Object ref = actualArrivalWeight_;
+    public java.lang.String getActualWeight() {
+      java.lang.Object ref = actualWeight_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        actualArrivalWeight_ = s;
+        actualWeight_ = s;
         return s;
       }
     }
     /**
-     * <code>string actualArrivalWeight = 4;</code>
+     * <code>string actualWeight = 4;</code>
      *
-     * @return The bytes for actualArrivalWeight.
+     * @return The bytes for actualWeight.
      */
-    public com.google.protobuf.ByteString getActualArrivalWeightBytes() {
-      java.lang.Object ref = actualArrivalWeight_;
+    public com.google.protobuf.ByteString getActualWeightBytes() {
+      java.lang.Object ref = actualWeight_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        actualArrivalWeight_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int PLANNEDDEPARTUREWEIGHT_FIELD_NUMBER = 5;
-    private volatile java.lang.Object plannedDepartureWeight_;
-    /**
-     * <code>string plannedDepartureWeight = 5;</code>
-     *
-     * @return The plannedDepartureWeight.
-     */
-    public java.lang.String getPlannedDepartureWeight() {
-      java.lang.Object ref = plannedDepartureWeight_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        plannedDepartureWeight_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string plannedDepartureWeight = 5;</code>
-     *
-     * @return The bytes for plannedDepartureWeight.
-     */
-    public com.google.protobuf.ByteString getPlannedDepartureWeightBytes() {
-      java.lang.Object ref = plannedDepartureWeight_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        plannedDepartureWeight_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int ACTUALDEPARTUREWEIGHT_FIELD_NUMBER = 6;
-    private volatile java.lang.Object actualDepartureWeight_;
-    /**
-     * <code>string actualDepartureWeight = 6;</code>
-     *
-     * @return The actualDepartureWeight.
-     */
-    public java.lang.String getActualDepartureWeight() {
-      java.lang.Object ref = actualDepartureWeight_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        actualDepartureWeight_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string actualDepartureWeight = 6;</code>
-     *
-     * @return The bytes for actualDepartureWeight.
-     */
-    public com.google.protobuf.ByteString getActualDepartureWeightBytes() {
-      java.lang.Object ref = actualDepartureWeight_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        actualDepartureWeight_ = b;
+        actualWeight_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -61072,17 +61404,11 @@ public final class LoadableStudy {
       if (!getTankNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, tankName_);
       }
-      if (!getPlannedArrivalWeightBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, plannedArrivalWeight_);
+      if (!getPlannedWeightBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, plannedWeight_);
       }
-      if (!getActualArrivalWeightBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, actualArrivalWeight_);
-      }
-      if (!getPlannedDepartureWeightBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, plannedDepartureWeight_);
-      }
-      if (!getActualDepartureWeightBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, actualDepartureWeight_);
+      if (!getActualWeightBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, actualWeight_);
       }
       unknownFields.writeTo(output);
     }
@@ -61099,18 +61425,11 @@ public final class LoadableStudy {
       if (!getTankNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, tankName_);
       }
-      if (!getPlannedArrivalWeightBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, plannedArrivalWeight_);
+      if (!getPlannedWeightBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, plannedWeight_);
       }
-      if (!getActualArrivalWeightBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, actualArrivalWeight_);
-      }
-      if (!getPlannedDepartureWeightBytes().isEmpty()) {
-        size +=
-            com.google.protobuf.GeneratedMessageV3.computeStringSize(5, plannedDepartureWeight_);
-      }
-      if (!getActualDepartureWeightBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, actualDepartureWeight_);
+      if (!getActualWeightBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, actualWeight_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -61130,10 +61449,8 @@ public final class LoadableStudy {
 
       if (getTankId() != other.getTankId()) return false;
       if (!getTankName().equals(other.getTankName())) return false;
-      if (!getPlannedArrivalWeight().equals(other.getPlannedArrivalWeight())) return false;
-      if (!getActualArrivalWeight().equals(other.getActualArrivalWeight())) return false;
-      if (!getPlannedDepartureWeight().equals(other.getPlannedDepartureWeight())) return false;
-      if (!getActualDepartureWeight().equals(other.getActualDepartureWeight())) return false;
+      if (!getPlannedWeight().equals(other.getPlannedWeight())) return false;
+      if (!getActualWeight().equals(other.getActualWeight())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -61149,14 +61466,10 @@ public final class LoadableStudy {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getTankId());
       hash = (37 * hash) + TANKNAME_FIELD_NUMBER;
       hash = (53 * hash) + getTankName().hashCode();
-      hash = (37 * hash) + PLANNEDARRIVALWEIGHT_FIELD_NUMBER;
-      hash = (53 * hash) + getPlannedArrivalWeight().hashCode();
-      hash = (37 * hash) + ACTUALARRIVALWEIGHT_FIELD_NUMBER;
-      hash = (53 * hash) + getActualArrivalWeight().hashCode();
-      hash = (37 * hash) + PLANNEDDEPARTUREWEIGHT_FIELD_NUMBER;
-      hash = (53 * hash) + getPlannedDepartureWeight().hashCode();
-      hash = (37 * hash) + ACTUALDEPARTUREWEIGHT_FIELD_NUMBER;
-      hash = (53 * hash) + getActualDepartureWeight().hashCode();
+      hash = (37 * hash) + PLANNEDWEIGHT_FIELD_NUMBER;
+      hash = (53 * hash) + getPlannedWeight().hashCode();
+      hash = (37 * hash) + ACTUALWEIGHT_FIELD_NUMBER;
+      hash = (53 * hash) + getActualWeight().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -61301,13 +61614,9 @@ public final class LoadableStudy {
 
         tankName_ = "";
 
-        plannedArrivalWeight_ = "";
+        plannedWeight_ = "";
 
-        actualArrivalWeight_ = "";
-
-        plannedDepartureWeight_ = "";
-
-        actualDepartureWeight_ = "";
+        actualWeight_ = "";
 
         return this;
       }
@@ -61339,10 +61648,8 @@ public final class LoadableStudy {
             new com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord(this);
         result.tankId_ = tankId_;
         result.tankName_ = tankName_;
-        result.plannedArrivalWeight_ = plannedArrivalWeight_;
-        result.actualArrivalWeight_ = actualArrivalWeight_;
-        result.plannedDepartureWeight_ = plannedDepartureWeight_;
-        result.actualDepartureWeight_ = actualDepartureWeight_;
+        result.plannedWeight_ = plannedWeight_;
+        result.actualWeight_ = actualWeight_;
         onBuilt();
         return result;
       }
@@ -61404,20 +61711,12 @@ public final class LoadableStudy {
           tankName_ = other.tankName_;
           onChanged();
         }
-        if (!other.getPlannedArrivalWeight().isEmpty()) {
-          plannedArrivalWeight_ = other.plannedArrivalWeight_;
+        if (!other.getPlannedWeight().isEmpty()) {
+          plannedWeight_ = other.plannedWeight_;
           onChanged();
         }
-        if (!other.getActualArrivalWeight().isEmpty()) {
-          actualArrivalWeight_ = other.actualArrivalWeight_;
-          onChanged();
-        }
-        if (!other.getPlannedDepartureWeight().isEmpty()) {
-          plannedDepartureWeight_ = other.plannedDepartureWeight_;
-          onChanged();
-        }
-        if (!other.getActualDepartureWeight().isEmpty()) {
-          actualDepartureWeight_ = other.actualDepartureWeight_;
+        if (!other.getActualWeight().isEmpty()) {
+          actualWeight_ = other.actualWeight_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -61560,306 +61859,154 @@ public final class LoadableStudy {
         return this;
       }
 
-      private java.lang.Object plannedArrivalWeight_ = "";
+      private java.lang.Object plannedWeight_ = "";
       /**
-       * <code>string plannedArrivalWeight = 3;</code>
+       * <code>string plannedWeight = 3;</code>
        *
-       * @return The plannedArrivalWeight.
+       * @return The plannedWeight.
        */
-      public java.lang.String getPlannedArrivalWeight() {
-        java.lang.Object ref = plannedArrivalWeight_;
+      public java.lang.String getPlannedWeight() {
+        java.lang.Object ref = plannedWeight_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          plannedArrivalWeight_ = s;
+          plannedWeight_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string plannedArrivalWeight = 3;</code>
+       * <code>string plannedWeight = 3;</code>
        *
-       * @return The bytes for plannedArrivalWeight.
+       * @return The bytes for plannedWeight.
        */
-      public com.google.protobuf.ByteString getPlannedArrivalWeightBytes() {
-        java.lang.Object ref = plannedArrivalWeight_;
+      public com.google.protobuf.ByteString getPlannedWeightBytes() {
+        java.lang.Object ref = plannedWeight_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          plannedArrivalWeight_ = b;
+          plannedWeight_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string plannedArrivalWeight = 3;</code>
+       * <code>string plannedWeight = 3;</code>
        *
-       * @param value The plannedArrivalWeight to set.
+       * @param value The plannedWeight to set.
        * @return This builder for chaining.
        */
-      public Builder setPlannedArrivalWeight(java.lang.String value) {
+      public Builder setPlannedWeight(java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
 
-        plannedArrivalWeight_ = value;
+        plannedWeight_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string plannedArrivalWeight = 3;</code>
+       * <code>string plannedWeight = 3;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearPlannedArrivalWeight() {
+      public Builder clearPlannedWeight() {
 
-        plannedArrivalWeight_ = getDefaultInstance().getPlannedArrivalWeight();
+        plannedWeight_ = getDefaultInstance().getPlannedWeight();
         onChanged();
         return this;
       }
       /**
-       * <code>string plannedArrivalWeight = 3;</code>
+       * <code>string plannedWeight = 3;</code>
        *
-       * @param value The bytes for plannedArrivalWeight to set.
+       * @param value The bytes for plannedWeight to set.
        * @return This builder for chaining.
        */
-      public Builder setPlannedArrivalWeightBytes(com.google.protobuf.ByteString value) {
+      public Builder setPlannedWeightBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
 
-        plannedArrivalWeight_ = value;
+        plannedWeight_ = value;
         onChanged();
         return this;
       }
 
-      private java.lang.Object actualArrivalWeight_ = "";
+      private java.lang.Object actualWeight_ = "";
       /**
-       * <code>string actualArrivalWeight = 4;</code>
+       * <code>string actualWeight = 4;</code>
        *
-       * @return The actualArrivalWeight.
+       * @return The actualWeight.
        */
-      public java.lang.String getActualArrivalWeight() {
-        java.lang.Object ref = actualArrivalWeight_;
+      public java.lang.String getActualWeight() {
+        java.lang.Object ref = actualWeight_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          actualArrivalWeight_ = s;
+          actualWeight_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string actualArrivalWeight = 4;</code>
+       * <code>string actualWeight = 4;</code>
        *
-       * @return The bytes for actualArrivalWeight.
+       * @return The bytes for actualWeight.
        */
-      public com.google.protobuf.ByteString getActualArrivalWeightBytes() {
-        java.lang.Object ref = actualArrivalWeight_;
+      public com.google.protobuf.ByteString getActualWeightBytes() {
+        java.lang.Object ref = actualWeight_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          actualArrivalWeight_ = b;
+          actualWeight_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string actualArrivalWeight = 4;</code>
+       * <code>string actualWeight = 4;</code>
        *
-       * @param value The actualArrivalWeight to set.
+       * @param value The actualWeight to set.
        * @return This builder for chaining.
        */
-      public Builder setActualArrivalWeight(java.lang.String value) {
+      public Builder setActualWeight(java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
 
-        actualArrivalWeight_ = value;
+        actualWeight_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string actualArrivalWeight = 4;</code>
+       * <code>string actualWeight = 4;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearActualArrivalWeight() {
+      public Builder clearActualWeight() {
 
-        actualArrivalWeight_ = getDefaultInstance().getActualArrivalWeight();
+        actualWeight_ = getDefaultInstance().getActualWeight();
         onChanged();
         return this;
       }
       /**
-       * <code>string actualArrivalWeight = 4;</code>
+       * <code>string actualWeight = 4;</code>
        *
-       * @param value The bytes for actualArrivalWeight to set.
+       * @param value The bytes for actualWeight to set.
        * @return This builder for chaining.
        */
-      public Builder setActualArrivalWeightBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        actualArrivalWeight_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object plannedDepartureWeight_ = "";
-      /**
-       * <code>string plannedDepartureWeight = 5;</code>
-       *
-       * @return The plannedDepartureWeight.
-       */
-      public java.lang.String getPlannedDepartureWeight() {
-        java.lang.Object ref = plannedDepartureWeight_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          plannedDepartureWeight_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string plannedDepartureWeight = 5;</code>
-       *
-       * @return The bytes for plannedDepartureWeight.
-       */
-      public com.google.protobuf.ByteString getPlannedDepartureWeightBytes() {
-        java.lang.Object ref = plannedDepartureWeight_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          plannedDepartureWeight_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string plannedDepartureWeight = 5;</code>
-       *
-       * @param value The plannedDepartureWeight to set.
-       * @return This builder for chaining.
-       */
-      public Builder setPlannedDepartureWeight(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        plannedDepartureWeight_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string plannedDepartureWeight = 5;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearPlannedDepartureWeight() {
-
-        plannedDepartureWeight_ = getDefaultInstance().getPlannedDepartureWeight();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string plannedDepartureWeight = 5;</code>
-       *
-       * @param value The bytes for plannedDepartureWeight to set.
-       * @return This builder for chaining.
-       */
-      public Builder setPlannedDepartureWeightBytes(com.google.protobuf.ByteString value) {
+      public Builder setActualWeightBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
 
-        plannedDepartureWeight_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object actualDepartureWeight_ = "";
-      /**
-       * <code>string actualDepartureWeight = 6;</code>
-       *
-       * @return The actualDepartureWeight.
-       */
-      public java.lang.String getActualDepartureWeight() {
-        java.lang.Object ref = actualDepartureWeight_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          actualDepartureWeight_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string actualDepartureWeight = 6;</code>
-       *
-       * @return The bytes for actualDepartureWeight.
-       */
-      public com.google.protobuf.ByteString getActualDepartureWeightBytes() {
-        java.lang.Object ref = actualDepartureWeight_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          actualDepartureWeight_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string actualDepartureWeight = 6;</code>
-       *
-       * @param value The actualDepartureWeight to set.
-       * @return This builder for chaining.
-       */
-      public Builder setActualDepartureWeight(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        actualDepartureWeight_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string actualDepartureWeight = 6;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearActualDepartureWeight() {
-
-        actualDepartureWeight_ = getDefaultInstance().getActualDepartureWeight();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string actualDepartureWeight = 6;</code>
-       *
-       * @param value The bytes for actualDepartureWeight to set.
-       * @return This builder for chaining.
-       */
-      public Builder setActualDepartureWeightBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        actualDepartureWeight_ = value;
+        actualWeight_ = value;
         onChanged();
         return this;
       }
@@ -64171,137 +64318,137 @@ public final class LoadableStudy {
           + "kList\022\n\n\002id\030\005 \001(\003\"x\n\026OnBoardQuantityRequ"
           + "est\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003"
           + "\022\027\n\017loadableStudyId\030\003 \001(\003\022\016\n\006portId\030\004 \001("
-          + "\003\022\020\n\010voyageId\030\005 \001(\003\"\327\001\n\025OnBoardQuantityD"
+          + "\003\022\020\n\010voyageId\030\005 \001(\003\"\355\001\n\025OnBoardQuantityD"
           + "etail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\016\n\006tan"
           + "kId\030\003 \001(\003\022\020\n\010tankName\030\004 \001(\t\022\017\n\007cargoId\030\005"
           + " \001(\003\022\021\n\tcargoName\030\006 \001(\t\022\020\n\010sounding\030\007 \001("
           + "\t\022\016\n\006weight\030\010 \001(\t\022\016\n\006volume\030\t \001(\t\022\027\n\017loa"
-          + "dableStudyId\030\n \001(\003\022\021\n\tcolorCode\030\013 \001(\t\"\226\001"
-          + "\n\024OnBoardQuantityReply\022\'\n\016responseStatus"
-          + "\030\001 \001(\0132\017.ResponseStatus\022/\n\017onBoardQuanti"
-          + "ty\030\002 \003(\0132\026.OnBoardQuantityDetail\022\030\n\005tank"
-          + "s\030\003 \003(\0132\t.TankList\022\n\n\002id\030\004 \001(\003\".\n\022Purpos"
-          + "eOfCommingle\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"4"
-          + "\n\031PurposeOfCommingleRequest\022\027\n\017loadableS"
-          + "tudyId\030\001 \001(\003\"s\n\027PurposeOfCommingleReply\022"
-          + "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus"
-          + "\022/\n\022purposeOfCommingle\030\002 \003(\0132\023.PurposeOf"
-          + "Commingle\"\303\001\n\024LoadablePatternReply\022)\n\017lo"
-          + "adablePattern\030\001 \003(\0132\020.LoadablePattern\022\'\n"
-          + "\016responseStatus\030\002 \001(\0132\017.ResponseStatus\022\030"
-          + "\n\005tanks\030\003 \003(\0132\t.TankList\022\"\n\032loadablePatt"
-          + "ernCreatedDate\030\004 \001(\t\022\031\n\021loadableStudyNam"
-          + "e\030\005 \001(\t\"\242\001\n\017LoadablePattern\022\031\n\021loadableP"
-          + "atternId\030\001 \001(\003\022A\n\033loadablePatternCargoDe"
-          + "tails\030\002 \003(\0132\034.LoadablePatternCargoDetail"
-          + "s\022\023\n\013constraints\030\003 \001(\t\022\034\n\024totalDifferenc"
-          + "eColor\030\004 \001(\t\"\217\002\n\033LoadablePatternCargoDet"
-          + "ails\022\020\n\010priority\030\001 \001(\003\022\031\n\021cargoAbbreviat"
-          + "ion\030\002 \001(\t\022\022\n\ncargoColor\030\003 \001(\t\022\016\n\006tankId\030"
-          + "\004 \001(\003\022\020\n\010quantity\030\005 \001(\t\022\022\n\ndifference\030\006 "
-          + "\001(\t\022\027\n\017differenceColor\030\007 \001(\t\022 \n\030loadable"
-          + "PatternDetailsId\030\010 \001(\003\022\023\n\013isCommingle\030\t "
-          + "\001(\010\022)\n!loadablePatternCommingleDetailsId"
-          + "\030\n \001(\003\"1\n\026LoadablePatternRequest\022\027\n\017load"
-          + "ableStudyId\030\001 \001(\003\"\265\001\n\016CommingleCargo\022\n\n\002"
-          + "id\030\001 \001(\003\022\021\n\tpurposeId\030\002 \001(\003\022\020\n\010slopOnly\030"
-          + "\003 \001(\010\022\026\n\016preferredTanks\030\004 \003(\003\022\020\n\010cargo1I"
-          + "d\030\005 \001(\003\022\021\n\tcargo1pct\030\006 \001(\t\022\020\n\010cargo2Id\030\007"
-          + " \001(\003\022\021\n\tcargo2pct\030\010 \001(\t\022\020\n\010quantity\030\t \001("
-          + "\t\"Y\n\025CommingleCargoRequest\022\027\n\017loadableSt"
-          + "udyId\030\001 \001(\003\022\'\n\016commingleCargo\030\002 \003(\0132\017.Co"
-          + "mmingleCargo\"g\n\023CommingleCargoReply\022\'\n\016r"
-          + "esponseStatus\030\001 \001(\0132\017.ResponseStatus\022\'\n\016"
-          + "commingleCargo\030\002 \003(\0132\017.CommingleCargo\"S\n"
-          + "&LoadablePatternCommingleDetailsRequest\022"
-          + ")\n!loadablePatternCommingleDetailsId\030\001 \001"
-          + "(\003\"\317\002\n$LoadablePatternCommingleDetailsRe"
-          + "ply\022\n\n\002id\030\001 \001(\003\022\025\n\rtankShortName\030\002 \001(\t\022\031"
-          + "\n\021cargo1Abbrivation\030\003 \001(\t\022\031\n\021cargo2Abbri"
-          + "vation\030\004 \001(\t\022\r\n\005grade\030\005 \001(\t\022\020\n\010quantity\030"
-          + "\006 \001(\t\022\013\n\003api\030\007 \001(\t\022\023\n\013temperature\030\010 \001(\t\022"
-          + "\026\n\016cargo1Quantity\030\t \001(\t\022\026\n\016cargo2Quantit"
-          + "y\030\n \001(\t\022\030\n\020cargo1Percentage\030\013 \001(\t\022\030\n\020car"
-          + "go2Percentage\030\014 \001(\t\022\'\n\016responseStatus\030\r "
-          + "\001(\0132\017.ResponseStatus\"\212\004\n\020SynopticalRecor"
-          + "d\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\020\n\010portNam"
-          + "e\030\003 \001(\t\022\025\n\roperationType\030\004 \001(\t\022\020\n\010distan"
-          + "ce\030\005 \001(\t\022\r\n\005speed\030\006 \001(\t\022\024\n\014runningHours\030"
-          + "\007 \001(\t\022\023\n\013inPortHours\030\010 \001(\t\022\025\n\rtimeOfSunr"
-          + "ise\030\t \001(\t\022\024\n\014timeOfSunset\030\n \001(\t\022\022\n\nhwTid"
-          + "eFrom\030\013 \001(\t\022\020\n\010hwTideTo\030\014 \001(\t\022\026\n\016hwTideT"
-          + "imeFrom\030\r \001(\t\022\024\n\014hwTideTimeTo\030\016 \001(\t\022\022\n\nl"
-          + "wTideFrom\030\017 \001(\t\022\020\n\010lwTideTo\030\020 \001(\t\022\026\n\016lwT"
-          + "ideTimeFrom\030\021 \001(\t\022\024\n\014lwTideTimeTo\030\022 \001(\t\022"
-          + "\027\n\017specificGravity\030\023 \001(\t\022\021\n\tetaActual\030\024 "
-          + "\001(\t\022\021\n\tetdActual\030\025 \001(\t\022\024\n\014etaEstimated\030\026"
-          + " \001(\t\022\024\n\014etdEstimated\030\027 \001(\t\022%\n\005cargo\030\030 \003("
-          + "\0132\026.SynopticalCargoRecord\"\263\001\n\025Synoptical"
-          + "CargoRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030"
-          + "\002 \001(\t\022\034\n\024plannedArrivalWeight\030\003 \001(\t\022\033\n\023a"
-          + "ctualArrivalWeight\030\004 \001(\t\022\036\n\026plannedDepar"
-          + "tureWeight\030\005 \001(\t\022\035\n\025actualDepartureWeigh"
-          + "t\030\006 \001(\t\"C\n\026SynopticalTableRequest\022\027\n\017loa"
-          + "dableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\"\216\001\n"
-          + "\024SynopticalTableReply\022\'\n\016responseStatus\030"
-          + "\001 \001(\0132\017.ResponseStatus\022,\n\021synopticalReco"
-          + "rds\030\002 \003(\0132\021.SynopticalRecord\022\037\n\nvesselTa"
-          + "nk\030\003 \003(\0132\013.TankDetail2\344\020\n\024LoadableStudyS"
-          + "ervice\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014.V"
-          + "oyageReply\"\000\0228\n\022GetVoyagesByVessel\022\016.Voy"
-          + "ageRequest\032\020.VoyageListReply\"\000\022J\n\024SaveLo"
-          + "adableQuantity\022\030.LoadableQuantityRequest"
-          + "\032\026.LoadableQuantityReply\"\000\022T\n$FindLoadab"
-          + "leStudiesByVesselAndVoyage\022\025.LoadableStu"
-          + "dyRequest\032\023.LoadableStudyReply\"\000\022@\n\021Save"
-          + "LoadableStudy\022\024.LoadableStudyDetail\032\023.Lo"
-          + "adableStudyReply\"\000\022G\n\023SaveCargoNominatio"
-          + "n\022\027.CargoNominationRequest\032\025.CargoNomina"
-          + "tionReply\"\000\022J\n\034GetLoadableStudyPortRotat"
-          + "ion\022\024.PortRotationRequest\032\022.PortRotation"
-          + "Reply\"\000\022J\n\026GetCargoNominationById\022\027.Carg"
-          + "oNominationRequest\032\025.CargoNominationRepl"
-          + "y\"\000\022I\n\023GetValveSegregation\022\030.ValveSegreg"
-          + "ationRequest\032\026.ValveSegregationReply\"\000\022J"
-          + "\n\023getLoadableQuantity\022\026.LoadableQuantity"
-          + "Reply\032\031.LoadableQuantityResponse\"\000\022J\n\035Sa"
-          + "veLoadableStudyPortRotation\022\023.PortRotati"
-          + "onDetail\032\022.PortRotationReply\"\000\022I\n\025Delete"
-          + "CargoNomination\022\027.CargoNominationRequest"
-          + "\032\025.CargoNominationReply\"\000\022B\n\024SaveDischar"
-          + "gingPorts\022\024.PortRotationRequest\032\022.PortRo"
-          + "tationReply\"\000\022N\n GetPortRotationByLoadab"
-          + "leStudyId\022\024.PortRotationRequest\032\022.PortRo"
-          + "tationReply\"\000\022C\n\023DeleteLoadableStudy\022\025.L"
-          + "oadableStudyRequest\032\023.LoadableStudyReply"
-          + "\"\000\022@\n\022DeletePortRotation\022\024.PortRotationR"
-          + "equest\032\022.PortRotationReply\"\000\022C\n\021GetOnHan"
-          + "dQuantity\022\026.OnHandQuantityRequest\032\024.OnHa"
-          + "ndQuantityReply\"\000\022C\n\022SaveOnHandQuantity\022"
-          + "\025.OnHandQuantityDetail\032\024.OnHandQuantityR"
-          + "eply\"\000\022M\n\031GetLoadablePatternDetails\022\027.Lo"
-          + "adablePatternRequest\032\025.LoadablePatternRe"
-          + "ply\"\000\022O\n\025GetPurposeOfCommingle\022\032.Purpose"
-          + "OfCommingleRequest\032\030.PurposeOfCommingleR"
-          + "eply\"\000\022C\n\021GetCommingleCargo\022\026.CommingleC"
-          + "argoRequest\032\024.CommingleCargoReply\"\000\022D\n\022S"
-          + "aveCommingleCargo\022\026.CommingleCargoReques"
-          + "t\032\024.CommingleCargoReply\"\000\022v\n\"GetLoadable"
-          + "PatternCommingleDetails\022\'.LoadablePatter"
-          + "nCommingleDetailsRequest\032%.LoadablePatte"
-          + "rnCommingleDetailsReply\"\000\0226\n\030GenerateLoa"
-          + "dablePatterns\022\014.AlgoRequest\032\n.AlgoReply\""
-          + "\000\022F\n\022GetOnBoardQuantity\022\027.OnBoardQuantit"
-          + "yRequest\032\025.OnBoardQuantityReply\"\000\022F\n\023Sav"
-          + "eOnBoardQuantity\022\026.OnBoardQuantityDetail"
-          + "\032\025.OnBoardQuantityReply\"\000\022E\n\033SaveAlgoLoa"
-          + "dableStudyStatus\022\022.AlgoStatusRequest\032\020.A"
-          + "lgoStatusReply\"\000\022F\n\022GetSynopticalTable\022\027"
-          + ".SynopticalTableRequest\032\025.SynopticalTabl"
-          + "eReply\"\000\022R\n\026GetLoadableStudyStatus\022\033.Loa"
-          + "dableStudyStatusRequest\032\031.LoadableStudyS"
-          + "tatusReply\"\000B\036\n\032com.cpdss.common.generat"
-          + "edP\000b\006proto3"
+          + "dableStudyId\030\n \001(\003\022\021\n\tcolorCode\030\013 \001(\t\022\024\n"
+          + "\014abbreviation\030\014 \001(\t\"\226\001\n\024OnBoardQuantityR"
+          + "eply\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseS"
+          + "tatus\022/\n\017onBoardQuantity\030\002 \003(\0132\026.OnBoard"
+          + "QuantityDetail\022\030\n\005tanks\030\003 \003(\0132\t.TankList"
+          + "\022\n\n\002id\030\004 \001(\003\".\n\022PurposeOfCommingle\022\n\n\002id"
+          + "\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"4\n\031PurposeOfComming"
+          + "leRequest\022\027\n\017loadableStudyId\030\001 \001(\003\"s\n\027Pu"
+          + "rposeOfCommingleReply\022\'\n\016responseStatus\030"
+          + "\001 \001(\0132\017.ResponseStatus\022/\n\022purposeOfCommi"
+          + "ngle\030\002 \003(\0132\023.PurposeOfCommingle\"\303\001\n\024Load"
+          + "ablePatternReply\022)\n\017loadablePattern\030\001 \003("
+          + "\0132\020.LoadablePattern\022\'\n\016responseStatus\030\002 "
+          + "\001(\0132\017.ResponseStatus\022\030\n\005tanks\030\003 \003(\0132\t.Ta"
+          + "nkList\022\"\n\032loadablePatternCreatedDate\030\004 \001"
+          + "(\t\022\031\n\021loadableStudyName\030\005 \001(\t\"\242\001\n\017Loadab"
+          + "lePattern\022\031\n\021loadablePatternId\030\001 \001(\003\022A\n\033"
+          + "loadablePatternCargoDetails\030\002 \003(\0132\034.Load"
+          + "ablePatternCargoDetails\022\023\n\013constraints\030\003"
+          + " \001(\t\022\034\n\024totalDifferenceColor\030\004 \001(\t\"\217\002\n\033L"
+          + "oadablePatternCargoDetails\022\020\n\010priority\030\001"
+          + " \001(\003\022\031\n\021cargoAbbreviation\030\002 \001(\t\022\022\n\ncargo"
+          + "Color\030\003 \001(\t\022\016\n\006tankId\030\004 \001(\003\022\020\n\010quantity\030"
+          + "\005 \001(\t\022\022\n\ndifference\030\006 \001(\t\022\027\n\017differenceC"
+          + "olor\030\007 \001(\t\022 \n\030loadablePatternDetailsId\030\010"
+          + " \001(\003\022\023\n\013isCommingle\030\t \001(\010\022)\n!loadablePat"
+          + "ternCommingleDetailsId\030\n \001(\003\"1\n\026Loadable"
+          + "PatternRequest\022\027\n\017loadableStudyId\030\001 \001(\003\""
+          + "\265\001\n\016CommingleCargo\022\n\n\002id\030\001 \001(\003\022\021\n\tpurpos"
+          + "eId\030\002 \001(\003\022\020\n\010slopOnly\030\003 \001(\010\022\026\n\016preferred"
+          + "Tanks\030\004 \003(\003\022\020\n\010cargo1Id\030\005 \001(\003\022\021\n\tcargo1p"
+          + "ct\030\006 \001(\t\022\020\n\010cargo2Id\030\007 \001(\003\022\021\n\tcargo2pct\030"
+          + "\010 \001(\t\022\020\n\010quantity\030\t \001(\t\"Y\n\025CommingleCarg"
+          + "oRequest\022\027\n\017loadableStudyId\030\001 \001(\003\022\'\n\016com"
+          + "mingleCargo\030\002 \003(\0132\017.CommingleCargo\"g\n\023Co"
+          + "mmingleCargoReply\022\'\n\016responseStatus\030\001 \001("
+          + "\0132\017.ResponseStatus\022\'\n\016commingleCargo\030\002 \003"
+          + "(\0132\017.CommingleCargo\"S\n&LoadablePatternCo"
+          + "mmingleDetailsRequest\022)\n!loadablePattern"
+          + "CommingleDetailsId\030\001 \001(\003\"\317\002\n$LoadablePat"
+          + "ternCommingleDetailsReply\022\n\n\002id\030\001 \001(\003\022\025\n"
+          + "\rtankShortName\030\002 \001(\t\022\031\n\021cargo1Abbrivatio"
+          + "n\030\003 \001(\t\022\031\n\021cargo2Abbrivation\030\004 \001(\t\022\r\n\005gr"
+          + "ade\030\005 \001(\t\022\020\n\010quantity\030\006 \001(\t\022\013\n\003api\030\007 \001(\t"
+          + "\022\023\n\013temperature\030\010 \001(\t\022\026\n\016cargo1Quantity\030"
+          + "\t \001(\t\022\026\n\016cargo2Quantity\030\n \001(\t\022\030\n\020cargo1P"
+          + "ercentage\030\013 \001(\t\022\030\n\020cargo2Percentage\030\014 \001("
+          + "\t\022\'\n\016responseStatus\030\r \001(\0132\017.ResponseStat"
+          + "us\"\277\004\n\020SynopticalRecord\022\n\n\002id\030\001 \001(\003\022\016\n\006p"
+          + "ortId\030\002 \001(\003\022\020\n\010portName\030\003 \001(\t\022\025\n\roperati"
+          + "onType\030\004 \001(\t\022\020\n\010distance\030\005 \001(\t\022\r\n\005speed\030"
+          + "\006 \001(\t\022\024\n\014runningHours\030\007 \001(\t\022\023\n\013inPortHou"
+          + "rs\030\010 \001(\t\022\025\n\rtimeOfSunrise\030\t \001(\t\022\024\n\014timeO"
+          + "fSunset\030\n \001(\t\022\022\n\nhwTideFrom\030\013 \001(\t\022\020\n\010hwT"
+          + "ideTo\030\014 \001(\t\022\026\n\016hwTideTimeFrom\030\r \001(\t\022\024\n\014h"
+          + "wTideTimeTo\030\016 \001(\t\022\022\n\nlwTideFrom\030\017 \001(\t\022\020\n"
+          + "\010lwTideTo\030\020 \001(\t\022\026\n\016lwTideTimeFrom\030\021 \001(\t\022"
+          + "\024\n\014lwTideTimeTo\030\022 \001(\t\022\027\n\017specificGravity"
+          + "\030\023 \001(\t\022\021\n\tetaActual\030\024 \001(\t\022\021\n\tetdActual\030\025"
+          + " \001(\t\022\024\n\014etaEstimated\030\026 \001(\t\022\024\n\014etdEstimat"
+          + "ed\030\027 \001(\t\022%\n\005cargo\030\030 \003(\0132\026.SynopticalCarg"
+          + "oRecord\022\031\n\021cargoPlannedTotal\030\031 \001(\t\022\030\n\020ca"
+          + "rgoActualTotal\030\032 \001(\t\"f\n\025SynopticalCargoR"
+          + "ecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022"
+          + "\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014actualWeight\030\004"
+          + " \001(\t\"C\n\026SynopticalTableRequest\022\027\n\017loadab"
+          + "leStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\"\216\001\n\024Sy"
+          + "nopticalTableReply\022\'\n\016responseStatus\030\001 \001"
+          + "(\0132\017.ResponseStatus\022,\n\021synopticalRecords"
+          + "\030\002 \003(\0132\021.SynopticalRecord\022\037\n\nvesselTank\030"
+          + "\003 \003(\0132\013.TankDetail2\344\020\n\024LoadableStudyServ"
+          + "ice\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014.Voya"
+          + "geReply\"\000\0228\n\022GetVoyagesByVessel\022\016.Voyage"
+          + "Request\032\020.VoyageListReply\"\000\022J\n\024SaveLoada"
+          + "bleQuantity\022\030.LoadableQuantityRequest\032\026."
+          + "LoadableQuantityReply\"\000\022T\n$FindLoadableS"
+          + "tudiesByVesselAndVoyage\022\025.LoadableStudyR"
+          + "equest\032\023.LoadableStudyReply\"\000\022@\n\021SaveLoa"
+          + "dableStudy\022\024.LoadableStudyDetail\032\023.Loada"
+          + "bleStudyReply\"\000\022G\n\023SaveCargoNomination\022\027"
+          + ".CargoNominationRequest\032\025.CargoNominatio"
+          + "nReply\"\000\022J\n\034GetLoadableStudyPortRotation"
+          + "\022\024.PortRotationRequest\032\022.PortRotationRep"
+          + "ly\"\000\022J\n\026GetCargoNominationById\022\027.CargoNo"
+          + "minationRequest\032\025.CargoNominationReply\"\000"
+          + "\022I\n\023GetValveSegregation\022\030.ValveSegregati"
+          + "onRequest\032\026.ValveSegregationReply\"\000\022J\n\023g"
+          + "etLoadableQuantity\022\026.LoadableQuantityRep"
+          + "ly\032\031.LoadableQuantityResponse\"\000\022J\n\035SaveL"
+          + "oadableStudyPortRotation\022\023.PortRotationD"
+          + "etail\032\022.PortRotationReply\"\000\022I\n\025DeleteCar"
+          + "goNomination\022\027.CargoNominationRequest\032\025."
+          + "CargoNominationReply\"\000\022B\n\024SaveDischargin"
+          + "gPorts\022\024.PortRotationRequest\032\022.PortRotat"
+          + "ionReply\"\000\022N\n GetPortRotationByLoadableS"
+          + "tudyId\022\024.PortRotationRequest\032\022.PortRotat"
+          + "ionReply\"\000\022C\n\023DeleteLoadableStudy\022\025.Load"
+          + "ableStudyRequest\032\023.LoadableStudyReply\"\000\022"
+          + "@\n\022DeletePortRotation\022\024.PortRotationRequ"
+          + "est\032\022.PortRotationReply\"\000\022C\n\021GetOnHandQu"
+          + "antity\022\026.OnHandQuantityRequest\032\024.OnHandQ"
+          + "uantityReply\"\000\022C\n\022SaveOnHandQuantity\022\025.O"
+          + "nHandQuantityDetail\032\024.OnHandQuantityRepl"
+          + "y\"\000\022M\n\031GetLoadablePatternDetails\022\027.Loada"
+          + "blePatternRequest\032\025.LoadablePatternReply"
+          + "\"\000\022O\n\025GetPurposeOfCommingle\022\032.PurposeOfC"
+          + "ommingleRequest\032\030.PurposeOfCommingleRepl"
+          + "y\"\000\022C\n\021GetCommingleCargo\022\026.CommingleCarg"
+          + "oRequest\032\024.CommingleCargoReply\"\000\022D\n\022Save"
+          + "CommingleCargo\022\026.CommingleCargoRequest\032\024"
+          + ".CommingleCargoReply\"\000\022v\n\"GetLoadablePat"
+          + "ternCommingleDetails\022\'.LoadablePatternCo"
+          + "mmingleDetailsRequest\032%.LoadablePatternC"
+          + "ommingleDetailsReply\"\000\0226\n\030GenerateLoadab"
+          + "lePatterns\022\014.AlgoRequest\032\n.AlgoReply\"\000\022F"
+          + "\n\022GetOnBoardQuantity\022\027.OnBoardQuantityRe"
+          + "quest\032\025.OnBoardQuantityReply\"\000\022F\n\023SaveOn"
+          + "BoardQuantity\022\026.OnBoardQuantityDetail\032\025."
+          + "OnBoardQuantityReply\"\000\022E\n\033SaveAlgoLoadab"
+          + "leStudyStatus\022\022.AlgoStatusRequest\032\020.Algo"
+          + "StatusReply\"\000\022F\n\022GetSynopticalTable\022\027.Sy"
+          + "nopticalTableRequest\032\025.SynopticalTableRe"
+          + "ply\"\000\022R\n\026GetLoadableStudyStatus\022\033.Loadab"
+          + "leStudyStatusRequest\032\031.LoadableStudyStat"
+          + "usReply\"\000B\036\n\032com.cpdss.common.generatedP"
+          + "\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -64678,6 +64825,7 @@ public final class LoadableStudy {
               "Volume",
               "LoadableStudyId",
               "ColorCode",
+              "Abbreviation",
             });
     internal_static_OnBoardQuantityReply_descriptor = getDescriptor().getMessageTypes().get(37);
     internal_static_OnBoardQuantityReply_fieldAccessorTable =
@@ -64839,18 +64987,15 @@ public final class LoadableStudy {
               "EtaEstimated",
               "EtdEstimated",
               "Cargo",
+              "CargoPlannedTotal",
+              "CargoActualTotal",
             });
     internal_static_SynopticalCargoRecord_descriptor = getDescriptor().getMessageTypes().get(51);
     internal_static_SynopticalCargoRecord_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SynopticalCargoRecord_descriptor,
             new java.lang.String[] {
-              "TankId",
-              "TankName",
-              "PlannedArrivalWeight",
-              "ActualArrivalWeight",
-              "PlannedDepartureWeight",
-              "ActualDepartureWeight",
+              "TankId", "TankName", "PlannedWeight", "ActualWeight",
             });
     internal_static_SynopticalTableRequest_descriptor = getDescriptor().getMessageTypes().get(52);
     internal_static_SynopticalTableRequest_fieldAccessorTable =

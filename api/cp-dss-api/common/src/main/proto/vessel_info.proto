@@ -111,6 +111,7 @@ message VesselTankDetail{
 	string colourCode = 21;
 	string tankCategoryShortName = 22;
 	bool showInOhqObq = 23;
+	int32 tankDisplayOrder = 24;
 }
 
 message VesselReply {

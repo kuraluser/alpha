@@ -401,6 +401,7 @@ message OnBoardQuantityDetail{
 	string volume = 9;
 	int64 loadableStudyId = 10;
 	string colorCode = 11;
+	string abbreviation = 12;
 }
 
 message OnBoardQuantityReply{
@@ -522,16 +523,16 @@ message SynopticalRecord{
 	string etdActual = 21;
 	string etaEstimated = 22;
 	string etdEstimated = 23;
-	repeated SynopticalCargoRecord cargo = 24; 
+	repeated SynopticalCargoRecord cargo = 24;
+	string cargoPlannedTotal = 25; 
+	string cargoActualTotal = 26;
 }
 
 message SynopticalCargoRecord{
 	int64 tankId = 1;
 	string tankName = 2;
-	string plannedArrivalWeight = 3;
-	string actualArrivalWeight = 4;
-	string plannedDepartureWeight = 5;
-	string actualDepartureWeight = 6;
+	string plannedWeight = 3;
+	string actualWeight = 4;
 }
 
 message SynopticalTableRequest{

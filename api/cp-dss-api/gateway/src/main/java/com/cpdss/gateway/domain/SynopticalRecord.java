@@ -36,4 +36,6 @@ public class SynopticalRecord {
   private String portName;
   private Long portOrder;
   private List<SynopticalCargoRecord> cargos;
+  private BigDecimal cargoPlannedTotal;
+  private BigDecimal cargoActualTotal;
 }

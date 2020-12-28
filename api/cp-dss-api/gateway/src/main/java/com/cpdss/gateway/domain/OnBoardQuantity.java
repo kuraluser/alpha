@@ -26,7 +26,6 @@ public class OnBoardQuantity {
 
   private String tankName;
 
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private Long cargoId;
 
   private BigDecimal sounding;
@@ -38,6 +37,8 @@ public class OnBoardQuantity {
   private BigDecimal volume;
 
   private String colorCode;
+
+  private String abbreviation;
 
   private Long loadableStudyId;
 }
