@@ -13,6 +13,7 @@ import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { IPermission } from '../../../../shared/models/user-profile.model';
+import { CargoDuplicateValidator } from '../../directives/validator/cargo-duplicate-validator.directive';
 
 
 /**
@@ -227,10 +228,12 @@ export class CommingleComponent implements OnInit {
    */
   async onEditComplete(event: ICommingleManualEvent) {
     if (event.field === 'cargo1') {
+      this.listData.cargoNominationsCargo2 = this.listData.cargoNominationsCargo2.filter(cargos =>  cargos.cargoId !== event.data.cargo1.value.cargoId);
       this.manualCommingleList[event.index]['cargo1Color'].value = event?.data?.cargo1?.value?.color
       this.updateField(event.index, 'cargo1Color', event?.data?.cargo1?.value?.color);
     }
     if (event.field === 'cargo2') {
+      this.listData.cargoNominationsCargo1 = this.listData.cargoNominationsCargo1.filter(cargos =>  cargos.cargoId !== event.data.cargo2.value.cargoId);
       this.manualCommingleList[event.index]['cargo2Color'].value = event?.data?.cargo2?.value?.color
       this.updateField(event.index, 'cargo2Color', event?.data?.cargo2?.value?.color);
     }
@@ -286,12 +289,12 @@ export class CommingleComponent implements OnInit {
    */
   private initCommingleManualFormGroup(commingle: ICommingleValueObject) {
     return this.fb.group({
-      cargo1: this.fb.control(commingle?.cargo1?.value, Validators.required),
-      cargo2: this.fb.control( commingle?.cargo2?.value, Validators.required),
-      cargo1pct: this.fb.control(commingle?.cargo1IdPct?.value?.id, Validators.required),
-      cargo2pct: this.fb.control(commingle?.cargo2IdPct?.value?.id, Validators.required),
-      cargo1IdPct: this.fb.control(commingle?.cargo1IdPct?.value, Validators.required),
-      cargo2IdPct: this.fb.control(commingle?.cargo2IdPct?.value, Validators.required),
+      cargo1: this.fb.control(commingle?.cargo1?.value, [Validators.required, CargoDuplicateValidator('cargo1', 'cargo2')]),
+      cargo2: this.fb.control(commingle?.cargo2?.value, [Validators.required, CargoDuplicateValidator('cargo2', 'cargo1')]),
+      cargo1pct: this.fb.control(commingle?.cargo1IdPct?.value?.id, [Validators.required]),
+      cargo2pct: this.fb.control(commingle?.cargo2IdPct?.value?.id, [Validators.required]),
+      cargo1IdPct: this.fb.control(commingle?.cargo1IdPct?.value, [Validators.required]),
+      cargo2IdPct: this.fb.control(commingle?.cargo2IdPct?.value, [Validators.required]),
       quantity: this.fb.control(commingle?.quantity?.value, [Validators.required, numberValidator(2, 7),Validators.min(1)]),
 
     });

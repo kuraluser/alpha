@@ -936,7 +936,8 @@ export class LoadableStudyDetailsTransformationService {
         fieldHeaderClass: 'column-cargo1',
         fieldClass: 'commingle-cargo1',
         errorMessages: {
-          'required': 'COMMINGLE_CARGO_SELECT_ERROR'
+          'required': 'COMMINGLE_CARGO_SELECT_ERROR',
+          'duplicate': 'COMMINGLE_MANUAL_SAME_CARGO_VALIDATION'
         }
       },
       {
@@ -970,7 +971,8 @@ export class LoadableStudyDetailsTransformationService {
         fieldHeaderClass: 'column-cargo2',
         fieldClass: 'commingle-cargo2',
         errorMessages: {
-          'required': 'COMMINGLE_CARGO_SELECT_ERROR'
+          'required': 'COMMINGLE_CARGO_SELECT_ERROR',
+          'duplicate': 'COMMINGLE_MANUAL_SAME_CARGO_VALIDATION'
         }
       },
       {
@@ -990,7 +992,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldHeaderClass:'column-cargo2-pct',
         fieldClass: 'commingle-cargo2-pct',
         errorMessages: {
-          'required': 'COMMINGLE_PERCENTAGE_SELECT_ERROR'
+          'required': 'COMMINGLE_PERCENTAGE_SELECT_ERROR',
         }
       },
       {
