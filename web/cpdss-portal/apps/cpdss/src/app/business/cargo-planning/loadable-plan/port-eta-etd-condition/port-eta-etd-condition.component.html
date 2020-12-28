@@ -1,0 +1,29 @@
+<div class="container-fluid">
+    <p-table #datatable [columns]="columns" [value]="value">
+        <!-- <ng-template pTemplate="header" let-columns let-rowData>
+            <tr *ngFor="let col of columns">
+                <th >{{col.header}}</th>
+            </tr>
+        </ng-template> -->
+        <ng-template #row pTemplate="header" let-rowData let-columns>
+            <tr>
+                <th>
+                    <table>
+                        <tr *ngFor="let col of columns">
+                            <th rowspan="col?.rowspan">{{col.header}}</th>
+                            <th>
+                                <table>
+                                    <tr *ngFor="let subCol of col?.subColumns">
+                                        <th>{{subCol.header}}</th>
+                                    </tr>
+                                </table>
+                            </th>
+                            <td *ngFor="let col of columns"> ARRIVAL</td>
+                        </tr>
+                    </table>
+                </th>
+            
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

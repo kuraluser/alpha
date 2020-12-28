@@ -27,7 +27,7 @@ export class LoadablePatternHistoryApiService {
    * @memberof LoadablePatternHistoryApiService
    */
   getLoadablePatterns(vesselId: number, voyageId: number, loadableStudyId: number): Observable<ILoadablePatternResponse> {
-    return this.commonApiService.get<ILoadablePatternResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-patterns`);
+    return this.commonApiService.get<ILoadablePatternResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/500/loadable-patterns`);
   }
 
 

@@ -1,0 +1,29 @@
+<div class="container-fluid">
+    <div  class="row">
+        1. Loadable Quantity
+    </div>
+    <div  class="row">
+        <p-table #datatable [columns]="columns" [value]="value">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns">
+                        <table>
+                            <tr>
+                                <th>{{col.header}}</th>
+                            </tr>
+                            <tr>
+                                <th *ngFor="let subCol of col?.subColumns">
+                                    <span>{{subCol.header}}</span>
+                                </th>
+                            </tr>
+                        </table>
+                    </th>
+                </tr>
+               
+            </ng-template>
+        </p-table>
+    </div>
+    <div  class="row">
+        <cpdss-portal-commingled-cargo-details></cpdss-portal-commingled-cargo-details>
+    </div>
+</div>

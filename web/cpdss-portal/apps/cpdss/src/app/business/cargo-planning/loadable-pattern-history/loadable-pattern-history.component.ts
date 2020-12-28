@@ -148,7 +148,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   async getLoadablePatterns(vesselId: number, voyageId: number, loadableStudyId: number) {
     this.ngxSpinnerService.show();
     this.loadablePatternResponse = await this.loadablePatternApiService.getLoadablePatterns(vesselId, voyageId, loadableStudyId).toPromise();
-    if(this.loadablePatternResponse.responseStatus.status === '200'){
+    if (this.loadablePatternResponse.responseStatus.status === '200') {
       this.loadablePatterns = this.loadablePatternResponse.loadablePatterns;
       this.tankLists = this.loadablePatternResponse.tankLists;
       this.loadablePatternCreatedDate = this.loadablePatternResponse.loadablePatternCreatedDate;
@@ -191,4 +191,14 @@ export class LoadablePatternHistoryComponent implements OnInit {
     this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
   }
 
+  /**
+   * for navigating stowage plan
+   *
+   * @param {*} event
+   * @memberof LoadablePatternHistoryComponent
+   */
+  viewPlan() {
+    this.router.navigate([`/business/cargo-planning/loadable-plan/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
+  }
+  
 }
