@@ -17,6 +17,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ConstraintComponent } from './pattern-case/constraint/constraint.component';
 import { CommingleCargoDetailsPopUpComponent } from './commingle-cargo-details-pop-up/commingle-cargo-details-pop-up.component';
 import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/cargo-tank-layout.module';
+import { PermissionDirectiveModule } from '../../../shared/directives/permission/permission-directive.module';
 
 /**
  * Routing Module for Loadable Pattern History Screen
@@ -37,7 +38,8 @@ import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/c
     TableModule,
     DatatableModule,
     DialogModule,
-    CargoTankLayoutModule
+    CargoTankLayoutModule,
+    PermissionDirectiveModule
   ],
   exports : [PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, ConstraintComponent, CommingleCargoDetailsPopUpComponent]
 })

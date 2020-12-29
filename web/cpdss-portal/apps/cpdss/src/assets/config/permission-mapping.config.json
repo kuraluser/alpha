@@ -4,5 +4,6 @@
     "CargoNominationComponent" : "CARGOPLANNING_CARGONOMINATION",
     "PortsComponent" : "CARGOPLANNING_PORTS",
     "OnHandQuantityComponent" : "CARGOPLANNING_ONHANDQUANTITITES",
-    "LoadableQuantityComponent" : "LOADABLE_QUANTITY"
+    "LoadableQuantityComponent" : "LOADABLE_QUANTITY",
+    "LoadablePatternHistoryComponent": "LOADABLE_PATTERN"
 }

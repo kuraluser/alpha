@@ -9,6 +9,9 @@ import { LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
 import { LoadablePatternHistoryApiService } from '../services/loadable-pattern-history-api.service';
 import { ILoadablePattern, ILoadablePatternCargoDetail, ILoadablePatternResponse } from '../models/loadable-pattern.model';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/common.model';
 
 /**
  * Component class of pattern history screen
@@ -51,6 +54,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   loadableStudyName: string;
   display = false;
   selectedLoadablePatterns: ILoadablePatternCargoDetail;
+  loadablePatternPermissionContext: IPermissionContext;
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -58,7 +62,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
     private voyageService: VoyageService,
     private ngxSpinnerService: NgxSpinnerService,
     private loadableStudyListApiService: LoadableStudyListApiService,
-    private loadablePatternApiService: LoadablePatternHistoryApiService) { }
+    private loadablePatternApiService: LoadablePatternHistoryApiService,
+    private permissionsService: PermissionsService) { }
 
   /**
    * Component lifecycle ngOnit
@@ -67,6 +72,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @memberof LoadablePatternHistoryComponent
    */
   async ngOnInit(): Promise<void> {
+    const loadablePatternPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], false);
+    this.loadablePatternPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], actions: [PERMISSION_ACTION.VIEW] };
     this.activatedRoute.paramMap.subscribe(params => {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
