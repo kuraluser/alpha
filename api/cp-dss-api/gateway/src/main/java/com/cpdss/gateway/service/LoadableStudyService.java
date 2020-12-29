@@ -93,6 +93,7 @@ import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Purpose;
 import com.cpdss.gateway.domain.SynopticalCargoRecord;
+import com.cpdss.gateway.domain.SynopticalOhqRecord;
 import com.cpdss.gateway.domain.SynopticalRecord;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
 import com.cpdss.gateway.domain.ValveSegregation;
@@ -1376,7 +1377,7 @@ public class LoadableStudyService {
                 ? null
                 : new BigDecimal(detail.getFillCapacityCubm()));
         tank.setFullCapacityCubm(
-            isEmpty(detail.getFillCapacityCubm()) ? null : detail.getFullCapacityCubm());
+            isEmpty(detail.getFullCapacityCubm()) ? null : detail.getFullCapacityCubm());
         tank.setSlopTank(detail.getIsSlopTank());
         tank.setGroup(detail.getTankGroup());
         tank.setOrder(detail.getTankOrder());
@@ -1737,6 +1738,7 @@ public class LoadableStudyService {
     }
     return builder;
   }
+
   /**
    * @param loadablePatternDetailsId
    * @param first
@@ -1969,6 +1971,7 @@ public class LoadableStudyService {
     log.info("saveOnBoardQuantites grpc call, correlationId: {}", correlationId);
     return this.loadableStudyServiceBlockingStub.saveOnBoardQuantity(request);
   }
+
   /**
    * @param request
    * @param correlationId
@@ -1992,6 +1995,7 @@ public class LoadableStudyService {
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
   }
+
   /**
    * @param request
    * @param correlationId
@@ -2105,10 +2109,8 @@ public class LoadableStudyService {
                         ? new BigDecimal(synopticalProtoRecord.getLwTideTo())
                         : new BigDecimal("0"));
                 synopticalRecord.setLwTideTimeTo(synopticalProtoRecord.getLwTideTimeTo());
-                synopticalRecord.setEtaActual(synopticalProtoRecord.getEtaActual());
-                synopticalRecord.setEtdActual(synopticalProtoRecord.getEtdActual());
-                synopticalRecord.setEtaPlanned(synopticalProtoRecord.getEtaEstimated());
-                synopticalRecord.setEtdPlanned(synopticalProtoRecord.getEtdEstimated());
+                synopticalRecord.setEtaEtdActual(synopticalProtoRecord.getEtaEtdActual());
+                synopticalRecord.setEtaEtdPlanned(synopticalProtoRecord.getEtaEtdEstimated());
                 synopticalRecord.setCargos(this.buildSynopticalTableCargos(synopticalProtoRecord));
                 synopticalRecord.setCargoPlannedTotal(
                     isEmpty(synopticalProtoRecord.getCargoPlannedTotal())
@@ -2118,11 +2120,60 @@ public class LoadableStudyService {
                     isEmpty(synopticalProtoRecord.getCargoActualTotal())
                         ? BigDecimal.ZERO
                         : new BigDecimal(synopticalProtoRecord.getCargoActualTotal()));
+                this.buildOhqDataForSynopticalTable(synopticalRecord, synopticalProtoRecord);
                 synopticalTableList.add(synopticalRecord);
               });
       synopticalTableResponse.setCargoTanks(this.buildSynopticalTableCargoTanks(reply));
       synopticalTableResponse.setSynopticalRecords(synopticalTableList);
     }
+  }
+
+  private void buildOhqDataForSynopticalTable(
+      SynopticalRecord synopticalRecord,
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
+    List<SynopticalOhqRecord> ohqList = new ArrayList<>();
+    for (com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord protoRec :
+        synopticalProtoRecord.getOhqList()) {
+      SynopticalOhqRecord rec = new SynopticalOhqRecord();
+      rec.setTankId(protoRec.getTankId());
+      rec.setTankName(protoRec.getTankName());
+      rec.setFuelType(protoRec.getFuelType());
+      rec.setFuelTypeId(protoRec.getFuelTypeId());
+      rec.setActualWeight(
+          isEmpty(protoRec.getActualWeight())
+              ? BigDecimal.ZERO
+              : new BigDecimal(protoRec.getActualWeight()));
+      rec.setPlannedWeight(
+          isEmpty(protoRec.getPlannedWeight())
+              ? BigDecimal.ZERO
+              : new BigDecimal(protoRec.getPlannedWeight()));
+      ohqList.add(rec);
+    }
+    synopticalRecord.setOhqList(ohqList);
+    synopticalRecord.setActualFOTotal(
+        isEmpty(synopticalProtoRecord.getFoActualTotal())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getFoActualTotal()));
+    synopticalRecord.setPlannedFOTotal(
+        isEmpty(synopticalProtoRecord.getFoPlannedTotal())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getFoPlannedTotal()));
+    synopticalRecord.setActualDOTotal(
+        isEmpty(synopticalProtoRecord.getDoActualTotal())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getDoActualTotal()));
+    synopticalRecord.setPlannedDOTotal(
+        isEmpty(synopticalProtoRecord.getDoPlannedTotal())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getDoPlannedTotal()));
+    synopticalRecord.setActualLubeTotal(
+        isEmpty(synopticalProtoRecord.getLubeActualTotal())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getLubeActualTotal()));
+    synopticalRecord.setPlannedLubeTotal(
+        isEmpty(synopticalProtoRecord.getLubePlannedTotal())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getLubePlannedTotal()));
   }
 
   /**

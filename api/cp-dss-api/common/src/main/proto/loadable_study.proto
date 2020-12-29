@@ -531,13 +531,19 @@ message SynopticalRecord{
 	string lwTideTimeFrom = 17;
 	string lwTideTimeTo = 18;
 	string specificGravity = 19;
-	string etaActual = 20;
-	string etdActual = 21;
-	string etaEstimated = 22;
-	string etdEstimated = 23;
-	repeated SynopticalCargoRecord cargo = 24;
-	string cargoPlannedTotal = 25; 
-	string cargoActualTotal = 26;
+	string etaEtdActual = 20;
+	string etaEtdEstimated = 21;
+	repeated SynopticalCargoRecord cargo = 22;
+	string cargoPlannedTotal = 23; 
+	string cargoActualTotal = 24;
+	repeated SynopticalOhqRecord ohq = 25;
+	string foPlannedTotal = 26;
+	string foActualTotal = 27;
+	string doPlannedTotal = 28;
+	string doActualTotal = 29;
+	string lubePlannedTotal = 30;
+	string lubeActualTotal = 31;
+	int64 portOrder = 32;
 }
 
 message SynopticalCargoRecord{
@@ -545,6 +551,15 @@ message SynopticalCargoRecord{
 	string tankName = 2;
 	string plannedWeight = 3;
 	string actualWeight = 4;
+}
+
+message SynopticalOhqRecord{
+	int64 tankId = 1;
+	string tankName = 2;
+	string plannedWeight = 3;
+	string actualWeight = 4;
+	int64 fuelTypeId = 5;
+	string fuelType = 6;
 }
 
 message SynopticalTableRequest{

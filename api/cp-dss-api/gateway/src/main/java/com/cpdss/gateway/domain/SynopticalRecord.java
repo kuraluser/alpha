@@ -17,10 +17,8 @@ public class SynopticalRecord {
   private BigDecimal speed;
   private BigDecimal runningHours;
   private BigDecimal inPortHours;
-  private String etaPlanned;
-  private String etaActual;
-  private String etdPlanned;
-  private String etdActual;
+  private String etaEtdPlanned;
+  private String etaEtdActual;
   private String timeOfSunrise;
   private String timeOfSunset;
   private BigDecimal hwTideFrom;
@@ -38,4 +36,11 @@ public class SynopticalRecord {
   private List<SynopticalCargoRecord> cargos;
   private BigDecimal cargoPlannedTotal;
   private BigDecimal cargoActualTotal;
+  private List<SynopticalOhqRecord> ohqList;
+  private BigDecimal plannedFOTotal;
+  private BigDecimal actualFOTotal;
+  private BigDecimal plannedDOTotal;
+  private BigDecimal actualDOTotal;
+  private BigDecimal plannedLubeTotal;
+  private BigDecimal actualLubeTotal;
 }
