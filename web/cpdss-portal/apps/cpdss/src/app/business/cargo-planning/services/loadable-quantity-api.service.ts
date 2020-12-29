@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { LoadableQuantityModel, LoadableQuantityResponseModel, LodadableQuantity } from '../models/loadable-quantity.model';
+import { LoadableQuantityModel, LoadableQuantityResponseModel, LodadableQuantity, ILoadableQuantityColumn } from '../models/loadable-quantity.model';
 
 @Injectable()
 export class LoadableQuantityApiService {
@@ -131,10 +131,60 @@ export class LoadableQuantityApiService {
         'required': 'LOADABLE_QUANTITY_TOTAL_QUANTITY_REQUIRED"'
       }
     }
-
-
-
-
-
   }
+
+  /**
+* 
+* @param vesselId 
+* @param voyageId 
+* @param loadableStudyId 
+* Get api for loadable quantity
+*/
+  getLoadableQuantityData(vesselId: number, voyageId: number, loadableStudyId: number): Observable<LoadableQuantityModel> {
+    return this.commonApiService.get<LoadableQuantityModel>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-quantity`);
+  }
+
+  /**
+  * 
+  * Get api for loadable quantity
+  * @returns {IDataTableColumn[]}
+  */
+  getLoadableQuantitytableColumns(): ILoadableQuantityColumn[] {
+    return [
+      { field: 'year', header: 'Grade' },
+      {
+        field: 'vin', header: 'Estimated', subColumns: [
+          { field: 'year', header: 'API' },
+          { field: 'year', header: 'TEMP' }
+        ]
+      },
+      {
+        field: 'year', header: 'ORDER', subColumns: [
+          { field: 'year', header: 'BBLSS@OBS.TEMP' },
+          { field: 'year', header: 'BBLSQLF' }
+        ]
+      },
+      {
+        field: 'brand', header: 'TLRNC', subColumns: [
+          { field: 'year', header: 'Min' },
+          { field: 'year', header: 'Max' }
+        ]
+      },
+      {
+        field: 'color', header: 'LOADABLE', subColumns: [
+          { field: 'year', header: 'BBLSS@OBS.TEMP' },
+          { field: 'year', header: 'BBLSQLF' },
+          { field: 'year', header: 'LT' },
+          { field: 'year', header: 'MT' },
+          { field: 'year', header: 'KL' }
+        ]
+      },
+      {
+        field: 'color', header: 'DIFF.', subColumns: [
+          { field: 'year', header: '%' }
+        ]
+      }
+    ]
+  }
+
 }

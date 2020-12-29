@@ -55,6 +55,26 @@ export class Status {
     status: string;
 }
 
+/**
+ * Interface for loadable quality table 
+ *
+ * @export
+ * @interface ILoadableQuantityColumn
+ */
+export interface ILoadableQuantityColumn {
+    field: string;
+    header: string;
+    subColumns?:ColumHeader[];  
+}
+
+/**
+ * Interface for table header
+*/
+interface ColumHeader {
+    field: string;
+    header: string;
+}
+
 
 
 
