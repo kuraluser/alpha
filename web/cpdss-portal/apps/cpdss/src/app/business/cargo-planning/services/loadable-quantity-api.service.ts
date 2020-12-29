@@ -147,40 +147,40 @@ export class LoadableQuantityApiService {
   /**
   * 
   * Get api for loadable quantity
-  * @returns {IDataTableColumn[]}
+  * @returns {ILoadableQuantityColumn[]}
   */
-  getLoadableQuantitytableColumns(): ILoadableQuantityColumn[] {
+  getLoadableQuantityTableColumns(): ILoadableQuantityColumn[] {
     return [
-      { field: 'year', header: 'Grade' },
+      { field: 'year', header: 'Grade' , colspan: 0},
       {
-        field: 'vin', header: 'Estimated', subColumns: [
+        field: 'vin', header: 'Estimated',  colspan: 2,  subColumns: [
           { field: 'year', header: 'API' },
           { field: 'year', header: 'TEMP' }
         ]
       },
       {
-        field: 'year', header: 'ORDER', subColumns: [
-          { field: 'year', header: 'BBLSS@OBS.TEMP' },
-          { field: 'year', header: 'BBLSQLF' }
+        field: 'year', header: 'ORDER' ,  colspan: 2 ,subColumns: [
+          { field: 'year', header: 'BBL@OBS.TEMP' },
+          { field: 'year', header: 'BBLS@60F' }
         ]
       },
       {
-        field: 'brand', header: 'TLRNC', subColumns: [
+        field: 'brand', header: 'TLRNC', colspan: 2 ,  subColumns: [
           { field: 'year', header: 'Min' },
           { field: 'year', header: 'Max' }
         ]
       },
       {
-        field: 'color', header: 'LOADABLE', subColumns: [
-          { field: 'year', header: 'BBLSS@OBS.TEMP' },
-          { field: 'year', header: 'BBLSQLF' },
+        field: 'color', header: 'LOADABLE',  colspan: 5 , subColumns: [
+          { field: 'year', header: 'BBLS@OBS.TEMP' },
+          { field: 'year', header: 'BBLS@60F' },
           { field: 'year', header: 'LT' },
           { field: 'year', header: 'MT' },
           { field: 'year', header: 'KL' }
         ]
       },
       {
-        field: 'color', header: 'DIFF.', subColumns: [
+        field: 'color', header: 'DIFF.', colspan: 2 , subColumns: [
           { field: 'year', header: '%' }
         ]
       }

@@ -30,8 +30,40 @@ export class LoadableQuantityComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.columns = this.loadableQuantityApiService.getLoadableQuantitytableColumns();
+    this.columns = this.loadableQuantityApiService.getLoadableQuantityTableColumns();
     this.value = [
+      {
+        grade: 'KUWAIT EXPORT C.O',
+        estimate: { api: '30.10', temp: 99.0 },
+        order: { bblsTemp: '1000,000', bblsF: 950000 },
+        tlrnic: { min: '-5%', max: '10%' },
+        loadable: { bblsTemp: '1000,000', bblsF: 950000, lt: 50000, mt: 56000, kl: 59000 },
+        diff: 2.66
+      },
+      {
+        grade: 'KUWAIT EXPORT C.O',
+        estimate: { api: '30.10', temp: 99.0 },
+        order: { bblsTemp: '1000,000', bblsF: 950000 },
+        tlrnic: { min: '-5%', max: '10%' },
+        loadable: { bblsTemp: '1000,000', bblsF: 950000, lt: 50000, mt: 56000, kl: 59000 },
+        diff: 2.66
+      },
+      {
+        grade: 'KUWAIT EXPORT C.O',
+        estimate: { api: '30.10', temp: 99.0 },
+        order: { bblsTemp: '1000,000', bblsF: 950000 },
+        tlrnic: { min: '-5%', max: '10%' },
+        loadable: { bblsTemp: '1000,000', bblsF: 950000, lt: 50000, mt: 56000, kl: 59000 },
+        diff: 2.66
+      },
+      {
+        grade: 'KUWAIT EXPORT C.O',
+        estimate: { api: '30.10', temp: 99.0 },
+        order: { bblsTemp: '1000,000', bblsF: 950000 },
+        tlrnic: { min: '-5%', max: '10%' },
+        loadable: { bblsTemp: '1000,000', bblsF: 950000, lt: 50000, mt: 56000, kl: 59000 },
+        diff: 2.66
+      },
       {
         grade: 'KUWAIT EXPORT C.O',
         estimate: { api: '30.10', temp: 99.0 },

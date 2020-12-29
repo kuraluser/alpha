@@ -3,64 +3,21 @@
         1. Loadable Quantity
     </div>
     <div  class="row">
-        <table style="width: 100%;">
-            <tr>
-                <th rowspan="2">Grade</th>
-                <th colspan="2">Estimated</th>
-                <th colspan="2">Order</th>
-                <th colspan="2">Trunc</th>
-                <th colspan="5">Loadable</th>
-                <th rowspan="2">Diff. %</th>
-            </tr>
-            <tr>
-                <th>API</th>
-                <th>temp</th>
-                <th>BBL@OBS.TEMP</th>
-                <th> BBLS@60F</th>
-                <th> min</th>
-                <th> max</th>
-                <th>bbls@obs.temp</th>
-                <th> BBLS@60F</th>
-                <th> LT</th>
-                <th> MT</th>
-                <th> KL</th>
-            </tr>
-            <tr>
-                <td>
-                    kuwait
-                </td>
-                <td>30.10</td>
-                <td>30.10</td>
-                <td>100000</td>
-                <td>5000</td>
-                <td><input type="text" class="form-control"></td>
-                <td><input type="text" class="form-control"></td>
-                <td>95000</td>
-                <td>95000</td>
-                <td>95000</td>
-                <td>95000</td>
-
-                <td>95000</td>
-                <td>26%</td>
-
-            </tr>
-        </table>
         <p-table #datatable [columns]="columns" [value]="value">
             <ng-template pTemplate="header" let-columns>
-                <tr>
-                    <th *ngFor="let col of columns">
-                        <table>
-                            <tr>
-                                <th>{{col.header}}</th>
-                            </tr>
-                            <tr>
-                                <th *ngFor="let subCol of col?.subColumns">
-                                    <span>{{subCol.header}}</span>
-                                </th>
-                            </tr>
-                        </table>
-                    </th>
-                </tr>
+                <ng-container>
+                    <tr>
+                        <th *ngFor="let col of columns; let colIndex = index" [attr.colspan]="col.colspan">{{col.header}}</th>
+                    </tr>
+                    <tr>
+                        <ng-container *ngFor="let col of columns; let colIndex = index">
+                            <ng-container *ngIf="col?.subColumns?.length;else other_content">
+                                <th *ngFor="let subCol of col.subColumns;">{{subCol.header}}</th>
+                            </ng-container>
+                            <ng-template #other_content><th></th></ng-template>
+                        </ng-container>
+                    </tr>
+                </ng-container>
             </ng-template>
             <ng-template pTemplate="body" let-rowData>
                 <tr>

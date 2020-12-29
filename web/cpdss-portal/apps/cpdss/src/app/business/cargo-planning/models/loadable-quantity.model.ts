@@ -64,6 +64,7 @@ export class Status {
 export interface ILoadableQuantityColumn {
     field: string;
     header: string;
+    colspan: number,
     subColumns?:ColumHeader[];  
 }
 
