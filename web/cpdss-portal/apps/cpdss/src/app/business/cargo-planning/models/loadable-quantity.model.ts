@@ -59,9 +59,9 @@ export class Status {
  * Interface for loadable quality table 
  *
  * @export
- * @interface ILoadableQuantityColumn
+ * @interface ITableHeaderModel
  */
-export interface ILoadableQuantityColumn {
+export interface ITableHeaderModel {
     field: string;
     header: string;
     colspan: number,

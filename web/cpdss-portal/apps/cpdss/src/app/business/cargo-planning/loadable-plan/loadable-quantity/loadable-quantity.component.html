@@ -19,9 +19,15 @@
                     </tr>
                 </ng-container>
             </ng-template>
-            <ng-template pTemplate="body" let-rowData>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
                 <tr>
-                    <td>{{rowData.grade}}</td>
+                    <ng-container *ngFor="let col of columns">
+                        <ng-container *ngIf="col?.subColumns?.length;else col_content">
+                            <ng-container *ngFor="let subCol of col.subColumns;"><td>{{getPropByString(rowData , subCol.field)}}</td></ng-container>
+                        </ng-container>
+                        <ng-template #col_content><td>{{getPropByString(rowData , col.field)}}</td></ng-template>
+                    </ng-container>
+                    <!-- <td>{{rowData.grade}}</td>
                     <td>{{rowData.estimate.api}}</td>
                     <td>{{rowData.estimate.temp}}</td>
                     <td>{{rowData.order.bblsTemp}}</td>
@@ -33,7 +39,7 @@
                     <td>{{rowData.loadable.lt}}</td>
                     <td>{{rowData.loadable.mt}}</td>
                     <td>{{rowData.loadable.kl}}</td>
-                    <td>{{rowData.diff}}</td>
+                    <td>{{rowData.diff}}</td> -->
                 </tr>
             </ng-template>
         </p-table>

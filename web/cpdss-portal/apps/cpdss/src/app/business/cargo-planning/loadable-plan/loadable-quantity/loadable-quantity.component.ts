@@ -2,7 +2,7 @@ import { Component, OnInit , Input } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { LoadableQuantityApiService } from '../../services/loadable-quantity-api.service';
-import { ILoadableQuantityColumn } from '../../models/loadable-quantity.model';
+import { ITableHeaderModel } from '../../models/loadable-quantity.model';
 
 /**
  * Component class of loadable quantity component in loadable plan
@@ -21,7 +21,7 @@ export class LoadableQuantityComponent implements OnInit {
   @Input() loadableStudyId: number;
   @Input() vesselId: number;
 
-  columns: ILoadableQuantityColumn[];
+  columns: ITableHeaderModel[];
   value: any[];
 
   constructor(
@@ -86,6 +86,23 @@ async getLoadableQuantity() {
   this.ngxSpinnerService.show();
   await this.loadableQuantityApiService.getLoadableQuantityData(this.vesselId, this.voyageId, this.loadableStudyId)
   this.ngxSpinnerService.hide();
+}
+
+getPropByString(obj, propString) {
+  if (!propString) return obj;
+
+  let prop,
+    props = propString.split(".");
+
+  for (var i = 0, iLen = props.length - 1; i < iLen; i++) {
+    prop = props[i];
+    if (obj[prop] !== undefined) {
+      obj = obj[prop];
+    } else {
+      break;
+    }
+  }
+  return obj[props[i]];
 }
 
 }

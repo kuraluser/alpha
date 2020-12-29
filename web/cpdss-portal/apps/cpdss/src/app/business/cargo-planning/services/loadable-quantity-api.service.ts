@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { LoadableQuantityModel, LoadableQuantityResponseModel, LodadableQuantity, ILoadableQuantityColumn } from '../models/loadable-quantity.model';
+import { LoadableQuantityModel, LoadableQuantityResponseModel, LodadableQuantity, ITableHeaderModel } from '../models/loadable-quantity.model';
 
 @Injectable()
 export class LoadableQuantityApiService {
@@ -146,42 +146,42 @@ export class LoadableQuantityApiService {
 
   /**
   * 
-  * Get api for loadable quantity
+  * Get loadable quantity table header
   * @returns {ILoadableQuantityColumn[]}
   */
-  getLoadableQuantityTableColumns(): ILoadableQuantityColumn[] {
+  getLoadableQuantityTableColumns(): ITableHeaderModel[] {
     return [
-      { field: 'year', header: 'Grade' , colspan: 0},
+      { field: 'grade', header: 'Grade' , colspan: 0},
       {
         field: 'vin', header: 'Estimated',  colspan: 2,  subColumns: [
-          { field: 'year', header: 'API' },
-          { field: 'year', header: 'TEMP' }
+          { field: 'estimate.api', header: 'API' },
+          { field: 'estimate.temp', header: 'TEMP' }
         ]
       },
       {
         field: 'year', header: 'ORDER' ,  colspan: 2 ,subColumns: [
-          { field: 'year', header: 'BBL@OBS.TEMP' },
-          { field: 'year', header: 'BBLS@60F' }
+          { field: 'order.bblsTemp', header: 'BBL@OBS.TEMP' },
+          { field: 'order.bblsF', header: 'BBLS@60F' }
         ]
       },
       {
         field: 'brand', header: 'TLRNC', colspan: 2 ,  subColumns: [
-          { field: 'year', header: 'Min' },
-          { field: 'year', header: 'Max' }
+          { field: 'tlrnic.min', header: 'Min' },
+          { field: 'tlrnic.max', header: 'Max' }
         ]
       },
       {
         field: 'color', header: 'LOADABLE',  colspan: 5 , subColumns: [
-          { field: 'year', header: 'BBLS@OBS.TEMP' },
-          { field: 'year', header: 'BBLS@60F' },
-          { field: 'year', header: 'LT' },
-          { field: 'year', header: 'MT' },
-          { field: 'year', header: 'KL' }
+          { field: 'loadable.bblsTemp', header: 'BBLS@OBS.TEMP' },
+          { field: 'loadable.bblsF', header: 'BBLS@60F' },
+          { field: 'loadable.lt', header: 'LT' },
+          { field: 'loadable.mt', header: 'MT' },
+          { field: 'loadable.kl', header: 'KL' }
         ]
       },
       {
         field: 'color', header: 'DIFF.', colspan: 2 , subColumns: [
-          { field: 'year', header: '%' }
+          { field: 'diff', header: '%' }
         ]
       }
     ]
