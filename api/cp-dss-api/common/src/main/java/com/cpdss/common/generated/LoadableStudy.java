@@ -58404,6 +58404,110 @@ public final class LoadableStudy {
      * @return The portOrder.
      */
     long getPortOrder();
+
+    /**
+     * <code>string othersPlanned = 33;</code>
+     *
+     * @return The othersPlanned.
+     */
+    java.lang.String getOthersPlanned();
+    /**
+     * <code>string othersPlanned = 33;</code>
+     *
+     * @return The bytes for othersPlanned.
+     */
+    com.google.protobuf.ByteString getOthersPlannedBytes();
+
+    /**
+     * <code>string othersActual = 34;</code>
+     *
+     * @return The othersActual.
+     */
+    java.lang.String getOthersActual();
+    /**
+     * <code>string othersActual = 34;</code>
+     *
+     * @return The bytes for othersActual.
+     */
+    com.google.protobuf.ByteString getOthersActualBytes();
+
+    /**
+     * <code>string constantPlanned = 35;</code>
+     *
+     * @return The constantPlanned.
+     */
+    java.lang.String getConstantPlanned();
+    /**
+     * <code>string constantPlanned = 35;</code>
+     *
+     * @return The bytes for constantPlanned.
+     */
+    com.google.protobuf.ByteString getConstantPlannedBytes();
+
+    /**
+     * <code>string constantActual = 36;</code>
+     *
+     * @return The constantActual.
+     */
+    java.lang.String getConstantActual();
+    /**
+     * <code>string constantActual = 36;</code>
+     *
+     * @return The bytes for constantActual.
+     */
+    com.google.protobuf.ByteString getConstantActualBytes();
+
+    /**
+     * <code>string totalDwtPlanned = 37;</code>
+     *
+     * @return The totalDwtPlanned.
+     */
+    java.lang.String getTotalDwtPlanned();
+    /**
+     * <code>string totalDwtPlanned = 37;</code>
+     *
+     * @return The bytes for totalDwtPlanned.
+     */
+    com.google.protobuf.ByteString getTotalDwtPlannedBytes();
+
+    /**
+     * <code>string totalDwtActual = 38;</code>
+     *
+     * @return The totalDwtActual.
+     */
+    java.lang.String getTotalDwtActual();
+    /**
+     * <code>string totalDwtActual = 38;</code>
+     *
+     * @return The bytes for totalDwtActual.
+     */
+    com.google.protobuf.ByteString getTotalDwtActualBytes();
+
+    /**
+     * <code>string displacementPlanned = 39;</code>
+     *
+     * @return The displacementPlanned.
+     */
+    java.lang.String getDisplacementPlanned();
+    /**
+     * <code>string displacementPlanned = 39;</code>
+     *
+     * @return The bytes for displacementPlanned.
+     */
+    com.google.protobuf.ByteString getDisplacementPlannedBytes();
+
+    /**
+     * <code>string displacementActual = 40;</code>
+     *
+     * @return The displacementActual.
+     */
+    java.lang.String getDisplacementActual();
+    /**
+     * <code>string displacementActual = 40;</code>
+     *
+     * @return The bytes for displacementActual.
+     */
+    com.google.protobuf.ByteString getDisplacementActualBytes();
   }
   /** Protobuf type {@code SynopticalRecord} */
   public static final class SynopticalRecord extends com.google.protobuf.GeneratedMessageV3
@@ -58446,6 +58550,14 @@ public final class LoadableStudy {
       doActualTotal_ = "";
       lubePlannedTotal_ = "";
       lubeActualTotal_ = "";
+      othersPlanned_ = "";
+      othersActual_ = "";
+      constantPlanned_ = "";
+      constantActual_ = "";
+      totalDwtPlanned_ = "";
+      totalDwtActual_ = "";
+      displacementPlanned_ = "";
+      displacementActual_ = "";
     }
 
     @java.lang.Override
@@ -58708,6 +58820,62 @@ public final class LoadableStudy {
             case 256:
               {
                 portOrder_ = input.readInt64();
+                break;
+              }
+            case 266:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                othersPlanned_ = s;
+                break;
+              }
+            case 274:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                othersActual_ = s;
+                break;
+              }
+            case 282:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                constantPlanned_ = s;
+                break;
+              }
+            case 290:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                constantActual_ = s;
+                break;
+              }
+            case 298:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                totalDwtPlanned_ = s;
+                break;
+              }
+            case 306:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                totalDwtActual_ = s;
+                break;
+              }
+            case 314:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                displacementPlanned_ = s;
+                break;
+              }
+            case 322:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                displacementActual_ = s;
                 break;
               }
             default:
@@ -59781,6 +59949,286 @@ public final class LoadableStudy {
       return portOrder_;
     }
 
+    public static final int OTHERSPLANNED_FIELD_NUMBER = 33;
+    private volatile java.lang.Object othersPlanned_;
+    /**
+     * <code>string othersPlanned = 33;</code>
+     *
+     * @return The othersPlanned.
+     */
+    public java.lang.String getOthersPlanned() {
+      java.lang.Object ref = othersPlanned_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        othersPlanned_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string othersPlanned = 33;</code>
+     *
+     * @return The bytes for othersPlanned.
+     */
+    public com.google.protobuf.ByteString getOthersPlannedBytes() {
+      java.lang.Object ref = othersPlanned_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        othersPlanned_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int OTHERSACTUAL_FIELD_NUMBER = 34;
+    private volatile java.lang.Object othersActual_;
+    /**
+     * <code>string othersActual = 34;</code>
+     *
+     * @return The othersActual.
+     */
+    public java.lang.String getOthersActual() {
+      java.lang.Object ref = othersActual_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        othersActual_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string othersActual = 34;</code>
+     *
+     * @return The bytes for othersActual.
+     */
+    public com.google.protobuf.ByteString getOthersActualBytes() {
+      java.lang.Object ref = othersActual_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        othersActual_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CONSTANTPLANNED_FIELD_NUMBER = 35;
+    private volatile java.lang.Object constantPlanned_;
+    /**
+     * <code>string constantPlanned = 35;</code>
+     *
+     * @return The constantPlanned.
+     */
+    public java.lang.String getConstantPlanned() {
+      java.lang.Object ref = constantPlanned_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        constantPlanned_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string constantPlanned = 35;</code>
+     *
+     * @return The bytes for constantPlanned.
+     */
+    public com.google.protobuf.ByteString getConstantPlannedBytes() {
+      java.lang.Object ref = constantPlanned_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        constantPlanned_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CONSTANTACTUAL_FIELD_NUMBER = 36;
+    private volatile java.lang.Object constantActual_;
+    /**
+     * <code>string constantActual = 36;</code>
+     *
+     * @return The constantActual.
+     */
+    public java.lang.String getConstantActual() {
+      java.lang.Object ref = constantActual_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        constantActual_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string constantActual = 36;</code>
+     *
+     * @return The bytes for constantActual.
+     */
+    public com.google.protobuf.ByteString getConstantActualBytes() {
+      java.lang.Object ref = constantActual_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        constantActual_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TOTALDWTPLANNED_FIELD_NUMBER = 37;
+    private volatile java.lang.Object totalDwtPlanned_;
+    /**
+     * <code>string totalDwtPlanned = 37;</code>
+     *
+     * @return The totalDwtPlanned.
+     */
+    public java.lang.String getTotalDwtPlanned() {
+      java.lang.Object ref = totalDwtPlanned_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        totalDwtPlanned_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string totalDwtPlanned = 37;</code>
+     *
+     * @return The bytes for totalDwtPlanned.
+     */
+    public com.google.protobuf.ByteString getTotalDwtPlannedBytes() {
+      java.lang.Object ref = totalDwtPlanned_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        totalDwtPlanned_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TOTALDWTACTUAL_FIELD_NUMBER = 38;
+    private volatile java.lang.Object totalDwtActual_;
+    /**
+     * <code>string totalDwtActual = 38;</code>
+     *
+     * @return The totalDwtActual.
+     */
+    public java.lang.String getTotalDwtActual() {
+      java.lang.Object ref = totalDwtActual_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        totalDwtActual_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string totalDwtActual = 38;</code>
+     *
+     * @return The bytes for totalDwtActual.
+     */
+    public com.google.protobuf.ByteString getTotalDwtActualBytes() {
+      java.lang.Object ref = totalDwtActual_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        totalDwtActual_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DISPLACEMENTPLANNED_FIELD_NUMBER = 39;
+    private volatile java.lang.Object displacementPlanned_;
+    /**
+     * <code>string displacementPlanned = 39;</code>
+     *
+     * @return The displacementPlanned.
+     */
+    public java.lang.String getDisplacementPlanned() {
+      java.lang.Object ref = displacementPlanned_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        displacementPlanned_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string displacementPlanned = 39;</code>
+     *
+     * @return The bytes for displacementPlanned.
+     */
+    public com.google.protobuf.ByteString getDisplacementPlannedBytes() {
+      java.lang.Object ref = displacementPlanned_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        displacementPlanned_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DISPLACEMENTACTUAL_FIELD_NUMBER = 40;
+    private volatile java.lang.Object displacementActual_;
+    /**
+     * <code>string displacementActual = 40;</code>
+     *
+     * @return The displacementActual.
+     */
+    public java.lang.String getDisplacementActual() {
+      java.lang.Object ref = displacementActual_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        displacementActual_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string displacementActual = 40;</code>
+     *
+     * @return The bytes for displacementActual.
+     */
+    public com.google.protobuf.ByteString getDisplacementActualBytes() {
+      java.lang.Object ref = displacementActual_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        displacementActual_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -59891,6 +60339,30 @@ public final class LoadableStudy {
       if (portOrder_ != 0L) {
         output.writeInt64(32, portOrder_);
       }
+      if (!getOthersPlannedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 33, othersPlanned_);
+      }
+      if (!getOthersActualBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 34, othersActual_);
+      }
+      if (!getConstantPlannedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 35, constantPlanned_);
+      }
+      if (!getConstantActualBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 36, constantActual_);
+      }
+      if (!getTotalDwtPlannedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 37, totalDwtPlanned_);
+      }
+      if (!getTotalDwtActualBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 38, totalDwtActual_);
+      }
+      if (!getDisplacementPlannedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 39, displacementPlanned_);
+      }
+      if (!getDisplacementActualBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 40, displacementActual_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -59996,6 +60468,30 @@ public final class LoadableStudy {
       if (portOrder_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(32, portOrder_);
       }
+      if (!getOthersPlannedBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(33, othersPlanned_);
+      }
+      if (!getOthersActualBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(34, othersActual_);
+      }
+      if (!getConstantPlannedBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(35, constantPlanned_);
+      }
+      if (!getConstantActualBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(36, constantActual_);
+      }
+      if (!getTotalDwtPlannedBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(37, totalDwtPlanned_);
+      }
+      if (!getTotalDwtActualBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(38, totalDwtActual_);
+      }
+      if (!getDisplacementPlannedBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(39, displacementPlanned_);
+      }
+      if (!getDisplacementActualBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(40, displacementActual_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -60044,6 +60540,14 @@ public final class LoadableStudy {
       if (!getLubePlannedTotal().equals(other.getLubePlannedTotal())) return false;
       if (!getLubeActualTotal().equals(other.getLubeActualTotal())) return false;
       if (getPortOrder() != other.getPortOrder()) return false;
+      if (!getOthersPlanned().equals(other.getOthersPlanned())) return false;
+      if (!getOthersActual().equals(other.getOthersActual())) return false;
+      if (!getConstantPlanned().equals(other.getConstantPlanned())) return false;
+      if (!getConstantActual().equals(other.getConstantActual())) return false;
+      if (!getTotalDwtPlanned().equals(other.getTotalDwtPlanned())) return false;
+      if (!getTotalDwtActual().equals(other.getTotalDwtActual())) return false;
+      if (!getDisplacementPlanned().equals(other.getDisplacementPlanned())) return false;
+      if (!getDisplacementActual().equals(other.getDisplacementActual())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -60123,6 +60627,22 @@ public final class LoadableStudy {
       hash = (53 * hash) + getLubeActualTotal().hashCode();
       hash = (37 * hash) + PORTORDER_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortOrder());
+      hash = (37 * hash) + OTHERSPLANNED_FIELD_NUMBER;
+      hash = (53 * hash) + getOthersPlanned().hashCode();
+      hash = (37 * hash) + OTHERSACTUAL_FIELD_NUMBER;
+      hash = (53 * hash) + getOthersActual().hashCode();
+      hash = (37 * hash) + CONSTANTPLANNED_FIELD_NUMBER;
+      hash = (53 * hash) + getConstantPlanned().hashCode();
+      hash = (37 * hash) + CONSTANTACTUAL_FIELD_NUMBER;
+      hash = (53 * hash) + getConstantActual().hashCode();
+      hash = (37 * hash) + TOTALDWTPLANNED_FIELD_NUMBER;
+      hash = (53 * hash) + getTotalDwtPlanned().hashCode();
+      hash = (37 * hash) + TOTALDWTACTUAL_FIELD_NUMBER;
+      hash = (53 * hash) + getTotalDwtActual().hashCode();
+      hash = (37 * hash) + DISPLACEMENTPLANNED_FIELD_NUMBER;
+      hash = (53 * hash) + getDisplacementPlanned().hashCode();
+      hash = (37 * hash) + DISPLACEMENTACTUAL_FIELD_NUMBER;
+      hash = (53 * hash) + getDisplacementActual().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -60337,6 +60857,22 @@ public final class LoadableStudy {
 
         portOrder_ = 0L;
 
+        othersPlanned_ = "";
+
+        othersActual_ = "";
+
+        constantPlanned_ = "";
+
+        constantActual_ = "";
+
+        totalDwtPlanned_ = "";
+
+        totalDwtActual_ = "";
+
+        displacementPlanned_ = "";
+
+        displacementActual_ = "";
+
         return this;
       }
 
@@ -60412,6 +60948,14 @@ public final class LoadableStudy {
         result.lubePlannedTotal_ = lubePlannedTotal_;
         result.lubeActualTotal_ = lubeActualTotal_;
         result.portOrder_ = portOrder_;
+        result.othersPlanned_ = othersPlanned_;
+        result.othersActual_ = othersActual_;
+        result.constantPlanned_ = constantPlanned_;
+        result.constantActual_ = constantActual_;
+        result.totalDwtPlanned_ = totalDwtPlanned_;
+        result.totalDwtActual_ = totalDwtActual_;
+        result.displacementPlanned_ = displacementPlanned_;
+        result.displacementActual_ = displacementActual_;
         onBuilt();
         return result;
       }
@@ -60634,6 +61178,38 @@ public final class LoadableStudy {
         }
         if (other.getPortOrder() != 0L) {
           setPortOrder(other.getPortOrder());
+        }
+        if (!other.getOthersPlanned().isEmpty()) {
+          othersPlanned_ = other.othersPlanned_;
+          onChanged();
+        }
+        if (!other.getOthersActual().isEmpty()) {
+          othersActual_ = other.othersActual_;
+          onChanged();
+        }
+        if (!other.getConstantPlanned().isEmpty()) {
+          constantPlanned_ = other.constantPlanned_;
+          onChanged();
+        }
+        if (!other.getConstantActual().isEmpty()) {
+          constantActual_ = other.constantActual_;
+          onChanged();
+        }
+        if (!other.getTotalDwtPlanned().isEmpty()) {
+          totalDwtPlanned_ = other.totalDwtPlanned_;
+          onChanged();
+        }
+        if (!other.getTotalDwtActual().isEmpty()) {
+          totalDwtActual_ = other.totalDwtActual_;
+          onChanged();
+        }
+        if (!other.getDisplacementPlanned().isEmpty()) {
+          displacementPlanned_ = other.displacementPlanned_;
+          onChanged();
+        }
+        if (!other.getDisplacementActual().isEmpty()) {
+          displacementActual_ = other.displacementActual_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -63261,6 +63837,614 @@ public final class LoadableStudy {
       public Builder clearPortOrder() {
 
         portOrder_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object othersPlanned_ = "";
+      /**
+       * <code>string othersPlanned = 33;</code>
+       *
+       * @return The othersPlanned.
+       */
+      public java.lang.String getOthersPlanned() {
+        java.lang.Object ref = othersPlanned_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          othersPlanned_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string othersPlanned = 33;</code>
+       *
+       * @return The bytes for othersPlanned.
+       */
+      public com.google.protobuf.ByteString getOthersPlannedBytes() {
+        java.lang.Object ref = othersPlanned_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          othersPlanned_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string othersPlanned = 33;</code>
+       *
+       * @param value The othersPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOthersPlanned(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        othersPlanned_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string othersPlanned = 33;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearOthersPlanned() {
+
+        othersPlanned_ = getDefaultInstance().getOthersPlanned();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string othersPlanned = 33;</code>
+       *
+       * @param value The bytes for othersPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOthersPlannedBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        othersPlanned_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object othersActual_ = "";
+      /**
+       * <code>string othersActual = 34;</code>
+       *
+       * @return The othersActual.
+       */
+      public java.lang.String getOthersActual() {
+        java.lang.Object ref = othersActual_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          othersActual_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string othersActual = 34;</code>
+       *
+       * @return The bytes for othersActual.
+       */
+      public com.google.protobuf.ByteString getOthersActualBytes() {
+        java.lang.Object ref = othersActual_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          othersActual_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string othersActual = 34;</code>
+       *
+       * @param value The othersActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOthersActual(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        othersActual_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string othersActual = 34;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearOthersActual() {
+
+        othersActual_ = getDefaultInstance().getOthersActual();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string othersActual = 34;</code>
+       *
+       * @param value The bytes for othersActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOthersActualBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        othersActual_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object constantPlanned_ = "";
+      /**
+       * <code>string constantPlanned = 35;</code>
+       *
+       * @return The constantPlanned.
+       */
+      public java.lang.String getConstantPlanned() {
+        java.lang.Object ref = constantPlanned_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          constantPlanned_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string constantPlanned = 35;</code>
+       *
+       * @return The bytes for constantPlanned.
+       */
+      public com.google.protobuf.ByteString getConstantPlannedBytes() {
+        java.lang.Object ref = constantPlanned_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          constantPlanned_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string constantPlanned = 35;</code>
+       *
+       * @param value The constantPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setConstantPlanned(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        constantPlanned_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string constantPlanned = 35;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearConstantPlanned() {
+
+        constantPlanned_ = getDefaultInstance().getConstantPlanned();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string constantPlanned = 35;</code>
+       *
+       * @param value The bytes for constantPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setConstantPlannedBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        constantPlanned_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object constantActual_ = "";
+      /**
+       * <code>string constantActual = 36;</code>
+       *
+       * @return The constantActual.
+       */
+      public java.lang.String getConstantActual() {
+        java.lang.Object ref = constantActual_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          constantActual_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string constantActual = 36;</code>
+       *
+       * @return The bytes for constantActual.
+       */
+      public com.google.protobuf.ByteString getConstantActualBytes() {
+        java.lang.Object ref = constantActual_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          constantActual_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string constantActual = 36;</code>
+       *
+       * @param value The constantActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setConstantActual(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        constantActual_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string constantActual = 36;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearConstantActual() {
+
+        constantActual_ = getDefaultInstance().getConstantActual();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string constantActual = 36;</code>
+       *
+       * @param value The bytes for constantActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setConstantActualBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        constantActual_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object totalDwtPlanned_ = "";
+      /**
+       * <code>string totalDwtPlanned = 37;</code>
+       *
+       * @return The totalDwtPlanned.
+       */
+      public java.lang.String getTotalDwtPlanned() {
+        java.lang.Object ref = totalDwtPlanned_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          totalDwtPlanned_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string totalDwtPlanned = 37;</code>
+       *
+       * @return The bytes for totalDwtPlanned.
+       */
+      public com.google.protobuf.ByteString getTotalDwtPlannedBytes() {
+        java.lang.Object ref = totalDwtPlanned_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          totalDwtPlanned_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string totalDwtPlanned = 37;</code>
+       *
+       * @param value The totalDwtPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTotalDwtPlanned(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        totalDwtPlanned_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string totalDwtPlanned = 37;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTotalDwtPlanned() {
+
+        totalDwtPlanned_ = getDefaultInstance().getTotalDwtPlanned();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string totalDwtPlanned = 37;</code>
+       *
+       * @param value The bytes for totalDwtPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTotalDwtPlannedBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        totalDwtPlanned_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object totalDwtActual_ = "";
+      /**
+       * <code>string totalDwtActual = 38;</code>
+       *
+       * @return The totalDwtActual.
+       */
+      public java.lang.String getTotalDwtActual() {
+        java.lang.Object ref = totalDwtActual_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          totalDwtActual_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string totalDwtActual = 38;</code>
+       *
+       * @return The bytes for totalDwtActual.
+       */
+      public com.google.protobuf.ByteString getTotalDwtActualBytes() {
+        java.lang.Object ref = totalDwtActual_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          totalDwtActual_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string totalDwtActual = 38;</code>
+       *
+       * @param value The totalDwtActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTotalDwtActual(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        totalDwtActual_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string totalDwtActual = 38;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTotalDwtActual() {
+
+        totalDwtActual_ = getDefaultInstance().getTotalDwtActual();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string totalDwtActual = 38;</code>
+       *
+       * @param value The bytes for totalDwtActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTotalDwtActualBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        totalDwtActual_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object displacementPlanned_ = "";
+      /**
+       * <code>string displacementPlanned = 39;</code>
+       *
+       * @return The displacementPlanned.
+       */
+      public java.lang.String getDisplacementPlanned() {
+        java.lang.Object ref = displacementPlanned_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          displacementPlanned_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string displacementPlanned = 39;</code>
+       *
+       * @return The bytes for displacementPlanned.
+       */
+      public com.google.protobuf.ByteString getDisplacementPlannedBytes() {
+        java.lang.Object ref = displacementPlanned_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          displacementPlanned_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string displacementPlanned = 39;</code>
+       *
+       * @param value The displacementPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDisplacementPlanned(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        displacementPlanned_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string displacementPlanned = 39;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDisplacementPlanned() {
+
+        displacementPlanned_ = getDefaultInstance().getDisplacementPlanned();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string displacementPlanned = 39;</code>
+       *
+       * @param value The bytes for displacementPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDisplacementPlannedBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        displacementPlanned_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object displacementActual_ = "";
+      /**
+       * <code>string displacementActual = 40;</code>
+       *
+       * @return The displacementActual.
+       */
+      public java.lang.String getDisplacementActual() {
+        java.lang.Object ref = displacementActual_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          displacementActual_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string displacementActual = 40;</code>
+       *
+       * @return The bytes for displacementActual.
+       */
+      public com.google.protobuf.ByteString getDisplacementActualBytes() {
+        java.lang.Object ref = displacementActual_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          displacementActual_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string displacementActual = 40;</code>
+       *
+       * @param value The displacementActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDisplacementActual(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        displacementActual_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string displacementActual = 40;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDisplacementActual() {
+
+        displacementActual_ = getDefaultInstance().getDisplacementActual();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string displacementActual = 40;</code>
+       *
+       * @param value The bytes for displacementActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDisplacementActualBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        displacementActual_ = value;
         onChanged();
         return this;
       }
@@ -67765,7 +68949,7 @@ public final class LoadableStudy {
           + "(\t\022\026\n\016cargo1Quantity\030\t \001(\t\022\026\n\016cargo2Quan"
           + "tity\030\n \001(\t\022\030\n\020cargo1Percentage\030\013 \001(\t\022\030\n\020"
           + "cargo2Percentage\030\014 \001(\t\022\'\n\016responseStatus"
-          + "\030\r \001(\0132\017.ResponseStatus\"\343\005\n\020SynopticalRe"
+          + "\030\r \001(\0132\017.ResponseStatus\"\253\007\n\020SynopticalRe"
           + "cord\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\020\n\010port"
           + "Name\030\003 \001(\t\022\025\n\roperationType\030\004 \001(\t\022\020\n\010dis"
           + "tance\030\005 \001(\t\022\r\n\005speed\030\006 \001(\t\022\024\n\014runningHou"
@@ -67784,7 +68968,12 @@ public final class LoadableStudy {
           + "al\030\033 \001(\t\022\026\n\016doPlannedTotal\030\034 \001(\t\022\025\n\rdoAc"
           + "tualTotal\030\035 \001(\t\022\030\n\020lubePlannedTotal\030\036 \001("
           + "\t\022\027\n\017lubeActualTotal\030\037 \001(\t\022\021\n\tportOrder\030"
-          + "  \001(\003\"f\n\025SynopticalCargoRecord\022\016\n\006tankId"
+          + "  \001(\003\022\025\n\rothersPlanned\030! \001(\t\022\024\n\014othersAc"
+          + "tual\030\" \001(\t\022\027\n\017constantPlanned\030# \001(\t\022\026\n\016c"
+          + "onstantActual\030$ \001(\t\022\027\n\017totalDwtPlanned\030%"
+          + " \001(\t\022\026\n\016totalDwtActual\030& \001(\t\022\033\n\023displace"
+          + "mentPlanned\030\' \001(\t\022\032\n\022displacementActual\030"
+          + "( \001(\t\"f\n\025SynopticalCargoRecord\022\016\n\006tankId"
           + "\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rplannedWeigh"
           + "t\030\003 \001(\t\022\024\n\014actualWeight\030\004 \001(\t\"\212\001\n\023Synopt"
           + "icalOhqRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankNam"
@@ -68413,6 +69602,14 @@ public final class LoadableStudy {
               "LubePlannedTotal",
               "LubeActualTotal",
               "PortOrder",
+              "OthersPlanned",
+              "OthersActual",
+              "ConstantPlanned",
+              "ConstantActual",
+              "TotalDwtPlanned",
+              "TotalDwtActual",
+              "DisplacementPlanned",
+              "DisplacementActual",
             });
     internal_static_SynopticalCargoRecord_descriptor = getDescriptor().getMessageTypes().get(53);
     internal_static_SynopticalCargoRecord_fieldAccessorTable =

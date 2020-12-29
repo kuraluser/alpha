@@ -22,6 +22,9 @@ service VesselInfoService {
 	
 	rpc GetVesselDetailsForAlgo (VesselAlgoRequest) returns (VesselAlgoReply) {
 	}
+	
+	rpc GetVesselDetailForSynopticalTable(VesselRequest) returns (VesselReply) {
+	}
 }
 
 message VesselRequest {

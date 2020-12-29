@@ -66,6 +66,7 @@ import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
 import com.cpdss.common.generated.PortInfo.PortDetail;
 import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
+import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
@@ -3159,7 +3160,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.synopticalTableRepository.findByLoadableStudyXIdAndIsActive(
               request.getLoadableStudyId(), true);
       if (!synopticalTableList.isEmpty()) {
-        VesselReply vesselReply = this.getSynopticalTableTanks(request);
+        VesselReply vesselReply =
+            this.getSynopticalTableVesselData(request, loadableStudyOpt.get());
         List<VesselTankDetail> sortedTankList = new ArrayList<>(vesselReply.getVesselTanksList());
         Collections.sort(
             sortedTankList, Comparator.comparing(VesselTankDetail::getTankDisplayOrder));
@@ -3169,6 +3171,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             this.getSynopticalTablePortRotations(request.getLoadableStudyId()),
             loadableStudyOpt.get(),
             sortedTankList,
+            vesselReply.getVesselLoadableQuantityDetails(),
             replyBuilder);
         this.setSynopticalTableCargoTanks(sortedTankList, replyBuilder);
       }
@@ -3261,6 +3264,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    *
    * @param synopticalTableList
    * @param portReply
+   * @param vesselLoadableQuantityDetails
    * @param vesselReply
    * @param vesselReply
    * @param replyBuilder
@@ -3271,6 +3275,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<LoadableStudyPortRotation> portRotations,
       LoadableStudy loadableStudy,
       List<VesselTankDetail> sortedTankList,
+      VesselLoadableQuantityDetails vesselLoadableQuantityDetails,
       SynopticalTableReply.Builder replyBuilder) {
     if (!CollectionUtils.isEmpty(synopticalTableList)) {
       List<OnBoardQuantity> obqEntities =
@@ -3285,6 +3290,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             this.setSynopticalEtaEtdEstimated(synopticalEntity, builder, portRotations);
             this.setSynopticalCargoDetails(obqEntities, synopticalEntity, builder, sortedTankList);
             this.setSynopticalOhqData(ohqEntities, synopticalEntity, builder, sortedTankList);
+            this.setSynopticalTableVesselParticulars(
+                synopticalEntity, builder, vesselLoadableQuantityDetails);
             records.add(builder.build());
           });
       Collections.sort(
@@ -3293,6 +3300,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .thenComparing(Comparator.comparing(SynopticalRecord::getOperationType)));
       replyBuilder.addAllSynopticalRecords(records);
     }
+  }
+
+  /**
+   * Set vessel particular data
+   *
+   * @param synopticalEntity
+   * @param builder
+   * @param vesselLoadableQuantityDetails
+   */
+  private void setSynopticalTableVesselParticulars(
+      SynopticalTable synopticalEntity,
+      SynopticalRecord.Builder builder,
+      VesselLoadableQuantityDetails vesselLoadableQuantityDetails) {
+    Optional.ofNullable(synopticalEntity.getOthersPlanned())
+        .ifPresent(item -> builder.setOthersPlanned(valueOf(item)));
+    Optional.ofNullable(synopticalEntity.getOthersActual())
+        .ifPresent(item -> builder.setOthersActual(valueOf(item)));
+    builder.setConstantPlanned(vesselLoadableQuantityDetails.getConstant());
+    Optional.ofNullable(synopticalEntity.getConstantActual())
+        .ifPresent(item -> builder.setConstantActual(valueOf(item)));
+    builder.setTotalDwtPlanned(vesselLoadableQuantityDetails.getDwt());
+    Optional.ofNullable(synopticalEntity.getDeadWeightActual())
+        .ifPresent(item -> builder.setTotalDwtActual(valueOf(item)));
+    builder.setDisplacementPlanned(vesselLoadableQuantityDetails.getDisplacmentDraftRestriction());
+    Optional.ofNullable(synopticalEntity.getDisplacementActual())
+        .ifPresent(item -> builder.setDisplacementActual(valueOf(item)));
   }
 
   /**
@@ -3583,18 +3616,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
-   * * Get vessel tanks for synoptical table
+   * * Get vessel data for synoptical table
    *
    * @param request
+   * @param loadableStudy
    * @return
    * @throws GenericServiceException
    */
-  private VesselReply getSynopticalTableTanks(SynopticalTableRequest request)
-      throws GenericServiceException {
+  private VesselReply getSynopticalTableVesselData(
+      SynopticalTableRequest request, LoadableStudy loadableStudy) throws GenericServiceException {
     VesselRequest.Builder vesselGrpcRequest = VesselRequest.newBuilder();
     vesselGrpcRequest.setVesselId(request.getVesselId());
+    Optional.ofNullable(loadableStudy.getLoadLineXId())
+        .ifPresent(vesselGrpcRequest::setVesselDraftConditionId);
+    Optional.ofNullable(loadableStudy.getDraftMark())
+        .ifPresent(item -> vesselGrpcRequest.setDraftExtreme(valueOf(item)));
     vesselGrpcRequest.addAllTankCategories(SYNOPTICAL_TABLE_TANK_CATEGORIES);
-    VesselReply vesselReply = this.getVesselTanks(vesselGrpcRequest.build());
+    VesselReply vesselReply = this.getVesselDetailForSynopticalTable(vesselGrpcRequest.build());
     if (!SUCCESS.equals(vesselReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "Failed to fetch vessel particualrs",
@@ -3602,6 +3640,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           HttpStatusCode.valueOf(Integer.valueOf(vesselReply.getResponseStatus().getCode())));
     }
     return vesselReply;
+  }
+
+  /**
+   * Call vessel info grpc service for synoptical table data
+   *
+   * @param request
+   * @return
+   */
+  public VesselReply getVesselDetailForSynopticalTable(VesselRequest request) {
+    return this.vesselInfoGrpcService.getVesselDetailForSynopticalTable(request);
   }
 
   @Override

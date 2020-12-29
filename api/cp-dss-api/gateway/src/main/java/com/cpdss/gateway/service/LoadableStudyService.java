@@ -2121,6 +2121,7 @@ public class LoadableStudyService {
                         ? BigDecimal.ZERO
                         : new BigDecimal(synopticalProtoRecord.getCargoActualTotal()));
                 this.buildOhqDataForSynopticalTable(synopticalRecord, synopticalProtoRecord);
+                this.buildVesselDataForSynopticalTable(synopticalRecord, synopticalProtoRecord);
                 synopticalTableList.add(synopticalRecord);
               });
       synopticalTableResponse.setCargoTanks(this.buildSynopticalTableCargoTanks(reply));
@@ -2128,6 +2129,55 @@ public class LoadableStudyService {
     }
   }
 
+  /**
+   * Set vessel data in synoptical table
+   *
+   * @param synopticalRecord
+   * @param synopticalProtoRecord
+   */
+  private void buildVesselDataForSynopticalTable(
+      SynopticalRecord synopticalRecord,
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
+    synopticalRecord.setOthersActual(
+        isEmpty(synopticalProtoRecord.getOthersActual())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getOthersActual()));
+    synopticalRecord.setOthersPlanned(
+        isEmpty(synopticalProtoRecord.getOthersPlanned())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getOthersPlanned()));
+    synopticalRecord.setConstantActual(
+        isEmpty(synopticalProtoRecord.getConstantActual())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getConstantActual()));
+    synopticalRecord.setConstantPlanned(
+        isEmpty(synopticalProtoRecord.getConstantPlanned())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getConstantPlanned()));
+    synopticalRecord.setTotalDwtActual(
+        isEmpty(synopticalProtoRecord.getTotalDwtActual())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getTotalDwtActual()));
+    synopticalRecord.setTotalDwtPlanned(
+        isEmpty(synopticalProtoRecord.getTotalDwtPlanned())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getTotalDwtPlanned()));
+    synopticalRecord.setDisplacementActual(
+        isEmpty(synopticalProtoRecord.getDisplacementActual())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getDisplacementActual()));
+    synopticalRecord.setDisplacementPlanned(
+        isEmpty(synopticalProtoRecord.getDisplacementPlanned())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getDisplacementPlanned()));
+  }
+
+  /**
+   * Set ohq data for synoptical table
+   *
+   * @param synopticalRecord
+   * @param synopticalProtoRecord
+   */
   private void buildOhqDataForSynopticalTable(
       SynopticalRecord synopticalRecord,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
