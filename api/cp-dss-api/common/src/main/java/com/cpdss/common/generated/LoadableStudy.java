@@ -58242,96 +58242,168 @@ public final class LoadableStudy {
     com.google.protobuf.ByteString getSpecificGravityBytes();
 
     /**
-     * <code>string etaActual = 20;</code>
+     * <code>string etaEtdActual = 20;</code>
      *
-     * @return The etaActual.
+     * @return The etaEtdActual.
      */
-    java.lang.String getEtaActual();
+    java.lang.String getEtaEtdActual();
     /**
-     * <code>string etaActual = 20;</code>
+     * <code>string etaEtdActual = 20;</code>
      *
-     * @return The bytes for etaActual.
+     * @return The bytes for etaEtdActual.
      */
-    com.google.protobuf.ByteString getEtaActualBytes();
+    com.google.protobuf.ByteString getEtaEtdActualBytes();
 
     /**
-     * <code>string etdActual = 21;</code>
+     * <code>string etaEtdEstimated = 21;</code>
      *
-     * @return The etdActual.
+     * @return The etaEtdEstimated.
      */
-    java.lang.String getEtdActual();
+    java.lang.String getEtaEtdEstimated();
     /**
-     * <code>string etdActual = 21;</code>
+     * <code>string etaEtdEstimated = 21;</code>
      *
-     * @return The bytes for etdActual.
+     * @return The bytes for etaEtdEstimated.
      */
-    com.google.protobuf.ByteString getEtdActualBytes();
+    com.google.protobuf.ByteString getEtaEtdEstimatedBytes();
 
-    /**
-     * <code>string etaEstimated = 22;</code>
-     *
-     * @return The etaEstimated.
-     */
-    java.lang.String getEtaEstimated();
-    /**
-     * <code>string etaEstimated = 22;</code>
-     *
-     * @return The bytes for etaEstimated.
-     */
-    com.google.protobuf.ByteString getEtaEstimatedBytes();
-
-    /**
-     * <code>string etdEstimated = 23;</code>
-     *
-     * @return The etdEstimated.
-     */
-    java.lang.String getEtdEstimated();
-    /**
-     * <code>string etdEstimated = 23;</code>
-     *
-     * @return The bytes for etdEstimated.
-     */
-    com.google.protobuf.ByteString getEtdEstimatedBytes();
-
-    /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+    /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
     java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord> getCargoList();
-    /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+    /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
     com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord getCargo(int index);
-    /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+    /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
     int getCargoCount();
-    /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+    /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
     java.util.List<
             ? extends com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecordOrBuilder>
         getCargoOrBuilderList();
-    /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+    /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
     com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecordOrBuilder getCargoOrBuilder(
         int index);
 
     /**
-     * <code>string cargoPlannedTotal = 25;</code>
+     * <code>string cargoPlannedTotal = 23;</code>
      *
      * @return The cargoPlannedTotal.
      */
     java.lang.String getCargoPlannedTotal();
     /**
-     * <code>string cargoPlannedTotal = 25;</code>
+     * <code>string cargoPlannedTotal = 23;</code>
      *
      * @return The bytes for cargoPlannedTotal.
      */
     com.google.protobuf.ByteString getCargoPlannedTotalBytes();
 
     /**
-     * <code>string cargoActualTotal = 26;</code>
+     * <code>string cargoActualTotal = 24;</code>
      *
      * @return The cargoActualTotal.
      */
     java.lang.String getCargoActualTotal();
     /**
-     * <code>string cargoActualTotal = 26;</code>
+     * <code>string cargoActualTotal = 24;</code>
      *
      * @return The bytes for cargoActualTotal.
      */
     com.google.protobuf.ByteString getCargoActualTotalBytes();
+
+    /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+    java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord> getOhqList();
+    /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+    com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord getOhq(int index);
+    /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+    int getOhqCount();
+    /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+    java.util.List<? extends com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecordOrBuilder>
+        getOhqOrBuilderList();
+    /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+    com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecordOrBuilder getOhqOrBuilder(
+        int index);
+
+    /**
+     * <code>string foPlannedTotal = 26;</code>
+     *
+     * @return The foPlannedTotal.
+     */
+    java.lang.String getFoPlannedTotal();
+    /**
+     * <code>string foPlannedTotal = 26;</code>
+     *
+     * @return The bytes for foPlannedTotal.
+     */
+    com.google.protobuf.ByteString getFoPlannedTotalBytes();
+
+    /**
+     * <code>string foActualTotal = 27;</code>
+     *
+     * @return The foActualTotal.
+     */
+    java.lang.String getFoActualTotal();
+    /**
+     * <code>string foActualTotal = 27;</code>
+     *
+     * @return The bytes for foActualTotal.
+     */
+    com.google.protobuf.ByteString getFoActualTotalBytes();
+
+    /**
+     * <code>string doPlannedTotal = 28;</code>
+     *
+     * @return The doPlannedTotal.
+     */
+    java.lang.String getDoPlannedTotal();
+    /**
+     * <code>string doPlannedTotal = 28;</code>
+     *
+     * @return The bytes for doPlannedTotal.
+     */
+    com.google.protobuf.ByteString getDoPlannedTotalBytes();
+
+    /**
+     * <code>string doActualTotal = 29;</code>
+     *
+     * @return The doActualTotal.
+     */
+    java.lang.String getDoActualTotal();
+    /**
+     * <code>string doActualTotal = 29;</code>
+     *
+     * @return The bytes for doActualTotal.
+     */
+    com.google.protobuf.ByteString getDoActualTotalBytes();
+
+    /**
+     * <code>string lubePlannedTotal = 30;</code>
+     *
+     * @return The lubePlannedTotal.
+     */
+    java.lang.String getLubePlannedTotal();
+    /**
+     * <code>string lubePlannedTotal = 30;</code>
+     *
+     * @return The bytes for lubePlannedTotal.
+     */
+    com.google.protobuf.ByteString getLubePlannedTotalBytes();
+
+    /**
+     * <code>string lubeActualTotal = 31;</code>
+     *
+     * @return The lubeActualTotal.
+     */
+    java.lang.String getLubeActualTotal();
+    /**
+     * <code>string lubeActualTotal = 31;</code>
+     *
+     * @return The bytes for lubeActualTotal.
+     */
+    com.google.protobuf.ByteString getLubeActualTotalBytes();
+
+    /**
+     * <code>int64 portOrder = 32;</code>
+     *
+     * @return The portOrder.
+     */
+    long getPortOrder();
   }
   /** Protobuf type {@code SynopticalRecord} */
   public static final class SynopticalRecord extends com.google.protobuf.GeneratedMessageV3
@@ -58362,13 +58434,18 @@ public final class LoadableStudy {
       lwTideTimeFrom_ = "";
       lwTideTimeTo_ = "";
       specificGravity_ = "";
-      etaActual_ = "";
-      etdActual_ = "";
-      etaEstimated_ = "";
-      etdEstimated_ = "";
+      etaEtdActual_ = "";
+      etaEtdEstimated_ = "";
       cargo_ = java.util.Collections.emptyList();
       cargoPlannedTotal_ = "";
       cargoActualTotal_ = "";
+      ohq_ = java.util.Collections.emptyList();
+      foPlannedTotal_ = "";
+      foActualTotal_ = "";
+      doPlannedTotal_ = "";
+      doActualTotal_ = "";
+      lubePlannedTotal_ = "";
+      lubeActualTotal_ = "";
     }
 
     @java.lang.Override
@@ -58534,31 +58611,17 @@ public final class LoadableStudy {
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                etaActual_ = s;
+                etaEtdActual_ = s;
                 break;
               }
             case 170:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                etdActual_ = s;
+                etaEtdEstimated_ = s;
                 break;
               }
             case 178:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                etaEstimated_ = s;
-                break;
-              }
-            case 186:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                etdEstimated_ = s;
-                break;
-              }
-            case 194:
               {
                 if (!((mutable_bitField0_ & 0x00000001) != 0)) {
                   cargo_ =
@@ -58572,18 +58635,79 @@ public final class LoadableStudy {
                         extensionRegistry));
                 break;
               }
-            case 202:
+            case 186:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 cargoPlannedTotal_ = s;
                 break;
               }
-            case 210:
+            case 194:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 cargoActualTotal_ = s;
+                break;
+              }
+            case 202:
+              {
+                if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                  ohq_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord>();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                ohq_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 210:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                foPlannedTotal_ = s;
+                break;
+              }
+            case 218:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                foActualTotal_ = s;
+                break;
+              }
+            case 226:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                doPlannedTotal_ = s;
+                break;
+              }
+            case 234:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                doActualTotal_ = s;
+                break;
+              }
+            case 242:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                lubePlannedTotal_ = s;
+                break;
+              }
+            case 250:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                lubeActualTotal_ = s;
+                break;
+              }
+            case 256:
+              {
+                portOrder_ = input.readInt64();
                 break;
               }
             default:
@@ -58602,6 +58726,9 @@ public final class LoadableStudy {
       } finally {
         if (((mutable_bitField0_ & 0x00000001) != 0)) {
           cargo_ = java.util.Collections.unmodifiableList(cargo_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) != 0)) {
+          ohq_ = java.util.Collections.unmodifiableList(ohq_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -59239,177 +59366,107 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int ETAACTUAL_FIELD_NUMBER = 20;
-    private volatile java.lang.Object etaActual_;
+    public static final int ETAETDACTUAL_FIELD_NUMBER = 20;
+    private volatile java.lang.Object etaEtdActual_;
     /**
-     * <code>string etaActual = 20;</code>
+     * <code>string etaEtdActual = 20;</code>
      *
-     * @return The etaActual.
+     * @return The etaEtdActual.
      */
-    public java.lang.String getEtaActual() {
-      java.lang.Object ref = etaActual_;
+    public java.lang.String getEtaEtdActual() {
+      java.lang.Object ref = etaEtdActual_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        etaActual_ = s;
+        etaEtdActual_ = s;
         return s;
       }
     }
     /**
-     * <code>string etaActual = 20;</code>
+     * <code>string etaEtdActual = 20;</code>
      *
-     * @return The bytes for etaActual.
+     * @return The bytes for etaEtdActual.
      */
-    public com.google.protobuf.ByteString getEtaActualBytes() {
-      java.lang.Object ref = etaActual_;
+    public com.google.protobuf.ByteString getEtaEtdActualBytes() {
+      java.lang.Object ref = etaEtdActual_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        etaActual_ = b;
+        etaEtdActual_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
 
-    public static final int ETDACTUAL_FIELD_NUMBER = 21;
-    private volatile java.lang.Object etdActual_;
+    public static final int ETAETDESTIMATED_FIELD_NUMBER = 21;
+    private volatile java.lang.Object etaEtdEstimated_;
     /**
-     * <code>string etdActual = 21;</code>
+     * <code>string etaEtdEstimated = 21;</code>
      *
-     * @return The etdActual.
+     * @return The etaEtdEstimated.
      */
-    public java.lang.String getEtdActual() {
-      java.lang.Object ref = etdActual_;
+    public java.lang.String getEtaEtdEstimated() {
+      java.lang.Object ref = etaEtdEstimated_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        etdActual_ = s;
+        etaEtdEstimated_ = s;
         return s;
       }
     }
     /**
-     * <code>string etdActual = 21;</code>
+     * <code>string etaEtdEstimated = 21;</code>
      *
-     * @return The bytes for etdActual.
+     * @return The bytes for etaEtdEstimated.
      */
-    public com.google.protobuf.ByteString getEtdActualBytes() {
-      java.lang.Object ref = etdActual_;
+    public com.google.protobuf.ByteString getEtaEtdEstimatedBytes() {
+      java.lang.Object ref = etaEtdEstimated_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        etdActual_ = b;
+        etaEtdEstimated_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
 
-    public static final int ETAESTIMATED_FIELD_NUMBER = 22;
-    private volatile java.lang.Object etaEstimated_;
-    /**
-     * <code>string etaEstimated = 22;</code>
-     *
-     * @return The etaEstimated.
-     */
-    public java.lang.String getEtaEstimated() {
-      java.lang.Object ref = etaEstimated_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        etaEstimated_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string etaEstimated = 22;</code>
-     *
-     * @return The bytes for etaEstimated.
-     */
-    public com.google.protobuf.ByteString getEtaEstimatedBytes() {
-      java.lang.Object ref = etaEstimated_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        etaEstimated_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int ETDESTIMATED_FIELD_NUMBER = 23;
-    private volatile java.lang.Object etdEstimated_;
-    /**
-     * <code>string etdEstimated = 23;</code>
-     *
-     * @return The etdEstimated.
-     */
-    public java.lang.String getEtdEstimated() {
-      java.lang.Object ref = etdEstimated_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        etdEstimated_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string etdEstimated = 23;</code>
-     *
-     * @return The bytes for etdEstimated.
-     */
-    public com.google.protobuf.ByteString getEtdEstimatedBytes() {
-      java.lang.Object ref = etdEstimated_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        etdEstimated_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int CARGO_FIELD_NUMBER = 24;
+    public static final int CARGO_FIELD_NUMBER = 22;
     private java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord> cargo_;
-    /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+    /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
     public java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord>
         getCargoList() {
       return cargo_;
     }
-    /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+    /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
     public java.util.List<
             ? extends com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecordOrBuilder>
         getCargoOrBuilderList() {
       return cargo_;
     }
-    /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+    /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
     public int getCargoCount() {
       return cargo_.size();
     }
-    /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+    /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
     public com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord getCargo(int index) {
       return cargo_.get(index);
     }
-    /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+    /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
     public com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecordOrBuilder
         getCargoOrBuilder(int index) {
       return cargo_.get(index);
     }
 
-    public static final int CARGOPLANNEDTOTAL_FIELD_NUMBER = 25;
+    public static final int CARGOPLANNEDTOTAL_FIELD_NUMBER = 23;
     private volatile java.lang.Object cargoPlannedTotal_;
     /**
-     * <code>string cargoPlannedTotal = 25;</code>
+     * <code>string cargoPlannedTotal = 23;</code>
      *
      * @return The cargoPlannedTotal.
      */
@@ -59425,7 +59482,7 @@ public final class LoadableStudy {
       }
     }
     /**
-     * <code>string cargoPlannedTotal = 25;</code>
+     * <code>string cargoPlannedTotal = 23;</code>
      *
      * @return The bytes for cargoPlannedTotal.
      */
@@ -59441,10 +59498,10 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int CARGOACTUALTOTAL_FIELD_NUMBER = 26;
+    public static final int CARGOACTUALTOTAL_FIELD_NUMBER = 24;
     private volatile java.lang.Object cargoActualTotal_;
     /**
-     * <code>string cargoActualTotal = 26;</code>
+     * <code>string cargoActualTotal = 24;</code>
      *
      * @return The cargoActualTotal.
      */
@@ -59460,7 +59517,7 @@ public final class LoadableStudy {
       }
     }
     /**
-     * <code>string cargoActualTotal = 26;</code>
+     * <code>string cargoActualTotal = 24;</code>
      *
      * @return The bytes for cargoActualTotal.
      */
@@ -59474,6 +59531,254 @@ public final class LoadableStudy {
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
+    }
+
+    public static final int OHQ_FIELD_NUMBER = 25;
+    private java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord> ohq_;
+    /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+    public java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord>
+        getOhqList() {
+      return ohq_;
+    }
+    /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecordOrBuilder>
+        getOhqOrBuilderList() {
+      return ohq_;
+    }
+    /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+    public int getOhqCount() {
+      return ohq_.size();
+    }
+    /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+    public com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord getOhq(int index) {
+      return ohq_.get(index);
+    }
+    /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+    public com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecordOrBuilder getOhqOrBuilder(
+        int index) {
+      return ohq_.get(index);
+    }
+
+    public static final int FOPLANNEDTOTAL_FIELD_NUMBER = 26;
+    private volatile java.lang.Object foPlannedTotal_;
+    /**
+     * <code>string foPlannedTotal = 26;</code>
+     *
+     * @return The foPlannedTotal.
+     */
+    public java.lang.String getFoPlannedTotal() {
+      java.lang.Object ref = foPlannedTotal_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        foPlannedTotal_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string foPlannedTotal = 26;</code>
+     *
+     * @return The bytes for foPlannedTotal.
+     */
+    public com.google.protobuf.ByteString getFoPlannedTotalBytes() {
+      java.lang.Object ref = foPlannedTotal_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        foPlannedTotal_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int FOACTUALTOTAL_FIELD_NUMBER = 27;
+    private volatile java.lang.Object foActualTotal_;
+    /**
+     * <code>string foActualTotal = 27;</code>
+     *
+     * @return The foActualTotal.
+     */
+    public java.lang.String getFoActualTotal() {
+      java.lang.Object ref = foActualTotal_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        foActualTotal_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string foActualTotal = 27;</code>
+     *
+     * @return The bytes for foActualTotal.
+     */
+    public com.google.protobuf.ByteString getFoActualTotalBytes() {
+      java.lang.Object ref = foActualTotal_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        foActualTotal_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DOPLANNEDTOTAL_FIELD_NUMBER = 28;
+    private volatile java.lang.Object doPlannedTotal_;
+    /**
+     * <code>string doPlannedTotal = 28;</code>
+     *
+     * @return The doPlannedTotal.
+     */
+    public java.lang.String getDoPlannedTotal() {
+      java.lang.Object ref = doPlannedTotal_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        doPlannedTotal_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string doPlannedTotal = 28;</code>
+     *
+     * @return The bytes for doPlannedTotal.
+     */
+    public com.google.protobuf.ByteString getDoPlannedTotalBytes() {
+      java.lang.Object ref = doPlannedTotal_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        doPlannedTotal_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DOACTUALTOTAL_FIELD_NUMBER = 29;
+    private volatile java.lang.Object doActualTotal_;
+    /**
+     * <code>string doActualTotal = 29;</code>
+     *
+     * @return The doActualTotal.
+     */
+    public java.lang.String getDoActualTotal() {
+      java.lang.Object ref = doActualTotal_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        doActualTotal_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string doActualTotal = 29;</code>
+     *
+     * @return The bytes for doActualTotal.
+     */
+    public com.google.protobuf.ByteString getDoActualTotalBytes() {
+      java.lang.Object ref = doActualTotal_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        doActualTotal_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LUBEPLANNEDTOTAL_FIELD_NUMBER = 30;
+    private volatile java.lang.Object lubePlannedTotal_;
+    /**
+     * <code>string lubePlannedTotal = 30;</code>
+     *
+     * @return The lubePlannedTotal.
+     */
+    public java.lang.String getLubePlannedTotal() {
+      java.lang.Object ref = lubePlannedTotal_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lubePlannedTotal_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string lubePlannedTotal = 30;</code>
+     *
+     * @return The bytes for lubePlannedTotal.
+     */
+    public com.google.protobuf.ByteString getLubePlannedTotalBytes() {
+      java.lang.Object ref = lubePlannedTotal_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lubePlannedTotal_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LUBEACTUALTOTAL_FIELD_NUMBER = 31;
+    private volatile java.lang.Object lubeActualTotal_;
+    /**
+     * <code>string lubeActualTotal = 31;</code>
+     *
+     * @return The lubeActualTotal.
+     */
+    public java.lang.String getLubeActualTotal() {
+      java.lang.Object ref = lubeActualTotal_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lubeActualTotal_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string lubeActualTotal = 31;</code>
+     *
+     * @return The bytes for lubeActualTotal.
+     */
+    public com.google.protobuf.ByteString getLubeActualTotalBytes() {
+      java.lang.Object ref = lubeActualTotal_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lubeActualTotal_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PORTORDER_FIELD_NUMBER = 32;
+    private long portOrder_;
+    /**
+     * <code>int64 portOrder = 32;</code>
+     *
+     * @return The portOrder.
+     */
+    public long getPortOrder() {
+      return portOrder_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -59547,26 +59852,44 @@ public final class LoadableStudy {
       if (!getSpecificGravityBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 19, specificGravity_);
       }
-      if (!getEtaActualBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 20, etaActual_);
+      if (!getEtaEtdActualBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 20, etaEtdActual_);
       }
-      if (!getEtdActualBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 21, etdActual_);
-      }
-      if (!getEtaEstimatedBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 22, etaEstimated_);
-      }
-      if (!getEtdEstimatedBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 23, etdEstimated_);
+      if (!getEtaEtdEstimatedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 21, etaEtdEstimated_);
       }
       for (int i = 0; i < cargo_.size(); i++) {
-        output.writeMessage(24, cargo_.get(i));
+        output.writeMessage(22, cargo_.get(i));
       }
       if (!getCargoPlannedTotalBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 25, cargoPlannedTotal_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 23, cargoPlannedTotal_);
       }
       if (!getCargoActualTotalBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 26, cargoActualTotal_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 24, cargoActualTotal_);
+      }
+      for (int i = 0; i < ohq_.size(); i++) {
+        output.writeMessage(25, ohq_.get(i));
+      }
+      if (!getFoPlannedTotalBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 26, foPlannedTotal_);
+      }
+      if (!getFoActualTotalBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 27, foActualTotal_);
+      }
+      if (!getDoPlannedTotalBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 28, doPlannedTotal_);
+      }
+      if (!getDoActualTotalBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 29, doActualTotal_);
+      }
+      if (!getLubePlannedTotalBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 30, lubePlannedTotal_);
+      }
+      if (!getLubeActualTotalBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 31, lubeActualTotal_);
+      }
+      if (portOrder_ != 0L) {
+        output.writeInt64(32, portOrder_);
       }
       unknownFields.writeTo(output);
     }
@@ -59634,26 +59957,44 @@ public final class LoadableStudy {
       if (!getSpecificGravityBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(19, specificGravity_);
       }
-      if (!getEtaActualBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(20, etaActual_);
+      if (!getEtaEtdActualBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(20, etaEtdActual_);
       }
-      if (!getEtdActualBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(21, etdActual_);
-      }
-      if (!getEtaEstimatedBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(22, etaEstimated_);
-      }
-      if (!getEtdEstimatedBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(23, etdEstimated_);
+      if (!getEtaEtdEstimatedBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(21, etaEtdEstimated_);
       }
       for (int i = 0; i < cargo_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream.computeMessageSize(24, cargo_.get(i));
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(22, cargo_.get(i));
       }
       if (!getCargoPlannedTotalBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(25, cargoPlannedTotal_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(23, cargoPlannedTotal_);
       }
       if (!getCargoActualTotalBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(26, cargoActualTotal_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(24, cargoActualTotal_);
+      }
+      for (int i = 0; i < ohq_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(25, ohq_.get(i));
+      }
+      if (!getFoPlannedTotalBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(26, foPlannedTotal_);
+      }
+      if (!getFoActualTotalBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(27, foActualTotal_);
+      }
+      if (!getDoPlannedTotalBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(28, doPlannedTotal_);
+      }
+      if (!getDoActualTotalBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(29, doActualTotal_);
+      }
+      if (!getLubePlannedTotalBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(30, lubePlannedTotal_);
+      }
+      if (!getLubeActualTotalBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(31, lubeActualTotal_);
+      }
+      if (portOrder_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(32, portOrder_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -59690,13 +60031,19 @@ public final class LoadableStudy {
       if (!getLwTideTimeFrom().equals(other.getLwTideTimeFrom())) return false;
       if (!getLwTideTimeTo().equals(other.getLwTideTimeTo())) return false;
       if (!getSpecificGravity().equals(other.getSpecificGravity())) return false;
-      if (!getEtaActual().equals(other.getEtaActual())) return false;
-      if (!getEtdActual().equals(other.getEtdActual())) return false;
-      if (!getEtaEstimated().equals(other.getEtaEstimated())) return false;
-      if (!getEtdEstimated().equals(other.getEtdEstimated())) return false;
+      if (!getEtaEtdActual().equals(other.getEtaEtdActual())) return false;
+      if (!getEtaEtdEstimated().equals(other.getEtaEtdEstimated())) return false;
       if (!getCargoList().equals(other.getCargoList())) return false;
       if (!getCargoPlannedTotal().equals(other.getCargoPlannedTotal())) return false;
       if (!getCargoActualTotal().equals(other.getCargoActualTotal())) return false;
+      if (!getOhqList().equals(other.getOhqList())) return false;
+      if (!getFoPlannedTotal().equals(other.getFoPlannedTotal())) return false;
+      if (!getFoActualTotal().equals(other.getFoActualTotal())) return false;
+      if (!getDoPlannedTotal().equals(other.getDoPlannedTotal())) return false;
+      if (!getDoActualTotal().equals(other.getDoActualTotal())) return false;
+      if (!getLubePlannedTotal().equals(other.getLubePlannedTotal())) return false;
+      if (!getLubeActualTotal().equals(other.getLubeActualTotal())) return false;
+      if (getPortOrder() != other.getPortOrder()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -59746,14 +60093,10 @@ public final class LoadableStudy {
       hash = (53 * hash) + getLwTideTimeTo().hashCode();
       hash = (37 * hash) + SPECIFICGRAVITY_FIELD_NUMBER;
       hash = (53 * hash) + getSpecificGravity().hashCode();
-      hash = (37 * hash) + ETAACTUAL_FIELD_NUMBER;
-      hash = (53 * hash) + getEtaActual().hashCode();
-      hash = (37 * hash) + ETDACTUAL_FIELD_NUMBER;
-      hash = (53 * hash) + getEtdActual().hashCode();
-      hash = (37 * hash) + ETAESTIMATED_FIELD_NUMBER;
-      hash = (53 * hash) + getEtaEstimated().hashCode();
-      hash = (37 * hash) + ETDESTIMATED_FIELD_NUMBER;
-      hash = (53 * hash) + getEtdEstimated().hashCode();
+      hash = (37 * hash) + ETAETDACTUAL_FIELD_NUMBER;
+      hash = (53 * hash) + getEtaEtdActual().hashCode();
+      hash = (37 * hash) + ETAETDESTIMATED_FIELD_NUMBER;
+      hash = (53 * hash) + getEtaEtdEstimated().hashCode();
       if (getCargoCount() > 0) {
         hash = (37 * hash) + CARGO_FIELD_NUMBER;
         hash = (53 * hash) + getCargoList().hashCode();
@@ -59762,6 +60105,24 @@ public final class LoadableStudy {
       hash = (53 * hash) + getCargoPlannedTotal().hashCode();
       hash = (37 * hash) + CARGOACTUALTOTAL_FIELD_NUMBER;
       hash = (53 * hash) + getCargoActualTotal().hashCode();
+      if (getOhqCount() > 0) {
+        hash = (37 * hash) + OHQ_FIELD_NUMBER;
+        hash = (53 * hash) + getOhqList().hashCode();
+      }
+      hash = (37 * hash) + FOPLANNEDTOTAL_FIELD_NUMBER;
+      hash = (53 * hash) + getFoPlannedTotal().hashCode();
+      hash = (37 * hash) + FOACTUALTOTAL_FIELD_NUMBER;
+      hash = (53 * hash) + getFoActualTotal().hashCode();
+      hash = (37 * hash) + DOPLANNEDTOTAL_FIELD_NUMBER;
+      hash = (53 * hash) + getDoPlannedTotal().hashCode();
+      hash = (37 * hash) + DOACTUALTOTAL_FIELD_NUMBER;
+      hash = (53 * hash) + getDoActualTotal().hashCode();
+      hash = (37 * hash) + LUBEPLANNEDTOTAL_FIELD_NUMBER;
+      hash = (53 * hash) + getLubePlannedTotal().hashCode();
+      hash = (37 * hash) + LUBEACTUALTOTAL_FIELD_NUMBER;
+      hash = (53 * hash) + getLubeActualTotal().hashCode();
+      hash = (37 * hash) + PORTORDER_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortOrder());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -59897,6 +60258,7 @@ public final class LoadableStudy {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
           getCargoFieldBuilder();
+          getOhqFieldBuilder();
         }
       }
 
@@ -59941,13 +60303,9 @@ public final class LoadableStudy {
 
         specificGravity_ = "";
 
-        etaActual_ = "";
+        etaEtdActual_ = "";
 
-        etdActual_ = "";
-
-        etaEstimated_ = "";
-
-        etdEstimated_ = "";
+        etaEtdEstimated_ = "";
 
         if (cargoBuilder_ == null) {
           cargo_ = java.util.Collections.emptyList();
@@ -59958,6 +60316,26 @@ public final class LoadableStudy {
         cargoPlannedTotal_ = "";
 
         cargoActualTotal_ = "";
+
+        if (ohqBuilder_ == null) {
+          ohq_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        } else {
+          ohqBuilder_.clear();
+        }
+        foPlannedTotal_ = "";
+
+        foActualTotal_ = "";
+
+        doPlannedTotal_ = "";
+
+        doActualTotal_ = "";
+
+        lubePlannedTotal_ = "";
+
+        lubeActualTotal_ = "";
+
+        portOrder_ = 0L;
 
         return this;
       }
@@ -60005,10 +60383,8 @@ public final class LoadableStudy {
         result.lwTideTimeFrom_ = lwTideTimeFrom_;
         result.lwTideTimeTo_ = lwTideTimeTo_;
         result.specificGravity_ = specificGravity_;
-        result.etaActual_ = etaActual_;
-        result.etdActual_ = etdActual_;
-        result.etaEstimated_ = etaEstimated_;
-        result.etdEstimated_ = etdEstimated_;
+        result.etaEtdActual_ = etaEtdActual_;
+        result.etaEtdEstimated_ = etaEtdEstimated_;
         if (cargoBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             cargo_ = java.util.Collections.unmodifiableList(cargo_);
@@ -60020,6 +60396,22 @@ public final class LoadableStudy {
         }
         result.cargoPlannedTotal_ = cargoPlannedTotal_;
         result.cargoActualTotal_ = cargoActualTotal_;
+        if (ohqBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0)) {
+            ohq_ = java.util.Collections.unmodifiableList(ohq_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.ohq_ = ohq_;
+        } else {
+          result.ohq_ = ohqBuilder_.build();
+        }
+        result.foPlannedTotal_ = foPlannedTotal_;
+        result.foActualTotal_ = foActualTotal_;
+        result.doPlannedTotal_ = doPlannedTotal_;
+        result.doActualTotal_ = doActualTotal_;
+        result.lubePlannedTotal_ = lubePlannedTotal_;
+        result.lubeActualTotal_ = lubeActualTotal_;
+        result.portOrder_ = portOrder_;
         onBuilt();
         return result;
       }
@@ -60146,20 +60538,12 @@ public final class LoadableStudy {
           specificGravity_ = other.specificGravity_;
           onChanged();
         }
-        if (!other.getEtaActual().isEmpty()) {
-          etaActual_ = other.etaActual_;
+        if (!other.getEtaEtdActual().isEmpty()) {
+          etaEtdActual_ = other.etaEtdActual_;
           onChanged();
         }
-        if (!other.getEtdActual().isEmpty()) {
-          etdActual_ = other.etdActual_;
-          onChanged();
-        }
-        if (!other.getEtaEstimated().isEmpty()) {
-          etaEstimated_ = other.etaEstimated_;
-          onChanged();
-        }
-        if (!other.getEtdEstimated().isEmpty()) {
-          etdEstimated_ = other.etdEstimated_;
+        if (!other.getEtaEtdEstimated().isEmpty()) {
+          etaEtdEstimated_ = other.etaEtdEstimated_;
           onChanged();
         }
         if (cargoBuilder_ == null) {
@@ -60196,6 +60580,60 @@ public final class LoadableStudy {
         if (!other.getCargoActualTotal().isEmpty()) {
           cargoActualTotal_ = other.cargoActualTotal_;
           onChanged();
+        }
+        if (ohqBuilder_ == null) {
+          if (!other.ohq_.isEmpty()) {
+            if (ohq_.isEmpty()) {
+              ohq_ = other.ohq_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureOhqIsMutable();
+              ohq_.addAll(other.ohq_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.ohq_.isEmpty()) {
+            if (ohqBuilder_.isEmpty()) {
+              ohqBuilder_.dispose();
+              ohqBuilder_ = null;
+              ohq_ = other.ohq_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              ohqBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getOhqFieldBuilder()
+                      : null;
+            } else {
+              ohqBuilder_.addAllMessages(other.ohq_);
+            }
+          }
+        }
+        if (!other.getFoPlannedTotal().isEmpty()) {
+          foPlannedTotal_ = other.foPlannedTotal_;
+          onChanged();
+        }
+        if (!other.getFoActualTotal().isEmpty()) {
+          foActualTotal_ = other.foActualTotal_;
+          onChanged();
+        }
+        if (!other.getDoPlannedTotal().isEmpty()) {
+          doPlannedTotal_ = other.doPlannedTotal_;
+          onChanged();
+        }
+        if (!other.getDoActualTotal().isEmpty()) {
+          doActualTotal_ = other.doActualTotal_;
+          onChanged();
+        }
+        if (!other.getLubePlannedTotal().isEmpty()) {
+          lubePlannedTotal_ = other.lubePlannedTotal_;
+          onChanged();
+        }
+        if (!other.getLubeActualTotal().isEmpty()) {
+          lubeActualTotal_ = other.lubeActualTotal_;
+          onChanged();
+        }
+        if (other.getPortOrder() != 0L) {
+          setPortOrder(other.getPortOrder());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -61587,306 +62025,154 @@ public final class LoadableStudy {
         return this;
       }
 
-      private java.lang.Object etaActual_ = "";
+      private java.lang.Object etaEtdActual_ = "";
       /**
-       * <code>string etaActual = 20;</code>
+       * <code>string etaEtdActual = 20;</code>
        *
-       * @return The etaActual.
+       * @return The etaEtdActual.
        */
-      public java.lang.String getEtaActual() {
-        java.lang.Object ref = etaActual_;
+      public java.lang.String getEtaEtdActual() {
+        java.lang.Object ref = etaEtdActual_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          etaActual_ = s;
+          etaEtdActual_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string etaActual = 20;</code>
+       * <code>string etaEtdActual = 20;</code>
        *
-       * @return The bytes for etaActual.
+       * @return The bytes for etaEtdActual.
        */
-      public com.google.protobuf.ByteString getEtaActualBytes() {
-        java.lang.Object ref = etaActual_;
+      public com.google.protobuf.ByteString getEtaEtdActualBytes() {
+        java.lang.Object ref = etaEtdActual_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          etaActual_ = b;
+          etaEtdActual_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string etaActual = 20;</code>
+       * <code>string etaEtdActual = 20;</code>
        *
-       * @param value The etaActual to set.
+       * @param value The etaEtdActual to set.
        * @return This builder for chaining.
        */
-      public Builder setEtaActual(java.lang.String value) {
+      public Builder setEtaEtdActual(java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
 
-        etaActual_ = value;
+        etaEtdActual_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string etaActual = 20;</code>
+       * <code>string etaEtdActual = 20;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearEtaActual() {
+      public Builder clearEtaEtdActual() {
 
-        etaActual_ = getDefaultInstance().getEtaActual();
+        etaEtdActual_ = getDefaultInstance().getEtaEtdActual();
         onChanged();
         return this;
       }
       /**
-       * <code>string etaActual = 20;</code>
+       * <code>string etaEtdActual = 20;</code>
        *
-       * @param value The bytes for etaActual to set.
+       * @param value The bytes for etaEtdActual to set.
        * @return This builder for chaining.
        */
-      public Builder setEtaActualBytes(com.google.protobuf.ByteString value) {
+      public Builder setEtaEtdActualBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
 
-        etaActual_ = value;
+        etaEtdActual_ = value;
         onChanged();
         return this;
       }
 
-      private java.lang.Object etdActual_ = "";
+      private java.lang.Object etaEtdEstimated_ = "";
       /**
-       * <code>string etdActual = 21;</code>
+       * <code>string etaEtdEstimated = 21;</code>
        *
-       * @return The etdActual.
+       * @return The etaEtdEstimated.
        */
-      public java.lang.String getEtdActual() {
-        java.lang.Object ref = etdActual_;
+      public java.lang.String getEtaEtdEstimated() {
+        java.lang.Object ref = etaEtdEstimated_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          etdActual_ = s;
+          etaEtdEstimated_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string etdActual = 21;</code>
+       * <code>string etaEtdEstimated = 21;</code>
        *
-       * @return The bytes for etdActual.
+       * @return The bytes for etaEtdEstimated.
        */
-      public com.google.protobuf.ByteString getEtdActualBytes() {
-        java.lang.Object ref = etdActual_;
+      public com.google.protobuf.ByteString getEtaEtdEstimatedBytes() {
+        java.lang.Object ref = etaEtdEstimated_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          etdActual_ = b;
+          etaEtdEstimated_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string etdActual = 21;</code>
+       * <code>string etaEtdEstimated = 21;</code>
        *
-       * @param value The etdActual to set.
+       * @param value The etaEtdEstimated to set.
        * @return This builder for chaining.
        */
-      public Builder setEtdActual(java.lang.String value) {
+      public Builder setEtaEtdEstimated(java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
 
-        etdActual_ = value;
+        etaEtdEstimated_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string etdActual = 21;</code>
+       * <code>string etaEtdEstimated = 21;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearEtdActual() {
+      public Builder clearEtaEtdEstimated() {
 
-        etdActual_ = getDefaultInstance().getEtdActual();
+        etaEtdEstimated_ = getDefaultInstance().getEtaEtdEstimated();
         onChanged();
         return this;
       }
       /**
-       * <code>string etdActual = 21;</code>
+       * <code>string etaEtdEstimated = 21;</code>
        *
-       * @param value The bytes for etdActual to set.
+       * @param value The bytes for etaEtdEstimated to set.
        * @return This builder for chaining.
        */
-      public Builder setEtdActualBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        etdActual_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object etaEstimated_ = "";
-      /**
-       * <code>string etaEstimated = 22;</code>
-       *
-       * @return The etaEstimated.
-       */
-      public java.lang.String getEtaEstimated() {
-        java.lang.Object ref = etaEstimated_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          etaEstimated_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string etaEstimated = 22;</code>
-       *
-       * @return The bytes for etaEstimated.
-       */
-      public com.google.protobuf.ByteString getEtaEstimatedBytes() {
-        java.lang.Object ref = etaEstimated_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          etaEstimated_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string etaEstimated = 22;</code>
-       *
-       * @param value The etaEstimated to set.
-       * @return This builder for chaining.
-       */
-      public Builder setEtaEstimated(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        etaEstimated_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string etaEstimated = 22;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearEtaEstimated() {
-
-        etaEstimated_ = getDefaultInstance().getEtaEstimated();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string etaEstimated = 22;</code>
-       *
-       * @param value The bytes for etaEstimated to set.
-       * @return This builder for chaining.
-       */
-      public Builder setEtaEstimatedBytes(com.google.protobuf.ByteString value) {
+      public Builder setEtaEtdEstimatedBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
 
-        etaEstimated_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object etdEstimated_ = "";
-      /**
-       * <code>string etdEstimated = 23;</code>
-       *
-       * @return The etdEstimated.
-       */
-      public java.lang.String getEtdEstimated() {
-        java.lang.Object ref = etdEstimated_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          etdEstimated_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string etdEstimated = 23;</code>
-       *
-       * @return The bytes for etdEstimated.
-       */
-      public com.google.protobuf.ByteString getEtdEstimatedBytes() {
-        java.lang.Object ref = etdEstimated_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          etdEstimated_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string etdEstimated = 23;</code>
-       *
-       * @param value The etdEstimated to set.
-       * @return This builder for chaining.
-       */
-      public Builder setEtdEstimated(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        etdEstimated_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string etdEstimated = 23;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearEtdEstimated() {
-
-        etdEstimated_ = getDefaultInstance().getEtdEstimated();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string etdEstimated = 23;</code>
-       *
-       * @param value The bytes for etdEstimated to set.
-       * @return This builder for chaining.
-       */
-      public Builder setEtdEstimatedBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        etdEstimated_ = value;
+        etaEtdEstimated_ = value;
         onChanged();
         return this;
       }
@@ -61909,7 +62195,7 @@ public final class LoadableStudy {
               com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecordOrBuilder>
           cargoBuilder_;
 
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord>
           getCargoList() {
         if (cargoBuilder_ == null) {
@@ -61918,7 +62204,7 @@ public final class LoadableStudy {
           return cargoBuilder_.getMessageList();
         }
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public int getCargoCount() {
         if (cargoBuilder_ == null) {
           return cargo_.size();
@@ -61926,7 +62212,7 @@ public final class LoadableStudy {
           return cargoBuilder_.getCount();
         }
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord getCargo(int index) {
         if (cargoBuilder_ == null) {
           return cargo_.get(index);
@@ -61934,7 +62220,7 @@ public final class LoadableStudy {
           return cargoBuilder_.getMessage(index);
         }
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public Builder setCargo(
           int index, com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord value) {
         if (cargoBuilder_ == null) {
@@ -61949,7 +62235,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public Builder setCargo(
           int index,
           com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord.Builder builderForValue) {
@@ -61962,7 +62248,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public Builder addCargo(
           com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord value) {
         if (cargoBuilder_ == null) {
@@ -61977,7 +62263,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public Builder addCargo(
           int index, com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord value) {
         if (cargoBuilder_ == null) {
@@ -61992,7 +62278,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public Builder addCargo(
           com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord.Builder builderForValue) {
         if (cargoBuilder_ == null) {
@@ -62004,7 +62290,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public Builder addCargo(
           int index,
           com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord.Builder builderForValue) {
@@ -62017,7 +62303,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public Builder addAllCargo(
           java.lang.Iterable<
                   ? extends com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord>
@@ -62031,7 +62317,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public Builder clearCargo() {
         if (cargoBuilder_ == null) {
           cargo_ = java.util.Collections.emptyList();
@@ -62042,7 +62328,7 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public Builder removeCargo(int index) {
         if (cargoBuilder_ == null) {
           ensureCargoIsMutable();
@@ -62053,12 +62339,12 @@ public final class LoadableStudy {
         }
         return this;
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord.Builder getCargoBuilder(
           int index) {
         return getCargoFieldBuilder().getBuilder(index);
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecordOrBuilder
           getCargoOrBuilder(int index) {
         if (cargoBuilder_ == null) {
@@ -62067,7 +62353,7 @@ public final class LoadableStudy {
           return cargoBuilder_.getMessageOrBuilder(index);
         }
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public java.util.List<
               ? extends com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecordOrBuilder>
           getCargoOrBuilderList() {
@@ -62077,7 +62363,7 @@ public final class LoadableStudy {
           return java.util.Collections.unmodifiableList(cargo_);
         }
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord.Builder
           addCargoBuilder() {
         return getCargoFieldBuilder()
@@ -62085,7 +62371,7 @@ public final class LoadableStudy {
                 com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord
                     .getDefaultInstance());
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord.Builder addCargoBuilder(
           int index) {
         return getCargoFieldBuilder()
@@ -62094,7 +62380,7 @@ public final class LoadableStudy {
                 com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord
                     .getDefaultInstance());
       }
-      /** <code>repeated .SynopticalCargoRecord cargo = 24;</code> */
+      /** <code>repeated .SynopticalCargoRecord cargo = 22;</code> */
       public java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord.Builder>
           getCargoBuilderList() {
         return getCargoFieldBuilder().getBuilderList();
@@ -62119,7 +62405,7 @@ public final class LoadableStudy {
 
       private java.lang.Object cargoPlannedTotal_ = "";
       /**
-       * <code>string cargoPlannedTotal = 25;</code>
+       * <code>string cargoPlannedTotal = 23;</code>
        *
        * @return The cargoPlannedTotal.
        */
@@ -62135,7 +62421,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string cargoPlannedTotal = 25;</code>
+       * <code>string cargoPlannedTotal = 23;</code>
        *
        * @return The bytes for cargoPlannedTotal.
        */
@@ -62151,7 +62437,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string cargoPlannedTotal = 25;</code>
+       * <code>string cargoPlannedTotal = 23;</code>
        *
        * @param value The cargoPlannedTotal to set.
        * @return This builder for chaining.
@@ -62166,7 +62452,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string cargoPlannedTotal = 25;</code>
+       * <code>string cargoPlannedTotal = 23;</code>
        *
        * @return This builder for chaining.
        */
@@ -62177,7 +62463,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string cargoPlannedTotal = 25;</code>
+       * <code>string cargoPlannedTotal = 23;</code>
        *
        * @param value The bytes for cargoPlannedTotal to set.
        * @return This builder for chaining.
@@ -62195,7 +62481,7 @@ public final class LoadableStudy {
 
       private java.lang.Object cargoActualTotal_ = "";
       /**
-       * <code>string cargoActualTotal = 26;</code>
+       * <code>string cargoActualTotal = 24;</code>
        *
        * @return The cargoActualTotal.
        */
@@ -62211,7 +62497,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string cargoActualTotal = 26;</code>
+       * <code>string cargoActualTotal = 24;</code>
        *
        * @return The bytes for cargoActualTotal.
        */
@@ -62227,7 +62513,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string cargoActualTotal = 26;</code>
+       * <code>string cargoActualTotal = 24;</code>
        *
        * @param value The cargoActualTotal to set.
        * @return This builder for chaining.
@@ -62242,7 +62528,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string cargoActualTotal = 26;</code>
+       * <code>string cargoActualTotal = 24;</code>
        *
        * @return This builder for chaining.
        */
@@ -62253,7 +62539,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string cargoActualTotal = 26;</code>
+       * <code>string cargoActualTotal = 24;</code>
        *
        * @param value The bytes for cargoActualTotal to set.
        * @return This builder for chaining.
@@ -62265,6 +62551,716 @@ public final class LoadableStudy {
         checkByteStringIsUtf8(value);
 
         cargoActualTotal_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord> ohq_ =
+          java.util.Collections.emptyList();
+
+      private void ensureOhqIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          ohq_ =
+              new java.util.ArrayList<com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord>(
+                  ohq_);
+          bitField0_ |= 0x00000002;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord,
+              com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.Builder,
+              com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecordOrBuilder>
+          ohqBuilder_;
+
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord>
+          getOhqList() {
+        if (ohqBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(ohq_);
+        } else {
+          return ohqBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public int getOhqCount() {
+        if (ohqBuilder_ == null) {
+          return ohq_.size();
+        } else {
+          return ohqBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord getOhq(int index) {
+        if (ohqBuilder_ == null) {
+          return ohq_.get(index);
+        } else {
+          return ohqBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public Builder setOhq(
+          int index, com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord value) {
+        if (ohqBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureOhqIsMutable();
+          ohq_.set(index, value);
+          onChanged();
+        } else {
+          ohqBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public Builder setOhq(
+          int index,
+          com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.Builder builderForValue) {
+        if (ohqBuilder_ == null) {
+          ensureOhqIsMutable();
+          ohq_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          ohqBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public Builder addOhq(com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord value) {
+        if (ohqBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureOhqIsMutable();
+          ohq_.add(value);
+          onChanged();
+        } else {
+          ohqBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public Builder addOhq(
+          int index, com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord value) {
+        if (ohqBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureOhqIsMutable();
+          ohq_.add(index, value);
+          onChanged();
+        } else {
+          ohqBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public Builder addOhq(
+          com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.Builder builderForValue) {
+        if (ohqBuilder_ == null) {
+          ensureOhqIsMutable();
+          ohq_.add(builderForValue.build());
+          onChanged();
+        } else {
+          ohqBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public Builder addOhq(
+          int index,
+          com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.Builder builderForValue) {
+        if (ohqBuilder_ == null) {
+          ensureOhqIsMutable();
+          ohq_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          ohqBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public Builder addAllOhq(
+          java.lang.Iterable<? extends com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord>
+              values) {
+        if (ohqBuilder_ == null) {
+          ensureOhqIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, ohq_);
+          onChanged();
+        } else {
+          ohqBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public Builder clearOhq() {
+        if (ohqBuilder_ == null) {
+          ohq_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          ohqBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public Builder removeOhq(int index) {
+        if (ohqBuilder_ == null) {
+          ensureOhqIsMutable();
+          ohq_.remove(index);
+          onChanged();
+        } else {
+          ohqBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.Builder getOhqBuilder(
+          int index) {
+        return getOhqFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecordOrBuilder getOhqOrBuilder(
+          int index) {
+        if (ohqBuilder_ == null) {
+          return ohq_.get(index);
+        } else {
+          return ohqBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecordOrBuilder>
+          getOhqOrBuilderList() {
+        if (ohqBuilder_ != null) {
+          return ohqBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(ohq_);
+        }
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.Builder addOhqBuilder() {
+        return getOhqFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.getDefaultInstance());
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.Builder addOhqBuilder(
+          int index) {
+        return getOhqFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.getDefaultInstance());
+      }
+      /** <code>repeated .SynopticalOhqRecord ohq = 25;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.Builder>
+          getOhqBuilderList() {
+        return getOhqFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord,
+              com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.Builder,
+              com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecordOrBuilder>
+          getOhqFieldBuilder() {
+        if (ohqBuilder_ == null) {
+          ohqBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord,
+                  com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.Builder,
+                  com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecordOrBuilder>(
+                  ohq_, ((bitField0_ & 0x00000002) != 0), getParentForChildren(), isClean());
+          ohq_ = null;
+        }
+        return ohqBuilder_;
+      }
+
+      private java.lang.Object foPlannedTotal_ = "";
+      /**
+       * <code>string foPlannedTotal = 26;</code>
+       *
+       * @return The foPlannedTotal.
+       */
+      public java.lang.String getFoPlannedTotal() {
+        java.lang.Object ref = foPlannedTotal_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          foPlannedTotal_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string foPlannedTotal = 26;</code>
+       *
+       * @return The bytes for foPlannedTotal.
+       */
+      public com.google.protobuf.ByteString getFoPlannedTotalBytes() {
+        java.lang.Object ref = foPlannedTotal_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          foPlannedTotal_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string foPlannedTotal = 26;</code>
+       *
+       * @param value The foPlannedTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFoPlannedTotal(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        foPlannedTotal_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string foPlannedTotal = 26;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearFoPlannedTotal() {
+
+        foPlannedTotal_ = getDefaultInstance().getFoPlannedTotal();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string foPlannedTotal = 26;</code>
+       *
+       * @param value The bytes for foPlannedTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFoPlannedTotalBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        foPlannedTotal_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object foActualTotal_ = "";
+      /**
+       * <code>string foActualTotal = 27;</code>
+       *
+       * @return The foActualTotal.
+       */
+      public java.lang.String getFoActualTotal() {
+        java.lang.Object ref = foActualTotal_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          foActualTotal_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string foActualTotal = 27;</code>
+       *
+       * @return The bytes for foActualTotal.
+       */
+      public com.google.protobuf.ByteString getFoActualTotalBytes() {
+        java.lang.Object ref = foActualTotal_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          foActualTotal_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string foActualTotal = 27;</code>
+       *
+       * @param value The foActualTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFoActualTotal(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        foActualTotal_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string foActualTotal = 27;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearFoActualTotal() {
+
+        foActualTotal_ = getDefaultInstance().getFoActualTotal();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string foActualTotal = 27;</code>
+       *
+       * @param value The bytes for foActualTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFoActualTotalBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        foActualTotal_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object doPlannedTotal_ = "";
+      /**
+       * <code>string doPlannedTotal = 28;</code>
+       *
+       * @return The doPlannedTotal.
+       */
+      public java.lang.String getDoPlannedTotal() {
+        java.lang.Object ref = doPlannedTotal_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          doPlannedTotal_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string doPlannedTotal = 28;</code>
+       *
+       * @return The bytes for doPlannedTotal.
+       */
+      public com.google.protobuf.ByteString getDoPlannedTotalBytes() {
+        java.lang.Object ref = doPlannedTotal_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          doPlannedTotal_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string doPlannedTotal = 28;</code>
+       *
+       * @param value The doPlannedTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDoPlannedTotal(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        doPlannedTotal_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string doPlannedTotal = 28;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDoPlannedTotal() {
+
+        doPlannedTotal_ = getDefaultInstance().getDoPlannedTotal();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string doPlannedTotal = 28;</code>
+       *
+       * @param value The bytes for doPlannedTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDoPlannedTotalBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        doPlannedTotal_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object doActualTotal_ = "";
+      /**
+       * <code>string doActualTotal = 29;</code>
+       *
+       * @return The doActualTotal.
+       */
+      public java.lang.String getDoActualTotal() {
+        java.lang.Object ref = doActualTotal_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          doActualTotal_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string doActualTotal = 29;</code>
+       *
+       * @return The bytes for doActualTotal.
+       */
+      public com.google.protobuf.ByteString getDoActualTotalBytes() {
+        java.lang.Object ref = doActualTotal_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          doActualTotal_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string doActualTotal = 29;</code>
+       *
+       * @param value The doActualTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDoActualTotal(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        doActualTotal_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string doActualTotal = 29;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDoActualTotal() {
+
+        doActualTotal_ = getDefaultInstance().getDoActualTotal();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string doActualTotal = 29;</code>
+       *
+       * @param value The bytes for doActualTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDoActualTotalBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        doActualTotal_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lubePlannedTotal_ = "";
+      /**
+       * <code>string lubePlannedTotal = 30;</code>
+       *
+       * @return The lubePlannedTotal.
+       */
+      public java.lang.String getLubePlannedTotal() {
+        java.lang.Object ref = lubePlannedTotal_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lubePlannedTotal_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string lubePlannedTotal = 30;</code>
+       *
+       * @return The bytes for lubePlannedTotal.
+       */
+      public com.google.protobuf.ByteString getLubePlannedTotalBytes() {
+        java.lang.Object ref = lubePlannedTotal_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          lubePlannedTotal_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string lubePlannedTotal = 30;</code>
+       *
+       * @param value The lubePlannedTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLubePlannedTotal(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        lubePlannedTotal_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lubePlannedTotal = 30;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLubePlannedTotal() {
+
+        lubePlannedTotal_ = getDefaultInstance().getLubePlannedTotal();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lubePlannedTotal = 30;</code>
+       *
+       * @param value The bytes for lubePlannedTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLubePlannedTotalBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        lubePlannedTotal_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lubeActualTotal_ = "";
+      /**
+       * <code>string lubeActualTotal = 31;</code>
+       *
+       * @return The lubeActualTotal.
+       */
+      public java.lang.String getLubeActualTotal() {
+        java.lang.Object ref = lubeActualTotal_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lubeActualTotal_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string lubeActualTotal = 31;</code>
+       *
+       * @return The bytes for lubeActualTotal.
+       */
+      public com.google.protobuf.ByteString getLubeActualTotalBytes() {
+        java.lang.Object ref = lubeActualTotal_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          lubeActualTotal_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string lubeActualTotal = 31;</code>
+       *
+       * @param value The lubeActualTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLubeActualTotal(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        lubeActualTotal_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lubeActualTotal = 31;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLubeActualTotal() {
+
+        lubeActualTotal_ = getDefaultInstance().getLubeActualTotal();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lubeActualTotal = 31;</code>
+       *
+       * @param value The bytes for lubeActualTotal to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLubeActualTotalBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        lubeActualTotal_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long portOrder_;
+      /**
+       * <code>int64 portOrder = 32;</code>
+       *
+       * @return The portOrder.
+       */
+      public long getPortOrder() {
+        return portOrder_;
+      }
+      /**
+       * <code>int64 portOrder = 32;</code>
+       *
+       * @param value The portOrder to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortOrder(long value) {
+
+        portOrder_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portOrder = 32;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortOrder() {
+
+        portOrder_ = 0L;
         onChanged();
         return this;
       }
@@ -63271,6 +64267,1179 @@ public final class LoadableStudy {
 
     @java.lang.Override
     public com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface SynopticalOhqRecordOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:SynopticalOhqRecord)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 tankId = 1;</code>
+     *
+     * @return The tankId.
+     */
+    long getTankId();
+
+    /**
+     * <code>string tankName = 2;</code>
+     *
+     * @return The tankName.
+     */
+    java.lang.String getTankName();
+    /**
+     * <code>string tankName = 2;</code>
+     *
+     * @return The bytes for tankName.
+     */
+    com.google.protobuf.ByteString getTankNameBytes();
+
+    /**
+     * <code>string plannedWeight = 3;</code>
+     *
+     * @return The plannedWeight.
+     */
+    java.lang.String getPlannedWeight();
+    /**
+     * <code>string plannedWeight = 3;</code>
+     *
+     * @return The bytes for plannedWeight.
+     */
+    com.google.protobuf.ByteString getPlannedWeightBytes();
+
+    /**
+     * <code>string actualWeight = 4;</code>
+     *
+     * @return The actualWeight.
+     */
+    java.lang.String getActualWeight();
+    /**
+     * <code>string actualWeight = 4;</code>
+     *
+     * @return The bytes for actualWeight.
+     */
+    com.google.protobuf.ByteString getActualWeightBytes();
+
+    /**
+     * <code>int64 fuelTypeId = 5;</code>
+     *
+     * @return The fuelTypeId.
+     */
+    long getFuelTypeId();
+
+    /**
+     * <code>string fuelType = 6;</code>
+     *
+     * @return The fuelType.
+     */
+    java.lang.String getFuelType();
+    /**
+     * <code>string fuelType = 6;</code>
+     *
+     * @return The bytes for fuelType.
+     */
+    com.google.protobuf.ByteString getFuelTypeBytes();
+  }
+  /** Protobuf type {@code SynopticalOhqRecord} */
+  public static final class SynopticalOhqRecord extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:SynopticalOhqRecord)
+      SynopticalOhqRecordOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use SynopticalOhqRecord.newBuilder() to construct.
+    private SynopticalOhqRecord(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private SynopticalOhqRecord() {
+      tankName_ = "";
+      plannedWeight_ = "";
+      actualWeight_ = "";
+      fuelType_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new SynopticalOhqRecord();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private SynopticalOhqRecord(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                tankId_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                tankName_ = s;
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                plannedWeight_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                actualWeight_ = s;
+                break;
+              }
+            case 40:
+              {
+                fuelTypeId_ = input.readInt64();
+                break;
+              }
+            case 50:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                fuelType_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_SynopticalOhqRecord_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_SynopticalOhqRecord_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.class,
+              com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.Builder.class);
+    }
+
+    public static final int TANKID_FIELD_NUMBER = 1;
+    private long tankId_;
+    /**
+     * <code>int64 tankId = 1;</code>
+     *
+     * @return The tankId.
+     */
+    public long getTankId() {
+      return tankId_;
+    }
+
+    public static final int TANKNAME_FIELD_NUMBER = 2;
+    private volatile java.lang.Object tankName_;
+    /**
+     * <code>string tankName = 2;</code>
+     *
+     * @return The tankName.
+     */
+    public java.lang.String getTankName() {
+      java.lang.Object ref = tankName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        tankName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string tankName = 2;</code>
+     *
+     * @return The bytes for tankName.
+     */
+    public com.google.protobuf.ByteString getTankNameBytes() {
+      java.lang.Object ref = tankName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        tankName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PLANNEDWEIGHT_FIELD_NUMBER = 3;
+    private volatile java.lang.Object plannedWeight_;
+    /**
+     * <code>string plannedWeight = 3;</code>
+     *
+     * @return The plannedWeight.
+     */
+    public java.lang.String getPlannedWeight() {
+      java.lang.Object ref = plannedWeight_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        plannedWeight_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string plannedWeight = 3;</code>
+     *
+     * @return The bytes for plannedWeight.
+     */
+    public com.google.protobuf.ByteString getPlannedWeightBytes() {
+      java.lang.Object ref = plannedWeight_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        plannedWeight_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ACTUALWEIGHT_FIELD_NUMBER = 4;
+    private volatile java.lang.Object actualWeight_;
+    /**
+     * <code>string actualWeight = 4;</code>
+     *
+     * @return The actualWeight.
+     */
+    public java.lang.String getActualWeight() {
+      java.lang.Object ref = actualWeight_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        actualWeight_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string actualWeight = 4;</code>
+     *
+     * @return The bytes for actualWeight.
+     */
+    public com.google.protobuf.ByteString getActualWeightBytes() {
+      java.lang.Object ref = actualWeight_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        actualWeight_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int FUELTYPEID_FIELD_NUMBER = 5;
+    private long fuelTypeId_;
+    /**
+     * <code>int64 fuelTypeId = 5;</code>
+     *
+     * @return The fuelTypeId.
+     */
+    public long getFuelTypeId() {
+      return fuelTypeId_;
+    }
+
+    public static final int FUELTYPE_FIELD_NUMBER = 6;
+    private volatile java.lang.Object fuelType_;
+    /**
+     * <code>string fuelType = 6;</code>
+     *
+     * @return The fuelType.
+     */
+    public java.lang.String getFuelType() {
+      java.lang.Object ref = fuelType_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        fuelType_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string fuelType = 6;</code>
+     *
+     * @return The bytes for fuelType.
+     */
+    public com.google.protobuf.ByteString getFuelTypeBytes() {
+      java.lang.Object ref = fuelType_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        fuelType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (tankId_ != 0L) {
+        output.writeInt64(1, tankId_);
+      }
+      if (!getTankNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, tankName_);
+      }
+      if (!getPlannedWeightBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, plannedWeight_);
+      }
+      if (!getActualWeightBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, actualWeight_);
+      }
+      if (fuelTypeId_ != 0L) {
+        output.writeInt64(5, fuelTypeId_);
+      }
+      if (!getFuelTypeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, fuelType_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (tankId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, tankId_);
+      }
+      if (!getTankNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, tankName_);
+      }
+      if (!getPlannedWeightBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, plannedWeight_);
+      }
+      if (!getActualWeightBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, actualWeight_);
+      }
+      if (fuelTypeId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, fuelTypeId_);
+      }
+      if (!getFuelTypeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, fuelType_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord other =
+          (com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord) obj;
+
+      if (getTankId() != other.getTankId()) return false;
+      if (!getTankName().equals(other.getTankName())) return false;
+      if (!getPlannedWeight().equals(other.getPlannedWeight())) return false;
+      if (!getActualWeight().equals(other.getActualWeight())) return false;
+      if (getFuelTypeId() != other.getFuelTypeId()) return false;
+      if (!getFuelType().equals(other.getFuelType())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + TANKID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getTankId());
+      hash = (37 * hash) + TANKNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getTankName().hashCode();
+      hash = (37 * hash) + PLANNEDWEIGHT_FIELD_NUMBER;
+      hash = (53 * hash) + getPlannedWeight().hashCode();
+      hash = (37 * hash) + ACTUALWEIGHT_FIELD_NUMBER;
+      hash = (53 * hash) + getActualWeight().hashCode();
+      hash = (37 * hash) + FUELTYPEID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getFuelTypeId());
+      hash = (37 * hash) + FUELTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getFuelType().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord parseFrom(
+        byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code SynopticalOhqRecord} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:SynopticalOhqRecord)
+        com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecordOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SynopticalOhqRecord_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SynopticalOhqRecord_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.class,
+                com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        tankId_ = 0L;
+
+        tankName_ = "";
+
+        plannedWeight_ = "";
+
+        actualWeight_ = "";
+
+        fuelTypeId_ = 0L;
+
+        fuelType_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SynopticalOhqRecord_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord build() {
+        com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord result =
+            new com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord(this);
+        result.tankId_ = tankId_;
+        result.tankName_ = tankName_;
+        result.plannedWeight_ = plannedWeight_;
+        result.actualWeight_ = actualWeight_;
+        result.fuelTypeId_ = fuelTypeId_;
+        result.fuelType_ = fuelType_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord other) {
+        if (other
+            == com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.getDefaultInstance())
+          return this;
+        if (other.getTankId() != 0L) {
+          setTankId(other.getTankId());
+        }
+        if (!other.getTankName().isEmpty()) {
+          tankName_ = other.tankName_;
+          onChanged();
+        }
+        if (!other.getPlannedWeight().isEmpty()) {
+          plannedWeight_ = other.plannedWeight_;
+          onChanged();
+        }
+        if (!other.getActualWeight().isEmpty()) {
+          actualWeight_ = other.actualWeight_;
+          onChanged();
+        }
+        if (other.getFuelTypeId() != 0L) {
+          setFuelTypeId(other.getFuelTypeId());
+        }
+        if (!other.getFuelType().isEmpty()) {
+          fuelType_ = other.fuelType_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long tankId_;
+      /**
+       * <code>int64 tankId = 1;</code>
+       *
+       * @return The tankId.
+       */
+      public long getTankId() {
+        return tankId_;
+      }
+      /**
+       * <code>int64 tankId = 1;</code>
+       *
+       * @param value The tankId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTankId(long value) {
+
+        tankId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 tankId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTankId() {
+
+        tankId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object tankName_ = "";
+      /**
+       * <code>string tankName = 2;</code>
+       *
+       * @return The tankName.
+       */
+      public java.lang.String getTankName() {
+        java.lang.Object ref = tankName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          tankName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string tankName = 2;</code>
+       *
+       * @return The bytes for tankName.
+       */
+      public com.google.protobuf.ByteString getTankNameBytes() {
+        java.lang.Object ref = tankName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          tankName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string tankName = 2;</code>
+       *
+       * @param value The tankName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTankName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        tankName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tankName = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTankName() {
+
+        tankName_ = getDefaultInstance().getTankName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tankName = 2;</code>
+       *
+       * @param value The bytes for tankName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTankNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        tankName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object plannedWeight_ = "";
+      /**
+       * <code>string plannedWeight = 3;</code>
+       *
+       * @return The plannedWeight.
+       */
+      public java.lang.String getPlannedWeight() {
+        java.lang.Object ref = plannedWeight_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          plannedWeight_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string plannedWeight = 3;</code>
+       *
+       * @return The bytes for plannedWeight.
+       */
+      public com.google.protobuf.ByteString getPlannedWeightBytes() {
+        java.lang.Object ref = plannedWeight_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          plannedWeight_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string plannedWeight = 3;</code>
+       *
+       * @param value The plannedWeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPlannedWeight(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        plannedWeight_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string plannedWeight = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPlannedWeight() {
+
+        plannedWeight_ = getDefaultInstance().getPlannedWeight();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string plannedWeight = 3;</code>
+       *
+       * @param value The bytes for plannedWeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPlannedWeightBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        plannedWeight_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object actualWeight_ = "";
+      /**
+       * <code>string actualWeight = 4;</code>
+       *
+       * @return The actualWeight.
+       */
+      public java.lang.String getActualWeight() {
+        java.lang.Object ref = actualWeight_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          actualWeight_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string actualWeight = 4;</code>
+       *
+       * @return The bytes for actualWeight.
+       */
+      public com.google.protobuf.ByteString getActualWeightBytes() {
+        java.lang.Object ref = actualWeight_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          actualWeight_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string actualWeight = 4;</code>
+       *
+       * @param value The actualWeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setActualWeight(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        actualWeight_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string actualWeight = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearActualWeight() {
+
+        actualWeight_ = getDefaultInstance().getActualWeight();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string actualWeight = 4;</code>
+       *
+       * @param value The bytes for actualWeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setActualWeightBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        actualWeight_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long fuelTypeId_;
+      /**
+       * <code>int64 fuelTypeId = 5;</code>
+       *
+       * @return The fuelTypeId.
+       */
+      public long getFuelTypeId() {
+        return fuelTypeId_;
+      }
+      /**
+       * <code>int64 fuelTypeId = 5;</code>
+       *
+       * @param value The fuelTypeId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFuelTypeId(long value) {
+
+        fuelTypeId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 fuelTypeId = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearFuelTypeId() {
+
+        fuelTypeId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object fuelType_ = "";
+      /**
+       * <code>string fuelType = 6;</code>
+       *
+       * @return The fuelType.
+       */
+      public java.lang.String getFuelType() {
+        java.lang.Object ref = fuelType_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          fuelType_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string fuelType = 6;</code>
+       *
+       * @return The bytes for fuelType.
+       */
+      public com.google.protobuf.ByteString getFuelTypeBytes() {
+        java.lang.Object ref = fuelType_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          fuelType_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string fuelType = 6;</code>
+       *
+       * @param value The fuelType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFuelType(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        fuelType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string fuelType = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearFuelType() {
+
+        fuelType_ = getDefaultInstance().getFuelType();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string fuelType = 6;</code>
+       *
+       * @param value The bytes for fuelType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFuelTypeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        fuelType_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:SynopticalOhqRecord)
+    }
+
+    // @@protoc_insertion_point(class_scope:SynopticalOhqRecord)
+    private static final com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<SynopticalOhqRecord> PARSER =
+        new com.google.protobuf.AbstractParser<SynopticalOhqRecord>() {
+          @java.lang.Override
+          public SynopticalOhqRecord parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new SynopticalOhqRecord(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<SynopticalOhqRecord> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<SynopticalOhqRecord> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord
         getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
@@ -65393,6 +67562,10 @@ public final class LoadableStudy {
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_SynopticalCargoRecord_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_SynopticalOhqRecord_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_SynopticalOhqRecord_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_SynopticalTableRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_SynopticalTableRequest_fieldAccessorTable;
@@ -65592,7 +67765,7 @@ public final class LoadableStudy {
           + "(\t\022\026\n\016cargo1Quantity\030\t \001(\t\022\026\n\016cargo2Quan"
           + "tity\030\n \001(\t\022\030\n\020cargo1Percentage\030\013 \001(\t\022\030\n\020"
           + "cargo2Percentage\030\014 \001(\t\022\'\n\016responseStatus"
-          + "\030\r \001(\0132\017.ResponseStatus\"\277\004\n\020SynopticalRe"
+          + "\030\r \001(\0132\017.ResponseStatus\"\343\005\n\020SynopticalRe"
           + "cord\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\020\n\010port"
           + "Name\030\003 \001(\t\022\025\n\roperationType\030\004 \001(\t\022\020\n\010dis"
           + "tance\030\005 \001(\t\022\r\n\005speed\030\006 \001(\t\022\024\n\014runningHou"
@@ -65602,76 +67775,83 @@ public final class LoadableStudy {
           + "deTimeFrom\030\r \001(\t\022\024\n\014hwTideTimeTo\030\016 \001(\t\022\022"
           + "\n\nlwTideFrom\030\017 \001(\t\022\020\n\010lwTideTo\030\020 \001(\t\022\026\n\016"
           + "lwTideTimeFrom\030\021 \001(\t\022\024\n\014lwTideTimeTo\030\022 \001"
-          + "(\t\022\027\n\017specificGravity\030\023 \001(\t\022\021\n\tetaActual"
-          + "\030\024 \001(\t\022\021\n\tetdActual\030\025 \001(\t\022\024\n\014etaEstimate"
-          + "d\030\026 \001(\t\022\024\n\014etdEstimated\030\027 \001(\t\022%\n\005cargo\030\030"
-          + " \003(\0132\026.SynopticalCargoRecord\022\031\n\021cargoPla"
-          + "nnedTotal\030\031 \001(\t\022\030\n\020cargoActualTotal\030\032 \001("
-          + "\t\"f\n\025SynopticalCargoRecord\022\016\n\006tankId\030\001 \001"
-          + "(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rplannedWeight\030\003 "
-          + "\001(\t\022\024\n\014actualWeight\030\004 \001(\t\"C\n\026SynopticalT"
-          + "ableRequest\022\027\n\017loadableStudyId\030\001 \001(\003\022\020\n\010"
-          + "vesselId\030\002 \001(\003\"\216\001\n\024SynopticalTableReply\022"
-          + "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus"
-          + "\022,\n\021synopticalRecords\030\002 \003(\0132\021.Synoptical"
-          + "Record\022\037\n\nvesselTank\030\003 \003(\0132\013.TankDetail2"
-          + "\235\021\n\024LoadableStudyService\022,\n\nSaveVoyage\022\016"
-          + ".VoyageRequest\032\014.VoyageReply\"\000\0228\n\022GetVoy"
-          + "agesByVessel\022\016.VoyageRequest\032\020.VoyageLis"
-          + "tReply\"\000\022J\n\024SaveLoadableQuantity\022\030.Loada"
-          + "bleQuantityRequest\032\026.LoadableQuantityRep"
-          + "ly\"\000\022T\n$FindLoadableStudiesByVesselAndVo"
-          + "yage\022\025.LoadableStudyRequest\032\023.LoadableSt"
-          + "udyReply\"\000\022@\n\021SaveLoadableStudy\022\024.Loadab"
-          + "leStudyDetail\032\023.LoadableStudyReply\"\000\022G\n\023"
-          + "SaveCargoNomination\022\027.CargoNominationReq"
-          + "uest\032\025.CargoNominationReply\"\000\022J\n\034GetLoad"
-          + "ableStudyPortRotation\022\024.PortRotationRequ"
-          + "est\032\022.PortRotationReply\"\000\022J\n\026GetCargoNom"
-          + "inationById\022\027.CargoNominationRequest\032\025.C"
-          + "argoNominationReply\"\000\022I\n\023GetValveSegrega"
-          + "tion\022\030.ValveSegregationRequest\032\026.ValveSe"
-          + "gregationReply\"\000\022J\n\023getLoadableQuantity\022"
-          + "\026.LoadableQuantityReply\032\031.LoadableQuanti"
-          + "tyResponse\"\000\022J\n\035SaveLoadableStudyPortRot"
-          + "ation\022\023.PortRotationDetail\032\022.PortRotatio"
-          + "nReply\"\000\022I\n\025DeleteCargoNomination\022\027.Carg"
-          + "oNominationRequest\032\025.CargoNominationRepl"
-          + "y\"\000\022B\n\024SaveDischargingPorts\022\024.PortRotati"
-          + "onRequest\032\022.PortRotationReply\"\000\022N\n GetPo"
-          + "rtRotationByLoadableStudyId\022\024.PortRotati"
-          + "onRequest\032\022.PortRotationReply\"\000\022C\n\023Delet"
-          + "eLoadableStudy\022\025.LoadableStudyRequest\032\023."
-          + "LoadableStudyReply\"\000\022@\n\022DeletePortRotati"
-          + "on\022\024.PortRotationRequest\032\022.PortRotationR"
-          + "eply\"\000\022C\n\021GetOnHandQuantity\022\026.OnHandQuan"
-          + "tityRequest\032\024.OnHandQuantityReply\"\000\022C\n\022S"
-          + "aveOnHandQuantity\022\025.OnHandQuantityDetail"
-          + "\032\024.OnHandQuantityReply\"\000\022M\n\031GetLoadableP"
-          + "atternDetails\022\027.LoadablePatternRequest\032\025"
-          + ".LoadablePatternReply\"\000\022O\n\025GetPurposeOfC"
-          + "ommingle\022\032.PurposeOfCommingleRequest\032\030.P"
-          + "urposeOfCommingleReply\"\000\022C\n\021GetCommingle"
-          + "Cargo\022\026.CommingleCargoRequest\032\024.Commingl"
-          + "eCargoReply\"\000\022D\n\022SaveCommingleCargo\022\026.Co"
-          + "mmingleCargoRequest\032\024.CommingleCargoRepl"
-          + "y\"\000\022v\n\"GetLoadablePatternCommingleDetail"
-          + "s\022\'.LoadablePatternCommingleDetailsReque"
-          + "st\032%.LoadablePatternCommingleDetailsRepl"
-          + "y\"\000\0226\n\030GenerateLoadablePatterns\022\014.AlgoRe"
-          + "quest\032\n.AlgoReply\"\000\022F\n\022GetOnBoardQuantit"
-          + "y\022\027.OnBoardQuantityRequest\032\025.OnBoardQuan"
-          + "tityReply\"\000\022F\n\023SaveOnBoardQuantity\022\026.OnB"
-          + "oardQuantityDetail\032\025.OnBoardQuantityRepl"
-          + "y\"\000\022E\n\033SaveAlgoLoadableStudyStatus\022\022.Alg"
-          + "oStatusRequest\032\020.AlgoStatusReply\"\000\022F\n\022Ge"
-          + "tSynopticalTable\022\027.SynopticalTableReques"
-          + "t\032\025.SynopticalTableReply\"\000\022R\n\026GetLoadabl"
-          + "eStudyStatus\022\033.LoadableStudyStatusReques"
-          + "t\032\031.LoadableStudyStatusReply\"\000\0227\n\013Confir"
-          + "mPlan\022\023.ConfirmPlanRequest\032\021.ConfirmPlan"
-          + "Reply\"\000B\036\n\032com.cpdss.common.generatedP\000b"
-          + "\006proto3"
+          + "(\t\022\027\n\017specificGravity\030\023 \001(\t\022\024\n\014etaEtdAct"
+          + "ual\030\024 \001(\t\022\027\n\017etaEtdEstimated\030\025 \001(\t\022%\n\005ca"
+          + "rgo\030\026 \003(\0132\026.SynopticalCargoRecord\022\031\n\021car"
+          + "goPlannedTotal\030\027 \001(\t\022\030\n\020cargoActualTotal"
+          + "\030\030 \001(\t\022!\n\003ohq\030\031 \003(\0132\024.SynopticalOhqRecor"
+          + "d\022\026\n\016foPlannedTotal\030\032 \001(\t\022\025\n\rfoActualTot"
+          + "al\030\033 \001(\t\022\026\n\016doPlannedTotal\030\034 \001(\t\022\025\n\rdoAc"
+          + "tualTotal\030\035 \001(\t\022\030\n\020lubePlannedTotal\030\036 \001("
+          + "\t\022\027\n\017lubeActualTotal\030\037 \001(\t\022\021\n\tportOrder\030"
+          + "  \001(\003\"f\n\025SynopticalCargoRecord\022\016\n\006tankId"
+          + "\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rplannedWeigh"
+          + "t\030\003 \001(\t\022\024\n\014actualWeight\030\004 \001(\t\"\212\001\n\023Synopt"
+          + "icalOhqRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankNam"
+          + "e\030\002 \001(\t\022\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014actual"
+          + "Weight\030\004 \001(\t\022\022\n\nfuelTypeId\030\005 \001(\003\022\020\n\010fuel"
+          + "Type\030\006 \001(\t\"C\n\026SynopticalTableRequest\022\027\n\017"
+          + "loadableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\""
+          + "\216\001\n\024SynopticalTableReply\022\'\n\016responseStat"
+          + "us\030\001 \001(\0132\017.ResponseStatus\022,\n\021synopticalR"
+          + "ecords\030\002 \003(\0132\021.SynopticalRecord\022\037\n\nvesse"
+          + "lTank\030\003 \003(\0132\013.TankDetail2\235\021\n\024LoadableStu"
+          + "dyService\022,\n\nSaveVoyage\022\016.VoyageRequest\032"
+          + "\014.VoyageReply\"\000\0228\n\022GetVoyagesByVessel\022\016."
+          + "VoyageRequest\032\020.VoyageListReply\"\000\022J\n\024Sav"
+          + "eLoadableQuantity\022\030.LoadableQuantityRequ"
+          + "est\032\026.LoadableQuantityReply\"\000\022T\n$FindLoa"
+          + "dableStudiesByVesselAndVoyage\022\025.Loadable"
+          + "StudyRequest\032\023.LoadableStudyReply\"\000\022@\n\021S"
+          + "aveLoadableStudy\022\024.LoadableStudyDetail\032\023"
+          + ".LoadableStudyReply\"\000\022G\n\023SaveCargoNomina"
+          + "tion\022\027.CargoNominationRequest\032\025.CargoNom"
+          + "inationReply\"\000\022J\n\034GetLoadableStudyPortRo"
+          + "tation\022\024.PortRotationRequest\032\022.PortRotat"
+          + "ionReply\"\000\022J\n\026GetCargoNominationById\022\027.C"
+          + "argoNominationRequest\032\025.CargoNominationR"
+          + "eply\"\000\022I\n\023GetValveSegregation\022\030.ValveSeg"
+          + "regationRequest\032\026.ValveSegregationReply\""
+          + "\000\022J\n\023getLoadableQuantity\022\026.LoadableQuant"
+          + "ityReply\032\031.LoadableQuantityResponse\"\000\022J\n"
+          + "\035SaveLoadableStudyPortRotation\022\023.PortRot"
+          + "ationDetail\032\022.PortRotationReply\"\000\022I\n\025Del"
+          + "eteCargoNomination\022\027.CargoNominationRequ"
+          + "est\032\025.CargoNominationReply\"\000\022B\n\024SaveDisc"
+          + "hargingPorts\022\024.PortRotationRequest\032\022.Por"
+          + "tRotationReply\"\000\022N\n GetPortRotationByLoa"
+          + "dableStudyId\022\024.PortRotationRequest\032\022.Por"
+          + "tRotationReply\"\000\022C\n\023DeleteLoadableStudy\022"
+          + "\025.LoadableStudyRequest\032\023.LoadableStudyRe"
+          + "ply\"\000\022@\n\022DeletePortRotation\022\024.PortRotati"
+          + "onRequest\032\022.PortRotationReply\"\000\022C\n\021GetOn"
+          + "HandQuantity\022\026.OnHandQuantityRequest\032\024.O"
+          + "nHandQuantityReply\"\000\022C\n\022SaveOnHandQuanti"
+          + "ty\022\025.OnHandQuantityDetail\032\024.OnHandQuanti"
+          + "tyReply\"\000\022M\n\031GetLoadablePatternDetails\022\027"
+          + ".LoadablePatternRequest\032\025.LoadablePatter"
+          + "nReply\"\000\022O\n\025GetPurposeOfCommingle\022\032.Purp"
+          + "oseOfCommingleRequest\032\030.PurposeOfComming"
+          + "leReply\"\000\022C\n\021GetCommingleCargo\022\026.Comming"
+          + "leCargoRequest\032\024.CommingleCargoReply\"\000\022D"
+          + "\n\022SaveCommingleCargo\022\026.CommingleCargoReq"
+          + "uest\032\024.CommingleCargoReply\"\000\022v\n\"GetLoada"
+          + "blePatternCommingleDetails\022\'.LoadablePat"
+          + "ternCommingleDetailsRequest\032%.LoadablePa"
+          + "tternCommingleDetailsReply\"\000\0226\n\030Generate"
+          + "LoadablePatterns\022\014.AlgoRequest\032\n.AlgoRep"
+          + "ly\"\000\022F\n\022GetOnBoardQuantity\022\027.OnBoardQuan"
+          + "tityRequest\032\025.OnBoardQuantityReply\"\000\022F\n\023"
+          + "SaveOnBoardQuantity\022\026.OnBoardQuantityDet"
+          + "ail\032\025.OnBoardQuantityReply\"\000\022E\n\033SaveAlgo"
+          + "LoadableStudyStatus\022\022.AlgoStatusRequest\032"
+          + "\020.AlgoStatusReply\"\000\022F\n\022GetSynopticalTabl"
+          + "e\022\027.SynopticalTableRequest\032\025.SynopticalT"
+          + "ableReply\"\000\022R\n\026GetLoadableStudyStatus\022\033."
+          + "LoadableStudyStatusRequest\032\031.LoadableStu"
+          + "dyStatusReply\"\000\0227\n\013ConfirmPlan\022\023.Confirm"
+          + "PlanRequest\032\021.ConfirmPlanReply\"\000B\036\n\032com."
+          + "cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -66220,13 +68400,19 @@ public final class LoadableStudy {
               "LwTideTimeFrom",
               "LwTideTimeTo",
               "SpecificGravity",
-              "EtaActual",
-              "EtdActual",
-              "EtaEstimated",
-              "EtdEstimated",
+              "EtaEtdActual",
+              "EtaEtdEstimated",
               "Cargo",
               "CargoPlannedTotal",
               "CargoActualTotal",
+              "Ohq",
+              "FoPlannedTotal",
+              "FoActualTotal",
+              "DoPlannedTotal",
+              "DoActualTotal",
+              "LubePlannedTotal",
+              "LubeActualTotal",
+              "PortOrder",
             });
     internal_static_SynopticalCargoRecord_descriptor = getDescriptor().getMessageTypes().get(53);
     internal_static_SynopticalCargoRecord_fieldAccessorTable =
@@ -66235,14 +68421,21 @@ public final class LoadableStudy {
             new java.lang.String[] {
               "TankId", "TankName", "PlannedWeight", "ActualWeight",
             });
-    internal_static_SynopticalTableRequest_descriptor = getDescriptor().getMessageTypes().get(54);
+    internal_static_SynopticalOhqRecord_descriptor = getDescriptor().getMessageTypes().get(54);
+    internal_static_SynopticalOhqRecord_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_SynopticalOhqRecord_descriptor,
+            new java.lang.String[] {
+              "TankId", "TankName", "PlannedWeight", "ActualWeight", "FuelTypeId", "FuelType",
+            });
+    internal_static_SynopticalTableRequest_descriptor = getDescriptor().getMessageTypes().get(55);
     internal_static_SynopticalTableRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SynopticalTableRequest_descriptor,
             new java.lang.String[] {
               "LoadableStudyId", "VesselId",
             });
-    internal_static_SynopticalTableReply_descriptor = getDescriptor().getMessageTypes().get(55);
+    internal_static_SynopticalTableReply_descriptor = getDescriptor().getMessageTypes().get(56);
     internal_static_SynopticalTableReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SynopticalTableReply_descriptor,

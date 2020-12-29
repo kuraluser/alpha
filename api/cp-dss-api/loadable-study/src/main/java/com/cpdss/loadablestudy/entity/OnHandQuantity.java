@@ -53,6 +53,12 @@ public class OnHandQuantity extends EntityDoc {
   @Column(name = "departure_quantity")
   private BigDecimal departureQuantity;
 
+  @Column(name = "actual_arrival_quantity")
+  private BigDecimal actualArrivalQuantity;
+
+  @Column(name = "actual_departure_quantity")
+  private BigDecimal actualDepartureQuantity;
+
   @Column(name = "is_active")
   private Boolean isActive;
 }
