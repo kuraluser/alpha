@@ -36,6 +36,7 @@ export interface IDataTableColumn {
     minDate?: Date;
     dateFormat?: string;
     columns?: IDataTableColumn[];
+    virtualScroll?: boolean;
 }
 
 /**

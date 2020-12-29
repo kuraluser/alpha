@@ -17,13 +17,13 @@ export function portDateCompareValidator(field, compareOperation): ValidatorFn {
                 if (check.length > 0) {
                     const checkDate = new Date(Number(check[2]), Number(check[1]) - 1, Number(check[0]));
                     if (compareOperation === '<') {
-                        if (checkDate < compareDate) {
+                        if (checkDate <= compareDate) {
                             return null;
                         } else {
                             return { failedCompare: true };
                         }
                     } else {
-                        if (checkDate > compareDate) {
+                        if (checkDate >= compareDate) {
                             return null;
                         } else {
                             return { failedCompare: true };

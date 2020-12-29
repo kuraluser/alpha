@@ -521,6 +521,7 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'port.value.name',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'SELECT_PORT',
+        virtualScroll: true,
         errorMessages: {
           'required': 'PORT_FIELD_REQUIRED_ERROR',
           'duplicate': 'PORT_FIELD_DUPLICATE_ERROR'
@@ -633,7 +634,8 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'PORT_ETA_REQUIRED_ERROR',
           'notInRange': 'PORT_ETA_NOT_IN_DATE_RANGE',
-          'failedCompare': 'PORT_ETA_COMPARE_ERROR'
+          'failedCompare': 'PORT_ETA_COMPARE_ERROR',
+          'etaFailed': 'PORT_ETA_COMAPRE_WITH_ETD_ERROR'
         }
       },
       {

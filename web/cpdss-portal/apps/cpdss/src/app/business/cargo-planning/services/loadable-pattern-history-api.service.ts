@@ -32,23 +32,7 @@ export class LoadablePatternHistoryApiService {
 
 
   /**
-   * Set loadable study api
-   *
-   * @param {number} vesselId
-   * @param {number} voyageId
-   * @param {number} loadableStudyId
-   * @param {number} loadablePatternId
-   * @param {number} loadablePatternCommingleDetailsId
-   * @returns {Observable<ICommingleCargoDetailsResponse>}
-   * @memberof LoadablePatternHistoryApiService
-   */
-  getCommingleCargoDetails(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number, loadablePatternCommingleDetailsId: number): Observable<ICommingleCargoDetailsResponse> {
-    return this.commonApiService.get<ICommingleCargoDetailsResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-patterns/${loadablePatternId}/loadable-pattern-commingle-details/${loadablePatternCommingleDetailsId}`);
-  }
-
-
-  /**
-   * Set loadable study api
+   * Api for get commingle cargo details
    *
    * @param {number} vesselId
    * @param {number} voyageId
