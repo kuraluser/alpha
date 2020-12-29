@@ -19,7 +19,23 @@
                         </table>
                     </th>
                 </tr>
-               
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+                <tr>
+                    <td>{{rowData.grade}}</td>
+                    <td>{{rowData.estimate.api}}</td>
+                    <td>{{rowData.estimate.temp}}</td>
+                    <td>{{rowData.order.bblsTemp}}</td>
+                    <td>{{rowData.order.bblsF}}</td>
+                    <td>{{rowData.tlrnic.min}}</td>
+                    <td>{{rowData.tlrnic.max}}</td>
+                    <td>{{rowData.loadable.bblsTemp}}</td>
+                    <td>{{rowData.loadable.bblsF}}</td>
+                    <td>{{rowData.loadable.lt}}</td>
+                    <td>{{rowData.loadable.mt}}</td>
+                    <td>{{rowData.loadable.kl}}</td>
+                    <td>{{rowData.diff}}</td>
+                </tr>
             </ng-template>
         </p-table>
     </div>
