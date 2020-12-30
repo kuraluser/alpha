@@ -91,4 +91,19 @@ public class SynopticalTable extends EntityDoc {
   @ManyToOne
   @JoinColumn(name = "port_rotation_xid")
   private LoadableStudyPortRotation loadableStudyPortRotation;
+
+  @Column(name = "others_planned")
+  private BigDecimal othersPlanned;
+
+  @Column(name = "others_actual")
+  private BigDecimal othersActual;
+
+  @Column(name = "constant_actual")
+  private BigDecimal constantActual;
+
+  @Column(name = "dead_weight_actual")
+  private BigDecimal deadWeightActual;
+
+  @Column(name = "displacement_actual")
+  private BigDecimal displacementActual;
 }

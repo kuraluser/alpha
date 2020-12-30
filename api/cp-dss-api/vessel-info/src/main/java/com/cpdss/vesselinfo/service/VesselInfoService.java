@@ -351,10 +351,10 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         builder.setTankId(tank.getId());
         builder.setTankName(tank.getTankName());
         builder.setShortName(tank.getShortName());
-        //	        builder.setTankCategoryId(tank.getTankCategory().getId());
-        //	        builder.setTankCategoryName(tank.getTankCategory().getName());
-        //	        builder.setFrameNumberFrom(tank.getFrameNumberFrom());
-        //	        builder.setFrameNumberTo(tank.getFrameNumberTo());
+        // builder.setTankCategoryId(tank.getTankCategory().getId());
+        // builder.setTankCategoryName(tank.getTankCategory().getName());
+        // builder.setFrameNumberFrom(tank.getFrameNumberFrom());
+        // builder.setFrameNumberTo(tank.getFrameNumberTo());
         replyBuilder.addVesselTanks(builder.build());
       }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -1015,5 +1015,57 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                     String.valueOf(deadweightConstantTcg)));
 
     return vesselDetailBuilder.build();
+  }
+
+  @Override
+  public void getVesselDetailForSynopticalTable(
+      VesselRequest request, StreamObserver<VesselReply> responseObserver) {
+    VesselReply.Builder replyBuilder = VesselReply.newBuilder();
+    try {
+      List<VesselTankDetail> tankList =
+          this.findVesselTanksByCategory(request.getVesselId(), request.getTankCategoriesList());
+      if (null != tankList && !tankList.isEmpty()) {
+        replyBuilder.addAllVesselTanks(tankList);
+      }
+      VesselDetails vesselDetails =
+          vesselRepository.findVesselDetailsById(
+              request.getVesselId(),
+              request.getVesselDraftConditionId(),
+              new BigDecimal(request.getDraftExtreme()));
+      VesselLoadableQuantityDetails.Builder builder = VesselLoadableQuantityDetails.newBuilder();
+      if (null != vesselDetails) {
+        Optional.ofNullable(vesselDetails.getDisplacmentDraftRestriction())
+            .ifPresent(item -> builder.setDisplacmentDraftRestriction(item.toString()));
+        Optional.ofNullable(vesselDetails.getVesselLightWeight())
+            .ifPresent(item -> builder.setVesselLightWeight(item.toString()));
+        Optional.ofNullable(vesselDetails.getDeadWeight())
+            .ifPresent(dwt -> builder.setDwt(dwt.toString()));
+        Optional.ofNullable(vesselDetails.getDraftConditionName())
+            .ifPresent(builder::setDraftConditionName);
+        Optional.ofNullable(vesselDetails.getConstant())
+            .ifPresent(constant -> builder.setConstant(constant.toString()));
+      }
+      replyBuilder.setVesselLoadableQuantityDetails(builder.build());
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in getVesselDetailForSynopticalTable", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage("GenericServiceException in getVesselDetailForSynopticalTable")
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      log.error("Exception in getVesselDetailForSynopticalTable", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception in getVesselDetailForSynopticalTable")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

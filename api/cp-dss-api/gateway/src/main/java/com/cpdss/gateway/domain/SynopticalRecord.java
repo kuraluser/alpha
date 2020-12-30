@@ -43,4 +43,12 @@ public class SynopticalRecord {
   private BigDecimal actualDOTotal;
   private BigDecimal plannedLubeTotal;
   private BigDecimal actualLubeTotal;
+  private BigDecimal othersPlanned;
+  private BigDecimal othersActual;
+  private BigDecimal constantPlanned;
+  private BigDecimal constantActual;
+  private BigDecimal totalDwtPlanned;
+  private BigDecimal totalDwtActual;
+  private BigDecimal displacementPlanned;
+  private BigDecimal displacementActual;
 }

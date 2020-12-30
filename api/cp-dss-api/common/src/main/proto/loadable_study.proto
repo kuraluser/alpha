@@ -544,6 +544,14 @@ message SynopticalRecord{
 	string lubePlannedTotal = 30;
 	string lubeActualTotal = 31;
 	int64 portOrder = 32;
+	string othersPlanned = 33;
+	string othersActual = 34;
+	string constantPlanned = 35;
+	string constantActual = 36;
+	string totalDwtPlanned = 37;
+	string totalDwtActual = 38;
+	string displacementPlanned = 39;
+	string displacementActual = 40;
 }
 
 message SynopticalCargoRecord{
