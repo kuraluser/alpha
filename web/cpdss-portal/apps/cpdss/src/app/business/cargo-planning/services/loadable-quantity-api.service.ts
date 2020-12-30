@@ -161,7 +161,7 @@ export class LoadableQuantityApiService {
       },
       {
         field: 'year', header: 'ORDER' ,  colspan: 2 ,subColumns: [
-          { field: 'orderBblsdbs', header: 'BBL@OBS.TEMP' },
+          { field: 'orderBblsdbs', header: 'BBLS@OBS.TEMP' },
           { field: 'orderBbls60f', header: 'BBLS@60F' }
         ]
       },
@@ -195,7 +195,7 @@ export class LoadableQuantityApiService {
   public getFormatedLoadableQuantityData(_decimalPipe: any ,loadableQuantity: LodadableQuantityPlan): LodadableQuantityPlan {
     const _loadableQuantityDetails = loadableQuantity;
     _loadableQuantityDetails.estimatedAPI = this.decimalConvertion(_decimalPipe,_loadableQuantityDetails.estimatedAPI);
-    _loadableQuantityDetails.estimatedTemp = this.decimalConvertion(_decimalPipe,_loadableQuantityDetails.estimatedAPI);
+    _loadableQuantityDetails.estimatedTemp = this.decimalConvertion(_decimalPipe,_loadableQuantityDetails.estimatedTemp);
     _loadableQuantityDetails.orderBbls60f = this.decimalConvertion(_decimalPipe ,_loadableQuantityDetails.orderBbls60f);
     _loadableQuantityDetails.orderBblsdbs = this.decimalConvertion(_decimalPipe ,_loadableQuantityDetails.orderBblsdbs);
     _loadableQuantityDetails.minTolerence = _loadableQuantityDetails.minTolerence + '%';
@@ -205,6 +205,7 @@ export class LoadableQuantityApiService {
     _loadableQuantityDetails.loadableKL = this.decimalConvertion(_decimalPipe , _loadableQuantityDetails.loadableKL);
     _loadableQuantityDetails.loadableMT = this.decimalConvertion(_decimalPipe , _loadableQuantityDetails.loadableMT);
     _loadableQuantityDetails.loadableLT = this.decimalConvertion(_decimalPipe ,_loadableQuantityDetails.loadableLT);
+    _loadableQuantityDetails.differencePercentage = _loadableQuantityDetails.differencePercentage + '%';
     return loadableQuantity;
   }
   
@@ -214,6 +215,6 @@ export class LoadableQuantityApiService {
   * @returns {decimal converted value us number}
   */
   decimalConvertion(_decimalPipe: any , value: string | number) {
-    return _decimalPipe.transform(value, '1.2-5');
+    return _decimalPipe.transform(value, '1.2-4');
   }
 }

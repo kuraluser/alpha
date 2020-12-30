@@ -61,26 +61,43 @@ export class LoadableQuantityComponent implements OnInit {
         "id": 1,
         "grade": "Arabian",
         "estimatedAPI": "12.0000",
+        "estimatedTemp": "789.0000",
+        "orderBblsdbs": "70000",
+        "orderBbls60f": "200",
+        "minTolerence": "15",
+        "maxTolerence": "99",
+        "loadableBblsdbs": "1000",
+        "loadableBbls60f": "200",
+        "loadableLT": "300",
+        "loadableMT": "400",
+        "loadableKL": "500",
+        "differencePercentage": "1.29000",
+        "differenceColor": "#ffffff"
+      },
+      {
+        "id": 2,
+        "grade": "arun",
+        "estimatedAPI": "123.0000",
         "estimatedTemp": "12.0000",
         "orderBblsdbs": "10000",
-        "orderBbls60f": "100",
-        "minTolerence": "12",
-        "maxTolerence": "10",
+        "orderBbls60f": "800",
+        "minTolerence": "20",
+        "maxTolerence": "1",
         "loadableBblsdbs": "1000",
         "loadableBbls60f": "100",
         "loadableLT": "12",
         "loadableMT": "13",
         "loadableKL": "14",
-        "differencePercentage": "1.2000",
-        "differenceColor": "#ffffff"
+        "differencePercentage": "1.9000",
+        "differenceColor": "#20ad58"
       }
     ];
+    this.total = <Total>{ orderBblsdbs: 0, orderBbls60f: 0, loadableBblsdbs: 0, loadableBbls60f: 0, loadableLT: 0, loadableMT: 0, loadableKL: 0, differencePercentage: 0 };
+    this.calculateTotal(loadableQuantityDatas);
     this.loadableQuantityDatas = [];
     loadableQuantityDatas?.map((loadableQuantityData) => {
       this.loadableQuantityDatas.push(this.loadableQuantityApiService.getFormatedLoadableQuantityData(this._decimalPipe , loadableQuantityData))
     })
-    this.total = <Total>{ orderBblsdbs: 0, orderBbls60f: 0, loadableBblsdbs: 0, loadableBbls60f: 0, loadableLT: 0, loadableMT: 0, loadableKL: 0, differencePercentage: 0 };
-    this.calculateTotal();
     this.ngxSpinnerService.hide();
   }
 
@@ -88,13 +105,13 @@ export class LoadableQuantityComponent implements OnInit {
    * calcuate total for orderBblsdbs, orderBbls60f ,
    * loadableBblsdbs , loadableLT , loadableKL
   */
-  private calculateTotal() {
-    this.loadableQuantityDatas?.map((value: LodadableQuantityPlan) => {
+  private calculateTotal(loadableQuantityDatas: LodadableQuantityPlan[]) {
+    loadableQuantityDatas?.map((value: LodadableQuantityPlan) => {
       this.total.orderBblsdbs += Number(value.orderBblsdbs);
       this.total.orderBbls60f += Number(value.orderBbls60f);
       this.total.loadableBblsdbs += Number(value.loadableBblsdbs);
       this.total.loadableBbls60f += Number(value.loadableBbls60f);
-      this.total.loadableLT += Number(value.loadableMT);
+      this.total.loadableLT += Number(value.loadableLT);
       this.total.loadableMT += Number(value.loadableMT);
       this.total.loadableKL += Number(value.loadableKL);
       this.total.differencePercentage += Number(value.differencePercentage);
