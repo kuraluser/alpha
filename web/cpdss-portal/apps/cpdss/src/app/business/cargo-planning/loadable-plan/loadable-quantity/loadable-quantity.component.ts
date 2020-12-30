@@ -80,7 +80,6 @@ export class LoadableQuantityComponent implements OnInit {
  * Get all details for loadable quantity
  *
  * @returns {Promise<IPortsDetailsResponse>}
- * @memberof PortsComponent
  */
 async getLoadableQuantity() {
   this.ngxSpinnerService.show();
@@ -88,12 +87,15 @@ async getLoadableQuantity() {
   this.ngxSpinnerService.hide();
 }
 
+/**
+ * parse nested string object
+ *
+ * @returns {Promise<IPortsDetailsResponse>}
+ */
 getPropByString(obj, propString) {
   if (!propString) return obj;
-
   let prop,
     props = propString.split(".");
-
   for (var i = 0, iLen = props.length - 1; i < iLen; i++) {
     prop = props[i];
     if (obj[prop] !== undefined) {
