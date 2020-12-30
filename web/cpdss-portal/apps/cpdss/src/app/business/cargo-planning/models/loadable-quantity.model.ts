@@ -55,6 +55,27 @@ export class Status {
     status: string;
 }
 
+/**
+ * Interface for loadable quality table 
+ *
+ * @export
+ * @interface ITableHeaderModel
+ */
+export interface ITableHeaderModel {
+    field: string;
+    header: string;
+    colspan: number,
+    subColumns?:ColumHeader[];  
+}
+
+/**
+ * Interface for table header
+*/
+interface ColumHeader {
+    field: string;
+    header: string;
+}
+
 
 
 

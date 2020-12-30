@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { LoadableQuantityModel, LoadableQuantityResponseModel, LodadableQuantity } from '../models/loadable-quantity.model';
+import { LoadableQuantityModel, LoadableQuantityResponseModel, LodadableQuantity, ITableHeaderModel } from '../models/loadable-quantity.model';
 
 @Injectable()
 export class LoadableQuantityApiService {
@@ -131,10 +131,60 @@ export class LoadableQuantityApiService {
         'required': 'LOADABLE_QUANTITY_TOTAL_QUANTITY_REQUIRED"'
       }
     }
-
-
-
-
-
   }
+
+  /**
+* 
+* @param vesselId 
+* @param voyageId 
+* @param loadableStudyId 
+* Get api for loadable quantity
+*/
+  getLoadableQuantityData(vesselId: number, voyageId: number, loadableStudyId: number): Observable<LoadableQuantityModel> {
+    return this.commonApiService.get<LoadableQuantityModel>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-quantity`);
+  }
+
+  /**
+  * 
+  * Get loadable quantity table header
+  * @returns {ILoadableQuantityColumn[]}
+  */
+  getLoadableQuantityTableColumns(): ITableHeaderModel[] {
+    return [
+      { field: 'grade', header: 'Grade' , colspan: 0},
+      {
+        field: 'vin', header: 'Estimated',  colspan: 2,  subColumns: [
+          { field: 'estimate.api', header: 'API' },
+          { field: 'estimate.temp', header: 'TEMP' }
+        ]
+      },
+      {
+        field: 'year', header: 'ORDER' ,  colspan: 2 ,subColumns: [
+          { field: 'order.bblsTemp', header: 'BBL@OBS.TEMP' },
+          { field: 'order.bblsF', header: 'BBLS@60F' }
+        ]
+      },
+      {
+        field: 'brand', header: 'TLRNC', colspan: 2 ,  subColumns: [
+          { field: 'tlrnic.min', header: 'Min' },
+          { field: 'tlrnic.max', header: 'Max' }
+        ]
+      },
+      {
+        field: 'color', header: 'LOADABLE',  colspan: 5 , subColumns: [
+          { field: 'loadable.bblsTemp', header: 'BBLS@OBS.TEMP' },
+          { field: 'loadable.bblsF', header: 'BBLS@60F' },
+          { field: 'loadable.lt', header: 'LT' },
+          { field: 'loadable.mt', header: 'MT' },
+          { field: 'loadable.kl', header: 'KL' }
+        ]
+      },
+      {
+        field: 'color', header: 'DIFF.', colspan: 2 , subColumns: [
+          { field: 'diff', header: '%' }
+        ]
+      }
+    ]
+  }
+
 }
