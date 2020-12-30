@@ -1494,6 +1494,58 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
+      getGetLoadablePlanDetailsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetLoadablePlanDetails",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
+      getGetLoadablePlanDetailsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
+        getGetLoadablePlanDetailsMethod;
+    if ((getGetLoadablePlanDetailsMethod = LoadableStudyServiceGrpc.getGetLoadablePlanDetailsMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadablePlanDetailsMethod =
+                LoadableStudyServiceGrpc.getGetLoadablePlanDetailsMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetLoadablePlanDetailsMethod =
+              getGetLoadablePlanDetailsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetLoadablePlanDetails"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "GetLoadablePlanDetails"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadablePlanDetailsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
           com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
       getConfirmPlanMethod;
@@ -1822,6 +1874,15 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void getLoadablePlanDetails(
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetLoadablePlanDetailsMethod(), responseObserver);
+    }
+
+    /** */
     public void confirmPlan(
         com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
@@ -2037,6 +2098,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest,
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply>(
                       this, METHODID_GET_LOADABLE_STUDY_STATUS)))
+          .addMethod(
+              getGetLoadablePlanDetailsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>(
+                      this, METHODID_GET_LOADABLE_PLAN_DETAILS)))
           .addMethod(
               getConfirmPlanMethod(),
               asyncUnaryCall(
@@ -2383,6 +2451,18 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void getLoadablePlanDetails(
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetLoadablePlanDetailsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
     public void confirmPlan(
         com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
@@ -2612,6 +2692,13 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetLoadableStudyStatusMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply getLoadablePlanDetails(
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetLoadablePlanDetailsMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -2892,6 +2979,15 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
+        getLoadablePlanDetails(
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetLoadablePlanDetailsMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
         confirmPlan(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
       return futureUnaryCall(
@@ -2928,7 +3024,8 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS = 26;
   private static final int METHODID_GET_SYNOPTICAL_TABLE = 27;
   private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 28;
-  private static final int METHODID_CONFIRM_PLAN = 29;
+  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 29;
+  private static final int METHODID_CONFIRM_PLAN = 30;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -3150,6 +3247,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply>)
                   responseObserver);
           break;
+        case METHODID_GET_LOADABLE_PLAN_DETAILS:
+          serviceImpl.getLoadablePlanDetails(
+              (com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>)
+                  responseObserver);
+          break;
         case METHODID_CONFIRM_PLAN:
           serviceImpl.confirmPlan(
               (com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest) request,
@@ -3250,6 +3354,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveAlgoLoadableStudyStatusMethod())
                       .addMethod(getGetSynopticalTableMethod())
                       .addMethod(getGetLoadableStudyStatusMethod())
+                      .addMethod(getGetLoadablePlanDetailsMethod())
                       .addMethod(getConfirmPlanMethod())
                       .build();
         }

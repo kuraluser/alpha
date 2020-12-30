@@ -22,6 +22,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsR
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
@@ -79,6 +81,8 @@ import com.cpdss.gateway.domain.LoadablePattern;
 import com.cpdss.gateway.domain.LoadablePatternCargoDetails;
 import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
+import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
+import com.cpdss.gateway.domain.LoadablePlanStowageDetails;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
@@ -2300,6 +2304,105 @@ public class LoadableStudyService {
   public ConfirmPlanReply confirmPlan(
       com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.Builder request) {
     return this.loadableStudyServiceBlockingStub.confirmPlan(request.build());
+  }
+
+  /**
+   * @param loadablePatternId
+   * @param first
+   * @return LoadablePlanDetailsResponse
+   */
+  public LoadablePlanDetailsResponse getLoadablePatternDetails(
+      Long loadablePatternId, String correlationId) throws GenericServiceException {
+    log.info(
+        "Inside getLoadablePatternDetails gateway service with correlationId : " + correlationId);
+    LoadablePlanDetailsResponse response = new LoadablePlanDetailsResponse();
+    LoadablePlanDetailsRequest.Builder request = LoadablePlanDetailsRequest.newBuilder();
+    request.setLoadablePatternId(loadablePatternId);
+    LoadablePlanDetailsReply grpcReply = this.getLoadablePatternDetails(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to getLoadablePatternDetails",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    buildLoadableStudyQuantity(response, grpcReply);
+    buildLoadableStudyStowageDetails(response, grpcReply);
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * @param response
+   * @param grpcReply void
+   */
+  private void buildLoadableStudyStowageDetails(
+      LoadablePlanDetailsResponse response, LoadablePlanDetailsReply grpcReply) {
+    response.setLoadablePlanStowageDetails(new ArrayList<LoadablePlanStowageDetails>());
+    grpcReply
+        .getLoadablePlanStowageDetailsList()
+        .forEach(
+            lpsd -> {
+              LoadablePlanStowageDetails loadablePlanStowageDetails =
+                  new LoadablePlanStowageDetails();
+              loadablePlanStowageDetails.setApi(lpsd.getApi());
+              loadablePlanStowageDetails.setCargoAbbreviation(lpsd.getCargoAbbreviation());
+              loadablePlanStowageDetails.setCorrectedUllage(lpsd.getCorrectedUllage());
+              loadablePlanStowageDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
+              loadablePlanStowageDetails.setFillingRatio(lpsd.getFillingRatio());
+              loadablePlanStowageDetails.setObservedBarrels(lpsd.getObservedBarrels());
+              loadablePlanStowageDetails.setObservedBarrelsAt60(lpsd.getObservedBarrelsAt60());
+              loadablePlanStowageDetails.setObservedM3(lpsd.getObservedM3());
+              loadablePlanStowageDetails.setRdgUllage(lpsd.getRdgUllage());
+              loadablePlanStowageDetails.setTankId(lpsd.getTankId());
+              loadablePlanStowageDetails.setTankName(lpsd.getTankName());
+              loadablePlanStowageDetails.setTemperature(lpsd.getTemperature());
+              loadablePlanStowageDetails.setWeight(lpsd.getWeight());
+              loadablePlanStowageDetails.setId(lpsd.getId());
+              response.getLoadablePlanStowageDetails().add(loadablePlanStowageDetails);
+            });
+  }
+
+  /**
+   * @param response
+   * @param grpcReply void
+   */
+  private void buildLoadableStudyQuantity(
+      LoadablePlanDetailsResponse response, LoadablePlanDetailsReply grpcReply) {
+    response.setLoadableQuantityCargoDetails(
+        new ArrayList<com.cpdss.gateway.domain.LoadableQuantityCargoDetails>());
+    grpcReply
+        .getLoadableQuantityCargoDetailsList()
+        .forEach(
+            lqcd -> {
+              com.cpdss.gateway.domain.LoadableQuantityCargoDetails cargoDetails =
+                  new com.cpdss.gateway.domain.LoadableQuantityCargoDetails();
+              cargoDetails.setDifferenceColor(lqcd.getDifferenceColor());
+              cargoDetails.setDifferencePercentage(lqcd.getDifferencePercentage());
+              cargoDetails.setEstimatedAPI(lqcd.getEstimatedAPI());
+              cargoDetails.setEstimatedTemp(lqcd.getEstimatedTemp());
+              cargoDetails.setGrade(lqcd.getGrade());
+              cargoDetails.setId(lqcd.getId());
+              cargoDetails.setLoadableBbls60f(lqcd.getLoadableBbls60F());
+              cargoDetails.setLoadableBblsdbs(lqcd.getLoadableBblsdbs());
+              cargoDetails.setLoadableKL(lqcd.getLoadableKL());
+              cargoDetails.setLoadableLT(lqcd.getLoadableLT());
+              cargoDetails.setLoadableMT(lqcd.getLoadableMT());
+              cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
+              cargoDetails.setMinTolerence(lqcd.getMinTolerence());
+              cargoDetails.setOrderBbls60f(lqcd.getOrderBbls60F());
+              cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
+              response.getLoadableQuantityCargoDetails().add(cargoDetails);
+            });
+  }
+
+  /**
+   * @param request
+   * @return LoadablePlanDetailsReply
+   */
+  private LoadablePlanDetailsReply getLoadablePatternDetails(
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.Builder request) {
+    return this.loadableStudyServiceBlockingStub.getLoadablePlanDetails(request.build());
   }
 
   /**

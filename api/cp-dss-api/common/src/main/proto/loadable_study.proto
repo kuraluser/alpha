@@ -95,8 +95,82 @@ service LoadableStudyService {
 	rpc GetLoadableStudyStatus(LoadableStudyStatusRequest) returns (LoadableStudyStatusReply) {
 	}
 	
+	rpc GetLoadablePlanDetails(LoadablePlanDetailsRequest) returns (LoadablePlanDetailsReply) {
+	}
+	
 	rpc ConfirmPlan(ConfirmPlanRequest) returns (ConfirmPlanReply) {
 	}
+}
+
+message LoadablePlanDetailsRequest {
+	int64 loadablePatternId = 1;
+}
+
+message LoadablePlanDetailsReply {
+ResponseStatus responseStatus = 1;
+repeated LoadableQuantityCommingleCargoDetails loadableQuantityCommingleCargoDetails= 2;
+repeated LoadableQuantityCargoDetails loadableQuantityCargoDetails = 3;
+repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 4;
+repeated TankList tanks = 5;
+}
+
+message LoadablePlanStowageDetails {
+  int64 tankId = 1;
+  string cargoAbbreviation = 2;
+  string weight = 3; // MT
+  string correctedUllage = 4; // ullage(M)
+  string fillingRatio = 5;
+  string tankName = 6;
+  string rdgUllage = 7;
+  string correctionFactor = 8;
+  string observedM3 = 9;
+  string observedBarrels = 10;
+  string observedBarrelsAt60 = 11; // volume(BBLS)
+  string api = 12;
+  string temperature = 13;
+  int64 id = 14;
+}
+
+
+message LoadableQuantityCommingleCargoDetails {
+	 int64 id = 1;
+	 string grade = 2;
+	 string tankName = 3;
+	 string quantity = 4;
+	 string api = 5;
+	 string temp = 6;
+	 string cargo1Abbreviation = 7;
+	 string cargo2Abbreviation = 8;
+	 string cargo1Percentage = 9;
+	 string cargo2Percentage = 10;
+	 string cargo1Bblsdbs = 11;
+	 string cargo2Bblsdbs = 12;
+	 string cargo1Bbls60f = 13;
+	 string cargo2Bbls60f = 14;
+	 string cargo1LT = 15;
+	 string cargo2LT = 16;
+	 string cargo1MT = 17;
+	 string cargo2MT = 18;
+	 string cargo1KL = 19;
+	 string cargo2KL = 20;
+}
+
+message LoadableQuantityCargoDetails {
+	 int64 id = 1;
+	 string grade = 2;
+	 string estimatedAPI = 3;
+	 string estimatedTemp = 4;
+	 string orderBblsdbs = 5;
+	 string orderBbls60f = 6;
+	 string minTolerence = 7;
+	 string maxTolerence = 8;
+	 string loadableBblsdbs = 9;
+	 string loadableBbls60f = 10;
+	 string loadableLT = 11;
+	 string loadableMT = 12;
+	 string loadableKL = 13;
+	 string differencePercentage = 14;
+	 string differenceColor = 15;
 }
 
 message ConfirmPlanRequest {

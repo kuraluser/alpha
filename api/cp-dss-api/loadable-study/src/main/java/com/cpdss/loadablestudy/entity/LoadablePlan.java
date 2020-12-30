@@ -2,12 +2,10 @@
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
-import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,9 +37,6 @@ public class LoadablePlan extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
-
-  @OneToMany(mappedBy = "loadablePlanXId")
-  private Collection<LoadablePlanQuantity> loadablePlanquantityCollection;
 
   @JoinColumn(name = "loadable_pattern_XId", referencedColumnName = "id")
   @ManyToOne

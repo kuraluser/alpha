@@ -23,6 +23,9 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsR
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse;
@@ -82,6 +85,8 @@ import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
@@ -102,6 +107,9 @@ import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
@@ -170,6 +178,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private PurposeOfCommingleRepository purposeOfCommingleRepository;
   @Autowired private LoadablePatternDetailsRepository loadablePatternDetailsRepository;
   @Autowired private LoadablePatternRepository loadablePatternRepository;
+  @Autowired private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
+  @Autowired private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
+  @Autowired private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
 
   @Autowired
   private LoadablePatternComingleDetailsRepository loadablePatternComingleDetailsRepository;
@@ -3653,8 +3664,111 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
+  public void getLoadablePlanDetails(
+      LoadablePlanDetailsRequest request,
+      StreamObserver<LoadablePlanDetailsReply> responseObserver) {
+    log.info("inside getLoadablePlanDetails loadable study service");
+    LoadablePlanDetailsReply.Builder replyBuilder = LoadablePlanDetailsReply.newBuilder();
+    try {
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+      if (!loadablePatternOpt.isPresent()) {
+        log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
+        replyBuilder.setResponseStatus(
+            ResponseStatus.newBuilder()
+                .setStatus(FAILED)
+                .setMessage(INVALID_LOADABLE_PATTERN_ID)
+                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+      } else {
+        List<LoadablePlanQuantity> loadablePlanQuantities =
+            loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
+                loadablePatternOpt.get(), true);
+        buildLoadablePlanQuantity(loadablePlanQuantities, replyBuilder);
+        List<LoadablePlanStowageDetails> loadablePlanStowageDetails =
+            loadablePlanStowageDetailsRespository.findByLoadablePatternAndIsActive(
+                loadablePatternOpt.get(), true);
+        buildLoadablePlanStowageCargoDetails(loadablePlanStowageDetails, replyBuilder);
+        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      }
+    } catch (Exception e) {
+      log.error("Exception when getLoadablePlanDetails ", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * @param loadablePlanStowageDetails
+   * @param replyBuilder void
+   */
+  private void buildLoadablePlanStowageCargoDetails(
+      List<LoadablePlanStowageDetails> loadablePlanStowageDetails,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
+    loadablePlanStowageDetails.forEach(
+        lpsd -> {
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
+          Optional.ofNullable(lpsd.getId()).ifPresent(builder::setId);
+          Optional.ofNullable(lpsd.getAbbreviation()).ifPresent(builder::setCargoAbbreviation);
+          Optional.ofNullable(lpsd.getApi()).ifPresent(builder::setApi);
+          Optional.ofNullable(lpsd.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
+          Optional.ofNullable(lpsd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
+          Optional.ofNullable(lpsd.getFillingPercentage()).ifPresent(builder::setFillingRatio);
+          Optional.ofNullable(lpsd.getObservedBarrels()).ifPresent(builder::setObservedBarrels);
+          Optional.ofNullable(lpsd.getObservedBarrelsAt60())
+              .ifPresent(builder::setObservedBarrelsAt60);
+          Optional.ofNullable(lpsd.getObservedM3()).ifPresent(builder::setObservedM3);
+          Optional.ofNullable(lpsd.getRdgUllage()).ifPresent(builder::setRdgUllage);
+          Optional.ofNullable(lpsd.getTankname()).ifPresent(builder::setTankName);
+          Optional.ofNullable(lpsd.getTankId()).ifPresent(builder::setTankId);
+          Optional.ofNullable(lpsd.getTemperature()).ifPresent(builder::setTemperature);
+          Optional.ofNullable(lpsd.getWeight()).ifPresent(builder::setWeight);
+          replyBuilder.addLoadablePlanStowageDetails(builder);
+        });
+  }
+
+  /**
+   * @param loadablePlanQuantities
+   * @param replyBuilder void
+   */
+  private void buildLoadablePlanQuantity(
+      List<LoadablePlanQuantity> loadablePlanQuantities,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
+    loadablePlanQuantities.forEach(
+        lpq -> {
+          LoadableQuantityCargoDetails.Builder builder = LoadableQuantityCargoDetails.newBuilder();
+          Optional.ofNullable(lpq.getId()).ifPresent(builder::setId);
+          Optional.ofNullable(lpq.getDifferenceColor()).ifPresent(builder::setDifferenceColor);
+          Optional.ofNullable(lpq.getDifferencePercentage())
+              .ifPresent(
+                  diffPercentage ->
+                      builder.setDifferencePercentage(String.valueOf(diffPercentage)));
+          Optional.ofNullable(lpq.getEstimatedApi())
+              .ifPresent(estimatedApi -> builder.setEstimatedAPI(String.valueOf(estimatedApi)));
+          Optional.ofNullable(lpq.getEstimatedTemperature())
+              .ifPresent(
+                  estimatedTemperature ->
+                      builder.setEstimatedTemp(String.valueOf(estimatedTemperature)));
+          Optional.ofNullable(lpq.getGrade()).ifPresent(builder::setGrade);
+          Optional.ofNullable(lpq.getLoadableBbls60f()).ifPresent(builder::setLoadableBbls60F);
+          Optional.ofNullable(lpq.getLoadableBblsDbs()).ifPresent(builder::setLoadableBblsdbs);
+          Optional.ofNullable(lpq.getLoadableKl()).ifPresent(builder::setLoadableKL);
+          Optional.ofNullable(lpq.getLoadableLt()).ifPresent(builder::setLoadableLT);
+          Optional.ofNullable(lpq.getLoadableMt()).ifPresent(builder::setLoadableMT);
+          Optional.ofNullable(lpq.getMaxTolerence()).ifPresent(builder::setMaxTolerence);
+          Optional.ofNullable(lpq.getMinTolerence()).ifPresent(builder::setMinTolerence);
+          Optional.ofNullable(lpq.getOrderBbls60f()).ifPresent(builder::setOrderBbls60F);
+          Optional.ofNullable(lpq.getOrderBblsDbs()).ifPresent(builder::setOrderBblsdbs);
+          replyBuilder.addLoadableQuantityCargoDetails(builder);
+        });
+  }
+
+  @Override
   public void confirmPlan(
       ConfirmPlanRequest request, StreamObserver<ConfirmPlanReply> responseObserver) {
+    log.info("inside confirmPlan loadable study service");
     ConfirmPlanReply.Builder replyBuilder = ConfirmPlanReply.newBuilder();
     try {
       Optional<LoadablePattern> loadablePatternOpt =
