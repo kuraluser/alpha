@@ -22,7 +22,7 @@ const routes: Routes = [
         loadChildren: () => import('./loadable-pattern-history/loadable-pattern-history.module').then(m => m.LoadablePatternHistoryModule)
       },
       {
-        path: 'loadable-plan/:vesselId/:voyageId/:loadableStudyId',
+        path: 'loadable-plan/:vesselId/:voyageId/:loadableStudyId/:loadablePatternId',
         loadChildren: () => import('./loadable-plan/loadable-plan.module').then(m => m.LoadablePlanModule)
       }
     ]

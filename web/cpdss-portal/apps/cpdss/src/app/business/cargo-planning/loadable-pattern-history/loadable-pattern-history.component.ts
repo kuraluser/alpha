@@ -204,8 +204,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @param {*} event
    * @memberof LoadablePatternHistoryComponent
    */
-  viewPlan() {
-    this.router.navigate([`/business/cargo-planning/loadable-plan/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
+  viewPlan(loadablePattern:ILoadablePattern) {
+    this.router.navigate([`/business/cargo-planning/loadable-plan/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}/${loadablePattern.loadablePatternId}`]);
   }
   
 }
