@@ -13,6 +13,8 @@ import { CommingledCargoDetailsComponent } from './loadable-quantity/commingled-
 import { TableModule } from 'primeng/table';
 import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/cargo-tank-layout.module';
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
+import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
+import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
 
 @NgModule({
   declarations: [LoadablePlanComponent, LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent],
@@ -24,7 +26,7 @@ import { LoadableQuantityApiService } from '../services/loadable-quantity-api.se
     TableModule,
     CargoTankLayoutModule
   ],
-  providers: [LoadableQuantityApiService , DecimalPipe],
+  providers: [LoadableQuantityApiService , DecimalPipe , LoadablePlanTransformationService , LoadablePlanApiService],
   exports: [
     LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent
   ]
