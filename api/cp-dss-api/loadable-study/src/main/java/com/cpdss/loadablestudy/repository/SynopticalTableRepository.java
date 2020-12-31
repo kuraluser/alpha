@@ -19,4 +19,7 @@ public interface SynopticalTableRepository extends CommonCrudRepository<Synoptic
       + "order by lp.portOrder, s.operationType")*/
   public List<SynopticalTable> findByLoadableStudyXIdAndIsActive(
       Long loadableStudyXId, boolean isActive);
+  
+  public List<SynopticalTable> findByLoadableStudyXIdAndIsActiveAndPortXid(
+	      Long loadableStudyXId, boolean isActive, Long portId);
 }

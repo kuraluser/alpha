@@ -474,7 +474,8 @@ class LoadableStudyServiceTest {
     voyage.setVoyageNo(VOYAGE);
     voyage.setCaptainId((long) 1);
     voyage.setChiefOfficerId((long) 1);
-
+    voyage.setStartDate("30-12-2020 01:01");
+    voyage.setEndDate("31-12-2020 23:58");
     VoyageResponse voyageResponse = spy.saveVoyage(voyage, (long) 1, (long) 1, "123");
 
     Assert.assertEquals(

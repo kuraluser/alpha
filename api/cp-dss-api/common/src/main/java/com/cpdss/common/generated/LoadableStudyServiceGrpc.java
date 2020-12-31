@@ -1442,6 +1442,59 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest,
+          com.cpdss.common.generated.LoadableStudy.SynopticalDataReply>
+      getGetSynopticalDataByPortIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetSynopticalDataByPortId",
+      requestType = com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.SynopticalDataReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest,
+          com.cpdss.common.generated.LoadableStudy.SynopticalDataReply>
+      getGetSynopticalDataByPortIdMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest,
+            com.cpdss.common.generated.LoadableStudy.SynopticalDataReply>
+        getGetSynopticalDataByPortIdMethod;
+    if ((getGetSynopticalDataByPortIdMethod =
+            LoadableStudyServiceGrpc.getGetSynopticalDataByPortIdMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetSynopticalDataByPortIdMethod =
+                LoadableStudyServiceGrpc.getGetSynopticalDataByPortIdMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetSynopticalDataByPortIdMethod =
+              getGetSynopticalDataByPortIdMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest,
+                          com.cpdss.common.generated.LoadableStudy.SynopticalDataReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetSynopticalDataByPortId"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.SynopticalDataReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "GetSynopticalDataByPortId"))
+                      .build();
+        }
+      }
+    }
+    return getGetSynopticalDataByPortIdMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest,
           com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply>
       getGetLoadableStudyStatusMethod;
@@ -1865,6 +1918,14 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void getSynopticalDataByPortId(
+        com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalDataReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetSynopticalDataByPortIdMethod(), responseObserver);
+    }
+
+    /** */
     public void getLoadableStudyStatus(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request,
         io.grpc.stub.StreamObserver<
@@ -2091,6 +2152,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
                       com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>(
                       this, METHODID_GET_SYNOPTICAL_TABLE)))
+          .addMethod(
+              getGetSynopticalDataByPortIdMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest,
+                      com.cpdss.common.generated.LoadableStudy.SynopticalDataReply>(
+                      this, METHODID_GET_SYNOPTICAL_DATA_BY_PORT_ID)))
           .addMethod(
               getGetLoadableStudyStatusMethod(),
               asyncUnaryCall(
@@ -2439,6 +2507,17 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void getSynopticalDataByPortId(
+        com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalDataReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetSynopticalDataByPortIdMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
     public void getLoadableStudyStatus(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request,
         io.grpc.stub.StreamObserver<
@@ -2685,6 +2764,13 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetSynopticalTableMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.SynopticalDataReply getSynopticalDataByPortId(
+        com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetSynopticalDataByPortIdMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -2970,6 +3056,15 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.SynopticalDataReply>
+        getSynopticalDataByPortId(
+            com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetSynopticalDataByPortIdMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply>
         getLoadableStudyStatus(
             com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request) {
@@ -3023,9 +3118,10 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_SAVE_ON_BOARD_QUANTITY = 25;
   private static final int METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS = 26;
   private static final int METHODID_GET_SYNOPTICAL_TABLE = 27;
-  private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 28;
-  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 29;
-  private static final int METHODID_CONFIRM_PLAN = 30;
+  private static final int METHODID_GET_SYNOPTICAL_DATA_BY_PORT_ID = 28;
+  private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 29;
+  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 30;
+  private static final int METHODID_CONFIRM_PLAN = 31;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -3240,6 +3336,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>)
                   responseObserver);
           break;
+        case METHODID_GET_SYNOPTICAL_DATA_BY_PORT_ID:
+          serviceImpl.getSynopticalDataByPortId(
+              (com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.SynopticalDataReply>)
+                  responseObserver);
+          break;
         case METHODID_GET_LOADABLE_STUDY_STATUS:
           serviceImpl.getLoadableStudyStatus(
               (com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest) request,
@@ -3353,6 +3456,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveOnBoardQuantityMethod())
                       .addMethod(getSaveAlgoLoadableStudyStatusMethod())
                       .addMethod(getGetSynopticalTableMethod())
+                      .addMethod(getGetSynopticalDataByPortIdMethod())
                       .addMethod(getGetLoadableStudyStatusMethod())
                       .addMethod(getGetLoadablePlanDetailsMethod())
                       .addMethod(getConfirmPlanMethod())

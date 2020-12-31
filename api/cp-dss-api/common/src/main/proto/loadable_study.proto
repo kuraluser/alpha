@@ -91,6 +91,9 @@ service LoadableStudyService {
 	
 	rpc GetSynopticalTable (SynopticalTableRequest) returns (SynopticalTableReply){
 	}
+	
+	rpc GetSynopticalDataByPortId (SynopticalDataRequest) returns (SynopticalDataReply){
+	}
 
 	rpc GetLoadableStudyStatus(LoadableStudyStatusRequest) returns (LoadableStudyStatusReply) {
 	}
@@ -213,6 +216,8 @@ message VoyageRequest {
 	int64 companyId = 3;
 	int64 vesselId = 4;
 	string voyageNo = 5;
+	string startDate = 6;
+	string endDate = 7;
 }
 
 message VoyageReply {
@@ -223,6 +228,8 @@ message VoyageReply {
 message VoyageDetail{
 	int64 id = 1;
 	string voyageNumber = 2;
+	string startDate = 3;
+	string endDate = 4;
 }
 
 message VoyageListReply{
@@ -671,4 +678,14 @@ message SynopticalTableLoadicatorData{
 	string calculatedTrimPlanned = 12;
 	string calculatedTrimActual = 13;
 	string blindSector = 14;
+}
+
+message SynopticalDataRequest{
+	int64 loadableStudyId = 1;
+	int64 portId = 2;
+}
+
+message SynopticalDataReply{
+	ResponseStatus responseStatus = 1;
+	repeated SynopticalRecord synopticalRecords = 2;
 }

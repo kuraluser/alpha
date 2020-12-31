@@ -47,6 +47,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData;
+import com.cpdss.common.generated.LoadableStudy.SynopticalDataReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.TankDetail;
@@ -150,6 +152,8 @@ public class LoadableStudyService {
   private static final int LOADABLE_STUDY_ATTACHEMENT_MAX_SIZE = 1 * 1024 * 1024;
   private static final List<String> ATTACHMENT_ALLOWED_EXTENSIONS =
       Arrays.asList("docx", "pdf", "txt", "jpg", "png", "msg", "eml");
+  private static final String ARR = "ARR";
+  private static final String DEP = "DEP";
 
   /**
    * method for voyage save
@@ -172,6 +176,8 @@ public class LoadableStudyService {
             .setCompanyId(companyId)
             .setVesselId(vesselId)
             .setVoyageNo(voyage.getVoyageNo())
+            .setStartDate(!StringUtils.isEmpty(voyage.getStartDate())? voyage.getStartDate(): "")
+            .setEndDate(!StringUtils.isEmpty(voyage.getEndDate())? voyage.getEndDate(): "")
             .build();
 
     VoyageReply voyageReply = this.saveVoyage(voyageRequest);
@@ -737,7 +743,29 @@ public class LoadableStudyService {
       port.setEtd(portDetail.getEtd());
       port.setLayCanFrom(portDetail.getLayCanFrom());
       port.setLayCanTo(portDetail.getLayCanTo());
-
+      // Fetch distance, eta/etd actual values from synoptical table
+      SynopticalDataRequest synopticalRequest =
+    		  SynopticalDataRequest.newBuilder().setLoadableStudyId(loadableStudyId).setPortId(portDetail.getPortId()).build();
+      SynopticalDataReply synopticalDataReply = loadableStudyServiceBlockingStub.getSynopticalDataByPortId(synopticalRequest);
+      if (synopticalDataReply != null
+    	        && synopticalDataReply.getResponseStatus() != null
+    	        && !SUCCESS.equalsIgnoreCase(synopticalDataReply.getResponseStatus().getStatus())) {
+    	  throw new GenericServiceException(
+    			  "Error in getLoadableStudyPortRotationList - getSynopticalDataByPortId",
+    			  CommonErrorCodes.E_GEN_INTERNAL_ERR,
+    			  HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
+      // add distance, eta/etd actual values from synoptical table
+      if (synopticalDataReply!=null && !CollectionUtils.isEmpty(synopticalDataReply.getSynopticalRecordsList())){
+    	  synopticalDataReply.getSynopticalRecordsList().forEach(record -> {
+    		  port.setDistanceBetweenPorts(!StringUtils.isEmpty(record.getDistance())? new BigDecimal(record.getDistance()): BigDecimal.ZERO);
+    		  if (ARR.equalsIgnoreCase(record.getOperationType())) {
+    			  port.setEtaActual(record.getEtaEtdActual());
+    		  } else {
+    			  port.setEtdActual(record.getEtaEtdActual());
+    		  }
+    	  });
+      }
       response.getPortList().add(port);
       response.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
@@ -953,6 +981,8 @@ public class LoadableStudyService {
       Voyage voyage = new Voyage();
       voyage.setId(detail.getId());
       voyage.setVoyageNo(detail.getVoyageNumber());
+      voyage.setStartDate(detail.getStartDate());
+      voyage.setEndDate(detail.getEndDate());
       response.getVoyages().add(voyage);
     }
     return response;
