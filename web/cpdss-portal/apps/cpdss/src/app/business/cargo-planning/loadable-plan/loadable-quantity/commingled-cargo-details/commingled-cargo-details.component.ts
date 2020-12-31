@@ -36,16 +36,14 @@ export class CommingledCargoDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.columns = this.loadablePlanTransformationService.getCommingledCargoTableColumn();
-    this.value = [1, 2, 3]
+    this.value = [1, 2, 3];
   }
 
   /**
-* Get all details for loadable quantity
-*
-*/
-  async getLoadableQuantity() {
+  * Get details for commingled cargo details
+  */
+  async getCommingledCargoDetails() {
     this.ngxSpinnerService.show();
-    //  let data = await this.loadablePlanApiService.getCommingledCargoDetails(this.vesselId, this.voyageId, this.loadableStudyId , this.loadablePatternId).toPromise();
     this.ngxSpinnerService.hide();
   }
 
