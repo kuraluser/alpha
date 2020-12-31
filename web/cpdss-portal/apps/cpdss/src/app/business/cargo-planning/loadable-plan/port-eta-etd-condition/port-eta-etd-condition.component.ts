@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
+
+import { ITableHeaderModel } from '../../models/loadable-plan.model';
+
+import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
+import { LoadablePlanApiService } from '../../services/loadable-plan-api.service';
 
 /**
  * Component class of ports eta etd component in loadable plan
@@ -13,34 +19,33 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./port-eta-etd-condition.component.scss']
 })
 export class PortEtaEtdConditionComponent implements OnInit {
-  columns: any[];
+  @Input() voyageId: number;
+  @Input() loadableStudyId: number;
+  @Input() vesselId: number;
+  @Input() loadablePatternId: number;
+
+  columns: ITableHeaderModel[];
   value: any[];
-  constructor() { }
+
+  constructor(
+    private ngxSpinnerService: NgxSpinnerService,
+    private loadablePlanTransformationService: LoadablePlanTransformationService,
+    private loadablePlanApiService: LoadablePlanApiService
+  ) { }
 
   ngOnInit(): void {
-    this.columns = [
-      { field: 'year', header: '' },
-      { field: 'year', header: 'PORT' },
-      { field: 'year', header: 'ETA/ETD DATE' },
-      { field: 'year', header: 'ETA/ETD TIME' },
-      { field: 'year', header: 'DRAFT',rowspan:3, subColumns: [
-        { field: 'year', header: 'FORE' },
-        { field: 'year', header: 'AFT' },
-        { field: 'year', header: 'MSHIP' }
-      ]},
-      { field: 'year', header: 'TRIM' },
-      { field: 'year', header: 'CARGO(MT)' },
-      { field: 'year', header: 'F.Q.' },
-      { field: 'year', header: 'D.Q.' },
-      { field: 'year', header: 'BALLAST' },
-      { field: 'year', header: 'FRESH WATER' },
-      { field: 'year', header: 'OTHERS' },
-      { field: 'year', header: 'TOTAL DWT' },
-      { field: 'year', header: 'DISPLACEMENT' },
-      { field: 'year', header: 'MAX FRBRO (M)' },
-      { field: 'year', header: 'MAX.MNFLD(M)' },
-      { field: 'year', header: 'DENSITY' },
-    ];
+    this.columns = this.loadablePlanTransformationService.getEtaEtdTableColumns();
+    this.getEtaEtdDetails();
+  }
+
+  /**
+  * Get  details for Eta & Etd
+  *
+  */
+  async getEtaEtdDetails() {
+    this.ngxSpinnerService.show();
+    // let data = await this.loadablePlanApiService.getLoadablePlanEtaEtdDetails(this.vesselId, this.voyageId, this.loadableStudyId , this.loadablePatternId).toPromise();
+    this.ngxSpinnerService.hide();
   }
 
 }
