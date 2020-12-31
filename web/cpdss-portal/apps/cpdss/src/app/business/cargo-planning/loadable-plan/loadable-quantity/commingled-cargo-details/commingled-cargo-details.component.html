@@ -21,6 +21,19 @@
                 </tr>
                
             </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td *ngFor="let col of columns">
+                        <span *ngIf="col?.field; else sub_col">{{col?.header}}</span>
+                        <ng-template #sub_col>
+                            <ng-container *ngFor="let sub of col.subColumns">
+                                {{sub.header}}j
+                            </ng-container>
+                        </ng-template>
+                    </td>
+                    
+                </tr>
+            </ng-template>
         </p-table>
     </div>
 </div>
