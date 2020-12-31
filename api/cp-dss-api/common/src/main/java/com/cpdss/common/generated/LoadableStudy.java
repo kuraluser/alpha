@@ -70286,6 +70286,32 @@ public final class LoadableStudy {
     /** <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code> */
     com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorDataOrBuilder
         getLoadicatorDataOrBuilder();
+
+    /**
+     * <code>string ballastPlanned = 42;</code>
+     *
+     * @return The ballastPlanned.
+     */
+    java.lang.String getBallastPlanned();
+    /**
+     * <code>string ballastPlanned = 42;</code>
+     *
+     * @return The bytes for ballastPlanned.
+     */
+    com.google.protobuf.ByteString getBallastPlannedBytes();
+
+    /**
+     * <code>string ballastActual = 43;</code>
+     *
+     * @return The ballastActual.
+     */
+    java.lang.String getBallastActual();
+    /**
+     * <code>string ballastActual = 43;</code>
+     *
+     * @return The bytes for ballastActual.
+     */
+    com.google.protobuf.ByteString getBallastActualBytes();
   }
   /** Protobuf type {@code SynopticalRecord} */
   public static final class SynopticalRecord extends com.google.protobuf.GeneratedMessageV3
@@ -70336,6 +70362,8 @@ public final class LoadableStudy {
       totalDwtActual_ = "";
       displacementPlanned_ = "";
       displacementActual_ = "";
+      ballastPlanned_ = "";
+      ballastActual_ = "";
     }
 
     @java.lang.Override
@@ -70673,6 +70701,20 @@ public final class LoadableStudy {
                   loadicatorData_ = subBuilder.buildPartial();
                 }
 
+                break;
+              }
+            case 338:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                ballastPlanned_ = s;
+                break;
+              }
+            case 346:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                ballastActual_ = s;
                 break;
               }
             default:
@@ -72054,6 +72096,76 @@ public final class LoadableStudy {
       return getLoadicatorData();
     }
 
+    public static final int BALLASTPLANNED_FIELD_NUMBER = 42;
+    private volatile java.lang.Object ballastPlanned_;
+    /**
+     * <code>string ballastPlanned = 42;</code>
+     *
+     * @return The ballastPlanned.
+     */
+    public java.lang.String getBallastPlanned() {
+      java.lang.Object ref = ballastPlanned_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        ballastPlanned_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string ballastPlanned = 42;</code>
+     *
+     * @return The bytes for ballastPlanned.
+     */
+    public com.google.protobuf.ByteString getBallastPlannedBytes() {
+      java.lang.Object ref = ballastPlanned_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        ballastPlanned_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int BALLASTACTUAL_FIELD_NUMBER = 43;
+    private volatile java.lang.Object ballastActual_;
+    /**
+     * <code>string ballastActual = 43;</code>
+     *
+     * @return The ballastActual.
+     */
+    public java.lang.String getBallastActual() {
+      java.lang.Object ref = ballastActual_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        ballastActual_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string ballastActual = 43;</code>
+     *
+     * @return The bytes for ballastActual.
+     */
+    public com.google.protobuf.ByteString getBallastActualBytes() {
+      java.lang.Object ref = ballastActual_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        ballastActual_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -72191,6 +72303,12 @@ public final class LoadableStudy {
       if (loadicatorData_ != null) {
         output.writeMessage(41, getLoadicatorData());
       }
+      if (!getBallastPlannedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 42, ballastPlanned_);
+      }
+      if (!getBallastActualBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 43, ballastActual_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -72323,6 +72441,12 @@ public final class LoadableStudy {
       if (loadicatorData_ != null) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(41, getLoadicatorData());
       }
+      if (!getBallastPlannedBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(42, ballastPlanned_);
+      }
+      if (!getBallastActualBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(43, ballastActual_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -72383,6 +72507,8 @@ public final class LoadableStudy {
       if (hasLoadicatorData()) {
         if (!getLoadicatorData().equals(other.getLoadicatorData())) return false;
       }
+      if (!getBallastPlanned().equals(other.getBallastPlanned())) return false;
+      if (!getBallastActual().equals(other.getBallastActual())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -72482,6 +72608,10 @@ public final class LoadableStudy {
         hash = (37 * hash) + LOADICATORDATA_FIELD_NUMBER;
         hash = (53 * hash) + getLoadicatorData().hashCode();
       }
+      hash = (37 * hash) + BALLASTPLANNED_FIELD_NUMBER;
+      hash = (53 * hash) + getBallastPlanned().hashCode();
+      hash = (37 * hash) + BALLASTACTUAL_FIELD_NUMBER;
+      hash = (53 * hash) + getBallastActual().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -72718,6 +72848,10 @@ public final class LoadableStudy {
           loadicatorData_ = null;
           loadicatorDataBuilder_ = null;
         }
+        ballastPlanned_ = "";
+
+        ballastActual_ = "";
+
         return this;
       }
 
@@ -72806,6 +72940,8 @@ public final class LoadableStudy {
         } else {
           result.loadicatorData_ = loadicatorDataBuilder_.build();
         }
+        result.ballastPlanned_ = ballastPlanned_;
+        result.ballastActual_ = ballastActual_;
         onBuilt();
         return result;
       }
@@ -73063,6 +73199,14 @@ public final class LoadableStudy {
         }
         if (other.hasLoadicatorData()) {
           mergeLoadicatorData(other.getLoadicatorData());
+        }
+        if (!other.getBallastPlanned().isEmpty()) {
+          ballastPlanned_ = other.ballastPlanned_;
+          onChanged();
+        }
+        if (!other.getBallastActual().isEmpty()) {
+          ballastActual_ = other.ballastActual_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -76428,6 +76572,158 @@ public final class LoadableStudy {
           loadicatorData_ = null;
         }
         return loadicatorDataBuilder_;
+      }
+
+      private java.lang.Object ballastPlanned_ = "";
+      /**
+       * <code>string ballastPlanned = 42;</code>
+       *
+       * @return The ballastPlanned.
+       */
+      public java.lang.String getBallastPlanned() {
+        java.lang.Object ref = ballastPlanned_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          ballastPlanned_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string ballastPlanned = 42;</code>
+       *
+       * @return The bytes for ballastPlanned.
+       */
+      public com.google.protobuf.ByteString getBallastPlannedBytes() {
+        java.lang.Object ref = ballastPlanned_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          ballastPlanned_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string ballastPlanned = 42;</code>
+       *
+       * @param value The ballastPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBallastPlanned(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        ballastPlanned_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ballastPlanned = 42;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearBallastPlanned() {
+
+        ballastPlanned_ = getDefaultInstance().getBallastPlanned();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ballastPlanned = 42;</code>
+       *
+       * @param value The bytes for ballastPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBallastPlannedBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        ballastPlanned_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object ballastActual_ = "";
+      /**
+       * <code>string ballastActual = 43;</code>
+       *
+       * @return The ballastActual.
+       */
+      public java.lang.String getBallastActual() {
+        java.lang.Object ref = ballastActual_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          ballastActual_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string ballastActual = 43;</code>
+       *
+       * @return The bytes for ballastActual.
+       */
+      public com.google.protobuf.ByteString getBallastActualBytes() {
+        java.lang.Object ref = ballastActual_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          ballastActual_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string ballastActual = 43;</code>
+       *
+       * @param value The ballastActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBallastActual(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        ballastActual_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ballastActual = 43;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearBallastActual() {
+
+        ballastActual_ = getDefaultInstance().getBallastActual();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ballastActual = 43;</code>
+       *
+       * @param value The bytes for ballastActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBallastActualBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        ballastActual_ = value;
+        onChanged();
+        return this;
       }
 
       @java.lang.Override
@@ -85107,7 +85403,7 @@ public final class LoadableStudy {
           + "e\030\010 \001(\t\022\026\n\016cargo1Quantity\030\t \001(\t\022\026\n\016cargo"
           + "2Quantity\030\n \001(\t\022\030\n\020cargo1Percentage\030\013 \001("
           + "\t\022\030\n\020cargo2Percentage\030\014 \001(\t\022\'\n\016responseS"
-          + "tatus\030\r \001(\0132\017.ResponseStatus\"\343\007\n\020Synopti"
+          + "tatus\030\r \001(\0132\017.ResponseStatus\"\222\010\n\020Synopti"
           + "calRecord\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\020\n"
           + "\010portName\030\003 \001(\t\022\025\n\roperationType\030\004 \001(\t\022\020"
           + "\n\010distance\030\005 \001(\t\022\r\n\005speed\030\006 \001(\t\022\024\n\014runni"
@@ -85132,94 +85428,95 @@ public final class LoadableStudy {
           + "ned\030% \001(\t\022\026\n\016totalDwtActual\030& \001(\t\022\033\n\023dis"
           + "placementPlanned\030\' \001(\t\022\032\n\022displacementAc"
           + "tual\030( \001(\t\0226\n\016loadicatorData\030) \001(\0132\036.Syn"
-          + "opticalTableLoadicatorData\"f\n\025Synoptical"
-          + "CargoRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030"
-          + "\002 \001(\t\022\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014actualWe"
-          + "ight\030\004 \001(\t\"\212\001\n\023SynopticalOhqRecord\022\016\n\006ta"
-          + "nkId\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rplannedW"
-          + "eight\030\003 \001(\t\022\024\n\014actualWeight\030\004 \001(\t\022\022\n\nfue"
-          + "lTypeId\030\005 \001(\003\022\020\n\010fuelType\030\006 \001(\t\"C\n\026Synop"
-          + "ticalTableRequest\022\027\n\017loadableStudyId\030\001 \001"
-          + "(\003\022\020\n\010vesselId\030\002 \001(\003\"\216\001\n\024SynopticalTable"
-          + "Reply\022\'\n\016responseStatus\030\001 \001(\0132\017.Response"
-          + "Status\022,\n\021synopticalRecords\030\002 \003(\0132\021.Syno"
-          + "pticalRecord\022\037\n\nvesselTank\030\003 \003(\0132\013.TankD"
-          + "etail\"\255\003\n\035SynopticalTableLoadicatorData\022"
-          + "\016\n\006hogSag\030\001 \001(\t\022\025\n\rfinalDraftFwd\030\002 \001(\t\022\025"
-          + "\n\rfinalDraftAft\030\003 \001(\t\022\025\n\rfinalDraftMid\030\004"
-          + " \001(\t\022\026\n\016finalDraftTrim\030\005 \001(\t\022!\n\031calculat"
-          + "edDraftFwdPlanned\030\006 \001(\t\022 \n\030calculatedDra"
-          + "ftFwdActual\030\007 \001(\t\022!\n\031calculatedDraftAftP"
-          + "lanned\030\010 \001(\t\022 \n\030calculatedDraftAftActual"
-          + "\030\t \001(\t\022!\n\031calculatedDraftMidPlanned\030\n \001("
-          + "\t\022 \n\030calculatedDraftMidActual\030\013 \001(\t\022\035\n\025c"
-          + "alculatedTrimPlanned\030\014 \001(\t\022\034\n\024calculated"
-          + "TrimActual\030\r \001(\t\022\023\n\013blindSector\030\016 \001(\t\"@\n"
-          + "\025SynopticalDataRequest\022\027\n\017loadableStudyI"
-          + "d\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\"l\n\023SynopticalDat"
-          + "aReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respons"
-          + "eStatus\022,\n\021synopticalRecords\030\002 \003(\0132\021.Syn"
-          + "opticalRecord2\276\022\n\024LoadableStudyService\022,"
-          + "\n\nSaveVoyage\022\016.VoyageRequest\032\014.VoyageRep"
-          + "ly\"\000\0228\n\022GetVoyagesByVessel\022\016.VoyageReque"
-          + "st\032\020.VoyageListReply\"\000\022J\n\024SaveLoadableQu"
-          + "antity\022\030.LoadableQuantityRequest\032\026.Loada"
-          + "bleQuantityReply\"\000\022T\n$FindLoadableStudie"
-          + "sByVesselAndVoyage\022\025.LoadableStudyReques"
-          + "t\032\023.LoadableStudyReply\"\000\022@\n\021SaveLoadable"
-          + "Study\022\024.LoadableStudyDetail\032\023.LoadableSt"
-          + "udyReply\"\000\022G\n\023SaveCargoNomination\022\027.Carg"
-          + "oNominationRequest\032\025.CargoNominationRepl"
-          + "y\"\000\022J\n\034GetLoadableStudyPortRotation\022\024.Po"
-          + "rtRotationRequest\032\022.PortRotationReply\"\000\022"
-          + "J\n\026GetCargoNominationById\022\027.CargoNominat"
-          + "ionRequest\032\025.CargoNominationReply\"\000\022I\n\023G"
-          + "etValveSegregation\022\030.ValveSegregationReq"
-          + "uest\032\026.ValveSegregationReply\"\000\022J\n\023getLoa"
-          + "dableQuantity\022\026.LoadableQuantityReply\032\031."
-          + "LoadableQuantityResponse\"\000\022J\n\035SaveLoadab"
-          + "leStudyPortRotation\022\023.PortRotationDetail"
-          + "\032\022.PortRotationReply\"\000\022I\n\025DeleteCargoNom"
-          + "ination\022\027.CargoNominationRequest\032\025.Cargo"
-          + "NominationReply\"\000\022B\n\024SaveDischargingPort"
-          + "s\022\024.PortRotationRequest\032\022.PortRotationRe"
-          + "ply\"\000\022N\n GetPortRotationByLoadableStudyI"
-          + "d\022\024.PortRotationRequest\032\022.PortRotationRe"
-          + "ply\"\000\022C\n\023DeleteLoadableStudy\022\025.LoadableS"
-          + "tudyRequest\032\023.LoadableStudyReply\"\000\022@\n\022De"
-          + "letePortRotation\022\024.PortRotationRequest\032\022"
-          + ".PortRotationReply\"\000\022C\n\021GetOnHandQuantit"
-          + "y\022\026.OnHandQuantityRequest\032\024.OnHandQuanti"
-          + "tyReply\"\000\022C\n\022SaveOnHandQuantity\022\025.OnHand"
-          + "QuantityDetail\032\024.OnHandQuantityReply\"\000\022M"
-          + "\n\031GetLoadablePatternDetails\022\027.LoadablePa"
-          + "tternRequest\032\025.LoadablePatternReply\"\000\022O\n"
-          + "\025GetPurposeOfCommingle\022\032.PurposeOfCommin"
-          + "gleRequest\032\030.PurposeOfCommingleReply\"\000\022C"
-          + "\n\021GetCommingleCargo\022\026.CommingleCargoRequ"
-          + "est\032\024.CommingleCargoReply\"\000\022D\n\022SaveCommi"
-          + "ngleCargo\022\026.CommingleCargoRequest\032\024.Comm"
-          + "ingleCargoReply\"\000\022v\n\"GetLoadablePatternC"
-          + "ommingleDetails\022\'.LoadablePatternComming"
-          + "leDetailsRequest\032%.LoadablePatternCommin"
-          + "gleDetailsReply\"\000\0226\n\030GenerateLoadablePat"
-          + "terns\022\014.AlgoRequest\032\n.AlgoReply\"\000\022F\n\022Get"
-          + "OnBoardQuantity\022\027.OnBoardQuantityRequest"
-          + "\032\025.OnBoardQuantityReply\"\000\022F\n\023SaveOnBoard"
-          + "Quantity\022\026.OnBoardQuantityDetail\032\025.OnBoa"
-          + "rdQuantityReply\"\000\022E\n\033SaveAlgoLoadableStu"
-          + "dyStatus\022\022.AlgoStatusRequest\032\020.AlgoStatu"
-          + "sReply\"\000\022F\n\022GetSynopticalTable\022\027.Synopti"
-          + "calTableRequest\032\025.SynopticalTableReply\"\000"
-          + "\022K\n\031GetSynopticalDataByPortId\022\026.Synoptic"
-          + "alDataRequest\032\024.SynopticalDataReply\"\000\022R\n"
-          + "\026GetLoadableStudyStatus\022\033.LoadableStudyS"
-          + "tatusRequest\032\031.LoadableStudyStatusReply\""
-          + "\000\022R\n\026GetLoadablePlanDetails\022\033.LoadablePl"
-          + "anDetailsRequest\032\031.LoadablePlanDetailsRe"
-          + "ply\"\000\0227\n\013ConfirmPlan\022\023.ConfirmPlanReques"
-          + "t\032\021.ConfirmPlanReply\"\000B\036\n\032com.cpdss.comm"
-          + "on.generatedP\000b\006proto3"
+          + "opticalTableLoadicatorData\022\026\n\016ballastPla"
+          + "nned\030* \001(\t\022\025\n\rballastActual\030+ \001(\t\"f\n\025Syn"
+          + "opticalCargoRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010ta"
+          + "nkName\030\002 \001(\t\022\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014a"
+          + "ctualWeight\030\004 \001(\t\"\212\001\n\023SynopticalOhqRecor"
+          + "d\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rp"
+          + "lannedWeight\030\003 \001(\t\022\024\n\014actualWeight\030\004 \001(\t"
+          + "\022\022\n\nfuelTypeId\030\005 \001(\003\022\020\n\010fuelType\030\006 \001(\t\"C"
+          + "\n\026SynopticalTableRequest\022\027\n\017loadableStud"
+          + "yId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\"\216\001\n\024Synoptic"
+          + "alTableReply\022\'\n\016responseStatus\030\001 \001(\0132\017.R"
+          + "esponseStatus\022,\n\021synopticalRecords\030\002 \003(\013"
+          + "2\021.SynopticalRecord\022\037\n\nvesselTank\030\003 \003(\0132"
+          + "\013.TankDetail\"\255\003\n\035SynopticalTableLoadicat"
+          + "orData\022\016\n\006hogSag\030\001 \001(\t\022\025\n\rfinalDraftFwd\030"
+          + "\002 \001(\t\022\025\n\rfinalDraftAft\030\003 \001(\t\022\025\n\rfinalDra"
+          + "ftMid\030\004 \001(\t\022\026\n\016finalDraftTrim\030\005 \001(\t\022!\n\031c"
+          + "alculatedDraftFwdPlanned\030\006 \001(\t\022 \n\030calcul"
+          + "atedDraftFwdActual\030\007 \001(\t\022!\n\031calculatedDr"
+          + "aftAftPlanned\030\010 \001(\t\022 \n\030calculatedDraftAf"
+          + "tActual\030\t \001(\t\022!\n\031calculatedDraftMidPlann"
+          + "ed\030\n \001(\t\022 \n\030calculatedDraftMidActual\030\013 \001"
+          + "(\t\022\035\n\025calculatedTrimPlanned\030\014 \001(\t\022\034\n\024cal"
+          + "culatedTrimActual\030\r \001(\t\022\023\n\013blindSector\030\016"
+          + " \001(\t\"@\n\025SynopticalDataRequest\022\027\n\017loadabl"
+          + "eStudyId\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\"l\n\023Synopt"
+          + "icalDataReply\022\'\n\016responseStatus\030\001 \001(\0132\017."
+          + "ResponseStatus\022,\n\021synopticalRecords\030\002 \003("
+          + "\0132\021.SynopticalRecord2\276\022\n\024LoadableStudySe"
+          + "rvice\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014.Vo"
+          + "yageReply\"\000\0228\n\022GetVoyagesByVessel\022\016.Voya"
+          + "geRequest\032\020.VoyageListReply\"\000\022J\n\024SaveLoa"
+          + "dableQuantity\022\030.LoadableQuantityRequest\032"
+          + "\026.LoadableQuantityReply\"\000\022T\n$FindLoadabl"
+          + "eStudiesByVesselAndVoyage\022\025.LoadableStud"
+          + "yRequest\032\023.LoadableStudyReply\"\000\022@\n\021SaveL"
+          + "oadableStudy\022\024.LoadableStudyDetail\032\023.Loa"
+          + "dableStudyReply\"\000\022G\n\023SaveCargoNomination"
+          + "\022\027.CargoNominationRequest\032\025.CargoNominat"
+          + "ionReply\"\000\022J\n\034GetLoadableStudyPortRotati"
+          + "on\022\024.PortRotationRequest\032\022.PortRotationR"
+          + "eply\"\000\022J\n\026GetCargoNominationById\022\027.Cargo"
+          + "NominationRequest\032\025.CargoNominationReply"
+          + "\"\000\022I\n\023GetValveSegregation\022\030.ValveSegrega"
+          + "tionRequest\032\026.ValveSegregationReply\"\000\022J\n"
+          + "\023getLoadableQuantity\022\026.LoadableQuantityR"
+          + "eply\032\031.LoadableQuantityResponse\"\000\022J\n\035Sav"
+          + "eLoadableStudyPortRotation\022\023.PortRotatio"
+          + "nDetail\032\022.PortRotationReply\"\000\022I\n\025DeleteC"
+          + "argoNomination\022\027.CargoNominationRequest\032"
+          + "\025.CargoNominationReply\"\000\022B\n\024SaveDischarg"
+          + "ingPorts\022\024.PortRotationRequest\032\022.PortRot"
+          + "ationReply\"\000\022N\n GetPortRotationByLoadabl"
+          + "eStudyId\022\024.PortRotationRequest\032\022.PortRot"
+          + "ationReply\"\000\022C\n\023DeleteLoadableStudy\022\025.Lo"
+          + "adableStudyRequest\032\023.LoadableStudyReply\""
+          + "\000\022@\n\022DeletePortRotation\022\024.PortRotationRe"
+          + "quest\032\022.PortRotationReply\"\000\022C\n\021GetOnHand"
+          + "Quantity\022\026.OnHandQuantityRequest\032\024.OnHan"
+          + "dQuantityReply\"\000\022C\n\022SaveOnHandQuantity\022\025"
+          + ".OnHandQuantityDetail\032\024.OnHandQuantityRe"
+          + "ply\"\000\022M\n\031GetLoadablePatternDetails\022\027.Loa"
+          + "dablePatternRequest\032\025.LoadablePatternRep"
+          + "ly\"\000\022O\n\025GetPurposeOfCommingle\022\032.PurposeO"
+          + "fCommingleRequest\032\030.PurposeOfCommingleRe"
+          + "ply\"\000\022C\n\021GetCommingleCargo\022\026.CommingleCa"
+          + "rgoRequest\032\024.CommingleCargoReply\"\000\022D\n\022Sa"
+          + "veCommingleCargo\022\026.CommingleCargoRequest"
+          + "\032\024.CommingleCargoReply\"\000\022v\n\"GetLoadableP"
+          + "atternCommingleDetails\022\'.LoadablePattern"
+          + "CommingleDetailsRequest\032%.LoadablePatter"
+          + "nCommingleDetailsReply\"\000\0226\n\030GenerateLoad"
+          + "ablePatterns\022\014.AlgoRequest\032\n.AlgoReply\"\000"
+          + "\022F\n\022GetOnBoardQuantity\022\027.OnBoardQuantity"
+          + "Request\032\025.OnBoardQuantityReply\"\000\022F\n\023Save"
+          + "OnBoardQuantity\022\026.OnBoardQuantityDetail\032"
+          + "\025.OnBoardQuantityReply\"\000\022E\n\033SaveAlgoLoad"
+          + "ableStudyStatus\022\022.AlgoStatusRequest\032\020.Al"
+          + "goStatusReply\"\000\022F\n\022GetSynopticalTable\022\027."
+          + "SynopticalTableRequest\032\025.SynopticalTable"
+          + "Reply\"\000\022K\n\031GetSynopticalDataByPortId\022\026.S"
+          + "ynopticalDataRequest\032\024.SynopticalDataRep"
+          + "ly\"\000\022R\n\026GetLoadableStudyStatus\022\033.Loadabl"
+          + "eStudyStatusRequest\032\031.LoadableStudyStatu"
+          + "sReply\"\000\022R\n\026GetLoadablePlanDetails\022\033.Loa"
+          + "dablePlanDetailsRequest\032\031.LoadablePlanDe"
+          + "tailsReply\"\000\0227\n\013ConfirmPlan\022\023.ConfirmPla"
+          + "nRequest\032\021.ConfirmPlanReply\"\000B\036\n\032com.cpd"
+          + "ss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -85885,6 +86182,8 @@ public final class LoadableStudy {
               "DisplacementPlanned",
               "DisplacementActual",
               "LoadicatorData",
+              "BallastPlanned",
+              "BallastActual",
             });
     internal_static_SynopticalCargoRecord_descriptor = getDescriptor().getMessageTypes().get(58);
     internal_static_SynopticalCargoRecord_fieldAccessorTable =

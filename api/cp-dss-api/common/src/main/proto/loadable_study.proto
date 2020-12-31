@@ -634,6 +634,8 @@ message SynopticalRecord{
 	string displacementPlanned = 39;
 	string displacementActual = 40;
 	SynopticalTableLoadicatorData loadicatorData = 41;
+	string ballastPlanned = 42;
+	string ballastActual = 43;
 }
 
 message SynopticalCargoRecord{

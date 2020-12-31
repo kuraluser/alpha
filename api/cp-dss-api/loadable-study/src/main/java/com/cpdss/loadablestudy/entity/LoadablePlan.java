@@ -24,7 +24,7 @@ public class LoadablePlan extends EntityDoc {
   private static final long serialVersionUID = 1L;
 
   @Column(name = "loadable_study_xid")
-  private Integer loadableStudyXId;
+  private Long loadableStudyXId;
 
   @Column(name = "details")
   private String details;
@@ -32,8 +32,8 @@ public class LoadablePlan extends EntityDoc {
   @Column(name = "comments")
   private String comments;
 
-  @Column(name = "loadable_study_status")
-  private Integer loadableStudyStatus;
+  @Column(name = "loadable_plan_status")
+  private Long loadablePlanStatus;
 
   @Column(name = "is_active")
   private Boolean isActive;

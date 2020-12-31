@@ -88,6 +88,7 @@ import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
@@ -112,6 +113,7 @@ import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
@@ -187,6 +189,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
 
   @Autowired
+  private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
+
+  @Autowired
   private LoadablePatternComingleDetailsRepository loadablePatternComingleDetailsRepository;
 
   @Autowired
@@ -218,7 +223,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long TRANSIT_OPERATION_ID = 4L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
-  private static final Long LOADABLE_STUDY_CONFIRMED_STATUS_ID = 2L;
+  private static final Long CONFIRMED_STATUS_ID = 2L;
   private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
   private static final int CASE_1 = 1;
   private static final int CASE_2 = 2;
@@ -332,11 +337,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         voyage.setVoyageNo(request.getVoyageNo());
         voyage.setCaptainXId(request.getCaptainId());
         voyage.setChiefOfficerXId(request.getChiefOfficerId());
-        voyage.setVoyageStartDate(!StringUtils.isEmpty(request.getStartDate())? LocalDateTime.from(
-                DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getStartDate()))
+        voyage.setVoyageStartDate(
+            !StringUtils.isEmpty(request.getStartDate())
+                ? LocalDateTime.from(
+                    DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getStartDate()))
                 : null);
-        voyage.setVoyageEndDate(!StringUtils.isEmpty(request.getEndDate())? LocalDateTime.from(
-                DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getEndDate()))
+        voyage.setVoyageEndDate(
+            !StringUtils.isEmpty(request.getEndDate())
+                ? LocalDateTime.from(
+                    DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getEndDate()))
                 : null);
         voyage = voyageRepository.save(voyage);
         // when Db save is complete we return to client a success message
@@ -1403,8 +1412,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         detailbuilder.setId(entity.getId());
         detailbuilder.setVoyageNumber(entity.getVoyageNo());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-        Optional.ofNullable(entity.getVoyageStartDate()).ifPresent(startDate -> detailbuilder.setStartDate(formatter.format(startDate)));
-        Optional.ofNullable(entity.getVoyageEndDate()).ifPresent(endDate -> detailbuilder.setEndDate(formatter.format(endDate)));
+        Optional.ofNullable(entity.getVoyageStartDate())
+            .ifPresent(startDate -> detailbuilder.setStartDate(formatter.format(startDate)));
+        Optional.ofNullable(entity.getVoyageEndDate())
+            .ifPresent(endDate -> detailbuilder.setEndDate(formatter.format(endDate)));
         builder.addVoyages(detailbuilder.build());
       }
       builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
@@ -3309,6 +3320,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.onBoardQuantityRepository.findByLoadableStudyAndIsActive(loadableStudy, true);
       List<OnHandQuantity> ohqEntities =
           this.onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudy, true);
+      List<LoadablePlanStowageBallastDetails> ballastDetails =
+          this.loadablePlanStowageBallastDetailsRepository.findBallastDetailsForLoadableStudy(
+              loadableStudy.getId(), CONFIRMED_STATUS_ID);
       List<SynopticalRecord> records = new ArrayList<>();
       synopticalTableList.forEach(
           synopticalEntity -> {
@@ -3320,6 +3334,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             this.setSynopticalTableVesselParticulars(
                 synopticalEntity, builder, vesselLoadableQuantityDetails);
             this.setSynopticalTableLoadicatorData(synopticalEntity, builder);
+            this.setBallastDetails(synopticalEntity, builder, ballastDetails);
             records.add(builder.build());
           });
       Collections.sort(
@@ -3328,6 +3343,35 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .thenComparing(Comparator.comparing(SynopticalRecord::getOperationType)));
       replyBuilder.addAllSynopticalRecords(records);
     }
+  }
+
+  /**
+   * Set ballast details
+   *
+   * @param synopticalEntity
+   * @param builder
+   * @param ballastDetails
+   */
+  private void setBallastDetails(
+      SynopticalTable synopticalEntity,
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builder,
+      List<LoadablePlanStowageBallastDetails> ballastDetails) {
+    List<LoadablePlanStowageBallastDetails> portBallastList =
+        ballastDetails.stream()
+            .filter(
+                bd ->
+                    synopticalEntity.getPortXid().equals(bd.getPortXId())
+                        && synopticalEntity.getOperationType().equals(bd.getOperationType()))
+            .collect(Collectors.toList());
+    if (null != portBallastList && !portBallastList.isEmpty()) {
+      BigDecimal plannedSum =
+          portBallastList.stream()
+              .map(LoadablePlanStowageBallastDetails::getQuantity)
+              .reduce(BigDecimal.ZERO, BigDecimal::add);
+      builder.setBallastPlanned(valueOf(plannedSum));
+    }
+    Optional.ofNullable(synopticalEntity.getBallastActual())
+        .ifPresent(item -> builder.setBallastActual(valueOf(item)));
   }
 
   /**
@@ -3877,7 +3921,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         List<LoadablePattern> loadablePatternConfirmedOpt =
             loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
                 loadablePatternOpt.get().getLoadableStudy().getVoyage().getId(),
-                LOADABLE_STUDY_CONFIRMED_STATUS_ID,
+                CONFIRMED_STATUS_ID,
                 true);
         if (!loadablePatternConfirmedOpt.isEmpty()) {
           loadablePatternRepository.updateLoadablePatternStatus(
@@ -3887,10 +3931,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               loadablePatternConfirmedOpt.get(0).getLoadableStudy().getId());
         }
         loadablePatternRepository.updateLoadablePatternStatus(
-            LOADABLE_STUDY_CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
+            CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
         loadableStudyRepository.updateLoadableStudyStatus(
-            LOADABLE_STUDY_CONFIRMED_STATUS_ID,
-            loadablePatternOpt.get().getLoadableStudy().getId());
+            CONFIRMED_STATUS_ID, loadablePatternOpt.get().getLoadableStudy().getId());
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
     } catch (Exception e) {
@@ -3939,51 +3982,62 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
-  
-  /**
-   * Retrieves the synoptical data for a portId
-   */
+
+  /** Retrieves the synoptical data for a portId */
   @Override
   public void getSynopticalDataByPortId(
-		  SynopticalDataRequest request, StreamObserver<SynopticalDataReply> responseObserver) {
-	  SynopticalDataReply.Builder replyBuilder = SynopticalDataReply.newBuilder();
-	  try {
-		  Optional<LoadableStudy> loadableStudyOpt =
-				  this.loadableStudyRepository.findById(request.getLoadableStudyId());
-		  if (!loadableStudyOpt.isPresent()) {
-			  throw new GenericServiceException(
-					  "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
-		  }
-		  List<SynopticalTable> synopticalTableList =
-		          this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveAndPortXid(
-		              request.getLoadableStudyId(), true, request.getPortId());
-		  if (!synopticalTableList.isEmpty()) {
-			  buildSynopticalDataReply(synopticalTableList, replyBuilder);
-		  }
-		  replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
-	  } catch (GenericServiceException e) {
-		  log.error("GenericServiceException in getSynopticalDataByPortId", e);
-		  replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
-	  } catch (Exception e) {
-		  log.error("Exception in getSynopticalDataByPortId", e);
-		  replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
-	  } finally {
-		  responseObserver.onNext(replyBuilder.build());
-		  responseObserver.onCompleted();
-	  }
+      SynopticalDataRequest request, StreamObserver<SynopticalDataReply> responseObserver) {
+    SynopticalDataReply.Builder replyBuilder = SynopticalDataReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findById(request.getLoadableStudyId());
+      if (!loadableStudyOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+      }
+      List<SynopticalTable> synopticalTableList =
+          this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveAndPortXid(
+              request.getLoadableStudyId(), true, request.getPortId());
+      if (!synopticalTableList.isEmpty()) {
+        buildSynopticalDataReply(synopticalTableList, replyBuilder);
+      }
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in getSynopticalDataByPortId", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } catch (Exception e) {
+      log.error("Exception in getSynopticalDataByPortId", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
-  
-  private void buildSynopticalDataReply(List<SynopticalTable> synopticalTableList,com.cpdss.common.generated.LoadableStudy.SynopticalDataReply.Builder replyBuilder){
-	if (!CollectionUtils.isEmpty(synopticalTableList)) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-		synopticalTableList.forEach(synopticalRecord -> {
-			SynopticalRecord.Builder recordBuilder = SynopticalRecord.newBuilder();
-			Optional.ofNullable(synopticalRecord.getOperationType()).ifPresent(recordBuilder::setOperationType);
-			Optional.ofNullable(synopticalRecord.getDistance()).ifPresent(distance -> recordBuilder.setDistance(String.valueOf(distance)));
-			Optional.ofNullable(synopticalRecord.getEtaActual()).ifPresent(etaActual -> recordBuilder.setEtaEtdActual(formatter.format(synopticalRecord.getEtaActual())));
-			Optional.ofNullable(synopticalRecord.getEtdActual()).ifPresent(etdActual -> recordBuilder.setEtaEtdActual(formatter.format(synopticalRecord.getEtdActual())));
-			replyBuilder.addSynopticalRecords(recordBuilder);
-		});
-	}
+
+  private void buildSynopticalDataReply(
+      List<SynopticalTable> synopticalTableList,
+      com.cpdss.common.generated.LoadableStudy.SynopticalDataReply.Builder replyBuilder) {
+    if (!CollectionUtils.isEmpty(synopticalTableList)) {
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+      synopticalTableList.forEach(
+          synopticalRecord -> {
+            SynopticalRecord.Builder recordBuilder = SynopticalRecord.newBuilder();
+            Optional.ofNullable(synopticalRecord.getOperationType())
+                .ifPresent(recordBuilder::setOperationType);
+            Optional.ofNullable(synopticalRecord.getDistance())
+                .ifPresent(distance -> recordBuilder.setDistance(String.valueOf(distance)));
+            Optional.ofNullable(synopticalRecord.getEtaActual())
+                .ifPresent(
+                    etaActual ->
+                        recordBuilder.setEtaEtdActual(
+                            formatter.format(synopticalRecord.getEtaActual())));
+            Optional.ofNullable(synopticalRecord.getEtdActual())
+                .ifPresent(
+                    etdActual ->
+                        recordBuilder.setEtaEtdActual(
+                            formatter.format(synopticalRecord.getEtdActual())));
+            replyBuilder.addSynopticalRecords(recordBuilder);
+          });
+    }
   }
 }

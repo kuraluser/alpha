@@ -46,9 +46,9 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
-import com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData;
 import com.cpdss.common.generated.LoadableStudy.SynopticalDataReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.TankDetail;
@@ -176,8 +176,8 @@ public class LoadableStudyService {
             .setCompanyId(companyId)
             .setVesselId(vesselId)
             .setVoyageNo(voyage.getVoyageNo())
-            .setStartDate(!StringUtils.isEmpty(voyage.getStartDate())? voyage.getStartDate(): "")
-            .setEndDate(!StringUtils.isEmpty(voyage.getEndDate())? voyage.getEndDate(): "")
+            .setStartDate(!StringUtils.isEmpty(voyage.getStartDate()) ? voyage.getStartDate() : "")
+            .setEndDate(!StringUtils.isEmpty(voyage.getEndDate()) ? voyage.getEndDate() : "")
             .build();
 
     VoyageReply voyageReply = this.saveVoyage(voyageRequest);
@@ -745,26 +745,37 @@ public class LoadableStudyService {
       port.setLayCanTo(portDetail.getLayCanTo());
       // Fetch distance, eta/etd actual values from synoptical table
       SynopticalDataRequest synopticalRequest =
-    		  SynopticalDataRequest.newBuilder().setLoadableStudyId(loadableStudyId).setPortId(portDetail.getPortId()).build();
-      SynopticalDataReply synopticalDataReply = loadableStudyServiceBlockingStub.getSynopticalDataByPortId(synopticalRequest);
+          SynopticalDataRequest.newBuilder()
+              .setLoadableStudyId(loadableStudyId)
+              .setPortId(portDetail.getPortId())
+              .build();
+      SynopticalDataReply synopticalDataReply =
+          loadableStudyServiceBlockingStub.getSynopticalDataByPortId(synopticalRequest);
       if (synopticalDataReply != null
-    	        && synopticalDataReply.getResponseStatus() != null
-    	        && !SUCCESS.equalsIgnoreCase(synopticalDataReply.getResponseStatus().getStatus())) {
-    	  throw new GenericServiceException(
-    			  "Error in getLoadableStudyPortRotationList - getSynopticalDataByPortId",
-    			  CommonErrorCodes.E_GEN_INTERNAL_ERR,
-    			  HttpStatusCode.INTERNAL_SERVER_ERROR);
+          && synopticalDataReply.getResponseStatus() != null
+          && !SUCCESS.equalsIgnoreCase(synopticalDataReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Error in getLoadableStudyPortRotationList - getSynopticalDataByPortId",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
       }
       // add distance, eta/etd actual values from synoptical table
-      if (synopticalDataReply!=null && !CollectionUtils.isEmpty(synopticalDataReply.getSynopticalRecordsList())){
-    	  synopticalDataReply.getSynopticalRecordsList().forEach(record -> {
-    		  port.setDistanceBetweenPorts(!StringUtils.isEmpty(record.getDistance())? new BigDecimal(record.getDistance()): BigDecimal.ZERO);
-    		  if (ARR.equalsIgnoreCase(record.getOperationType())) {
-    			  port.setEtaActual(record.getEtaEtdActual());
-    		  } else {
-    			  port.setEtdActual(record.getEtaEtdActual());
-    		  }
-    	  });
+      if (synopticalDataReply != null
+          && !CollectionUtils.isEmpty(synopticalDataReply.getSynopticalRecordsList())) {
+        synopticalDataReply
+            .getSynopticalRecordsList()
+            .forEach(
+                record -> {
+                  port.setDistanceBetweenPorts(
+                      !StringUtils.isEmpty(record.getDistance())
+                          ? new BigDecimal(record.getDistance())
+                          : BigDecimal.ZERO);
+                  if (ARR.equalsIgnoreCase(record.getOperationType())) {
+                    port.setEtaActual(record.getEtaEtdActual());
+                  } else {
+                    port.setEtdActual(record.getEtaEtdActual());
+                  }
+                });
       }
       response.getPortList().add(port);
       response.setResponseStatus(
@@ -1924,9 +1935,12 @@ public class LoadableStudyService {
       dto.setCargoId(0 == detail.getCargoId() ? null : detail.getCargoId());
       dto.setColorCode(isEmpty(detail.getColorCode()) ? null : detail.getColorCode());
       dto.setAbbreviation(isEmpty(detail.getAbbreviation()) ? null : detail.getAbbreviation());
-      dto.setSounding(isEmpty(detail.getSounding()) ? null : new BigDecimal(detail.getSounding()));
-      dto.setWeight(isEmpty(detail.getWeight()) ? null : new BigDecimal(detail.getWeight()));
-      dto.setVolume(isEmpty(detail.getVolume()) ? null : new BigDecimal(detail.getVolume()));
+      dto.setSounding(
+          isEmpty(detail.getSounding()) ? BigDecimal.ZERO : new BigDecimal(detail.getSounding()));
+      dto.setWeight(
+          isEmpty(detail.getWeight()) ? BigDecimal.ZERO : new BigDecimal(detail.getWeight()));
+      dto.setVolume(
+          isEmpty(detail.getVolume()) ? BigDecimal.ZERO : new BigDecimal(detail.getVolume()));
       dto.setTankId(detail.getTankId());
       dto.setTankName(detail.getTankName());
       response.getOnBoardQuantities().add(dto);
@@ -2227,6 +2241,14 @@ public class LoadableStudyService {
     synopticalRecord.setLwTideTimeTo(synopticalProtoRecord.getLwTideTimeTo());
     synopticalRecord.setEtaEtdActual(synopticalProtoRecord.getEtaEtdActual());
     synopticalRecord.setEtaEtdPlanned(synopticalProtoRecord.getEtaEtdEstimated());
+    synopticalRecord.setBallastPlanned(
+        isEmpty(synopticalProtoRecord.getBallastPlanned())
+            ? null
+            : new BigDecimal(synopticalProtoRecord.getBallastPlanned()));
+    synopticalRecord.setBallastActual(
+        isEmpty(synopticalProtoRecord.getBallastActual())
+            ? null
+            : new BigDecimal(synopticalProtoRecord.getBallastActual()));
   }
 
   /**

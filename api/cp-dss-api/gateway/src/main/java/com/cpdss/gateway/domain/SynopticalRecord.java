@@ -52,4 +52,6 @@ public class SynopticalRecord {
   private BigDecimal displacementPlanned;
   private BigDecimal displacementActual;
   private SynopticalLoadicatorRecord synopticalLoadicatorRecord;
+  private BigDecimal ballastPlanned;
+  private BigDecimal ballastActual;
 }
