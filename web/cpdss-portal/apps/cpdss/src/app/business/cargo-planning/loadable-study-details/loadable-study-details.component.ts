@@ -307,8 +307,20 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @param {string} selectedTab
    * @memberof LoadableStudyDetailsComponent
    */
-  onTabClick(selectedTab: string) {
-    this.selectedTab = selectedTab;
+  async onTabClick(selectedTab: string) {
+    const translationKeys = await this.translateService.get(['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY', 'CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS']).toPromise();
+    if (selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION) {
+      if (this.dischargingPorts?.length > 0) {
+        this.selectedTab = selectedTab;
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY'], detail: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS'] });
+      }
+    }
+    else {
+      this.selectedTab = selectedTab;
+    }
+
   }
 
   /**
@@ -372,7 +384,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @memberof LoadableStudyDetailsComponent
    */
   onLoadableStudyChange(event) {
-    if(event){
+    if (event) {
       this.loadableStudyId = event;
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
       this.loadableStudyDetailsTransformationService.setPortValidity(false);

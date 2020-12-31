@@ -368,5 +368,7 @@
 	"OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY": "Volume loaded in tank must not exceed capacity of tank.",
 	"PORT_ETA_COMAPRE_WITH_ETD_ERROR": "Eta is overlapping with ETD of previous port",
 	"COMMINGLE_MANUAL_QUANTITY_MIN_VALUE": "Quantity must be greater than 0",
-	"COMMINGLE_MANUAL_SAME_CARGO_VALIDATION": "This cargo combination already exist"
+	"COMMINGLE_MANUAL_SAME_CARGO_VALIDATION": "This cargo combination already exist",
+	"CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY": "Error",
+	"CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS": "Discharge port is required"
 }
