@@ -118,7 +118,9 @@ export class PortsComponent implements OnInit {
       const portData = this.loadableStudyDetailsTransformationService.getPortAsValueObject(item, false, isEditable, this.listData);
       return portData;
     });
-    const portListArray = _portsLists.map(ports => this.initPortsFormGroup(ports));
+    const portListArray = _portsLists.map(ports =>
+      this.initPortsFormGroup(ports)
+    );
     this.portsForm = this.fb.group({
       dataTable: this.fb.array([...portListArray])
     });
@@ -141,21 +143,24 @@ export class PortsComponent implements OnInit {
   * @memberof PortsComponent
   */
   private initPortsFormGroup(ports: IPortsValueObject) {
+    let layCanData = false;
+    (ports.operation.value && (ports.operation.value.operationName === 'Bunkering' || ports.operation.value.operationName === 'Transit')) ? layCanData = true : layCanData = false;
     return this.fb.group({
       port: this.fb.control(ports.port.value, [Validators.required, portDuplicationValidator('port')]),
       portOrder: this.fb.control(ports.portOrder),
       portcode: this.fb.control(ports.portcode.value, [Validators.required]),
       operation: this.fb.control(ports.operation.value, [Validators.required, portDuplicationValidator('operation')]),
       seaWaterDensity: this.fb.control(ports.seaWaterDensity.value, [Validators.required, Validators.min(0), numberValidator(4, 2)]),
-      layCan: this.fb.control(ports.layCan.value, [Validators.required]),
-      layCanFrom: this.fb.control(ports.layCan.value?.split('to')[0]?.trim(), Validators.required),
-      layCanTo: this.fb.control(ports.layCan.value?.split('to')[1]?.trim(), Validators.required),
+      layCan: this.fb.control({ value: ports.layCan.value, disabled: layCanData }, { validators: layCanData ? [] : Validators.required }),
+      layCanFrom: this.fb.control({ value: ports.layCan.value?.split('to')[0]?.trim(), disabled: layCanData }, layCanData ? [] : { validators: layCanData ? [] : Validators.required }),
+      layCanTo: this.fb.control({ value: ports.layCan.value?.split('to')[1]?.trim(), disabled: layCanData }, layCanData ? [] : { validators: layCanData ? [] : Validators.required }),
       maxDraft: this.fb.control(ports.maxDraft.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
       maxAirDraft: this.fb.control(ports.maxAirDraft.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
       eta: this.fb.control(ports.eta.value, [Validators.required, portDateRangeValidator, portDateCompareValidator('etd', '<'), portEtaValidator]),
       etd: this.fb.control(ports.etd.value, [Validators.required, portDateCompareValidator('eta', '>')])
 
     });
+
   }
 
   /**
@@ -189,9 +194,9 @@ export class PortsComponent implements OnInit {
   private addPort(ports: IPortList = null) {
     ports = ports ?? <IPortList>{ id: 0, loadableStudyId: null, portOrder: 0, portId: null, operationId: null, seaWaterDensity: null, distanceBetweenPorts: null, timeOfStay: null, maxDraft: null, maxAirDraft: null, eta: null, etd: null, layCanFrom: null, layCanTo: null };
     const _ports = this.loadableStudyDetailsTransformationService.getPortAsValueObject(ports, true, true, this.listData);
-    this.portsLists = [_ports, ...this.portsLists];
+    this.portsLists = [...this.portsLists, _ports];
     const dataTableControl = <FormArray>this.portsForm.get('dataTable');
-    dataTableControl.insert(0, this.initPortsFormGroup(_ports));
+    dataTableControl.push(this.initPortsFormGroup(_ports));
   }
 
   /**
@@ -217,7 +222,7 @@ export class PortsComponent implements OnInit {
  * @param {*} value
  * @memberof PortsComponent
  */
-  private updateField(index: number, field: string, value: any) {
+  private updateField(index: number, field: string, value?: any) {
     const control = this.field(index, field);
     control.setValue(value);
     control.markAsDirty();
@@ -248,7 +253,13 @@ export class PortsComponent implements OnInit {
       form.controls.operation.updateValueAndValidity();
     }
     if (event.field === 'operation') {
-      form.controls.port.updateValueAndValidity();
+      (event.data.operation.value.operationName === 'Bunkering' || event.data.operation.value.operationName === 'Transit') ?
+        (form.controls.layCan.setValue(null), form.controls.layCan.disable(), form.controls.layCan.setValidators([]), form.controls.layCanTo.setValidators([]), form.controls.layCanFrom.setValidators([])) :
+        (form.controls.layCan.enable(), form.controls.layCan.setValidators([Validators.required]), form.controls.layCanFrom.setValidators([Validators.required]), form.controls.layCanTo.setValidators([Validators.required]))
+
+      form.controls.layCan.updateValueAndValidity();
+      form.controls.layCanTo.updateValueAndValidity();
+      form.controls.layCanFrom.updateValueAndValidity();
     }
     if (event.field === 'layCan') {
       this.portsLists[valueIndex]['layCanFrom'].value = event.data.layCan.value.split('to')[0].trim();
@@ -259,8 +270,8 @@ export class PortsComponent implements OnInit {
       form.controls.etd.updateValueAndValidity();
     }
     if (event.field === 'eta' || event.field === 'etd') {
-        form.controls.eta.updateValueAndValidity();
-        form.controls.etd.updateValueAndValidity();
+      form.controls.eta.updateValueAndValidity();
+      form.controls.etd.updateValueAndValidity();
     }
     if (!event.data?.isAdd) {
       if (form.valid) {

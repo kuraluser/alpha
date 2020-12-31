@@ -578,6 +578,17 @@ export class DatatableComponent implements OnInit {
     });
     this.sort.emit(event);
   }
+
+  /**
+   * Checks field disabled or not
+   * @param formGroupIndex 
+   * @param formControlName 
+   */
+  disabledField(formGroupIndex: number, formControlName: string){
+    const formControl  = this.field(formGroupIndex, formControlName);
+   return formControl.disabled;
+
+  }
 }
 
 
