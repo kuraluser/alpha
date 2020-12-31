@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
+
+import { ITableHeaderModel } from '../../../models/loadable-plan.model';
+
+import { LoadablePlanTransformationService } from '../../../services/loadable-plan-transformation.service';
+import { LoadablePlanApiService } from '../../../services/loadable-plan-api.service';
 
 /**
  * Component class of commingle cargo details component in loadable plan
@@ -13,27 +19,34 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./commingled-cargo-details.component.scss']
 })
 export class CommingledCargoDetailsComponent implements OnInit {
+  @Input() voyageId: number;
+  @Input() loadableStudyId: number;
+  @Input() vesselId: number;
+  @Input() loadablePatternId: number;
+
+
   columns: any[];
   value: any[];
-  constructor() { }
+
+  constructor(
+    private ngxSpinnerService: NgxSpinnerService,
+    private loadablePlanTransformationService: LoadablePlanTransformationService,
+    private loadablePlanApiService: LoadablePlanApiService
+  ) { }
 
   ngOnInit(): void {
-    this.columns = [
-      { field: 'year', header: 'GRADE' },
-      { field: 'year', header: 'TANK' },
-      { field: 'year', header: 'QUANTITY (BLS)' },
-      { field: 'year', header: 'API' },
-      { field: 'year', header: 'TEMP(F)' },
-      {
-        field: 'vin', header: 'COMPOSITION BREAKDOWN', subColumns: [
-          { field: 'year', header: 'PERCENTAGE' },
-          { field: 'year', header: 'BBLS@OBS.TEMP' },
-          { field: 'year', header: 'LT' },
-          { field: 'year', header: 'MT' },
-          { field: 'year', header: 'KL' }
-        ]
-      }
-    ];
+    this.columns = this.loadablePlanTransformationService.getCommingledCargoTableColumn();
+    this.value = [1, 2, 3]
+  }
+
+  /**
+* Get all details for loadable quantity
+*
+*/
+  async getLoadableQuantity() {
+    this.ngxSpinnerService.show();
+    //  let data = await this.loadablePlanApiService.getCommingledCargoDetails(this.vesselId, this.voyageId, this.loadableStudyId , this.loadablePatternId).toPromise();
+    this.ngxSpinnerService.hide();
   }
 
 }

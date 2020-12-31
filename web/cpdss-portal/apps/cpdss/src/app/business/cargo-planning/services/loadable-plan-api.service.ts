@@ -26,4 +26,17 @@ export class LoadablePlanApiService {
   getLoadablePlanEtaEtdDetails(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<any> {
     return this.commonApiService.get<any>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-pattern-details/${loadablePatternId}`);
   }
+
+
+  /**
+* 
+* @param vesselId 
+* @param voyageId 
+* @param loadableStudyId 
+* @param loadablePatternId
+* Get api for loadable quantity
+*/
+  getCommingledCargoDetails(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<any> {
+    return this.commonApiService.get<any>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-pattern-details/${loadablePatternId}`);
+  }
 }
