@@ -21,6 +21,7 @@ export class LoadablePlanComponent implements OnInit {
   voyageId: number;
   loadableStudyId: number;
   vesselId: number;
+  loadablePatternId: number;
   vesselInfo: IVessel;
   constructor(private vesselsApiService: VesselsApiService, private ngxSpinnerService: NgxSpinnerService, private activatedRoute: ActivatedRoute, private router: Router) { }
 
@@ -29,6 +30,7 @@ export class LoadablePlanComponent implements OnInit {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));
+      this.loadablePatternId = Number(params.get('loadablePatternId'))
       this.getVesselInfo();
     });
   }

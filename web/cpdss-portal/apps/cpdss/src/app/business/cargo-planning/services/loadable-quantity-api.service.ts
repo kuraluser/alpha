@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { LoadableQuantityModel, LoadableQuantityResponseModel, LodadableQuantity, ITableHeaderModel } from '../models/loadable-quantity.model';
+import { LoadableQuantityModel, LoadableQuantityResponseModel, LodadableQuantity, ITableHeaderModel ,  LodadableQuantityPlan } from '../models/loadable-quantity.model';
+
 
 @Injectable()
 export class LoadableQuantityApiService {
@@ -140,8 +141,8 @@ export class LoadableQuantityApiService {
 * @param loadableStudyId 
 * Get api for loadable quantity
 */
-  getLoadableQuantityData(vesselId: number, voyageId: number, loadableStudyId: number): Observable<LoadableQuantityModel> {
-    return this.commonApiService.get<LoadableQuantityModel>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-quantity`);
+  getLoadableQuantityData(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<LodadableQuantityPlan> {
+    return this.commonApiService.get<LodadableQuantityPlan>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-pattern-details/${loadablePatternId}`);
   }
 
   /**
@@ -151,40 +152,69 @@ export class LoadableQuantityApiService {
   */
   getLoadableQuantityTableColumns(): ITableHeaderModel[] {
     return [
-      { field: 'grade', header: 'Grade' , colspan: 0},
+      { field: 'grade', header: 'Grade' , colspan: 0 , },
       {
         field: 'vin', header: 'Estimated',  colspan: 2,  subColumns: [
-          { field: 'estimate.api', header: 'API' },
-          { field: 'estimate.temp', header: 'TEMP' }
+          { field: 'estimatedAPI', header: 'API' },
+          { field: 'estimatedTemp', header: 'TEMP' }
         ]
       },
       {
         field: 'year', header: 'ORDER' ,  colspan: 2 ,subColumns: [
-          { field: 'order.bblsTemp', header: 'BBL@OBS.TEMP' },
-          { field: 'order.bblsF', header: 'BBLS@60F' }
+          { field: 'orderBblsdbs', header: 'BBLS@OBS.TEMP' },
+          { field: 'orderBbls60f', header: 'BBLS@60F' }
         ]
       },
       {
         field: 'brand', header: 'TLRNC', colspan: 2 ,  subColumns: [
-          { field: 'tlrnic.min', header: 'Min' },
-          { field: 'tlrnic.max', header: 'Max' }
+          { field: 'minTolerence', header: 'Min' },
+          { field: 'maxTolerence', header: 'Max' }
         ]
       },
       {
         field: 'color', header: 'LOADABLE',  colspan: 5 , subColumns: [
-          { field: 'loadable.bblsTemp', header: 'BBLS@OBS.TEMP' },
-          { field: 'loadable.bblsF', header: 'BBLS@60F' },
-          { field: 'loadable.lt', header: 'LT' },
-          { field: 'loadable.mt', header: 'MT' },
-          { field: 'loadable.kl', header: 'KL' }
+          { field: 'loadableBblsdbs', header: 'BBLS@OBS.TEMP' },
+          { field: 'loadableBbls60f', header: 'BBLS@60F' },
+          { field: 'loadableLT', header: 'LT' },
+          { field: 'loadableMT', header: 'MT' },
+          { field: 'loadableKL', header: 'KL' }
         ]
       },
       {
-        field: 'color', header: 'DIFF.', colspan: 2 , subColumns: [
-          { field: 'diff', header: '%' }
-        ]
+        field: 'differencePercentage', header: 'DIFF.%', colspan: 2 
       }
     ]
   }
 
+  /**
+  * 
+  * Get FormatedLoadable Quantity Data
+  * @returns {LodadableQuantityPlan}
+  * @param loadableQuantityObject 
+  */
+  public getFormatedLoadableQuantityData(_decimalPipe: any ,loadableQuantity: LodadableQuantityPlan): LodadableQuantityPlan {
+    const _loadableQuantityDetails = loadableQuantity;
+    _loadableQuantityDetails.estimatedAPI = this.decimalConvertion(_decimalPipe,_loadableQuantityDetails.estimatedAPI);
+    _loadableQuantityDetails.estimatedTemp = this.decimalConvertion(_decimalPipe,_loadableQuantityDetails.estimatedTemp);
+    _loadableQuantityDetails.orderBbls60f = this.decimalConvertion(_decimalPipe ,_loadableQuantityDetails.orderBbls60f);
+    _loadableQuantityDetails.orderBblsdbs = this.decimalConvertion(_decimalPipe ,_loadableQuantityDetails.orderBblsdbs);
+    _loadableQuantityDetails.minTolerence = _loadableQuantityDetails.minTolerence + '%';
+    _loadableQuantityDetails.maxTolerence = _loadableQuantityDetails.maxTolerence + '%';
+    _loadableQuantityDetails.loadableBbls60f = this.decimalConvertion(_decimalPipe , _loadableQuantityDetails.loadableBbls60f);
+    _loadableQuantityDetails.loadableBblsdbs = this.decimalConvertion(_decimalPipe , _loadableQuantityDetails.loadableBblsdbs);
+    _loadableQuantityDetails.loadableKL = this.decimalConvertion(_decimalPipe , _loadableQuantityDetails.loadableKL);
+    _loadableQuantityDetails.loadableMT = this.decimalConvertion(_decimalPipe , _loadableQuantityDetails.loadableMT);
+    _loadableQuantityDetails.loadableLT = this.decimalConvertion(_decimalPipe ,_loadableQuantityDetails.loadableLT);
+    _loadableQuantityDetails.differencePercentage = _loadableQuantityDetails.differencePercentage + '%';
+    return loadableQuantity;
+  }
+  
+  /**
+  * 
+  * Get FormatedLoadable Quantity Data
+  * @returns {decimal converted value us number}
+  */
+  decimalConvertion(_decimalPipe: any , value: string | number) {
+    return _decimalPipe.transform(value, '1.2-4');
+  }
 }

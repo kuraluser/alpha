@@ -56,13 +56,13 @@ export class Status {
 }
 
 /**
- * Interface for loadable quality table 
+ * Interface for loadable quality plan table 
  *
  * @export
  * @interface ITableHeaderModel
  */
 export interface ITableHeaderModel {
-    field: string;
+    field?: string;
     header: string;
     colspan: number,
     subColumns?:ColumHeader[];  
@@ -75,6 +75,31 @@ interface ColumHeader {
     field: string;
     header: string;
 }
+
+/**
+ * Interface for loadable quality plan table binding  
+ *
+ * @export
+ * @interface LodadableQuantityPlan
+ */
+export  interface LodadableQuantityPlan {
+    id: number,
+    grade: string,
+    estimatedAPI: string,
+    estimatedTemp: string,
+    orderBblsdbs: string,
+    orderBbls60f: string,
+    minTolerence: string,
+    maxTolerence: string,
+    loadableBblsdbs: string,
+    loadableBbls60f: string,
+    loadableLT: string,
+    loadableMT: string,
+    loadableKL: string,
+    differencePercentage: string,
+    differenceColor: string
+}
+
 
 
 

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule ,  DecimalPipe } from '@angular/common';
 
 import { LoadablePlanComponent } from './loadable-plan.component';
 import { LoadableQuantityComponent } from './loadable-quantity/loadable-quantity.component';
@@ -24,7 +24,7 @@ import { LoadableQuantityApiService } from '../services/loadable-quantity-api.se
     TableModule,
     CargoTankLayoutModule
   ],
-  providers: [LoadableQuantityApiService],
+  providers: [LoadableQuantityApiService , DecimalPipe],
   exports: [
     LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent
   ]
