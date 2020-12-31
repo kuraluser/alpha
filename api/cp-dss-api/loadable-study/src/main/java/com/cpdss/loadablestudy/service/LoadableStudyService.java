@@ -96,6 +96,7 @@ import com.cpdss.loadablestudy.entity.OnBoardQuantity;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.PurposeOfCommingle;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
+import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.entity.VoyageHistory;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
@@ -118,6 +119,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
@@ -196,6 +198,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private VoyageHistoryRepository voyageHistoryRepository;
   @Autowired private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
   @Autowired private SynopticalTableRepository synopticalTableRepository;
+
+  @Autowired
+  private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -3303,6 +3308,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             this.setSynopticalOhqData(ohqEntities, synopticalEntity, builder, sortedTankList);
             this.setSynopticalTableVesselParticulars(
                 synopticalEntity, builder, vesselLoadableQuantityDetails);
+            this.setSynopticalTableLoadicatorData(synopticalEntity, builder);
             records.add(builder.build());
           });
       Collections.sort(
@@ -3311,6 +3317,82 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .thenComparing(Comparator.comparing(SynopticalRecord::getOperationType)));
       replyBuilder.addAllSynopticalRecords(records);
     }
+  }
+
+  /**
+   * Set loadicator data in synoptical table record
+   *
+   * @param synopticalEntity
+   * @param builder
+   */
+  private void setSynopticalTableLoadicatorData(
+      SynopticalTable synopticalEntity,
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builder) {
+    SynopticalTableLoadicatorData loadicatorData =
+        this.synopticalTableLoadicatorDataRepository.findBySynopticalTableIdAndIsActive(
+            synopticalEntity.getId(), true);
+    if (null != loadicatorData) {
+      com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder dataBuilder =
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.newBuilder();
+      Optional.ofNullable(loadicatorData.getBlindSetor())
+          .ifPresent(item -> dataBuilder.setBlindSector(valueOf(item)));
+      Optional.ofNullable(loadicatorData.getHog())
+          .ifPresent(item -> dataBuilder.setHogSag(valueOf(item)));
+      Optional.ofNullable(loadicatorData.getCalculatedDraftAftActual())
+          .ifPresent(item -> dataBuilder.setCalculatedDraftAftActual(valueOf(item)));
+      Optional.ofNullable(loadicatorData.getCalculatedDraftAftPlanned())
+          .ifPresent(item -> dataBuilder.setCalculatedDraftAftPlanned(valueOf(item)));
+      Optional.ofNullable(loadicatorData.getCalculatedDraftFwdActual())
+          .ifPresent(item -> dataBuilder.setCalculatedDraftFwdActual(valueOf(item)));
+      Optional.ofNullable(loadicatorData.getCalculatedDraftFwdPlanned())
+          .ifPresent(item -> dataBuilder.setCalculatedDraftFwdPlanned(valueOf(item)));
+      Optional.ofNullable(loadicatorData.getCalculatedDraftMidActual())
+          .ifPresent(item -> dataBuilder.setCalculatedDraftMidActual(valueOf(item)));
+      Optional.ofNullable(loadicatorData.getCalculatedDraftMidPlanned())
+          .ifPresent(item -> dataBuilder.setCalculatedDraftMidPlanned(valueOf(item)));
+      Optional.ofNullable(loadicatorData.getCalculatedTrimActual())
+          .ifPresent(item -> dataBuilder.setCalculatedTrimActual(valueOf(item)));
+      Optional.ofNullable(loadicatorData.getCalculatedTrimPlanned())
+          .ifPresent(item -> dataBuilder.setCalculatedTrimPlanned(valueOf(item)));
+      this.setFinalDraftValues(dataBuilder, loadicatorData);
+      builder.setLoadicatorData(dataBuilder.build());
+    }
+  }
+
+  /**
+   * Set final draft values
+   *
+   * @param dataBuilder
+   * @param loadicatorData
+   */
+  private void setFinalDraftValues(
+      com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder dataBuilder,
+      SynopticalTableLoadicatorData loadicatorData) {
+    BigDecimal hog = BigDecimal.ZERO;
+    if (null != loadicatorData.getHog()) {
+      hog = BigDecimal.ZERO;
+    }
+    BigDecimal calculatedDraftFwd = BigDecimal.ZERO;
+    if (null != loadicatorData.getCalculatedDraftFwdActual()) {
+      calculatedDraftFwd = loadicatorData.getCalculatedDraftFwdActual();
+    } else if (null != loadicatorData.getCalculatedDraftFwdPlanned()) {
+      calculatedDraftFwd = loadicatorData.getCalculatedDraftFwdPlanned();
+    }
+    BigDecimal calculatedDraftAft = BigDecimal.ZERO;
+    if (null != loadicatorData.getCalculatedDraftAftActual()) {
+      calculatedDraftAft = loadicatorData.getCalculatedDraftAftActual();
+    } else if (null != loadicatorData.getCalculatedDraftAftPlanned()) {
+      calculatedDraftAft = loadicatorData.getCalculatedDraftAftPlanned();
+    }
+    BigDecimal calculatedDraftMid = BigDecimal.ZERO;
+    if (null != loadicatorData.getCalculatedDraftMidActual()) {
+      calculatedDraftMid = loadicatorData.getCalculatedDraftMidActual();
+    } else if (null != loadicatorData.getCalculatedDraftMidPlanned()) {
+      calculatedDraftMid = loadicatorData.getCalculatedDraftMidPlanned();
+    }
+    dataBuilder.setFinalDraftAft(valueOf(hog.add(calculatedDraftAft)));
+    dataBuilder.setFinalDraftFwd(valueOf(hog.add(calculatedDraftFwd)));
+    dataBuilder.setFinalDraftMid(valueOf(hog.add(calculatedDraftMid)));
   }
 
   /**

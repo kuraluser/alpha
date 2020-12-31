@@ -626,6 +626,7 @@ message SynopticalRecord{
 	string totalDwtActual = 38;
 	string displacementPlanned = 39;
 	string displacementActual = 40;
+	SynopticalTableLoadicatorData loadicatorData = 41;
 }
 
 message SynopticalCargoRecord{
@@ -653,4 +654,21 @@ message SynopticalTableReply{
 	ResponseStatus responseStatus = 1;
 	repeated SynopticalRecord synopticalRecords = 2;
 	repeated TankDetail vesselTank = 3;
+}
+
+message SynopticalTableLoadicatorData{
+	string hogSag = 1;
+	string finalDraftFwd = 2;
+	string finalDraftAft = 3;
+	string finalDraftMid = 4;
+	string finalDraftTrim = 5;
+	string calculatedDraftFwdPlanned = 6;
+	string calculatedDraftFwdActual = 7;
+	string calculatedDraftAftPlanned = 8;
+	string calculatedDraftAftActual = 9;
+	string calculatedDraftMidPlanned = 10;
+	string calculatedDraftMidActual = 11;
+	string calculatedTrimPlanned = 12;
+	string calculatedTrimActual = 13;
+	string blindSector = 14;
 }

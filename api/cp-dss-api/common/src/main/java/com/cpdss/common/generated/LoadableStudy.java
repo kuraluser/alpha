@@ -69678,6 +69678,22 @@ public final class LoadableStudy {
      * @return The bytes for displacementActual.
      */
     com.google.protobuf.ByteString getDisplacementActualBytes();
+
+    /**
+     * <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code>
+     *
+     * @return Whether the loadicatorData field is set.
+     */
+    boolean hasLoadicatorData();
+    /**
+     * <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code>
+     *
+     * @return The loadicatorData.
+     */
+    com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData getLoadicatorData();
+    /** <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code> */
+    com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorDataOrBuilder
+        getLoadicatorDataOrBuilder();
   }
   /** Protobuf type {@code SynopticalRecord} */
   public static final class SynopticalRecord extends com.google.protobuf.GeneratedMessageV3
@@ -70046,6 +70062,25 @@ public final class LoadableStudy {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 displacementActual_ = s;
+                break;
+              }
+            case 330:
+              {
+                com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder
+                    subBuilder = null;
+                if (loadicatorData_ != null) {
+                  subBuilder = loadicatorData_.toBuilder();
+                }
+                loadicatorData_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+                            .parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(loadicatorData_);
+                  loadicatorData_ = subBuilder.buildPartial();
+                }
+
                 break;
               }
             default:
@@ -71399,6 +71434,34 @@ public final class LoadableStudy {
       }
     }
 
+    public static final int LOADICATORDATA_FIELD_NUMBER = 41;
+    private com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData loadicatorData_;
+    /**
+     * <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code>
+     *
+     * @return Whether the loadicatorData field is set.
+     */
+    public boolean hasLoadicatorData() {
+      return loadicatorData_ != null;
+    }
+    /**
+     * <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code>
+     *
+     * @return The loadicatorData.
+     */
+    public com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+        getLoadicatorData() {
+      return loadicatorData_ == null
+          ? com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+              .getDefaultInstance()
+          : loadicatorData_;
+    }
+    /** <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code> */
+    public com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorDataOrBuilder
+        getLoadicatorDataOrBuilder() {
+      return getLoadicatorData();
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -71533,6 +71596,9 @@ public final class LoadableStudy {
       if (!getDisplacementActualBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 40, displacementActual_);
       }
+      if (loadicatorData_ != null) {
+        output.writeMessage(41, getLoadicatorData());
+      }
       unknownFields.writeTo(output);
     }
 
@@ -71662,6 +71728,9 @@ public final class LoadableStudy {
       if (!getDisplacementActualBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(40, displacementActual_);
       }
+      if (loadicatorData_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(41, getLoadicatorData());
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -71718,6 +71787,10 @@ public final class LoadableStudy {
       if (!getTotalDwtActual().equals(other.getTotalDwtActual())) return false;
       if (!getDisplacementPlanned().equals(other.getDisplacementPlanned())) return false;
       if (!getDisplacementActual().equals(other.getDisplacementActual())) return false;
+      if (hasLoadicatorData() != other.hasLoadicatorData()) return false;
+      if (hasLoadicatorData()) {
+        if (!getLoadicatorData().equals(other.getLoadicatorData())) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -71813,6 +71886,10 @@ public final class LoadableStudy {
       hash = (53 * hash) + getDisplacementPlanned().hashCode();
       hash = (37 * hash) + DISPLACEMENTACTUAL_FIELD_NUMBER;
       hash = (53 * hash) + getDisplacementActual().hashCode();
+      if (hasLoadicatorData()) {
+        hash = (37 * hash) + LOADICATORDATA_FIELD_NUMBER;
+        hash = (53 * hash) + getLoadicatorData().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -72043,6 +72120,12 @@ public final class LoadableStudy {
 
         displacementActual_ = "";
 
+        if (loadicatorDataBuilder_ == null) {
+          loadicatorData_ = null;
+        } else {
+          loadicatorData_ = null;
+          loadicatorDataBuilder_ = null;
+        }
         return this;
       }
 
@@ -72126,6 +72209,11 @@ public final class LoadableStudy {
         result.totalDwtActual_ = totalDwtActual_;
         result.displacementPlanned_ = displacementPlanned_;
         result.displacementActual_ = displacementActual_;
+        if (loadicatorDataBuilder_ == null) {
+          result.loadicatorData_ = loadicatorData_;
+        } else {
+          result.loadicatorData_ = loadicatorDataBuilder_.build();
+        }
         onBuilt();
         return result;
       }
@@ -72380,6 +72468,9 @@ public final class LoadableStudy {
         if (!other.getDisplacementActual().isEmpty()) {
           displacementActual_ = other.displacementActual_;
           onChanged();
+        }
+        if (other.hasLoadicatorData()) {
+          mergeLoadicatorData(other.getLoadicatorData());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -75617,6 +75708,134 @@ public final class LoadableStudy {
         displacementActual_ = value;
         onChanged();
         return this;
+      }
+
+      private com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+          loadicatorData_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData,
+              com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder,
+              com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorDataOrBuilder>
+          loadicatorDataBuilder_;
+      /**
+       * <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code>
+       *
+       * @return Whether the loadicatorData field is set.
+       */
+      public boolean hasLoadicatorData() {
+        return loadicatorDataBuilder_ != null || loadicatorData_ != null;
+      }
+      /**
+       * <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code>
+       *
+       * @return The loadicatorData.
+       */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+          getLoadicatorData() {
+        if (loadicatorDataBuilder_ == null) {
+          return loadicatorData_ == null
+              ? com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+                  .getDefaultInstance()
+              : loadicatorData_;
+        } else {
+          return loadicatorDataBuilder_.getMessage();
+        }
+      }
+      /** <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code> */
+      public Builder setLoadicatorData(
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData value) {
+        if (loadicatorDataBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          loadicatorData_ = value;
+          onChanged();
+        } else {
+          loadicatorDataBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code> */
+      public Builder setLoadicatorData(
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder
+              builderForValue) {
+        if (loadicatorDataBuilder_ == null) {
+          loadicatorData_ = builderForValue.build();
+          onChanged();
+        } else {
+          loadicatorDataBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code> */
+      public Builder mergeLoadicatorData(
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData value) {
+        if (loadicatorDataBuilder_ == null) {
+          if (loadicatorData_ != null) {
+            loadicatorData_ =
+                com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.newBuilder(
+                        loadicatorData_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            loadicatorData_ = value;
+          }
+          onChanged();
+        } else {
+          loadicatorDataBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code> */
+      public Builder clearLoadicatorData() {
+        if (loadicatorDataBuilder_ == null) {
+          loadicatorData_ = null;
+          onChanged();
+        } else {
+          loadicatorData_ = null;
+          loadicatorDataBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code> */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder
+          getLoadicatorDataBuilder() {
+
+        onChanged();
+        return getLoadicatorDataFieldBuilder().getBuilder();
+      }
+      /** <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code> */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorDataOrBuilder
+          getLoadicatorDataOrBuilder() {
+        if (loadicatorDataBuilder_ != null) {
+          return loadicatorDataBuilder_.getMessageOrBuilder();
+        } else {
+          return loadicatorData_ == null
+              ? com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+                  .getDefaultInstance()
+              : loadicatorData_;
+        }
+      }
+      /** <code>.SynopticalTableLoadicatorData loadicatorData = 41;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData,
+              com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder,
+              com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorDataOrBuilder>
+          getLoadicatorDataFieldBuilder() {
+        if (loadicatorDataBuilder_ == null) {
+          loadicatorDataBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData,
+                  com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder,
+                  com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorDataOrBuilder>(
+                  getLoadicatorData(), getParentForChildren(), isClean());
+          loadicatorData_ = null;
+        }
+        return loadicatorDataBuilder_;
       }
 
       @java.lang.Override
@@ -79699,6 +79918,2540 @@ public final class LoadableStudy {
     }
   }
 
+  public interface SynopticalTableLoadicatorDataOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:SynopticalTableLoadicatorData)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string hogSag = 1;</code>
+     *
+     * @return The hogSag.
+     */
+    java.lang.String getHogSag();
+    /**
+     * <code>string hogSag = 1;</code>
+     *
+     * @return The bytes for hogSag.
+     */
+    com.google.protobuf.ByteString getHogSagBytes();
+
+    /**
+     * <code>string finalDraftFwd = 2;</code>
+     *
+     * @return The finalDraftFwd.
+     */
+    java.lang.String getFinalDraftFwd();
+    /**
+     * <code>string finalDraftFwd = 2;</code>
+     *
+     * @return The bytes for finalDraftFwd.
+     */
+    com.google.protobuf.ByteString getFinalDraftFwdBytes();
+
+    /**
+     * <code>string finalDraftAft = 3;</code>
+     *
+     * @return The finalDraftAft.
+     */
+    java.lang.String getFinalDraftAft();
+    /**
+     * <code>string finalDraftAft = 3;</code>
+     *
+     * @return The bytes for finalDraftAft.
+     */
+    com.google.protobuf.ByteString getFinalDraftAftBytes();
+
+    /**
+     * <code>string finalDraftMid = 4;</code>
+     *
+     * @return The finalDraftMid.
+     */
+    java.lang.String getFinalDraftMid();
+    /**
+     * <code>string finalDraftMid = 4;</code>
+     *
+     * @return The bytes for finalDraftMid.
+     */
+    com.google.protobuf.ByteString getFinalDraftMidBytes();
+
+    /**
+     * <code>string finalDraftTrim = 5;</code>
+     *
+     * @return The finalDraftTrim.
+     */
+    java.lang.String getFinalDraftTrim();
+    /**
+     * <code>string finalDraftTrim = 5;</code>
+     *
+     * @return The bytes for finalDraftTrim.
+     */
+    com.google.protobuf.ByteString getFinalDraftTrimBytes();
+
+    /**
+     * <code>string calculatedDraftFwdPlanned = 6;</code>
+     *
+     * @return The calculatedDraftFwdPlanned.
+     */
+    java.lang.String getCalculatedDraftFwdPlanned();
+    /**
+     * <code>string calculatedDraftFwdPlanned = 6;</code>
+     *
+     * @return The bytes for calculatedDraftFwdPlanned.
+     */
+    com.google.protobuf.ByteString getCalculatedDraftFwdPlannedBytes();
+
+    /**
+     * <code>string calculatedDraftFwdActual = 7;</code>
+     *
+     * @return The calculatedDraftFwdActual.
+     */
+    java.lang.String getCalculatedDraftFwdActual();
+    /**
+     * <code>string calculatedDraftFwdActual = 7;</code>
+     *
+     * @return The bytes for calculatedDraftFwdActual.
+     */
+    com.google.protobuf.ByteString getCalculatedDraftFwdActualBytes();
+
+    /**
+     * <code>string calculatedDraftAftPlanned = 8;</code>
+     *
+     * @return The calculatedDraftAftPlanned.
+     */
+    java.lang.String getCalculatedDraftAftPlanned();
+    /**
+     * <code>string calculatedDraftAftPlanned = 8;</code>
+     *
+     * @return The bytes for calculatedDraftAftPlanned.
+     */
+    com.google.protobuf.ByteString getCalculatedDraftAftPlannedBytes();
+
+    /**
+     * <code>string calculatedDraftAftActual = 9;</code>
+     *
+     * @return The calculatedDraftAftActual.
+     */
+    java.lang.String getCalculatedDraftAftActual();
+    /**
+     * <code>string calculatedDraftAftActual = 9;</code>
+     *
+     * @return The bytes for calculatedDraftAftActual.
+     */
+    com.google.protobuf.ByteString getCalculatedDraftAftActualBytes();
+
+    /**
+     * <code>string calculatedDraftMidPlanned = 10;</code>
+     *
+     * @return The calculatedDraftMidPlanned.
+     */
+    java.lang.String getCalculatedDraftMidPlanned();
+    /**
+     * <code>string calculatedDraftMidPlanned = 10;</code>
+     *
+     * @return The bytes for calculatedDraftMidPlanned.
+     */
+    com.google.protobuf.ByteString getCalculatedDraftMidPlannedBytes();
+
+    /**
+     * <code>string calculatedDraftMidActual = 11;</code>
+     *
+     * @return The calculatedDraftMidActual.
+     */
+    java.lang.String getCalculatedDraftMidActual();
+    /**
+     * <code>string calculatedDraftMidActual = 11;</code>
+     *
+     * @return The bytes for calculatedDraftMidActual.
+     */
+    com.google.protobuf.ByteString getCalculatedDraftMidActualBytes();
+
+    /**
+     * <code>string calculatedTrimPlanned = 12;</code>
+     *
+     * @return The calculatedTrimPlanned.
+     */
+    java.lang.String getCalculatedTrimPlanned();
+    /**
+     * <code>string calculatedTrimPlanned = 12;</code>
+     *
+     * @return The bytes for calculatedTrimPlanned.
+     */
+    com.google.protobuf.ByteString getCalculatedTrimPlannedBytes();
+
+    /**
+     * <code>string calculatedTrimActual = 13;</code>
+     *
+     * @return The calculatedTrimActual.
+     */
+    java.lang.String getCalculatedTrimActual();
+    /**
+     * <code>string calculatedTrimActual = 13;</code>
+     *
+     * @return The bytes for calculatedTrimActual.
+     */
+    com.google.protobuf.ByteString getCalculatedTrimActualBytes();
+
+    /**
+     * <code>string blindSector = 14;</code>
+     *
+     * @return The blindSector.
+     */
+    java.lang.String getBlindSector();
+    /**
+     * <code>string blindSector = 14;</code>
+     *
+     * @return The bytes for blindSector.
+     */
+    com.google.protobuf.ByteString getBlindSectorBytes();
+  }
+  /** Protobuf type {@code SynopticalTableLoadicatorData} */
+  public static final class SynopticalTableLoadicatorData
+      extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:SynopticalTableLoadicatorData)
+      SynopticalTableLoadicatorDataOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use SynopticalTableLoadicatorData.newBuilder() to construct.
+    private SynopticalTableLoadicatorData(
+        com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private SynopticalTableLoadicatorData() {
+      hogSag_ = "";
+      finalDraftFwd_ = "";
+      finalDraftAft_ = "";
+      finalDraftMid_ = "";
+      finalDraftTrim_ = "";
+      calculatedDraftFwdPlanned_ = "";
+      calculatedDraftFwdActual_ = "";
+      calculatedDraftAftPlanned_ = "";
+      calculatedDraftAftActual_ = "";
+      calculatedDraftMidPlanned_ = "";
+      calculatedDraftMidActual_ = "";
+      calculatedTrimPlanned_ = "";
+      calculatedTrimActual_ = "";
+      blindSector_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new SynopticalTableLoadicatorData();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private SynopticalTableLoadicatorData(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                hogSag_ = s;
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                finalDraftFwd_ = s;
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                finalDraftAft_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                finalDraftMid_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                finalDraftTrim_ = s;
+                break;
+              }
+            case 50:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                calculatedDraftFwdPlanned_ = s;
+                break;
+              }
+            case 58:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                calculatedDraftFwdActual_ = s;
+                break;
+              }
+            case 66:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                calculatedDraftAftPlanned_ = s;
+                break;
+              }
+            case 74:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                calculatedDraftAftActual_ = s;
+                break;
+              }
+            case 82:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                calculatedDraftMidPlanned_ = s;
+                break;
+              }
+            case 90:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                calculatedDraftMidActual_ = s;
+                break;
+              }
+            case 98:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                calculatedTrimPlanned_ = s;
+                break;
+              }
+            case 106:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                calculatedTrimActual_ = s;
+                break;
+              }
+            case 114:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                blindSector_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_SynopticalTableLoadicatorData_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_SynopticalTableLoadicatorData_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.class,
+              com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder.class);
+    }
+
+    public static final int HOGSAG_FIELD_NUMBER = 1;
+    private volatile java.lang.Object hogSag_;
+    /**
+     * <code>string hogSag = 1;</code>
+     *
+     * @return The hogSag.
+     */
+    public java.lang.String getHogSag() {
+      java.lang.Object ref = hogSag_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hogSag_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string hogSag = 1;</code>
+     *
+     * @return The bytes for hogSag.
+     */
+    public com.google.protobuf.ByteString getHogSagBytes() {
+      java.lang.Object ref = hogSag_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        hogSag_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int FINALDRAFTFWD_FIELD_NUMBER = 2;
+    private volatile java.lang.Object finalDraftFwd_;
+    /**
+     * <code>string finalDraftFwd = 2;</code>
+     *
+     * @return The finalDraftFwd.
+     */
+    public java.lang.String getFinalDraftFwd() {
+      java.lang.Object ref = finalDraftFwd_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        finalDraftFwd_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string finalDraftFwd = 2;</code>
+     *
+     * @return The bytes for finalDraftFwd.
+     */
+    public com.google.protobuf.ByteString getFinalDraftFwdBytes() {
+      java.lang.Object ref = finalDraftFwd_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        finalDraftFwd_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int FINALDRAFTAFT_FIELD_NUMBER = 3;
+    private volatile java.lang.Object finalDraftAft_;
+    /**
+     * <code>string finalDraftAft = 3;</code>
+     *
+     * @return The finalDraftAft.
+     */
+    public java.lang.String getFinalDraftAft() {
+      java.lang.Object ref = finalDraftAft_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        finalDraftAft_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string finalDraftAft = 3;</code>
+     *
+     * @return The bytes for finalDraftAft.
+     */
+    public com.google.protobuf.ByteString getFinalDraftAftBytes() {
+      java.lang.Object ref = finalDraftAft_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        finalDraftAft_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int FINALDRAFTMID_FIELD_NUMBER = 4;
+    private volatile java.lang.Object finalDraftMid_;
+    /**
+     * <code>string finalDraftMid = 4;</code>
+     *
+     * @return The finalDraftMid.
+     */
+    public java.lang.String getFinalDraftMid() {
+      java.lang.Object ref = finalDraftMid_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        finalDraftMid_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string finalDraftMid = 4;</code>
+     *
+     * @return The bytes for finalDraftMid.
+     */
+    public com.google.protobuf.ByteString getFinalDraftMidBytes() {
+      java.lang.Object ref = finalDraftMid_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        finalDraftMid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int FINALDRAFTTRIM_FIELD_NUMBER = 5;
+    private volatile java.lang.Object finalDraftTrim_;
+    /**
+     * <code>string finalDraftTrim = 5;</code>
+     *
+     * @return The finalDraftTrim.
+     */
+    public java.lang.String getFinalDraftTrim() {
+      java.lang.Object ref = finalDraftTrim_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        finalDraftTrim_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string finalDraftTrim = 5;</code>
+     *
+     * @return The bytes for finalDraftTrim.
+     */
+    public com.google.protobuf.ByteString getFinalDraftTrimBytes() {
+      java.lang.Object ref = finalDraftTrim_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        finalDraftTrim_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CALCULATEDDRAFTFWDPLANNED_FIELD_NUMBER = 6;
+    private volatile java.lang.Object calculatedDraftFwdPlanned_;
+    /**
+     * <code>string calculatedDraftFwdPlanned = 6;</code>
+     *
+     * @return The calculatedDraftFwdPlanned.
+     */
+    public java.lang.String getCalculatedDraftFwdPlanned() {
+      java.lang.Object ref = calculatedDraftFwdPlanned_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        calculatedDraftFwdPlanned_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string calculatedDraftFwdPlanned = 6;</code>
+     *
+     * @return The bytes for calculatedDraftFwdPlanned.
+     */
+    public com.google.protobuf.ByteString getCalculatedDraftFwdPlannedBytes() {
+      java.lang.Object ref = calculatedDraftFwdPlanned_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        calculatedDraftFwdPlanned_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CALCULATEDDRAFTFWDACTUAL_FIELD_NUMBER = 7;
+    private volatile java.lang.Object calculatedDraftFwdActual_;
+    /**
+     * <code>string calculatedDraftFwdActual = 7;</code>
+     *
+     * @return The calculatedDraftFwdActual.
+     */
+    public java.lang.String getCalculatedDraftFwdActual() {
+      java.lang.Object ref = calculatedDraftFwdActual_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        calculatedDraftFwdActual_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string calculatedDraftFwdActual = 7;</code>
+     *
+     * @return The bytes for calculatedDraftFwdActual.
+     */
+    public com.google.protobuf.ByteString getCalculatedDraftFwdActualBytes() {
+      java.lang.Object ref = calculatedDraftFwdActual_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        calculatedDraftFwdActual_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CALCULATEDDRAFTAFTPLANNED_FIELD_NUMBER = 8;
+    private volatile java.lang.Object calculatedDraftAftPlanned_;
+    /**
+     * <code>string calculatedDraftAftPlanned = 8;</code>
+     *
+     * @return The calculatedDraftAftPlanned.
+     */
+    public java.lang.String getCalculatedDraftAftPlanned() {
+      java.lang.Object ref = calculatedDraftAftPlanned_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        calculatedDraftAftPlanned_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string calculatedDraftAftPlanned = 8;</code>
+     *
+     * @return The bytes for calculatedDraftAftPlanned.
+     */
+    public com.google.protobuf.ByteString getCalculatedDraftAftPlannedBytes() {
+      java.lang.Object ref = calculatedDraftAftPlanned_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        calculatedDraftAftPlanned_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CALCULATEDDRAFTAFTACTUAL_FIELD_NUMBER = 9;
+    private volatile java.lang.Object calculatedDraftAftActual_;
+    /**
+     * <code>string calculatedDraftAftActual = 9;</code>
+     *
+     * @return The calculatedDraftAftActual.
+     */
+    public java.lang.String getCalculatedDraftAftActual() {
+      java.lang.Object ref = calculatedDraftAftActual_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        calculatedDraftAftActual_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string calculatedDraftAftActual = 9;</code>
+     *
+     * @return The bytes for calculatedDraftAftActual.
+     */
+    public com.google.protobuf.ByteString getCalculatedDraftAftActualBytes() {
+      java.lang.Object ref = calculatedDraftAftActual_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        calculatedDraftAftActual_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CALCULATEDDRAFTMIDPLANNED_FIELD_NUMBER = 10;
+    private volatile java.lang.Object calculatedDraftMidPlanned_;
+    /**
+     * <code>string calculatedDraftMidPlanned = 10;</code>
+     *
+     * @return The calculatedDraftMidPlanned.
+     */
+    public java.lang.String getCalculatedDraftMidPlanned() {
+      java.lang.Object ref = calculatedDraftMidPlanned_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        calculatedDraftMidPlanned_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string calculatedDraftMidPlanned = 10;</code>
+     *
+     * @return The bytes for calculatedDraftMidPlanned.
+     */
+    public com.google.protobuf.ByteString getCalculatedDraftMidPlannedBytes() {
+      java.lang.Object ref = calculatedDraftMidPlanned_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        calculatedDraftMidPlanned_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CALCULATEDDRAFTMIDACTUAL_FIELD_NUMBER = 11;
+    private volatile java.lang.Object calculatedDraftMidActual_;
+    /**
+     * <code>string calculatedDraftMidActual = 11;</code>
+     *
+     * @return The calculatedDraftMidActual.
+     */
+    public java.lang.String getCalculatedDraftMidActual() {
+      java.lang.Object ref = calculatedDraftMidActual_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        calculatedDraftMidActual_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string calculatedDraftMidActual = 11;</code>
+     *
+     * @return The bytes for calculatedDraftMidActual.
+     */
+    public com.google.protobuf.ByteString getCalculatedDraftMidActualBytes() {
+      java.lang.Object ref = calculatedDraftMidActual_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        calculatedDraftMidActual_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CALCULATEDTRIMPLANNED_FIELD_NUMBER = 12;
+    private volatile java.lang.Object calculatedTrimPlanned_;
+    /**
+     * <code>string calculatedTrimPlanned = 12;</code>
+     *
+     * @return The calculatedTrimPlanned.
+     */
+    public java.lang.String getCalculatedTrimPlanned() {
+      java.lang.Object ref = calculatedTrimPlanned_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        calculatedTrimPlanned_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string calculatedTrimPlanned = 12;</code>
+     *
+     * @return The bytes for calculatedTrimPlanned.
+     */
+    public com.google.protobuf.ByteString getCalculatedTrimPlannedBytes() {
+      java.lang.Object ref = calculatedTrimPlanned_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        calculatedTrimPlanned_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CALCULATEDTRIMACTUAL_FIELD_NUMBER = 13;
+    private volatile java.lang.Object calculatedTrimActual_;
+    /**
+     * <code>string calculatedTrimActual = 13;</code>
+     *
+     * @return The calculatedTrimActual.
+     */
+    public java.lang.String getCalculatedTrimActual() {
+      java.lang.Object ref = calculatedTrimActual_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        calculatedTrimActual_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string calculatedTrimActual = 13;</code>
+     *
+     * @return The bytes for calculatedTrimActual.
+     */
+    public com.google.protobuf.ByteString getCalculatedTrimActualBytes() {
+      java.lang.Object ref = calculatedTrimActual_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        calculatedTrimActual_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int BLINDSECTOR_FIELD_NUMBER = 14;
+    private volatile java.lang.Object blindSector_;
+    /**
+     * <code>string blindSector = 14;</code>
+     *
+     * @return The blindSector.
+     */
+    public java.lang.String getBlindSector() {
+      java.lang.Object ref = blindSector_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        blindSector_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string blindSector = 14;</code>
+     *
+     * @return The bytes for blindSector.
+     */
+    public com.google.protobuf.ByteString getBlindSectorBytes() {
+      java.lang.Object ref = blindSector_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        blindSector_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (!getHogSagBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, hogSag_);
+      }
+      if (!getFinalDraftFwdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, finalDraftFwd_);
+      }
+      if (!getFinalDraftAftBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, finalDraftAft_);
+      }
+      if (!getFinalDraftMidBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, finalDraftMid_);
+      }
+      if (!getFinalDraftTrimBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, finalDraftTrim_);
+      }
+      if (!getCalculatedDraftFwdPlannedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, calculatedDraftFwdPlanned_);
+      }
+      if (!getCalculatedDraftFwdActualBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, calculatedDraftFwdActual_);
+      }
+      if (!getCalculatedDraftAftPlannedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, calculatedDraftAftPlanned_);
+      }
+      if (!getCalculatedDraftAftActualBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, calculatedDraftAftActual_);
+      }
+      if (!getCalculatedDraftMidPlannedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, calculatedDraftMidPlanned_);
+      }
+      if (!getCalculatedDraftMidActualBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, calculatedDraftMidActual_);
+      }
+      if (!getCalculatedTrimPlannedBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, calculatedTrimPlanned_);
+      }
+      if (!getCalculatedTrimActualBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 13, calculatedTrimActual_);
+      }
+      if (!getBlindSectorBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 14, blindSector_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getHogSagBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, hogSag_);
+      }
+      if (!getFinalDraftFwdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, finalDraftFwd_);
+      }
+      if (!getFinalDraftAftBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, finalDraftAft_);
+      }
+      if (!getFinalDraftMidBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, finalDraftMid_);
+      }
+      if (!getFinalDraftTrimBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, finalDraftTrim_);
+      }
+      if (!getCalculatedDraftFwdPlannedBytes().isEmpty()) {
+        size +=
+            com.google.protobuf.GeneratedMessageV3.computeStringSize(6, calculatedDraftFwdPlanned_);
+      }
+      if (!getCalculatedDraftFwdActualBytes().isEmpty()) {
+        size +=
+            com.google.protobuf.GeneratedMessageV3.computeStringSize(7, calculatedDraftFwdActual_);
+      }
+      if (!getCalculatedDraftAftPlannedBytes().isEmpty()) {
+        size +=
+            com.google.protobuf.GeneratedMessageV3.computeStringSize(8, calculatedDraftAftPlanned_);
+      }
+      if (!getCalculatedDraftAftActualBytes().isEmpty()) {
+        size +=
+            com.google.protobuf.GeneratedMessageV3.computeStringSize(9, calculatedDraftAftActual_);
+      }
+      if (!getCalculatedDraftMidPlannedBytes().isEmpty()) {
+        size +=
+            com.google.protobuf.GeneratedMessageV3.computeStringSize(
+                10, calculatedDraftMidPlanned_);
+      }
+      if (!getCalculatedDraftMidActualBytes().isEmpty()) {
+        size +=
+            com.google.protobuf.GeneratedMessageV3.computeStringSize(11, calculatedDraftMidActual_);
+      }
+      if (!getCalculatedTrimPlannedBytes().isEmpty()) {
+        size +=
+            com.google.protobuf.GeneratedMessageV3.computeStringSize(12, calculatedTrimPlanned_);
+      }
+      if (!getCalculatedTrimActualBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, calculatedTrimActual_);
+      }
+      if (!getBlindSectorBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, blindSector_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj
+          instanceof com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData other =
+          (com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData) obj;
+
+      if (!getHogSag().equals(other.getHogSag())) return false;
+      if (!getFinalDraftFwd().equals(other.getFinalDraftFwd())) return false;
+      if (!getFinalDraftAft().equals(other.getFinalDraftAft())) return false;
+      if (!getFinalDraftMid().equals(other.getFinalDraftMid())) return false;
+      if (!getFinalDraftTrim().equals(other.getFinalDraftTrim())) return false;
+      if (!getCalculatedDraftFwdPlanned().equals(other.getCalculatedDraftFwdPlanned()))
+        return false;
+      if (!getCalculatedDraftFwdActual().equals(other.getCalculatedDraftFwdActual())) return false;
+      if (!getCalculatedDraftAftPlanned().equals(other.getCalculatedDraftAftPlanned()))
+        return false;
+      if (!getCalculatedDraftAftActual().equals(other.getCalculatedDraftAftActual())) return false;
+      if (!getCalculatedDraftMidPlanned().equals(other.getCalculatedDraftMidPlanned()))
+        return false;
+      if (!getCalculatedDraftMidActual().equals(other.getCalculatedDraftMidActual())) return false;
+      if (!getCalculatedTrimPlanned().equals(other.getCalculatedTrimPlanned())) return false;
+      if (!getCalculatedTrimActual().equals(other.getCalculatedTrimActual())) return false;
+      if (!getBlindSector().equals(other.getBlindSector())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + HOGSAG_FIELD_NUMBER;
+      hash = (53 * hash) + getHogSag().hashCode();
+      hash = (37 * hash) + FINALDRAFTFWD_FIELD_NUMBER;
+      hash = (53 * hash) + getFinalDraftFwd().hashCode();
+      hash = (37 * hash) + FINALDRAFTAFT_FIELD_NUMBER;
+      hash = (53 * hash) + getFinalDraftAft().hashCode();
+      hash = (37 * hash) + FINALDRAFTMID_FIELD_NUMBER;
+      hash = (53 * hash) + getFinalDraftMid().hashCode();
+      hash = (37 * hash) + FINALDRAFTTRIM_FIELD_NUMBER;
+      hash = (53 * hash) + getFinalDraftTrim().hashCode();
+      hash = (37 * hash) + CALCULATEDDRAFTFWDPLANNED_FIELD_NUMBER;
+      hash = (53 * hash) + getCalculatedDraftFwdPlanned().hashCode();
+      hash = (37 * hash) + CALCULATEDDRAFTFWDACTUAL_FIELD_NUMBER;
+      hash = (53 * hash) + getCalculatedDraftFwdActual().hashCode();
+      hash = (37 * hash) + CALCULATEDDRAFTAFTPLANNED_FIELD_NUMBER;
+      hash = (53 * hash) + getCalculatedDraftAftPlanned().hashCode();
+      hash = (37 * hash) + CALCULATEDDRAFTAFTACTUAL_FIELD_NUMBER;
+      hash = (53 * hash) + getCalculatedDraftAftActual().hashCode();
+      hash = (37 * hash) + CALCULATEDDRAFTMIDPLANNED_FIELD_NUMBER;
+      hash = (53 * hash) + getCalculatedDraftMidPlanned().hashCode();
+      hash = (37 * hash) + CALCULATEDDRAFTMIDACTUAL_FIELD_NUMBER;
+      hash = (53 * hash) + getCalculatedDraftMidActual().hashCode();
+      hash = (37 * hash) + CALCULATEDTRIMPLANNED_FIELD_NUMBER;
+      hash = (53 * hash) + getCalculatedTrimPlanned().hashCode();
+      hash = (37 * hash) + CALCULATEDTRIMACTUAL_FIELD_NUMBER;
+      hash = (53 * hash) + getCalculatedTrimActual().hashCode();
+      hash = (37 * hash) + BLINDSECTOR_FIELD_NUMBER;
+      hash = (53 * hash) + getBlindSector().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData parseFrom(
+        byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code SynopticalTableLoadicatorData} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:SynopticalTableLoadicatorData)
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorDataOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SynopticalTableLoadicatorData_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SynopticalTableLoadicatorData_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.class,
+                com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder
+                    .class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        hogSag_ = "";
+
+        finalDraftFwd_ = "";
+
+        finalDraftAft_ = "";
+
+        finalDraftMid_ = "";
+
+        finalDraftTrim_ = "";
+
+        calculatedDraftFwdPlanned_ = "";
+
+        calculatedDraftFwdActual_ = "";
+
+        calculatedDraftAftPlanned_ = "";
+
+        calculatedDraftAftActual_ = "";
+
+        calculatedDraftMidPlanned_ = "";
+
+        calculatedDraftMidActual_ = "";
+
+        calculatedTrimPlanned_ = "";
+
+        calculatedTrimActual_ = "";
+
+        blindSector_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SynopticalTableLoadicatorData_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData build() {
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData result =
+            buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData result =
+            new com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData(this);
+        result.hogSag_ = hogSag_;
+        result.finalDraftFwd_ = finalDraftFwd_;
+        result.finalDraftAft_ = finalDraftAft_;
+        result.finalDraftMid_ = finalDraftMid_;
+        result.finalDraftTrim_ = finalDraftTrim_;
+        result.calculatedDraftFwdPlanned_ = calculatedDraftFwdPlanned_;
+        result.calculatedDraftFwdActual_ = calculatedDraftFwdActual_;
+        result.calculatedDraftAftPlanned_ = calculatedDraftAftPlanned_;
+        result.calculatedDraftAftActual_ = calculatedDraftAftActual_;
+        result.calculatedDraftMidPlanned_ = calculatedDraftMidPlanned_;
+        result.calculatedDraftMidActual_ = calculatedDraftMidActual_;
+        result.calculatedTrimPlanned_ = calculatedTrimPlanned_;
+        result.calculatedTrimActual_ = calculatedTrimActual_;
+        result.blindSector_ = blindSector_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other
+            instanceof com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData) {
+          return mergeFrom(
+              (com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData other) {
+        if (other
+            == com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+                .getDefaultInstance()) return this;
+        if (!other.getHogSag().isEmpty()) {
+          hogSag_ = other.hogSag_;
+          onChanged();
+        }
+        if (!other.getFinalDraftFwd().isEmpty()) {
+          finalDraftFwd_ = other.finalDraftFwd_;
+          onChanged();
+        }
+        if (!other.getFinalDraftAft().isEmpty()) {
+          finalDraftAft_ = other.finalDraftAft_;
+          onChanged();
+        }
+        if (!other.getFinalDraftMid().isEmpty()) {
+          finalDraftMid_ = other.finalDraftMid_;
+          onChanged();
+        }
+        if (!other.getFinalDraftTrim().isEmpty()) {
+          finalDraftTrim_ = other.finalDraftTrim_;
+          onChanged();
+        }
+        if (!other.getCalculatedDraftFwdPlanned().isEmpty()) {
+          calculatedDraftFwdPlanned_ = other.calculatedDraftFwdPlanned_;
+          onChanged();
+        }
+        if (!other.getCalculatedDraftFwdActual().isEmpty()) {
+          calculatedDraftFwdActual_ = other.calculatedDraftFwdActual_;
+          onChanged();
+        }
+        if (!other.getCalculatedDraftAftPlanned().isEmpty()) {
+          calculatedDraftAftPlanned_ = other.calculatedDraftAftPlanned_;
+          onChanged();
+        }
+        if (!other.getCalculatedDraftAftActual().isEmpty()) {
+          calculatedDraftAftActual_ = other.calculatedDraftAftActual_;
+          onChanged();
+        }
+        if (!other.getCalculatedDraftMidPlanned().isEmpty()) {
+          calculatedDraftMidPlanned_ = other.calculatedDraftMidPlanned_;
+          onChanged();
+        }
+        if (!other.getCalculatedDraftMidActual().isEmpty()) {
+          calculatedDraftMidActual_ = other.calculatedDraftMidActual_;
+          onChanged();
+        }
+        if (!other.getCalculatedTrimPlanned().isEmpty()) {
+          calculatedTrimPlanned_ = other.calculatedTrimPlanned_;
+          onChanged();
+        }
+        if (!other.getCalculatedTrimActual().isEmpty()) {
+          calculatedTrimActual_ = other.calculatedTrimActual_;
+          onChanged();
+        }
+        if (!other.getBlindSector().isEmpty()) {
+          blindSector_ = other.blindSector_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private java.lang.Object hogSag_ = "";
+      /**
+       * <code>string hogSag = 1;</code>
+       *
+       * @return The hogSag.
+       */
+      public java.lang.String getHogSag() {
+        java.lang.Object ref = hogSag_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hogSag_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string hogSag = 1;</code>
+       *
+       * @return The bytes for hogSag.
+       */
+      public com.google.protobuf.ByteString getHogSagBytes() {
+        java.lang.Object ref = hogSag_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          hogSag_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string hogSag = 1;</code>
+       *
+       * @param value The hogSag to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHogSag(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        hogSag_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hogSag = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearHogSag() {
+
+        hogSag_ = getDefaultInstance().getHogSag();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hogSag = 1;</code>
+       *
+       * @param value The bytes for hogSag to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHogSagBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        hogSag_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object finalDraftFwd_ = "";
+      /**
+       * <code>string finalDraftFwd = 2;</code>
+       *
+       * @return The finalDraftFwd.
+       */
+      public java.lang.String getFinalDraftFwd() {
+        java.lang.Object ref = finalDraftFwd_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          finalDraftFwd_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string finalDraftFwd = 2;</code>
+       *
+       * @return The bytes for finalDraftFwd.
+       */
+      public com.google.protobuf.ByteString getFinalDraftFwdBytes() {
+        java.lang.Object ref = finalDraftFwd_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          finalDraftFwd_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string finalDraftFwd = 2;</code>
+       *
+       * @param value The finalDraftFwd to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFinalDraftFwd(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        finalDraftFwd_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string finalDraftFwd = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearFinalDraftFwd() {
+
+        finalDraftFwd_ = getDefaultInstance().getFinalDraftFwd();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string finalDraftFwd = 2;</code>
+       *
+       * @param value The bytes for finalDraftFwd to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFinalDraftFwdBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        finalDraftFwd_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object finalDraftAft_ = "";
+      /**
+       * <code>string finalDraftAft = 3;</code>
+       *
+       * @return The finalDraftAft.
+       */
+      public java.lang.String getFinalDraftAft() {
+        java.lang.Object ref = finalDraftAft_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          finalDraftAft_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string finalDraftAft = 3;</code>
+       *
+       * @return The bytes for finalDraftAft.
+       */
+      public com.google.protobuf.ByteString getFinalDraftAftBytes() {
+        java.lang.Object ref = finalDraftAft_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          finalDraftAft_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string finalDraftAft = 3;</code>
+       *
+       * @param value The finalDraftAft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFinalDraftAft(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        finalDraftAft_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string finalDraftAft = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearFinalDraftAft() {
+
+        finalDraftAft_ = getDefaultInstance().getFinalDraftAft();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string finalDraftAft = 3;</code>
+       *
+       * @param value The bytes for finalDraftAft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFinalDraftAftBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        finalDraftAft_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object finalDraftMid_ = "";
+      /**
+       * <code>string finalDraftMid = 4;</code>
+       *
+       * @return The finalDraftMid.
+       */
+      public java.lang.String getFinalDraftMid() {
+        java.lang.Object ref = finalDraftMid_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          finalDraftMid_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string finalDraftMid = 4;</code>
+       *
+       * @return The bytes for finalDraftMid.
+       */
+      public com.google.protobuf.ByteString getFinalDraftMidBytes() {
+        java.lang.Object ref = finalDraftMid_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          finalDraftMid_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string finalDraftMid = 4;</code>
+       *
+       * @param value The finalDraftMid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFinalDraftMid(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        finalDraftMid_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string finalDraftMid = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearFinalDraftMid() {
+
+        finalDraftMid_ = getDefaultInstance().getFinalDraftMid();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string finalDraftMid = 4;</code>
+       *
+       * @param value The bytes for finalDraftMid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFinalDraftMidBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        finalDraftMid_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object finalDraftTrim_ = "";
+      /**
+       * <code>string finalDraftTrim = 5;</code>
+       *
+       * @return The finalDraftTrim.
+       */
+      public java.lang.String getFinalDraftTrim() {
+        java.lang.Object ref = finalDraftTrim_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          finalDraftTrim_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string finalDraftTrim = 5;</code>
+       *
+       * @return The bytes for finalDraftTrim.
+       */
+      public com.google.protobuf.ByteString getFinalDraftTrimBytes() {
+        java.lang.Object ref = finalDraftTrim_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          finalDraftTrim_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string finalDraftTrim = 5;</code>
+       *
+       * @param value The finalDraftTrim to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFinalDraftTrim(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        finalDraftTrim_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string finalDraftTrim = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearFinalDraftTrim() {
+
+        finalDraftTrim_ = getDefaultInstance().getFinalDraftTrim();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string finalDraftTrim = 5;</code>
+       *
+       * @param value The bytes for finalDraftTrim to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFinalDraftTrimBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        finalDraftTrim_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object calculatedDraftFwdPlanned_ = "";
+      /**
+       * <code>string calculatedDraftFwdPlanned = 6;</code>
+       *
+       * @return The calculatedDraftFwdPlanned.
+       */
+      public java.lang.String getCalculatedDraftFwdPlanned() {
+        java.lang.Object ref = calculatedDraftFwdPlanned_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          calculatedDraftFwdPlanned_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string calculatedDraftFwdPlanned = 6;</code>
+       *
+       * @return The bytes for calculatedDraftFwdPlanned.
+       */
+      public com.google.protobuf.ByteString getCalculatedDraftFwdPlannedBytes() {
+        java.lang.Object ref = calculatedDraftFwdPlanned_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          calculatedDraftFwdPlanned_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string calculatedDraftFwdPlanned = 6;</code>
+       *
+       * @param value The calculatedDraftFwdPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedDraftFwdPlanned(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        calculatedDraftFwdPlanned_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedDraftFwdPlanned = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCalculatedDraftFwdPlanned() {
+
+        calculatedDraftFwdPlanned_ = getDefaultInstance().getCalculatedDraftFwdPlanned();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedDraftFwdPlanned = 6;</code>
+       *
+       * @param value The bytes for calculatedDraftFwdPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedDraftFwdPlannedBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        calculatedDraftFwdPlanned_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object calculatedDraftFwdActual_ = "";
+      /**
+       * <code>string calculatedDraftFwdActual = 7;</code>
+       *
+       * @return The calculatedDraftFwdActual.
+       */
+      public java.lang.String getCalculatedDraftFwdActual() {
+        java.lang.Object ref = calculatedDraftFwdActual_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          calculatedDraftFwdActual_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string calculatedDraftFwdActual = 7;</code>
+       *
+       * @return The bytes for calculatedDraftFwdActual.
+       */
+      public com.google.protobuf.ByteString getCalculatedDraftFwdActualBytes() {
+        java.lang.Object ref = calculatedDraftFwdActual_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          calculatedDraftFwdActual_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string calculatedDraftFwdActual = 7;</code>
+       *
+       * @param value The calculatedDraftFwdActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedDraftFwdActual(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        calculatedDraftFwdActual_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedDraftFwdActual = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCalculatedDraftFwdActual() {
+
+        calculatedDraftFwdActual_ = getDefaultInstance().getCalculatedDraftFwdActual();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedDraftFwdActual = 7;</code>
+       *
+       * @param value The bytes for calculatedDraftFwdActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedDraftFwdActualBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        calculatedDraftFwdActual_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object calculatedDraftAftPlanned_ = "";
+      /**
+       * <code>string calculatedDraftAftPlanned = 8;</code>
+       *
+       * @return The calculatedDraftAftPlanned.
+       */
+      public java.lang.String getCalculatedDraftAftPlanned() {
+        java.lang.Object ref = calculatedDraftAftPlanned_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          calculatedDraftAftPlanned_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string calculatedDraftAftPlanned = 8;</code>
+       *
+       * @return The bytes for calculatedDraftAftPlanned.
+       */
+      public com.google.protobuf.ByteString getCalculatedDraftAftPlannedBytes() {
+        java.lang.Object ref = calculatedDraftAftPlanned_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          calculatedDraftAftPlanned_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string calculatedDraftAftPlanned = 8;</code>
+       *
+       * @param value The calculatedDraftAftPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedDraftAftPlanned(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        calculatedDraftAftPlanned_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedDraftAftPlanned = 8;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCalculatedDraftAftPlanned() {
+
+        calculatedDraftAftPlanned_ = getDefaultInstance().getCalculatedDraftAftPlanned();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedDraftAftPlanned = 8;</code>
+       *
+       * @param value The bytes for calculatedDraftAftPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedDraftAftPlannedBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        calculatedDraftAftPlanned_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object calculatedDraftAftActual_ = "";
+      /**
+       * <code>string calculatedDraftAftActual = 9;</code>
+       *
+       * @return The calculatedDraftAftActual.
+       */
+      public java.lang.String getCalculatedDraftAftActual() {
+        java.lang.Object ref = calculatedDraftAftActual_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          calculatedDraftAftActual_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string calculatedDraftAftActual = 9;</code>
+       *
+       * @return The bytes for calculatedDraftAftActual.
+       */
+      public com.google.protobuf.ByteString getCalculatedDraftAftActualBytes() {
+        java.lang.Object ref = calculatedDraftAftActual_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          calculatedDraftAftActual_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string calculatedDraftAftActual = 9;</code>
+       *
+       * @param value The calculatedDraftAftActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedDraftAftActual(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        calculatedDraftAftActual_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedDraftAftActual = 9;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCalculatedDraftAftActual() {
+
+        calculatedDraftAftActual_ = getDefaultInstance().getCalculatedDraftAftActual();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedDraftAftActual = 9;</code>
+       *
+       * @param value The bytes for calculatedDraftAftActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedDraftAftActualBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        calculatedDraftAftActual_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object calculatedDraftMidPlanned_ = "";
+      /**
+       * <code>string calculatedDraftMidPlanned = 10;</code>
+       *
+       * @return The calculatedDraftMidPlanned.
+       */
+      public java.lang.String getCalculatedDraftMidPlanned() {
+        java.lang.Object ref = calculatedDraftMidPlanned_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          calculatedDraftMidPlanned_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string calculatedDraftMidPlanned = 10;</code>
+       *
+       * @return The bytes for calculatedDraftMidPlanned.
+       */
+      public com.google.protobuf.ByteString getCalculatedDraftMidPlannedBytes() {
+        java.lang.Object ref = calculatedDraftMidPlanned_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          calculatedDraftMidPlanned_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string calculatedDraftMidPlanned = 10;</code>
+       *
+       * @param value The calculatedDraftMidPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedDraftMidPlanned(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        calculatedDraftMidPlanned_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedDraftMidPlanned = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCalculatedDraftMidPlanned() {
+
+        calculatedDraftMidPlanned_ = getDefaultInstance().getCalculatedDraftMidPlanned();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedDraftMidPlanned = 10;</code>
+       *
+       * @param value The bytes for calculatedDraftMidPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedDraftMidPlannedBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        calculatedDraftMidPlanned_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object calculatedDraftMidActual_ = "";
+      /**
+       * <code>string calculatedDraftMidActual = 11;</code>
+       *
+       * @return The calculatedDraftMidActual.
+       */
+      public java.lang.String getCalculatedDraftMidActual() {
+        java.lang.Object ref = calculatedDraftMidActual_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          calculatedDraftMidActual_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string calculatedDraftMidActual = 11;</code>
+       *
+       * @return The bytes for calculatedDraftMidActual.
+       */
+      public com.google.protobuf.ByteString getCalculatedDraftMidActualBytes() {
+        java.lang.Object ref = calculatedDraftMidActual_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          calculatedDraftMidActual_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string calculatedDraftMidActual = 11;</code>
+       *
+       * @param value The calculatedDraftMidActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedDraftMidActual(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        calculatedDraftMidActual_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedDraftMidActual = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCalculatedDraftMidActual() {
+
+        calculatedDraftMidActual_ = getDefaultInstance().getCalculatedDraftMidActual();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedDraftMidActual = 11;</code>
+       *
+       * @param value The bytes for calculatedDraftMidActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedDraftMidActualBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        calculatedDraftMidActual_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object calculatedTrimPlanned_ = "";
+      /**
+       * <code>string calculatedTrimPlanned = 12;</code>
+       *
+       * @return The calculatedTrimPlanned.
+       */
+      public java.lang.String getCalculatedTrimPlanned() {
+        java.lang.Object ref = calculatedTrimPlanned_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          calculatedTrimPlanned_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string calculatedTrimPlanned = 12;</code>
+       *
+       * @return The bytes for calculatedTrimPlanned.
+       */
+      public com.google.protobuf.ByteString getCalculatedTrimPlannedBytes() {
+        java.lang.Object ref = calculatedTrimPlanned_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          calculatedTrimPlanned_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string calculatedTrimPlanned = 12;</code>
+       *
+       * @param value The calculatedTrimPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedTrimPlanned(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        calculatedTrimPlanned_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedTrimPlanned = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCalculatedTrimPlanned() {
+
+        calculatedTrimPlanned_ = getDefaultInstance().getCalculatedTrimPlanned();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedTrimPlanned = 12;</code>
+       *
+       * @param value The bytes for calculatedTrimPlanned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedTrimPlannedBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        calculatedTrimPlanned_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object calculatedTrimActual_ = "";
+      /**
+       * <code>string calculatedTrimActual = 13;</code>
+       *
+       * @return The calculatedTrimActual.
+       */
+      public java.lang.String getCalculatedTrimActual() {
+        java.lang.Object ref = calculatedTrimActual_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          calculatedTrimActual_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string calculatedTrimActual = 13;</code>
+       *
+       * @return The bytes for calculatedTrimActual.
+       */
+      public com.google.protobuf.ByteString getCalculatedTrimActualBytes() {
+        java.lang.Object ref = calculatedTrimActual_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          calculatedTrimActual_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string calculatedTrimActual = 13;</code>
+       *
+       * @param value The calculatedTrimActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedTrimActual(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        calculatedTrimActual_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedTrimActual = 13;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCalculatedTrimActual() {
+
+        calculatedTrimActual_ = getDefaultInstance().getCalculatedTrimActual();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string calculatedTrimActual = 13;</code>
+       *
+       * @param value The bytes for calculatedTrimActual to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCalculatedTrimActualBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        calculatedTrimActual_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object blindSector_ = "";
+      /**
+       * <code>string blindSector = 14;</code>
+       *
+       * @return The blindSector.
+       */
+      public java.lang.String getBlindSector() {
+        java.lang.Object ref = blindSector_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          blindSector_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string blindSector = 14;</code>
+       *
+       * @return The bytes for blindSector.
+       */
+      public com.google.protobuf.ByteString getBlindSectorBytes() {
+        java.lang.Object ref = blindSector_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          blindSector_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string blindSector = 14;</code>
+       *
+       * @param value The blindSector to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBlindSector(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        blindSector_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string blindSector = 14;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearBlindSector() {
+
+        blindSector_ = getDefaultInstance().getBlindSector();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string blindSector = 14;</code>
+       *
+       * @param value The bytes for blindSector to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBlindSectorBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        blindSector_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:SynopticalTableLoadicatorData)
+    }
+
+    // @@protoc_insertion_point(class_scope:SynopticalTableLoadicatorData)
+    private static final com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE =
+          new com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<SynopticalTableLoadicatorData> PARSER =
+        new com.google.protobuf.AbstractParser<SynopticalTableLoadicatorData>() {
+          @java.lang.Override
+          public SynopticalTableLoadicatorData parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new SynopticalTableLoadicatorData(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<SynopticalTableLoadicatorData> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<SynopticalTableLoadicatorData> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_LoadablePlanDetailsRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -79947,6 +82700,10 @@ public final class LoadableStudy {
       internal_static_SynopticalTableReply_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_SynopticalTableReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_SynopticalTableLoadicatorData_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_SynopticalTableLoadicatorData_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -80176,7 +82933,7 @@ public final class LoadableStudy {
           + "perature\030\010 \001(\t\022\026\n\016cargo1Quantity\030\t \001(\t\022\026"
           + "\n\016cargo2Quantity\030\n \001(\t\022\030\n\020cargo1Percenta"
           + "ge\030\013 \001(\t\022\030\n\020cargo2Percentage\030\014 \001(\t\022\'\n\016re"
-          + "sponseStatus\030\r \001(\0132\017.ResponseStatus\"\253\007\n\020"
+          + "sponseStatus\030\r \001(\0132\017.ResponseStatus\"\343\007\n\020"
           + "SynopticalRecord\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002"
           + " \001(\003\022\020\n\010portName\030\003 \001(\t\022\025\n\roperationType\030"
           + "\004 \001(\t\022\020\n\010distance\030\005 \001(\t\022\r\n\005speed\030\006 \001(\t\022\024"
@@ -80200,77 +82957,89 @@ public final class LoadableStudy {
           + "d\030# \001(\t\022\026\n\016constantActual\030$ \001(\t\022\027\n\017total"
           + "DwtPlanned\030% \001(\t\022\026\n\016totalDwtActual\030& \001(\t"
           + "\022\033\n\023displacementPlanned\030\' \001(\t\022\032\n\022displac"
-          + "ementActual\030( \001(\t\"f\n\025SynopticalCargoReco"
-          + "rd\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\r"
-          + "plannedWeight\030\003 \001(\t\022\024\n\014actualWeight\030\004 \001("
-          + "\t\"\212\001\n\023SynopticalOhqRecord\022\016\n\006tankId\030\001 \001("
-          + "\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rplannedWeight\030\003 \001"
-          + "(\t\022\024\n\014actualWeight\030\004 \001(\t\022\022\n\nfuelTypeId\030\005"
-          + " \001(\003\022\020\n\010fuelType\030\006 \001(\t\"C\n\026SynopticalTabl"
-          + "eRequest\022\027\n\017loadableStudyId\030\001 \001(\003\022\020\n\010ves"
-          + "selId\030\002 \001(\003\"\216\001\n\024SynopticalTableReply\022\'\n\016"
-          + "responseStatus\030\001 \001(\0132\017.ResponseStatus\022,\n"
-          + "\021synopticalRecords\030\002 \003(\0132\021.SynopticalRec"
-          + "ord\022\037\n\nvesselTank\030\003 \003(\0132\013.TankDetail2\361\021\n"
-          + "\024LoadableStudyService\022,\n\nSaveVoyage\022\016.Vo"
-          + "yageRequest\032\014.VoyageReply\"\000\0228\n\022GetVoyage"
-          + "sByVessel\022\016.VoyageRequest\032\020.VoyageListRe"
-          + "ply\"\000\022J\n\024SaveLoadableQuantity\022\030.Loadable"
-          + "QuantityRequest\032\026.LoadableQuantityReply\""
-          + "\000\022T\n$FindLoadableStudiesByVesselAndVoyag"
-          + "e\022\025.LoadableStudyRequest\032\023.LoadableStudy"
-          + "Reply\"\000\022@\n\021SaveLoadableStudy\022\024.LoadableS"
-          + "tudyDetail\032\023.LoadableStudyReply\"\000\022G\n\023Sav"
-          + "eCargoNomination\022\027.CargoNominationReques"
-          + "t\032\025.CargoNominationReply\"\000\022J\n\034GetLoadabl"
-          + "eStudyPortRotation\022\024.PortRotationRequest"
-          + "\032\022.PortRotationReply\"\000\022J\n\026GetCargoNomina"
-          + "tionById\022\027.CargoNominationRequest\032\025.Carg"
-          + "oNominationReply\"\000\022I\n\023GetValveSegregatio"
-          + "n\022\030.ValveSegregationRequest\032\026.ValveSegre"
-          + "gationReply\"\000\022J\n\023getLoadableQuantity\022\026.L"
-          + "oadableQuantityReply\032\031.LoadableQuantityR"
-          + "esponse\"\000\022J\n\035SaveLoadableStudyPortRotati"
-          + "on\022\023.PortRotationDetail\032\022.PortRotationRe"
-          + "ply\"\000\022I\n\025DeleteCargoNomination\022\027.CargoNo"
-          + "minationRequest\032\025.CargoNominationReply\"\000"
-          + "\022B\n\024SaveDischargingPorts\022\024.PortRotationR"
-          + "equest\032\022.PortRotationReply\"\000\022N\n GetPortR"
-          + "otationByLoadableStudyId\022\024.PortRotationR"
-          + "equest\032\022.PortRotationReply\"\000\022C\n\023DeleteLo"
-          + "adableStudy\022\025.LoadableStudyRequest\032\023.Loa"
-          + "dableStudyReply\"\000\022@\n\022DeletePortRotation\022"
-          + "\024.PortRotationRequest\032\022.PortRotationRepl"
-          + "y\"\000\022C\n\021GetOnHandQuantity\022\026.OnHandQuantit"
-          + "yRequest\032\024.OnHandQuantityReply\"\000\022C\n\022Save"
-          + "OnHandQuantity\022\025.OnHandQuantityDetail\032\024."
-          + "OnHandQuantityReply\"\000\022M\n\031GetLoadablePatt"
-          + "ernDetails\022\027.LoadablePatternRequest\032\025.Lo"
-          + "adablePatternReply\"\000\022O\n\025GetPurposeOfComm"
-          + "ingle\022\032.PurposeOfCommingleRequest\032\030.Purp"
-          + "oseOfCommingleReply\"\000\022C\n\021GetCommingleCar"
-          + "go\022\026.CommingleCargoRequest\032\024.CommingleCa"
-          + "rgoReply\"\000\022D\n\022SaveCommingleCargo\022\026.Commi"
-          + "ngleCargoRequest\032\024.CommingleCargoReply\"\000"
-          + "\022v\n\"GetLoadablePatternCommingleDetails\022\'"
-          + ".LoadablePatternCommingleDetailsRequest\032"
-          + "%.LoadablePatternCommingleDetailsReply\"\000"
-          + "\0226\n\030GenerateLoadablePatterns\022\014.AlgoReque"
-          + "st\032\n.AlgoReply\"\000\022F\n\022GetOnBoardQuantity\022\027"
-          + ".OnBoardQuantityRequest\032\025.OnBoardQuantit"
-          + "yReply\"\000\022F\n\023SaveOnBoardQuantity\022\026.OnBoar"
-          + "dQuantityDetail\032\025.OnBoardQuantityReply\"\000"
-          + "\022E\n\033SaveAlgoLoadableStudyStatus\022\022.AlgoSt"
-          + "atusRequest\032\020.AlgoStatusReply\"\000\022F\n\022GetSy"
-          + "nopticalTable\022\027.SynopticalTableRequest\032\025"
-          + ".SynopticalTableReply\"\000\022R\n\026GetLoadableSt"
-          + "udyStatus\022\033.LoadableStudyStatusRequest\032\031"
-          + ".LoadableStudyStatusReply\"\000\022R\n\026GetLoadab"
-          + "lePlanDetails\022\033.LoadablePlanDetailsReque"
-          + "st\032\031.LoadablePlanDetailsReply\"\000\0227\n\013Confi"
-          + "rmPlan\022\023.ConfirmPlanRequest\032\021.ConfirmPla"
-          + "nReply\"\000B\036\n\032com.cpdss.common.generatedP\000"
-          + "b\006proto3"
+          + "ementActual\030( \001(\t\0226\n\016loadicatorData\030) \001("
+          + "\0132\036.SynopticalTableLoadicatorData\"f\n\025Syn"
+          + "opticalCargoRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010ta"
+          + "nkName\030\002 \001(\t\022\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014a"
+          + "ctualWeight\030\004 \001(\t\"\212\001\n\023SynopticalOhqRecor"
+          + "d\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rp"
+          + "lannedWeight\030\003 \001(\t\022\024\n\014actualWeight\030\004 \001(\t"
+          + "\022\022\n\nfuelTypeId\030\005 \001(\003\022\020\n\010fuelType\030\006 \001(\t\"C"
+          + "\n\026SynopticalTableRequest\022\027\n\017loadableStud"
+          + "yId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\"\216\001\n\024Synoptic"
+          + "alTableReply\022\'\n\016responseStatus\030\001 \001(\0132\017.R"
+          + "esponseStatus\022,\n\021synopticalRecords\030\002 \003(\013"
+          + "2\021.SynopticalRecord\022\037\n\nvesselTank\030\003 \003(\0132"
+          + "\013.TankDetail\"\255\003\n\035SynopticalTableLoadicat"
+          + "orData\022\016\n\006hogSag\030\001 \001(\t\022\025\n\rfinalDraftFwd\030"
+          + "\002 \001(\t\022\025\n\rfinalDraftAft\030\003 \001(\t\022\025\n\rfinalDra"
+          + "ftMid\030\004 \001(\t\022\026\n\016finalDraftTrim\030\005 \001(\t\022!\n\031c"
+          + "alculatedDraftFwdPlanned\030\006 \001(\t\022 \n\030calcul"
+          + "atedDraftFwdActual\030\007 \001(\t\022!\n\031calculatedDr"
+          + "aftAftPlanned\030\010 \001(\t\022 \n\030calculatedDraftAf"
+          + "tActual\030\t \001(\t\022!\n\031calculatedDraftMidPlann"
+          + "ed\030\n \001(\t\022 \n\030calculatedDraftMidActual\030\013 \001"
+          + "(\t\022\035\n\025calculatedTrimPlanned\030\014 \001(\t\022\034\n\024cal"
+          + "culatedTrimActual\030\r \001(\t\022\023\n\013blindSector\030\016"
+          + " \001(\t2\361\021\n\024LoadableStudyService\022,\n\nSaveVoy"
+          + "age\022\016.VoyageRequest\032\014.VoyageReply\"\000\0228\n\022G"
+          + "etVoyagesByVessel\022\016.VoyageRequest\032\020.Voya"
+          + "geListReply\"\000\022J\n\024SaveLoadableQuantity\022\030."
+          + "LoadableQuantityRequest\032\026.LoadableQuanti"
+          + "tyReply\"\000\022T\n$FindLoadableStudiesByVessel"
+          + "AndVoyage\022\025.LoadableStudyRequest\032\023.Loada"
+          + "bleStudyReply\"\000\022@\n\021SaveLoadableStudy\022\024.L"
+          + "oadableStudyDetail\032\023.LoadableStudyReply\""
+          + "\000\022G\n\023SaveCargoNomination\022\027.CargoNominati"
+          + "onRequest\032\025.CargoNominationReply\"\000\022J\n\034Ge"
+          + "tLoadableStudyPortRotation\022\024.PortRotatio"
+          + "nRequest\032\022.PortRotationReply\"\000\022J\n\026GetCar"
+          + "goNominationById\022\027.CargoNominationReques"
+          + "t\032\025.CargoNominationReply\"\000\022I\n\023GetValveSe"
+          + "gregation\022\030.ValveSegregationRequest\032\026.Va"
+          + "lveSegregationReply\"\000\022J\n\023getLoadableQuan"
+          + "tity\022\026.LoadableQuantityReply\032\031.LoadableQ"
+          + "uantityResponse\"\000\022J\n\035SaveLoadableStudyPo"
+          + "rtRotation\022\023.PortRotationDetail\032\022.PortRo"
+          + "tationReply\"\000\022I\n\025DeleteCargoNomination\022\027"
+          + ".CargoNominationRequest\032\025.CargoNominatio"
+          + "nReply\"\000\022B\n\024SaveDischargingPorts\022\024.PortR"
+          + "otationRequest\032\022.PortRotationReply\"\000\022N\n "
+          + "GetPortRotationByLoadableStudyId\022\024.PortR"
+          + "otationRequest\032\022.PortRotationReply\"\000\022C\n\023"
+          + "DeleteLoadableStudy\022\025.LoadableStudyReque"
+          + "st\032\023.LoadableStudyReply\"\000\022@\n\022DeletePortR"
+          + "otation\022\024.PortRotationRequest\032\022.PortRota"
+          + "tionReply\"\000\022C\n\021GetOnHandQuantity\022\026.OnHan"
+          + "dQuantityRequest\032\024.OnHandQuantityReply\"\000"
+          + "\022C\n\022SaveOnHandQuantity\022\025.OnHandQuantityD"
+          + "etail\032\024.OnHandQuantityReply\"\000\022M\n\031GetLoad"
+          + "ablePatternDetails\022\027.LoadablePatternRequ"
+          + "est\032\025.LoadablePatternReply\"\000\022O\n\025GetPurpo"
+          + "seOfCommingle\022\032.PurposeOfCommingleReques"
+          + "t\032\030.PurposeOfCommingleReply\"\000\022C\n\021GetComm"
+          + "ingleCargo\022\026.CommingleCargoRequest\032\024.Com"
+          + "mingleCargoReply\"\000\022D\n\022SaveCommingleCargo"
+          + "\022\026.CommingleCargoRequest\032\024.CommingleCarg"
+          + "oReply\"\000\022v\n\"GetLoadablePatternCommingleD"
+          + "etails\022\'.LoadablePatternCommingleDetails"
+          + "Request\032%.LoadablePatternCommingleDetail"
+          + "sReply\"\000\0226\n\030GenerateLoadablePatterns\022\014.A"
+          + "lgoRequest\032\n.AlgoReply\"\000\022F\n\022GetOnBoardQu"
+          + "antity\022\027.OnBoardQuantityRequest\032\025.OnBoar"
+          + "dQuantityReply\"\000\022F\n\023SaveOnBoardQuantity\022"
+          + "\026.OnBoardQuantityDetail\032\025.OnBoardQuantit"
+          + "yReply\"\000\022E\n\033SaveAlgoLoadableStudyStatus\022"
+          + "\022.AlgoStatusRequest\032\020.AlgoStatusReply\"\000\022"
+          + "F\n\022GetSynopticalTable\022\027.SynopticalTableR"
+          + "equest\032\025.SynopticalTableReply\"\000\022R\n\026GetLo"
+          + "adableStudyStatus\022\033.LoadableStudyStatusR"
+          + "equest\032\031.LoadableStudyStatusReply\"\000\022R\n\026G"
+          + "etLoadablePlanDetails\022\033.LoadablePlanDeta"
+          + "ilsRequest\032\031.LoadablePlanDetailsReply\"\000\022"
+          + "7\n\013ConfirmPlan\022\023.ConfirmPlanRequest\032\021.Co"
+          + "nfirmPlanReply\"\000B\036\n\032com.cpdss.common.gen"
+          + "eratedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -80929,6 +83698,7 @@ public final class LoadableStudy {
               "TotalDwtActual",
               "DisplacementPlanned",
               "DisplacementActual",
+              "LoadicatorData",
             });
     internal_static_SynopticalCargoRecord_descriptor = getDescriptor().getMessageTypes().get(58);
     internal_static_SynopticalCargoRecord_fieldAccessorTable =
@@ -80957,6 +83727,27 @@ public final class LoadableStudy {
             internal_static_SynopticalTableReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "SynopticalRecords", "VesselTank",
+            });
+    internal_static_SynopticalTableLoadicatorData_descriptor =
+        getDescriptor().getMessageTypes().get(62);
+    internal_static_SynopticalTableLoadicatorData_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_SynopticalTableLoadicatorData_descriptor,
+            new java.lang.String[] {
+              "HogSag",
+              "FinalDraftFwd",
+              "FinalDraftAft",
+              "FinalDraftMid",
+              "FinalDraftTrim",
+              "CalculatedDraftFwdPlanned",
+              "CalculatedDraftFwdActual",
+              "CalculatedDraftAftPlanned",
+              "CalculatedDraftAftActual",
+              "CalculatedDraftMidPlanned",
+              "CalculatedDraftMidActual",
+              "CalculatedTrimPlanned",
+              "CalculatedTrimActual",
+              "BlindSector",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }

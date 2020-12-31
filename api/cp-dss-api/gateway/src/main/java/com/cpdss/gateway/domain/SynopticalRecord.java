@@ -51,4 +51,5 @@ public class SynopticalRecord {
   private BigDecimal totalDwtActual;
   private BigDecimal displacementPlanned;
   private BigDecimal displacementActual;
+  private SynopticalLoadicatorRecord synopticalLoadicatorRecord;
 }

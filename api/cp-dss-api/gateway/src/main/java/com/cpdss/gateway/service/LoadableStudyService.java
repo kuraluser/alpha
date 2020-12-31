@@ -46,6 +46,7 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.TankDetail;
@@ -97,6 +98,7 @@ import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Purpose;
 import com.cpdss.gateway.domain.SynopticalCargoRecord;
+import com.cpdss.gateway.domain.SynopticalLoadicatorRecord;
 import com.cpdss.gateway.domain.SynopticalOhqRecord;
 import com.cpdss.gateway.domain.SynopticalRecord;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
@@ -2067,70 +2069,134 @@ public class LoadableStudyService {
           .forEach(
               synopticalProtoRecord -> {
                 SynopticalRecord synopticalRecord = new SynopticalRecord();
-                synopticalRecord.setId(synopticalProtoRecord.getId());
-                synopticalRecord.setPortId(synopticalProtoRecord.getPortId());
-                synopticalRecord.setPortName(synopticalProtoRecord.getPortName());
-                synopticalRecord.setSpecificGravity(
-                    !isEmpty(synopticalProtoRecord.getSpecificGravity())
-                        ? new BigDecimal(synopticalProtoRecord.getSpecificGravity())
-                        : new BigDecimal("0"));
-                synopticalRecord.setOperationType(synopticalProtoRecord.getOperationType());
-                synopticalRecord.setDistance(
-                    !isEmpty(synopticalProtoRecord.getDistance())
-                        ? new BigDecimal(synopticalProtoRecord.getDistance())
-                        : new BigDecimal("0"));
-                synopticalRecord.setSpeed(
-                    !isEmpty(synopticalProtoRecord.getSpeed())
-                        ? new BigDecimal(synopticalProtoRecord.getSpeed())
-                        : new BigDecimal("0"));
-                synopticalRecord.setRunningHours(
-                    !isEmpty(synopticalProtoRecord.getRunningHours())
-                        ? new BigDecimal(synopticalProtoRecord.getRunningHours())
-                        : new BigDecimal("0"));
-                synopticalRecord.setInPortHours(
-                    !isEmpty(synopticalProtoRecord.getInPortHours())
-                        ? new BigDecimal(synopticalProtoRecord.getInPortHours())
-                        : new BigDecimal("0"));
-                synopticalRecord.setTimeOfSunrise(synopticalProtoRecord.getTimeOfSunrise());
-                synopticalRecord.setTimeOfSunset(synopticalProtoRecord.getTimeOfSunset());
-                synopticalRecord.setHwTideFrom(
-                    !isEmpty(synopticalProtoRecord.getHwTideFrom())
-                        ? new BigDecimal(synopticalProtoRecord.getHwTideFrom())
-                        : new BigDecimal("0"));
-                synopticalRecord.setHwTideTimeFrom(synopticalProtoRecord.getHwTideTimeFrom());
-                synopticalRecord.setHwTideTo(
-                    !isEmpty(synopticalProtoRecord.getHwTideTo())
-                        ? new BigDecimal(synopticalProtoRecord.getHwTideTo())
-                        : new BigDecimal("0"));
-                synopticalRecord.setHwTideTimeTo(synopticalProtoRecord.getHwTideTimeTo());
-                synopticalRecord.setLwTideFrom(
-                    !isEmpty(synopticalProtoRecord.getLwTideFrom())
-                        ? new BigDecimal(synopticalProtoRecord.getLwTideFrom())
-                        : new BigDecimal("0"));
-                synopticalRecord.setLwTideTimeFrom(synopticalProtoRecord.getLwTideTimeFrom());
-                synopticalRecord.setLwTideTo(
-                    !isEmpty(synopticalProtoRecord.getLwTideTo())
-                        ? new BigDecimal(synopticalProtoRecord.getLwTideTo())
-                        : new BigDecimal("0"));
-                synopticalRecord.setLwTideTimeTo(synopticalProtoRecord.getLwTideTimeTo());
-                synopticalRecord.setEtaEtdActual(synopticalProtoRecord.getEtaEtdActual());
-                synopticalRecord.setEtaEtdPlanned(synopticalProtoRecord.getEtaEtdEstimated());
-                synopticalRecord.setCargos(this.buildSynopticalTableCargos(synopticalProtoRecord));
-                synopticalRecord.setCargoPlannedTotal(
-                    isEmpty(synopticalProtoRecord.getCargoPlannedTotal())
-                        ? BigDecimal.ZERO
-                        : new BigDecimal(synopticalProtoRecord.getCargoPlannedTotal()));
-                synopticalRecord.setCargoActualTotal(
-                    isEmpty(synopticalProtoRecord.getCargoActualTotal())
-                        ? BigDecimal.ZERO
-                        : new BigDecimal(synopticalProtoRecord.getCargoActualTotal()));
+                this.buildSynopticalRecord(synopticalRecord, synopticalProtoRecord);
+                this.buildSynopticalTableCargos(synopticalRecord, synopticalProtoRecord);
                 this.buildOhqDataForSynopticalTable(synopticalRecord, synopticalProtoRecord);
                 this.buildVesselDataForSynopticalTable(synopticalRecord, synopticalProtoRecord);
+                this.buildSynopticalLoadicatorRecord(synopticalRecord, synopticalProtoRecord);
                 synopticalTableList.add(synopticalRecord);
               });
       synopticalTableResponse.setCargoTanks(this.buildSynopticalTableCargoTanks(reply));
       synopticalTableResponse.setSynopticalRecords(synopticalTableList);
     }
+  }
+
+  /**
+   * Set loadicator data in synoptical table
+   *
+   * @param synopticalRecord
+   * @param synopticalProtoRecord
+   */
+  private void buildSynopticalLoadicatorRecord(
+      SynopticalRecord synopticalRecord,
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
+    SynopticalLoadicatorRecord record = new SynopticalLoadicatorRecord();
+    SynopticalTableLoadicatorData proto = synopticalProtoRecord.getLoadicatorData();
+    record.setHogSag(isEmpty(proto.getHogSag()) ? null : proto.getHogSag());
+    record.setFinalDraftFwd(
+        isEmpty(proto.getFinalDraftFwd()) ? null : new BigDecimal(proto.getFinalDraftFwd()));
+    record.setFinalDraftAft(
+        isEmpty(proto.getFinalDraftAft()) ? null : new BigDecimal(proto.getFinalDraftAft()));
+    record.setFinalDraftMid(
+        isEmpty(proto.getFinalDraftMid()) ? null : new BigDecimal(proto.getFinalDraftMid()));
+    record.setCalculatedDraftFwdActual(
+        isEmpty(proto.getCalculatedDraftFwdActual())
+            ? null
+            : new BigDecimal(proto.getCalculatedDraftFwdActual()));
+    record.setCalculatedDraftFwdPlanned(
+        isEmpty(proto.getCalculatedDraftFwdPlanned())
+            ? null
+            : new BigDecimal(proto.getCalculatedDraftFwdPlanned()));
+
+    record.setCalculatedDraftAftActual(
+        isEmpty(proto.getCalculatedDraftAftActual())
+            ? null
+            : new BigDecimal(proto.getCalculatedDraftAftActual()));
+    record.setCalculatedDraftAftPlanned(
+        isEmpty(proto.getCalculatedDraftAftPlanned())
+            ? null
+            : new BigDecimal(proto.getCalculatedDraftAftPlanned()));
+
+    record.setCalculatedDraftMidActual(
+        isEmpty(proto.getCalculatedDraftMidActual())
+            ? null
+            : new BigDecimal(proto.getCalculatedDraftMidActual()));
+    record.setCalculatedDraftMidPlanned(
+        isEmpty(proto.getCalculatedDraftMidPlanned())
+            ? null
+            : new BigDecimal(proto.getCalculatedDraftMidPlanned()));
+
+    record.setCalculatedTrimActual(
+        isEmpty(proto.getCalculatedTrimActual())
+            ? null
+            : new BigDecimal(proto.getCalculatedTrimActual()));
+    record.setCalculatedTrimPlanned(
+        isEmpty(proto.getCalculatedTrimPlanned())
+            ? null
+            : new BigDecimal(proto.getCalculatedTrimPlanned()));
+
+    record.setBlindSector(
+        isEmpty(proto.getBlindSector()) ? null : new BigDecimal(proto.getBlindSector()));
+    synopticalRecord.setSynopticalLoadicatorRecord(record);
+  }
+
+  /**
+   * Build synoptical record
+   *
+   * @param synopticalRecord
+   * @param synopticalProtoRecord
+   */
+  private void buildSynopticalRecord(
+      SynopticalRecord synopticalRecord,
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
+    synopticalRecord.setId(synopticalProtoRecord.getId());
+    synopticalRecord.setPortId(synopticalProtoRecord.getPortId());
+    synopticalRecord.setPortName(synopticalProtoRecord.getPortName());
+    synopticalRecord.setSpecificGravity(
+        !isEmpty(synopticalProtoRecord.getSpecificGravity())
+            ? new BigDecimal(synopticalProtoRecord.getSpecificGravity())
+            : BigDecimal.ZERO);
+    synopticalRecord.setOperationType(synopticalProtoRecord.getOperationType());
+    synopticalRecord.setDistance(
+        !isEmpty(synopticalProtoRecord.getDistance())
+            ? new BigDecimal(synopticalProtoRecord.getDistance())
+            : BigDecimal.ZERO);
+    synopticalRecord.setSpeed(
+        !isEmpty(synopticalProtoRecord.getSpeed())
+            ? new BigDecimal(synopticalProtoRecord.getSpeed())
+            : BigDecimal.ZERO);
+    synopticalRecord.setRunningHours(
+        !isEmpty(synopticalProtoRecord.getRunningHours())
+            ? new BigDecimal(synopticalProtoRecord.getRunningHours())
+            : BigDecimal.ZERO);
+    synopticalRecord.setInPortHours(
+        !isEmpty(synopticalProtoRecord.getInPortHours())
+            ? new BigDecimal(synopticalProtoRecord.getInPortHours())
+            : BigDecimal.ZERO);
+    synopticalRecord.setTimeOfSunrise(synopticalProtoRecord.getTimeOfSunrise());
+    synopticalRecord.setTimeOfSunset(synopticalProtoRecord.getTimeOfSunset());
+    synopticalRecord.setHwTideFrom(
+        !isEmpty(synopticalProtoRecord.getHwTideFrom())
+            ? new BigDecimal(synopticalProtoRecord.getHwTideFrom())
+            : BigDecimal.ZERO);
+    synopticalRecord.setHwTideTimeFrom(synopticalProtoRecord.getHwTideTimeFrom());
+    synopticalRecord.setHwTideTo(
+        !isEmpty(synopticalProtoRecord.getHwTideTo())
+            ? new BigDecimal(synopticalProtoRecord.getHwTideTo())
+            : BigDecimal.ZERO);
+    synopticalRecord.setHwTideTimeTo(synopticalProtoRecord.getHwTideTimeTo());
+    synopticalRecord.setLwTideFrom(
+        !isEmpty(synopticalProtoRecord.getLwTideFrom())
+            ? new BigDecimal(synopticalProtoRecord.getLwTideFrom())
+            : BigDecimal.ZERO);
+    synopticalRecord.setLwTideTimeFrom(synopticalProtoRecord.getLwTideTimeFrom());
+    synopticalRecord.setLwTideTo(
+        !isEmpty(synopticalProtoRecord.getLwTideTo())
+            ? new BigDecimal(synopticalProtoRecord.getLwTideTo())
+            : BigDecimal.ZERO);
+    synopticalRecord.setLwTideTimeTo(synopticalProtoRecord.getLwTideTimeTo());
+    synopticalRecord.setEtaEtdActual(synopticalProtoRecord.getEtaEtdActual());
+    synopticalRecord.setEtaEtdPlanned(synopticalProtoRecord.getEtaEtdEstimated());
   }
 
   /**
@@ -2250,10 +2316,12 @@ public class LoadableStudyService {
   /**
    * Build cargo details
    *
+   * @param synopticalRecord
    * @param synopticalProtoRecord
    * @return
    */
-  private List<SynopticalCargoRecord> buildSynopticalTableCargos(
+  private void buildSynopticalTableCargos(
+      SynopticalRecord synopticalRecord,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
     List<SynopticalCargoRecord> list = new ArrayList<>();
     for (com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord protoRec :
@@ -2271,7 +2339,15 @@ public class LoadableStudyService {
               : new BigDecimal(protoRec.getPlannedWeight()));
       list.add(rec);
     }
-    return list;
+    synopticalRecord.setCargos(list);
+    synopticalRecord.setCargoPlannedTotal(
+        isEmpty(synopticalProtoRecord.getCargoPlannedTotal())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getCargoPlannedTotal()));
+    synopticalRecord.setCargoActualTotal(
+        isEmpty(synopticalProtoRecord.getCargoActualTotal())
+            ? BigDecimal.ZERO
+            : new BigDecimal(synopticalProtoRecord.getCargoActualTotal()));
   }
 
   /**
