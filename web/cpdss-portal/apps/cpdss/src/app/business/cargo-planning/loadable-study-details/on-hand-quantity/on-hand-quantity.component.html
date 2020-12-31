@@ -9,7 +9,7 @@
                                 <span class="text-secondary text-uppercase">{{'OHQ_SELECTED_PORT'| translate}}</span>
                             </div>
                             <div class="col pl-0">
-                                <ul class="list-unstyled list-inline port-list mb-0">
+                                <ul class="list-unstyled list-inline port-list pb-10 mb-0">
                                     <li class="list-inline-item" [ngClass]="{'active': selectedPort.id === port.id}"
                                         *ngFor="let port of ohqPorts" (click)="onPortSelection(port)">{{port?.name}}
                                     </li>

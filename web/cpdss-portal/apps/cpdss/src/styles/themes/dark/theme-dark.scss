@@ -689,6 +689,9 @@ div{
 
 .sidebar{
   border-right: 1px solid $table-border;
+  .p-datatable-thead tr th{
+    background: $body-bg!important;
+  }
 }
 .icon-status-1{
   background: url($images-theme + 'sidebar-table-status-1.png') no-repeat center center;
