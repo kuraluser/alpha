@@ -3184,6 +3184,112 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
+  public void saveSynopticalTable(
+      SynopticalTableRequest request, StreamObserver<SynopticalTableReply> responseObserver) {
+    SynopticalTableReply.Builder replyBuilder = SynopticalTableReply.newBuilder();
+    try {
+      SynopticalTable entity = null;
+      if (request.getSynopticalRecord().getId() != 0) {
+        Optional<SynopticalTable> entityOpt =
+            this.synopticalTableRepository.findByIdAndIsActive(
+                request.getSynopticalRecord().getId(), true);
+        if (!entityOpt.isPresent()) {
+          throw new GenericServiceException(
+              "Synoptical record does not exist with given id",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        entity = entityOpt.get();
+      } else {
+        Optional<LoadableStudy> loadableStudyOpt =
+            this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+        if (!loadableStudyOpt.isPresent()) {
+          throw new GenericServiceException(
+              "Invalid loadable study",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        entity = new SynopticalTable();
+        entity.setLoadableStudyXId(loadableStudyOpt.get().getId());
+        entity.setIsActive(true);
+      }
+      entity.setPortXid(request.getPortId());
+      entity = this.buildSynopticalTableEntity(entity, request);
+      entity = this.synopticalTableRepository.save(entity);
+      replyBuilder.setId(entity.getId());
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving synoptical table", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage("GenericServiceException when saving synoptical table")
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      log.error("Exception when saving saving synoptical table", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when saving synoptical table")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Populate synoptical entity fields
+   *
+   * @param entity
+   * @param request
+   * @return
+   */
+  private SynopticalTable buildSynopticalTableEntity(
+      SynopticalTable entity, SynopticalTableRequest request) {
+    DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+    SynopticalRecord record = request.getSynopticalRecord();
+    entity.setOperationType(record.getOperationType());
+    entity.setDistance(isEmpty(record.getDistance()) ? null : new BigDecimal(record.getDistance()));
+    entity.setSpeed(isEmpty(record.getSpeed()) ? null : new BigDecimal(record.getSpeed()));
+    entity.setRunningHours(
+        isEmpty(record.getRunningHours()) ? null : new BigDecimal(record.getRunningHours()));
+    entity.setInPortHours(
+        isEmpty(record.getInPortHours()) ? null : new BigDecimal(record.getInPortHours()));
+    entity.setTimeOfSunrise(record.getTimeOfSunrise());
+    entity.setTimeOfSunSet(record.getTimeOfSunset());
+    entity.setSeaWaterSg(
+        isEmpty(record.getSpecificGravity()) ? null : new BigDecimal(record.getSpecificGravity()));
+
+    entity.setHwTideFrom(
+        isEmpty(record.getHwTideFrom()) ? null : new BigDecimal(record.getHwTideFrom()));
+    entity.setHwTideTo(isEmpty(record.getHwTideTo()) ? null : new BigDecimal(record.getHwTideTo()));
+    entity.setLwTideFrom(
+        isEmpty(record.getLwTideFrom()) ? null : new BigDecimal(record.getLwTideFrom()));
+    entity.setLwTideTo(isEmpty(record.getLwTideTo()) ? null : new BigDecimal(record.getLwTideTo()));
+    entity.setHwTideTimeFrom(
+        isEmpty(record.getHwTideTimeFrom())
+            ? null
+            : LocalDateTime.from(df.parse(record.getHwTideTimeFrom())));
+    entity.setHwTideTimeTo(
+        isEmpty(record.getHwTideTimeTo())
+            ? null
+            : LocalDateTime.from(df.parse(record.getHwTideTimeTo())));
+    entity.setLwTideTimeFrom(
+        isEmpty(record.getLwTideTimeFrom())
+            ? null
+            : LocalDateTime.from(df.parse(record.getLwTideTimeFrom())));
+    entity.setLwTideTimeTo(
+        isEmpty(record.getLwTideTimeTo())
+            ? null
+            : LocalDateTime.from(df.parse(record.getLwTideTimeTo())));
+    entity.setOperationType(record.getOperationType());
+    return entity;
+  }
+
+  @Override
   public void getSynopticalTable(
       SynopticalTableRequest request, StreamObserver<SynopticalTableReply> responseObserver) {
     SynopticalTableReply.Builder replyBuilder = SynopticalTableReply.newBuilder();
@@ -3705,7 +3811,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Optional.ofNullable(synopticalEntity.getInPortHours())
         .ifPresent(inPortHours -> builder.setInPortHours(String.valueOf(inPortHours)));
     Optional.ofNullable(synopticalEntity.getTimeOfSunrise()).ifPresent(builder::setTimeOfSunrise);
-    Optional.ofNullable(synopticalEntity.getTimeOfSunset()).ifPresent(builder::setTimeOfSunset);
+    Optional.ofNullable(synopticalEntity.getTimeOfSunSet()).ifPresent(builder::setTimeOfSunset);
     // If specific gravity is available in database then replace the port master
     // value
     Optional.ofNullable(synopticalEntity.getSpecificGravity())

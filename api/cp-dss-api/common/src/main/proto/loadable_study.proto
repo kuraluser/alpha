@@ -34,7 +34,6 @@ service LoadableStudyService {
 	rpc GetValveSegregation (ValveSegregationRequest) returns (ValveSegregationReply){
 	}
 
-
   	rpc getLoadableQuantity (LoadableQuantityReply) returns (LoadableQuantityResponse) {
 	}
 	
@@ -87,6 +86,9 @@ service LoadableStudyService {
 	}
 	
 	rpc SaveAlgoLoadableStudyStatus(AlgoStatusRequest) returns (AlgoStatusReply) {
+	}
+	
+	rpc SaveSynopticalTable(SynopticalTableRequest) returns (SynopticalTableReply){
 	}
 	
 	rpc GetSynopticalTable (SynopticalTableRequest) returns (SynopticalTableReply){
@@ -657,12 +659,15 @@ message SynopticalOhqRecord{
 message SynopticalTableRequest{
 	int64 loadableStudyId = 1;
 	int64 vesselId = 2;
+	int64 portId = 3;
+	SynopticalRecord synopticalRecord = 4;	
 }
 
 message SynopticalTableReply{
 	ResponseStatus responseStatus = 1;
 	repeated SynopticalRecord synopticalRecords = 2;
 	repeated TankDetail vesselTank = 3;
+	int64 id = 4;
 }
 
 message SynopticalTableLoadicatorData{

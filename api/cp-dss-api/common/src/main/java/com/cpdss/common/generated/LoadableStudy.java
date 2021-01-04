@@ -78924,6 +78924,29 @@ public final class LoadableStudy {
      * @return The vesselId.
      */
     long getVesselId();
+
+    /**
+     * <code>int64 portId = 3;</code>
+     *
+     * @return The portId.
+     */
+    long getPortId();
+
+    /**
+     * <code>.SynopticalRecord synopticalRecord = 4;</code>
+     *
+     * @return Whether the synopticalRecord field is set.
+     */
+    boolean hasSynopticalRecord();
+    /**
+     * <code>.SynopticalRecord synopticalRecord = 4;</code>
+     *
+     * @return The synopticalRecord.
+     */
+    com.cpdss.common.generated.LoadableStudy.SynopticalRecord getSynopticalRecord();
+    /** <code>.SynopticalRecord synopticalRecord = 4;</code> */
+    com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder
+        getSynopticalRecordOrBuilder();
   }
   /** Protobuf type {@code SynopticalTableRequest} */
   public static final class SynopticalTableRequest extends com.google.protobuf.GeneratedMessageV3
@@ -78975,6 +78998,28 @@ public final class LoadableStudy {
             case 16:
               {
                 vesselId_ = input.readInt64();
+                break;
+              }
+            case 24:
+              {
+                portId_ = input.readInt64();
+                break;
+              }
+            case 34:
+              {
+                com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder subBuilder = null;
+                if (synopticalRecord_ != null) {
+                  subBuilder = synopticalRecord_.toBuilder();
+                }
+                synopticalRecord_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.LoadableStudy.SynopticalRecord.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(synopticalRecord_);
+                  synopticalRecord_ = subBuilder.buildPartial();
+                }
+
                 break;
               }
             default:
@@ -79033,6 +79078,43 @@ public final class LoadableStudy {
       return vesselId_;
     }
 
+    public static final int PORTID_FIELD_NUMBER = 3;
+    private long portId_;
+    /**
+     * <code>int64 portId = 3;</code>
+     *
+     * @return The portId.
+     */
+    public long getPortId() {
+      return portId_;
+    }
+
+    public static final int SYNOPTICALRECORD_FIELD_NUMBER = 4;
+    private com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalRecord_;
+    /**
+     * <code>.SynopticalRecord synopticalRecord = 4;</code>
+     *
+     * @return Whether the synopticalRecord field is set.
+     */
+    public boolean hasSynopticalRecord() {
+      return synopticalRecord_ != null;
+    }
+    /**
+     * <code>.SynopticalRecord synopticalRecord = 4;</code>
+     *
+     * @return The synopticalRecord.
+     */
+    public com.cpdss.common.generated.LoadableStudy.SynopticalRecord getSynopticalRecord() {
+      return synopticalRecord_ == null
+          ? com.cpdss.common.generated.LoadableStudy.SynopticalRecord.getDefaultInstance()
+          : synopticalRecord_;
+    }
+    /** <code>.SynopticalRecord synopticalRecord = 4;</code> */
+    public com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder
+        getSynopticalRecordOrBuilder() {
+      return getSynopticalRecord();
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -79053,6 +79135,12 @@ public final class LoadableStudy {
       if (vesselId_ != 0L) {
         output.writeInt64(2, vesselId_);
       }
+      if (portId_ != 0L) {
+        output.writeInt64(3, portId_);
+      }
+      if (synopticalRecord_ != null) {
+        output.writeMessage(4, getSynopticalRecord());
+      }
       unknownFields.writeTo(output);
     }
 
@@ -79067,6 +79155,12 @@ public final class LoadableStudy {
       }
       if (vesselId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, vesselId_);
+      }
+      if (portId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, portId_);
+      }
+      if (synopticalRecord_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(4, getSynopticalRecord());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -79086,6 +79180,11 @@ public final class LoadableStudy {
 
       if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
       if (getVesselId() != other.getVesselId()) return false;
+      if (getPortId() != other.getPortId()) return false;
+      if (hasSynopticalRecord() != other.hasSynopticalRecord()) return false;
+      if (hasSynopticalRecord()) {
+        if (!getSynopticalRecord().equals(other.getSynopticalRecord())) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -79101,6 +79200,12 @@ public final class LoadableStudy {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
       hash = (37 * hash) + VESSELID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVesselId());
+      hash = (37 * hash) + PORTID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
+      if (hasSynopticalRecord()) {
+        hash = (37 * hash) + SYNOPTICALRECORD_FIELD_NUMBER;
+        hash = (53 * hash) + getSynopticalRecord().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -79247,6 +79352,14 @@ public final class LoadableStudy {
 
         vesselId_ = 0L;
 
+        portId_ = 0L;
+
+        if (synopticalRecordBuilder_ == null) {
+          synopticalRecord_ = null;
+        } else {
+          synopticalRecord_ = null;
+          synopticalRecordBuilder_ = null;
+        }
         return this;
       }
 
@@ -79277,6 +79390,12 @@ public final class LoadableStudy {
             new com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest(this);
         result.loadableStudyId_ = loadableStudyId_;
         result.vesselId_ = vesselId_;
+        result.portId_ = portId_;
+        if (synopticalRecordBuilder_ == null) {
+          result.synopticalRecord_ = synopticalRecord_;
+        } else {
+          result.synopticalRecord_ = synopticalRecordBuilder_.build();
+        }
         onBuilt();
         return result;
       }
@@ -79336,6 +79455,12 @@ public final class LoadableStudy {
         }
         if (other.getVesselId() != 0L) {
           setVesselId(other.getVesselId());
+        }
+        if (other.getPortId() != 0L) {
+          setPortId(other.getPortId());
+        }
+        if (other.hasSynopticalRecord()) {
+          mergeSynopticalRecord(other.getSynopticalRecord());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -79432,6 +79557,162 @@ public final class LoadableStudy {
         vesselId_ = 0L;
         onChanged();
         return this;
+      }
+
+      private long portId_;
+      /**
+       * <code>int64 portId = 3;</code>
+       *
+       * @return The portId.
+       */
+      public long getPortId() {
+        return portId_;
+      }
+      /**
+       * <code>int64 portId = 3;</code>
+       *
+       * @param value The portId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortId(long value) {
+
+        portId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portId = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortId() {
+
+        portId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalRecord_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.SynopticalRecord,
+              com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder,
+              com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder>
+          synopticalRecordBuilder_;
+      /**
+       * <code>.SynopticalRecord synopticalRecord = 4;</code>
+       *
+       * @return Whether the synopticalRecord field is set.
+       */
+      public boolean hasSynopticalRecord() {
+        return synopticalRecordBuilder_ != null || synopticalRecord_ != null;
+      }
+      /**
+       * <code>.SynopticalRecord synopticalRecord = 4;</code>
+       *
+       * @return The synopticalRecord.
+       */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalRecord getSynopticalRecord() {
+        if (synopticalRecordBuilder_ == null) {
+          return synopticalRecord_ == null
+              ? com.cpdss.common.generated.LoadableStudy.SynopticalRecord.getDefaultInstance()
+              : synopticalRecord_;
+        } else {
+          return synopticalRecordBuilder_.getMessage();
+        }
+      }
+      /** <code>.SynopticalRecord synopticalRecord = 4;</code> */
+      public Builder setSynopticalRecord(
+          com.cpdss.common.generated.LoadableStudy.SynopticalRecord value) {
+        if (synopticalRecordBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          synopticalRecord_ = value;
+          onChanged();
+        } else {
+          synopticalRecordBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.SynopticalRecord synopticalRecord = 4;</code> */
+      public Builder setSynopticalRecord(
+          com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builderForValue) {
+        if (synopticalRecordBuilder_ == null) {
+          synopticalRecord_ = builderForValue.build();
+          onChanged();
+        } else {
+          synopticalRecordBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.SynopticalRecord synopticalRecord = 4;</code> */
+      public Builder mergeSynopticalRecord(
+          com.cpdss.common.generated.LoadableStudy.SynopticalRecord value) {
+        if (synopticalRecordBuilder_ == null) {
+          if (synopticalRecord_ != null) {
+            synopticalRecord_ =
+                com.cpdss.common.generated.LoadableStudy.SynopticalRecord.newBuilder(
+                        synopticalRecord_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            synopticalRecord_ = value;
+          }
+          onChanged();
+        } else {
+          synopticalRecordBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.SynopticalRecord synopticalRecord = 4;</code> */
+      public Builder clearSynopticalRecord() {
+        if (synopticalRecordBuilder_ == null) {
+          synopticalRecord_ = null;
+          onChanged();
+        } else {
+          synopticalRecord_ = null;
+          synopticalRecordBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.SynopticalRecord synopticalRecord = 4;</code> */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder
+          getSynopticalRecordBuilder() {
+
+        onChanged();
+        return getSynopticalRecordFieldBuilder().getBuilder();
+      }
+      /** <code>.SynopticalRecord synopticalRecord = 4;</code> */
+      public com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder
+          getSynopticalRecordOrBuilder() {
+        if (synopticalRecordBuilder_ != null) {
+          return synopticalRecordBuilder_.getMessageOrBuilder();
+        } else {
+          return synopticalRecord_ == null
+              ? com.cpdss.common.generated.LoadableStudy.SynopticalRecord.getDefaultInstance()
+              : synopticalRecord_;
+        }
+      }
+      /** <code>.SynopticalRecord synopticalRecord = 4;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.SynopticalRecord,
+              com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder,
+              com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder>
+          getSynopticalRecordFieldBuilder() {
+        if (synopticalRecordBuilder_ == null) {
+          synopticalRecordBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.LoadableStudy.SynopticalRecord,
+                  com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder,
+                  com.cpdss.common.generated.LoadableStudy.SynopticalRecordOrBuilder>(
+                  getSynopticalRecord(), getParentForChildren(), isClean());
+          synopticalRecord_ = null;
+        }
+        return synopticalRecordBuilder_;
       }
 
       @java.lang.Override
@@ -79534,6 +79815,13 @@ public final class LoadableStudy {
         getVesselTankOrBuilderList();
     /** <code>repeated .TankDetail vesselTank = 3;</code> */
     com.cpdss.common.generated.LoadableStudy.TankDetailOrBuilder getVesselTankOrBuilder(int index);
+
+    /**
+     * <code>int64 id = 4;</code>
+     *
+     * @return The id.
+     */
+    long getId();
   }
   /** Protobuf type {@code SynopticalTableReply} */
   public static final class SynopticalTableReply extends com.google.protobuf.GeneratedMessageV3
@@ -79624,6 +79912,11 @@ public final class LoadableStudy {
                     input.readMessage(
                         com.cpdss.common.generated.LoadableStudy.TankDetail.parser(),
                         extensionRegistry));
+                break;
+              }
+            case 32:
+              {
+                id_ = input.readInt64();
                 break;
               }
             default:
@@ -79745,6 +80038,17 @@ public final class LoadableStudy {
       return vesselTank_.get(index);
     }
 
+    public static final int ID_FIELD_NUMBER = 4;
+    private long id_;
+    /**
+     * <code>int64 id = 4;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -79768,6 +80072,9 @@ public final class LoadableStudy {
       for (int i = 0; i < vesselTank_.size(); i++) {
         output.writeMessage(3, vesselTank_.get(i));
       }
+      if (id_ != 0L) {
+        output.writeInt64(4, id_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -79786,6 +80093,9 @@ public final class LoadableStudy {
       }
       for (int i = 0; i < vesselTank_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, vesselTank_.get(i));
+      }
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, id_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -79809,6 +80119,7 @@ public final class LoadableStudy {
       }
       if (!getSynopticalRecordsList().equals(other.getSynopticalRecordsList())) return false;
       if (!getVesselTankList().equals(other.getVesselTankList())) return false;
+      if (getId() != other.getId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -79832,6 +80143,8 @@ public final class LoadableStudy {
         hash = (37 * hash) + VESSELTANK_FIELD_NUMBER;
         hash = (53 * hash) + getVesselTankList().hashCode();
       }
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -79993,6 +80306,8 @@ public final class LoadableStudy {
         } else {
           vesselTankBuilder_.clear();
         }
+        id_ = 0L;
+
         return this;
       }
 
@@ -80045,6 +80360,7 @@ public final class LoadableStudy {
         } else {
           result.vesselTank_ = vesselTankBuilder_.build();
         }
+        result.id_ = id_;
         onBuilt();
         return result;
       }
@@ -80155,6 +80471,9 @@ public final class LoadableStudy {
               vesselTankBuilder_.addAllMessages(other.vesselTank_);
             }
           }
+        }
+        if (other.getId() != 0L) {
+          setId(other.getId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -80749,6 +81068,39 @@ public final class LoadableStudy {
           vesselTank_ = null;
         }
         return vesselTankBuilder_;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 4;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 4;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
       }
 
       @java.lang.Override
@@ -85435,88 +85787,92 @@ public final class LoadableStudy {
           + "ctualWeight\030\004 \001(\t\"\212\001\n\023SynopticalOhqRecor"
           + "d\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rp"
           + "lannedWeight\030\003 \001(\t\022\024\n\014actualWeight\030\004 \001(\t"
-          + "\022\022\n\nfuelTypeId\030\005 \001(\003\022\020\n\010fuelType\030\006 \001(\t\"C"
-          + "\n\026SynopticalTableRequest\022\027\n\017loadableStud"
-          + "yId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\"\216\001\n\024Synoptic"
-          + "alTableReply\022\'\n\016responseStatus\030\001 \001(\0132\017.R"
-          + "esponseStatus\022,\n\021synopticalRecords\030\002 \003(\013"
-          + "2\021.SynopticalRecord\022\037\n\nvesselTank\030\003 \003(\0132"
-          + "\013.TankDetail\"\255\003\n\035SynopticalTableLoadicat"
-          + "orData\022\016\n\006hogSag\030\001 \001(\t\022\025\n\rfinalDraftFwd\030"
-          + "\002 \001(\t\022\025\n\rfinalDraftAft\030\003 \001(\t\022\025\n\rfinalDra"
-          + "ftMid\030\004 \001(\t\022\026\n\016finalDraftTrim\030\005 \001(\t\022!\n\031c"
-          + "alculatedDraftFwdPlanned\030\006 \001(\t\022 \n\030calcul"
-          + "atedDraftFwdActual\030\007 \001(\t\022!\n\031calculatedDr"
-          + "aftAftPlanned\030\010 \001(\t\022 \n\030calculatedDraftAf"
-          + "tActual\030\t \001(\t\022!\n\031calculatedDraftMidPlann"
-          + "ed\030\n \001(\t\022 \n\030calculatedDraftMidActual\030\013 \001"
-          + "(\t\022\035\n\025calculatedTrimPlanned\030\014 \001(\t\022\034\n\024cal"
-          + "culatedTrimActual\030\r \001(\t\022\023\n\013blindSector\030\016"
-          + " \001(\t\"@\n\025SynopticalDataRequest\022\027\n\017loadabl"
-          + "eStudyId\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\"l\n\023Synopt"
-          + "icalDataReply\022\'\n\016responseStatus\030\001 \001(\0132\017."
-          + "ResponseStatus\022,\n\021synopticalRecords\030\002 \003("
-          + "\0132\021.SynopticalRecord2\276\022\n\024LoadableStudySe"
-          + "rvice\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014.Vo"
-          + "yageReply\"\000\0228\n\022GetVoyagesByVessel\022\016.Voya"
-          + "geRequest\032\020.VoyageListReply\"\000\022J\n\024SaveLoa"
-          + "dableQuantity\022\030.LoadableQuantityRequest\032"
-          + "\026.LoadableQuantityReply\"\000\022T\n$FindLoadabl"
-          + "eStudiesByVesselAndVoyage\022\025.LoadableStud"
-          + "yRequest\032\023.LoadableStudyReply\"\000\022@\n\021SaveL"
-          + "oadableStudy\022\024.LoadableStudyDetail\032\023.Loa"
-          + "dableStudyReply\"\000\022G\n\023SaveCargoNomination"
-          + "\022\027.CargoNominationRequest\032\025.CargoNominat"
-          + "ionReply\"\000\022J\n\034GetLoadableStudyPortRotati"
-          + "on\022\024.PortRotationRequest\032\022.PortRotationR"
-          + "eply\"\000\022J\n\026GetCargoNominationById\022\027.Cargo"
-          + "NominationRequest\032\025.CargoNominationReply"
-          + "\"\000\022I\n\023GetValveSegregation\022\030.ValveSegrega"
-          + "tionRequest\032\026.ValveSegregationReply\"\000\022J\n"
-          + "\023getLoadableQuantity\022\026.LoadableQuantityR"
-          + "eply\032\031.LoadableQuantityResponse\"\000\022J\n\035Sav"
-          + "eLoadableStudyPortRotation\022\023.PortRotatio"
-          + "nDetail\032\022.PortRotationReply\"\000\022I\n\025DeleteC"
-          + "argoNomination\022\027.CargoNominationRequest\032"
-          + "\025.CargoNominationReply\"\000\022B\n\024SaveDischarg"
-          + "ingPorts\022\024.PortRotationRequest\032\022.PortRot"
-          + "ationReply\"\000\022N\n GetPortRotationByLoadabl"
-          + "eStudyId\022\024.PortRotationRequest\032\022.PortRot"
-          + "ationReply\"\000\022C\n\023DeleteLoadableStudy\022\025.Lo"
-          + "adableStudyRequest\032\023.LoadableStudyReply\""
-          + "\000\022@\n\022DeletePortRotation\022\024.PortRotationRe"
-          + "quest\032\022.PortRotationReply\"\000\022C\n\021GetOnHand"
-          + "Quantity\022\026.OnHandQuantityRequest\032\024.OnHan"
-          + "dQuantityReply\"\000\022C\n\022SaveOnHandQuantity\022\025"
-          + ".OnHandQuantityDetail\032\024.OnHandQuantityRe"
-          + "ply\"\000\022M\n\031GetLoadablePatternDetails\022\027.Loa"
-          + "dablePatternRequest\032\025.LoadablePatternRep"
-          + "ly\"\000\022O\n\025GetPurposeOfCommingle\022\032.PurposeO"
-          + "fCommingleRequest\032\030.PurposeOfCommingleRe"
-          + "ply\"\000\022C\n\021GetCommingleCargo\022\026.CommingleCa"
-          + "rgoRequest\032\024.CommingleCargoReply\"\000\022D\n\022Sa"
-          + "veCommingleCargo\022\026.CommingleCargoRequest"
-          + "\032\024.CommingleCargoReply\"\000\022v\n\"GetLoadableP"
-          + "atternCommingleDetails\022\'.LoadablePattern"
-          + "CommingleDetailsRequest\032%.LoadablePatter"
-          + "nCommingleDetailsReply\"\000\0226\n\030GenerateLoad"
-          + "ablePatterns\022\014.AlgoRequest\032\n.AlgoReply\"\000"
-          + "\022F\n\022GetOnBoardQuantity\022\027.OnBoardQuantity"
-          + "Request\032\025.OnBoardQuantityReply\"\000\022F\n\023Save"
-          + "OnBoardQuantity\022\026.OnBoardQuantityDetail\032"
-          + "\025.OnBoardQuantityReply\"\000\022E\n\033SaveAlgoLoad"
-          + "ableStudyStatus\022\022.AlgoStatusRequest\032\020.Al"
-          + "goStatusReply\"\000\022F\n\022GetSynopticalTable\022\027."
-          + "SynopticalTableRequest\032\025.SynopticalTable"
-          + "Reply\"\000\022K\n\031GetSynopticalDataByPortId\022\026.S"
-          + "ynopticalDataRequest\032\024.SynopticalDataRep"
-          + "ly\"\000\022R\n\026GetLoadableStudyStatus\022\033.Loadabl"
-          + "eStudyStatusRequest\032\031.LoadableStudyStatu"
-          + "sReply\"\000\022R\n\026GetLoadablePlanDetails\022\033.Loa"
-          + "dablePlanDetailsRequest\032\031.LoadablePlanDe"
-          + "tailsReply\"\000\0227\n\013ConfirmPlan\022\023.ConfirmPla"
-          + "nRequest\032\021.ConfirmPlanReply\"\000B\036\n\032com.cpd"
-          + "ss.common.generatedP\000b\006proto3"
+          + "\022\022\n\nfuelTypeId\030\005 \001(\003\022\020\n\010fuelType\030\006 \001(\t\"\200"
+          + "\001\n\026SynopticalTableRequest\022\027\n\017loadableStu"
+          + "dyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\016\n\006portId\030\003"
+          + " \001(\003\022+\n\020synopticalRecord\030\004 \001(\0132\021.Synopti"
+          + "calRecord\"\232\001\n\024SynopticalTableReply\022\'\n\016re"
+          + "sponseStatus\030\001 \001(\0132\017.ResponseStatus\022,\n\021s"
+          + "ynopticalRecords\030\002 \003(\0132\021.SynopticalRecor"
+          + "d\022\037\n\nvesselTank\030\003 \003(\0132\013.TankDetail\022\n\n\002id"
+          + "\030\004 \001(\003\"\255\003\n\035SynopticalTableLoadicatorData"
+          + "\022\016\n\006hogSag\030\001 \001(\t\022\025\n\rfinalDraftFwd\030\002 \001(\t\022"
+          + "\025\n\rfinalDraftAft\030\003 \001(\t\022\025\n\rfinalDraftMid\030"
+          + "\004 \001(\t\022\026\n\016finalDraftTrim\030\005 \001(\t\022!\n\031calcula"
+          + "tedDraftFwdPlanned\030\006 \001(\t\022 \n\030calculatedDr"
+          + "aftFwdActual\030\007 \001(\t\022!\n\031calculatedDraftAft"
+          + "Planned\030\010 \001(\t\022 \n\030calculatedDraftAftActua"
+          + "l\030\t \001(\t\022!\n\031calculatedDraftMidPlanned\030\n \001"
+          + "(\t\022 \n\030calculatedDraftMidActual\030\013 \001(\t\022\035\n\025"
+          + "calculatedTrimPlanned\030\014 \001(\t\022\034\n\024calculate"
+          + "dTrimActual\030\r \001(\t\022\023\n\013blindSector\030\016 \001(\t\"@"
+          + "\n\025SynopticalDataRequest\022\027\n\017loadableStudy"
+          + "Id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\"l\n\023SynopticalDa"
+          + "taReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respon"
+          + "seStatus\022,\n\021synopticalRecords\030\002 \003(\0132\021.Sy"
+          + "nopticalRecord2\207\023\n\024LoadableStudyService\022"
+          + ",\n\nSaveVoyage\022\016.VoyageRequest\032\014.VoyageRe"
+          + "ply\"\000\0228\n\022GetVoyagesByVessel\022\016.VoyageRequ"
+          + "est\032\020.VoyageListReply\"\000\022J\n\024SaveLoadableQ"
+          + "uantity\022\030.LoadableQuantityRequest\032\026.Load"
+          + "ableQuantityReply\"\000\022T\n$FindLoadableStudi"
+          + "esByVesselAndVoyage\022\025.LoadableStudyReque"
+          + "st\032\023.LoadableStudyReply\"\000\022@\n\021SaveLoadabl"
+          + "eStudy\022\024.LoadableStudyDetail\032\023.LoadableS"
+          + "tudyReply\"\000\022G\n\023SaveCargoNomination\022\027.Car"
+          + "goNominationRequest\032\025.CargoNominationRep"
+          + "ly\"\000\022J\n\034GetLoadableStudyPortRotation\022\024.P"
+          + "ortRotationRequest\032\022.PortRotationReply\"\000"
+          + "\022J\n\026GetCargoNominationById\022\027.CargoNomina"
+          + "tionRequest\032\025.CargoNominationReply\"\000\022I\n\023"
+          + "GetValveSegregation\022\030.ValveSegregationRe"
+          + "quest\032\026.ValveSegregationReply\"\000\022J\n\023getLo"
+          + "adableQuantity\022\026.LoadableQuantityReply\032\031"
+          + ".LoadableQuantityResponse\"\000\022J\n\035SaveLoada"
+          + "bleStudyPortRotation\022\023.PortRotationDetai"
+          + "l\032\022.PortRotationReply\"\000\022I\n\025DeleteCargoNo"
+          + "mination\022\027.CargoNominationRequest\032\025.Carg"
+          + "oNominationReply\"\000\022B\n\024SaveDischargingPor"
+          + "ts\022\024.PortRotationRequest\032\022.PortRotationR"
+          + "eply\"\000\022N\n GetPortRotationByLoadableStudy"
+          + "Id\022\024.PortRotationRequest\032\022.PortRotationR"
+          + "eply\"\000\022C\n\023DeleteLoadableStudy\022\025.Loadable"
+          + "StudyRequest\032\023.LoadableStudyReply\"\000\022@\n\022D"
+          + "eletePortRotation\022\024.PortRotationRequest\032"
+          + "\022.PortRotationReply\"\000\022C\n\021GetOnHandQuanti"
+          + "ty\022\026.OnHandQuantityRequest\032\024.OnHandQuant"
+          + "ityReply\"\000\022C\n\022SaveOnHandQuantity\022\025.OnHan"
+          + "dQuantityDetail\032\024.OnHandQuantityReply\"\000\022"
+          + "M\n\031GetLoadablePatternDetails\022\027.LoadableP"
+          + "atternRequest\032\025.LoadablePatternReply\"\000\022O"
+          + "\n\025GetPurposeOfCommingle\022\032.PurposeOfCommi"
+          + "ngleRequest\032\030.PurposeOfCommingleReply\"\000\022"
+          + "C\n\021GetCommingleCargo\022\026.CommingleCargoReq"
+          + "uest\032\024.CommingleCargoReply\"\000\022D\n\022SaveComm"
+          + "ingleCargo\022\026.CommingleCargoRequest\032\024.Com"
+          + "mingleCargoReply\"\000\022v\n\"GetLoadablePattern"
+          + "CommingleDetails\022\'.LoadablePatternCommin"
+          + "gleDetailsRequest\032%.LoadablePatternCommi"
+          + "ngleDetailsReply\"\000\0226\n\030GenerateLoadablePa"
+          + "tterns\022\014.AlgoRequest\032\n.AlgoReply\"\000\022F\n\022Ge"
+          + "tOnBoardQuantity\022\027.OnBoardQuantityReques"
+          + "t\032\025.OnBoardQuantityReply\"\000\022F\n\023SaveOnBoar"
+          + "dQuantity\022\026.OnBoardQuantityDetail\032\025.OnBo"
+          + "ardQuantityReply\"\000\022E\n\033SaveAlgoLoadableSt"
+          + "udyStatus\022\022.AlgoStatusRequest\032\020.AlgoStat"
+          + "usReply\"\000\022G\n\023SaveSynopticalTable\022\027.Synop"
+          + "ticalTableRequest\032\025.SynopticalTableReply"
+          + "\"\000\022F\n\022GetSynopticalTable\022\027.SynopticalTab"
+          + "leRequest\032\025.SynopticalTableReply\"\000\022K\n\031Ge"
+          + "tSynopticalDataByPortId\022\026.SynopticalData"
+          + "Request\032\024.SynopticalDataReply\"\000\022R\n\026GetLo"
+          + "adableStudyStatus\022\033.LoadableStudyStatusR"
+          + "equest\032\031.LoadableStudyStatusReply\"\000\022R\n\026G"
+          + "etLoadablePlanDetails\022\033.LoadablePlanDeta"
+          + "ilsRequest\032\031.LoadablePlanDetailsReply\"\000\022"
+          + "7\n\013ConfirmPlan\022\023.ConfirmPlanRequest\032\021.Co"
+          + "nfirmPlanReply\"\000B\036\n\032com.cpdss.common.gen"
+          + "eratedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -86204,14 +86560,14 @@ public final class LoadableStudy {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SynopticalTableRequest_descriptor,
             new java.lang.String[] {
-              "LoadableStudyId", "VesselId",
+              "LoadableStudyId", "VesselId", "PortId", "SynopticalRecord",
             });
     internal_static_SynopticalTableReply_descriptor = getDescriptor().getMessageTypes().get(61);
     internal_static_SynopticalTableReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SynopticalTableReply_descriptor,
             new java.lang.String[] {
-              "ResponseStatus", "SynopticalRecords", "VesselTank",
+              "ResponseStatus", "SynopticalRecords", "VesselTank", "Id",
             });
     internal_static_SynopticalTableLoadicatorData_descriptor =
         getDescriptor().getMessageTypes().get(62);
