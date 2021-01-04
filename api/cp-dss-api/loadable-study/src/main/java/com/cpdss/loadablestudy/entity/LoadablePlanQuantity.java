@@ -24,14 +24,17 @@ public class LoadablePlanQuantity extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 
+  @Column(name = "grade")
+  private String grade;
+
   @Column(name = "cargo_nomination_xid")
-  private Integer cargoNominationXId;
+  private Long cargoNominationId;
 
   @Column(name = "estimated_api")
   private BigDecimal estimatedApi;
 
-  @Column(name = "estimalted_temperature")
-  private BigDecimal estimaltedTemperature;
+  @Column(name = "estimated_temperature")
+  private BigDecimal estimatedTemperature;
 
   @Column(name = "order_quantity")
   private BigDecimal orderQuantity;
@@ -45,7 +48,37 @@ public class LoadablePlanQuantity extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
-  @JoinColumn(name = "loadableplanxid", referencedColumnName = "id")
+  @Column(name = "order_bbls_dbs")
+  private String orderBblsDbs;
+
+  @Column(name = "order_bbls_60f")
+  private String orderBbls60f;
+
+  @Column(name = "min_tolerence")
+  private String minTolerence;
+
+  @Column(name = "max_tolerence")
+  private String maxTolerence;
+
+  @Column(name = "loadable_bbls_dbs")
+  private String loadableBblsDbs;
+
+  @Column(name = "loadable_bbls_60f")
+  private String loadableBbls60f;
+
+  @Column(name = "loadable_lt")
+  private String loadableLt;
+
+  @Column(name = "loadable_mt")
+  private String loadableMt;
+
+  @Column(name = "loadable_kl")
+  private String loadableKl;
+
+  @Column(name = "difference_color")
+  private String differenceColor;
+
+  @JoinColumn(name = "loadable_pattern_xid")
   @ManyToOne
-  private LoadablePlan loadablePlanXId;
+  private LoadablePattern loadablePattern;
 }

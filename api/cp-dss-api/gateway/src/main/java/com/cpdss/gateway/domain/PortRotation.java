@@ -37,7 +37,11 @@ public class PortRotation {
 
   private String eta;
 
+  private String etaActual;
+
   private String etd;
+
+  private String etdActual;
 
   private String layCanFrom;
 

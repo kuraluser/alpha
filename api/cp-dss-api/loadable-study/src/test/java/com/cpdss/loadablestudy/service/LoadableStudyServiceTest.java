@@ -70,6 +70,8 @@ import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
@@ -148,6 +150,8 @@ class LoadableStudyServiceTest {
 
   @MockBean private OnBoardQuantityRepository onBoardQuantityRepository;
   @MockBean private CargoHistoryRepository cargoHistoryRepository;
+  @MockBean private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
+  @MockBean private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @MockBean private VoyageHistoryRepository voyageHistoryRepository;
   @MockBean private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
   @MockBean private SynopticalTableRepository synopticalTableRepository;

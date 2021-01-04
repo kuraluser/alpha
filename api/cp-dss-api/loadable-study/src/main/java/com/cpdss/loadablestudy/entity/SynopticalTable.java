@@ -106,4 +106,7 @@ public class SynopticalTable extends EntityDoc {
 
   @Column(name = "displacement_actual")
   private BigDecimal displacementActual;
+
+  @Column(name = "ballast_actual")
+  private BigDecimal ballastActual;
 }

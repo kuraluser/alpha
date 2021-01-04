@@ -22,4 +22,8 @@ public class Voyage {
   private String voyageNo;
 
   private Long id;
+
+  private String startDate;
+
+  private String endDate;
 }
