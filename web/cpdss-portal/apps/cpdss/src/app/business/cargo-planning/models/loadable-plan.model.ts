@@ -27,7 +27,7 @@ interface ColumHeader {
  * Interface for Loadable Quantity api response
  *
  * @export
- * @interface ILoadableQuantityResponse
+ * @interface ILoadablePlanResponse
  */
 export interface ILoadablePlanResponse {
     responseStatus: IResponseStatus;
