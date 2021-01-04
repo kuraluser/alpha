@@ -13,8 +13,8 @@
             </div>
           </div>
           <div class="form-group row">
-            <label for="chief_name"
-              class="col-md-6 col-form-label text-secondary">{{'CHIEF_OFFICER' | translate}}</label>
+            <label for="chief_name" class="col-md-6 col-form-label text-secondary">{{'CHIEF_OFFICER' |
+              translate}}</label>
             <div class="col-md-6">
               <input type="text" readonly class="form-control-plaintext" formControlName="chiefOfficer" id="chief_name">
             </div>
@@ -22,17 +22,41 @@
           <div class="form-group row">
             <label for="voyage_no" class="col-md-6 col-form-label text-secondary">{{'VOYAGE_NO' | translate}}</label>
             <div class="col-md-6">
-              <input type="text" class="form-control" id="voyage_no" formControlName="voyageNo" (change)="trimVoyageNo($event)">
-              <div *ngIf="!newVoyageFormControl.voyageNo.valid && newVoyageFormControl.voyageNo.touched"
-                class="pt-5 text-danger">
-                <span *ngIf="newVoyageFormControl.voyageNo.errors?.required">
-                  {{ 'VOYAGE_POPUP_VOYAGE_NO_REQUIRED_ERROR' | translate}} </span>
-                <span *ngIf="newVoyageFormControl.voyageNo.errors?.pattern">
-                  {{ 'NEW_VOYAGE_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED' | translate }}</span>
-                <span *ngIf="newVoyageFormControl.voyageNo.errors?.maxlength">
-                  {{ 'NEW_VOYAGE_POPUP_CHARACTER_LIMIT' | translate }} </span>
-              </div>
+              <input type="text" class="form-control" id="voyage_no" formControlName="voyageNo"
+                (change)="trimVoyageNo($event)">
             </div>
+            <cpdss-portal-validation-error [errors]="fieldError('voyageNo')" [errorMessages]="errorMessages.voyageNo">
+            </cpdss-portal-validation-error>
+
+          </div>
+          <div class="form-group row">
+            <label for="start_date" class="col-md-6 col-form-label text-secondary">{{'VOYAGE_POP_UP_START_DATE_LABEL' |
+              translate}}</label>
+            <div class="col-md-6">
+              <p-calendar appendTo="body" inputId="basic" formControlName="start_date" dateFormat="dd-mm-yy"
+                (onSelect)="onDateSelect($event)" [hideOnDateTimeSelect]="false" [showTime]="true" #startDateTime>
+                <p-footer><button class="btn btn-main"
+                    (click)="startDateTime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
+                    translate}}</button></p-footer>
+              </p-calendar>
+            </div>
+            <cpdss-portal-validation-error [errors]="fieldError('start_date')"
+              [errorMessages]="errorMessages.start_date">
+            </cpdss-portal-validation-error>
+          </div>
+          <div class="form-group row">
+            <label for="end_date" class="col-md-6 col-form-label text-secondary">{{'VOYAGE_POP_UP_END_DATE_LABEL' |
+              translate}}</label>
+            <div class="col-md-6">
+              <p-calendar appendTo="body" inputId="basic" formControlName="end_date" dateFormat="dd-mm-yy"
+                (onSelect)="onDateSelect($event)" [hideOnDateTimeSelect]="false" [showTime]="true" #endDateTime>
+                <p-footer><button class="btn btn-main"
+                    (click)="endDateTime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
+                    translate}}</button></p-footer>
+              </p-calendar>
+            </div>
+            <cpdss-portal-validation-error [errors]="fieldError('end_date')" [errorMessages]="errorMessages.end_date">
+            </cpdss-portal-validation-error>
           </div>
           <div class="row">
             <div class="col">
@@ -49,10 +73,10 @@
   <p-footer>
     <div class="row">
       <div class="col text-right">
-        <button class="btn btn-main mr-10" id="voyage_popup_cancel"
-          (click)="cancel()">{{ 'CANCEL_BUTTON_NEW_VOYAGE_POPUP' | translate }}</button>
-        <button class="btn btn-main" type="submit" id="voyage_popup_submit"
-          (click)="saveNewVoyagePopup()">{{ 'SAVE_BUTTON_NEW_VOYAGE_POPUP' | translate }}</button>
+        <button class="btn btn-main mr-10" id="voyage_popup_cancel" (click)="cancel()">{{
+          'CANCEL_BUTTON_NEW_VOYAGE_POPUP' | translate }}</button>
+        <button class="btn btn-main" type="submit" id="voyage_popup_submit" (click)="saveNewVoyagePopup()">{{
+          'SAVE_BUTTON_NEW_VOYAGE_POPUP' | translate }}</button>
       </div>
     </div>
 
