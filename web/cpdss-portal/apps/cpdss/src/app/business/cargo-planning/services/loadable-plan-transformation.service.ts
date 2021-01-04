@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ITableHeaderModel , ILoadableQuantityCargo } from '../models/loadable-plan.model';
+import { ITableHeaderModel , ILoadableQuantityCargo , ILoadableQuantityCommingleCargo , ICommingleCargoDispaly } from '../models/loadable-plan.model';
 
 /**
  * Transformation Service for Lodable Plan details module
@@ -57,19 +57,19 @@ export class LoadablePlanTransformationService {
 */
   public getCommingledCargoTableColumn(): ITableHeaderModel[] {
     return [
-      { field: 'year', header: 'GRADE' },
-      { field: 'year', header: 'TANK' },
-      { field: 'year', header: 'QUANTITY (BLS)' },
-      { field: 'year', header: 'API' },
-      { field: 'year', header: 'TEMP(F)' },
+      { field: 'grade', header: 'GRADE'  , rowspan: 2 },
+      { field: 'tankName', header: 'TANK' , rowspan: 2 },
+      { field: 'quantity', header: 'QUANTITY (BLS)' , rowspan: 2 },
+      { field: 'api', header: 'API' , rowspan: 2 },
+      { field: 'temp', header: 'TEMP(F)' , rowspan: 2 },
       {
-        header: 'COMPOSITION BREAKDOWN', subColumns: [
-          { field: 'year', header: 'PERCENTAGE' },
-          { field: 'year', header: 'BBLS@OBS.TEMP' },
-          { field: 'year', header: 'BBL@60F' },
-          { field: 'year', header: 'LT' },
-          { field: 'year', header: 'MT' },
-          { field: 'year', header: 'KL' }
+        header: 'COMPOSITION BREAKDOWN' , colspan: 5 , subColumns: [
+          { field: 'cargoPercentage', header: 'PERCENTAGE' },
+          { field: 'cargoBblsdbs', header: 'BBLS@DBS.TEMP' },
+          { field: 'cargoBbls60f', header: 'BBL@60F' },
+          { field: 'cargoLT', header: 'LT' },
+          { field: 'cargoMT', header: 'MT' },
+          { field: 'cargoKL', header: 'KL' }
         ]
       }
     ];
@@ -82,7 +82,7 @@ export class LoadablePlanTransformationService {
   */
   getLoadableQuantityTableColumns(): ITableHeaderModel[] {
     return [
-      { field: 'grade', header: 'Grade', colspan: 0, },
+      { field: 'grade', header: 'Grade', rowspan: 2 },
       {
         field: 'vin', header: 'Estimated', colspan: 2, subColumns: [
           { field: 'estimatedAPI', header: 'API' },
@@ -103,7 +103,7 @@ export class LoadablePlanTransformationService {
       },
       {
         field: 'color', header: 'LOADABLE', colspan: 5, subColumns: [
-          { field: 'loadableBblsdbs', header: 'BBLS@OBS.TEMP' },
+          { field: 'loadableBblsdbs', header: 'BBLS@DBS.TEMP' },
           { field: 'loadableBbls60f', header: 'BBLS@60F' },
           { field: 'loadableLT', header: 'LT' },
           { field: 'loadableMT', header: 'MT' },
@@ -111,7 +111,7 @@ export class LoadablePlanTransformationService {
         ]
       },
       {
-        field: 'differencePercentage', header: 'DIFF.%', colspan: 2
+        field: 'differencePercentage', header: 'DIFF.%' , rowspan: 2
       }
     ]
   }
@@ -147,5 +147,27 @@ export class LoadablePlanTransformationService {
   decimalConvertion(_decimalPipe: any, value: string | number) {
     return _decimalPipe.transform(value, '1.2-4');
   }
+
+  /**
+  * 
+  * Get Formated Loadable Quantity Data
+  * @returns { ICommingleCargoDispaly }
+  * @param loadablePlanCommingleCargoDetails  
+  */
+ public getFormatedLoadableCommingleCargo(_decimalPipe: any, loadablePlanCommingleCargoDetails : ILoadableQuantityCommingleCargo):  ICommingleCargoDispaly {
+  const _loadablePlanCommingleCargoDetails = <ICommingleCargoDispaly>{};
+  _loadablePlanCommingleCargoDetails.api = this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.api);
+  _loadablePlanCommingleCargoDetails.tankName = loadablePlanCommingleCargoDetails.tankName;
+  _loadablePlanCommingleCargoDetails.grade = loadablePlanCommingleCargoDetails.grade;
+  _loadablePlanCommingleCargoDetails.quantity = loadablePlanCommingleCargoDetails.quantity;
+  _loadablePlanCommingleCargoDetails.temp = this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.temp);
+  _loadablePlanCommingleCargoDetails.cargoPercentage = loadablePlanCommingleCargoDetails.cargo1Abbreviation + ' - ' + loadablePlanCommingleCargoDetails.cargo1Percentage + '%' + '<br>' + loadablePlanCommingleCargoDetails.cargo2Abbreviation + ' - ' + loadablePlanCommingleCargoDetails.cargo2Percentage + '%';
+  _loadablePlanCommingleCargoDetails.cargoBblsdbs = loadablePlanCommingleCargoDetails.cargo1Bblsdbs + '<br>' + loadablePlanCommingleCargoDetails.cargo2Bblsdbs;
+  _loadablePlanCommingleCargoDetails.cargoBbls60f = this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo1Bbls60f) + '<br>' + this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo2Bbls60f);
+  _loadablePlanCommingleCargoDetails.cargoLT = this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo1LT) + '<br>' + this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo2LT);
+  _loadablePlanCommingleCargoDetails.cargoMT = this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo1MT) + '<br>' + this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo2MT);
+  _loadablePlanCommingleCargoDetails.cargoKL = this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo1KL) + '<br>' + this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo2KL);
+  return _loadablePlanCommingleCargoDetails;
+ }
 
 }

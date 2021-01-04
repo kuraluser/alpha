@@ -7,14 +7,13 @@
             <ng-template pTemplate="header" let-columns>
                 <ng-container>
                     <tr>
-                        <th *ngFor="let col of columns; let colIndex = index" [attr.colspan]="col.colspan">{{col.header}}</th>
+                        <th *ngFor="let col of columns; let colIndex = index" [attr.colspan]="col.colspan" [attr.rowspan]="col.rowspan"><div>{{col.header}}</div></th>
                     </tr>
                     <tr>
                         <ng-container *ngFor="let col of columns; let colIndex = index">
-                            <ng-container *ngIf="col?.subColumns?.length;else other_content">
+                            <ng-container *ngIf="col?.subColumns?.length;">
                                 <th *ngFor="let subCol of col.subColumns;">{{subCol.header}}</th>
                             </ng-container>
-                            <ng-template #other_content><th></th></ng-template>
                         </ng-container>
                     </tr>
                 </ng-container>
@@ -52,6 +51,6 @@
         </p-table>
     </div>
     <div  class="row">
-        <cpdss-portal-commingled-cargo-details></cpdss-portal-commingled-cargo-details>
+        <cpdss-portal-commingled-cargo-details [loadableQuantityCargoDetails]="loadableQuantityCommingleCargoDetails"></cpdss-portal-commingled-cargo-details>
     </div>
 </div>

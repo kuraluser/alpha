@@ -1,10 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DecimalPipe  } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
 
-import { ITableHeaderModel, ILoadableQuantityCargo , ILoadableQuantityCommingleCargo , ITotalLoadableQuality} from '../../models/loadable-plan.model';
+import { ITableHeaderModel, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ITotalLoadableQuality } from '../../models/loadable-plan.model';
 
 /**
  * Component class of loadable quantity component in loadable plan
@@ -24,17 +24,45 @@ export class LoadableQuantityComponent implements OnInit {
     this.calculateTotal(value);
     this.loadableQuantityData = [];
     value?.map((loadableQuantityData: ILoadableQuantityCargo) => {
-      this.loadableQuantityData.push(this.loadablePlanTransformationService.getFormatedLoadableQuantityData(this._decimalPipe , loadableQuantityData))
+      this.loadableQuantityData.push(this.loadablePlanTransformationService.getFormatedLoadableQuantityData(this._decimalPipe, loadableQuantityData))
     });
   }
 
-  @Input() set loadableQuantityCommingleCargoDetails(value: ILoadableQuantityCommingleCargo) {
+  @Input() set loadableQuantityCommingleCargoDetails(value: ILoadableQuantityCommingleCargo[]) {
+    this._loadableQuantityCommingleCargoDetails = value;
+  }
 
+  get loadableQuantityCommingleCargoDetails(): ILoadableQuantityCommingleCargo[] {
+    return [
+      {
+        "id": 1,
+        "grade": "GET",
+        "tankName": "4C",
+        "quantity": "1000",
+        "api": "22",
+        "temp": "20",
+        "cargo1Abbreviation": "AER",
+        "cargo2Abbreviation": "APP",
+        "cargo1Percentage": "40",
+        "cargo2Percentage": "60",
+        "cargo1Bblsdbs": "20",
+        "cargo2Bblsdbs": "300",
+        "cargo1Bbls60f": "400",
+        "cargo2Bbls60f": "500",
+        "cargo1LT": "60",
+        "cargo2LT": "40",
+        "cargo1MT": "300",
+        "cargo2MT": "200",
+        "cargo1KL": "500",
+        "cargo2KL": "800"
+      }
+    ];
   }
 
   public columns: ITableHeaderModel[];
   public loadableQuantityData: ILoadableQuantityCargo[];
-  public total:ITotalLoadableQuality; 
+  public _loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
+  public total: ITotalLoadableQuality;
 
   constructor(
     private ngxSpinnerService: NgxSpinnerService,

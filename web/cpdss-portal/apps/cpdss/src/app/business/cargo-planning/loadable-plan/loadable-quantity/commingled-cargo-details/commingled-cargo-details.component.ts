@@ -1,10 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { DecimalPipe  } from '@angular/common';
 
-import { ITableHeaderModel } from '../../../models/loadable-plan.model';
+import { ITableHeaderModel , ILoadableQuantityCommingleCargo } from '../../../models/loadable-plan.model';
 
 import { LoadablePlanTransformationService } from '../../../services/loadable-plan-transformation.service';
-import { LoadablePlanApiService } from '../../../services/loadable-plan-api.service';
 
 /**
  * Component class of commingle cargo details component in loadable plan
@@ -20,17 +19,34 @@ import { LoadablePlanApiService } from '../../../services/loadable-plan-api.serv
 })
 export class CommingledCargoDetailsComponent implements OnInit {
 
-  columns: any[];
-  value: any[];
+  @Input() set loadableQuantityCargoDetails(value: ILoadableQuantityCommingleCargo[]) {
+    const loadableQuantityCargoDetails = value;
+    this._loadableQuantityCargoDetails = [];
+    loadableQuantityCargoDetails?.map((loadableQuantityCargoDetail) => {
+      this.arrangeLoadablePlanCargoDetails(loadableQuantityCargoDetail)
+    })
+  }
+
+  get loadableQuantityCargoDetails() {
+    return this._loadableQuantityCargoDetails
+  }
+
+  public columns: any[];
+  public _loadableQuantityCargoDetails: any[];
 
   constructor(
-    private ngxSpinnerService: NgxSpinnerService,
     private loadablePlanTransformationService: LoadablePlanTransformationService,
-    private loadablePlanApiService: LoadablePlanApiService
+    private _decimalPipe: DecimalPipe
   ) { }
 
   ngOnInit(): void {
     this.columns = this.loadablePlanTransformationService.getCommingledCargoTableColumn();
-    this.value = [1, 2, 3];
+  }
+
+  /**
+   * arrange Loadable Plan CargoDetails 
+   */
+  arrangeLoadablePlanCargoDetails(loadableQuantityCargoDetail: ILoadableQuantityCommingleCargo) {
+    this._loadableQuantityCargoDetails.push(this.loadablePlanTransformationService.getFormatedLoadableCommingleCargo(this._decimalPipe , loadableQuantityCargoDetail));
   }
 }

@@ -66,12 +66,50 @@ export interface ILoadableQuantityCargo {
  * @interface ILoadableQuantityCommingleCargo
  */
 export interface ILoadableQuantityCommingleCargo {
+    id: number,
     grade: string,
-    estimatedAPI: string,
-    estimatedTemp: string,
-    orderBblsdbs: string,
-    orderBbls60f: string,
+    tankName: string,
+    quantity: string,
+    api: string,
+    temp: string,
+    cargo1Abbreviation: string,
+    cargo2Abbreviation: string,
+    cargo1Percentage: string,
+    cargo2Percentage: string,
+    cargo1Bblsdbs: string,
+    cargo2Bblsdbs: string,
+    cargo1Bbls60f: string,
+    cargo2Bbls60f: string,
+    cargo1LT: string,
+    cargo2LT: string,
+    cargo1MT: string,
+    cargo2MT: string,
+    cargo1KL: string,
+    cargo2KL: string
 }
+
+/**
+ * Interface for loadable commingle Cargo
+ *
+ * @export
+ * @interface ICommingleCargoDispaly
+ */
+export interface ICommingleCargoDispaly {
+    id: number,
+    grade: string,
+    tankName: string,
+    quantity: string,
+    api: string,
+    temp: string,
+    cargoPercentage: string,
+    cargoBblsdbs: string,
+    cargoBbls60f: string,
+    cargoLT: string
+    cargoMT: string,
+    cargoKL: string,
+}
+
+
 
 /**
  * Interface for loadableQuantity total calculate
