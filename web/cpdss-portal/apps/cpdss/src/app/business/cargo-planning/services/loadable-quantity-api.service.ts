@@ -102,11 +102,11 @@ export class LoadableQuantityApiService {
         'min': 'LOADABLE_QUANTITY_ERROR'
       },
       distanceInSummerzone: {
-        'required': 'LOADABLE_QUANTITY_DISATANCE_IN_SUMMERZONE_REQUIRED',
+        'required': 'LOADABLE_QUANTITY_DISATANCE_REQUIRED',
         'min': 'LOADABLE_QUANTITY_ERROR'
       },
       speedInSz: {
-        'required': 'LOADABLE_QUANTITY_SPEED_IN_SZ_REQUIRED',
+        'required': 'LOADABLE_QUANTITY_SPEED_REQUIRED',
         'min': 'LOADABLE_QUANTITY_ERROR'
       },
       runningHours: {

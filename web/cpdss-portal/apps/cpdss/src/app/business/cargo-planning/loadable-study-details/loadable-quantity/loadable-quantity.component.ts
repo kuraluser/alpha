@@ -101,7 +101,7 @@ export class LoadableQuantityComponent implements OnInit {
         boilerWaterOnboard: ['', [Validators.required, numberValidator(0, 7), Validators.pattern(/^[0-9]\d{0,6}$/)]],
 
         ballast: ['', [Validators.required, numberValidator(2, 7), Validators.min(0)]],
-        constant: ['', [Validators.required , numberValidator(2)]],
+        constant: ['', [Validators.required, numberValidator(2)]],
         others: ['', [Validators.required, numberValidator(2, 7), Validators.min(0)]],
         subTotal: ['', numberValidator(2, 7)],
         totalQuantity: ['', numberValidator(2, 7)]
@@ -260,11 +260,11 @@ export class LoadableQuantityComponent implements OnInit {
           totalQuantity: this.loadableQuantityForm.controls.totalQuantity.value,
         }
       }
-      const translationKeys = await this.translateService.get(['VOYAGE_CREATE_SUCCESS', 'VOYAGE_CREATED_SUCCESSFULLY', 'VOYAGE_CREATE_ERROR', 'VOYAGE_ALREADY_EXIST']).toPromise();
+      const translationKeys = await this.translateService.get(['LOADABLE_QUANTITY_SUCCESS', 'LOADABLE_QUANTITY_SAVED_SUCCESSFULLY']).toPromise();
       const result = await this.loadableQuantityApiService.saveLoadableQuantity(this.vesselId, this.voyage.id, this.selectedLoadableStudy.id, this.loadableQuantity).toPromise();
       this.newLoadableQuantity.emit(this.loadableQuantity.totalQuantity);
       if (result.responseStatus.status === "200") {
-        this.messageService.add({ severity: 'success', summary: translationKeys['VOYAGE_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_QUANTITY_SAVED_SUCCESSFULLY'] });
+        this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_QUANTITY_SUCCESS'], detail: translationKeys['LOADABLE_QUANTITY_SAVED_SUCCESSFULLY'] });
 
       }
       this.ngxSpinnerService.hide();
