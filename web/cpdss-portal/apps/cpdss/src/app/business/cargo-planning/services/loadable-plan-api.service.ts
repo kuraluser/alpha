@@ -6,7 +6,6 @@ import { ILoadablePlanResponse } from '../models/loadable-plan.model';
 
 /**
  * Api Service for loadable plan
- *
  * @export
  * @class LoadablePlanApiService
 */
