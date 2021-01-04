@@ -368,6 +368,7 @@
 	"OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY": "Volume loaded in tank must not exceed capacity of tank.",
 	"COMMINGLE_MANUAL_QUANTITY_MIN_VALUE": "Quantity must be greater than 0",
 	"COMMINGLE_MANUAL_SAME_CARGO_VALIDATION": "This cargo combination already exist",
+	"EDIT_PORT_ROTATION": "Edit port rotation",
 	"VOYAGE_POP_UP_START_DATE_LABEL": "Start Date",
 	"VOYAGE_POP_UP_END_DATE_LABEL": "End Date",
 	"VOYAGE_POPUP_START_DATE_REQUIRED_ERROR": "Start date is required",
