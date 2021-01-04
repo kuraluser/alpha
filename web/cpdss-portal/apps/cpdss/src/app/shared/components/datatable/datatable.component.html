@@ -246,7 +246,7 @@
                                             (onClearClick)="onClearDateRange($event, rowIndex, col.field,rowData)"
                                             [dateFormat]="col.dateFormat" selectionMode="range"
                                             [placeholder]="col.fieldPlaceholder| translate" [minDate]="col.minDate"
-                                            id="{{col.field+'_'+rowIndex}}" #coldaterange>
+                                            id="{{col.field+'_'+rowIndex}}" [hideOnDateTimeSelect]="false" #coldaterange>
                                             <p-footer><button class="btn btn-main"
                                                 (click)="coldaterange.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
                                                     |
@@ -281,7 +281,7 @@
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[col.field]?.isEditMode && !fieldError(rowIndex, col.field)">
+                                    <ng-container *ngIf="!rowData[col.field]?.isEditMode">
                                         <span *ngIf="rowData[col.field]?.value?.name">{{ rowData[col.field]?.value?.name
                                             }}</span>
                                         <span *ngIf="!rowData[col.field]?.value?.name">{{ rowData[col.field]?.value

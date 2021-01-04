@@ -788,6 +788,7 @@ export class LoadableStudyDetailsTransformationService {
             filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
             filterType: DATATABLE_FILTER_TYPE.NUMBER,
             filterPlaceholder: 'OHQ_SEARCH_VOL',
+            fieldHeaderClass: 'column-volume',
             errorMessages: {
               'required': 'OHQ_VALUE_REQUIRED',
               'min': 'OHQ_MIN_VALUE',
@@ -828,6 +829,7 @@ export class LoadableStudyDetailsTransformationService {
             filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
             filterType: DATATABLE_FILTER_TYPE.NUMBER,
             filterPlaceholder: 'OHQ_SEARCH_VOL',
+            fieldHeaderClass: 'column-volume',
             errorMessages: {
               'required': 'OHQ_VALUE_REQUIRED',
               'min': 'OHQ_MIN_VALUE',

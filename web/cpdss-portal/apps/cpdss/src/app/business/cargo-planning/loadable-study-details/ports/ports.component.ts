@@ -256,7 +256,6 @@ export class PortsComponent implements OnInit {
       (event.data.operation.value.operationName === 'Bunkering' || event.data.operation.value.operationName === 'Transit') ?
         (form.controls.layCan.setValue(null), form.controls.layCan.disable(), form.controls.layCan.setValidators([]), form.controls.layCanTo.setValidators([]), form.controls.layCanFrom.setValidators([])) :
         (form.controls.layCan.enable(), form.controls.layCan.setValidators([Validators.required]), form.controls.layCanFrom.setValidators([Validators.required]), form.controls.layCanTo.setValidators([Validators.required]))
-
       form.controls.layCan.updateValueAndValidity();
       form.controls.layCanTo.updateValueAndValidity();
       form.controls.layCanFrom.updateValueAndValidity();
@@ -273,29 +272,34 @@ export class PortsComponent implements OnInit {
       form.controls.eta.updateValueAndValidity();
       form.controls.etd.updateValueAndValidity();
     }
-    if (!event.data?.isAdd) {
-      if (form.valid) {
-        const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
-        if (res) {
-          for (const key in this.portsLists[valueIndex]) {
-            if (this.portsLists[valueIndex].hasOwnProperty(key) && this.portsLists[valueIndex][key].hasOwnProperty('_isEditMode')) {
-              this.portsLists[valueIndex][key].isEditMode = false;
-            }
-          }
-          this.portsLists = [...this.portsLists];
-          this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
-        }
-
-      } else {
-        const fromGroup = this.row(event.index);
-        const invalidFormControls = this.findInvalidControlsRecursive(fromGroup);
+    const formArray = (<FormArray>this.portsForm.get('dataTable')).controls;
+    formArray.forEach(async (row: FormGroup, index) => {
+      if (row.invalid && row.touched) {
+        const invalidFormControls = this.findInvalidControlsRecursive(row);
         invalidFormControls.forEach((key) => {
+          const formControl = this.field(index, key);
+          formControl.updateValueAndValidity();
           this.portsLists[valueIndex][key].isEditMode = true;
         });
-        fromGroup.markAllAsTouched();
-        this.portsForm.updateValueAndValidity();
+        setTimeout(() => {
+          this.updateFormValidity(this.portsLists);
+        }, 200);
       }
-    }
+      if (row.valid) {
+        if (!event.data?.isAdd) {
+          const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+          if (res) {
+            for (const key in this.portsLists[valueIndex]) {
+              if (this.portsLists[valueIndex].hasOwnProperty(key) && this.portsLists[valueIndex][key].hasOwnProperty('_isEditMode')) {
+                this.portsLists[valueIndex][key].isEditMode = false;
+              }
+            }
+            this.portsLists = [...this.portsLists];
+            this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
+          }
+        }
+      }
+    });
   }
 
   /**
@@ -406,12 +410,23 @@ export class PortsComponent implements OnInit {
  * @memberof PortsComponent
  */
   async onRowReorder(event) {
+    this.ngxSpinnerService.show();
     for (let i = 0; i < this.portsLists.length; i++) {
       const form = this.row(i);
       this.portsLists[i].portOrder = i + 1;
       this.portsLists[i].slNo = i + 1;
       await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[i]), this.vesselId, this.voyageId, this.loadableStudyId);
     }
+    const portListArray = this.portsLists.map(ports =>
+      this.initPortsFormGroup(ports)
+    );
+    this.portsForm = this.fb.group({
+      dataTable: this.fb.array([...portListArray])
+    });
+    setTimeout(() => {
+      this.updateFormValidity(portListArray)
+    }, 500);
+    this.ngxSpinnerService.hide();
   }
 
   /**
@@ -453,6 +468,7 @@ export class PortsComponent implements OnInit {
         this.portsLists[i][key].isEditMode = true;
       });
       fromGroup.markAllAsTouched();
+      fromGroup.updateValueAndValidity();
       this.portsForm.updateValueAndValidity();
     }
     this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
