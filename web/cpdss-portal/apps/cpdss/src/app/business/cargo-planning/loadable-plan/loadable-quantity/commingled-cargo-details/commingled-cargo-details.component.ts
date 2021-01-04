@@ -19,11 +19,6 @@ import { LoadablePlanApiService } from '../../../services/loadable-plan-api.serv
   styleUrls: ['./commingled-cargo-details.component.scss']
 })
 export class CommingledCargoDetailsComponent implements OnInit {
-  @Input() voyageId: number;
-  @Input() loadableStudyId: number;
-  @Input() vesselId: number;
-  @Input() loadablePatternId: number;
-
 
   columns: any[];
   value: any[];
@@ -38,13 +33,4 @@ export class CommingledCargoDetailsComponent implements OnInit {
     this.columns = this.loadablePlanTransformationService.getCommingledCargoTableColumn();
     this.value = [1, 2, 3];
   }
-
-  /**
-  * Get details for commingled cargo details
-  */
-  async getCommingledCargoDetails() {
-    this.ngxSpinnerService.show();
-    this.ngxSpinnerService.hide();
-  }
-
 }
