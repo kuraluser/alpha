@@ -1,18 +1,26 @@
 import { Injectable } from '@angular/core';
-import { ITableHeaderModel } from '../models/loadable-plan.model';
+import { ITableHeaderModel , ILoadableQuantityCargo } from '../models/loadable-plan.model';
+
+/**
+ * Transformation Service for Lodable Plan details module
+ *
+ * @export
+ * @class LoadablePlanTransformationService
+*/
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class LoadablePlanTransformationService {
 
   constructor() { }
 
   /**
-* 
-* Get loadable quantity table header
-* @returns {ITableHeaderModel[]}
-*/
+  * 
+  * Get loadable quantity table header
+  * @returns {ITableHeaderModel[]}
+  */
   public getEtaEtdTableColumns(): ITableHeaderModel[] {
     return [
       { field: 'year', header: '' },
@@ -65,6 +73,79 @@ export class LoadablePlanTransformationService {
         ]
       }
     ];
+  }
+
+  /**
+  * 
+  * Get loadable quantity table header
+  * @returns {ITableHeaderModel[]}
+  */
+  getLoadableQuantityTableColumns(): ITableHeaderModel[] {
+    return [
+      { field: 'grade', header: 'Grade', colspan: 0, },
+      {
+        field: 'vin', header: 'Estimated', colspan: 2, subColumns: [
+          { field: 'estimatedAPI', header: 'API' },
+          { field: 'estimatedTemp', header: 'TEMP' }
+        ]
+      },
+      {
+        field: 'year', header: 'ORDER', colspan: 2, subColumns: [
+          { field: 'orderBblsdbs', header: 'BBLS@OBS.TEMP' },
+          { field: 'orderBbls60f', header: 'BBLS@60F' }
+        ]
+      },
+      {
+        field: 'brand', header: 'TLRNC', colspan: 2, subColumns: [
+          { field: 'minTolerence', header: 'Min' },
+          { field: 'maxTolerence', header: 'Max' }
+        ]
+      },
+      {
+        field: 'color', header: 'LOADABLE', colspan: 5, subColumns: [
+          { field: 'loadableBblsdbs', header: 'BBLS@OBS.TEMP' },
+          { field: 'loadableBbls60f', header: 'BBLS@60F' },
+          { field: 'loadableLT', header: 'LT' },
+          { field: 'loadableMT', header: 'MT' },
+          { field: 'loadableKL', header: 'KL' }
+        ]
+      },
+      {
+        field: 'differencePercentage', header: 'DIFF.%', colspan: 2
+      }
+    ]
+  }
+
+  /**
+  * 
+  * Get Formated Loadable Quantity Data
+  * @returns {ILoadableQuantityCargo}
+  * @param loadableQuantityObject 
+  */
+  public getFormatedLoadableQuantityData(_decimalPipe: any, loadableQuantity: ILoadableQuantityCargo): ILoadableQuantityCargo {
+    const _loadableQuantityDetails = loadableQuantity;
+    _loadableQuantityDetails.estimatedAPI = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.estimatedAPI);
+    _loadableQuantityDetails.estimatedTemp = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.estimatedTemp);
+    _loadableQuantityDetails.orderBbls60f = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.orderBbls60f);
+    _loadableQuantityDetails.orderBblsdbs = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.orderBblsdbs);
+    _loadableQuantityDetails.minTolerence = _loadableQuantityDetails.minTolerence + '%';
+    _loadableQuantityDetails.maxTolerence = _loadableQuantityDetails.maxTolerence + '%';
+    _loadableQuantityDetails.loadableBbls60f = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.loadableBbls60f);
+    _loadableQuantityDetails.loadableBblsdbs = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.loadableBblsdbs);
+    _loadableQuantityDetails.loadableKL = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.loadableKL);
+    _loadableQuantityDetails.loadableMT = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.loadableMT);
+    _loadableQuantityDetails.loadableLT = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.loadableLT);
+    _loadableQuantityDetails.differencePercentage = _loadableQuantityDetails.differencePercentage + '%';
+    return loadableQuantity;
+  }
+
+  /**
+  * 
+  * Get Formated Loadable Quantity Data
+  * @returns {decimal converted value us number}
+  */
+  decimalConvertion(_decimalPipe: any, value: string | number) {
+    return _decimalPipe.transform(value, '1.2-4');
   }
 
 }
