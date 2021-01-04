@@ -63,7 +63,7 @@ export class LoadableQuantityComponent implements OnInit {
   }
 
   /**
-   * calcuate total for orderBblsdbs, orderBbls60f ,
+   * calculate total for orderBblsdbs, orderBbls60f ,
    * loadableBblsdbs , loadableLT , loadableKL
   */
   private calculateTotal(loadableQuantityData: LoadableQuantityCargo[]) {
