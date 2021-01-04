@@ -58,7 +58,13 @@ export class CommingleApiService {
 
       preferredTanks: {
         'required': 'COMMINGLE_PREFERRED_TANK_REQUIRED',
-      }
+      },
+      cargo1: {
+        'required': 'COMMINGLE_CARGO_SELECT_ERROR',
+      },
+      cargo2: {
+        'required': 'COMMINGLE_CARGO_SELECT_ERROR',
+      },
     }
   }    
 }
