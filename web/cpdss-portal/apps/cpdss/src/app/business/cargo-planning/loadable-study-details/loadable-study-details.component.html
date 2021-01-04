@@ -82,7 +82,7 @@
 
 
             <label class="pr-20">{{'LOADABLE_STUDY_DETAILS_LOADABLE_QUANTITY_LABEL'| translate}}
-                <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button"
+                <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button" [disabled]="!loadableStudies?.length"
                     (click)="showLoadableQuantityPopup()"
                     *cpdssPortalPermission="loadableQuantityPermissionContext">{{loadableQuantityNew | number : '1.2-2'}}</button></label>
 
@@ -95,14 +95,14 @@
                 (click)="showComminglePopup()" [disabled]="showCommingleButton" *cpdssPortalPermission="addCommingleBtnPermissionContext">{{'COMMINGLE_BUTTON' | translate}}</button>
         </div>
         <div class="pr-15">
-            <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
+            <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudies?.length">
                 <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
                     *cpdssPortalPermission="addCargoBtnPermissionContext"
                     (click)="addCargoNomination()">{{'ADD_CARGO_BUTTON_LABEL'| translate}}</a>
             </ng-container>
         </div>
         <div class="pr-15">
-            <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">
+            <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && loadableStudies?.length">
                 <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
                     *cpdssPortalPermission="addPortBtnPermissionContext"
                     (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'| translate}}</a>
