@@ -4,9 +4,17 @@ import { Observable } from 'rxjs';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { ILoadablePlanResponse } from '../models/loadable-plan.model';
 
+/**
+ * Api Service for loadable plan
+ *
+ * @export
+ * @class LoadablePlanApiService
+*/
+
 @Injectable({
   providedIn: 'root'
 })
+
 export class LoadablePlanApiService {
 
   /**
@@ -21,7 +29,7 @@ export class LoadablePlanApiService {
   * @param {number} voyageId 
   * @param {number} loadableStudyId 
   * @param {number} loadablePatternId
-  * Get api for loadable quantity
+  * Get api for loadable plan details
   */
   getLoadablePlanDetails(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<ILoadablePlanResponse> {
     return this.commonApiService.get<ILoadablePlanResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${'500'}/loadable-pattern-details/${'4'}`);

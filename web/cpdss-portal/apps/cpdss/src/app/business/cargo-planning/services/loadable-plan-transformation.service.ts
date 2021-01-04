@@ -1,18 +1,26 @@
 import { Injectable } from '@angular/core';
-import { ITableHeaderModel , LoadableQuantityCargo } from '../models/loadable-plan.model';
+import { ITableHeaderModel , ILoadableQuantityCargo } from '../models/loadable-plan.model';
+
+/**
+ * Transformation Service for Lodable Plan details module
+ *
+ * @export
+ * @class LoadablePlanTransformationService
+*/
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class LoadablePlanTransformationService {
 
   constructor() { }
 
   /**
-* 
-* Get loadable quantity table header
-* @returns {ITableHeaderModel[]}
-*/
+  * 
+  * Get loadable quantity table header
+  * @returns {ITableHeaderModel[]}
+  */
   public getEtaEtdTableColumns(): ITableHeaderModel[] {
     return [
       { field: 'year', header: '' },
@@ -111,10 +119,10 @@ export class LoadablePlanTransformationService {
   /**
   * 
   * Get Formated Loadable Quantity Data
-  * @returns {LoadableQuantityCargo}
+  * @returns {ILoadableQuantityCargo}
   * @param loadableQuantityObject 
   */
-  public getFormatedLoadableQuantityData(_decimalPipe: any, loadableQuantity: LoadableQuantityCargo): LoadableQuantityCargo {
+  public getFormatedLoadableQuantityData(_decimalPipe: any, loadableQuantity: ILoadableQuantityCargo): ILoadableQuantityCargo {
     const _loadableQuantityDetails = loadableQuantity;
     _loadableQuantityDetails.estimatedAPI = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.estimatedAPI);
     _loadableQuantityDetails.estimatedTemp = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.estimatedTemp);

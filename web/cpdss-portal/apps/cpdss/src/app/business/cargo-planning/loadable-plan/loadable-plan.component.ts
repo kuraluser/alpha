@@ -6,7 +6,7 @@ import { IVessel } from '../../core/models/vessel-details.model';
 
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
 
-import { ILoadablePlanResponse, LoadableQuantityCargo, ILoadableQuantityCommingleCargo } from '../models/loadable-plan.model';
+import { ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo } from '../models/loadable-plan.model';
 
 /**
  * Component class of loadable plan
@@ -27,7 +27,7 @@ export class LoadablePlanComponent implements OnInit {
   vesselId: number;
   loadablePatternId: number;
   vesselInfo: IVessel;
-  loadableQuantityCargoDetails: LoadableQuantityCargo[];
+  loadableQuantityCargoDetails: ILoadableQuantityCargo[];
   loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
 
   constructor(private ngxSpinnerService: NgxSpinnerService,

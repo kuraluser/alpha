@@ -4,22 +4,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 
 import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
 
-import { ITableHeaderModel, LoadableQuantityCargo , ILoadableQuantityCommingleCargo } from '../../models/loadable-plan.model';
-
-
-/**
- * Interface for loadableQuantity total calculate
-*/
-interface Total {
-  orderBblsdbs: number,
-  orderBbls60f: number,
-  loadableBblsdbs: number,
-  loadableBbls60f: number,
-  loadableLT: number,
-  loadableMT: number,
-  loadableKL: number,
-  differencePercentage: number
-}
+import { ITableHeaderModel, ILoadableQuantityCargo , ILoadableQuantityCommingleCargo , ITotalLoadableQuality} from '../../models/loadable-plan.model';
 
 /**
  * Component class of loadable quantity component in loadable plan
@@ -35,10 +20,10 @@ interface Total {
 })
 export class LoadableQuantityComponent implements OnInit {
 
-  @Input() set loadableQuantityCargoDetails(value: LoadableQuantityCargo[]) {
+  @Input() set loadableQuantityCargoDetails(value: ILoadableQuantityCargo[]) {
     this.calculateTotal(value);
     this.loadableQuantityData = [];
-    value?.map((loadableQuantityData: LoadableQuantityCargo) => {
+    value?.map((loadableQuantityData: ILoadableQuantityCargo) => {
       this.loadableQuantityData.push(this.loadablePlanTransformationService.getFormatedLoadableQuantityData(this._decimalPipe , loadableQuantityData))
     });
   }
@@ -48,8 +33,8 @@ export class LoadableQuantityComponent implements OnInit {
   }
 
   public columns: ITableHeaderModel[];
-  public loadableQuantityData: LoadableQuantityCargo[];
-  public total:Total; 
+  public loadableQuantityData: ILoadableQuantityCargo[];
+  public total:ITotalLoadableQuality; 
 
   constructor(
     private ngxSpinnerService: NgxSpinnerService,
@@ -59,15 +44,15 @@ export class LoadableQuantityComponent implements OnInit {
 
   ngOnInit() {
     this.columns = this.loadablePlanTransformationService.getLoadableQuantityTableColumns();
-    this.total = <Total>{ orderBblsdbs: 0, orderBbls60f: 0, loadableBblsdbs: 0, loadableBbls60f: 0, loadableLT: 0, loadableMT: 0, loadableKL: 0, differencePercentage: 0 };
+    this.total = <ITotalLoadableQuality>{ orderBblsdbs: 0, orderBbls60f: 0, loadableBblsdbs: 0, loadableBbls60f: 0, loadableLT: 0, loadableMT: 0, loadableKL: 0, differencePercentage: 0 };
   }
 
   /**
    * calculate total for orderBblsdbs, orderBbls60f ,
    * loadableBblsdbs , loadableLT , loadableKL
   */
-  private calculateTotal(loadableQuantityData: LoadableQuantityCargo[]) {
-    loadableQuantityData?.map((value: LoadableQuantityCargo) => {
+  private calculateTotal(loadableQuantityData: ILoadableQuantityCargo[]) {
+    loadableQuantityData?.map((value: ILoadableQuantityCargo) => {
       this.total.orderBblsdbs += Number(value.orderBblsdbs);
       this.total.orderBbls60f += Number(value.orderBbls60f);
       this.total.loadableBblsdbs += Number(value.loadableBblsdbs);

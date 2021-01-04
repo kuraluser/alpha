@@ -11,13 +11,13 @@ export interface ITableHeaderModel {
     header: string;
     rowspan?: number;
     colspan?: number,
-    subColumns?:ColumHeader[];  
+    subColumns?: IColumHeader[];
 }
 
 /**
- * Interface for table header
+ * Interface for sub column table header
 */
-interface ColumHeader {
+interface IColumHeader {
     field: string;
     header: string;
     rowspan?: number;
@@ -31,26 +31,17 @@ interface ColumHeader {
  */
 export interface ILoadablePlanResponse {
     responseStatus: IResponseStatus;
-    loadableQuantityCargoDetails: LoadableQuantityCargo[],
+    loadableQuantityCargoDetails: ILoadableQuantityCargo[],
     loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[]
-}
-
-
-/**
- * Interface for sub column table header
-*/
-interface ColumHeader {
-    field: string;
-    header: string;
 }
 
 /**
  * Interface for loadable quality 
  *
  * @export
- * @interface LoadableQuantityCargo
+ * @interface ILoadableQuantityCargo
  */
-export  interface LoadableQuantityCargo {
+export interface ILoadableQuantityCargo {
     id: number,
     grade: string,
     estimatedAPI: string,
@@ -80,4 +71,18 @@ export interface ILoadableQuantityCommingleCargo {
     estimatedTemp: string,
     orderBblsdbs: string,
     orderBbls60f: string,
+}
+
+/**
+ * Interface for loadableQuantity total calculate
+*/
+export interface ITotalLoadableQuality {
+    orderBblsdbs: number,
+    orderBbls60f: number,
+    loadableBblsdbs: number,
+    loadableBbls60f: number,
+    loadableLT: number,
+    loadableMT: number,
+    loadableKL: number,
+    differencePercentage: number
 }
