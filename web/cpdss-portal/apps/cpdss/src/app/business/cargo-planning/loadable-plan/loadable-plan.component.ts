@@ -4,6 +4,10 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
 
+import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
+
+import { ILoadablePlanResponse, LoadableQuantityCargo, ILoadableQuantityCommingleCargo } from '../models/loadable-plan.model';
+
 /**
  * Component class of loadable plan
  *
@@ -23,7 +27,14 @@ export class LoadablePlanComponent implements OnInit {
   vesselId: number;
   loadablePatternId: number;
   vesselInfo: IVessel;
-  constructor(private vesselsApiService: VesselsApiService, private ngxSpinnerService: NgxSpinnerService, private activatedRoute: ActivatedRoute, private router: Router) { }
+  loadableQuantityCargoDetails: LoadableQuantityCargo[];
+  loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
+
+  constructor(private ngxSpinnerService: NgxSpinnerService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private vesselsApiService: VesselsApiService,
+    private loadablePlanApiService: LoadablePlanApiService) { }
 
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(params => {
@@ -32,6 +43,7 @@ export class LoadablePlanComponent implements OnInit {
       this.loadableStudyId = Number(params.get('loadableStudyId'));
       this.loadablePatternId = Number(params.get('loadablePatternId'))
       this.getVesselInfo();
+      this.getLoadablePlanDetails();
     });
   }
 
@@ -55,6 +67,19 @@ export class LoadablePlanComponent implements OnInit {
   */
   async backToLoadableStudy() {
     this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
+  }
+
+  /**
+  * Get details for loadable Plan
+  * @returns {Promise<ILoadablePlanResponse>}
+  * @memberof LoadablePlanComponent
+  */
+  private async getLoadablePlanDetails() {
+    this.ngxSpinnerService.show();
+    const loadablePlanRes: ILoadablePlanResponse = await this.loadablePlanApiService.getLoadablePlanDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
+    this.loadableQuantityCargoDetails = loadablePlanRes.loadableQuantityCargoDetails;
+    this.loadableQuantityCommingleCargoDetails = loadablePlanRes.loadableQuantityCommingleCargoDetails;
+    this.ngxSpinnerService.hide();
   }
 
 }

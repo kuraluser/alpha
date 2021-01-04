@@ -19,10 +19,6 @@ import { LoadablePlanApiService } from '../../services/loadable-plan-api.service
   styleUrls: ['./port-eta-etd-condition.component.scss']
 })
 export class PortEtaEtdConditionComponent implements OnInit {
-  @Input() voyageId: number;
-  @Input() loadableStudyId: number;
-  @Input() vesselId: number;
-  @Input() loadablePatternId: number;
 
   columns: ITableHeaderModel[];
   value: any[];
@@ -35,17 +31,6 @@ export class PortEtaEtdConditionComponent implements OnInit {
 
   ngOnInit(): void {
     this.columns = this.loadablePlanTransformationService.getEtaEtdTableColumns();
-    this.getEtaEtdDetails();
-  }
-
-  /**
-  * Get  details for Eta & Etd
-  *
-  */
-  async getEtaEtdDetails() {
-    this.ngxSpinnerService.show();
-    // let data = await this.loadablePlanApiService.getLoadablePlanEtaEtdDetails(this.vesselId, this.voyageId, this.loadableStudyId , this.loadablePatternId).toPromise();
-    this.ngxSpinnerService.hide();
   }
 
 }
