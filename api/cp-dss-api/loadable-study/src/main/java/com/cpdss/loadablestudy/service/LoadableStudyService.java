@@ -285,7 +285,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID, CARGO_VOID_TANK_CATEGORY_ID);
 
   private static final List<Long> CARGO_OPERATION_ARR_DEP_SYNOPTICAL =
-      Arrays.asList(LOADING_OPERATION_ID, DISCHARGING_OPERATION_ID, BUNKERING_OPERATION_ID);
+      Arrays.asList(
+          LOADING_OPERATION_ID,
+          DISCHARGING_OPERATION_ID,
+          BUNKERING_OPERATION_ID,
+          TRANSIT_OPERATION_ID);
 
   private static final List<Long> SYNOPTICAL_TABLE_TANK_CATEGORIES =
       Arrays.asList(
@@ -1618,6 +1622,33 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).parse(request.getLayCanTo())));
     entity.setOperation(this.cargoOperationRepository.getOne(request.getOperationId()));
     entity.setPortOrder(0 == request.getPortOrder() ? null : request.getPortOrder());
+    // update distance, etaActual, etdActual values in synoptical
+    if (!CollectionUtils.isEmpty(entity.getSynopticalTable())) {
+      entity
+          .getSynopticalTable()
+          .forEach(
+              record -> {
+                record.setDistance(
+                    !StringUtils.isEmpty(request.getDistanceBetweenPorts())
+                        ? new BigDecimal(request.getDistanceBetweenPorts())
+                        : null);
+                if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equalsIgnoreCase(record.getOperationType())) {
+                  record.setEtaActual(
+                      isEmpty(request.getEtaActual())
+                          ? null
+                          : LocalDateTime.from(
+                              DateTimeFormatter.ofPattern(ETA_ETD_FORMAT)
+                                  .parse(request.getEtaActual())));
+                } else {
+                  record.setEtdActual(
+                      isEmpty(request.getEtdActual())
+                          ? null
+                          : LocalDateTime.from(
+                              DateTimeFormatter.ofPattern(ETA_ETD_FORMAT)
+                                  .parse(request.getEtdActual())));
+                }
+              });
+    }
     return entity;
   }
 
@@ -1635,10 +1666,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             com.cpdss.loadablestudy.domain.CargoOperation.getOperation(requestedOperationId))) {
       Set<SynopticalTable> synopticalTableEntityList = new HashSet<>();
       if (CARGO_OPERATION_ARR_DEP_SYNOPTICAL.contains(requestedOperationId)) {
-        buildSynopticalTableRecord(requestedPortId, entity, synopticalTableEntityList, "ARR");
-        buildSynopticalTableRecord(requestedPortId, entity, synopticalTableEntityList, "DEP");
-      } else if (TRANSIT_OPERATION_ID.equals(requestedOperationId)) {
-        buildSynopticalTableRecord(requestedPortId, entity, synopticalTableEntityList, "TRANSIT");
+        buildSynopticalTableRecord(
+            requestedPortId, entity, synopticalTableEntityList, SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL);
+        buildSynopticalTableRecord(
+            requestedPortId, entity, synopticalTableEntityList, SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE);
       }
       if (!CollectionUtils.isEmpty(entity.getSynopticalTable())) {
         entity.getSynopticalTable().addAll(synopticalTableEntityList);

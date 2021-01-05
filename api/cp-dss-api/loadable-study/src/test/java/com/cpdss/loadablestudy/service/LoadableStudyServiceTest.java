@@ -1219,7 +1219,9 @@ class LoadableStudyServiceTest {
     builder.setOperationId(ID_TEST_VALUE);
     builder.setDistanceBetweenPorts(NUMERICAL_TEST_VALUE);
     builder.setEta(DATE_TIME_TEST_VALUE);
+    builder.setEtaActual(DATE_TIME_TEST_VALUE);
     builder.setEtd(DATE_TIME_TEST_VALUE);
+    builder.setEtdActual(DATE_TIME_TEST_VALUE);
     builder.setLayCanFrom(DATE_TEST_VALUE);
     builder.setLayCanTo(DATE_TEST_VALUE);
     builder.setMaxAirDraft(NUMERICAL_TEST_VALUE);
