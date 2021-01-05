@@ -23,6 +23,7 @@ import com.cpdss.gateway.domain.CommonResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
+import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.LoadingPort;
@@ -177,6 +178,13 @@ class LoadableStudyControllerTest {
       CLOUD_API_URL_PREFIX + GET_LOADABLE_PATTERN_COMMINGLE_DETAILS_API_URL;
   private static final String GET_LOADABLE_PATTERN_COMMINGLE_DETAILS_SHIP_API_URL =
       SHIP_API_URL_PREFIX + GET_LOADABLE_PATTERN_COMMINGLE_DETAILS_API_URL;
+
+  private static final String GET_LOADABLE_PATTERN_DETAILS_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-pattern-details/{loadablePatternId}";
+  private static final String GET_LOADABLE_PATTERN_DETAILS_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + GET_LOADABLE_PATTERN_DETAILS_API_URL;
+  private static final String GET_LOADABLE_PATTERN_DETAILS_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + GET_LOADABLE_PATTERN_DETAILS_API_URL;
 
   private static final String GET_CONFIRM_PLAN_API_URL =
       "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/confirm-plan/{loadablePatternId}";
@@ -1069,6 +1077,58 @@ class LoadableStudyControllerTest {
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  /**
+   * @param url
+   * @throws Exception void
+   */
+  @ValueSource(
+      strings = {
+        GET_LOADABLE_PATTERN_DETAILS_CLOUD_API_URL,
+        GET_LOADABLE_PATTERN_DETAILS_SHIP_API_URL
+      })
+  @ParameterizedTest
+  void testLoadablePatternDetails(String url) throws Exception {
+    when(this.loadableStudyService.getLoadablePatternDetails(anyLong(), anyString()))
+        .thenReturn(new LoadablePlanDetailsResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  /**
+   * @param exceptionClass
+   * @throws Exception void
+   */
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testLoadablePatternDetailsRuntimeException(Class<? extends Exception> exceptionClass)
+      throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.loadableStudyService.getLoadablePatternDetails(anyLong(), anyString())).thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(
+                    GET_LOADABLE_PATTERN_DETAILS_CLOUD_API_URL,
+                    TEST_VESSEL_ID,
+                    TEST_VOYAGE_ID,
+                    1,
+                    1,
+                    1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
         .andExpect(status().isInternalServerError());
   }
 

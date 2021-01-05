@@ -26,6 +26,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCommingleCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse;
@@ -87,6 +88,7 @@ import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
@@ -111,6 +113,7 @@ import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
@@ -187,6 +190,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
   @Autowired private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @Autowired private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
+  @Autowired private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
 
   @Autowired
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
@@ -3927,11 +3931,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
                 loadablePatternOpt.get(), true);
         buildLoadablePlanQuantity(loadablePlanQuantities, replyBuilder);
+
+        List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
+            loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
+                loadablePatternOpt.get(), true);
+        buildLoadablePlanCommingleDetails(loadablePlanCommingleDetails, replyBuilder);
+
         List<LoadablePlanStowageDetails> loadablePlanStowageDetails =
             loadablePlanStowageDetailsRespository.findByLoadablePatternAndIsActive(
                 loadablePatternOpt.get(), true);
         buildLoadablePlanStowageCargoDetails(loadablePlanStowageDetails, replyBuilder);
-        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+
+        VesselReply vesselReply =
+            this.getTankListForPattern(loadablePatternOpt.get().getLoadableStudy().getVesselXId());
+        if (!SUCCESS.equals(vesselReply.getResponseStatus().getStatus())) {
+          replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+        } else {
+          replyBuilder.addAllTanks(this.groupTanks(vesselReply.getVesselTanksList()));
+          replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+        }
       }
     } catch (Exception e) {
       log.error("Exception when getLoadablePlanDetails ", e);
@@ -3940,6 +3958,43 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * @param loadablePlanCommingleDetails
+   * @param replyBuilder void
+   */
+  private void buildLoadablePlanCommingleDetails(
+      List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
+    loadablePlanCommingleDetails.forEach(
+        lpcd -> {
+          LoadableQuantityCommingleCargoDetails.Builder builder =
+              LoadableQuantityCommingleCargoDetails.newBuilder();
+          Optional.ofNullable(lpcd.getId()).ifPresent(builder::setId);
+          Optional.ofNullable(lpcd.getApi()).ifPresent(builder::setApi);
+          Optional.ofNullable(lpcd.getCargo1Abbreviation())
+              .ifPresent(builder::setCargo1Abbreviation);
+          Optional.ofNullable(lpcd.getCargo1Bbls60f()).ifPresent(builder::setCargo1Bbls60F);
+          Optional.ofNullable(lpcd.getCargo1BblsDbs()).ifPresent(builder::setCargo1Bblsdbs);
+          Optional.ofNullable(lpcd.getCargo1Kl()).ifPresent(builder::setCargo1KL);
+          Optional.ofNullable(lpcd.getCargo1Lt()).ifPresent(builder::setCargo1LT);
+          Optional.ofNullable(lpcd.getCargo1Mt()).ifPresent(builder::setCargo1MT);
+          Optional.ofNullable(lpcd.getCargo1Percentage()).ifPresent(builder::setCargo1Percentage);
+          Optional.ofNullable(lpcd.getCargo2Abbreviation())
+              .ifPresent(builder::setCargo2Abbreviation);
+          Optional.ofNullable(lpcd.getCargo2Bbls60f()).ifPresent(builder::setCargo2Bbls60F);
+          Optional.ofNullable(lpcd.getCargo2BblsDbs()).ifPresent(builder::setCargo2Bblsdbs);
+          Optional.ofNullable(lpcd.getCargo2Kl()).ifPresent(builder::setCargo2KL);
+          Optional.ofNullable(lpcd.getCargo2Lt()).ifPresent(builder::setCargo2LT);
+          Optional.ofNullable(lpcd.getCargo2Mt()).ifPresent(builder::setCargo2MT);
+          Optional.ofNullable(lpcd.getCargo2Percentage()).ifPresent(builder::setCargo2Percentage);
+          Optional.ofNullable(lpcd.getGrade()).ifPresent(builder::setGrade);
+          Optional.ofNullable(lpcd.getQuantity()).ifPresent(builder::setQuantity);
+          Optional.ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
+          Optional.ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
+          replyBuilder.addLoadableQuantityCommingleCargoDetails(builder);
+        });
   }
 
   /**

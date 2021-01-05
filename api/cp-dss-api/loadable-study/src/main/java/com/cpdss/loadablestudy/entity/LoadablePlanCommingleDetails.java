@@ -86,7 +86,7 @@ public class LoadablePlanCommingleDetails extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
-  @JoinColumn(name = "loadable_patternxid")
+  @JoinColumn(name = "loadable_pattern_xid")
   @ManyToOne
   private LoadablePattern loadablePattern;
 }

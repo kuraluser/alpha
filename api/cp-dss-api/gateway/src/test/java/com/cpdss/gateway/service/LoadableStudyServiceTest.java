@@ -18,6 +18,10 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCommingleCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
@@ -46,6 +50,7 @@ import com.cpdss.gateway.domain.CommonResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
+import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
@@ -1322,6 +1327,82 @@ class LoadableStudyServiceTest {
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  /** @throws GenericServiceException void */
+  @Test
+  void testGetLoadablePatternDetails() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.getLoadablePatternDetails(anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(
+            this.loadableStudyService.getLoadablePatternDetails(
+                any(
+                    com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.Builder
+                        .class)))
+        .thenReturn(
+            LoadablePlanDetailsReply.newBuilder()
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .addLoadableQuantityCargoDetails(buildLoadableQuantityCargoDetails())
+                .addLoadableQuantityCommingleCargoDetails(
+                    buildLoadableQuantityCommingleCargoDetails())
+                .addLoadablePlanStowageDetails(buildLoadablePlanStowageDetails())
+                .build());
+    LoadablePlanDetailsResponse response =
+        this.loadableStudyService.getLoadablePatternDetails(1L, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "response valid"));
+  }
+
+  /** @throws GenericServiceException void */
+  @Test
+  void testGetLoadablePatternDetailsGrpcFailure() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.getLoadablePatternDetails(anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(
+            this.loadableStudyService.getLoadablePatternDetails(
+                any(
+                    com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.Builder
+                        .class)))
+        .thenReturn(
+            LoadablePlanDetailsReply.newBuilder()
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.getLoadablePatternDetails(
+                    1L, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  /** @return LoadablePlanStowageDetails */
+  private LoadablePlanStowageDetails buildLoadablePlanStowageDetails() {
+    LoadablePlanStowageDetails.Builder builder = LoadablePlanStowageDetails.newBuilder();
+    return builder.build();
+  }
+
+  /** @return LoadableQuantityCommingleCargoDetails */
+  private LoadableQuantityCommingleCargoDetails buildLoadableQuantityCommingleCargoDetails() {
+    LoadableQuantityCommingleCargoDetails.Builder builder =
+        LoadableQuantityCommingleCargoDetails.newBuilder();
+    return builder.build();
+  }
+
+  /** @return LoadableQuantityCargoDetails */
+  private LoadableQuantityCargoDetails buildLoadableQuantityCargoDetails() {
+    LoadableQuantityCargoDetails.Builder builder = LoadableQuantityCargoDetails.newBuilder();
+    return builder.build();
   }
 
   /** @throws GenericServiceException void */

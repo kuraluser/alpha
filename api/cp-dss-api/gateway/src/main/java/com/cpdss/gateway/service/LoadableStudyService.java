@@ -87,6 +87,7 @@ import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePlanStowageDetails;
 import com.cpdss.gateway.domain.LoadableQuantity;
+import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
@@ -2454,10 +2455,50 @@ public class LoadableStudyService {
           HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }
     buildLoadableStudyQuantity(response, grpcReply);
+    buildloadableStudyCommingleCargoDetails(response, grpcReply);
     buildLoadableStudyStowageDetails(response, grpcReply);
+    response.setTankLists(createGroupWiseTankList(grpcReply.getTanksList()));
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
+  }
+
+  /**
+   * @param response
+   * @param grpcReply void
+   */
+  private void buildloadableStudyCommingleCargoDetails(
+      LoadablePlanDetailsResponse response, LoadablePlanDetailsReply grpcReply) {
+    response.setLoadableQuantityCommingleCargoDetails(
+        new ArrayList<LoadableQuantityCommingleCargoDetails>());
+    grpcReply
+        .getLoadableQuantityCommingleCargoDetailsList()
+        .forEach(
+            lqccd -> {
+              LoadableQuantityCommingleCargoDetails details =
+                  new LoadableQuantityCommingleCargoDetails();
+              details.setId(lqccd.getId());
+              details.setApi(lqccd.getApi());
+              details.setCargo1Abbreviation(lqccd.getCargo1Abbreviation());
+              details.setCargo1Bbls60f(lqccd.getCargo1Bbls60F());
+              details.setCargo1Bblsdbs(lqccd.getCargo1Bblsdbs());
+              details.setCargo1KL(lqccd.getCargo1KL());
+              details.setCargo1LT(lqccd.getCargo1LT());
+              details.setCargo1MT(lqccd.getCargo1MT());
+              details.setCargo1Percentage(lqccd.getCargo1Percentage());
+              details.setCargo2Abbreviation(lqccd.getCargo2Abbreviation());
+              details.setCargo2Bbls60f(lqccd.getCargo2Bbls60F());
+              details.setCargo2Bblsdbs(lqccd.getCargo2Bblsdbs());
+              details.setCargo2KL(lqccd.getCargo2KL());
+              details.setCargo2LT(lqccd.getCargo2LT());
+              details.setCargo2MT(lqccd.getCargo2MT());
+              details.setCargo2Percentage(lqccd.getCargo2Percentage());
+              details.setGrade(lqccd.getGrade());
+              details.setQuantity(lqccd.getQuantity());
+              details.setTankName(lqccd.getTankName());
+              details.setTemp(lqccd.getTemp());
+              response.getLoadableQuantityCommingleCargoDetails().add(details);
+            });
   }
 
   /**
@@ -2528,7 +2569,7 @@ public class LoadableStudyService {
    * @param request
    * @return LoadablePlanDetailsReply
    */
-  private LoadablePlanDetailsReply getLoadablePatternDetails(
+  public LoadablePlanDetailsReply getLoadablePatternDetails(
       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.Builder request) {
     return this.loadableStudyServiceBlockingStub.getLoadablePlanDetails(request.build());
   }
