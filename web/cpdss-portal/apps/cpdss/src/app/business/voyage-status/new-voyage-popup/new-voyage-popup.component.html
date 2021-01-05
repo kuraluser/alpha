@@ -33,7 +33,7 @@
             <label for="start_date" class="col-md-6 col-form-label text-secondary">{{'VOYAGE_POP_UP_START_DATE_LABEL' |
               translate}}</label>
             <div class="col-md-6">
-              <p-calendar appendTo="body" inputId="basic" formControlName="start_date" dateFormat="dd-mm-yy"
+              <p-calendar appendTo="body" inputId="start_date" formControlName="start_date" dateFormat="dd-mm-yy"
                 (onSelect)="onDateSelect($event)" [hideOnDateTimeSelect]="false" [showTime]="true" #startDateTime>
                 <p-footer><button class="btn btn-main"
                     (click)="startDateTime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
@@ -48,7 +48,7 @@
             <label for="end_date" class="col-md-6 col-form-label text-secondary">{{'VOYAGE_POP_UP_END_DATE_LABEL' |
               translate}}</label>
             <div class="col-md-6">
-              <p-calendar appendTo="body" inputId="basic" formControlName="end_date" dateFormat="dd-mm-yy"
+              <p-calendar appendTo="body" inputId="end_date" formControlName="end_date" dateFormat="dd-mm-yy"
                 (onSelect)="onDateSelect($event)" [hideOnDateTimeSelect]="false" [showTime]="true" #endDateTime>
                 <p-footer><button class="btn btn-main"
                     (click)="endDateTime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
