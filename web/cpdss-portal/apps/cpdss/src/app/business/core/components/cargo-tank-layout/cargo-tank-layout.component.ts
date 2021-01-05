@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ICargoTank, ITank } from '../../../core/models/common.model';
+import { ICargoTank, ITank, ITankOptions } from '../../../core/models/common.model';
 
 
 
@@ -16,7 +16,8 @@ import { ICargoTank, ITank } from '../../../core/models/common.model';
   styleUrls: ['./cargo-tank-layout.component.scss']
 })
 export class CargoTankLayoutComponent implements OnInit {
-  @Input() isFullyFilled = false;
+
+  @Input() options: ITankOptions = { 'isFullyFilled': false };
 
   @Input()
   get tanks(): ICargoTank[][] {
@@ -24,9 +25,12 @@ export class CargoTankLayoutComponent implements OnInit {
   }
 
   set tanks(tanks: ICargoTank[][]) {
-    this._tanks = tanks.map(group => group.map(tank => {
+    this._tanks = tanks?.map(group => group.map(tank => {
       tank.gridColumn = this.gridColumn(group, tank);
-      tank.percentageFilled = this.isFullyFilled ? '100%' : this.getFillingPercentage(tank);
+      if (!this.options?.fillingPercentageField) {
+        tank.percentageFilled = this.options?.isFullyFilled ? '100' : this.getFillingPercentage(tank);
+      }
+
       return tank;
     }));
   }
@@ -34,7 +38,7 @@ export class CargoTankLayoutComponent implements OnInit {
   @Input() selectedTankId: number;
 
   @Output() selectedTankIdChange = new EventEmitter<number>();
-  
+
   private _tanks: ICargoTank[][];
   constructor() { }
 
@@ -98,7 +102,7 @@ export class CargoTankLayoutComponent implements OnInit {
     if (isNaN(fillingratio)) {
       fillingratio = 0;
     }
-    return ((fillingratio).toString() + '%');
+    return fillingratio;
   }
 
 
@@ -126,13 +130,13 @@ export class CargoTankLayoutComponent implements OnInit {
     return `${currentTankStart} / ${currentTankEnd}`;
   }
 
-    /**
-   * Method for tank selection event
-   *
-   * @param {*} $event
-   * @param {*} tankId
-   * @memberof CargoTankLayoutComponent
-   */
+  /**
+ * Method for tank selection event
+ *
+ * @param {*} $event
+ * @param {*} tankId
+ * @memberof CargoTankLayoutComponent
+ */
   onTankSelect($event, tankId) {
     this.selectedTankId = tankId;
     this.selectedTankIdChange.emit(tankId);

@@ -1,5 +1,5 @@
 import { IResponseStatus } from '../../../shared/models/common.model';
-import { ICargoTank } from '../../core/models/common.model';
+import { ICargoTank, ILoadableCargo } from '../../core/models/common.model';
 
 
 /**
@@ -36,7 +36,7 @@ export interface ILoadablePattern {
  * @export
  * @interface ILoadablePatternCargoDetail
  */
-export interface ILoadablePatternCargoDetail {
+export interface ILoadablePatternCargoDetail extends ILoadableCargo {
     priority: number;
     cargoAbbreviation: string;
     cargoColor: string;

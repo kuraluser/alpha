@@ -1,4 +1,4 @@
-<div class="tank-outer-pattern">
+<div class="tank-outer-pattern" [ngClass]="options?.class">
     <div class="ship-front-pattern"></div>
     <div class="ship-rear-pattern">
         <div class="rear-top-pattern"></div>
@@ -10,12 +10,27 @@
         <div class="tank-column-pattern" *ngFor="let group of tanks"
             [ngStyle]="{'width':getTankGroupWidthPercentage(tanks[0],group,tanks[tanks.length-1])}">
             <div *ngFor="let tank of group" [ngStyle]="{'grid-column': tank?.gridColumn}"
-             [class.active]="tank?.id === selectedTankId" (click)="onTankSelect($event, tank?.id)">
+                [class.active]="tank?.id === selectedTankId" (click)="onTankSelect($event, tank?.id)">
                 <div [ngStyle]="{'background':tank.commodity?.cargoColor, 'height': tank.percentageFilled}"
                     class="tank-level-pattern">
 
                 </div>
                 <h5 class="tank-name">{{tank?.shortName}}</h5>
+                <ng-container *ngIf="tank?.commodity">
+                    <span *ngIf="options?.showCommodityName"
+                        class="tank-commodity-name">{{tank?.commodity?.cargoAbbreviation}}</span>
+                    <span *ngIf="options?.showVolume"
+                        class="tank-commodity-volume">{{tank?.commodity[options?.volumeField]}}
+                        {{options?.volumeUnit}}</span>
+                    <span *ngIf="options?.showWeight"
+                        class="tank-commodity-weight">{{tank?.commodity[options?.weightField]}}
+                        {{options?.weightUnit}}</span>
+                    <span *ngIf="options?.showUllage"
+                        class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField]}}
+                        {{options?.ullageUnit}}</span>
+                    <span *ngIf="options?.showFillingPercentage"
+                        class="tank-filling-percentage">{{options?.fillingPercentageField ? tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}%</span>
+                </ng-container>
             </div>
         </div>
     </div>

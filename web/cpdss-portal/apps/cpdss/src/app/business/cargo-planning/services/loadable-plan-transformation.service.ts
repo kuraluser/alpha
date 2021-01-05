@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ITableHeaderModel , ILoadableQuantityCargo } from '../models/loadable-plan.model';
+import { ICargoTank } from '../../core/models/common.model';
+import { CargoPlanningModule } from '../cargo-planning.module';
+import { ITableHeaderModel, ILoadableQuantityCargo, ICargoTankDetail } from '../models/loadable-plan.model';
 
 /**
  * Transformation Service for Lodable Plan details module
@@ -9,7 +11,7 @@ import { ITableHeaderModel , ILoadableQuantityCargo } from '../models/loadable-p
 */
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: CargoPlanningModule
 })
 
 export class LoadablePlanTransformationService {
@@ -146,6 +148,20 @@ export class LoadablePlanTransformationService {
   */
   decimalConvertion(_decimalPipe: any, value: string | number) {
     return _decimalPipe.transform(value, '1.2-4');
+  }
+
+  /**
+   * Method for formatting cargo tanks data
+   *
+   * @param {ICargoTank[][]} cargoTank
+   * @param {ICargoTankDetail[]} cargoTankDetails
+   * @returns {ICargoTank[][]}
+   * @memberof LoadablePlanTransformationService
+   */
+  formatCargoTanks(cargoTank: ICargoTank, cargoTankDetails: ICargoTankDetail[]): ICargoTank {
+    cargoTank.commodity = cargoTankDetails?.find(cargo => cargoTank?.id === cargo?.tankId);
+
+    return cargoTank;
   }
 
 }

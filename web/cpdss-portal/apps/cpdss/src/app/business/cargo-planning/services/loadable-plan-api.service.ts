@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
+import { CargoPlanningModule } from '../cargo-planning.module';
 import { ILoadablePlanResponse } from '../models/loadable-plan.model';
 
 /**
@@ -11,7 +12,7 @@ import { ILoadablePlanResponse } from '../models/loadable-plan.model';
 */
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: CargoPlanningModule
 })
 
 export class LoadablePlanApiService {

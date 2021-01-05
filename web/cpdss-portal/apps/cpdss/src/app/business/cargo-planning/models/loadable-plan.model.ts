@@ -1,4 +1,5 @@
 import { IResponseStatus } from '../../../shared/models/common.model';
+import { ICargoTank, ILoadableCargo } from '../../core/models/common.model';
 
 /**
  * Interface for loadable quality plan table 
@@ -31,8 +32,10 @@ interface IColumHeader {
  */
 export interface ILoadablePlanResponse {
     responseStatus: IResponseStatus;
-    loadableQuantityCargoDetails: ILoadableQuantityCargo[],
-    loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[]
+    loadableQuantityCargoDetails: ILoadableQuantityCargo[];
+    loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
+    tankLists: ICargoTank[][];
+    loadablePlanStowageDetails: ICargoTankDetail[];
 }
 
 /**
@@ -85,4 +88,27 @@ export interface ITotalLoadableQuality {
     loadableMT: number,
     loadableKL: number,
     differencePercentage: number
+}
+
+/**
+ * Interface for cargo tank details
+ *
+ * @export
+ * @interface ICargoTankDetail
+ */
+export interface ICargoTankDetail extends ILoadableCargo {
+    id: number;
+    tankId: number;
+    cargoAbbreviation: string;
+    weight: number;
+    correctedUllage: number;
+    fillingRatio: number;
+    tankName: string;
+    rdgUllage: number;
+    correctionFactor: number;
+    observedM3: number;
+    observedBarrels: number;
+    observedBarrelsAt60: number;
+    api: number;
+    temperature: number;
 }
