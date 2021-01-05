@@ -64,7 +64,7 @@ export class LoadablePlanTransformationService {
       { field: 'tankName', header: 'TANK' , rowspan: 2 },
       { field: 'quantity', header: 'QUANTITY (BLS)' , rowspan: 2 },
       { field: 'api', header: 'API' , rowspan: 2 },
-      { field: 'temp', header: 'TEMP(F)' , rowspan: 2 },
+      { field: 'temp', header: 'TEMP (F)' , rowspan: 2 },
       {
         header: 'COMPOSITION BREAKDOWN' , colspan: 6 , subColumns: [
           { field: 'cargoPercentage', header: 'PERCENTAGE' },
@@ -166,7 +166,7 @@ export class LoadablePlanTransformationService {
   _loadablePlanCommingleCargoDetails.temp = this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.temp , '1.2-4');
   _loadablePlanCommingleCargoDetails.cargoPercentage = loadablePlanCommingleCargoDetails.cargo1Abbreviation + ' - ' + loadablePlanCommingleCargoDetails.cargo1Percentage + '%' + '<br>' + loadablePlanCommingleCargoDetails.cargo2Abbreviation + ' - ' + loadablePlanCommingleCargoDetails.cargo2Percentage + '%';
   _loadablePlanCommingleCargoDetails.cargoBblsdbs = loadablePlanCommingleCargoDetails.cargo1Bblsdbs + '<br>' + loadablePlanCommingleCargoDetails.cargo2Bblsdbs;
-  _loadablePlanCommingleCargoDetails.cargoBbls60f = this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo1Bbls60f , '1.2-4') + '<br>' + this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo2Bbls60f , '1.2-4');
+  _loadablePlanCommingleCargoDetails.cargoBbls60f =  loadablePlanCommingleCargoDetails.cargo1Bbls60f  + '<br>' +  loadablePlanCommingleCargoDetails.cargo2Bbls60f;
   _loadablePlanCommingleCargoDetails.cargoLT = this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo1LT , '1.2-4') + '<br>' + this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo2LT , '1.2-4');
   _loadablePlanCommingleCargoDetails.cargoMT = this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo1MT , '1.2-4') + '<br>' + this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo2MT , '1.2-4' );
   _loadablePlanCommingleCargoDetails.cargoKL = this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo1KL , '1.2-4') + '<br>' + this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo2KL , '1.2-4');

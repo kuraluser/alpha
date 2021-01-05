@@ -33,30 +33,7 @@ export class LoadableQuantityComponent implements OnInit {
   }
 
   get loadableQuantityCommingleCargoDetails(): ILoadableQuantityCommingleCargo[] {
-    return [
-      {
-        "id": 1,
-        "grade": "GET",
-        "tankName": "4C",
-        "quantity": "1000",
-        "api": "22",
-        "temp": "20",
-        "cargo1Abbreviation": "AER",
-        "cargo2Abbreviation": "APP",
-        "cargo1Percentage": "40",
-        "cargo2Percentage": "60",
-        "cargo1Bblsdbs": "20",
-        "cargo2Bblsdbs": "300",
-        "cargo1Bbls60f": "400",
-        "cargo2Bbls60f": "500",
-        "cargo1LT": "60",
-        "cargo2LT": "40",
-        "cargo1MT": "300",
-        "cargo2MT": "200",
-        "cargo1KL": "500",
-        "cargo2KL": "800"
-      }
-    ];
+    return this._loadableQuantityCommingleCargoDetails;
   }
 
   public columns: ITableHeaderModel[];
