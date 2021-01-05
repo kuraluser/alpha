@@ -11,6 +11,7 @@ export interface ITableHeaderModel {
     header: string;
     rowspan?: number;
     colspan?: number,
+    className?: string,
     subColumns?: IColumHeader[];
 }
 

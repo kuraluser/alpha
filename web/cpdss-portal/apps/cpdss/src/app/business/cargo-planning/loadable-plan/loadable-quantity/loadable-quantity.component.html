@@ -7,7 +7,9 @@
             <ng-template pTemplate="header" let-columns>
                 <ng-container>
                     <tr>
-                        <th *ngFor="let col of columns; let colIndex = index" [attr.colspan]="col.colspan" [attr.rowspan]="col.rowspan"><div>{{col.header}}</div></th>
+                        <th *ngFor="let col of columns; let colIndex = index" [attr.colspan]="col.colspan" [attr.rowspan]="col.rowspan">
+                            <div [class]="col.className">{{col.header}}</div>
+                        </th>
                     </tr>
                     <tr>
                         <ng-container *ngFor="let col of columns; let colIndex = index">
@@ -37,11 +39,11 @@
             <ng-template pTemplate="footer">
                 <tr>
                     <td colspan="3">Total</td>
-                    <td>{{total.orderBblsdbs | number :'1.2-4'}}</td>
-                    <td>{{total.orderBbls60f | number :'1.2-4'}}</td>
+                    <td>{{total.orderBblsdbs | number :'1.0-4'}}</td>
+                    <td>{{total.orderBbls60f | number :'1.0-4'}}</td>
                     <td colspan="2"></td>
-                    <td>{{total.loadableBblsdbs | number :'1.2-4'}}</td>
-                    <td>{{total.loadableBbls60f | number :'1.2-4'}}</td>
+                    <td>{{total.loadableBblsdbs | number :'1.0-4'}}</td>
+                    <td>{{total.loadableBbls60f | number :'1.0-4'}}</td>
                     <td>{{total.loadableLT | number :'1.2-4'}}</td>
                     <td>{{total.loadableMT | number :'1.2-4'}}</td>
                     <td>{{total.loadableKL | number :'1.2-4'}}</td>
