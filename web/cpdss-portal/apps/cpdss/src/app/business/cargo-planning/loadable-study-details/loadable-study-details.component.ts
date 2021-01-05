@@ -97,6 +97,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadableQuantityNew = '0';
     this.initSubsciptions();
     this.activatedRoute.paramMap.subscribe(params => {
       this.vesselId = Number(params.get('vesselId'));
@@ -296,6 +297,8 @@ export class LoadableStudyDetailsComponent implements OnInit {
         this.selectedLoadableStudy = loadableStudies[0];
       } else {
         this.loadableStudyId = 0;
+        this.loadableQuantityNew = '0';
+        this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(0);
       }
     }
     this.loadableStudies.splice(event?.index, 1);

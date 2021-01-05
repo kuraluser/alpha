@@ -82,7 +82,7 @@
 
 
             <label class="pr-20">{{'LOADABLE_STUDY_DETAILS_LOADABLE_QUANTITY_LABEL'| translate}}
-                <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button"
+                <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button" [disabled]="!loadableStudies?.length"
                     (click)="showLoadableQuantityPopup()"
                     *cpdssPortalPermission="loadableQuantityPermissionContext">{{loadableQuantityNew | number : '1.2-2'}}</button></label>
 
@@ -92,18 +92,18 @@
         </div>
         <div class="pr-15"  *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
             <button id="commingle_btn" class="btn btn-main  ml-10" type="button"
-                (click)="showComminglePopup()" [disabled]="showCommingleButton" *cpdssPortalPermission="addCommingleBtnPermissionContext">{{'COMMINGLE_BUTTON' | translate}}</button>
+                (click)="showComminglePopup()" [disabled]="showCommingleButton || !loadableStudies?.length" *cpdssPortalPermission="addCommingleBtnPermissionContext">{{'COMMINGLE_BUTTON' | translate}}</button>
         </div>
         <div class="pr-15">
             <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
-                <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
+                <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right" [ngClass]="{'disabled': !loadableStudies?.length}"
                     *cpdssPortalPermission="addCargoBtnPermissionContext"
                     (click)="addCargoNomination()">{{'ADD_CARGO_BUTTON_LABEL'| translate}}</a>
             </ng-container>
         </div>
         <div class="pr-15">
             <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">
-                <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
+                <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right" [ngClass]="{'disabled': !loadableStudies?.length}"
                     *cpdssPortalPermission="addPortBtnPermissionContext"
                     (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'| translate}}</a>
             </ng-container>
