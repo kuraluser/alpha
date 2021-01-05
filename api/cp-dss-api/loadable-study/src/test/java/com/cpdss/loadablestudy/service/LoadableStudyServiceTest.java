@@ -22,6 +22,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsR
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse;
@@ -54,6 +56,9 @@ import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
@@ -70,8 +75,11 @@ import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
@@ -80,6 +88,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
@@ -129,6 +138,13 @@ class LoadableStudyServiceTest {
   @MockBean private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @MockBean private CargoOperationRepository cargoOperationRepository;
   @MockBean private LoadableStudyStatusRepository loadableStudyStatusRepository;
+  @MockBean private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
+
+  @MockBean
+  private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
+
+  @MockBean private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
+  @MockBean private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
 
   @MockBean private LoadablePatternDetailsRepository loadablePatternDetailsRepository;
   @MockBean private LoadablePatternRepository loadablePatternRepository;
@@ -1203,7 +1219,9 @@ class LoadableStudyServiceTest {
     builder.setOperationId(ID_TEST_VALUE);
     builder.setDistanceBetweenPorts(NUMERICAL_TEST_VALUE);
     builder.setEta(DATE_TIME_TEST_VALUE);
+    builder.setEtaActual(DATE_TIME_TEST_VALUE);
     builder.setEtd(DATE_TIME_TEST_VALUE);
+    builder.setEtdActual(DATE_TIME_TEST_VALUE);
     builder.setLayCanFrom(DATE_TEST_VALUE);
     builder.setLayCanTo(DATE_TEST_VALUE);
     builder.setMaxAirDraft(NUMERICAL_TEST_VALUE);
@@ -1956,6 +1974,11 @@ class LoadableStudyServiceTest {
     assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
   }
 
+  /**
+   * testConfirmPlanInvalidLoadablePatternId
+   *
+   * <p>void
+   */
   @Test
   void testConfirmPlanInvalidLoadablePatternId() {
     when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
@@ -1968,6 +1991,11 @@ class LoadableStudyServiceTest {
     assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, results.get(0).getResponseStatus().getCode());
   }
 
+  /**
+   * testConfirmPlanRuntimeException
+   *
+   * <p>void
+   */
   @Test
   void testConfirmPlanRuntimeException() {
     when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
@@ -1993,11 +2021,152 @@ class LoadableStudyServiceTest {
     loadablePattern.setId(1L);
     LoadableStudy loadableStudy = new LoadableStudy();
     loadableStudy.setId(1L);
+    loadableStudy.setVesselXId(1L);
     Voyage voyage = new Voyage();
     voyage.setId(1L);
     loadableStudy.setVoyage(voyage);
     loadablePattern.setLoadableStudy(loadableStudy);
     return loadablePattern;
+  }
+  /**
+   * testGetLoadablePlanDetails
+   *
+   * <p>void
+   */
+  @Test
+  void testGetLoadablePlanDetails() {
+
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    Mockito.doReturn(this.createVesselReply().build())
+        .when(spyService)
+        .getVesselTanks(any(VesselRequest.class));
+
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(createLoadablePattern()));
+
+    when(this.loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(preparePlanQuantity());
+
+    when(this.loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(preparePlanCommingleDetails());
+
+    when(this.loadablePlanStowageDetailsRespository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(preparePlanStowageDetails());
+
+    StreamRecorder<LoadablePlanDetailsReply> responseObserver = StreamRecorder.create();
+    spyService.getLoadablePlanDetails(this.createGetLoadablePlanDetails(), responseObserver);
+    List<LoadablePlanDetailsReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /**
+   * testGetLoadablePlanDetailsInvalidTankDetails
+   *
+   * <p>void
+   */
+  @Test
+  void testGetLoadablePlanDetailsInvalidTankDetails() {
+
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    Mockito.doReturn(
+            this.createVesselReply()
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build())
+                .build())
+        .when(spyService)
+        .getVesselTanks(any(VesselRequest.class));
+
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(createLoadablePattern()));
+
+    when(this.loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(preparePlanQuantity());
+
+    when(this.loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(preparePlanCommingleDetails());
+
+    when(this.loadablePlanStowageDetailsRespository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(preparePlanStowageDetails());
+
+    StreamRecorder<LoadablePlanDetailsReply> responseObserver = StreamRecorder.create();
+    spyService.getLoadablePlanDetails(this.createGetLoadablePlanDetails(), responseObserver);
+    List<LoadablePlanDetailsReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /**
+   * testGetLoadablePlanDetailsInvalidLoadablePatternId
+   *
+   * <p>void
+   */
+  @Test
+  void testGetLoadablePlanDetailsInvalidLoadablePatternId() {
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    StreamRecorder<LoadablePlanDetailsReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.getLoadablePlanDetails(
+        this.createGetLoadablePlanDetails(), responseObserver);
+    List<LoadablePlanDetailsReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, results.get(0).getResponseStatus().getCode());
+  }
+
+  /**
+   * testGetLoadablePlanDetailsRuntimeException
+   *
+   * <p>void
+   */
+  @Test
+  void testGetLoadablePlanDetailsRuntimeException() {
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(RuntimeException.class);
+    StreamRecorder<LoadablePlanDetailsReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.getLoadablePlanDetails(
+        this.createGetLoadablePlanDetails(), responseObserver);
+    List<LoadablePlanDetailsReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /** @return List<LoadablePlanStowageDetails> */
+  private List<LoadablePlanStowageDetails> preparePlanStowageDetails() {
+    List<LoadablePlanStowageDetails> loadablePlanStowageDetails =
+        new ArrayList<LoadablePlanStowageDetails>();
+    loadablePlanStowageDetails.add(new LoadablePlanStowageDetails());
+    return loadablePlanStowageDetails;
+  }
+
+  /** @return List<LoadablePlanCommingleDetails> */
+  private List<LoadablePlanCommingleDetails> preparePlanCommingleDetails() {
+    List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
+        new ArrayList<LoadablePlanCommingleDetails>();
+    loadablePlanCommingleDetails.add(new LoadablePlanCommingleDetails());
+    return loadablePlanCommingleDetails;
+  }
+
+  /** @return List<LoadablePlanQuantity> */
+  private List<LoadablePlanQuantity> preparePlanQuantity() {
+    List<LoadablePlanQuantity> loadablePlanQuantities = new ArrayList<LoadablePlanQuantity>();
+    loadablePlanQuantities.add(new LoadablePlanQuantity());
+    return loadablePlanQuantities;
+  }
+
+  /** @return LoadablePlanDetailsRequest */
+  private LoadablePlanDetailsRequest createGetLoadablePlanDetails() {
+    LoadablePlanDetailsRequest.Builder builder = LoadablePlanDetailsRequest.newBuilder();
+    builder.setLoadablePatternId(1L);
+    return builder.build();
   }
 
   /**

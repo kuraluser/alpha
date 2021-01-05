@@ -28,6 +28,7 @@ import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.SynopticalTableRequest;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
@@ -197,6 +198,7 @@ public class LoadableStudyController {
   public LoadableStudyResponse saveLoadableStudy(
       @PathVariable Long vesselId,
       @PathVariable Long voyageId,
+      @PathVariable Long loadableStudyId,
       @Valid final LoadableStudy request,
       @Size(max = 5, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           @RequestParam(name = "files", required = false)
@@ -208,6 +210,8 @@ public class LoadableStudyController {
       request.setVesselId(vesselId);
       request.setVoyageId(voyageId);
       request.setCompanyId(1L);
+      request.setId(loadableStudyId);
+
       return this.loadableStudyService.saveLoadableStudy(
           request, headers.getFirst(CORRELATION_ID_HEADER), files);
     } catch (GenericServiceException e) {
@@ -1021,6 +1025,42 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception getSynopticalTable", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @PostMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/synoptical-table",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public SynopticalTableResponse saveSynopticalTable(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @Valid @RequestBody SynopticalTableRequest request,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.debug(
+          "saveSynopticalTable controller method, correlationId:{}",
+          headers.getFirst(CORRELATION_ID_HEADER));
+      log.debug(
+          "saveSynopticalTable, request: {}, correlationId:{}",
+          request,
+          headers.getFirst(CORRELATION_ID_HEADER));
+      return this.loadableStudyService.saveSynopticalTable(
+          request, voyageId, loadableStudyId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving snynoptical table record", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when saving snynoptical table record", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

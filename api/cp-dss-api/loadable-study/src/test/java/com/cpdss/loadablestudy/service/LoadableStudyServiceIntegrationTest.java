@@ -13,6 +13,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
@@ -21,15 +22,22 @@ import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
+import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import io.grpc.internal.testing.StreamRecorder;
 import java.util.ArrayList;
@@ -71,8 +79,18 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private CargoNominationRepository cargoNominationRepository;
 
   @MockBean private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
-
+  @MockBean private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
   @MockBean private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
+
+  @MockBean
+  private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
+
+  @MockBean private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
+  @MockBean private CargoHistoryRepository cargoHistoryRepository;
+  @MockBean private VoyageHistoryRepository voyageHistoryRepository;
+  @MockBean private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
+  @MockBean private SynopticalTableRepository synopticalTableRepository;
+  @MockBean private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
 
   @MockBean private CargoNominationValveSegregationRepository valveSegregationRepository;
 

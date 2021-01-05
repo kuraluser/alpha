@@ -87,6 +87,7 @@ import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePlanStowageDetails;
 import com.cpdss.gateway.domain.LoadableQuantity;
+import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
@@ -118,6 +119,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -375,6 +377,7 @@ public class LoadableStudyService {
         .ifPresent(maxTemp -> builder.setMaxWaterTemperature(String.valueOf(maxTemp)));
     Optional.ofNullable(request.getVesselId()).ifPresent(builder::setVesselId);
     Optional.ofNullable(request.getVoyageId()).ifPresent(builder::setVoyageId);
+    Optional.ofNullable(request.getId()).ifPresent(builder::setId);
     Optional.ofNullable(request.getCreatedFromId()).ifPresent(builder::setDuplicatedFromId);
     for (MultipartFile file : files) {
       String orginalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
@@ -870,6 +873,10 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getTimeOfStay())
         .ifPresent(item -> builder.setTimeOfStay(valueOf(request.getTimeOfStay())));
     Optional.ofNullable(request.getPortOrder()).ifPresent(builder::setPortOrder);
+    Optional.ofNullable(request.getEtaActual())
+        .ifPresent(item -> builder.setEtaActual(valueOf(request.getEtaActual())));
+    Optional.ofNullable(request.getEtdActual())
+        .ifPresent(item -> builder.setEtdActual(valueOf(request.getEtdActual())));
     return builder.build();
   }
 
@@ -1935,12 +1942,9 @@ public class LoadableStudyService {
       dto.setCargoId(0 == detail.getCargoId() ? null : detail.getCargoId());
       dto.setColorCode(isEmpty(detail.getColorCode()) ? null : detail.getColorCode());
       dto.setAbbreviation(isEmpty(detail.getAbbreviation()) ? null : detail.getAbbreviation());
-      dto.setSounding(
-          isEmpty(detail.getSounding()) ? BigDecimal.ZERO : new BigDecimal(detail.getSounding()));
-      dto.setWeight(
-          isEmpty(detail.getWeight()) ? BigDecimal.ZERO : new BigDecimal(detail.getWeight()));
-      dto.setVolume(
-          isEmpty(detail.getVolume()) ? BigDecimal.ZERO : new BigDecimal(detail.getVolume()));
+      dto.setSounding(isEmpty(detail.getSounding()) ? null : new BigDecimal(detail.getSounding()));
+      dto.setWeight(isEmpty(detail.getWeight()) ? null : new BigDecimal(detail.getWeight()));
+      dto.setVolume(isEmpty(detail.getVolume()) ? null : new BigDecimal(detail.getVolume()));
       dto.setTankId(detail.getTankId());
       dto.setTankName(detail.getTankName());
       response.getOnBoardQuantities().add(dto);
@@ -2454,10 +2458,50 @@ public class LoadableStudyService {
           HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }
     buildLoadableStudyQuantity(response, grpcReply);
+    buildloadableStudyCommingleCargoDetails(response, grpcReply);
     buildLoadableStudyStowageDetails(response, grpcReply);
+    response.setTankLists(createGroupWiseTankList(grpcReply.getTanksList()));
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
+  }
+
+  /**
+   * @param response
+   * @param grpcReply void
+   */
+  private void buildloadableStudyCommingleCargoDetails(
+      LoadablePlanDetailsResponse response, LoadablePlanDetailsReply grpcReply) {
+    response.setLoadableQuantityCommingleCargoDetails(
+        new ArrayList<LoadableQuantityCommingleCargoDetails>());
+    grpcReply
+        .getLoadableQuantityCommingleCargoDetailsList()
+        .forEach(
+            lqccd -> {
+              LoadableQuantityCommingleCargoDetails details =
+                  new LoadableQuantityCommingleCargoDetails();
+              details.setId(lqccd.getId());
+              details.setApi(lqccd.getApi());
+              details.setCargo1Abbreviation(lqccd.getCargo1Abbreviation());
+              details.setCargo1Bbls60f(lqccd.getCargo1Bbls60F());
+              details.setCargo1Bblsdbs(lqccd.getCargo1Bblsdbs());
+              details.setCargo1KL(lqccd.getCargo1KL());
+              details.setCargo1LT(lqccd.getCargo1LT());
+              details.setCargo1MT(lqccd.getCargo1MT());
+              details.setCargo1Percentage(lqccd.getCargo1Percentage());
+              details.setCargo2Abbreviation(lqccd.getCargo2Abbreviation());
+              details.setCargo2Bbls60f(lqccd.getCargo2Bbls60F());
+              details.setCargo2Bblsdbs(lqccd.getCargo2Bblsdbs());
+              details.setCargo2KL(lqccd.getCargo2KL());
+              details.setCargo2LT(lqccd.getCargo2LT());
+              details.setCargo2MT(lqccd.getCargo2MT());
+              details.setCargo2Percentage(lqccd.getCargo2Percentage());
+              details.setGrade(lqccd.getGrade());
+              details.setQuantity(lqccd.getQuantity());
+              details.setTankName(lqccd.getTankName());
+              details.setTemp(lqccd.getTemp());
+              response.getLoadableQuantityCommingleCargoDetails().add(details);
+            });
   }
 
   /**
@@ -2528,7 +2572,7 @@ public class LoadableStudyService {
    * @param request
    * @return LoadablePlanDetailsReply
    */
-  private LoadablePlanDetailsReply getLoadablePatternDetails(
+  public LoadablePlanDetailsReply getLoadablePatternDetails(
       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.Builder request) {
     return this.loadableStudyServiceBlockingStub.getLoadablePlanDetails(request.build());
   }
@@ -2575,6 +2619,137 @@ public class LoadableStudyService {
       Long loadableStudyId, String correlationId) {
     LoadableStudyStatusRequest.Builder builder = LoadableStudyStatusRequest.newBuilder();
     builder.setLoadableStudyId(loadableStudyId);
+    return builder.build();
+  }
+
+  /**
+   * Save synoptical records
+   *
+   * @param request
+   * @param voyageId
+   * @param loadableStudyId
+   * @param first
+   * @return
+   * @throws InterruptedException
+   */
+  public SynopticalTableResponse saveSynopticalTable(
+      com.cpdss.gateway.domain.SynopticalTableRequest request,
+      Long voyageId,
+      Long loadableStudyId,
+      String correlationId)
+      throws GenericServiceException, InterruptedException {
+    log.info("LoadableStudyService: saveSynopticalTable, correlationId:{}", correlationId);
+    log.debug(
+        "LoadableStudyService: saveSynopticalTable, request: {}, voyageId: {}, loadbleStudyId:{}",
+        request,
+        voyageId,
+        loadableStudyId);
+    SynopticalTableResponse response = new SynopticalTableResponse();
+    List<Long> failedRecords = new ArrayList<>();
+    CountDownLatch latch = new CountDownLatch(request.getSynopticalRecords().size());
+    List<Thread> workers = new ArrayList<>();
+    for (SynopticalRecord record : request.getSynopticalRecords()) {
+      SynopticalTableRequest grpcRequest =
+          this.buildSynopticalTableRequest(record, loadableStudyId, correlationId);
+      workers.add(
+          new Thread(
+              () ->
+                  this.saveSynopticalTable(
+                      grpcRequest, correlationId, failedRecords, record.getId(), latch)));
+    }
+    workers.forEach(Thread::start);
+    latch.await();
+    if (!failedRecords.isEmpty()) {
+      response.setFailedRecords(failedRecords);
+      response.setResponseStatus(
+          new CommonSuccessResponse(
+              String.valueOf(HttpStatus.MULTI_STATUS.value()), correlationId));
+    } else {
+      response.setResponseStatus(
+          new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    }
+    return response;
+  }
+
+  /**
+   * Call grpc service for saving synoptical table
+   *
+   * @param grpcRequest
+   * @return
+   */
+  private void saveSynopticalTable(
+      SynopticalTableRequest grpcRequest,
+      String correlationId,
+      List<Long> failedRecords,
+      Long id,
+      CountDownLatch latch) {
+    try {
+      log.debug("calling grpc serice: saveSynopticalTable, correationId: {}", correlationId);
+      SynopticalTableReply grpcReply =
+          this.loadableStudyServiceBlockingStub.saveSynopticalTable(grpcRequest);
+      if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+        failedRecords.add(id);
+      }
+    } catch (Exception e) {
+      log.error("Error calling synoptical table save grpc service", e);
+    } finally {
+      latch.countDown();
+    }
+  }
+
+  /**
+   * Build synoptical record grpc object
+   *
+   * @param request
+   * @param loadableStudyId
+   * @return
+   */
+  private SynopticalTableRequest buildSynopticalTableRequest(
+      SynopticalRecord request, Long loadableStudyId, String correlationId) {
+    log.debug("building grpc request, correlationId:{}", correlationId);
+    SynopticalTableRequest.Builder builder = SynopticalTableRequest.newBuilder();
+    builder.setLoadableStudyId(loadableStudyId);
+    builder.setPortId(request.getPortId());
+    com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder =
+        com.cpdss.common.generated.LoadableStudy.SynopticalRecord.newBuilder();
+    recordBuilder.setId(request.getId());
+    recordBuilder.setOperationType(request.getOperationType());
+    Optional.ofNullable(request.getDistance())
+        .ifPresent(item -> recordBuilder.setDistance(valueOf(request.getDistance())));
+    Optional.ofNullable(request.getSpeed())
+        .ifPresent(item -> recordBuilder.setSpeed(valueOf(request.getSpeed())));
+    Optional.ofNullable(request.getRunningHours())
+        .ifPresent(item -> recordBuilder.setRunningHours(valueOf(request.getRunningHours())));
+    Optional.ofNullable(request.getInPortHours())
+        .ifPresent(item -> recordBuilder.setInPortHours(valueOf(request.getInPortHours())));
+    Optional.ofNullable(request.getInPortHours())
+        .ifPresent(item -> recordBuilder.setInPortHours(valueOf(request.getInPortHours())));
+    Optional.ofNullable(request.getTimeOfSunrise()).ifPresent(recordBuilder::setTimeOfSunrise);
+    Optional.ofNullable(request.getTimeOfSunset()).ifPresent(recordBuilder::setTimeOfSunset);
+
+    Optional.ofNullable(request.getHwTideFrom())
+        .ifPresent(item -> recordBuilder.setHwTideFrom(valueOf(request.getHwTideFrom())));
+    Optional.ofNullable(request.getHwTideTo())
+        .ifPresent(item -> recordBuilder.setHwTideTo(valueOf(request.getHwTideTo())));
+    Optional.ofNullable(request.getHwTideTimeFrom())
+        .ifPresent(item -> recordBuilder.setHwTideTimeFrom(valueOf(request.getHwTideTimeFrom())));
+    Optional.ofNullable(request.getHwTideTimeTo())
+        .ifPresent(item -> recordBuilder.setHwTideTimeTo(valueOf(request.getHwTideTimeTo())));
+
+    Optional.ofNullable(request.getLwTideFrom())
+        .ifPresent(item -> recordBuilder.setLwTideFrom(valueOf(request.getLwTideFrom())));
+    Optional.ofNullable(request.getLwTideTo())
+        .ifPresent(item -> recordBuilder.setLwTideTo(valueOf(request.getLwTideTo())));
+    Optional.ofNullable(request.getLwTideTimeFrom())
+        .ifPresent(item -> recordBuilder.setLwTideTimeFrom(valueOf(request.getLwTideTimeFrom())));
+    Optional.ofNullable(request.getLwTideTimeTo())
+        .ifPresent(item -> recordBuilder.setLwTideTimeTo(valueOf(request.getLwTideTimeTo())));
+
+    Optional.ofNullable(request.getSpecificGravity())
+        .ifPresent(item -> recordBuilder.setSpecificGravity(valueOf(request.getSpecificGravity())));
+    Optional.ofNullable(request.getEtaEtdActual()).ifPresent(recordBuilder::setEtaEtdActual);
+    Optional.ofNullable(request.getEtaEtdPlanned()).ifPresent(recordBuilder::setEtaEtdEstimated);
+    builder.setSynopticalRecord(recordBuilder.build());
     return builder.build();
   }
 }

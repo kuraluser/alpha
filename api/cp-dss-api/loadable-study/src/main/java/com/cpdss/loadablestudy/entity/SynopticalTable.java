@@ -34,26 +34,26 @@ public class SynopticalTable extends EntityDoc {
   @Column(name = "distance")
   private BigDecimal distance;
 
+  @Column(name = "speed")
+  private BigDecimal speed;
+
   @Column(name = "running_hours")
   private BigDecimal runningHours;
 
   @Column(name = "in_port_hours")
   private BigDecimal inPortHours;
 
-  @Column(name = "speed")
-  private BigDecimal speed;
+  @Column(name = "eta_actual")
+  private LocalDateTime etaActual;
 
-  @Column(name = "port_xid")
-  private Long portXid;
+  @Column(name = "etd_actual")
+  private LocalDateTime etdActual;
 
   @Column(name = "time_of_sunrise")
   private String timeOfSunrise;
 
   @Column(name = "time_of_sunset")
-  private String timeOfSunset;
-
-  @Column(name = "sea_water_sg")
-  private BigDecimal specificGravity;
+  private String timeOfSunSet;
 
   @Column(name = "hw_tide_from")
   private BigDecimal hwTideFrom;
@@ -79,14 +79,14 @@ public class SynopticalTable extends EntityDoc {
   @Column(name = "lw_tide_time_to")
   private LocalDateTime lwTideTimeTo;
 
+  @Column(name = "port_xid")
+  private Long portXid;
+
+  @Column(name = "sea_water_sg")
+  private BigDecimal specificGravity;
+
   @Column(name = "is_active")
   private Boolean isActive;
-
-  @Column(name = "eta_actual")
-  private LocalDateTime etaActual;
-
-  @Column(name = "etd_actual")
-  private LocalDateTime etdActual;
 
   @ManyToOne
   @JoinColumn(name = "port_rotation_xid")

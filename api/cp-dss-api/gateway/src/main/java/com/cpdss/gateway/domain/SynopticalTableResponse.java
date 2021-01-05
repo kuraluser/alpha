@@ -16,4 +16,8 @@ public class SynopticalTableResponse {
   private List<SynopticalRecord> synopticalRecords;
 
   private List<VesselTank> cargoTanks;
+
+  private Long id;
+
+  private List<Long> failedRecords;
 }
