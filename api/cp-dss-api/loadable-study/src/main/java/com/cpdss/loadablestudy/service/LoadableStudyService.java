@@ -31,6 +31,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
@@ -120,6 +122,7 @@ import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepos
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
@@ -191,6 +194,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
   @Autowired private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @Autowired private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
+
+  @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
+
   @Autowired private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
 
   @Autowired
@@ -578,6 +584,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 }
               });
         }
+
+        List<LoadableStudyAttachments> loadableStudyAttachments =
+            this.loadableStudyAttachmentsRepository.findByLoadableStudyXIdAndIsActive(
+                entity.getId(), true);
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder
+            loadableStudyAttachmentBuilder = LoadableStudyAttachment.newBuilder();
+        if (null != loadableStudyAttachments && !loadableStudyAttachments.isEmpty()) {
+          loadableStudyAttachments.forEach(
+              loadableStudyAttachment -> {
+                loadableStudyAttachmentBuilder.setFileName(
+                    loadableStudyAttachment.getUploadedFileName());
+                loadableStudyAttachmentBuilder.setId(loadableStudyAttachment.getId());
+
+                builder.addAttachments(loadableStudyAttachmentBuilder.build());
+              });
+        }
+
         replyBuilder.addLoadableStudies(builder.build());
       }
 
@@ -3321,9 +3344,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         isEmpty(record.getInPortHours()) ? null : new BigDecimal(record.getInPortHours()));
     entity.setTimeOfSunrise(record.getTimeOfSunrise());
     entity.setTimeOfSunSet(record.getTimeOfSunset());
+
     entity.setSpecificGravity(
         isEmpty(record.getSpecificGravity()) ? null : new BigDecimal(record.getSpecificGravity()));
-
     entity.setHwTideFrom(
         isEmpty(record.getHwTideFrom()) ? null : new BigDecimal(record.getHwTideFrom()));
     entity.setHwTideTo(isEmpty(record.getHwTideTo()) ? null : new BigDecimal(record.getHwTideTo()));
@@ -4277,4 +4300,36 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           });
     }
   }
+
+	@Override
+	public void downloadLoadableStudyAttachment(LoadableStudyAttachmentRequest request,
+			StreamObserver<LoadableStudyAttachmentReply> responseObserver) {
+		LoadableStudyAttachmentReply.Builder builder = LoadableStudyAttachmentReply.newBuilder();
+		try {
+
+			LoadableStudyAttachments attachment = loadableStudyAttachmentsRepository
+					.findByIdAndLoadableStudyXIdAndIsActive(request.getFileId(), request.getLoadableStudyId(), true);
+			if (null == attachment) {
+				throw new GenericServiceException("Attachment does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST,
+						HttpStatusCode.BAD_REQUEST);
+			}
+
+			String FILE_PATH = this.rootFolder +File.separator+ attachment.getFilePath() +File.separator+ attachment.getUploadedFileName();
+
+			builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+			builder.setFilePath(FILE_PATH);
+
+		} catch (GenericServiceException e) {
+			log.error("GenericServiceException in downloadLoadableStudyAttachment", e);
+			builder.setResponseStatus(
+					ResponseStatus.newBuilder().setStatus(FAILED).setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST).build());
+		} catch (Exception e) {
+			log.error("Exception in downloadLoadableStudyAttachment", e);
+			builder.setResponseStatus(
+					ResponseStatus.newBuilder().setStatus(FAILED).setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST).build());
+		} finally {
+			responseObserver.onNext(builder.build());
+			responseObserver.onCompleted();
+		}
+	}
 }

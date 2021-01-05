@@ -27,6 +27,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
@@ -90,6 +92,8 @@ import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
+import com.cpdss.gateway.domain.LoadableStudyAttachmentData;
+import com.cpdss.gateway.domain.LoadableStudyAttachmentResponse;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.LoadableStudyStatusResponse;
 import com.cpdss.gateway.domain.LoadingPort;
@@ -337,6 +341,20 @@ public class LoadableStudyService {
       dto.setDischargingPortIds(grpcReply.getDischargingPortIdsList());
       dto.setStatus(grpcReply.getStatus());
       dto.setStatusId(grpcReply.getStatusId());
+
+      List<LoadableStudyAttachmentData> attachmentList = new ArrayList();
+
+      grpcReply
+          .getAttachmentsList()
+          .forEach(
+              attachments -> {
+                LoadableStudyAttachmentData loadableStudyAttachment =
+                    new LoadableStudyAttachmentData();
+                loadableStudyAttachment.setFileName(attachments.getFileName());
+                loadableStudyAttachment.setId(attachments.getId());
+                attachmentList.add(loadableStudyAttachment);
+              });
+      dto.setLoadableStudyAttachment(attachmentList);
       list.add(dto);
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
@@ -2750,6 +2768,36 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getEtaEtdActual()).ifPresent(recordBuilder::setEtaEtdActual);
     Optional.ofNullable(request.getEtaEtdPlanned()).ifPresent(recordBuilder::setEtaEtdEstimated);
     builder.setSynopticalRecord(recordBuilder.build());
+    return builder.build();
+  }
+
+	public LoadableStudyAttachmentResponse downloadLoadableStudyAttachment(Long attachmentId, Long loadableStudyId,
+			String correlationId) throws GenericServiceException {
+		log.info("Inside downloadLoadableStudyAttachment gateway service with correlationId : " + correlationId);
+		LoadableStudyAttachmentResponse response = new LoadableStudyAttachmentResponse();
+
+		LoadableStudyAttachmentReply grpcReply = this.downloadLoadableStudyAttachment(
+				this.builddownloadLoadableStudyAttachmentRequest(attachmentId, loadableStudyId, correlationId));
+		if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+			throw new GenericServiceException("Failed to get download LoadableStudy Attachment",
+					grpcReply.getResponseStatus().getCode(),
+					HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+		}
+		response.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+		response.setFilePath(grpcReply.getFilePath());
+		return response;
+	}
+
+  public LoadableStudyAttachmentReply downloadLoadableStudyAttachment(
+      LoadableStudyAttachmentRequest grpcRequest) {
+    return this.loadableStudyServiceBlockingStub.downloadLoadableStudyAttachment(grpcRequest);
+  }
+
+  private LoadableStudyAttachmentRequest builddownloadLoadableStudyAttachmentRequest(
+      Long attachmentId, Long loadableStudyId, String correlationId) {
+    LoadableStudyAttachmentRequest.Builder builder = LoadableStudyAttachmentRequest.newBuilder();
+    builder.setFileId(attachmentId);
+    builder.setLoadableStudyId(loadableStudyId);
     return builder.build();
   }
 }

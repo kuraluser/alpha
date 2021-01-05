@@ -20,6 +20,7 @@ import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
+import com.cpdss.gateway.domain.LoadableStudyAttachmentResponse;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.LoadableStudyStatusResponse;
 import com.cpdss.gateway.domain.OnBoardQuantity;
@@ -33,6 +34,9 @@ import com.cpdss.gateway.domain.SynopticalTableResponse;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -40,8 +44,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -1158,4 +1165,41 @@ public class LoadableStudyController {
     }
     return remoteAddr;
   }
+
+	@GetMapping(value = "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/attachments/{attachmentId}")
+	public ResponseEntity<Resource> getLoadableStudyAttachment(
+			@PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+			@PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+			@PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long loadableStudyId,
+			@PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long attachmentId,
+			@RequestHeader HttpHeaders headers) throws CommonRestException {
+		try {
+
+			LoadableStudyAttachmentResponse response = this.loadableStudyService
+					.downloadLoadableStudyAttachment(attachmentId, loadableStudyId, CORRELATION_ID_HEADER);
+			if (null != response) {
+				File file = new File(response.getFilePath());
+				InputStreamResource inputStream = null;
+				try {
+					inputStream = new InputStreamResource(new FileInputStream(file));
+				} catch (FileNotFoundException e) {
+					log.error("FileNotFoundException in downloadLoadableStudyAttachment", e);
+					throw new FileNotFoundException(e.getMessage());
+				}
+
+				headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
+
+				return ResponseEntity.ok().headers(headers).contentLength(file.length())
+						.contentType(MediaType.APPLICATION_OCTET_STREAM).body(inputStream);
+			}
+			return ResponseEntity.badRequest().body(null);
+		} catch (GenericServiceException e) {
+			log.error("GenericServiceException when getLoadableStudyAttachment", e);
+			throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+		} catch (Exception e) {
+			log.error("Exception when get getLoadableStudyAttachment", e);
+			throw new CommonRestException(CommonErrorCodes.E_GEN_INTERNAL_ERR, headers,
+					HttpStatusCode.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+		}
+	}
 }
