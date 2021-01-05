@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ITableHeaderModel , ILoadableQuantityCargo , ILoadableQuantityCommingleCargo , ICommingleCargoDispaly } from '../models/loadable-plan.model';
+
+import { ICargoTank } from '../../core/models/common.model';
+import { CargoPlanningModule } from '../cargo-planning.module';
+import { ITableHeaderModel, ILoadableQuantityCargo, ICargoTankDetail , ILoadableQuantityCommingleCargo , ICommingleCargoDispaly } from '../models/loadable-plan.model';
 
 /**
  * Transformation Service for Lodable Plan details module
@@ -9,7 +12,7 @@ import { ITableHeaderModel , ILoadableQuantityCargo , ILoadableQuantityCommingle
 */
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: CargoPlanningModule
 })
 
 export class LoadablePlanTransformationService {
@@ -169,5 +172,20 @@ export class LoadablePlanTransformationService {
   _loadablePlanCommingleCargoDetails.cargoKL = this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo1KL , '1.2-4') + '<br>' + this.decimalConvertion(_decimalPipe , loadablePlanCommingleCargoDetails.cargo2KL , '1.2-4');
   return _loadablePlanCommingleCargoDetails;
  }
+ 
+  /**
+  * 
+   * Method for formatting cargo tanks data
+   *
+   * @param {ICargoTank[][]} cargoTank
+   * @param {ICargoTankDetail[]} cargoTankDetails
+   * @returns {ICargoTank[][]}
+   * @memberof LoadablePlanTransformationService
+   */
+  formatCargoTanks(cargoTank: ICargoTank, cargoTankDetails: ICargoTankDetail[]): ICargoTank {
+    cargoTank.commodity = cargoTankDetails?.find(cargo => cargoTank?.id === cargo?.tankId);
+
+    return cargoTank;
+  }
 
 }

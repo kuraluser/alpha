@@ -52,4 +52,11 @@ export class VoyageStatusComponent implements OnInit {
     this.displayEditPortPopup = true;
   }
 
+  /**
+   * Value from edit port rotation
+   */
+  displayEditPortRotationPopUpTab(displayNew_: boolean) {
+    this.displayEditPortPopup = displayNew_;
+  }
+
 }

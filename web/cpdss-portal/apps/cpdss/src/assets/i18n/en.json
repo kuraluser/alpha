@@ -364,11 +364,15 @@
 	"PORT_MAX_AIR_DRAFT_MIN_ERROR": "Max air draft must be greater than or equal to 0",
 	"LOADABLE_PLAN_HEADER": "LOADABLE PLAN",
 	"LOADABLE_PLAN_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL": "Back to Loadable studies",
+	"LOADABLE_PLAN_STOWAGE_HEADER": "Stowage",
+	"LOADABLE_PLAN_STOWAGE_CARGO_TAB": "Cargo",
+	"LOADABLE_PLAN_STOWAGE_BALLAST_TAB": "Ballast",
+	"LOADABLE_PLAN_STOWAGE_MORE_LABEL": "More",
+	"LOADABLE_PLAN_STOWAGE_HIDE_LABEL": "Hide",
 	"DATA_TABLE_OK_BUTTON_LABEL": "OK",
 	"OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY": "Volume loaded in tank must not exceed capacity of tank.",
 	"COMMINGLE_MANUAL_QUANTITY_MIN_VALUE": "Quantity must be greater than 0",
 	"COMMINGLE_MANUAL_SAME_CARGO_VALIDATION": "This cargo combination already exist",
-	"EDIT_PORT_ROTATION": "Edit port rotation",
 	"VOYAGE_POP_UP_START_DATE_LABEL": "Start Date",
 	"VOYAGE_POP_UP_END_DATE_LABEL": "End Date",
 	"VOYAGE_POPUP_START_DATE_REQUIRED_ERROR": "Start date is required",
@@ -378,5 +382,10 @@
 	"COMMINGLE_MANUAL_SAME_PERCENTAGE_VALIDATION" : "Sum of the percentage is more than 100 please correct.",
 	"PORT_ETA_COMAPRE_WITH_ETD_ERROR": "Eta is overlapping with ETD of previous port",
 	"CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY": "Error",
-	"CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS": "Discharge port is required"
+	"CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS": "Discharge port is required",
+	"EDIT_PORT_ROTATION":"Edit port rotaion",
+	"EDIT_PORT_ROTATION_NOTE":"Note",
+	"EDIT_PORT_ROTATION_NOTE_DETAILS":"Changing port rotation will clear dates and times for ETA/ETD on the affected port items",
+	"CANCEL_BUTTON_EDIT_PORT_ROTATION_POPUP": "Cancel",
+	"SAVE_BUTTON_EDIT_PORT_ROTATION_POPUP": "Save"
 }

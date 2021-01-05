@@ -15,6 +15,7 @@ import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/c
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
+import { DatatableModule } from '../../../shared/components/datatable/datatable.module';
 
 @NgModule({
   declarations: [LoadablePlanComponent, LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent],
@@ -24,7 +25,8 @@ import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
     TranslateModule,
     VesselInfoModule,
     TableModule,
-    CargoTankLayoutModule
+    CargoTankLayoutModule,
+    DatatableModule
   ],
   providers: [LoadableQuantityApiService , DecimalPipe , LoadablePlanTransformationService , LoadablePlanApiService],
   exports: [

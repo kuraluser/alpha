@@ -3,7 +3,7 @@
         <cpdss-portal-grade-loading-order [loadablePatternCargoDetails]="loadablePattern.loadablePatternCargoDetails" [index]="index">
         </cpdss-portal-grade-loading-order>
         <cpdss-portal-constraint [constraint]="loadablePattern.constraints"></cpdss-portal-constraint>
-        <cpdss-portal-cargo-tank-layout [isFullyFilled]="true" [tanks]="tanks"></cpdss-portal-cargo-tank-layout>
+        <cpdss-portal-cargo-tank-layout [options]="{'isFullyFilled': true}" [tanks]="tanks"></cpdss-portal-cargo-tank-layout>
     </div>
     <div class="col-5">
         <cpdss-portal-cargo-priority-grid [loadablePatternCargoDetails]="loadablePattern.loadablePatternCargoDetails"
