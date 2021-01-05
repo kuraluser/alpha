@@ -18,4 +18,6 @@ public class SynopticalTableResponse {
   private List<VesselTank> cargoTanks;
 
   private Long id;
+
+  private List<Long> failedRecords;
 }

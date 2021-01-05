@@ -162,6 +162,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -3188,38 +3189,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void saveSynopticalTable(
       SynopticalTableRequest request, StreamObserver<SynopticalTableReply> responseObserver) {
     SynopticalTableReply.Builder replyBuilder = SynopticalTableReply.newBuilder();
     try {
-      SynopticalTable entity = null;
-      if (request.getSynopticalRecord().getId() != 0) {
-        Optional<SynopticalTable> entityOpt =
-            this.synopticalTableRepository.findByIdAndIsActive(
-                request.getSynopticalRecord().getId(), true);
-        if (!entityOpt.isPresent()) {
-          throw new GenericServiceException(
-              "Synoptical record does not exist with given id",
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatusCode.BAD_REQUEST);
-        }
-        entity = entityOpt.get();
-      } else {
-        Optional<LoadableStudy> loadableStudyOpt =
-            this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
-        if (!loadableStudyOpt.isPresent()) {
-          throw new GenericServiceException(
-              "Invalid loadable study",
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatusCode.BAD_REQUEST);
-        }
-        entity = new SynopticalTable();
-        entity.setLoadableStudyXId(loadableStudyOpt.get().getId());
-        entity.setIsActive(true);
+      Optional<SynopticalTable> entityOpt =
+          this.synopticalTableRepository.findByIdAndIsActive(
+              request.getSynopticalRecord().getId(), true);
+      if (!entityOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Synoptical record does not exist with given id",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
       }
-      entity.setPortXid(request.getPortId());
+      SynopticalTable entity = entityOpt.get();
       entity = this.buildSynopticalTableEntity(entity, request);
       entity = this.synopticalTableRepository.save(entity);
+      this.updateSynopticalEtaEtdEstimates(entity, request);
       replyBuilder.setId(entity.getId());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
@@ -3245,6 +3232,29 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
+   * Update estimated values to port rotation table
+   *
+   * @param entity
+   * @param request
+   */
+  private void updateSynopticalEtaEtdEstimates(
+      SynopticalTable entity, SynopticalTableRequest request) {
+    SynopticalRecord record = request.getSynopticalRecord();
+    LoadableStudyPortRotation prEntity = entity.getLoadableStudyPortRotation();
+    LocalDateTime etaEtdEstimated =
+        isEmpty(record.getEtaEtdEstimated())
+            ? null
+            : LocalDateTime.from(
+                DateTimeFormatter.ofPattern(ETA_ETD_FORMAT).parse(record.getEtaEtdEstimated()));
+    if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())) {
+      prEntity.setEta(etaEtdEstimated);
+    } else {
+      prEntity.setEtd(etaEtdEstimated);
+    }
+    this.loadableStudyPortRotationRepository.save(prEntity);
+  }
+
+  /**
    * Populate synoptical entity fields
    *
    * @param entity
@@ -3255,7 +3265,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       SynopticalTable entity, SynopticalTableRequest request) {
     DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
     SynopticalRecord record = request.getSynopticalRecord();
-    entity.setOperationType(record.getOperationType());
     entity.setDistance(isEmpty(record.getDistance()) ? null : new BigDecimal(record.getDistance()));
     entity.setSpeed(isEmpty(record.getSpeed()) ? null : new BigDecimal(record.getSpeed()));
     entity.setRunningHours(
@@ -3264,7 +3273,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         isEmpty(record.getInPortHours()) ? null : new BigDecimal(record.getInPortHours()));
     entity.setTimeOfSunrise(record.getTimeOfSunrise());
     entity.setTimeOfSunSet(record.getTimeOfSunset());
-    entity.setSeaWaterSg(
+    entity.setSpecificGravity(
         isEmpty(record.getSpecificGravity()) ? null : new BigDecimal(record.getSpecificGravity()));
 
     entity.setHwTideFrom(
@@ -3289,8 +3298,27 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         isEmpty(record.getLwTideTimeTo())
             ? null
             : LocalDateTime.from(df.parse(record.getLwTideTimeTo())));
-    entity.setOperationType(record.getOperationType());
+    this.buildSynopticalTableEtaEtdActuals(entity, record);
     return entity;
+  }
+
+  /**
+   * build eta etd actuals
+   *
+   * @param entity
+   * @param record
+   */
+  private void buildSynopticalTableEtaEtdActuals(SynopticalTable entity, SynopticalRecord record) {
+    LocalDateTime etaEtdActual =
+        isEmpty(record.getEtaEtdActual())
+            ? null
+            : LocalDateTime.from(
+                DateTimeFormatter.ofPattern(ETA_ETD_FORMAT).parse(record.getEtaEtdActual()));
+    if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())) {
+      entity.setEtaActual(etaEtdActual);
+    } else {
+      entity.setEtdActual(etaEtdActual);
+    }
   }
 
   @Override

@@ -119,6 +119,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -2627,10 +2628,14 @@ public class LoadableStudyService {
    * @param loadableStudyId
    * @param first
    * @return
+   * @throws InterruptedException
    */
   public SynopticalTableResponse saveSynopticalTable(
-      SynopticalRecord request, Long voyageId, Long loadableStudyId, String correlationId)
-      throws GenericServiceException {
+      com.cpdss.gateway.domain.SynopticalTableRequest request,
+      Long voyageId,
+      Long loadableStudyId,
+      String correlationId)
+      throws GenericServiceException, InterruptedException {
     log.info("LoadableStudyService: saveSynopticalTable, correlationId:{}", correlationId);
     log.debug(
         "LoadableStudyService: saveSynopticalTable, request: {}, voyageId: {}, loadbleStudyId:{}",
@@ -2638,19 +2643,29 @@ public class LoadableStudyService {
         voyageId,
         loadableStudyId);
     SynopticalTableResponse response = new SynopticalTableResponse();
-    SynopticalTableRequest grpcRequest =
-        this.buildSynopticalTableRequest(request, loadableStudyId, correlationId);
-    SynopticalTableReply grpcReply = this.saveSynopticalTable(grpcRequest, correlationId);
-    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "Failed to save synoptical table",
-          grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    List<Long> failedRecords = new ArrayList<>();
+    CountDownLatch latch = new CountDownLatch(request.getSynopticalRecords().size());
+    List<Thread> workers = new ArrayList<>();
+    for (SynopticalRecord record : request.getSynopticalRecords()) {
+      SynopticalTableRequest grpcRequest =
+          this.buildSynopticalTableRequest(record, loadableStudyId, correlationId);
+      workers.add(
+          new Thread(
+              () ->
+                  this.saveSynopticalTable(
+                      grpcRequest, correlationId, failedRecords, record.getId(), latch)));
     }
-    log.debug("success reponse from grpc service , correlationId:{}", correlationId);
-    response.setId(grpcReply.getId());
-    response.setResponseStatus(
-        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    workers.forEach(Thread::start);
+    latch.await();
+    if (!failedRecords.isEmpty()) {
+      response.setFailedRecords(failedRecords);
+      response.setResponseStatus(
+          new CommonSuccessResponse(
+              String.valueOf(HttpStatus.MULTI_STATUS.value()), correlationId));
+    } else {
+      response.setResponseStatus(
+          new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    }
     return response;
   }
 
@@ -2660,10 +2675,24 @@ public class LoadableStudyService {
    * @param grpcRequest
    * @return
    */
-  private SynopticalTableReply saveSynopticalTable(
-      SynopticalTableRequest grpcRequest, String correlationId) {
-    log.debug("calling grpc serice: saveSynopticalTable, correationId: {}", correlationId);
-    return this.loadableStudyServiceBlockingStub.saveSynopticalTable(grpcRequest);
+  private void saveSynopticalTable(
+      SynopticalTableRequest grpcRequest,
+      String correlationId,
+      List<Long> failedRecords,
+      Long id,
+      CountDownLatch latch) {
+    try {
+      log.debug("calling grpc serice: saveSynopticalTable, correationId: {}", correlationId);
+      SynopticalTableReply grpcReply =
+          this.loadableStudyServiceBlockingStub.saveSynopticalTable(grpcRequest);
+      if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+        failedRecords.add(id);
+      }
+    } catch (Exception e) {
+      log.error("Error calling synoptical table save grpc service", e);
+    } finally {
+      latch.countDown();
+    }
   }
 
   /**
@@ -2716,6 +2745,8 @@ public class LoadableStudyService {
 
     Optional.ofNullable(request.getSpecificGravity())
         .ifPresent(item -> recordBuilder.setSpecificGravity(valueOf(request.getSpecificGravity())));
+    Optional.ofNullable(request.getEtaEtdActual()).ifPresent(recordBuilder::setEtaEtdActual);
+    Optional.ofNullable(request.getEtaEtdPlanned()).ifPresent(recordBuilder::setEtaEtdEstimated);
     builder.setSynopticalRecord(recordBuilder.build());
     return builder.build();
   }

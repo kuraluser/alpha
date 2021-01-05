@@ -79,14 +79,8 @@ public class SynopticalTable extends EntityDoc {
   @Column(name = "lw_tide_time_to")
   private LocalDateTime lwTideTimeTo;
 
-  @Column(name = "sea_water_sg")
-  private BigDecimal seaWaterSg;
-
   @Column(name = "port_xid")
   private Long portXid;
-
-  @Column(name = "time_of_sunset")
-  private String timeOfSunset;
 
   @Column(name = "sea_water_sg")
   private BigDecimal specificGravity;
