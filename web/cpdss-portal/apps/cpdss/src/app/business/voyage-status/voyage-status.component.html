@@ -8,12 +8,16 @@
             <div class="col">
                 <a class="btn btn-link icon-btn plus-icon-rounded" (click)="showDialog()"
                     id="show-popup">{{'NEW_VOYAGE_BUTTON_VOYAGE_STATUS' | translate}}</a>
-                <a class="" (click)="showEditPortRotation()" 
-                id="show-edit-port-rotation-popup">{{'EDIT_PORT_ROTATION' | translate}}</a>
+                <a class="" (click)="showEditPortRotation()" id="show-edit-port-rotation-popup">{{'EDIT_PORT_ROTATION' |
+                    translate}}</a>
             </div>
         </div>
         <cpdss-portal-new-voyage-popup [vesselDetails]="vesselInfo" *ngIf="display && vesselInfo"
             (displayPopUp)="displayPopUpTab($event)">
         </cpdss-portal-new-voyage-popup>
+
+        <cpdss-portal-edit-port-rotation *ngIf="displayEditPortPopup"
+            (displayPopUp)="displayEditPortRotationPopUpTab($event)">
+        </cpdss-portal-edit-port-rotation>
     </div>
 </div>

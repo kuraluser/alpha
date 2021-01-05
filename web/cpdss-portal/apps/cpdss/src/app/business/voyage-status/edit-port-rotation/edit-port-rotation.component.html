@@ -1,0 +1,22 @@
+<p-dialog header="TC-10 FUJAIHRAH - {{'EDIT_PORT_ROTATION' | translate}}" [(visible)]="showPopUp"
+    styleClass="" [closable]="false" [draggable]="false" [modal]="true">
+
+    <p-footer>
+        <div class="row">
+            <div class="col text-left" >{{'EDIT_PORT_ROTATION_NOTE' | translate}}:</div>
+        </div>
+        <div class="row">
+            <div class="col text-left">{{'EDIT_PORT_ROTATION_NOTE_DETAILS' | translate }}</div>
+        </div>
+       
+        <div class="row">
+            <div class="col text-right">
+                <button class="btn btn-main mr-10" id="edit-port-rotation-popup-cancel" (click)="cancel()">{{
+                    'CANCEL_BUTTON_EDIT_PORT_ROTATION_POPUP' | translate }}</button>
+                <button class="btn btn-main" type="submit" id="edit-port-rotation-popup-submit" (click)="saveEditPortRotation()">{{
+                    'SAVE_BUTTON_EDIT_PORT_ROTATION_POPUP' | translate }}</button>
+            </div>
+        </div>
+
+    </p-footer>
+</p-dialog>
