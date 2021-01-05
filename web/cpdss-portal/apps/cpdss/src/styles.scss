@@ -628,7 +628,7 @@ h5{
 }
 
 .p-datepicker{
-  min-width: 340px !important;
+ // min-width: 340px !important;
 }
 
 .p-dropdown{ 
@@ -1095,8 +1095,8 @@ input[type=number] {
 }
 
 .column-class.column-weight{
-  width: 130px!important;
-  max-width: 130px!important;
+  /*width: 6vw!important;
+  max-width: 6vw!important;*/
 }
 
 
@@ -1299,45 +1299,48 @@ td.sl div{
 } 
 
 .cargo-nomination-table.ohq .p-datatable-thead tr:nth-child(2) th{
-top: 36px;
+top: 35px;
 }
 .cargo-nomination-table.ohq .p-datatable-thead tr th{
   table{
-    th:last-child{
-      width: 130px;
-      max-width: 130px;
+    tr:nth-child(2){
+      th:last-child{
+        width: 50%;
+        max-width: 50%;
+        padding-left: 5px;
+      }
     }
   }
-  }
+}
 
  
 
-  @media (max-width: 1450px){
-    .cargo-nomination-table.ohq .p-datatable-thead tr th{
-  table{
-    th:last-child{
-      width: 50%;
-      max-width: 50%;
-    }
-  }
-  }
-  .column-class.column-weight{
-    width: 11%!important;
-    max-width: 11%!important;
-  }
-}
+//   @media (max-width: 1450px){
+//     .cargo-nomination-table.ohq .p-datatable-thead tr th{
+//   table{
+//     th:last-child{
+//       width: 50%;
+//       max-width: 50%;
+//     }
+//   }
+//   }
+//   .column-class.column-weight{
+//     width: 11%!important;
+//     max-width: 11%!important;
+//   }
+// }
 @media (max-width: 1699px){
   .cargo-nomination-table.ohq .p-datatable-thead tr th{
 table{
   th:last-child{
-    width: 50%;
-    max-width: 50%;
+    width: 5vw!important;
+    max-width: 5vw !important;
+  }
   }
 }
-}
 .column-class.column-weight{
-  width: 11%!important;
-  max-width: 11%!important;
+  width: 5vw!important;
+  max-width: 5vw!important;
 }
 }
 .error-icon{
@@ -1600,3 +1603,21 @@ th .p-calendar .p-inputtext{
   
 }
 
+.cargo-nomination-table.ohq table > thead > tr:nth-child(2) th:nth-child(5), .cargo-nomination-table.ohq table > thead > tr:nth-child(2) th:nth-child(7){
+  padding-left: 0;
+}
+
+.p-datepicker table td > span{
+  width: 1.7rem;
+  height: 1.7rem;
+}
+.p-datepicker .p-datepicker-buttonbar{
+  padding: 5px 0;
+}
+
+.p-datepicker .p-datepicker-buttonbar .p-button{
+  padding: 0.25rem 1rem;
+}
+.p-datepicker .p-datepicker-header{
+  padding: 0px 0.5rem 3px;
+}

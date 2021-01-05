@@ -161,7 +161,7 @@ export class LoadingPortsPopupComponent implements OnInit {
   private initLoadingPortFormGroup(loadingPort: ILoadingPortValueObject) {
     return this.fb.group({
       name: this.fb.control(loadingPort.name.value, Validators.required),
-      quantity: this.fb.control(loadingPort.quantity.value, [Validators.required, Validators.min(1), numberValidator(2, 7, false)])
+      quantity: this.fb.control(loadingPort.quantity.value, [Validators.required, Validators.min(1), numberValidator(4, 6, false)])
     });
   }
 

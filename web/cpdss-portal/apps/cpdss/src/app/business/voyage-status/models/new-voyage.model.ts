@@ -7,6 +7,8 @@ export class NewVoyageModel {
     public voyageNo!: string;
     public captainId!: number;
     public chiefOfficerId!: number;
+    public startDate!: string;
+    public endDate!: string;
 }
 
 /**

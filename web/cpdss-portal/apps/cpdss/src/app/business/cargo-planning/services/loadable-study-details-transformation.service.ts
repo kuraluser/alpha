@@ -788,6 +788,7 @@ export class LoadableStudyDetailsTransformationService {
             filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
             filterType: DATATABLE_FILTER_TYPE.NUMBER,
             filterPlaceholder: 'OHQ_SEARCH_VOL',
+            fieldHeaderClass: 'column-volume',
             errorMessages: {
               'required': 'OHQ_VALUE_REQUIRED',
               'min': 'OHQ_MIN_VALUE',
@@ -828,6 +829,7 @@ export class LoadableStudyDetailsTransformationService {
             filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
             filterType: DATATABLE_FILTER_TYPE.NUMBER,
             filterPlaceholder: 'OHQ_SEARCH_VOL',
+            fieldHeaderClass: 'column-volume',
             errorMessages: {
               'required': 'OHQ_VALUE_REQUIRED',
               'min': 'OHQ_MIN_VALUE',
@@ -1009,7 +1011,8 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'COMMINGLE_CARGO_SELECT_ERROR',
           'max': 'COMMINGLE_QUANTITY_MAX_LIMIT',
-          'min': 'COMMINGLE_MANUAL_QUANTITY_MIN_VALUE'
+          'min': 'COMMINGLE_MANUAL_QUANTITY_MIN_VALUE',
+          'isMaxQuantity': 'COMMINGLE_QUANTITY_MAX_LIMIT'
         }
       },
       {
@@ -1066,7 +1069,7 @@ export class LoadableStudyDetailsTransformationService {
     _commingleManual.cargo2pct = new ValueObject<number>(cargo2IdPctObj?.id, true, isNewValue, false, isEditable);
     _commingleManual.cargo1IdPct = new ValueObject<IPercentage>(cargo1IdPctObj, true, isNewValue, false, isEditable);
     _commingleManual.cargo2IdPct = new ValueObject<IPercentage>(cargo2IdPctObj, true, isNewValue, false, isEditable);
-    _commingleManual.quantity = new ValueObject<number>(commingleManual.quantity, true, isNewValue, false, isEditable);
+    _commingleManual.quantity = new ValueObject<number>(commingleManual?.quantity, true, isNewValue, false, isEditable);
     return _commingleManual;
   }
 

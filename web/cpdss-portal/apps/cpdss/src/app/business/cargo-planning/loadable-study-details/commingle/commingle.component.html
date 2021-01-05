@@ -32,10 +32,12 @@
                     <div class="col-5" *ngIf="!isVolumeMaximum"><label for="commingle_preferred_tank"
                             class=" col-form-label">{{'COMMINGLE_PREFERRED_TANK' | translate}}</label></div>
                     <div class="col pr-10" *ngIf="!isVolumeMaximum">
-                        <p-multiSelect [options]="preferredTankList" styleClass="w-100" appendTo="body" defaultLabel="{{'COMMINGLE_SELECT_PREFERRED_TANK' | translate}}"
-                            id="commingle_preferred_tank" optionLabel="shortName" formControlName="preferredTanks" [readonly]="!isEditable" [selectionLimit]="5">
+                        <p-multiSelect [options]="preferredTankList" styleClass="w-100" appendTo="body"
+                            defaultLabel="{{'COMMINGLE_SELECT_PREFERRED_TANK' | translate}}"
+                            id="commingle_preferred_tank" optionLabel="shortName" formControlName="preferredTanks"
+                            [readonly]="!isEditable" [selectionLimit]="5">
                         </p-multiSelect>
-                        
+
                     </div>
                     <div class="col pl-0 pr-0 pt-5" style="max-width: 20px;">
                         <cpdss-portal-validation-error [errors]="fieldError('preferredTanks')"
@@ -46,8 +48,9 @@
         </div>
         <div class="row mb-5" *ngIf="!isVolumeMaximum">
             <div class="col text-right">
-                <a id="add_new_btn" class="btn btn-link icon-btn float-right"
-                    (click)="addNew()" *cpdssPortalPermission="cargoNominationPermissionContext"><i class="pi pi-plus mr-5"></i> {{'ADD_NEW_BUTTON_LABEL'| translate}}</a>
+                <a id="add_new_btn" class="btn btn-link icon-btn float-right" (click)="addNew()"
+                    *cpdssPortalPermission="cargoNominationPermissionContext"><i class="pi pi-plus mr-5"></i>
+                    {{'ADD_NEW_BUTTON_LABEL'| translate}}</a>
             </div>
         </div>
         <div class="row " *ngIf="isVolumeMaximum">
@@ -70,10 +73,9 @@
                                 formControlName="cargo1" (onChange)="onChange($event, 1)"
                                 placeholder="{{'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER' | translate}}">
                             </p-dropdown>
-                            <span *ngIf="form.cargo1.invalid && form.cargo1.touched && form.cargo1.errors?.required"
-                                class="text-danger">
-                                {{'COMMINGLE_CARGO_SELECT_ERROR' | translate}}
-                            </span>
+                            <cpdss-portal-validation-error [errors]="fieldError('cargo1')"
+                                [errorMessages]="errorMesages.cargo1">
+                            </cpdss-portal-validation-error>
                         </div>
                         <div class="col no-left-padding" style="max-width: 20px;">
                             <div class="color-rounded mt-5"
@@ -90,10 +92,9 @@
                                 formControlName="cargo2" (onChange)="onChange($event, 2)"
                                 placeholder="{{'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER' | translate}}">
                             </p-dropdown>
-                            <span *ngIf="form.cargo2.invalid && form.cargo2.touched && form.cargo2.errors?.required"
-                                class="text-danger">
-                                {{'COMMINGLE_CARGO_SELECT_ERROR' | translate}}
-                            </span>
+                            <cpdss-portal-validation-error [errors]="fieldError('cargo2')"
+                                [errorMessages]="errorMesages.cargo2">
+                            </cpdss-portal-validation-error>
                         </div>
                         <div class="col no-left-padding" style="max-width: 20px;">
                             <div class="color-rounded mt-5"
@@ -106,26 +107,30 @@
             <hr class="hr-margin" *ngIf="isVolumeMaximum">
         </div>
 
-        <div class="row" *ngIf="!isVolumeMaximum">
-            <div class="col">
-                <cpdss-portal-datatable  [tableId]="'commingle'"  [listData]="listData" [form]="commingleManualForm" [columns]="columns"
-                [editMode]="editMode"  [value]="manualCommingleList"  [filterable]="true" (editComplete)="onEditComplete($event)" (deleteRow)="onDeleteRow($event)">
-                </cpdss-portal-datatable>
-            </div>
+
+        <div class="" *ngIf="commingleManualForm && !isVolumeMaximum">
+            <form [formGroup]="commingleManualForm">
+                <div class="form-group row">
+                    <div class="col">
+                        <cpdss-portal-datatable [tableId]="'commingle'" [listData]="listData"
+                            [form]="commingleManualForm" [columns]="columns" [editMode]="editMode"
+                            [value]="manualCommingleList" [filterable]="true" (editComplete)="onEditComplete($event)"
+                            (deleteRow)="onDeleteRow($event)">
+                        </cpdss-portal-datatable>
+                    </div>
+                </div>
+            </form>
         </div>
-        <div class="row" *ngIf="!isVolumeMaximum">
-            <div class="col"><div class="text-danger" *ngIf="isMaxQuantity">
-                {{'COMMINGLE_QUANTITY_MAX_LIMIT' |   translate}}</div></div>
-        </div>
+
 
     </form>
     <p-footer>
         <div class="float-right">
-            <button class="btn btn-main mr-10" id="commingle_cancel"
-                (click)="close()">{{'COMMINGLE_CANCEL' | translate}}
+            <button class="btn btn-main mr-10" id="commingle_cancel" (click)="close()">{{'COMMINGLE_CANCEL' |
+                translate}}
             </button>
-            <button class="btn btn-main" type="submit" id="commingle_submit"
-                form="commingle_form"  *cpdssPortalPermission="cargoNominationPermissionContext">{{'COMMINGLE_SAVE' | translate}}</button>
+            <button class="btn btn-main" type="submit" id="commingle_submit" form="commingle_form"
+                *cpdssPortalPermission="cargoNominationPermissionContext">{{'COMMINGLE_SAVE' | translate}}</button>
         </div>
     </p-footer>
 </p-dialog>

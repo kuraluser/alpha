@@ -28,13 +28,13 @@
     </div>
 
     <div>
-        <cpdss-portal-loadable-quantity [voyageId]="voyageId" [vesselId]="vesselId" [loadableStudyId]="loadableStudyId" [loadablePatternId]="loadablePatternId"></cpdss-portal-loadable-quantity>
+        <cpdss-portal-loadable-quantity [loadableQuantityCargoDetails]="loadableQuantityCargoDetails" [loadableQuantityCommingleCargoDetails]="loadableQuantityCommingleCargoDetails"></cpdss-portal-loadable-quantity>
     </div>
     <div>
-        <cpdss-portal-stowage></cpdss-portal-stowage>
+        <cpdss-portal-stowage [cargoTanks]="cargoTanks" [cargoTankDetails]="cargoTankDetails"></cpdss-portal-stowage>
     </div>
     <div>
-        <cpdss-portal-port-eta-etd-condition  [voyageId]="voyageId" [vesselId]="vesselId" [loadableStudyId]="loadableStudyId" [loadablePatternId]="loadablePatternId"></cpdss-portal-port-eta-etd-condition>
+        <cpdss-portal-port-eta-etd-condition></cpdss-portal-port-eta-etd-condition>
     </div>
     <div>
         <cpdss-portal-comments></cpdss-portal-comments>

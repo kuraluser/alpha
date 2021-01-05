@@ -1,7 +1,7 @@
 import { Input, Output } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { NewVoyageModel } from '../models/new-voyage.model';
@@ -9,6 +9,7 @@ import { VoyageApiService } from '../services/voyage-api.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { dateCompareValidator } from '../directive/validator/date-compare-validator.directive'
 
 /**
  * Component for new voyage popup
@@ -21,12 +22,14 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class NewVoyagePopupComponent implements OnInit {
   @Input() vesselDetails: IVessel;
   @Output() displayPopUp = new EventEmitter<boolean>();
+
   showPopUp: boolean;
   newVoyageForm!: FormGroup;
   newVoyageModel!: NewVoyageModel;
   isLoading: boolean;
   isSubmitted: boolean;
   isExisting = false;
+  errorMessages: any;
 
   constructor(private fb: FormBuilder, private router: Router,
     private voyageApiService: VoyageApiService,
@@ -35,30 +38,23 @@ export class NewVoyagePopupComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService) { }
 
   ngOnInit(): void {
+    this.errorMessages = this.voyageApiService.setValidationErrorMessage();
     this.getVesselInfo();
-  }
-
-  /**
-   * Return the form controlls of the form
-   */
-  get newVoyageFormControl() {
-    return this.newVoyageForm.controls;
   }
 
   /**
    * Submit form
    */
   onSubmit() {
-
-
     this.isLoading = true;
     this.newVoyageModel = new NewVoyageModel();
     this.newVoyageModel.captainId = this.vesselDetails?.captainId;
     this.newVoyageModel.chiefOfficerId = this.vesselDetails?.chiefOfficerId;
     this.newVoyageModel.voyageNo = this.newVoyageForm.value.voyageNo;
+    this.newVoyageModel.startDate = this.formatDateTime(this.newVoyageForm.value.start_date);
+    this.newVoyageModel.endDate = this.formatDateTime(this.newVoyageForm.value.end_date);
     this.saveNewVoyage();
     this.isLoading = false;
-
   }
 
   /**
@@ -99,7 +95,9 @@ export class NewVoyagePopupComponent implements OnInit {
     this.newVoyageForm = this.fb.group({
       'captain': [this.vesselDetails?.captainName],
       'chiefOfficer': [this.vesselDetails?.chiefOfficerName],
-      'voyageNo': [null, [Validators.required, Validators.pattern('^[a-zA-Z0-9 ][ A-Za-z0-9_.()&,-]*$'), Validators.maxLength(100)]]
+      'voyageNo': [null, [Validators.required, Validators.pattern('^[a-zA-Z0-9 ][ A-Za-z0-9_.()&,-]*$'), Validators.maxLength(100)]],
+      'start_date': this.fb.control(null, [Validators.required, dateCompareValidator('end_date', '<')]),
+      "end_date": this.fb.control(null, [Validators.required, dateCompareValidator('start_date', '>')])
     });
     this.showPopUp = true;
     this.isLoading = false;
@@ -115,6 +113,7 @@ export class NewVoyagePopupComponent implements OnInit {
       this.onSubmit();
     } else {
       this.newVoyageForm.controls.voyageNo.markAsTouched({ onlySelf: true });
+      this.newVoyageForm.markAllAsTouched();
     }
 
   }
@@ -122,8 +121,69 @@ export class NewVoyagePopupComponent implements OnInit {
   /**
    * Trim blank space entered as the first character in voyage no. field 
    */
-  trimVoyageNo(){
-   this.newVoyageForm.controls['voyageNo'].setValue((this.newVoyageForm.get('voyageNo').value).trim());
+  trimVoyageNo() {
+    this.newVoyageForm.controls['voyageNo'].setValue((this.newVoyageForm.get('voyageNo').value).trim());
   }
 
+  /**
+   * Method to update form on date time select
+   */
+  onDateSelect(event) {
+    this.newVoyageForm.controls.start_date.updateValueAndValidity();
+    this.newVoyageForm.controls.end_date.updateValueAndValidity();
+  }
+
+  /**
+  * Format date time(dd-mm-yyyy hh:mm)
+  */
+  formatDateTime(date) {
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+
+    if (month < 10) {
+      month = '0' + month;
+    }
+
+    if (day < 10) {
+      day = '0' + day;
+    }
+
+    if (hour < 10) {
+      hour = '0' + hour;
+    }
+
+    if (minute < 10) {
+      minute = '0' + minute;
+    }
+
+    return day + '-' + month + '-' + date.getFullYear() + ' ' + hour + ':' + minute;
+  }
+
+  /**
+   * Get field errors
+   *
+   *
+   * @param {string} formControlName
+   * @returns {ValidationErrors}
+   * @memberof NewVoyagePopupComponent
+   */
+  fieldError(formControlName: string): ValidationErrors {
+    const formControl = this.field(formControlName);
+    return formControl?.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
+  }
+
+  /**
+  * Get form control of newVoyageForm 
+  *
+  *
+  * @param {string} formControlName
+  * @returns {FormControl}
+  * @memberof NewVoyagePopupComponent
+  */
+  field(formControlName: string): FormControl {
+    const formControl = <FormControl>this.newVoyageForm.get(formControlName);
+    return formControl;
+  }
 }

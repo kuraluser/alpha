@@ -1,72 +1,53 @@
 <div class="container-fluid">
     <div class="row pb-20">
         <div class="col">
-            2. STOWAGE
+            2. {{'LOADABLE_PLAN_STOWAGE_HEADER' | translate}}
         </div>
-
         <div class="ml-auto pr-15">
-            <button class="btn btn-main"
-                id="btn_callNewLoadableStudyPopup">{{'LOADABLE_PATTERN_HISTORY_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
+            <button class="btn btn-main" id="btn_callNewLoadableStudyPopup">{{'LOADABLE_PATTERN_HISTORY_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
                 translate}}</button>
         </div>
-
     </div>
     <div class="row">
         <div class="col  text-center">
-            <a class="tab-btn" [ngClass]="{'active': selectedTab === 'Cargo'}" (click)="onTabClick('Cargo')">Cargo
+            <a class="tab-btn" [ngClass]="{'active': selectedTab === tankType.CARGO}"
+                (click)="onTabClick(tankType.CARGO)">{{'LOADABLE_PLAN_STOWAGE_CARGO_TAB' | translate}}
             </a>
-            <a class="tab-btn" [ngClass]="{'active': selectedTab === 'Ballast'}" (click)="onTabClick('Ballast')">Ballast
+            <a class="tab-btn" [ngClass]="{'active': selectedTab === tankType.BALLAST}"
+                (click)="onTabClick(tankType.BALLAST)">{{'LOADABLE_PLAN_STOWAGE_BALLAST_TAB' | translate}}
             </a>
         </div>
-
     </div>
-    <div  *ngIf="selectedTab === 'Cargo'">
-        <div class="row"> 
-            <div class="col">
-            <cpdss-portal-cargo-tank-layout [isFullyFilled]="true" [tanks]="tanks"></cpdss-portal-cargo-tank-layout>
-        </div>
+    <div>
+        <div class="row">
+            <div class="col" *ngIf="selectedTab === tankType.CARGO">
+                <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks" [options]="cargoTankOptions"></cpdss-portal-cargo-tank-layout>
+            </div>
+            <div class="col" *ngIf="selectedTab === tankType.BALLAST">
+                <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks"></cpdss-portal-cargo-tank-layout>
+            </div>
         </div>
         <div class="row">
-            <button class="btn btn-main" (click)="more()">{{MORE_HIDE_BUTTON_LABEL}}</button>
+            <div class="col text-center">
+                <button class="btn btn-main"
+                    (click)="toggleGridView()">{{(showGrid ? 'LOADABLE_PLAN_STOWAGE_HIDE_LABEL' : 'LOADABLE_PLAN_STOWAGE_MORE_LABEL') | translate}}</button>
+            </div>
         </div>
-        <div *ngIf="isViewMore" class="row">
-            <p-table #datatable [columns]="columns" [value]="value">
-                <ng-template pTemplate="header" let-columns>
-                    <tr>
-                        <th *ngFor="let col of columns">
-                            {{col.header}}
-                        </th>
-                    </tr>
-                   
-                </ng-template>
-            </p-table>
+        <div *ngIf="showGrid" class="row">
+            <div class="col" *ngIf="selectedTab === tankType.CARGO">
+                <cpdss-portal-datatable [columns]="columns" [value]="value"></cpdss-portal-datatable>
+            </div>
+            <div class="col" *ngIf="selectedTab === tankType.BALLAST">
+                <p-table #datatable [columns]="columns" [value]="value">
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th *ngFor="let col of columns">
+                                {{col.header}}
+                            </th>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
         </div>
-
     </div>
-    <div  *ngIf="selectedTab === 'Ballast'">
-        <div class="row">
-            <div class="col">
-            <cpdss-portal-cargo-tank-layout [isFullyFilled]="true" [tanks]="tanks"></cpdss-portal-cargo-tank-layout>
-        </div>
-        </div>
-        <div class="row">
-            <button class="btn btn-main" (click)="more()">{{MORE_HIDE_BUTTON_LABEL}}</button>
-        </div>
-        <div *ngIf="isViewMore" class="row">
-            <div class="col">
-            <p-table #datatable [columns]="columns" [value]="value">
-                <ng-template pTemplate="header" let-columns>
-                    <tr>
-                        <th *ngFor="let col of columns">
-                            {{col.header}}
-                        </th>
-                    </tr>
-                   
-                </ng-template>
-            </p-table>
-        </div>
-        </div>
-
-    </div>
-
 </div>

@@ -1,20 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { DecimalPipe  } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';
 
-import { LoadableQuantityApiService } from '../../services/loadable-quantity-api.service';
-import { ITableHeaderModel, LodadableQuantityPlan } from '../../models/loadable-quantity.model';
-import { DecimalPipe  } from '@angular/common';
+import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
 
-interface Total {
-  orderBblsdbs: number,
-  orderBbls60f: number,
-  loadableBblsdbs: number,
-  loadableBbls60f: number,
-  loadableLT: number,
-  loadableMT: number,
-  loadableKL: number,
-  differencePercentage: number
-}
+import { ITableHeaderModel, ILoadableQuantityCargo , ILoadableQuantityCommingleCargo , ITotalLoadableQuality} from '../../models/loadable-plan.model';
 
 /**
  * Component class of loadable quantity component in loadable plan
@@ -29,84 +19,40 @@ interface Total {
   styleUrls: ['./loadable-quantity.component.scss']
 })
 export class LoadableQuantityComponent implements OnInit {
-  @Input() voyageId: number;
-  @Input() loadableStudyId: number;
-  @Input() vesselId: number;
-  @Input() loadablePatternId: number;
 
-  columns: ITableHeaderModel[];
-  loadableQuantityDatas: LodadableQuantityPlan[];
-  public total:Total; 
+  @Input() set loadableQuantityCargoDetails(value: ILoadableQuantityCargo[]) {
+    this.calculateTotal(value);
+    this.loadableQuantityData = [];
+    value?.map((loadableQuantityData: ILoadableQuantityCargo) => {
+      this.loadableQuantityData.push(this.loadablePlanTransformationService.getFormatedLoadableQuantityData(this._decimalPipe , loadableQuantityData))
+    });
+  }
+
+  @Input() set loadableQuantityCommingleCargoDetails(value: ILoadableQuantityCommingleCargo) {
+
+  }
+
+  public columns: ITableHeaderModel[];
+  public loadableQuantityData: ILoadableQuantityCargo[];
+  public total:ITotalLoadableQuality; 
 
   constructor(
     private ngxSpinnerService: NgxSpinnerService,
-    private loadableQuantityApiService: LoadableQuantityApiService,
+    private loadablePlanTransformationService: LoadablePlanTransformationService,
     private _decimalPipe: DecimalPipe
   ) { }
 
   ngOnInit() {
-    this.columns = this.loadableQuantityApiService.getLoadableQuantityTableColumns();
-    this.getLoadableQuantity();
+    this.columns = this.loadablePlanTransformationService.getLoadableQuantityTableColumns();
+    this.total = <ITotalLoadableQuality>{ orderBblsdbs: 0, orderBbls60f: 0, loadableBblsdbs: 0, loadableBbls60f: 0, loadableLT: 0, loadableMT: 0, loadableKL: 0, differencePercentage: 0 };
   }
 
   /**
- * Get all details for loadable quantity
- *
- */
-  async getLoadableQuantity() {
-    this.ngxSpinnerService.show();
-    // let data = await this.loadableQuantityApiService.getLoadableQuantityData(this.vesselId, this.voyageId, this.loadableStudyId , this.loadablePatternId).toPromise();
-    const loadableQuantityDatas = [
-      {
-        "id": 1,
-        "grade": "Arabian",
-        "estimatedAPI": "12.0000",
-        "estimatedTemp": "789.0000",
-        "orderBblsdbs": "70000",
-        "orderBbls60f": "200",
-        "minTolerence": "15",
-        "maxTolerence": "99",
-        "loadableBblsdbs": "1000",
-        "loadableBbls60f": "200",
-        "loadableLT": "300",
-        "loadableMT": "400",
-        "loadableKL": "500",
-        "differencePercentage": "1.29000",
-        "differenceColor": "#ffffff"
-      },
-      {
-        "id": 2,
-        "grade": "arun",
-        "estimatedAPI": "123.0000",
-        "estimatedTemp": "12.0000",
-        "orderBblsdbs": "10000",
-        "orderBbls60f": "800",
-        "minTolerence": "20",
-        "maxTolerence": "1",
-        "loadableBblsdbs": "1000",
-        "loadableBbls60f": "100",
-        "loadableLT": "12",
-        "loadableMT": "13",
-        "loadableKL": "14",
-        "differencePercentage": "1.9000",
-        "differenceColor": "#20ad58"
-      }
-    ];
-    this.total = <Total>{ orderBblsdbs: 0, orderBbls60f: 0, loadableBblsdbs: 0, loadableBbls60f: 0, loadableLT: 0, loadableMT: 0, loadableKL: 0, differencePercentage: 0 };
-    this.calculateTotal(loadableQuantityDatas);
-    this.loadableQuantityDatas = [];
-    loadableQuantityDatas?.map((loadableQuantityData) => {
-      this.loadableQuantityDatas.push(this.loadableQuantityApiService.getFormatedLoadableQuantityData(this._decimalPipe , loadableQuantityData))
-    })
-    this.ngxSpinnerService.hide();
-  }
-
-  /**
-   * calcuate total for orderBblsdbs, orderBbls60f ,
+   * calculate total for orderBblsdbs, orderBbls60f ,
    * loadableBblsdbs , loadableLT , loadableKL
   */
-  private calculateTotal(loadableQuantityDatas: LodadableQuantityPlan[]) {
-    loadableQuantityDatas?.map((value: LodadableQuantityPlan) => {
+  private calculateTotal(loadableQuantityData: ILoadableQuantityCargo[]) {
+    loadableQuantityData?.map((value: ILoadableQuantityCargo) => {
       this.total.orderBblsdbs += Number(value.orderBblsdbs);
       this.total.orderBbls60f += Number(value.orderBbls60f);
       this.total.loadableBblsdbs += Number(value.loadableBblsdbs);
@@ -122,7 +68,7 @@ export class LoadableQuantityComponent implements OnInit {
    * parse nested string object
    * @returns nested object value
    */
-  getPropByString(obj, propString) {
+  public getPropByString(obj: any, propString: string) {
     if (!propString) return obj;
     let prop,
       props = propString.split(".");

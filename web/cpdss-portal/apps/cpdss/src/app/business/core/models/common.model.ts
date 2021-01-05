@@ -1,5 +1,4 @@
 import { IResponseStatus } from '../../../shared/models/common.model';
-import { ILoadablePatternCargoDetail } from '../../cargo-planning/models/loadable-pattern.model';
 
 /**
  *  vessel-info model
@@ -117,7 +116,58 @@ export interface ICargoTank extends ITank {
     group: number;
     order: number;
     slopTank: boolean;
-    commodity?: ILoadablePatternCargoDetail;
+    commodity?: ILoadableCargo;
     gridColumn?: string;
     percentageFilled?: string;
+}
+
+/**
+ * Interface for setting tank details options
+ *
+ * @export
+ * @interface ITankOptions
+ */
+export interface ITankOptions {
+    class?: string;
+    isFullyFilled?: boolean;
+    showFillingPercentage?: boolean;
+    fillingPercentageField?: string;
+    showVolume?: boolean;
+    volumeField?: string;
+    volumeUnit?: string;
+    showWeight?: boolean;
+    weightField?: string;
+    weightUnit?: string;
+    showUllage?: boolean;
+    ullageField?: string;
+    ullageUnit?: string;
+    showCommodityName?: boolean;
+}
+
+/**
+ * ENUM for tank layout tabs
+ *
+ * @export
+ * @enum {number}
+ */
+export enum TANKTYPE {
+    CARGO = "CARGO",
+    BALLAST = "BALLAST",
+    BUNKER = "BUNKER",
+}
+
+/**
+ * Interface for loadable cargo details
+ *
+ * @export
+ * @interface ILoadableCargo
+ */
+export interface ILoadableCargo {
+    cargoAbbreviation: string;
+    cargoColor: string;
+    tankId: number;
+    quantity: string;
+    isCommingle: boolean;
+    volume?: number;
+    ullage?: number;
 }

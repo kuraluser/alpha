@@ -1,4 +1,5 @@
-
+import { IResponseStatus } from '../../../shared/models/common.model';
+import { ICargoTank, ILoadableCargo } from '../../core/models/common.model';
 
 /**
  * Interface for loadable quality plan table 
@@ -11,14 +12,103 @@ export interface ITableHeaderModel {
     header: string;
     rowspan?: number;
     colspan?: number,
-    subColumns?:ColumHeader[];  
+    subColumns?: IColumHeader[];
 }
 
 /**
- * Interface for table header
+ * Interface for sub column table header
 */
-interface ColumHeader {
+interface IColumHeader {
     field: string;
     header: string;
     rowspan?: number;
+}
+
+/**
+ * Interface for Loadable Quantity api response
+ *
+ * @export
+ * @interface ILoadablePlanResponse
+ */
+export interface ILoadablePlanResponse {
+    responseStatus: IResponseStatus;
+    loadableQuantityCargoDetails: ILoadableQuantityCargo[];
+    loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
+    tankLists: ICargoTank[][];
+    loadablePlanStowageDetails: ICargoTankDetail[];
+}
+
+/**
+ * Interface for loadable quality 
+ *
+ * @export
+ * @interface ILoadableQuantityCargo
+ */
+export interface ILoadableQuantityCargo {
+    id: number,
+    grade: string,
+    estimatedAPI: string,
+    estimatedTemp: string,
+    orderBblsdbs: string,
+    orderBbls60f: string,
+    minTolerence: string,
+    maxTolerence: string,
+    loadableBblsdbs: string,
+    loadableBbls60f: string,
+    loadableLT: string,
+    loadableMT: string,
+    loadableKL: string,
+    differencePercentage: string,
+    differenceColor: string
+}
+
+/**
+ * Interface for loadable commingle Cargo
+ *
+ * @export
+ * @interface ILoadableQuantityCommingleCargo
+ */
+export interface ILoadableQuantityCommingleCargo {
+    grade: string,
+    estimatedAPI: string,
+    estimatedTemp: string,
+    orderBblsdbs: string,
+    orderBbls60f: string,
+}
+
+/**
+ * Interface for loadableQuantity total calculate
+*/
+export interface ITotalLoadableQuality {
+    orderBblsdbs: number,
+    orderBbls60f: number,
+    loadableBblsdbs: number,
+    loadableBbls60f: number,
+    loadableLT: number,
+    loadableMT: number,
+    loadableKL: number,
+    differencePercentage: number
+}
+
+/**
+ * Interface for cargo tank details
+ *
+ * @export
+ * @interface ICargoTankDetail
+ */
+export interface ICargoTankDetail extends ILoadableCargo {
+    id: number;
+    tankId: number;
+    cargoAbbreviation: string;
+    weight: number;
+    correctedUllage: number;
+    fillingRatio: number;
+    tankName: string;
+    rdgUllage: number;
+    correctionFactor: number;
+    observedM3: number;
+    observedBarrels: number;
+    observedBarrelsAt60: number;
+    api: number;
+    temperature: number;
 }

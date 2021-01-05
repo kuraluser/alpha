@@ -3,7 +3,7 @@
         1. Loadable Quantity
     </div>
     <div  class="row">
-        <p-table #datatable [columns]="columns" [value]="loadableQuantityDatas">
+        <p-table #datatable [columns]="columns" [value]="loadableQuantityData">
             <ng-template pTemplate="header" let-columns>
                 <ng-container>
                     <tr>
@@ -52,6 +52,6 @@
         </p-table>
     </div>
     <div  class="row">
-        <cpdss-portal-commingled-cargo-details [voyageId]="voyageId" [vesselId]="vesselId" [loadableStudyId]="loadableStudyId" [loadablePatternId]="loadablePatternId"></cpdss-portal-commingled-cargo-details>
+        <cpdss-portal-commingled-cargo-details></cpdss-portal-commingled-cargo-details>
     </div>
 </div>

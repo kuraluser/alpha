@@ -22,10 +22,10 @@ export class ValidationErrorComponent implements OnInit {
     return this._errors;
   }
   set errors(errors: IValidationErrors) {
-    this._errors = errors;
-    if (errors) {
+    if (this.errors) {
       this.setErrors();
     }
+    this._errors = errors;
   }
 
   @Input() errorMessages: IValidationErrorMessages;
@@ -37,6 +37,9 @@ export class ValidationErrorComponent implements OnInit {
   constructor(private translateService: TranslateService) { }
 
   ngOnInit() {
+    if (this.errors) {
+      this.setErrors();
+    }
   }
   /**
    * Method for setting error component on respective form controll

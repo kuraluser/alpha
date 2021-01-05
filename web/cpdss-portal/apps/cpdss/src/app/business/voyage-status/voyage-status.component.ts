@@ -11,6 +11,7 @@ export class VoyageStatusComponent implements OnInit {
   display: boolean;
   showData: boolean;
   vesselInfo: IVessel;
+  displayEditPortPopup: boolean;
 
   constructor(private vesselsApiService: VesselsApiService) { }
 
@@ -42,6 +43,20 @@ export class VoyageStatusComponent implements OnInit {
    */
   displayPopUpTab(displayNew_: boolean) {
     this.display = displayNew_;
+  }
+
+  /**
+   * Show edit port rotation popup
+   */
+  showEditPortRotation(){
+    this.displayEditPortPopup = true;
+  }
+
+  /**
+   * Value from edit port rotation
+   */
+  displayEditPortRotationPopUpTab(displayNew_: boolean) {
+    this.displayEditPortPopup = displayNew_;
   }
 
 }
