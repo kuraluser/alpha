@@ -615,7 +615,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Builder replyBuilder = LoadableStudyReply.newBuilder();
     LoadableStudy entity = null;
     try {
-      entity = new LoadableStudy();
+
+      if (request.getId() != 0) {
+        Optional<LoadableStudy> loadableStudy =
+            this.loadableStudyRepository.findByIdAndIsActive(request.getId(), true);
+        if (!loadableStudy.isPresent()) {
+          throw new GenericServiceException(
+              "Loadable study with given id does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+
+        entity = loadableStudy.get();
+
+      } else {
+        entity = new LoadableStudy();
+      }
+
       this.checkVoyageAndCreatedFrom(request, entity);
       entity.setName(request.getName());
       entity.setDetails(StringUtils.isEmpty(request.getDetail()) ? null : request.getDetail());
@@ -657,6 +673,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
         entity.setAttachments(attachmentCollection);
       }
+
       this.setCaseNo(entity);
       entity.setLoadableStudyStatus(
           this.loadableStudyStatusRepository.getOne(LOADABLE_STUDY_INITIAL_STATUS_ID));

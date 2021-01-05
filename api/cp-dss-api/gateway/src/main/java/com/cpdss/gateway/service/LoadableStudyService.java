@@ -377,6 +377,7 @@ public class LoadableStudyService {
         .ifPresent(maxTemp -> builder.setMaxWaterTemperature(String.valueOf(maxTemp)));
     Optional.ofNullable(request.getVesselId()).ifPresent(builder::setVesselId);
     Optional.ofNullable(request.getVoyageId()).ifPresent(builder::setVoyageId);
+    Optional.ofNullable(request.getId()).ifPresent(builder::setId);
     Optional.ofNullable(request.getCreatedFromId()).ifPresent(builder::setDuplicatedFromId);
     for (MultipartFile file : files) {
       String orginalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();

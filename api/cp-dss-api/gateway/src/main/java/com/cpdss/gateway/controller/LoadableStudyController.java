@@ -198,6 +198,7 @@ public class LoadableStudyController {
   public LoadableStudyResponse saveLoadableStudy(
       @PathVariable Long vesselId,
       @PathVariable Long voyageId,
+      @PathVariable Long loadableStudyId,
       @Valid final LoadableStudy request,
       @Size(max = 5, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           @RequestParam(name = "files", required = false)
@@ -209,6 +210,8 @@ public class LoadableStudyController {
       request.setVesselId(vesselId);
       request.setVoyageId(voyageId);
       request.setCompanyId(1L);
+      request.setId(loadableStudyId);
+
       return this.loadableStudyService.saveLoadableStudy(
           request, headers.getFirst(CORRELATION_ID_HEADER), files);
     } catch (GenericServiceException e) {
