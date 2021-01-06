@@ -87,7 +87,7 @@ export class LoadablePlanTransformationService {
     return [
       { field: 'grade', header: 'LOADABLE_PLAN_GRADE', rowspan: 2 },
       {
-        field: 'vin', header: 'Estimated', colspan: 2, className: "header-border" ,subColumns: [
+        field: 'vin', header: 'LOADABLE_PLAN_ESTIMATED', colspan: 2, className: "header-border" ,subColumns: [
           { field: 'estimatedAPI', header: 'LOADABLE_PLAN_ESTIMATED_API' },
           { field: 'estimatedTemp', header: 'LOADABLE_PLAN_ESTIMATED_TEMP' }
         ]
