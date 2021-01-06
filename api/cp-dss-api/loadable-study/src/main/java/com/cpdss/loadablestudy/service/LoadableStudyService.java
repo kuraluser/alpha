@@ -164,7 +164,6 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -173,7 +172,6 @@ import org.springframework.util.StringUtils;
 /** @Author jerin.g */
 @Log4j2
 @GrpcService
-@Service
 @Transactional
 public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
@@ -3260,7 +3258,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
   public void saveSynopticalTable(
       SynopticalTableRequest request, StreamObserver<SynopticalTableReply> responseObserver) {
     SynopticalTableReply.Builder replyBuilder = SynopticalTableReply.newBuilder();
@@ -3277,8 +3275,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       SynopticalTable entity = entityOpt.get();
       entity = this.buildSynopticalTableEntity(entity, request);
       entity = this.synopticalTableRepository.save(entity);
-      this.updateSynopticalEtaEtdEstimates(entity, request);
-      replyBuilder.setId(entity.getId());
+      this.saveSynopticalEtaEtdEstimates(entity, request);
+      this.saveSynopticalLoadicatorData(entity, request);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving synoptical table", e);
@@ -3303,15 +3301,64 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
+   * Save synoptical table loadicator data
+   *
+   * @param entity
+   * @param entity
+   * @param request
+   * @throws GenericServiceException
+   */
+  public void saveSynopticalLoadicatorData(SynopticalTable entity, SynopticalTableRequest request)
+      throws GenericServiceException {
+    SynopticalRecord record = request.getSynopticalRecord();
+    com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData data =
+        record.getLoadicatorData();
+    SynopticalTableLoadicatorData ldEntity =
+        this.synopticalTableLoadicatorDataRepository.findBySynopticalTableAndIsActive(entity, true);
+    if (null == ldEntity) {
+      log.info(
+          "Loadicator data does not exist for given synoptical record with id {}", record.getId());
+    } else {
+      ldEntity.setHog(isEmpty(data.getHogSag()) ? null : new BigDecimal(data.getHogSag()));
+      ldEntity.setCalculatedDraftFwdActual(
+          isEmpty(data.getCalculatedDraftFwdActual())
+              ? null
+              : new BigDecimal(data.getCalculatedDraftFwdActual()));
+      ldEntity.setCalculatedDraftAftActual(
+          isEmpty(data.getCalculatedDraftAftActual())
+              ? null
+              : new BigDecimal(data.getCalculatedDraftAftActual()));
+      ldEntity.setCalculatedDraftMidActual(
+          isEmpty(data.getCalculatedDraftMidActual())
+              ? null
+              : new BigDecimal(data.getCalculatedDraftMidActual()));
+      ldEntity.setCalculatedTrimActual(
+          isEmpty(data.getCalculatedTrimActual())
+              ? null
+              : new BigDecimal(data.getCalculatedTrimActual()));
+      ldEntity.setBlindSector(
+          isEmpty(data.getBlindSector()) ? null : new BigDecimal(data.getBlindSector()));
+      this.synopticalTableLoadicatorDataRepository.save(ldEntity);
+    }
+  }
+
+  /**
    * Update estimated values to port rotation table
    *
    * @param entity
    * @param request
+   * @throws GenericServiceException
    */
-  private void updateSynopticalEtaEtdEstimates(
-      SynopticalTable entity, SynopticalTableRequest request) {
+  public void saveSynopticalEtaEtdEstimates(SynopticalTable entity, SynopticalTableRequest request)
+      throws GenericServiceException {
     SynopticalRecord record = request.getSynopticalRecord();
     LoadableStudyPortRotation prEntity = entity.getLoadableStudyPortRotation();
+    if (null == prEntity) {
+      throw new GenericServiceException(
+          "Port rotation does not exist for given synoptical record",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
     LocalDateTime etaEtdEstimated =
         isEmpty(record.getEtaEtdEstimated())
             ? null
@@ -3332,7 +3379,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param request
    * @return
    */
-  private SynopticalTable buildSynopticalTableEntity(
+  public SynopticalTable buildSynopticalTableEntity(
       SynopticalTable entity, SynopticalTableRequest request) {
     DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
     SynopticalRecord record = request.getSynopticalRecord();
@@ -3379,7 +3426,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param entity
    * @param record
    */
-  private void buildSynopticalTableEtaEtdActuals(SynopticalTable entity, SynopticalRecord record) {
+  public void buildSynopticalTableEtaEtdActuals(SynopticalTable entity, SynopticalRecord record) {
     LocalDateTime etaEtdActual =
         isEmpty(record.getEtaEtdActual())
             ? null
@@ -3593,12 +3640,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       SynopticalTable synopticalEntity,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builder) {
     SynopticalTableLoadicatorData loadicatorData =
-        this.synopticalTableLoadicatorDataRepository.findBySynopticalTableIdAndIsActive(
-            synopticalEntity.getId(), true);
+        this.synopticalTableLoadicatorDataRepository.findBySynopticalTableAndIsActive(
+            synopticalEntity, true);
     if (null != loadicatorData) {
       com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder dataBuilder =
           com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.newBuilder();
-      Optional.ofNullable(loadicatorData.getBlindSetor())
+      Optional.ofNullable(loadicatorData.getBlindSector())
           .ifPresent(item -> dataBuilder.setBlindSector(valueOf(item)));
       Optional.ofNullable(loadicatorData.getHog())
           .ifPresent(item -> dataBuilder.setHogSag(valueOf(item)));
@@ -3935,7 +3982,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Optional.ofNullable(synopticalEntity.getLwTideTo())
         .ifPresent(lwTideTo -> builder.setLwTideTo(String.valueOf(lwTideTo)));
     Optional.ofNullable(synopticalEntity.getLwTideTimeTo())
-        .ifPresent(lwTideTimeTo -> builder.setLwTideTimeTo(String.valueOf(lwTideTimeTo)));
+        .ifPresent(lwTideTimeTo -> builder.setLwTideTimeTo(formatter.format(lwTideTimeTo)));
     if (null != synopticalEntity.getEtaActual()) {
       builder.setEtaEtdActual(formatter.format(synopticalEntity.getEtaActual()));
     } else if (null != synopticalEntity.getEtdActual()) {
