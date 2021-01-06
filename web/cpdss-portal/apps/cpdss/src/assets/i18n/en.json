@@ -373,8 +373,8 @@
 	"OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY": "Volume loaded in tank must not exceed capacity of tank.",
 	"COMMINGLE_MANUAL_QUANTITY_MIN_VALUE": "Quantity must be greater than 0",
 	"COMMINGLE_MANUAL_SAME_CARGO_VALIDATION": "This cargo combination already exist",
-	"VOYAGE_POP_UP_START_DATE_LABEL": "Start Date",
-	"VOYAGE_POP_UP_END_DATE_LABEL": "End Date",
+	"VOYAGE_POP_UP_START_DATE_LABEL": "Planned start date",
+	"VOYAGE_POP_UP_END_DATE_LABEL": "Planned end date",
 	"VOYAGE_POPUP_START_DATE_REQUIRED_ERROR": "Start date is required",
 	"VOYAGE_POPUP_END_DATE_REQUIRED_ERROR": "End date is required",
 	"VOYAGE_POPUP_START_DATE_COMPARE_ERROR": "Start date must be less than end date",
@@ -387,5 +387,6 @@
 	"EDIT_PORT_ROTATION_NOTE":"Note",
 	"EDIT_PORT_ROTATION_NOTE_DETAILS":"Changing port rotation will clear dates and times for ETA/ETD on the affected port items",
 	"CANCEL_BUTTON_EDIT_PORT_ROTATION_POPUP": "Cancel",
-	"SAVE_BUTTON_EDIT_PORT_ROTATION_POPUP": "Save"
+	"SAVE_BUTTON_EDIT_PORT_ROTATION_POPUP": "Save",
+	"CARGO_NOMINATION_FIELD_ABBREVIATION_MAX_LENGTH_ERROR": "Maximum allowed character length is 4"
 }
