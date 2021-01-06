@@ -22,10 +22,10 @@ export class ValidationErrorComponent implements OnInit {
     return this._errors;
   }
   set errors(errors: IValidationErrors) {
-    if (this.errors) {
+    this._errors = errors;
+    if (errors) {
       this.setErrors();
     }
-    this._errors = errors;
   }
 
   @Input() errorMessages: IValidationErrorMessages;

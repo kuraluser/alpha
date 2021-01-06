@@ -47,9 +47,10 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     if (duplicateLoadableStudy)
       this.getLoadableStudyDetailsForDuplicating(duplicateLoadableStudy);
   }
-
+  @Input() isEdit = false;
+  @Input() selectedLoadableStudy: LoadableStudy;
   @Output() displayPopup = new EventEmitter();
-  @Output() addedNewLoadableStudy = new EventEmitter<number>();
+  @Output() addedNewLoadableStudy = new EventEmitter<Object>();
 
   @ViewChild('fileUpload') fileUploadVariable: ElementRef;
 
@@ -64,10 +65,13 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   loadlineList: ILoadLineList;
   draftMarkList: IdraftMarks[] = [];
   uploadedFiles: any[] = [];
+  editUploadFiles: any[] = [];
   loadlineLists: ILoadLineList[];
   showError = false;
   uploadError = "";
   newLoadableStudyNameExist = false;
+  popUpHeader = "";
+  saveButtonLabel = "";
   constructor(private loadableStudyListApiService: LoadableStudyListApiService,
     private formBuilder: FormBuilder,
     private router: Router,
@@ -76,6 +80,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService) { }
 
   ngOnInit(): void {
+    this.popUpHeader = this.isEdit ? "NEW_LOADABLE_STUDY_POPUP_EDIT_HEADER" : "NEW_LOADABLE_STUDY_POPUP_HEADER"
+    this.saveButtonLabel = this.isEdit ? "NEW_LOADABLE_STUDY_POPUP_UPDATE_BUTTON" : "NEW_LOADABLE_STUDY_POPUP_SAVE_BUTTON";
     this.getVesselInfo();
   }
 
@@ -84,7 +90,11 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     this.uploadedFiles = [];
     this.loadlineLists = this.vesselInfoList?.loadlines;
     this.createNewLoadableStudyFormGroup();
-    this.getLoadlineSummer();
+    if (this.isEdit) {
+      this.updateLoadableStudyFormGroup()
+    } else {
+      this.getLoadlineSummer();
+    }
   }
 
   //get summer loadline data
@@ -92,7 +102,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     const result = this.loadlineLists.filter(e => e.name.toLowerCase() === 'summer');
     if (result.length > 0) {
       this.loadlineList = result[0];
-      const draftMarkSummer = Math.max(...this.loadlineList.draftMarks.map(Number));
+      const draftMarkSummer = this.loadlineList.draftMarks[0];
       this.newLoadableStudyFormGroup.patchValue({
         loadLine: this.loadlineList,
         draftMark: { id: draftMarkSummer, name: draftMarkSummer }
@@ -112,9 +122,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       subCharterer: this.formBuilder.control('', [Validators.maxLength(30)]),
       loadLine: '',
       draftMark: '',
-      draftRestriction: this.formBuilder.control('', [ numberValidator(2, 2) ]),
-      maxAirTempExpected: this.formBuilder.control('', [ numberValidator(2, 3) ]),
-      maxWaterTempExpected: this.formBuilder.control('', [ numberValidator(2, 3) ])
+      draftRestriction: this.formBuilder.control('', [numberValidator(2, 2)]),
+      maxAirTempExpected: this.formBuilder.control('', [numberValidator(2, 3)]),
+      maxWaterTempExpected: this.formBuilder.control('', [numberValidator(2, 3)])
     });
   }
 
@@ -139,11 +149,12 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   // post newLoadableStudyFormGroup for saving newly created loadable-study
   public async saveLoadableStudy() {
     if (this.newLoadableStudyFormGroup.valid) {
-      this.newLoadableStudyNameExist = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
-      const translationKeys = await this.translateService.get(['LOADABLE_STUDY_CREATE_SUCCESS', 'LOADABLE_STUDY_CREATED_SUCCESSFULLY', 'LOADABLE_STUDY_CREATE_ERROR', 'LOADABLE_STUDY_ALREADY_EXIST']).toPromise();
+      const nameExistence = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
+      this.newLoadableStudyNameExist = this.isEdit ? (this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim() === this.selectedLoadableStudy.name.toLocaleLowerCase() ? false : nameExistence) : nameExistence;
+      const translationKeys = await this.translateService.get(['LOADABLE_STUDY_CREATE_SUCCESS', 'LOADABLE_STUDY_CREATED_SUCCESSFULLY', 'LOADABLE_STUDY_CREATE_ERROR', 'LOADABLE_STUDY_ALREADY_EXIST', 'LOADABLE_STUDY_UPDATE_SUCCESS', 'LOADABLE_STUDY_UPDATED_SUCCESSFULLY']).toPromise();
       if (!this.newLoadableStudyNameExist) {
         this.newLoadableStudyPopupModel = {
-          id: 0,
+          id: this.isEdit ? this.selectedLoadableStudy.id : 0,
           createdFromId: this.newLoadableStudyFormGroup.controls.duplicateExisting.value?.id,
           name: this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.trim(),
           detail: this.newLoadableStudyFormGroup.controls.enquiryDetails.value,
@@ -160,10 +171,13 @@ export class NewLoadableStudyPopupComponent implements OnInit {
         try {
           const result = await this.loadableStudyListApiService.setLodableStudy(this.vesselInfoList?.id, this.voyage.id, this.newLoadableStudyPopupModel).toPromise();
           if (result.responseStatus.status === "200") {
-            this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
+            if (this.isEdit) {
+              this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
+            } else {
+              this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
+            }
             this.closeDialog();
             this.addedNewLoadableStudy.emit(result.loadableStudyId)
-            // this.router.navigate(['business/cargo-planning/loadable-study-details/' + this.vesselInfoList?.id + '/' + this.voyage.id + '/' + result.loadableStudyId]);
           }
         } catch (error) {
           //TODO: The validation error for lodable study with same name exist error should be given in api response
@@ -194,12 +208,12 @@ export class NewLoadableStudyPopupComponent implements OnInit {
             continue;
           } else {
             this.showError = false;
-            if(uploadFile.length < 5){
+            if (uploadFile.length < 5) {
               uploadFile.push(uploadedFileVar[i]);
-            }else{
+            } else {
               this.showError = true;
               this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_LIMIT_ERROR"
-            }   
+            }
           }
         } else {
           this.showError = true;
@@ -217,10 +231,14 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   }
 
   //open selected file
-  openFile(index) {
-    const blob = new Blob([this.uploadedFiles[index]], { type: this.uploadedFiles[index].type })
-    const fileurl = window.URL.createObjectURL(blob)
-    window.open(fileurl)
+  openFile(index, fileID = null) {
+    if (fileID) {
+      this.loadableStudyListApiService.downloadAttachment(this.vesselInfoList?.id, this.voyage.id, this.selectedLoadableStudy?.id, fileID);
+    } else {
+      const blob = new Blob([this.uploadedFiles[index]], { type: this.uploadedFiles[index].type })
+      const fileurl = window.URL.createObjectURL(blob)
+      window.open(fileurl)
+    }
   }
 
   //remove selected file
@@ -251,6 +269,34 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   //for set selcted loadable study value in loadable study form
   onDuplicateExisting(event: IDropdownEvent) {
     this.getLoadableStudyDetailsForDuplicating(event.value);
+  }
+
+  //for edit update the values 
+  updateLoadableStudyFormGroup() {
+    this.newLoadableStudyFormGroup.patchValue({
+      duplicateExisting: '',
+      newLoadableStudyName: this.selectedLoadableStudy.name,
+      enquiryDetails: this.selectedLoadableStudy.detail,
+      charterer: this.selectedLoadableStudy.charterer,
+      subCharterer: this.selectedLoadableStudy.subCharterer,
+      loadLine: this.selectedLoadableStudy,
+      draftMark: this.selectedLoadableStudy,
+      draftRestriction: this.selectedLoadableStudy.draftRestriction,
+      maxAirTempExpected: this.selectedLoadableStudy.maxAirTemperature,
+      maxWaterTempExpected: this.selectedLoadableStudy.maxWaterTemperature
+    })
+    const result = this.loadlineLists.filter(e => e.id === this.selectedLoadableStudy.loadLineXId);
+    if (result.length > 0) {
+      this.loadlineList = result[0];
+      const selectedDraftMark = this.selectedLoadableStudy.draftMark;
+      this.newLoadableStudyFormGroup.patchValue({
+        loadLine: this.loadlineList,
+        draftMark: { id: selectedDraftMark, name: selectedDraftMark }
+      });
+    }
+    const loadLine = this.newLoadableStudyFormGroup.get('loadLine').value;
+    this.draftMarkList = loadLine.draftMarks.map(draftMarks => ({ id: draftMarks, name: draftMarks }));
+    this.uploadedFiles = [...this.selectedLoadableStudy.loadableStudyAttachment];
   }
 
 }

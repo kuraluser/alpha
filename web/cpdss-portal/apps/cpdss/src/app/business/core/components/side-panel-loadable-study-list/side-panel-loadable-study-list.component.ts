@@ -35,6 +35,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
 
   columns: IDataTableColumn[];
   display = false;
+  isEdit = false;
   duplicateLoadableStudy: LoadableStudy;
   selectionMode = DATATABLE_SELECTIONMODE.SINGLE;
 
@@ -135,4 +136,15 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
     this.selectedLoadableStudyChange.emit(event);
   }
   
+   /**
+   * Handler for row selection
+   *
+   * @param {*} event
+   * @memberof SidePanelLoadableStudyListComponent
+   */
+  onEdit(event) {
+    this.selectedLoadableStudy = event?.data;
+    this.isEdit = true;
+    this.display = true;
+  }
 }

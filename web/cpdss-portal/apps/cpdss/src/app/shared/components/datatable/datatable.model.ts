@@ -164,5 +164,6 @@ export enum DATATABLE_ACTION {
     SAVE = 'SAVE',
     DELETE = 'DELETE',
     DUPLICATE = 'DUPLICATE',
-    VIEW = 'VIEW'
+    VIEW = 'VIEW',
+    EDIT = 'EDIT'
 }

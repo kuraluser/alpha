@@ -294,6 +294,9 @@ a {
 }
 
 .pencil-icon {
+  width: 18px;
+  height: 14px;
+  display: inline-block;
   background-position: center left;
 }
 
@@ -655,6 +658,7 @@ h5{
 
 .p-datatable .p-datatable-tbody > tr > td{
   padding: 11px 5px;
+  cursor: pointer;
 }
 
 /* width */
@@ -1011,7 +1015,6 @@ input[type=number] {
 }
 
 .cargo-nomination-table .p-datatable table{
-  width: auto!important;
   min-width: 100%!important;
   // table-layout: auto!important;
   td{
@@ -1307,7 +1310,6 @@ top: 35px;
       th:last-child{
         width: 50%;
         max-width: 50%;
-        padding-left: 5px;
       }
     }
   }
@@ -1332,13 +1334,13 @@ top: 35px;
 @media (max-width: 1699px){
   .cargo-nomination-table.ohq .p-datatable-thead tr th{
 table{
-  th:last-child{
+  th{
     width: 5vw!important;
     max-width: 5vw !important;
   }
   }
 }
-.column-class.column-weight{
+.column-class.column-weight, .column-class.column-volume{
   width: 5vw!important;
   max-width: 5vw!important;
 }
