@@ -6,12 +6,12 @@
         <p-table #datatable [columns]="columns" [value]="loadableQuantityCargoDetails">
             <ng-template pTemplate="header" let-columns>
                 <tr>
-                    <th *ngFor="let col of columns; let colIndex = index" [attr.colspan]="col.colspan" [attr.rowspan]="col.rowspan"><div>{{col.header}}</div></th>
+                    <th *ngFor="let col of columns; let colIndex = index" [attr.colspan]="col.colspan" [attr.rowspan]="col.rowspan"><div>{{col.header | translate}}</div></th>
                 </tr>
                 <tr>
                     <ng-container *ngFor="let col of columns; let colIndex = index">
                         <ng-container *ngIf="col?.subColumns?.length;">
-                            <th *ngFor="let subCol of col.subColumns;">{{subCol.header}}</th>
+                            <th *ngFor="let subCol of col.subColumns;">{{subCol.header | translate}}</th>
                         </ng-container>
                     </ng-container>
                 </tr>

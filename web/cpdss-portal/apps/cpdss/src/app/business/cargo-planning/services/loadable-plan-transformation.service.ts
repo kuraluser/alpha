@@ -27,28 +27,28 @@ export class LoadablePlanTransformationService {
   public getEtaEtdTableColumns(): ITableHeaderModel[] {
     return [
       { field: 'year', header: '' },
-      { field: 'year', header: 'PORT' },
-      { field: 'year', header: 'ETA/ETD DATE' },
-      { field: 'year', header: 'ETA/ETD TIME' },
+      { field: 'year', header: 'ETA_ETD_PORT' },
+      { field: 'year', header: 'ETA_ETD_DATE' },
+      { field: 'year', header: 'ETA_ETD_TIME' },
       {
-        field: 'year', header: 'DRAFT', rowspan: 3, subColumns: [
-          { field: 'year', header: 'FORE' },
-          { field: 'year', header: 'AFT' },
-          { field: 'year', header: 'MSHIP' }
+        field: 'year', header: 'ETA_ETD_DRAFT', rowspan: 3, subColumns: [
+          { field: 'year', header: 'ETA_ETD_DRAFT_FORE' },
+          { field: 'year', header: 'ETA_ETD_DRAFT_AFT' },
+          { field: 'year', header: 'ETA_ETD_DRAFT_MSHIP' }
         ]
       },
-      { field: 'year', header: 'TRIM' },
-      { field: 'year', header: 'CARGO(MT)' },
-      { field: 'year', header: 'F.Q.' },
-      { field: 'year', header: 'D.Q.' },
-      { field: 'year', header: 'BALLAST' },
-      { field: 'year', header: 'FRESH WATER' },
-      { field: 'year', header: 'OTHERS' },
-      { field: 'year', header: 'TOTAL DWT' },
-      { field: 'year', header: 'DISPLACEMENT' },
-      { field: 'year', header: 'MAX FRBRO (M)' },
-      { field: 'year', header: 'MAX.MNFLD(M)' },
-      { field: 'year', header: 'DENSITY' },
+      { field: 'year', header: 'ETA_ETD_TRIM' },
+      { field: 'year', header: 'ETA_ETD_CARGO' },
+      { field: 'year', header: 'ETA_ETD_FQ' },
+      { field: 'year', header: 'ETA_ETD_DQ' },
+      { field: 'year', header: 'ETA_ETD_BALLAST' },
+      { field: 'year', header: 'ETA_ETD_FRESH_WATER' },
+      { field: 'year', header: 'ETA_ETD_OTHERS' },
+      { field: 'year', header: 'ETA_ETD_TOTAL_DWT' },
+      { field: 'year', header: 'ETA_ETD_DISPLACEMENT' },
+      { field: 'year', header: 'ETA_ETD_MAX_FRBRO' },
+      { field: 'year', header: 'ETA_ETD_MAX_MNFLD' },
+      { field: 'year', header: 'ETA_ETD_DENSITY' },
     ]
   }
 
@@ -60,19 +60,19 @@ export class LoadablePlanTransformationService {
 */
   public getCommingledCargoTableColumn(): ITableHeaderModel[] {
     return [
-      { field: 'grade', header: 'GRADE'  , rowspan: 2 },
-      { field: 'tankName', header: 'TANK' , rowspan: 2 },
-      { field: 'quantity', header: 'QUANTITY (BLS)' , rowspan: 2 },
-      { field: 'api', header: 'API' , rowspan: 2 },
-      { field: 'temp', header: 'TEMP (F)' , rowspan: 2 },
+      { field: 'grade', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_GRADE'  , rowspan: 2 },
+      { field: 'tankName', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_TANK' , rowspan: 2 },
+      { field: 'quantity', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_QUANTITY' , rowspan: 2 },
+      { field: 'api', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_API' , rowspan: 2 },
+      { field: 'temp', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_TEMP' , rowspan: 2 },
       {
-        header: 'COMPOSITION BREAKDOWN' , colspan: 6 , subColumns: [
-          { field: 'cargoPercentage', header: 'PERCENTAGE' },
-          { field: 'cargoBblsdbs', header: 'BBLS@DBS.TEMP' },
-          { field: 'cargoBbls60f', header: 'BBL@60F' },
-          { field: 'cargoLT', header: 'LT' },
-          { field: 'cargoMT', header: 'MT' },
-          { field: 'cargoKL', header: 'KL' }
+        header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN' , colspan: 6 , subColumns: [
+          { field: 'cargoPercentage', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN_PERCENTAGE' },
+          { field: 'cargoBblsdbs', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN_BBLS@DBS.TEMP' },
+          { field: 'cargoBbls60f', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN_BBL@60F' },
+          { field: 'cargoLT', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_LT' },
+          { field: 'cargoMT', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_MT' },
+          { field: 'cargoKL', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_KL' }
         ]
       }
     ];
@@ -85,36 +85,36 @@ export class LoadablePlanTransformationService {
   */
   getLoadableQuantityTableColumns(): ITableHeaderModel[] {
     return [
-      { field: 'grade', header: 'Grade', rowspan: 2 },
+      { field: 'grade', header: 'LOADABLE_PLAN_GRADE', rowspan: 2 },
       {
         field: 'vin', header: 'Estimated', colspan: 2, className: "header-border" ,subColumns: [
-          { field: 'estimatedAPI', header: 'API' },
-          { field: 'estimatedTemp', header: 'TEMP' }
+          { field: 'estimatedAPI', header: 'LOADABLE_PLAN_ESTIMATED_API' },
+          { field: 'estimatedTemp', header: 'LOADABLE_PLAN_ESTIMATED_TEMP' }
         ]
       },
       {
-        field: 'year', header: 'ORDER', colspan: 2, className: "header-border" , subColumns: [
-          { field: 'orderBblsdbs', header: 'BBLS@OBS.TEMP' },
-          { field: 'orderBbls60f', header: 'BBLS@60F' }
+        field: 'year', header: 'LOADABLE_PLAN_ORDER', colspan: 2, className: "header-border" , subColumns: [
+          { field: 'orderBblsdbs', header: 'LOADABLE_PLAN_ORDER_BBLS@OBS_TEMP' },
+          { field: 'orderBbls60f', header: 'LOADABLE_PLAN_ORDER_BBLS@60F' }
         ]
       },
       {
-        field: 'brand', header: 'TLRNC', colspan: 2, className: "header-border" , subColumns: [
-          { field: 'minTolerence', header: 'Min' },
-          { field: 'maxTolerence', header: 'Max' }
+        field: 'brand', header: 'LOADABLE_PLAN_TLRNC', colspan: 2, className: "header-border" , subColumns: [
+          { field: 'minTolerence', header: 'LOADABLE_PLAN_TLRNC_MIN' },
+          { field: 'maxTolerence', header: 'LOADABLE_PLAN_TLRNC_MAX' }
         ]
       },
       {
-        field: 'color', header: 'LOADABLE', colspan: 5, className: "header-border" , subColumns: [
-          { field: 'loadableBblsdbs', header: 'BBLS@DBS.TEMP' },
-          { field: 'loadableBbls60f', header: 'BBLS@60F' },
-          { field: 'loadableLT', header: 'LT' },
-          { field: 'loadableMT', header: 'MT' },
-          { field: 'loadableKL', header: 'KL' }
+        field: 'color', header: 'LOADABLE_PLAN_LOADABLE', colspan: 5, className: "header-border" , subColumns: [
+          { field: 'loadableBblsdbs', header: 'LOADABLE_PLAN_LOADABLE_BBLS@DBS_TEMP' },
+          { field: 'loadableBbls60f', header: 'LOADABLE_PLAN_LOADABLE_BBLS@60F' },
+          { field: 'loadableLT', header: 'LOADABLE_PLAN_LOADABLE_LT' },
+          { field: 'loadableMT', header: 'LOADABLE_PLAN_LOADABLE_MT' },
+          { field: 'loadableKL', header: 'LOADABLE_PLAN_LOADABLE_KL' }
         ]
       },
       {
-        field: 'differencePercentage', header: 'DIFF.%' , rowspan: 2
+        field: 'differencePercentage', header: 'LOADABLE_PLAN_LOADABLE_DIFF' , rowspan: 2
       }
     ]
   }
