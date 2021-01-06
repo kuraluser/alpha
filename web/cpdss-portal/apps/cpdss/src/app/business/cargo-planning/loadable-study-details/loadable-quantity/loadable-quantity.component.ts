@@ -113,7 +113,7 @@ export class LoadableQuantityComponent implements OnInit {
         this.loadableQuantityForm.addControl('speedInSz', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
         this.loadableQuantityForm.addControl('runningHours', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
         this.loadableQuantityForm.addControl('runningDays', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
-        this.loadableQuantityForm.addControl('foConday', this.fb.control('', [Validators.required, numberValidator(0, 2), Validators.min(0)]));
+        this.loadableQuantityForm.addControl('foConday', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
         this.loadableQuantityForm.addControl('foConsInSz', this.fb.control('', [Validators.required, numberValidator(5, 7), Validators.min(0)]));
       }
       if (this.caseNo === 3) {
