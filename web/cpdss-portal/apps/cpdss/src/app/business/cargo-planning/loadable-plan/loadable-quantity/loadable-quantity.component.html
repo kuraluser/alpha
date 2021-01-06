@@ -8,13 +8,13 @@
                 <ng-container>
                     <tr>
                         <th *ngFor="let col of columns; let colIndex = index" [attr.colspan]="col.colspan" [attr.rowspan]="col.rowspan">
-                            <div [class]="col.className">{{col.header}}</div>
+                            <div [class]="col.className">{{col.header | translate}}</div>
                         </th>
                     </tr>
                     <tr>
                         <ng-container *ngFor="let col of columns; let colIndex = index">
                             <ng-container *ngIf="col?.subColumns?.length;">
-                                <th *ngFor="let subCol of col.subColumns;">{{subCol.header}}</th>
+                                <th *ngFor="let subCol of col.subColumns;">{{subCol.header | translate}}</th>
                             </ng-container>
                         </ng-container>
                     </tr>
