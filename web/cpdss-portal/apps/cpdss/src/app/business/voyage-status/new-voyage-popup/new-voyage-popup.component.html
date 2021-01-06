@@ -25,7 +25,7 @@
               <input type="text" class="form-control" id="voyage_no" formControlName="voyageNo"
                 (change)="trimVoyageNo($event)">
             </div>
-            <cpdss-portal-validation-error [errors]="fieldError('voyageNo')" [errorMessages]="errorMessages.voyageNo">
+            <cpdss-portal-validation-error *ngIf="fieldError('voyageNo')" [errors]="fieldError('voyageNo')" [errorMessages]="errorMessages.voyageNo">
             </cpdss-portal-validation-error>
 
           </div>
@@ -40,7 +40,7 @@
                     translate}}</button></p-footer>
               </p-calendar>
             </div>
-            <cpdss-portal-validation-error [errors]="fieldError('start_date')"
+            <cpdss-portal-validation-error *ngIf="fieldError('start_date')" [errors]="fieldError('start_date')"
               [errorMessages]="errorMessages.start_date">
             </cpdss-portal-validation-error>
           </div>
@@ -55,7 +55,7 @@
                     translate}}</button></p-footer>
               </p-calendar>
             </div>
-            <cpdss-portal-validation-error [errors]="fieldError('end_date')" [errorMessages]="errorMessages.end_date">
+            <cpdss-portal-validation-error *ngIf="fieldError('end_date')" [errors]="fieldError('end_date')" [errorMessages]="errorMessages.end_date">
             </cpdss-portal-validation-error>
           </div>
           <div class="row">
