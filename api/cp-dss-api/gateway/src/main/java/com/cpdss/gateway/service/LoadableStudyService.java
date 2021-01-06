@@ -1959,9 +1959,9 @@ public class LoadableStudyService {
       dto.setCargoId(0 == detail.getCargoId() ? null : detail.getCargoId());
       dto.setColorCode(isEmpty(detail.getColorCode()) ? null : detail.getColorCode());
       dto.setAbbreviation(isEmpty(detail.getAbbreviation()) ? null : detail.getAbbreviation());
-      dto.setSounding(isEmpty(detail.getSounding()) ? null : new BigDecimal(detail.getSounding()));
-      dto.setWeight(isEmpty(detail.getWeight()) ? null : new BigDecimal(detail.getWeight()));
-      dto.setVolume(isEmpty(detail.getVolume()) ? null : new BigDecimal(detail.getVolume()));
+      dto.setSounding(isEmpty(detail.getSounding()) ? BigDecimal.ZERO : new BigDecimal(detail.getSounding()));
+      dto.setWeight(isEmpty(detail.getWeight()) ? BigDecimal.ZERO : new BigDecimal(detail.getWeight()));
+      dto.setVolume(isEmpty(detail.getVolume()) ? BigDecimal.ZERO : new BigDecimal(detail.getVolume()));
       dto.setTankId(detail.getTankId());
       dto.setTankName(detail.getTankName());
       response.getOnBoardQuantities().add(dto);
