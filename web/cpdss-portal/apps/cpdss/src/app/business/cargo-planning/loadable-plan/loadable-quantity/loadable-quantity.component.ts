@@ -4,7 +4,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 
 import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
 
-import { ITableHeaderModel, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ITotalLoadableQuality } from '../../models/loadable-plan.model';
+import { ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ITotalLoadableQuality } from '../../models/loadable-plan.model';
+import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 
 /**
  * Component class of loadable quantity component in loadable plan
@@ -36,7 +37,7 @@ export class LoadableQuantityComponent implements OnInit {
     return this._loadableQuantityCommingleCargoDetails;
   }
 
-  public columns: ITableHeaderModel[];
+  public columns: IDataTableColumn[];
   public loadableQuantityData: ILoadableQuantityCargo[];
   public _loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
   public total: ITotalLoadableQuality;
@@ -58,14 +59,14 @@ export class LoadableQuantityComponent implements OnInit {
   */
   private calculateTotal(loadableQuantityData: ILoadableQuantityCargo[]) {
     loadableQuantityData?.map((value: ILoadableQuantityCargo) => {
-      this.total.orderBblsdbs += Number(value.orderBblsdbs);
-      this.total.orderBbls60f += Number(value.orderBbls60f);
-      this.total.loadableBblsdbs += Number(value.loadableBblsdbs);
-      this.total.loadableBbls60f += Number(value.loadableBbls60f);
-      this.total.loadableLT += Number(value.loadableLT);
-      this.total.loadableMT += Number(value.loadableMT);
-      this.total.loadableKL += Number(value.loadableKL);
-      this.total.differencePercentage += Number(value.differencePercentage);
+      this.total.orderBblsdbs += Number(value?.orderBblsdbs);
+      this.total.orderBbls60f += Number(value?.orderBbls60f);
+      this.total.loadableBblsdbs += Number(value?.loadableBblsdbs);
+      this.total.loadableBbls60f += Number(value?.loadableBbls60f);
+      this.total.loadableLT += Number(value?.loadableLT);
+      this.total.loadableMT += Number(value?.loadableMT);
+      this.total.loadableKL += Number(value?.loadableKL);
+      this.total.differencePercentage += Number(value?.differencePercentage);
     })
   }
 

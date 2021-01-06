@@ -1,29 +1,6 @@
 import { IResponseStatus } from '../../../shared/models/common.model';
 import { ICargoTank, ILoadableCargo } from '../../core/models/common.model';
 
-/**
- * Interface for loadable quality plan table 
- *
- * @export
- * @interface ITableHeaderModel
- */
-export interface ITableHeaderModel {
-    field?: string;
-    header: string;
-    rowspan?: number;
-    colspan?: number,
-    className?: string,
-    subColumns?: IColumHeader[];
-}
-
-/**
- * Interface for sub column table header
-*/
-interface IColumHeader {
-    field: string;
-    header: string;
-    rowspan?: number;
-}
 
 /**
  * Interface for Loadable Quantity api response

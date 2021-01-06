@@ -1,7 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DecimalPipe  } from '@angular/common';
 
-import { ITableHeaderModel , ILoadableQuantityCommingleCargo } from '../../../models/loadable-plan.model';
+import { ILoadableQuantityCommingleCargo } from '../../../models/loadable-plan.model';
+import { IDataTableColumn } from '../../../../../shared/components/datatable/datatable.model';
 
 import { LoadablePlanTransformationService } from '../../../services/loadable-plan-transformation.service';
 
@@ -31,7 +32,7 @@ export class CommingledCargoDetailsComponent implements OnInit {
     return this._loadableQuantityCargoDetails
   }
 
-  public columns: any[];
+  public columns: IDataTableColumn[];
   public _loadableQuantityCargoDetails: any[];
 
   constructor(

@@ -23,7 +23,7 @@ export class LoadablePlanTransformationService {
   /**
   * 
   * Get loadable quantity table header
-  * @returns {ITableHeaderModel[]}
+  * @returns {IDataTableColumn[]}
   */
   public getEtaEtdTableColumns(): IDataTableColumn[] {
     return [
@@ -57,7 +57,7 @@ export class LoadablePlanTransformationService {
   /**
 * 
 * GetCommingled Cargo Table Column
-* @returns {ITableHeaderModel[]}
+* @returns {IDataTableColumn[]}
 */
   public getCommingledCargoTableColumn(): IDataTableColumn[] {
     return [
@@ -82,7 +82,7 @@ export class LoadablePlanTransformationService {
   /**
   * 
   * Get loadable quantity table header
-  * @returns {ITableHeaderModel[]}
+  * @returns {IDataTableColumn[]}
   */
   getLoadableQuantityTableColumns(): IDataTableColumn[] {
     return [
