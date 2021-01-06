@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { ICargoTank } from '../../core/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ITableHeaderModel, ILoadableQuantityCargo, ICargoTankDetail , ILoadableQuantityCommingleCargo , ICommingleCargoDispaly } from '../models/loadable-plan.model';
+import { ILoadableQuantityCargo, ICargoTankDetail , ILoadableQuantityCommingleCargo , ICommingleCargoDispaly } from '../models/loadable-plan.model';
+import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 
 /**
  * Transformation Service for Lodable Plan details module
@@ -24,7 +25,7 @@ export class LoadablePlanTransformationService {
   * Get loadable quantity table header
   * @returns {ITableHeaderModel[]}
   */
-  public getEtaEtdTableColumns(): ITableHeaderModel[] {
+  public getEtaEtdTableColumns(): IDataTableColumn[] {
     return [
       { field: 'year', header: '' },
       { field: 'year', header: 'ETA_ETD_PORT' },
@@ -58,7 +59,7 @@ export class LoadablePlanTransformationService {
 * GetCommingled Cargo Table Column
 * @returns {ITableHeaderModel[]}
 */
-  public getCommingledCargoTableColumn(): ITableHeaderModel[] {
+  public getCommingledCargoTableColumn(): IDataTableColumn[] {
     return [
       { field: 'grade', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_GRADE'  , rowspan: 2 },
       { field: 'tankName', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_TANK' , rowspan: 2 },
@@ -66,7 +67,7 @@ export class LoadablePlanTransformationService {
       { field: 'api', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_API' , rowspan: 2 },
       { field: 'temp', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_TEMP' , rowspan: 2 },
       {
-        header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN' , colspan: 6 , subColumns: [
+         header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN' , colspan: 6 , subColumns: [
           { field: 'cargoPercentage', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN_PERCENTAGE' },
           { field: 'cargoBblsdbs', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN_BBLS@DBS.TEMP' },
           { field: 'cargoBbls60f', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN_BBL@60F' },
@@ -83,29 +84,29 @@ export class LoadablePlanTransformationService {
   * Get loadable quantity table header
   * @returns {ITableHeaderModel[]}
   */
-  getLoadableQuantityTableColumns(): ITableHeaderModel[] {
+  getLoadableQuantityTableColumns(): IDataTableColumn[] {
     return [
       { field: 'grade', header: 'LOADABLE_PLAN_GRADE', rowspan: 2 },
       {
-        field: 'vin', header: 'LOADABLE_PLAN_ESTIMATED', colspan: 2, className: "header-border" ,subColumns: [
+        header: 'LOADABLE_PLAN_ESTIMATED', colspan: 2, className: "header-border" ,subColumns: [
           { field: 'estimatedAPI', header: 'LOADABLE_PLAN_ESTIMATED_API' },
           { field: 'estimatedTemp', header: 'LOADABLE_PLAN_ESTIMATED_TEMP' }
         ]
       },
       {
-        field: 'year', header: 'LOADABLE_PLAN_ORDER', colspan: 2, className: "header-border" , subColumns: [
+        header: 'LOADABLE_PLAN_ORDER', colspan: 2, className: "header-border" , subColumns: [
           { field: 'orderBblsdbs', header: 'LOADABLE_PLAN_ORDER_BBLS@OBS_TEMP' },
           { field: 'orderBbls60f', header: 'LOADABLE_PLAN_ORDER_BBLS@60F' }
         ]
       },
       {
-        field: 'brand', header: 'LOADABLE_PLAN_TLRNC', colspan: 2, className: "header-border" , subColumns: [
+        header: 'LOADABLE_PLAN_TLRNC', colspan: 2, className: "header-border" , subColumns: [
           { field: 'minTolerence', header: 'LOADABLE_PLAN_TLRNC_MIN' },
           { field: 'maxTolerence', header: 'LOADABLE_PLAN_TLRNC_MAX' }
         ]
       },
       {
-        field: 'color', header: 'LOADABLE_PLAN_LOADABLE', colspan: 5, className: "header-border" , subColumns: [
+        header: 'LOADABLE_PLAN_LOADABLE', colspan: 5, className: "header-border" , subColumns: [
           { field: 'loadableBblsdbs', header: 'LOADABLE_PLAN_LOADABLE_BBLS@DBS_TEMP' },
           { field: 'loadableBbls60f', header: 'LOADABLE_PLAN_LOADABLE_BBLS@60F' },
           { field: 'loadableLT', header: 'LOADABLE_PLAN_LOADABLE_LT' },
