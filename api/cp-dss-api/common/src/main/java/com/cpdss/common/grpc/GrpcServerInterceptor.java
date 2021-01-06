@@ -57,6 +57,7 @@ public class GrpcServerInterceptor implements ServerInterceptor {
           AppContext.clear();
           super.onHalfClose();
         } catch (Exception e) {
+          log.error("Error on half close", e);
           serverCall.close(
               Status.INTERNAL.withCause(e).withDescription("error message"), new Metadata());
         }
@@ -68,6 +69,7 @@ public class GrpcServerInterceptor implements ServerInterceptor {
           AppContext.clear();
           super.onComplete();
         } catch (Exception e) {
+          log.error("Error on complete", e);
           serverCall.close(
               Status.INTERNAL.withCause(e).withDescription("error message"), new Metadata());
         }

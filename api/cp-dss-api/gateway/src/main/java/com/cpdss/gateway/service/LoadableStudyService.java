@@ -27,6 +27,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
@@ -90,6 +92,8 @@ import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
+import com.cpdss.gateway.domain.LoadableStudyAttachmentData;
+import com.cpdss.gateway.domain.LoadableStudyAttachmentResponse;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.LoadableStudyStatusResponse;
 import com.cpdss.gateway.domain.LoadingPort;
@@ -101,7 +105,6 @@ import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Purpose;
 import com.cpdss.gateway.domain.SynopticalCargoRecord;
-import com.cpdss.gateway.domain.SynopticalLoadicatorRecord;
 import com.cpdss.gateway.domain.SynopticalOhqRecord;
 import com.cpdss.gateway.domain.SynopticalRecord;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
@@ -337,6 +340,20 @@ public class LoadableStudyService {
       dto.setDischargingPortIds(grpcReply.getDischargingPortIdsList());
       dto.setStatus(grpcReply.getStatus());
       dto.setStatusId(grpcReply.getStatusId());
+
+      List<LoadableStudyAttachmentData> attachmentList = new ArrayList();
+
+      grpcReply
+          .getAttachmentsList()
+          .forEach(
+              attachments -> {
+                LoadableStudyAttachmentData loadableStudyAttachment =
+                    new LoadableStudyAttachmentData();
+                loadableStudyAttachment.setFileName(attachments.getFileName());
+                loadableStudyAttachment.setId(attachments.getId());
+                attachmentList.add(loadableStudyAttachment);
+              });
+      dto.setLoadableStudyAttachment(attachmentList);
       list.add(dto);
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
@@ -1942,9 +1959,9 @@ public class LoadableStudyService {
       dto.setCargoId(0 == detail.getCargoId() ? null : detail.getCargoId());
       dto.setColorCode(isEmpty(detail.getColorCode()) ? null : detail.getColorCode());
       dto.setAbbreviation(isEmpty(detail.getAbbreviation()) ? null : detail.getAbbreviation());
-      dto.setSounding(isEmpty(detail.getSounding()) ? null : new BigDecimal(detail.getSounding()));
-      dto.setWeight(isEmpty(detail.getWeight()) ? null : new BigDecimal(detail.getWeight()));
-      dto.setVolume(isEmpty(detail.getVolume()) ? null : new BigDecimal(detail.getVolume()));
+      dto.setSounding(isEmpty(detail.getSounding()) ? BigDecimal.ZERO : new BigDecimal(detail.getSounding()));
+      dto.setWeight(isEmpty(detail.getWeight()) ? BigDecimal.ZERO : new BigDecimal(detail.getWeight()));
+      dto.setVolume(isEmpty(detail.getVolume()) ? BigDecimal.ZERO : new BigDecimal(detail.getVolume()));
       dto.setTankId(detail.getTankId());
       dto.setTankName(detail.getTankName());
       response.getOnBoardQuantities().add(dto);
@@ -2138,54 +2155,52 @@ public class LoadableStudyService {
   private void buildSynopticalLoadicatorRecord(
       SynopticalRecord synopticalRecord,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
-    SynopticalLoadicatorRecord record = new SynopticalLoadicatorRecord();
     SynopticalTableLoadicatorData proto = synopticalProtoRecord.getLoadicatorData();
-    record.setHogSag(isEmpty(proto.getHogSag()) ? null : proto.getHogSag());
-    record.setFinalDraftFwd(
+    synopticalRecord.setHogSag(isEmpty(proto.getHogSag()) ? null : proto.getHogSag());
+    synopticalRecord.setFinalDraftFwd(
         isEmpty(proto.getFinalDraftFwd()) ? null : new BigDecimal(proto.getFinalDraftFwd()));
-    record.setFinalDraftAft(
+    synopticalRecord.setFinalDraftAft(
         isEmpty(proto.getFinalDraftAft()) ? null : new BigDecimal(proto.getFinalDraftAft()));
-    record.setFinalDraftMid(
+    synopticalRecord.setFinalDraftMid(
         isEmpty(proto.getFinalDraftMid()) ? null : new BigDecimal(proto.getFinalDraftMid()));
-    record.setCalculatedDraftFwdActual(
+    synopticalRecord.setCalculatedDraftFwdActual(
         isEmpty(proto.getCalculatedDraftFwdActual())
             ? null
             : new BigDecimal(proto.getCalculatedDraftFwdActual()));
-    record.setCalculatedDraftFwdPlanned(
+    synopticalRecord.setCalculatedDraftFwdPlanned(
         isEmpty(proto.getCalculatedDraftFwdPlanned())
             ? null
             : new BigDecimal(proto.getCalculatedDraftFwdPlanned()));
 
-    record.setCalculatedDraftAftActual(
+    synopticalRecord.setCalculatedDraftAftActual(
         isEmpty(proto.getCalculatedDraftAftActual())
             ? null
             : new BigDecimal(proto.getCalculatedDraftAftActual()));
-    record.setCalculatedDraftAftPlanned(
+    synopticalRecord.setCalculatedDraftAftPlanned(
         isEmpty(proto.getCalculatedDraftAftPlanned())
             ? null
             : new BigDecimal(proto.getCalculatedDraftAftPlanned()));
 
-    record.setCalculatedDraftMidActual(
+    synopticalRecord.setCalculatedDraftMidActual(
         isEmpty(proto.getCalculatedDraftMidActual())
             ? null
             : new BigDecimal(proto.getCalculatedDraftMidActual()));
-    record.setCalculatedDraftMidPlanned(
+    synopticalRecord.setCalculatedDraftMidPlanned(
         isEmpty(proto.getCalculatedDraftMidPlanned())
             ? null
             : new BigDecimal(proto.getCalculatedDraftMidPlanned()));
 
-    record.setCalculatedTrimActual(
+    synopticalRecord.setCalculatedTrimActual(
         isEmpty(proto.getCalculatedTrimActual())
             ? null
             : new BigDecimal(proto.getCalculatedTrimActual()));
-    record.setCalculatedTrimPlanned(
+    synopticalRecord.setCalculatedTrimPlanned(
         isEmpty(proto.getCalculatedTrimPlanned())
             ? null
             : new BigDecimal(proto.getCalculatedTrimPlanned()));
 
-    record.setBlindSector(
+    synopticalRecord.setBlindSector(
         isEmpty(proto.getBlindSector()) ? null : new BigDecimal(proto.getBlindSector()));
-    synopticalRecord.setSynopticalLoadicatorRecord(record);
   }
 
   /**
@@ -2709,9 +2724,48 @@ public class LoadableStudyService {
     log.debug("building grpc request, correlationId:{}", correlationId);
     SynopticalTableRequest.Builder builder = SynopticalTableRequest.newBuilder();
     builder.setLoadableStudyId(loadableStudyId);
-    builder.setPortId(request.getPortId());
     com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder =
         com.cpdss.common.generated.LoadableStudy.SynopticalRecord.newBuilder();
+    this.buildSynopticalRequestRecord(recordBuilder, request);
+    this.buildSynopticalRequestLoadicatorData(recordBuilder, request);
+    builder.setSynopticalRecord(recordBuilder.build());
+    return builder.build();
+  }
+
+  /**
+   * Loadicator data for save request of synoptical table
+   *
+   * @param recordBuilder
+   * @param request
+   */
+  private void buildSynopticalRequestLoadicatorData(
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder,
+      SynopticalRecord request) {
+    SynopticalTableLoadicatorData.Builder loadicatorBuilder =
+        SynopticalTableLoadicatorData.newBuilder();
+    Optional.ofNullable(request.getHogSag()).ifPresent(loadicatorBuilder::setHogSag);
+    Optional.ofNullable(request.getCalculatedDraftFwdActual())
+        .ifPresent(item -> loadicatorBuilder.setCalculatedDraftFwdActual(valueOf(item)));
+    Optional.ofNullable(request.getCalculatedDraftAftActual())
+        .ifPresent(item -> loadicatorBuilder.setCalculatedDraftAftActual(valueOf(item)));
+    Optional.ofNullable(request.getCalculatedDraftMidActual())
+        .ifPresent(item -> loadicatorBuilder.setCalculatedDraftMidActual(valueOf(item)));
+    Optional.ofNullable(request.getCalculatedTrimActual())
+        .ifPresent(item -> loadicatorBuilder.setCalculatedTrimActual(valueOf(item)));
+    Optional.ofNullable(request.getBlindSector())
+        .ifPresent(item -> loadicatorBuilder.setBlindSector(valueOf(item)));
+    recordBuilder.setLoadicatorData(loadicatorBuilder.build());
+  }
+
+  /**
+   * Build synoptical table save request
+   *
+   * @param recordBuilder
+   * @param request
+   */
+  private void buildSynopticalRequestRecord(
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder,
+      SynopticalRecord request) {
     recordBuilder.setId(request.getId());
     recordBuilder.setOperationType(request.getOperationType());
     Optional.ofNullable(request.getDistance())
@@ -2749,7 +2803,35 @@ public class LoadableStudyService {
         .ifPresent(item -> recordBuilder.setSpecificGravity(valueOf(request.getSpecificGravity())));
     Optional.ofNullable(request.getEtaEtdActual()).ifPresent(recordBuilder::setEtaEtdActual);
     Optional.ofNullable(request.getEtaEtdPlanned()).ifPresent(recordBuilder::setEtaEtdEstimated);
-    builder.setSynopticalRecord(recordBuilder.build());
+  }
+
+	public LoadableStudyAttachmentResponse downloadLoadableStudyAttachment(Long attachmentId, Long loadableStudyId,
+			String correlationId) throws GenericServiceException {
+		log.info("Inside downloadLoadableStudyAttachment gateway service with correlationId : " + correlationId);
+		LoadableStudyAttachmentResponse response = new LoadableStudyAttachmentResponse();
+
+		LoadableStudyAttachmentReply grpcReply = this.downloadLoadableStudyAttachment(
+				this.builddownloadLoadableStudyAttachmentRequest(attachmentId, loadableStudyId, correlationId));
+		if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+			throw new GenericServiceException("Failed to get download LoadableStudy Attachment",
+					grpcReply.getResponseStatus().getCode(),
+					HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+		}
+		response.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+		response.setFilePath(grpcReply.getFilePath());
+		return response;
+	}
+
+  public LoadableStudyAttachmentReply downloadLoadableStudyAttachment(
+      LoadableStudyAttachmentRequest grpcRequest) {
+    return this.loadableStudyServiceBlockingStub.downloadLoadableStudyAttachment(grpcRequest);
+  }
+
+  private LoadableStudyAttachmentRequest builddownloadLoadableStudyAttachmentRequest(
+      Long attachmentId, Long loadableStudyId, String correlationId) {
+    LoadableStudyAttachmentRequest.Builder builder = LoadableStudyAttachmentRequest.newBuilder();
+    builder.setFileId(attachmentId);
+    builder.setLoadableStudyId(loadableStudyId);
     return builder.build();
   }
 }

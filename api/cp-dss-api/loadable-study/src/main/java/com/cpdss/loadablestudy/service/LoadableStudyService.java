@@ -31,6 +31,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
@@ -120,6 +122,7 @@ import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepos
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
@@ -161,7 +164,6 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -170,7 +172,6 @@ import org.springframework.util.StringUtils;
 /** @Author jerin.g */
 @Log4j2
 @GrpcService
-@Service
 @Transactional
 public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
@@ -191,6 +192,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
   @Autowired private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @Autowired private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
+
+  @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
+
   @Autowired private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
 
   @Autowired
@@ -578,6 +582,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 }
               });
         }
+
+        List<LoadableStudyAttachments> loadableStudyAttachments =
+            this.loadableStudyAttachmentsRepository.findByLoadableStudyXIdAndIsActive(
+                entity.getId(), true);
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment.Builder
+            loadableStudyAttachmentBuilder = LoadableStudyAttachment.newBuilder();
+        if (null != loadableStudyAttachments && !loadableStudyAttachments.isEmpty()) {
+          loadableStudyAttachments.forEach(
+              loadableStudyAttachment -> {
+                loadableStudyAttachmentBuilder.setFileName(
+                    loadableStudyAttachment.getUploadedFileName());
+                loadableStudyAttachmentBuilder.setId(loadableStudyAttachment.getId());
+
+                builder.addAttachments(loadableStudyAttachmentBuilder.build());
+              });
+        }
+
         replyBuilder.addLoadableStudies(builder.build());
       }
 
@@ -3237,7 +3258,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
   public void saveSynopticalTable(
       SynopticalTableRequest request, StreamObserver<SynopticalTableReply> responseObserver) {
     SynopticalTableReply.Builder replyBuilder = SynopticalTableReply.newBuilder();
@@ -3254,8 +3275,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       SynopticalTable entity = entityOpt.get();
       entity = this.buildSynopticalTableEntity(entity, request);
       entity = this.synopticalTableRepository.save(entity);
-      this.updateSynopticalEtaEtdEstimates(entity, request);
-      replyBuilder.setId(entity.getId());
+      this.saveSynopticalEtaEtdEstimates(entity, request);
+      this.saveSynopticalLoadicatorData(entity, request);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving synoptical table", e);
@@ -3280,15 +3301,64 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
+   * Save synoptical table loadicator data
+   *
+   * @param entity
+   * @param entity
+   * @param request
+   * @throws GenericServiceException
+   */
+  public void saveSynopticalLoadicatorData(SynopticalTable entity, SynopticalTableRequest request)
+      throws GenericServiceException {
+    SynopticalRecord record = request.getSynopticalRecord();
+    com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData data =
+        record.getLoadicatorData();
+    SynopticalTableLoadicatorData ldEntity =
+        this.synopticalTableLoadicatorDataRepository.findBySynopticalTableAndIsActive(entity, true);
+    if (null == ldEntity) {
+      log.info(
+          "Loadicator data does not exist for given synoptical record with id {}", record.getId());
+    } else {
+      ldEntity.setHog(isEmpty(data.getHogSag()) ? null : new BigDecimal(data.getHogSag()));
+      ldEntity.setCalculatedDraftFwdActual(
+          isEmpty(data.getCalculatedDraftFwdActual())
+              ? null
+              : new BigDecimal(data.getCalculatedDraftFwdActual()));
+      ldEntity.setCalculatedDraftAftActual(
+          isEmpty(data.getCalculatedDraftAftActual())
+              ? null
+              : new BigDecimal(data.getCalculatedDraftAftActual()));
+      ldEntity.setCalculatedDraftMidActual(
+          isEmpty(data.getCalculatedDraftMidActual())
+              ? null
+              : new BigDecimal(data.getCalculatedDraftMidActual()));
+      ldEntity.setCalculatedTrimActual(
+          isEmpty(data.getCalculatedTrimActual())
+              ? null
+              : new BigDecimal(data.getCalculatedTrimActual()));
+      ldEntity.setBlindSector(
+          isEmpty(data.getBlindSector()) ? null : new BigDecimal(data.getBlindSector()));
+      this.synopticalTableLoadicatorDataRepository.save(ldEntity);
+    }
+  }
+
+  /**
    * Update estimated values to port rotation table
    *
    * @param entity
    * @param request
+   * @throws GenericServiceException
    */
-  private void updateSynopticalEtaEtdEstimates(
-      SynopticalTable entity, SynopticalTableRequest request) {
+  public void saveSynopticalEtaEtdEstimates(SynopticalTable entity, SynopticalTableRequest request)
+      throws GenericServiceException {
     SynopticalRecord record = request.getSynopticalRecord();
     LoadableStudyPortRotation prEntity = entity.getLoadableStudyPortRotation();
+    if (null == prEntity) {
+      throw new GenericServiceException(
+          "Port rotation does not exist for given synoptical record",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
     LocalDateTime etaEtdEstimated =
         isEmpty(record.getEtaEtdEstimated())
             ? null
@@ -3309,7 +3379,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param request
    * @return
    */
-  private SynopticalTable buildSynopticalTableEntity(
+  public SynopticalTable buildSynopticalTableEntity(
       SynopticalTable entity, SynopticalTableRequest request) {
     DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
     SynopticalRecord record = request.getSynopticalRecord();
@@ -3321,9 +3391,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         isEmpty(record.getInPortHours()) ? null : new BigDecimal(record.getInPortHours()));
     entity.setTimeOfSunrise(record.getTimeOfSunrise());
     entity.setTimeOfSunSet(record.getTimeOfSunset());
+
     entity.setSpecificGravity(
         isEmpty(record.getSpecificGravity()) ? null : new BigDecimal(record.getSpecificGravity()));
-
     entity.setHwTideFrom(
         isEmpty(record.getHwTideFrom()) ? null : new BigDecimal(record.getHwTideFrom()));
     entity.setHwTideTo(isEmpty(record.getHwTideTo()) ? null : new BigDecimal(record.getHwTideTo()));
@@ -3356,7 +3426,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param entity
    * @param record
    */
-  private void buildSynopticalTableEtaEtdActuals(SynopticalTable entity, SynopticalRecord record) {
+  public void buildSynopticalTableEtaEtdActuals(SynopticalTable entity, SynopticalRecord record) {
     LocalDateTime etaEtdActual =
         isEmpty(record.getEtaEtdActual())
             ? null
@@ -3570,12 +3640,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       SynopticalTable synopticalEntity,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builder) {
     SynopticalTableLoadicatorData loadicatorData =
-        this.synopticalTableLoadicatorDataRepository.findBySynopticalTableIdAndIsActive(
-            synopticalEntity.getId(), true);
+        this.synopticalTableLoadicatorDataRepository.findBySynopticalTableAndIsActive(
+            synopticalEntity, true);
     if (null != loadicatorData) {
       com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder dataBuilder =
           com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.newBuilder();
-      Optional.ofNullable(loadicatorData.getBlindSetor())
+      Optional.ofNullable(loadicatorData.getBlindSector())
           .ifPresent(item -> dataBuilder.setBlindSector(valueOf(item)));
       Optional.ofNullable(loadicatorData.getHog())
           .ifPresent(item -> dataBuilder.setHogSag(valueOf(item)));
@@ -3912,7 +3982,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Optional.ofNullable(synopticalEntity.getLwTideTo())
         .ifPresent(lwTideTo -> builder.setLwTideTo(String.valueOf(lwTideTo)));
     Optional.ofNullable(synopticalEntity.getLwTideTimeTo())
-        .ifPresent(lwTideTimeTo -> builder.setLwTideTimeTo(String.valueOf(lwTideTimeTo)));
+        .ifPresent(lwTideTimeTo -> builder.setLwTideTimeTo(formatter.format(lwTideTimeTo)));
     if (null != synopticalEntity.getEtaActual()) {
       builder.setEtaEtdActual(formatter.format(synopticalEntity.getEtaActual()));
     } else if (null != synopticalEntity.getEtdActual()) {
@@ -4277,4 +4347,36 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           });
     }
   }
+
+	@Override
+	public void downloadLoadableStudyAttachment(LoadableStudyAttachmentRequest request,
+			StreamObserver<LoadableStudyAttachmentReply> responseObserver) {
+		LoadableStudyAttachmentReply.Builder builder = LoadableStudyAttachmentReply.newBuilder();
+		try {
+
+			LoadableStudyAttachments attachment = loadableStudyAttachmentsRepository
+					.findByIdAndLoadableStudyXIdAndIsActive(request.getFileId(), request.getLoadableStudyId(), true);
+			if (null == attachment) {
+				throw new GenericServiceException("Attachment does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST,
+						HttpStatusCode.BAD_REQUEST);
+			}
+
+			String FILE_PATH = this.rootFolder +File.separator+ attachment.getFilePath() +File.separator+ attachment.getUploadedFileName();
+
+			builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+			builder.setFilePath(FILE_PATH);
+
+		} catch (GenericServiceException e) {
+			log.error("GenericServiceException in downloadLoadableStudyAttachment", e);
+			builder.setResponseStatus(
+					ResponseStatus.newBuilder().setStatus(FAILED).setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST).build());
+		} catch (Exception e) {
+			log.error("Exception in downloadLoadableStudyAttachment", e);
+			builder.setResponseStatus(
+					ResponseStatus.newBuilder().setStatus(FAILED).setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST).build());
+		} finally {
+			responseObserver.onNext(builder.build());
+			responseObserver.onCompleted();
+		}
+	}
 }

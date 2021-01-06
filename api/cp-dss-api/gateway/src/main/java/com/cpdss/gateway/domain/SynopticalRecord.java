@@ -51,7 +51,20 @@ public class SynopticalRecord {
   private BigDecimal totalDwtActual;
   private BigDecimal displacementPlanned;
   private BigDecimal displacementActual;
-  private SynopticalLoadicatorRecord synopticalLoadicatorRecord;
   private BigDecimal ballastPlanned;
   private BigDecimal ballastActual;
+
+  private String hogSag;
+  private BigDecimal finalDraftFwd;
+  private BigDecimal finalDraftAft;
+  private BigDecimal finalDraftMid;
+  private BigDecimal calculatedDraftFwdPlanned;
+  private BigDecimal calculatedDraftFwdActual;
+  private BigDecimal calculatedDraftAftPlanned;
+  private BigDecimal calculatedDraftAftActual;
+  private BigDecimal calculatedDraftMidPlanned;
+  private BigDecimal calculatedDraftMidActual;
+  private BigDecimal calculatedTrimPlanned;
+  private BigDecimal calculatedTrimActual;
+  private BigDecimal blindSector;
 }

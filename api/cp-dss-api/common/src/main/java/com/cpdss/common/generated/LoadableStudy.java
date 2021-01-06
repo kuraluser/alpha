@@ -26006,6 +26006,12 @@ public final class LoadableStudy {
      */
     com.google.protobuf.ByteString
         getFileNameBytes();
+
+    /**
+     * <code>int64 id = 3;</code>
+     * @return The id.
+     */
+    long getId();
   }
   /**
    * Protobuf type {@code LoadableStudyAttachment}
@@ -26063,6 +26069,11 @@ public final class LoadableStudy {
               java.lang.String s = input.readStringRequireUtf8();
 
               fileName_ = s;
+              break;
+            }
+            case 24: {
+
+              id_ = input.readInt64();
               break;
             }
             default: {
@@ -26143,6 +26154,16 @@ public final class LoadableStudy {
       }
     }
 
+    public static final int ID_FIELD_NUMBER = 3;
+    private long id_;
+    /**
+     * <code>int64 id = 3;</code>
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -26163,6 +26184,9 @@ public final class LoadableStudy {
       if (!getFileNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, fileName_);
       }
+      if (id_ != 0L) {
+        output.writeInt64(3, id_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -26178,6 +26202,10 @@ public final class LoadableStudy {
       }
       if (!getFileNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, fileName_);
+      }
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(3, id_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -26198,6 +26226,8 @@ public final class LoadableStudy {
           .equals(other.getByteString())) return false;
       if (!getFileName()
           .equals(other.getFileName())) return false;
+      if (getId()
+          != other.getId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -26213,6 +26243,9 @@ public final class LoadableStudy {
       hash = (53 * hash) + getByteString().hashCode();
       hash = (37 * hash) + FILENAME_FIELD_NUMBER;
       hash = (53 * hash) + getFileName().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -26350,6 +26383,8 @@ public final class LoadableStudy {
 
         fileName_ = "";
 
+        id_ = 0L;
+
         return this;
       }
 
@@ -26378,6 +26413,7 @@ public final class LoadableStudy {
         com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment result = new com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment(this);
         result.byteString_ = byteString_;
         result.fileName_ = fileName_;
+        result.id_ = id_;
         onBuilt();
         return result;
       }
@@ -26432,6 +26468,9 @@ public final class LoadableStudy {
         if (!other.getFileName().isEmpty()) {
           fileName_ = other.fileName_;
           onChanged();
+        }
+        if (other.getId() != 0L) {
+          setId(other.getId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -26567,6 +26606,36 @@ public final class LoadableStudy {
   checkByteStringIsUtf8(value);
         
         fileName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long id_ ;
+      /**
+       * <code>int64 id = 3;</code>
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 3;</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+        
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        
+        id_ = 0L;
         onChanged();
         return this;
       }
@@ -84568,6 +84637,1400 @@ public final class LoadableStudy {
 
   }
 
+  public interface LoadableStudyAttachmentRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:LoadableStudyAttachmentRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 fileId = 1;</code>
+     * @return The fileId.
+     */
+    long getFileId();
+
+    /**
+     * <code>int64 loadableStudyId = 2;</code>
+     * @return The loadableStudyId.
+     */
+    long getLoadableStudyId();
+  }
+  /**
+   * Protobuf type {@code LoadableStudyAttachmentRequest}
+   */
+  public  static final class LoadableStudyAttachmentRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:LoadableStudyAttachmentRequest)
+      LoadableStudyAttachmentRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use LoadableStudyAttachmentRequest.newBuilder() to construct.
+    private LoadableStudyAttachmentRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private LoadableStudyAttachmentRequest() {
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new LoadableStudyAttachmentRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private LoadableStudyAttachmentRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+
+              fileId_ = input.readInt64();
+              break;
+            }
+            case 16: {
+
+              loadableStudyId_ = input.readInt64();
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachmentRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachmentRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest.class, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest.Builder.class);
+    }
+
+    public static final int FILEID_FIELD_NUMBER = 1;
+    private long fileId_;
+    /**
+     * <code>int64 fileId = 1;</code>
+     * @return The fileId.
+     */
+    public long getFileId() {
+      return fileId_;
+    }
+
+    public static final int LOADABLESTUDYID_FIELD_NUMBER = 2;
+    private long loadableStudyId_;
+    /**
+     * <code>int64 loadableStudyId = 2;</code>
+     * @return The loadableStudyId.
+     */
+    public long getLoadableStudyId() {
+      return loadableStudyId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (fileId_ != 0L) {
+        output.writeInt64(1, fileId_);
+      }
+      if (loadableStudyId_ != 0L) {
+        output.writeInt64(2, loadableStudyId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (fileId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, fileId_);
+      }
+      if (loadableStudyId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(2, loadableStudyId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest other = (com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest) obj;
+
+      if (getFileId()
+          != other.getFileId()) return false;
+      if (getLoadableStudyId()
+          != other.getLoadableStudyId()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + FILEID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getFileId());
+      hash = (37 * hash) + LOADABLESTUDYID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getLoadableStudyId());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code LoadableStudyAttachmentRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:LoadableStudyAttachmentRequest)
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachmentRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachmentRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest.class, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        fileId_ = 0L;
+
+        loadableStudyId_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachmentRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest build() {
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest result = new com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest(this);
+        result.fileId_ = fileId_;
+        result.loadableStudyId_ = loadableStudyId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest other) {
+        if (other == com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest.getDefaultInstance()) return this;
+        if (other.getFileId() != 0L) {
+          setFileId(other.getFileId());
+        }
+        if (other.getLoadableStudyId() != 0L) {
+          setLoadableStudyId(other.getLoadableStudyId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long fileId_ ;
+      /**
+       * <code>int64 fileId = 1;</code>
+       * @return The fileId.
+       */
+      public long getFileId() {
+        return fileId_;
+      }
+      /**
+       * <code>int64 fileId = 1;</code>
+       * @param value The fileId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFileId(long value) {
+        
+        fileId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 fileId = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFileId() {
+        
+        fileId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long loadableStudyId_ ;
+      /**
+       * <code>int64 loadableStudyId = 2;</code>
+       * @return The loadableStudyId.
+       */
+      public long getLoadableStudyId() {
+        return loadableStudyId_;
+      }
+      /**
+       * <code>int64 loadableStudyId = 2;</code>
+       * @param value The loadableStudyId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadableStudyId(long value) {
+        
+        loadableStudyId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadableStudyId = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadableStudyId() {
+        
+        loadableStudyId_ = 0L;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:LoadableStudyAttachmentRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:LoadableStudyAttachmentRequest)
+    private static final com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<LoadableStudyAttachmentRequest>
+        PARSER = new com.google.protobuf.AbstractParser<LoadableStudyAttachmentRequest>() {
+      @java.lang.Override
+      public LoadableStudyAttachmentRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new LoadableStudyAttachmentRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<LoadableStudyAttachmentRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<LoadableStudyAttachmentRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface LoadableStudyAttachmentReplyOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:LoadableStudyAttachmentReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /**
+     * <code>string filePath = 2;</code>
+     * @return The filePath.
+     */
+    java.lang.String getFilePath();
+    /**
+     * <code>string filePath = 2;</code>
+     * @return The bytes for filePath.
+     */
+    com.google.protobuf.ByteString
+        getFilePathBytes();
+
+    /**
+     * <code>bytes byteString = 3;</code>
+     * @return The byteString.
+     */
+    com.google.protobuf.ByteString getByteString();
+  }
+  /**
+   * Protobuf type {@code LoadableStudyAttachmentReply}
+   */
+  public  static final class LoadableStudyAttachmentReply extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:LoadableStudyAttachmentReply)
+      LoadableStudyAttachmentReplyOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use LoadableStudyAttachmentReply.newBuilder() to construct.
+    private LoadableStudyAttachmentReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private LoadableStudyAttachmentReply() {
+      filePath_ = "";
+      byteString_ = com.google.protobuf.ByteString.EMPTY;
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new LoadableStudyAttachmentReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private LoadableStudyAttachmentReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+              if (responseStatus_ != null) {
+                subBuilder = responseStatus_.toBuilder();
+              }
+              responseStatus_ = input.readMessage(com.cpdss.common.generated.Common.ResponseStatus.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(responseStatus_);
+                responseStatus_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              filePath_ = s;
+              break;
+            }
+            case 26: {
+
+              byteString_ = input.readBytes();
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachmentReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachmentReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply.class, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply.Builder.class);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance() : responseStatus_;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    public static final int FILEPATH_FIELD_NUMBER = 2;
+    private volatile java.lang.Object filePath_;
+    /**
+     * <code>string filePath = 2;</code>
+     * @return The filePath.
+     */
+    public java.lang.String getFilePath() {
+      java.lang.Object ref = filePath_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        filePath_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string filePath = 2;</code>
+     * @return The bytes for filePath.
+     */
+    public com.google.protobuf.ByteString
+        getFilePathBytes() {
+      java.lang.Object ref = filePath_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        filePath_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int BYTESTRING_FIELD_NUMBER = 3;
+    private com.google.protobuf.ByteString byteString_;
+    /**
+     * <code>bytes byteString = 3;</code>
+     * @return The byteString.
+     */
+    public com.google.protobuf.ByteString getByteString() {
+      return byteString_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (responseStatus_ != null) {
+        output.writeMessage(1, getResponseStatus());
+      }
+      if (!getFilePathBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, filePath_);
+      }
+      if (!byteString_.isEmpty()) {
+        output.writeBytes(3, byteString_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getResponseStatus());
+      }
+      if (!getFilePathBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, filePath_);
+      }
+      if (!byteString_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(3, byteString_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply other = (com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply) obj;
+
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus()
+            .equals(other.getResponseStatus())) return false;
+      }
+      if (!getFilePath()
+          .equals(other.getFilePath())) return false;
+      if (!getByteString()
+          .equals(other.getByteString())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      hash = (37 * hash) + FILEPATH_FIELD_NUMBER;
+      hash = (53 * hash) + getFilePath().hashCode();
+      hash = (37 * hash) + BYTESTRING_FIELD_NUMBER;
+      hash = (53 * hash) + getByteString().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code LoadableStudyAttachmentReply}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:LoadableStudyAttachmentReply)
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachmentReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachmentReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply.class, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        filePath_ = "";
+
+        byteString_ = com.google.protobuf.ByteString.EMPTY;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_LoadableStudyAttachmentReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply build() {
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply result = new com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply(this);
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        result.filePath_ = filePath_;
+        result.byteString_ = byteString_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply other) {
+        if (other == com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply.getDefaultInstance()) return this;
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        if (!other.getFilePath().isEmpty()) {
+          filePath_ = other.filePath_;
+          onChanged();
+        }
+        if (other.getByteString() != com.google.protobuf.ByteString.EMPTY) {
+          setByteString(other.getByteString());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.cpdss.common.generated.Common.ResponseStatus, com.cpdss.common.generated.Common.ResponseStatus.Builder, com.cpdss.common.generated.Common.ResponseStatusOrBuilder> responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance() : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+              com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_).mergeFrom(value).buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+        
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null ?
+              com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance() : responseStatus_;
+        }
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.cpdss.common.generated.Common.ResponseStatus, com.cpdss.common.generated.Common.ResponseStatus.Builder, com.cpdss.common.generated.Common.ResponseStatusOrBuilder> 
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus, com.cpdss.common.generated.Common.ResponseStatus.Builder, com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(),
+                  getParentForChildren(),
+                  isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      private java.lang.Object filePath_ = "";
+      /**
+       * <code>string filePath = 2;</code>
+       * @return The filePath.
+       */
+      public java.lang.String getFilePath() {
+        java.lang.Object ref = filePath_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          filePath_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string filePath = 2;</code>
+       * @return The bytes for filePath.
+       */
+      public com.google.protobuf.ByteString
+          getFilePathBytes() {
+        java.lang.Object ref = filePath_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          filePath_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string filePath = 2;</code>
+       * @param value The filePath to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFilePath(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        filePath_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string filePath = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFilePath() {
+        
+        filePath_ = getDefaultInstance().getFilePath();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string filePath = 2;</code>
+       * @param value The bytes for filePath to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFilePathBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        filePath_ = value;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString byteString_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes byteString = 3;</code>
+       * @return The byteString.
+       */
+      public com.google.protobuf.ByteString getByteString() {
+        return byteString_;
+      }
+      /**
+       * <code>bytes byteString = 3;</code>
+       * @param value The byteString to set.
+       * @return This builder for chaining.
+       */
+      public Builder setByteString(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        byteString_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes byteString = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearByteString() {
+        
+        byteString_ = getDefaultInstance().getByteString();
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:LoadableStudyAttachmentReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:LoadableStudyAttachmentReply)
+    private static final com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<LoadableStudyAttachmentReply>
+        PARSER = new com.google.protobuf.AbstractParser<LoadableStudyAttachmentReply>() {
+      @java.lang.Override
+      public LoadableStudyAttachmentReply parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new LoadableStudyAttachmentReply(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<LoadableStudyAttachmentReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<LoadableStudyAttachmentReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_LoadablePlanDetailsRequest_descriptor;
   private static final 
@@ -84893,6 +86356,16 @@ public final class LoadableStudy {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_SynopticalDataReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_LoadableStudyAttachmentRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadableStudyAttachmentRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_LoadableStudyAttachmentReply_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadableStudyAttachmentReply_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -84986,264 +86459,271 @@ public final class LoadableStudy {
       "ableStudyId\030\003 \001(\003\"f\n\024LoadableStudyReques" +
       "t\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020" +
       "\n\010voyageId\030\003 \001(\003\022\027\n\017loadableStudyId\030\004 \001(" +
-      "\003\"?\n\027LoadableStudyAttachment\022\022\n\nbyteStri" +
-      "ng\030\001 \001(\014\022\020\n\010fileName\030\002 \001(\t\"\242\003\n\023LoadableS" +
-      "tudyDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\016\n\006" +
-      "detail\030\003 \001(\t\022\020\n\010statusId\030\004 \001(\003\022\016\n\006status" +
-      "\030\005 \001(\t\022\023\n\013createdDate\030\006 \001(\t\022\021\n\tcharterer" +
-      "\030\007 \001(\t\022\024\n\014subCharterer\030\010 \001(\t\022\021\n\tdraftMar" +
-      "k\030\t \001(\t\022\023\n\013loadLineXId\030\n \001(\003\022\030\n\020draftRes" +
-      "triction\030\013 \001(\t\022\031\n\021maxAirTemperature\030\014 \001(" +
-      "\t\022\033\n\023maxWaterTemperature\030\r \001(\t\022\030\n\020duplic" +
-      "atedFromId\030\016 \001(\003\022\020\n\010voyageId\030\017 \001(\003\022\020\n\010ve" +
-      "sselId\030\020 \001(\003\022-\n\013attachments\030\021 \003(\0132\030.Load" +
-      "ableStudyAttachment\022\032\n\022dischargingPortId" +
-      "s\030\022 \003(\003\"x\n\022LoadableStudyReply\022\'\n\016respons" +
-      "eStatus\030\001 \001(\0132\017.ResponseStatus\022-\n\017loadab" +
-      "leStudies\030\002 \003(\0132\024.LoadableStudyDetail\022\n\n" +
-      "\002id\030\003 \001(\003\"5\n\021LoadingPortDetail\022\016\n\006portId" +
-      "\030\001 \001(\003\022\020\n\010quantity\030\002 \001(\t\".\n\021segregationD" +
-      "etail\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\"\252\002\n\025Car" +
-      "goNominationDetail\022\n\n\002id\030\001 \001(\003\022\027\n\017loadab" +
-      "leStudyId\030\002 \001(\003\022\020\n\010priority\030\003 \001(\003\022\r\n\005col" +
-      "or\030\004 \001(\t\022\017\n\007cargoId\030\005 \001(\003\022\024\n\014abbreviatio" +
-      "n\030\006 \001(\t\022.\n\022loadingPortDetails\030\007 \003(\0132\022.Lo" +
-      "adingPortDetail\022\020\n\010quantity\030\010 \001(\t\022\024\n\014max" +
-      "Tolerance\030\t \001(\t\022\024\n\014minTolerance\030\n \001(\t\022\016\n" +
-      "\006apiEst\030\013 \001(\t\022\017\n\007tempEst\030\014 \001(\t\022\025\n\rsegreg" +
-      "ationId\030\r \001(\003\"\247\001\n\026CargoNominationRequest" +
-      "\022\020\n\010vesselId\030\001 \001(\003\022\020\n\010voyageId\030\002 \001(\003\022\027\n\017" +
-      "loadableStudyId\030\003 \001(\003\022\031\n\021cargoNomination" +
-      "Id\030\004 \001(\003\0225\n\025cargoNominationDetail\030\005 \001(\0132" +
-      "\026.CargoNominationDetail\"\214\001\n\024CargoNominat" +
-      "ionReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo" +
-      "nseStatus\022\031\n\021cargoNominationId\030\002 \001(\003\0220\n\020" +
-      "cargoNominations\030\003 \003(\0132\026.CargoNomination" +
-      "Detail\"z\n\023PortRotationRequest\022\027\n\017loadabl" +
-      "eStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voya" +
-      "geId\030\003 \001(\003\022\032\n\022dischargingPortIds\030\004 \003(\003\022\n" +
-      "\n\002id\030\005 \001(\003\"\332\002\n\022PortRotationDetail\022\n\n\002id\030" +
-      "\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\017\n\007berthId\030\003 \001(\003\022\023" +
-      "\n\013operationId\030\004 \001(\003\022\027\n\017seaWaterDensity\030\005" +
-      " \001(\t\022\034\n\024distanceBetweenPorts\030\006 \001(\t\022\022\n\nti" +
-      "meOfStay\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t\022\023\n\013maxA" +
-      "irDraft\030\t \001(\t\022\013\n\003eta\030\n \001(\t\022\021\n\tetaActual\030" +
-      "\013 \001(\t\022\013\n\003etd\030\014 \001(\t\022\021\n\tetdActual\030\r \001(\t\022\022\n" +
-      "\nlayCanFrom\030\016 \001(\t\022\020\n\010layCanTo\030\017 \001(\t\022\027\n\017l" +
-      "oadableStudyId\030\020 \001(\003\022\021\n\tportOrder\030\021 \001(\003\"" +
-      ".\n\tOperation\022\n\n\002id\030\001 \001(\003\022\025\n\roperationNam" +
-      "e\030\002 \001(\t\"\230\001\n\021PortRotationReply\022\'\n\016respons" +
-      "eStatus\030\001 \001(\0132\017.ResponseStatus\022\"\n\005ports\030" +
-      "\002 \003(\0132\023.PortRotationDetail\022\036\n\noperations" +
-      "\030\003 \003(\0132\n.Operation\022\026\n\016portRotationId\030\004 \001" +
-      "(\003\"\241\001\n\030LoadableQuantityResponse\0229\n\027loada" +
-      "bleQuantityRequest\030\001 \001(\0132\030.LoadableQuant" +
-      "ityRequest\022$\n\016responseStatus\030\002 \001(\0132\014.Sta" +
-      "tusReply\022\016\n\006caseNo\030\003 \001(\005\022\024\n\014selectedZone" +
-      "\030\004 \001(\t\",\n\020ValveSegregation\022\n\n\002id\030\001 \001(\003\022\014" +
-      "\n\004name\030\002 \001(\t\"2\n\027ValveSegregationRequest\022" +
-      "\027\n\017loadableStudyId\030\001 \001(\003\"m\n\025ValveSegrega" +
-      "tionReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp" +
-      "onseStatus\022+\n\020valveSegregation\030\002 \003(\0132\021.V" +
-      "alveSegregation\"e\n\025OnHandQuantityRequest" +
-      "\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\027\n" +
-      "\017loadableStudyId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\"\245" +
-      "\002\n\024OnHandQuantityDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006p" +
-      "ortId\030\002 \001(\003\022\022\n\nfuelTypeId\030\003 \001(\003\022\020\n\010fuelT" +
-      "ype\030\004 \001(\t\022\016\n\006tankId\030\005 \001(\003\022\020\n\010tankName\030\006 " +
-      "\001(\t\022\025\n\rarrivalVolume\030\007 \001(\t\022\027\n\017arrivalQua" +
-      "ntity\030\010 \001(\t\022\027\n\017departureVolume\030\t \001(\t\022\031\n\021" +
-      "departureQuantity\030\n \001(\t\022\027\n\017loadableStudy" +
-      "Id\030\013 \001(\003\022\021\n\tcolorCode\030\014 \001(\t\022\031\n\021fuelTypeS" +
-      "hortName\030\r \001(\t\"\310\002\n\nTankDetail\022\016\n\006tankId\030" +
-      "\001 \001(\003\022\026\n\016tankCategoryId\030\002 \001(\003\022\030\n\020tankCat" +
-      "egoryName\030\003 \001(\t\022\020\n\010tankName\030\004 \001(\t\022\027\n\017fra" +
-      "meNumberFrom\030\005 \001(\t\022\025\n\rframeNumberTo\030\006 \001(" +
-      "\t\022\021\n\tshortName\030\007 \001(\t\022\030\n\020fillCapacityCubm" +
-      "\030\010 \001(\t\022\017\n\007density\030\t \001(\t\022\022\n\nisSlopTank\030\n " +
-      "\001(\010\022\022\n\nheightFrom\030\013 \001(\t\022\020\n\010heightTo\030\014 \001(" +
-      "\t\022\021\n\ttankOrder\030\r \001(\005\022\021\n\ttankGroup\030\016 \001(\005\022" +
-      "\030\n\020fullCapacityCubm\030\017 \001(\t\"+\n\010TankList\022\037\n" +
-      "\nvesselTank\030\001 \003(\0132\013.TankDetail\"\261\001\n\023OnHan" +
-      "dQuantityReply\022\'\n\016responseStatus\030\001 \001(\0132\017" +
-      ".ResponseStatus\022-\n\016onHandQuantity\030\002 \003(\0132" +
-      "\025.OnHandQuantityDetail\022\030\n\005tanks\030\003 \003(\0132\t." +
-      "TankList\022\034\n\trearTanks\030\004 \003(\0132\t.TankList\022\n" +
-      "\n\002id\030\005 \001(\003\"x\n\026OnBoardQuantityRequest\022\021\n\t" +
-      "companyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\027\n\017loa" +
-      "dableStudyId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\022\020\n\010vo" +
-      "yageId\030\005 \001(\003\"\355\001\n\025OnBoardQuantityDetail\022\n" +
-      "\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\016\n\006tankId\030\003 \001" +
-      "(\003\022\020\n\010tankName\030\004 \001(\t\022\017\n\007cargoId\030\005 \001(\003\022\021\n" +
-      "\tcargoName\030\006 \001(\t\022\020\n\010sounding\030\007 \001(\t\022\016\n\006we" +
-      "ight\030\010 \001(\t\022\016\n\006volume\030\t \001(\t\022\027\n\017loadableSt" +
-      "udyId\030\n \001(\003\022\021\n\tcolorCode\030\013 \001(\t\022\024\n\014abbrev" +
-      "iation\030\014 \001(\t\"\226\001\n\024OnBoardQuantityReply\022\'\n" +
-      "\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022/" +
-      "\n\017onBoardQuantity\030\002 \003(\0132\026.OnBoardQuantit" +
-      "yDetail\022\030\n\005tanks\030\003 \003(\0132\t.TankList\022\n\n\002id\030" +
-      "\004 \001(\003\".\n\022PurposeOfCommingle\022\n\n\002id\030\001 \001(\003\022" +
-      "\014\n\004name\030\002 \001(\t\"4\n\031PurposeOfCommingleReque" +
-      "st\022\027\n\017loadableStudyId\030\001 \001(\003\"s\n\027PurposeOf" +
-      "CommingleReply\022\'\n\016responseStatus\030\001 \001(\0132\017" +
-      ".ResponseStatus\022/\n\022purposeOfCommingle\030\002 " +
-      "\003(\0132\023.PurposeOfCommingle\"\303\001\n\024LoadablePat" +
-      "ternReply\022)\n\017loadablePattern\030\001 \003(\0132\020.Loa" +
-      "dablePattern\022\'\n\016responseStatus\030\002 \001(\0132\017.R" +
-      "esponseStatus\022\030\n\005tanks\030\003 \003(\0132\t.TankList\022" +
-      "\"\n\032loadablePatternCreatedDate\030\004 \001(\t\022\031\n\021l" +
-      "oadableStudyName\030\005 \001(\t\"\301\001\n\017LoadablePatte" +
-      "rn\022\031\n\021loadablePatternId\030\001 \001(\003\022A\n\033loadabl" +
-      "ePatternCargoDetails\030\002 \003(\0132\034.LoadablePat" +
-      "ternCargoDetails\022\023\n\013constraints\030\003 \001(\t\022\034\n" +
-      "\024totalDifferenceColor\030\004 \001(\t\022\035\n\025loadableS" +
-      "tudyStatusId\030\005 \001(\003\"\217\002\n\033LoadablePatternCa" +
-      "rgoDetails\022\020\n\010priority\030\001 \001(\003\022\031\n\021cargoAbb" +
-      "reviation\030\002 \001(\t\022\022\n\ncargoColor\030\003 \001(\t\022\016\n\006t" +
-      "ankId\030\004 \001(\003\022\020\n\010quantity\030\005 \001(\t\022\022\n\ndiffere" +
-      "nce\030\006 \001(\t\022\027\n\017differenceColor\030\007 \001(\t\022 \n\030lo" +
-      "adablePatternDetailsId\030\010 \001(\003\022\023\n\013isCommin" +
-      "gle\030\t \001(\010\022)\n!loadablePatternCommingleDet" +
-      "ailsId\030\n \001(\003\"1\n\026LoadablePatternRequest\022\027" +
-      "\n\017loadableStudyId\030\001 \001(\003\"\265\001\n\016CommingleCar" +
-      "go\022\n\n\002id\030\001 \001(\003\022\021\n\tpurposeId\030\002 \001(\003\022\020\n\010slo" +
-      "pOnly\030\003 \001(\010\022\026\n\016preferredTanks\030\004 \003(\003\022\020\n\010c" +
-      "argo1Id\030\005 \001(\003\022\021\n\tcargo1pct\030\006 \001(\t\022\020\n\010carg" +
-      "o2Id\030\007 \001(\003\022\021\n\tcargo2pct\030\010 \001(\t\022\020\n\010quantit" +
-      "y\030\t \001(\t\"Y\n\025CommingleCargoRequest\022\027\n\017load" +
-      "ableStudyId\030\001 \001(\003\022\'\n\016commingleCargo\030\002 \003(" +
-      "\0132\017.CommingleCargo\"g\n\023CommingleCargoRepl" +
+      "\003\"K\n\027LoadableStudyAttachment\022\022\n\nbyteStri" +
+      "ng\030\001 \001(\014\022\020\n\010fileName\030\002 \001(\t\022\n\n\002id\030\003 \001(\003\"\242" +
+      "\003\n\023LoadableStudyDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004na" +
+      "me\030\002 \001(\t\022\016\n\006detail\030\003 \001(\t\022\020\n\010statusId\030\004 \001" +
+      "(\003\022\016\n\006status\030\005 \001(\t\022\023\n\013createdDate\030\006 \001(\t\022" +
+      "\021\n\tcharterer\030\007 \001(\t\022\024\n\014subCharterer\030\010 \001(\t" +
+      "\022\021\n\tdraftMark\030\t \001(\t\022\023\n\013loadLineXId\030\n \001(\003" +
+      "\022\030\n\020draftRestriction\030\013 \001(\t\022\031\n\021maxAirTemp" +
+      "erature\030\014 \001(\t\022\033\n\023maxWaterTemperature\030\r \001" +
+      "(\t\022\030\n\020duplicatedFromId\030\016 \001(\003\022\020\n\010voyageId" +
+      "\030\017 \001(\003\022\020\n\010vesselId\030\020 \001(\003\022-\n\013attachments\030" +
+      "\021 \003(\0132\030.LoadableStudyAttachment\022\032\n\022disch" +
+      "argingPortIds\030\022 \003(\003\"x\n\022LoadableStudyRepl" +
       "y\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStat" +
-      "us\022\'\n\016commingleCargo\030\002 \003(\0132\017.CommingleCa" +
-      "rgo\"S\n&LoadablePatternCommingleDetailsRe" +
-      "quest\022)\n!loadablePatternCommingleDetails" +
-      "Id\030\001 \001(\003\"\317\002\n$LoadablePatternCommingleDet" +
-      "ailsReply\022\n\n\002id\030\001 \001(\003\022\025\n\rtankShortName\030\002" +
-      " \001(\t\022\031\n\021cargo1Abbrivation\030\003 \001(\t\022\031\n\021cargo" +
-      "2Abbrivation\030\004 \001(\t\022\r\n\005grade\030\005 \001(\t\022\020\n\010qua" +
-      "ntity\030\006 \001(\t\022\013\n\003api\030\007 \001(\t\022\023\n\013temperature\030" +
-      "\010 \001(\t\022\026\n\016cargo1Quantity\030\t \001(\t\022\026\n\016cargo2Q" +
-      "uantity\030\n \001(\t\022\030\n\020cargo1Percentage\030\013 \001(\t\022" +
-      "\030\n\020cargo2Percentage\030\014 \001(\t\022\'\n\016responseSta" +
-      "tus\030\r \001(\0132\017.ResponseStatus\"\222\010\n\020Synoptica" +
-      "lRecord\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\020\n\010p" +
-      "ortName\030\003 \001(\t\022\025\n\roperationType\030\004 \001(\t\022\020\n\010" +
-      "distance\030\005 \001(\t\022\r\n\005speed\030\006 \001(\t\022\024\n\014running" +
-      "Hours\030\007 \001(\t\022\023\n\013inPortHours\030\010 \001(\t\022\025\n\rtime" +
-      "OfSunrise\030\t \001(\t\022\024\n\014timeOfSunset\030\n \001(\t\022\022\n" +
-      "\nhwTideFrom\030\013 \001(\t\022\020\n\010hwTideTo\030\014 \001(\t\022\026\n\016h" +
-      "wTideTimeFrom\030\r \001(\t\022\024\n\014hwTideTimeTo\030\016 \001(" +
-      "\t\022\022\n\nlwTideFrom\030\017 \001(\t\022\020\n\010lwTideTo\030\020 \001(\t\022" +
-      "\026\n\016lwTideTimeFrom\030\021 \001(\t\022\024\n\014lwTideTimeTo\030" +
-      "\022 \001(\t\022\027\n\017specificGravity\030\023 \001(\t\022\024\n\014etaEtd" +
-      "Actual\030\024 \001(\t\022\027\n\017etaEtdEstimated\030\025 \001(\t\022%\n" +
-      "\005cargo\030\026 \003(\0132\026.SynopticalCargoRecord\022\031\n\021" +
-      "cargoPlannedTotal\030\027 \001(\t\022\030\n\020cargoActualTo" +
-      "tal\030\030 \001(\t\022!\n\003ohq\030\031 \003(\0132\024.SynopticalOhqRe" +
-      "cord\022\026\n\016foPlannedTotal\030\032 \001(\t\022\025\n\rfoActual" +
-      "Total\030\033 \001(\t\022\026\n\016doPlannedTotal\030\034 \001(\t\022\025\n\rd" +
-      "oActualTotal\030\035 \001(\t\022\030\n\020lubePlannedTotal\030\036" +
-      " \001(\t\022\027\n\017lubeActualTotal\030\037 \001(\t\022\021\n\tportOrd" +
-      "er\030  \001(\003\022\025\n\rothersPlanned\030! \001(\t\022\024\n\014other" +
-      "sActual\030\" \001(\t\022\027\n\017constantPlanned\030# \001(\t\022\026" +
-      "\n\016constantActual\030$ \001(\t\022\027\n\017totalDwtPlanne" +
-      "d\030% \001(\t\022\026\n\016totalDwtActual\030& \001(\t\022\033\n\023displ" +
-      "acementPlanned\030\' \001(\t\022\032\n\022displacementActu" +
-      "al\030( \001(\t\0226\n\016loadicatorData\030) \001(\0132\036.Synop" +
-      "ticalTableLoadicatorData\022\026\n\016ballastPlann" +
-      "ed\030* \001(\t\022\025\n\rballastActual\030+ \001(\t\"f\n\025Synop" +
-      "ticalCargoRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tank" +
-      "Name\030\002 \001(\t\022\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014act" +
-      "ualWeight\030\004 \001(\t\"\212\001\n\023SynopticalOhqRecord\022" +
-      "\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rpla" +
-      "nnedWeight\030\003 \001(\t\022\024\n\014actualWeight\030\004 \001(\t\022\022" +
-      "\n\nfuelTypeId\030\005 \001(\003\022\020\n\010fuelType\030\006 \001(\t\"\200\001\n" +
-      "\026SynopticalTableRequest\022\027\n\017loadableStudy" +
-      "Id\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\016\n\006portId\030\003 \001" +
-      "(\003\022+\n\020synopticalRecord\030\004 \001(\0132\021.Synoptica" +
-      "lRecord\"\232\001\n\024SynopticalTableReply\022\'\n\016resp" +
-      "onseStatus\030\001 \001(\0132\017.ResponseStatus\022,\n\021syn" +
-      "opticalRecords\030\002 \003(\0132\021.SynopticalRecord\022" +
-      "\037\n\nvesselTank\030\003 \003(\0132\013.TankDetail\022\n\n\002id\030\004" +
-      " \001(\003\"\255\003\n\035SynopticalTableLoadicatorData\022\016" +
-      "\n\006hogSag\030\001 \001(\t\022\025\n\rfinalDraftFwd\030\002 \001(\t\022\025\n" +
-      "\rfinalDraftAft\030\003 \001(\t\022\025\n\rfinalDraftMid\030\004 " +
-      "\001(\t\022\026\n\016finalDraftTrim\030\005 \001(\t\022!\n\031calculate" +
-      "dDraftFwdPlanned\030\006 \001(\t\022 \n\030calculatedDraf" +
-      "tFwdActual\030\007 \001(\t\022!\n\031calculatedDraftAftPl" +
-      "anned\030\010 \001(\t\022 \n\030calculatedDraftAftActual\030" +
-      "\t \001(\t\022!\n\031calculatedDraftMidPlanned\030\n \001(\t" +
-      "\022 \n\030calculatedDraftMidActual\030\013 \001(\t\022\035\n\025ca" +
-      "lculatedTrimPlanned\030\014 \001(\t\022\034\n\024calculatedT" +
-      "rimActual\030\r \001(\t\022\023\n\013blindSector\030\016 \001(\t\"m\n\025" +
-      "SynopticalDataRequest\022\027\n\017loadableStudyId" +
-      "\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022+\n\020synopticalReco" +
-      "rd\030\003 \001(\0132\021.SynopticalRecord\"l\n\023Synoptica" +
-      "lDataReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Res" +
-      "ponseStatus\022,\n\021synopticalRecords\030\002 \003(\0132\021" +
-      ".SynopticalRecord2\207\023\n\024LoadableStudyServi" +
-      "ce\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014.Voyag" +
-      "eReply\"\000\0228\n\022GetVoyagesByVessel\022\016.VoyageR" +
-      "equest\032\020.VoyageListReply\"\000\022J\n\024SaveLoadab" +
-      "leQuantity\022\030.LoadableQuantityRequest\032\026.L" +
-      "oadableQuantityReply\"\000\022T\n$FindLoadableSt" +
-      "udiesByVesselAndVoyage\022\025.LoadableStudyRe" +
-      "quest\032\023.LoadableStudyReply\"\000\022@\n\021SaveLoad" +
-      "ableStudy\022\024.LoadableStudyDetail\032\023.Loadab" +
-      "leStudyReply\"\000\022G\n\023SaveCargoNomination\022\027." +
-      "CargoNominationRequest\032\025.CargoNomination" +
-      "Reply\"\000\022J\n\034GetLoadableStudyPortRotation\022" +
-      "\024.PortRotationRequest\032\022.PortRotationRepl" +
-      "y\"\000\022J\n\026GetCargoNominationById\022\027.CargoNom" +
-      "inationRequest\032\025.CargoNominationReply\"\000\022" +
-      "I\n\023GetValveSegregation\022\030.ValveSegregatio" +
-      "nRequest\032\026.ValveSegregationReply\"\000\022J\n\023ge" +
-      "tLoadableQuantity\022\026.LoadableQuantityRepl" +
-      "y\032\031.LoadableQuantityResponse\"\000\022J\n\035SaveLo" +
-      "adableStudyPortRotation\022\023.PortRotationDe" +
-      "tail\032\022.PortRotationReply\"\000\022I\n\025DeleteCarg" +
-      "oNomination\022\027.CargoNominationRequest\032\025.C" +
-      "argoNominationReply\"\000\022B\n\024SaveDischarging" +
-      "Ports\022\024.PortRotationRequest\032\022.PortRotati" +
-      "onReply\"\000\022N\n GetPortRotationByLoadableSt" +
-      "udyId\022\024.PortRotationRequest\032\022.PortRotati" +
-      "onReply\"\000\022C\n\023DeleteLoadableStudy\022\025.Loada" +
-      "bleStudyRequest\032\023.LoadableStudyReply\"\000\022@" +
-      "\n\022DeletePortRotation\022\024.PortRotationReque" +
-      "st\032\022.PortRotationReply\"\000\022C\n\021GetOnHandQua" +
-      "ntity\022\026.OnHandQuantityRequest\032\024.OnHandQu" +
-      "antityReply\"\000\022C\n\022SaveOnHandQuantity\022\025.On" +
-      "HandQuantityDetail\032\024.OnHandQuantityReply" +
-      "\"\000\022M\n\031GetLoadablePatternDetails\022\027.Loadab" +
-      "lePatternRequest\032\025.LoadablePatternReply\"" +
-      "\000\022O\n\025GetPurposeOfCommingle\022\032.PurposeOfCo" +
-      "mmingleRequest\032\030.PurposeOfCommingleReply" +
-      "\"\000\022C\n\021GetCommingleCargo\022\026.CommingleCargo" +
-      "Request\032\024.CommingleCargoReply\"\000\022D\n\022SaveC" +
-      "ommingleCargo\022\026.CommingleCargoRequest\032\024." +
-      "CommingleCargoReply\"\000\022v\n\"GetLoadablePatt" +
-      "ernCommingleDetails\022\'.LoadablePatternCom" +
-      "mingleDetailsRequest\032%.LoadablePatternCo" +
-      "mmingleDetailsReply\"\000\0226\n\030GenerateLoadabl" +
-      "ePatterns\022\014.AlgoRequest\032\n.AlgoReply\"\000\022F\n" +
-      "\022GetOnBoardQuantity\022\027.OnBoardQuantityReq" +
-      "uest\032\025.OnBoardQuantityReply\"\000\022F\n\023SaveOnB" +
-      "oardQuantity\022\026.OnBoardQuantityDetail\032\025.O" +
-      "nBoardQuantityReply\"\000\022E\n\033SaveAlgoLoadabl" +
-      "eStudyStatus\022\022.AlgoStatusRequest\032\020.AlgoS" +
-      "tatusReply\"\000\022G\n\023SaveSynopticalTable\022\027.Sy" +
-      "nopticalTableRequest\032\025.SynopticalTableRe" +
-      "ply\"\000\022F\n\022GetSynopticalTable\022\027.Synoptical" +
-      "TableRequest\032\025.SynopticalTableReply\"\000\022K\n" +
-      "\031GetSynopticalDataByPortId\022\026.SynopticalD" +
-      "ataRequest\032\024.SynopticalDataReply\"\000\022R\n\026Ge" +
-      "tLoadableStudyStatus\022\033.LoadableStudyStat" +
-      "usRequest\032\031.LoadableStudyStatusReply\"\000\022R" +
-      "\n\026GetLoadablePlanDetails\022\033.LoadablePlanD" +
-      "etailsRequest\032\031.LoadablePlanDetailsReply" +
-      "\"\000\0227\n\013ConfirmPlan\022\023.ConfirmPlanRequest\032\021" +
-      ".ConfirmPlanReply\"\000B\036\n\032com.cpdss.common." +
-      "generatedP\000b\006proto3"
+      "us\022-\n\017loadableStudies\030\002 \003(\0132\024.LoadableSt" +
+      "udyDetail\022\n\n\002id\030\003 \001(\003\"5\n\021LoadingPortDeta" +
+      "il\022\016\n\006portId\030\001 \001(\003\022\020\n\010quantity\030\002 \001(\t\".\n\021" +
+      "segregationDetail\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002" +
+      " \001(\t\"\252\002\n\025CargoNominationDetail\022\n\n\002id\030\001 \001" +
+      "(\003\022\027\n\017loadableStudyId\030\002 \001(\003\022\020\n\010priority\030" +
+      "\003 \001(\003\022\r\n\005color\030\004 \001(\t\022\017\n\007cargoId\030\005 \001(\003\022\024\n" +
+      "\014abbreviation\030\006 \001(\t\022.\n\022loadingPortDetail" +
+      "s\030\007 \003(\0132\022.LoadingPortDetail\022\020\n\010quantity\030" +
+      "\010 \001(\t\022\024\n\014maxTolerance\030\t \001(\t\022\024\n\014minTolera" +
+      "nce\030\n \001(\t\022\016\n\006apiEst\030\013 \001(\t\022\017\n\007tempEst\030\014 \001" +
+      "(\t\022\025\n\rsegregationId\030\r \001(\003\"\247\001\n\026CargoNomin" +
+      "ationRequest\022\020\n\010vesselId\030\001 \001(\003\022\020\n\010voyage" +
+      "Id\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\031\n\021car" +
+      "goNominationId\030\004 \001(\003\0225\n\025cargoNominationD" +
+      "etail\030\005 \001(\0132\026.CargoNominationDetail\"\214\001\n\024" +
+      "CargoNominationReply\022\'\n\016responseStatus\030\001" +
+      " \001(\0132\017.ResponseStatus\022\031\n\021cargoNomination" +
+      "Id\030\002 \001(\003\0220\n\020cargoNominations\030\003 \003(\0132\026.Car" +
+      "goNominationDetail\"z\n\023PortRotationReques" +
+      "t\022\027\n\017loadableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002" +
+      " \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\032\n\022dischargingPor" +
+      "tIds\030\004 \003(\003\022\n\n\002id\030\005 \001(\003\"\332\002\n\022PortRotationD" +
+      "etail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\017\n\007ber" +
+      "thId\030\003 \001(\003\022\023\n\013operationId\030\004 \001(\003\022\027\n\017seaWa" +
+      "terDensity\030\005 \001(\t\022\034\n\024distanceBetweenPorts" +
+      "\030\006 \001(\t\022\022\n\ntimeOfStay\030\007 \001(\t\022\020\n\010maxDraft\030\010" +
+      " \001(\t\022\023\n\013maxAirDraft\030\t \001(\t\022\013\n\003eta\030\n \001(\t\022\021" +
+      "\n\tetaActual\030\013 \001(\t\022\013\n\003etd\030\014 \001(\t\022\021\n\tetdAct" +
+      "ual\030\r \001(\t\022\022\n\nlayCanFrom\030\016 \001(\t\022\020\n\010layCanT" +
+      "o\030\017 \001(\t\022\027\n\017loadableStudyId\030\020 \001(\003\022\021\n\tport" +
+      "Order\030\021 \001(\003\".\n\tOperation\022\n\n\002id\030\001 \001(\003\022\025\n\r" +
+      "operationName\030\002 \001(\t\"\230\001\n\021PortRotationRepl" +
+      "y\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStat" +
+      "us\022\"\n\005ports\030\002 \003(\0132\023.PortRotationDetail\022\036" +
+      "\n\noperations\030\003 \003(\0132\n.Operation\022\026\n\016portRo" +
+      "tationId\030\004 \001(\003\"\241\001\n\030LoadableQuantityRespo" +
+      "nse\0229\n\027loadableQuantityRequest\030\001 \001(\0132\030.L" +
+      "oadableQuantityRequest\022$\n\016responseStatus" +
+      "\030\002 \001(\0132\014.StatusReply\022\016\n\006caseNo\030\003 \001(\005\022\024\n\014" +
+      "selectedZone\030\004 \001(\t\",\n\020ValveSegregation\022\n" +
+      "\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"2\n\027ValveSegrega" +
+      "tionRequest\022\027\n\017loadableStudyId\030\001 \001(\003\"m\n\025" +
+      "ValveSegregationReply\022\'\n\016responseStatus\030" +
+      "\001 \001(\0132\017.ResponseStatus\022+\n\020valveSegregati" +
+      "on\030\002 \003(\0132\021.ValveSegregation\"e\n\025OnHandQua" +
+      "ntityRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesse" +
+      "lId\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\016\n\006po" +
+      "rtId\030\004 \001(\003\"\245\002\n\024OnHandQuantityDetail\022\n\n\002i" +
+      "d\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\022\n\nfuelTypeId\030\003 " +
+      "\001(\003\022\020\n\010fuelType\030\004 \001(\t\022\016\n\006tankId\030\005 \001(\003\022\020\n" +
+      "\010tankName\030\006 \001(\t\022\025\n\rarrivalVolume\030\007 \001(\t\022\027" +
+      "\n\017arrivalQuantity\030\010 \001(\t\022\027\n\017departureVolu" +
+      "me\030\t \001(\t\022\031\n\021departureQuantity\030\n \001(\t\022\027\n\017l" +
+      "oadableStudyId\030\013 \001(\003\022\021\n\tcolorCode\030\014 \001(\t\022" +
+      "\031\n\021fuelTypeShortName\030\r \001(\t\"\310\002\n\nTankDetai" +
+      "l\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tankCategoryId\030\002 \001(" +
+      "\003\022\030\n\020tankCategoryName\030\003 \001(\t\022\020\n\010tankName\030" +
+      "\004 \001(\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025\n\rframeN" +
+      "umberTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t\022\030\n\020fill" +
+      "CapacityCubm\030\010 \001(\t\022\017\n\007density\030\t \001(\t\022\022\n\ni" +
+      "sSlopTank\030\n \001(\010\022\022\n\nheightFrom\030\013 \001(\t\022\020\n\010h" +
+      "eightTo\030\014 \001(\t\022\021\n\ttankOrder\030\r \001(\005\022\021\n\ttank" +
+      "Group\030\016 \001(\005\022\030\n\020fullCapacityCubm\030\017 \001(\t\"+\n" +
+      "\010TankList\022\037\n\nvesselTank\030\001 \003(\0132\013.TankDeta" +
+      "il\"\261\001\n\023OnHandQuantityReply\022\'\n\016responseSt" +
+      "atus\030\001 \001(\0132\017.ResponseStatus\022-\n\016onHandQua" +
+      "ntity\030\002 \003(\0132\025.OnHandQuantityDetail\022\030\n\005ta" +
+      "nks\030\003 \003(\0132\t.TankList\022\034\n\trearTanks\030\004 \003(\0132" +
+      "\t.TankList\022\n\n\002id\030\005 \001(\003\"x\n\026OnBoardQuantit" +
+      "yRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId\030" +
+      "\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\016\n\006portId" +
+      "\030\004 \001(\003\022\020\n\010voyageId\030\005 \001(\003\"\355\001\n\025OnBoardQuan" +
+      "tityDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\016" +
+      "\n\006tankId\030\003 \001(\003\022\020\n\010tankName\030\004 \001(\t\022\017\n\007carg" +
+      "oId\030\005 \001(\003\022\021\n\tcargoName\030\006 \001(\t\022\020\n\010sounding" +
+      "\030\007 \001(\t\022\016\n\006weight\030\010 \001(\t\022\016\n\006volume\030\t \001(\t\022\027" +
+      "\n\017loadableStudyId\030\n \001(\003\022\021\n\tcolorCode\030\013 \001" +
+      "(\t\022\024\n\014abbreviation\030\014 \001(\t\"\226\001\n\024OnBoardQuan" +
+      "tityReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp" +
+      "onseStatus\022/\n\017onBoardQuantity\030\002 \003(\0132\026.On" +
+      "BoardQuantityDetail\022\030\n\005tanks\030\003 \003(\0132\t.Tan" +
+      "kList\022\n\n\002id\030\004 \001(\003\".\n\022PurposeOfCommingle\022" +
+      "\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"4\n\031PurposeOfCo" +
+      "mmingleRequest\022\027\n\017loadableStudyId\030\001 \001(\003\"" +
+      "s\n\027PurposeOfCommingleReply\022\'\n\016responseSt" +
+      "atus\030\001 \001(\0132\017.ResponseStatus\022/\n\022purposeOf" +
+      "Commingle\030\002 \003(\0132\023.PurposeOfCommingle\"\303\001\n" +
+      "\024LoadablePatternReply\022)\n\017loadablePattern" +
+      "\030\001 \003(\0132\020.LoadablePattern\022\'\n\016responseStat" +
+      "us\030\002 \001(\0132\017.ResponseStatus\022\030\n\005tanks\030\003 \003(\013" +
+      "2\t.TankList\022\"\n\032loadablePatternCreatedDat" +
+      "e\030\004 \001(\t\022\031\n\021loadableStudyName\030\005 \001(\t\"\301\001\n\017L" +
+      "oadablePattern\022\031\n\021loadablePatternId\030\001 \001(" +
+      "\003\022A\n\033loadablePatternCargoDetails\030\002 \003(\0132\034" +
+      ".LoadablePatternCargoDetails\022\023\n\013constrai" +
+      "nts\030\003 \001(\t\022\034\n\024totalDifferenceColor\030\004 \001(\t\022" +
+      "\035\n\025loadableStudyStatusId\030\005 \001(\003\"\217\002\n\033Loada" +
+      "blePatternCargoDetails\022\020\n\010priority\030\001 \001(\003" +
+      "\022\031\n\021cargoAbbreviation\030\002 \001(\t\022\022\n\ncargoColo" +
+      "r\030\003 \001(\t\022\016\n\006tankId\030\004 \001(\003\022\020\n\010quantity\030\005 \001(" +
+      "\t\022\022\n\ndifference\030\006 \001(\t\022\027\n\017differenceColor" +
+      "\030\007 \001(\t\022 \n\030loadablePatternDetailsId\030\010 \001(\003" +
+      "\022\023\n\013isCommingle\030\t \001(\010\022)\n!loadablePattern" +
+      "CommingleDetailsId\030\n \001(\003\"1\n\026LoadablePatt" +
+      "ernRequest\022\027\n\017loadableStudyId\030\001 \001(\003\"\265\001\n\016" +
+      "CommingleCargo\022\n\n\002id\030\001 \001(\003\022\021\n\tpurposeId\030" +
+      "\002 \001(\003\022\020\n\010slopOnly\030\003 \001(\010\022\026\n\016preferredTank" +
+      "s\030\004 \003(\003\022\020\n\010cargo1Id\030\005 \001(\003\022\021\n\tcargo1pct\030\006" +
+      " \001(\t\022\020\n\010cargo2Id\030\007 \001(\003\022\021\n\tcargo2pct\030\010 \001(" +
+      "\t\022\020\n\010quantity\030\t \001(\t\"Y\n\025CommingleCargoReq" +
+      "uest\022\027\n\017loadableStudyId\030\001 \001(\003\022\'\n\016comming" +
+      "leCargo\030\002 \003(\0132\017.CommingleCargo\"g\n\023Commin" +
+      "gleCargoReply\022\'\n\016responseStatus\030\001 \001(\0132\017." +
+      "ResponseStatus\022\'\n\016commingleCargo\030\002 \003(\0132\017" +
+      ".CommingleCargo\"S\n&LoadablePatternCommin" +
+      "gleDetailsRequest\022)\n!loadablePatternComm" +
+      "ingleDetailsId\030\001 \001(\003\"\317\002\n$LoadablePattern" +
+      "CommingleDetailsReply\022\n\n\002id\030\001 \001(\003\022\025\n\rtan" +
+      "kShortName\030\002 \001(\t\022\031\n\021cargo1Abbrivation\030\003 " +
+      "\001(\t\022\031\n\021cargo2Abbrivation\030\004 \001(\t\022\r\n\005grade\030" +
+      "\005 \001(\t\022\020\n\010quantity\030\006 \001(\t\022\013\n\003api\030\007 \001(\t\022\023\n\013" +
+      "temperature\030\010 \001(\t\022\026\n\016cargo1Quantity\030\t \001(" +
+      "\t\022\026\n\016cargo2Quantity\030\n \001(\t\022\030\n\020cargo1Perce" +
+      "ntage\030\013 \001(\t\022\030\n\020cargo2Percentage\030\014 \001(\t\022\'\n" +
+      "\016responseStatus\030\r \001(\0132\017.ResponseStatus\"\222" +
+      "\010\n\020SynopticalRecord\022\n\n\002id\030\001 \001(\003\022\016\n\006portI" +
+      "d\030\002 \001(\003\022\020\n\010portName\030\003 \001(\t\022\025\n\roperationTy" +
+      "pe\030\004 \001(\t\022\020\n\010distance\030\005 \001(\t\022\r\n\005speed\030\006 \001(" +
+      "\t\022\024\n\014runningHours\030\007 \001(\t\022\023\n\013inPortHours\030\010" +
+      " \001(\t\022\025\n\rtimeOfSunrise\030\t \001(\t\022\024\n\014timeOfSun" +
+      "set\030\n \001(\t\022\022\n\nhwTideFrom\030\013 \001(\t\022\020\n\010hwTideT" +
+      "o\030\014 \001(\t\022\026\n\016hwTideTimeFrom\030\r \001(\t\022\024\n\014hwTid" +
+      "eTimeTo\030\016 \001(\t\022\022\n\nlwTideFrom\030\017 \001(\t\022\020\n\010lwT" +
+      "ideTo\030\020 \001(\t\022\026\n\016lwTideTimeFrom\030\021 \001(\t\022\024\n\014l" +
+      "wTideTimeTo\030\022 \001(\t\022\027\n\017specificGravity\030\023 \001" +
+      "(\t\022\024\n\014etaEtdActual\030\024 \001(\t\022\027\n\017etaEtdEstima" +
+      "ted\030\025 \001(\t\022%\n\005cargo\030\026 \003(\0132\026.SynopticalCar" +
+      "goRecord\022\031\n\021cargoPlannedTotal\030\027 \001(\t\022\030\n\020c" +
+      "argoActualTotal\030\030 \001(\t\022!\n\003ohq\030\031 \003(\0132\024.Syn" +
+      "opticalOhqRecord\022\026\n\016foPlannedTotal\030\032 \001(\t" +
+      "\022\025\n\rfoActualTotal\030\033 \001(\t\022\026\n\016doPlannedTota" +
+      "l\030\034 \001(\t\022\025\n\rdoActualTotal\030\035 \001(\t\022\030\n\020lubePl" +
+      "annedTotal\030\036 \001(\t\022\027\n\017lubeActualTotal\030\037 \001(" +
+      "\t\022\021\n\tportOrder\030  \001(\003\022\025\n\rothersPlanned\030! " +
+      "\001(\t\022\024\n\014othersActual\030\" \001(\t\022\027\n\017constantPla" +
+      "nned\030# \001(\t\022\026\n\016constantActual\030$ \001(\t\022\027\n\017to" +
+      "talDwtPlanned\030% \001(\t\022\026\n\016totalDwtActual\030& " +
+      "\001(\t\022\033\n\023displacementPlanned\030\' \001(\t\022\032\n\022disp" +
+      "lacementActual\030( \001(\t\0226\n\016loadicatorData\030)" +
+      " \001(\0132\036.SynopticalTableLoadicatorData\022\026\n\016" +
+      "ballastPlanned\030* \001(\t\022\025\n\rballastActual\030+ " +
+      "\001(\t\"f\n\025SynopticalCargoRecord\022\016\n\006tankId\030\001" +
+      " \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rplannedWeight\030" +
+      "\003 \001(\t\022\024\n\014actualWeight\030\004 \001(\t\"\212\001\n\023Synoptic" +
+      "alOhqRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030" +
+      "\002 \001(\t\022\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014actualWe" +
+      "ight\030\004 \001(\t\022\022\n\nfuelTypeId\030\005 \001(\003\022\020\n\010fuelTy" +
+      "pe\030\006 \001(\t\"\200\001\n\026SynopticalTableRequest\022\027\n\017l" +
+      "oadableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\016" +
+      "\n\006portId\030\003 \001(\003\022+\n\020synopticalRecord\030\004 \001(\013" +
+      "2\021.SynopticalRecord\"\232\001\n\024SynopticalTableR" +
+      "eply\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseS" +
+      "tatus\022,\n\021synopticalRecords\030\002 \003(\0132\021.Synop" +
+      "ticalRecord\022\037\n\nvesselTank\030\003 \003(\0132\013.TankDe" +
+      "tail\022\n\n\002id\030\004 \001(\003\"\255\003\n\035SynopticalTableLoad" +
+      "icatorData\022\016\n\006hogSag\030\001 \001(\t\022\025\n\rfinalDraft" +
+      "Fwd\030\002 \001(\t\022\025\n\rfinalDraftAft\030\003 \001(\t\022\025\n\rfina" +
+      "lDraftMid\030\004 \001(\t\022\026\n\016finalDraftTrim\030\005 \001(\t\022" +
+      "!\n\031calculatedDraftFwdPlanned\030\006 \001(\t\022 \n\030ca" +
+      "lculatedDraftFwdActual\030\007 \001(\t\022!\n\031calculat" +
+      "edDraftAftPlanned\030\010 \001(\t\022 \n\030calculatedDra" +
+      "ftAftActual\030\t \001(\t\022!\n\031calculatedDraftMidP" +
+      "lanned\030\n \001(\t\022 \n\030calculatedDraftMidActual" +
+      "\030\013 \001(\t\022\035\n\025calculatedTrimPlanned\030\014 \001(\t\022\034\n" +
+      "\024calculatedTrimActual\030\r \001(\t\022\023\n\013blindSect" +
+      "or\030\016 \001(\t\"m\n\025SynopticalDataRequest\022\027\n\017loa" +
+      "dableStudyId\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022+\n\020sy" +
+      "nopticalRecord\030\003 \001(\0132\021.SynopticalRecord\"" +
+      "l\n\023SynopticalDataReply\022\'\n\016responseStatus" +
+      "\030\001 \001(\0132\017.ResponseStatus\022,\n\021synopticalRec" +
+      "ords\030\002 \003(\0132\021.SynopticalRecord\"I\n\036Loadabl" +
+      "eStudyAttachmentRequest\022\016\n\006fileId\030\001 \001(\003\022" +
+      "\027\n\017loadableStudyId\030\002 \001(\003\"m\n\034LoadableStud" +
+      "yAttachmentReply\022\'\n\016responseStatus\030\001 \001(\013" +
+      "2\017.ResponseStatus\022\020\n\010filePath\030\002 \001(\t\022\022\n\nb" +
+      "yteString\030\003 \001(\0142\354\023\n\024LoadableStudyService" +
+      "\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014.VoyageR" +
+      "eply\"\000\0228\n\022GetVoyagesByVessel\022\016.VoyageReq" +
+      "uest\032\020.VoyageListReply\"\000\022J\n\024SaveLoadable" +
+      "Quantity\022\030.LoadableQuantityRequest\032\026.Loa" +
+      "dableQuantityReply\"\000\022T\n$FindLoadableStud" +
+      "iesByVesselAndVoyage\022\025.LoadableStudyRequ" +
+      "est\032\023.LoadableStudyReply\"\000\022@\n\021SaveLoadab" +
+      "leStudy\022\024.LoadableStudyDetail\032\023.Loadable" +
+      "StudyReply\"\000\022G\n\023SaveCargoNomination\022\027.Ca" +
+      "rgoNominationRequest\032\025.CargoNominationRe" +
+      "ply\"\000\022J\n\034GetLoadableStudyPortRotation\022\024." +
+      "PortRotationRequest\032\022.PortRotationReply\"" +
+      "\000\022J\n\026GetCargoNominationById\022\027.CargoNomin" +
+      "ationRequest\032\025.CargoNominationReply\"\000\022I\n" +
+      "\023GetValveSegregation\022\030.ValveSegregationR" +
+      "equest\032\026.ValveSegregationReply\"\000\022J\n\023getL" +
+      "oadableQuantity\022\026.LoadableQuantityReply\032" +
+      "\031.LoadableQuantityResponse\"\000\022J\n\035SaveLoad" +
+      "ableStudyPortRotation\022\023.PortRotationDeta" +
+      "il\032\022.PortRotationReply\"\000\022I\n\025DeleteCargoN" +
+      "omination\022\027.CargoNominationRequest\032\025.Car" +
+      "goNominationReply\"\000\022B\n\024SaveDischargingPo" +
+      "rts\022\024.PortRotationRequest\032\022.PortRotation" +
+      "Reply\"\000\022N\n GetPortRotationByLoadableStud" +
+      "yId\022\024.PortRotationRequest\032\022.PortRotation" +
+      "Reply\"\000\022C\n\023DeleteLoadableStudy\022\025.Loadabl" +
+      "eStudyRequest\032\023.LoadableStudyReply\"\000\022@\n\022" +
+      "DeletePortRotation\022\024.PortRotationRequest" +
+      "\032\022.PortRotationReply\"\000\022C\n\021GetOnHandQuant" +
+      "ity\022\026.OnHandQuantityRequest\032\024.OnHandQuan" +
+      "tityReply\"\000\022C\n\022SaveOnHandQuantity\022\025.OnHa" +
+      "ndQuantityDetail\032\024.OnHandQuantityReply\"\000" +
+      "\022M\n\031GetLoadablePatternDetails\022\027.Loadable" +
+      "PatternRequest\032\025.LoadablePatternReply\"\000\022" +
+      "O\n\025GetPurposeOfCommingle\022\032.PurposeOfComm" +
+      "ingleRequest\032\030.PurposeOfCommingleReply\"\000" +
+      "\022C\n\021GetCommingleCargo\022\026.CommingleCargoRe" +
+      "quest\032\024.CommingleCargoReply\"\000\022D\n\022SaveCom" +
+      "mingleCargo\022\026.CommingleCargoRequest\032\024.Co" +
+      "mmingleCargoReply\"\000\022v\n\"GetLoadablePatter" +
+      "nCommingleDetails\022\'.LoadablePatternCommi" +
+      "ngleDetailsRequest\032%.LoadablePatternComm" +
+      "ingleDetailsReply\"\000\0226\n\030GenerateLoadableP" +
+      "atterns\022\014.AlgoRequest\032\n.AlgoReply\"\000\022F\n\022G" +
+      "etOnBoardQuantity\022\027.OnBoardQuantityReque" +
+      "st\032\025.OnBoardQuantityReply\"\000\022F\n\023SaveOnBoa" +
+      "rdQuantity\022\026.OnBoardQuantityDetail\032\025.OnB" +
+      "oardQuantityReply\"\000\022E\n\033SaveAlgoLoadableS" +
+      "tudyStatus\022\022.AlgoStatusRequest\032\020.AlgoSta" +
+      "tusReply\"\000\022G\n\023SaveSynopticalTable\022\027.Syno" +
+      "pticalTableRequest\032\025.SynopticalTableRepl" +
+      "y\"\000\022F\n\022GetSynopticalTable\022\027.SynopticalTa" +
+      "bleRequest\032\025.SynopticalTableReply\"\000\022K\n\031G" +
+      "etSynopticalDataByPortId\022\026.SynopticalDat" +
+      "aRequest\032\024.SynopticalDataReply\"\000\022R\n\026GetL" +
+      "oadableStudyStatus\022\033.LoadableStudyStatus" +
+      "Request\032\031.LoadableStudyStatusReply\"\000\022R\n\026" +
+      "GetLoadablePlanDetails\022\033.LoadablePlanDet" +
+      "ailsRequest\032\031.LoadablePlanDetailsReply\"\000" +
+      "\0227\n\013ConfirmPlan\022\023.ConfirmPlanRequest\032\021.C" +
+      "onfirmPlanReply\"\000\022c\n\037DownloadLoadableStu" +
+      "dyAttachment\022\037.LoadableStudyAttachmentRe" +
+      "quest\032\035.LoadableStudyAttachmentReply\"\000B\036" +
+      "\n\032com.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -85381,7 +86861,7 @@ public final class LoadableStudy {
     internal_static_LoadableStudyAttachment_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_LoadableStudyAttachment_descriptor,
-        new java.lang.String[] { "ByteString", "FileName", });
+        new java.lang.String[] { "ByteString", "FileName", "Id", });
     internal_static_LoadableStudyDetail_descriptor =
       getDescriptor().getMessageTypes().get(22);
     internal_static_LoadableStudyDetail_fieldAccessorTable = new
@@ -85640,6 +87120,18 @@ public final class LoadableStudy {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_SynopticalDataReply_descriptor,
         new java.lang.String[] { "ResponseStatus", "SynopticalRecords", });
+    internal_static_LoadableStudyAttachmentRequest_descriptor =
+      getDescriptor().getMessageTypes().get(65);
+    internal_static_LoadableStudyAttachmentRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_LoadableStudyAttachmentRequest_descriptor,
+        new java.lang.String[] { "FileId", "LoadableStudyId", });
+    internal_static_LoadableStudyAttachmentReply_descriptor =
+      getDescriptor().getMessageTypes().get(66);
+    internal_static_LoadableStudyAttachmentReply_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_LoadableStudyAttachmentReply_descriptor,
+        new java.lang.String[] { "ResponseStatus", "FilePath", "ByteString", });
     com.cpdss.common.generated.Common.getDescriptor();
   }
 

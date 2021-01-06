@@ -5,7 +5,10 @@ import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +19,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class SynopticalTableLoadicatorData extends EntityDoc {
+
+  private static final long serialVersionUID = 1L;
 
   @Column(name = "hog")
   private BigDecimal hog;
@@ -46,11 +52,12 @@ public class SynopticalTableLoadicatorData extends EntityDoc {
   private BigDecimal calculatedTrimActual;
 
   @Column(name = "blind_sector")
-  private BigDecimal blindSetor;
+  private BigDecimal blindSector;
 
   @Column(name = "is_active")
   private boolean isActive;
 
-  @Column(name = "synoptical_table_xid")
-  private Long synopticalTableId;
+  @OneToOne
+  @JoinColumn(name = "synoptical_table_xid")
+  private SynopticalTable synopticalTable;
 }

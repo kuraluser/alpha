@@ -1050,6 +1050,37 @@ public final class LoadableStudyServiceGrpc {
     return getConfirmPlanMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest,
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply> getDownloadLoadableStudyAttachmentMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DownloadLoadableStudyAttachment",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest,
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply> getDownloadLoadableStudyAttachmentMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply> getDownloadLoadableStudyAttachmentMethod;
+    if ((getDownloadLoadableStudyAttachmentMethod = LoadableStudyServiceGrpc.getDownloadLoadableStudyAttachmentMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getDownloadLoadableStudyAttachmentMethod = LoadableStudyServiceGrpc.getDownloadLoadableStudyAttachmentMethod) == null) {
+          LoadableStudyServiceGrpc.getDownloadLoadableStudyAttachmentMethod = getDownloadLoadableStudyAttachmentMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest, com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "DownloadLoadableStudyAttachment"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply.getDefaultInstance()))
+              .setSchemaDescriptor(new LoadableStudyServiceMethodDescriptorSupplier("DownloadLoadableStudyAttachment"))
+              .build();
+        }
+      }
+    }
+    return getDownloadLoadableStudyAttachmentMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -1329,6 +1360,13 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getConfirmPlanMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void downloadLoadableStudyAttachment(com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply> responseObserver) {
+      asyncUnimplementedUnaryCall(getDownloadLoadableStudyAttachmentMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -1562,6 +1600,13 @@ public final class LoadableStudyServiceGrpc {
                 com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
                 com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>(
                   this, METHODID_CONFIRM_PLAN)))
+          .addMethod(
+            getDownloadLoadableStudyAttachmentMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest,
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply>(
+                  this, METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT)))
           .build();
     }
   }
@@ -1843,6 +1888,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getConfirmPlanMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void downloadLoadableStudyAttachment(com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getDownloadLoadableStudyAttachmentMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -2088,6 +2141,13 @@ public final class LoadableStudyServiceGrpc {
     public com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply confirmPlan(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
       return blockingUnaryCall(
           getChannel(), getConfirmPlanMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply downloadLoadableStudyAttachment(com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getDownloadLoadableStudyAttachmentMethod(), getCallOptions(), request);
     }
   }
 
@@ -2368,6 +2428,14 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getConfirmPlanMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply> downloadLoadableStudyAttachment(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getDownloadLoadableStudyAttachmentMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -2403,6 +2471,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 30;
   private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 31;
   private static final int METHODID_CONFIRM_PLAN = 32;
+  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 33;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -2553,6 +2622,10 @@ public final class LoadableStudyServiceGrpc {
           serviceImpl.confirmPlan((com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>) responseObserver);
           break;
+        case METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT:
+          serviceImpl.downloadLoadableStudyAttachment((com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply>) responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -2647,6 +2720,7 @@ public final class LoadableStudyServiceGrpc {
               .addMethod(getGetLoadableStudyStatusMethod())
               .addMethod(getGetLoadablePlanDetailsMethod())
               .addMethod(getConfirmPlanMethod())
+              .addMethod(getDownloadLoadableStudyAttachmentMethod())
               .build();
         }
       }
