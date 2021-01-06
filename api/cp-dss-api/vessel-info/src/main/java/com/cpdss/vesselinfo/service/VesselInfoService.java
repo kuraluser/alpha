@@ -241,6 +241,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   public void getVesselTanks(VesselRequest request, StreamObserver<VesselReply> responseObserver) {
     VesselReply.Builder replyBuilder = VesselReply.newBuilder();
     try {
+      log.info("inside getVesselTanks");
       List<VesselTankDetail> tankList =
           this.findVesselTanksByCategory(request.getVesselId(), request.getTankCategoriesList());
       if (null != tankList && !tankList.isEmpty()) {
@@ -279,8 +280,10 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
    */
   public List<VesselTankDetail> findVesselTanksByCategory(Long vesselId, List<Long> tankCategoryIds)
       throws GenericServiceException {
+    log.info("inside findVesselTanksByCategory");
     Vessel vessel = this.vesselRepository.findByIdAndIsActive(vesselId, true);
     if (null == vessel) {
+      log.error("Vessel does not exist");
       throw new GenericServiceException(
           "Vessel with given id does not exist",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
@@ -301,7 +304,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       builder.setTankCategoryName(tank.getTankCategory().getName());
       Optional.ofNullable(tank.getTankCategory().getShortName())
           .ifPresent(builder::setTankCategoryShortName);
-      builder.setShortName(tank.getShortName());
+      Optional.ofNullable(tank.getShortName()).ifPresent(builder::setShortName);
       builder.setFrameNumberFrom(tank.getFrameNumberFrom());
       builder.setFrameNumberTo(tank.getFrameNumberTo());
       builder.setTankName(tank.getTankName());
@@ -321,6 +324,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               capacity -> builder.setFullCapacityCubm(String.valueOf(tank.getFullCapacityCubm())));
       Optional.ofNullable(tank.getTankDisplayOrder()).ifPresent(builder::setTankDisplayOrder);
       Optional.ofNullable(tank.getShowInOhqObq()).ifPresent(builder::setShowInOhqObq);
+      Optional.ofNullable(tank.getTankPositionCategory())
+          .ifPresent(builder::setTankPositionCategory);
       tankDetailsList.add(builder.build());
     }
     return tankDetailsList;

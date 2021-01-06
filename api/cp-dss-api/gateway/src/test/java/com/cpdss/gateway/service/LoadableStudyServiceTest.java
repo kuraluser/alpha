@@ -1346,6 +1346,7 @@ class LoadableStudyServiceTest {
                 .addLoadableQuantityCommingleCargoDetails(
                     buildLoadableQuantityCommingleCargoDetails())
                 .addLoadablePlanStowageDetails(buildLoadablePlanStowageDetails())
+                .addTanks(buildCargoTanks())
                 .build());
     LoadablePlanDetailsResponse response =
         this.loadableStudyService.getLoadablePatternDetails(1L, CORRELATION_ID_HEADER_VALUE);
@@ -1355,6 +1356,14 @@ class LoadableStudyServiceTest {
                 String.valueOf(HttpStatusCode.OK.value()),
                 response.getResponseStatus().getStatus(),
                 "response valid"));
+  }
+
+  /** @return TankList */
+  private TankList buildCargoTanks() {
+    TankList.Builder builder = TankList.newBuilder();
+    TankDetail.Builder buildTankDetail = TankDetail.newBuilder();
+    builder.addVesselTank(buildTankDetail.build());
+    return builder.build();
   }
 
   /** @throws GenericServiceException void */

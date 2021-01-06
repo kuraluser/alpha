@@ -115,11 +115,31 @@ message LoadablePlanDetailsRequest {
 }
 
 message LoadablePlanDetailsReply {
-ResponseStatus responseStatus = 1;
-repeated LoadableQuantityCommingleCargoDetails loadableQuantityCommingleCargoDetails= 2;
-repeated LoadableQuantityCargoDetails loadableQuantityCargoDetails = 3;
-repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 4;
-repeated TankList tanks = 5;
+	ResponseStatus responseStatus = 1;
+	repeated LoadableQuantityCommingleCargoDetails loadableQuantityCommingleCargoDetails= 2;
+	repeated LoadableQuantityCargoDetails loadableQuantityCargoDetails = 3;
+	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 4;
+	repeated TankList tanks = 5;
+	repeated TankList ballastFrontTanks = 6;
+	repeated TankList ballastCenterTanks = 7;
+	repeated TankList ballastRearTanks = 8;
+	repeated LoadablePlanBallastDetails loadablePlanBallastDetails = 9;
+}
+
+message LoadablePlanBallastDetails {
+	int64 id = 1;
+ 	int64 tankId = 2;
+ 	string rdgLevel = 3;
+	string correctionFactor = 4;
+	string correctedLevel = 5;
+	string metricTon = 6;
+	string cubicMeter = 7;
+	string percentage = 8;
+	string sg = 9;
+	string lcg = 10;
+	string vcg = 11;
+	string tcg = 12;
+	string inertia = 13;
 }
 
 message LoadablePlanStowageDetails {

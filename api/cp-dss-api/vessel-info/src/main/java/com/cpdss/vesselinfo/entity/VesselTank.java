@@ -145,4 +145,7 @@ public class VesselTank extends EntityDoc {
 
   @Column(name = "show_in_ohq_obq")
   private Boolean showInOhqObq;
+
+  @Column(name = "tank_position_category")
+  private String tankPositionCategory;
 }
