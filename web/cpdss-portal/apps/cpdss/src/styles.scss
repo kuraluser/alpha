@@ -294,6 +294,9 @@ a {
 }
 
 .pencil-icon {
+  width: 18px;
+  height: 14px;
+  display: inline-block;
   background-position: center left;
 }
 
@@ -655,6 +658,7 @@ h5{
 
 .p-datatable .p-datatable-tbody > tr > td{
   padding: 11px 5px;
+  cursor: pointer;
 }
 
 /* width */

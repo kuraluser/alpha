@@ -5,6 +5,7 @@ import { IResponse } from '../../../shared/models/common.model';
  */
 export class LoadableStudy {
     public id: number;
+    slNo: number;
     public name: string;
     public status: string;
     public detail: string;
@@ -17,6 +18,18 @@ export class LoadableStudy {
     public maxAirTemperature: number;
     public maxWaterTemperature: number;
     public dischargingPortIds?: number[];
+    loadableStudyAttachment?: ILoadableStudyAttachment[];
+}
+
+/**
+ * Interface for loadable study attachments
+ *
+ * @export
+ * @interface ILoadableStudyAttachment
+ */
+export interface ILoadableStudyAttachment {
+    id: number;
+    fileName: string;
 }
 
 /**

@@ -450,7 +450,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'actions',
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.DELETE, DATATABLE_ACTION.DUPLICATE]
+        actions: [DATATABLE_ACTION.EDIT, DATATABLE_ACTION.DELETE, DATATABLE_ACTION.DUPLICATE]
       }
     ];
   }

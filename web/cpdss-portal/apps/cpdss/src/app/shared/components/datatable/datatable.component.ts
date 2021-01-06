@@ -96,6 +96,7 @@ export class DatatableComponent implements OnInit {
   @Output() rowReorder = new EventEmitter<IDataTableEvent>();
   @Output() filter = new EventEmitter<IDataTableFilterEvent>();
   @Output() sort = new EventEmitter<IDataTableSortEvent>();
+  @Output() editRow = new EventEmitter<IDataTableEvent>();
 
   // public fields
   readonly fieldType = DATATABLE_FIELD_TYPE;
@@ -435,12 +436,37 @@ export class DatatableComponent implements OnInit {
             }
           }
           break;
+          
+        case DATATABLE_ACTION.EDIT:
+          _option = {
+            id: DATATABLE_ACTION.EDIT,
+            label: label,
+            icon: 'pencil-icon',
+            command: () => {
+              this.onEdit();
+            }
+          }
+          break;
         default:
           break;
       }
       return _option;
     });
 
+  }
+
+
+
+   /**
+   * Handler for api row edit event
+   *
+   * @param {MouseEvent} event
+   * @param {Object} rowData
+   * @param {number} rowIndex
+   * @memberof DatatableComponent
+   */
+  onEdit() {
+    this.editRow.emit(this.selectedRowEvent);
   }
 
   /**
@@ -584,9 +610,9 @@ export class DatatableComponent implements OnInit {
    * @param formGroupIndex 
    * @param formControlName 
    */
-  disabledField(formGroupIndex: number, formControlName: string){
-    const formControl  = this.field(formGroupIndex, formControlName);
-   return formControl.disabled;
+  disabledField(formGroupIndex: number, formControlName: string) {
+    const formControl = this.field(formGroupIndex, formControlName);
+    return formControl.disabled;
 
   }
 }

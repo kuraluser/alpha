@@ -14,9 +14,16 @@ export class LoadableStudyListTransformationService {
   getLoadableStudyListDatatableColumns(): IDataTableColumn[] {
     return [
       {
+        field: 'slNo',
+        header: 'SL',
+        fieldType: DATATABLE_FIELD_TYPE.SLNO,
+        fieldHeaderClass: 'column-sl',
+        fieldClass: 'sl'
+      },
+      {
         field: 'name',
         header: 'LOADABLE_STUDY_LIST_GRID_LOADABLE_STUDY_NAME_LABEL',
-        sortable: false,
+        sortable: true,
         filter: true,
         editable: false,
         filterPlaceholder: 'LOADABLE_STUDY_LIST_SEARCH_BY_NAME',
@@ -63,7 +70,7 @@ export class LoadableStudyListTransformationService {
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
         fieldValueIcon: '##',
-        actions: [DATATABLE_ACTION.VIEW]
+        actions: [DATATABLE_ACTION.EDIT]
       }
     ]
   }

@@ -24,10 +24,11 @@ export class LoadableStudyListComponent implements OnInit {
   loadableStudyList: LoadableStudy[];
   voyages: Voyage[];
   selectedVoyage: Voyage;
-  selectedLoadableStudy: LoadableStudy[];
+  selectedLoadableStudy: LoadableStudy;
   loading = true;
   cols: TableColumns[];
   display = false;
+  isEdit = false;
   isDuplicateExistingLoadableStudy = true;
   vesselDetails: IVessel;
   voyageId: number;
@@ -35,7 +36,6 @@ export class LoadableStudyListComponent implements OnInit {
   loadableStudyListForm: FormGroup;
   readonly editMode = null;
   isVoyageIdSelected = true;
-
 
   constructor(private loadableStudyListApiService: LoadableStudyListApiService,
     private vesselsApiService: VesselsApiService, private router: Router,
@@ -63,7 +63,11 @@ export class LoadableStudyListComponent implements OnInit {
    * Take the user to particular loadable study
    */
   onRowSelect(event: IDataTableEvent) {
-    this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
+    if (event?.field !== 'actions'){
+      this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
+    }else{
+      this.callNewLoadableStudyPopup(true, event.data)
+    }
   }
 
   /**
@@ -74,14 +78,19 @@ export class LoadableStudyListComponent implements OnInit {
     if (voyageId !== 0) {
       const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
       this.loadableStudyList = result.loadableStudies;
+      this.loadableStudyList.map((loadablestudy, index) => {
+        loadablestudy.slNo = index + 1; 
+      })
       this.initLoadableStudyArray(this.loadableStudyList);
     }
     this.ngxSpinnerService.hide();
   }
 
   // invoke popup which binds new-loadable-study-popup component
-  callNewLoadableStudyPopup() {
+  callNewLoadableStudyPopup(isEdit, editLoadableStudy = null) {
     if (this.selectedVoyage) {
+      this.selectedLoadableStudy = editLoadableStudy;
+      this.isEdit = isEdit;
       this.display = true;
     }
     else
@@ -124,9 +133,11 @@ export class LoadableStudyListComponent implements OnInit {
   /**
    * called when name is clicked
    */
-  columnClick(data: IDataTableEvent) {
-    if (data?.field === 'name') {
-      this.onRowSelect(data);
+  columnClick(event: IDataTableEvent) {
+    if (event?.field === 'actions') {
+      this.callNewLoadableStudyPopup(true, event.data)
+    }else{
+      this.onRowSelect(event);
     }
   }
 

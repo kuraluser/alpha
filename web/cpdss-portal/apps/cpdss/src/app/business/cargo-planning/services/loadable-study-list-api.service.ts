@@ -60,4 +60,17 @@ export class LoadableStudyListApiService {
   deleteLodableStudy(vesselId: number, voyageId: number, loadableStudyId: number): Observable<IResponse> {
     return this.commonApiService.delete<IResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}`)
   }
+
+  /**
+  *
+  *
+  * @param {number} vesselId
+  * @param {number} voyageId
+  * @param {number} loadableStudy
+  * @param {number} attachmentId
+  * @memberof LoadableStudyListApiService
+  */
+  downloadAttachment(vesselId: number, voyageId: number, loadableStudyId: number, attachmentId: number) {
+    window.open(`${self.location.origin}/api/cloud/vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/attachments/${attachmentId}`)
+  }
 }  
