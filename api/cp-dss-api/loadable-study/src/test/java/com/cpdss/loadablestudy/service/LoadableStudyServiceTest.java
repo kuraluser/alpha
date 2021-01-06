@@ -2075,7 +2075,11 @@ class LoadableStudyServiceTest {
     LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
     Mockito.doReturn(
             this.createVesselReply()
-                .setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build())
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
                 .build())
         .when(spyService)
         .getVesselTanks(any(VesselRequest.class));

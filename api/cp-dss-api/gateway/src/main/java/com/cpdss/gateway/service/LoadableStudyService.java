@@ -2476,6 +2476,9 @@ public class LoadableStudyService {
     buildloadableStudyCommingleCargoDetails(response, grpcReply);
     buildLoadableStudyStowageDetails(response, grpcReply);
     response.setTankLists(createGroupWiseTankList(grpcReply.getTanksList()));
+    response.setFrontBallastTanks(createGroupWiseTankList(grpcReply.getBallastFrontTanksList()));
+    response.setCenterBallastTanks(createGroupWiseTankList(grpcReply.getBallastCenterTanksList()));
+    response.setRearBallastTanks(createGroupWiseTankList(grpcReply.getBallastRearTanksList()));
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;

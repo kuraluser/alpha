@@ -259,6 +259,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LUBRICANT_OIL_TANK_CATEGORY_ID = 19L;
   private static final Long FUEL_VOID_TANK_CATEGORY_ID = 22L;
   private static final Long FRESH_WATER_VOID_TANK_CATEGORY_ID = 23L;
+  private static final Long BALLAST_VOID_TANK_CATEGORY_ID = 16L;
+  private static final Long BALLAST_TANK_CATEGORY_ID = 2L;
+
+  private static final String BALLAST_FRONT_TANK = "FRONT";
+  private static final String BALLAST_CENTER_TANK = "CENTER";
+  private static final String BALLAST_REAR_TANK = "REAR";
+
+  private static final List<Long> BALLAST_TANK_CATEGORIES =
+      Arrays.asList(BALLAST_TANK_CATEGORY_ID, BALLAST_VOID_TANK_CATEGORY_ID);
 
   private static final List<Long> OHQ_TANK_CATEGORIES =
       Arrays.asList(
@@ -4056,6 +4065,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     return this.vesselInfoGrpcService.getVesselDetailForSynopticalTable(request);
   }
 
+  private VesselReply getTanks(Long vesselId, List<Long> tankCategory)
+      throws GenericServiceException {
+    VesselRequest.Builder vesselGrpcRequest = VesselRequest.newBuilder();
+    vesselGrpcRequest.setVesselId(vesselId);
+    vesselGrpcRequest.addAllTankCategories(tankCategory);
+    return this.getVesselTanks(vesselGrpcRequest.build());
+  }
+
   @Override
   public void getLoadablePlanDetails(
       LoadablePlanDetailsRequest request,
@@ -4073,6 +4090,30 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setMessage(INVALID_LOADABLE_PATTERN_ID)
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
+
+        VesselReply vesselReplyCargoTanks =
+            this.getTanks(
+                loadablePatternOpt.get().getLoadableStudy().getVesselXId(), CARGO_TANK_CATEGORIES);
+        if (!SUCCESS.equals(vesselReplyCargoTanks.getResponseStatus().getStatus())) {
+          throw new GenericServiceException(
+              "Failed to fetch vessel particualrs for cargo tanks",
+              vesselReplyCargoTanks.getResponseStatus().getCode(),
+              HttpStatusCode.valueOf(
+                  Integer.valueOf(vesselReplyCargoTanks.getResponseStatus().getCode())));
+        }
+
+        VesselReply vesselReplyBallastTanks =
+            this.getTanks(
+                loadablePatternOpt.get().getLoadableStudy().getVesselXId(),
+                BALLAST_TANK_CATEGORIES);
+        if (!SUCCESS.equals(vesselReplyBallastTanks.getResponseStatus().getStatus())) {
+          throw new GenericServiceException(
+              "Failed to fetch vessel particualrs for ballast tanks",
+              vesselReplyBallastTanks.getResponseStatus().getCode(),
+              HttpStatusCode.valueOf(
+                  Integer.valueOf(vesselReplyBallastTanks.getResponseStatus().getCode())));
+        }
+
         List<LoadablePlanQuantity> loadablePlanQuantities =
             loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
                 loadablePatternOpt.get(), true);
@@ -4088,15 +4129,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 loadablePatternOpt.get(), true);
         buildLoadablePlanStowageCargoDetails(loadablePlanStowageDetails, replyBuilder);
 
-        VesselReply vesselReply =
-            this.getTankListForPattern(loadablePatternOpt.get().getLoadableStudy().getVesselXId());
-        if (!SUCCESS.equals(vesselReply.getResponseStatus().getStatus())) {
-          replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
-        } else {
-          replyBuilder.addAllTanks(this.groupTanks(vesselReply.getVesselTanksList()));
-          replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-        }
+        replyBuilder.addAllTanks(this.groupTanks(vesselReplyCargoTanks.getVesselTanksList()));
+
+        buildBallastTankLayout(vesselReplyBallastTanks, replyBuilder);
+
+        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching loadable study - port data", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
     } catch (Exception e) {
       log.error("Exception when getLoadablePlanDetails ", e);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
@@ -4104,6 +4145,36 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * @param vesselReplyBallastTanks
+   * @param replyBuilder void
+   */
+  private void buildBallastTankLayout(
+      VesselReply vesselReplyBallastTanks,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
+
+    List<VesselTankDetail> frontBallastTanks = new ArrayList<>();
+    List<VesselTankDetail> centerBallestTanks = new ArrayList<>();
+    List<VesselTankDetail> rearBallastTanks = new ArrayList<>();
+    frontBallastTanks.addAll(
+        vesselReplyBallastTanks.getVesselTanksList().stream()
+            .filter(tank -> BALLAST_FRONT_TANK.equals(tank.getTankPositionCategory()))
+            .collect(Collectors.toList()));
+    centerBallestTanks.addAll(
+        vesselReplyBallastTanks.getVesselTanksList().stream()
+            .filter(tank -> BALLAST_CENTER_TANK.equals(tank.getTankPositionCategory()))
+            .collect(Collectors.toList()));
+
+    rearBallastTanks.addAll(
+        vesselReplyBallastTanks.getVesselTanksList().stream()
+            .filter(tank -> BALLAST_REAR_TANK.equals(tank.getTankPositionCategory()))
+            .collect(Collectors.toList()));
+
+    replyBuilder.addAllBallastFrontTanks(this.groupTanks(frontBallastTanks));
+    replyBuilder.addAllBallastCenterTanks(this.groupTanks(centerBallestTanks));
+    replyBuilder.addAllBallastRearTanks(this.groupTanks(rearBallastTanks));
   }
 
   /**
