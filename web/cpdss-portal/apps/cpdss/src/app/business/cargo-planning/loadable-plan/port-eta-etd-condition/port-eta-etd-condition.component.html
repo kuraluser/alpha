@@ -10,11 +10,11 @@
                 <th>
                     <table>
                         <tr *ngFor="let col of columns">
-                            <th rowspan="col?.rowspan">{{col.header}}</th>
+                            <th rowspan="col?.rowspan">{{col.header | translate}}</th>
                             <th>
                                 <table>
                                     <tr *ngFor="let subCol of col?.subColumns">
-                                        <th>{{subCol.header}}</th>
+                                        <th>{{subCol.header | translate}}</th>
                                     </tr>
                                 </table>
                             </th>
