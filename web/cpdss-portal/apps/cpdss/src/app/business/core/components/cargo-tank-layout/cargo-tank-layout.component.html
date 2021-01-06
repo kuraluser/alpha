@@ -11,7 +11,7 @@
             [ngStyle]="{'width':getTankGroupWidthPercentage(tanks[0],group,tanks[tanks.length-1])}">
             <div *ngFor="let tank of group" [ngStyle]="{'grid-column': tank?.gridColumn}"
                 [class.active]="tank?.id === selectedTankId" (click)="onTankSelect($event, tank?.id)">
-                <div [ngStyle]="{'background':tank.commodity?.cargoColor, 'height': tank.percentageFilled}"
+                <div [ngStyle]="{'background':tank.commodity?.cargoColor, 'height': tank.percentageFilled + '%'}"
                     class="tank-level-pattern">
 
                 </div>
