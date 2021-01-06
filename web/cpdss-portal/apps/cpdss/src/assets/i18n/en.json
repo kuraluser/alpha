@@ -387,5 +387,6 @@
 	"EDIT_PORT_ROTATION_NOTE":"Note",
 	"EDIT_PORT_ROTATION_NOTE_DETAILS":"Changing port rotation will clear dates and times for ETA/ETD on the affected port items",
 	"CANCEL_BUTTON_EDIT_PORT_ROTATION_POPUP": "Cancel",
-	"SAVE_BUTTON_EDIT_PORT_ROTATION_POPUP": "Save"
+	"SAVE_BUTTON_EDIT_PORT_ROTATION_POPUP": "Save",
+	"CARGO_NOMINATION_FIELD_ABBREVIATION_MAX_LENGTH_ERROR": "Maximum allowed character length is 4"
 }

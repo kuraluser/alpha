@@ -24,6 +24,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { GlobalErrorHandler } from './shared/services/error-handlers/global-error-handler';
 import { ConfirmationAlertModule } from './shared/components/confirmation-alert/confirmation-alert.module';
+import { FocusTrapModule } from 'primeng/focustrap';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { ConfirmationAlertModule } from './shared/components/confirmation-alert/
     NgxSpinnerModule,
     ToastAlertModule.forRoot(),
     ConfirmationAlertModule.forRoot(),
+    FocusTrapModule
   ],
   providers: [
     {
