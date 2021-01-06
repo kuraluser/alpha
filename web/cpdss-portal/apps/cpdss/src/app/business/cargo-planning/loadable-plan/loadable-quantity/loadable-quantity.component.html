@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div  class="row">
-        1. Loadable Quantity
+        1. {{'LOADABLE_QUANTITY_HEADER' | translate}}
     </div>
     <div  class="row">
         <p-table #datatable [columns]="columns" [value]="loadableQuantityData">
@@ -38,7 +38,7 @@
             </ng-template>
             <ng-template pTemplate="footer">
                 <tr>
-                    <td colspan="3">Total</td>
+                    <td colspan="3">{{'LOADABLE_QUANTITY_TOTAL' | translate}}</td>
                     <td>{{total.orderBblsdbs | number :'1.0-4'}}</td>
                     <td>{{total.orderBbls60f | number :'1.0-4'}}</td>
                     <td colspan="2"></td>
