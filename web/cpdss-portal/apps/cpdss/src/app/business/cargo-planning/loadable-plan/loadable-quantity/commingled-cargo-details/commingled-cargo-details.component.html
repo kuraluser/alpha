@@ -1,37 +1,31 @@
 <div>
     <div  class="row">
-       Commingled Cargo Details
+        {{'COMMINGLED_CARGO_DETAILS' | translate}}
     </div>
     <div  class="row">
-        <p-table #datatable [columns]="columns" [value]="value">
+        <p-table #datatable [columns]="columns" [value]="loadableQuantityCargoDetails">
             <ng-template pTemplate="header" let-columns>
                 <tr>
-                    <th *ngFor="let col of columns">
-                        <table>
-                            <tr>
-                                <th>{{col.header}}</th>
-                            </tr>
-                            <tr>
-                                <th *ngFor="let subCol of col?.subColumns">
-                                    <span>{{subCol.header}}</span>
-                                </th>
-                            </tr>
-                        </table>
-                    </th>
+                    <th *ngFor="let col of columns; let colIndex = index" [attr.colspan]="col.colspan" [attr.rowspan]="col.rowspan"><div>{{col.header | translate}}</div></th>
                 </tr>
-               
+                <tr>
+                    <ng-container *ngFor="let col of columns; let colIndex = index">
+                        <ng-container *ngIf="col?.subColumns?.length;">
+                            <th *ngFor="let subCol of col.subColumns;">{{subCol.header | translate}}</th>
+                        </ng-container>
+                    </ng-container>
+                </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
                 <tr>
-                    <td *ngFor="let col of columns">
-                        <span *ngIf="col?.field; else sub_col">{{col?.header}}</span>
-                        <ng-template #sub_col>
+                    <ng-container *ngFor="let col of columns">
+                        <ng-container *ngIf="col?.subColumns?.length; else col_field">
                             <ng-container *ngFor="let sub of col.subColumns">
-                                {{sub.header}}j
+                               <td><span [innerHTML]="rowData[sub?.field]"></span></td> 
                             </ng-container>
-                        </ng-template>
-                    </td>
-                    
+                    </ng-container>
+                        <ng-template #col_field><td><span>{{rowData[col?.field]}}</span></td></ng-template>
+                </ng-container>
                 </tr>
             </ng-template>
         </p-table>
