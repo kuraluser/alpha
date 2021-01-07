@@ -4,6 +4,19 @@ package com.cpdss.loadablestudy.service;
 import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
@@ -146,6 +159,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -192,6 +206,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
   @Autowired private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @Autowired private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
+  @PersistenceContext
+  private EntityManager entityManager;
 
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
 
@@ -319,6 +335,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   private static final String ACTUAL_SUM_MAP_SUFFIX = "_actual";
   private static final String PLANNED_SUM_MAP_SUFFIX = "_planned";
+  
+  private static final String STATUS_ACTIVE = "ACTIVE";
+  private static final String STATUS_CONFIRMED = "CONFIRMED";
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -703,6 +722,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           attachmentEntity.setUploadedFileName(attachment.getFileName());
           attachmentEntity.setFilePath(folderLocation);
           attachmentEntity.setLoadableStudy(entity);
+          attachmentEntity.setIsActive(true);
           attachmentCollection.add(attachmentEntity);
         }
         entity.setAttachments(attachmentCollection);
@@ -712,6 +732,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       entity.setLoadableStudyStatus(
           this.loadableStudyStatusRepository.getOne(LOADABLE_STUDY_INITIAL_STATUS_ID));
       entity = this.loadableStudyRepository.save(entity);
+      this.checkDuplicatedFromAndCloneEntity(request, entity);
       replyBuilder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
           .setId(entity.getId());
@@ -1472,15 +1493,26 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(startDate -> detailbuilder.setStartDate(formatter.format(startDate)));
         Optional.ofNullable(entity.getVoyageEndDate())
             .ifPresent(endDate -> detailbuilder.setEndDate(formatter.format(endDate)));
+        detailbuilder.setStatus(entity.getVoyageStatus()!=null?entity.getVoyageStatus().getName():"");
+        // fetch the confirmed loadable study for active voyages
+        if (entity.getVoyageStatus() != null &&
+        		STATUS_ACTIVE.equalsIgnoreCase(entity.getVoyageStatus().getName())) {
+        	Stream<LoadableStudy> loadableStudyStream = Optional.ofNullable(entity.getLoadableStudies())
+        		.map(Collection::stream).orElseGet(Stream::empty);
+        	Optional<LoadableStudy> loadableStudy = loadableStudyStream.filter(loadableStudyElement -> (loadableStudyElement.getLoadableStudyStatus() != null 
+        													&& STATUS_CONFIRMED.equalsIgnoreCase(loadableStudyElement.getLoadableStudyStatus().getName()))).findFirst();
+        	loadableStudy.ifPresent(record -> detailbuilder.setConfirmedLoadableStudyId(record.getId()));
+        }
         builder.addVoyages(detailbuilder.build());
       }
       builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
-      builder.setResponseStatus(
-          StatusReply.newBuilder()
-              .setStatus(FAILED)
-              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .build());
+    	log.error("Error in getVoyagesByVessel method ", e);
+    	builder.setResponseStatus(
+    			StatusReply.newBuilder()
+    			.setStatus(FAILED)
+    			.setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+    			.build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
@@ -4418,6 +4450,133 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           });
     }
   }
+  
+	@Transactional
+	public void checkDuplicatedFromAndCloneEntity(LoadableStudyDetail request, LoadableStudy entity)
+			throws GenericServiceException {
+		if (0 != request.getDuplicatedFromId()) {
+			try {
+
+				List<CargoNomination> CargoNominationList = this.cargoNominationRepository
+						.findByLoadableStudyXIdAndIsActive(request.getDuplicatedFromId(), true);
+				if (!CargoNominationList.isEmpty()) {
+					List<CargoNomination> CargoNominations = new ArrayList<CargoNomination>();
+					CargoNominationList.forEach(cargoNomination -> {
+						entityManager.detach(cargoNomination);
+						cargoNomination.setId(null);
+						cargoNomination.setLoadableStudyXId(entity.getId());
+						CargoNominations.add(cargoNomination);
+					});
+					this.cargoNominationRepository.saveAll(CargoNominations);
+
+				}
+
+				List<LoadableStudyPortRotation> loadableStudyPortRotationList = this.loadableStudyPortRotationRepository
+						.findByLoadableStudyAndIsActive(request.getDuplicatedFromId(), true);
+				if (!loadableStudyPortRotationList.isEmpty()) {
+					List<LoadableStudyPortRotation> LoadableStudyPorts = new ArrayList<LoadableStudyPortRotation>();
+
+					loadableStudyPortRotationList.forEach(loadableStudyPortRotation -> {
+						entityManager.detach(loadableStudyPortRotation);
+						loadableStudyPortRotation.setId(null);
+						loadableStudyPortRotation.setLoadableStudy(entity);
+						LoadableStudyPorts.add(loadableStudyPortRotation);
+					});
+					this.loadableStudyPortRotationRepository.saveAll(LoadableStudyPorts);
+
+				}
+
+				Optional<LoadableStudy> loadableStudyOpt = this.loadableStudyRepository
+						.findByIdAndIsActive(request.getDuplicatedFromId(), true);
+				if (!loadableStudyOpt.isPresent()) {
+					throw new GenericServiceException("Loadable study does not exist",
+							CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
+				}
+
+				List<OnHandQuantity> onHandQuantityList = this.onHandQuantityRepository
+						.findByLoadableStudyAndIsActive(loadableStudyOpt.get(), true);
+				if (!onHandQuantityList.isEmpty()) {
+					List<OnHandQuantity> OnHandQuantities = new ArrayList<OnHandQuantity>();
+
+					onHandQuantityList.forEach(onHandQuantity -> {
+						entityManager.detach(onHandQuantity);
+						onHandQuantity.setId(null);
+						onHandQuantity.setLoadableStudy(entity);
+						OnHandQuantities.add(onHandQuantity);
+					});
+					this.onHandQuantityRepository.saveAll(OnHandQuantities);
+
+				}
+				List<OnBoardQuantity> onBoardQuantityList = this.onBoardQuantityRepository
+						.findByLoadableStudyAndIsActive(loadableStudyOpt.get(), true);
+				if (!onBoardQuantityList.isEmpty()) {
+					List<OnBoardQuantity> OnBoardQuantities = new ArrayList<OnBoardQuantity>();
+
+					onBoardQuantityList.forEach(onBoardQuantity -> {
+						entityManager.detach(onBoardQuantity);
+						onBoardQuantity.setId(null);
+						onBoardQuantity.setLoadableStudy(entity);
+						OnBoardQuantities.add(onBoardQuantity);
+					});
+					this.onBoardQuantityRepository.saveAll(OnBoardQuantities);
+
+				}
+
+				List<LoadableQuantity> loadableQuantityList = this.loadableQuantityRepository
+						.findByLoadableStudyXIdAndIsActive(request.getDuplicatedFromId(), true);
+				if (!loadableQuantityList.isEmpty()) {
+					List<LoadableQuantity> loadableQuantities = new ArrayList<LoadableQuantity>();
+
+					loadableQuantityList.forEach(loadableQuantity -> {
+						System.out.println(loadableQuantity.getId());
+						entityManager.detach(loadableQuantity);
+						loadableQuantity.setId(null);
+						loadableQuantity.setLoadableStudyXId(entity);
+						loadableQuantities.add(loadableQuantity);
+					});
+					this.loadableQuantityRepository.saveAll(loadableQuantities);
+
+				}
+
+				List<com.cpdss.loadablestudy.entity.CommingleCargo> CommingleCargoList = this.commingleCargoRepository
+						.findByLoadableStudyXIdAndIsActive(request.getDuplicatedFromId(), true);
+				if (!CommingleCargoList.isEmpty()) {
+					List<com.cpdss.loadablestudy.entity.CommingleCargo> CommingleCargos = new ArrayList<com.cpdss.loadablestudy.entity.CommingleCargo>();
+
+					CommingleCargoList.forEach(CommingleCargo -> {
+						entityManager.detach(CommingleCargo);
+						CommingleCargo.setId(null);
+						CommingleCargo.setLoadableStudyXId(entity.getId());
+						CommingleCargos.add(CommingleCargo);
+					});
+					this.commingleCargoRepository.saveAll(CommingleCargos);
+
+				}
+
+				List<SynopticalTable> synopticalTableList = this.synopticalTableRepository
+						.findByLoadableStudyXIdAndIsActive(request.getDuplicatedFromId(), true);
+
+				if (!synopticalTableList.isEmpty()) {
+					List<SynopticalTable> SynopticalTables = new ArrayList<SynopticalTable>();
+
+					synopticalTableList.forEach(synopticalTable -> {
+						entityManager.detach(synopticalTable);
+						synopticalTable.setId(null);
+						synopticalTable.setLoadableStudyXId(entity.getId());
+						SynopticalTables.add(synopticalTable);
+					});
+					this.synopticalTableRepository.saveAll(SynopticalTables);
+
+				}
+			} catch (Exception e) {
+				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+				throw new GenericServiceException("Failed to save duplicate entries",
+						CommonErrorCodes.E_GEN_INTERNAL_ERR, null);
+
+			}
+		}
+	}
+	
 
 	@Override
 	public void downloadLoadableStudyAttachment(LoadableStudyAttachmentRequest request,
@@ -4432,7 +4591,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 						HttpStatusCode.BAD_REQUEST);
 			}
 
-			String FILE_PATH = this.rootFolder +File.separator+ attachment.getFilePath() +File.separator+ attachment.getUploadedFileName();
+			String FILE_PATH = this.rootFolder + attachment.getFilePath() + attachment.getUploadedFileName();
 
 			builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
 			builder.setFilePath(FILE_PATH);
