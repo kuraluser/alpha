@@ -1,4 +1,5 @@
-import { IResponseStatus } from '../../../shared/models/common.model';
+import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
+import { IResponseStatus, ValueObject } from '../../../shared/models/common.model';
 import { ICargoTank, ILoadableCargo } from '../../core/models/common.model';
 
 
@@ -127,4 +128,42 @@ export interface ICargoTankDetail extends ILoadableCargo {
     observedBarrelsAt60: number;
     api: number;
     temperature: number;
+}
+
+/**
+ * Interface for cargo tank details value object
+ *
+ * @export
+ * @interface ICargoTankDetailValueObject
+ */
+export interface ICargoTankDetailValueObject {
+    id: number;
+    tankId: number;
+    cargoAbbreviation: string;
+    weight: ValueObject<number>;
+    correctedUllage: ValueObject<number>;
+    fillingRatio: ValueObject<number>;
+    tankName: string;
+    rdgUllage: ValueObject<number>;
+    correctionFactor: ValueObject<number>;
+    observedM3: ValueObject<number>;
+    observedBarrels: ValueObject<number>;
+    observedBarrelsAt60: ValueObject<number>;
+    api: ValueObject<number>;
+    temperature: ValueObject<number>;
+    isAdd: boolean;
+}
+
+/**
+ * Interface for cargo tank details grid events
+ *
+ * @export
+ * @interface ICargoTankDetailEvent
+ * @extends {IDataTableEvent}
+ */
+export interface ICargoTankDetailEvent extends IDataTableEvent {
+    data: ICargoTankDetailValueObject;
+    field: string;
+    index: number;
+    originalEvent: MouseEvent;
 }

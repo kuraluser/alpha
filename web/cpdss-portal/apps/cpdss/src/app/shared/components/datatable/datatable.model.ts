@@ -42,6 +42,7 @@ export interface IDataTableColumn {
     className?: string,
     subColumns? : IDataTableColumn[],
     subHeader?: string;
+    numberFormat?: string;
 }
 
 /**

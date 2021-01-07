@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 
 import { ICargoTank } from '../../core/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ILoadableQuantityCargo, ICargoTankDetail , ILoadableQuantityCommingleCargo , ICommingleCargoDispaly } from '../models/loadable-plan.model';
-import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
+import { ILoadableQuantityCargo, ICargoTankDetail , ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , ICargoTankDetailValueObject } from '../models/loadable-plan.model';
+import { DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
+import { ValueObject } from '../../../shared/models/common.model';
+
 
 /**
  * Transformation Service for Lodable Plan details module
@@ -180,10 +182,153 @@ export class LoadablePlanTransformationService {
    * @returns {ICargoTank[][]}
    * @memberof LoadablePlanTransformationService
    */
-  formatCargoTanks(cargoTank: ICargoTank, cargoTankDetails: ICargoTankDetail[]): ICargoTank {
-    cargoTank.commodity = cargoTankDetails?.find(cargo => cargoTank?.id === cargo?.tankId);
+  formatCargoTanks(cargoTank: ICargoTank, cargoTankDetails: ICargoTankDetailValueObject[]): ICargoTank {
+    const commodity = cargoTankDetails?.find(cargo => cargoTank?.id === cargo?.tankId);
+    cargoTank.commodity = commodity ? this.getCargoTankDetailAsValue(commodity) : null;
 
     return cargoTank;
+  }
+
+  /**
+   * Method to convert loadable plan tank details to value object
+   *
+   * @param {ICargoTankDetail} cargoTankDetail
+   * @param {boolean} [isNewValue=true]
+   * @returns {ICargoTankDetailValueObject}
+   * @memberof LoadablePlanTransformationService
+   */
+  getCargoTankDetailAsValueObject(cargoTankDetail: ICargoTankDetail, isNewValue = true): ICargoTankDetailValueObject {
+    const _cargoTankDetail = <ICargoTankDetailValueObject>{};
+    _cargoTankDetail.id = cargoTankDetail?.id;
+    _cargoTankDetail.tankId = cargoTankDetail?.tankId;
+    _cargoTankDetail.cargoAbbreviation = cargoTankDetail?.cargoAbbreviation;
+    _cargoTankDetail.weight = new ValueObject<number>(cargoTankDetail?.weight, true, false);
+    _cargoTankDetail.correctedUllage = new ValueObject<number>(cargoTankDetail?.correctedUllage, true, false);
+    _cargoTankDetail.fillingRatio = new ValueObject<number>(cargoTankDetail?.fillingRatio, true, false);
+    _cargoTankDetail.tankName = cargoTankDetail?.tankName;
+    _cargoTankDetail.rdgUllage = new ValueObject<number>(cargoTankDetail?.rdgUllage, true, isNewValue);
+    _cargoTankDetail.correctionFactor = new ValueObject<number>(cargoTankDetail?.correctionFactor, true, false);
+    _cargoTankDetail.observedM3 = new ValueObject<number>(cargoTankDetail?.observedM3, true, false);
+    _cargoTankDetail.observedBarrels = new ValueObject<number>(cargoTankDetail?.observedBarrels, true, false);
+    _cargoTankDetail.observedBarrelsAt60 = new ValueObject<number>(cargoTankDetail?.observedBarrelsAt60, true, false);
+    _cargoTankDetail.api = new ValueObject<number>(cargoTankDetail?.api, true, false);
+    _cargoTankDetail.temperature = new ValueObject<number>(cargoTankDetail?.temperature, true, false);
+    _cargoTankDetail.isAdd = isNewValue;
+
+    return _cargoTankDetail;
+  }
+
+  /**
+   * Method for converting cargo tank data as value
+   *
+   * @param {ICargoTankDetailValueObject} cargoTankDetail
+   * @returns {ICargoTankDetail}
+   * @memberof LoadablePlanTransformationService
+   */
+  getCargoTankDetailAsValue(cargoTankDetail: ICargoTankDetailValueObject): ICargoTankDetail {
+    const _cargoTankDetail: ICargoTankDetail = <ICargoTankDetail>{};
+    for (const key in cargoTankDetail) {
+      if (Object.prototype.hasOwnProperty.call(cargoTankDetail, key)) {
+        _cargoTankDetail[key] = cargoTankDetail[key]?.value ?? cargoTankDetail[key];
+      }
+    }
+
+    return _cargoTankDetail;
+  }
+
+  /**
+   * Method to get cargo grid colums
+   *
+   * @returns {IDataTableColumn[]}
+   * @memberof LoadablePlanTransformationService
+   */
+  getCargoDatatableColumns(): IDataTableColumn[] {
+    return [
+      {
+        field: 'tankName',
+        header: 'LOADABLE_PLAN_CARGO_GRID_TANK',
+        editable: false,
+        fieldHeaderClass: 'column-tank-name'
+      },
+      {
+        field: 'cargoAbbreviation',
+        header: 'LOADABLE_PLAN_CARGO_GRID_ABBREVIATION',
+        editable: false,
+      },
+      {
+        field: 'rdgUllage',
+        header: 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG',
+        fieldPlaceholder: 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_PLACEHOLDER',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldHeaderClass: 'column-rdg-ullage',
+        numberFormat: '1.0-2',
+        errorMessages: {
+          'required': 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_REQUIRED'
+        }
+      },
+      {
+        field: 'correctionFactor',
+        header: 'LOADABLE_PLAN_CARGO_GRID_CORRECTION_FACTOR',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        editable: false,
+      },
+      {
+        field: 'correctedUllage',
+        header: 'LOADABLE_PLAN_CARGO_GRID_CORRECTED_ULLAGE',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: '1.0-2',
+        editable: false,
+      },
+      {
+        field: 'observedM3',
+        header: 'LOADABLE_PLAN_CARGO_GRID_OBSERVED_M3',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: '1.0-2',
+        editable: false,
+      },
+      {
+        field: 'observedBarrels',
+        header: 'LOADABLE_PLAN_CARGO_GRID_OBSERVED_BBLS',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: '1.0-2',
+        editable: false,
+      },
+      {
+        field: 'observedBarrelsAt60',
+        header: 'LOADABLE_PLAN_CARGO_GRID_OBSERVED_BBL_AT_60F',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: '1.0-2',
+        editable: false,
+      },
+      {
+        field: 'weight',
+        header: 'LOADABLE_PLAN_CARGO_GRID_WEIGHT',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: '1.0-2',
+        editable: false,
+      },
+      {
+        field: 'fillingRatio',
+        header: 'LOADABLE_PLAN_CARGO_GRID_FILLING_RATIO',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: '1.0-2',
+        editable: false,
+      },
+      {
+        field: 'api',
+        header: 'LOADABLE_PLAN_CARGO_GRID_API',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: '1.0-2',
+        editable: false,
+      },
+      {
+        field: 'temperature',
+        header: 'LOADABLE_PLAN_CARGO_GRID_TEMPERATURE',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: '1.0-2',
+        editable: false,
+      },
+    ]
   }
 
 }

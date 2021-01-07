@@ -21,7 +21,8 @@
     <div>
         <div class="row">
             <div class="col" *ngIf="selectedTab === tankType.CARGO">
-                <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks" [options]="cargoTankOptions"></cpdss-portal-cargo-tank-layout>
+                <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks" [options]="cargoTankOptions">
+                </cpdss-portal-cargo-tank-layout>
             </div>
             <div class="col" *ngIf="selectedTab === tankType.BALLAST">
                 <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks"></cpdss-portal-cargo-tank-layout>
@@ -35,7 +36,13 @@
         </div>
         <div *ngIf="showGrid" class="row">
             <div class="col" *ngIf="selectedTab === tankType.CARGO">
-                <cpdss-portal-datatable [columns]="columns" [value]="value"></cpdss-portal-datatable>
+                <button class="btn btn-main"
+                    (click)="toggleEditMode()">{{(editMode === null ?'LOADABLE_PLAN_EDIT_STOWAGE_BUTTON_LABEL': 'LOADABLE_PLAN_SAVE_STOWAGE_BUTTON_LABEL')| translate}}
+                </button>
+
+                <cpdss-portal-datatable [columns]="columns" [value]="cargoTankDetails" [editMode]="editMode"
+                    [form]="form.controls?.cargoTanks">
+                </cpdss-portal-datatable>
             </div>
             <div class="col" *ngIf="selectedTab === tankType.BALLAST">
                 <p-table #datatable [columns]="columns" [value]="value">
