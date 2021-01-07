@@ -204,7 +204,7 @@
 	"LOADABLE_QUANTITY_TPC_REQUIRED": "TPC is required",
 	"LOADABLE_QUANTITY_SAF_CORRECTION_REQUIRED": "Sag correction is required",
 	"LOADABLE_QUANTITY_DO_ONBOARD_REQUIRED": "DO On board quantity is required",
-	"LOADABLE_QUANTITY_FRESH_WATER_REQUIRED": "Fresh W. is required",
+	"LOADABLE_QUANTITY_FRESH_WATER_REQUIRED": "Fresh W. On Board is required",
 	"LOADABLE_QUANTITY_BOILER_WATER_REQUIRED": "Boiler water on board is required",
 	"LOADABLE_QUANTITY_BALLAST_REQUIRED": "Ballast is required",
 	"LOADABLE_QUANTITY_SEA_WATER_DENSITTY_REQUIRED": " Sea water density is required",
