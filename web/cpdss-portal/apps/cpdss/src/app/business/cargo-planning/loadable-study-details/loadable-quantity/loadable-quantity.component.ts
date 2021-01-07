@@ -161,7 +161,7 @@ export class LoadableQuantityComponent implements OnInit {
 
       this.getRunningHoursOnLoad();
       this.getRunningDaysOnLoad();
-      this.getSubTotalOnLoad();
+      this.getSubTotal();
     }
     else if (this.caseNo === 3) {
       this.loadableQuantityForm.controls.displacement.setValue(this.loadableQuantity.displacmentDraftRestriction);
@@ -170,10 +170,10 @@ export class LoadableQuantityComponent implements OnInit {
       this.loadableQuantityForm.controls.sgCorrection.setValue(this.loadableQuantity.sgCorrection);
 
       this.getDWT();
-      this.getSubTotalOnLoad();
+      this.getSubTotal();
     }
     else {
-      this.getSubTotalOnLoad();
+      this.getSubTotal();
     }
 
   }
