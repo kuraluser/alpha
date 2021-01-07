@@ -51,7 +51,6 @@ export class CargoNominationComponent implements OnInit {
     this._cargoNominations = cargoNominations.map((cargoNomination, index) => {
       const _cargoNomination = this.loadableStudyDetailsTransformationService.formatCargoNomination(cargoNomination);
       totalQuantity += _cargoNomination?.isDelete ? 0 : _cargoNomination.quantity.value;
-      _cargoNomination.slNo = index + 1;
       _cargoNomination.priority.value = _cargoNomination.priority.value > cargoNominations.length ? this._cargoNominations.length : _cargoNomination.priority.value;
       return _cargoNomination
     });
