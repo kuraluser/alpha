@@ -27,17 +27,14 @@ export class LoadablePlanTransformationService {
   */
   public getEtaEtdTableColumns(): IDataTableColumn[] {
     return [
-      { field: 'year', header: '' },
       { field: 'year', header: 'ETA_ETD_PORT' },
       { field: 'year', header: 'ETA_ETD_DATE' },
       { field: 'year', header: 'ETA_ETD_TIME' },
       {
-        field: 'year', header: 'ETA_ETD_DRAFT', rowspan: 3, subColumns: [
-          { field: 'year', header: 'ETA_ETD_DRAFT_FORE' },
-          { field: 'year', header: 'ETA_ETD_DRAFT_AFT' },
-          { field: 'year', header: 'ETA_ETD_DRAFT_MSHIP' }
-        ]
+        field: 'year', header: 'ETA_ETD_DRAFT', rowspan: 3, subHeader: 'ETA_ETD_DRAFT_FORE' 
       },
+      { field: 'year', header: "" , subHeader: 'ETA_ETD_DRAFT_AFT' },
+      { field: 'year', header: "" , subHeader: 'ETA_ETD_DRAFT_MSHIP' },
       { field: 'year', header: 'ETA_ETD_TRIM' },
       { field: 'year', header: 'ETA_ETD_CARGO' },
       { field: 'year', header: 'ETA_ETD_FQ' },

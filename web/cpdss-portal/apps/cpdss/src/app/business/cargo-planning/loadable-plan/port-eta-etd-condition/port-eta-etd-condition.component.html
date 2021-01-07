@@ -1,13 +1,9 @@
 <div class="container-fluid">
     <p>3 {{'ETA_ETD_HEADING' | translate}}</p>
-    <p-table #datatable [columns]="columns" [value]="value">
-        <!-- <ng-template pTemplate="header" let-columns let-rowData>
-            <tr *ngFor="let col of columns">
-                <th >{{col.header}}</th>
-            </tr>
-        </ng-template> -->
+    <p-table #datatable [columns]="columns" [value]="columns">
+        
         <ng-template #row pTemplate="header" let-rowData let-columns>
-            <tr>
+            <!-- <tr>
                 <th>
                     <table>
                         <tr *ngFor="let col of columns">
@@ -23,7 +19,18 @@
                         </tr>
                     </table>
                 </th>
-            
+            </tr> -->
+            <tr>
+                <th *ngFor="let col of header" [attr.colspan]="col.colspan">{{col.header}}</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr>
+                <th *ngIf="rowData?.header" [attr.rowspan]="rowData.rowspan">{{rowData.header}}</th>
+                <th>{{rowData.subHeader}}</th>
+                <ng-container *ngFor="let col of header">
+                    <td *ngIf="col.header">{{data[rowIndex][col.field]}}</td>
+                </ng-container>
             </tr>
         </ng-template>
     </p-table>

@@ -40,7 +40,8 @@ export interface IDataTableColumn {
     rowspan?: number;
     colspan?: number;
     className?: string,
-    subColumns? : IDataTableColumn[]
+    subColumns? : IDataTableColumn[],
+    subHeader?: string;
 }
 
 /**
