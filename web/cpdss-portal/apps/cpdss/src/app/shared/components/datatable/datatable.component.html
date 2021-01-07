@@ -138,7 +138,7 @@
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.TEXT">
-                                    <ng-container *ngIf="rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <input type="text" class="form-control" [formControlName]="col.field"
                                             [placeholder]="col.fieldPlaceholder| translate"
                                             (change)="onChange($event, rowData, rowIndex, col)"
@@ -148,13 +148,13 @@
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
                                         <span>{{rowData[col.field].value}}</span>
                                     </ng-container>
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.NUMBER">
-                                    <ng-container *ngIf="rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <input type="number" class="form-control" [formControlName]="col.field"
                                             [placeholder]="col.fieldPlaceholder| translate"
                                             (change)="onChange($event, rowData, rowIndex, col)"
@@ -166,8 +166,8 @@
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[col.field]?.isEditMode">
-                                        <span>{{rowData[col.field]?.value}}{{rowData[col.field]?.value? col.fieldSuffix
+                                    <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
+                                        <span>{{rowData[col.field]?.value | number: col?.numberFormat}}{{rowData[col.field]?.value? col.fieldSuffix
                                             : ''}}
                                             <i *ngIf="rowData[col.field]?.value && col.fieldValueIcon"
                                                 class="{{col.fieldValueIcon}}"
@@ -176,7 +176,7 @@
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.SELECT">
-                                    <ng-container *ngIf="rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <p-dropdown [options]="listData[col.listName]" styleClass="form-control"
                                             appendTo="body" [formControlName]="col.field" [filter]="col.listFilter"
                                             optionLabel="{{col.fieldOptionLabel}}"
@@ -188,7 +188,7 @@
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
                                         <span *ngIf="rowData[col.field]?.value?.name">{{ rowData[col.field]?.value?.name
                                             }}</span>
                                         <span *ngIf="rowData[col.field]?.value?.operationName">{{
@@ -208,7 +208,7 @@
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.COLORPICKER">
-                                    <ng-container *ngIf="rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <p-colorPicker [formControlName]="col.field"
                                             [ngClass]="{'empty': !rowData[col.field]?.value}"
                                             (onChange)="onChange($event, rowData, rowIndex, col)"
@@ -217,7 +217,7 @@
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
                                         <div class="colorpicker p-colorpicker-preview p-inputtext"
                                             [style.background-color]="rowData[col.field]?.value">
                                         </div>
@@ -225,7 +225,7 @@
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.ARRAY">
-                                    <ng-container *ngIf="rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <a class="btn btn-secondary"
                                             (click)="onCellValueClick($event, rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}">{{rowData[col.arrayLabelField] ?
@@ -234,12 +234,12 @@
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
                                         <a>{{rowData[col.arrayLabelField]}}</a>
                                     </ng-container>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.DATERANGE">
-                                    <ng-container *ngIf="rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <p-calendar appendTo="body" [showButtonBar]="true" [readonlyInput]="true"
                                              [disabled]="disabledField(rowIndex, col.field)" [hidden]= "disabledField(rowIndex, col.field)"
                                             (onSelect)="onDateRangeSelect($event, rowIndex, col.field, rowData)"
@@ -256,7 +256,7 @@
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
                                         <span *ngIf="rowData[col.field]?.value?.name">{{ rowData[col.field]?.value?.name
                                             }}</span>
                                         <span *ngIf="!rowData[col.field]?.value?.name">{{ rowData[col.field]?.value
@@ -264,7 +264,7 @@
                                     </ng-container>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
-                                    <ng-container *ngIf="rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <p-calendar appendTo="body" [showTime]="true" [showButtonBar]="true"
                                             [readonlyInput]="false"
                                             (onSelect)="onDateTimeSelect($event,rowIndex, col.field,rowData)"
@@ -281,7 +281,7 @@
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[col.field]?.isEditMode">
+                                    <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
                                         <span *ngIf="rowData[col.field]?.value?.name">{{ rowData[col.field]?.value?.name
                                             }}</span>
                                         <span *ngIf="!rowData[col.field]?.value?.name">{{ rowData[col.field]?.value
@@ -316,7 +316,7 @@
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.TEXT">
-                                    <ng-container *ngIf="rowData[subCol.field]?.isEditMode">
+                                    <ng-container *ngIf="editMode && rowData[subCol.field]?.isEditMode">
                                         <input type="text" class="form-control" [formControlName]="subCol.field"
                                             [placeholder]="subCol.fieldPlaceholder| translate"
                                             (change)="onChange($event, rowData, rowIndex, subCol)"
@@ -326,13 +326,13 @@
                                             [errorMessages]="subCol.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[subCol.field]?.isEditMode">
+                                    <ng-container *ngIf="!editMode || !rowData[subCol.field]?.isEditMode">
                                         <span>{{rowData[subCol.field].value}}</span>
                                     </ng-container>
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.NUMBER">
-                                    <ng-container *ngIf="rowData[subCol.field]?.isEditMode">
+                                    <ng-container *ngIf="editMode && rowData[subCol.field]?.isEditMode">
                                         <input type="number" class="form-control" [formControlName]="subCol.field"
                                             [placeholder]="subCol.fieldPlaceholder| translate"
                                             (change)="onChange($event, rowData, rowIndex, subCol)"
@@ -344,8 +344,8 @@
                                             [errorMessages]="subCol.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[subCol.field]?.isEditMode">
-                                        <span>{{rowData[subCol.field]?.value}}{{rowData[subCol.field]?.value?
+                                    <ng-container *ngIf="!editMode || !rowData[subCol.field]?.isEditMode">
+                                        <span>{{rowData[subCol.field]?.value | number: subCol?.numberFormat}}{{rowData[subCol.field]?.value?
                                             subCol.fieldSuffix : ''}}
                                             <i *ngIf="rowData[subCol.field]?.value && subCol.fieldValueIcon"
                                                 class="{{subCol.fieldValueIcon}}"
@@ -354,7 +354,7 @@
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.SELECT">
-                                    <ng-container *ngIf="rowData[subCol.field]?.isEditMode">
+                                    <ng-container *ngIf="editMode && rowData[subCol.field]?.isEditMode">
                                         <p-dropdown [options]="listData[subCol.listName]" styleClass="form-control"
                                             appendTo="body" [formControlName]="subCol.field"
                                             [filter]="subCol.listFilter" optionLabel="{{subCol.fieldOptionLabel}}"
@@ -366,7 +366,7 @@
                                             [errorMessages]="subCol.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[subCol.field]?.isEditMode">
+                                    <ng-container *ngIf="!editMode || !rowData[subCol.field]?.isEditMode">
                                         <span *ngIf="rowData[subCol.field]?.value?.name">{{
                                             rowData[subCol.field]?.value?.name }}</span>
                                         <span *ngIf="rowData[subCol.field]?.value?.operationName">{{
@@ -378,7 +378,7 @@
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.COLORPICKER">
-                                    <ng-container *ngIf="rowData[subCol.field]?.isEditMode">
+                                    <ng-container *ngIf="editMode && rowData[subCol.field]?.isEditMode">
                                         <p-colorPicker [formControlName]="subCol.field"
                                         [ngClass]="{'empty': !rowData[subCol.field]?.value}"
                                             (onChange)="onChange($event, rowData, rowIndex, subCol)"
@@ -387,7 +387,7 @@
                                             [errorMessages]="subCol.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[subCol.field]?.isEditMode">
+                                    <ng-container *ngIf="!editMode || !rowData[subCol.field]?.isEditMode">
                                         <div class="colorpicker p-colorpicker-preview p-inputtext"
                                             [style.background-color]="rowData[subCol.field]?.value">
                                         </div>
@@ -395,7 +395,7 @@
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.ARRAY">
-                                    <ng-container *ngIf="rowData[subCol.field]?.isEditMode">
+                                    <ng-container *ngIf="editMode && rowData[subCol.field]?.isEditMode">
                                         <a class="btn btn-secondary"
                                             (click)="onCellValueClick($event, rowData, rowIndex, subCol)"
                                             id="{{subCol.field+'_'+rowIndex}}">{{rowData[subCol.arrayLabelField] ?
@@ -404,12 +404,12 @@
                                             [errorMessages]="subCol.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[subCol.field]?.isEditMode">
+                                    <ng-container *ngIf="!editMode || !rowData[subCol.field]?.isEditMode">
                                         <a>{{rowData[subCol.arrayLabelField]}}</a>
                                     </ng-container>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.DATERANGE">
-                                    <ng-container *ngIf="rowData[subCol.field]?.isEditMode">
+                                    <ng-container *ngIf="editMode && rowData[subCol.field]?.isEditMode">
                                         <p-calendar appendTo="body" [showButtonBar]="true" [readonlyInput]="true"
                                             (onSelect)="onDateRangeSelect($event, rowIndex, subCol.field, rowData)"
                                             (onClearClick)="onClearDateRange($event, rowIndex, subCol.field,rowData)"
@@ -426,7 +426,7 @@
                                             [errorMessages]="subCol.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[subCol.field]?.isEditMode">
+                                    <ng-container *ngIf="!editMode || !rowData[subCol.field]?.isEditMode">
                                         <span *ngIf="rowData[subCol.field]?.value?.name">{{
                                             rowData[subCol.field]?.value?.name }}</span>
                                         <span *ngIf="!rowData[subCol.field]?.value?.name">{{
@@ -434,7 +434,7 @@
                                     </ng-container>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
-                                    <ng-container *ngIf="rowData[subCol.field]?.isEditMode">
+                                    <ng-container *ngIf="editMode && rowData[subCol.field]?.isEditMode">
                                         <p-calendar appendTo="body" [showButtonBar]="true" [showTime]="true"
                                             inputId="time"
                                             (onSelect)="onDateTimeSelect($event, rowIndex, subCol.field, rowData)"
@@ -452,7 +452,7 @@
                                             [errorMessages]="subCol.errorMessages">
                                         </cpdss-portal-validation-error>
                                     </ng-container>
-                                    <ng-container *ngIf="!rowData[subCol.field]?.isEditMode">
+                                    <ng-container *ngIf="!editMode || !rowData[subCol.field]?.isEditMode">
                                         <span *ngIf="rowData[subCol.field]?.value?.name">{{
                                             rowData[subCol.field]?.value?.name }}</span>
                                         <span *ngIf="!rowData[subCol.field]?.value?.name">{{

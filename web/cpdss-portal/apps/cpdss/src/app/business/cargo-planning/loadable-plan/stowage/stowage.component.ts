@@ -1,6 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { DATATABLE_EDITMODE } from '../../../../shared/components/datatable/datatable.model';
 import { ICargoTank, ITankOptions, TANKTYPE } from '../../../core/models/common.model';
-import { ICargoTankDetail } from '../../models/loadable-plan.model';
+import { ICargoTankDetailValueObject } from '../../models/loadable-plan.model';
+import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
 
 /**
  * Component class of stowage section
@@ -25,37 +28,32 @@ export class StowageComponent implements OnInit {
   }
 
   @Input()
-  get cargoTankDetails(): ICargoTankDetail[] {
+  get cargoTankDetails(): ICargoTankDetailValueObject[] {
     return this._cargoTankDetails;
   }
-  set cargoTankDetails(value: ICargoTankDetail[]) {
+  set cargoTankDetails(value: ICargoTankDetailValueObject[]) {
     this._cargoTankDetails = value;
   }
 
+  @Input() loadablePlanForm: FormBuilder;
+
+  @Input() form: FormGroup;
+
   readonly tankType = TANKTYPE;
+  editMode: DATATABLE_EDITMODE = null;
   selectedTab = TANKTYPE.CARGO;
   showGrid = false;
   columns: any[];
   value: any[];
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showCommodityName: true, showVolume: true, showWeight: true, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'fillingRatio', volumeField: 'observedBarrels', volumeUnit: 'BBLS', weightField: 'weight', weightUnit: 'MT', ullageField: 'correctedUllage', ullageUnit: 'M'};
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showCommodityName: true, showVolume: true, showWeight: true, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'fillingRatio', volumeField: 'observedBarrels', volumeUnit: 'BBLS', weightField: 'weight', weightUnit: 'MT', ullageField: 'correctedUllage', ullageUnit: 'M' };
 
   private _cargoTanks: ICargoTank[][];
-  private _cargoTankDetails: ICargoTankDetail[];
+  private _cargoTankDetails: ICargoTankDetailValueObject[];
 
-  constructor() { }
+  constructor(private loadablePlanTransformationService: LoadablePlanTransformationService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
-    this.columns = [
-      { field: 'year', header: 'GRADE' },
-      { field: 'year', header: 'ABBREV' },
-      { field: 'year', header: 'RDG ULG' },
-      { field: 'year', header: 'OBS.M3' },
-      { field: 'year', header: 'OBS.BBLS' },
-      { field: 'year', header: 'M/T' },
-      { field: 'year', header: '%' },
-      { field: 'year', header: 'API' },
-      { field: 'year', header: 'DEG.F' }
-    ];
+    this.columns = this.loadablePlanTransformationService.getCargoDatatableColumns();
   }
 
   /**
@@ -75,5 +73,14 @@ export class StowageComponent implements OnInit {
    */
   toggleGridView() {
     this.showGrid = !this.showGrid;
+  }
+
+  /**
+   * Method for toggling edit mode of cargo tank details grid
+   *
+   * @memberof StowageComponent
+   */
+  toggleEditMode() {
+    this.editMode = this.editMode === null ? DATATABLE_EDITMODE.CELL : null;
   }
 }

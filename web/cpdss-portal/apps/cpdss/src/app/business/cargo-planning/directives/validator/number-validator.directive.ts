@@ -1,10 +1,15 @@
 import { FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 /**
- * Validator Function for remove space
- * @param control 
+ * Validator Function for invalid check for numbers
+ *
+ * @export
+ * @param {number} decimalPlaces
+ * @param {number} [digitLength=null]
+ * @param {boolean} [isNegativeAccept=true]
+ * @returns {ValidatorFn}
  */
-export function numberValidator(decimalPlaces, digitLength = null, isNegativeAccept = true): ValidatorFn {
+export function numberValidator(decimalPlaces: number, digitLength: number = null, isNegativeAccept = true): ValidatorFn {
   return (control: FormControl): ValidationErrors | null => {
     if (control && control.value) {
       const number = control.value.toString().split('.');
@@ -19,7 +24,7 @@ export function numberValidator(decimalPlaces, digitLength = null, isNegativeAcc
         }
       }
       if (control?.value?.toString()?.includes('-') && !isNegativeAccept) {
-        let value = Math.abs(control.value);
+        const value = Math.abs(control.value);
         control.setValue(Number(value));
         if (!value) {
           return { required: true };

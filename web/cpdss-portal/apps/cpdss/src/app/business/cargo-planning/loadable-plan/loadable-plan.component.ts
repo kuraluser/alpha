@@ -5,8 +5,10 @@ import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { ICargoTank } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
-import { ICargoTankDetail, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo } from '../models/loadable-plan.model';
+import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { numberValidator } from '../directives/validator/number-validator.directive';
 
 /**
  * Component class of loadable plan
@@ -29,10 +31,10 @@ export class LoadablePlanComponent implements OnInit {
     this._cargoTanks = tanks?.map(group => group.map(tank => this.loadablePlanTransformationService.formatCargoTanks(tank, this.cargoTankDetails)));
   }
 
-  get cargoTankDetails(): ICargoTankDetail[] {
+  get cargoTankDetails(): ICargoTankDetailValueObject[] {
     return this._cargoTankDetails;
   }
-  set cargoTankDetails(value: ICargoTankDetail[]) {
+  set cargoTankDetails(value: ICargoTankDetailValueObject[]) {
     this._cargoTankDetails = value;
   }
 
@@ -43,16 +45,18 @@ export class LoadablePlanComponent implements OnInit {
   vesselInfo: IVessel;
   loadableQuantityCargoDetails: ILoadableQuantityCargo[];
   loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
+  loadablePlanForm: FormGroup;
 
   private _cargoTanks: ICargoTank[][];
-  private _cargoTankDetails: ICargoTankDetail[];
+  private _cargoTankDetails: ICargoTankDetailValueObject[];
 
   constructor(private ngxSpinnerService: NgxSpinnerService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private vesselsApiService: VesselsApiService,
     private loadablePlanApiService: LoadablePlanApiService,
-    private loadablePlanTransformationService: LoadablePlanTransformationService) { }
+    private loadablePlanTransformationService: LoadablePlanTransformationService,
+    private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(params => {
@@ -96,292 +100,52 @@ export class LoadablePlanComponent implements OnInit {
     const loadablePlanRes: ILoadablePlanResponse = await this.loadablePlanApiService.getLoadablePlanDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
     this.loadableQuantityCargoDetails = loadablePlanRes.loadableQuantityCargoDetails;
     this.loadableQuantityCommingleCargoDetails = loadablePlanRes.loadableQuantityCommingleCargoDetails;
+    this.cargoTankDetails = loadablePlanRes?.loadablePlanStowageDetails?.map(cargo => this.loadablePlanTransformationService.getCargoTankDetailAsValueObject(cargo));
     this.cargoTanks = loadablePlanRes?.tankLists;
-    this.cargoTankDetails = loadablePlanRes?.loadablePlanStowageDetails;
-    this.cargoTanks = [
-      [
-        {
-          "id": 25595,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "SLOP TANK",
-          "frameNumberFrom": 49,
-          "frameNumberTo": 52,
-          "shortName": "SLP",
-          "fillCapcityCubm": 4117,
-          "fullCapacityCubm": "4117.3000",
-          "density": 1.3,
-          "group": 1,
-          "order": 1,
-          "slopTank": false,
-          "commodity": {
-            "cargoAbbreviation": "KEN",
-            "cargoColor": "#FFFFFF",
-            "tankId": 25595,
-            "quantity": "1000.0000",
-            "volume": 4000,
-            "isCommingle": true
-          },
-        },
-        {
-          "id": 25593,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.5 WING CARGO OIL TANK",
-          "frameNumberFrom": 52,
-          "frameNumberTo": 61,
-          "shortName": "5P",
-          "fillCapcityCubm": 17277,
-          "fullCapacityCubm": "17277.4000",
-          "density": 1.3,
-          "group": 1,
-          "order": 2,
-          "slopTank": false,
-          "commodity": {
-            "cargoAbbreviation": "FNP",
-            "cargoColor": "#FFFFFF",
-            "tankId": 25593,
-            "quantity": "1000.0000",
-            "volume": 10000,
-            "isCommingle": false
-          },
-        },
-        {
-          "id": 25584,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.5 CENTER CARGO OIL TANK",
-          "frameNumberFrom": 49,
-          "frameNumberTo": 61,
-          "shortName": "5C",
-          "fillCapcityCubm": 20798,
-          "fullCapacityCubm": "20797.7000",
-          "density": 1.3,
-          "group": 1,
-          "order": 3,
-          "slopTank": false
-        },
-        {
-          "id": 25596,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "SLOP TANK",
-          "frameNumberFrom": 49,
-          "frameNumberTo": 52,
-          "shortName": "SLS",
-          "fillCapcityCubm": 4117,
-          "fullCapacityCubm": "4117.3000",
-          "density": 1.3,
-          "group": 1,
-          "order": 4,
-          "slopTank": false
-        },
-        {
-          "id": 25594,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.5 WING CARGO OIL TANK",
-          "frameNumberFrom": 52,
-          "frameNumberTo": 61,
-          "shortName": "5S",
-          "fillCapcityCubm": 17277,
-          "fullCapacityCubm": "17277.4000",
-          "density": 1.3,
-          "group": 1,
-          "order": 5,
-          "slopTank": false
-        }
-      ],
-      [
-        {
-          "id": 25591,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.4 WING CARGO OIL TANK",
-          "frameNumberFrom": 61,
-          "frameNumberTo": 71,
-          "shortName": "4P",
-          "fillCapcityCubm": 20281,
-          "fullCapacityCubm": "20280.8000",
-          "density": 1.3,
-          "group": 2,
-          "order": 1,
-          "slopTank": false
-        },
-        {
-          "id": 25583,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.4 CENTER CARGO OIL TANK",
-          "frameNumberFrom": 61,
-          "frameNumberTo": 71,
-          "shortName": "4C",
-          "fillCapcityCubm": 33725,
-          "fullCapacityCubm": "33725.1000",
-          "density": 1.3,
-          "group": 2,
-          "order": 2,
-          "slopTank": false
-        },
-        {
-          "id": 25592,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.4 WING CARGO OIL TANK",
-          "frameNumberFrom": 61,
-          "frameNumberTo": 71,
-          "shortName": "4S",
-          "fillCapcityCubm": 20281,
-          "fullCapacityCubm": "20280.8000",
-          "density": 1.3,
-          "group": 2,
-          "order": 3,
-          "slopTank": false
-        }
-      ],
-      [
-        {
-          "id": 25589,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.3 WING CARGO OIL TANK",
-          "frameNumberFrom": 71,
-          "frameNumberTo": 81,
-          "shortName": "3P",
-          "fillCapcityCubm": 20281,
-          "fullCapacityCubm": "20280.8000",
-          "density": 1.3,
-          "group": 3,
-          "order": 1,
-          "slopTank": false
-        },
-        {
-          "id": 25582,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.3 CENTER CARGO OIL TANK",
-          "frameNumberFrom": 71,
-          "frameNumberTo": 81,
-          "shortName": "3C",
-          "fillCapcityCubm": 28202,
-          "fullCapacityCubm": "28201.6000",
-          "density": 1.3,
-          "group": 3,
-          "order": 2,
-          "slopTank": false
-        },
-        {
-          "id": 25590,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.3 WING CARGO OIL TANK",
-          "frameNumberFrom": 71,
-          "frameNumberTo": 81,
-          "shortName": "3S",
-          "fillCapcityCubm": 20281,
-          "fullCapacityCubm": "20280.8000",
-          "density": 1.3,
-          "group": 3,
-          "order": 3,
-          "slopTank": false
-        }
-      ],
-      [
-        {
-          "id": 25587,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.2 WING CARGO OIL TANK",
-          "frameNumberFrom": 81,
-          "frameNumberTo": 91,
-          "shortName": "2P",
-          "fillCapcityCubm": 20281,
-          "fullCapacityCubm": "20280.8000",
-          "density": 1.3,
-          "group": 4,
-          "order": 1,
-          "slopTank": false
-        },
-        {
-          "id": 25581,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.2 CENTER CARGO OIL TANK",
-          "frameNumberFrom": 81,
-          "frameNumberTo": 91,
-          "shortName": "2C",
-          "fillCapcityCubm": 28202,
-          "fullCapacityCubm": "28201.6000",
-          "density": 1.3,
-          "group": 4,
-          "order": 2,
-          "slopTank": false
-        },
-        {
-          "id": 25588,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.2 WING CARGO OIL TANK",
-          "frameNumberFrom": 81,
-          "frameNumberTo": 91,
-          "shortName": "2S",
-          "fillCapcityCubm": 20281,
-          "fullCapacityCubm": "20280.8000",
-          "density": 1.3,
-          "group": 4,
-          "order": 3,
-          "slopTank": false
-        }
-      ],
-      [
-        {
-          "id": 25585,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.1  WING CARGO OIL TANK",
-          "frameNumberFrom": 91,
-          "frameNumberTo": 103,
-          "shortName": "1P",
-          "fillCapcityCubm": 20798,
-          "fullCapacityCubm": "20797.7000",
-          "density": 1.3,
-          "group": 5,
-          "order": 1,
-          "slopTank": false
-        },
-        {
-          "id": 25580,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.1 CENTER CARGO OIL TANK",
-          "frameNumberFrom": 91,
-          "frameNumberTo": 103,
-          "shortName": "1C",
-          "fillCapcityCubm": 30230,
-          "fullCapacityCubm": "30229.5000",
-          "density": 1.3,
-          "group": 5,
-          "order": 2,
-          "slopTank": false
-        },
-        {
-          "id": 25586,
-          "categoryId": 1,
-          "categoryName": "Cargo Tank",
-          "name": "NO.1  WING CARGO OIL TANK",
-          "frameNumberFrom": 91,
-          "frameNumberTo": 103,
-          "shortName": "1S",
-          "fillCapcityCubm": 20281,
-          "fullCapacityCubm": "20280.8000",
-          "density": 1.3,
-          "group": 5,
-          "order": 3,
-          "slopTank": false
-        }
-      ]
-    ];
+    this.initLoadablePlanForm();
     this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Initialize loadable plan form
+   *
+   * @private
+   * @memberof LoadablePlanComponent
+   */
+  private initLoadablePlanForm() {
+    const cargoTankDetailsArray = this.cargoTankDetails?.map(cargo => this.initCargoTankFormGroup(cargo));
+    this.loadablePlanForm = this.fb.group({
+      cargoTanks: this.fb.group({
+        dataTable: this.fb.array([...cargoTankDetailsArray])
+      })
+    });
+  }
+
+  /**
+   * Initialize cargo tank form group
+   *
+   * @private
+   * @param {ICargoTankDetailValueObject} cargo
+   * @returns {FormGroup}
+   * @memberof LoadablePlanComponent
+   */
+  private initCargoTankFormGroup(cargo: ICargoTankDetailValueObject): FormGroup {
+    return this.fb.group({
+      id: this.fb.control(cargo?.id),
+      tankId: this.fb.control(cargo?.tankId),
+      cargoAbbreviation: this.fb.control(cargo?.cargoAbbreviation),
+      weight: this.fb.control(cargo?.weight?.value),
+      correctedUllage: this.fb.control(cargo?.correctedUllage?.value),
+      fillingRatio: this.fb.control(cargo?.fillingRatio?.value),
+      tankName: this.fb.control(cargo?.tankName),
+      rdgUllage: this.fb.control(cargo?.rdgUllage?.value, [Validators.required, numberValidator(2, 2, false)]),
+      correctionFactor: this.fb.control(cargo?.correctionFactor?.value),
+      observedM3: this.fb.control(cargo?.observedM3?.value),
+      observedBarrels: this.fb.control(cargo?.observedBarrels?.value),
+      observedBarrelsAt60: this.fb.control(cargo?.observedBarrelsAt60?.value),
+      api: this.fb.control(cargo?.api),
+      temperature: this.fb.control(cargo?.temperature),
+    });
   }
 
 }
