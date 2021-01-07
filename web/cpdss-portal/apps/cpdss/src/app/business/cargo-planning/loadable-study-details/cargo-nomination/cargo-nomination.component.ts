@@ -207,7 +207,7 @@ export class CargoNominationComponent implements OnInit {
       this.cargoNominations[valueIndex]['cargo'].value = event?.data?.cargo?.value;
       this.updateField(event.index, 'cargo', event?.data?.cargo?.value);
     }
-    this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
+    // this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
     if (!event.data?.isAdd) {
       if (this.cargoNominationForm.valid) {
         this.ngxSpinnerService.show();
@@ -256,6 +256,9 @@ export class CargoNominationComponent implements OnInit {
             this.cargoNominations.splice(event.index, 1);
             this.cargoNominations = [...this.cargoNominations];
             this.updateCommingleButton();
+            const dataTableControl = <FormArray>this.cargoNominationForm.get('dataTable');
+            dataTableControl.removeAt(event.index);
+            this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
           }
           this.ngxSpinnerService.hide();
         }
@@ -333,6 +336,7 @@ export class CargoNominationComponent implements OnInit {
     this.cargoNominations = [...this.cargoNominations, _cargoNomination];
     const dataTableControl = <FormArray>this.cargoNominationForm.get('dataTable');
     dataTableControl.push(this.initCargoNominationFormGroup(_cargoNomination));
+    this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
   }
 
   /**
