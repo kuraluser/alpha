@@ -3,8 +3,15 @@ package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.time.LocalDateTime;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,9 +42,6 @@ public class Voyage extends EntityDoc {
   @Column(name = "company_xid")
   private Long companyXId;
 
-  @Column(name = "voyage_status")
-  private Integer voyageStatus;
-
   @Column(name = "captain_xid")
   private Long captainXId;
 
@@ -49,4 +53,11 @@ public class Voyage extends EntityDoc {
 
   @Column(name = "voyage_end_date")
   private LocalDateTime voyageEndDate;
+  
+  @ManyToOne
+  @JoinColumn(name = "voyage_status")
+  private VoyageStatus voyageStatus;
+  
+  @OneToMany(mappedBy = "voyage")
+  private Set<LoadableStudy> loadableStudies;
 }

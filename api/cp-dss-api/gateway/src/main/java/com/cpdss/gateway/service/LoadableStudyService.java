@@ -1018,6 +1018,8 @@ public class LoadableStudyService {
       voyage.setVoyageNo(detail.getVoyageNumber());
       voyage.setStartDate(detail.getStartDate());
       voyage.setEndDate(detail.getEndDate());
+      voyage.setStatus(detail.getStatus());
+      voyage.setConfirmedLoadableStudyId(detail.getConfirmedLoadableStudyId()!=0? detail.getConfirmedLoadableStudyId(): null);
       response.getVoyages().add(voyage);
     }
     return response;

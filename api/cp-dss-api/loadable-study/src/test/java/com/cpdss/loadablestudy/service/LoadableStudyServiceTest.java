@@ -66,6 +66,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.LoadableStudyStatus;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.entity.VoyageStatus;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
@@ -1086,6 +1087,9 @@ class LoadableStudyServiceTest {
               Voyage voyage = new Voyage();
               voyage.setId(Long.valueOf(i));
               voyage.setVoyageNo("VYG-" + i);
+              voyage.setVoyageStartDate(LocalDateTime.now());
+              voyage.setVoyageEndDate(LocalDateTime.now());
+              voyage.setVoyageStatus(new VoyageStatus("ACTIVE", true));
               entityList.add(voyage);
             });
     return entityList;

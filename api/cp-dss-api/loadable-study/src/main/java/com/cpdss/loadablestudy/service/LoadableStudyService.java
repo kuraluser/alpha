@@ -4,29 +4,6 @@ package com.cpdss.loadablestudy.service;
 import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -170,12 +147,34 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.grpc.stub.StreamObserver;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -183,7 +182,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
 
 /** @Author jerin.g */
 @Log4j2
@@ -337,6 +335,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   private static final String ACTUAL_SUM_MAP_SUFFIX = "_actual";
   private static final String PLANNED_SUM_MAP_SUFFIX = "_planned";
+  
+  private static final String STATUS_ACTIVE = "ACTIVE";
+  private static final String STATUS_CONFIRMED = "CONFIRMED";
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -793,8 +794,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             null);
       }
       entity.setDuplicatedFrom(createdFromOpt.get());
-			}
-}
+    }
+  }
 
   /**
    * Construct folder path for loadable study attachments
@@ -1492,15 +1493,26 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(startDate -> detailbuilder.setStartDate(formatter.format(startDate)));
         Optional.ofNullable(entity.getVoyageEndDate())
             .ifPresent(endDate -> detailbuilder.setEndDate(formatter.format(endDate)));
+        detailbuilder.setStatus(entity.getVoyageStatus()!=null?entity.getVoyageStatus().getName():"");
+        // fetch the confirmed loadable study for active voyages
+        if (entity.getVoyageStatus() != null &&
+        		STATUS_ACTIVE.equalsIgnoreCase(entity.getVoyageStatus().getName())) {
+        	Stream<LoadableStudy> loadableStudyStream = Optional.ofNullable(entity.getLoadableStudies())
+        		.map(Collection::stream).orElseGet(Stream::empty);
+        	Optional<LoadableStudy> loadableStudy = loadableStudyStream.filter(loadableStudyElement -> (loadableStudyElement.getLoadableStudyStatus() != null 
+        													&& STATUS_CONFIRMED.equalsIgnoreCase(loadableStudyElement.getLoadableStudyStatus().getName()))).findFirst();
+        	loadableStudy.ifPresent(record -> detailbuilder.setConfirmedLoadableStudyId(record.getId()));
+        }
         builder.addVoyages(detailbuilder.build());
       }
       builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
-      builder.setResponseStatus(
-          StatusReply.newBuilder()
-              .setStatus(FAILED)
-              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .build());
+    	log.error("Error in getVoyagesByVessel method ", e);
+    	builder.setResponseStatus(
+    			StatusReply.newBuilder()
+    			.setStatus(FAILED)
+    			.setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+    			.build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
