@@ -34,7 +34,7 @@ export class LoadableStudyListTransformationService {
       {
         field: 'detail',
         header: 'LOADABLE_STUDY_LIST_GRID_ENQUIRY_DETAILS_LABEL',
-        sortable: false,
+        sortable: true,
         filter: true,
         editable: false,
         filterPlaceholder: 'LOADABLE_STUDY_LIST_SEARCH_BY_DETAILS',
@@ -46,7 +46,7 @@ export class LoadableStudyListTransformationService {
         field: 'status',
         header: 'LOADABLE_STUDY_LIST_GRID_STATUS_LABEL',
         filter: true,
-        sortable: false,
+        sortable: true,
         editable: false,
         filterPlaceholder: 'LOADABLE_STUDY_LIST_SEARCH_BY_STATUS',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
@@ -56,7 +56,7 @@ export class LoadableStudyListTransformationService {
       {
         field: 'createdDate',
         header: 'LOADABLE_STUDY_LIST_GRID_DATE_LABEL',
-        sortable: false,
+        sortable: true,
         filter: true,
         editable: false,
         filterPlaceholder: 'LOADABLE_STUDY_LIST_SEARCH_BY_DATE',
