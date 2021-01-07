@@ -54,7 +54,7 @@ import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/c
     ValidationErrorModule,
     CheckboxModule,
     ColorPickerModule,
-    BunkeringLayoutModule ,
+    BunkeringLayoutModule,
     CargoTankLayoutModule
   ],
   providers: [

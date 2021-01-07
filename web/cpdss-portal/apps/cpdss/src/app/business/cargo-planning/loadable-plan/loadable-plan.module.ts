@@ -16,11 +16,13 @@ import { LoadableQuantityApiService } from '../services/loadable-quantity-api.se
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
 import { DatatableModule } from '../../../shared/components/datatable/datatable.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [LoadablePlanComponent, LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     LoadablePlanRoutingModule,
     TranslateModule,
     VesselInfoModule,
