@@ -4,19 +4,6 @@ package com.cpdss.loadablestudy.service;
 import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
@@ -128,7 +115,6 @@ import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
@@ -156,6 +142,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -172,6 +159,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -180,6 +169,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -206,12 +196,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
   @Autowired private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @Autowired private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
-  @PersistenceContext
-  private EntityManager entityManager;
+  @PersistenceContext private EntityManager entityManager;
 
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
-
-  @Autowired private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
 
   @Autowired
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
@@ -259,8 +246,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOAD_LINE_TROPICAL_TO_SUMMER_ID = 7L;
   private static final Long LOAD_LINE_TROPICAL_TO_WINTER_ID = 8L;
   private static final Long LOAD_LINE_SUMMER_TO_WINTER_ID = 9L;
-
-  private static final String INVALID_PROCESS_ID = "INVALID_PROCESS_ID";
 
   private static final List<Long> CASE_1_LOAD_LINES =
       Arrays.asList(
@@ -333,9 +318,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL = "ARR";
   private static final String SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE = "DEP";
 
-  private static final String ACTUAL_SUM_MAP_SUFFIX = "_actual";
-  private static final String PLANNED_SUM_MAP_SUFFIX = "_planned";
-  
   private static final String STATUS_ACTIVE = "ACTIVE";
   private static final String STATUS_CONFIRMED = "CONFIRMED";
 
@@ -1493,26 +1475,36 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(startDate -> detailbuilder.setStartDate(formatter.format(startDate)));
         Optional.ofNullable(entity.getVoyageEndDate())
             .ifPresent(endDate -> detailbuilder.setEndDate(formatter.format(endDate)));
-        detailbuilder.setStatus(entity.getVoyageStatus()!=null?entity.getVoyageStatus().getName():"");
+        detailbuilder.setStatus(
+            entity.getVoyageStatus() != null ? entity.getVoyageStatus().getName() : "");
         // fetch the confirmed loadable study for active voyages
-        if (entity.getVoyageStatus() != null &&
-        		STATUS_ACTIVE.equalsIgnoreCase(entity.getVoyageStatus().getName())) {
-        	Stream<LoadableStudy> loadableStudyStream = Optional.ofNullable(entity.getLoadableStudies())
-        		.map(Collection::stream).orElseGet(Stream::empty);
-        	Optional<LoadableStudy> loadableStudy = loadableStudyStream.filter(loadableStudyElement -> (loadableStudyElement.getLoadableStudyStatus() != null 
-        													&& STATUS_CONFIRMED.equalsIgnoreCase(loadableStudyElement.getLoadableStudyStatus().getName()))).findFirst();
-        	loadableStudy.ifPresent(record -> detailbuilder.setConfirmedLoadableStudyId(record.getId()));
+        if (entity.getVoyageStatus() != null
+            && STATUS_ACTIVE.equalsIgnoreCase(entity.getVoyageStatus().getName())) {
+          Stream<LoadableStudy> loadableStudyStream =
+              Optional.ofNullable(entity.getLoadableStudies())
+                  .map(Collection::stream)
+                  .orElseGet(Stream::empty);
+          Optional<LoadableStudy> loadableStudy =
+              loadableStudyStream
+                  .filter(
+                      loadableStudyElement ->
+                          (loadableStudyElement.getLoadableStudyStatus() != null
+                              && STATUS_CONFIRMED.equalsIgnoreCase(
+                                  loadableStudyElement.getLoadableStudyStatus().getName())))
+                  .findFirst();
+          loadableStudy.ifPresent(
+              record -> detailbuilder.setConfirmedLoadableStudyId(record.getId()));
         }
         builder.addVoyages(detailbuilder.build());
       }
       builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
-    	log.error("Error in getVoyagesByVessel method ", e);
-    	builder.setResponseStatus(
-    			StatusReply.newBuilder()
-    			.setStatus(FAILED)
-    			.setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-    			.build());
+      log.error("Error in getVoyagesByVessel method ", e);
+      builder.setResponseStatus(
+          StatusReply.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
@@ -3304,20 +3296,30 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       SynopticalTableRequest request, StreamObserver<SynopticalTableReply> responseObserver) {
     SynopticalTableReply.Builder replyBuilder = SynopticalTableReply.newBuilder();
     try {
-      Optional<SynopticalTable> entityOpt =
-          this.synopticalTableRepository.findByIdAndIsActive(
-              request.getSynopticalRecord().getId(), true);
-      if (!entityOpt.isPresent()) {
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+      if (!loadableStudyOpt.isPresent()) {
         throw new GenericServiceException(
-            "Synoptical record does not exist with given id",
+            "Loadable study does not exist with given id",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      SynopticalTable entity = entityOpt.get();
-      entity = this.buildSynopticalTableEntity(entity, request);
-      entity = this.synopticalTableRepository.save(entity);
-      this.saveSynopticalEtaEtdEstimates(entity, request);
-      this.saveSynopticalLoadicatorData(entity, request);
+      for (SynopticalRecord record : request.getSynopticalRecordList()) {
+        Optional<SynopticalTable> entityOpt =
+            this.synopticalTableRepository.findByIdAndIsActive(record.getId(), true);
+        if (!entityOpt.isPresent()) {
+          throw new GenericServiceException(
+              "Synoptical record does not exist with given id",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        SynopticalTable entity = entityOpt.get();
+        entity = this.buildSynopticalTableEntity(entity, record);
+        entity = this.synopticalTableRepository.save(entity);
+        this.saveSynopticalEtaEtdEstimates(entity, record);
+        this.saveSynopticalLoadicatorData(entity, record);
+        this.saveSynopticalCargoData(loadableStudyOpt.get(), entity, record);
+      }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving synoptical table", e);
@@ -3342,6 +3344,61 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
+   * Save cargo data
+   *
+   * @param loadableStudy
+   * @param entity
+   * @param request
+   * @throws GenericServiceException
+   */
+  public void saveSynopticalCargoData(
+      LoadableStudy loadableStudy, SynopticalTable entity, SynopticalRecord record) {
+    List<OnBoardQuantity> obqEntities =
+        this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
+            loadableStudy, record.getPortId(), true);
+    List<OnBoardQuantity> toBeSavedList = new ArrayList<>();
+    for (SynopticalCargoRecord cargoRecord : record.getCargoList()) {
+      OnBoardQuantity obqEntity = null;
+      Optional<OnBoardQuantity> obqEntityOpt =
+          obqEntities.stream()
+              .filter(obq -> obq.getTankId().equals(cargoRecord.getTankId()))
+              .findAny();
+      if (obqEntityOpt.isPresent()) {
+        obqEntity = obqEntityOpt.get();
+      } else {
+        obqEntity = new OnBoardQuantity();
+        obqEntity.setTankId(cargoRecord.getTankId());
+        obqEntity.setPortId(record.getPortId());
+        obqEntity.setLoadableStudy(loadableStudy);
+        obqEntity.setIsActive(true);
+      }
+      if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())) {
+        obqEntity.setPlannedArrivalWeight(
+            isEmpty(cargoRecord.getPlannedWeight())
+                ? null
+                : new BigDecimal(cargoRecord.getPlannedWeight()));
+        obqEntity.setActualArrivalWeight(
+            isEmpty(cargoRecord.getActualWeight())
+                ? null
+                : new BigDecimal(cargoRecord.getActualWeight()));
+      } else {
+        obqEntity.setPlannedDepartureWeight(
+            isEmpty(cargoRecord.getPlannedWeight())
+                ? null
+                : new BigDecimal(cargoRecord.getPlannedWeight()));
+        obqEntity.setActualDepartureWeight(
+            isEmpty(cargoRecord.getActualWeight())
+                ? null
+                : new BigDecimal(cargoRecord.getActualWeight()));
+      }
+      toBeSavedList.add(obqEntity);
+    }
+    if (!toBeSavedList.isEmpty()) {
+      this.onBoardQuantityRepository.saveAll(toBeSavedList);
+    }
+  }
+
+  /**
    * Save synoptical table loadicator data
    *
    * @param entity
@@ -3349,9 +3406,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param request
    * @throws GenericServiceException
    */
-  public void saveSynopticalLoadicatorData(SynopticalTable entity, SynopticalTableRequest request)
+  public void saveSynopticalLoadicatorData(SynopticalTable entity, SynopticalRecord record)
       throws GenericServiceException {
-    SynopticalRecord record = request.getSynopticalRecord();
     com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData data =
         record.getLoadicatorData();
     SynopticalTableLoadicatorData ldEntity =
@@ -3390,9 +3446,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param request
    * @throws GenericServiceException
    */
-  public void saveSynopticalEtaEtdEstimates(SynopticalTable entity, SynopticalTableRequest request)
+  public void saveSynopticalEtaEtdEstimates(SynopticalTable entity, SynopticalRecord record)
       throws GenericServiceException {
-    SynopticalRecord record = request.getSynopticalRecord();
     LoadableStudyPortRotation prEntity = entity.getLoadableStudyPortRotation();
     if (null == prEntity) {
       throw new GenericServiceException(
@@ -3421,17 +3476,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @return
    */
   public SynopticalTable buildSynopticalTableEntity(
-      SynopticalTable entity, SynopticalTableRequest request) {
+      SynopticalTable entity, SynopticalRecord record) {
     DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-    SynopticalRecord record = request.getSynopticalRecord();
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
     entity.setDistance(isEmpty(record.getDistance()) ? null : new BigDecimal(record.getDistance()));
     entity.setSpeed(isEmpty(record.getSpeed()) ? null : new BigDecimal(record.getSpeed()));
     entity.setRunningHours(
         isEmpty(record.getRunningHours()) ? null : new BigDecimal(record.getRunningHours()));
     entity.setInPortHours(
         isEmpty(record.getInPortHours()) ? null : new BigDecimal(record.getInPortHours()));
-    entity.setTimeOfSunrise(record.getTimeOfSunrise());
-    entity.setTimeOfSunSet(record.getTimeOfSunset());
+    entity.setTimeOfSunrise(
+        isEmpty(record.getTimeOfSunrise())
+            ? null
+            : LocalTime.from(dtf.parse(record.getTimeOfSunrise())));
+    entity.setTimeOfSunSet(
+        isEmpty(record.getTimeOfSunset())
+            ? null
+            : LocalTime.from(dtf.parse(record.getTimeOfSunset())));
 
     entity.setSpecificGravity(
         isEmpty(record.getSpecificGravity()) ? null : new BigDecimal(record.getSpecificGravity()));
@@ -3444,19 +3505,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     entity.setHwTideTimeFrom(
         isEmpty(record.getHwTideTimeFrom())
             ? null
-            : LocalDateTime.from(df.parse(record.getHwTideTimeFrom())));
+            : LocalTime.from(dtf.parse(record.getHwTideTimeFrom())));
     entity.setHwTideTimeTo(
         isEmpty(record.getHwTideTimeTo())
             ? null
-            : LocalDateTime.from(df.parse(record.getHwTideTimeTo())));
+            : LocalTime.from(dtf.parse(record.getHwTideTimeTo())));
     entity.setLwTideTimeFrom(
         isEmpty(record.getLwTideTimeFrom())
             ? null
-            : LocalDateTime.from(df.parse(record.getLwTideTimeFrom())));
+            : LocalTime.from(dtf.parse(record.getLwTideTimeFrom())));
     entity.setLwTideTimeTo(
         isEmpty(record.getLwTideTimeTo())
             ? null
-            : LocalDateTime.from(df.parse(record.getLwTideTimeTo())));
+            : LocalTime.from(dtf.parse(record.getLwTideTimeTo())));
     this.buildSynopticalTableEtaEtdActuals(entity, record);
     return entity;
   }
@@ -3508,7 +3569,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             sortedTankList,
             vesselReply.getVesselLoadableQuantityDetails(),
             replyBuilder);
-        this.setSynopticalTableCargoTanks(sortedTankList, replyBuilder);
       }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (GenericServiceException e) {
@@ -3520,26 +3580,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
-    }
-  }
-
-  /**
-   * Create tank detail for synoptical table
-   *
-   * @param vesselReply
-   * @param replyBuilder
-   */
-  private void setSynopticalTableCargoTanks(
-      List<VesselTankDetail> sortedTankList, SynopticalTableReply.Builder replyBuilder) {
-    for (VesselTankDetail tank : sortedTankList) {
-      if (!CARGO_TANK_CATEGORIES.contains(tank.getTankCategoryId())) {
-        continue;
-      }
-      replyBuilder.addVesselTank(
-          TankDetail.newBuilder()
-              .setTankId(tank.getTankId())
-              .setShortName(tank.getShortName())
-              .build());
     }
   }
 
@@ -3790,7 +3830,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         ohqEntities.stream()
             .filter(entity -> entity.getPortXId().equals(synopticalEntity.getPortXid()))
             .collect(Collectors.toList());
-    Map<String, BigDecimal> sumMap = new HashMap<>();
     for (VesselTankDetail tank : sortedTankList) {
       if (!OHQ_TANK_CATEGORIES.contains(tank.getTankCategoryId()) || !tank.getShowInOhqObq()) {
         continue;
@@ -3821,96 +3860,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ohqBuilder.setActualWeight(valueOf(ohq.getActualDepartureQuantity()));
           }
         }
-        this.calculateOhqSum(tank, ohq, sumMap, synopticalEntity.getOperationType());
       }
       builder.addOhq(ohqBuilder.build());
-    }
-    this.setOhqTotalValues(builder, sumMap);
-  }
-
-  /**
-   * Set ohq total values
-   *
-   * @param builder
-   * @param sumMap
-   * @param portSpecificEntities
-   */
-  private void setOhqTotalValues(SynopticalRecord.Builder builder, Map<String, BigDecimal> sumMap) {
-    if (null != sumMap.get(FUEL_OIL_TANK_CATEGORY_ID + ACTUAL_SUM_MAP_SUFFIX)) {
-      builder.setFoActualTotal(
-          valueOf(sumMap.get(FUEL_OIL_TANK_CATEGORY_ID + ACTUAL_SUM_MAP_SUFFIX)));
-    }
-    if (null != sumMap.get(FUEL_OIL_TANK_CATEGORY_ID + PLANNED_SUM_MAP_SUFFIX)) {
-      builder.setFoPlannedTotal(
-          valueOf(sumMap.get(FUEL_OIL_TANK_CATEGORY_ID + PLANNED_SUM_MAP_SUFFIX)));
-    }
-
-    if (null != sumMap.get(DIESEL_OIL_TANK_CATEGORY_ID + ACTUAL_SUM_MAP_SUFFIX)) {
-      builder.setDoActualTotal(
-          valueOf(sumMap.get(DIESEL_OIL_TANK_CATEGORY_ID + ACTUAL_SUM_MAP_SUFFIX)));
-    }
-    if (null != sumMap.get(DIESEL_OIL_TANK_CATEGORY_ID + PLANNED_SUM_MAP_SUFFIX)) {
-      builder.setDoPlannedTotal(
-          valueOf(sumMap.get(DIESEL_OIL_TANK_CATEGORY_ID + PLANNED_SUM_MAP_SUFFIX)));
-    }
-
-    if (null == sumMap.get(LUBRICANT_OIL_TANK_CATEGORY_ID + ACTUAL_SUM_MAP_SUFFIX)) {
-      sumMap.put(LUBRICANT_OIL_TANK_CATEGORY_ID + ACTUAL_SUM_MAP_SUFFIX, BigDecimal.ZERO);
-    }
-
-    if (null == sumMap.get(LUBRICANT_OIL_TANK_CATEGORY_ID + PLANNED_SUM_MAP_SUFFIX)) {
-      sumMap.put(LUBRICANT_OIL_TANK_CATEGORY_ID + PLANNED_SUM_MAP_SUFFIX, BigDecimal.ZERO);
-    }
-
-    if (null == sumMap.get(LUBRICATING_OIL_TANK_CATEGORY_ID + ACTUAL_SUM_MAP_SUFFIX)) {
-      sumMap.put(LUBRICATING_OIL_TANK_CATEGORY_ID + ACTUAL_SUM_MAP_SUFFIX, BigDecimal.ZERO);
-    }
-
-    if (null == sumMap.get(LUBRICATING_OIL_TANK_CATEGORY_ID + PLANNED_SUM_MAP_SUFFIX)) {
-      sumMap.put(LUBRICATING_OIL_TANK_CATEGORY_ID + PLANNED_SUM_MAP_SUFFIX, BigDecimal.ZERO);
-    }
-
-    builder.setLubeActualTotal(
-        valueOf(
-            sumMap
-                .get(LUBRICATING_OIL_TANK_CATEGORY_ID + ACTUAL_SUM_MAP_SUFFIX)
-                .add(sumMap.get(LUBRICANT_OIL_TANK_CATEGORY_ID + ACTUAL_SUM_MAP_SUFFIX))));
-    builder.setLubePlannedTotal(
-        valueOf(
-            sumMap
-                .get(LUBRICATING_OIL_TANK_CATEGORY_ID + PLANNED_SUM_MAP_SUFFIX)
-                .add(sumMap.get(LUBRICANT_OIL_TANK_CATEGORY_ID + PLANNED_SUM_MAP_SUFFIX))));
-  }
-
-  private void calculateOhqSum(
-      VesselTankDetail tank,
-      OnHandQuantity ohq,
-      Map<String, BigDecimal> sumMap,
-      String operationType) {
-    String keyActual = tank.getTankCategoryId() + ACTUAL_SUM_MAP_SUFFIX;
-    String keyPlanned = tank.getTankCategoryId() + PLANNED_SUM_MAP_SUFFIX;
-    BigDecimal actualQty = null;
-    BigDecimal plannedQty = null;
-    if (operationType.equals(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL)) {
-      actualQty = ohq.getActualArrivalQuantity();
-      plannedQty = ohq.getArrivalQuantity();
-    } else if (operationType.equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)) {
-      actualQty = ohq.getActualDepartureQuantity();
-      plannedQty = ohq.getDepartureQuantity();
-    }
-    if (null != actualQty) {
-      if (null == sumMap.get(keyActual)) {
-        sumMap.put(keyActual, actualQty);
-      } else {
-        sumMap.put(keyActual, sumMap.get(keyActual).add(actualQty));
-      }
-    }
-    if (null != plannedQty) {
-      if (null == sumMap.get(keyPlanned)) {
-        sumMap.put(keyPlanned, plannedQty);
-      } else {
-        sumMap.put(keyPlanned, sumMap.get(keyPlanned).add(plannedQty));
-      }
     }
   }
 
@@ -3947,6 +3898,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .findAny();
       if (obqOpt.isPresent()) {
         OnBoardQuantity obqEntity = obqOpt.get();
+        cargoBuilder.setObqId(obqEntity.getId());
         if (synopticalEntity.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL)) {
           if (null != obqEntity.getActualArrivalWeight()) {
             cargoBuilder.setActualWeight(valueOf(obqEntity.getActualArrivalWeight()));
@@ -4001,8 +3953,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .ifPresent(runningHours -> builder.setRunningHours(String.valueOf(runningHours)));
     Optional.ofNullable(synopticalEntity.getInPortHours())
         .ifPresent(inPortHours -> builder.setInPortHours(String.valueOf(inPortHours)));
-    Optional.ofNullable(synopticalEntity.getTimeOfSunrise()).ifPresent(builder::setTimeOfSunrise);
-    Optional.ofNullable(synopticalEntity.getTimeOfSunSet()).ifPresent(builder::setTimeOfSunset);
+    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+    Optional.ofNullable(synopticalEntity.getTimeOfSunrise())
+        .ifPresent(time -> builder.setTimeOfSunrise(timeFormatter.format(time)));
+    Optional.ofNullable(synopticalEntity.getTimeOfSunSet())
+        .ifPresent(time -> builder.setTimeOfSunset(timeFormatter.format(time)));
     // If specific gravity is available in database then replace the port master
     // value
     Optional.ofNullable(synopticalEntity.getSpecificGravity())
@@ -4011,19 +3966,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Optional.ofNullable(synopticalEntity.getHwTideFrom())
         .ifPresent(hwTideFrom -> builder.setHwTideFrom(String.valueOf(hwTideFrom)));
     Optional.ofNullable(synopticalEntity.getHwTideTimeFrom())
-        .ifPresent(hwTideTimeFrom -> builder.setHwTideTimeFrom(formatter.format(hwTideTimeFrom)));
+        .ifPresent(
+            hwTideTimeFrom -> builder.setHwTideTimeFrom(timeFormatter.format(hwTideTimeFrom)));
     Optional.ofNullable(synopticalEntity.getHwTideTo())
         .ifPresent(hwTideTo -> builder.setHwTideTo(String.valueOf(hwTideTo)));
     Optional.ofNullable(synopticalEntity.getHwTideTimeTo())
-        .ifPresent(hwTideTimeTo -> builder.setHwTideTimeTo(formatter.format(hwTideTimeTo)));
+        .ifPresent(hwTideTimeTo -> builder.setHwTideTimeTo(timeFormatter.format(hwTideTimeTo)));
     Optional.ofNullable(synopticalEntity.getLwTideFrom())
         .ifPresent(lwTideFrom -> builder.setLwTideFrom(String.valueOf(lwTideFrom)));
     Optional.ofNullable(synopticalEntity.getLwTideTimeFrom())
-        .ifPresent(lwTideTimeFrom -> builder.setLwTideTimeFrom(formatter.format(lwTideTimeFrom)));
+        .ifPresent(
+            lwTideTimeFrom -> builder.setLwTideTimeFrom(timeFormatter.format(lwTideTimeFrom)));
     Optional.ofNullable(synopticalEntity.getLwTideTo())
         .ifPresent(lwTideTo -> builder.setLwTideTo(String.valueOf(lwTideTo)));
     Optional.ofNullable(synopticalEntity.getLwTideTimeTo())
-        .ifPresent(lwTideTimeTo -> builder.setLwTideTimeTo(formatter.format(lwTideTimeTo)));
+        .ifPresent(lwTideTimeTo -> builder.setLwTideTimeTo(timeFormatter.format(lwTideTimeTo)));
     if (null != synopticalEntity.getEtaActual()) {
       builder.setEtaEtdActual(formatter.format(synopticalEntity.getEtaActual()));
     } else if (null != synopticalEntity.getEtdActual()) {
@@ -4450,163 +4407,183 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           });
     }
   }
-  
-	@Transactional
-	public void checkDuplicatedFromAndCloneEntity(LoadableStudyDetail request, LoadableStudy entity)
-			throws GenericServiceException {
-		if (0 != request.getDuplicatedFromId()) {
-			try {
 
-				List<CargoNomination> CargoNominationList = this.cargoNominationRepository
-						.findByLoadableStudyXIdAndIsActive(request.getDuplicatedFromId(), true);
-				if (!CargoNominationList.isEmpty()) {
-					List<CargoNomination> CargoNominations = new ArrayList<CargoNomination>();
-					CargoNominationList.forEach(cargoNomination -> {
-						entityManager.detach(cargoNomination);
-						cargoNomination.setId(null);
-						cargoNomination.setLoadableStudyXId(entity.getId());
-						CargoNominations.add(cargoNomination);
-					});
-					this.cargoNominationRepository.saveAll(CargoNominations);
+  @Transactional
+  public void checkDuplicatedFromAndCloneEntity(LoadableStudyDetail request, LoadableStudy entity)
+      throws GenericServiceException {
+    if (0 != request.getDuplicatedFromId()) {
+      try {
 
-				}
+        List<CargoNomination> CargoNominationList =
+            this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
+                request.getDuplicatedFromId(), true);
+        if (!CargoNominationList.isEmpty()) {
+          List<CargoNomination> CargoNominations = new ArrayList<CargoNomination>();
+          CargoNominationList.forEach(
+              cargoNomination -> {
+                entityManager.detach(cargoNomination);
+                cargoNomination.setId(null);
+                cargoNomination.setLoadableStudyXId(entity.getId());
+                CargoNominations.add(cargoNomination);
+              });
+          this.cargoNominationRepository.saveAll(CargoNominations);
+        }
 
-				List<LoadableStudyPortRotation> loadableStudyPortRotationList = this.loadableStudyPortRotationRepository
-						.findByLoadableStudyAndIsActive(request.getDuplicatedFromId(), true);
-				if (!loadableStudyPortRotationList.isEmpty()) {
-					List<LoadableStudyPortRotation> LoadableStudyPorts = new ArrayList<LoadableStudyPortRotation>();
+        List<LoadableStudyPortRotation> loadableStudyPortRotationList =
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+                request.getDuplicatedFromId(), true);
+        if (!loadableStudyPortRotationList.isEmpty()) {
+          List<LoadableStudyPortRotation> LoadableStudyPorts =
+              new ArrayList<LoadableStudyPortRotation>();
 
-					loadableStudyPortRotationList.forEach(loadableStudyPortRotation -> {
-						entityManager.detach(loadableStudyPortRotation);
-						loadableStudyPortRotation.setId(null);
-						loadableStudyPortRotation.setLoadableStudy(entity);
-						LoadableStudyPorts.add(loadableStudyPortRotation);
-					});
-					this.loadableStudyPortRotationRepository.saveAll(LoadableStudyPorts);
+          loadableStudyPortRotationList.forEach(
+              loadableStudyPortRotation -> {
+                entityManager.detach(loadableStudyPortRotation);
+                loadableStudyPortRotation.setId(null);
+                loadableStudyPortRotation.setLoadableStudy(entity);
+                LoadableStudyPorts.add(loadableStudyPortRotation);
+              });
+          this.loadableStudyPortRotationRepository.saveAll(LoadableStudyPorts);
+        }
 
-				}
+        Optional<LoadableStudy> loadableStudyOpt =
+            this.loadableStudyRepository.findByIdAndIsActive(request.getDuplicatedFromId(), true);
+        if (!loadableStudyOpt.isPresent()) {
+          throw new GenericServiceException(
+              "Loadable study does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
 
-				Optional<LoadableStudy> loadableStudyOpt = this.loadableStudyRepository
-						.findByIdAndIsActive(request.getDuplicatedFromId(), true);
-				if (!loadableStudyOpt.isPresent()) {
-					throw new GenericServiceException("Loadable study does not exist",
-							CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
-				}
+        List<OnHandQuantity> onHandQuantityList =
+            this.onHandQuantityRepository.findByLoadableStudyAndIsActive(
+                loadableStudyOpt.get(), true);
+        if (!onHandQuantityList.isEmpty()) {
+          List<OnHandQuantity> OnHandQuantities = new ArrayList<OnHandQuantity>();
 
-				List<OnHandQuantity> onHandQuantityList = this.onHandQuantityRepository
-						.findByLoadableStudyAndIsActive(loadableStudyOpt.get(), true);
-				if (!onHandQuantityList.isEmpty()) {
-					List<OnHandQuantity> OnHandQuantities = new ArrayList<OnHandQuantity>();
+          onHandQuantityList.forEach(
+              onHandQuantity -> {
+                entityManager.detach(onHandQuantity);
+                onHandQuantity.setId(null);
+                onHandQuantity.setLoadableStudy(entity);
+                OnHandQuantities.add(onHandQuantity);
+              });
+          this.onHandQuantityRepository.saveAll(OnHandQuantities);
+        }
+        List<OnBoardQuantity> onBoardQuantityList =
+            this.onBoardQuantityRepository.findByLoadableStudyAndIsActive(
+                loadableStudyOpt.get(), true);
+        if (!onBoardQuantityList.isEmpty()) {
+          List<OnBoardQuantity> OnBoardQuantities = new ArrayList<OnBoardQuantity>();
 
-					onHandQuantityList.forEach(onHandQuantity -> {
-						entityManager.detach(onHandQuantity);
-						onHandQuantity.setId(null);
-						onHandQuantity.setLoadableStudy(entity);
-						OnHandQuantities.add(onHandQuantity);
-					});
-					this.onHandQuantityRepository.saveAll(OnHandQuantities);
+          onBoardQuantityList.forEach(
+              onBoardQuantity -> {
+                entityManager.detach(onBoardQuantity);
+                onBoardQuantity.setId(null);
+                onBoardQuantity.setLoadableStudy(entity);
+                OnBoardQuantities.add(onBoardQuantity);
+              });
+          this.onBoardQuantityRepository.saveAll(OnBoardQuantities);
+        }
 
-				}
-				List<OnBoardQuantity> onBoardQuantityList = this.onBoardQuantityRepository
-						.findByLoadableStudyAndIsActive(loadableStudyOpt.get(), true);
-				if (!onBoardQuantityList.isEmpty()) {
-					List<OnBoardQuantity> OnBoardQuantities = new ArrayList<OnBoardQuantity>();
+        List<LoadableQuantity> loadableQuantityList =
+            this.loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
+                request.getDuplicatedFromId(), true);
+        if (!loadableQuantityList.isEmpty()) {
+          List<LoadableQuantity> loadableQuantities = new ArrayList<LoadableQuantity>();
 
-					onBoardQuantityList.forEach(onBoardQuantity -> {
-						entityManager.detach(onBoardQuantity);
-						onBoardQuantity.setId(null);
-						onBoardQuantity.setLoadableStudy(entity);
-						OnBoardQuantities.add(onBoardQuantity);
-					});
-					this.onBoardQuantityRepository.saveAll(OnBoardQuantities);
+          loadableQuantityList.forEach(
+              loadableQuantity -> {
+                System.out.println(loadableQuantity.getId());
+                entityManager.detach(loadableQuantity);
+                loadableQuantity.setId(null);
+                loadableQuantity.setLoadableStudyXId(entity);
+                loadableQuantities.add(loadableQuantity);
+              });
+          this.loadableQuantityRepository.saveAll(loadableQuantities);
+        }
 
-				}
+        List<com.cpdss.loadablestudy.entity.CommingleCargo> CommingleCargoList =
+            this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
+                request.getDuplicatedFromId(), true);
+        if (!CommingleCargoList.isEmpty()) {
+          List<com.cpdss.loadablestudy.entity.CommingleCargo> CommingleCargos =
+              new ArrayList<com.cpdss.loadablestudy.entity.CommingleCargo>();
 
-				List<LoadableQuantity> loadableQuantityList = this.loadableQuantityRepository
-						.findByLoadableStudyXIdAndIsActive(request.getDuplicatedFromId(), true);
-				if (!loadableQuantityList.isEmpty()) {
-					List<LoadableQuantity> loadableQuantities = new ArrayList<LoadableQuantity>();
+          CommingleCargoList.forEach(
+              CommingleCargo -> {
+                entityManager.detach(CommingleCargo);
+                CommingleCargo.setId(null);
+                CommingleCargo.setLoadableStudyXId(entity.getId());
+                CommingleCargos.add(CommingleCargo);
+              });
+          this.commingleCargoRepository.saveAll(CommingleCargos);
+        }
 
-					loadableQuantityList.forEach(loadableQuantity -> {
-						System.out.println(loadableQuantity.getId());
-						entityManager.detach(loadableQuantity);
-						loadableQuantity.setId(null);
-						loadableQuantity.setLoadableStudyXId(entity);
-						loadableQuantities.add(loadableQuantity);
-					});
-					this.loadableQuantityRepository.saveAll(loadableQuantities);
+        List<SynopticalTable> synopticalTableList =
+            this.synopticalTableRepository.findByLoadableStudyXIdAndIsActive(
+                request.getDuplicatedFromId(), true);
 
-				}
+        if (!synopticalTableList.isEmpty()) {
+          List<SynopticalTable> SynopticalTables = new ArrayList<SynopticalTable>();
 
-				List<com.cpdss.loadablestudy.entity.CommingleCargo> CommingleCargoList = this.commingleCargoRepository
-						.findByLoadableStudyXIdAndIsActive(request.getDuplicatedFromId(), true);
-				if (!CommingleCargoList.isEmpty()) {
-					List<com.cpdss.loadablestudy.entity.CommingleCargo> CommingleCargos = new ArrayList<com.cpdss.loadablestudy.entity.CommingleCargo>();
+          synopticalTableList.forEach(
+              synopticalTable -> {
+                entityManager.detach(synopticalTable);
+                synopticalTable.setId(null);
+                synopticalTable.setLoadableStudyXId(entity.getId());
+                SynopticalTables.add(synopticalTable);
+              });
+          this.synopticalTableRepository.saveAll(SynopticalTables);
+        }
+      } catch (Exception e) {
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        throw new GenericServiceException(
+            "Failed to save duplicate entries", CommonErrorCodes.E_GEN_INTERNAL_ERR, null);
+      }
+    }
+  }
 
-					CommingleCargoList.forEach(CommingleCargo -> {
-						entityManager.detach(CommingleCargo);
-						CommingleCargo.setId(null);
-						CommingleCargo.setLoadableStudyXId(entity.getId());
-						CommingleCargos.add(CommingleCargo);
-					});
-					this.commingleCargoRepository.saveAll(CommingleCargos);
+  @Override
+  public void downloadLoadableStudyAttachment(
+      LoadableStudyAttachmentRequest request,
+      StreamObserver<LoadableStudyAttachmentReply> responseObserver) {
+    LoadableStudyAttachmentReply.Builder builder = LoadableStudyAttachmentReply.newBuilder();
+    try {
 
-				}
+      LoadableStudyAttachments attachment =
+          loadableStudyAttachmentsRepository.findByIdAndLoadableStudyXIdAndIsActive(
+              request.getFileId(), request.getLoadableStudyId(), true);
+      if (null == attachment) {
+        throw new GenericServiceException(
+            "Attachment does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
 
-				List<SynopticalTable> synopticalTableList = this.synopticalTableRepository
-						.findByLoadableStudyXIdAndIsActive(request.getDuplicatedFromId(), true);
+      String FILE_PATH =
+          this.rootFolder + attachment.getFilePath() + attachment.getUploadedFileName();
 
-				if (!synopticalTableList.isEmpty()) {
-					List<SynopticalTable> SynopticalTables = new ArrayList<SynopticalTable>();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      builder.setFilePath(FILE_PATH);
 
-					synopticalTableList.forEach(synopticalTable -> {
-						entityManager.detach(synopticalTable);
-						synopticalTable.setId(null);
-						synopticalTable.setLoadableStudyXId(entity.getId());
-						SynopticalTables.add(synopticalTable);
-					});
-					this.synopticalTableRepository.saveAll(SynopticalTables);
-
-				}
-			} catch (Exception e) {
-				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-				throw new GenericServiceException("Failed to save duplicate entries",
-						CommonErrorCodes.E_GEN_INTERNAL_ERR, null);
-
-			}
-		}
-	}
-	
-
-	@Override
-	public void downloadLoadableStudyAttachment(LoadableStudyAttachmentRequest request,
-			StreamObserver<LoadableStudyAttachmentReply> responseObserver) {
-		LoadableStudyAttachmentReply.Builder builder = LoadableStudyAttachmentReply.newBuilder();
-		try {
-
-			LoadableStudyAttachments attachment = loadableStudyAttachmentsRepository
-					.findByIdAndLoadableStudyXIdAndIsActive(request.getFileId(), request.getLoadableStudyId(), true);
-			if (null == attachment) {
-				throw new GenericServiceException("Attachment does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST,
-						HttpStatusCode.BAD_REQUEST);
-			}
-
-			String FILE_PATH = this.rootFolder + attachment.getFilePath() + attachment.getUploadedFileName();
-
-			builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-			builder.setFilePath(FILE_PATH);
-
-		} catch (GenericServiceException e) {
-			log.error("GenericServiceException in downloadLoadableStudyAttachment", e);
-			builder.setResponseStatus(
-					ResponseStatus.newBuilder().setStatus(FAILED).setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST).build());
-		} catch (Exception e) {
-			log.error("Exception in downloadLoadableStudyAttachment", e);
-			builder.setResponseStatus(
-					ResponseStatus.newBuilder().setStatus(FAILED).setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST).build());
-		} finally {
-			responseObserver.onNext(builder.build());
-			responseObserver.onCompleted();
-		}
-	}
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in downloadLoadableStudyAttachment", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+              .build());
+    } catch (Exception e) {
+      log.error("Exception in downloadLoadableStudyAttachment", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

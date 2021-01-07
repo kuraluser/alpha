@@ -29,6 +29,7 @@ import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepos
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
@@ -118,6 +119,8 @@ public class LoadableStudyServiceIntegrationTest {
 
   @MockBean
   private LoadablePatternComingleDetailsRepository loadablePatternComingleDetailsRepository;
+
+  @MockBean private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
 
   @Test
   void testSaveCargoNomination() {

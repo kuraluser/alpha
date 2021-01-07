@@ -10,10 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Voyage status entity
- *
- */
+/** Voyage status entity */
 @Entity
 @Table(name = "voyage_status")
 @Getter

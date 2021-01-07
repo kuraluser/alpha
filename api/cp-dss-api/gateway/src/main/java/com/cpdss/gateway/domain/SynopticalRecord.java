@@ -36,13 +36,18 @@ public class SynopticalRecord {
   private List<SynopticalCargoRecord> cargos;
   private BigDecimal cargoPlannedTotal;
   private BigDecimal cargoActualTotal;
-  private List<SynopticalOhqRecord> ohqList;
+  private List<SynopticalOhqRecord> foList;
+  private List<SynopticalOhqRecord> doList;
+  private List<SynopticalOhqRecord> fwList;
+  private List<SynopticalOhqRecord> lubeList;
   private BigDecimal plannedFOTotal;
   private BigDecimal actualFOTotal;
   private BigDecimal plannedDOTotal;
   private BigDecimal actualDOTotal;
   private BigDecimal plannedLubeTotal;
   private BigDecimal actualLubeTotal;
+  private BigDecimal plannedFWTotal;
+  private BigDecimal actualFWTotal;
   private BigDecimal othersPlanned;
   private BigDecimal othersActual;
   private BigDecimal constantPlanned;
@@ -54,7 +59,7 @@ public class SynopticalRecord {
   private BigDecimal ballastPlanned;
   private BigDecimal ballastActual;
 
-  private String hogSag;
+  private BigDecimal hogSag;
   private BigDecimal finalDraftFwd;
   private BigDecimal finalDraftAft;
   private BigDecimal finalDraftMid;

@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.entity;
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -50,10 +51,10 @@ public class SynopticalTable extends EntityDoc {
   private LocalDateTime etdActual;
 
   @Column(name = "time_of_sunrise")
-  private String timeOfSunrise;
+  private LocalTime timeOfSunrise;
 
   @Column(name = "time_of_sunset")
-  private String timeOfSunSet;
+  private LocalTime timeOfSunSet;
 
   @Column(name = "hw_tide_from")
   private BigDecimal hwTideFrom;
@@ -62,10 +63,10 @@ public class SynopticalTable extends EntityDoc {
   private BigDecimal hwTideTo;
 
   @Column(name = "hw_tide_time_from")
-  private LocalDateTime hwTideTimeFrom;
+  private LocalTime hwTideTimeFrom;
 
   @Column(name = "hw_tide_time_to")
-  private LocalDateTime hwTideTimeTo;
+  private LocalTime hwTideTimeTo;
 
   @Column(name = "lw_tide_from")
   private BigDecimal lwTideFrom;
@@ -74,10 +75,10 @@ public class SynopticalTable extends EntityDoc {
   private BigDecimal lwTideTo;
 
   @Column(name = "lw_tide_time_from")
-  private LocalDateTime lwTideTimeFrom;
+  private LocalTime lwTideTimeFrom;
 
   @Column(name = "lw_tide_time_to")
-  private LocalDateTime lwTideTimeTo;
+  private LocalTime lwTideTimeTo;
 
   @Column(name = "port_xid")
   private Long portXid;

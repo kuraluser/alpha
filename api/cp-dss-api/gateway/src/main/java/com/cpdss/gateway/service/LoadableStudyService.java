@@ -121,6 +121,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
@@ -159,6 +160,12 @@ public class LoadableStudyService {
       Arrays.asList("docx", "pdf", "txt", "jpg", "png", "msg", "eml");
   private static final String ARR = "ARR";
   private static final String DEP = "DEP";
+
+  private static final Long FRESH_WATER_TANK_CATEGORY_ID = 3L;
+  private static final Long FUEL_OIL_TANK_CATEGORY_ID = 5L;
+  private static final Long DIESEL_OIL_TANK_CATEGORY_ID = 6L;
+  private static final Long LUBRICATING_OIL_TANK_CATEGORY_ID = 14L;
+  private static final Long LUBRICANT_OIL_TANK_CATEGORY_ID = 19L;
 
   /**
    * method for voyage save
@@ -1019,7 +1026,8 @@ public class LoadableStudyService {
       voyage.setStartDate(detail.getStartDate());
       voyage.setEndDate(detail.getEndDate());
       voyage.setStatus(detail.getStatus());
-      voyage.setConfirmedLoadableStudyId(detail.getConfirmedLoadableStudyId()!=0? detail.getConfirmedLoadableStudyId(): null);
+      voyage.setConfirmedLoadableStudyId(
+          detail.getConfirmedLoadableStudyId() != 0 ? detail.getConfirmedLoadableStudyId() : null);
       response.getVoyages().add(voyage);
     }
     return response;
@@ -1961,9 +1969,12 @@ public class LoadableStudyService {
       dto.setCargoId(0 == detail.getCargoId() ? null : detail.getCargoId());
       dto.setColorCode(isEmpty(detail.getColorCode()) ? null : detail.getColorCode());
       dto.setAbbreviation(isEmpty(detail.getAbbreviation()) ? null : detail.getAbbreviation());
-      dto.setSounding(isEmpty(detail.getSounding()) ? BigDecimal.ZERO : new BigDecimal(detail.getSounding()));
-      dto.setWeight(isEmpty(detail.getWeight()) ? BigDecimal.ZERO : new BigDecimal(detail.getWeight()));
-      dto.setVolume(isEmpty(detail.getVolume()) ? BigDecimal.ZERO : new BigDecimal(detail.getVolume()));
+      dto.setSounding(
+          isEmpty(detail.getSounding()) ? BigDecimal.ZERO : new BigDecimal(detail.getSounding()));
+      dto.setWeight(
+          isEmpty(detail.getWeight()) ? BigDecimal.ZERO : new BigDecimal(detail.getWeight()));
+      dto.setVolume(
+          isEmpty(detail.getVolume()) ? BigDecimal.ZERO : new BigDecimal(detail.getVolume()));
       dto.setTankId(detail.getTankId());
       dto.setTankName(detail.getTankName());
       response.getOnBoardQuantities().add(dto);
@@ -2143,7 +2154,6 @@ public class LoadableStudyService {
                 this.buildSynopticalLoadicatorRecord(synopticalRecord, synopticalProtoRecord);
                 synopticalTableList.add(synopticalRecord);
               });
-      synopticalTableResponse.setCargoTanks(this.buildSynopticalTableCargoTanks(reply));
       synopticalTableResponse.setSynopticalRecords(synopticalTableList);
     }
   }
@@ -2158,51 +2168,58 @@ public class LoadableStudyService {
       SynopticalRecord synopticalRecord,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
     SynopticalTableLoadicatorData proto = synopticalProtoRecord.getLoadicatorData();
-    synopticalRecord.setHogSag(isEmpty(proto.getHogSag()) ? null : proto.getHogSag());
+    synopticalRecord.setHogSag(
+        isEmpty(proto.getHogSag()) ? null : new BigDecimal(proto.getHogSag()));
     synopticalRecord.setFinalDraftFwd(
-        isEmpty(proto.getFinalDraftFwd()) ? null : new BigDecimal(proto.getFinalDraftFwd()));
+        isEmpty(proto.getFinalDraftFwd())
+            ? BigDecimal.ZERO
+            : new BigDecimal(proto.getFinalDraftFwd()));
     synopticalRecord.setFinalDraftAft(
-        isEmpty(proto.getFinalDraftAft()) ? null : new BigDecimal(proto.getFinalDraftAft()));
+        isEmpty(proto.getFinalDraftAft())
+            ? BigDecimal.ZERO
+            : new BigDecimal(proto.getFinalDraftAft()));
     synopticalRecord.setFinalDraftMid(
-        isEmpty(proto.getFinalDraftMid()) ? null : new BigDecimal(proto.getFinalDraftMid()));
+        isEmpty(proto.getFinalDraftMid())
+            ? BigDecimal.ZERO
+            : new BigDecimal(proto.getFinalDraftMid()));
     synopticalRecord.setCalculatedDraftFwdActual(
         isEmpty(proto.getCalculatedDraftFwdActual())
-            ? null
+            ? BigDecimal.ZERO
             : new BigDecimal(proto.getCalculatedDraftFwdActual()));
     synopticalRecord.setCalculatedDraftFwdPlanned(
         isEmpty(proto.getCalculatedDraftFwdPlanned())
-            ? null
+            ? BigDecimal.ZERO
             : new BigDecimal(proto.getCalculatedDraftFwdPlanned()));
 
     synopticalRecord.setCalculatedDraftAftActual(
         isEmpty(proto.getCalculatedDraftAftActual())
-            ? null
+            ? BigDecimal.ZERO
             : new BigDecimal(proto.getCalculatedDraftAftActual()));
     synopticalRecord.setCalculatedDraftAftPlanned(
         isEmpty(proto.getCalculatedDraftAftPlanned())
-            ? null
+            ? BigDecimal.ZERO
             : new BigDecimal(proto.getCalculatedDraftAftPlanned()));
 
     synopticalRecord.setCalculatedDraftMidActual(
         isEmpty(proto.getCalculatedDraftMidActual())
-            ? null
+            ? BigDecimal.ZERO
             : new BigDecimal(proto.getCalculatedDraftMidActual()));
     synopticalRecord.setCalculatedDraftMidPlanned(
         isEmpty(proto.getCalculatedDraftMidPlanned())
-            ? null
+            ? BigDecimal.ZERO
             : new BigDecimal(proto.getCalculatedDraftMidPlanned()));
 
     synopticalRecord.setCalculatedTrimActual(
         isEmpty(proto.getCalculatedTrimActual())
-            ? null
+            ? BigDecimal.ZERO
             : new BigDecimal(proto.getCalculatedTrimActual()));
     synopticalRecord.setCalculatedTrimPlanned(
         isEmpty(proto.getCalculatedTrimPlanned())
-            ? null
+            ? BigDecimal.ZERO
             : new BigDecimal(proto.getCalculatedTrimPlanned()));
 
     synopticalRecord.setBlindSector(
-        isEmpty(proto.getBlindSector()) ? null : new BigDecimal(proto.getBlindSector()));
+        isEmpty(proto.getBlindSector()) ? BigDecimal.ZERO : new BigDecimal(proto.getBlindSector()));
   }
 
   /**
@@ -2264,11 +2281,11 @@ public class LoadableStudyService {
     synopticalRecord.setEtaEtdPlanned(synopticalProtoRecord.getEtaEtdEstimated());
     synopticalRecord.setBallastPlanned(
         isEmpty(synopticalProtoRecord.getBallastPlanned())
-            ? null
+            ? BigDecimal.ZERO
             : new BigDecimal(synopticalProtoRecord.getBallastPlanned()));
     synopticalRecord.setBallastActual(
         isEmpty(synopticalProtoRecord.getBallastActual())
-            ? null
+            ? BigDecimal.ZERO
             : new BigDecimal(synopticalProtoRecord.getBallastActual()));
   }
 
@@ -2324,7 +2341,11 @@ public class LoadableStudyService {
   private void buildOhqDataForSynopticalTable(
       SynopticalRecord synopticalRecord,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
-    List<SynopticalOhqRecord> ohqList = new ArrayList<>();
+    List<SynopticalOhqRecord> foList = new ArrayList<>();
+    List<SynopticalOhqRecord> doList = new ArrayList<>();
+    List<SynopticalOhqRecord> fwList = new ArrayList<>();
+    List<SynopticalOhqRecord> lubeList = new ArrayList<>();
+
     for (com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord protoRec :
         synopticalProtoRecord.getOhqList()) {
       SynopticalOhqRecord rec = new SynopticalOhqRecord();
@@ -2340,50 +2361,46 @@ public class LoadableStudyService {
           isEmpty(protoRec.getPlannedWeight())
               ? BigDecimal.ZERO
               : new BigDecimal(protoRec.getPlannedWeight()));
-      ohqList.add(rec);
+      if (FUEL_OIL_TANK_CATEGORY_ID.equals(protoRec.getFuelTypeId())) {
+        foList.add(rec);
+      } else if (DIESEL_OIL_TANK_CATEGORY_ID.equals(protoRec.getFuelTypeId())) {
+        doList.add(rec);
+      } else if (FRESH_WATER_TANK_CATEGORY_ID.equals(protoRec.getFuelTypeId())) {
+        fwList.add(rec);
+      } else {
+        lubeList.add(rec);
+      }
     }
-    synopticalRecord.setOhqList(ohqList);
-    synopticalRecord.setActualFOTotal(
-        isEmpty(synopticalProtoRecord.getFoActualTotal())
-            ? BigDecimal.ZERO
-            : new BigDecimal(synopticalProtoRecord.getFoActualTotal()));
-    synopticalRecord.setPlannedFOTotal(
-        isEmpty(synopticalProtoRecord.getFoPlannedTotal())
-            ? BigDecimal.ZERO
-            : new BigDecimal(synopticalProtoRecord.getFoPlannedTotal()));
-    synopticalRecord.setActualDOTotal(
-        isEmpty(synopticalProtoRecord.getDoActualTotal())
-            ? BigDecimal.ZERO
-            : new BigDecimal(synopticalProtoRecord.getDoActualTotal()));
-    synopticalRecord.setPlannedDOTotal(
-        isEmpty(synopticalProtoRecord.getDoPlannedTotal())
-            ? BigDecimal.ZERO
-            : new BigDecimal(synopticalProtoRecord.getDoPlannedTotal()));
-    synopticalRecord.setActualLubeTotal(
-        isEmpty(synopticalProtoRecord.getLubeActualTotal())
-            ? BigDecimal.ZERO
-            : new BigDecimal(synopticalProtoRecord.getLubeActualTotal()));
-    synopticalRecord.setPlannedLubeTotal(
-        isEmpty(synopticalProtoRecord.getLubePlannedTotal())
-            ? BigDecimal.ZERO
-            : new BigDecimal(synopticalProtoRecord.getLubePlannedTotal()));
-  }
+    synopticalRecord.setFoList(foList);
+    synopticalRecord.setDoList(doList);
+    synopticalRecord.setFwList(fwList);
+    synopticalRecord.setLubeList(lubeList);
 
-  /**
-   * Build synoptical table cargo tank list
-   *
-   * @param reply
-   * @return
-   */
-  private List<VesselTank> buildSynopticalTableCargoTanks(SynopticalTableReply reply) {
-    List<VesselTank> tankList = new ArrayList<>();
-    for (TankDetail proto : reply.getVesselTankList()) {
-      VesselTank tank = new VesselTank();
-      tank.setId(proto.getTankId());
-      tank.setShortName(proto.getShortName());
-      tankList.add(tank);
-    }
-    return tankList;
+    synopticalRecord.setActualFOTotal(
+        foList.stream().map(fo -> fo.getActualWeight()).reduce(BigDecimal.ZERO, BigDecimal::add));
+    synopticalRecord.setActualDOTotal(
+        doList.stream()
+            .map(doTank -> doTank.getActualWeight())
+            .reduce(BigDecimal.ZERO, BigDecimal::add));
+    synopticalRecord.setActualFWTotal(
+        fwList.stream().map(fw -> fw.getActualWeight()).reduce(BigDecimal.ZERO, BigDecimal::add));
+    synopticalRecord.setActualLubeTotal(
+        lubeList.stream()
+            .map(lube -> lube.getActualWeight())
+            .reduce(BigDecimal.ZERO, BigDecimal::add));
+
+    synopticalRecord.setPlannedFOTotal(
+        foList.stream().map(fo -> fo.getPlannedWeight()).reduce(BigDecimal.ZERO, BigDecimal::add));
+    synopticalRecord.setPlannedDOTotal(
+        doList.stream()
+            .map(doTank -> doTank.getPlannedWeight())
+            .reduce(BigDecimal.ZERO, BigDecimal::add));
+    synopticalRecord.setPlannedFWTotal(
+        fwList.stream().map(fw -> fw.getPlannedWeight()).reduce(BigDecimal.ZERO, BigDecimal::add));
+    synopticalRecord.setPlannedLubeTotal(
+        lubeList.stream()
+            .map(lube -> lube.getPlannedWeight())
+            .reduce(BigDecimal.ZERO, BigDecimal::add));
   }
 
   /**
@@ -2666,16 +2683,18 @@ public class LoadableStudyService {
         loadableStudyId);
     SynopticalTableResponse response = new SynopticalTableResponse();
     List<Long> failedRecords = new ArrayList<>();
-    CountDownLatch latch = new CountDownLatch(request.getSynopticalRecords().size());
     List<Thread> workers = new ArrayList<>();
-    for (SynopticalRecord record : request.getSynopticalRecords()) {
+    Set<Long> portIds =
+        request.getSynopticalRecords().stream()
+            .map(SynopticalRecord::getPortId)
+            .collect(Collectors.toSet());
+    CountDownLatch latch = new CountDownLatch(portIds.size());
+    for (Long portId : portIds) {
       SynopticalTableRequest grpcRequest =
-          this.buildSynopticalTableRequest(record, loadableStudyId, correlationId);
+          this.buildSynopticalTableRequest(portId, request, loadableStudyId, correlationId);
       workers.add(
           new Thread(
-              () ->
-                  this.saveSynopticalTable(
-                      grpcRequest, correlationId, failedRecords, record.getId(), latch)));
+              () -> this.saveSynopticalTable(grpcRequest, correlationId, failedRecords, latch)));
     }
     workers.forEach(Thread::start);
     latch.await();
@@ -2701,14 +2720,13 @@ public class LoadableStudyService {
       SynopticalTableRequest grpcRequest,
       String correlationId,
       List<Long> failedRecords,
-      Long id,
       CountDownLatch latch) {
     try {
       log.debug("calling grpc serice: saveSynopticalTable, correationId: {}", correlationId);
       SynopticalTableReply grpcReply =
           this.loadableStudyServiceBlockingStub.saveSynopticalTable(grpcRequest);
       if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
-        failedRecords.add(id);
+        grpcRequest.getSynopticalRecordList().forEach(rec -> failedRecords.add(rec.getId()));
       }
     } catch (Exception e) {
       log.error("Error calling synoptical table save grpc service", e);
@@ -2723,18 +2741,59 @@ public class LoadableStudyService {
    * @param request
    * @param loadableStudyId
    * @return
+   * @throws GenericServiceException
    */
   private SynopticalTableRequest buildSynopticalTableRequest(
-      SynopticalRecord request, Long loadableStudyId, String correlationId) {
+      Long portId,
+      com.cpdss.gateway.domain.SynopticalTableRequest request,
+      Long loadableStudyId,
+      String correlationId)
+      throws GenericServiceException {
     log.debug("building grpc request, correlationId:{}", correlationId);
     SynopticalTableRequest.Builder builder = SynopticalTableRequest.newBuilder();
     builder.setLoadableStudyId(loadableStudyId);
-    com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder =
-        com.cpdss.common.generated.LoadableStudy.SynopticalRecord.newBuilder();
-    this.buildSynopticalRequestRecord(recordBuilder, request);
-    this.buildSynopticalRequestLoadicatorData(recordBuilder, request);
-    builder.setSynopticalRecord(recordBuilder.build());
+    List<SynopticalRecord> records =
+        request.getSynopticalRecords().stream()
+            .filter(rec -> rec.getPortId().equals(portId))
+            .collect(Collectors.toList());
+    if (records.size() != 2) {
+      throw new GenericServiceException(
+          "Invalid size of port records",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    for (SynopticalRecord rec : records) {
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder =
+          com.cpdss.common.generated.LoadableStudy.SynopticalRecord.newBuilder();
+      this.buildSynopticalRequestRecord(recordBuilder, rec);
+      this.buildSynopticalRequestLoadicatorData(recordBuilder, rec);
+      this.buildSynopticalRequestCargoData(recordBuilder, rec);
+      builder.addSynopticalRecord(recordBuilder.build());
+    }
     return builder.build();
+  }
+
+  /**
+   * Cargo data for save request of synoptical table
+   *
+   * @param recordBuilder
+   * @param request
+   */
+  private void buildSynopticalRequestCargoData(
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder,
+      SynopticalRecord request) {
+    if (null != request.getCargos()) {
+      for (SynopticalCargoRecord cargo : request.getCargos()) {
+        com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord.Builder builder =
+            com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord.newBuilder();
+        Optional.ofNullable(cargo.getTankId()).ifPresent(builder::setTankId);
+        Optional.ofNullable(cargo.getPlannedWeight())
+            .ifPresent(item -> builder.setPlannedWeight(valueOf(item)));
+        Optional.ofNullable(cargo.getActualWeight())
+            .ifPresent(item -> builder.setActualWeight(valueOf(item)));
+        recordBuilder.addCargo(builder.build());
+      }
+    }
   }
 
   /**
@@ -2748,7 +2807,8 @@ public class LoadableStudyService {
       SynopticalRecord request) {
     SynopticalTableLoadicatorData.Builder loadicatorBuilder =
         SynopticalTableLoadicatorData.newBuilder();
-    Optional.ofNullable(request.getHogSag()).ifPresent(loadicatorBuilder::setHogSag);
+    Optional.ofNullable(request.getHogSag())
+        .ifPresent(item -> loadicatorBuilder.setHogSag(valueOf(item)));
     Optional.ofNullable(request.getCalculatedDraftFwdActual())
         .ifPresent(item -> loadicatorBuilder.setCalculatedDraftFwdActual(valueOf(item)));
     Optional.ofNullable(request.getCalculatedDraftAftActual())
@@ -2772,6 +2832,7 @@ public class LoadableStudyService {
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder,
       SynopticalRecord request) {
     recordBuilder.setId(request.getId());
+    recordBuilder.setPortId(request.getPortId());
     recordBuilder.setOperationType(request.getOperationType());
     Optional.ofNullable(request.getDistance())
         .ifPresent(item -> recordBuilder.setDistance(valueOf(request.getDistance())));
@@ -2810,22 +2871,29 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getEtaEtdPlanned()).ifPresent(recordBuilder::setEtaEtdEstimated);
   }
 
-	public LoadableStudyAttachmentResponse downloadLoadableStudyAttachment(Long attachmentId, Long loadableStudyId,
-			String correlationId) throws GenericServiceException {
-		log.info("Inside downloadLoadableStudyAttachment gateway service with correlationId : " + correlationId);
-		LoadableStudyAttachmentResponse response = new LoadableStudyAttachmentResponse();
+  public LoadableStudyAttachmentResponse downloadLoadableStudyAttachment(
+      Long attachmentId, Long loadableStudyId, String correlationId)
+      throws GenericServiceException {
+    log.info(
+        "Inside downloadLoadableStudyAttachment gateway service with correlationId : "
+            + correlationId);
+    LoadableStudyAttachmentResponse response = new LoadableStudyAttachmentResponse();
 
-		LoadableStudyAttachmentReply grpcReply = this.downloadLoadableStudyAttachment(
-				this.builddownloadLoadableStudyAttachmentRequest(attachmentId, loadableStudyId, correlationId));
-		if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
-			throw new GenericServiceException("Failed to get download LoadableStudy Attachment",
-					grpcReply.getResponseStatus().getCode(),
-					HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
-		}
-		response.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
-		response.setFilePath(grpcReply.getFilePath());
-		return response;
-	}
+    LoadableStudyAttachmentReply grpcReply =
+        this.downloadLoadableStudyAttachment(
+            this.builddownloadLoadableStudyAttachmentRequest(
+                attachmentId, loadableStudyId, correlationId));
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to get download LoadableStudy Attachment",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    response.setFilePath(grpcReply.getFilePath());
+    return response;
+  }
 
   public LoadableStudyAttachmentReply downloadLoadableStudyAttachment(
       LoadableStudyAttachmentRequest grpcRequest) {
