@@ -102,6 +102,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
    * @memberof SidePanelLoadableStudyListComponent
    */
   openLoadableStudyPopup() {
+    this.isEdit = false;
     this.display = true;
   }
 

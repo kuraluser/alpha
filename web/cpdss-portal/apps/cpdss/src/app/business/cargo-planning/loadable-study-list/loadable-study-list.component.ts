@@ -78,9 +78,6 @@ export class LoadableStudyListComponent implements OnInit {
     if (voyageId !== 0) {
       const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
       this.loadableStudyList = result.loadableStudies;
-      this.loadableStudyList.map((loadablestudy, index) => {
-        loadablestudy.slNo = index + 1; 
-      })
       this.initLoadableStudyArray(this.loadableStudyList);
     }
     this.ngxSpinnerService.hide();

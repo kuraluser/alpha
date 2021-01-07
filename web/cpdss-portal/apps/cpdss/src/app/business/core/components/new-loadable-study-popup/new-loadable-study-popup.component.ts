@@ -45,7 +45,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   set duplicateLoadableStudy(duplicateLoadableStudy: LoadableStudy) {
     this._duplicateLoadableStudy = duplicateLoadableStudy;
     if (duplicateLoadableStudy)
-      this.getLoadableStudyDetailsForDuplicating(duplicateLoadableStudy);
+      this.updateLoadableStudyFormGroup(duplicateLoadableStudy, false);
   }
   @Input() isEdit = false;
   @Input() selectedLoadableStudy: LoadableStudy;
@@ -91,9 +91,13 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     this.loadlineLists = this.vesselInfoList?.loadlines;
     this.createNewLoadableStudyFormGroup();
     if (this.isEdit) {
-      this.updateLoadableStudyFormGroup()
+      this.updateLoadableStudyFormGroup(this.selectedLoadableStudy, true)
     } else {
-      this.getLoadlineSummer();
+      if (this.duplicateLoadableStudy) {
+        this.updateLoadableStudyFormGroup(this.duplicateLoadableStudy, false);
+      } else {
+        this.getLoadlineSummer();
+      }
     }
   }
 
@@ -128,23 +132,6 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     });
   }
 
-  // for duplicating a loadable study populating from mock API as of now.
-  // the actual data will come from parent component called "loadable-study-list" and have to bind form-group with actual data.
-  public async getLoadableStudyDetailsForDuplicating(loadableStudyObj: LoadableStudy) {
-    this.newLoadableStudyFormGroup.controls.duplicateExisting.setValue(loadableStudyObj);
-    this.newLoadableStudyFormGroup.controls.newLoadableStudyName.setValue(loadableStudyObj.name);
-    this.newLoadableStudyFormGroup.controls.enquiryDetails.setValue(loadableStudyObj.detail);
-    this.newLoadableStudyFormGroup.controls.charterer.setValue(loadableStudyObj.charterer);
-    this.newLoadableStudyFormGroup.controls.subCharterer.setValue(loadableStudyObj.subCharterer);
-    const loadLine = this.loadlineLists.find(loadline => loadableStudyObj.loadLineXId === loadline.id);
-    this.newLoadableStudyFormGroup.controls.loadLine.setValue(loadLine);
-    this.onloadLineChange();
-    const draftMark = this.draftMarkList.find(draftmark => draftmark.id === loadableStudyObj.draftMark);
-    this.newLoadableStudyFormGroup.controls.draftMark.setValue(draftMark);
-    this.newLoadableStudyFormGroup.controls.draftRestriction.setValue(loadableStudyObj.draftRestriction);
-    this.newLoadableStudyFormGroup.controls.maxAirTempExpected.setValue(loadableStudyObj.maxAirTemperature);
-    this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.setValue(loadableStudyObj.maxWaterTemperature);
-  }
 
   // post newLoadableStudyFormGroup for saving newly created loadable-study
   public async saveLoadableStudy() {
@@ -160,12 +147,12 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           detail: this.newLoadableStudyFormGroup.controls.enquiryDetails.value,
           attachMail: this.uploadedFiles,
           charterer: this.newLoadableStudyFormGroup.controls.charterer.value,
-          subCharterer: this.newLoadableStudyFormGroup.controls.subCharterer.value,
+          subCharterer: this.newLoadableStudyFormGroup?.controls?.subCharterer?.value ? this.newLoadableStudyFormGroup?.controls?.subCharterer?.value : "",
           loadLineXId: this.newLoadableStudyFormGroup.controls.loadLine.value?.id,
           draftMark: this.newLoadableStudyFormGroup.controls.draftMark.value?.id,
           draftRestriction: this.newLoadableStudyFormGroup.controls.draftRestriction.value,
-          maxAirTempExpected: this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value,
-          maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value
+          maxAirTempExpected: this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value ? this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value : "",
+          maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value ? this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value : ""
         }
         this.ngxSpinnerService.show();
         try {
@@ -268,27 +255,35 @@ export class NewLoadableStudyPopupComponent implements OnInit {
 
   //for set selcted loadable study value in loadable study form
   onDuplicateExisting(event: IDropdownEvent) {
-    this.getLoadableStudyDetailsForDuplicating(event.value);
+    this.updateLoadableStudyFormGroup(event.value, false);
   }
 
-  //for edit update the values 
-  updateLoadableStudyFormGroup() {
+  //for edit/duplicate update the values 
+  updateLoadableStudyFormGroup(loadableStudyObj: LoadableStudy, isEdit: boolean) {
+    if (isEdit) {
+      this.newLoadableStudyFormGroup.patchValue({
+        duplicateExisting: null
+      })
+    } else {
+      this.newLoadableStudyFormGroup.patchValue({
+        duplicateExisting: loadableStudyObj
+      })
+    }
     this.newLoadableStudyFormGroup.patchValue({
-      duplicateExisting: '',
-      newLoadableStudyName: this.selectedLoadableStudy.name,
-      enquiryDetails: this.selectedLoadableStudy.detail,
-      charterer: this.selectedLoadableStudy.charterer,
-      subCharterer: this.selectedLoadableStudy.subCharterer,
-      loadLine: this.selectedLoadableStudy,
-      draftMark: this.selectedLoadableStudy,
-      draftRestriction: this.selectedLoadableStudy.draftRestriction,
-      maxAirTempExpected: this.selectedLoadableStudy.maxAirTemperature,
-      maxWaterTempExpected: this.selectedLoadableStudy.maxWaterTemperature
+      newLoadableStudyName: loadableStudyObj.name,
+      enquiryDetails: loadableStudyObj.detail,
+      charterer: loadableStudyObj.charterer,
+      subCharterer: loadableStudyObj?.subCharterer,
+      loadLine: loadableStudyObj,
+      draftMark: loadableStudyObj,
+      draftRestriction: loadableStudyObj.draftRestriction,
+      maxAirTempExpected: loadableStudyObj.maxAirTemperature,
+      maxWaterTempExpected: loadableStudyObj.maxWaterTemperature
     })
-    const result = this.loadlineLists.filter(e => e.id === this.selectedLoadableStudy.loadLineXId);
+    const result = this.loadlineLists.filter(loadline => loadline.id === loadableStudyObj.loadLineXId);
     if (result.length > 0) {
       this.loadlineList = result[0];
-      const selectedDraftMark = this.selectedLoadableStudy.draftMark;
+      const selectedDraftMark = loadableStudyObj.draftMark;
       this.newLoadableStudyFormGroup.patchValue({
         loadLine: this.loadlineList,
         draftMark: { id: selectedDraftMark, name: selectedDraftMark }
@@ -296,7 +291,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     }
     const loadLine = this.newLoadableStudyFormGroup.get('loadLine').value;
     this.draftMarkList = loadLine.draftMarks.map(draftMarks => ({ id: draftMarks, name: draftMarks }));
-    this.uploadedFiles = [...this.selectedLoadableStudy.loadableStudyAttachment];
+    this.uploadedFiles = [...loadableStudyObj.loadableStudyAttachment];
   }
 
 }

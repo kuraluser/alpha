@@ -8,7 +8,7 @@ import { IValidationErrorMessages } from '../validation-error/validation-error.m
  * @interface IDataTableColumn
  */
 export interface IDataTableColumn {
-    field: string;
+    field?: string;
     header: string;
     fieldType?: DATATABLE_FIELD_TYPE;
     sortable?: boolean;
@@ -37,6 +37,11 @@ export interface IDataTableColumn {
     dateFormat?: string;
     columns?: IDataTableColumn[];
     virtualScroll?: boolean;
+    rowspan?: number;
+    colspan?: number;
+    className?: string,
+    subColumns? : IDataTableColumn[],
+    subHeader?: string;
     numberFormat?: string;
 }
 

@@ -7,7 +7,7 @@ import { LoadableStudyDetailsApiService } from '../../services/loadable-study-de
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
 import { groupTotalValidator } from '../../directives/validator/group-total.directive';
-import { IPermission } from 'apps/cpdss/src/app/shared/models/user-profile.model';
+import { IPermission } from '../../../../shared/models/user-profile.model';
 
 /**
  * Compoent for OHQ tab
@@ -46,7 +46,6 @@ export class OnHandQuantityComponent implements OnInit {
   set selectedPortOHQTankDetails(selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[]) {
     this._selectedPortOHQTankDetails = selectedPortOHQTankDetails.map((ohqTankDetail, index) => {
       const _ohqTankDetail = this.loadableStudyDetailsTransformationService.formatOHQTankDetail(ohqTankDetail);
-      _ohqTankDetail.slNo = index + 1;
       return _ohqTankDetail;
     });
     this.loadableStudyDetailsTransformationService.setOHQValidity(this.ohqForm.valid && this.ohqGroupValidity(this._selectedPortOHQTankDetails));
@@ -381,7 +380,7 @@ export class OnHandQuantityComponent implements OnInit {
    * @memberof OnHandQuantityComponent
    */
   field(formGroupIndex: number, formControlName: string): FormControl {
-    const formControl = <FormControl>(<FormArray>this.ohqForm.get('dataTable')).at(formGroupIndex).get(formControlName);
+    const formControl = <FormControl>(<FormArray>this.ohqForm.get('dataTable'))?.at(formGroupIndex)?.get(formControlName);
     return formControl;
   }
 
@@ -485,7 +484,7 @@ export class OnHandQuantityComponent implements OnInit {
    */
   fieldError(formGroupIndex: number, formControlName: string): ValidationErrors {
     const formControl = this.field(formGroupIndex, formControlName);
-    return (this.permission?.edit === undefined || this.permission?.edit) && formControl.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
+    return (this.permission?.edit === undefined || this.permission?.edit) && formControl?.invalid && (formControl?.dirty || formControl?.touched) ? formControl?.errors : null;
   }
 
   /**

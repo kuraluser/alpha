@@ -2,28 +2,6 @@ import { IDataTableEvent } from '../../../shared/components/datatable/datatable.
 import { IResponseStatus, ValueObject } from '../../../shared/models/common.model';
 import { ICargoTank, ILoadableCargo } from '../../core/models/common.model';
 
-/**
- * Interface for loadable quality plan table 
- *
- * @export
- * @interface ITableHeaderModel
- */
-export interface ITableHeaderModel {
-    field?: string;
-    header: string;
-    rowspan?: number;
-    colspan?: number,
-    subColumns?: IColumHeader[];
-}
-
-/**
- * Interface for sub column table header
-*/
-interface IColumHeader {
-    field: string;
-    header: string;
-    rowspan?: number;
-}
 
 /**
  * Interface for Loadable Quantity api response
@@ -70,12 +48,50 @@ export interface ILoadableQuantityCargo {
  * @interface ILoadableQuantityCommingleCargo
  */
 export interface ILoadableQuantityCommingleCargo {
+    id: number,
     grade: string,
-    estimatedAPI: string,
-    estimatedTemp: string,
-    orderBblsdbs: string,
-    orderBbls60f: string,
+    tankName: string,
+    quantity: string,
+    api: string,
+    temp: string,
+    cargo1Abbreviation: string,
+    cargo2Abbreviation: string,
+    cargo1Percentage: string,
+    cargo2Percentage: string,
+    cargo1Bblsdbs: string,
+    cargo2Bblsdbs: string,
+    cargo1Bbls60f: string,
+    cargo2Bbls60f: string,
+    cargo1LT: string,
+    cargo2LT: string,
+    cargo1MT: string,
+    cargo2MT: string,
+    cargo1KL: string,
+    cargo2KL: string
 }
+
+/**
+ * Interface for loadable commingle Cargo
+ *
+ * @export
+ * @interface ICommingleCargoDispaly
+ */
+export interface ICommingleCargoDispaly {
+    id: number,
+    grade: string,
+    tankName: string,
+    quantity: string,
+    api: string,
+    temp: string,
+    cargoPercentage: string,
+    cargoBblsdbs: string,
+    cargoBbls60f: string,
+    cargoLT: string
+    cargoMT: string,
+    cargoKL: string,
+}
+
+
 
 /**
  * Interface for loadableQuantity total calculate

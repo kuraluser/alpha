@@ -1,10 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DecimalPipe  } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
 
-import { ITableHeaderModel, ILoadableQuantityCargo , ILoadableQuantityCommingleCargo , ITotalLoadableQuality} from '../../models/loadable-plan.model';
+import { ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ITotalLoadableQuality } from '../../models/loadable-plan.model';
+import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 
 /**
  * Component class of loadable quantity component in loadable plan
@@ -24,17 +25,22 @@ export class LoadableQuantityComponent implements OnInit {
     this.calculateTotal(value);
     this.loadableQuantityData = [];
     value?.map((loadableQuantityData: ILoadableQuantityCargo) => {
-      this.loadableQuantityData.push(this.loadablePlanTransformationService.getFormatedLoadableQuantityData(this._decimalPipe , loadableQuantityData))
+      this.loadableQuantityData.push(this.loadablePlanTransformationService.getFormatedLoadableQuantityData(this._decimalPipe, loadableQuantityData))
     });
   }
 
-  @Input() set loadableQuantityCommingleCargoDetails(value: ILoadableQuantityCommingleCargo) {
-
+  @Input() set loadableQuantityCommingleCargoDetails(value: ILoadableQuantityCommingleCargo[]) {
+    this._loadableQuantityCommingleCargoDetails = value;
   }
 
-  public columns: ITableHeaderModel[];
+  get loadableQuantityCommingleCargoDetails(): ILoadableQuantityCommingleCargo[] {
+    return this._loadableQuantityCommingleCargoDetails;
+  }
+
+  public columns: IDataTableColumn[];
   public loadableQuantityData: ILoadableQuantityCargo[];
-  public total:ITotalLoadableQuality; 
+  public _loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
+  public total: ITotalLoadableQuality;
 
   constructor(
     private ngxSpinnerService: NgxSpinnerService,
@@ -53,14 +59,14 @@ export class LoadableQuantityComponent implements OnInit {
   */
   private calculateTotal(loadableQuantityData: ILoadableQuantityCargo[]) {
     loadableQuantityData?.map((value: ILoadableQuantityCargo) => {
-      this.total.orderBblsdbs += Number(value.orderBblsdbs);
-      this.total.orderBbls60f += Number(value.orderBbls60f);
-      this.total.loadableBblsdbs += Number(value.loadableBblsdbs);
-      this.total.loadableBbls60f += Number(value.loadableBbls60f);
-      this.total.loadableLT += Number(value.loadableLT);
-      this.total.loadableMT += Number(value.loadableMT);
-      this.total.loadableKL += Number(value.loadableKL);
-      this.total.differencePercentage += Number(value.differencePercentage);
+      this.total.orderBblsdbs += Number(value?.orderBblsdbs);
+      this.total.orderBbls60f += Number(value?.orderBbls60f);
+      this.total.loadableBblsdbs += Number(value?.loadableBblsdbs);
+      this.total.loadableBbls60f += Number(value?.loadableBbls60f);
+      this.total.loadableLT += Number(value?.loadableLT);
+      this.total.loadableMT += Number(value?.loadableMT);
+      this.total.loadableKL += Number(value?.loadableKL);
+      this.total.differencePercentage += Number(value?.differencePercentage);
     })
   }
 

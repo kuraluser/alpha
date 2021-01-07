@@ -176,7 +176,7 @@
                                 formControlName="freshWaterOnboard" (change)="getSubTotal()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <div class="col error-column">
+                        <div class="col error-column text-center">
                             <cpdss-portal-validation-error [errors]="fieldError('freshWaterOnboard')"
                                 [errorMessages]="errorMesages.freshWaterOnboard"></cpdss-portal-validation-error>
                         </div>

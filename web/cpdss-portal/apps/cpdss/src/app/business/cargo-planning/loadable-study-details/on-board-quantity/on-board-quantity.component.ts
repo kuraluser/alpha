@@ -47,7 +47,6 @@ export class OnBoardQuantityComponent implements OnInit {
   set selectedPortOBQTankDetails(selectedPortOBQTankDetails: IPortOBQTankDetailValueObject[]) {
     this._selectedPortOBQTankDetails = selectedPortOBQTankDetails.map((obqTankDetail, index) => {
       const _obqTankDetail = this.loadableStudyDetailsTransformationService.formatOBQTankDetail(obqTankDetail);
-      _obqTankDetail.slNo = index + 1;
       return _obqTankDetail;
     })
   }

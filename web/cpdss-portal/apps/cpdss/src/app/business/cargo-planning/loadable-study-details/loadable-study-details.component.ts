@@ -250,17 +250,19 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @param {Event} event
    * @memberof LoadableStudyDetailsComponent
    */
-  async onDischargePortChange(event: Event) {
-    this.ngxSpinnerService.show();
-    this.selectedLoadableStudy.dischargingPortIds = this.dischargingPorts?.map(port => port.id);
-    const dischargingPortIds: IDischargingPortIds = { portIds: this.selectedLoadableStudy.dischargingPortIds };
-    const translationKeys = await this.translateService.get(['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS', 'LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY']).toPromise();
-    const res = await this.loadableStudyDetailsApiService.setLoadableStudyDischargingPorts(this.vesselId, this.voyageId, this.loadableStudyId, dischargingPortIds).toPromise();
-    if (res?.responseStatus?.status === "200") {
-      this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY'] });
+  async onDischargePortChange(event) {
+    if (!event.originalEvent?.target?.className.toString().includes('disabled')) {
+      this.ngxSpinnerService.show();
+      this.selectedLoadableStudy.dischargingPortIds = this.dischargingPorts?.map(port => port.id);
+      const dischargingPortIds: IDischargingPortIds = { portIds: this.selectedLoadableStudy.dischargingPortIds };
+      const translationKeys = await this.translateService.get(['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS', 'LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY']).toPromise();
+      const res = await this.loadableStudyDetailsApiService.setLoadableStudyDischargingPorts(this.vesselId, this.voyageId, this.loadableStudyId, dischargingPortIds).toPromise();
+      if (res?.responseStatus?.status === "200") {
+        this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY'] });
+      }
+      this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
+      this.ngxSpinnerService.hide();
     }
-    this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
-    this.ngxSpinnerService.hide();
   }
 
   /**

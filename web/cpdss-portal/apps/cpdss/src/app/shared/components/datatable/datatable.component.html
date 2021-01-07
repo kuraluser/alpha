@@ -119,7 +119,8 @@
                             [pEditableColumnRowIndex]="rowIndex" (click)="onClick($event, rowData, rowIndex, col)">
                             <div [attr.tabindex]="col.field !== 'actions' && col.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+rowIndex : null"
                                 (keyup)="onFocus($event, rowData, rowIndex, col, colIndex)">
-                                <span *ngSwitchCase="fieldType.SLNO">{{rowData[col.field]}}</span>
+                                <span
+                                    *ngSwitchCase="fieldType.SLNO">{{rowData[col.field] ? rowData[col.field] : rowIndex+ 1}}</span>
                                 <span *ngSwitchCase="fieldType.ICON"><i
                                         class="{{col.fieldValueIcon+'-'+rowData[col.field]}}"></i></span>
 
@@ -247,8 +248,7 @@
                                             [dateFormat]="col.dateFormat" selectionMode="range"
                                             [placeholder]="col.fieldPlaceholder| translate" [minDate]="col.minDate"
                                             id="{{col.field+'_'+rowIndex}}" [hideOnDateTimeSelect]="false" #coldaterange>
-                                            <p-footer><button class="btn btn-main"
-                                                (click)="coldaterange.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                                            <p-footer><button class="btn btn-main" (click)="coldaterange.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
                                                     |
                                                     translate}}</button></p-footer>
                                         </p-calendar>
@@ -273,8 +273,7 @@
                                             [dateFormat]="col.dateFormat"
                                             (onClearClick)="onDateTimeNotSelected($event, rowIndex, col.field,rowData)"
                                             [hideOnDateTimeSelect]="false" #coldatetime>
-                                            <p-footer><button class="btn btn-main"
-                                                (click)="coldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
+                                            <p-footer><button class="btn btn-main" (click)="coldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
                                                     translate}}</button></p-footer>
                                         </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
@@ -297,7 +296,7 @@
                             (click)="onClick($event, rowData, rowIndex, subCol)">
                             <div [attr.tabindex]="subCol.field !== 'actions' && subCol.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+subColIndex+rowIndex : null"
                                 (keyup)="onFocus($event, rowData, rowIndex, subCol, colIndex+subColIndex)">
-                                <span *ngSwitchCase="fieldType.SLNO">{{rowData[subCol.field]}}</span>
+                                <span *ngSwitchCase="fieldType.SLNO">{{rowData[col.field] ? rowData[col.field] : rowIndex+ 1}}</span>
                                 <span *ngSwitchCase="fieldType.ICON"><i
                                         class="{{subCol.fieldValueIcon+'-'+rowData[subCol.field]}}"></i></span>
 
@@ -380,7 +379,7 @@
                                 <ng-container *ngSwitchCase="fieldType.COLORPICKER">
                                     <ng-container *ngIf="editMode && rowData[subCol.field]?.isEditMode">
                                         <p-colorPicker [formControlName]="subCol.field"
-                                        [ngClass]="{'empty': !rowData[subCol.field]?.value}"
+                                            [ngClass]="{'empty': !rowData[subCol.field]?.value}"
                                             (onChange)="onChange($event, rowData, rowIndex, subCol)"
                                             id="{{subCol.field+'_'+rowIndex}}"></p-colorPicker>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, subCol.field)"
