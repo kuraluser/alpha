@@ -26,8 +26,8 @@ public class Voyage {
   private String startDate;
 
   private String endDate;
-  
+
   private String status;
-  
+
   private Long confirmedLoadableStudyId;
 }

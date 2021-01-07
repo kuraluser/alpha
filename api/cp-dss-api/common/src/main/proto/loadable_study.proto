@@ -648,24 +648,18 @@ message SynopticalRecord{
 	string cargoPlannedTotal = 23; 
 	string cargoActualTotal = 24;
 	repeated SynopticalOhqRecord ohq = 25;
-	string foPlannedTotal = 26;
-	string foActualTotal = 27;
-	string doPlannedTotal = 28;
-	string doActualTotal = 29;
-	string lubePlannedTotal = 30;
-	string lubeActualTotal = 31;
-	int64 portOrder = 32;
-	string othersPlanned = 33;
-	string othersActual = 34;
-	string constantPlanned = 35;
-	string constantActual = 36;
-	string totalDwtPlanned = 37;
-	string totalDwtActual = 38;
-	string displacementPlanned = 39;
-	string displacementActual = 40;
-	SynopticalTableLoadicatorData loadicatorData = 41;
-	string ballastPlanned = 42;
-	string ballastActual = 43;
+	int64 portOrder = 26;
+	string othersPlanned = 27;
+	string othersActual = 28;
+	string constantPlanned = 29;
+	string constantActual = 30;
+	string totalDwtPlanned = 31;
+	string totalDwtActual = 32;
+	string displacementPlanned = 33;
+	string displacementActual = 34;
+	SynopticalTableLoadicatorData loadicatorData = 35;
+	string ballastPlanned = 36;
+	string ballastActual = 37;
 }
 
 message SynopticalCargoRecord{
@@ -673,6 +667,7 @@ message SynopticalCargoRecord{
 	string tankName = 2;
 	string plannedWeight = 3;
 	string actualWeight = 4;
+	int64 obqId = 5;
 }
 
 message SynopticalOhqRecord{
@@ -688,14 +683,13 @@ message SynopticalTableRequest{
 	int64 loadableStudyId = 1;
 	int64 vesselId = 2;
 	int64 portId = 3;
-	SynopticalRecord synopticalRecord = 4;	
+	repeated SynopticalRecord synopticalRecord = 4;	
 }
 
 message SynopticalTableReply{
 	ResponseStatus responseStatus = 1;
 	repeated SynopticalRecord synopticalRecords = 2;
-	repeated TankDetail vesselTank = 3;
-	int64 id = 4;
+	int64 id = 3;
 }
 
 message SynopticalTableLoadicatorData{

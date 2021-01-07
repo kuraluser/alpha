@@ -1166,40 +1166,53 @@ public class LoadableStudyController {
     return remoteAddr;
   }
 
-	@GetMapping(value = "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/attachments/{attachmentId}")
-	public ResponseEntity<Resource> getLoadableStudyAttachment(
-			@PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
-			@PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
-			@PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long loadableStudyId,
-			@PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long attachmentId,
-			@RequestHeader HttpHeaders headers) throws CommonRestException {
-		try {
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/attachments/{attachmentId}")
+  public ResponseEntity<Resource> getLoadableStudyAttachment(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long attachmentId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
 
-			LoadableStudyAttachmentResponse response = this.loadableStudyService
-					.downloadLoadableStudyAttachment(attachmentId, loadableStudyId, CORRELATION_ID_HEADER);
-			if (null != response) {
-				File file = new File(response.getFilePath());
-				InputStreamResource inputStream = null;
-				try {
-					inputStream = new InputStreamResource(new FileInputStream(file));
-				} catch (FileNotFoundException e) {
-					log.error("FileNotFoundException in downloadLoadableStudyAttachment", e);
-					throw new FileNotFoundException(e.getMessage());
-				}
+      LoadableStudyAttachmentResponse response =
+          this.loadableStudyService.downloadLoadableStudyAttachment(
+              attachmentId, loadableStudyId, CORRELATION_ID_HEADER);
+      if (null != response) {
+        File file = new File(response.getFilePath());
+        InputStreamResource inputStream = null;
+        try {
+          inputStream = new InputStreamResource(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+          log.error("FileNotFoundException in downloadLoadableStudyAttachment", e);
+          throw new FileNotFoundException(e.getMessage());
+        }
 
-				headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
 
-				return ResponseEntity.ok().headers(headers).contentLength(file.length())
-						.contentType(MediaType.APPLICATION_OCTET_STREAM).body(inputStream);
-			}
-			return ResponseEntity.badRequest().body(null);
-		} catch (GenericServiceException e) {
-			log.error("GenericServiceException when getLoadableStudyAttachment", e);
-			throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
-		} catch (Exception e) {
-			log.error("Exception when get getLoadableStudyAttachment", e);
-			throw new CommonRestException(CommonErrorCodes.E_GEN_INTERNAL_ERR, headers,
-					HttpStatusCode.INTERNAL_SERVER_ERROR, e.getMessage(), e);
-		}
-	}
+        return ResponseEntity.ok()
+            .headers(headers)
+            .contentLength(file.length())
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .body(inputStream);
+      }
+      return ResponseEntity.badRequest().body(null);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when getLoadableStudyAttachment", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when get getLoadableStudyAttachment", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
 }
