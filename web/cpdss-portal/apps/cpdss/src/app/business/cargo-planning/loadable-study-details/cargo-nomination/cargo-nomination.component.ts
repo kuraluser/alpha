@@ -274,10 +274,11 @@ export class CargoNominationComponent implements OnInit {
    */
   async onRowSave(event: ICargoNominationEvent) {
     const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
-    this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
+    
     if (this.row(event.index).valid) {
       this.ngxSpinnerService.show();
       const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+      this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
       if (res) {
         this.cargoNominations[valueIndex].isAdd = false;
         for (const key in this.cargoNominations[valueIndex]) {
