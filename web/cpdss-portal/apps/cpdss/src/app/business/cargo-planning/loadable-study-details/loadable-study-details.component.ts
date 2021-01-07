@@ -298,6 +298,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
       } else {
         this.loadableStudyId = 0;
         this.loadableQuantityNew = '0';
+        this.selectedLoadableStudy = null;
         this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(0);
       }
     }
@@ -311,6 +312,10 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @memberof LoadableStudyDetailsComponent
    */
   async onTabClick(selectedTab: string) {
+    if (!this?.loadableStudies?.length) {
+      this.selectedTab = selectedTab;
+      return;
+    }
     const translationKeys = await this.translateService.get(['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY', 'CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS']).toPromise();
     if (selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION) {
       if (this.dischargingPorts?.length > 0) {
