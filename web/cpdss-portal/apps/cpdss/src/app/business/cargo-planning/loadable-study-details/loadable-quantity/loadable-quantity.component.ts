@@ -134,7 +134,6 @@ export class LoadableQuantityComponent implements OnInit {
    * Populate loadable quantity data
    */
   getLoadableQuantityData() {
-
     this.loadableQuantityForm.controls.portName.setValue(this.ports.find(port => port.id === this.loadableQuantity.portId));
     this.loadableQuantityForm.controls.arrivalMaxDraft.setValue(this.loadableQuantity.draftRestriction);
     this.loadableQuantityForm.controls.dwt.setValue(this.loadableQuantity.dwt);
@@ -157,12 +156,12 @@ export class LoadableQuantityComponent implements OnInit {
       this.loadableQuantityForm.controls.speedInSz.setValue(this.loadableQuantity.vesselAverageSpeed);
       this.loadableQuantityForm.controls.runningHours.setValue(this.loadableQuantity.runningHours);
       this.loadableQuantityForm.controls.runningDays.setValue(this.loadableQuantity.runningDays);
-      this.loadableQuantityForm.controls.foConday.setValue(this.loadableQuantity.foConsumptionPerDay);
+      this.loadableQuantityForm.controls.foConday.setValue(this.loadableQuantity.foConsumptionPerDay?.toString());
       this.loadableQuantityForm.controls.foConsInSz.setValue(this.loadableQuantity.foConInSZ);
 
       this.getRunningHoursOnLoad();
       this.getRunningDaysOnLoad();
-      this.getSubTotalOnLoad();
+      this.getSubTotal();
     }
     else if (this.caseNo === 3) {
       this.loadableQuantityForm.controls.displacement.setValue(this.loadableQuantity.displacmentDraftRestriction);
@@ -171,10 +170,10 @@ export class LoadableQuantityComponent implements OnInit {
       this.loadableQuantityForm.controls.sgCorrection.setValue(this.loadableQuantity.sgCorrection);
 
       this.getDWT();
-      this.getSubTotalOnLoad();
+      this.getSubTotal();
     }
     else {
-      this.getSubTotalOnLoad();
+      this.getSubTotal();
     }
 
   }
