@@ -364,11 +364,12 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'quantity',
         header: 'QUANTITY',
-        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldType: DATATABLE_FIELD_TYPE.TEXT,
         fieldPlaceholder: 'LOADING_PORT_QUANTITY_PLACEHOLDER',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
-          'min': 'CARGO_NOMINATION_LOADING_PORT_MIN_ERROR'
+          'min': 'CARGO_NOMINATION_LOADING_PORT_MIN_ERROR',
+          'pattern': 'CARGO_NOMINATION_LOADING_PORT_PATTERN_ERROR'
         }
       },
       {
@@ -782,7 +783,7 @@ export class LoadableStudyDetailsTransformationService {
           {
             field: 'arrivalVolume',
             header: 'OHQ_VOL',
-            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+            fieldType: DATATABLE_FIELD_TYPE.TEXT,
             fieldPlaceholder: 'OHQ_PLACEHOLDER_VOL',
             filter: true,
             filterField: 'arrivalVolume.value',
@@ -794,13 +795,14 @@ export class LoadableStudyDetailsTransformationService {
               'required': 'OHQ_VALUE_REQUIRED',
               'min': 'OHQ_MIN_VALUE',
               'groupTotal': 'OHQ_GROUP_TOTAL',
-              'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY"
+              'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY",
+              'pattern': 'OHQ_PATTERN_ERROR'
             }
           },
           {
             field: 'arrivalQuantity',
             header: 'OHQ_WEIGHT',
-            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+            fieldType: DATATABLE_FIELD_TYPE.TEXT,
             fieldPlaceholder: 'OHQ_PLACEHOLDER_WEIGHT',
             filter: true,
             filterField: 'arrivalQuantity.value',
@@ -811,7 +813,8 @@ export class LoadableStudyDetailsTransformationService {
             errorMessages: {
               'required': 'OHQ_VALUE_REQUIRED',
               'min': 'OHQ_MIN_VALUE',
-              'groupTotal': 'OHQ_GROUP_TOTAL'
+              'groupTotal': 'OHQ_GROUP_TOTAL',
+              'pattern': 'OHQ_PATTERN_ERROR'
             }
           }
         ]
@@ -823,7 +826,7 @@ export class LoadableStudyDetailsTransformationService {
           {
             field: 'departureVolume',
             header: 'OHQ_VOL',
-            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+            fieldType: DATATABLE_FIELD_TYPE.TEXT,
             fieldPlaceholder: 'OHQ_PLACEHOLDER_VOL',
             filter: true,
             filterField: 'departureVolume.value',
@@ -835,13 +838,14 @@ export class LoadableStudyDetailsTransformationService {
               'required': 'OHQ_VALUE_REQUIRED',
               'min': 'OHQ_MIN_VALUE',
               'groupTotal': 'OHQ_GROUP_TOTAL',
-              'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY"
+              'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY",
+              'pattern': 'OHQ_PATTERN_ERROR'
             }
           },
           {
             field: 'departureQuantity',
             header: 'OHQ_WEIGHT',
-            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+            fieldType: DATATABLE_FIELD_TYPE.TEXT,
             fieldPlaceholder: 'OHQ_PLACEHOLDER_WEIGHT',
             filter: true,
             filterField: 'departureQuantity.value',
@@ -852,7 +856,8 @@ export class LoadableStudyDetailsTransformationService {
             errorMessages: {
               'required': 'OHQ_VALUE_REQUIRED',
               'min': 'OHQ_MIN_VALUE',
-              'groupTotal': 'OHQ_GROUP_TOTAL'
+              'groupTotal': 'OHQ_GROUP_TOTAL',
+              'pattern': 'OHQ_PATTERN_ERROR'
             }
           }
         ]

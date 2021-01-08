@@ -72,6 +72,7 @@ export class LoadingPortsPopupComponent implements OnInit {
    * @memberof LoadingPortsPopupComponent
    */
   closePopup() {
+    this.popupData.rowData.loadingPorts.value = this.loadingPort?.reverse().map(port => this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortAsValue(port));
     this.loadingPort = null;
     this.visible = false;
     this.visibleChange.emit(this.visible);

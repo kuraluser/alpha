@@ -26,6 +26,7 @@ export class BunkeringLayoutComponent implements OnInit {
       tank.percentageFilled = this.getFillingPercentage(tank);
       return tank;
     }));
+    this.selectedTankIdChange.emit(this.selectedTankId);
   }
 
   @Input()
@@ -38,6 +39,7 @@ export class BunkeringLayoutComponent implements OnInit {
       tank.percentageFilled = this.getFillingPercentage(tank);
       return tank;
     }));
+    this.selectedTankIdChange.emit(this.selectedTankId);
   }
 
   @Input() selectedTankId: number;

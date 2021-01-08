@@ -295,10 +295,6 @@ export class OnHandQuantityComponent implements OnInit {
           }
         }
         this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
-        if (this.selectedTankId) {
-          this.setFillingPercentage(this.selectedTankId);
-          this.selectedTankFormGroup.get(event?.field).setValue((event?.data[event?.field]).value);
-        }
       }
 
     } else {
@@ -313,6 +309,10 @@ export class OnHandQuantityComponent implements OnInit {
       this.ohqForm.updateValueAndValidity();
     }
 
+    if (this.selectedTankId) {
+      this.setFillingPercentage(this.selectedTankId);
+      this.selectedTankFormGroup.get(event?.field).setValue((event?.data[event?.field]).value);
+    }
     const formArray = (<FormArray>this.ohqForm.get('dataTable')).controls;
     formArray.forEach(async (row: FormGroup, index) => {
       if (row.invalid && row.touched) {
@@ -447,9 +447,9 @@ export class OnHandQuantityComponent implements OnInit {
   setFillingPercentage(selectedTankId: number) {
     const tanks = [...this.tanks, ...this.rearTanks];
     for (let index = 0; index < tanks.length; index++) {
-      const tank = tanks[index]?.find(tank => tank.id === selectedTankId);
-      if (tank) {
-        this.selectedTank.percentageFilled = tank?.percentageFilled ?? '';
+      const selectedTank = tanks[index]?.find(tank => tank.id === selectedTankId);
+      if (selectedTank) {
+        this.selectedTank.percentageFilled = selectedTank?.percentageFilled ?? '';
         break;
       }
     }
@@ -465,8 +465,8 @@ export class OnHandQuantityComponent implements OnInit {
    * @memberof OnHandQuantityComponent
    */
   onChange(event, selectedTankFormGroupIndex: number, field: string) {
+    this.selectedTank[field].value = event?.target.value;
     if (this.selectedTankFormGroup.valid) {
-      this.selectedTank[field].value = event?.target.value;
       this.onEditComplete({ originalEvent: event, data: this.selectedTank, field: field, index: selectedTankFormGroupIndex });
     } else {
       this.selectedTankFormGroup.markAllAsTouched();
@@ -531,7 +531,7 @@ export class OnHandQuantityComponent implements OnInit {
    * @memberof OnHandQuantityComponent
    */
   ohqGroupValidity(selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[]): boolean {
-    let key = ['arrivalVolume', 'arrivalQuantity', 'departureVolume', 'departureQuantity'];
+    const key = ['arrivalVolume', 'arrivalQuantity', 'departureVolume', 'departureQuantity'];
     for (let index = 0; index < this.listData.fuelTypes.length; index++) {
       for (let i = 0; i < key.length; i++) {
         const groupId = this.listData.fuelTypes[index].id;
