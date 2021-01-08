@@ -14,6 +14,7 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
 import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
+import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 
 /**
  *  popup for loadable quantity
@@ -56,7 +57,8 @@ export class LoadableQuantityComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService,
     private messageService: MessageService,
     private translateService: TranslateService,
-    private permissionsService: PermissionsService
+    private permissionsService: PermissionsService,
+    private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService
   ) { }
 
   /**
@@ -69,7 +71,7 @@ export class LoadableQuantityComponent implements OnInit {
     this.loadableQuantityBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], false);
     this.isEditable = this.permission ? this.permission?.edit : false;
-    this.errorMesages = this.loadableQuantityApiService.setValidationErrorMessage();
+    this.errorMesages = this.loadableStudyDetailsTransformationService.setValidationErrorMessageForLoadableQuantity();
     this.ports = await this.getPorts();
     this.getLoadableQuantity();
   }

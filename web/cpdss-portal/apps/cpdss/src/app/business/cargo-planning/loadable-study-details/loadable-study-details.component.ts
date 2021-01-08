@@ -81,6 +81,8 @@ export class LoadableStudyDetailsComponent implements OnInit {
   showCommingleButton = false;
   addCommingleBtnPermissionContext: IPermissionContext;
   obqComplete$: Observable<boolean>;
+  errorMesages: any;
+  isSelectedDischargePort = true;
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -106,6 +108,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
       this.loadableStudies = null;
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
     });
+    this.errorMesages = this.loadableStudyDetailsTransformationService.setValidationErrorMessage();
     this.setPagePermissionContext();
   }
 
@@ -322,8 +325,10 @@ export class LoadableStudyDetailsComponent implements OnInit {
     if (selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION) {
       if (this.dischargingPorts?.length > 0) {
         this.selectedTab = selectedTab;
+        this.isSelectedDischargePort = true;
       }
       else {
+        this.isSelectedDischargePort = false;
         this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY'], detail: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS'] });
       }
     }
@@ -403,6 +408,18 @@ export class LoadableStudyDetailsComponent implements OnInit {
       this.initSubsciptions();
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+    }
+  }
+
+  /**
+   * Get error if no discharge port is selected
+   */
+  fieldError(){
+    if (this.dischargingPorts?.length > 0) {
+     return null;
+    }
+    else {
+    return {required: true};
     }
   }
 }

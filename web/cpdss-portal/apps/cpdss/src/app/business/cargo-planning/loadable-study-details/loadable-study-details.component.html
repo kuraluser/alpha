@@ -22,7 +22,7 @@
             <a class="tab-btn" *cpdssPortalPermission="cargoNominationTabPermissionContext"
                 [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION}"
                 (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION)">{{'CARGO_NOMINATION' | translate}}
-                <div *ngIf="(cargoNominationComplete$|async) else incomplete" class="pt-5">
+                <div *ngIf="(cargoNominationComplete$|async) && dischargingPorts?.length> 0  else incomplete" class="pt-5">
                     <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
                 </div>
                 <ng-template #incomplete>
@@ -149,6 +149,10 @@
                             placeholder="{{ 'DISCHARGE_DROPDOWN_SELECT_PORT'| translate }}"
                             (onChange)="onDischargePortChange($event)" [selectionLimit]="5">
                         </p-multiSelect>
+                        <span class="col error-column" *ngIf="!isSelectedDischargePort">
+                            <cpdss-portal-validation-error [errors]="fieldError()"
+                                [errorMessages]="errorMesages.dischargePort"></cpdss-portal-validation-error>
+                        </span>
                         <span *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">{{dischargingPortsNames}}</span>
                     </div>
                 </div>

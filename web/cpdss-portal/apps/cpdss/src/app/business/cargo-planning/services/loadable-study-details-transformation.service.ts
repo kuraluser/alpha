@@ -953,7 +953,7 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'cargo1Color',
         header: '',
-        fieldHeaderClass:'column-cargo1-color',
+        fieldHeaderClass: 'column-cargo1-color',
         fieldClass: 'commingle-cargo1-color',
         fieldType: DATATABLE_FIELD_TYPE.COLOR,
 
@@ -965,7 +965,7 @@ export class LoadableStudyDetailsTransformationService {
         listName: 'percentage',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_PERCENTAGE_PLACEHOLDER',
-        fieldHeaderClass:'column-cargo1-pct',
+        fieldHeaderClass: 'column-cargo1-pct',
         fieldClass: 'commingle-cargo1-pct',
         errorMessages: {
           'required': 'COMMINGLE_PERCENTAGE_SELECT_ERROR',
@@ -989,7 +989,7 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'cargo2Color',
         header: '',
-        fieldHeaderClass:'column-cargo2-color',
+        fieldHeaderClass: 'column-cargo2-color',
         fieldClass: 'commingle-cargo2-color',
         fieldType: DATATABLE_FIELD_TYPE.COLOR
       },
@@ -1000,7 +1000,7 @@ export class LoadableStudyDetailsTransformationService {
         listName: 'percentage',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_PERCENTAGE_PLACEHOLDER',
-        fieldHeaderClass:'column-cargo2-pct',
+        fieldHeaderClass: 'column-cargo2-pct',
         fieldClass: 'commingle-cargo2-pct',
         errorMessages: {
           'required': 'COMMINGLE_PERCENTAGE_SELECT_ERROR',
@@ -1184,10 +1184,10 @@ export class LoadableStudyDetailsTransformationService {
  * @returns {IPortOBQTankDetailValueObject}
  * @memberof LoadableStudyDetailsTransformationService
  */
-  getOBQTankDetailsAsValueObject(obqTankDetail: IPortOBQTankDetail, isNewValue = true, listData: IPortOBQListData, isEditable=true): IPortOBQTankDetailValueObject {
+  getOBQTankDetailsAsValueObject(obqTankDetail: IPortOBQTankDetail, isNewValue = true, listData: IPortOBQListData, isEditable = true): IPortOBQTankDetailValueObject {
     const _obqTankDetail = <IPortOBQTankDetailValueObject>{};
     _obqTankDetail.id = obqTankDetail.id;
-    _obqTankDetail.portId = obqTankDetail.portId; 
+    _obqTankDetail.portId = obqTankDetail.portId;
     _obqTankDetail.tankId = obqTankDetail.tankId;
     _obqTankDetail.tankName = obqTankDetail.tankName;
     const cargoObj: ICargo = listData.cargoList.find(cargo => cargo.id === obqTankDetail.cargoId);
@@ -1214,13 +1214,13 @@ export class LoadableStudyDetailsTransformationService {
     return obqTankDetail;
   }
 
-    /**
-   * Method for converting obq data as value
-   *
-   * @param {IPortOBQTankDetailValueObject} obqTankDetail
-   * @returns {IPortOBQTankDetail}
-   * @memberof LoadableStudyDetailsTransformationService
-   */
+  /**
+ * Method for converting obq data as value
+ *
+ * @param {IPortOBQTankDetailValueObject} obqTankDetail
+ * @returns {IPortOBQTankDetail}
+ * @memberof LoadableStudyDetailsTransformationService
+ */
   getOBQTankDetailAsValue(obqTankDetail: IPortOBQTankDetailValueObject): IPortOBQTankDetail {
     const _obqTankDetail: IPortOBQTankDetail = <IPortOBQTankDetail>{};
     for (const key in obqTankDetail) {
@@ -1233,9 +1233,117 @@ export class LoadableStudyDetailsTransformationService {
     return _obqTankDetail;
   }
 
-    /** Set port grid complete status */
-    setObqValidity(isValid: boolean) {
-      this._obqValiditySource.next(isValid);
-    }
+  /** Set port grid complete status */
+  setObqValidity(isValid: boolean) {
+    this._obqValiditySource.next(isValid);
+  }
 
+  /**
+   *  Set validation error message
+   */
+  setValidationErrorMessage() {
+    return {
+      dischargePort: {
+        'required': 'CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS',
+      },
+    }
+  }
+
+   /**
+   * Set validation Error to form control
+   */
+  setValidationErrorMessageForLoadableQuantity() {
+    return {
+
+      portName: {
+        'required': 'LOADABLE_QUANTITY_PORTNAME_REQUIRED',
+      },
+      displacement: {
+        'required': 'LOADABLE_QUANTITY_DISPLACEMENT_REQUIREDD',
+      },
+      arrivalMaxDraft: {
+        'required': 'LOADABLE_QUANTITY_ARRIVAL_MAX_DRAFT_REQUIRED',
+      },
+      dwt: {
+        'required': 'LOADABLE_QUANTITY_DWT_REQUIRED',
+      },
+      lwt: {
+        'required': 'LOADABLE_QUANTITY_LWT_REQUIRED',
+      },
+      tpc: {
+        'required': 'LOADABLE_QUANTITY_TPC_REQUIRED'
+      },
+      estSeaDensity: {
+        'required': 'LOADABLE_QUANTITY_SEA_WATER_DENSITTY_REQUIRED',
+        'min': 'LOADABLE_QUANTITY_ERROR'
+      },
+      sgCorrection: {
+        'required': 'LOADABLE_QUANTITY_SG_CORRECTION_REQUIRED'
+      },
+      estimateSag: {
+        'required': 'LOADABLE_QUANTITY_ESTIMATE_SAG_REQUIRED',
+        'min': 'LOADABLE_QUANTITY_ERROR'
+      },
+      safCorrection: {
+        'required': 'LOADABLE_QUANTITY_SAF_CORRECTION_REQUIRED'
+      },
+      foOnboard: {
+        'required': 'LOADABLE_QUANTITY_FO_ONBOARD_REQUIRED',
+        'pattern': 'LOADABLE_QUANTITY_ERROR'
+      },
+      doOnboard: {
+        'required': 'LOADABLE_QUANTITY_DO_ONBOARD_REQUIRED',
+        'pattern': 'LOADABLE_QUANTITY_ERROR'
+      },
+      freshWaterOnboard: {
+        'required': 'LOADABLE_QUANTITY_FRESH_WATER_REQUIRED',
+        'pattern': 'LOADABLE_QUANTITY_ERROR'
+      },
+      boilerWaterOnboard: {
+        'required': 'LOADABLE_QUANTITY_BOILER_WATER_ONBOARD_REQUIRED',
+        'pattern': 'LOADABLE_QUANTITY_ERROR'
+      },
+      ballast: {
+        'required': 'LOADABLE_QUANTITY_BALLAST_REQUIRED',
+        'min': 'LOADABLE_QUANTITY_ERROR'
+      },
+      constant: {
+        'required': 'LOADABLE_QUANTITY_CONSTANT_REQUIRED'
+      },
+      others: {
+        'required': 'LOADABLE_QUANTITY_OTHERS_REQUIRED',
+        'min': 'LOADABLE_QUANTITY_ERROR'
+      },
+      distanceInSummerzone: {
+        'required': 'LOADABLE_QUANTITY_DISATANCE_REQUIRED',
+        'min': 'LOADABLE_QUANTITY_ERROR'
+      },
+      speedInSz: {
+        'required': 'LOADABLE_QUANTITY_SPEED_REQUIRED',
+        'min': 'LOADABLE_QUANTITY_ERROR'
+      },
+      runningHours: {
+        'required': 'LOADABLE_QUANTITY_RUNNING_HOURS_REQUIRED',
+        'min': 'LOADABLE_QUANTITY_ERROR'
+      },
+      runningDays: {
+        'required': 'LOADABLE_QUANTITY_RUNNING_DAYS_REQUIRED',
+        'min': 'LOADABLE_QUANTITY_ERROR'
+      },
+      foConday: {
+        'required': 'LOADABLE_QUANTITY_FO_CONS_PER_DAY_REQUIRED',
+        'min': 'LOADABLE_QUANTITY_ERROR'
+      },
+      foConsInSz: {
+        'required': 'LOADABLE_QUANTITY_FO_CONS_IN_SZ_REQUIRED',
+        'min': 'LOADABLE_QUANTITY_ERROR'
+      },
+      subTotal: {
+        'required': 'LOADABLE_QUANTITY_SUB_TOTAL_REQUIRED',
+      },
+      totalQuantity: {
+        'required': 'LOADABLE_QUANTITY_TOTAL_QUANTITY_REQUIRED"'
+      }
+    }
+  }
 }
