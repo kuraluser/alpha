@@ -40,6 +40,9 @@ service LoadableStudyService {
 	rpc SaveLoadableStudyPortRotation (PortRotationDetail) returns (PortRotationReply){
 	}
 	
+	rpc SaveLoadableStudyPortRotationList (PortRotationRequest) returns (PortRotationReply){
+	}
+	
 	rpc DeleteCargoNomination (CargoNominationRequest) returns (CargoNominationReply){
 	}
 		
@@ -396,6 +399,7 @@ message PortRotationRequest{
 	int64 voyageId = 3;
 	repeated int64 dischargingPortIds = 4;
 	int64 id = 5;
+	repeated PortRotationDetail portRotationDetails = 6;
 }
 
 message PortRotationDetail{

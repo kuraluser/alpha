@@ -28,6 +28,7 @@ import com.cpdss.gateway.domain.OnBoardQuantityResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
+import com.cpdss.gateway.domain.PortRotationRequest;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.SynopticalTableRequest;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
@@ -434,6 +435,46 @@ public class LoadableStudyController {
       request.setId(id);
       request.setLoadableStudyId(loadableStudyId);
       return this.loadableStudyService.savePortRotation(
+          request, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving loadable study - port rotation", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when saving loadable study - port rotation", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+  
+  /**
+   * Save all loadable study ports
+   *
+   * @param request
+   * @param loadableStudyId
+   * @param id
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public PortRotationResponse savePortRotationList(
+      @RequestBody @Valid PortRotationRequest request,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("savePortRotation: {}", getClientIp());
+      request.setLoadableStudyId(loadableStudyId);
+      return this.loadableStudyService.savePortRotationList(
           request, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable study - port rotation", e);
