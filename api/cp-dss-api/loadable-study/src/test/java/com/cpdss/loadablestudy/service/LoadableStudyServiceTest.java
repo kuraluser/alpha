@@ -53,6 +53,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.CargoOperation;
+import com.cpdss.loadablestudy.entity.CommingleCargo;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
@@ -65,9 +66,10 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.LoadableStudyStatus;
+import com.cpdss.loadablestudy.entity.OnBoardQuantity;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
+import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.entity.Voyage;
-import com.cpdss.loadablestudy.entity.VoyageStatus;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
@@ -110,6 +112,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -141,6 +145,7 @@ class LoadableStudyServiceTest {
   @MockBean private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @MockBean private CargoOperationRepository cargoOperationRepository;
   @MockBean private LoadableStudyStatusRepository loadableStudyStatusRepository;
+
   @MockBean private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
   @MockBean private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
 
@@ -148,7 +153,6 @@ class LoadableStudyServiceTest {
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
 
   @MockBean private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
-  @MockBean private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
 
   @MockBean private LoadablePatternDetailsRepository loadablePatternDetailsRepository;
   @MockBean private LoadablePatternRepository loadablePatternRepository;
@@ -176,9 +180,13 @@ class LoadableStudyServiceTest {
   @MockBean private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
   @MockBean private SynopticalTableRepository synopticalTableRepository;
   @Mock private CargoNomination cargoNomination;
-
   @Mock private CargoNominationPortDetails cargoNominationPortDetails;
 
+  @MockBean private EntityManager entityManager;
+
+  @MockBean private EntityManagerFactory entityManagerFactory;
+
+  @MockBean private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
   private static final String SUCCESS = "SUCCESS";
   private static final String VOYAGE = "VOYAGE";
   private static final String VOYAGEEXISTS = "VOYAGE_EXISTS";
@@ -457,6 +465,7 @@ class LoadableStudyServiceTest {
     if (loadlineXId.equals(0L)) {
       requestBuilder.setDraftRestriction(NUMERICAL_TEST_VALUE);
     }
+    requestBuilder.setDuplicatedFromId(0);
     requestBuilder.setLoadLineXId(loadlineXId);
     LoadableStudy entity = new LoadableStudy();
     entity.setId(2L);
@@ -1090,9 +1099,6 @@ class LoadableStudyServiceTest {
               Voyage voyage = new Voyage();
               voyage.setId(Long.valueOf(i));
               voyage.setVoyageNo("VYG-" + i);
-              voyage.setVoyageStartDate(LocalDateTime.now());
-              voyage.setVoyageEndDate(LocalDateTime.now());
-              voyage.setVoyageStatus(new VoyageStatus("ACTIVE", true));
               entityList.add(voyage);
             });
     return entityList;
@@ -1226,9 +1232,7 @@ class LoadableStudyServiceTest {
     builder.setOperationId(ID_TEST_VALUE);
     builder.setDistanceBetweenPorts(NUMERICAL_TEST_VALUE);
     builder.setEta(DATE_TIME_TEST_VALUE);
-    builder.setEtaActual(DATE_TIME_TEST_VALUE);
     builder.setEtd(DATE_TIME_TEST_VALUE);
-    builder.setEtdActual(DATE_TIME_TEST_VALUE);
     builder.setLayCanFrom(DATE_TEST_VALUE);
     builder.setLayCanTo(DATE_TEST_VALUE);
     builder.setMaxAirDraft(NUMERICAL_TEST_VALUE);
@@ -1981,11 +1985,6 @@ class LoadableStudyServiceTest {
     assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
   }
 
-  /**
-   * testConfirmPlanInvalidLoadablePatternId
-   *
-   * <p>void
-   */
   @Test
   void testConfirmPlanInvalidLoadablePatternId() {
     when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
@@ -1998,11 +1997,6 @@ class LoadableStudyServiceTest {
     assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, results.get(0).getResponseStatus().getCode());
   }
 
-  /**
-   * testConfirmPlanRuntimeException
-   *
-   * <p>void
-   */
   @Test
   void testConfirmPlanRuntimeException() {
     when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
@@ -2028,13 +2022,13 @@ class LoadableStudyServiceTest {
     loadablePattern.setId(1L);
     LoadableStudy loadableStudy = new LoadableStudy();
     loadableStudy.setId(1L);
-    loadableStudy.setVesselXId(1L);
     Voyage voyage = new Voyage();
     voyage.setId(1L);
     loadableStudy.setVoyage(voyage);
     loadablePattern.setLoadableStudy(loadableStudy);
     return loadablePattern;
   }
+
   /**
    * testGetLoadablePlanDetails
    *
@@ -2331,5 +2325,266 @@ class LoadableStudyServiceTest {
         LoadablePatternCommingleDetailsRequest.newBuilder();
     builder.setLoadablePatternCommingleDetailsId(1L);
     return builder.build();
+  }
+
+  /** Test loadable study duplicating */
+  @ParameterizedTest
+  @ValueSource(longs = {7L, 0L, 2L})
+  void testDuplicateLoadableStudy(Long loadlineXId) {
+    LoadableStudyDetail.Builder requestBuilder = this.createLoadableStudySaveRequest();
+    if (loadlineXId.equals(0L)) {
+      requestBuilder.setDraftRestriction(NUMERICAL_TEST_VALUE);
+    }
+    requestBuilder.setLoadLineXId(loadlineXId);
+    LoadableStudy entity = new LoadableStudy();
+
+    CargoNomination cargoNomination = new CargoNomination();
+    List<CargoNomination> cargoNominationList = new ArrayList<CargoNomination>();
+
+    LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
+    List<LoadableStudyPortRotation> loadableStudyPortRotationList =
+        new ArrayList<LoadableStudyPortRotation>();
+
+    OnHandQuantity onHandQuantity = new OnHandQuantity();
+    List<OnHandQuantity> onHandQuantityList = new ArrayList<OnHandQuantity>();
+
+    OnBoardQuantity onBoardQuantity = new OnBoardQuantity();
+    List<OnBoardQuantity> onBoardQuantityList = new ArrayList<OnBoardQuantity>();
+
+    LoadableQuantity loadableQuantity = new LoadableQuantity();
+    List<LoadableQuantity> loadableQuantityList = new ArrayList<LoadableQuantity>();
+
+    SynopticalTable synopticalTable = new SynopticalTable();
+    List<SynopticalTable> synopticalTableList = new ArrayList<SynopticalTable>();
+
+    CommingleCargo cargo = new CommingleCargo();
+    List<CommingleCargo> cargoList = new ArrayList<CommingleCargo>();
+
+    entity.setId(2L);
+    cargoNomination.setLoadableStudyXId(entity.getId());
+    cargoNominationList.add(cargoNomination);
+
+    loadableStudyPortRotation.setLoadableStudy(entity);
+    loadableStudyPortRotationList.add(loadableStudyPortRotation);
+
+    onHandQuantity.setLoadableStudy(entity);
+    onHandQuantityList.add(onHandQuantity);
+
+    onBoardQuantity.setLoadableStudy(entity);
+    onBoardQuantityList.add(onBoardQuantity);
+
+    loadableQuantity.setLoadableStudyXId(entity);
+    loadableQuantityList.add(loadableQuantity);
+
+    synopticalTable.setLoadableStudyXId(entity.getId());
+    synopticalTableList.add(synopticalTable);
+
+    cargo.setLoadableStudyXId(entity.getId());
+    cargoList.add(cargo);
+
+    when(this.voyageRepository.findById(anyLong()))
+        .thenReturn(Optional.of(this.createVoyageEntity()));
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), Mockito.anyBoolean()))
+        .thenReturn(Optional.of(entity));
+
+    when(this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
+            anyLong(), Mockito.anyBoolean()))
+        .thenReturn(cargoNominationList);
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+            anyLong(), Mockito.anyBoolean()))
+        .thenReturn(loadableStudyPortRotationList);
+    when(this.onHandQuantityRepository.findByLoadableStudyAndIsActive(any(), Mockito.anyBoolean()))
+        .thenReturn(onHandQuantityList);
+    when(this.onBoardQuantityRepository.findByLoadableStudyAndIsActive(any(), Mockito.anyBoolean()))
+        .thenReturn(onBoardQuantityList);
+    when(this.loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
+            anyLong(), Mockito.anyBoolean()))
+        .thenReturn(loadableQuantityList);
+    when(this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
+            anyLong(), Mockito.anyBoolean()))
+        .thenReturn(cargoList);
+    when(this.synopticalTableRepository.findByLoadableStudyXIdAndIsActive(
+            anyLong(), Mockito.anyBoolean()))
+        .thenReturn(synopticalTableList);
+
+    Mockito.doNothing().when(this.entityManager).detach(any(CargoNomination.class));
+    Mockito.doNothing().when(this.entityManager).detach(any(LoadableStudyPortRotation.class));
+    Mockito.doNothing().when(this.entityManager).detach(any(OnHandQuantity.class));
+    Mockito.doNothing().when(this.entityManager).detach(any(OnBoardQuantity.class));
+    Mockito.doNothing().when(this.entityManager).detach(any(LoadableQuantity.class));
+    Mockito.doNothing().when(this.entityManager).detach(any(SynopticalTable.class));
+    Mockito.doNothing().when(this.entityManager).detach(any(CommingleCargo.class));
+
+    when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudy(requestBuilder.build(), responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+    assertEquals(2L, replies.get(0).getId());
+  }
+
+  /** Test loadable study editing */
+  @ParameterizedTest
+  @ValueSource(longs = {7L, 0L, 2L})
+  void testEditLoadableStudy(Long loadlineXId) {
+    LoadableStudyDetail.Builder requestBuilder = this.createLoadableStudySaveRequest();
+    requestBuilder.setId(2L);
+    if (loadlineXId.equals(0L)) {
+      requestBuilder.setDraftRestriction(NUMERICAL_TEST_VALUE);
+    }
+    requestBuilder.setLoadLineXId(loadlineXId);
+    LoadableStudy entity = new LoadableStudy();
+
+    CargoNomination cargoNomination = new CargoNomination();
+    List<CargoNomination> cargoNominationList = new ArrayList<CargoNomination>();
+
+    LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
+    List<LoadableStudyPortRotation> loadableStudyPortRotationList =
+        new ArrayList<LoadableStudyPortRotation>();
+
+    OnHandQuantity onHandQuantity = new OnHandQuantity();
+    List<OnHandQuantity> onHandQuantityList = new ArrayList<OnHandQuantity>();
+
+    OnBoardQuantity onBoardQuantity = new OnBoardQuantity();
+    List<OnBoardQuantity> onBoardQuantityList = new ArrayList<OnBoardQuantity>();
+
+    LoadableQuantity loadableQuantity = new LoadableQuantity();
+    List<LoadableQuantity> loadableQuantityList = new ArrayList<LoadableQuantity>();
+
+    SynopticalTable synopticalTable = new SynopticalTable();
+    List<SynopticalTable> synopticalTableList = new ArrayList<SynopticalTable>();
+
+    CommingleCargo cargo = new CommingleCargo();
+    List<CommingleCargo> cargoList = new ArrayList<CommingleCargo>();
+
+    entity.setId(2L);
+    cargoNomination.setLoadableStudyXId(entity.getId());
+    cargoNominationList.add(cargoNomination);
+
+    loadableStudyPortRotation.setLoadableStudy(entity);
+    loadableStudyPortRotationList.add(loadableStudyPortRotation);
+
+    onHandQuantity.setLoadableStudy(entity);
+    onHandQuantityList.add(onHandQuantity);
+
+    onBoardQuantity.setLoadableStudy(entity);
+    onBoardQuantityList.add(onBoardQuantity);
+
+    loadableQuantity.setLoadableStudyXId(entity);
+    loadableQuantityList.add(loadableQuantity);
+
+    synopticalTable.setLoadableStudyXId(entity.getId());
+    synopticalTableList.add(synopticalTable);
+
+    cargo.setLoadableStudyXId(entity.getId());
+    cargoList.add(cargo);
+
+    when(this.voyageRepository.findById(anyLong()))
+        .thenReturn(Optional.of(this.createVoyageEntity()));
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), Mockito.anyBoolean()))
+        .thenReturn(Optional.of(entity));
+
+    when(this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
+            anyLong(), Mockito.anyBoolean()))
+        .thenReturn(cargoNominationList);
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+            anyLong(), Mockito.anyBoolean()))
+        .thenReturn(loadableStudyPortRotationList);
+    when(this.onHandQuantityRepository.findByLoadableStudyAndIsActive(any(), Mockito.anyBoolean()))
+        .thenReturn(onHandQuantityList);
+    when(this.onBoardQuantityRepository.findByLoadableStudyAndIsActive(any(), Mockito.anyBoolean()))
+        .thenReturn(onBoardQuantityList);
+    when(this.loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
+            anyLong(), Mockito.anyBoolean()))
+        .thenReturn(loadableQuantityList);
+    when(this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
+            anyLong(), Mockito.anyBoolean()))
+        .thenReturn(cargoList);
+    when(this.synopticalTableRepository.findByLoadableStudyXIdAndIsActive(
+            anyLong(), Mockito.anyBoolean()))
+        .thenReturn(synopticalTableList);
+
+    Mockito.doNothing().when(this.entityManager).detach(any(CargoNomination.class));
+    Mockito.doNothing().when(this.entityManager).detach(any(LoadableStudyPortRotation.class));
+    Mockito.doNothing().when(this.entityManager).detach(any(OnHandQuantity.class));
+    Mockito.doNothing().when(this.entityManager).detach(any(OnBoardQuantity.class));
+    Mockito.doNothing().when(this.entityManager).detach(any(LoadableQuantity.class));
+    Mockito.doNothing().when(this.entityManager).detach(any(SynopticalTable.class));
+    Mockito.doNothing().when(this.entityManager).detach(any(CommingleCargo.class));
+
+    when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudy(requestBuilder.build(), responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+    assertEquals(2L, replies.get(0).getId());
+  }
+
+  /** Test loadable study editing when entity is null */
+  @ParameterizedTest
+  @ValueSource(longs = {7L, 0L, 2L})
+  void testEditLoadableStudyWithEntityNull(Long loadlineXId) {
+    LoadableStudyDetail.Builder requestBuilder = this.createLoadableStudySaveRequest();
+    requestBuilder.setId(2L);
+    if (loadlineXId.equals(0L)) {
+      requestBuilder.setDraftRestriction(NUMERICAL_TEST_VALUE);
+    }
+    requestBuilder.setLoadLineXId(loadlineXId);
+    LoadableStudy entity = new LoadableStudy();
+
+    entity.setId(2L);
+
+    when(this.voyageRepository.findById(anyLong()))
+        .thenReturn(Optional.of(this.createVoyageEntity()));
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), Mockito.anyBoolean()))
+        .thenReturn(Optional.empty());
+
+    when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudy(requestBuilder.build(), responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+    assertEquals(0L, replies.get(0).getId());
+  }
+
+  /** Test loadable study editing with exception */
+  @ParameterizedTest
+  @ValueSource(longs = {7L, 0L, 2L})
+  void testEditLoadableStudyWithException(Long loadlineXId) {
+    LoadableStudyDetail.Builder requestBuilder = this.createLoadableStudySaveRequest();
+    requestBuilder.setId(2L);
+    if (loadlineXId.equals(0L)) {
+      requestBuilder.setDraftRestriction(NUMERICAL_TEST_VALUE);
+    }
+    requestBuilder.setLoadLineXId(loadlineXId);
+    LoadableStudy entity = new LoadableStudy();
+
+    entity.setId(2L);
+
+    when(this.voyageRepository.findById(anyLong()))
+        .thenReturn(Optional.of(this.createVoyageEntity()));
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), Mockito.anyBoolean()))
+        .thenThrow(NullPointerException.class);
+
+    when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudy(requestBuilder.build(), responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+    assertEquals(0L, replies.get(0).getId());
   }
 }

@@ -162,7 +162,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -198,8 +197,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
   @Autowired private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @Autowired private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
+  @Autowired private EntityManager entityManager;
   @Autowired private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
-  @PersistenceContext private EntityManager entityManager;
 
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
 
