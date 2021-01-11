@@ -90,6 +90,7 @@ import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
@@ -115,6 +116,7 @@ import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
@@ -196,6 +198,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
   @Autowired private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @Autowired private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
+  @Autowired private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
   @PersistenceContext private EntityManager entityManager;
 
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
@@ -293,6 +296,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long CARGO_TANK_CATEGORY_ID = 1L;
   private static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;
   private static final Long CARGO_VOID_TANK_CATEGORY_ID = 15L;
+
+  private static final List<Long> CARGO_BALLAST_TANK_CATEGORIES =
+      Arrays.asList(
+          CARGO_TANK_CATEGORY_ID,
+          CARGO_SLOP_TANK_CATEGORY_ID,
+          CARGO_VOID_TANK_CATEGORY_ID,
+          BALLAST_TANK_CATEGORY_ID,
+          BALLAST_VOID_TANK_CATEGORY_ID);
 
   private static final List<Long> CARGO_TANK_CATEGORIES =
       Arrays.asList(
@@ -4080,49 +4091,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
 
-        VesselReply vesselReplyCargoTanks =
-            this.getTanks(
-                loadablePatternOpt.get().getLoadableStudy().getVesselXId(), CARGO_TANK_CATEGORIES);
-        if (!SUCCESS.equals(vesselReplyCargoTanks.getResponseStatus().getStatus())) {
-          throw new GenericServiceException(
-              "Failed to fetch vessel particualrs for cargo tanks",
-              vesselReplyCargoTanks.getResponseStatus().getCode(),
-              HttpStatusCode.valueOf(
-                  Integer.valueOf(vesselReplyCargoTanks.getResponseStatus().getCode())));
-        }
-
-        VesselReply vesselReplyBallastTanks =
-            this.getTanks(
-                loadablePatternOpt.get().getLoadableStudy().getVesselXId(),
-                BALLAST_TANK_CATEGORIES);
-        if (!SUCCESS.equals(vesselReplyBallastTanks.getResponseStatus().getStatus())) {
-          throw new GenericServiceException(
-              "Failed to fetch vessel particualrs for ballast tanks",
-              vesselReplyBallastTanks.getResponseStatus().getCode(),
-              HttpStatusCode.valueOf(
-                  Integer.valueOf(vesselReplyBallastTanks.getResponseStatus().getCode())));
-        }
-
-        List<LoadablePlanQuantity> loadablePlanQuantities =
-            loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
-                loadablePatternOpt.get(), true);
-        buildLoadablePlanQuantity(loadablePlanQuantities, replyBuilder);
-
-        List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
-            loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
-                loadablePatternOpt.get(), true);
-        buildLoadablePlanCommingleDetails(loadablePlanCommingleDetails, replyBuilder);
-
-        List<LoadablePlanStowageDetails> loadablePlanStowageDetails =
-            loadablePlanStowageDetailsRespository.findByLoadablePatternAndIsActive(
-                loadablePatternOpt.get(), true);
-        buildLoadablePlanStowageCargoDetails(loadablePlanStowageDetails, replyBuilder);
-
-        replyBuilder.addAllTanks(this.groupTanks(vesselReplyCargoTanks.getVesselTanksList()));
-
-        buildBallastTankLayout(vesselReplyBallastTanks, replyBuilder);
-
-        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+        buildLoadablePlanDetails(loadablePatternOpt, replyBuilder);
       }
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching loadable study - port data", e);
@@ -4137,27 +4106,113 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
+   * void
+   *
+   * @param replyBuilder
+   * @param loadablePatternOpt
+   */
+  private void buildLoadablePlanDetails(
+      Optional<LoadablePattern> loadablePatternOpt,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder)
+      throws GenericServiceException {
+
+    VesselReply vesselReplyCargoBallastTanks =
+        this.getTanks(
+            loadablePatternOpt.get().getLoadableStudy().getVesselXId(),
+            CARGO_BALLAST_TANK_CATEGORIES);
+    if (!SUCCESS.equals(vesselReplyCargoBallastTanks.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to fetch vessel particualrs for cargo tanks",
+          vesselReplyCargoBallastTanks.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(vesselReplyCargoBallastTanks.getResponseStatus().getCode())));
+    }
+
+    List<LoadablePlanQuantity> loadablePlanQuantities =
+        loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
+            loadablePatternOpt.get(), true);
+    buildLoadablePlanQuantity(loadablePlanQuantities, replyBuilder);
+
+    List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
+        loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
+            loadablePatternOpt.get(), true);
+    buildLoadablePlanCommingleDetails(loadablePlanCommingleDetails, replyBuilder);
+
+    List<LoadablePlanStowageDetails> loadablePlanStowageDetails =
+        loadablePlanStowageDetailsRespository.findByLoadablePatternAndIsActive(
+            loadablePatternOpt.get(), true);
+    buildLoadablePlanStowageCargoDetails(loadablePlanStowageDetails, replyBuilder);
+
+    replyBuilder.addAllTanks(
+        this.groupTanks(
+            vesselReplyCargoBallastTanks.getVesselTanksList().stream()
+                .filter(tankList -> CARGO_TANK_CATEGORIES.contains(tankList.getTankCategoryId()))
+                .collect(Collectors.toList())));
+
+    buildBallastTankLayout(
+        vesselReplyCargoBallastTanks.getVesselTanksList().stream()
+            .filter(tankList -> BALLAST_TANK_CATEGORIES.contains(tankList.getTankCategoryId()))
+            .collect(Collectors.toList()),
+        replyBuilder);
+    List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
+        loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
+            loadablePatternOpt.get(), true);
+    buildBallstGridDetails(loadablePlanBallastDetails, replyBuilder);
+
+    replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+  }
+
+  /**
+   * @param loadablePlanBallastDetails
+   * @param replyBuilder void
+   */
+  private void buildBallstGridDetails(
+      List<LoadablePlanBallastDetails> loadablePlanBallastDetails,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
+    loadablePlanBallastDetails.forEach(
+        lpbd -> {
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails.Builder builder =
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails.newBuilder();
+          Optional.ofNullable(lpbd.getId()).ifPresent(builder::setId);
+          Optional.ofNullable(lpbd.getCorrectedLevel()).ifPresent(builder::setCorrectedLevel);
+          Optional.ofNullable(lpbd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
+          Optional.ofNullable(lpbd.getCubicMeter()).ifPresent(builder::setCubicMeter);
+          Optional.ofNullable(lpbd.getInertia()).ifPresent(builder::setInertia);
+          Optional.ofNullable(lpbd.getLcg()).ifPresent(builder::setLcg);
+          Optional.ofNullable(lpbd.getMetricTon()).ifPresent(builder::setMetricTon);
+          Optional.ofNullable(lpbd.getPercentage()).ifPresent(builder::setPercentage);
+          Optional.ofNullable(lpbd.getRdgLevel()).ifPresent(builder::setRdgLevel);
+          Optional.ofNullable(lpbd.getSg()).ifPresent(builder::setSg);
+          Optional.ofNullable(lpbd.getTankId()).ifPresent(builder::setTankId);
+          Optional.ofNullable(lpbd.getTcg()).ifPresent(builder::setTcg);
+          Optional.ofNullable(lpbd.getVcg()).ifPresent(builder::setVcg);
+          Optional.ofNullable(lpbd.getTankName()).ifPresent(builder::setTankName);
+          replyBuilder.addLoadablePlanBallastDetails(builder);
+        });
+  }
+
+  /**
    * @param vesselReplyBallastTanks
    * @param replyBuilder void
    */
   private void buildBallastTankLayout(
-      VesselReply vesselReplyBallastTanks,
+      List<VesselTankDetail> vesselTankDetails,
       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
 
     List<VesselTankDetail> frontBallastTanks = new ArrayList<>();
     List<VesselTankDetail> centerBallestTanks = new ArrayList<>();
     List<VesselTankDetail> rearBallastTanks = new ArrayList<>();
     frontBallastTanks.addAll(
-        vesselReplyBallastTanks.getVesselTanksList().stream()
+        vesselTankDetails.stream()
             .filter(tank -> BALLAST_FRONT_TANK.equals(tank.getTankPositionCategory()))
             .collect(Collectors.toList()));
     centerBallestTanks.addAll(
-        vesselReplyBallastTanks.getVesselTanksList().stream()
+        vesselTankDetails.stream()
             .filter(tank -> BALLAST_CENTER_TANK.equals(tank.getTankPositionCategory()))
             .collect(Collectors.toList()));
 
     rearBallastTanks.addAll(
-        vesselReplyBallastTanks.getVesselTanksList().stream()
+        vesselTankDetails.stream()
             .filter(tank -> BALLAST_REAR_TANK.equals(tank.getTankPositionCategory()))
             .collect(Collectors.toList()));
 

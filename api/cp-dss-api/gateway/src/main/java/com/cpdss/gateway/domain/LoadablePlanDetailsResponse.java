@@ -17,4 +17,5 @@ public class LoadablePlanDetailsResponse {
   private List<List<VesselTank>> centerBallastTanks;
   private List<List<VesselTank>> rearBallastTanks;
   private List<LoadablePlanBallastDetails> loadablePlanBallastDetails;
+  private List<LoadablePlanSynopticalRecord> loadablePlanSynopticalRecords;
 }

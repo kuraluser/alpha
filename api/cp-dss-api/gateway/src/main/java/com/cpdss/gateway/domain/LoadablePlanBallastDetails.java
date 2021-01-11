@@ -19,4 +19,5 @@ public class LoadablePlanBallastDetails {
   private String vcg;
   private String tcg;
   private String inertia;
+  private String tankName;
 }

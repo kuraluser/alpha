@@ -1091,7 +1091,8 @@ class LoadableStudyControllerTest {
       })
   @ParameterizedTest
   void testLoadablePatternDetails(String url) throws Exception {
-    when(this.loadableStudyService.getLoadablePatternDetails(anyLong(), anyString()))
+    when(this.loadableStudyService.getLoadablePatternDetails(
+            anyLong(), anyLong(), anyLong(), anyString()))
         .thenReturn(new LoadablePlanDetailsResponse());
     this.mockMvc
         .perform(
@@ -1118,7 +1119,9 @@ class LoadableStudyControllerTest {
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    when(this.loadableStudyService.getLoadablePatternDetails(anyLong(), anyString())).thenThrow(ex);
+    when(this.loadableStudyService.getLoadablePatternDetails(
+            anyLong(), anyLong(), anyLong(), anyString()))
+        .thenThrow(ex);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(

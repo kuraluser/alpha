@@ -56,6 +56,7 @@ import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
@@ -141,6 +142,7 @@ class LoadableStudyServiceTest {
   @MockBean private CargoOperationRepository cargoOperationRepository;
   @MockBean private LoadableStudyStatusRepository loadableStudyStatusRepository;
   @MockBean private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
+  @MockBean private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
 
   @MockBean
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
@@ -176,7 +178,6 @@ class LoadableStudyServiceTest {
   @Mock private CargoNomination cargoNomination;
 
   @Mock private CargoNominationPortDetails cargoNominationPortDetails;
-  @MockBean private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String VOYAGE = "VOYAGE";
@@ -2062,6 +2063,10 @@ class LoadableStudyServiceTest {
             any(LoadablePattern.class), anyBoolean()))
         .thenReturn(preparePlanStowageDetails());
 
+    when(this.loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(preparePlanBallastDetails());
+
     StreamRecorder<LoadablePlanDetailsReply> responseObserver = StreamRecorder.create();
     spyService.getLoadablePlanDetails(this.createGetLoadablePlanDetails(), responseObserver);
     List<LoadablePlanDetailsReply> results = responseObserver.getValues();
@@ -2105,6 +2110,10 @@ class LoadableStudyServiceTest {
             any(LoadablePattern.class), anyBoolean()))
         .thenReturn(preparePlanStowageDetails());
 
+    when(this.loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(preparePlanBallastDetails());
+
     StreamRecorder<LoadablePlanDetailsReply> responseObserver = StreamRecorder.create();
     spyService.getLoadablePlanDetails(this.createGetLoadablePlanDetails(), responseObserver);
     List<LoadablePlanDetailsReply> results = responseObserver.getValues();
@@ -2147,6 +2156,14 @@ class LoadableStudyServiceTest {
     assertEquals(1, results.size());
     assertNull(responseObserver.getError());
     assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /** @return List<LoadablePlanBallastDetails> */
+  private List<LoadablePlanBallastDetails> preparePlanBallastDetails() {
+    List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
+        new ArrayList<LoadablePlanBallastDetails>();
+    loadablePlanBallastDetails.add(new LoadablePlanBallastDetails());
+    return loadablePlanBallastDetails;
   }
 
   /** @return List<LoadablePlanStowageDetails> */
