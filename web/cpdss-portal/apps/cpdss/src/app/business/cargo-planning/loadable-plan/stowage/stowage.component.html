@@ -45,15 +45,7 @@
                 </cpdss-portal-datatable>
             </div>
             <div class="col" *ngIf="selectedTab === tankType.BALLAST">
-                <p-table #datatable [columns]="columns" [value]="value">
-                    <ng-template pTemplate="header" let-columns>
-                        <tr>
-                            <th *ngFor="let col of columns">
-                                {{col.header}}
-                            </th>
-                        </tr>
-                    </ng-template>
-                </p-table>
+                <cpdss-portal-ballast-stowage  [ballastDetails]="ballastDetails"></cpdss-portal-ballast-stowage>
             </div>
         </div>
     </div>

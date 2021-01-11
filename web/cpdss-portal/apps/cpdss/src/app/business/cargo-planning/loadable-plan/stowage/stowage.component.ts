@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DATATABLE_EDITMODE } from '../../../../shared/components/datatable/datatable.model';
 import { ICargoTank, ITankOptions, TANKTYPE } from '../../../core/models/common.model';
-import { ICargoTankDetailValueObject } from '../../models/loadable-plan.model';
+import { ICargoTankDetailValueObject , IBallastStowageDetails } from '../../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
 
 /**
@@ -39,6 +39,15 @@ export class StowageComponent implements OnInit {
 
   @Input() form: FormGroup;
 
+  @Input()
+  set ballastDetails(value: IBallastStowageDetails[]) {
+    this._ballastDetails = value;
+  }
+
+  get ballastDetails(): IBallastStowageDetails[] {
+    return this._ballastDetails;
+  }
+
   readonly tankType = TANKTYPE;
   editMode: DATATABLE_EDITMODE = null;
   selectedTab = TANKTYPE.CARGO;
@@ -49,6 +58,7 @@ export class StowageComponent implements OnInit {
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[];
+  private _ballastDetails: IBallastStowageDetails[];
 
   constructor(private loadablePlanTransformationService: LoadablePlanTransformationService, private fb: FormBuilder) { }
 

@@ -5,7 +5,7 @@ import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { ICargoTank } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
-import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo } from '../models/loadable-plan.model';
+import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo , IBallastTanksDetails , IBallastStowageDetails } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { numberValidator } from '../directives/validator/number-validator.directive';
@@ -46,6 +46,10 @@ export class LoadablePlanComponent implements OnInit {
   loadableQuantityCargoDetails: ILoadableQuantityCargo[];
   loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
   loadablePlanForm: FormGroup;
+  public rearBallastTanks: IBallastTanksDetails[];
+  public centerBallastTanks: IBallastTanksDetails[];
+  public frontBallastTanks: IBallastTanksDetails[];
+  public loadablePlanBallastDetails: IBallastStowageDetails[];
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[];
@@ -103,6 +107,10 @@ export class LoadablePlanComponent implements OnInit {
     this.cargoTankDetails = loadablePlanRes?.loadablePlanStowageDetails?.map(cargo => this.loadablePlanTransformationService.getCargoTankDetailAsValueObject(cargo));
     this.cargoTanks = loadablePlanRes?.tankLists;
     this.initLoadablePlanForm();
+    this.frontBallastTanks = loadablePlanRes.frontBallastTanks;
+    this.rearBallastTanks = loadablePlanRes.rearBallastTanks;
+    this.centerBallastTanks = loadablePlanRes.centerBallastTanks;
+    this.loadablePlanBallastDetails = loadablePlanRes.loadablePlanBallastDetails;
     this.ngxSpinnerService.hide();
   }
 

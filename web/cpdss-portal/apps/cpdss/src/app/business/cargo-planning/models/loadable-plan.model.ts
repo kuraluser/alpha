@@ -15,6 +15,10 @@ export interface ILoadablePlanResponse {
     loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
     tankLists: ICargoTank[][];
     loadablePlanStowageDetails: ICargoTankDetail[];
+    frontBallastTanks: IBallastTanksDetails[],
+    centerBallastTanks: IBallastTanksDetails[],
+    rearBallastTanks: IBallastTanksDetails[],
+    loadablePlanBallastDetails: IBallastStowageDetails[]
 }
 
 /**
@@ -166,4 +170,48 @@ export interface ICargoTankDetailEvent extends IDataTableEvent {
     field: string;
     index: number;
     originalEvent: MouseEvent;
+}
+
+/**
+ * Interface for ballast stowage
+ *
+ * @export
+ * @interface 
+ */
+export interface IBallastStowageDetails {
+    id: number,
+    tankName?: string,
+    tankId: number,
+    rdgLevel: string,
+    correctionFactor: string,
+    correctedLevel: string,
+    metricTon: string,
+    cubicMeter: string,
+    percentage: string,
+    sg: string,
+    lcg: string,
+    vcg: string,
+    tcg: string,
+    inertia: string
+}
+
+
+/**
+ * Interface for ballast Tank details
+ * @export
+ * @interface 
+ */
+export interface IBallastTanksDetails {
+    id: number,
+    categoryId: number,
+    categoryName: string,
+    name: string,
+    frameNumberFrom: string,
+    frameNumberTo: string,
+    shortName: string,
+    fullCapacityCubm: string,
+    density: number,
+    group: number,
+    order: number,
+    slopTank: boolean
 }
