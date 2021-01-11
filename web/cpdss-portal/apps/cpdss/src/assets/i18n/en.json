@@ -364,6 +364,18 @@
 	"SYNOPTICAL_LOADABLE_STUDY_LABEL": "Loadable study",
 	"SYNOPTICAL_VOYAGE_LABEL": "Voyage",
 	"SYNOPTICAL_LOADABLESTUDY_PLACEHOLDER": "Select loadable study",
+
+	"SYNOPTICAL_REQUIRED": "Required",
+    "SYNOPTICAL_INVALID": "Invalid",
+    "SYNOPTICAL_FROM_MAX": "From Tide should be less than To Tide",
+    "SYNOPTICAL_TO_MIN": "To Tide should be greater than From Tide",
+    "SYNOPTICAL_TIME_FROM_MAX": "From Time should be less than To Time",
+    "SYNOPTICAL_TIME_TO_MIN": "To Time should be greater than From Time",
+    "SYNOPTICAL_ETA_MIN": "Arrival time should be greater than last port's Departure time",
+    "SYNOPTICAL_ETD_MIN": "Departure time should be greater than Arrival time",
+    "SYNOPTICAL_ETA_MAX": "Arrival time should be less than Departure time",
+	"SYNOPTICAL_ETD_MAX": "Departure time should be less than next port's Arrival time",
+	
 	"PORT_WATER_DENSITY_MIN_ERROR": "Water density must be greater than or equal to 0",
 	"PORT_MAX_DRAFT_MIN_ERROR": "Max draft must be greater than or equal to 0",
 	"PORT_MAX_AIR_DRAFT_MIN_ERROR": "Max air draft must be greater than or equal to 0",

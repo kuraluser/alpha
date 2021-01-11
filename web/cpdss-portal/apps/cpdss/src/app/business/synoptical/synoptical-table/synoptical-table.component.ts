@@ -1,8 +1,15 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ISynopticalRecords, SynopticalColumn, SynopticalDynamicColumn } from '../models/synoptical-table.model';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { DATATABLE_FIELD_TYPE } from '../../../shared/components/datatable/datatable.model';
+import { IValidationErrorMessages } from '../../../shared/components/validation-error/validation-error.model';
+import { numberValidator } from '../../cargo-planning/directives/validator/number-validator.directive';
+import { ISynopticalRecords, SynopticalColumn, SynopticalDynamicColumn, SynopticField } from '../models/synoptical-table.model';
 import { SynopticalApiService } from '../services/synoptical-api.service';
+import { SynopticalService } from '../services/synoptical.service';
 
 /**
  * Component class of synoptical table
@@ -16,31 +23,74 @@ import { SynopticalApiService } from '../services/synoptical-api.service';
   templateUrl: './synoptical-table.component.html',
   styleUrls: ['./synoptical-table.component.scss']
 })
-export class SynopticalTableComponent {
+export class SynopticalTableComponent implements OnInit {
+  readonly fieldType = DATATABLE_FIELD_TYPE;
+
   synopticalRecords: ISynopticalRecords[] = [];
   cols: SynopticalColumn[];
   maxSubRowLevel = 2;
 
-  @Input() loadableStudyId: number;
-  @Input() vesselId: number;
-  @Input() voyageId: number;
 
   listData = {};
   dynamicColumns: SynopticalDynamicColumn[];
   headerColumn: SynopticalColumn;
+  tableForm: FormArray = new FormArray([]);
+  errorMessages: IValidationErrorMessages = {
+    'required': 'SYNOPTICAL_REQUIRED',
+    'invalid': 'SYNOPTICAL_INVALID',
+    'fromMax': 'SYNOPTICAL_FROM_MAX',
+    'toMin': 'SYNOPTICAL_TO_MIN',
+    'timeFromMax': 'SYNOPTICAL_TIME_FROM_MAX',
+    'timeToMin': 'SYNOPTICAL_TIME_TO_MIN',
+    'etaMin': "SYNOPTICAL_ETA_MIN",
+    'etdMin': 'SYNOPTICAL_ETD_MIN',
+    'etaMax': 'SYNOPTICAL_ETA_MAX',
+    'etdMax': "SYNOPTICAL_ETD_MAX",
+  };
+  editMode = false;
+  ngUnsubscribe: Subject<void> = new Subject();
 
   constructor(
     private synoticalApiService: SynopticalApiService,
     private route: ActivatedRoute,
-    private ngxSpinner: NgxSpinnerService
+    private ngxSpinner: NgxSpinnerService,
+    private synopticalService: SynopticalService
   ) {
-    this.route.params
-      .subscribe(route => {
-        this.loadableStudyId = route.loadableStudyId;
-        this.vesselId = route.vesselId;
-        this.voyageId = route.voyageId;
-        this.initData();
-      });
+  }
+
+  /**
+  * Component lifecycle ngOnit
+  *
+  * @returns {Promise<void>}
+  * @memberof SynopticalTableComponent
+  */
+  ngOnInit() {
+    this.synopticalService.onInitCompleted$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(completed => {
+        if (completed) {
+          this.route.params
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(async route => {
+              this.synopticalService.loadableStudyId = route.loadableStudyId;
+              this.synopticalService.vesselId = route.vesselId;
+              this.synopticalService.voyageId = route.voyageId;
+              await this.synopticalService.setSelectedVoyage();
+              this.initData();
+            });
+        }
+      })
+  }
+
+  /**
+  * Component lifecycle ngOnDestroy
+  *
+  * @returns {Promise<void>}
+  * @memberof SynopticalTableComponent
+  */
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**
@@ -54,14 +104,14 @@ export class SynopticalTableComponent {
     this.initColumns();
     this.initDynamicColumns();
     this.setColumnHeader();
-    const result = await this.synoticalApiService.getSynopticalTable(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
+    const result = await this.synoticalApiService.getSynopticalTable(this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId).toPromise();
     if (result.responseStatus.status === "200") {
-      this.synopticalRecords = result.synopticalRecords;
+      this.synopticalRecords = result.synopticalRecords ?? [];
       this.dynamicColumns.forEach(dynamicColumn => {
-        this.listData[dynamicColumn.listKey] = result[dynamicColumn.listKey];
         this.formatData(dynamicColumn)
         this.addToColumns(dynamicColumn);
       })
+      this.initForm();
     }
     this.ngxSpinner.hide();
   }
@@ -117,26 +167,550 @@ export class SynopticalTableComponent {
    */
   initColumns() {
     this.cols = [
-      { field: 'portName', header: 'Ports' },
-      { field: 'operationType', header: 'ARR OR DEP' },
-      { field: 'distance', header: 'Distance' },
-      { field: 'speed', header: 'Speed' },
-      { field: 'runningHours', header: 'Running Hours' },
-      // {
-      //   header: 'ETA/ETD',
-      //   subHeaders: [{
-      //     header: '',
-      //     subHeaders: [
-      //       { header: "Estimated", field: 'eta' },
-      //       { header: "Actual", field: 'etd' },
-      //     ]
-      //   }
-      //   ]
-      // },
-      { field: 'inPortHours', header: 'In Port Hours' },
-      { field: 'timeOfSunrise', header: 'Time of Sunrise' },
-      { field: 'timeOfSunset', header: 'Time of Sunset' },
-      { field: 'timeOfSunrise', header: 'Time of Sunrise' },
+      { fields: [{ key: 'portName' }], header: 'Ports' },
+      {
+        fields: [{ key: 'operationType' }],
+        header: 'ARR OR DEP',
+      },
+      {
+        fields: [{
+          key: 'distance',
+          type: this.fieldType.NUMBER,
+          validators: ['dddd.dd.+']
+        }],
+        header: 'Distance',
+        editable: true,
+      },
+      {
+        fields: [{
+          key: 'speed',
+          type: this.fieldType.NUMBER,
+          validators: ['dddd.dd.+']
+        }],
+        header: 'Speed',
+        editable: true,
+      },
+      {
+        fields: [{
+          key: 'runningHours',
+          type: this.fieldType.NUMBER,
+        }],
+        header: 'Running Hours',
+        editable: false,
+      },
+      {
+        header: 'ETA/ETD',
+        subHeaders: [{
+          header: '',
+          subHeaders: [
+            {
+              header: "Plan",
+              fields: [{
+                key: 'etaEtdPlanned',
+                type: this.fieldType.DATETIME,
+                validators: ['required']
+              }],
+              editable: !this.checkIfConfirmed(),
+            },
+            {
+              header: "Actual",
+              fields: [{
+                key: 'etaEtdActual',
+                type: this.fieldType.DATETIME,
+                validators: ['required']
+              }],
+              editable: this.checkIfConfirmed(),
+            },
+          ]
+        }
+        ]
+      },
+      {
+        header: 'In Port Hours',
+        fields: [{
+          key: 'inPortHours',
+          type: this.fieldType.NUMBER,
+          validators: ['dddd.dd.+']
+        }],
+        editable: true,
+      },
+      {
+        header: 'Time of Sunrise',
+        fields: [{ key: 'timeOfSunrise' }],
+        editable: true,
+      },
+      {
+        header: 'Time of Sunset',
+        fields: [{ key: 'timeOfSunset' }],
+        editable: true,
+      },
+      {
+        header: 'Seawater Specific Gravity',
+        fields: [{
+          key: 'specificGravity',
+          type: this.fieldType.NUMBER,
+          validators: ['dddd.dd.+']
+        }],
+        editable: this.checkIfConfirmed(),
+      },
+      {
+        header: 'H.W Tide & Time',
+        subHeaders: [{
+          header: '',
+          subHeaders: [
+            {
+              header: "H.W Tide",
+              fields: [
+                {
+                  key: 'hwTideFrom',
+                  type: this.fieldType.NUMBER,
+                  validators: ['required', 'dd.dd.+']
+                },
+                {
+                  key: 'hwTideTo',
+                  type: this.fieldType.NUMBER,
+                  validators: ['required', 'dd.dd.+']
+                }
+              ],
+              editable: true,
+            },
+            {
+              header: "Time",
+              fields: [
+                {
+                  key: 'hwTideTimeFrom',
+                  type: this.fieldType.TIME
+                },
+                {
+                  key: 'hwTideTimeTo',
+                  type: this.fieldType.TIME
+                }
+              ],
+              editable: true,
+            },
+          ]
+        }
+        ]
+      },
+      {
+        header: 'L.W Tide & Time',
+        subHeaders: [{
+          header: '',
+          subHeaders: [
+            {
+              header: "L.W Tide",
+              fields: [
+                {
+                  key: 'lwTideFrom',
+                  type: this.fieldType.NUMBER,
+                  validators: ['required', 'dd.dd.+']
+                },
+                {
+                  key: 'lwTideTo',
+                  type: this.fieldType.NUMBER,
+                  validators: ['required', 'dd.dd.+']
+                }
+              ],
+              editable: true,
+            },
+            {
+              header: "Time",
+              fields: [
+                {
+                  key: 'lwTideTimeFrom',
+                  type: this.fieldType.TIME
+                },
+                {
+                  key: 'lwTideTimeTo',
+                  type: this.fieldType.TIME
+                }
+              ],
+              editable: true,
+            },
+          ]
+        }
+        ]
+      },
+      {
+        header: "Final Draft",
+        expandable: true,
+        subHeaders: [
+          {
+            header: "FWD",
+            fields: [{
+              key: "finalDraftFwd",
+              type: this.fieldType.NUMBER
+            }],
+            editable: false,
+          },
+          {
+            header: "AFT",
+            fields: [{
+              key: "finalDraftAft",
+              type: this.fieldType.NUMBER
+            }],
+            editable: false,
+          },
+          {
+            header: "MID",
+            fields: [{
+              key: "finalDraftMid",
+              type: this.fieldType.NUMBER
+            }],
+            editable: false,
+          },
+        ],
+        expandedFields: [
+          {
+            header: "Calculated Draft",
+            subHeaders: [
+              {
+                header: "FWD",
+                subHeaders: [
+                  {
+                    header: "Plan",
+                    fields: [{
+                      key: "calculatedDraftFwdPlanned",
+                      type: this.fieldType.NUMBER,
+                      validators: ['required']
+                    }],
+                    editable: !this.checkIfConfirmed(),
+                    editableIfValue: true
+                  },
+                  {
+                    header: "Actual",
+                    fields: [{
+                      key: "calculatedDraftFwdActual",
+                      type: this.fieldType.NUMBER,
+                      validators: ['required']
+                    }],
+                    editable: this.checkIfConfirmed(),
+                    editableIfValue: true
+                  },
+                ]
+              },
+              {
+                header: "AFT",
+                subHeaders: [
+                  {
+                    header: "Plan",
+                    fields: [{
+                      key: "calculatedDraftAftPlanned",
+                      type: this.fieldType.NUMBER,
+                      validators: ['required']
+                    }],
+                    editable: !this.checkIfConfirmed(),
+                    editableIfValue: true
+                  },
+                  {
+                    header: "Actual",
+                    fields: [{
+                      key: "calculatedDraftAftActual",
+                      type: this.fieldType.NUMBER,
+                      validators: ['required']
+                    }],
+                    editable: this.checkIfConfirmed(),
+                    editableIfValue: true
+                  },
+                ]
+              },
+              {
+                header: "MID",
+                subHeaders: [
+                  {
+                    header: "Plan",
+                    fields: [{
+                      key: "calculatedDraftMidPlanned",
+                      type: this.fieldType.NUMBER,
+                      validators: ['required']
+                    }],
+                    editable: !this.checkIfConfirmed(),
+                    editableIfValue: true
+                  },
+                  {
+                    header: "Actual",
+                    fields: [{
+                      key: "calculatedDraftMidActual",
+                      type: this.fieldType.NUMBER,
+                      validators: ['required']
+                    }],
+                    editable: this.checkIfConfirmed(),
+                    editableIfValue: true
+                  },
+                ]
+              },
+            ]
+          },
+          {
+            header: "Calculated Trim",
+            subHeaders: [
+              {
+                header: "Plan",
+                fields: [{
+                  key: "calculatedTrimPlanned",
+                  type: this.fieldType.NUMBER,
+                  validators: ['required']
+                }],
+                editable: !this.checkIfConfirmed(),
+                editableIfValue: true
+              },
+              {
+                header: "Actual",
+                fields: [{
+                  key: "calculatedTrimActual",
+                  type: this.fieldType.NUMBER,
+                  validators: ['required']
+                }],
+                editable: this.checkIfConfirmed(),
+                editableIfValue: true
+              },
+            ]
+          }
+        ]
+      },
+      {
+        header: "Blind Sector",
+        fields: [{
+          key: "blindSector"
+        }],
+        editable: true,
+      },
+      {
+        header: 'Cargo',
+        dynamicKey: 'cargos',
+        expandable: true,
+        subHeaders: [
+          {
+            header: "",
+            subHeaders: [
+              {
+                fields: [{ key: 'cargoPlannedTotal' }],
+                header: 'Plan'
+              },
+              {
+                fields: [{ key: 'cargoActualTotal' }],
+                header: 'Actual',
+              },
+            ]
+          }
+        ],
+        expandedFields: []
+      },
+      {
+        header: 'Total F.O',
+        dynamicKey: 'foList',
+        expandable: true,
+        subHeaders: [
+          {
+            header: "",
+            subHeaders: [
+              {
+                header: 'Plan',
+                fields: [{ key: 'plannedFOTotal' }],
+              },
+              {
+                header: 'Actual',
+                fields: [{ key: 'actualFOTotal' }],
+              },
+            ]
+          }
+        ],
+        expandedFields: []
+      },
+      {
+        header: 'Total D.O',
+        dynamicKey: 'doList',
+        expandable: true,
+        subHeaders: [
+          {
+            header: "",
+            subHeaders: [
+              {
+                header: 'Plan',
+                fields: [{ key: 'plannedDOTotal', }],
+              },
+              {
+                header: 'Actual',
+                fields: [{ key: 'actualDOTotal', }],
+              },
+            ]
+          }
+        ],
+        expandedFields: []
+      },
+      {
+        header: 'Fresh W.T',
+        dynamicKey: 'fwList',
+        expandable: true,
+        subHeaders: [
+          {
+            header: "",
+            subHeaders: [
+              {
+                header: 'Plan',
+                fields: [{ key: 'plannedFWTotal' }],
+              },
+              {
+                header: 'Actual',
+                fields: [{ key: 'actualFWTotal' }],
+              },
+            ]
+          }
+        ],
+        expandedFields: []
+      },
+      {
+        header: 'Lube Oil Total',
+        dynamicKey: 'lubeList',
+        expandable: true,
+        subHeaders: [
+          {
+            header: "",
+            subHeaders: [
+              {
+                header: 'Plan',
+                fields: [{ key: 'plannedLubeTotal' }],
+              },
+              {
+                header: 'Actual',
+                fields: [{ key: 'actualLubeTotal' }],
+              },
+            ]
+          }
+        ],
+        expandedFields: []
+      },
+      {
+        header: "Ballast",
+        subHeaders: [
+          {
+            header: "",
+            subHeaders: [
+              {
+                header: "Plan",
+                fields: [{
+                  key: "ballastPlanned",
+                  type: this.fieldType.NUMBER
+                }],
+                editable: false
+              },
+              {
+                header: "Actual",
+                fields: [{
+                  key: "ballastActual",
+                  type: this.fieldType.NUMBER
+                }],
+                editable: this.checkIfConfirmed(),
+              },
+            ]
+          }
+        ]
+      },
+      {
+        header: 'Others',
+        subHeaders: [{
+          header: '',
+          subHeaders: [
+            {
+              header: "Plan",
+              fields: [{
+                key: 'othersPlanned',
+                type: this.fieldType.NUMBER,
+                validators: ['required', 'ddddddd.+']
+              }],
+              editable: !this.checkIfConfirmed(),
+            },
+            {
+              header: "Actual",
+              fields: [{
+                key: 'othersActual',
+                type: this.fieldType.NUMBER,
+                validators: ['required', 'ddddddd.+']
+              }],
+              editable: this.checkIfConfirmed(),
+            },
+          ]
+        }
+        ]
+      },
+      {
+        header: 'Constant',
+        subHeaders: [{
+          header: '',
+          subHeaders: [
+            {
+              header: "Plan",
+              fields: [{
+                key: 'constantPlanned',
+                type: this.fieldType.NUMBER,
+                validators: ['required']
+              }],
+              editable: true,
+            },
+            {
+              header: "Actual",
+              fields: [{
+                key: 'constantActual',
+                type: this.fieldType.NUMBER,
+              }],
+              editable: this.checkIfConfirmed(),
+            },
+          ]
+        }
+        ]
+      },
+      {
+        header: 'Total DWT',
+        subHeaders: [{
+          header: '',
+          subHeaders: [
+            {
+              header: "Plan",
+              fields: [{
+                key: 'totalDwtPlanned',
+                type: this.fieldType.NUMBER,
+                validators: ['required']
+              }],
+              editable: true,
+            },
+            {
+              header: "Actual",
+              fields: [{
+                key: 'totalDwtActual',
+                type: this.fieldType.NUMBER,
+              }],
+              editable: this.checkIfConfirmed(),
+            },
+          ]
+        }
+        ]
+      },
+      {
+        header: 'Displacement',
+        subHeaders: [{
+          header: '',
+          subHeaders: [
+            {
+              header: "Plan",
+              fields: [{
+                key: 'displacementPlanned',
+                type: this.fieldType.NUMBER,
+                validators: ['required']
+              }],
+              editable: !this.checkIfConfirmed(),
+            },
+            {
+              header: "Actual",
+              fields: [{
+                key: 'displacementActual',
+                type: this.fieldType.NUMBER,
+              }],
+              editable: this.checkIfConfirmed(),
+            },
+          ]
+        }
+        ]
+      },
     ];
 
   }
@@ -150,27 +724,136 @@ export class SynopticalTableComponent {
   initDynamicColumns() {
     this.dynamicColumns = [
       {
-        listKey: 'cargoTanks',
         fieldKey: 'cargos',
         primaryKey: 'tankId',
+        headerLabel: 'tankName',
         subHeaders: [
-          { field: 'plannedWeight', header: 'Plan' },
-          { field: 'actualWeight', header: 'Actual' },
+          {
+            fields: [{
+              key: 'plannedWeight',
+              type: this.fieldType.NUMBER,
+              validators: ['required', 'ddddddd.+']
+            }],
+            header: 'Plan',
+            editable: !this.checkIfConfirmed(),
+          },
+          {
+            header: 'Actual',
+            fields: [{
+              key: 'actualWeight',
+              type: this.fieldType.NUMBER,
+              validators: ['required', 'ddddddd.+']
+            }],
+            editable: this.checkIfConfirmed(),
+          },
         ],
-        column: {
-          header: 'Cargo',
-          expandable: true,
-          subHeaders: [
-            {
-              header: "",
-              subHeaders: [
-                { field: 'cargoPlannedTotal', header: 'Plan' },
-                { field: 'cargoActualTotal', header: 'Actual' },
-              ]
-            }
-          ],
-          expandedFields: []
-        }
+      },
+      {
+        fieldKey: 'foList',
+        primaryKey: 'tankId',
+        headerLabel: 'tankName',
+        subHeaders: [
+          {
+            fields: [{
+              key: 'plannedWeight',
+              type: this.fieldType.NUMBER,
+              validators: ['required', 'ddddddd.+']
+            }],
+            header: 'Plan',
+            editable: !this.checkIfConfirmed(),
+
+          },
+          {
+            fields: [{
+              key: 'actualWeight',
+              type: this.fieldType.NUMBER,
+              validators: ['required', 'ddddddd.+']
+            }],
+            header: 'Actual',
+            editable: this.checkIfConfirmed(),
+
+          },
+        ],
+      },
+      {
+        fieldKey: 'doList',
+        primaryKey: 'tankId',
+        headerLabel: 'tankName',
+        subHeaders: [
+          {
+            fields: [{
+              key: 'plannedWeight',
+              type: this.fieldType.NUMBER,
+              validators: ['required', 'ddddddd.+']
+            }],
+            header: 'Plan',
+            editable: !this.checkIfConfirmed()
+
+          },
+          {
+            fields: [{
+              key: 'actualWeight',
+              type: this.fieldType.NUMBER,
+              validators: ['required', 'ddddddd.+']
+            }],
+            header: 'Actual',
+            editable: this.checkIfConfirmed(),
+
+          },
+        ],
+      },
+      {
+        fieldKey: 'fwList',
+        primaryKey: 'tankId',
+        headerLabel: 'tankName',
+        subHeaders: [
+          {
+            fields: [{
+              key: 'plannedWeight',
+              type: this.fieldType.NUMBER,
+              validators: ['required', 'ddddddd.+']
+            }],
+            header: 'Plan',
+            editable: !this.checkIfConfirmed(),
+
+          },
+          {
+            fields: [{
+              key: 'actualWeight',
+              type: this.fieldType.NUMBER,
+              validators: ['required', 'ddddddd.+']
+            }],
+            header: 'Actual',
+            editable: this.checkIfConfirmed(),
+
+          },
+        ],
+      },
+      {
+        fieldKey: 'lubeList',
+        primaryKey: 'tankId',
+        headerLabel: 'tankName',
+        subHeaders: [
+          {
+            fields: [{
+              key: 'plannedWeight',
+              type: this.fieldType.NUMBER,
+              validators: ['required', 'ddddddd.+']
+            }],
+            header: 'Plan',
+            editable: !this.checkIfConfirmed(),
+
+          },
+          {
+            fields: [{
+              key: 'actualWeight',
+              type: this.fieldType.NUMBER,
+              validators: ['required', 'ddddddd.+']
+            }],
+            header: 'Actual',
+            editable: this.checkIfConfirmed(),
+          },
+        ],
       },
     ]
   }
@@ -184,29 +867,31 @@ export class SynopticalTableComponent {
   addToColumns(dynamicColumn: SynopticalDynamicColumn) {
     const keys = dynamicColumn.subHeaders;
     const fieldKey = dynamicColumn.fieldKey;
-    const listKey = dynamicColumn.listKey;
-    let col = dynamicColumn.column;
-    this.listData[listKey].forEach(item => {
+    let col = this.cols.find(col => col.dynamicKey == fieldKey);
+    this.listData[fieldKey].forEach(item => {
       let subHeaders = [];
       keys.forEach(key => {
-        subHeaders.push({
-          header: key.header,
-          field: fieldKey + item.id + key.field
+        let subHeader = JSON.parse(JSON.stringify(key))
+        subHeader['fields'] = []
+        key.fields.forEach(field => {
+          let tempField = JSON.parse(JSON.stringify(field))
+          tempField['key'] = fieldKey + item.id + field['key']
+          subHeader.fields.push(tempField)
         })
+        subHeaders.push(subHeader);
       });
       col.expandedFields.push(
         {
           header: "",
           subHeaders: [
             {
-              header: item.shortName,
+              header: item.header,
               subHeaders: subHeaders
             }
           ],
         }
       );
     })
-    this.cols.push(col)
   }
 
   /**
@@ -216,15 +901,25 @@ export class SynopticalTableComponent {
    * @memberof SynopticalTableComponent
    */
   formatData(dynamicColumn: SynopticalDynamicColumn) {
-    const listKey = dynamicColumn.listKey;
     const fieldKey = dynamicColumn.fieldKey;
     const primaryKey = dynamicColumn.primaryKey;
+    const headerLabel = dynamicColumn.headerLabel;
     const keys = dynamicColumn.subHeaders;
+    this.listData[fieldKey] = [];
     this.synopticalRecords.forEach(synopticalRecord => {
       if (synopticalRecord[fieldKey]) {
         synopticalRecord[fieldKey].forEach(record => {
+          const index = this.listData[fieldKey].findIndex(item => item.id == record[primaryKey]);
+          if (!index || index < 0) {
+            this.listData[fieldKey].push({
+              id: record[primaryKey],
+              header: record[headerLabel]
+            })
+          }
           keys.forEach(key => {
-            synopticalRecord[fieldKey + record[primaryKey] + key.field] = record[key.field];
+            key.fields.forEach(field => {
+              synopticalRecord[fieldKey + record[primaryKey] + field['key']] = record[field['key']];
+            })
           });
         })
       }
@@ -239,5 +934,289 @@ export class SynopticalTableComponent {
    */
   setColumnHeader() {
     this.headerColumn = this.cols.splice(0, 1)[0];
+  }
+
+  /**
+ * Function to initalize form
+ *
+ * @returns {Promise<void>}
+ * @memberof SynopticalTableComponent
+ */
+  initForm() {
+    const columns = this.getAllColumns(this.cols);
+
+    this.synopticalRecords.forEach((record, colIndex) => {
+      let fg = new FormGroup({})
+      columns.forEach(column => {
+        if (column.editable) {
+          column.fields?.forEach(field => {
+            fg.addControl(field.key, new FormControl(this.getValue(record[field.key], field.type)))
+          });
+          column.fields?.forEach(field => {
+            let validators: ValidatorFn[] = []
+            field.validators?.forEach(validator => {
+              validators.push(this.getValidators(validator))
+            })
+            let fc = fg.get(field.key);
+            fc.setValidators(validators)
+          })
+        }
+      })
+      this.tableForm.push(fg)
+    })
+  }
+
+  /**
+ * Method to get all leaf child columns of the table
+ * @param columns
+ * @returns {SynopticalColumn[]}
+ * @memberof SynopticalTableComponent
+ */
+  getAllColumns(columns: SynopticalColumn[]): SynopticalColumn[] {
+    let cols: SynopticalColumn[] = [];
+    columns.forEach(column => {
+      if (column.expandedFields) {
+        cols = [...cols, ...this.getAllColumns(column.expandedFields)]
+      }
+      if (column.subHeaders) {
+        cols = [...cols, ...this.getAllColumns(column.subHeaders)]
+      } else {
+        cols.push(column)
+      }
+    })
+    return cols;
+  }
+
+  /**
+  * Method to get the control of a particular field
+  * @param {number} colIndex
+  * @param {string} key
+  * @returns {AbstractControl}
+  * @memberof SynopticalTableComponent
+  */
+  getControl(colIndex: number, key: string): AbstractControl {
+    return this.tableForm.at(colIndex).get(key)
+  }
+
+  /**
+   * Get field errors
+   *
+   * @param {number} formGroupIndex
+   * @param {string} formControlName
+   * @returns {ValidationErrors}
+   * @memberof SynopticalTableComponent
+  */
+  fieldError(formGroupIndex: number, formControlName: string): ValidationErrors {
+    const formControl = this.getControl(formGroupIndex, formControlName);
+    return formControl.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
+  }
+
+  /**
+   * Get the validator based on a key string
+   *
+   * @param {string} validator
+   * @returns {ValidatorFn}
+   * @memberof SynopticalTableComponent
+  */
+  getValidators(validator: string): ValidatorFn {
+    if (validator == 'required')
+      return Validators.required;
+    else if (/^(d*(.d)?d*(.\+)?)$/.test(validator)) {
+      let decimals = 0;
+      let isNegativeAccepted = true;
+      const arr = validator.split('.')
+      const digits = arr[0].length;
+      if (arr.length > 2)
+        decimals = arr[1].length;
+      if (/\+/.test(validator))
+        isNegativeAccepted = false;
+      return numberValidator(decimals, digits, isNegativeAccepted);
+    }
+    else
+      return null;
+  }
+
+  /**
+   * Get the value after converting it based on type
+   *
+   * @param value
+   * @param type
+   * @returns {any}
+   * @memberof SynopticalTableComponent
+  */
+  getValue(value, type) {
+    if (type) {
+      switch (type) {
+        case this.fieldType.DATETIME:
+          return this.convertToDate(value)
+        case this.fieldType.TIME:
+          return this.convertToDate(value)
+        default:
+          return value;
+      }
+    }
+    return value;
+  }
+
+  /**
+   * Convert value to date
+   *
+   * @param value
+   * @returns {any}
+   * @memberof SynopticalTableComponent
+  */
+  convertToDate(value) {
+    if (value) {
+      const arr = value.split(' ');
+      let time, day, month, year;
+      if (arr.length > 1) {
+        const date = arr[0];
+        time = arr[1];
+        const dateArr = date.split('-');
+        day = dateArr[0]
+        month = Number(dateArr[1]) - 1
+        year = dateArr[2]
+      } else {
+        const date = new Date();
+        day = date.getDate();
+        month = date.getMonth();
+        year = date.getFullYear();
+        time = arr[0];
+      }
+      const timeArr = time.split(':')
+      const hour = timeArr[0];
+      const min = timeArr[1];
+      return new Date(year, month, day, hour, min);
+    }
+    return value;
+  }
+
+  /**
+   * Method to do validations on focusing out of an input
+   *
+   * @param {SynopticField} field
+   * @param {number} colIndex
+   * @returns {any}
+   * @memberof SynopticalTableComponent
+  */
+  onBlur(field: SynopticField, colIndex: number) {
+    let fc = this.getControl(colIndex, field.key)
+    if (fc.invalid)
+      return;
+    let fcMax, fcMin;
+    switch (field.key) {
+      case 'hwTideFrom':
+        fcMax = this.getControl(colIndex, 'hwTideTo')
+        if (fc.value > fcMax.value) {
+          fc.setErrors({ fromMax: true })
+        } else if (fcMax.hasError('toMin')) {
+          fcMax.setValue(fcMax.value, { emitEvent: false })
+        }
+        break;
+      case 'hwTideTo':
+        fcMin = this.getControl(colIndex, 'hwTideFrom')
+        if (fc.value < fcMin.value) {
+          fc.setErrors({ toMin: true })
+        } else if (fcMin.hasError('fromMax')) {
+          fcMin.setValue(fcMin.value, { emitEvent: false })
+        }
+        break;
+      case 'lwTideFrom':
+        fcMax = this.getControl(colIndex, 'lwTideTo')
+        if (fc.value > fcMax.value) {
+          fc.setErrors({ fromMax: true })
+        } else if (fcMax.hasError('toMin')) {
+          fcMax.setValue(fcMax.value, { emitEvent: false })
+        }
+        break;
+      case 'lwTideTo':
+        fcMin = this.getControl(colIndex, 'lwTideFrom')
+        if (fc.value < fcMin.value) {
+          fc.setErrors({ toMin: true })
+        } else if (fcMin.hasError('fromMax')) {
+          fcMin.setValue(fcMin.value, { emitEvent: false })
+        }
+        break;
+      case 'hwTideTimeFrom':
+        fcMax = this.getControl(colIndex, 'hwTideTimeTo')
+        if (fc.value > fcMax.value) {
+          fc.setErrors({ timeFromMax: true })
+        } else if (fcMax.hasError('timeToMin')) {
+          fcMax.setValue(fcMax.value, { emitEvent: false })
+        }
+        break;
+      case 'hwTideTimeTo':
+        fcMin = this.getControl(colIndex, 'hwTideTimeFrom')
+        if (fc.value < fcMin.value) {
+          fc.setErrors({ timeToMin: true })
+        } else if (fcMin.hasError('timeFromMax')) {
+          fcMin.setValue(fcMin.value, { emitEvent: false })
+        }
+        break;
+      case 'lwTideTimeFrom':
+        fcMax = this.getControl(colIndex, 'lwTideTimeTo')
+        if (fc.value > fcMax.value) {
+          fc.setErrors({ timeFromMax: true })
+        } else if (fcMax.hasError('timeToMin')) {
+          fcMax.setValue(fcMax.value, { emitEvent: false })
+        }
+        break;
+      case 'lwTideTimeTo':
+        fcMin = this.getControl(colIndex, 'lwTideTimeFrom')
+        if (fc.value < fcMin.value) {
+          fc.setErrors({ timeToMin: true })
+        } else if (fcMin.hasError('timeFromMax')) {
+          fcMin.setValue(fcMin.value, { emitEvent: false })
+        }
+        break;
+
+      case 'etaEtdPlanned': case 'etaEtdActual':
+        if (colIndex > 0) {
+          fcMin = this.getControl(colIndex - 1, field.key)
+          if (fc.value < fcMin.value) {
+            if (this.synopticalRecords[colIndex].operationType == 'ARR')
+              fc.setErrors({ etaMin: true })
+            else
+              fc.setErrors({ etdMin: true })
+          } else if (fcMin.hasError('etaMax') || fcMin.hasError('etdMax')) {
+            fcMin.setValue(fcMin.value, { emitEvent: false })
+          }
+        }
+        if (colIndex < this.synopticalRecords.length - 1) {
+          fcMax = this.getControl(colIndex + 1, field.key)
+          if (fc.value > fcMax.value) {
+            if (this.synopticalRecords[colIndex].operationType == 'ARR')
+              fc.setErrors({ etaMax: true })
+            else
+              fc.setErrors({ etdMax: true })
+          } else if (fcMax.hasError('etaMin') || fcMax.hasError('etdMin')) {
+            fcMax.setValue(fcMax.value, { emitEvent: false })
+          }
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  /**
+   * Method to check if the loadable study is confirmed
+   *
+   * @returns {boolean}
+   * @memberof SynopticalTableComponent
+  */
+  checkIfConfirmed(): boolean {
+    return this.synopticalService.selectedLoadableStudy?.status == "Confirmed" ?? false
+  }
+
+  /**
+   * Method to check if value is null or blank
+   *
+   * @param {any} value
+   * @returns {boolean}
+   * @memberof SynopticalTableComponent
+  */
+  isNotBlankOrNull(value): boolean {
+    return (typeof value !== 'undefined' && value !== '');
   }
 }

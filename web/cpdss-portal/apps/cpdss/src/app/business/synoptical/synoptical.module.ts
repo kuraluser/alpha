@@ -5,12 +5,15 @@ import { SynopticalRoutingModule } from './synoptical-routing.module';
 import { SynopticalComponent } from './synoptical.component';
 import { VesselInfoModule } from '../core/components/vessel-info/vessel-info.module';
 import { TranslateModule } from '@ngx-translate/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { LoadableStudyListApiService } from '../cargo-planning/services/loadable-study-list-api.service';
 import { SynopticalTableComponent } from './synoptical-table/synoptical-table.component';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import { ValidationErrorModule } from '../../shared/components/validation-error/validation-error.module';
+import { CalendarModule } from 'primeng/calendar';
+import { SynopticalService } from './services/synoptical.service';
 
 /**
  * Module for Synoptical Table
@@ -25,12 +28,18 @@ import { ButtonModule } from 'primeng/button';
     CommonModule,
     SynopticalRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     TableModule,
     VesselInfoModule,
     TranslateModule,
     DropdownModule,
-    ButtonModule
+    ButtonModule,
+    ValidationErrorModule,
+    CalendarModule,
   ],
-  providers: [LoadableStudyListApiService]
+  providers: [
+    LoadableStudyListApiService,
+    SynopticalService,
+  ]
 })
 export class SynopticalModule { }

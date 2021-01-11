@@ -1,12 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Voyage } from '../core/models/common.model';
-import { VesselsApiService } from '../core/services/vessels-api.service';
-import { VoyageService } from '../core/services/voyage.service';
-import { IVessel } from '../core/models/vessel-details.model';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { LoadableStudyListApiService } from '../cargo-planning/services/loadable-study-list-api.service';
-import { LoadableStudy } from '../cargo-planning/models/loadable-study-list.model';
 import { Router } from '@angular/router';
+import { SynopticalService } from './services/synoptical.service';
 
 /**
  * Component class of synoptical
@@ -21,16 +16,10 @@ import { Router } from '@angular/router';
   styleUrls: ['./synoptical.component.scss']
 })
 export class SynopticalComponent implements OnInit {
-  vesselInfo: IVessel;
-  voyages: Voyage[];
-  selectedVoyage: Voyage;
-  loadableStudyList: LoadableStudy[];
-  selectedLoadableStudy: LoadableStudy;
-  isVoyageIdSelected = true;
 
-  constructor(private vesselsApiService: VesselsApiService,
-    private voyageService: VoyageService, private ngxSpinnerService: NgxSpinnerService,
-    private loadableStudyListApiService: LoadableStudyListApiService,
+  constructor(
+    private ngxSpinnerService: NgxSpinnerService,
+    public synopticalService: SynopticalService,
     private router: Router
   ) { }
 
@@ -42,32 +31,15 @@ export class SynopticalComponent implements OnInit {
    */
   async ngOnInit(): Promise<void> {
     this.ngxSpinnerService.show();
-    const res = await this.vesselsApiService.getVesselsInfo().toPromise();
-    this.vesselInfo = res[0] ?? <IVessel>{};
-    this.voyages = await this.voyageService.getVoyagesByVesselId(this.vesselInfo?.id).toPromise();
+    await this.synopticalService.init();
     this.ngxSpinnerService.hide();
-
   }
 
   /**
   * Show loadable study list based on selected voyage id
   */
   showLoadableStudyList() {
-    this.getLoadableStudyInfo(this.vesselInfo?.id, this.selectedVoyage.id);
-  }
-
-  /**
-  * Get loadable study list for selected voyage
-  */
-  async getLoadableStudyInfo(vesselId: number, voyageId: number) {
-    if (this.selectedVoyage.id !== 0) {
-      this.isVoyageIdSelected = true;
-      const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
-      this.loadableStudyList = result.loadableStudies;
-    }
-    else{
-      this.isVoyageIdSelected = false;
-    }
+    this.synopticalService.getLoadableStudyInfo(this.synopticalService.vesselInfo?.id, this.synopticalService.selectedVoyage.id);
   }
 
   /**
@@ -77,8 +49,8 @@ export class SynopticalComponent implements OnInit {
    * @memberof SynopticalComponent
    */
 
-  onSelectLoadableStudy(event){
-    this.router.navigateByUrl('/business/synoptical/'+ this.vesselInfo.id + '/'+ this.selectedVoyage.id + '/' + this.selectedLoadableStudy.id)
+  onSelectLoadableStudy() {
+    this.router.navigateByUrl('/business/synoptical/' + this.synopticalService.vesselInfo.id + '/' + this.synopticalService.selectedVoyage.id + '/' + this.synopticalService.selectedLoadableStudy.id)
   }
 
 

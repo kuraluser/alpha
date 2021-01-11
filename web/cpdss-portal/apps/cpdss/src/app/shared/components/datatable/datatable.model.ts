@@ -51,20 +51,22 @@ export interface IDataTableColumn {
  * @export
  * @enum {number}
  */
+
 export enum DATATABLE_FIELD_TYPE {
-    ICON = 'ICON',
-    SLNO = 'SLNO',
-    TEXT = 'TEXT',
-    NUMBER = 'NUMBER',
-    SELECT = 'SELECT',
-    COLORPICKER = 'COLORPICKER',
-    AUTOCOMPLETE = 'AUTOCOMPLETE',
-    ARRAY = 'ARRAY',
-    ACTION = 'ACTION',
-    DATE = 'DATE',
-    DATERANGE = 'DATERANGE',
-    DATETIME = 'DATETIME',
-    COLOR = 'COLOR'
+  ICON = 'ICON',
+  SLNO = 'SLNO',
+  TEXT = 'TEXT',
+  NUMBER = 'NUMBER',
+  SELECT = 'SELECT',
+  COLORPICKER = 'COLORPICKER',
+  AUTOCOMPLETE = 'AUTOCOMPLETE',
+  ARRAY = 'ARRAY',
+  ACTION = 'ACTION',
+  DATE = 'DATE',
+  DATERANGE = 'DATERANGE',
+  DATETIME = 'DATETIME',
+  COLOR = 'COLOR',
+  TIME = "TIME"
 }
 
 /**

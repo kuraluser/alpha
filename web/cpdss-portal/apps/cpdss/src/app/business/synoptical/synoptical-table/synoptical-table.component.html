@@ -1,55 +1,108 @@
-<p-table *ngIf="synopticalRecords.length; else empty" [columns]="synopticalRecords" [value]="cols" dataKey="header">
-    <ng-template pTemplate="header" let-columns let-rowData>
-        <tr>
-            <th>{{headerColumn.header}}</th>
-            <th></th>
-            <th></th>
-            <th *ngFor="let col of columns">{{col[headerColumn.field]}}</th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex" let-expanded="expanded">
-        <ng-container
-            *ngTemplateOutlet="row;context:{rowData:rowData, columns:columns, rowIndex:rowIndex, expanded: expanded, subRowLevel: 0, headers: []}">
-        </ng-container>
-    </ng-template>
-    <ng-template #row let-rowData="rowData" let-columns="columns" let-rowIndex="rowIndex" let-expanded="expanded"
-        let-subRowLevel="subRowLevel" let-headers="headers">
-        <ng-container *ngIf="!rowData.subHeaders">
+<button (click)="editMode = !editMode">Edit</button>
+<form>
+    <p-table *ngIf="synopticalRecords.length; else empty" [columns]="synopticalRecords" [value]="cols" dataKey="header">
+        <ng-template pTemplate="header" let-columns let-rowData>
             <tr>
-                <ng-container *ngFor="let header of headers; let headerIndex = index">
-                    <th [attr.rowspan]="calculateRowSpan(header)">
-                        <button type="button" *ngIf="header.expandable" pButton pRipple [pRowToggler]="header"
+                <th>{{headerColumn.header | translate}}</th>
+                <th></th>
+                <th></th>
+                <th *ngFor="let col of columns">{{col[headerColumn.fields[0].key]}}</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex" let-expanded="expanded">
+            <ng-container
+                *ngTemplateOutlet="row;context:{rowData:rowData, columns:columns, rowIndex:rowIndex, expanded: expanded, subRowLevel: 0, headers: []}">
+            </ng-container>
+        </ng-template>
+        <ng-template #row let-rowData="rowData" let-columns="columns" let-rowIndex="rowIndex" let-expanded="expanded"
+            let-subRowLevel="subRowLevel" let-headers="headers">
+            <ng-container *ngIf="!rowData.subHeaders">
+                <tr>
+                    <ng-container *ngFor="let header of headers; let headerIndex = index">
+                        <th [attr.rowspan]="calculateRowSpan(header)">
+                            <button type="button" *ngIf="header.expandable" pButton pRipple [pRowToggler]="header"
+                                class="p-button-text p-button-rounded p-button-plain"
+                                [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                            <span class="row-header">{{header.header | translate}}</span>
+                        </th>
+                    </ng-container>
+                    <th [attr.rowspan]="calculateRowSpan(rowData)">
+                        <button type="button" *ngIf="rowData.expandable" pButton pRipple [pRowToggler]="rowData"
                             class="p-button-text p-button-rounded p-button-plain"
                             [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
-                        <span class="row-header">{{header.header}}</span>
+                        <span class="row-header">{{rowData.header | translate}}</span>
                     </th>
+                    <th *ngFor="let x of getBlanks(subRowLevel)"></th>
+                    <ng-container *ngFor="let col of columns; let colIndex = index">
+                        <ng-container *ngTemplateOutlet="cell;context:{rowData:rowData, column:col, colIndex: colIndex }">
+                        </ng-container>
+                    </ng-container>
+                </tr>
+            </ng-container>
+            <ng-container *ngFor="let subRow of rowData?.subHeaders; let subIndex = index">
+                <ng-container
+                    *ngTemplateOutlet="row;context:{rowData:subRow, columns:columns, rowIndex:subIndex, expanded: expanded, subRowLevel: subRowLevel + 1, headers: getRowHeaders(headers,rowData,subIndex) }">
                 </ng-container>
-                <th [attr.rowspan]="calculateRowSpan(rowData)">
-                    <button type="button" *ngIf="rowData.expandable" pButton pRipple [pRowToggler]="rowData"
-                        class="p-button-text p-button-rounded p-button-plain"
-                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
-                    <span class="row-header">{{rowData.header}}</span>
-                </th>
-                <th *ngFor="let x of getBlanks(subRowLevel)"></th>
-                <td *ngFor="let col of columns">
-                    {{col[rowData?.field]}}
-                </td>
-            </tr>
-        </ng-container>
-        <ng-container *ngFor="let subRow of rowData?.subHeaders; let subIndex = index">
-            <ng-container
-                *ngTemplateOutlet="row;context:{rowData:subRow, columns:columns, rowIndex:subIndex, expanded: expanded, subRowLevel: subRowLevel + 1, headers: getRowHeaders(headers,rowData,subIndex) }">
             </ng-container>
-        </ng-container>
-    </ng-template>
-    <ng-template pTemplate="rowexpansion" let-rowData>
-        <ng-container *ngFor="let expandedRow of rowData.expandedFields; let subIndex = index">
-            <ng-container
-                *ngTemplateOutlet="row;context:{rowData:expandedRow, columns:synopticalRecords, rowIndex:subIndex, expanded: false, subRowLevel: 0, headers: [] }">
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-rowData>
+            <ng-container *ngFor="let expandedRow of rowData.expandedFields; let subIndex = index">
+                <ng-container
+                    *ngTemplateOutlet="row;context:{rowData:expandedRow, columns:synopticalRecords, rowIndex:subIndex, expanded: false, subRowLevel: 0, headers: [] }">
+                </ng-container>
             </ng-container>
-        </ng-container>
-    </ng-template>
-</p-table>
+        </ng-template>
+        <ng-template #cell let-rowData="rowData" let-column="column" let-colIndex="colIndex">
+            <td>
+                <ng-container *ngFor="let field of rowData.fields;let i = index">
+                    <div class="error-icon-wrapper">
+                        <span *ngIf="i > 0">-</span>
+                        <ng-container
+                            *ngIf="rowData.editable && editMode && (!rowData.editableIfValue || isNotBlankOrNull(column[field.key])); else noEdit">
+                            <ng-container [ngSwitch]="field.type">
+                                <ng-container *ngSwitchCase="fieldType.DATETIME">
+                                    <p-calendar appendTo="body" [showButtonBar]="true" [showTime]="true"
+                                        inputId="{{field.key + colIndex}}" id="{{field.key + colIndex}}"
+                                        [formControl]="getControl(colIndex,field.key)" [hideOnDateTimeSelect]="false"
+                                        dateFormat="dd-mm-yy" (onSelect)="onBlur(field,colIndex)" #subcoldatetime>
+                                        <p-footer>
+                                            <button class="btn btn-main"
+                                                (click)="subcoldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                                                | translate}}</button>
+                                        </p-footer>
+                                    </p-calendar>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="fieldType.TIME">
+                                    <p-calendar appendTo="body" inputId="{{field.key + colIndex}}"
+                                        id="{{field.key + colIndex}}" [timeOnly]="true"
+                                        [formControl]="getControl(colIndex,field.key)" (onBlur)="onBlur(field,colIndex)"
+                                        #subcoltime>
+                                    </p-calendar>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="fieldType.NUMBER">
+                                    <input type="number" class="form-control" id="{{field.key + colIndex}}"
+                                        [formControl]="getControl(colIndex,field.key)" (blur)="onBlur(field,colIndex)">
+                                </ng-container>
+                                <ng-container *ngSwitchDefault>
+                                    <input type="text" class="form-control" id="{{field.key + colIndex}}"
+                                        [formControl]="getControl(colIndex,field.key)" (blur)="onBlur(field,colIndex)">
+                                </ng-container>
+                            </ng-container>
+                            <cpdss-portal-validation-error [errors]="fieldError(colIndex, field.key)"
+                                [errorMessages]="errorMessages">
+                            </cpdss-portal-validation-error>
+                        </ng-container>
+                        <ng-template #noEdit>
+                            <span>
+                                {{column[field.key]}}
+                            </span>
+                        </ng-template>
+                    </div>
+                </ng-container>
+            </td>
+        </ng-template>
+    </p-table>
+</form>
 <ng-template #empty>
     {{'NO_RECORDS_FOUND'| translate}}
 </ng-template>
