@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -30,6 +31,7 @@ import com.cpdss.gateway.domain.LoadingPort;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
+import com.cpdss.gateway.domain.PortRotationRequest;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
@@ -49,6 +51,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
@@ -71,6 +74,8 @@ class LoadableStudyControllerTest {
   @MockBean private LoadableStudyService loadableStudyService;
 
   @MockBean private CargoNominationResponse cargoNominationResponse;
+  
+  @MockBean private PortRotationResponse portRotationResponse;
 
   @MockBean private CommingleCargoResponse commingleCargoResponse;
 
@@ -1184,5 +1189,93 @@ class LoadableStudyControllerTest {
                     1)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
         .andExpect(status().isInternalServerError());
+  }
+  
+  @Test
+  void testSavePortRotationList() throws Exception {
+    when(loadableStudyService.savePortRotationList(Mockito.any(), Mockito.any()))
+        .thenReturn(portRotationResponse);
+    this.mockMvc
+        .perform(
+            post(
+                    "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports",
+                    1,
+                    1,
+                    30,
+                    0)
+                .content(createPortRotationListRequest())
+                .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+  
+  @Test
+  void testSavePortRotationListWithException() throws Exception {
+    when(loadableStudyService.savePortRotationList(
+            Mockito.any(), Mockito.any()))
+        .thenThrow(
+            new GenericServiceException(
+                "Error in savePortRotationList",
+                CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                HttpStatusCode.INTERNAL_SERVER_ERROR));
+    this.mockMvc
+        .perform(
+            post(
+                    "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports",
+                    1,
+                    1,
+                    30,
+                    1)
+                .content(createPortRotationListRequest())
+                .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError())
+        .andExpect(
+            result ->
+                assertEquals(
+                    "Error in savePortRotationList", result.getResolvedException().getMessage()));
+  }
+  
+  @Test
+  void testSavePortRotationListWithGeneralException() throws Exception {
+    when(loadableStudyService.savePortRotationList(
+            Mockito.any(), Mockito.any()))
+        .thenThrow(
+            new RuntimeException("Error in savePortRotationList"));
+    this.mockMvc
+        .perform(
+            post(
+                    "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports",
+                    1,
+                    1,
+                    30,
+                    1)
+                .content(createPortRotationListRequest())
+                .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(
+            result ->
+                assertEquals(
+                    "Error in savePortRotationList", result.getResolvedException().getMessage()));
+  }
+
+  
+  private String createPortRotationListRequest() throws JsonProcessingException {
+	  PortRotationRequest portRotationRequest = new PortRotationRequest();
+	  List<PortRotation> portRotationList = new ArrayList<>();
+	  PortRotation request = new PortRotation();
+	  request.setDistanceBetweenPorts(TEST_BIGDECIMAL_VALUE);
+	  request.setEta(LocalDateTime.now().toString());
+	  request.setEtd(request.getEta());
+	  request.setLayCanFrom(LocalDate.now().toString());
+	  request.setLayCanTo(request.getLayCanFrom());
+	  request.setLoadableStudyId(1L);
+	  portRotationList.add(request);
+	  portRotationRequest.setPortList(portRotationList);
+	  ObjectMapper mapper = new ObjectMapper();
+	  return mapper.writeValueAsString(request);
   }
 }

@@ -4,6 +4,30 @@ package com.cpdss.gateway.service;
 import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import javax.validation.constraints.Min;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
@@ -115,29 +139,9 @@ import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.google.protobuf.ByteString;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import javax.validation.constraints.Min;
+
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 /** GatewayLoadableStudyService - service class for loadable study related operations */
 @Service
@@ -854,8 +858,75 @@ public class LoadableStudyService {
         new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
     return response;
   }
-
+  
   /**
+   * Save all port rotations for a loadable study
+   *
+   * @param request
+   * @param first
+   * @return
+   * @throws GenericServiceException
+   */
+  public PortRotationResponse savePortRotationList(com.cpdss.gateway.domain.PortRotationRequest request, String correlationId)
+      throws GenericServiceException {
+    log.info("Inside savePortRotationList");
+    PortRotationRequest savePortRotationListRequest = buildSavePortRotationList(request);
+    PortRotationReply grpcReply = loadableStudyServiceBlockingStub.saveLoadableStudyPortRotationList(savePortRotationListRequest);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to save loadable study - ports",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    PortRotationResponse response = new PortRotationResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  private PortRotationRequest buildSavePortRotationList(com.cpdss.gateway.domain.PortRotationRequest request){
+	  PortRotationRequest.Builder portListBuilder = PortRotationRequest.newBuilder();
+	  portListBuilder.setLoadableStudyId(request.getLoadableStudyId());
+	  if (!CollectionUtils.isEmpty(request.getPortList())) {
+		  request.getPortList().forEach(requestPort -> {
+			  PortRotationDetail.Builder builder = PortRotationDetail.newBuilder();
+			  builder.setId(requestPort.getId());
+			  builder.setLoadableStudyId(request.getLoadableStudyId());
+			  Optional.ofNullable(requestPort.getOperationId()).ifPresent(builder::setOperationId);
+			  Optional.ofNullable(requestPort.getBerthId()).ifPresent(builder::setBerthId);
+			  Optional.ofNullable(requestPort.getDistanceBetweenPorts())
+			  .ifPresent(
+					  item -> builder.setDistanceBetweenPorts(valueOf(requestPort.getDistanceBetweenPorts())));
+			  Optional.ofNullable(requestPort.getEta())
+			  .ifPresent(item -> builder.setEta(valueOf(requestPort.getEta())));
+			  Optional.ofNullable(requestPort.getEtd())
+			  .ifPresent(item -> builder.setEtd(valueOf(requestPort.getEtd())));
+			  Optional.ofNullable(requestPort.getLayCanFrom())
+			  .ifPresent(item -> builder.setLayCanFrom(valueOf(requestPort.getLayCanFrom())));
+			  Optional.ofNullable(requestPort.getLayCanTo())
+			  .ifPresent(item -> builder.setLayCanTo(valueOf(requestPort.getLayCanTo())));
+			  Optional.ofNullable(requestPort.getMaxAirDraft())
+			  .ifPresent(item -> builder.setMaxAirDraft(valueOf(requestPort.getMaxAirDraft())));
+			  Optional.ofNullable(requestPort.getMaxDraft())
+			  .ifPresent(item -> builder.setMaxDraft(valueOf(requestPort.getMaxDraft())));
+			  Optional.ofNullable(requestPort.getPortId())
+			  .ifPresent(item -> builder.setPortId(requestPort.getPortId()));
+			  Optional.ofNullable(requestPort.getSeaWaterDensity())
+			  .ifPresent(item -> builder.setSeaWaterDensity(valueOf(requestPort.getSeaWaterDensity())));
+			  Optional.ofNullable(requestPort.getTimeOfStay())
+			  .ifPresent(item -> builder.setTimeOfStay(valueOf(requestPort.getTimeOfStay())));
+			  Optional.ofNullable(requestPort.getPortOrder()).ifPresent(builder::setPortOrder);
+			  Optional.ofNullable(requestPort.getEtaActual())
+			  .ifPresent(item -> builder.setEtaActual(valueOf(requestPort.getEtaActual())));
+			  Optional.ofNullable(requestPort.getEtdActual())
+			  .ifPresent(item -> builder.setEtdActual(valueOf(requestPort.getEtdActual())));
+			  portListBuilder.addPortRotationDetails(builder);
+		  });
+	  }
+	  return portListBuilder.build();
+  }
+
+/**
    * Call loadable study service to save port rotation
    *
    * @param request {@link PortRotationDetail}

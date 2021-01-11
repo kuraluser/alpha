@@ -8,6 +8,8 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargo;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
+import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
+import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceImplBase;
@@ -85,4 +87,16 @@ public class LoadableStudyImplForLoadableStudyServiceIntegration
     responseObserver.onNext(commingleCargoReply.build());
     responseObserver.onCompleted();
   }
+  
+  @Override
+  public void saveLoadableStudyPortRotationList(
+		  PortRotationRequest request, StreamObserver<PortRotationReply> responseObserver) {
+	  PortRotationReply.Builder replyBuilder = PortRotationReply.newBuilder();
+	  ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+	  responseStatus.setStatus(SUCCESS);
+	  replyBuilder.setResponseStatus(responseStatus);
+	  responseObserver.onNext(replyBuilder.build());
+	  responseObserver.onCompleted();
+  }
+
 }

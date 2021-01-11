@@ -577,6 +577,59 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
+      getSaveLoadableStudyPortRotationListMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveLoadableStudyPortRotationList",
+      requestType = com.cpdss.common.generated.LoadableStudy.PortRotationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.PortRotationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
+      getSaveLoadableStudyPortRotationListMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+            com.cpdss.common.generated.LoadableStudy.PortRotationReply>
+        getSaveLoadableStudyPortRotationListMethod;
+    if ((getSaveLoadableStudyPortRotationListMethod =
+            LoadableStudyServiceGrpc.getSaveLoadableStudyPortRotationListMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveLoadableStudyPortRotationListMethod =
+                LoadableStudyServiceGrpc.getSaveLoadableStudyPortRotationListMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getSaveLoadableStudyPortRotationListMethod =
+              getSaveLoadableStudyPortRotationListMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+                          com.cpdss.common.generated.LoadableStudy.PortRotationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveLoadableStudyPortRotationList"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.PortRotationRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.PortRotationReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "SaveLoadableStudyPortRotationList"))
+                      .build();
+        }
+      }
+    }
+    return getSaveLoadableStudyPortRotationListMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
           com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
       getDeleteCargoNominationMethod;
@@ -1883,6 +1936,14 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void saveLoadableStudyPortRotationList(
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveLoadableStudyPortRotationListMethod(), responseObserver);
+    }
+
+    /** */
     public void deleteCargoNomination(
         com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
@@ -2151,6 +2212,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.PortRotationDetail,
                       com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
                       this, METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION)))
+          .addMethod(
+              getSaveLoadableStudyPortRotationListMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+                      com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
+                      this, METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION_LIST)))
           .addMethod(
               getDeleteCargoNominationMethod(),
               asyncUnaryCall(
@@ -2447,6 +2515,17 @@ public final class LoadableStudyServiceGrpc {
             responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getSaveLoadableStudyPortRotationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void saveLoadableStudyPortRotationList(
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveLoadableStudyPortRotationListMethod(), getCallOptions()),
           request,
           responseObserver);
     }
@@ -2802,6 +2881,14 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public com.cpdss.common.generated.LoadableStudy.PortRotationReply
+        saveLoadableStudyPortRotationList(
+            com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getSaveLoadableStudyPortRotationListMethod(), getCallOptions(), request);
+    }
+
+    /** */
     public com.cpdss.common.generated.LoadableStudy.CargoNominationReply deleteCargoNomination(
         com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
       return blockingUnaryCall(
@@ -3080,6 +3167,16 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.PortRotationReply>
+        saveLoadableStudyPortRotationList(
+            com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveLoadableStudyPortRotationListMethod(), getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.CargoNominationReply>
         deleteCargoNomination(
             com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
@@ -3292,29 +3389,30 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_VALVE_SEGREGATION = 8;
   private static final int METHODID_GET_LOADABLE_QUANTITY = 9;
   private static final int METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION = 10;
-  private static final int METHODID_DELETE_CARGO_NOMINATION = 11;
-  private static final int METHODID_SAVE_DISCHARGING_PORTS = 12;
-  private static final int METHODID_GET_PORT_ROTATION_BY_LOADABLE_STUDY_ID = 13;
-  private static final int METHODID_DELETE_LOADABLE_STUDY = 14;
-  private static final int METHODID_DELETE_PORT_ROTATION = 15;
-  private static final int METHODID_GET_ON_HAND_QUANTITY = 16;
-  private static final int METHODID_SAVE_ON_HAND_QUANTITY = 17;
-  private static final int METHODID_GET_LOADABLE_PATTERN_DETAILS = 18;
-  private static final int METHODID_GET_PURPOSE_OF_COMMINGLE = 19;
-  private static final int METHODID_GET_COMMINGLE_CARGO = 20;
-  private static final int METHODID_SAVE_COMMINGLE_CARGO = 21;
-  private static final int METHODID_GET_LOADABLE_PATTERN_COMMINGLE_DETAILS = 22;
-  private static final int METHODID_GENERATE_LOADABLE_PATTERNS = 23;
-  private static final int METHODID_GET_ON_BOARD_QUANTITY = 24;
-  private static final int METHODID_SAVE_ON_BOARD_QUANTITY = 25;
-  private static final int METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS = 26;
-  private static final int METHODID_SAVE_SYNOPTICAL_TABLE = 27;
-  private static final int METHODID_GET_SYNOPTICAL_TABLE = 28;
-  private static final int METHODID_GET_SYNOPTICAL_DATA_BY_PORT_ID = 29;
-  private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 30;
-  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 31;
-  private static final int METHODID_CONFIRM_PLAN = 32;
-  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 33;
+  private static final int METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION_LIST = 11;
+  private static final int METHODID_DELETE_CARGO_NOMINATION = 12;
+  private static final int METHODID_SAVE_DISCHARGING_PORTS = 13;
+  private static final int METHODID_GET_PORT_ROTATION_BY_LOADABLE_STUDY_ID = 14;
+  private static final int METHODID_DELETE_LOADABLE_STUDY = 15;
+  private static final int METHODID_DELETE_PORT_ROTATION = 16;
+  private static final int METHODID_GET_ON_HAND_QUANTITY = 17;
+  private static final int METHODID_SAVE_ON_HAND_QUANTITY = 18;
+  private static final int METHODID_GET_LOADABLE_PATTERN_DETAILS = 19;
+  private static final int METHODID_GET_PURPOSE_OF_COMMINGLE = 20;
+  private static final int METHODID_GET_COMMINGLE_CARGO = 21;
+  private static final int METHODID_SAVE_COMMINGLE_CARGO = 22;
+  private static final int METHODID_GET_LOADABLE_PATTERN_COMMINGLE_DETAILS = 23;
+  private static final int METHODID_GENERATE_LOADABLE_PATTERNS = 24;
+  private static final int METHODID_GET_ON_BOARD_QUANTITY = 25;
+  private static final int METHODID_SAVE_ON_BOARD_QUANTITY = 26;
+  private static final int METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS = 27;
+  private static final int METHODID_SAVE_SYNOPTICAL_TABLE = 28;
+  private static final int METHODID_GET_SYNOPTICAL_TABLE = 29;
+  private static final int METHODID_GET_SYNOPTICAL_DATA_BY_PORT_ID = 30;
+  private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 31;
+  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 32;
+  private static final int METHODID_CONFIRM_PLAN = 33;
+  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 34;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -3405,6 +3503,13 @@ public final class LoadableStudyServiceGrpc {
         case METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION:
           serviceImpl.saveLoadableStudyPortRotation(
               (com.cpdss.common.generated.LoadableStudy.PortRotationDetail) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.PortRotationReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION_LIST:
+          serviceImpl.saveLoadableStudyPortRotationList(
+              (com.cpdss.common.generated.LoadableStudy.PortRotationRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.LoadableStudy.PortRotationReply>)
                   responseObserver);
@@ -3646,6 +3751,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetValveSegregationMethod())
                       .addMethod(getGetLoadableQuantityMethod())
                       .addMethod(getSaveLoadableStudyPortRotationMethod())
+                      .addMethod(getSaveLoadableStudyPortRotationListMethod())
                       .addMethod(getDeleteCargoNominationMethod())
                       .addMethod(getSaveDischargingPortsMethod())
                       .addMethod(getGetPortRotationByLoadableStudyIdMethod())
