@@ -28,6 +28,7 @@ import { CommingleApiService } from '../services/commingle-api.service';
 import { OnBoardQuantityComponent } from './on-board-quantity/on-board-quantity.component';
 import { BunkeringLayoutModule } from '../../core/components/bunkering-layout/bunkering-layout.module';
 import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/cargo-tank-layout.module';
+import { NumberDirectiveModule } from '../../../shared/directives/number-directive/number-directive.module';
 
 /**
  * Routing Module for Loadable Study Details Screen
@@ -55,7 +56,8 @@ import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/c
     CheckboxModule,
     ColorPickerModule,
     BunkeringLayoutModule,
-    CargoTankLayoutModule
+    CargoTankLayoutModule,
+    NumberDirectiveModule
   ],
   providers: [
     LoadableQuantityApiService, CommingleApiService

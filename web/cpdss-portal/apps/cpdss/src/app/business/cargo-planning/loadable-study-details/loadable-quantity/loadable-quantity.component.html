@@ -95,7 +95,7 @@
                         <label for="loadable_quantity_sea_water_density"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SEA_WATER_DENSITY' | translate}}</label>
                         <div class="col">
-                            <input type="number" class="form-control" id="loadable_quantity_sea_water_density"
+                            <input type="text" cpdssPortalNumberDecimal class="form-control" id="loadable_quantity_sea_water_density"
                                 formControlName="estSeaDensity" (change)="getSgCorrectionOnChange()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -120,7 +120,7 @@
                         <label for="loadable_quantity_estimate_sag"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_ESTIMATE_SAG' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_estimate_sag" class="form-control"
+                            <input type="text" cpdssPortalNumberDecimal id="loadable_quantity_estimate_sag" class="form-control"
                                 formControlName="estimateSag" (change)="getSagCorrectionOnChange()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_CM' | translate }}</div>
@@ -145,7 +145,7 @@
                         <label for="loadable_quantity_fo_onboard"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FO_ONBOARD' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_fo_onboard" class="form-control"
+                            <input type="text" cpdssPortalNumberDecimal id="loadable_quantity_fo_onboard" class="form-control"
                                 formControlName="foOnboard" (change)="getSubTotal()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -158,7 +158,7 @@
                         <label for="loadable_quantity_do_onboard"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_DO_ONBOARD' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_do_onboard" class="form-control"
+                            <input type="text" cpdssPortalNumberDecimal id="loadable_quantity_do_onboard" class="form-control"
                                 formControlName="doOnboard" (change)="getSubTotal()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -172,7 +172,7 @@
                         <label for="loadable_quantity_fresh_water_onboard"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FRESH_WATER_ON_BOARD' | translate}}</label>
                         <div class="col">
-                            <input type="number" class="form-control" id="loadable_quantity_fresh_water_onboard"
+                            <input type="text" cpdssPortalNumberDecimal class="form-control" id="loadable_quantity_fresh_water_onboard"
                                 formControlName="freshWaterOnboard" (change)="getSubTotal()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -185,7 +185,7 @@
                         <label for="loadable_quantity_boiler_water_onboard"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_BOILER_WATER_ON_BOARD' | translate}}</label>
                         <div class="col">
-                            <input type="number" class="form-control" id="loadable_quantity_boiler_water_onboard"
+                            <input type="text" cpdssPortalNumberDecimal class="form-control" id="loadable_quantity_boiler_water_onboard"
                                 formControlName="boilerWaterOnboard" (change)="getSubTotal()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -198,7 +198,7 @@
                         <label for="loadable_quantity_ballast"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_BALLAST' | translate }}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_ballast" class="form-control"
+                            <input type="text" cpdssPortalNumberDecimal id="loadable_quantity_ballast" class="form-control"
                                 formControlName="ballast" (change)="getSubTotal()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -224,7 +224,7 @@
                         <label for="loadable_quantity_others"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_OTHERS' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_others" class="form-control"
+                            <input type="text" cpdssPortalNumberDecimal id="loadable_quantity_others" class="form-control"
                                 formControlName="others" (change)="getSubTotal()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -263,7 +263,7 @@
                         <label for="loadable_quantity_dist_in_summery"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_DIST_IN' | translate}} {{selectedZone}}</label>
                         <div class="col">
-                            <input type="number" class="form-control" id="loadable_quantity_dist_in_summery"
+                            <input type="text" cpdssPortalNumberDecimal class="form-control" id="loadable_quantity_dist_in_summery"
                                 formControlName="distanceInSummerzone" (change)="getRunningHours()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MILES' | translate }}</div>
@@ -276,7 +276,7 @@
                         <label for="loadable_quantity_speed_in_sz"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SPEED_IN' | translate}} {{selectedZone}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_speed_in_sz" class="form-control"
+                            <input type="text" cpdssPortalNumberDecimal id="loadable_quantity_speed_in_sz" class="form-control"
                                 formControlName="speedInSz" (change)="getRunningHours()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_KNOTS' | translate }}</div>
@@ -289,7 +289,7 @@
                         <label for="loadable_quantity_running_hours"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_RUNNING_HOURS' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_running_hours" class="form-control"
+                            <input type="text" cpdssPortalNumberDecimal id="loadable_quantity_running_hours" class="form-control"
                                 formControlName="runningHours" (change)="getRunningDays()" readonly>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_HOURS' | translate }}</div>
@@ -302,7 +302,7 @@
                         <label for="loadable_quantity_running_days"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_RUNNING_DAYS' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_running_days" class="form-control"
+                            <input type="text" cpdssPortalNumberDecimal id="loadable_quantity_running_days" class="form-control"
                                 formControlName="runningDays" (change)="getFoConsumptionInSz()" readonly>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_DAYS' | translate }}</div>
@@ -315,7 +315,7 @@
                         <label for="loadable_quantity_fo_con_day"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FO_CON_/_DAY' | translate}}</label>
                         <div class="col">
-                            <input type="number" id="loadable_quantity_fo_con_day" class="form-control"
+                            <input type="text" cpdssPortalNumberDecimal id="loadable_quantity_fo_con_day" class="form-control"
                                 formControlName="foConday" (change)="getFoConsumptionInSz()" [readonly]="isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT/DAY' | translate }}</div>
@@ -328,7 +328,7 @@
                         <label for="loadable_quantity_fo_cons_in_sz"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FO_CONS_IN' | translate}} {{selectedZone}}</label>
                         <div class="col">
-                            <input type="number" class="form-control" id="loadable_quantity_fo_cons_in_sz"
+                            <input type="text" cpdssPortalNumberDecimal class="form-control" id="loadable_quantity_fo_cons_in_sz"
                                 formControlName="foConsInSz" readonly>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>

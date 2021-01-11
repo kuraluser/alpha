@@ -106,7 +106,7 @@
                                     <label for="" class="col-12 text-center">{{'OHQ_ARRIVAL'| translate}}
                                         {{'OHQ_VOL'| translate}}</label>
                                     <div class="col">
-                                        <input type="number" class="form-control" formControlName="arrivalVolume"
+                                        <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="arrivalVolume"
                                             (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalVolume')"
                                             [readOnly]="!permission?.edit">
                                         <cpdss-portal-validation-error
@@ -123,7 +123,7 @@
                                     <label for="" class="col-12 text-center">{{'OHQ_ARRIVAL'| translate}}
                                         {{'OHQ_WEIGHT'| translate}}</label>
                                     <div class="col">
-                                        <input type="number" class="form-control" formControlName="arrivalQuantity"
+                                        <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="arrivalQuantity"
                                             (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalQuantity')"
                                             [readOnly]="!permission?.edit">
                                         <cpdss-portal-validation-error
@@ -139,7 +139,7 @@
                                     <label for="" class="col-12 text-center">{{'OHQ_DEPARTURE'| translate}}
                                         {{'OHQ_VOL'| translate}}</label>
                                     <div class="col">
-                                        <input type="number" class="form-control" formControlName="departureVolume"
+                                        <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="departureVolume"
                                             (change)="onChange($event, selectedTankFormGroupIndex, 'departureVolume')"
                                             [readOnly]="!permission?.edit">
                                         <cpdss-portal-validation-error
@@ -155,7 +155,7 @@
                                     <label for="" class="col-12 text-center">{{'OHQ_DEPARTURE'| translate}}
                                         {{'OHQ_WEIGHT'| translate}}</label>
                                     <div class="col">
-                                        <input type="number" class="form-control" formControlName="departureQuantity"
+                                        <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="departureQuantity"
                                             (change)="onChange($event, selectedTankFormGroupIndex, 'departureQuantity')"
                                             [readOnly]="!permission?.edit">
                                         <cpdss-portal-validation-error

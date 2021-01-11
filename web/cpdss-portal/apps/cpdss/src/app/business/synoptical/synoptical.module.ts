@@ -14,6 +14,7 @@ import { ButtonModule } from 'primeng/button';
 import { ValidationErrorModule } from '../../shared/components/validation-error/validation-error.module';
 import { CalendarModule } from 'primeng/calendar';
 import { SynopticalService } from './services/synoptical.service';
+import { NumberDirectiveModule } from '../../shared/directives/number-directive/number-directive.module';
 
 /**
  * Module for Synoptical Table
@@ -36,6 +37,7 @@ import { SynopticalService } from './services/synoptical.service';
     ButtonModule,
     ValidationErrorModule,
     CalendarModule,
+    NumberDirectiveModule
   ],
   providers: [
     LoadableStudyListApiService,

@@ -6,6 +6,7 @@ import { CargoPlanningComponent } from './cargo-planning.component';
 import { VesselInfoModule } from '../core/components/vessel-info/vessel-info.module';
 import { LoadableStudyListApiService } from './services/loadable-study-list-api.service';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NumberDirectiveModule } from '../../shared/directives/number-directive/number-directive.module';
 
 /**
  * Module class Cargo Planning module 
@@ -20,7 +21,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     ReactiveFormsModule,
     CargoPlanningRoutingModule,
-    VesselInfoModule
+    VesselInfoModule,
+    NumberDirectiveModule
   ],
   providers: [LoadableStudyListApiService]
 })

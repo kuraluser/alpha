@@ -80,7 +80,7 @@
                                     </p-calendar>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.NUMBER">
-                                    <input type="number" class="form-control" id="{{field.key + colIndex}}"
+                                    <input type="text" cpdssPortalNumberDecimal class="form-control" id="{{field.key + colIndex}}"
                                         [formControl]="getControl(colIndex,field.key)" (blur)="onBlur(field,colIndex)">
                                 </ng-container>
                                 <ng-container *ngSwitchDefault>

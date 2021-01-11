@@ -7,12 +7,12 @@ import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
 
-**
+/*
  * Service class for synoptical table
  *
  * @export
  * @class SynopticalService
- */
+*/
 @Injectable()
 export class SynopticalService {
 
@@ -32,10 +32,10 @@ export class SynopticalService {
     private loadableStudyListApiService: LoadableStudyListApiService,
     private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,
- ) { }
+  ) { }
 
   // Init function to intialize data
-  async init(){
+  async init() {
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
     this.vesselInfo = res[0] ?? <IVessel>{};
     this.voyages = await this.voyageService.getVoyagesByVesselId(this.vesselInfo?.id).toPromise();
@@ -47,8 +47,8 @@ export class SynopticalService {
   async setSelectedVoyage() {
     if (!this.selectedVoyage && this.voyages && this.voyageId) {
       this.selectedVoyage = this.voyages.find(voyage => voyage.id == this.voyageId)
-      await this.getLoadableStudyInfo(this.vesselInfo.id,this.selectedVoyage.id)
-    } else if(this.selectedVoyage){
+      await this.getLoadableStudyInfo(this.vesselInfo.id, this.selectedVoyage.id)
+    } else if (this.selectedVoyage) {
       this.voyageId = this.selectedVoyage.id;
     }
   }
@@ -68,7 +68,7 @@ export class SynopticalService {
       this.loadableStudyList = result.loadableStudies;
       if (!this.selectedLoadableStudy && this.loadableStudyId) {
         this.setSelectedLoadableStudy();
-      } else if(this.selectedLoadableStudy){
+      } else if (this.selectedLoadableStudy) {
         this.loadableStudyId = this.selectedLoadableStudy.id;
       }
     }

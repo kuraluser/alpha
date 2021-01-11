@@ -156,7 +156,7 @@
 
                                 <ng-container *ngSwitchCase="fieldType.NUMBER">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
-                                        <input type="number" class="form-control" [formControlName]="col.field"
+                                        <input type="text" cpdssPortalNumberDecimal class="form-control" [formControlName]="col.field"
                                             [placeholder]="col.fieldPlaceholder| translate"
                                             (change)="onChange($event, rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}">
@@ -332,7 +332,7 @@
 
                                 <ng-container *ngSwitchCase="fieldType.NUMBER">
                                     <ng-container *ngIf="editMode && rowData[subCol.field]?.isEditMode">
-                                        <input type="number" class="form-control" [formControlName]="subCol.field"
+                                        <input type="text" cpdssPortalNumberDecimal class="form-control" [formControlName]="subCol.field"
                                             [placeholder]="subCol.fieldPlaceholder| translate"
                                             (change)="onChange($event, rowData, rowIndex, subCol)"
                                             id="{{subCol.field+'_'+rowIndex}}">
