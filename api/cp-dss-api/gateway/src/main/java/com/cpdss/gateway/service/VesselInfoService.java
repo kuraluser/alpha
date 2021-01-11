@@ -353,7 +353,7 @@ public class VesselInfoService {
     List<ShearingForce> shearingForces = new ArrayList<ShearingForce>();
     vesselAlgoReply
         .getBMAndSF()
-        .getBendingMomentList()
+        .getShearingForceList()
         .forEach(
             shearingForce -> {
               ShearingForce sf = new ShearingForce();
