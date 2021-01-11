@@ -17,10 +17,13 @@ import { IBallastStowageDetails } from '../../../models/loadable-plan.model';
   styleUrls: ['./ballast-stowage.component.scss']
 })
 export class BallastStowageComponent implements OnInit {
-
+  
+  //public fields 
   public columns: any[];
-  private _ballastDetails: IBallastStowageDetails[];
   public editMode: false;
+
+  //private fields 
+  private _ballastDetails: IBallastStowageDetails[];
 
   @Input() set ballastDetails(value: IBallastStowageDetails[]) {
     this._ballastDetails = [
@@ -60,9 +63,17 @@ export class BallastStowageComponent implements OnInit {
   get ballastDetails(): IBallastStowageDetails[] {
     return this._ballastDetails;
   }
-
+  
+  // public methods
   constructor(private loadablePlanTransformationService: LoadablePlanTransformationService) { }
 
+  /**
+   * Component lifecycle ngOnit
+   * Method called while intialization the component
+   * 
+   * @returns {void}
+   * @memberof BallastStowageComponent
+   */
   ngOnInit(): void {
     this.columns = this.loadablePlanTransformationService.getBallastDatatableColumns();
   }
