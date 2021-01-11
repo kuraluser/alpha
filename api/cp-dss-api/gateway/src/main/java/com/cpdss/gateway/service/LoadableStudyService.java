@@ -86,8 +86,10 @@ import com.cpdss.gateway.domain.LoadablePattern;
 import com.cpdss.gateway.domain.LoadablePatternCargoDetails;
 import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
+import com.cpdss.gateway.domain.LoadablePlanBallastDetails;
 import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePlanStowageDetails;
+import com.cpdss.gateway.domain.LoadablePlanSynopticalRecord;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
@@ -2474,11 +2476,13 @@ public class LoadableStudyService {
 
   /**
    * @param loadablePatternId
+   * @param loadableStudyId
    * @param first
    * @return LoadablePlanDetailsResponse
    */
   public LoadablePlanDetailsResponse getLoadablePatternDetails(
-      Long loadablePatternId, String correlationId) throws GenericServiceException {
+      Long loadablePatternId, Long loadableStudyId, Long vesselId, String correlationId)
+      throws GenericServiceException {
     log.info(
         "Inside getLoadablePatternDetails gateway service with correlationId : " + correlationId);
     LoadablePlanDetailsResponse response = new LoadablePlanDetailsResponse();
@@ -2498,9 +2502,89 @@ public class LoadableStudyService {
     response.setFrontBallastTanks(createGroupWiseTankList(grpcReply.getBallastFrontTanksList()));
     response.setCenterBallastTanks(createGroupWiseTankList(grpcReply.getBallastCenterTanksList()));
     response.setRearBallastTanks(createGroupWiseTankList(grpcReply.getBallastRearTanksList()));
+    buildLoadableStudyBallastDetails(response, grpcReply);
+    buildSynopticalTableDetails(
+        response, 716L, vesselId); // ToDo change loadable study to actual one
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
+  }
+
+  /**
+   * @param response
+   * @param loadableStudyId void
+   * @throws GenericServiceException
+   */
+  private void buildSynopticalTableDetails(
+      LoadablePlanDetailsResponse response, Long loadableStudyId, Long vesselId)
+      throws GenericServiceException {
+
+    SynopticalTableResponse synopticalTableResponse = getSynopticalTable(vesselId, loadableStudyId);
+    if (!synopticalTableResponse
+        .getResponseStatus()
+        .getStatus()
+        .equals(String.valueOf(HttpStatus.OK.value()))) {
+      throw new GenericServiceException(
+          "Failed to get synoptical table data",
+          String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()),
+          HttpStatusCode.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+    }
+    response.setLoadablePlanSynopticalRecords(new ArrayList<LoadablePlanSynopticalRecord>());
+    synopticalTableResponse
+        .getSynopticalRecords()
+        .forEach(
+            str -> {
+              LoadablePlanSynopticalRecord synopticalRecord = new LoadablePlanSynopticalRecord();
+              synopticalRecord.setId(str.getId());
+              synopticalRecord.setDisplacementPlanned(str.getDisplacementPlanned());
+              synopticalRecord.setEtaEtdPlanned(str.getEtaEtdPlanned());
+              synopticalRecord.setOperationType(str.getOperationType());
+              synopticalRecord.setOthersPlanned(str.getOthersPlanned());
+              synopticalRecord.setPlannedDOTotal(str.getPlannedDOTotal());
+              synopticalRecord.setPlannedFOTotal(str.getPlannedFOTotal());
+              synopticalRecord.setPlannedFWTotal(str.getPlannedFWTotal());
+              synopticalRecord.setPortId(str.getPortId());
+              synopticalRecord.setPortName(str.getPortName());
+              synopticalRecord.setSpecificGravity(str.getSpecificGravity());
+              synopticalRecord.setTotalDwtPlanned(str.getTotalDwtPlanned());
+              synopticalRecord.setFinalDraftAft(str.getFinalDraftAft());
+              synopticalRecord.setFinalDraftFwd(str.getFinalDraftFwd());
+              synopticalRecord.setFinalDraftMid(str.getFinalDraftMid());
+              synopticalRecord.setCalculatedTrimPlanned(str.getCalculatedTrimPlanned());
+              synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
+              synopticalRecord.setBallastPlanned(str.getBallastPlanned());
+              response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
+            });
+  }
+
+  /**
+   * @param response
+   * @param grpcReply void
+   */
+  private void buildLoadableStudyBallastDetails(
+      LoadablePlanDetailsResponse response, LoadablePlanDetailsReply grpcReply) {
+    response.setLoadablePlanBallastDetails(new ArrayList<LoadablePlanBallastDetails>());
+    grpcReply
+        .getLoadablePlanBallastDetailsList()
+        .forEach(
+            lpbd -> {
+              LoadablePlanBallastDetails details = new LoadablePlanBallastDetails();
+              details.setId(lpbd.getId());
+              details.setCorrectedLevel(lpbd.getCorrectedLevel());
+              details.setCorrectionFactor(lpbd.getCorrectionFactor());
+              details.setCubicMeter(lpbd.getCubicMeter());
+              details.setInertia(lpbd.getInertia());
+              details.setLcg(lpbd.getLcg());
+              details.setMetricTon(lpbd.getMetricTon());
+              details.setPercentage(lpbd.getPercentage());
+              details.setRdgLevel(lpbd.getRdgLevel());
+              details.setSg(lpbd.getSg());
+              details.setTankId(lpbd.getTankId());
+              details.setTcg(lpbd.getTcg());
+              details.setVcg(lpbd.getVcg());
+              details.setTankName(lpbd.getTankName());
+              response.getLoadablePlanBallastDetails().add(details);
+            });
   }
 
   /**

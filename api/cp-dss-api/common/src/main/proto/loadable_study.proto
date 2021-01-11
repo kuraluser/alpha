@@ -140,6 +140,7 @@ message LoadablePlanBallastDetails {
 	string vcg = 11;
 	string tcg = 12;
 	string inertia = 13;
+	string tankName = 14;
 }
 
 message LoadablePlanStowageDetails {

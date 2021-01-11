@@ -1100,7 +1100,7 @@ public class LoadableStudyController {
       throws CommonRestException {
     try {
       return this.loadableStudyService.getLoadablePatternDetails(
-          loadablePatternId, headers.getFirst(CORRELATION_ID_HEADER));
+          loadablePatternId, loadableStudyId, vesselId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when getLoadablePatternDetails", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

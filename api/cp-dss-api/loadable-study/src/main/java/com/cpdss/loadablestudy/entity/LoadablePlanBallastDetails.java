@@ -2,8 +2,6 @@
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -26,43 +24,46 @@ public class LoadablePlanBallastDetails extends EntityDoc {
   private static final long serialVersionUID = 1L;
 
   @Column(name = "tank_xid")
-  private BigInteger tankXid;
+  private Long tankId;
 
   @Column(name = "rdg_level")
-  private BigDecimal rdgLevel;
+  private String rdgLevel;
 
   @Column(name = "correction_factor")
-  private BigDecimal correctionFactor;
+  private String correctionFactor;
 
   @Column(name = "corrected_level")
-  private BigDecimal correctedLevel;
+  private String correctedLevel;
 
   @Column(name = "metric_ton")
-  private BigDecimal metricTon;
+  private String metricTon;
 
   @Column(name = "cubic_meter")
-  private BigDecimal cubicMeter;
+  private String cubicMeter;
 
   @Column(name = "percentage")
-  private BigDecimal percentage;
+  private String percentage;
 
   @Column(name = "sg")
-  private BigDecimal sg;
+  private String sg;
 
   @Column(name = "lcg")
-  private BigDecimal lcg;
+  private String lcg;
 
   @Column(name = "tcg")
-  private BigDecimal tcg;
+  private String tcg;
 
   @Column(name = "vcg")
-  private BigDecimal vcg;
+  private String vcg;
 
   @Column(name = "inertia")
-  private BigDecimal inertia;
+  private String inertia;
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Column(name = "tank_name")
+  private String tankName;
 
   @JoinColumn(name = "loadable_pattern_xid", referencedColumnName = "id")
   @ManyToOne

@@ -18,6 +18,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails;
@@ -43,6 +44,7 @@ import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.AlgoStatusResponse;
@@ -59,6 +61,8 @@ import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.SynopticalRecord;
+import com.cpdss.gateway.domain.SynopticalTableResponse;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
 import java.math.BigDecimal;
@@ -73,6 +77,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.multipart.MultipartFile;
@@ -1332,7 +1337,9 @@ class LoadableStudyServiceTest {
   /** @throws GenericServiceException void */
   @Test
   void testGetLoadablePatternDetails() throws GenericServiceException {
-    Mockito.when(this.loadableStudyService.getLoadablePatternDetails(anyLong(), anyString()))
+    Mockito.when(
+            this.loadableStudyService.getLoadablePatternDetails(
+                anyLong(), anyLong(), anyLong(), anyString()))
         .thenCallRealMethod();
     Mockito.when(
             this.loadableStudyService.getLoadablePatternDetails(
@@ -1347,15 +1354,87 @@ class LoadableStudyServiceTest {
                     buildLoadableQuantityCommingleCargoDetails())
                 .addLoadablePlanStowageDetails(buildLoadablePlanStowageDetails())
                 .addTanks(buildCargoTanks())
+                .addLoadablePlanBallastDetails(buildLoadablePlanBallastDetails())
                 .build());
+
+    Mockito.when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong()))
+        .thenReturn(buildLoadablePlanSynopticalResponse());
+
     LoadablePlanDetailsResponse response =
-        this.loadableStudyService.getLoadablePatternDetails(1L, CORRELATION_ID_HEADER_VALUE);
+        this.loadableStudyService.getLoadablePatternDetails(
+            1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE);
     assertAll(
         () ->
             assertEquals(
                 String.valueOf(HttpStatusCode.OK.value()),
                 response.getResponseStatus().getStatus(),
                 "response valid"));
+  }
+
+  /** @throws GenericServiceException void */
+  @Test
+  void testGetLoadablePatternDetailsSynopticalFail() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.getLoadablePatternDetails(
+                anyLong(), anyLong(), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(
+            this.loadableStudyService.getLoadablePatternDetails(
+                any(
+                    com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.Builder
+                        .class)))
+        .thenReturn(
+            LoadablePlanDetailsReply.newBuilder()
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .addLoadableQuantityCargoDetails(buildLoadableQuantityCargoDetails())
+                .addLoadableQuantityCommingleCargoDetails(
+                    buildLoadableQuantityCommingleCargoDetails())
+                .addLoadablePlanStowageDetails(buildLoadablePlanStowageDetails())
+                .addTanks(buildCargoTanks())
+                .addLoadablePlanBallastDetails(buildLoadablePlanBallastDetails())
+                .build());
+
+    Mockito.when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong()))
+        .thenReturn(buildLoadablePlanSynopticalFailResponse());
+
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.getLoadablePatternDetails(
+                    1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE));
+
+    assertAll(
+        () ->
+            assertEquals(
+                HttpStatusCode.INTERNAL_SERVER_ERROR, ex.getStatus(), "Invternal server error"));
+  }
+
+  /** @return SynopticalTableResponse */
+  private SynopticalTableResponse buildLoadablePlanSynopticalFailResponse() {
+    SynopticalTableResponse synopticalResponse = new SynopticalTableResponse();
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+    synopticalResponse.setResponseStatus(commonSuccessResponse);
+    return synopticalResponse;
+  }
+
+  /** @return SynopticalTableResponse */
+  private SynopticalTableResponse buildLoadablePlanSynopticalResponse() {
+    SynopticalTableResponse synopticalResponse = new SynopticalTableResponse();
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    synopticalResponse.setResponseStatus(commonSuccessResponse);
+    List<SynopticalRecord> synopticalRecords = new ArrayList<SynopticalRecord>();
+    synopticalRecords.add(new SynopticalRecord());
+    synopticalResponse.setSynopticalRecords(synopticalRecords);
+    return synopticalResponse;
+  }
+
+  /** @return LoadablePlanBallastDetails */
+  private LoadablePlanBallastDetails buildLoadablePlanBallastDetails() {
+    LoadablePlanBallastDetails.Builder builder = LoadablePlanBallastDetails.newBuilder();
+    return builder.build();
   }
 
   /** @return TankList */
@@ -1369,7 +1448,9 @@ class LoadableStudyServiceTest {
   /** @throws GenericServiceException void */
   @Test
   void testGetLoadablePatternDetailsGrpcFailure() throws GenericServiceException {
-    Mockito.when(this.loadableStudyService.getLoadablePatternDetails(anyLong(), anyString()))
+    Mockito.when(
+            this.loadableStudyService.getLoadablePatternDetails(
+                anyLong(), anyLong(), anyLong(), anyString()))
         .thenCallRealMethod();
     Mockito.when(
             this.loadableStudyService.getLoadablePatternDetails(
@@ -1389,7 +1470,7 @@ class LoadableStudyServiceTest {
             GenericServiceException.class,
             () ->
                 this.loadableStudyService.getLoadablePatternDetails(
-                    1L, CORRELATION_ID_HEADER_VALUE));
+                    1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
