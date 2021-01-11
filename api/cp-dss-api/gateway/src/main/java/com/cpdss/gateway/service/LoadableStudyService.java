@@ -2582,7 +2582,6 @@ public class LoadableStudyService {
               details.setTankId(lpbd.getTankId());
               details.setTcg(lpbd.getTcg());
               details.setVcg(lpbd.getVcg());
-              details.setTankName(lpbd.getTankName());
               response.getLoadablePlanBallastDetails().add(details);
             });
   }
