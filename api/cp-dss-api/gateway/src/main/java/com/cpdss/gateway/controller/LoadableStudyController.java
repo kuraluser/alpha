@@ -449,7 +449,7 @@ public class LoadableStudyController {
           e);
     }
   }
-  
+
   /**
    * Save all loadable study ports
    *
@@ -461,8 +461,7 @@ public class LoadableStudyController {
    * @throws CommonRestException
    */
   @PostMapping(
-      value =
-          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports",
+      value = "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public PortRotationResponse savePortRotationList(

@@ -88,6 +88,9 @@ public class LoadableStudy extends EntityDoc {
   @Column(name = "case_no")
   private Integer caseNo;
 
+  @Column(name = "first_cargo_to_be_discharged")
+  private Long dischargeCargoId;
+
   @PrePersist
   void prePersist() {
     this.isActive = true;

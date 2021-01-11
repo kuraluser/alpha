@@ -59,4 +59,6 @@ public class LoadableStudy {
   private List<Long> dischargingPortIds;
 
   private List<LoadableStudyAttachmentData> LoadableStudyAttachment;
+
+  private Long dischargingCargoid;
 }

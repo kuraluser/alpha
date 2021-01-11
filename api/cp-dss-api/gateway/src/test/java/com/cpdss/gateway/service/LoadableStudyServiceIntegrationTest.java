@@ -10,9 +10,6 @@ import com.cpdss.gateway.domain.CommingleCargoResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationRequest;
 import com.cpdss.gateway.domain.PortRotationResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -77,28 +74,28 @@ class LoadableStudyServiceIntegrationTest {
     commingleCargo.setCargoGroups(cargoGroups);
     return commingleCargo;
   }
-  
+
   @Test
   void testSavePortRotationList() throws GenericServiceException {
-	  PortRotationResponse response =
+    PortRotationResponse response =
         loadableStudyService.savePortRotationList(createPortRotationListRequest(), "");
     assertThat(response.getResponseStatus().getStatus()).isEqualTo(HTTP_STATUS_200);
   }
-  
+
   private PortRotationRequest createPortRotationListRequest() {
-	  PortRotationRequest portRotationRequest = new PortRotationRequest();
-	  portRotationRequest.setLoadableStudyId(1L);
-	  List<PortRotation> portRotationList = new ArrayList<>();
-	  PortRotation request = new PortRotation();
-	  request.setId(2L);
-	  request.setDistanceBetweenPorts(new BigDecimal("0"));
-	  request.setEta(LocalDateTime.now().toString());
-	  request.setEtd(request.getEta());
-	  request.setLayCanFrom(LocalDate.now().toString());
-	  request.setLayCanTo(request.getLayCanFrom());
-	  request.setLoadableStudyId(1L);
-	  portRotationList.add(request);
-	  portRotationRequest.setPortList(portRotationList);
-	  return portRotationRequest;
+    PortRotationRequest portRotationRequest = new PortRotationRequest();
+    portRotationRequest.setLoadableStudyId(1L);
+    List<PortRotation> portRotationList = new ArrayList<>();
+    PortRotation request = new PortRotation();
+    request.setId(2L);
+    request.setDistanceBetweenPorts(new BigDecimal("0"));
+    request.setEta(LocalDateTime.now().toString());
+    request.setEtd(request.getEta());
+    request.setLayCanFrom(LocalDate.now().toString());
+    request.setLayCanTo(request.getLayCanFrom());
+    request.setLoadableStudyId(1L);
+    portRotationList.add(request);
+    portRotationRequest.setPortList(portRotationList);
+    return portRotationRequest;
   }
 }

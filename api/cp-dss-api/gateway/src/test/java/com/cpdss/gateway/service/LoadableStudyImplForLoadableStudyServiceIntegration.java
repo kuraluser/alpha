@@ -87,16 +87,15 @@ public class LoadableStudyImplForLoadableStudyServiceIntegration
     responseObserver.onNext(commingleCargoReply.build());
     responseObserver.onCompleted();
   }
-  
+
   @Override
   public void saveLoadableStudyPortRotationList(
-		  PortRotationRequest request, StreamObserver<PortRotationReply> responseObserver) {
-	  PortRotationReply.Builder replyBuilder = PortRotationReply.newBuilder();
-	  ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-	  responseStatus.setStatus(SUCCESS);
-	  replyBuilder.setResponseStatus(responseStatus);
-	  responseObserver.onNext(replyBuilder.build());
-	  responseObserver.onCompleted();
+      PortRotationRequest request, StreamObserver<PortRotationReply> responseObserver) {
+    PortRotationReply.Builder replyBuilder = PortRotationReply.newBuilder();
+    ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+    responseStatus.setStatus(SUCCESS);
+    replyBuilder.setResponseStatus(responseStatus);
+    responseObserver.onNext(replyBuilder.build());
+    responseObserver.onCompleted();
   }
-
 }
