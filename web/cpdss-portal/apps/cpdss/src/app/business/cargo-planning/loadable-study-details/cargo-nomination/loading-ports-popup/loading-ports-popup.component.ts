@@ -6,6 +6,8 @@ import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableEvent } from '../../../
 import { numberValidator } from '../../../directives/validator/number-validator.directive';
 import { ILoadingPort, ILoadingPortValueObject, ILoadingPopupData, IPort } from '../../../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
+import { ConfirmationAlertService } from '../../../../../shared/components/confirmation-alert/confirmation-alert.service';
+import { first } from 'rxjs/operators';
 
 /**
  * Component class for loading ports popup
@@ -60,7 +62,8 @@ export class LoadingPortsPopupComponent implements OnInit {
   constructor(private fb: FormBuilder,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private messageService: MessageService,
-    private translateService: TranslateService) { }
+    private translateService: TranslateService,
+    private confirmationAlertService: ConfirmationAlertService) { }
 
   ngOnInit(): void {
     this.columns = this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortDatatableColumns();
@@ -120,10 +123,16 @@ export class LoadingPortsPopupComponent implements OnInit {
    * @memberof LoadingPortsPopupComponent
    */
   onDeleteRow(event: IDataTableEvent) {
-    this.loadingPort.splice(event.index, 1);
-    const dataTableControl = <FormArray>this.loadingPortsFrom.get('dataTable');
-    dataTableControl.removeAt(event.index);
-    this.updatePorts(this.popupData);
+    
+    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADED_PORT_DELETE_SUMMARY', detail: 'LOADED_PORT_DELETE_DETAILS', data: { confirmLabel: 'LOADED_PORT_DELETE_CONFIRM_LABEL', rejectLabel: 'LOADED_PORT_DELETE_REJECT_LABEL' } });
+    this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
+      if (response) {
+        this.loadingPort.splice(event.index, 1);
+        const dataTableControl = <FormArray>this.loadingPortsFrom.get('dataTable');
+        dataTableControl.removeAt(event.index);
+        this.updatePorts(this.popupData);
+      }
+    });
   }
 
   /**
