@@ -50,7 +50,7 @@ export class CargoNominationComponent implements OnInit {
     let totalQuantity = 0;
     this._cargoNominations = cargoNominations.map((cargoNomination, index) => {
       const _cargoNomination = this.loadableStudyDetailsTransformationService.formatCargoNomination(cargoNomination);
-      totalQuantity += _cargoNomination?.isDelete ? 0 : _cargoNomination.quantity.value;
+      totalQuantity += _cargoNomination?.isDelete ? 0 : Number(_cargoNomination.quantity.value);
       _cargoNomination.priority.value = _cargoNomination.priority.value > cargoNominations.length ? this._cargoNominations.length : _cargoNomination.priority.value;
       return _cargoNomination
     });
@@ -397,7 +397,7 @@ export class CargoNominationComponent implements OnInit {
       cargo: this.fb.control(cargoNomination.cargo.value, Validators.required),
       abbreviation: this.fb.control(cargoNomination.abbreviation.value, [Validators.required, alphabetsOnlyValidator, Validators.maxLength(4)]),
       loadingPorts: this.fb.control(cargoNomination.loadingPorts.value, [Validators.required, cargoNominationLoadingPortValidator]),
-      quantity: this.fb.control({ value: cargoNomination.quantity.value, disabled: true }),
+      quantity: this.fb.control({ value: Number(cargoNomination.quantity.value), disabled: true }),
       api: this.fb.control(cargoNomination.api.value, [Validators.required, Validators.min(0), numberValidator(2, 3)]),
       temperature: this.fb.control(cargoNomination.temperature.value, [Validators.required, numberValidator(2, 3)]),
       minTolerance: this.fb.control(cargoNomination.minTolerance.value, [Validators.required, Validators.max(0), Validators.min(-25)]),
@@ -441,7 +441,7 @@ export class CargoNominationComponent implements OnInit {
     this.cargoNominations[valueIndex].loadingPorts.isEditMode = this.cargoNominations[valueIndex]?.isAdd ? true : false;
     this.cargoNominations = [...this.cargoNominations];
     this.updateField(loadingPopupData.rowIndex, 'loadingPorts', loadingPopupData.rowData.loadingPorts.value);
-    this.updateField(loadingPopupData.rowIndex, 'quantity', loadingPopupData.rowData.quantity.value);
+    this.updateField(loadingPopupData.rowIndex, 'quantity', Number(loadingPopupData.rowData.quantity.value));
     this.onEditComplete({ originalEvent: loadingPopupData.originalEvent, data: loadingPopupData.rowData, field: 'loadingPorts', index: loadingPopupData.rowIndex });
   }
 

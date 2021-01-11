@@ -51,7 +51,7 @@ export class LoadableStudyDetailsTransformationService {
     if (cargoNomination.loadingPorts.value?.length) {
       cargoNomination.quantity.value = 0;
       cargoNomination.loadingPorts.value.map(port => {
-        cargoNomination.quantity.value += port.quantity;
+        cargoNomination.quantity.value += Number(port.quantity);
       })
       cargoNomination.loadingPortsNameArray = cargoNomination.loadingPorts.value.map(lport => lport.name);
       const portLength = cargoNomination.loadingPorts.value.length;
@@ -86,7 +86,7 @@ export class LoadableStudyDetailsTransformationService {
     });
     cargoNomination.quantity = 0;
     cargoNomination?.loadingPorts?.map(port => {
-      cargoNomination.quantity += port.quantity;
+      cargoNomination.quantity += Number(port.quantity);
     });
     _cargoNomination.id = cargoNomination.id;
     _cargoNomination.priority = new ValueObject<number>(cargoNomination.priority, true, isNewValue, false);
@@ -364,7 +364,7 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'quantity',
         header: 'QUANTITY',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'LOADING_PORT_QUANTITY_PLACEHOLDER',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
@@ -783,7 +783,7 @@ export class LoadableStudyDetailsTransformationService {
           {
             field: 'arrivalVolume',
             header: 'OHQ_VOL',
-            fieldType: DATATABLE_FIELD_TYPE.TEXT,
+            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
             fieldPlaceholder: 'OHQ_PLACEHOLDER_VOL',
             filter: true,
             filterField: 'arrivalVolume.value',
@@ -802,7 +802,7 @@ export class LoadableStudyDetailsTransformationService {
           {
             field: 'arrivalQuantity',
             header: 'OHQ_WEIGHT',
-            fieldType: DATATABLE_FIELD_TYPE.TEXT,
+            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
             fieldPlaceholder: 'OHQ_PLACEHOLDER_WEIGHT',
             filter: true,
             filterField: 'arrivalQuantity.value',
@@ -826,7 +826,7 @@ export class LoadableStudyDetailsTransformationService {
           {
             field: 'departureVolume',
             header: 'OHQ_VOL',
-            fieldType: DATATABLE_FIELD_TYPE.TEXT,
+            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
             fieldPlaceholder: 'OHQ_PLACEHOLDER_VOL',
             filter: true,
             filterField: 'departureVolume.value',
@@ -845,7 +845,7 @@ export class LoadableStudyDetailsTransformationService {
           {
             field: 'departureQuantity',
             header: 'OHQ_WEIGHT',
-            fieldType: DATATABLE_FIELD_TYPE.TEXT,
+            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
             fieldPlaceholder: 'OHQ_PLACEHOLDER_WEIGHT',
             filter: true,
             filterField: 'departureQuantity.value',

@@ -27,7 +27,7 @@
     serverSyncPorts();
     serverSyncOHQ();
     serverSyncOBQ();
-  }, 5000);
+  }, 2000);
 
   /**
    * Fuction for sync of indexdb and server for cargo nomination grid
@@ -43,7 +43,7 @@
 
         if (primaryKey?.length) {
           //Get last update record of particular store key
-          const cargoNomination = await db.cargoNominations.where({ ':id': primaryKey.sort((a, b) => a > b ? a : b)[0] }).first();
+          const cargoNomination = await db.cargoNominations.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
           if (cargoNomination) {
             const updated = await db.cargoNominations.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now() });
             if (updated) {
@@ -113,7 +113,7 @@
         const primaryKey = await db.ports.where({ 'storeKey': key }).and(data => !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
 
         //Get last update record of particular store key
-        const port = await db.ports.where({ ':id': primaryKey.sort((a, b) => a > b ? a : b)[0] }).first();
+        const port = await db.ports.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
         if (port) {
           const updated = await db.ports.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now() });
           if (updated) {
@@ -184,7 +184,7 @@
 
         if (primaryKey?.length) {
           //Get last update record of particular store key
-          const ohq = await db.ohq.where({ ':id': primaryKey.sort((a, b) => a > b ? a : b)[0] }).first();
+          const ohq = await db.ohq.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
           if (ohq) {
             const updated = await db.ohq.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now() });
             if (updated) {
@@ -232,7 +232,7 @@
 
           if (primaryKey?.length) {
             //Get last update record of particular store key
-            const obq = await db.obq.where({ ':id': primaryKey.sort((a, b) => a > b ? a : b)[0] }).first();
+            const obq = await db.obq.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
             if (obq) {
               const updated = await db.obq.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now() });
               if (updated) {
