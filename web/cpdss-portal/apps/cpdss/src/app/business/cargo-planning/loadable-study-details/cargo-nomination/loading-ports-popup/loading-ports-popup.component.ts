@@ -38,7 +38,7 @@ export class LoadingPortsPopupComponent implements OnInit {
   set popupData(popupData: ILoadingPopupData) {
     this._popupData = popupData;
     this.ports = this.popupData.ports;
-    this.loadingPort = this.popupData.rowData.loadingPorts.value ? this.popupData.rowData.loadingPorts.value.reverse().map(port => this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortAsValueObject(port, false)) : [];
+    this.loadingPort = popupData.rowData.loadingPorts.value ? [...popupData.rowData.loadingPorts.value].reverse().map(port => this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortAsValueObject(port, false)) : [];
     this.updatePorts(popupData);
     const loadingPortArray = this.loadingPort.map(port => this.initLoadingPortFormGroup(port));
     this.loadingPortsFrom = this.fb.group({
@@ -75,7 +75,6 @@ export class LoadingPortsPopupComponent implements OnInit {
    * @memberof LoadingPortsPopupComponent
    */
   closePopup() {
-    this.popupData.rowData.loadingPorts.value = this.loadingPort?.reverse().map(port => this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortAsValue(port));
     this.loadingPort = null;
     this.visible = false;
     this.visibleChange.emit(this.visible);
@@ -171,7 +170,7 @@ export class LoadingPortsPopupComponent implements OnInit {
   private initLoadingPortFormGroup(loadingPort: ILoadingPortValueObject) {
     return this.fb.group({
       name: this.fb.control(loadingPort.name.value, Validators.required),
-      quantity: this.fb.control(loadingPort.quantity.value, [Validators.required, Validators.min(1), numberValidator(4, 6, false)])
+      quantity: this.fb.control(loadingPort.quantity.value, [Validators.required, Validators.min(1), numberValidator(2, 7, false)])
     });
   }
 
