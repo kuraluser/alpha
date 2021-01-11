@@ -1,37 +1,45 @@
-<div class="container-fluid">
-    <p>3 {{'ETA_ETD_HEADING' | translate}}</p>
-    <p-table #datatable [columns]="columns" [value]="columns">
+
+    <div class="row">
+        <div class="col pb-20">
+            <h5 class="text-uppercase secondary-text heading-border pt-15 pb-10">3 {{'ETA_ETD_HEADING' | translate}}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col ml-30 table-eta">
+            <p-table #datatable [columns]="columns" [value]="columns">
         
-        <ng-template #row pTemplate="header" let-rowData let-columns>
-            <!-- <tr>
-                <th>
-                    <table>
-                        <tr *ngFor="let col of columns">
-                            <th rowspan="col?.rowspan">{{col.header | translate}}</th>
-                            <th>
-                                <table>
-                                    <tr *ngFor="let subCol of col?.subColumns">
-                                        <th>{{subCol.header | translate}}</th>
-                                    </tr>
-                                </table>
-                            </th>
-                            <td *ngFor="let col of columns"> ARRIVAL</td>
-                        </tr>
-                    </table>
-                </th>
-            </tr> -->
-            <tr>
-                <th *ngFor="let col of header" [attr.colspan]="col.colspan">{{col.header}}</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-            <tr>
-                <th *ngIf="rowData?.header" [attr.rowspan]="rowData.rowspan">{{rowData.header}}</th>
-                <th>{{rowData.subHeader}}</th>
-                <ng-container *ngFor="let col of header">
-                    <td *ngIf="col.header">{{data[rowIndex][col.field]}}</td>
-                </ng-container>
-            </tr>
-        </ng-template>
-    </p-table>
-</div>
+                <ng-template #row pTemplate="header" let-rowData let-columns>
+                    <!-- <tr>
+                        <th>
+                            <table>
+                                <tr *ngFor="let col of columns">
+                                    <th rowspan="col?.rowspan">{{col.header | translate}}</th>
+                                    <th>
+                                        <table>
+                                            <tr *ngFor="let subCol of col?.subColumns">
+                                                <th>{{subCol.header | translate}}</th>
+                                            </tr>
+                                        </table>
+                                    </th>
+                                    <td *ngFor="let col of columns"> ARRIVAL</td>
+                                </tr>
+                            </table>
+                        </th>
+                    </tr> -->
+                    <tr>
+                        <th *ngFor="let col of header" [attr.colspan]="col.colspan">{{col.header}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                    <tr>
+                        <th *ngIf="rowData?.header" [attr.rowspan]="rowData.rowspan">{{rowData.header}}</th>
+                        <th>{{rowData.subHeader}}</th>
+                        <ng-container *ngFor="let col of header">
+                            <td *ngIf="col.header">{{data[rowIndex][col.field]}}</td>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    

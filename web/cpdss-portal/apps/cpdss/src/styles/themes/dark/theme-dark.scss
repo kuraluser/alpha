@@ -940,7 +940,8 @@ a{
   border: 2px solid $tank-ohq-border; 
   .tank-column-pattern{
     >div{
-      border-color: $tank-ohq-border; 
+      border-color: $tank-ohq-border!important;
+      color: $text-secondary;
       >div{
         border-color: $tank-ohq-border; 
       }
@@ -1031,3 +1032,22 @@ a{
   }
 }
 
+
+.heading-border, .th-border{
+  border-bottom: 2px solid $table-border;
+}
+.p-datatable .p-datatable-tfoot > tr > td{
+  border-bottom: 1px solid $table-border;
+}
+.colspan-table.p-datatable .p-datatable-tfoot > tr > td{
+  color: $text-primary;
+}
+.loadable-plan.p-datatable .p-datatable-tfoot > tr > td{
+  color: $text-secondary;
+}
+.table-eta{
+  .p-datatable .p-datatable-tbody > tr > th{
+    color: $text-secondary;
+    border-bottom: 1px solid $table-border;
+  }
+}

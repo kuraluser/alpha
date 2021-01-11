@@ -1,8 +1,10 @@
-<div>
-    <div  class="row">
-        {{'COMMINGLED_CARGO_DETAILS' | translate}}
-    </div>
-    <div  class="row">
+<div  class="row">
+    <div class="col ml-30 pt-20">
+        <h5 class="secondary-text heading-border pb-10 mb-15">{{'COMMINGLED_CARGO_DETAILS' | translate}}</h5>
+      </div>
+  </div>
+  <div  class="row">
+      <div class="col ml-30">
         <p-table #datatable [columns]="columns" [value]="loadableQuantityCargoDetails">
             <ng-template pTemplate="header" let-columns>
                 <tr>
@@ -29,5 +31,5 @@
                 </tr>
             </ng-template>
         </p-table>
-    </div>
+  </div>
 </div>
