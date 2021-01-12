@@ -29,6 +29,9 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
@@ -57,6 +60,7 @@ import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.OnBoardQuantityResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
@@ -1550,5 +1554,79 @@ class LoadableStudyServiceTest {
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  @Test
+  void testGetOnBoardQuantity() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.getOnBoardQuantites(
+                anyLong(), anyLong(), anyLong(), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.getOnBoardQuantites(any(OnBoardQuantityRequest.class)))
+        .thenReturn(
+            OnBoardQuantityReply.newBuilder()
+                .addAllOnBoardQuantity(this.createOnBoardQuantityDetail())
+                .addTanks(TankList.newBuilder().addAllVesselTank(this.createTankDetail()).build())
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    OnBoardQuantityResponse response =
+        this.loadableStudyService.getOnBoardQuantites(1L, 1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "Invalid response status"));
+  }
+
+  @Test
+  void testGetOnBoardQuantityGrpcFailure() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.getOnBoardQuantites(
+                anyLong(), anyLong(), anyLong(), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.getOnBoardQuantites(any(OnBoardQuantityRequest.class)))
+        .thenReturn(
+            OnBoardQuantityReply.newBuilder()
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.getOnBoardQuantites(
+                    1L, 1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  private List<OnBoardQuantityDetail> createOnBoardQuantityDetail() {
+    List<OnBoardQuantityDetail> list = new ArrayList<>();
+    IntStream.range(1, 5)
+        .forEach(
+            i -> {
+              OnBoardQuantityDetail detail =
+                  OnBoardQuantityDetail.newBuilder()
+                      .setTankId(Long.valueOf(i))
+                      .setId(Long.valueOf(i))
+                      .setTankName("tank-" + i)
+                      .setPortId(Long.valueOf(i))
+                      .setCargoName(String.valueOf(i))
+                      .setWeight(String.valueOf(i))
+                      .setSounding(String.valueOf(i))
+                      .setVolume(String.valueOf(i))
+                      .setCargoId(Long.valueOf(i))
+                      .setLoadableStudyId(Long.valueOf(i))
+                      .setColorCode(String.valueOf(i))
+                      .setAbbreviation(String.valueOf(i))
+                      .build();
+              list.add(detail);
+            });
+    return list;
   }
 }

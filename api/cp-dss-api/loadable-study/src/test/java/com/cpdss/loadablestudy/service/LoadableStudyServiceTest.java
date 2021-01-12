@@ -34,6 +34,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
@@ -2586,5 +2588,73 @@ class LoadableStudyServiceTest {
     assertNull(responseObserver.getError());
     assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
     assertEquals(0L, replies.get(0).getId());
+  }
+
+  @Test
+  void testGetOnBoardQuantity() {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    LoadableStudy loadableStudy = new LoadableStudy();
+    Voyage voyage = new Voyage();
+    when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(voyage);
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(loadableStudy));
+    Mockito.doReturn(this.createVesselReply().build())
+        .when(spyService)
+        .getVesselTanks(any(VesselRequest.class));
+
+    StreamRecorder<OnBoardQuantityReply> responseObserver = StreamRecorder.create();
+    spyService.getOnBoardQuantity(this.createOnBoardQuantityRequest(), responseObserver);
+    List<OnBoardQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetOnBoardQuantityWithVoyageNull() {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    LoadableStudy loadableStudy = new LoadableStudy();
+    when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(null);
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(loadableStudy));
+    Mockito.doReturn(this.createVesselReply().build())
+        .when(spyService)
+        .getVesselTanks(any(VesselRequest.class));
+
+    StreamRecorder<OnBoardQuantityReply> responseObserver = StreamRecorder.create();
+    spyService.getOnBoardQuantity(this.createOnBoardQuantityRequest(), responseObserver);
+    List<OnBoardQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetOnBoardQuantityWithLoadableStudyNull() {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    Voyage voyage = new Voyage();
+    when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(voyage);
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    Mockito.doReturn(this.createVesselReply().build())
+        .when(spyService)
+        .getVesselTanks(any(VesselRequest.class));
+
+    StreamRecorder<OnBoardQuantityReply> responseObserver = StreamRecorder.create();
+    spyService.getOnBoardQuantity(this.createOnBoardQuantityRequest(), responseObserver);
+    List<OnBoardQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  private OnBoardQuantityRequest createOnBoardQuantityRequest() {
+    return OnBoardQuantityRequest.newBuilder()
+        .setCompanyId(ID_TEST_VALUE)
+        .setVesselId(ID_TEST_VALUE)
+        .setLoadableStudyId(ID_TEST_VALUE)
+        .setPortId(ID_TEST_VALUE)
+        .setVoyageId(ID_TEST_VALUE)
+        .build();
   }
 }
