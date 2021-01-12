@@ -25,6 +25,16 @@ public interface CargoNominationOperationDetailsRepository
 
   @Query(
       "FROM CargoNominationPortDetails LSPR WHERE LSPR.cargoNomination = ?1 AND LSPR.isActive = ?2")
+  public CargoNominationPortDetails findByCargoNominationAndIsActive(
+      CargoNomination cargoNominations, Boolean isActive);
+
+  @Query(
+      "FROM CargoNominationPortDetails LSPR WHERE LSPR.cargoNomination = ?1 AND LSPR.isActive = ?2")
+  public List<CargoNominationPortDetails> findByCargoNominationnAndIsActive(
+      CargoNomination cargoNominations, Boolean isActive);
+
+  @Query(
+      "FROM CargoNominationPortDetails LSPR WHERE LSPR.cargoNomination = ?1 AND LSPR.isActive = ?2")
   public List<CargoNominationPortDetails> findByPortAndCargoIdAndIsActive(
       CargoNomination cargo, Boolean isActive);
 }

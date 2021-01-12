@@ -365,6 +365,9 @@ public class LoadableStudyService {
       dto.setLoadableStudyAttachment(attachmentList);
       dto.setDischargingCargoid(grpcReply.getDischargingCargoId());
 
+      dto.setDischargingCargoid(
+          0 != grpcReply.getDischargingCargoId() ? grpcReply.getDischargingCargoId() : null);
+
       list.add(dto);
     }
     LoadableStudyResponse response = new LoadableStudyResponse();

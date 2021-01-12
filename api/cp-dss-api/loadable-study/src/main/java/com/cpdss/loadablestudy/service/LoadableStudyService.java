@@ -166,6 +166,7 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Propagation;
@@ -4412,19 +4413,33 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     if (0 != request.getDuplicatedFromId()) {
       try {
 
-        List<CargoNomination> CargoNominationList =
+        List<CargoNomination> cargoNominationList =
             this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
                 request.getDuplicatedFromId(), true);
-        if (!CargoNominationList.isEmpty()) {
-          List<CargoNomination> CargoNominations = new ArrayList<CargoNomination>();
-          CargoNominationList.forEach(
+
+        if (!cargoNominationList.isEmpty()) {
+          cargoNominationList.forEach(
               cargoNomination -> {
-                entityManager.detach(cargoNomination);
-                cargoNomination.setId(null);
-                cargoNomination.setLoadableStudyXId(entity.getId());
-                CargoNominations.add(cargoNomination);
+                CargoNomination crgoNomination = new CargoNomination();
+                List<CargoNominationPortDetails> oldCargoNominationPortDetails =
+                    this.cargoNominationOperationDetailsRepository
+                        .findByCargoNominationnAndIsActive(cargoNomination, true);
+
+                BeanUtils.copyProperties(cargoNomination, crgoNomination);
+                crgoNomination.setLoadableStudyXId(entity.getId());
+                crgoNomination.setId(null);
+
+                oldCargoNominationPortDetails.forEach(
+                    oldCargo -> {
+                      CargoNominationPortDetails cargoNominationPortDetails =
+                          new CargoNominationPortDetails();
+                      BeanUtils.copyProperties(oldCargo, cargoNominationPortDetails);
+                      cargoNominationPortDetails.setId(null);
+                      cargoNominationPortDetails.setCargoNomination(crgoNomination);
+                      this.cargoNominationOperationDetailsRepository.save(
+                          cargoNominationPortDetails);
+                    });
               });
-          this.cargoNominationRepository.saveAll(CargoNominations);
         }
 
         List<LoadableStudyPortRotation> loadableStudyPortRotationList =
@@ -4534,7 +4549,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               });
           this.synopticalTableRepository.saveAll(SynopticalTables);
         }
+
       } catch (Exception e) {
+       
         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         throw new GenericServiceException(
             "Failed to save duplicate entries", CommonErrorCodes.E_GEN_INTERNAL_ERR, null);
