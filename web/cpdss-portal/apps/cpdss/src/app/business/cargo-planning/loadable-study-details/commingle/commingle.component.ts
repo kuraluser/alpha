@@ -358,7 +358,7 @@ export class CommingleComponent implements OnInit {
    */
   async saveManuals() {
     this.commingleForm.markAllAsTouched();
-    if (this.commingleForm.valid && this.commingleManualForm.valid) {
+    if (this.commingleForm.valid && this.commingleManualForm.valid && this.manualCommingleList?.length) {
       this.ngxSpinnerService.show();
       const translationKeys = await this.translateService.get(['COMMINGLE_MANUAL_SAVE_SUCCESS', 'COMMINGLE_COMPLETED_SUCCESSFULLY']).toPromise();
       const _commingleList = Array<ICargoGroup>();
