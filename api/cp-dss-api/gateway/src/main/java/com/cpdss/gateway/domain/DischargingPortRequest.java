@@ -13,4 +13,6 @@ public class DischargingPortRequest {
 
   @NotEmpty(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private List<Long> portIds;
+
+  private Long dischargingCargoId;
 }

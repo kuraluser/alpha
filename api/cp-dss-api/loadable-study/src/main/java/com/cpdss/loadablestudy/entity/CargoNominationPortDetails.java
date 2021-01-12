@@ -3,6 +3,7 @@ package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -24,7 +25,7 @@ public class CargoNominationPortDetails extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.MERGE)
   @JoinColumn(name = "cargo_nomination_xid")
   private CargoNomination cargoNomination;
 
