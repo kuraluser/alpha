@@ -30,6 +30,7 @@ export class NewVoyagePopupComponent implements OnInit {
   isSubmitted: boolean;
   isExisting = false;
   errorMessages: any;
+  date:Date;
 
   constructor(private fb: FormBuilder, private router: Router,
     private voyageApiService: VoyageApiService,
@@ -38,6 +39,7 @@ export class NewVoyagePopupComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService) { }
 
   ngOnInit(): void {
+    this.date = new Date();
     this.errorMessages = this.voyageApiService.setValidationErrorMessage();
     this.getVesselInfo();
   }
