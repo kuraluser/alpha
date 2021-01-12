@@ -2937,9 +2937,36 @@ public class LoadableStudyService {
       this.buildSynopticalRequestRecord(recordBuilder, rec);
       this.buildSynopticalRequestLoadicatorData(recordBuilder, rec);
       this.buildSynopticalRequestCargoData(recordBuilder, rec);
+      this.buildSynopticalRequestOhqData(recordBuilder, rec);
       builder.addSynopticalRecord(recordBuilder.build());
     }
     return builder.build();
+  }
+
+  /**
+   * Set ohq data to synoptical save request
+   *
+   * @param recordBuilder
+   * @param rec
+   */
+  private void buildSynopticalRequestOhqData(
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder,
+      SynopticalRecord rec) {
+    List<SynopticalOhqRecord> ohqList = new ArrayList<>();
+    Optional.ofNullable(rec.getFoList()).ifPresent(ohqList::addAll);
+    Optional.ofNullable(rec.getDoList()).ifPresent(ohqList::addAll);
+    Optional.ofNullable(rec.getFwList()).ifPresent(ohqList::addAll);
+    Optional.ofNullable(rec.getLubeList()).ifPresent(ohqList::addAll);
+    for (SynopticalOhqRecord record : ohqList) {
+      com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.Builder ohqBuilder =
+          com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.newBuilder();
+      ohqBuilder.setTankId(record.getTankId());
+      Optional.ofNullable(record.getActualWeight())
+          .ifPresent(item -> ohqBuilder.setActualWeight(valueOf(item)));
+      Optional.ofNullable(record.getPlannedWeight())
+          .ifPresent(item -> ohqBuilder.setPlannedWeight(valueOf(item)));
+      recordBuilder.addOhq(ohqBuilder.build());
+    }
   }
 
   /**

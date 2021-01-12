@@ -1806,7 +1806,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
 
-        List<Long> portIds =
+        Set<Long> portIds =
             this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
                 loadableStudy.get(), true);
         if (portIds.isEmpty()) {
@@ -3274,6 +3274,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         this.saveSynopticalEtaEtdEstimates(entity, record);
         this.saveSynopticalLoadicatorData(entity, record);
         this.saveSynopticalCargoData(loadableStudyOpt.get(), entity, record);
+        this.saveSynopticalOhqData(loadableStudyOpt.get(), entity, record);
       }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
@@ -3295,6 +3296,54 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  private void saveSynopticalOhqData(
+      LoadableStudy loadableStudy, SynopticalTable entity, SynopticalRecord record) {
+    List<OnHandQuantity> ohqEntities =
+        this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
+            loadableStudy, record.getPortId(), true);
+    List<OnHandQuantity> toBeSavedList = new ArrayList<>();
+    for (SynopticalOhqRecord ohqRecord : record.getOhqList()) {
+      OnHandQuantity ohqEntity = null;
+      Optional<OnHandQuantity> ohqEntityOpt =
+          ohqEntities.stream()
+              .filter(ohq -> ohq.getTankXId().equals(ohqRecord.getTankId()))
+              .findAny();
+      if (ohqEntityOpt.isPresent()) {
+        ohqEntity = ohqEntityOpt.get();
+      } else {
+        ohqEntity = new OnHandQuantity();
+        ohqEntity.setTankXId(ohqRecord.getTankId());
+        ohqEntity.setPortXId(record.getPortId());
+        ohqEntity.setLoadableStudy(loadableStudy);
+        ohqEntity.setIsActive(true);
+      }
+
+      if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())) {
+        ohqEntity.setArrivalQuantity(
+            isEmpty(ohqRecord.getPlannedWeight())
+                ? null
+                : new BigDecimal(ohqRecord.getPlannedWeight()));
+        ohqEntity.setActualArrivalQuantity(
+            isEmpty(ohqRecord.getActualWeight())
+                ? null
+                : new BigDecimal(ohqRecord.getActualWeight()));
+      } else {
+        ohqEntity.setDepartureQuantity(
+            isEmpty(ohqRecord.getPlannedWeight())
+                ? null
+                : new BigDecimal(ohqRecord.getPlannedWeight()));
+        ohqEntity.setActualDepartureQuantity(
+            isEmpty(ohqRecord.getActualWeight())
+                ? null
+                : new BigDecimal(ohqRecord.getActualWeight()));
+      }
+      toBeSavedList.add(ohqEntity);
+    }
+    if (!toBeSavedList.isEmpty()) {
+      this.onHandQuantityRepository.saveAll(toBeSavedList);
     }
   }
 
