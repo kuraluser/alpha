@@ -107,7 +107,7 @@
             <hr class="hr-margin" *ngIf="isVolumeMaximum">
         </div>
 
-
+        
         <div class="" *ngIf="commingleManualForm && !isVolumeMaximum">
             <form [formGroup]="commingleManualForm">
                 <div class="form-group row">
@@ -122,7 +122,7 @@
             </form>
         </div>
 
-
+        <p class="text-danger" *ngIf="commingleManualForm && !isVolumeMaximum && commingleManualForm.touched && !manualCommingleList?.length">{{'COMMINGLE_CARGO_VALID_DATA'| translate}}</p>
     </form>
     <p-footer>
         <div class="float-right">
