@@ -34,7 +34,7 @@
               translate}}</label>
             <div class="col-md-6">
               <p-calendar appendTo="body" inputId="start_date" formControlName="start_date" dateFormat="dd-mm-yy"
-                (onSelect)="onDateSelect($event)" [hideOnDateTimeSelect]="false" [showTime]="true" #startDateTime>
+                (onSelect)="onDateSelect($event)" [hideOnDateTimeSelect]="false" [showTime]="true" #startDateTime [readonlyInput]="true">
                 <p-footer><button class="btn btn-main"
                     (click)="startDateTime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
                     translate}}</button></p-footer>
@@ -49,7 +49,7 @@
               translate}}</label>
             <div class="col-md-6">
               <p-calendar appendTo="body" inputId="end_date" formControlName="end_date" dateFormat="dd-mm-yy"
-                (onSelect)="onDateSelect($event)" [hideOnDateTimeSelect]="false" [showTime]="true" #endDateTime>
+                (onSelect)="onDateSelect($event)" [hideOnDateTimeSelect]="false" [showTime]="true" #endDateTime [readonlyInput]="true"> 
                 <p-footer><button class="btn btn-main"
                     (click)="endDateTime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
                     translate}}</button></p-footer>
