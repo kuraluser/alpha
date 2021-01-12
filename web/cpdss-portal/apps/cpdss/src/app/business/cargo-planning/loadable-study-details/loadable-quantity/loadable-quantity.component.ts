@@ -329,7 +329,8 @@ export class LoadableQuantityComponent implements OnInit {
    * Auto calculate (Distance/ Speed)
    */
   getRunningHoursOnLoad() {
-    this.loadableQuantityForm.controls['runningHours'].setValue(Number(this.loadableQuantity.distanceFromLastPort) / Number(this.loadableQuantity.vesselAverageSpeed));
+    let runningHours = Number(this.loadableQuantity.distanceFromLastPort) / Number(this.loadableQuantity.vesselAverageSpeed);
+    this.loadableQuantityForm.controls['runningHours'].setValue(isNaN(runningHours) ? 0 : runningHours);
   }
 
   /**

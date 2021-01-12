@@ -18,7 +18,8 @@ export interface ILoadablePlanResponse {
     frontBallastTanks: IBallastTanksDetails[],
     centerBallastTanks: IBallastTanksDetails[],
     rearBallastTanks: IBallastTanksDetails[],
-    loadablePlanBallastDetails: IBallastStowageDetails[]
+    loadablePlanBallastDetails: IBallastStowageDetails[],
+    loadablePlanSynopticalRecords: ILoadablePlanSynopticalRecord[]
 }
 
 /**
@@ -214,4 +215,56 @@ export interface IBallastTanksDetails {
     group: number,
     order: number,
     slopTank: boolean
+}
+
+/**
+ * Interface for LoadablePlan Synoptical Records
+ * @export
+ * @interface 
+ */
+export interface ILoadablePlanSynopticalRecord {
+    id: number,
+    operationType: string,
+    portId: number,
+    portName: string,
+    etaEtdPlanned: string,
+    plannedFOTotal: number,
+    plannedDOTotal: number,
+    plannedFWTotal: number,
+    othersPlanned: number,
+    totalDwtPlanned: number,
+    displacementPlanned: number,
+    specificGravity: number,
+    finalDraftFwd: number,
+    finalDraftAft: number,
+    finalDraftMid: number,
+    calculatedTrimPlanned: number,
+    cargoPlannedTotal: number,
+    ballastPlanned: number
+}
+
+/**
+ * Interface for LoadablePlan arranged Synoptical Records
+ * @export
+ * @interface 
+ */
+export interface ISynopticalRecordArrangeModel {
+    id: number,
+    operationType: string,
+    portId: number,
+    portName: string,
+    etaEtdPlanned: string,
+    plannedFOTotal: number,
+    plannedDOTotal: number,
+    plannedFWTotal: number,
+    othersPlanned: number,
+    totalDwtPlanned: number,
+    displacementPlanned: number,
+    specificGravity: number,
+    finalDraftFwd: string,
+    finalDraftAft: string,
+    finalDraftMid: string,
+    calculatedTrimPlanned: string,
+    cargoPlannedTotal: number,
+    ballastPlanned: number
 }

@@ -50,7 +50,6 @@ export class LoadableQuantityComponent implements OnInit {
 
   ngOnInit() {
     this.columns = this.loadablePlanTransformationService.getLoadableQuantityTableColumns();
-    this.total = <ITotalLoadableQuality>{ orderBblsdbs: 0, orderBbls60f: 0, loadableBblsdbs: 0, loadableBbls60f: 0, loadableLT: 0, loadableMT: 0, loadableKL: 0, differencePercentage: 0 };
   }
 
   /**
@@ -58,6 +57,7 @@ export class LoadableQuantityComponent implements OnInit {
    * loadableBblsdbs , loadableLT , loadableKL
   */
   private calculateTotal(loadableQuantityData: ILoadableQuantityCargo[]) {
+    this.total = <ITotalLoadableQuality>{ orderBblsdbs: 0, orderBbls60f: 0, loadableBblsdbs: 0, loadableBbls60f: 0, loadableLT: 0, loadableMT: 0, loadableKL: 0, differencePercentage: 0 };
     loadableQuantityData?.map((value: ILoadableQuantityCargo) => {
       this.total.orderBblsdbs += Number(value?.orderBblsdbs);
       this.total.orderBbls60f += Number(value?.orderBbls60f);

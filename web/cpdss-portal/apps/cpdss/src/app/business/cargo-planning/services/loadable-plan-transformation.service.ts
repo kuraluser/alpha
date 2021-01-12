@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { ICargoTank } from '../../core/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ILoadableQuantityCargo, ICargoTankDetail, ILoadableQuantityCommingleCargo, ICommingleCargoDispaly, ICargoTankDetailValueObject } from '../models/loadable-plan.model';
+import { ILoadableQuantityCargo, ICargoTankDetail, ILoadableQuantityCommingleCargo, ICommingleCargoDispaly, ICargoTankDetailValueObject, ILoadablePlanSynopticalRecord, ISynopticalRecordArrangeModel } from '../models/loadable-plan.model';
 import { DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { ValueObject } from '../../../shared/models/common.model';
 
@@ -29,26 +29,23 @@ export class LoadablePlanTransformationService {
   */
   public getEtaEtdTableColumns(): IDataTableColumn[] {
     return [
-      { field: 'year', header: 'ETA_ETD_PORT' },
-      { field: 'year', header: 'ETA_ETD_DATE' },
-      { field: 'year', header: 'ETA_ETD_TIME' },
+      { field: 'portName', header: 'ETA_ETD_PORT' },
+      { field: 'etaEtdPlanned', header: 'ETA_ETD_DATE' },
       {
-        field: 'year', header: 'ETA_ETD_DRAFT', rowspan: 3, subHeader: 'ETA_ETD_DRAFT_FORE'
+        field: 'finalDraftFwd', header: 'ETA_ETD_DRAFT', rowspan: 3, subHeader: 'ETA_ETD_DRAFT_FORE'
       },
-      { field: 'year', header: "", subHeader: 'ETA_ETD_DRAFT_AFT' },
-      { field: 'year', header: "", subHeader: 'ETA_ETD_DRAFT_MSHIP' },
-      { field: 'year', header: 'ETA_ETD_TRIM' },
-      { field: 'year', header: 'ETA_ETD_CARGO' },
-      { field: 'year', header: 'ETA_ETD_FQ' },
-      { field: 'year', header: 'ETA_ETD_DQ' },
-      { field: 'year', header: 'ETA_ETD_BALLAST' },
-      { field: 'year', header: 'ETA_ETD_FRESH_WATER' },
-      { field: 'year', header: 'ETA_ETD_OTHERS' },
-      { field: 'year', header: 'ETA_ETD_TOTAL_DWT' },
-      { field: 'year', header: 'ETA_ETD_DISPLACEMENT' },
-      { field: 'year', header: 'ETA_ETD_MAX_FRBRO' },
-      { field: 'year', header: 'ETA_ETD_MAX_MNFLD' },
-      { field: 'year', header: 'ETA_ETD_DENSITY' },
+      { field: 'finalDraftAft', header: "", subHeader: 'ETA_ETD_DRAFT_AFT' },
+      { field: 'finalDraftMid', header: "", subHeader: 'ETA_ETD_DRAFT_MSHIP' },
+      { field: 'calculatedTrimPlanned', header: 'ETA_ETD_TRIM' },
+      { field: 'cargoPlannedTotal', header: 'ETA_ETD_CARGO' },
+      { field: 'plannedFOTotal', header: 'ETA_ETD_FO' },
+      { field: 'plannedDOTotal', header: 'ETA_ETD_DO' },
+      { field: 'ballastPlanned', header: 'ETA_ETD_BALLAST' },
+      { field: 'plannedFWTotal', header: 'ETA_ETD_FRESH_WATER' },
+      { field: 'othersPlanned', header: 'ETA_ETD_OTHERS' },
+      { field: 'totalDwtPlanned', header: 'ETA_ETD_TOTAL_DWT' },
+      { field: 'displacementPlanned', header: 'ETA_ETD_DISPLACEMENT' },
+      { field: 'specificGravity', header: 'ETA_ETD_DENSITY' },
     ]
   }
 
@@ -66,7 +63,7 @@ export class LoadablePlanTransformationService {
       { field: 'api', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_API', rowspan: 2 },
       { field: 'temp', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_TEMP', rowspan: 2 },
       {
-        header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN', colspan: 6, subColumns: [
+        header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN', colspan: 6, className: "th-border", subColumns: [
           { field: 'cargoPercentage', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN_PERCENTAGE' },
           { field: 'cargoBblsdbs', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN_BBLS@DBS.TEMP' },
           { field: 'cargoBbls60f', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN_BBL@60F' },
@@ -352,6 +349,37 @@ export class LoadablePlanTransformationService {
       { field: 'tcg', header: 'STOWAGE_BALLAST_TCG' },
       { field: 'inertia', header: 'STOWAGE_BALLAST_INERTIA' },
     ]
+  }
+
+  /**
+  * 
+  * Get Formated ETA/ETD Data
+  * @returns {ISynopticalRecordArrangeModel}
+  * @param { ILoadablePlanSynopticalRecord } synopticalRecord 
+  */
+  public getFormatedEtaEtdData(_decimalPipe: any, synopticalRecord: ILoadablePlanSynopticalRecord): ISynopticalRecordArrangeModel {
+    let _synopticalRecord = <ISynopticalRecordArrangeModel>{};
+    _synopticalRecord.id = synopticalRecord.id;
+    _synopticalRecord.operationType = synopticalRecord.operationType;
+    _synopticalRecord.portId = synopticalRecord.portId;
+    _synopticalRecord.portName = synopticalRecord.portName;
+    _synopticalRecord.etaEtdPlanned = synopticalRecord.etaEtdPlanned;
+
+    _synopticalRecord.plannedFOTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.plannedFOTotal, '0.0-4');
+    _synopticalRecord.plannedDOTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.plannedDOTotal, '1.0-4');
+    _synopticalRecord.plannedFWTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.plannedFWTotal, '1.0-4');
+    _synopticalRecord.othersPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.othersPlanned, '1.0-4');
+    _synopticalRecord.totalDwtPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.totalDwtPlanned, '1.0-4');
+    _synopticalRecord.displacementPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.displacementPlanned, '1.0-4');
+    _synopticalRecord.specificGravity = this.decimalConvertion(_decimalPipe, synopticalRecord.specificGravity, '1.0-4');
+    _synopticalRecord.cargoPlannedTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.cargoPlannedTotal, '1.0-4');
+    _synopticalRecord.ballastPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.ballastPlanned, '1.0-4');
+
+    _synopticalRecord.finalDraftFwd = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftFwd, '1.0-4') + 'm';
+    _synopticalRecord.finalDraftAft = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftAft, '1.0-4') + 'm';
+    _synopticalRecord.finalDraftMid = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftMid, '1.0-4') + 'm';
+    _synopticalRecord.calculatedTrimPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord?.calculatedTrimPlanned, '1.0-4') + 'm';
+    return _synopticalRecord;
   }
 
 }
