@@ -2924,7 +2924,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             });
 
         GetPortInfoByPortIdsRequest.Builder portsBuilder = GetPortInfoByPortIdsRequest.newBuilder();
-        List<Long> portIds =
+        Set<Long> portIds =
             loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
                 loadableStudyOpt.get(), true);
         portIds.forEach(
@@ -4600,7 +4600,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
 
       } catch (Exception e) {
-       
+
         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         throw new GenericServiceException(
             "Failed to save duplicate entries", CommonErrorCodes.E_GEN_INTERNAL_ERR, null);
