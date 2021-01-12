@@ -19,12 +19,14 @@
                 <ng-container *ngIf="tank?.commodity">
                     <span *ngIf="options?.showCommodityName"
                         class="tank-commodity-name">{{tank?.commodity?.cargoAbbreviation}}</span>
-                    <span *ngIf="options?.showVolume"
+                    <div class="tank-item-valign">
+                    <div *ngIf="options?.showVolume"
                         class="tank-commodity-volume">{{tank?.commodity[options?.volumeField]}}
-                        {{options?.volumeUnit}}</span>
+                        {{options?.volumeUnit}}</div>
                     <span *ngIf="options?.showWeight"
                         class="tank-commodity-weight">{{tank?.commodity[options?.weightField]}}
                         {{options?.weightUnit}}</span>
+                    </div>
                     <span *ngIf="options?.showUllage"
                         class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField]}}
                         {{options?.ullageUnit}}</span>

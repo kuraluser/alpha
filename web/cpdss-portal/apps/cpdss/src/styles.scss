@@ -1427,6 +1427,46 @@ table{
   }
     }
   }
+  &.loadable-plan-stowage{
+    height: 40vh;
+    .tank-name{
+
+    }
+  }
+}
+.loadable-plan-ballast .tank-outer-pattern, .loadable-plan-stowage.tank-outer-pattern{
+      height: 40vh;
+      .tank-name{
+        top: 5px!important;
+        text-align: left!important;
+        margin-top: 0!important;
+        left: 5px;
+      }
+      .tank-commodity-name{
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        text-align: right;
+      }
+      .tank-item-valign{
+        position: absolute;
+        top: 50%;
+        left: 5px;
+        margin-top: -17px;
+      }
+      .tank-commodity-volume{
+        padding-bottom: 2px;
+      }
+      .tank-commodity-ullage{
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
+      }
+      .tank-filling-percentage{
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+      }
 }
 
 .ship-front-pattern{
@@ -1605,11 +1645,6 @@ th .p-calendar .p-inputtext{
   
 }
 
-.error-icon-wrapper{
-  position: relative;
-  padding-right: 20px;
-}
-
 .cargo-nomination-table.ohq table > thead > tr:nth-child(2) th:nth-child(5), .cargo-nomination-table.ohq table > thead > tr:nth-child(2) th:nth-child(7){
   padding-left: 0;
 }
@@ -1627,4 +1662,20 @@ th .p-calendar .p-inputtext{
 }
 .p-datepicker .p-datepicker-header{
   padding: 0px 0.5rem 3px;
+}
+
+.th-border{
+  text-align: center;
+  padding-bottom: 5px;
+  margin-bottom: 3px;
+}
+.p-datatable .p-datatable-tfoot > tr > td{
+  padding: 11px 5px;
+}
+
+.pull-right{
+  float: right;
+}
+.tab-btn-default{
+  padding: 10px 25px;
 }
