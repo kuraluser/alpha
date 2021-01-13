@@ -20,4 +20,5 @@ public class LoadablePlanBallastDetails {
   private String tcg;
   private String inertia;
   private String tankName;
+  private String colorCode;
 }

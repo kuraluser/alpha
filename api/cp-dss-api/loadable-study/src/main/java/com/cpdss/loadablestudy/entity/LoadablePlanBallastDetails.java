@@ -65,6 +65,9 @@ public class LoadablePlanBallastDetails extends EntityDoc {
   @Column(name = "tank_name")
   private String tankName;
 
+  @Column(name = "color_code")
+  private String colorCode;
+
   @JoinColumn(name = "loadable_pattern_xid", referencedColumnName = "id")
   @ManyToOne
   private LoadablePattern loadablePattern;

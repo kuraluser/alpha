@@ -8,7 +8,10 @@ import lombok.Data;
 /** @Author jerin.g */
 @Data
 public class LoadablePlanDetailsResponse {
-  private CommonSuccessResponse responseStatus;
+  private Long id;
+  private String caseNumber;
+  private String date;
+  private String voyageNumber;
   private List<LoadableQuantityCargoDetails> loadableQuantityCargoDetails;
   private List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetails;
   private List<List<VesselTank>> tankLists;
@@ -18,4 +21,6 @@ public class LoadablePlanDetailsResponse {
   private List<List<VesselTank>> rearBallastTanks;
   private List<LoadablePlanBallastDetails> loadablePlanBallastDetails;
   private List<LoadablePlanSynopticalRecord> loadablePlanSynopticalRecords;
+  private List<LoadablePlanComments> loadablePlanComments;
+  private CommonSuccessResponse responseStatus;
 }

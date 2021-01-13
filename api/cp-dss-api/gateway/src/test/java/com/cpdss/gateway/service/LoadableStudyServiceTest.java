@@ -19,6 +19,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsR
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanComments;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails;
@@ -1359,6 +1360,7 @@ class LoadableStudyServiceTest {
                 .addLoadablePlanStowageDetails(buildLoadablePlanStowageDetails())
                 .addTanks(buildCargoTanks())
                 .addLoadablePlanBallastDetails(buildLoadablePlanBallastDetails())
+                .addLoadablePlanComments(buildLoadablePlanComments())
                 .build());
 
     Mockito.when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong()))
@@ -1373,6 +1375,12 @@ class LoadableStudyServiceTest {
                 String.valueOf(HttpStatusCode.OK.value()),
                 response.getResponseStatus().getStatus(),
                 "response valid"));
+  }
+
+  /** @return LoadablePlanComments */
+  private LoadablePlanComments buildLoadablePlanComments() {
+    LoadablePlanComments.Builder builder = LoadablePlanComments.newBuilder();
+    return builder.build();
   }
 
   /** @throws GenericServiceException void */

@@ -23,6 +23,7 @@ import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsReposito
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
@@ -82,6 +83,7 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
   @MockBean private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
   @MockBean private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
+  @MockBean private LoadablePlanCommentsRepository loadablePlanCommentsRepository;
 
   @MockBean
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;

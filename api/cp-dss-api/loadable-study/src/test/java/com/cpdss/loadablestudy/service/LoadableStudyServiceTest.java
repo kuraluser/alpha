@@ -60,6 +60,7 @@ import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanComments;
 import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
@@ -82,6 +83,7 @@ import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsReposito
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
@@ -155,7 +157,7 @@ class LoadableStudyServiceTest {
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
 
   @MockBean private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
-
+  @MockBean private LoadablePlanCommentsRepository loadablePlanCommentsRepository;
   @MockBean private LoadablePatternDetailsRepository loadablePatternDetailsRepository;
   @MockBean private LoadablePatternRepository loadablePatternRepository;
 
@@ -2024,10 +2026,14 @@ class LoadableStudyServiceTest {
     loadablePattern.setId(1L);
     LoadableStudy loadableStudy = new LoadableStudy();
     loadableStudy.setId(1L);
+    loadableStudy.setVesselXId(1L);
     Voyage voyage = new Voyage();
     voyage.setId(1L);
+    voyage.setVoyageNo(VOYAGE);
     loadableStudy.setVoyage(voyage);
     loadablePattern.setLoadableStudy(loadableStudy);
+    loadablePattern.setCaseNumber(1);
+    loadablePattern.setCreatedDate(LocalDate.now());
     return loadablePattern;
   }
 
@@ -2062,6 +2068,10 @@ class LoadableStudyServiceTest {
     when(this.loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
             any(LoadablePattern.class), anyBoolean()))
         .thenReturn(preparePlanBallastDetails());
+
+    when(this.loadablePlanCommentsRepository.findByLoadablePatternAndIsActiveOrderByIdDesc(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(preparePlanComments());
 
     StreamRecorder<LoadablePlanDetailsReply> responseObserver = StreamRecorder.create();
     spyService.getLoadablePlanDetails(this.createGetLoadablePlanDetails(), responseObserver);
@@ -2152,6 +2162,15 @@ class LoadableStudyServiceTest {
     assertEquals(1, results.size());
     assertNull(responseObserver.getError());
     assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /** @return List<LoadablePlanComments> */
+  private List<LoadablePlanComments> preparePlanComments() {
+    List<LoadablePlanComments> loadablePlanComments = new ArrayList<LoadablePlanComments>();
+    LoadablePlanComments planComments = new LoadablePlanComments();
+    planComments.setCreatedDateTime(LocalDateTime.now());
+    loadablePlanComments.add(planComments);
+    return loadablePlanComments;
   }
 
   /** @return List<LoadablePlanBallastDetails> */
