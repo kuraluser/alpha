@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ICargoTank } from '../../core/models/common.model';
+import { IBallastStowageDetails, IBallastTank, ICargoTank } from '../../core/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
 import { ILoadableQuantityCargo, ICargoTankDetail, ILoadableQuantityCommingleCargo, ICommingleCargoDispaly, ICargoTankDetailValueObject, ILoadablePlanSynopticalRecord, ISynopticalRecordArrangeModel } from '../models/loadable-plan.model';
 import { DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
@@ -184,6 +184,20 @@ export class LoadablePlanTransformationService {
     cargoTank.commodity = commodity ? this.getCargoTankDetailAsValue(commodity) : null;
 
     return cargoTank;
+  }
+
+  /**
+   * Method for formatting ballast tanks data
+   *
+   * @param {IBallastTank} ballastTank
+   * @param {IBallastStowageDetails[]} ballastTankDetails
+   * @returns {IBallastTank}
+   * @memberof LoadablePlanTransformationService
+   */
+  formatBallastTanks(ballastTank: IBallastTank, ballastTankDetails: IBallastStowageDetails[]): IBallastTank {
+    ballastTank.commodity = ballastTankDetails?.find(ballast => ballastTank?.id === ballast?.tankId);
+
+    return ballastTank;
   }
 
   /**

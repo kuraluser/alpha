@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DATATABLE_EDITMODE } from '../../../../shared/components/datatable/datatable.model';
-import { ICargoTank, ITankOptions, TANKTYPE } from '../../../core/models/common.model';
-import { ICargoTankDetailValueObject , IBallastStowageDetails } from '../../models/loadable-plan.model';
+import { IBallastStowageDetails, IBallastTank, ICargoTank, ITankOptions, TANKTYPE } from '../../../core/models/common.model';
+import { ICargoTankDetailValueObject } from '../../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
 
 /**
@@ -35,6 +35,30 @@ export class StowageComponent implements OnInit {
     this._cargoTankDetails = value;
   }
 
+  @Input()
+  get rearBallastTanks(): IBallastTank[][] {
+    return this._rearBallastTanks;
+  }
+  set rearBallastTanks(tanks: IBallastTank[][]) {
+    this._rearBallastTanks = tanks;
+  }
+
+  @Input()
+  get centerBallastTanks(): IBallastTank[][] {
+    return this._centerBallastTanks;
+  }
+  set centerBallastTanks(tanks: IBallastTank[][]) {
+    this._centerBallastTanks = tanks;
+  }
+
+  @Input()
+  get frontBallastTanks(): IBallastTank[][] {
+    return this._frontBallastTanks;
+  }
+  set frontBallastTanks(tanks: IBallastTank[][]) {
+    this._frontBallastTanks = tanks;
+  }
+
   @Input() loadablePlanForm: FormBuilder;
 
   @Input() form: FormGroup;
@@ -52,18 +76,22 @@ export class StowageComponent implements OnInit {
   editMode: DATATABLE_EDITMODE = null;
   selectedTab = TANKTYPE.CARGO;
   showGrid = false;
-  columns: any[];
-  value: any[];
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showCommodityName: true, showVolume: true, showWeight: true, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'fillingRatio', volumeField: 'observedBarrels', volumeUnit: 'BBLS', weightField: 'weight', weightUnit: 'MT', ullageField: 'correctedUllage', ullageUnit: 'M' };
+  cargoGridColumns: any[];
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showCommodityName: true, showVolume: true, showWeight: true, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'fillingRatio', volumeField: 'observedBarrels', volumeUnit: 'BBLS', weightField: 'weight', weightUnit: 'MT', ullageField: 'correctedUllage', ullageUnit: 'CM' };
+  ballastTankOptions: ITankOptions = { isFullyFilled: false, showUllage: true, showFillingPercentage: true, class: 'loadable-plan-stowage', fillingPercentageField: 'percentage', ullageField: 'correctedLevel', ullageUnit: 'CM' };
+
 
   private _cargoTanks: ICargoTank[][];
+  private _rearBallastTanks: IBallastTank[][];
+  private _centerBallastTanks: IBallastTank[][];
+  private _frontBallastTanks: IBallastTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[];
   private _ballastDetails: IBallastStowageDetails[];
 
   constructor(private loadablePlanTransformationService: LoadablePlanTransformationService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
-    this.columns = this.loadablePlanTransformationService.getCargoDatatableColumns();
+    this.cargoGridColumns = this.loadablePlanTransformationService.getCargoDatatableColumns();
   }
 
   /**

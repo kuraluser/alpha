@@ -39,7 +39,7 @@ export interface ILoadablePattern {
 export interface ILoadablePatternCargoDetail extends ILoadableCargo {
     priority: number;
     cargoAbbreviation: string;
-    cargoColor: string;
+    colorCode: string;
     tankId: number;
     quantity: string;
     difference: string;

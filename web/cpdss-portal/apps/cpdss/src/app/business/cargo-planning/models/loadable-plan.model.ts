@@ -1,6 +1,6 @@
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { IResponseStatus, ValueObject } from '../../../shared/models/common.model';
-import { ICargoTank, ILoadableCargo } from '../../core/models/common.model';
+import { IBallastTank, ICargoTank, ILoadableCargo } from '../../core/models/common.model';
 
 
 /**
@@ -15,9 +15,9 @@ export interface ILoadablePlanResponse {
     loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
     tankLists: ICargoTank[][];
     loadablePlanStowageDetails: ICargoTankDetail[];
-    frontBallastTanks: IBallastTanksDetails[],
-    centerBallastTanks: IBallastTanksDetails[],
-    rearBallastTanks: IBallastTanksDetails[],
+    frontBallastTanks: IBallastTank[][],
+    centerBallastTanks: IBallastTank[][],
+    rearBallastTanks: IBallastTank[][],
     loadablePlanBallastDetails: IBallastStowageDetails[],
     loadablePlanSynopticalRecords: ILoadablePlanSynopticalRecord[]
 }
@@ -133,6 +133,7 @@ export interface ICargoTankDetail extends ILoadableCargo {
     observedBarrelsAt60: number;
     api: number;
     temperature: number;
+    colorCode: string;
 }
 
 /**

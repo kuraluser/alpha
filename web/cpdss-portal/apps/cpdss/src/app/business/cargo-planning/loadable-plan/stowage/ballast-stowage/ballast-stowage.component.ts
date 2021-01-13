@@ -1,8 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-
+import { IBallastStowageDetails } from '../../../../core/models/common.model';
 import { LoadablePlanTransformationService } from '../../../services/loadable-plan-transformation.service';
 
-import { IBallastStowageDetails } from '../../../models/loadable-plan.model';
 
 /**
  * Component class of ballast section

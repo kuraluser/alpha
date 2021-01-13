@@ -83,7 +83,7 @@ export interface ITank {
     shortName: string;
     heightFrom?: number;
     heightTo?: number;
-    fillCapcityCubm: number;
+    fillCapcityCubm?: number;
     fullCapacityCubm?: string;
     density: number;
     group: number;
@@ -164,10 +164,55 @@ export enum TANKTYPE {
  */
 export interface ILoadableCargo {
     cargoAbbreviation: string;
-    cargoColor: string;
+    colorCode: string;
     tankId: number;
     quantity: string;
     isCommingle: boolean;
     volume?: number;
     ullage?: number;
+}
+
+/**
+ * Interface for ballast stowage
+ *
+ * @export
+ * @interface 
+ */
+export interface IBallastStowageDetails {
+    id: number,
+    tankName?: string,
+    tankId: number,
+    rdgLevel: string,
+    correctionFactor: string,
+    correctedLevel: string,
+    metricTon: string,
+    cubicMeter: string,
+    percentage: string,
+    sg: string,
+    lcg: string,
+    vcg: string,
+    tcg: string,
+    inertia: string;
+    colorCode?: string;
+}
+
+/**
+ * Interface for ballast Tank details
+ * @export
+ * @interface 
+ */
+export interface IBallastTank extends ITank {
+    id: number,
+    categoryId: number,
+    categoryName: string,
+    name: string,
+    frameNumberFrom: number,
+    frameNumberTo: number,
+    shortName: string,
+    fullCapacityCubm: string,
+    density: number,
+    group: number,
+    order: number,
+    slopTank: boolean,
+    commodity: IBallastStowageDetails;
 }

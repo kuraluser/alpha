@@ -18,6 +18,7 @@ import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
 import { DatatableModule } from '../../../shared/components/datatable/datatable.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BallastStowageComponent } from './stowage/ballast-stowage/ballast-stowage.component';
+import { BallastLayoutModule } from '../../core/components/ballast-layout/ballast-layout.module';
 
 @NgModule({
   declarations: [LoadablePlanComponent, LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent, BallastStowageComponent],
@@ -29,7 +30,8 @@ import { BallastStowageComponent } from './stowage/ballast-stowage/ballast-stowa
     VesselInfoModule,
     TableModule,
     CargoTankLayoutModule,
-    DatatableModule
+    DatatableModule,
+    BallastLayoutModule
   ],
   providers: [LoadableQuantityApiService , DecimalPipe , LoadablePlanTransformationService , LoadablePlanApiService],
   exports: [

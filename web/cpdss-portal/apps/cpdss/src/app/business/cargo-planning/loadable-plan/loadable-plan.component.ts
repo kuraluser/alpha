@@ -3,9 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
-import { ICargoTank } from '../../core/models/common.model';
+import { IBallastStowageDetails, IBallastTank, ICargoTank } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
-import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo , IBallastTanksDetails , IBallastStowageDetails , ILoadablePlanSynopticalRecord } from '../models/loadable-plan.model';
+import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ILoadablePlanSynopticalRecord } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { numberValidator } from '../directives/validator/number-validator.directive';
@@ -38,6 +38,27 @@ export class LoadablePlanComponent implements OnInit {
     this._cargoTankDetails = value;
   }
 
+  get rearBallastTanks(): IBallastTank[][] {
+    return this._rearBallastTanks;
+  }
+  set rearBallastTanks(tanks: IBallastTank[][]) {
+    this._rearBallastTanks = tanks?.map(group => group.map(tank => this.loadablePlanTransformationService.formatBallastTanks(tank, this.loadablePlanBallastDetails)));
+  }
+
+  get centerBallastTanks(): IBallastTank[][] {
+    return this._centerBallastTanks;
+  }
+  set centerBallastTanks(tanks: IBallastTank[][]) {
+    this._centerBallastTanks = tanks?.map(group => group.map(tank => this.loadablePlanTransformationService.formatBallastTanks(tank, this.loadablePlanBallastDetails)));
+  }
+
+  get frontBallastTanks(): IBallastTank[][] {
+    return this._frontBallastTanks;
+  }
+  set frontBallastTanks(tanks: IBallastTank[][]) {
+    this._frontBallastTanks = tanks?.map(group => group.map(tank => this.loadablePlanTransformationService.formatBallastTanks(tank, this.loadablePlanBallastDetails)));
+  }
+
   voyageId: number;
   loadableStudyId: number;
   vesselId: number;
@@ -46,14 +67,14 @@ export class LoadablePlanComponent implements OnInit {
   loadableQuantityCargoDetails: ILoadableQuantityCargo[];
   loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
   loadablePlanForm: FormGroup;
-  public rearBallastTanks: IBallastTanksDetails[];
-  public centerBallastTanks: IBallastTanksDetails[];
-  public frontBallastTanks: IBallastTanksDetails[];
-  public loadablePlanBallastDetails: IBallastStowageDetails[];
+  loadablePlanBallastDetails: IBallastStowageDetails[];
   public loadablePlanSynopticalRecords: ILoadablePlanSynopticalRecord[];
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[];
+  private _rearBallastTanks: IBallastTank[][];
+  private _centerBallastTanks: IBallastTank[][];
+  private _frontBallastTanks: IBallastTank[][];
 
   constructor(private ngxSpinnerService: NgxSpinnerService,
     private activatedRoute: ActivatedRoute,
@@ -106,12 +127,12 @@ export class LoadablePlanComponent implements OnInit {
     this.loadableQuantityCargoDetails = loadablePlanRes.loadableQuantityCargoDetails;
     this.loadableQuantityCommingleCargoDetails = loadablePlanRes.loadableQuantityCommingleCargoDetails;
     this.cargoTankDetails = loadablePlanRes?.loadablePlanStowageDetails?.map(cargo => this.loadablePlanTransformationService.getCargoTankDetailAsValueObject(cargo));
+    this.loadablePlanBallastDetails = loadablePlanRes.loadablePlanBallastDetails;
     this.cargoTanks = loadablePlanRes?.tankLists;
     this.initLoadablePlanForm();
     this.frontBallastTanks = loadablePlanRes.frontBallastTanks;
     this.rearBallastTanks = loadablePlanRes.rearBallastTanks;
     this.centerBallastTanks = loadablePlanRes.centerBallastTanks;
-    this.loadablePlanBallastDetails = loadablePlanRes.loadablePlanBallastDetails;
     this.loadablePlanSynopticalRecords = loadablePlanRes.loadablePlanSynopticalRecords;
     this.ngxSpinnerService.hide();
   }

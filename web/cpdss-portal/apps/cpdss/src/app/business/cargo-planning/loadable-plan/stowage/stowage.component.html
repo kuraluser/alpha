@@ -1,9 +1,11 @@
 <div class="row pb-20">
     <div class="col">
-        <h5 class="secondary-text heading-border clearfix pt-15 pb-10" style="line-height: 20px;"> 2 {{'LOADABLE_PLAN_STOWAGE_HEADER' | translate}} <button class="btn btn-main pull-right" id="btn_callNewLoadableStudyPopup">{{'LOADABLE_PATTERN_HISTORY_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
+        <h5 class="secondary-text heading-border clearfix pt-15 pb-10" style="line-height: 20px;"> 2
+            {{'LOADABLE_PLAN_STOWAGE_HEADER' | translate}} <button class="btn btn-main pull-right"
+                id="btn_callNewLoadableStudyPopup">{{'LOADABLE_PATTERN_HISTORY_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
             translate}}</button></h5>
     </div>
-    
+
 </div>
 <div class="row pb-15 pt-15">
     <div class="col  text-center">
@@ -22,30 +24,30 @@
             </cpdss-portal-cargo-tank-layout>
         </div>
         <div class="col-11 m-auto loadable-plan-ballast" *ngIf="selectedTab === tankType.BALLAST">
-            <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks"></cpdss-portal-cargo-tank-layout>
+            <cpdss-portal-ballast-layout [tanks]="centerBallastTanks" [rearTanks]="rearBallastTanks"
+                [frontTanks]="frontBallastTanks" [options]="ballastTankOptions">
+            </cpdss-portal-ballast-layout>
         </div>
     </div>
     <div class="row pt-15 pb-15">
         <div class="col text-center">
-                <button class="btn btn-main"
-                    (click)="toggleGridView()">{{(showGrid ? 'LOADABLE_PLAN_STOWAGE_HIDE_LABEL' : 'LOADABLE_PLAN_STOWAGE_MORE_LABEL') | translate}}</button>
+            <button class="btn btn-main"
+                (click)="toggleGridView()">{{(showGrid ? 'LOADABLE_PLAN_STOWAGE_HIDE_LABEL' : 'LOADABLE_PLAN_STOWAGE_MORE_LABEL') | translate}}</button>
         </div>
     </div>
     <div *ngIf="showGrid" class="row mb-15">
         <div class="col" *ngIf="selectedTab === tankType.CARGO">
-            <cpdss-portal-datatable [columns]="columns" [value]="value"></cpdss-portal-datatable>
+            <div class="text-right mb-10">
+            <button class="btn btn-main"
+                (click)="toggleEditMode()">{{(editMode === null ?'LOADABLE_PLAN_EDIT_STOWAGE_BUTTON_LABEL': 'LOADABLE_PLAN_SAVE_STOWAGE_BUTTON_LABEL')| translate}}
+            </button>
+        </div>
+            <cpdss-portal-datatable [columns]="cargoGridColumns" [value]="cargoTankDetails" [editMode]="editMode"
+                [form]="form.controls?.cargoTanks">
+            </cpdss-portal-datatable>
         </div>
         <div class="col" *ngIf="selectedTab === tankType.BALLAST">
-            <!-- <p-table #datatable [columns]="columns" [value]="value">
-                <ng-template pTemplate="header" let-columns>
-                    <tr>
-                        <th *ngFor="let col of columns">
-                            {{col.header}}
-                        </th>
-                    </tr>
-                </ng-template>
-            </p-table> -->
-            <cpdss-portal-ballast-stowage  [ballastDetails]="ballastDetails"></cpdss-portal-ballast-stowage>
+            <cpdss-portal-ballast-stowage [ballastDetails]="ballastDetails"></cpdss-portal-ballast-stowage>
         </div>
     </div>
 </div>

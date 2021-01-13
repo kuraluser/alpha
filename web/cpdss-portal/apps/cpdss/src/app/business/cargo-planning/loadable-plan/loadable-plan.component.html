@@ -1,51 +1,53 @@
 <div class="content-loadable-plan">
     <div class="container-fluid" *ngIf="loadablePlanForm">
-        <form [formGroup]="loadablePlanForm">
-            <div class="row pb-20">
-                <div class="col vessel-info-wrapper">
+    <form [formGroup]="loadablePlanForm">
+        <div class="row pb-20">
+            <div class="col vessel-info-wrapper">
                     <cpdss-portal-vessel-info *ngIf="vesselInfo" [vesselDetails]="vesselInfo">
                     </cpdss-portal-vessel-info>
-                </div>
-                <div class="">
-                    <h5 class="main-head inline-block">{{'LOADABLE_PLAN_HEADER' | translate}} </h5>
-                    <div class=" mr-10 text-secondary">
-                        CASE-01 REVISED 00</div>
+            </div>
+            <div class="">
+                <h5 class="main-head inline-block">{{'LOADABLE_PLAN_HEADER' | translate}} </h5>
+                <div class=" mr-10 text-secondary">
+                    CASE-01 REVISED 00</div>
 
-                </div>
-                <div class="col">
-                    <h5 class=" inline-block">VOYAGE TC-10 </h5>
-                    <div class=" mr-10 text-secondary">
-                        9-JUL-2020</div>
+            </div>
+            <div class="col">
+                <h5 class=" inline-block">VOYAGE TC-10 </h5>
+                <div class=" mr-10 text-secondary">
+                    9-JUL-2020</div>
 
-                </div>
-                <div class="ml-auto pr-15">
-                    <button class="btn btn-main">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL' |
-                    translate}}</button>
+            </div>
+            <div class="ml-auto pr-15">
+                <button class="btn btn-main">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL' |
+                translate}}</button>
                     <a><img src="../../../../assets/images/themes/dark/download-arrow.png" alt="" class="ml-20"></a>
                     <a><img src="../../../../assets/images/themes/dark/print-icon.png" alt="" class="ml-20 mr-30"></a>
-                    <button class="btn btn-main" id="btn_callNewLoadableStudyPopup" (click)="backToLoadableStudy()">{{'LOADABLE_PLAN_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
-                    translate}}</button>
-                </div>
-
+                <button class="btn btn-main" id="btn_callNewLoadableStudyPopup" (click)="backToLoadableStudy()">{{'LOADABLE_PLAN_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
+                translate}}</button>
             </div>
 
-            <div>
-                <cpdss-portal-loadable-quantity [loadableQuantityCargoDetails]="loadableQuantityCargoDetails"
-                    [loadableQuantityCommingleCargoDetails]="loadableQuantityCommingleCargoDetails">
-                </cpdss-portal-loadable-quantity>
-            </div>
-            <div>
-                <cpdss-portal-stowage [cargoTanks]="cargoTanks" [cargoTankDetails]="cargoTankDetails"
-                    [form]="loadablePlanForm" [ballastDetails]="loadablePlanBallastDetails">
-                </cpdss-portal-stowage>
-            </div>
-            <div>
+        </div>
+
+        <div>
+            <cpdss-portal-loadable-quantity [loadableQuantityCargoDetails]="loadableQuantityCargoDetails"
+                [loadableQuantityCommingleCargoDetails]="loadableQuantityCommingleCargoDetails">
+            </cpdss-portal-loadable-quantity>
+        </div>
+        <div>
+            <cpdss-portal-stowage [cargoTanks]="cargoTanks" [rearBallastTanks]="rearBallastTanks"
+                [centerBallastTanks]="centerBallastTanks" [frontBallastTanks]="frontBallastTanks"
+                [cargoTankDetails]="cargoTankDetails" [form]="loadablePlanForm"
+                [ballastDetails]="loadablePlanBallastDetails">
+            </cpdss-portal-stowage>
+        </div>
+        <div>
                 <cpdss-portal-port-eta-etd-condition [synopticalRecords]="loadablePlanSynopticalRecords"></cpdss-portal-port-eta-etd-condition>
-            </div>
-            <div>
-                <cpdss-portal-comments></cpdss-portal-comments>
-            </div>
+        </div>
+        <div>
+            <cpdss-portal-comments></cpdss-portal-comments>
+        </div>
 
-        </form>
+    </form>
     </div>
 </div>

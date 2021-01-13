@@ -1427,15 +1427,27 @@ table{
   }
     }
   }
-  &.loadable-plan-stowage{
-    height: 40vh;
-    .tank-name{
-
-    }
-  }
 }
 .loadable-plan-ballast .tank-outer-pattern, .loadable-plan-stowage.tank-outer-pattern{
       height: 40vh;
+      padding: 0 210px 0 110px;
+      .ship-front-pattern{
+        width: 210px;
+        .front-tank-wrapper{
+          width: 100%;
+          display: grid;
+          right: 0;
+        }
+      }
+      .ship-rear-pattern{
+        width: 110px;
+        .rear-top-pattern, .rear-bottom-pattern{
+          border-right: 112px solid transparent;
+          &:after{
+            border-right: 112px solid transparent;
+          }
+        }
+      }
       .tank-name{
         top: 5px!important;
         text-align: left!important;
@@ -1475,7 +1487,14 @@ table{
   height: 100%;
   right: 0;
   top: 0;
-  background-size: 100% 100%!important;
+  &:after{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    content: "";
+    z-index: 2;
+    background-size: 100% 100%!important;
+  }
 }
 
 .ship-rear-pattern{
@@ -1492,6 +1511,7 @@ table{
     position: absolute;
     top: 0;
     left: -2px;
+    z-index: 2;
     &:after{
         content: "";
         width: 0;
@@ -1523,6 +1543,27 @@ table{
         top: 3px;
         left: 0px;
         z-index: 1;
+    }
+  }
+  .rear-tank-pattern{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    .tank-level{
+      position: absolute;
+      width: 100%;
+      bottom: 0;
+    }
+    .rear-tank-ullage-and-percentage{
+      position: absolute;
+      top:50%;
+      left: 40%;;
+      .tank-filling-percentage{
+        position: static;
+      }
+      .tank-commodity-ullage{
+        display: none;
+      }
     }
   }
 }
