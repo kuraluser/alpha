@@ -1724,6 +1724,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+
+      this.commingleCargoRepository.deleteCommingleCargoByLodableStudyXId(
+          existingCargoNomination.get().getLoadableStudyXId());
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findById(
+              existingCargoNomination.get().getLoadableStudyXId());
+      if (loadableStudyOpt.isPresent()) {
+        LoadableStudy loadableStudy = loadableStudyOpt.get();
+        loadableStudy.setDischargeCargoId(null);
+        this.loadableStudyRepository.save(loadableStudy);
+      }
       this.cargoNominationOperationDetailsRepository.deleteCargoNominationPortDetails(
           request.getCargoNominationId());
       this.cargoNominationRepository.deleteCargoNomination(request.getCargoNominationId());
