@@ -34,6 +34,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
@@ -58,6 +60,7 @@ import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanComments;
 import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
@@ -80,6 +83,7 @@ import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsReposito
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
@@ -153,7 +157,7 @@ class LoadableStudyServiceTest {
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
 
   @MockBean private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
-
+  @MockBean private LoadablePlanCommentsRepository loadablePlanCommentsRepository;
   @MockBean private LoadablePatternDetailsRepository loadablePatternDetailsRepository;
   @MockBean private LoadablePatternRepository loadablePatternRepository;
 
@@ -2022,10 +2026,14 @@ class LoadableStudyServiceTest {
     loadablePattern.setId(1L);
     LoadableStudy loadableStudy = new LoadableStudy();
     loadableStudy.setId(1L);
+    loadableStudy.setVesselXId(1L);
     Voyage voyage = new Voyage();
     voyage.setId(1L);
+    voyage.setVoyageNo(VOYAGE);
     loadableStudy.setVoyage(voyage);
     loadablePattern.setLoadableStudy(loadableStudy);
+    loadablePattern.setCaseNumber(1);
+    loadablePattern.setCreatedDate(LocalDate.now());
     return loadablePattern;
   }
 
@@ -2060,6 +2068,10 @@ class LoadableStudyServiceTest {
     when(this.loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
             any(LoadablePattern.class), anyBoolean()))
         .thenReturn(preparePlanBallastDetails());
+
+    when(this.loadablePlanCommentsRepository.findByLoadablePatternAndIsActiveOrderByIdDesc(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(preparePlanComments());
 
     StreamRecorder<LoadablePlanDetailsReply> responseObserver = StreamRecorder.create();
     spyService.getLoadablePlanDetails(this.createGetLoadablePlanDetails(), responseObserver);
@@ -2150,6 +2162,15 @@ class LoadableStudyServiceTest {
     assertEquals(1, results.size());
     assertNull(responseObserver.getError());
     assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /** @return List<LoadablePlanComments> */
+  private List<LoadablePlanComments> preparePlanComments() {
+    List<LoadablePlanComments> loadablePlanComments = new ArrayList<LoadablePlanComments>();
+    LoadablePlanComments planComments = new LoadablePlanComments();
+    planComments.setCreatedDateTime(LocalDateTime.now());
+    loadablePlanComments.add(planComments);
+    return loadablePlanComments;
   }
 
   /** @return List<LoadablePlanBallastDetails> */
@@ -2586,5 +2607,73 @@ class LoadableStudyServiceTest {
     assertNull(responseObserver.getError());
     assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
     assertEquals(0L, replies.get(0).getId());
+  }
+
+  @Test
+  void testGetOnBoardQuantity() {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    LoadableStudy loadableStudy = new LoadableStudy();
+    Voyage voyage = new Voyage();
+    when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(voyage);
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(loadableStudy));
+    Mockito.doReturn(this.createVesselReply().build())
+        .when(spyService)
+        .getVesselTanks(any(VesselRequest.class));
+
+    StreamRecorder<OnBoardQuantityReply> responseObserver = StreamRecorder.create();
+    spyService.getOnBoardQuantity(this.createOnBoardQuantityRequest(), responseObserver);
+    List<OnBoardQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetOnBoardQuantityWithVoyageNull() {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    LoadableStudy loadableStudy = new LoadableStudy();
+    when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(null);
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(loadableStudy));
+    Mockito.doReturn(this.createVesselReply().build())
+        .when(spyService)
+        .getVesselTanks(any(VesselRequest.class));
+
+    StreamRecorder<OnBoardQuantityReply> responseObserver = StreamRecorder.create();
+    spyService.getOnBoardQuantity(this.createOnBoardQuantityRequest(), responseObserver);
+    List<OnBoardQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetOnBoardQuantityWithLoadableStudyNull() {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    Voyage voyage = new Voyage();
+    when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(voyage);
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    Mockito.doReturn(this.createVesselReply().build())
+        .when(spyService)
+        .getVesselTanks(any(VesselRequest.class));
+
+    StreamRecorder<OnBoardQuantityReply> responseObserver = StreamRecorder.create();
+    spyService.getOnBoardQuantity(this.createOnBoardQuantityRequest(), responseObserver);
+    List<OnBoardQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  private OnBoardQuantityRequest createOnBoardQuantityRequest() {
+    return OnBoardQuantityRequest.newBuilder()
+        .setCompanyId(ID_TEST_VALUE)
+        .setVesselId(ID_TEST_VALUE)
+        .setLoadableStudyId(ID_TEST_VALUE)
+        .setPortId(ID_TEST_VALUE)
+        .setVoyageId(ID_TEST_VALUE)
+        .build();
   }
 }

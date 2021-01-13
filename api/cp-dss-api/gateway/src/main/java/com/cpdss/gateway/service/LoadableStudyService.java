@@ -87,6 +87,7 @@ import com.cpdss.gateway.domain.LoadablePatternCargoDetails;
 import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadablePlanBallastDetails;
+import com.cpdss.gateway.domain.LoadablePlanComments;
 import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePlanStowageDetails;
 import com.cpdss.gateway.domain.LoadablePlanSynopticalRecord;
@@ -1172,13 +1173,16 @@ public class LoadableStudyService {
   public PortRotationResponse saveDischargingPorts(
       DischargingPortRequest request, String correlationId) throws GenericServiceException {
     log.info("Inside savePortRotation");
-    PortRotationRequest grpcRequest =
-        PortRotationRequest.newBuilder()
-            .addAllDischargingPortIds(request.getPortIds())
-            .setLoadableStudyId(request.getLoadableStudyId())
-            .setDischargingCargoId(request.getDischargingCargoId())
-            .build();
-    PortRotationReply grpcReply = this.saveDischargingPorts(grpcRequest);
+    PortRotationRequest.Builder portRotationRequestBuilder = PortRotationRequest.newBuilder();
+
+    portRotationRequestBuilder
+        .addAllDischargingPortIds(request.getPortIds())
+        .setLoadableStudyId(request.getLoadableStudyId());
+
+    Optional.ofNullable(request.getDischargingCargoId())
+        .ifPresent(portRotationRequestBuilder::setDischargingCargoId);
+
+    PortRotationReply grpcReply = this.saveDischargingPorts(portRotationRequestBuilder.build());
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "failed to save discharging ports",
@@ -2039,7 +2043,7 @@ public class LoadableStudyService {
           grpcReply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }
-    return this.buildOnBoardQuantityResponse(grpcReply);
+    return this.buildOnBoardQuantityResponse(grpcReply, correlationId);
   }
 
   /**
@@ -2048,7 +2052,8 @@ public class LoadableStudyService {
    * @param grpcReply
    * @return
    */
-  private OnBoardQuantityResponse buildOnBoardQuantityResponse(OnBoardQuantityReply grpcReply) {
+  private OnBoardQuantityResponse buildOnBoardQuantityResponse(
+      OnBoardQuantityReply grpcReply, String CorrelationId) {
     OnBoardQuantityResponse response = new OnBoardQuantityResponse();
     response.setOnBoardQuantities(new ArrayList<>());
     for (OnBoardQuantityDetail detail : grpcReply.getOnBoardQuantityList()) {
@@ -2068,6 +2073,8 @@ public class LoadableStudyService {
       response.getOnBoardQuantities().add(dto);
     }
     response.setTanks(this.createGroupWiseTankList(grpcReply.getTanksList()));
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), CorrelationId));
     return response;
   }
 
@@ -2581,6 +2588,7 @@ public class LoadableStudyService {
           grpcReply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }
+    buildLoadableStudyDetails(response, grpcReply);
     buildLoadableStudyQuantity(response, grpcReply);
     buildloadableStudyCommingleCargoDetails(response, grpcReply);
     buildLoadableStudyStowageDetails(response, grpcReply);
@@ -2591,9 +2599,42 @@ public class LoadableStudyService {
     buildLoadableStudyBallastDetails(response, grpcReply);
     buildSynopticalTableDetails(
         response, 716L, vesselId); // ToDo change loadable study to actual one
+    buildLoadablePlanComments(response, grpcReply);
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
+  }
+
+  /**
+   * @param response
+   * @param grpcReply void
+   */
+  private void buildLoadableStudyDetails(
+      LoadablePlanDetailsResponse response, LoadablePlanDetailsReply grpcReply) {
+    response.setId(grpcReply.getId());
+    response.setVoyageNumber(grpcReply.getVoyageNumber());
+    response.setCaseNumber(grpcReply.getCaseNumber());
+    response.setDate(grpcReply.getDate());
+  }
+
+  /**
+   * @param response
+   * @param grpcReply void
+   */
+  private void buildLoadablePlanComments(
+      LoadablePlanDetailsResponse response, LoadablePlanDetailsReply grpcReply) {
+    response.setLoadablePlanComments(new ArrayList<LoadablePlanComments>());
+    grpcReply
+        .getLoadablePlanCommentsList()
+        .forEach(
+            lpc -> {
+              LoadablePlanComments commets = new LoadablePlanComments();
+              commets.setId(lpc.getId());
+              commets.setComment(lpc.getComment());
+              commets.setDataAndTime(lpc.getDataAndTime());
+              commets.setUserName(lpc.getUserName());
+              response.getLoadablePlanComments().add(commets);
+            });
   }
 
   /**
@@ -2668,6 +2709,8 @@ public class LoadableStudyService {
               details.setTankId(lpbd.getTankId());
               details.setTcg(lpbd.getTcg());
               details.setVcg(lpbd.getVcg());
+              details.setTankName(lpbd.getTankName());
+              details.setColorCode(lpbd.getColorCode());
               response.getLoadablePlanBallastDetails().add(details);
             });
   }
@@ -2737,6 +2780,7 @@ public class LoadableStudyService {
               loadablePlanStowageDetails.setTemperature(lpsd.getTemperature());
               loadablePlanStowageDetails.setWeight(lpsd.getWeight());
               loadablePlanStowageDetails.setId(lpsd.getId());
+              loadablePlanStowageDetails.setColorCode(lpsd.getColorCode());
               response.getLoadablePlanStowageDetails().add(loadablePlanStowageDetails);
             });
   }

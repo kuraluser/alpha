@@ -91,6 +91,7 @@ import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanComments;
 import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
@@ -117,6 +118,7 @@ import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsReposito
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
@@ -196,6 +198,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePatternDetailsRepository loadablePatternDetailsRepository;
   @Autowired private LoadablePatternRepository loadablePatternRepository;
   @Autowired private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
+  @Autowired private LoadablePlanCommentsRepository loadablePlanCommentsRepository;
   @Autowired private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @Autowired private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
   @Autowired private EntityManager entityManager;
@@ -1331,8 +1334,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(
                 updateDateAndTime ->
                     loadableQuantityRequest.setUpdateDateAndTime(
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                            .format(updateDateAndTime)));
+                        DateTimeFormatter.ofPattern(DATE_FORMAT).format(updateDateAndTime)));
         Optional.ofNullable(loadableQuantity.get(0).getPortId())
             .ifPresent(portId -> loadableQuantityRequest.setPortId(portId.longValue()));
         Optional.ofNullable(loadableQuantity.get(0).getBoilerWaterOnBoard())
@@ -1723,6 +1725,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Cargo Nomination does not exist",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
+      }
+
+      this.commingleCargoRepository.deleteCommingleCargoByLodableStudyXId(
+          existingCargoNomination.get().getLoadableStudyXId());
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findById(
+              existingCargoNomination.get().getLoadableStudyXId());
+      if (loadableStudyOpt.isPresent()) {
+        LoadableStudy loadableStudy = loadableStudyOpt.get();
+        loadableStudy.setDischargeCargoId(null);
+        this.loadableStudyRepository.save(loadableStudy);
       }
       this.cargoNominationOperationDetailsRepository.deleteCargoNominationPortDetails(
           request.getCargoNominationId());
@@ -4150,16 +4163,60 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
         loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
             loadablePatternOpt.get(), true);
-    buildBallstGridDetails(loadablePlanBallastDetails, replyBuilder);
+    buildBallastGridDetails(loadablePlanBallastDetails, replyBuilder);
+
+    List<LoadablePlanComments> loadablePlanComments =
+        loadablePlanCommentsRepository.findByLoadablePatternAndIsActiveOrderByIdDesc(
+            loadablePatternOpt.get(), true);
+
+    buildCommentDetails(loadablePlanComments, replyBuilder);
+
+    buildLoadablePlanDetails(replyBuilder, loadablePatternOpt.get());
 
     replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+  }
+
+  /**
+   * @param replyBuilder
+   * @param loadablePattern void
+   */
+  private void buildLoadablePlanDetails(
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder,
+      LoadablePattern loadablePattern) {
+    replyBuilder.setId(loadablePattern.getId());
+    replyBuilder.setCaseNumber(loadablePattern.getCaseNumber().toString());
+    replyBuilder.setDate(
+        DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT).format(loadablePattern.getCreatedDate()));
+    replyBuilder.setVoyageNumber(loadablePattern.getLoadableStudy().getVoyage().getVoyageNo());
+  }
+
+  /**
+   * @param loadablePlanComments
+   * @param replyBuilder void
+   */
+  private void buildCommentDetails(
+      List<LoadablePlanComments> loadablePlanComments,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
+
+    loadablePlanComments.forEach(
+        lpc -> {
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanComments.Builder builder =
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanComments.newBuilder();
+          Optional.ofNullable(lpc.getId()).ifPresent(builder::setId);
+          Optional.ofNullable(lpc.getComments()).ifPresent(builder::setComment);
+          Optional.ofNullable(
+                  DateTimeFormatter.ofPattern(DATE_FORMAT).format(lpc.getCreatedDateTime()))
+              .ifPresent(builder::setDataAndTime);
+          builder.setUserName("Uttam Kumar"); // ToDo - replace it with the value taken from cache
+          replyBuilder.addLoadablePlanComments(builder);
+        });
   }
 
   /**
    * @param loadablePlanBallastDetails
    * @param replyBuilder void
    */
-  private void buildBallstGridDetails(
+  private void buildBallastGridDetails(
       List<LoadablePlanBallastDetails> loadablePlanBallastDetails,
       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
     loadablePlanBallastDetails.forEach(
@@ -4180,6 +4237,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpbd.getTcg()).ifPresent(builder::setTcg);
           Optional.ofNullable(lpbd.getVcg()).ifPresent(builder::setVcg);
           Optional.ofNullable(lpbd.getTankName()).ifPresent(builder::setTankName);
+          Optional.ofNullable(lpbd.getColorCode()).ifPresent(builder::setColorCode);
           replyBuilder.addLoadablePlanBallastDetails(builder);
         });
   }
@@ -4277,6 +4335,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpsd.getTankId()).ifPresent(builder::setTankId);
           Optional.ofNullable(lpsd.getTemperature()).ifPresent(builder::setTemperature);
           Optional.ofNullable(lpsd.getWeight()).ifPresent(builder::setWeight);
+          Optional.ofNullable(lpsd.getColorCode()).ifPresent(builder::setColorCode);
           replyBuilder.addLoadablePlanStowageDetails(builder);
         });
   }

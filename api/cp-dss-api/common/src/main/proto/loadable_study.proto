@@ -127,6 +127,18 @@ message LoadablePlanDetailsReply {
 	repeated TankList ballastCenterTanks = 7;
 	repeated TankList ballastRearTanks = 8;
 	repeated LoadablePlanBallastDetails loadablePlanBallastDetails = 9;
+	repeated LoadablePlanComments loadablePlanComments = 10;
+	string caseNumber = 11;
+  	string date = 12;
+  	string voyageNumber = 13;
+  	int64 id = 14;
+}
+
+message LoadablePlanComments {
+	int64 id = 1;
+	string userName = 2;
+	string dataAndTime = 3;
+	string comment = 4;
 }
 
 message LoadablePlanBallastDetails {
@@ -144,6 +156,7 @@ message LoadablePlanBallastDetails {
 	string tcg = 12;
 	string inertia = 13;
 	string tankName = 14;
+	string colorCode = 15;
 }
 
 message LoadablePlanStowageDetails {
@@ -161,6 +174,7 @@ message LoadablePlanStowageDetails {
   string api = 12;
   string temperature = 13;
   int64 id = 14;
+  string colorCode = 15;
 }
 
 

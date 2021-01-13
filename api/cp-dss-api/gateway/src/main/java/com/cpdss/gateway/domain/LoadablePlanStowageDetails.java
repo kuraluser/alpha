@@ -20,4 +20,5 @@ public class LoadablePlanStowageDetails {
   private String observedBarrelsAt60; // volume(BBLS)
   private String api;
   private String temperature;
+  private String colorCode;
 }

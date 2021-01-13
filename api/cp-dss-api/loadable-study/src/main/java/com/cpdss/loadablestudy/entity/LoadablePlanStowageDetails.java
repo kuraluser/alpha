@@ -68,6 +68,9 @@ public class LoadablePlanStowageDetails extends EntityDoc {
   @Column(name = "temperature")
   private String temperature;
 
+  @Column(name = "color_code")
+  private String colorCode;
+
   @JoinColumn(name = "loadable_plan_xid", referencedColumnName = "id")
   @ManyToOne
   private LoadablePlan loadablePlan;
