@@ -60,5 +60,5 @@ public class LoadableStudy {
 
   private List<LoadableStudyAttachmentData> LoadableStudyAttachment;
 
-  private Long dischargingCargoid;
+  private Long dischargingCargoId;
 }

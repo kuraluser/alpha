@@ -111,6 +111,9 @@ service LoadableStudyService {
 	
 	rpc DownloadLoadableStudyAttachment(LoadableStudyAttachmentRequest) returns (LoadableStudyAttachmentReply){
 	}
+	
+	rpc SaveComment(SaveCommentRequest) returns (SaveCommentReply){
+	}
 }
 
 message LoadablePlanDetailsRequest {
@@ -750,5 +753,15 @@ message LoadableStudyAttachmentReply{
 	ResponseStatus responseStatus = 1;
 	string filePath = 2;
 	bytes byteString = 3;
+}
+
+message SaveCommentReply {
+	ResponseStatus responseStatus = 1;
+}
+
+message SaveCommentRequest{
+	int64 loadablePatternId=1;
+	string comment =2;
+	int64 user=3;
 }
 

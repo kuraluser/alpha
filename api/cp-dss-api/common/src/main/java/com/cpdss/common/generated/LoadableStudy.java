@@ -92844,6 +92844,1365 @@ public final class LoadableStudy {
     }
   }
 
+  public interface SaveCommentReplyOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:SaveCommentReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+  }
+  /** Protobuf type {@code SaveCommentReply} */
+  public static final class SaveCommentReply extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:SaveCommentReply)
+      SaveCommentReplyOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use SaveCommentReply.newBuilder() to construct.
+    private SaveCommentReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private SaveCommentReply() {}
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new SaveCommentReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private SaveCommentReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_SaveCommentReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_SaveCommentReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.SaveCommentReply.class,
+              com.cpdss.common.generated.LoadableStudy.SaveCommentReply.Builder.class);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (responseStatus_ != null) {
+        output.writeMessage(1, getResponseStatus());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.SaveCommentReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.SaveCommentReply other =
+          (com.cpdss.common.generated.LoadableStudy.SaveCommentReply) obj;
+
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentReply parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentReply parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentReply parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentReply parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentReply parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentReply parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentReply parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentReply parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentReply parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentReply parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentReply parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentReply parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.SaveCommentReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code SaveCommentReply} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:SaveCommentReply)
+        com.cpdss.common.generated.LoadableStudy.SaveCommentReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_SaveCommentReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SaveCommentReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.SaveCommentReply.class,
+                com.cpdss.common.generated.LoadableStudy.SaveCommentReply.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.LoadableStudy.SaveCommentReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy.internal_static_SaveCommentReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SaveCommentReply getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.SaveCommentReply.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SaveCommentReply build() {
+        com.cpdss.common.generated.LoadableStudy.SaveCommentReply result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SaveCommentReply buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.SaveCommentReply result =
+            new com.cpdss.common.generated.LoadableStudy.SaveCommentReply(this);
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.SaveCommentReply) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.SaveCommentReply) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.LoadableStudy.SaveCommentReply other) {
+        if (other == com.cpdss.common.generated.LoadableStudy.SaveCommentReply.getDefaultInstance())
+          return this;
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.SaveCommentReply parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.SaveCommentReply) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:SaveCommentReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:SaveCommentReply)
+    private static final com.cpdss.common.generated.LoadableStudy.SaveCommentReply DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.SaveCommentReply();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentReply getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<SaveCommentReply> PARSER =
+        new com.google.protobuf.AbstractParser<SaveCommentReply>() {
+          @java.lang.Override
+          public SaveCommentReply parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new SaveCommentReply(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<SaveCommentReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<SaveCommentReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.SaveCommentReply getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface SaveCommentRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:SaveCommentRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 loadablePatternId = 1;</code>
+     *
+     * @return The loadablePatternId.
+     */
+    long getLoadablePatternId();
+
+    /**
+     * <code>string comment = 2;</code>
+     *
+     * @return The comment.
+     */
+    java.lang.String getComment();
+    /**
+     * <code>string comment = 2;</code>
+     *
+     * @return The bytes for comment.
+     */
+    com.google.protobuf.ByteString getCommentBytes();
+
+    /**
+     * <code>int64 user = 3;</code>
+     *
+     * @return The user.
+     */
+    long getUser();
+  }
+  /** Protobuf type {@code SaveCommentRequest} */
+  public static final class SaveCommentRequest extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:SaveCommentRequest)
+      SaveCommentRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use SaveCommentRequest.newBuilder() to construct.
+    private SaveCommentRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private SaveCommentRequest() {
+      comment_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new SaveCommentRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private SaveCommentRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                loadablePatternId_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                comment_ = s;
+                break;
+              }
+            case 24:
+              {
+                user_ = input.readInt64();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy.internal_static_SaveCommentRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_SaveCommentRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.SaveCommentRequest.class,
+              com.cpdss.common.generated.LoadableStudy.SaveCommentRequest.Builder.class);
+    }
+
+    public static final int LOADABLEPATTERNID_FIELD_NUMBER = 1;
+    private long loadablePatternId_;
+    /**
+     * <code>int64 loadablePatternId = 1;</code>
+     *
+     * @return The loadablePatternId.
+     */
+    public long getLoadablePatternId() {
+      return loadablePatternId_;
+    }
+
+    public static final int COMMENT_FIELD_NUMBER = 2;
+    private volatile java.lang.Object comment_;
+    /**
+     * <code>string comment = 2;</code>
+     *
+     * @return The comment.
+     */
+    public java.lang.String getComment() {
+      java.lang.Object ref = comment_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        comment_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string comment = 2;</code>
+     *
+     * @return The bytes for comment.
+     */
+    public com.google.protobuf.ByteString getCommentBytes() {
+      java.lang.Object ref = comment_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        comment_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int USER_FIELD_NUMBER = 3;
+    private long user_;
+    /**
+     * <code>int64 user = 3;</code>
+     *
+     * @return The user.
+     */
+    public long getUser() {
+      return user_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (loadablePatternId_ != 0L) {
+        output.writeInt64(1, loadablePatternId_);
+      }
+      if (!getCommentBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, comment_);
+      }
+      if (user_ != 0L) {
+        output.writeInt64(3, user_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (loadablePatternId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, loadablePatternId_);
+      }
+      if (!getCommentBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, comment_);
+      }
+      if (user_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, user_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.SaveCommentRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.SaveCommentRequest other =
+          (com.cpdss.common.generated.LoadableStudy.SaveCommentRequest) obj;
+
+      if (getLoadablePatternId() != other.getLoadablePatternId()) return false;
+      if (!getComment().equals(other.getComment())) return false;
+      if (getUser() != other.getUser()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + LOADABLEPATTERNID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadablePatternId());
+      hash = (37 * hash) + COMMENT_FIELD_NUMBER;
+      hash = (53 * hash) + getComment().hashCode();
+      hash = (37 * hash) + USER_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getUser());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentRequest parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentRequest parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentRequest parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentRequest parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentRequest parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentRequest parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentRequest parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentRequest parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.SaveCommentRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code SaveCommentRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:SaveCommentRequest)
+        com.cpdss.common.generated.LoadableStudy.SaveCommentRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SaveCommentRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SaveCommentRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.SaveCommentRequest.class,
+                com.cpdss.common.generated.LoadableStudy.SaveCommentRequest.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.LoadableStudy.SaveCommentRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        loadablePatternId_ = 0L;
+
+        comment_ = "";
+
+        user_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_SaveCommentRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SaveCommentRequest
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.SaveCommentRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SaveCommentRequest build() {
+        com.cpdss.common.generated.LoadableStudy.SaveCommentRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.SaveCommentRequest buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.SaveCommentRequest result =
+            new com.cpdss.common.generated.LoadableStudy.SaveCommentRequest(this);
+        result.loadablePatternId_ = loadablePatternId_;
+        result.comment_ = comment_;
+        result.user_ = user_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.SaveCommentRequest) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.SaveCommentRequest) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.LoadableStudy.SaveCommentRequest other) {
+        if (other
+            == com.cpdss.common.generated.LoadableStudy.SaveCommentRequest.getDefaultInstance())
+          return this;
+        if (other.getLoadablePatternId() != 0L) {
+          setLoadablePatternId(other.getLoadablePatternId());
+        }
+        if (!other.getComment().isEmpty()) {
+          comment_ = other.comment_;
+          onChanged();
+        }
+        if (other.getUser() != 0L) {
+          setUser(other.getUser());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.SaveCommentRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.SaveCommentRequest)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long loadablePatternId_;
+      /**
+       * <code>int64 loadablePatternId = 1;</code>
+       *
+       * @return The loadablePatternId.
+       */
+      public long getLoadablePatternId() {
+        return loadablePatternId_;
+      }
+      /**
+       * <code>int64 loadablePatternId = 1;</code>
+       *
+       * @param value The loadablePatternId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadablePatternId(long value) {
+
+        loadablePatternId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadablePatternId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadablePatternId() {
+
+        loadablePatternId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object comment_ = "";
+      /**
+       * <code>string comment = 2;</code>
+       *
+       * @return The comment.
+       */
+      public java.lang.String getComment() {
+        java.lang.Object ref = comment_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          comment_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string comment = 2;</code>
+       *
+       * @return The bytes for comment.
+       */
+      public com.google.protobuf.ByteString getCommentBytes() {
+        java.lang.Object ref = comment_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          comment_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string comment = 2;</code>
+       *
+       * @param value The comment to set.
+       * @return This builder for chaining.
+       */
+      public Builder setComment(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        comment_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string comment = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearComment() {
+
+        comment_ = getDefaultInstance().getComment();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string comment = 2;</code>
+       *
+       * @param value The bytes for comment to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCommentBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        comment_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long user_;
+      /**
+       * <code>int64 user = 3;</code>
+       *
+       * @return The user.
+       */
+      public long getUser() {
+        return user_;
+      }
+      /**
+       * <code>int64 user = 3;</code>
+       *
+       * @param value The user to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUser(long value) {
+
+        user_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 user = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearUser() {
+
+        user_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:SaveCommentRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:SaveCommentRequest)
+    private static final com.cpdss.common.generated.LoadableStudy.SaveCommentRequest
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.SaveCommentRequest();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.SaveCommentRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<SaveCommentRequest> PARSER =
+        new com.google.protobuf.AbstractParser<SaveCommentRequest>() {
+          @java.lang.Override
+          public SaveCommentRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new SaveCommentRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<SaveCommentRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<SaveCommentRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.SaveCommentRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_LoadablePlanDetailsRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -93120,6 +94479,14 @@ public final class LoadableStudy {
       internal_static_LoadableStudyAttachmentReply_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_LoadableStudyAttachmentReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_SaveCommentReply_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_SaveCommentReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_SaveCommentRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_SaveCommentRequest_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -93430,74 +94797,79 @@ public final class LoadableStudy {
           + "\016\n\006fileId\030\001 \001(\003\022\027\n\017loadableStudyId\030\002 \001(\003"
           + "\"m\n\034LoadableStudyAttachmentReply\022\'\n\016resp"
           + "onseStatus\030\001 \001(\0132\017.ResponseStatus\022\020\n\010fil"
-          + "ePath\030\002 \001(\t\022\022\n\nbyteString\030\003 \001(\0142\275\024\n\024Load"
-          + "ableStudyService\022,\n\nSaveVoyage\022\016.VoyageR"
-          + "equest\032\014.VoyageReply\"\000\0228\n\022GetVoyagesByVe"
-          + "ssel\022\016.VoyageRequest\032\020.VoyageListReply\"\000"
-          + "\022J\n\024SaveLoadableQuantity\022\030.LoadableQuant"
-          + "ityRequest\032\026.LoadableQuantityReply\"\000\022T\n$"
-          + "FindLoadableStudiesByVesselAndVoyage\022\025.L"
-          + "oadableStudyRequest\032\023.LoadableStudyReply"
-          + "\"\000\022@\n\021SaveLoadableStudy\022\024.LoadableStudyD"
-          + "etail\032\023.LoadableStudyReply\"\000\022G\n\023SaveCarg"
-          + "oNomination\022\027.CargoNominationRequest\032\025.C"
-          + "argoNominationReply\"\000\022J\n\034GetLoadableStud"
-          + "yPortRotation\022\024.PortRotationRequest\032\022.Po"
-          + "rtRotationReply\"\000\022J\n\026GetCargoNominationB"
-          + "yId\022\027.CargoNominationRequest\032\025.CargoNomi"
-          + "nationReply\"\000\022I\n\023GetValveSegregation\022\030.V"
-          + "alveSegregationRequest\032\026.ValveSegregatio"
-          + "nReply\"\000\022J\n\023getLoadableQuantity\022\026.Loadab"
-          + "leQuantityReply\032\031.LoadableQuantityRespon"
-          + "se\"\000\022J\n\035SaveLoadableStudyPortRotation\022\023."
-          + "PortRotationDetail\032\022.PortRotationReply\"\000"
-          + "\022O\n!SaveLoadableStudyPortRotationList\022\024."
-          + "PortRotationRequest\032\022.PortRotationReply\""
-          + "\000\022I\n\025DeleteCargoNomination\022\027.CargoNomina"
-          + "tionRequest\032\025.CargoNominationReply\"\000\022B\n\024"
-          + "SaveDischargingPorts\022\024.PortRotationReque"
-          + "st\032\022.PortRotationReply\"\000\022N\n GetPortRotat"
-          + "ionByLoadableStudyId\022\024.PortRotationReque"
-          + "st\032\022.PortRotationReply\"\000\022C\n\023DeleteLoadab"
-          + "leStudy\022\025.LoadableStudyRequest\032\023.Loadabl"
-          + "eStudyReply\"\000\022@\n\022DeletePortRotation\022\024.Po"
-          + "rtRotationRequest\032\022.PortRotationReply\"\000\022"
-          + "C\n\021GetOnHandQuantity\022\026.OnHandQuantityReq"
-          + "uest\032\024.OnHandQuantityReply\"\000\022C\n\022SaveOnHa"
-          + "ndQuantity\022\025.OnHandQuantityDetail\032\024.OnHa"
-          + "ndQuantityReply\"\000\022M\n\031GetLoadablePatternD"
-          + "etails\022\027.LoadablePatternRequest\032\025.Loadab"
-          + "lePatternReply\"\000\022O\n\025GetPurposeOfCommingl"
-          + "e\022\032.PurposeOfCommingleRequest\032\030.PurposeO"
-          + "fCommingleReply\"\000\022C\n\021GetCommingleCargo\022\026"
-          + ".CommingleCargoRequest\032\024.CommingleCargoR"
-          + "eply\"\000\022D\n\022SaveCommingleCargo\022\026.Commingle"
-          + "CargoRequest\032\024.CommingleCargoReply\"\000\022v\n\""
-          + "GetLoadablePatternCommingleDetails\022\'.Loa"
-          + "dablePatternCommingleDetailsRequest\032%.Lo"
-          + "adablePatternCommingleDetailsReply\"\000\0226\n\030"
-          + "GenerateLoadablePatterns\022\014.AlgoRequest\032\n"
-          + ".AlgoReply\"\000\022F\n\022GetOnBoardQuantity\022\027.OnB"
-          + "oardQuantityRequest\032\025.OnBoardQuantityRep"
-          + "ly\"\000\022F\n\023SaveOnBoardQuantity\022\026.OnBoardQua"
-          + "ntityDetail\032\025.OnBoardQuantityReply\"\000\022E\n\033"
-          + "SaveAlgoLoadableStudyStatus\022\022.AlgoStatus"
-          + "Request\032\020.AlgoStatusReply\"\000\022G\n\023SaveSynop"
-          + "ticalTable\022\027.SynopticalTableRequest\032\025.Sy"
-          + "nopticalTableReply\"\000\022F\n\022GetSynopticalTab"
-          + "le\022\027.SynopticalTableRequest\032\025.Synoptical"
-          + "TableReply\"\000\022K\n\031GetSynopticalDataByPortI"
-          + "d\022\026.SynopticalDataRequest\032\024.SynopticalDa"
-          + "taReply\"\000\022R\n\026GetLoadableStudyStatus\022\033.Lo"
-          + "adableStudyStatusRequest\032\031.LoadableStudy"
-          + "StatusReply\"\000\022R\n\026GetLoadablePlanDetails\022"
-          + "\033.LoadablePlanDetailsRequest\032\031.LoadableP"
-          + "lanDetailsReply\"\000\0227\n\013ConfirmPlan\022\023.Confi"
-          + "rmPlanRequest\032\021.ConfirmPlanReply\"\000\022c\n\037Do"
-          + "wnloadLoadableStudyAttachment\022\037.Loadable"
-          + "StudyAttachmentRequest\032\035.LoadableStudyAt"
-          + "tachmentReply\"\000B\036\n\032com.cpdss.common.gene"
-          + "ratedP\000b\006proto3"
+          + "ePath\030\002 \001(\t\022\022\n\nbyteString\030\003 \001(\014\";\n\020SaveC"
+          + "ommentReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Re"
+          + "sponseStatus\"N\n\022SaveCommentRequest\022\031\n\021lo"
+          + "adablePatternId\030\001 \001(\003\022\017\n\007comment\030\002 \001(\t\022\014"
+          + "\n\004user\030\003 \001(\0032\366\024\n\024LoadableStudyService\022,\n"
+          + "\nSaveVoyage\022\016.VoyageRequest\032\014.VoyageRepl"
+          + "y\"\000\0228\n\022GetVoyagesByVessel\022\016.VoyageReques"
+          + "t\032\020.VoyageListReply\"\000\022J\n\024SaveLoadableQua"
+          + "ntity\022\030.LoadableQuantityRequest\032\026.Loadab"
+          + "leQuantityReply\"\000\022T\n$FindLoadableStudies"
+          + "ByVesselAndVoyage\022\025.LoadableStudyRequest"
+          + "\032\023.LoadableStudyReply\"\000\022@\n\021SaveLoadableS"
+          + "tudy\022\024.LoadableStudyDetail\032\023.LoadableStu"
+          + "dyReply\"\000\022G\n\023SaveCargoNomination\022\027.Cargo"
+          + "NominationRequest\032\025.CargoNominationReply"
+          + "\"\000\022J\n\034GetLoadableStudyPortRotation\022\024.Por"
+          + "tRotationRequest\032\022.PortRotationReply\"\000\022J"
+          + "\n\026GetCargoNominationById\022\027.CargoNominati"
+          + "onRequest\032\025.CargoNominationReply\"\000\022I\n\023Ge"
+          + "tValveSegregation\022\030.ValveSegregationRequ"
+          + "est\032\026.ValveSegregationReply\"\000\022J\n\023getLoad"
+          + "ableQuantity\022\026.LoadableQuantityReply\032\031.L"
+          + "oadableQuantityResponse\"\000\022J\n\035SaveLoadabl"
+          + "eStudyPortRotation\022\023.PortRotationDetail\032"
+          + "\022.PortRotationReply\"\000\022O\n!SaveLoadableStu"
+          + "dyPortRotationList\022\024.PortRotationRequest"
+          + "\032\022.PortRotationReply\"\000\022I\n\025DeleteCargoNom"
+          + "ination\022\027.CargoNominationRequest\032\025.Cargo"
+          + "NominationReply\"\000\022B\n\024SaveDischargingPort"
+          + "s\022\024.PortRotationRequest\032\022.PortRotationRe"
+          + "ply\"\000\022N\n GetPortRotationByLoadableStudyI"
+          + "d\022\024.PortRotationRequest\032\022.PortRotationRe"
+          + "ply\"\000\022C\n\023DeleteLoadableStudy\022\025.LoadableS"
+          + "tudyRequest\032\023.LoadableStudyReply\"\000\022@\n\022De"
+          + "letePortRotation\022\024.PortRotationRequest\032\022"
+          + ".PortRotationReply\"\000\022C\n\021GetOnHandQuantit"
+          + "y\022\026.OnHandQuantityRequest\032\024.OnHandQuanti"
+          + "tyReply\"\000\022C\n\022SaveOnHandQuantity\022\025.OnHand"
+          + "QuantityDetail\032\024.OnHandQuantityReply\"\000\022M"
+          + "\n\031GetLoadablePatternDetails\022\027.LoadablePa"
+          + "tternRequest\032\025.LoadablePatternReply\"\000\022O\n"
+          + "\025GetPurposeOfCommingle\022\032.PurposeOfCommin"
+          + "gleRequest\032\030.PurposeOfCommingleReply\"\000\022C"
+          + "\n\021GetCommingleCargo\022\026.CommingleCargoRequ"
+          + "est\032\024.CommingleCargoReply\"\000\022D\n\022SaveCommi"
+          + "ngleCargo\022\026.CommingleCargoRequest\032\024.Comm"
+          + "ingleCargoReply\"\000\022v\n\"GetLoadablePatternC"
+          + "ommingleDetails\022\'.LoadablePatternComming"
+          + "leDetailsRequest\032%.LoadablePatternCommin"
+          + "gleDetailsReply\"\000\0226\n\030GenerateLoadablePat"
+          + "terns\022\014.AlgoRequest\032\n.AlgoReply\"\000\022F\n\022Get"
+          + "OnBoardQuantity\022\027.OnBoardQuantityRequest"
+          + "\032\025.OnBoardQuantityReply\"\000\022F\n\023SaveOnBoard"
+          + "Quantity\022\026.OnBoardQuantityDetail\032\025.OnBoa"
+          + "rdQuantityReply\"\000\022E\n\033SaveAlgoLoadableStu"
+          + "dyStatus\022\022.AlgoStatusRequest\032\020.AlgoStatu"
+          + "sReply\"\000\022G\n\023SaveSynopticalTable\022\027.Synopt"
+          + "icalTableRequest\032\025.SynopticalTableReply\""
+          + "\000\022F\n\022GetSynopticalTable\022\027.SynopticalTabl"
+          + "eRequest\032\025.SynopticalTableReply\"\000\022K\n\031Get"
+          + "SynopticalDataByPortId\022\026.SynopticalDataR"
+          + "equest\032\024.SynopticalDataReply\"\000\022R\n\026GetLoa"
+          + "dableStudyStatus\022\033.LoadableStudyStatusRe"
+          + "quest\032\031.LoadableStudyStatusReply\"\000\022R\n\026Ge"
+          + "tLoadablePlanDetails\022\033.LoadablePlanDetai"
+          + "lsRequest\032\031.LoadablePlanDetailsReply\"\000\0227"
+          + "\n\013ConfirmPlan\022\023.ConfirmPlanRequest\032\021.Con"
+          + "firmPlanReply\"\000\022c\n\037DownloadLoadableStudy"
+          + "Attachment\022\037.LoadableStudyAttachmentRequ"
+          + "est\032\035.LoadableStudyAttachmentReply\"\000\0227\n\013"
+          + "SaveComment\022\023.SaveCommentRequest\032\021.SaveC"
+          + "ommentReply\"\000B\036\n\032com.cpdss.common.genera"
+          + "tedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -94286,6 +95658,20 @@ public final class LoadableStudy {
             internal_static_LoadableStudyAttachmentReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "FilePath", "ByteString",
+            });
+    internal_static_SaveCommentReply_descriptor = getDescriptor().getMessageTypes().get(69);
+    internal_static_SaveCommentReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_SaveCommentReply_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus",
+            });
+    internal_static_SaveCommentRequest_descriptor = getDescriptor().getMessageTypes().get(70);
+    internal_static_SaveCommentRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_SaveCommentRequest_descriptor,
+            new java.lang.String[] {
+              "LoadablePatternId", "Comment", "User",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }

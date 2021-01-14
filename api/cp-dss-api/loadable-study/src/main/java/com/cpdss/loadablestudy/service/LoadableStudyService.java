@@ -52,6 +52,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
+import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
+import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalDataReply;
@@ -1092,12 +1094,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         throw new GenericServiceException(
             "Loadable study does not exist in database", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
-      CargoOperation dischargingOperation =
-          this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID);
+
       List<LoadableStudyPortRotation> entityList =
-          this.loadableStudyPortRotationRepository
-              .findByLoadableStudyAndOperationNotAndIsActiveOrderByPortOrder(
-                  loadableStudyOpt.get(), dischargingOperation, true);
+          this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+              loadableStudyOpt.get(), true);
       for (LoadableStudyPortRotation entity : entityList) {
         replyBuilder.addPorts(
             this.createPortDetail(
@@ -4868,6 +4868,38 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                                   .parse(request.getEtdActual())));
                 }
               });
+    }
+  }
+
+  @Override
+  public void saveComment(
+      SaveCommentRequest request, StreamObserver<SaveCommentReply> responseObserver) {
+
+    SaveCommentReply.Builder replyBuilder = SaveCommentReply.newBuilder();
+    try {
+      LoadablePlanComments entity = new LoadablePlanComments();
+      entity.setComments(request.getComment());
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+      if (loadablePatternOpt.isPresent()) {
+        entity.setLoadablePattern(loadablePatternOpt.get());
+      }
+      entity.setCreatedBy(Long.toString(request.getUser()));
+      entity.setIsActive(true);
+      entity = this.loadablePlanCommentsRepository.save(entity);
+
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      log.error("Error saving comment", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Error saving comment")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
     }
   }
 }

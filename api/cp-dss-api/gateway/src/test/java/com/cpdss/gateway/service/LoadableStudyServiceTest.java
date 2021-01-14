@@ -40,6 +40,8 @@ import com.cpdss.common.generated.LoadableStudy.Operation;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
+import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
+import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.TankDetail;
 import com.cpdss.common.generated.LoadableStudy.TankList;
@@ -52,6 +54,7 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.AlgoStatusResponse;
+import com.cpdss.gateway.domain.Comment;
 import com.cpdss.gateway.domain.CommonResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
@@ -66,10 +69,15 @@ import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.SaveCommentResponse;
 import com.cpdss.gateway.domain.SynopticalRecord;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
+import com.cpdss.gateway.entity.RoleUserMapping;
+import com.cpdss.gateway.entity.Roles;
+import com.cpdss.gateway.entity.Users;
+import com.cpdss.gateway.repository.UsersRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -82,6 +90,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -119,6 +128,8 @@ class LoadableStudyServiceTest {
   private static final String LOADABLE_QUANTITY_DUMMY = "100";
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
   private static final BigDecimal TEST_BIGDECIMAL_VALUE = new BigDecimal(100);
+
+  @MockBean private UsersRepository usersRepository;
 
   @BeforeEach
   public void init() {
@@ -537,6 +548,7 @@ class LoadableStudyServiceTest {
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
+
   /**
    * Save loadable quantity - positive scenario
    *
@@ -1636,5 +1648,51 @@ class LoadableStudyServiceTest {
               list.add(detail);
             });
     return list;
+  }
+
+  @Test
+  void testSaveComment() throws GenericServiceException {
+
+    LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
+
+    SaveCommentReply saveCommentReply =
+        SaveCommentReply.newBuilder()
+            .setResponseStatus(
+                ResponseStatus.newBuilder().setMessage("Success").setStatus(SUCCESS).build())
+            .build();
+
+    Mockito.when(spy.saveComment(ArgumentMatchers.any(Comment.class), anyString(), anyLong()))
+        .thenCallRealMethod();
+
+    Mockito.when(
+            this.usersRepository.findByKeycloakIdAndIsActive(any(String.class), any(Boolean.class)))
+        .thenReturn(createUser());
+
+    Mockito.when(spy.getUsersEntity()).thenReturn(createUser());
+    Mockito.when(spy.saveComment(ArgumentMatchers.any(SaveCommentRequest.class)))
+        .thenReturn(saveCommentReply);
+
+    final Comment comment = new Comment();
+    comment.setComment("comment");
+     comment.setUser(1L);
+
+    SaveCommentResponse commentResponse = spy.saveComment(comment, "corelationId", (long) 1);
+
+    Assert.assertEquals(
+        String.valueOf(HttpStatusCode.OK.value()), commentResponse.getResponseStatus().getStatus());
+  }
+
+  private Users createUser() {
+    Users user = new Users();
+    user.setId(1L);
+    RoleUserMapping roleUserMapping = new RoleUserMapping();
+    Roles roles = new Roles();
+    roles.setId(1L);
+    roles.setName("CHIEF_OFFICER");
+    roleUserMapping.setRoles(roles);
+    List<RoleUserMapping> roleUserMappingList = new ArrayList();
+    roleUserMappingList.add(roleUserMapping);
+    user.setRoleUserMappings(roleUserMappingList);
+    return user;
   }
 }

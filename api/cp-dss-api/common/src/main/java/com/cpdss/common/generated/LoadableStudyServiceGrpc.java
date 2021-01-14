@@ -1801,6 +1801,53 @@ public final class LoadableStudyServiceGrpc {
     return getDownloadLoadableStudyAttachmentMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.SaveCommentRequest,
+          com.cpdss.common.generated.LoadableStudy.SaveCommentReply>
+      getSaveCommentMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveComment",
+      requestType = com.cpdss.common.generated.LoadableStudy.SaveCommentRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.SaveCommentReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.SaveCommentRequest,
+          com.cpdss.common.generated.LoadableStudy.SaveCommentReply>
+      getSaveCommentMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.SaveCommentRequest,
+            com.cpdss.common.generated.LoadableStudy.SaveCommentReply>
+        getSaveCommentMethod;
+    if ((getSaveCommentMethod = LoadableStudyServiceGrpc.getSaveCommentMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveCommentMethod = LoadableStudyServiceGrpc.getSaveCommentMethod) == null) {
+          LoadableStudyServiceGrpc.getSaveCommentMethod =
+              getSaveCommentMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.SaveCommentRequest,
+                          com.cpdss.common.generated.LoadableStudy.SaveCommentReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveComment"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.SaveCommentRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.SaveCommentReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("SaveComment"))
+                      .build();
+        }
+      }
+    }
+    return getSaveCommentMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -2132,6 +2179,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getDownloadLoadableStudyAttachmentMethod(), responseObserver);
     }
 
+    /** */
+    public void saveComment(
+        com.cpdss.common.generated.LoadableStudy.SaveCommentRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SaveCommentReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveCommentMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -2382,6 +2437,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest,
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply>(
                       this, METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT)))
+          .addMethod(
+              getSaveCommentMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.SaveCommentRequest,
+                      com.cpdss.common.generated.LoadableStudy.SaveCommentReply>(
+                      this, METHODID_SAVE_COMMENT)))
           .build();
     }
   }
@@ -2787,6 +2849,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void saveComment(
+        com.cpdss.common.generated.LoadableStudy.SaveCommentRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SaveCommentReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveCommentMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -3050,6 +3123,12 @@ public final class LoadableStudyServiceGrpc {
             com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest request) {
       return blockingUnaryCall(
           getChannel(), getDownloadLoadableStudyAttachmentMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.SaveCommentReply saveComment(
+        com.cpdss.common.generated.LoadableStudy.SaveCommentRequest request) {
+      return blockingUnaryCall(getChannel(), getSaveCommentMethod(), getCallOptions(), request);
     }
   }
 
@@ -3376,6 +3455,14 @@ public final class LoadableStudyServiceGrpc {
           getChannel().newCall(getDownloadLoadableStudyAttachmentMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.SaveCommentReply>
+        saveComment(com.cpdss.common.generated.LoadableStudy.SaveCommentRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveCommentMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -3413,6 +3500,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 32;
   private static final int METHODID_CONFIRM_PLAN = 33;
   private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 34;
+  private static final int METHODID_SAVE_COMMENT = 35;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -3676,6 +3764,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply>)
                   responseObserver);
           break;
+        case METHODID_SAVE_COMMENT:
+          serviceImpl.saveComment(
+              (com.cpdss.common.generated.LoadableStudy.SaveCommentRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.SaveCommentReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -3775,6 +3870,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetLoadablePlanDetailsMethod())
                       .addMethod(getConfirmPlanMethod())
                       .addMethod(getDownloadLoadableStudyAttachmentMethod())
+                      .addMethod(getSaveCommentMethod())
                       .build();
         }
       }
