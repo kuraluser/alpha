@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { IResponse } from '../../../shared/models/common.model';
+import { IPort, IPortList, IPortsDetailsResponse, IPortsResponse, IResponse } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, IPortsResponse, IPort, IPortsDetailsResponse, IPortList, PortsDB, IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, OHQDB, IPortOBQResponse, IPortOBQTankDetail, OBQDB } from '../models/cargo-planning.model';
+import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, PortsDB, IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, OHQDB, IPortOBQResponse, IPortOBQTankDetail, OBQDB } from '../models/cargo-planning.model';
 import { IDischargingPortIds } from '../models/loadable-study-list.model';
 
 /**

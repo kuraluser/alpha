@@ -54,6 +54,10 @@ export interface IVessels {
 export class Voyage {
     public voyageNo: string;
     public id: number;
+    public status?: string;
+    public confirmedLoadableStudyId?: number;
+    public startDate?: string;
+    public endDate?: string;
 }
 
 /**

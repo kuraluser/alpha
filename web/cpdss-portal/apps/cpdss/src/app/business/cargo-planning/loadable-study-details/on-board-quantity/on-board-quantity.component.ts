@@ -3,12 +3,13 @@ import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Valid
 import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
-import { IPort, IPortOBQListData, IPortOBQTankDetailValueObject } from '../../models/cargo-planning.model';
+import { IPortOBQListData, IPortOBQTankDetailValueObject } from '../../models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { CommingleApiService } from '../../services/commingle-api.service';
 import { ITank } from '../../../core/models/common.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
+import { IPort } from '../../../../shared/models/common.model';
 
 /**
  * Component for OBQ tab 

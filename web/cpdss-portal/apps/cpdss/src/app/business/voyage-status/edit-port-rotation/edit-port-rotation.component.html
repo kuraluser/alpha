@@ -1,5 +1,14 @@
-<p-dialog header="TC-10 FUJAIHRAH - {{'EDIT_PORT_ROTATION' | translate}}" [(visible)]="showPopUp"
+<p-dialog header="{{voyageName}} - {{'EDIT_PORT_ROTATION' | translate}}" [(visible)]="showPopUp"
     styleClass="" [closable]="false" [draggable]="false" [modal]="true">
+
+    <p-orderList [value]="portList" dragdrop="true" [(selection)]="selectedPorts"  
+    (onReorder)="portOrderChange($event)">
+        <ng-template let-port let-i="index" pTemplate="item">
+            <div>
+                <span class="col-sm-2">{{i+1}} </span> <span class="col-sm-10">{{port.name}}</span>
+            </div>
+        </ng-template>
+    </p-orderList>
 
     <p-footer>
         <div class="row">

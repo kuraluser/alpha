@@ -4,10 +4,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableEvent } from '../../../../../shared/components/datatable/datatable.model';
 import { numberValidator } from '../../../directives/validator/number-validator.directive';
-import { ILoadingPort, ILoadingPortValueObject, ILoadingPopupData, IPort } from '../../../models/cargo-planning.model';
+import { ILoadingPort, ILoadingPortValueObject, ILoadingPopupData } from '../../../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
 import { ConfirmationAlertService } from '../../../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { first } from 'rxjs/operators';
+import { IPort } from '../../../../../shared/models/common.model';
 
 /**
  * Component class for loading ports popup

@@ -131,3 +131,82 @@ export class CPDSSDB extends Dexie {
         super('CPDSS');
     }
 }
+
+/**
+ * Interface for port
+ *
+ * @export
+ * @interface IPort
+ */
+export interface IPort {
+    id: number;
+    name: string;
+    code: string;
+    maxAirDraft: number;
+    maxDraft: number;
+    waterDensity: number;
+}
+
+/**
+ * Interface for port api response
+ *
+ * @export
+ * @interface IPortsResponse
+ */
+export interface IPortsResponse {
+    responseStatus: IResponseStatus;
+    ports: IPort[];
+}
+
+/**
+ * Interface for Operations
+ *
+ * @export
+ * @interface IOperations
+ */
+export interface IOperations {
+    id: number;
+    operationName: string;
+}
+/**
+ * Interface for Ports api response
+ *
+ * @export
+ * @interface IPortsDetailsResponse
+ */
+export interface IPortsDetailsResponse {
+    responseStatus: IResponseStatus;
+    portList: IPortList[];
+    operations: IOperations[];
+    portId?: number;
+}
+
+/**
+ * Interface for port
+ *
+ * @export
+ * @interface IPortList
+ */
+export interface IPortList {
+    id: number;
+    portOrder: number;
+    loadableStudyId: number;
+    portId: number;
+    operationId: number;
+    seaWaterDensity: number;
+    distanceBetweenPorts: number;
+    timeOfStay: number;
+    maxDraft: number;
+    maxAirDraft: number;
+    eta: string;
+    etd: string;
+    layCanFrom: string;
+    layCanTo: string;
+    isDelete?: boolean;
+    isAdd?: boolean;
+    storeKey?: number;
+    vesselId?: number;
+    voyageId?: number;
+    etaActual?: string;
+    etdActual?: string;
+}

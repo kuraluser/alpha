@@ -2,12 +2,13 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { IPortOHQTankDetailEvent, IPort, IPortOHQListData, IPortOHQTankDetailValueObject, OHQ_MODE, IBunkerTank } from '../../models/cargo-planning.model';
+import { IPortOHQTankDetailEvent, IPortOHQListData, IPortOHQTankDetailValueObject, OHQ_MODE, IBunkerTank } from '../../models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
 import { groupTotalValidator } from '../../directives/validator/group-total.directive';
 import { IPermission } from '../../../../shared/models/user-profile.model';
+import { IPort } from '../../../../shared/models/common.model';
 
 /**
  * Compoent for OHQ tab

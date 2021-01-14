@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { IPortAllDropdownData, IPortList, IPortsDetailsResponse, IPortsValueObject, IPortsEvent } from '../../models/cargo-planning.model';
+import { IPortAllDropdownData, IPortsValueObject, IPortsEvent } from '../../models/cargo-planning.model';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -12,7 +12,9 @@ import { IPermission } from '../../../../shared/models/user-profile.model';
 import { portDateRangeValidator } from '../../directives/validator/port-daterange-validator.directive';
 import { portDateCompareValidator } from '../../directives/validator/port-date-compare-validator.directive';
 import { portDuplicationValidator } from '../../directives/validator/port-duplication-validator.directive';
-import { portEtaEtdValidator } from '../../directives/validator/port-eta-etd-validator.directive'
+import { portEtaValidator } from '../../directives/validator/port-eta-validator.directive';
+import { IPortList, IPortsDetailsResponse } from '../../../../shared/models/common.model';
+
 /**
  * Component class of ports screen
  *

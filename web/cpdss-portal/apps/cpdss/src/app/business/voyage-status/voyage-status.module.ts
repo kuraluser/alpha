@@ -11,6 +11,8 @@ import { VesselInfoModule } from '../core/components/vessel-info/vessel-info.mod
 import { EditPortRotationComponent } from './edit-port-rotation/edit-port-rotation.component';
 import { CalendarModule } from 'primeng/calendar';
 import { ValidationErrorModule } from '../../shared/components/validation-error/validation-error.module';
+import { OrderListModule } from 'primeng/orderlist';
+import { EditPortRotationApiService } from './services/edit-port-rotation-api.service';
 
 /**
  * Module for new voyage-status
@@ -27,10 +29,12 @@ import { ValidationErrorModule } from '../../shared/components/validation-error/
     TranslateModule,
     VesselInfoModule,
     VoyageStatusRoutingModule,
-    CalendarModule
+    CalendarModule,
+    OrderListModule
   ],
   providers: [
-    VoyageApiService
+    VoyageApiService,
+    EditPortRotationApiService
   ]
 })
 export class VoyageStatusModule { }

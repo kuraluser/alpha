@@ -1,6 +1,6 @@
 import { SelectItem } from 'primeng/api';
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
-import { CPDSSDB, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
+import { CPDSSDB, IOperations, IPort, IPortList, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
 import { ITank } from '../../core/models/common.model';
 
 /**
@@ -125,21 +125,6 @@ export interface ILoadingPortValueObject {
 }
 
 /**
- * Interface for port
- *
- * @export
- * @interface IPort
- */
-export interface IPort {
-    id: number;
-    name: string;
-    code: string;
-    maxAirDraft: number;
-    maxDraft: number;
-    waterDensity: number;
-}
-
-/**
  * Interface for cargo nomination list data
  *
  * @export
@@ -149,17 +134,6 @@ export interface ICargoNominationAllDropdownData {
     priorityList: SelectItem[];
     cargoList: ICargo[];
     segregationList: ISegregation[];
-    ports: IPort[];
-}
-
-/**
- * Interface for port api response
- *
- * @export
- * @interface IPortsResponse
- */
-export interface IPortsResponse {
-    responseStatus: IResponseStatus;
     ports: IPort[];
 }
 
@@ -232,58 +206,6 @@ export interface IPortAllDropdownData {
     portList: IPort[];
     operationList: IOperations[];
     operationListComplete: IOperations[];
-}
-
-/**
- * Interface for Operations
- *
- * @export
- * @interface IOperations
- */
-export interface IOperations {
-    id: number;
-    operationName: string;
-}
-
-/**
- * Interface for port
- *
- * @export
- * @interface IPortList
- */
-export interface IPortList {
-    id: number;
-    portOrder: number;
-    loadableStudyId: number;
-    portId: number;
-    operationId: number;
-    seaWaterDensity: number;
-    distanceBetweenPorts: number;
-    timeOfStay: number;
-    maxDraft: number;
-    maxAirDraft: number;
-    eta: string;
-    etd: string;
-    layCanFrom: string;
-    layCanTo: string;
-    isDelete?: boolean;
-    isAdd?: boolean;
-    storeKey?: number;
-    vesselId?: number;
-    voyageId?: number;
-}
-
-/**
- * Interface for Ports api response
- *
- * @export
- * @interface IPortsDetailsResponse
- */
-export interface IPortsDetailsResponse {
-    responseStatus: IResponseStatus;
-    portList: IPortList[];
-    operations: IOperations[];
-    portId?: number;
 }
 
 /**

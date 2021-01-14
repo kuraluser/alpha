@@ -3,7 +3,6 @@ import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Valid
 import { LoadableQuantityApiService } from '../../services/loadable-quantity-api.service';
 import { LodadableQuantity } from '../../models/loadable-quantity.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
-import { IPort } from '../../models/cargo-planning.model';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { Voyage } from '../../../core/models/common.model';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
@@ -11,7 +10,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
-import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
+import { IPermissionContext, IPort, PERMISSION_ACTION } from '../../../../shared/models/common.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
