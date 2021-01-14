@@ -48,6 +48,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
+import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
+import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.SynopticalDataReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData;
@@ -78,6 +80,7 @@ import com.cpdss.gateway.domain.Cargo;
 import com.cpdss.gateway.domain.CargoGroup;
 import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CargoNominationResponse;
+import com.cpdss.gateway.domain.Comment;
 import com.cpdss.gateway.domain.CommingleCargo;
 import com.cpdss.gateway.domain.CommingleCargoResponse;
 import com.cpdss.gateway.domain.CommonResponse;
@@ -107,6 +110,7 @@ import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Purpose;
+import com.cpdss.gateway.domain.SaveCommentResponse;
 import com.cpdss.gateway.domain.SynopticalCargoRecord;
 import com.cpdss.gateway.domain.SynopticalOhqRecord;
 import com.cpdss.gateway.domain.SynopticalRecord;
@@ -115,6 +119,8 @@ import com.cpdss.gateway.domain.ValveSegregation;
 import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
+import com.cpdss.gateway.entity.Users;
+import com.cpdss.gateway.repository.UsersRepository;
 import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -133,6 +139,7 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -170,6 +177,7 @@ public class LoadableStudyService {
   private static final Long LUBRICATING_OIL_TANK_CATEGORY_ID = 14L;
   private static final Long LUBRICANT_OIL_TANK_CATEGORY_ID = 19L;
 
+  @Autowired private UsersRepository usersRepository;
   /**
    * method for voyage save
    *
@@ -364,9 +372,9 @@ public class LoadableStudyService {
                 attachmentList.add(loadableStudyAttachment);
               });
       dto.setLoadableStudyAttachment(attachmentList);
-      dto.setDischargingCargoid(grpcReply.getDischargingCargoId());
+      dto.setDischargingCargoId(grpcReply.getDischargingCargoId());
 
-      dto.setDischargingCargoid(
+      dto.setDischargingCargoId(
           0 != grpcReply.getDischargingCargoId() ? grpcReply.getDischargingCargoId() : null);
 
       list.add(dto);
@@ -3165,5 +3173,38 @@ public class LoadableStudyService {
     builder.setFileId(attachmentId);
     builder.setLoadableStudyId(loadableStudyId);
     return builder.build();
+  }
+
+  public SaveCommentResponse saveComment(
+      Comment request, String correlationId, long loadablePatternId)
+      throws NumberFormatException, GenericServiceException {
+    SaveCommentRequest.Builder builder = SaveCommentRequest.newBuilder();
+    builder.setLoadablePatternId(loadablePatternId);
+    Optional.ofNullable(request.getComment()).ifPresent(builder::setComment);
+    Users usersEntity = this.getUsersEntity();
+    if (usersEntity != null) {
+      request.setUser(usersEntity.getId());
+    }
+    builder.setUser(request.getUser());
+    SaveCommentReply reply = this.saveComment(builder.build());
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to save comment",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+    }
+    SaveCommentResponse response = new SaveCommentResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  public SaveCommentReply saveComment(SaveCommentRequest grpcRequest) {
+    return this.loadableStudyServiceBlockingStub.saveComment(grpcRequest);
+  }
+
+  public Users getUsersEntity() {
+    return this.usersRepository.findByKeycloakIdAndIsActive(
+        "4b5608ff-b77b-40c6-9645-d69856d4aafa", true);
   }
 }

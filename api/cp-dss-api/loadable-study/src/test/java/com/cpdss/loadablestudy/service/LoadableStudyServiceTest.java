@@ -42,6 +42,8 @@ import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
+import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
+import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
@@ -2609,6 +2611,7 @@ class LoadableStudyServiceTest {
     assertEquals(0L, replies.get(0).getId());
   }
 
+  /** Test GetOnBoardQuantity */
   @Test
   void testGetOnBoardQuantity() {
     LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
@@ -2629,6 +2632,7 @@ class LoadableStudyServiceTest {
     assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
   }
 
+  /** Test GetOnBoardQuantity when voyage is null */
   @Test
   void testGetOnBoardQuantityWithVoyageNull() {
     LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
@@ -2648,6 +2652,7 @@ class LoadableStudyServiceTest {
     assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
   }
 
+  /** Test GetOnBoardQuantity when loadable study is null */
   @Test
   void testGetOnBoardQuantityWithLoadableStudyNull() {
     LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
@@ -2675,5 +2680,87 @@ class LoadableStudyServiceTest {
         .setPortId(ID_TEST_VALUE)
         .setVoyageId(ID_TEST_VALUE)
         .build();
+  }
+
+  /** Test to save comment */
+  @Test
+  public void testSaveComment() throws GenericServiceException {
+    SaveCommentRequest request =
+        SaveCommentRequest.newBuilder().setComment("comment").setLoadablePatternId(1L).build();
+    StreamRecorder<SaveCommentReply> responseObserver = StreamRecorder.create();
+
+    LoadablePattern loadablePattern = new LoadablePattern();
+    Mockito.when(
+            this.loadablePatternRepository.findByIdAndIsActive(
+                request.getLoadablePatternId(), true))
+        .thenReturn(Optional.of(loadablePattern));
+    LoadablePlanComments comments = new LoadablePlanComments();
+    Mockito.when(
+            this.loadablePlanCommentsRepository.save(
+                ArgumentMatchers.any(LoadablePlanComments.class)))
+        .thenReturn(comments);
+
+    loadableStudyService.saveComment(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<SaveCommentReply> results = responseObserver.getValues();
+
+    assertEquals(1, results.size());
+    SaveCommentReply response = results.get(0);
+    assertEquals(SUCCESS, response.getResponseStatus().getStatus());
+  }
+
+  /** Test to save comment with exception */
+  @Test
+  public void testSaveCommentWithException() throws GenericServiceException {
+    SaveCommentRequest request =
+        SaveCommentRequest.newBuilder().setComment("comment").setLoadablePatternId(1L).build();
+    StreamRecorder<SaveCommentReply> responseObserver = StreamRecorder.create();
+
+    LoadablePattern loadablePattern = new LoadablePattern();
+    Mockito.when(
+            this.loadablePatternRepository.findByIdAndIsActive(
+                request.getLoadablePatternId(), true))
+        .thenReturn(Optional.of(loadablePattern));
+    Mockito.when(
+            this.loadablePlanCommentsRepository.save(
+                ArgumentMatchers.any(LoadablePlanComments.class)))
+        .thenThrow(NullPointerException.class);
+
+    loadableStudyService.saveComment(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<SaveCommentReply> results = responseObserver.getValues();
+
+    assertEquals(1, results.size());
+    SaveCommentReply response = results.get(0);
+    assertEquals(FAILED, response.getResponseStatus().getStatus());
+  }
+
+  /** Test to save comment when comment is null */
+  @Test
+  public void testSaveCommentWhenCommentNull() throws GenericServiceException {
+    SaveCommentRequest request = SaveCommentRequest.newBuilder().setLoadablePatternId(1L).build();
+    StreamRecorder<SaveCommentReply> responseObserver = StreamRecorder.create();
+
+    LoadablePattern loadablePattern = new LoadablePattern();
+    Mockito.when(
+            this.loadablePatternRepository.findByIdAndIsActive(
+                request.getLoadablePatternId(), true))
+        .thenReturn(Optional.of(loadablePattern));
+    LoadablePlanComments comments = new LoadablePlanComments();
+    Mockito.when(
+            this.loadablePlanCommentsRepository.save(
+                ArgumentMatchers.any(LoadablePlanComments.class)))
+        .thenReturn(comments);
+
+    loadableStudyService.saveComment(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<SaveCommentReply> results = responseObserver.getValues();
+
+    assertEquals(1, results.size());
+    SaveCommentReply response = results.get(0);
+    assertEquals(SUCCESS, response.getResponseStatus().getStatus());
   }
 }
