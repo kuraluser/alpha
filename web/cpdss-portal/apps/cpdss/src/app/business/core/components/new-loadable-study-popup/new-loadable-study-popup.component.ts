@@ -11,6 +11,7 @@ import { numberValidator } from '../../../cargo-planning/directives/validator/nu
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { whiteSpaceValidator } from '../../directives/space-validator.directive';
 
 /**
  *  popup for creating / editing loadable-study
@@ -119,7 +120,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   async createNewLoadableStudyFormGroup() {
     this.newLoadableStudyFormGroup = this.formBuilder.group({
       duplicateExisting: '',
-      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100), Validators.pattern(/^\S+/)]),
+      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100) , whiteSpaceValidator ]),
       enquiryDetails: this.formBuilder.control('', [Validators.maxLength(1000)]),
       attachMail: null,
       charterer: this.vesselInfoList?.charterer,
@@ -131,6 +132,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       maxWaterTempExpected: this.formBuilder.control('', [numberValidator(2, 3)])
     });
   }
+
+  
 
 
   // post newLoadableStudyFormGroup for saving newly created loadable-study

@@ -254,7 +254,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @memberof LoadableStudyDetailsComponent
    */
   async onDischargePortChange(event) {
-    if (!event.originalEvent?.target?.className.toString().includes('disabled')) {
+    if (this.dischargingPorts.length < 5) {
       this.ngxSpinnerService.show();
       this.selectedLoadableStudy.dischargingPortIds = this.dischargingPorts?.map(port => port.id);
       const dischargingPortIds: IDischargingPortIds = { portIds: this.selectedLoadableStudy.dischargingPortIds };
