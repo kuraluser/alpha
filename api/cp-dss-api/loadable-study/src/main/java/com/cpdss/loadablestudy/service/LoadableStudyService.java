@@ -3535,6 +3535,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         isEmpty(record.getLwTideTimeTo())
             ? null
             : LocalTime.from(dtf.parse(record.getLwTideTimeTo())));
+
+    entity.setOthersPlanned(
+        isEmpty(record.getOthersPlanned()) ? null : new BigDecimal(record.getOthersPlanned()));
+    entity.setOthersActual(
+        isEmpty(record.getOthersActual()) ? null : new BigDecimal(record.getOthersActual()));
+    entity.setConstantActual(
+        isEmpty(record.getConstantActual()) ? null : new BigDecimal(record.getConstantActual()));
+    entity.setDeadWeightActual(
+        isEmpty(record.getTotalDwtActual()) ? null : new BigDecimal(record.getTotalDwtActual()));
+    entity.setDisplacementActual(
+        isEmpty(record.getDisplacementActual())
+            ? null
+            : new BigDecimal(record.getDisplacementActual()));
+
     this.buildSynopticalTableEtaEtdActuals(entity, record);
     return entity;
   }

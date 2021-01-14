@@ -2227,8 +2227,9 @@ public class LoadableStudyService {
     } else {
       throw new GenericServiceException(
           "Error calling getSynopticalTable service",
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
+          synopticalTableReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(synopticalTableReply.getResponseStatus().getCode())));
     }
     return synopticalTableResponse;
   }
@@ -3109,6 +3110,24 @@ public class LoadableStudyService {
         .ifPresent(item -> recordBuilder.setSpecificGravity(valueOf(request.getSpecificGravity())));
     Optional.ofNullable(request.getEtaEtdActual()).ifPresent(recordBuilder::setEtaEtdActual);
     Optional.ofNullable(request.getEtaEtdPlanned()).ifPresent(recordBuilder::setEtaEtdEstimated);
+    Optional.ofNullable(request.getOthersPlanned())
+        .ifPresent(item -> recordBuilder.setOthersPlanned(valueOf(item)));
+    Optional.ofNullable(request.getOthersActual())
+        .ifPresent(item -> recordBuilder.setOthersActual(valueOf(item)));
+    Optional.ofNullable(request.getOthersActual())
+        .ifPresent(item -> recordBuilder.setOthersActual(valueOf(item)));
+    Optional.ofNullable(request.getConstantPlanned())
+        .ifPresent(item -> recordBuilder.setConstantPlanned(valueOf(item)));
+    Optional.ofNullable(request.getConstantActual())
+        .ifPresent(item -> recordBuilder.setConstantActual(valueOf(item)));
+    Optional.ofNullable(request.getTotalDwtPlanned())
+        .ifPresent(item -> recordBuilder.setTotalDwtPlanned(valueOf(item)));
+    Optional.ofNullable(request.getTotalDwtActual())
+        .ifPresent(item -> recordBuilder.setTotalDwtActual(valueOf(item)));
+    Optional.ofNullable(request.getDisplacementPlanned())
+        .ifPresent(item -> recordBuilder.setDisplacementPlanned(valueOf(item)));
+    Optional.ofNullable(request.getDisplacementActual())
+        .ifPresent(item -> recordBuilder.setDisplacementActual(valueOf(item)));
   }
 
   public LoadableStudyAttachmentResponse downloadLoadableStudyAttachment(
