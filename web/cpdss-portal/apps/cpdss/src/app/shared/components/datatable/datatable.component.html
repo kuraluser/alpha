@@ -266,12 +266,14 @@
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <p-calendar appendTo="body" [showTime]="true" [showButtonBar]="true"
-                                            [readonlyInput]="false"
+                                            [readonlyInput]="true"
                                             (onSelect)="onDateTimeSelect($event,rowIndex, col.field,rowData)"
-                                            [formControlName]="col.field"
+                                            (onClose)="onDatePanelClosed($event,rowIndex, col.field,rowData)"
+                                            [formControlName]= "col.field"
                                             [placeholder]="col.fieldPlaceholder| translate"
+                                            inputId="{{col.field+'_'+rowIndex + 'input'}}"
                                             id="{{col.field+'_'+rowIndex}}" [minDate]="col.minDate"
-                                            [dateFormat]="col.dateFormat"
+                                            [dateFormat]="col.dateFormat ? col.dateFormat : 'dd-mm-yy'"
                                             (onClearClick)="onDateTimeNotSelected($event, rowIndex, col.field,rowData)"
                                             [hideOnDateTimeSelect]="false" #coldatetime>
                                             <p-footer><button class="btn btn-main" (click)="coldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
@@ -436,12 +438,14 @@
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
                                     <ng-container *ngIf="editMode && rowData[subCol.field]?.isEditMode">
                                         <p-calendar appendTo="body" [showButtonBar]="true" [showTime]="true"
-                                            inputId="time"
-                                            (onSelect)="onDateTimeSelect($event, rowIndex, subCol.field, rowData)"
+                                            [readonlyInput]="true"
+                                            ((onSelect)="onDateTimeSelect($event,rowIndex, subCol.field,rowData)"
+                                            (onClose)="onDatePanelClosed($event,rowIndex, subCol.field,rowData)"
                                             [placeholder]="subCol.fieldPlaceholder| translate"
-                                            [formControlName]="subCol.field"
+                                            [formControlName]= "subCol.field"
+                                            inputId="{{subCol.field+'_'+rowIndex + 'input'}}"
                                             id="{{subCol.field+'_'+rowIndex}}" [minDate]="subCol.minDate"
-                                            [dateFormat]="subCol.dateFormat"
+                                            [dateFormat]="subCol.dateFormat ? subCol.dateFormat : 'dd-mm-yy'"
                                             (onClearClick)="onDateTimeNotSelected($event, rowIndex, subCol.field,rowData)"
                                             [hideOnDateTimeSelect]="false" #subcoldatetime>
                                             <p-footer><button class="btn btn-main"

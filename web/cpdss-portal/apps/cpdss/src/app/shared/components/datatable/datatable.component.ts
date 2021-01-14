@@ -134,23 +134,28 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   onEditComplete(event: IDataTableEvent): void {
-    let colEditable;
+    let colEditable, col;
     for (let index = 0; index < this.columns.length; index++) {
       if (this.columns[index].field === event?.field) {
-        colEditable = this.columns[index]?.editable;
+        col = this.columns[index];
         break;
       } else {
-        colEditable = this.columns[index]?.columns?.find(col => col?.field === event?.field)?.editable;
-        if (colEditable !== undefined) {
+        col = this.columns[index]?.columns?.find(col => col?.field === event?.field);
+        if (col !== undefined) {
           break;
         }
       }
     }
+    colEditable = col?.editable
     if (this.editMode && (colEditable === undefined || colEditable) && event?.data[event.field]?.isEditable && !event.data.isAdd && event.field !== 'actions') {
       const control = this.field(event.index, event.field);
       event.data[event.field].isEditMode = control?.invalid;
       if (control?.dirty && control?.valid) {
-        event.data[event.field].value = control.value;
+        if (col?.fieldType == this.fieldType.DATETIME){
+          event.data[event.field].value = this.formatDateTime(control.value, true);
+        }
+        else
+          event.data[event.field].value = control.value;
         this.editComplete.emit(event);
       }
     }
@@ -436,7 +441,7 @@ export class DatatableComponent implements OnInit {
             }
           }
           break;
-          
+
         case DATATABLE_ACTION.EDIT:
           _option = {
             id: DATATABLE_ACTION.EDIT,
@@ -457,14 +462,14 @@ export class DatatableComponent implements OnInit {
 
 
 
-   /**
-   * Handler for api row edit event
-   *
-   * @param {MouseEvent} event
-   * @param {Object} rowData
-   * @param {number} rowIndex
-   * @memberof DatatableComponent
-   */
+  /**
+  * Handler for api row edit event
+  *
+  * @param {MouseEvent} event
+  * @param {Object} rowData
+  * @param {number} rowIndex
+  * @memberof DatatableComponent
+  */
   onEdit() {
     this.editRow.emit(this.selectedRowEvent);
   }
@@ -491,6 +496,8 @@ export class DatatableComponent implements OnInit {
   * Format date time(dd-mm-yyyy hh:mm)
   */
   formatDateTime(date, isTime = false) {
+    if(!date)
+      return ""
     let month = date.getMonth() + 1;
     let day = date.getDate();
     let hour = date.getHours();
@@ -553,10 +560,15 @@ export class DatatableComponent implements OnInit {
   * Date and time select
   */
   onDateTimeSelect(event, formGroupIndex: number, formControlName: string, rowData: any) {
-    const formControl = this.field(formGroupIndex, formControlName);
-    formControl.markAsTouched();
     rowData[formControlName].value = this.formatDateTime(event, true);
-    formControl.setValue(rowData[formControlName].value);
+  }
+
+  /**
+  * On closing Date panel 
+  */
+  onDatePanelClosed(event, formGroupIndex: number, formControlName: string, rowData: any) {
+    const formControl = this.field(formGroupIndex, formControlName);
+    rowData[formControlName].value = this.formatDateTime(formControl.value, true);
     this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
   }
 

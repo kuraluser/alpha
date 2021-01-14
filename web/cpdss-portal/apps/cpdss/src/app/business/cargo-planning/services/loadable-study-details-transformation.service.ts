@@ -656,7 +656,8 @@ export class LoadableStudyDetailsTransformationService {
         fieldClass: 'etd',
         errorMessages: {
           'required': 'PORT_ETD_REQUIRED_ERROR',
-          'failedCompare': 'PORT_ETD_COMPARE_ERROR'
+          'failedCompare': 'PORT_ETD_COMPARE_ERROR',
+          'etdFailed': 'PORT_ETD_COMAPRE_WITH_ETA_ERROR'
         }
       },
       {
@@ -1249,9 +1250,9 @@ export class LoadableStudyDetailsTransformationService {
     }
   }
 
-   /**
-   * Set validation Error to form control
-   */
+  /**
+  * Set validation Error to form control
+  */
   setValidationErrorMessageForLoadableQuantity() {
     return {
 
