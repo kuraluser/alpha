@@ -1,13 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ITank, ITankOptions } from '../../models/common.model';
 
-/**
- * Component class for ballast tank layout
- *
- * @export
- * @class BallastLayoutComponent
- * @implements {OnInit}
- */
 @Component({
   selector: 'cpdss-portal-ballast-layout',
   templateUrl: './ballast-layout.component.html',

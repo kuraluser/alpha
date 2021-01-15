@@ -1073,3 +1073,36 @@ a{
 .front-tank-wrapper, .rear-tank-ullage-and-percentage{
   color: $text-secondary;
 }
+
+.edit-port-rotation{
+  .p-orderlist .p-orderlist-list .p-orderlist-item{
+    border-top: 1px solid $table-border;
+    color: $text-primary;
+    
+  }
+  .p-orderlist .p-orderlist-list .p-orderlist-item:not(.p-highlight):hover, .p-orderlist .p-orderlist-list .p-orderlist-item.p-highlight{
+    background: $dropdown-menu-hover-bg url($images-theme + 'grab-handles.png') no-repeat;
+    color: $text-secondary;
+    background-position: 95% 15px;
+  }
+  .p-orderlist .p-orderlist-list .p-orderlist-item:hover + .p-orderlist-droppoint{
+    background: $dropdown-menu-hover-bg;
+  }
+}
+.p-orderlist .p-orderlist-list .p-orderlist-item.p-highlight + .p-orderlist-droppoint{
+  background: $dropdown-menu-hover-bg;
+}
+.p-orderlist{
+  li:last-child{
+    border-bottom: 1px solid $table-border;
+  }
+}
+
+.circle-outline{
+  border: 2px solid $text-primary;
+  background: $body-bg;
+}
+
+.port-rotation-border{
+  border-right: 2px dashed $text-primary;
+}

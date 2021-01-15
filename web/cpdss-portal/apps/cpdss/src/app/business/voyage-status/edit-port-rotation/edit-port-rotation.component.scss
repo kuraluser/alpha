@@ -1,0 +1,21 @@
+.port-count{
+    font-size: 15px;
+    margin-right: 15px;
+}
+
+.circle-outline{
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    position: absolute;
+    left: -30px;
+    top: 4px;
+}
+.port-rotation-border{
+    position: absolute;
+    left: 7px;
+    top: 35px;
+    bottom: 33px;
+    width: 0;
+}

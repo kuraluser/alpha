@@ -1,22 +1,24 @@
 <p-dialog header="{{voyageName}} - {{'EDIT_PORT_ROTATION' | translate}}" [(visible)]="showPopUp"
-    styleClass="" [closable]="false" [draggable]="false" [modal]="true">
-
+    styleClass="edit-port-rotation" [closable]="false" [draggable]="false" [modal]="true">
+    <div class="relative">
+        <div class="port-rotation-border"></div>
     <p-orderList [value]="portList" dragdrop="true" [(selection)]="selectedPorts"  
     (onReorder)="portOrderChange($event)">
         <ng-template let-port let-i="index" pTemplate="item">
-            <div>
-                <span class="col-sm-2">{{i+1}} </span> <span class="col-sm-10">{{port.name}}</span>
+            <div class="row">
+                <div class="col"><span class="circle-outline"></span><span class="port-count">{{i+1}}</span> {{port.name}}</div>
             </div>
         </ng-template>
     </p-orderList>
-
+</div>
+    <div class="row">
+        <div class="col text-left ml-30" >{{'EDIT_PORT_ROTATION_NOTE' | translate}}:</div>
+    </div>
+    <div class="row">
+        <div class="col text-left ml-30">{{'EDIT_PORT_ROTATION_NOTE_DETAILS' | translate }}</div>
+    </div>
     <p-footer>
-        <div class="row">
-            <div class="col text-left" >{{'EDIT_PORT_ROTATION_NOTE' | translate}}:</div>
-        </div>
-        <div class="row">
-            <div class="col text-left">{{'EDIT_PORT_ROTATION_NOTE_DETAILS' | translate }}</div>
-        </div>
+        
        
         <div class="row">
             <div class="col text-right">
