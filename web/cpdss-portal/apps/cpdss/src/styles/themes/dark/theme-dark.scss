@@ -1106,3 +1106,6 @@ a{
 .port-rotation-border{
   border-right: 2px dashed $text-primary;
 }
+.p-component-overlay{
+  background: rgba($body-bg, 0.6)!important;
+}

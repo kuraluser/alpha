@@ -1,9 +1,8 @@
 <div class="" *ngIf="cargoNominationForm">
     <form [formGroup]="cargoNominationForm">
         <div class="form-group row">
-            <div class="col">
-                <div class="table-responsive-custom cargo-nomination-table"
-                    [ngClass]="{'datatable-loading': dataTableLoading }">
+            <div class="col" [ngClass]="{'datatable-loading': dataTableLoading }">
+                <div class="table-responsive-custom cargo-nomination-table">
                     <cpdss-portal-datatable [tableId]="'cargo_nomination'" [form]="cargoNominationForm"
                         [columns]="columns" [value]="cargoNominations" [loading]="dataTableLoading" [showTotal]="true"
                         [editMode]="editMode" [listData]="listData" (cellValueClick)="onCellValueClick($event)"

@@ -19,8 +19,8 @@
                         <div class="row">
                             <div class="col">
                                 <div class="form-group row">
-                                    <div class="col">
-                                        <div class="table-responsive-custom cargo-nomination-table ohq" [ngClass]="{'datatable-loading': dataTableLoading }">
+                                    <div class="col" [ngClass]="{'datatable-loading': dataTableLoading }">
+                                        <div class="table-responsive-custom cargo-nomination-table ohq" >
                                             <cpdss-portal-datatable [tableId]="'ohq'" [form]="ohqForm"
                                                 [columns]="columns" [value]="selectedPortOHQTankDetails"
                                                 [editMode]="editMode" [filterable]="true" [listData]="listData"

@@ -1768,3 +1768,10 @@ th .p-calendar .p-inputtext{
   padding-top: 10px;
 }
 
+.confirmation-wrapper{
+  z-index: 9999;
+}
+
+.datatable-loading .col, .datatable-loading .p-datatable{
+  position: static;
+}

@@ -18,8 +18,8 @@
                         <div class="col" *ngIf="obqForm"> 
                             <form [formGroup]="obqForm">
                                 <div class="form-group row">
-                                    <div class="col">
-                                        <div class="table-responsive-custom cargo-nomination-table obq" [ngClass]="{'datatable-loading': dataTableLoading }">
+                                    <div class="col" [ngClass]="{'datatable-loading': dataTableLoading }">
+                                        <div class="table-responsive-custom cargo-nomination-table obq" >
                                             <cpdss-portal-datatable [tableId]="'obq'" [form]="obqForm"
                                                 [columns]="columns" [value]="selectedPortOBQTankDetails"
                                                 [editMode]="editMode" [filterable]="true" [listData]="listData"
