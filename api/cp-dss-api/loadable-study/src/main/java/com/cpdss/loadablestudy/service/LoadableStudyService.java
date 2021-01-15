@@ -1257,11 +1257,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
               loadableStudy.get(), true);
 
-      BigDecimal foOnboard = null;
-      BigDecimal doOnboard = null;
-      BigDecimal freshWaterOnBoard = null;
-      BigDecimal boileWaterOnBoard = null;
-
+      BigDecimal foOnboard = BigDecimal.ZERO;
+      BigDecimal doOnboard = BigDecimal.ZERO;
+      BigDecimal freshWaterOnBoard = BigDecimal.ZERO;
+      BigDecimal boileWaterOnBoard = BigDecimal.ZERO;
       if (!portList.isEmpty()) {
         long firstPort = portList.iterator().next();
         List<OnHandQuantity> onHandQuantityList =
@@ -1287,7 +1286,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                                 && ohq.getPortXId() == firstPort
                                 && ohq.getIsActive() == true)
                     .mapToLong(
-                        foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
+                        doOnboardQuantity -> doOnboardQuantity.getArrivalQuantity().longValue())
                     .sum());
         freshWaterOnBoard =
             BigDecimal.valueOf(
@@ -1298,7 +1297,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                                 && ohq.getPortXId() == firstPort
                                 && ohq.getIsActive() == true)
                     .mapToLong(
-                        foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
+                        fwOnboardQuantity -> fwOnboardQuantity.getArrivalQuantity().longValue())
                     .sum());
         boileWaterOnBoard =
             BigDecimal.valueOf(
@@ -1309,7 +1308,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                                 && ohq.getPortXId() == firstPort
                                 && ohq.getIsActive() == true)
                     .mapToLong(
-                        foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
+                        bwOnboardQuantity -> bwOnboardQuantity.getArrivalQuantity().longValue())
                     .sum());
       }
 
