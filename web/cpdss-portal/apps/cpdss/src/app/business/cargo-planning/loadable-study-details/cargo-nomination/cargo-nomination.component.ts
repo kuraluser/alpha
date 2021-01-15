@@ -51,7 +51,7 @@ export class CargoNominationComponent implements OnInit {
     this.loadableStudyDetailsApiService.cargoNominations = cargoNominations.map((cargoNomination, index) => {
       const _cargoNomination = this.loadableStudyDetailsTransformationService.formatCargoNomination(cargoNomination);
       this.totalQuantity += _cargoNomination?.isDelete ? 0 : Number(_cargoNomination.quantity.value);
-      _cargoNomination.priority.value = _cargoNomination.priority.value > cargoNominations.length ? this.loadableStudyDetailsApiService.cargoNominations.length : _cargoNomination.priority.value;
+      _cargoNomination.priority.value = _cargoNomination.priority.value > cargoNominations.length ? cargoNominations.length : _cargoNomination.priority.value;
       return _cargoNomination
     });
     this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(this.totalQuantity);

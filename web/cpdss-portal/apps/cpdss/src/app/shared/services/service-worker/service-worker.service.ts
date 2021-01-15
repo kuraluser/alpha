@@ -18,7 +18,7 @@ import { CPDSSDB } from '../../models/common.model';
   providedIn: 'root'
 })
 export class ServiceWorkerService {
-  cpdssDb: CPDSSDB = new CPDSSDB();
+  cpdssDb: CPDSSDB;
   constructor(private appRef: ApplicationRef,
     private updates: SwUpdate,
     private confirmationAlertService: ConfirmationAlertService,
@@ -28,6 +28,7 @@ export class ServiceWorkerService {
     console.log("Service worker Enabled", this.updates.isEnabled);
     this.initSubscriptions();
     this.promptUpdate();
+    this.cpdssDb = new CPDSSDB();
   }
 
   /**
@@ -67,16 +68,20 @@ export class ServiceWorkerService {
    */
   promptUpdate() {
     this.updates.available.subscribe(event => {
-      this.ngxSpinnerService.show();
       this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'SERVICE_WORKER_UPDATE', detail: 'SERVICE_WORKER_UPDATE_DETAILS', data: { confirmLabel: 'SERVICE_WORKER_CONFIRM_LABEL' } });
       this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
         if (response) {
-          this.cpdssDb.delete().then(() => {
-            console.log("Database successfully deleted");
-          }).catch((err) => {
-            console.error("Could not delete database");
-          }).finally(() => {
-            this.updates.activateUpdate().then(() => document.location.reload());
+          this.ngxSpinnerService.show();
+          this.updates.activateUpdate().then(() => {
+            // delete existing db
+            this.cpdssDb?.delete().then(() => {
+              console.log("Database successfully deleted");
+            }).catch((err) => {
+              console.error("Could not delete database");
+            }).finally(() => {
+              this.ngxSpinnerService.hide();
+              document.location.reload();
+            });
           });
         }
       });
