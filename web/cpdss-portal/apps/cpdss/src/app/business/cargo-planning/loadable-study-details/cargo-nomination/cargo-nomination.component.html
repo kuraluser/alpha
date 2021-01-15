@@ -2,12 +2,16 @@
     <form [formGroup]="cargoNominationForm">
         <div class="form-group row">
             <div class="col">
-                <div class="table-responsive-custom cargo-nomination-table">
-                <cpdss-portal-datatable [tableId]="'cargo_nomination'" [form]="cargoNominationForm" [columns]="columns" [value]="cargoNominations"
-                    [editMode]="editMode" [listData]="listData" (cellValueClick)="onCellValueClick($event)"
-                    (editComplete)="onEditComplete($event)" [filterable]="true" (duplicateRow)="onDuplicate($event)" (saveRow)="onRowSave($event)" (deleteRow)="onDeleteRow($event)" (sort)="onSort($event)" (filter)="onFilter($event)">
-                </cpdss-portal-datatable>
-            </div>
+                <div class="table-responsive-custom cargo-nomination-table"
+                    [ngClass]="{'datatable-loading': dataTableLoading }">
+                    <cpdss-portal-datatable [tableId]="'cargo_nomination'" [form]="cargoNominationForm"
+                        [columns]="columns" [value]="cargoNominations" [loading]="dataTableLoading"
+                        [editMode]="editMode" [listData]="listData" (cellValueClick)="onCellValueClick($event)"
+                        (editComplete)="onEditComplete($event)" [filterable]="true" (duplicateRow)="onDuplicate($event)"
+                        (saveRow)="onRowSave($event)" (deleteRow)="onDeleteRow($event)" (sort)="onSort($event)"
+                        (filter)="onFilter($event)">
+                    </cpdss-portal-datatable>
+                </div>
             </div>
         </div>
     </form>

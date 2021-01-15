@@ -189,7 +189,7 @@ export class CargoNominationDB extends CPDSSDB {
     constructor() {
         super();
         this.version(1).stores({
-            cargoNominations: '++,storeKey,timeStamp'
+            cargoNominations: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
         });
     }
 
@@ -436,7 +436,7 @@ export class OHQDB extends CPDSSDB {
     constructor() {
         super();
         this.version(1).stores({
-            ohq: '++,storeKey,timeStamp'
+            ohq: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
         });
     }
 
@@ -455,7 +455,7 @@ export class PortsDB extends CPDSSDB {
     constructor() {
         super();
         this.version(1).stores({
-            ports: '++,storeKey,timeStamp'
+            ports: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
         });
     }
 
@@ -620,7 +620,7 @@ export class OBQDB extends CPDSSDB {
     constructor() {
         super();
         this.version(1).stores({
-            obq: '++,storeKey,timeStamp'
+            obq: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
         });
     }
 

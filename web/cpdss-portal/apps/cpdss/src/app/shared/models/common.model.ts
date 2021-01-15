@@ -101,7 +101,7 @@ export interface IDictionary<T> {
 export interface IPermissionContext {
     key: string;
     actions: PERMISSION_ACTION[];
-    hideElementOnViewFalse?:boolean;
+    hideElementOnViewFalse?: boolean;
 }
 
 /**
@@ -127,6 +127,8 @@ export enum PERMISSION_ACTION {
 export class CPDSSDB extends Dexie {
     cargoNominations!: Dexie.Table<any, number>;
     ports!: Dexie.Table<any, number>;
+    ohq!: Dexie.Table<any, number>;
+    obq!: Dexie.Table<any, number>;
     constructor() {
         super('CPDSS');
     }

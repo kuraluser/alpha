@@ -91,6 +91,8 @@ export class CargoNominationComponent implements OnInit {
   listData = <ICargoNominationAllDropdownData>{};
   cargoNominationForm: FormGroup;
   cargoNominationDetails: ICargoNominationDetailsResponse;
+  dataTableLoading: boolean;
+  cargoNominationCheckUpdatesTimer;
 
   // private fields
   private _loadableStudyId: number;
@@ -128,6 +130,28 @@ export class CargoNominationComponent implements OnInit {
   async getCargoNominationDetails() {
     this.ngxSpinnerService.show();
     this.listData = await this.getDropdownData();
+    await this.getCargoNominations();
+    const hasPendingUpdates = await this.checkForPendingUpdates();
+    if (hasPendingUpdates) {
+      this.dataTableLoading = true;
+      this.cargoNominationCheckUpdatesTimer = setInterval(async () => {
+        const _hasPendingUpdates = await this.checkForPendingUpdates();
+        if (!_hasPendingUpdates) {
+          await this.getCargoNominations();
+          this.dataTableLoading = false;
+          clearInterval(this.cargoNominationCheckUpdatesTimer);
+        }
+      }, 500);
+    }
+    this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Get cargonominations
+   *
+   * @memberof CargoNominationComponent
+   */
+  async getCargoNominations() {
     const cargoNominationFormData: ICargoNominationDetailsResponse = await this.loadableStudyDetailsApiService.getCargoNominationDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
     if (cargoNominationFormData?.responseStatus?.status === '200') {
       cargoNominationFormData.cargoNominations = cargoNominationFormData.cargoNominations ?? [];
@@ -136,7 +160,23 @@ export class CargoNominationComponent implements OnInit {
       this.cargoNominationDetails = cargoNominationFormData;
       this.initCargoNominationArray(this.cargoNominationDetails?.cargoNominations);
     }
-    this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Check if there are any pending updates in indexed db
+   *
+   * @returns {Promise<boolean>}
+   * @memberof CargoNominationComponent
+   */
+  async checkForPendingUpdates(): Promise<boolean> {
+    const count = await this.loadableStudyDetailsApiService.getCargoNominationPendingUpdatesCount(this.vesselId, this.voyageId, this.loadableStudyId);
+    if (!count) {
+      return false;
+    } else {
+      this.ngxSpinnerService.hide();
+      this.dataTableLoading = true;
+      return true;
+    }
   }
 
   /**
@@ -207,7 +247,7 @@ export class CargoNominationComponent implements OnInit {
       this.cargoNominations[valueIndex]['cargo'].value = event?.data?.cargo?.value;
       this.updateField(event.index, 'cargo', event?.data?.cargo?.value);
     }
-    
+
     if (!event.data?.isAdd) {
       if (this.cargoNominationForm.valid) {
         this.ngxSpinnerService.show();
@@ -274,7 +314,7 @@ export class CargoNominationComponent implements OnInit {
    */
   async onRowSave(event: ICargoNominationEvent) {
     const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
-    
+
     if (this.row(event.index).valid) {
       this.ngxSpinnerService.show();
       const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
@@ -436,7 +476,7 @@ export class CargoNominationComponent implements OnInit {
    * @memberof CargoNominationComponent
    */
   private updateLoadingPortData(loadingPopupData: ILoadingPopupData) {
-    const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === loadingPopupData?.rowData?.storeKey);    
+    const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === loadingPopupData?.rowData?.storeKey);
     this.cargoNominations[valueIndex].loadingPorts.value = loadingPopupData.rowData.loadingPorts.value;
     this.cargoNominations[valueIndex].loadingPorts.isEditMode = this.cargoNominations[valueIndex]?.isAdd ? true : false;
     this.cargoNominations = [...this.cargoNominations];

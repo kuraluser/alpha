@@ -58,6 +58,16 @@ export class LoadableStudyDetailsApiService {
     }
 
     /**
+     * Get count of pending updates in cargo nomination db
+     * @param vesselId 
+     * @param voyageId 
+     * @param loadableStudyId 
+     */
+    getCargoNominationPendingUpdatesCount(vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
+        return this._cargoNominationDb.cargoNominations.where({ 'vesselId': vesselId, 'voyageId': voyageId, 'loadableStudyId': loadableStudyId }).count();
+    }
+
+    /**
      * Method to get all ports in port master
      *
      * @returns {Observable<IPort[]>}
@@ -122,6 +132,19 @@ export class LoadableStudyDetailsApiService {
     }
 
     /**
+     * Get count of pending updates in ports db
+     *
+     * @param {number} vesselId
+     * @param {number} voyageId
+     * @param {number} loadableStudyId
+     * @returns {Promise<number>}
+     * @memberof LoadableStudyDetailsApiService
+     */
+    getPortPendingUpdatesCount(vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
+        return this._portsDb.ports.where({ 'vesselId': vesselId, 'voyageId': voyageId, 'loadableStudyId': loadableStudyId }).count();
+    }
+
+    /**
      * Method for fetching port rotation for ohq
      *
      * @param {number} vesselId
@@ -166,6 +189,19 @@ export class LoadableStudyDetailsApiService {
     }
 
     /**
+     * Get count of pending updates in ohq db
+     *
+     * @param {number} vesselId
+     * @param {number} voyageId
+     * @param {number} loadableStudyId
+     * @returns {Promise<number>}
+     * @memberof LoadableStudyDetailsApiService
+     */
+    getOHQTankDetailsPendingUpdatesCount(vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
+        return this._ohqDb.ohq.where({ 'vesselId': vesselId, 'voyageId': voyageId, 'loadableStudyId': loadableStudyId }).count();
+    }
+
+    /**
     * Method for fetching port specific obq
     *
     * @param {number} vesselId
@@ -194,5 +230,18 @@ export class LoadableStudyDetailsApiService {
         obqTankDetails.voyageId = voyageId;
         obqTankDetails.loadableStudyId = loadableStudyId;
         return this._obqDb.obq.add(obqTankDetails);
+    }
+
+    /**
+     * Get count of pending updates in obq db
+     *
+     * @param {number} vesselId
+     * @param {number} voyageId
+     * @param {number} loadableStudyId
+     * @returns {Promise<number>}
+     * @memberof LoadableStudyDetailsApiService
+     */
+    getOBQTankDetailsPendingUpdatesCount(vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
+        return this._obqDb.obq.where({ 'vesselId': vesselId, 'voyageId': voyageId, 'loadableStudyId': loadableStudyId }).count();
     }
 }

@@ -19,11 +19,11 @@
                             <form [formGroup]="obqForm">
                                 <div class="form-group row">
                                     <div class="col">
-                                        <div class="table-responsive-custom cargo-nomination-table obq">
+                                        <div class="table-responsive-custom cargo-nomination-table obq" [ngClass]="{'datatable-loading': dataTableLoading }">
                                             <cpdss-portal-datatable [tableId]="'obq'" [form]="obqForm"
                                                 [columns]="columns" [value]="selectedPortOBQTankDetails"
                                                 [editMode]="editMode" [filterable]="true" [listData]="listData"
-                                                [selectionMode]="selectionMode" (editComplete)="onEditComplete($event)"
+                                                [selectionMode]="selectionMode" [loading]="dataTableLoading" (editComplete)="onEditComplete($event)"
                                                 (rowSelection)="onRowSelection($event)" [selection]="selectedTank">
                                             </cpdss-portal-datatable>
                                         </div>

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { ServiceWorkerService } from './shared/services/service-worker/service-worker.service';
 
 @Component({
   selector: 'cpdss-portal-root',
@@ -9,8 +10,9 @@ import { TranslateService } from '@ngx-translate/core';
 export class AppComponent {
 
 
-  constructor(private translateService: TranslateService) {
+  constructor(private translateService: TranslateService, private serviceWorkerService: ServiceWorkerService) {
     this.initLanguageTranslator();
+    this.serviceWorkerService.checkForUpdate();
   }
 
   /**

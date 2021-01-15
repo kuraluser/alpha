@@ -78,9 +78,11 @@ export class OnBoardQuantityComponent implements OnInit {
   columns: IDataTableColumn[];
   listData = <IPortOBQListData>{};
   selectionMode = DATATABLE_SELECTIONMODE.SINGLE;
-  selectedIndex: number = -1;
+  selectedIndex = -1;
   tanks: ITank[][] = [];
   isEditable = false;
+  dataTableLoading: boolean;
+  ohqCheckUpdatesTimer;
 
   private _selectedTank: IPortOBQTankDetailValueObject;
   private _loadableStudyId: number;
@@ -123,6 +125,21 @@ export class OnBoardQuantityComponent implements OnInit {
       this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
       this.getGradeData();
       this.updateTankList();
+      const hasPendingUpdates = await this.checkForPendingUpdates();
+      if (hasPendingUpdates) {
+        this.dataTableLoading = true;
+        this.ohqCheckUpdatesTimer = setInterval(async () => {
+          const _hasPendingUpdates = await this.checkForPendingUpdates();
+          if (!_hasPendingUpdates) {
+            this.selectedPortOBQTankDetails = await this.getPortOBQDetails(this.selectedPort?.id);
+            this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
+            this.getGradeData();
+            this.updateTankList();
+            this.dataTableLoading = false;
+            clearInterval(this.ohqCheckUpdatesTimer);
+          }
+        }, 500);
+      }
     }
     this.ngxSpinnerService.hide();
   }
@@ -159,6 +176,23 @@ export class OnBoardQuantityComponent implements OnInit {
     this.enableOrDisableControls(this.obqForm, ['sounding', 'weight', 'volume'], false);
     this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
     return [..._selectedPortOBQTankDetails];
+  }
+
+  /**
+   * Check if there are any pending updates in indexed db
+   *
+   * @returns {Promise<boolean>}
+   * @memberof OnBoardQuantityComponent
+   */
+  async checkForPendingUpdates(): Promise<boolean> {
+    const count = await this.loadableStudyDetailsApiService.getOBQTankDetailsPendingUpdatesCount(this.vesselId, this.voyageId, this.loadableStudyId);
+    if (!count) {
+      return false;
+    } else {
+      this.ngxSpinnerService.hide();
+      this.dataTableLoading = true;
+      return true;
+    }
   }
 
   /**
@@ -321,8 +355,8 @@ export class OnBoardQuantityComponent implements OnInit {
    * @memberof OnBoardQuantityComponent
    */
   getErrorMessages(field: string) {
-    const column = this.columns.find(column => {
-      return column.field === field
+    const column = this.columns.find(col => {
+      return col.field === field
     });
     return column?.errorMessages;
   }
@@ -377,7 +411,7 @@ export class OnBoardQuantityComponent implements OnInit {
   */
   getGradeData() {
     this.selectedPortOBQTankDetails.forEach(obqDetails => {
-      if (this.cargoList.findIndex(cargo => cargo.id == obqDetails?.cargo?.value?.id) == -1) {
+      if (this.cargoList.findIndex(cargo => cargo.id === obqDetails?.cargo?.value?.id) === -1) {
         if (obqDetails.cargo.value !== undefined) {
           obqDetails.cargo.value.abbreviation = obqDetails?.abbreviation;
         }
@@ -395,9 +429,9 @@ export class OnBoardQuantityComponent implements OnInit {
   setFillingPercentage(selectedTankId: number) {
     const tanks = [...this.tanks];
     for (let index = 0; index < tanks.length; index++) {
-      const tank = tanks[index]?.find(tank => tank.id === selectedTankId);
-      if (tank) {
-        this.selectedTank.percentageFilled = tank?.percentageFilled ?? '';
+      const selectedTank = tanks[index]?.find(tank => tank.id === selectedTankId);
+      if (selectedTank) {
+        this.selectedTank.percentageFilled = selectedTank?.percentageFilled ?? '';
         break;
       }
 

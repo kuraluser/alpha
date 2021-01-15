@@ -58,6 +58,8 @@ export class PortsComponent implements OnInit {
   listData = <IPortAllDropdownData>{};
   portsDetails: IPortsDetailsResponse;
   portOrder = 0;
+  dataTableLoading: boolean;
+  portCheckUpdatesTimer;
 
   // private fields
   private _portsLists: IPortsValueObject[];
@@ -97,13 +99,51 @@ export class PortsComponent implements OnInit {
   async getPortDetails() {
     this.ngxSpinnerService.show();
     this.listData = await this.getDropdownData();
+    await this.getPorts();
+    const hasPendingUpdates = await this.checkForPendingUpdates();
+    if (hasPendingUpdates) {
+      this.dataTableLoading = true;
+      this.portCheckUpdatesTimer = setInterval(async () => {
+        const _hasPendingUpdates = await this.checkForPendingUpdates();
+        if (!_hasPendingUpdates) {
+          await this.getPorts();
+          this.dataTableLoading = false;
+          clearInterval(this.portCheckUpdatesTimer);
+        }
+      }, 500);
+    }
+    this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Get ports
+   *
+   * @memberof PortsComponent
+   */
+  async getPorts() {
     const portsFormData: IPortsDetailsResponse = await this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
     portsFormData.portList = portsFormData.portList ?? [];
     this.listData.operationListComplete = portsFormData.operations;
     this.listData.operationList = portsFormData.operations.filter((item) => item.id !== OPERATIONS.LOADING);
     this.portsDetails = portsFormData;
     this.initPortsArray(this.portsDetails?.portList);
-    this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Check if there are any pending updates in indexed db
+   *
+   * @returns {Promise<boolean>}
+   * @memberof PortsComponent
+   */
+  async checkForPendingUpdates(): Promise<boolean> {
+    const count = await this.loadableStudyDetailsApiService.getPortPendingUpdatesCount(this.vesselId, this.voyageId, this.loadableStudyId);
+    if (!count) {
+      return false;
+    } else {
+      this.ngxSpinnerService.hide();
+      this.dataTableLoading = true;
+      return true;
+    }
   }
 
   /**

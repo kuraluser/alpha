@@ -503,5 +503,10 @@
 	"COMMINGLE_CARGO_DELETE_DETAILS": "Please click on yes to proceed",
 	"COMMINGLE_CARGO_DELETE_CONFIRM_LABEL": "Yes",
 	"COMMINGLE_CARGO_DELETE_REJECT_LABEL": "No",
-	"COMMINGLE_CARGO_VALID_DATA": "Please enter valid data"
+	"COMMINGLE_CARGO_VALID_DATA": "Please enter valid data",
+	"SERVICE_WORKER_UPDATE": "Service Worker Update",
+	"SERVICE_WORKER_ACTIVATION": "Service Worker Activation",
+	"SERVICE_WORKER_ACTIVATED_SUCCESSFULLY": "Service worker activated successfully",
+	"SERVICE_WORKER_UPDATE_DETAILS": "New service worker update is available. Page will be auto refreshed after the update.",
+	"SERVICE_WORKER_CONFIRM_LABEL": "Ok"
 }

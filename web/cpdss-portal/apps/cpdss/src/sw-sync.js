@@ -3,7 +3,6 @@
 
   importScripts('dexie.min.js');
 
-  const db = new Dexie("CPDSS");
   let apiUrl;
   if (self.location.protocol === 'https:') {
     apiUrl = `${self.location.protocol}//${self.location.hostname}:${self.location.port}/api/cloud`;
@@ -11,13 +10,12 @@
     apiUrl = `${self.location.protocol}//192.168.2.89:8085/api/cloud`;
   }
 
-
-
+  const db = new Dexie("CPDSS");
   db.version(1).stores({
-    cargoNominations: "++,storeKey,timeStamp",
-    ports: "++,storeKey,timeStamp",
-    ohq: "++,storeKey,timeStamp",
-    obq: "++,storeKey,timeStamp",
+    cargoNominations: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+    ports: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+    ohq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+    obq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
   });
   db.open();
 
@@ -34,18 +32,21 @@
    *
    */
   async function serverSyncCargoNomination() {
+    // Remove all records with api initiated as status true
+    db.cargoNominations.where({ 'status': 1 }).delete();
+
     //Get all store keys
     await db.cargoNominations.orderBy('storeKey').uniqueKeys((storeKeys) => {
       storeKeys.forEach(async (key) => {
         const timeStamp = Date.now - 60000;
         //Get all primary keys with storekey
-        const primaryKey = await db.cargoNominations.where({ 'storeKey': key }).and(data => !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
+        const primaryKey = await db.cargoNominations.where({ 'storeKey': key }).and(data => data.status !== 1 && (!data.timeStamp || data.timeStamp < timeStamp)).primaryKeys();
 
         if (primaryKey?.length) {
           //Get last update record of particular store key
           const cargoNomination = await db.cargoNominations.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
           if (cargoNomination) {
-            const updated = await db.cargoNominations.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now() });
+            const updated = await db.cargoNominations.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now(), status: 1 });
             if (updated) {
               if (cargoNomination?.isDelete) {
                 // send delete sync request to the server
@@ -86,8 +87,12 @@
                   sync.storeKey = cargoNomination.storeKey;
                   sync.type = 'cargo_nomination_sync_finished';
 
-                  //on success of api call remove all rows of selected primary keys
-                  primaryKey.forEach(async (primaryKey) => await db.cargoNominations.delete(primaryKey))
+                  // update id of cargo nomination if there are any new rows with same storekey
+                  const updated = await db.cargoNominations.where({ 'storeKey': key }).modify({ 'id': cargoNomination?.id });
+                  if (updated) {
+                    //on success of api call remove all rows of selected primary keys
+                    primaryKey.forEach(async (primaryKey) => await db.cargoNominations.delete(primaryKey));
+                  }
                   return notifyClients(sync);
                 }
 
@@ -97,7 +102,6 @@
           }
         }
       });
-
     });
   }
 
@@ -106,16 +110,19 @@
    *
    */
   async function serverSyncPorts() {
+    // Remove all records with api initiated as status true
+    db.ports.where({ 'status': 1 }).delete();
+
     await db.ports.orderBy('storeKey').uniqueKeys((storeKeys) => {
       storeKeys.forEach(async (key) => {
         const timeStamp = Date.now - 60000;
         //Get all primary keys with storekey
-        const primaryKey = await db.ports.where({ 'storeKey': key }).and(data => !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
+        const primaryKey = await db.ports.where({ 'storeKey': key }).and(data => data.status !== 1 && (!data.timeStamp || data.timeStamp < timeStamp)).primaryKeys();
 
         //Get last update record of particular store key
         const port = await db.ports.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
         if (port) {
-          const updated = await db.ports.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now() });
+          const updated = await db.ports.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now(), status: 1 });
           if (updated) {
             if (port?.isDelete) {
               // send delete sync request to the server
@@ -156,8 +163,13 @@
                 sync.storeKey = port.storeKey;
                 sync.type = 'ports_sync_finished';
 
-                //on success of api call remove all rows of selected primary keys
-                primaryKey.forEach(async (primaryKey) => await db.ports.delete(primaryKey))
+                // update id of port if there are any new rows with same storekey
+                const updated = await db.ports.where({ 'storeKey': key }).modify({ 'id': port?.id });
+                if (updated) {
+                  //on success of api call remove all rows of selected primary keys
+                  primaryKey.forEach(async (primaryKey) => await db.ports.delete(primaryKey));
+                }
+
                 return notifyClients(sync);
               }
 
@@ -166,7 +178,6 @@
           }
         }
       });
-
     });
   }
 
@@ -175,18 +186,21 @@
    *
    */
   async function serverSyncOHQ() {
+    // Remove all records with api initiated as status true
+    db.ohq.where({ 'status': 1 }).delete();
+
     //Get all store keys
     await db.ohq.orderBy('storeKey').uniqueKeys((storeKeys) => {
       storeKeys.forEach(async (key) => {
         const timeStamp = Date.now - 60000;
         //Get all primary keys with storekey
-        const primaryKey = await db.ohq.where({ 'storeKey': key }).and(data => !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
+        const primaryKey = await db.ohq.where({ 'storeKey': key }).and(data => data.status !== 1 && (!data.timeStamp || data.timeStamp < timeStamp)).primaryKeys();
 
         if (primaryKey?.length) {
           //Get last update record of particular store key
           const ohq = await db.ohq.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
           if (ohq) {
-            const updated = await db.ohq.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now() });
+            const updated = await db.ohq.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now(), status: 1 });
             if (updated) {
               // send update or add sync request to the server
               var headers = {
@@ -204,8 +218,12 @@
                 sync.storeKey = ohq.storeKey;
                 sync.type = 'ohq_sync_finished';
 
-                //on success of api call remove all rows of selected primary keys
-                primaryKey.forEach(async (primaryKey) => await db.ohq.delete(primaryKey))
+                // update id of ohq if there are any new rows with same storekey
+                const updated = await db.ohq.where({ 'storeKey': key }).modify({ 'id': ohq?.id });
+                if (updated) {
+                  //on success of api call remove all rows of selected primary keys
+                  primaryKey.forEach(async (primaryKey) => await db.ohq.delete(primaryKey));
+                }
                 return notifyClients(sync);
               }
 
@@ -214,56 +232,61 @@
           }
         }
       });
-
     });
   }
 
   /**
- * Fuction for sync of indexdb and server for obq
- *
- */
+   * Fuction for sync of indexdb and server for obq
+   *
+   */
   async function serverSyncOBQ() {
+    // Remove all records with api initiated as status true
+    db.obq.where({ 'status': 1 }).delete();
+
     //Get all store keys
-      await db.obq.orderBy('storeKey').uniqueKeys((storeKeys) => {
-        storeKeys.forEach(async (key) => {
-          const timeStamp = Date.now - 60000;
-          //Get all primary keys with storekey
-          const primaryKey = await db.obq.where({ 'storeKey': key }).and(data => !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
+    await db.obq.orderBy('storeKey').uniqueKeys((storeKeys) => {
+      storeKeys.forEach(async (key) => {
+        const timeStamp = Date.now - 60000;
+        //Get all primary keys with storekey
+        const primaryKey = await db.obq.where({ 'storeKey': key }).and(data => data.status !== 1 && (!data.timeStamp || data.timeStamp < timeStamp)).primaryKeys();
 
-          if (primaryKey?.length) {
-            //Get last update record of particular store key
-            const obq = await db.obq.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
-            if (obq) {
-              const updated = await db.obq.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now() });
-              if (updated) {
-                // send update or add sync request to the server
-                var headers = {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                }
-                const syncResponse = await fetch(`${apiUrl}/vessels/${obq?.vesselId}/voyages/${obq?.voyageId}/loadable-studies/${obq?.loadableStudyId}/ports/${obq?.portId}/on-board-quantities/${obq?.id}`, {
-                  method: 'POST',
-                  body: JSON.stringify(obq),
-                  headers: headers
-                });
-
-                if (syncResponse.status === 200) {
-                  const sync = await syncResponse.json();
-                  sync.storeKey = obq.storeKey;
-                  sync.type = 'obq_sync_finished';
-
-                  //on success of api call remove all rows of selected primary keys
-                  primaryKey.forEach(async (primaryKey) => await db.obq.delete(primaryKey))
-                  return notifyClients(sync);
-                }
-
-                return Promise.reject('sync failed: ' + syncResponse.status);
+        if (primaryKey?.length) {
+          //Get last update record of particular store key
+          const obq = await db.obq.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
+          if (obq) {
+            const updated = await db.obq.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now(), status: 1 });
+            if (updated) {
+              // send update or add sync request to the server
+              var headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
               }
+              const syncResponse = await fetch(`${apiUrl}/vessels/${obq?.vesselId}/voyages/${obq?.voyageId}/loadable-studies/${obq?.loadableStudyId}/ports/${obq?.portId}/on-board-quantities/${obq?.id}`, {
+                method: 'POST',
+                body: JSON.stringify(obq),
+                headers: headers
+              });
+
+              if (syncResponse.status === 200) {
+                const sync = await syncResponse.json();
+                sync.storeKey = obq.storeKey;
+                sync.type = 'obq_sync_finished';
+
+                // update id of obq if there are any new rows with same storekey
+                const updated = await db.obq.where({ 'storeKey': key }).modify({ 'id': obq?.id });
+                if (updated) {
+                  //on success of api call remove all rows of selected primary keys
+                  primaryKey.forEach(async (primaryKey) => await db.obq.delete(primaryKey));
+                }
+                return notifyClients(sync);
+              }
+
+              return Promise.reject('sync failed: ' + syncResponse.status);
             }
           }
-        });
-
+        }
       });
+    });
   }
 
   /**

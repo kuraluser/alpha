@@ -109,6 +109,8 @@ export class OnHandQuantityComponent implements OnInit {
   selectedTankFormGroup: FormGroup;
   selectedTankFormGroupIndex: number;
   selectedTankStoreKey: number;
+  dataTableLoading: boolean;
+  ohqCheckUpdatesTimer;
 
   private _selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[];
   private _loadableStudyId: number;
@@ -148,6 +150,19 @@ export class OnHandQuantityComponent implements OnInit {
       this.ohqPorts = result?.portList?.map((ohqPort) => this.ports?.find((port) => port.id === ohqPort.portId));
       this.selectedPort = this.ohqPorts[0];
       await this.getPortOHQDetails(this.selectedPort?.id);
+      const hasPendingUpdates = await this.checkForPendingUpdates();
+      if (hasPendingUpdates) {
+        this.dataTableLoading = true;
+        this.ohqCheckUpdatesTimer = setInterval(async () => {
+          const _hasPendingUpdates = await this.checkForPendingUpdates();
+          if (!_hasPendingUpdates) {
+            await this.getPortOHQDetails(this.selectedPort?.id);
+            this.dataTableLoading = false;
+            clearInterval(this.ohqCheckUpdatesTimer);
+          }
+        }, 500);
+      }
+
     }
     this.ngxSpinnerService.hide();
   }
@@ -180,6 +195,23 @@ export class OnHandQuantityComponent implements OnInit {
     this.selectedPortOHQTankDetails = [..._selectedPortOHQTankDetails];
     this.tanks = result?.tanks ?? [];
     this.rearTanks = result?.rearTanks ?? [];
+  }
+
+  /**
+   * Check if there are any pending updates in indexed db
+   *
+   * @returns {Promise<boolean>}
+   * @memberof OnHandQuantityComponent
+   */
+  async checkForPendingUpdates(): Promise<boolean> {
+    const count = await this.loadableStudyDetailsApiService.getOHQTankDetailsPendingUpdatesCount(this.vesselId, this.voyageId, this.loadableStudyId);
+    if (!count) {
+      return false;
+    } else {
+      this.ngxSpinnerService.hide();
+      this.dataTableLoading = true;
+      return true;
+    }
   }
 
   /**
