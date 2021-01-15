@@ -526,5 +526,7 @@
 	"SERVICE_WORKER_CONFIRM_LABEL": "Ok",
 	"Max_AIR_TEMP_MIN": "Max air tem. should be above -99",
 	"Max_WATER_TEMP_MIN": "Max water tem. should be above -99",
-	"COMMENTS_TIME": "IST"
+	"COMMENTS_TIME": "IST",
+	"LOADABLE_QUANTITY_UPDATE_SUCCESS": "Success",
+    "LOADABLE_QUANTITY_UPDATE_SUCCESSFULLY": "Loadable quantity updated successfully"
 }

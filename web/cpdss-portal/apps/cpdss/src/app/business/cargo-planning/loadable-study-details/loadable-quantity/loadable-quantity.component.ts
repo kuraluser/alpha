@@ -270,7 +270,12 @@ export class LoadableQuantityComponent implements OnInit {
       const result = await this.loadableQuantityApiService.saveLoadableQuantity(this.vesselId, this.voyage.id, this.selectedLoadableStudy.id, this.loadableQuantity).toPromise();
       this.newLoadableQuantity.emit(this.loadableQuantity.totalQuantity);
       if (result.responseStatus.status === "200") {
-        this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_QUANTITY_SUCCESS'], detail: translationKeys['LOADABLE_QUANTITY_SAVED_SUCCESSFULLY'] });
+        if(this.loadableQuantityId) {
+          this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_QUANTITY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_QUANTITY_UPDATE_SUCCESSFULLY'] });
+        } else {
+          this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_QUANTITY_SUCCESS'], detail: translationKeys['LOADABLE_QUANTITY_SAVED_SUCCESSFULLY'] });
+        }
+        
 
       }
       this.ngxSpinnerService.hide();
