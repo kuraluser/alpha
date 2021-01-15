@@ -39,6 +39,8 @@ export class LodadableQuantity {
     public foConInSZ?: string;
     public subTotal?: string;
     public totalQuantity?: string;
+    public loadableQuantityId?: number;
+    public id?: number;
 }
 
 /**

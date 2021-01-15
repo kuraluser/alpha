@@ -4,6 +4,7 @@
     <form [formGroup]="newLoadableStudyFormGroup" id="fg_newLoadableStudy" (submit)="saveLoadableStudy()">
         <div class="container-fluid">
             <div class="row">
+                <p class="text-danger text-center" *ngIf="savedloadableDetails && isLoadlineChanged()">{{'LOADABLE_STUDY_EDIT_UPDATING_LOADLING/DRAFT' | translate}}</p>
                 <div class="col-sm-6">
                     <div class="row form-group">
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DUPLICATE_EXISTING' | translate}}
@@ -146,11 +147,12 @@
                                 formControlName="maxWaterTempExpected" focusTrap>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
 
-
+       
     </form>
     <p-footer>
         <div class="row">

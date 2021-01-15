@@ -181,6 +181,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
     this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
+    sessionStorage.getItem('loadableStudyInfo') ?  (this.displayLoadableQuntity = true , sessionStorage.removeItem('loadableStudyInfo')) : '';
     this.ngxSpinnerService.hide();
   }
 
@@ -203,7 +204,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
     } else {
       const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id).toPromise();
       if (loadableQuantityResult.responseStatus.status === "200") {
-        loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.loadableQuantityNew = "0" : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
+        loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
         if (Number(this.totalQuantity$) > Number(this.loadableQuantityNew)) {
           this.messageService.add({ severity: 'error', summary: translationKeys['TOTAL_QUANTITY_ERROR'], detail: translationKeys['TOTAL_QUANTITY_ERROR'] });
         }
@@ -414,12 +415,62 @@ export class LoadableStudyDetailsComponent implements OnInit {
   /**
    * Get error if no discharge port is selected
    */
-  fieldError(){
+  fieldError() {
     if (this.dischargingPorts?.length > 0) {
-     return null;
+      return null;
     }
     else {
-    return {required: true};
+      return { required: true };
     }
+  }
+
+  /**
+  * Calculation for subtotal
+  */
+  getSubTotal(loadableQuantityResult: any) {
+    let loadableQuantity = loadableQuantityResult.loadableQuantity;
+    let subTotal: number = 0;
+    if (loadableQuantityResult.caseNo === 1 || loadableQuantityResult.caseNo === 2) {
+      subTotal = Number(loadableQuantity.dwt)
+        + Number(loadableQuantity.estFOOnBoard)
+        - Number(loadableQuantity.estFOOnBoard) - Number(loadableQuantity.estDOOnBoard)
+        - Number(loadableQuantity.estFreshWaterOnBoard) - Number(loadableQuantity.boilerWaterOnBoard)
+        - Number(loadableQuantity.ballast) - Number(loadableQuantity.constant)
+        - Number(loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny);
+      this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
+    }
+    else {
+      subTotal = Number(loadableQuantity.dwt) + Number(loadableQuantity.estFOOnBoard) + Number(loadableQuantity.sgCorrection)
+        - Number(loadableQuantity.estFOOnBoard) - Number(loadableQuantity.estDOOnBoard) - Number(loadableQuantity.estFreshWaterOnBoard) - Number(loadableQuantity.boilerWaterOnBoard) - Number(loadableQuantity.ballast) - Number(loadableQuantity.constant) - Number(loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny);
+      this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
+    }
+  }
+
+
+  /**
+   * Calculation for Loadable quantity
+  */
+  getTotalLoadableQuantity(subTotal: number, loadableQuantityResult: any) {
+    let loadableQuantity = loadableQuantityResult.loadableQuantity;
+    if (loadableQuantityResult.caseNo === 1) {
+      const total = Number(subTotal) - Number(loadableQuantity.foConInSZ);
+      if (total < 0) {
+        this.loadableQuantityNew = '0';
+      }
+      else {
+        this.loadableQuantityNew = total?.toString();
+      }
+
+    }
+    else {
+      if (subTotal < 0) {
+        this.loadableQuantityNew = '0';
+      }
+      else {
+        this.loadableQuantityNew = subTotal?.toString();
+      }
+
+    }
+
   }
 }

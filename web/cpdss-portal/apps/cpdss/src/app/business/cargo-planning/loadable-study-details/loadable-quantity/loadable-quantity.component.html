@@ -367,7 +367,7 @@
                 (click)="cancel()">{{'LOADABLE_QUANTITY_CANCEL' | translate}}
             </button>
             <button class="btn btn-main" type="submit" id="lodable_quantity_submit" form="fg_loadableQunatity"
-                *cpdssPortalPermission="loadableQuantityBtnPermissionContext">{{'LOADABLE_QUANTITY_SAVE' | translate}}</button>
+                *cpdssPortalPermission="loadableQuantityBtnPermissionContext">{{ buttonLabel | translate}}</button>
         </div>
     </p-footer>
 </p-dialog>

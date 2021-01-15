@@ -73,6 +73,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   newLoadableStudyNameExist = false;
   popUpHeader = "";
   saveButtonLabel = "";
+  savedloadableDetails: any;
   constructor(private loadableStudyListApiService: LoadableStudyListApiService,
     private formBuilder: FormBuilder,
     private router: Router,
@@ -162,6 +163,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           const result = await this.loadableStudyListApiService.setLodableStudy(this.vesselInfoList?.id, this.voyage.id, this.newLoadableStudyPopupModel).toPromise();
           if (result.responseStatus.status === "200") {
             if (this.isEdit) {
+              this.isLoadlineChanged() ? sessionStorage.setItem('loadableStudyInfo', JSON.stringify({ voyageId: this.voyage.id , vesselId: this.vesselInfoList?.id})): null;
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
             } else {
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
@@ -264,6 +266,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   //for edit/duplicate update the values 
   updateLoadableStudyFormGroup(loadableStudyObj: LoadableStudy, isEdit: boolean) {
     if (isEdit) {
+      this.savedloadableDetails = loadableStudyObj;
+      !this.savedloadableDetails.draftRestriction ? this.savedloadableDetails.draftRestriction  = '' : null;
       this.newLoadableStudyFormGroup.patchValue({
         duplicateExisting: null
       })
@@ -279,7 +283,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       subCharterer: loadableStudyObj?.subCharterer,
       loadLine: loadableStudyObj,
       draftMark: loadableStudyObj,
-      draftRestriction: loadableStudyObj.draftRestriction,
+      draftRestriction: loadableStudyObj.draftRestriction ? loadableStudyObj.draftRestriction : '',
       maxAirTempExpected: loadableStudyObj.maxAirTemperature,
       maxWaterTempExpected: loadableStudyObj.maxWaterTemperature
     })
@@ -295,6 +299,19 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     const loadLine = this.newLoadableStudyFormGroup.get('loadLine').value;
     this.draftMarkList = loadLine.draftMarks.map(draftMarks => ({ id: draftMarks, name: draftMarks }));
     this.uploadedFiles = [...loadableStudyObj.loadableStudyAttachment];
+  }
+
+  /**
+   * check whether new draftMark , loadLineXId , draftRestriction
+   * has been selected
+   * @memberof NewLoadableStudyPopupComponent
+  */
+  isLoadlineChanged() {
+    if(this.savedloadableDetails?.draftMark !== this.newLoadableStudyFormGroup.controls['draftMark'].value?.id ||
+       this.savedloadableDetails?.loadLineXId !== this.newLoadableStudyFormGroup.controls['loadLine'].value?.id ||
+       (this.savedloadableDetails?.draftRestriction !== this.newLoadableStudyFormGroup.controls['draftRestriction']?.value)) {
+      return true;
+    }
   }
 
 }

@@ -47,6 +47,8 @@ export class LoadableQuantityComponent implements OnInit {
   isEditable = false;
   caseNo: number;
   selectedZone: string;
+  loadableQuantityId: number;
+  buttonLabel: string;
 
   private _loadableStudies: LoadableStudy[];
 
@@ -87,6 +89,8 @@ export class LoadableQuantityComponent implements OnInit {
       this.loadableQuantity = loadableQuantityResult.loadableQuantity;
       this.selectedPort = this.ports.find(port => port.id === this.loadableQuantity.portId);
       this.lastUpdatedDateAndTime = this.loadableQuantity.updateDateAndTime;
+      this.loadableQuantityId = this.loadableQuantity.loadableQuantityId;
+      this.buttonLabel = this.loadableQuantityId ? 'LOADABLE_QUANTITY_UPDATE' : 'LOADABLE_QUANTITY_SAVE';
 
       this.loadableQuantityForm = this.fb.group({
         portName: [this.ports.find(port => port.id === this.loadableQuantity.portId), Validators.required],
@@ -95,11 +99,11 @@ export class LoadableQuantityComponent implements OnInit {
         tpc: ['', [Validators.required, numberValidator(1, 3)]],
         estimateSag: ['', [Validators.required, numberValidator(2, 2), , Validators.min(0)]],
         safCorrection: ['', [Validators.required, numberValidator(5, 7), Validators.min(0)]],
-        foOnboard: ['', [Validators.required, numberValidator(2, 7)]],
-        doOnboard: ['', [Validators.required, numberValidator(2, 7)]],
-        freshWaterOnboard: ['', [Validators.required, numberValidator(2, 7)]],
+        foOnboard: [{ value: '', disabled: true} , [Validators.required, numberValidator(2, 7)]],
+        doOnboard: [{ value: '', disabled: true}, [Validators.required, numberValidator(2, 7)]],
+        freshWaterOnboard: [{ value: '', disabled: true}, [Validators.required, numberValidator(2, 7)]],
 
-        boilerWaterOnboard: ['', [Validators.required, numberValidator(0, 7), Validators.pattern(/^[0-9]\d{0,6}$/)]],
+        boilerWaterOnboard: [{ value: '', disabled: true}, [Validators.required, numberValidator(0, 7), Validators.pattern(/^[0-9]\d{0,6}$/)]],
 
         ballast: ['', [Validators.required, numberValidator(2, 7), Validators.min(0)]],
         constant: ['', [Validators.required, numberValidator(2)]],
@@ -195,7 +199,7 @@ export class LoadableQuantityComponent implements OnInit {
       if (this.caseNo === 1) {
         this.loadableQuantity = {
 
-
+          id: this.loadableQuantityId,
           portId: this.loadableQuantityForm.controls.portName.value.id,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
           dwt: this.loadableQuantityForm.controls.dwt.value,
@@ -222,6 +226,7 @@ export class LoadableQuantityComponent implements OnInit {
       }
       else if (this.caseNo === 2) {
         this.loadableQuantity = {
+          id: this.loadableQuantityId,
           portId: this.loadableQuantityForm.controls.portName.value.id,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
           dwt: this.loadableQuantityForm.controls.dwt.value,
@@ -240,6 +245,7 @@ export class LoadableQuantityComponent implements OnInit {
       }
       else {
         this.loadableQuantity = {
+          id: this.loadableQuantityId,
           portId: this.loadableQuantityForm.controls.portName.value.id,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
           displacmentDraftRestriction: this.loadableQuantityForm.controls.displacement.value,

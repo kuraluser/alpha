@@ -504,6 +504,8 @@
 	"COMMINGLE_CARGO_DELETE_CONFIRM_LABEL": "Yes",
 	"COMMINGLE_CARGO_DELETE_REJECT_LABEL": "No",
 	"COMMINGLE_CARGO_VALID_DATA": "Please enter valid data",
+	"LOADABLE_STUDY_EDIT_UPDATING_LOADLING/DRAFT": "Loadable Quantity will be updated based on the Loadline/Draft changes",
+	"LOADABLE_QUANTITY_UPDATE": "UPDATE",
 	"COMMENTS_REQUIRED": "Please enter comment",
 	"SERVICE_WORKER_UPDATE": "Service Worker Update",
 	"SERVICE_WORKER_ACTIVATION": "Service Worker Activation",
