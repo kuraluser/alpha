@@ -5,7 +5,7 @@ import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { IBallastStowageDetails, IBallastTank, ICargoTank } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
-import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ILoadablePlanSynopticalRecord } from '../models/loadable-plan.model';
+import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ILoadablePlanSynopticalRecord , ILoadablePlanCommentsDetails } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { numberValidator } from '../directives/validator/number-validator.directive';
@@ -69,6 +69,7 @@ export class LoadablePlanComponent implements OnInit {
   loadablePlanForm: FormGroup;
   loadablePlanBallastDetails: IBallastStowageDetails[];
   public loadablePlanSynopticalRecords: ILoadablePlanSynopticalRecord[];
+  public loadablePlanComments:ILoadablePlanCommentsDetails[];
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[];
@@ -134,6 +135,7 @@ export class LoadablePlanComponent implements OnInit {
     this.rearBallastTanks = loadablePlanRes.rearBallastTanks;
     this.centerBallastTanks = loadablePlanRes.centerBallastTanks;
     this.loadablePlanSynopticalRecords = loadablePlanRes.loadablePlanSynopticalRecords;
+    this.loadablePlanComments = loadablePlanRes.loadablePlanComments;
     this.ngxSpinnerService.hide();
   }
 

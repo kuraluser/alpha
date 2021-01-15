@@ -19,7 +19,8 @@ export interface ILoadablePlanResponse {
     centerBallastTanks: IBallastTank[][],
     rearBallastTanks: IBallastTank[][],
     loadablePlanBallastDetails: IBallastStowageDetails[],
-    loadablePlanSynopticalRecords: ILoadablePlanSynopticalRecord[]
+    loadablePlanSynopticalRecords: ILoadablePlanSynopticalRecord[],
+    loadablePlanComments: ILoadablePlanCommentsDetails[]
 }
 
 /**
@@ -268,4 +269,25 @@ export interface ISynopticalRecordArrangeModel {
     calculatedTrimPlanned: string,
     cargoPlannedTotal: number,
     ballastPlanned: number
+}
+
+/**
+ * Interface for LoadablePlan comments details
+ * @export
+ * @interface 
+ */
+export interface ILoadablePlanCommentsDetails {
+    id: number,
+    userName: string,
+    dataAndTime: string,
+    comment: string
+}
+
+/**
+ * Interface for save comment
+ * @export
+ * @interface 
+ */
+export interface ISaveComment {
+    comment: string;
 }

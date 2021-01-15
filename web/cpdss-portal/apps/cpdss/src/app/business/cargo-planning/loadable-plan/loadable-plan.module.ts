@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule ,  DecimalPipe } from '@angular/common';
+import { CommonModule ,  DecimalPipe , DatePipe } from '@angular/common';
 
 import { LoadablePlanComponent } from './loadable-plan.component';
 import { LoadableQuantityComponent } from './loadable-quantity/loadable-quantity.component';
@@ -33,7 +33,7 @@ import { BallastLayoutModule } from '../../core/components/ballast-layout/ballas
     DatatableModule,
     BallastLayoutModule
   ],
-  providers: [LoadableQuantityApiService , DecimalPipe , LoadablePlanTransformationService , LoadablePlanApiService],
+  providers: [LoadableQuantityApiService , DecimalPipe , LoadablePlanTransformationService , LoadablePlanApiService , DatePipe ],
   exports: [
     LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent
   ]
