@@ -37,23 +37,16 @@
     </div>
     <div *ngIf="showGrid" class="row mb-15">
         <div class="col" *ngIf="selectedTab === tankType.CARGO">
+            <div class="text-right mb-10">
             <button class="btn btn-main"
                 (click)="toggleEditMode()">{{(editMode === null ?'LOADABLE_PLAN_EDIT_STOWAGE_BUTTON_LABEL': 'LOADABLE_PLAN_SAVE_STOWAGE_BUTTON_LABEL')| translate}}
             </button>
+        </div>
             <cpdss-portal-datatable [columns]="cargoGridColumns" [value]="cargoTankDetails" [editMode]="editMode"
                 [form]="form.controls?.cargoTanks">
             </cpdss-portal-datatable>
         </div>
         <div class="col" *ngIf="selectedTab === tankType.BALLAST">
-            <!-- <p-table #datatable [columns]="columns" [value]="value">
-                <ng-template pTemplate="header" let-columns>
-                    <tr>
-                        <th *ngFor="let col of columns">
-                            {{col.header}}
-                        </th>
-                    </tr>
-                </ng-template>
-            </p-table> -->
             <cpdss-portal-ballast-stowage [ballastDetails]="ballastDetails"></cpdss-portal-ballast-stowage>
         </div>
     </div>
