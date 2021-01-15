@@ -224,6 +224,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.observedBarrelsAt60 = new ValueObject<number>(cargoTankDetail?.observedBarrelsAt60, true, false);
     _cargoTankDetail.api = new ValueObject<number>(cargoTankDetail?.api, true, false);
     _cargoTankDetail.temperature = new ValueObject<number>(cargoTankDetail?.temperature, true, false);
+    _cargoTankDetail.colorCode = cargoTankDetail?.colorCode;
     _cargoTankDetail.isAdd = isNewValue;
 
     return _cargoTankDetail;

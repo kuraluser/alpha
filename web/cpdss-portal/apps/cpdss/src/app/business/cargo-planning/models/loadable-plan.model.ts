@@ -145,6 +145,7 @@ export interface ICargoTankDetail extends ILoadableCargo {
  */
 export interface ICargoTankDetailValueObject {
     id: number;
+    colorCode: string;
     tankId: number;
     cargoAbbreviation: string;
     weight: ValueObject<number>;
