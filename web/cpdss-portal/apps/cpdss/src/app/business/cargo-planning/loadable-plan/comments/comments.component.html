@@ -17,7 +17,7 @@
         <div class="row">
             <div class="col ml-30">
             <div *ngFor="let commentsDetail of commentsDetails">
-                <div class="text-secondary pb-10">{{commentsDetail?.userName}}, {{commentsDetail?.dataAndTime}}</div>
+                <div class="text-secondary pb-10">{{commentsDetail?.userName}}, {{commentsDetail?.dataAndTime}} {{'COMMENTS_TIME' | translate}}</div>
                 <div class="ml-30"><i class="icon-api-temp mr-10" ></i> {{commentsDetail?.comment}}</div>
                 <hr>
             </div>

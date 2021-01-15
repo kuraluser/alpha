@@ -34,10 +34,7 @@
               translate}}</label>
             <div class="col-md-6">
               <p-calendar appendTo="body" inputId="start_date" formControlName="start_date" dateFormat="dd-mm-yy"
-                (onSelect)="onDateSelect($event)" [hideOnDateTimeSelect]="false"  #startDateTime [minDate]="date">
-                <p-footer><button class="btn btn-main"
-                    (click)="startDateTime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
-                    translate}}</button></p-footer>
+                (onSelect)="onDateSelect($event)"   #startDateTime [minDate]="date">
               </p-calendar>
             </div>
             <cpdss-portal-validation-error *ngIf="fieldError('start_date')" [errors]="fieldError('start_date')"
@@ -49,10 +46,7 @@
               translate}}</label>
             <div class="col-md-6">
               <p-calendar appendTo="body" inputId="end_date" formControlName="end_date" dateFormat="dd-mm-yy"
-                (onSelect)="onDateSelect($event)" [hideOnDateTimeSelect]="false"  #endDateTime [minDate]="date"> 
-                <p-footer><button class="btn btn-main"
-                    (click)="endDateTime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
-                    translate}}</button></p-footer>
+                (onSelect)="onDateSelect($event)"   #endDateTime [minDate]="date"> 
               </p-calendar>
             </div>
             <cpdss-portal-validation-error *ngIf="fieldError('end_date')" [errors]="fieldError('end_date')" [errorMessages]="errorMessages.end_date">

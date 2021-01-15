@@ -66,7 +66,10 @@ export class LoadablePlanComponent implements OnInit {
   loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
   loadablePlanBallastDetails: IBallastStowageDetails[];
   public loadablePlanSynopticalRecords: ILoadablePlanSynopticalRecord[];
-  public loadablePlanComments: ILoadablePlanCommentsDetails[];
+  public loadablePlanComments:ILoadablePlanCommentsDetails[];
+  public voyageNumber: string;
+  public date: string;
+  public caseNumber: string;
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[] = [];
@@ -131,6 +134,9 @@ export class LoadablePlanComponent implements OnInit {
     this.centerBallastTanks = loadablePlanRes.centerBallastTanks;
     this.loadablePlanSynopticalRecords = loadablePlanRes.loadablePlanSynopticalRecords;
     this.loadablePlanComments = loadablePlanRes.loadablePlanComments;
+    this.voyageNumber = loadablePlanRes.voyageNumber;
+    this.date = loadablePlanRes.date;
+    this.caseNumber = loadablePlanRes.caseNumber;
     this.ngxSpinnerService.hide();
   }
 

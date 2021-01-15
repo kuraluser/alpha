@@ -13,6 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { whiteSpaceValidator } from '../../directives/space-validator.directive';
 
+
 /**
  *  popup for creating / editing loadable-study
  */
@@ -129,8 +130,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       loadLine: '',
       draftMark: '',
       draftRestriction: this.formBuilder.control('', [numberValidator(2, 2)]),
-      maxAirTempExpected: this.formBuilder.control('', [numberValidator(2, 3)]),
-      maxWaterTempExpected: this.formBuilder.control('', [numberValidator(2, 3)])
+      maxAirTempExpected: this.formBuilder.control('', [numberValidator(2, 2) , Validators.min(-99)]),
+      maxWaterTempExpected: this.formBuilder.control('', [numberValidator(2, 3) , Validators.min(-99)])
     });
   }
 
@@ -286,7 +287,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       draftRestriction: loadableStudyObj.draftRestriction ? loadableStudyObj.draftRestriction : '',
       maxAirTempExpected: loadableStudyObj.maxAirTemperature,
       maxWaterTempExpected: loadableStudyObj.maxWaterTemperature
-    })
+    });
+    this.savedloadableDetails.draftRestriction = this.newLoadableStudyFormGroup.controls['draftRestriction']?.value;
     const result = this.loadlineLists.filter(loadline => loadline.id === loadableStudyObj.loadLineXId);
     if (result.length > 0) {
       this.loadlineList = result[0];

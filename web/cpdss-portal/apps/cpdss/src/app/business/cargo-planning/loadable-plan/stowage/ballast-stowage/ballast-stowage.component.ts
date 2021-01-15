@@ -25,38 +25,7 @@ export class BallastStowageComponent implements OnInit {
   private _ballastDetails: IBallastStowageDetails[];
 
   @Input() set ballastDetails(value: IBallastStowageDetails[]) {
-    this._ballastDetails = [
-      {
-        "id": 1,
-        "tankId": 25599,
-        "rdgLevel": "10",
-        "correctionFactor": "12",
-        "correctedLevel": "14",
-        "metricTon": "1000",
-        "cubicMeter": "50",
-        "percentage": "88",
-        "sg": "10",
-        "lcg": "12",
-        "vcg": "18",
-        "tcg": "16",
-        "inertia": "20"
-      },
-      {
-        "id": 2,
-        "tankId": 25600,
-        "rdgLevel": "12",
-        "correctionFactor": "14",
-        "correctedLevel": "16",
-        "metricTon": "1500",
-        "cubicMeter": "60",
-        "percentage": "90",
-        "sg": "12",
-        "lcg": "14",
-        "vcg": "20",
-        "tcg": "16",
-        "inertia": "18"
-      }
-    ];
+    this._ballastDetails = value;
   }
 
   get ballastDetails(): IBallastStowageDetails[] {

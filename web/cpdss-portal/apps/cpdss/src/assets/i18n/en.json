@@ -223,7 +223,7 @@
 	"LOADABLE_QUANTITY_FO_ONBOARD_REQUIRED": "FO Onboard quantity is required",
 	"LOADABLE_QUANTITY_ESTIMATE_SAG_REQUIRED": "Estimate sag is required",
 	"LOADABLE_QUANTITY_LAST_UPDATED": "last updated",
-	"LOADABLE_QUANTITY_TIME": "UTC",
+	"LOADABLE_QUANTITY_TIME": "IST",
 	"LOADABLE_QUANTITY_UNIT_MT": "MT",
 	"LOADABLE_QUANTITY_UNIT_CM": "CM",
 	"LOADABLE_QUANTITY_UNIT_M": "M",
@@ -511,7 +511,7 @@
 	"COMMINGLE_CARGO_DELETE_DETAILS": "Please click on yes to proceed",
 	"COMMINGLE_CARGO_DELETE_CONFIRM_LABEL": "Yes",
 	"COMMINGLE_CARGO_DELETE_REJECT_LABEL": "No",
-	"COMMINGLE_CARGO_VALID_DATA": "Please enter valid data",
+	"COMMINGLE_CARGO_VALID_DATA": "Please add cargoes",
 	"CARGO_DISCHARGE_FIRST": "Cargo to discharge first",
 	"CARGO_DISCHARGE_SELECT": "Select Cargo",
 	"LOADABLE_STUDY_DISCHARGING_CARGO_UPDATE_SUCCESS": "Success",
@@ -523,5 +523,8 @@
 	"SERVICE_WORKER_ACTIVATION": "Service Worker Activation",
 	"SERVICE_WORKER_ACTIVATED_SUCCESSFULLY": "Service worker activated successfully",
 	"SERVICE_WORKER_UPDATE_DETAILS": "New service worker update is available. Page will be auto refreshed after the update.",
-	"SERVICE_WORKER_CONFIRM_LABEL": "Ok"
+	"SERVICE_WORKER_CONFIRM_LABEL": "Ok",
+	"Max_AIR_TEMP_MIN": "Max air tem. should be above -99",
+	"Max_WATER_TEMP_MIN": "Max water tem. should be above -99",
+	"COMMENTS_TIME": "IST"
 }

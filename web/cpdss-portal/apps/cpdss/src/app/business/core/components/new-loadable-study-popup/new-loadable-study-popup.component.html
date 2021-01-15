@@ -137,6 +137,11 @@
                         <div class="col">
                             <input class="form-control" type="text" cpdssPortalNumberDecimal id="txt_maxAirTempExceeded"
                                 formControlName="maxAirTempExpected" focusTrap>
+                                <span
+                                    *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && form.maxAirTempExpected.errors?.min"
+                                    class="text-danger">
+                                    {{'Max_AIR_TEMP_MIN' | translate}}
+                                </span>
                         </div>
                     </div>
                     <div class="row form-group">
@@ -145,6 +150,11 @@
                         <div class="col">
                             <input class="form-control" type="text" cpdssPortalNumberDecimal id="txt_maxWaterTempExceeded"
                                 formControlName="maxWaterTempExpected" focusTrap>
+                                <span
+                                    *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && form.maxWaterTempExpected.errors?.min"
+                                    class="text-danger">
+                                    {{'Max_WATER_TEMP_MIN' | translate}}
+                                </span>
                         </div>
                     </div>
                     

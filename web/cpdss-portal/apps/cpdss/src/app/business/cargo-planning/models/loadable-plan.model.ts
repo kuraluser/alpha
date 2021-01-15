@@ -20,7 +20,10 @@ export interface ILoadablePlanResponse {
     rearBallastTanks: IBallastTank[][],
     loadablePlanBallastDetails: IBallastStowageDetails[],
     loadablePlanSynopticalRecords: ILoadablePlanSynopticalRecord[],
-    loadablePlanComments: ILoadablePlanCommentsDetails[]
+    loadablePlanComments: ILoadablePlanCommentsDetails[],
+    voyageNumber: string,
+    date: string,
+    caseNumber: string
 }
 
 /**
