@@ -19,9 +19,18 @@ import { DatatableModule } from '../../../shared/components/datatable/datatable.
 import { ReactiveFormsModule } from '@angular/forms';
 import { BallastStowageComponent } from './stowage/ballast-stowage/ballast-stowage.component';
 import { BallastLayoutModule } from '../../core/components/ballast-layout/ballast-layout.module';
+import { SaveStowagePopupComponent } from './stowage/save-stowage-popup/save-stowage-popup.component';
+import { DialogModule } from 'primeng/dialog';
+import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
 
+/**
+ * Module for loadable plan
+ *
+ * @export
+ * @class LoadablePlanModule
+ */
 @NgModule({
-  declarations: [LoadablePlanComponent, LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent, BallastStowageComponent],
+  declarations: [LoadablePlanComponent, LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent, BallastStowageComponent, SaveStowagePopupComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -31,7 +40,9 @@ import { BallastLayoutModule } from '../../core/components/ballast-layout/ballas
     TableModule,
     CargoTankLayoutModule,
     DatatableModule,
-    BallastLayoutModule
+    BallastLayoutModule,
+    DialogModule,
+    ValidationErrorModule
   ],
   providers: [LoadableQuantityApiService , DecimalPipe , LoadablePlanTransformationService , LoadablePlanApiService , DatePipe ],
   exports: [

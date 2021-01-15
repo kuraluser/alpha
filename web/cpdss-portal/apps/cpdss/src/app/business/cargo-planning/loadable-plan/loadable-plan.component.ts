@@ -5,10 +5,8 @@ import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { IBallastStowageDetails, IBallastTank, ICargoTank } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
-import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ILoadablePlanSynopticalRecord , ILoadablePlanCommentsDetails } from '../models/loadable-plan.model';
+import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ILoadablePlanSynopticalRecord, ILoadablePlanCommentsDetails } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { numberValidator } from '../directives/validator/number-validator.directive';
 
 /**
  * Component class of loadable plan
@@ -66,13 +64,12 @@ export class LoadablePlanComponent implements OnInit {
   vesselInfo: IVessel;
   loadableQuantityCargoDetails: ILoadableQuantityCargo[];
   loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
-  loadablePlanForm: FormGroup;
   loadablePlanBallastDetails: IBallastStowageDetails[];
   public loadablePlanSynopticalRecords: ILoadablePlanSynopticalRecord[];
-  public loadablePlanComments:ILoadablePlanCommentsDetails[];
+  public loadablePlanComments: ILoadablePlanCommentsDetails[];
 
   private _cargoTanks: ICargoTank[][];
-  private _cargoTankDetails: ICargoTankDetailValueObject[];
+  private _cargoTankDetails: ICargoTankDetailValueObject[] = [];
   private _rearBallastTanks: IBallastTank[][];
   private _centerBallastTanks: IBallastTank[][];
   private _frontBallastTanks: IBallastTank[][];
@@ -82,8 +79,7 @@ export class LoadablePlanComponent implements OnInit {
     private router: Router,
     private vesselsApiService: VesselsApiService,
     private loadablePlanApiService: LoadablePlanApiService,
-    private loadablePlanTransformationService: LoadablePlanTransformationService,
-    private fb: FormBuilder) { }
+    private loadablePlanTransformationService: LoadablePlanTransformationService) { }
 
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(params => {
@@ -127,58 +123,15 @@ export class LoadablePlanComponent implements OnInit {
     const loadablePlanRes: ILoadablePlanResponse = await this.loadablePlanApiService.getLoadablePlanDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
     this.loadableQuantityCargoDetails = loadablePlanRes.loadableQuantityCargoDetails;
     this.loadableQuantityCommingleCargoDetails = loadablePlanRes.loadableQuantityCommingleCargoDetails;
-    this.cargoTankDetails = loadablePlanRes?.loadablePlanStowageDetails?.map(cargo => this.loadablePlanTransformationService.getCargoTankDetailAsValueObject(cargo));
+    this.cargoTankDetails = loadablePlanRes?.loadablePlanStowageDetails ? loadablePlanRes?.loadablePlanStowageDetails?.map(cargo => this.loadablePlanTransformationService.getCargoTankDetailAsValueObject(cargo)) : [];
     this.loadablePlanBallastDetails = loadablePlanRes.loadablePlanBallastDetails;
     this.cargoTanks = loadablePlanRes?.tankLists;
-    this.initLoadablePlanForm();
     this.frontBallastTanks = loadablePlanRes.frontBallastTanks;
     this.rearBallastTanks = loadablePlanRes.rearBallastTanks;
     this.centerBallastTanks = loadablePlanRes.centerBallastTanks;
     this.loadablePlanSynopticalRecords = loadablePlanRes.loadablePlanSynopticalRecords;
     this.loadablePlanComments = loadablePlanRes.loadablePlanComments;
     this.ngxSpinnerService.hide();
-  }
-
-  /**
-   * Initialize loadable plan form
-   *
-   * @private
-   * @memberof LoadablePlanComponent
-   */
-  private initLoadablePlanForm() {
-    const cargoTankDetailsArray = this.cargoTankDetails?.map(cargo => this.initCargoTankFormGroup(cargo));
-    this.loadablePlanForm = this.fb.group({
-      cargoTanks: this.fb.group({
-        dataTable: this.fb.array([...cargoTankDetailsArray])
-      })
-    });
-  }
-
-  /**
-   * Initialize cargo tank form group
-   *
-   * @private
-   * @param {ICargoTankDetailValueObject} cargo
-   * @returns {FormGroup}
-   * @memberof LoadablePlanComponent
-   */
-  private initCargoTankFormGroup(cargo: ICargoTankDetailValueObject): FormGroup {
-    return this.fb.group({
-      id: this.fb.control(cargo?.id),
-      tankId: this.fb.control(cargo?.tankId),
-      cargoAbbreviation: this.fb.control(cargo?.cargoAbbreviation),
-      weight: this.fb.control(cargo?.weight?.value),
-      correctedUllage: this.fb.control(cargo?.correctedUllage?.value),
-      fillingRatio: this.fb.control(cargo?.fillingRatio?.value),
-      tankName: this.fb.control(cargo?.tankName),
-      rdgUllage: this.fb.control(cargo?.rdgUllage?.value, [Validators.required, numberValidator(2, 2, false)]),
-      correctionFactor: this.fb.control(cargo?.correctionFactor?.value),
-      observedM3: this.fb.control(cargo?.observedM3?.value),
-      observedBarrels: this.fb.control(cargo?.observedBarrels?.value),
-      observedBarrelsAt60: this.fb.control(cargo?.observedBarrelsAt60?.value),
-      api: this.fb.control(cargo?.api),
-      temperature: this.fb.control(cargo?.temperature),
-    });
   }
 
 }

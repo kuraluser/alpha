@@ -1,53 +1,61 @@
-<div class="row pb-20">
-    <div class="col">
-        <h5 class="secondary-text heading-border clearfix pt-15 pb-10" style="line-height: 20px;"> 2
-            {{'LOADABLE_PLAN_STOWAGE_HEADER' | translate}} <button class="btn btn-main pull-right"
-                id="btn_callNewLoadableStudyPopup">{{'LOADABLE_PATTERN_HISTORY_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
+<form *ngIf="loadablePlanForm" [formGroup]="loadablePlanForm">
+    <div class="row pb-20">
+        <div class="col">
+            <h5 class="secondary-text heading-border clearfix pt-15 pb-10" style="line-height: 20px;"> 2
+                {{'LOADABLE_PLAN_STOWAGE_HEADER' | translate}} <button class="btn btn-main pull-right"
+                    id="btn_callNewLoadableStudyPopup">{{'LOADABLE_PATTERN_HISTORY_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
             translate}}</button></h5>
-    </div>
+        </div>
 
-</div>
-<div class="row pb-15 pt-15">
-    <div class="col  text-center">
-        <a class="tab-btn tab-btn-default" [ngClass]="{'active': selectedTab === tankType.CARGO}"
-            (click)="onTabClick(tankType.CARGO)">{{'LOADABLE_PLAN_STOWAGE_CARGO_TAB' | translate}}
-        </a>
-        <a class="tab-btn tab-btn-default" [ngClass]="{'active': selectedTab === tankType.BALLAST}"
-            (click)="onTabClick(tankType.BALLAST)">{{'LOADABLE_PLAN_STOWAGE_BALLAST_TAB' | translate}}
-        </a>
     </div>
-</div>
-<div>
-    <div class="row">
-        <div class="col col-11 m-auto" *ngIf="selectedTab === tankType.CARGO">
-            <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks" [options]="cargoTankOptions">
-            </cpdss-portal-cargo-tank-layout>
-        </div>
-        <div class="col-11 m-auto loadable-plan-ballast" *ngIf="selectedTab === tankType.BALLAST">
-            <cpdss-portal-ballast-layout [tanks]="centerBallastTanks" [rearTanks]="rearBallastTanks"
-                [frontTanks]="frontBallastTanks" [options]="ballastTankOptions">
-            </cpdss-portal-ballast-layout>
+    <div class="row pb-15 pt-15">
+        <div class="col  text-center">
+            <a class="tab-btn tab-btn-default" [ngClass]="{'active': selectedTab === tankType.CARGO}" id="cargo_tab"
+                (click)="onTabClick(tankType.CARGO)">{{'LOADABLE_PLAN_STOWAGE_CARGO_TAB' | translate}}
+            </a>
+            <a class="tab-btn tab-btn-default" [ngClass]="{'active': selectedTab === tankType.BALLAST}" id="ballast_tab"
+                (click)="onTabClick(tankType.BALLAST)">{{'LOADABLE_PLAN_STOWAGE_BALLAST_TAB' | translate}}
+            </a>
         </div>
     </div>
-    <div class="row pt-15 pb-15">
-        <div class="col text-center">
-            <button class="btn btn-main"
-                (click)="toggleGridView()">{{(showGrid ? 'LOADABLE_PLAN_STOWAGE_HIDE_LABEL' : 'LOADABLE_PLAN_STOWAGE_MORE_LABEL') | translate}}</button>
+    <div>
+        <div class="row">
+            <div class="col col-11 m-auto" *ngIf="selectedTab === tankType.CARGO">
+                <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks" [options]="cargoTankOptions">
+                </cpdss-portal-cargo-tank-layout>
+            </div>
+            <div class="col-11 m-auto loadable-plan-ballast" *ngIf="selectedTab === tankType.BALLAST">
+                <cpdss-portal-ballast-layout [tanks]="centerBallastTanks" [rearTanks]="rearBallastTanks"
+                    [frontTanks]="frontBallastTanks" [options]="ballastTankOptions">
+                </cpdss-portal-ballast-layout>
+            </div>
+        </div>
+        <div class="row pt-15 pb-15">
+            <div class="col text-center">
+                <button class="btn btn-main" id="grid_toggle_btn"
+                    (click)="toggleGridView()">{{(showGrid ? 'LOADABLE_PLAN_STOWAGE_HIDE_LABEL' : 'LOADABLE_PLAN_STOWAGE_MORE_LABEL') | translate}}</button>
+            </div>
+        </div>
+        <div *ngIf="showGrid" class="row mb-15">
+            <div class="col" *ngIf="selectedTab === tankType.CARGO">
+                <div class="text-right mb-10">
+                    <button class="btn btn-main" *ngIf="!editMode" id="editmode_toggle_button"
+                        (click)="changeGridToEditMode()">{{'LOADABLE_PLAN_EDIT_STOWAGE_BUTTON_LABEL'| translate}}
+                    </button>
+                    <button class="btn btn-main" *ngIf="editMode" id="editmode_toggle_button"
+                        (click)="saveStowage()">{{'LOADABLE_PLAN_SAVE_STOWAGE_BUTTON_LABEL'| translate}}
+                    </button>
+                </div>
+                <cpdss-portal-datatable *ngIf="loadablePlanForm.controls?.cargoTanks" [columns]="cargoGridColumns"
+                    [value]="cargoTankDetails" [editMode]="editMode" [form]="loadablePlanForm.controls?.cargoTanks">
+                </cpdss-portal-datatable>
+            </div>
+            <div class="col" *ngIf="selectedTab === tankType.BALLAST">
+                <cpdss-portal-ballast-stowage [ballastDetails]="ballastDetails"></cpdss-portal-ballast-stowage>
+            </div>
         </div>
     </div>
-    <div *ngIf="showGrid" class="row mb-15">
-        <div class="col" *ngIf="selectedTab === tankType.CARGO">
-            <div class="text-right mb-10">
-            <button class="btn btn-main"
-                (click)="toggleEditMode()">{{(editMode === null ?'LOADABLE_PLAN_EDIT_STOWAGE_BUTTON_LABEL': 'LOADABLE_PLAN_SAVE_STOWAGE_BUTTON_LABEL')| translate}}
-            </button>
-        </div>
-            <cpdss-portal-datatable [columns]="cargoGridColumns" [value]="cargoTankDetails" [editMode]="editMode"
-                [form]="form.controls?.cargoTanks">
-            </cpdss-portal-datatable>
-        </div>
-        <div class="col" *ngIf="selectedTab === tankType.BALLAST">
-            <cpdss-portal-ballast-stowage [ballastDetails]="ballastDetails"></cpdss-portal-ballast-stowage>
-        </div>
-    </div>
-</div>
+</form>
+<cpdss-portal-save-stowage-popup [vesselId]="vesselId" [voyageId]="voyageId" [loadablePatternId]="loadablePatternId"
+    [loadableStudyId]="loadableStudyId" [(visible)]="openSaveStowagePopup">
+</cpdss-portal-save-stowage-popup>
