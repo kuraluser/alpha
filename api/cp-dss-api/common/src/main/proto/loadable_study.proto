@@ -82,6 +82,9 @@ service LoadableStudyService {
 	rpc GenerateLoadablePatterns (AlgoRequest) returns (AlgoReply) {
 	}
 	
+	rpc getLoadablePatternList (LoadablePatternRequest) returns (LoadablePatternReply) {
+	}
+	
 	rpc GetOnBoardQuantity(OnBoardQuantityRequest) returns (OnBoardQuantityReply){
 	}
 	
@@ -586,6 +589,7 @@ message LoadablePattern {
 	string constraints = 3;
 	string totalDifferenceColor = 4;
 	int64 loadableStudyStatusId = 5;
+	string caseNumber = 6;
 }
 
 message LoadablePatternCargoDetails {

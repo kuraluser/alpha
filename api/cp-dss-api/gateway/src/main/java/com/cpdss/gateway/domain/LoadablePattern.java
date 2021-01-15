@@ -12,4 +12,5 @@ public class LoadablePattern {
   private String totalDifferenceColor;
   private List<LoadablePatternCargoDetails> loadablePatternCargoDetails;
   private Long loadableStudyStatusId;
+  private String caseNumber;
 }

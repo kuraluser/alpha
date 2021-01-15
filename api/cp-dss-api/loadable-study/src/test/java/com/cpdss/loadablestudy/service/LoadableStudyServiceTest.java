@@ -2763,4 +2763,55 @@ class LoadableStudyServiceTest {
     SaveCommentReply response = results.get(0);
     assertEquals(SUCCESS, response.getResponseStatus().getStatus());
   }
+
+  @Test
+  void testGetLoadablePatternList() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadableStudy()));
+    List<LoadablePattern> patternList = new ArrayList<>();
+    IntStream.of(1, 3)
+        .forEach(
+            i -> {
+              patternList.add(this.createLoadablePattern());
+            });
+    when(this.loadablePatternRepository.findByLoadableStudyAndIsActive(
+            any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(patternList);
+    StreamRecorder<LoadablePatternReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.getLoadablePatternList(
+        LoadablePatternRequest.newBuilder().setLoadableStudyId(ID_TEST_VALUE).build(),
+        responseObserver);
+    List<LoadablePatternReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadablePatternListInvalidLs() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    StreamRecorder<LoadablePatternReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.getLoadablePatternList(
+        LoadablePatternRequest.newBuilder().setLoadableStudyId(ID_TEST_VALUE).build(),
+        responseObserver);
+    List<LoadablePatternReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadablePatternListRuntimeException() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(RuntimeException.class);
+    StreamRecorder<LoadablePatternReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.getLoadablePatternList(
+        LoadablePatternRequest.newBuilder().setLoadableStudyId(ID_TEST_VALUE).build(),
+        responseObserver);
+    List<LoadablePatternReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
 }

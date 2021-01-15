@@ -3211,4 +3211,47 @@ public class LoadableStudyService {
     return this.usersRepository.findByKeycloakIdAndIsActive(
         "4b5608ff-b77b-40c6-9645-d69856d4aafa", true);
   }
+
+  /**
+   * Get loadable pattern list for a loadable study
+   *
+   * @param loadableStudiesId
+   * @param correlationId
+   * @return
+   * @throws GenericServiceException
+   */
+  public LoadablePatternResponse getLoadablePatternList(Long loadableStudyId, String correlationId)
+      throws GenericServiceException {
+    LoadablePatternResponse response = new LoadablePatternResponse();
+    LoadablePatternRequest grpcRequest =
+        LoadablePatternRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
+    LoadablePatternReply grpcReply = this.getLoadablePatternList(grpcRequest);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to get pattern list from grpc service",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    response.setLoadablePatterns(new ArrayList<>());
+    for (com.cpdss.common.generated.LoadableStudy.LoadablePattern pattern :
+        grpcReply.getLoadablePatternList()) {
+      LoadablePattern patternDto = new LoadablePattern();
+      patternDto.setLoadablePatternId(pattern.getLoadablePatternId());
+      patternDto.setCaseNumber(pattern.getCaseNumber());
+      response.getLoadablePatterns().add(patternDto);
+    }
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * Call grpc service for loadable pattern list
+   *
+   * @param grpcRequest
+   * @return
+   */
+  public LoadablePatternReply getLoadablePatternList(LoadablePatternRequest grpcRequest) {
+    return this.loadableStudyServiceBlockingStub.getLoadablePatternList(grpcRequest);
+  }
 }

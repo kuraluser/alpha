@@ -581,6 +581,7 @@ public class LoadableStudyController {
           e);
     }
   }
+
   /**
    * @param vesselId
    * @param voyageId
@@ -810,6 +811,7 @@ public class LoadableStudyController {
           e);
     }
   }
+
   /**
    * Get commingle cargo
    *
@@ -882,6 +884,7 @@ public class LoadableStudyController {
           e);
     }
   }
+
   /**
    * @param vesselId
    * @param voyageId
@@ -1297,6 +1300,33 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error when saving comment", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @GetMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/patterns")
+  public LoadablePatternResponse getLoadablePatternList(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudiesId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("get pattern list: {}", getClientIp());
+      log.info(
+          "get loadable pattern API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+      return loadableStudyService.getLoadablePatternList(
+          loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in get loadable pattern list", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in get loadable pattern list", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

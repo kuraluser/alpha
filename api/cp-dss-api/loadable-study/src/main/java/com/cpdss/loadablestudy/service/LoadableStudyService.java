@@ -2301,6 +2301,68 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
+  /** Get list of patterns for a loadable study */
+  @Override
+  public void getLoadablePatternList(
+      LoadablePatternRequest request, StreamObserver<LoadablePatternReply> responseObserver) {
+    LoadablePatternReply.Builder replyBuilder = LoadablePatternReply.newBuilder();
+    try {
+      log.info("getLoadablePatternList - loadable study micro service");
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+      if (!loadableStudyOpt.isPresent()) {
+        throw new GenericServiceException(
+            "Loadable study does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      List<LoadablePattern> patterns =
+          this.loadablePatternRepository.findByLoadableStudyAndIsActive(
+              loadableStudyOpt.get(), true);
+      if (null != patterns && !patterns.isEmpty()) {
+        this.buildPatternDetails(patterns, replyBuilder);
+      }
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in loadable pattern list", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      log.error("Exception in loadable pattern list", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception in getLoadablePatternList")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Build pattern reply
+   *
+   * @param patterns
+   * @param replyBuilder
+   */
+  private void buildPatternDetails(
+      List<LoadablePattern> patterns, LoadablePatternReply.Builder replyBuilder) {
+    for (LoadablePattern pattern : patterns) {
+      com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder builder =
+          com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
+      builder.setLoadablePatternId(pattern.getId());
+      Optional.ofNullable(pattern.getCaseNumber())
+          .ifPresent(item -> builder.setCaseNumber(valueOf(item)));
+      replyBuilder.addLoadablePattern(builder.build());
+    }
+  }
+
   @Override
   public void getLoadablePatternDetails(
       LoadablePatternRequest request, StreamObserver<LoadablePatternReply> responseObserver) {
@@ -3671,10 +3733,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching loadable study - port data", e);
-      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
     } catch (Exception e) {
       log.error("Exception when fetching loadable study - port data", e);
-      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
