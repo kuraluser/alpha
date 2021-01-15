@@ -44,18 +44,18 @@ export class CargoNominationComponent implements OnInit {
 
   // properties
   get cargoNominations(): ICargoNominationValueObject[] {
-    return this._cargoNominations;
+    return this.loadableStudyDetailsApiService.cargoNominations;
   }
   set cargoNominations(cargoNominations: ICargoNominationValueObject[]) {
-    let totalQuantity = 0;
-    this._cargoNominations = cargoNominations.map((cargoNomination, index) => {
+    this.totalQuantity = 0;
+    this.loadableStudyDetailsApiService.cargoNominations = cargoNominations.map((cargoNomination, index) => {
       const _cargoNomination = this.loadableStudyDetailsTransformationService.formatCargoNomination(cargoNomination);
-      totalQuantity += _cargoNomination?.isDelete ? 0 : Number(_cargoNomination.quantity.value);
-      _cargoNomination.priority.value = _cargoNomination.priority.value > cargoNominations.length ? this._cargoNominations.length : _cargoNomination.priority.value;
+      this.totalQuantity += _cargoNomination?.isDelete ? 0 : Number(_cargoNomination.quantity.value);
+      _cargoNomination.priority.value = _cargoNomination.priority.value > cargoNominations.length ? this.loadableStudyDetailsApiService.cargoNominations.length : _cargoNomination.priority.value;
       return _cargoNomination
     });
-    this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(totalQuantity);
-    this.updatePriorityDropdown(this._cargoNominations.length);
+    this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(this.totalQuantity);
+    this.updatePriorityDropdown(this.loadableStudyDetailsApiService.cargoNominations.length);
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
   }
 
@@ -97,9 +97,9 @@ export class CargoNominationComponent implements OnInit {
   // private fields
   private _loadableStudyId: number;
   private _loadingPopupData: ILoadingPopupData;
-  private _cargoNominations: ICargoNominationValueObject[];
   private _openLoadingPopup = false;
   private _openAPITemperatureHistoryPopup = false;
+  private totalQuantity = 0;
 
 
   // public methods

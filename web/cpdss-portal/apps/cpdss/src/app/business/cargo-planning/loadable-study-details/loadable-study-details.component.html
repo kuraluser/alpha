@@ -9,8 +9,8 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <label
-                        class="col-form-label pr-10 text-uppercase">{{ 'LOADABLE_STUDY_DETAILS_VOYAGE_DROPDOWN_LABEL'  | translate }}</label>
+                    <label class="col-form-label pr-10 text-uppercase">{{ 'LOADABLE_STUDY_DETAILS_VOYAGE_DROPDOWN_LABEL'
+                        | translate }}</label>
 
                     <p-dropdown id="voyage_dropdown" styleClass="dropdown-w-180" [options]="voyages"
                         [(ngModel)]="selectedVoyage" filter="true" optionLabel="voyageNo"
@@ -22,7 +22,8 @@
             <a class="tab-btn" *cpdssPortalPermission="cargoNominationTabPermissionContext"
                 [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION}"
                 (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION)">{{'CARGO_NOMINATION' | translate}}
-                <div *ngIf="(cargoNominationComplete$|async) && dischargingPorts?.length> 0  else incomplete" class="pt-5">
+                <div *ngIf="(cargoNominationComplete$|async) && dischargingPorts?.length> 0  else incomplete"
+                    class="pt-5">
                     <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
                 </div>
                 <ng-template #incomplete>
@@ -82,30 +83,31 @@
 
 
             <label class="pr-20">{{'LOADABLE_STUDY_DETAILS_LOADABLE_QUANTITY_LABEL'| translate}}
-                <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button" [disabled]="!loadableStudies?.length"
-                    (click)="showLoadableQuantityPopup()"
-                    *cpdssPortalPermission="loadableQuantityPermissionContext">{{loadableQuantityNew | number : '1.2-2'}}</button></label>
-
-
-            <label class="">{{'CARGO_NOMINATION_TOTAL_QUANTITY'| translate}}
-                <span class="ml-10 text-secondary">{{totalQuantity$|async}}</span></label>
+                <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button"
+                    [disabled]="!loadableStudies?.length" (click)="showLoadableQuantityPopup()"
+                    *cpdssPortalPermission="loadableQuantityPermissionContext">{{loadableQuantityNew | number :
+                    '1.2-2'}}</button>
+            </label>
         </div>
-        <div class="pr-15"  *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
-            <button id="commingle_btn" class="btn btn-main  ml-10" type="button"
-                (click)="showComminglePopup()" [disabled]="showCommingleButton || !loadableStudies?.length" *cpdssPortalPermission="addCommingleBtnPermissionContext">{{'COMMINGLE_BUTTON' | translate}}</button>
+        <div class="pr-15" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
+            <button id="commingle_btn" class="btn btn-main  ml-10" type="button" (click)="showComminglePopup()"
+                [disabled]="showCommingleButton || !loadableStudies?.length"
+                *cpdssPortalPermission="addCommingleBtnPermissionContext">{{'COMMINGLE_BUTTON' | translate}}</button>
         </div>
         <div class="pr-15">
             <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
-                <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right" [ngClass]="{'disabled': !loadableStudies?.length}"
+                <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
+                    [ngClass]="{'disabled': !loadableStudies?.length}"
                     *cpdssPortalPermission="addCargoBtnPermissionContext"
                     (click)="addCargoNomination()">{{'ADD_CARGO_BUTTON_LABEL'| translate}}</a>
             </ng-container>
         </div>
         <div class="pr-15">
             <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">
-                <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right" [ngClass]="{'disabled': !loadableStudies?.length}"
-                    *cpdssPortalPermission="addPortBtnPermissionContext"
-                    (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'| translate}}</a>
+                <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
+                    [ngClass]="{'disabled': !loadableStudies?.length}"
+                    *cpdssPortalPermission="addPortBtnPermissionContext" (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'|
+                    translate}}</a>
             </ng-container>
         </div>
     </div>
@@ -115,7 +117,8 @@
             <div class="sidebar-content">
                 <cpdss-portal-side-panel-loadable-study-list [vesselInfo]="vesselInfo" [voyage]="selectedVoyage"
                     [(selectedLoadableStudy)]="selectedLoadableStudy" [loadableStudies]="loadableStudies"
-                    (deleteLoadableStudy)="onDeleteLoadableStudy($event)" (selectedLoadableStudyChange)="onLoadableStudyChange($event)">
+                    (deleteLoadableStudy)="onDeleteLoadableStudy($event)"
+                    (selectedLoadableStudyChange)="onLoadableStudyChange($event)">
                 </cpdss-portal-side-panel-loadable-study-list>
             </div>
         </div>
@@ -141,18 +144,28 @@
                 </cpdss-portal-on-board-quantity>
 
 
-                <div class="row" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION || selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">
+                <div class="row"
+                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION || selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">
                     <div class="col-sm-12" *ngIf="loadableStudies?.length">
                         <label class="col-form-label pr-10">{{'DISCHARGE_DROPDOWN_LABEL' | translate}}</label>
-                        <p-multiSelect id="discharge_ports" [(ngModel)]="dischargingPorts" [options]="ports"
-                            *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION" optionLabel="name"
-                            placeholder="{{ 'DISCHARGE_DROPDOWN_SELECT_PORT'| translate }}"
-                            (onChange)="onDischargePortChange($event)" [selectionLimit]="5">
-                        </p-multiSelect>
-                        <span class="col error-column" *ngIf="!isSelectedDischargePort">
-                            <cpdss-portal-validation-error [errors]="fieldError()"
-                                [errorMessages]="errorMesages.dischargePort"></cpdss-portal-validation-error>
-                        </span>
+                        <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
+                            <p-multiSelect id="discharge_ports" [(ngModel)]="dischargingPorts" [options]="ports"
+                                optionLabel="name" placeholder="{{ 'DISCHARGE_DROPDOWN_SELECT_PORT'| translate }}"
+                                (onChange)="onDischargePortChange($event)" [selectionLimit]="5">
+                            </p-multiSelect>
+                            <span class="col error-column" *ngIf="!isSelectedDischargePort">
+                                <cpdss-portal-validation-error [errors]="fieldError()"
+                                    [errorMessages]="errorMesages.dischargePort"></cpdss-portal-validation-error>
+                            </span>
+                            <ng-container *ngIf="dischargingPorts && dischargingPorts.length">
+                                <label class="col-form-label pr-10 ml-15">{{'CARGO_DISCHARGE_FIRST' | translate}}</label>
+                                <p-dropdown id="cargo_discharge" [(ngModel)]="selectedDischargeCargo"
+                                    [options]="dischargeCargos" optionLabel="name"
+                                    placeholder="{{ 'CARGO_DISCHARGE_SELECT'| translate }}"
+                                    (onChange)="onDischargeCargoChange($event)">
+                                </p-dropdown>
+                            </ng-container>
+                        </ng-container>
                         <span *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">{{dischargingPortsNames}}</span>
                     </div>
                 </div>

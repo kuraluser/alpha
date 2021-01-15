@@ -231,6 +231,7 @@ export class LoadableStudyDetailsTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
         filterField: 'quantity.value',
         fieldPlaceholder: 'ENTER_QUANTITY',
+        showTotal: true,
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR'
         }

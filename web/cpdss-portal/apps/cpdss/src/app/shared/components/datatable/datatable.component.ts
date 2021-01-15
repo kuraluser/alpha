@@ -79,6 +79,9 @@ export class DatatableComponent implements OnInit {
   @Input() tableRowReOrder = false;
 
   @Input() tableId: string;
+  
+  @Input() showTotal = false;
+  
 
   @Input() loading = false;
 
@@ -629,7 +632,27 @@ export class DatatableComponent implements OnInit {
     return formControl.disabled;
 
   }
+
+  /**
+ * Get the total value of a column
+ * @param col 
+ * @param index 
+ */
+  getTotal(col: IDataTableColumn, index: number) {
+    if (!index)
+      return "Total"
+    else if (col.showTotal && col.fieldType == this.fieldType.NUMBER) {
+      let total = 0;
+      this.value.forEach(row => {
+        if(row[col.field]){
+          const value = row[col.field].value ?? 0;
+          total += value
+        }
+      })
+      return total;
+    }
+    return ""
+  }
+
 }
-
-
 

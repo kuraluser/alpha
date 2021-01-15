@@ -87,7 +87,7 @@
                                     <input *ngSwitchCase="filterType.ARRAY" type="text" id="{{subCol.field+'_filter'}}"
                                         (input)="datatable.filter($event.target.value.trim(), subCol.arrayFilterField, subCol.filterMatchMode)"
                                         [placeholder]="subCol.filterPlaceholder| translate" class="p-column-filter">
-                                    <p-calendar appendTo="body" *ngSwitchCase="filterType.DATE"                       
+                                    <p-calendar appendTo="body" *ngSwitchCase="filterType.DATE"
                                         [maxDate]="subCol.filterFieldMaxvalue"
                                         (onSelect)="onDateSelect($event, subCol?.filterField, subCol?.filterMatchMode)"
                                         (onInput)="onDateFilter($event.target.value, subCol?.filterField, subCol?.filterMatchMode)"
@@ -119,8 +119,8 @@
                             [pEditableColumnRowIndex]="rowIndex" (click)="onClick($event, rowData, rowIndex, col)">
                             <div [attr.tabindex]="col.field !== 'actions' && col.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+rowIndex : null"
                                 (keyup)="onFocus($event, rowData, rowIndex, col, colIndex)">
-                                <span
-                                    *ngSwitchCase="fieldType.SLNO">{{rowData[col.field] ? rowData[col.field] : rowIndex+ 1}}</span>
+                                <span *ngSwitchCase="fieldType.SLNO">{{rowData[col.field] ? rowData[col.field] :
+                                    rowIndex+ 1}}</span>
                                 <span *ngSwitchCase="fieldType.ICON"><i
                                         class="{{col.fieldValueIcon+'-'+rowData[col.field]}}"></i></span>
 
@@ -156,7 +156,8 @@
 
                                 <ng-container *ngSwitchCase="fieldType.NUMBER">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
-                                        <input type="text" cpdssPortalNumberDecimal class="form-control" [formControlName]="col.field"
+                                        <input type="text" cpdssPortalNumberDecimal class="form-control"
+                                            [formControlName]="col.field"
                                             [placeholder]="col.fieldPlaceholder| translate"
                                             (change)="onChange($event, rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}">
@@ -168,7 +169,8 @@
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
-                                        <span>{{rowData[col.field]?.value | number: col?.numberFormat}}{{rowData[col.field]?.value? col.fieldSuffix
+                                        <span>{{rowData[col.field]?.value | number:
+                                            col?.numberFormat}}{{rowData[col.field]?.value? col.fieldSuffix
                                             : ''}}
                                             <i *ngIf="rowData[col.field]?.value && col.fieldValueIcon"
                                                 class="{{col.fieldValueIcon}}"
@@ -183,7 +185,8 @@
                                             optionLabel="{{col.fieldOptionLabel}}"
                                             [placeholder]="col.fieldPlaceholder| translate"
                                             (onChange)="onChange($event, rowData, rowIndex, col)"
-                                            id="{{col.field+'_'+rowIndex}}" [virtualScroll]="col.virtualScroll" itemSize="30">
+                                            id="{{col.field+'_'+rowIndex}}" [virtualScroll]="col.virtualScroll"
+                                            itemSize="30">
                                         </p-dropdown>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
@@ -242,13 +245,16 @@
                                 <ng-container *ngSwitchCase="fieldType.DATERANGE">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <p-calendar appendTo="body" [showButtonBar]="true" [readonlyInput]="true"
-                                             [disabled]="disabledField(rowIndex, col.field)" [hidden]= "disabledField(rowIndex, col.field)"
+                                            [disabled]="disabledField(rowIndex, col.field)"
+                                            [hidden]="disabledField(rowIndex, col.field)"
                                             (onSelect)="onDateRangeSelect($event, rowIndex, col.field, rowData)"
                                             (onClearClick)="onClearDateRange($event, rowIndex, col.field,rowData)"
                                             [dateFormat]="col.dateFormat" selectionMode="range"
                                             [placeholder]="col.fieldPlaceholder| translate" [minDate]="col.minDate"
-                                            id="{{col.field+'_'+rowIndex}}" [hideOnDateTimeSelect]="false" #coldaterange>
-                                            <p-footer><button class="btn btn-main" (click)="coldaterange.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                                            id="{{col.field+'_'+rowIndex}}" [hideOnDateTimeSelect]="false"
+                                            #coldaterange>
+                                            <p-footer><button class="btn btn-main"
+                                                    (click)="coldaterange.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
                                                     |
                                                     translate}}</button></p-footer>
                                         </p-calendar>
@@ -276,7 +282,8 @@
                                             [dateFormat]="col.dateFormat ? col.dateFormat : 'dd-mm-yy'"
                                             (onClearClick)="onDateTimeNotSelected($event, rowIndex, col.field,rowData)"
                                             [hideOnDateTimeSelect]="false" #coldatetime>
-                                            <p-footer><button class="btn btn-main" (click)="coldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
+                                            <p-footer><button class="btn btn-main"
+                                                    (click)="coldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
                                                     translate}}</button></p-footer>
                                         </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
@@ -299,7 +306,8 @@
                             (click)="onClick($event, rowData, rowIndex, subCol)">
                             <div [attr.tabindex]="subCol.field !== 'actions' && subCol.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+subColIndex+rowIndex : null"
                                 (keyup)="onFocus($event, rowData, rowIndex, subCol, colIndex+subColIndex)">
-                                <span *ngSwitchCase="fieldType.SLNO">{{rowData[col.field] ? rowData[col.field] : rowIndex+ 1}}</span>
+                                <span *ngSwitchCase="fieldType.SLNO">{{rowData[col.field] ? rowData[col.field] :
+                                    rowIndex+ 1}}</span>
                                 <span *ngSwitchCase="fieldType.ICON"><i
                                         class="{{subCol.fieldValueIcon+'-'+rowData[subCol.field]}}"></i></span>
 
@@ -335,7 +343,8 @@
 
                                 <ng-container *ngSwitchCase="fieldType.NUMBER">
                                     <ng-container *ngIf="editMode && rowData[subCol.field]?.isEditMode">
-                                        <input type="text" cpdssPortalNumberDecimal class="form-control" [formControlName]="subCol.field"
+                                        <input type="text" cpdssPortalNumberDecimal class="form-control"
+                                            [formControlName]="subCol.field"
                                             [placeholder]="subCol.fieldPlaceholder| translate"
                                             (change)="onChange($event, rowData, rowIndex, subCol)"
                                             id="{{subCol.field+'_'+rowIndex}}">
@@ -347,7 +356,8 @@
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!editMode || !rowData[subCol.field]?.isEditMode">
-                                        <span>{{rowData[subCol.field]?.value | number: subCol?.numberFormat}}{{rowData[subCol.field]?.value?
+                                        <span>{{rowData[subCol.field]?.value | number:
+                                            subCol?.numberFormat}}{{rowData[subCol.field]?.value?
                                             subCol.fieldSuffix : ''}}
                                             <i *ngIf="rowData[subCol.field]?.value && subCol.fieldValueIcon"
                                                 class="{{subCol.fieldValueIcon}}"
@@ -362,7 +372,8 @@
                                             [filter]="subCol.listFilter" optionLabel="{{subCol.fieldOptionLabel}}"
                                             [placeholder]="subCol.fieldPlaceholder| translate"
                                             (onChange)="onChange($event, rowData, rowIndex, subCol)"
-                                            id="{{subCol.field+'_'+rowIndex}}" [virtualScroll]="subCol.virtualScroll" itemSize="30">
+                                            id="{{subCol.field+'_'+rowIndex}}" [virtualScroll]="subCol.virtualScroll"
+                                            itemSize="30">
                                         </p-dropdown>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, subCol.field)"
                                             [errorMessages]="subCol.errorMessages">
@@ -468,6 +479,13 @@
                             </div>
                         </td>
                     </ng-container>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer" let-columns>
+                <tr *ngIf="showTotal">
+                    <td *ngFor="let col of columns; let i = index">
+                    {{getTotal(col, i)}}
+                    </td>
                 </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage" let-columns>

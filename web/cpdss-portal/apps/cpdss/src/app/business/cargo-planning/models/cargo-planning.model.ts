@@ -91,9 +91,9 @@ export interface ICargoPortsResponse {
  */
 export interface ICargo {
     id: number;
-    name: string;
-    abbreviation: string;
-    api: number;
+    name?: string;
+    abbreviation?: string;
+    api?: number;
     ports?: IPort[];
 }
 

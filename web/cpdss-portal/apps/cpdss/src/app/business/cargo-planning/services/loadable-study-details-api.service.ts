@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IPort, IPortList, IPortsDetailsResponse, IPortsResponse, IResponse } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, PortsDB, IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, OHQDB, IPortOBQResponse, IPortOBQTankDetail, OBQDB } from '../models/cargo-planning.model';
+import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, PortsDB, IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, OHQDB, IPortOBQResponse, IPortOBQTankDetail, OBQDB, ICargoNominationValueObject } from '../models/cargo-planning.model';
 import { IDischargingPortIds } from '../models/loadable-study-list.model';
 
 /**
@@ -22,7 +22,15 @@ export class LoadableStudyDetailsApiService {
     private _portsDb: PortsDB;
     private _ohqDb: OHQDB;
     private _obqDb: OBQDB;
-
+    private  _cargoNominations: ICargoNominationValueObject[];
+    public cargoNominationChange = new Subject();
+    get cargoNominations(){
+        return this._cargoNominations;
+    }
+    set cargoNominations(cargoNominations: ICargoNominationValueObject[]){
+        this._cargoNominations = cargoNominations;
+        this.cargoNominationChange.next(true);
+    }
     constructor(private commonApiService: CommonApiService) {
         this._cargoNominationDb = new CargoNominationDB();
         this._portsDb = new PortsDB();

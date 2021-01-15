@@ -43,6 +43,7 @@ export interface IDataTableColumn {
     subColumns? : IDataTableColumn[],
     subHeader?: string;
     numberFormat?: string;
+    showTotal?: boolean;
 }
 
 /**

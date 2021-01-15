@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LOADABLE_STUDY_DETAILS_TABS } from '../models/cargo-planning.model';
+import { ICargo, LOADABLE_STUDY_DETAILS_TABS } from '../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../services/loadable-study-details-transformation.service';
 import { LoadableStudyDetailsApiService } from '../services/loadable-study-details-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -83,6 +83,9 @@ export class LoadableStudyDetailsComponent implements OnInit {
   obqComplete$: Observable<boolean>;
   errorMesages: any;
   isSelectedDischargePort = true;
+  selectedDischargeCargo: ICargo;
+  dischargeCargos: ICargo[] = [];
+
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -196,6 +199,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   async getLoadableStudyDetails(vesselId: number, voyageId: number, loadableStudyId: number) {
     const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR']).toPromise();
     this.ngxSpinnerService.show();
+    this.selectedDischargeCargo = { id: this.selectedLoadableStudy.dischargingCargoId }
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
     // if no loadable study is selected set 1st loadable study as selected one and reload
@@ -235,6 +239,10 @@ export class LoadableStudyDetailsComponent implements OnInit {
     this.portsComplete$ = this.loadableStudyDetailsTransformationService.portValidity$;
     this.ohqComplete$ = this.loadableStudyDetailsTransformationService.ohqValidity$;
     this.obqComplete$ = this.loadableStudyDetailsTransformationService.obqValidity$;
+    this.loadableStudyDetailsApiService.cargoNominationChange.asObservable()
+      .subscribe(() => {
+        this.onCargoNominationChange();
+      })
   }
 
   /**
@@ -255,17 +263,9 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @memberof LoadableStudyDetailsComponent
    */
   async onDischargePortChange(event) {
-    if (this.dischargingPorts.length < 5) {
-      this.ngxSpinnerService.show();
-      this.selectedLoadableStudy.dischargingPortIds = this.dischargingPorts?.map(port => port.id);
-      const dischargingPortIds: IDischargingPortIds = { portIds: this.selectedLoadableStudy.dischargingPortIds };
-      const translationKeys = await this.translateService.get(['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS', 'LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY']).toPromise();
-      const res = await this.loadableStudyDetailsApiService.setLoadableStudyDischargingPorts(this.vesselId, this.voyageId, this.loadableStudyId, dischargingPortIds).toPromise();
-      if (res?.responseStatus?.status === "200") {
-        this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY'] });
-      }
-      this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
-      this.ngxSpinnerService.hide();
+    if (!event.originalEvent?.target?.className.toString().includes('disabled')) {
+      const sucessKeys = ['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS', 'LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY']
+      this.updateDischargeData(sucessKeys)
     }
   }
 
@@ -422,6 +422,55 @@ export class LoadableStudyDetailsComponent implements OnInit {
     else {
       return { required: true };
     }
+  }
+
+  /**
+   * Actions to do when cargo nomination data changes
+   */
+  onCargoNominationChange() {
+    this.dischargeCargos = []
+    this.loadableStudyDetailsApiService.cargoNominations.forEach(cargoNomination => {
+      if (this.dischargeCargos.indexOf(cargoNomination.cargo.value) == -1)
+        this.dischargeCargos.push(cargoNomination.cargo.value)
+    });
+    if (this.selectedDischargeCargo && !this.selectedDischargeCargo.name) {
+      this.selectedDischargeCargo = this.dischargeCargos.find(cargo => cargo.id == this.selectedDischargeCargo.id)
+    }
+  }
+
+
+  /**
+ * Handler for discharge cargo dropdown change
+ *
+ * @param {Event} event
+ * @memberof LoadableStudyDetailsComponent
+ */
+  async onDischargeCargoChange(event) {
+    console.log(event)
+    const sucessKeys = ['LOADABLE_STUDY_DISCHARGING_CARGO_UPDATE_SUCCESS', 'LOADABLE_STUDY_DISCHARGING_CARGO_UPDATE_SUCCESSFULLY']
+    this.updateDischargeData(sucessKeys)
+  }
+
+/**
+ * Method to save discharge data for loadable study
+ *
+ * @param {string[]} sucessKeys
+ * @memberof LoadableStudyDetailsComponent
+ */
+  async updateDischargeData(sucessKeys: string[]) {
+    this.ngxSpinnerService.show();
+    this.selectedLoadableStudy.dischargingPortIds = this.dischargingPorts?.map(port => port.id);
+    const dischargingPortIds: IDischargingPortIds = {
+      portIds: this.selectedLoadableStudy.dischargingPortIds,
+      dischargingCargoId: this.selectedDischargeCargo?.id ?? null
+    };
+    const translationKeys = await this.translateService.get(sucessKeys).toPromise();
+    const res = await this.loadableStudyDetailsApiService.setLoadableStudyDischargingPorts(this.vesselId, this.voyageId, this.loadableStudyId, dischargingPortIds).toPromise();
+    if (res?.responseStatus?.status === "200") {
+      this.messageService.add({ severity: 'success', summary: translationKeys[sucessKeys[0]], detail: translationKeys[sucessKeys[1]] });
+    }
+    this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
+    this.ngxSpinnerService.hide();
   }
 
   /**

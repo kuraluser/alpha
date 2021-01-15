@@ -19,6 +19,7 @@ export class LoadableStudy {
     public maxWaterTemperature: number;
     public dischargingPortIds?: number[];
     loadableStudyAttachment?: ILoadableStudyAttachment[];
+    dischargingCargoId: number;
 }
 
 /**
@@ -40,6 +41,7 @@ export interface ILoadableStudyAttachment {
  */
 export interface IDischargingPortIds {
     portIds: number[];
+    dischargingCargoId: number;
 }
 
 /**

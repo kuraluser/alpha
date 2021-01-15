@@ -1003,7 +1003,8 @@ input[type=number] {
     }
     &.api, &.temperature{
       > div{
-        width: 60px;
+        min-width: 60px!important;
+        max-width: 60px;
         height: 25px;
         line-height: 25px;
         .icon-api-temp{
@@ -1017,6 +1018,7 @@ input[type=number] {
 .cargo-nomination-table .p-datatable table{
   min-width: 100%!important;
   // table-layout: auto!important;
+  width: auto!important;
   td{
     .icon-api-temp{
       position: absolute;
@@ -1068,7 +1070,16 @@ input[type=number] {
       }
     }
   }
+ .p-datatable-tbody{
+    tr{
+    td{
+      > div{
+        min-width: 85px;
+      }
+    }
+  }
 }
+} 
 .pointer{
   cursor: pointer;
 }
@@ -1213,7 +1224,8 @@ td.lay-can {
 }
 
 td.sl div{
-  width: 40px;
+  min-width: 40px!important;
+  max-width: 40px;
 }
 
 .loadable-quantity-pop-up{ 
