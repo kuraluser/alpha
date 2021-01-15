@@ -1121,8 +1121,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 DateTimeFormatter.ofPattern(LAY_CAN_FORMAT)));
       }
       List<CargoOperation> operationEntityList =
-          this.cargoOperationRepository.findByIsActiveOrderById(
-               true);
+          this.cargoOperationRepository.findByIsActiveOrderById(true);
       for (CargoOperation entity : operationEntityList) {
         replyBuilder.addOperations(this.createOperationDetail(entity));
       }
@@ -1257,54 +1256,62 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Set<Long> portList =
           this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
               loadableStudy.get(), true);
-      long firstPort = portList.iterator().next();
-      List<OnHandQuantity> onHandQuantityList =
-          this.onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudy.get(), true);
 
-      BigDecimal foOnboard =
-          BigDecimal.valueOf(
-              onHandQuantityList.stream()
-                  .filter(
-                      ohq ->
-                          ohq.getFuelTypeXId() == FUEL_OIL_TANK_CATEGORY_ID
-                              && ohq.getPortXId() == firstPort
-                              && ohq.getIsActive() == true)
-                  .mapToLong(
-                      foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
-                  .sum());
-      BigDecimal doOnboard =
-          BigDecimal.valueOf(
-              onHandQuantityList.stream()
-                  .filter(
-                      ohq ->
-                          ohq.getFuelTypeXId() == DIESEL_OIL_TANK_CATEGORY_ID
-                              && ohq.getPortXId() == firstPort
-                              && ohq.getIsActive() == true)
-                  .mapToLong(
-                      foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
-                  .sum());
-      BigDecimal freshWaterOnBoard =
-          BigDecimal.valueOf(
-              onHandQuantityList.stream()
-                  .filter(
-                      ohq ->
-                          ohq.getFuelTypeXId() == FRESH_WATER_TANK_CATEGORY_ID
-                              && ohq.getPortXId() == firstPort
-                              && ohq.getIsActive() == true)
-                  .mapToLong(
-                      foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
-                  .sum());
-      BigDecimal boileWaterOnBoard =
-          BigDecimal.valueOf(
-              onHandQuantityList.stream()
-                  .filter(
-                      ohq ->
-                          ohq.getFuelTypeXId() == FRESH_WATER_TANK_CATEGORY_ID
-                              && ohq.getPortXId() == firstPort
-                              && ohq.getIsActive() == true)
-                  .mapToLong(
-                      foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
-                  .sum());
+      BigDecimal foOnboard = null;
+      BigDecimal doOnboard = null;
+      BigDecimal freshWaterOnBoard = null;
+      BigDecimal boileWaterOnBoard = null;
+
+      if (!portList.isEmpty()) {
+        long firstPort = portList.iterator().next();
+        List<OnHandQuantity> onHandQuantityList =
+            this.onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudy.get(), true);
+
+        foOnboard =
+            BigDecimal.valueOf(
+                onHandQuantityList.stream()
+                    .filter(
+                        ohq ->
+                            ohq.getFuelTypeXId() == FUEL_OIL_TANK_CATEGORY_ID
+                                && ohq.getPortXId() == firstPort
+                                && ohq.getIsActive() == true)
+                    .mapToLong(
+                        foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
+                    .sum());
+        doOnboard =
+            BigDecimal.valueOf(
+                onHandQuantityList.stream()
+                    .filter(
+                        ohq ->
+                            ohq.getFuelTypeXId() == DIESEL_OIL_TANK_CATEGORY_ID
+                                && ohq.getPortXId() == firstPort
+                                && ohq.getIsActive() == true)
+                    .mapToLong(
+                        foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
+                    .sum());
+        freshWaterOnBoard =
+            BigDecimal.valueOf(
+                onHandQuantityList.stream()
+                    .filter(
+                        ohq ->
+                            ohq.getFuelTypeXId() == FRESH_WATER_TANK_CATEGORY_ID
+                                && ohq.getPortXId() == firstPort
+                                && ohq.getIsActive() == true)
+                    .mapToLong(
+                        foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
+                    .sum());
+        boileWaterOnBoard =
+            BigDecimal.valueOf(
+                onHandQuantityList.stream()
+                    .filter(
+                        ohq ->
+                            ohq.getFuelTypeXId() == FRESH_WATER_TANK_CATEGORY_ID
+                                && ohq.getPortXId() == firstPort
+                                && ohq.getIsActive() == true)
+                    .mapToLong(
+                        foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
+                    .sum());
+      }
 
       VesselRequest replyBuilder =
           VesselRequest.newBuilder()
