@@ -425,11 +425,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableQuantityRequest loadableQuantityRequest,
       StreamObserver<LoadableQuantityReply> responseObserver) {
     LoadableQuantityReply loadableQuantityReply = null;
+    LoadableQuantity loadableQuantity = null;
     try {
       Optional<LoadableStudy> loadableStudy =
           loadableStudyRepository.findById((Long) loadableQuantityRequest.getLoadableStudyId());
       if (loadableStudy.isPresent()) {
-        LoadableQuantity loadableQuantity = new LoadableQuantity();
+        if (0 == loadableQuantityRequest.getId()) {
+          loadableQuantity = new LoadableQuantity();
+        } else {
+          loadableQuantity =
+              this.loadableQuantityRepository.findByIdAndIsActive(
+                  loadableQuantityRequest.getId(), true);
+          if (null == loadableQuantity) {
+            throw new GenericServiceException(
+                "Loadable quantity does not exist",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+        }
+
         loadableQuantity.setConstant(new BigDecimal(loadableQuantityRequest.getConstant()));
         loadableQuantity.setDeadWeight(new BigDecimal(loadableQuantityRequest.getDwt()));
         loadableQuantity.setDisplacementAtDraftRestriction(
@@ -515,6 +529,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getFoConsumptionPerDay()));
         loadableQuantity.setIsActive(true);
+
         loadableQuantity = loadableQuantityRepository.save(loadableQuantity);
 
         // when Db save is complete we return to client a success message
@@ -1106,8 +1121,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 DateTimeFormatter.ofPattern(LAY_CAN_FORMAT)));
       }
       List<CargoOperation> operationEntityList =
-          this.cargoOperationRepository.findByIdNotAndIsActiveOrderById(
-              DISCHARGING_OPERATION_ID, true);
+          this.cargoOperationRepository.findByIsActiveOrderById(
+               true);
       for (CargoOperation entity : operationEntityList) {
         replyBuilder.addOperations(this.createOperationDetail(entity));
       }
@@ -1238,6 +1253,59 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+
+      Set<Long> portList =
+          this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+              loadableStudy.get(), true);
+      long firstPort = portList.iterator().next();
+      List<OnHandQuantity> onHandQuantityList =
+          this.onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudy.get(), true);
+
+      BigDecimal foOnboard =
+          BigDecimal.valueOf(
+              onHandQuantityList.stream()
+                  .filter(
+                      ohq ->
+                          ohq.getFuelTypeXId() == FUEL_OIL_TANK_CATEGORY_ID
+                              && ohq.getPortXId() == firstPort
+                              && ohq.getIsActive() == true)
+                  .mapToLong(
+                      foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
+                  .sum());
+      BigDecimal doOnboard =
+          BigDecimal.valueOf(
+              onHandQuantityList.stream()
+                  .filter(
+                      ohq ->
+                          ohq.getFuelTypeXId() == DIESEL_OIL_TANK_CATEGORY_ID
+                              && ohq.getPortXId() == firstPort
+                              && ohq.getIsActive() == true)
+                  .mapToLong(
+                      foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
+                  .sum());
+      BigDecimal freshWaterOnBoard =
+          BigDecimal.valueOf(
+              onHandQuantityList.stream()
+                  .filter(
+                      ohq ->
+                          ohq.getFuelTypeXId() == FRESH_WATER_TANK_CATEGORY_ID
+                              && ohq.getPortXId() == firstPort
+                              && ohq.getIsActive() == true)
+                  .mapToLong(
+                      foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
+                  .sum());
+      BigDecimal boileWaterOnBoard =
+          BigDecimal.valueOf(
+              onHandQuantityList.stream()
+                  .filter(
+                      ohq ->
+                          ohq.getFuelTypeXId() == FRESH_WATER_TANK_CATEGORY_ID
+                              && ohq.getPortXId() == firstPort
+                              && ohq.getIsActive() == true)
+                  .mapToLong(
+                      foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
+                  .sum());
+
       VesselRequest replyBuilder =
           VesselRequest.newBuilder()
               .setVesselId(loadableStudy.get().getVesselXId())
@@ -1277,6 +1345,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         LoadableQuantityRequest.Builder loadableQuantityRequest =
             LoadableQuantityRequest.newBuilder();
+        loadableQuantityRequest.setId(loadableQuantity.get(0).getId());
         Optional.ofNullable(loadableQuantity.get(0).getDisplacementAtDraftRestriction())
             .ifPresent(
                 disp -> loadableQuantityRequest.setDisplacmentDraftRestriction(disp.toString()));
@@ -1290,17 +1359,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(dist -> loadableQuantityRequest.setDistanceFromLastPort(dist.toString()));
         Optional.ofNullable(loadableQuantity.get(0).getDeadWeight())
             .ifPresent(deadWeight -> loadableQuantityRequest.setDwt(deadWeight.toString()));
-        Optional.ofNullable(loadableQuantity.get(0).getEstimatedDOOnBoard())
-            .ifPresent(
-                estDOOnBoard -> loadableQuantityRequest.setEstDOOnBoard(estDOOnBoard.toString()));
-        Optional.ofNullable(loadableQuantity.get(0).getEstimatedFOOnBoard())
-            .ifPresent(
-                estFOOnBoard -> loadableQuantityRequest.setEstFOOnBoard(estFOOnBoard.toString()));
-        Optional.ofNullable(loadableQuantity.get(0).getEstimatedFWOnBoard())
-            .ifPresent(
-                estFreshWaterOnBoard ->
-                    loadableQuantityRequest.setEstFreshWaterOnBoard(
-                        estFreshWaterOnBoard.toString()));
+
+        loadableQuantityRequest.setEstFOOnBoard(String.valueOf(foOnboard));
+        loadableQuantityRequest.setEstDOOnBoard(String.valueOf(doOnboard));
+        loadableQuantityRequest.setEstFreshWaterOnBoard(String.valueOf(freshWaterOnBoard));
+        loadableQuantityRequest.setBoilerWaterOnBoard(String.valueOf(boileWaterOnBoard));
+
         Optional.ofNullable(loadableQuantity.get(0).getEstimatedSagging())
             .ifPresent(estSagging -> loadableQuantityRequest.setEstSagging(estSagging.toString()));
         Optional.ofNullable(loadableQuantity.get(0).getEstimatedSeaDensity())
@@ -1337,10 +1401,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         DateTimeFormatter.ofPattern(DATE_FORMAT).format(updateDateAndTime)));
         Optional.ofNullable(loadableQuantity.get(0).getPortId())
             .ifPresent(portId -> loadableQuantityRequest.setPortId(portId.longValue()));
-        Optional.ofNullable(loadableQuantity.get(0).getBoilerWaterOnBoard())
-            .ifPresent(
-                boilerWaterOnBoard ->
-                    loadableQuantityRequest.setBoilerWaterOnBoard(boilerWaterOnBoard.toString()));
+
         Optional.ofNullable(loadableQuantity.get(0).getBallast())
             .ifPresent(ballast -> loadableQuantityRequest.setBallast(ballast.toString()));
         Optional.ofNullable(loadableQuantity.get(0).getRunningHours())
@@ -4540,6 +4601,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 request.getDuplicatedFromId(), true);
 
         if (!cargoNominationList.isEmpty()) {
+          List<CargoNomination> crgoNominationList = new ArrayList<CargoNomination>();
           cargoNominationList.forEach(
               cargoNomination -> {
                 CargoNomination crgoNomination = new CargoNomination();
@@ -4550,7 +4612,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 BeanUtils.copyProperties(cargoNomination, crgoNomination);
                 crgoNomination.setLoadableStudyXId(entity.getId());
                 crgoNomination.setId(null);
-
+                crgoNominationList.add(crgoNomination);
+                crgoNomination.setCargoNominationPortDetails(
+                    new HashSet<CargoNominationPortDetails>());
                 oldCargoNominationPortDetails.forEach(
                     oldCargo -> {
                       CargoNominationPortDetails cargoNominationPortDetails =
@@ -4558,10 +4622,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       BeanUtils.copyProperties(oldCargo, cargoNominationPortDetails);
                       cargoNominationPortDetails.setId(null);
                       cargoNominationPortDetails.setCargoNomination(crgoNomination);
-                      this.cargoNominationOperationDetailsRepository.save(
-                          cargoNominationPortDetails);
+                      crgoNomination
+                          .getCargoNominationPortDetails()
+                          .add(cargoNominationPortDetails);
                     });
               });
+          this.cargoNominationRepository.saveAll(crgoNominationList);
         }
 
         List<LoadableStudyPortRotation> loadableStudyPortRotationList =
@@ -4672,8 +4738,26 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.synopticalTableRepository.saveAll(SynopticalTables);
         }
 
-      } catch (Exception e) {
+        List<LoadableStudyAttachments> loadableStudyAttachmentsList =
+            this.loadableStudyAttachmentsRepository.findByLoadableStudyXIdAndIsActive(
+                request.getDuplicatedFromId(), true);
 
+        if (!loadableStudyAttachmentsList.isEmpty()) {
+          List<LoadableStudyAttachments> loadableStudyAttachments =
+              new ArrayList<LoadableStudyAttachments>();
+
+          loadableStudyAttachmentsList.forEach(
+              loadableStudyAttachment -> {
+                entityManager.detach(loadableStudyAttachment);
+                loadableStudyAttachment.setId(null);
+                loadableStudyAttachment.setLoadableStudy(entity);
+                loadableStudyAttachments.add(loadableStudyAttachment);
+              });
+          this.loadableStudyAttachmentsRepository.saveAll(loadableStudyAttachments);
+        }
+
+      } catch (Exception e) {
+        log.error("GenericServiceException in checkDuplicatedFromAndCloneEntity", e);
         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         throw new GenericServiceException(
             "Failed to save duplicate entries", CommonErrorCodes.E_GEN_INTERNAL_ERR, null);

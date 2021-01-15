@@ -1208,6 +1208,17 @@ public class LoadableStudyController {
     return remoteAddr;
   }
 
+  /**
+   * Download loadable study attachment
+   *
+   * @param vesselId
+   * @param voyageId
+   * @param loadableStudyId
+   * @param attachmentId
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
   @GetMapping(
       value =
           "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/attachments/{attachmentId}")
@@ -1258,6 +1269,15 @@ public class LoadableStudyController {
     }
   }
 
+  /**
+   * Save comment
+   *
+   * @param loadablePatternId
+   * @param request
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
   @PostMapping(
       value =
           "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-patten/{loadablePatternId}/comment",

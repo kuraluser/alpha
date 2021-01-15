@@ -248,6 +248,7 @@ public class LoadableStudyService {
     LoadableQuantityResponse loadableQuantityResponse = new LoadableQuantityResponse();
     LoadableQuantityRequest.Builder builder = LoadableQuantityRequest.newBuilder();
     builder.setConstant(loadableQuantity.getConstant());
+    Optional.ofNullable(loadableQuantity.getLoadableQuantityId()).ifPresent(builder::setId);
     Optional.ofNullable(loadableQuantity.getDisplacmentDraftRestriction())
         .ifPresent(builder::setDisplacmentDraftRestriction);
     Optional.ofNullable(loadableQuantity.getDistanceFromLastPort())
@@ -1021,7 +1022,8 @@ public class LoadableStudyService {
           HttpStatusCode.valueOf(
               Integer.valueOf(loadableQuantityResponse.getResponseStatus().getCode())));
     }
-
+    loadableQuantity.setLoadableQuantityId(
+        loadableQuantityResponse.getLoadableQuantityRequest().getId());
     loadableQuantity.setConstant(
         loadableQuantityResponse.getLoadableQuantityRequest().getConstant());
     loadableQuantity.setDwt(loadableQuantityResponse.getLoadableQuantityRequest().getDwt());
@@ -1075,6 +1077,8 @@ public class LoadableStudyService {
     loadableQuantity.setSubTotal(
         loadableQuantityResponse.getLoadableQuantityRequest().getSubTotal());
     loadableQuantity.setDwt(loadableQuantityResponse.getLoadableQuantityRequest().getDwt());
+    loadableQuantityResponseDto.setLoadableQuantityId(
+        loadableQuantityResponse.getLoadableQuantityRequest().getId());
     loadableQuantityResponseDto.setLoadableQuantity(loadableQuantity);
     loadableQuantityResponseDto.setSelectedZone(loadableQuantityResponse.getSelectedZone());
     loadableQuantityResponseDto.setCaseNo(loadableQuantityResponse.getCaseNo());

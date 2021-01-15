@@ -45,6 +45,8 @@ public interface LoadableStudyPortRotationRepository
    * @param isActive
    * @return List<LoadableStudyPortRotation>
    */
+  @Query(
+	      "FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy = ?1 AND LSPR.isActive = ?2 ORDER BY LSPR.portOrder")
   public List<LoadableStudyPortRotation> findByLoadableStudyAndIsActiveOrderByPortOrder(
       final LoadableStudy loadableStudy, final boolean isActive);
 
@@ -67,4 +69,9 @@ public interface LoadableStudyPortRotationRepository
       "SELECT portXId FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy = ?1 AND LSPR.isActive = ?2 ORDER BY LSPR.portOrder")
   public Set<Long> findByLoadableStudyAndIsActive(
       final LoadableStudy loadableStudy, final boolean isActive);
+
+  @Query(
+      "SELECT portXId FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy = ?1 AND LSPR.isActive = ?2 AND LSPR.portOrder =?3")
+  public Long findByLoadableStudyAndIsActiveAndPortOrder(
+      final LoadableStudy loadableStudy, final boolean isActive, final Long portOrder);
 }

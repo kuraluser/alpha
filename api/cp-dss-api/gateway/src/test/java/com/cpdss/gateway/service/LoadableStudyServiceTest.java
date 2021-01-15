@@ -1674,7 +1674,7 @@ class LoadableStudyServiceTest {
 
     final Comment comment = new Comment();
     comment.setComment("comment");
-     comment.setUser(1L);
+    comment.setUser(1L);
 
     SaveCommentResponse commentResponse = spy.saveComment(comment, "corelationId", (long) 1);
 

@@ -62,4 +62,6 @@ public class LoadableQuantity {
   private String draftRestriction;
 
   private String subTotal;
+
+  private Long loadableQuantityId;
 }

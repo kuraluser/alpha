@@ -114,6 +114,7 @@ service LoadableStudyService {
 	
 	rpc SaveComment(SaveCommentRequest) returns (SaveCommentReply){
 	}
+	
 }
 
 message LoadablePlanDetailsRequest {
@@ -321,6 +322,7 @@ message LoadableQuantityRequest {
 	string draftRestriction = 26;
 	string subTotal = 27;
 	string foConsumptionPerDay = 28;
+	int64 id = 29;
 }
 
 message LoadableQuantityReply {
@@ -764,4 +766,6 @@ message SaveCommentRequest{
 	string comment =2;
 	int64 user=3;
 }
+
+
 

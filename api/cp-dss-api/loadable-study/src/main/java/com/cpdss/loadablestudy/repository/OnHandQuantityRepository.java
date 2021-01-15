@@ -4,7 +4,9 @@ package com.cpdss.loadablestudy.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
+import java.math.BigDecimal;
 import java.util.List;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * On hand quantity repository
@@ -39,4 +41,9 @@ public interface OnHandQuantityRepository extends CommonCrudRepository<OnHandQua
    */
   public List<OnHandQuantity> findByLoadableStudyAndIsActive(
       LoadableStudy loadableStudy, Boolean isActive);
+
+  @Query(
+      " SELECT SUM(OHQ.arrivalQuantity) FROM OnHandQuantity OHQ WHERE OHQ.portXId= ?1 AND OHQ.fuelTypeXId =?2 AND OHQ.isActive = ?3")
+  public BigDecimal getOnHandQuantityByPortXIdAndFuelTypeAndIsActive(
+      Long portXId, Long fuelType, Boolean isActive);
 }
