@@ -56,7 +56,7 @@
             <div *ngFor="let tank of group"
                 [ngStyle]="{'grid-column': tank?.gridColumn, 'visibility': tank?.categoryId !== 2? 'hidden': 'visible'}"
                 [class.active]="tank?.id === selectedTankId" (click)="onTankSelect($event, tank?.id)">
-                <div [ngStyle]="{'background-color':tank.commodity?.cargoColor, 'height': (tank?.commodity && options?.fillingPercentageField ? tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled) + '%'}" class="tank-level-pattern"></div>
+                <div [ngStyle]="{'background-color':tank.commodity?.colorCode, 'height': (tank?.commodity && options?.fillingPercentageField ? tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled) + '%'}" class="tank-level-pattern"></div>
                 <h5 class="tank-name">{{tank?.shortName}}</h5>
                 <ng-container *ngIf="tank?.commodity">
                     <span *ngIf="options?.showUllage"
