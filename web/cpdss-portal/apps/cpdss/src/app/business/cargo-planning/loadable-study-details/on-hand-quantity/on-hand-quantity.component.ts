@@ -1,14 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { IPortOHQTankDetailEvent, IPortOHQListData, IPortOHQTankDetailValueObject, OHQ_MODE, IBunkerTank } from '../../models/cargo-planning.model';
+import { IPortOHQTankDetailEvent, IPortOHQListData, IPortOHQTankDetailValueObject, OHQ_MODE, IBunkerTank, IPortOHQTankDetail } from '../../models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
 import { groupTotalValidator } from '../../directives/validator/group-total.directive';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { IPort } from '../../../../shared/models/common.model';
+import { Observable, of } from 'rxjs';
 
 /**
  * Compoent for OHQ tab
@@ -23,6 +24,8 @@ import { IPort } from '../../../../shared/models/common.model';
   styleUrls: ['./on-hand-quantity.component.scss']
 })
 export class OnHandQuantityComponent implements OnInit {
+
+  @ViewChild('ohqDatatable') ohqDatatable: ElementRef;
 
   @Input() voyageId: number;
 
@@ -49,7 +52,7 @@ export class OnHandQuantityComponent implements OnInit {
       const _ohqTankDetail = this.loadableStudyDetailsTransformationService.formatOHQTankDetail(ohqTankDetail);
       return _ohqTankDetail;
     });
-    this.loadableStudyDetailsTransformationService.setOHQValidity(this.ohqForm.valid && this.ohqGroupValidity(this._selectedPortOHQTankDetails));
+    this.loadableStudyDetailsTransformationService.setOHQValidity(this.ohqForm?.valid && this.ohqGroupValidity(this._selectedPortOHQTankDetails));
   }
 
   get tanks(): IBunkerTank[][] {
@@ -78,6 +81,7 @@ export class OnHandQuantityComponent implements OnInit {
     this.selectedTankFormGroupIndex = this.ohqForm?.controls?.dataTable?.value?.findIndex(row => row?.tankId === tankId);
     this.selectedTankFormGroup = this.row(this.selectedTankFormGroupIndex);
     if (this.selectedTank) {
+      this.scrollToSelectedRow(this.selectedTankFormGroupIndex);
       this.setFillingPercentage(this.selectedTankId);
     }
   }
@@ -159,7 +163,7 @@ export class OnHandQuantityComponent implements OnInit {
             await this.getPortOHQDetails(this.selectedPort?.id);
             this.dataTableLoading = false;
             clearInterval(this.ohqCheckUpdatesTimer);
-          }
+    }
         }, 500);
       }
 
@@ -187,7 +191,7 @@ export class OnHandQuantityComponent implements OnInit {
       const _ohqTankDetail = this.loadableStudyDetailsTransformationService.getOHQTankDetailsAsValueObject(ohqTankDetail, false);
       return _ohqTankDetail;
     });
-    const ohqTankDetailsArray = _selectedPortOHQTankDetails?.map(ohqTankDetails => this.initOHQFormGroup(ohqTankDetails));
+    const ohqTankDetailsArray = _selectedPortOHQTankDetails?.map(ohqTankDetails => this.initOHQFormGroup(ohqTankDetails, selectedPortOHQTankDetails));
     this.ohqForm = this.fb.group({
       dataTable: this.fb.array([...ohqTankDetailsArray]),
       mode: this.fb.control(OHQ_MODE.ARRIVAL)
@@ -260,16 +264,16 @@ export class OnHandQuantityComponent implements OnInit {
    * @returns
    * @memberof OnHandQuantityComponent
    */
-  private initOHQFormGroup(ohqTankDetail: IPortOHQTankDetailValueObject) {
+  private initOHQFormGroup(ohqTankDetail: IPortOHQTankDetailValueObject, selectedPortOHQTankDetails: IPortOHQTankDetail[]) {
     return this.fb.group({
       fuelTypeId: this.fb.control(ohqTankDetail.fuelTypeId),
       fuelTypeName: this.fb.control(ohqTankDetail.fuelTypeName, Validators.required),
       tankName: this.fb.control(ohqTankDetail.tankName, Validators.required),
       tankId: this.fb.control(ohqTankDetail.tankId, Validators.required),
-      arrivalVolume: this.fb.control(ohqTankDetail.arrivalVolume.value, [Validators.required, numberValidator(2, 7, false), groupTotalValidator('arrivalVolume', 'fuelTypeId'), Validators.max(Number(ohqTankDetail?.fullCapacityCubm))]),
-      arrivalQuantity: this.fb.control(ohqTankDetail.arrivalQuantity.value, [Validators.required, numberValidator(2, 7, false), groupTotalValidator('arrivalQuantity', 'fuelTypeId')]),
-      departureVolume: this.fb.control(ohqTankDetail.departureVolume.value, [Validators.required, numberValidator(2, 7, false), groupTotalValidator('departureVolume', 'fuelTypeId'), Validators.max(Number(ohqTankDetail?.fullCapacityCubm))]),
-      departureQuantity: this.fb.control(ohqTankDetail.departureQuantity.value, [Validators.required, numberValidator(2, 7, false), groupTotalValidator('departureQuantity', 'fuelTypeId')]),
+      arrivalVolume: this.fb.control(ohqTankDetail.arrivalVolume.value, [Validators.required, numberValidator(2, 7, false), groupTotalValidator('arrivalVolume', 'fuelTypeId', selectedPortOHQTankDetails), Validators.max(Number(ohqTankDetail?.fullCapacityCubm))]),
+      arrivalQuantity: this.fb.control(ohqTankDetail.arrivalQuantity.value, [Validators.required, numberValidator(2, 7, false), groupTotalValidator('arrivalQuantity', 'fuelTypeId', selectedPortOHQTankDetails)]),
+      departureVolume: this.fb.control(ohqTankDetail.departureVolume.value, [Validators.required, numberValidator(2, 7, false), groupTotalValidator('departureVolume', 'fuelTypeId', selectedPortOHQTankDetails), Validators.max(Number(ohqTankDetail?.fullCapacityCubm))]),
+      departureQuantity: this.fb.control(ohqTankDetail.departureQuantity.value, [Validators.required, numberValidator(2, 7, false), groupTotalValidator('departureQuantity', 'fuelTypeId', selectedPortOHQTankDetails)]),
     });
   }
 
@@ -317,7 +321,7 @@ export class OnHandQuantityComponent implements OnInit {
     }
     //TODO: END need to be removed after latest validation
 
-    this.loadableStudyDetailsTransformationService.setOHQValidity(this.ohqForm.valid);
+    this.loadableStudyDetailsTransformationService.setOHQValidity(this.ohqForm.valid && this.ohqGroupValidity(this._selectedPortOHQTankDetails));
     const valueIndex = this.selectedPortOHQTankDetails.findIndex(ohqDetails => ohqDetails?.storeKey === event?.data?.storeKey);
     if (fromGroup.valid) {
       const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(this.selectedPortOHQTankDetails[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
@@ -341,11 +345,6 @@ export class OnHandQuantityComponent implements OnInit {
       fromGroup.markAllAsTouched();
       this.ohqForm.updateValueAndValidity();
     }
-
-    if (this.selectedTankId) {
-      this.setFillingPercentage(this.selectedTankId);
-      this.selectedTankFormGroup.get(event?.field).setValue((event?.data[event?.field]).value);
-    }
     const formArray = (<FormArray>this.ohqForm.get('dataTable')).controls;
     formArray.forEach(async (row: FormGroup, index) => {
       if (row.invalid && row.touched) {
@@ -368,6 +367,12 @@ export class OnHandQuantityComponent implements OnInit {
         }
       }
     });
+
+    if (this.selectedTankId && this.selectedTankFormGroupIndex === event?.index) {
+      this.setFillingPercentage(this.selectedTankId);
+      this.selectedTankFormGroup.get(event?.field).setValue((this.field(event?.index, event?.field)).value);
+    }
+    
     this.tanks = [...this.tanks];
     this.rearTanks = [...this.rearTanks];
     this.ngxSpinnerService.hide();
@@ -515,9 +520,9 @@ export class OnHandQuantityComponent implements OnInit {
    * @returns {ValidationErrors}
    * @memberof OnHandQuantityComponent
    */
-  fieldError(formGroupIndex: number, formControlName: string): ValidationErrors {
+  fieldError(formGroupIndex: number, formControlName: string): Observable<ValidationErrors> {
     const formControl = this.field(formGroupIndex, formControlName);
-    return (this.permission?.edit === undefined || this.permission?.edit) && formControl?.invalid && (formControl?.dirty || formControl?.touched) ? formControl?.errors : null;
+    return of((this.permission?.edit === undefined || this.permission?.edit) && formControl?.invalid && (formControl?.dirty || formControl?.touched) ? formControl?.errors : null);
   }
 
   /**
@@ -538,8 +543,10 @@ export class OnHandQuantityComponent implements OnInit {
    */
   onFilter(event: IDataTableFilterEvent) {
     this.ngxSpinnerService.show();
-    const ohqTankDetailsArray = event?.filteredValue?.map(ohqTankDetails => this.initOHQFormGroup(ohqTankDetails));
+    const selectedPortOHQTankDetailsAsValue = this.getSelectedPortOHQTankDetailsAsValue(this.selectedPortOHQTankDetails);
+    const ohqTankDetailsArray = event?.filteredValue?.map(ohqTankDetails => this.initOHQFormGroup(ohqTankDetails, selectedPortOHQTankDetailsAsValue));
     this.ohqForm.controls.dataTable = this.fb.array([...ohqTankDetailsArray]);
+    this.ohqForm.controls.dataTable.updateValueAndValidity();
     this.ngxSpinnerService.hide();
   }
 
@@ -551,8 +558,10 @@ export class OnHandQuantityComponent implements OnInit {
    */
   onSort(event: IDataTableSortEvent) {
     this.ngxSpinnerService.show();
-    const ohqTankDetailsArray = event?.data?.map(ohqTankDetails => this.initOHQFormGroup(ohqTankDetails));
+    const selectedPortOHQTankDetailsAsValue = this.getSelectedPortOHQTankDetailsAsValue(this.selectedPortOHQTankDetails);
+    const ohqTankDetailsArray = event?.data?.map(ohqTankDetails => this.initOHQFormGroup(ohqTankDetails, selectedPortOHQTankDetailsAsValue));
     this.ohqForm.controls.dataTable = this.fb.array([...ohqTankDetailsArray]);
+    this.ohqForm.controls.dataTable.updateValueAndValidity();
     this.ngxSpinnerService.hide();
   }
 
@@ -575,6 +584,33 @@ export class OnHandQuantityComponent implements OnInit {
       }
     }
     return true;
+  }
+
+  /**
+   * Method to scroll to seletced row in the ohq grid
+   *
+   * @param {number} rowIndex
+   * @memberof OnHandQuantityComponent
+   */
+  scrollToSelectedRow(rowIndex: number) {
+    const rows = this.ohqDatatable?.nativeElement?.querySelectorAll('table tbody tr');
+    if (rows) {
+      rows[rowIndex]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  }
+
+  /**
+   * Convert ohq grid data value object to value
+   *
+   * @param {IPortOHQTankDetailValueObject[]} selectedPortOHQTankDetails
+   * @returns
+   * @memberof OnHandQuantityComponent
+   */
+  getSelectedPortOHQTankDetailsAsValue(selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[]) {
+    return selectedPortOHQTankDetails.map(ohqTankDetails => this.loadableStudyDetailsTransformationService.getOHQTankDetailAsValue(ohqTankDetails));
   }
 
 }

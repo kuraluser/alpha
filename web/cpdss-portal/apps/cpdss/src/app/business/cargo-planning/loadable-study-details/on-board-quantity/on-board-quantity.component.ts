@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -24,6 +24,8 @@ import { IPort } from '../../../../shared/models/common.model';
   styleUrls: ['./on-board-quantity.component.scss']
 })
 export class OnBoardQuantityComponent implements OnInit {
+
+  @ViewChild('obqDatatable') obqDatatable: ElementRef;
 
   @Input() voyageId: number;
 
@@ -68,6 +70,7 @@ export class OnBoardQuantityComponent implements OnInit {
     this.selectedIndex = this.selectedPortOBQTankDetails.findIndex(obqDetails => obqDetails.tankId === id);
     this.selectedTank = this.selectedPortOBQTankDetails[this.selectedIndex];
     this.setFillingPercentage(this.selectedTankId);
+    this.scrollToSelectedRow(this.selectedIndex);
     this.onRowSelection({ data: this.selectedTank, index: this.selectedIndex });
   }
 
@@ -435,6 +438,22 @@ export class OnBoardQuantityComponent implements OnInit {
         break;
       }
 
+    }
+  }
+
+  /**
+   * Method to scroll to seletced row in the obq grid
+   *
+   * @param {number} rowIndex
+   * @memberof OnBoardQuantityComponent
+   */
+  scrollToSelectedRow(rowIndex: number) {
+    const rows = this.obqDatatable?.nativeElement?.querySelectorAll('table tbody tr');
+    if (rows) {
+      rows[rowIndex]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
     }
   }
 

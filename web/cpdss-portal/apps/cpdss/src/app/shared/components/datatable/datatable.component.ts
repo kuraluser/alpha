@@ -145,7 +145,7 @@ export class DatatableComponent implements OnInit {
         col = this.columns[index];
         break;
       } else {
-        col = this.columns[index]?.columns?.find(col => col?.field === event?.field);
+        col = this.columns[index]?.columns?.find(column => column?.field === event?.field);
         if (col !== undefined) {
           break;
         }
@@ -156,12 +156,13 @@ export class DatatableComponent implements OnInit {
       const control = this.field(event.index, event.field);
       event.data[event.field].isEditMode = control?.invalid;
       if (control?.dirty && control?.valid) {
-        if (col?.fieldType == this.fieldType.DATETIME){
+        if (col?.fieldType === this.fieldType.DATETIME) {
           event.data[event.field].value = this.formatDateTime(control.value, true);
         }
-        else
+        else if (col?.fieldType === DATATABLE_FIELD_TYPE.COLORPICKER) {
           event.data[event.field].value = control.value;
-        this.editComplete.emit(event);
+          this.editComplete.emit(event);
+        }
       }
     }
   }
@@ -467,14 +468,14 @@ export class DatatableComponent implements OnInit {
 
 
 
-  /**
-  * Handler for api row edit event
-  *
-  * @param {MouseEvent} event
-  * @param {Object} rowData
-  * @param {number} rowIndex
-  * @memberof DatatableComponent
-  */
+   /**
+   * Handler for api row edit event
+   *
+   * @param {MouseEvent} event
+   * @param {Object} rowData
+   * @param {number} rowIndex
+   * @memberof DatatableComponent
+   */
   onEdit() {
     this.editRow.emit(this.selectedRowEvent);
   }

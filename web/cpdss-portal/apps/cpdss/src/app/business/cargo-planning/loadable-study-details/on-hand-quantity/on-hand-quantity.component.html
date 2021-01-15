@@ -20,12 +20,12 @@
                             <div class="col">
                                 <div class="form-group row">
                                     <div class="col" [ngClass]="{'datatable-loading': dataTableLoading }">
-                                        <div class="table-responsive-custom cargo-nomination-table ohq" >
+                                        <div class="table-responsive-custom cargo-nomination-table ohq"  #ohqDatatable>
                                             <cpdss-portal-datatable [tableId]="'ohq'" [form]="ohqForm"
                                                 [columns]="columns" [value]="selectedPortOHQTankDetails"
                                                 [editMode]="editMode" [filterable]="true" [listData]="listData"
                                                 [selectionMode]="selectionMode" [selection]="selectedTank"
-                                                [loading]="dataTableLoading" (editComplete)="onEditComplete($event)"
+                                                [loading]="dataTableLoading" (editComplete)="onEditComplete($event)" (columnClick)="onRowSelection($event)"
                                                 (rowSelection)="onRowSelection($event)" (filter)="onFilter($event)"
                                                 (sort)="onSort($event)">
                                             </cpdss-portal-datatable>
@@ -112,7 +112,7 @@
                                             (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalVolume')"
                                             [readOnly]="!permission?.edit">
                                         <cpdss-portal-validation-error
-                                            [errors]="fieldError(selectedTankFormGroupIndex, 'arrivalVolume')"
+                                            [errors]="fieldError(selectedTankFormGroupIndex, 'arrivalVolume')| async"
                                             [errorMessages]="getErrorMessages('arrivalVolume')">
                                         </cpdss-portal-validation-error>
                                     </div>
@@ -130,7 +130,7 @@
                                             (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalQuantity')"
                                             [readOnly]="!permission?.edit">
                                         <cpdss-portal-validation-error
-                                            [errors]="fieldError(selectedTankFormGroupIndex, 'arrivalQuantity')"
+                                            [errors]="fieldError(selectedTankFormGroupIndex, 'arrivalQuantity')| async"
                                             [errorMessages]="getErrorMessages('arrivalQuantity')">
                                         </cpdss-portal-validation-error>
                                     </div>
@@ -147,7 +147,7 @@
                                             (change)="onChange($event, selectedTankFormGroupIndex, 'departureVolume')"
                                             [readOnly]="!permission?.edit">
                                         <cpdss-portal-validation-error
-                                            [errors]="fieldError(selectedTankFormGroupIndex, 'departureVolume')"
+                                            [errors]="fieldError(selectedTankFormGroupIndex, 'departureVolume')| async"
                                             [errorMessages]="getErrorMessages('departureVolume')">
                                         </cpdss-portal-validation-error>
                                     </div>
@@ -164,7 +164,7 @@
                                             (change)="onChange($event, selectedTankFormGroupIndex, 'departureQuantity')"
                                             [readOnly]="!permission?.edit">
                                         <cpdss-portal-validation-error
-                                            [errors]="fieldError(selectedTankFormGroupIndex, 'departureQuantity')"
+                                            [errors]="fieldError(selectedTankFormGroupIndex, 'departureQuantity')| async"
                                             [errorMessages]="getErrorMessages('departureQuantity')">
                                         </cpdss-portal-validation-error>
                                     </div>

@@ -8,14 +8,18 @@ import { FormArray, FormControl, ValidationErrors, ValidatorFn } from '@angular/
  * @param {string} groupKey
  * @returns {ValidatorFn}
  */
-export function groupTotalValidator(key: string, groupKey: string): ValidatorFn {
+export function groupTotalValidator(key: string, groupKey: string, gridData = null): ValidatorFn {
   return (control: FormControl): ValidationErrors | null => {
     if (!control.root || !control.parent) {
       return null;
     }
-    const gridData = control.root.get('dataTable') as FormArray;
+    gridData = (<FormArray>control.root.get('dataTable'))?.value ?? gridData;
     const groupId = control.parent.value[groupKey];
-    const total = gridData?.value?.reduce((a, b) => a + (b !== control.parent?.value && b[groupKey] === groupId ? b[key] || 0 : 0), control?.value);
+    const total = gridData?.reduce((a, b) => {
+      const value = Number(b[key]) ? Number(b[key]) : 0;
+      const sum = a + (b !== control.parent?.value && b[groupKey] === groupId ? value || 0 : 0);
+      return sum;
+    }, Number(control.value));
 
     return total <= 0 ? { groupTotal: true } : null;
   }
