@@ -482,7 +482,7 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="footer" let-columns>
-                <tr *ngIf="showTotal">
+                <tr *ngIf="showTotal && value && value.length">
                     <td *ngFor="let col of columns; let i = index">
                     {{getTotal(col, i)}}
                     </td>

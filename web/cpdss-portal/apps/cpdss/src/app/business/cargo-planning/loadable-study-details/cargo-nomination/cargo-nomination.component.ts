@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { ICargoNominationValueObject, ICargoNominationAllDropdownData, ICargoNominationDetailsResponse, ICargoNominationEvent, ICargoNomination, ILoadingPopupData } from '../../models/cargo-planning.model';
@@ -10,7 +10,8 @@ import { alphabetsOnlyValidator } from '../../directives/validator/cargo-nominat
 import { numberValidator } from '../../directives/validator/number-validator.directive'
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
-import { first } from 'rxjs/operators';
+import { first, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 /**
  * Component class of cargonomination screen
@@ -24,7 +25,7 @@ import { first } from 'rxjs/operators';
   templateUrl: './cargo-nomination.component.html',
   styleUrls: ['./cargo-nomination.component.scss']
 })
-export class CargoNominationComponent implements OnInit {
+export class CargoNominationComponent implements OnInit, OnDestroy {
 
   @Input() voyageId: number;
 
@@ -100,6 +101,7 @@ export class CargoNominationComponent implements OnInit {
   private _openLoadingPopup = false;
   private _openAPITemperatureHistoryPopup = false;
   private totalQuantity = 0;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
 
   // public methods
@@ -119,6 +121,17 @@ export class CargoNominationComponent implements OnInit {
   ngOnInit() {
     this.columns = this.loadableStudyDetailsTransformationService.getCargoNominationDatatableColumns();
     this.initSubscriptions();
+  }
+
+  /**
+   * Component lifecycle ngOnDestroy
+   *
+   * @returns {Promise<void>}
+   * @memberof CargoNominationComponent
+   */
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**
@@ -283,26 +296,28 @@ export class CargoNominationComponent implements OnInit {
     if (event?.data?.isDelete) {
       const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
       this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'CARGONOMINATION_DELETE_SUMMARY', detail: 'CARGONOMINATION_DELETE_DETAILS', data: { confirmLabel: 'CARGONOMINATION_DELETE_CONFIRM_LABEL', rejectLabel: 'CARGONOMINATION_DELETE_REJECT_LABEL' } });
-      this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
-        if (response) {
-          this.ngxSpinnerService.show();
-          let res;
-          if (!event?.data?.isAdd) {
-            res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
-          } else {
-            res = true;
+      this.confirmationAlertService.confirmAlert$
+        .pipe(first(), takeUntil(this.ngUnsubscribe))
+        .subscribe(async (response) => {
+          if (response) {
+            this.ngxSpinnerService.show();
+            let res;
+            if (!event?.data?.isAdd) {
+              res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+            } else {
+              res = true;
+            }
+            if (res) {
+              this.cargoNominations.splice(event.index, 1);
+              this.cargoNominations = [...this.cargoNominations];
+              this.updateCommingleButton();
+              const dataTableControl = <FormArray>this.cargoNominationForm.get('dataTable');
+              dataTableControl.removeAt(event.index);
+              this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
+            }
+            this.ngxSpinnerService.hide();
           }
-          if (res) {
-            this.cargoNominations.splice(event.index, 1);
-            this.cargoNominations = [...this.cargoNominations];
-            this.updateCommingleButton();
-            const dataTableControl = <FormArray>this.cargoNominationForm.get('dataTable');
-            dataTableControl.removeAt(event.index);
-            this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
-          }
-          this.ngxSpinnerService.hide();
-        }
-      });
+        });
     }
   }
 
@@ -360,9 +375,12 @@ export class CargoNominationComponent implements OnInit {
    * @memberof CargoNominationComponent
    */
   private updatePriorityDropdown(count: number) {
-    this.listData.priorityList = [...Array(count).keys()].map(i => {
-      return { label: (i + 1).toString(), value: (i + 1) }
-    });
+    this.listData.priorityList = [];
+    if (count) {
+      for (let index = 1; index <= count; index++) {
+        this.listData.priorityList.push({ label: index.toString(), value: index })
+      }
+    }
   }
 
   /**
@@ -453,9 +471,11 @@ export class CargoNominationComponent implements OnInit {
    * @memberof CargoNominationComponent
    */
   private initSubscriptions() {
-    this.loadableStudyDetailsTransformationService.addCargoNomination$.subscribe(() => {
-      this.addCargoNomination();
-    });
+    this.loadableStudyDetailsTransformationService.addCargoNomination$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        this.addCargoNomination();
+      });
 
     navigator.serviceWorker.addEventListener('message', async event => {
       if (event.data.type === 'cargo_nomination_sync_finished') {

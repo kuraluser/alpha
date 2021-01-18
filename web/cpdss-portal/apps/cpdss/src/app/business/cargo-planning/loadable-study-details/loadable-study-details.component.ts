@@ -430,11 +430,11 @@ export class LoadableStudyDetailsComponent implements OnInit {
   onCargoNominationChange() {
     this.dischargeCargos = []
     this.loadableStudyDetailsApiService.cargoNominations.forEach(cargoNomination => {
-      if (this.dischargeCargos.indexOf(cargoNomination.cargo.value) == -1)
+      if (!cargoNomination.isAdd && this.dischargeCargos.indexOf(cargoNomination.cargo.value) === -1)
         this.dischargeCargos.push(cargoNomination.cargo.value)
     });
     if (this.selectedDischargeCargo && !this.selectedDischargeCargo.name) {
-      this.selectedDischargeCargo = this.dischargeCargos.find(cargo => cargo.id == this.selectedDischargeCargo.id)
+      this.selectedDischargeCargo = this.dischargeCargos.find(cargo => cargo.id === this.selectedDischargeCargo.id)
     }
   }
 
@@ -446,7 +446,6 @@ export class LoadableStudyDetailsComponent implements OnInit {
  * @memberof LoadableStudyDetailsComponent
  */
   async onDischargeCargoChange(event) {
-    console.log(event)
     const sucessKeys = ['LOADABLE_STUDY_DISCHARGING_CARGO_UPDATE_SUCCESS', 'LOADABLE_STUDY_DISCHARGING_CARGO_UPDATE_SUCCESSFULLY']
     this.updateDischargeData(sucessKeys)
   }
@@ -477,7 +476,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   * Calculation for subtotal
   */
   getSubTotal(loadableQuantityResult: any) {
-    let loadableQuantity = loadableQuantityResult.loadableQuantity;
+    const loadableQuantity = loadableQuantityResult.loadableQuantity;
     let subTotal: number = 0;
     if (loadableQuantityResult.caseNo === 1 || loadableQuantityResult.caseNo === 2) {
       subTotal = Number(loadableQuantity.dwt)
@@ -500,7 +499,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * Calculation for Loadable quantity
   */
   getTotalLoadableQuantity(subTotal: number, loadableQuantityResult: any) {
-    let loadableQuantity = loadableQuantityResult.loadableQuantity;
+    const loadableQuantity = loadableQuantityResult.loadableQuantity;
     if (loadableQuantityResult.caseNo === 1) {
       const total = Number(subTotal) - Number(loadableQuantity.foConInSZ);
       if (total < 0) {

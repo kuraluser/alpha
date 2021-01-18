@@ -157,7 +157,7 @@
                                 <cpdss-portal-validation-error [errors]="fieldError()"
                                     [errorMessages]="errorMesages.dischargePort"></cpdss-portal-validation-error>
                             </span>
-                            <ng-container *ngIf="dischargingPorts && dischargingPorts.length">
+                            <ng-container *ngIf="dischargingPorts && dischargingPorts.length && dischargeCargos && dischargeCargos.length">
                                 <label class="col-form-label pr-10 ml-15">{{'CARGO_DISCHARGE_FIRST' | translate}}</label>
                                 <p-dropdown id="cargo_discharge" [(ngModel)]="selectedDischargeCargo"
                                     [options]="dischargeCargos" optionLabel="name"
