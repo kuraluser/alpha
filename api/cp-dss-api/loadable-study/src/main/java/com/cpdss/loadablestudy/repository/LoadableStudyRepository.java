@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface LoadableStudyRepository extends CommonCrudRepository<LoadableStudy, Long> {
 
-  public List<LoadableStudy> findByVesselXIdAndVoyageAndIsActive(
+  public List<LoadableStudy> findByVesselXIdAndVoyageAndIsActiveOrderByLastModifiedDateTimeDesc(
       final Long vesselXId, final Voyage voyage, final boolean isActive);
 
   public Optional<LoadableStudy> findByIdAndIsActive(Long id, Boolean isActive);

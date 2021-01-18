@@ -100,7 +100,10 @@ service LoadableStudyService {
 	rpc GetSynopticalTable (SynopticalTableRequest) returns (SynopticalTableReply){
 	}
 	
-	rpc GetSynopticalDataByPortId (SynopticalDataRequest) returns (SynopticalDataReply){
+	rpc GetSynopticalDataByPortId (SynopticalTableRequest) returns (SynopticalTableReply){
+	}
+	
+	rpc GetSynopticalPortDataByPortId (SynopticalTableRequest) returns (SynopticalTableReply){
 	}
 	
 	rpc GetLoadableStudyStatus(LoadableStudyStatusRequest) returns (LoadableStudyStatusReply) {
@@ -495,11 +498,12 @@ message OnHandQuantityDetail{
 	string tankName = 6;
 	string arrivalVolume = 7;
 	string arrivalQuantity = 8;
-	string departureVolume = 9;
-	string departureQuantity = 10;
-	int64 loadableStudyId = 11;
-	string colorCode = 12;
-	string fuelTypeShortName = 13;
+	string actualArrivalQuantity = 9;
+	string departureVolume = 10;
+	string departureQuantity = 11;
+	int64 loadableStudyId = 12;
+	string colorCode = 13;
+	string fuelTypeShortName = 14;
 }
 
 message TankDetail{
@@ -549,10 +553,11 @@ message OnBoardQuantityDetail{
 	string cargoName = 6;
 	string sounding = 7;
 	string weight = 8;
-	string volume = 9;
-	int64 loadableStudyId = 10;
-	string colorCode = 11;
-	string abbreviation = 12;
+	string actualWeight = 9;
+	string volume = 10;
+	int64 loadableStudyId = 11;
+	string colorCode = 12;
+	string abbreviation = 13;
 }
 
 message OnBoardQuantityReply{
@@ -739,16 +744,16 @@ message SynopticalTableLoadicatorData{
 	string blindSector = 14;
 }
 
-message SynopticalDataRequest{
-	int64 loadableStudyId = 1;
-	int64 portId = 2;
-	SynopticalRecord synopticalRecord = 3;
-}
+//message SynopticalDataRequest{
+//	int64 loadableStudyId = 1;
+//	int64 portId = 2;
+//	SynopticalRecord synopticalRecord = 3;
+//}
 
-message SynopticalDataReply{
-	ResponseStatus responseStatus = 1;
-	repeated SynopticalRecord synopticalRecords = 2;
-}
+//message SynopticalDataReply{
+//	ResponseStatus responseStatus = 1;
+//	repeated SynopticalRecord synopticalRecords = 2;
+//}
 
 message LoadableStudyAttachmentRequest{
  	int64 fileId = 1 ;

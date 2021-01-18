@@ -1,14 +1,12 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.List;
 import lombok.Data;
 
 /** Request class for Port rotation list */
 @Data
-@JsonInclude(Include.NON_EMPTY)
+// @JsonInclude(Include.NON_EMPTY) // commented out since Web team would need the null values
 public class PortRotationRequest {
 
   private Long loadableStudyId;
