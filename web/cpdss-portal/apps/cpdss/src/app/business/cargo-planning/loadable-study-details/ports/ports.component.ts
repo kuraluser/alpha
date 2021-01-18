@@ -44,6 +44,7 @@ export class PortsComponent implements OnInit {
     this._portsLists = portsLists.map((ports, index) => {
       const _ports = this.loadableStudyDetailsTransformationService.formatPorts(ports);
       _ports.slNo = index + 1;
+      this.updateValuesIfBunkering(ports, this.row(index), index)
       return _ports
     });
     this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
@@ -124,7 +125,7 @@ export class PortsComponent implements OnInit {
     const portsFormData: IPortsDetailsResponse = await this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
     portsFormData.portList = portsFormData.portList ?? [];
     this.listData.operationListComplete = portsFormData.operations;
-    this.listData.operationList = portsFormData.operations.filter((item) => item.id !== OPERATIONS.LOADING);
+    this.listData.operationList = portsFormData.operations.filter((item) => item.id !== OPERATIONS.LOADING && item.id !== OPERATIONS.DISCHARGING);
     this.portsDetails = portsFormData;
     this.initPortsArray(this.portsDetails?.portList);
   }
@@ -185,8 +186,7 @@ export class PortsComponent implements OnInit {
   * @memberof PortsComponent
   */
   private initPortsFormGroup(ports: IPortsValueObject, index: number) {
-    let layCanData = false;
-    (ports.operation.value && (ports.operation.value.operationName === 'Bunkering' || ports.operation.value.operationName === 'Transit')) ? layCanData = true : layCanData = false;
+    const layCanData = (ports.operation.value && [OPERATIONS.BUNKERING, OPERATIONS.DISCHARGING, OPERATIONS.TRANSIT].includes(ports.operation.value.id));
     return this.fb.group({
       port: this.fb.control(ports.port.value, [Validators.required, portDuplicationValidator('port')]),
       portOrder: this.fb.control(ports.portOrder),
@@ -198,9 +198,8 @@ export class PortsComponent implements OnInit {
       layCanTo: this.fb.control({ value: this.convertToDate(ports.layCan.value?.split('to')[1]?.trim()), disabled: layCanData }, layCanData ? [] : { validators: layCanData ? [] : Validators.required }),
       maxDraft: this.fb.control(ports.maxDraft.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
       maxAirDraft: this.fb.control(ports.maxAirDraft.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
-      eta: this.fb.control(this.convertToDate(ports.eta.value), [Validators.required, portDateRangeValidator, portDateCompareValidator('etd', '<'), portEtaEtdValidator('eta', index)]),
-      etd: this.fb.control(this.convertToDate(ports.etd.value), [Validators.required, portDateCompareValidator('eta', '>'), portEtaEtdValidator('etd', index)])
-
+      eta: this.fb.control(this.convertToDate(ports.eta.value), this.getValidators('eta', index)),
+      etd: this.fb.control(this.convertToDate(ports.etd.value), this.getValidators('etd', index))
     });
 
   }
@@ -236,9 +235,9 @@ export class PortsComponent implements OnInit {
   private addPort(ports: IPortList = null) {
     ports = ports ?? <IPortList>{ id: 0, loadableStudyId: null, portOrder: 0, portId: null, operationId: null, seaWaterDensity: null, distanceBetweenPorts: null, timeOfStay: null, maxDraft: null, maxAirDraft: null, eta: null, etd: null, layCanFrom: null, layCanTo: null };
     const _ports = this.loadableStudyDetailsTransformationService.getPortAsValueObject(ports, true, true, this.listData);
-    this.portsLists = [...this.portsLists, _ports];
     const dataTableControl = <FormArray>this.portsForm.get('dataTable');
     dataTableControl.push(this.initPortsFormGroup(_ports, this.portsLists.length - 1));
+    this.portsLists = [...this.portsLists, _ports];
   }
 
   /**
@@ -294,14 +293,27 @@ export class PortsComponent implements OnInit {
       this.updateField(event.index, 'seaWaterDensity', event.data.port.value.waterDensity);
       this.updateField(event.index, 'portOrder', this.portOrder);
       form.controls.operation.updateValueAndValidity();
+      this.updateValuesIfBunkering(event.data, form, index);
     }
     if (event.field === 'operation') {
-      (event.data.operation.value.operationName === 'Bunkering' || event.data.operation.value.operationName === 'Transit') ?
-        (form.controls.layCan.setValue(null), form.controls.layCan.disable(), form.controls.layCan.setValidators([]), form.controls.layCanTo.setValidators([]), form.controls.layCanFrom.setValidators([])) :
-        (form.controls.layCan.enable(), form.controls.layCan.setValidators([Validators.required]), form.controls.layCanFrom.setValidators([Validators.required]), form.controls.layCanTo.setValidators([Validators.required]))
+      const operationId = event.data.operation.value.id;
+      if ([OPERATIONS.BUNKERING, OPERATIONS.DISCHARGING, OPERATIONS.TRANSIT].includes(operationId)) {
+        form.controls.layCan.setValue(null);
+        form.controls.layCan.disable();
+        form.controls.layCan.setValidators([]);
+        form.controls.layCanTo.setValidators([]);
+        form.controls.layCanFrom.setValidators([]);
+      } else {
+        form.controls.layCan.enable();
+        form.controls.layCan.setValidators([Validators.required]);
+        form.controls.layCanFrom.setValidators([Validators.required]);
+        form.controls.layCanTo.setValidators([Validators.required]);
+      }
+      form.controls.port.updateValueAndValidity();
       form.controls.layCan.updateValueAndValidity();
       form.controls.layCanTo.updateValueAndValidity();
       form.controls.layCanFrom.updateValueAndValidity();
+      this.updateValuesIfBunkering(event.data, form, index);
     }
     if (event.field === 'layCan') {
       const layCanFrom = event.data.layCan.value.split('to')[0].trim()
@@ -325,20 +337,28 @@ export class PortsComponent implements OnInit {
         this.updateValidityAndEditMode(index - 1, 'etd');
     }
     const formArray = (<FormArray>this.portsForm.get('dataTable')).controls;
-    formArray.forEach(async (row: FormGroup, index) => {
+    formArray.forEach(async (row: FormGroup, rowIndex) => {
+      if((event.field === 'port' || event.field === 'operation') && form.controls.port.valid && form.controls.operation.valid){
+        if(row.controls.port.hasError('duplicate')){
+          row.controls.port.updateValueAndValidity()
+        }
+        if(row.controls.operation.hasError('duplicate')){
+          row.controls.operation.updateValueAndValidity()
+        }
+      }
       if (row.valid && !event.data?.isAdd) {
-        const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[index]), this.vesselId, this.voyageId, this.loadableStudyId);
+        const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
         if (res) {
-          for (const key in this.portsLists[index]) {
-            if (this.portsLists[index].hasOwnProperty(key) && this.portsLists[index][key].hasOwnProperty('_isEditMode')) {
-              this.portsLists[index][key].isEditMode = false;
+          for (const key in this.portsLists[rowIndex]) {
+            if (this.portsLists[rowIndex].hasOwnProperty(key) && this.portsLists[rowIndex][key].hasOwnProperty('_isEditMode')) {
+              this.portsLists[rowIndex][key].isEditMode = false;
             }
           }
-          this.portsLists = [...this.portsLists];
-          this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
         }
       }
     });
+    this.portsLists = [...this.portsLists];
+    this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
   }
 
   /**
@@ -522,19 +542,21 @@ export class PortsComponent implements OnInit {
     const field = this.field(index, key)
     if (field) {
       field.updateValueAndValidity();
-      this.portsLists[index][key].isEditMode = field.invalid;
+      this.portsLists[index][key].isEditMode = field.invalid && field.enabled;
     }
   }
 
   /**
   * Convert to date time(dd-mm-yyyy hh:mm)
+  *
+  * @memberof PortsComponent
   */
   convertToDate(value) {
     if (value) {
-      let arr = value.toString().split(' ')
-      let dateArr = arr[0]?.split('-');
-      if(arr[1]){
-        let timeArr = arr[1].split(':')
+      const arr = value.toString().split(' ')
+      const dateArr = arr[0]?.split('-');
+      if (arr[1]) {
+        const timeArr = arr[1].split(':')
         if (dateArr.length > 2 && timeArr.length > 1) {
           return new Date(Number(dateArr[2]), Number(dateArr[1]) - 1, Number(dateArr[0]), Number(timeArr[0]), Number(timeArr[1]));
         }
@@ -543,6 +565,58 @@ export class PortsComponent implements OnInit {
       }
     }
     return null
+  }
+
+  /**
+   * Method to update eta and etd if port is bunkering
+   *
+   * @memberof PortsComponent
+   */
+  updateValuesIfBunkering(data, form, index) {
+    if (data && data.operation?.value?.id === OPERATIONS.BUNKERING && data.port.value) {
+      const portId = Number(data.port.value.id);
+      const loadingPortData = this.portsLists.find(row => row.port?.value?.id === portId && [OPERATIONS.LOADING,OPERATIONS.DISCHARGING].includes(row.operation?.value?.id));
+      if (loadingPortData) {
+        const loadingPortForm = this.row(Number(loadingPortData.slNo - 1));
+        form.controls.eta.setValue(loadingPortForm.value.eta);
+        form.controls.etd.setValue(loadingPortForm.value.etd);
+        form.controls.eta.disable();
+        form.controls.etd.disable();
+        this.portsLists[index].eta.value = loadingPortData.eta.value;
+        this.portsLists[index].etd.value = loadingPortData.etd.value;
+        this.portsLists[index].eta.isEditable = false;
+        this.portsLists[index].etd.isEditable = false;
+        this.updateValidityAndEditMode(index, 'eta');
+        this.updateValidityAndEditMode(index, 'etd');
+        return;
+      }
+    }
+    if (form.controls.eta.disabled && form.controls.etd.disabled) {
+      form.controls.eta.enable();
+      form.controls.etd.enable();
+      form.controls.eta.markAsTouched();
+      form.controls.etd.markAsTouched();
+      this.portsLists[index].eta.isEditable = true;
+      this.portsLists[index].etd.isEditable = true;
+      this.updateValidityAndEditMode(index, 'eta');
+      this.updateValidityAndEditMode(index, 'etd');
+    }
+  }
+
+  /**
+   * Method to get validators of a key
+   *
+   * @memberof PortsComponent
+   */
+  getValidators(key, index) {
+    switch (key) {
+      case 'eta':
+        return [Validators.required, portDateRangeValidator, portDateCompareValidator('etd', '<'), portEtaEtdValidator('eta', index)];
+      case 'etd':
+        return [Validators.required, portDateCompareValidator('eta', '>'), portEtaEtdValidator('etd', index)];
+      default:
+        return [];
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { MenuItem, SortEvent } from 'primeng/api';
@@ -79,9 +79,9 @@ export class DatatableComponent implements OnInit {
   @Input() tableRowReOrder = false;
 
   @Input() tableId: string;
-  
+
   @Input() showTotal = false;
-  
+
 
   @Input() loading = false;
 
@@ -152,14 +152,13 @@ export class DatatableComponent implements OnInit {
       }
     }
     colEditable = col?.editable
-    if (this.editMode && (colEditable === undefined || colEditable) && event?.data[event.field]?.isEditable && !event.data.isAdd && event.field !== 'actions') {
+    if (this.editMode && (colEditable === undefined || colEditable) && event?.data[event.field]?.isEditable && !event.data?.isAdd && event.field !== 'actions') {
       const control = this.field(event.index, event.field);
-      event.data[event.field].isEditMode = control?.invalid;
+      if (col?.fieldType !== this.fieldType.DATETIME) {
+        event.data[event.field].isEditMode = control?.invalid;
+      }
       if (control?.dirty && control?.valid) {
-        if (col?.fieldType === this.fieldType.DATETIME) {
-          event.data[event.field].value = this.formatDateTime(control.value, true);
-        }
-        else if (col?.fieldType === DATATABLE_FIELD_TYPE.COLORPICKER) {
+        if (col?.fieldType === DATATABLE_FIELD_TYPE.COLORPICKER) {
           event.data[event.field].value = control.value;
           this.editComplete.emit(event);
         }
@@ -220,9 +219,9 @@ export class DatatableComponent implements OnInit {
    * @param col 
    * @param colIndex 
    */
-  onFocus(event, rowData: any, rowIndex: number, col: IDataTableColumn, colIndex: number) {
+  onFocus(event, rowData: any, col: IDataTableColumn, colIndex: number) {
     const code = (event.keyCode ? event.keyCode : event.which);
-    if (code === 9 && col.fieldType !== this.fieldType.ACTION && (col.editable === undefined || col.editable) && rowData[col.field]?.isEditable && !event.data.isAdd) {
+    if (code === 9 && col.fieldType !== this.fieldType.ACTION && (col.editable === undefined || col.editable) && rowData[col.field]?.isEditable && !event.data?.isAdd) {
       const prevField = this.columns[colIndex - 1].field;
       if (prevField && rowData[prevField]) {
         rowData[prevField].isEditMode = false
@@ -277,7 +276,7 @@ export class DatatableComponent implements OnInit {
    * @returns {ValidationErrors}
    * @memberof DatatableComponent
    */
-  fieldError(formGroupIndex: number, formControlName: string, formGroupData: any): ValidationErrors {
+  fieldError(formGroupIndex: number, formControlName: string): ValidationErrors {
     const formControl = this.field(formGroupIndex, formControlName);
     return formControl.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
   }
@@ -468,14 +467,14 @@ export class DatatableComponent implements OnInit {
 
 
 
-   /**
-   * Handler for api row edit event
-   *
-   * @param {MouseEvent} event
-   * @param {Object} rowData
-   * @param {number} rowIndex
-   * @memberof DatatableComponent
-   */
+  /**
+  * Handler for api row edit event
+  *
+  * @param {MouseEvent} event
+  * @param {Object} rowData
+  * @param {number} rowIndex
+  * @memberof DatatableComponent
+  */
   onEdit() {
     this.editRow.emit(this.selectedRowEvent);
   }
@@ -502,7 +501,7 @@ export class DatatableComponent implements OnInit {
   * Format date time(dd-mm-yyyy hh:mm)
   */
   formatDateTime(date, isTime = false) {
-    if(!date)
+    if (!date)
       return ""
     let month = date.getMonth() + 1;
     let day = date.getDate();
@@ -556,17 +555,10 @@ export class DatatableComponent implements OnInit {
   /**
   * Range date cleared
   */
-  onClearDateRange(event, formGroupIndex: number, formControlName: string, rowData: Object) {
+  onClearDateRange(formGroupIndex: number, formControlName: string, rowData: Object) {
     const formControl = this.field(formGroupIndex, formControlName);
     rowData[formControlName].value = "";
     formControl.setErrors({ 'required': true });
-  }
-
-  /**
-  * Date and time select
-  */
-  onDateTimeSelect(event, formGroupIndex: number, formControlName: string, rowData: any) {
-    rowData[formControlName].value = this.formatDateTime(event, true);
   }
 
   /**
@@ -575,17 +567,8 @@ export class DatatableComponent implements OnInit {
   onDatePanelClosed(event, formGroupIndex: number, formControlName: string, rowData: any) {
     const formControl = this.field(formGroupIndex, formControlName);
     rowData[formControlName].value = this.formatDateTime(formControl.value, true);
+    rowData[formControlName].isEditMode = formControl?.invalid;
     this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
-  }
-
-  /**
-  * Not selcting Date and time 
-  */
-  onDateTimeNotSelected(value, formGroupIndex: number, formControlName: string, rowData: Object) {
-    const formControl = this.field(formGroupIndex, formControlName);
-    formControl.setValue(null);
-    rowData[formControlName].value = "";
-    formControl.setErrors({ 'required': true });
   }
 
   /**
@@ -642,10 +625,10 @@ export class DatatableComponent implements OnInit {
   getTotal(col: IDataTableColumn, index: number) {
     if (!index)
       return "Total"
-    else if (col.showTotal && col.fieldType == this.fieldType.NUMBER) {
+    else if (col.showTotal && col.fieldType === this.fieldType.NUMBER) {
       let total = 0;
       this.value.forEach(row => {
-        if(row[col.field]){
+        if (row[col.field]) {
           const value = row[col.field].value ?? 0;
           total += value
         }

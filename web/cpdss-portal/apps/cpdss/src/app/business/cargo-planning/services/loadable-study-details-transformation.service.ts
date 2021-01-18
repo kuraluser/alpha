@@ -470,7 +470,7 @@ export class LoadableStudyDetailsTransformationService {
     const _port = <IPortsValueObject>{};
     const portObj: IPort = listData.portList.find(portData => portData.id === port.portId);
     const operationObj: IOperations = listData.operationListComplete.find(operation => operation.id === port.operationId);
-    const isEdit = operationObj ? !(operationObj.id === OPERATIONS.LOADING) : true;
+    const isEdit = operationObj ? !(operationObj.id === OPERATIONS.LOADING || operationObj.id === OPERATIONS.DISCHARGING) : true;
     const layCan = (port.layCanFrom && port.layCanTo) ? (port.layCanFrom + ' to ' + port.layCanTo) : '';
     _port.id = port.id;
     _port.portOrder = port.portOrder;

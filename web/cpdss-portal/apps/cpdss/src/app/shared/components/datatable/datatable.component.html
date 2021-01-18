@@ -118,7 +118,7 @@
                             [pEditableColumn]="rowData" [pEditableColumnField]="col.field"
                             [pEditableColumnRowIndex]="rowIndex" (click)="onClick($event, rowData, rowIndex, col)">
                             <div [attr.tabindex]="col.field !== 'actions' && col.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+rowIndex : null"
-                                (keyup)="onFocus($event, rowData, rowIndex, col, colIndex)">
+                                (keyup)="onFocus($event, rowData, col, colIndex)">
                                 <span *ngSwitchCase="fieldType.SLNO">{{rowData[col.field] ? rowData[col.field] :
                                     rowIndex+ 1}}</span>
                                 <span *ngSwitchCase="fieldType.ICON"><i
@@ -273,14 +273,12 @@
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <p-calendar appendTo="body" [showTime]="true" [showButtonBar]="true"
                                             [readonlyInput]="true"
-                                            (onSelect)="onDateTimeSelect($event,rowIndex, col.field,rowData)"
                                             (onClose)="onDatePanelClosed($event,rowIndex, col.field,rowData)"
                                             [formControlName]= "col.field"
                                             [placeholder]="col.fieldPlaceholder| translate"
                                             inputId="{{col.field+'_'+rowIndex + 'input'}}"
                                             id="{{col.field+'_'+rowIndex}}" [minDate]="col.minDate"
                                             [dateFormat]="col.dateFormat ? col.dateFormat : 'dd-mm-yy'"
-                                            (onClearClick)="onDateTimeNotSelected($event, rowIndex, col.field,rowData)"
                                             [hideOnDateTimeSelect]="false" #coldatetime>
                                             <p-footer><button class="btn btn-main"
                                                     (click)="coldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
@@ -305,7 +303,7 @@
                             [pEditableColumnField]="subCol.field" [pEditableColumnRowIndex]="rowIndex"
                             (click)="onClick($event, rowData, rowIndex, subCol)">
                             <div [attr.tabindex]="subCol.field !== 'actions' && subCol.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+subColIndex+rowIndex : null"
-                                (keyup)="onFocus($event, rowData, rowIndex, subCol, colIndex+subColIndex)">
+                                (keyup)="onFocus($event, rowData, subCol, colIndex+subColIndex)">
                                 <span *ngSwitchCase="fieldType.SLNO">{{rowData[col.field] ? rowData[col.field] :
                                     rowIndex+ 1}}</span>
                                 <span *ngSwitchCase="fieldType.ICON"><i
@@ -450,14 +448,12 @@
                                     <ng-container *ngIf="editMode && rowData[subCol.field]?.isEditMode">
                                         <p-calendar appendTo="body" [showButtonBar]="true" [showTime]="true"
                                             [readonlyInput]="true"
-                                            ((onSelect)="onDateTimeSelect($event,rowIndex, subCol.field,rowData)"
                                             (onClose)="onDatePanelClosed($event,rowIndex, subCol.field,rowData)"
                                             [placeholder]="subCol.fieldPlaceholder| translate"
                                             [formControlName]= "subCol.field"
                                             inputId="{{subCol.field+'_'+rowIndex + 'input'}}"
                                             id="{{subCol.field+'_'+rowIndex}}" [minDate]="subCol.minDate"
                                             [dateFormat]="subCol.dateFormat ? subCol.dateFormat : 'dd-mm-yy'"
-                                            (onClearClick)="onDateTimeNotSelected($event, rowIndex, subCol.field,rowData)"
                                             [hideOnDateTimeSelect]="false" #subcoldatetime>
                                             <p-footer><button class="btn btn-main"
                                                     (click)="subcoldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
