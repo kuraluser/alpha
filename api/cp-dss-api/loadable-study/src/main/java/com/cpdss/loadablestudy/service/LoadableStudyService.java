@@ -81,6 +81,7 @@ import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CargoHistory;
 import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.entity.CargoNomination;
@@ -176,6 +177,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
 
 /** @Author jerin.g */
 @Log4j2
@@ -185,6 +188,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Value("${loadablestudy.attachement.rooFolder}")
   private String rootFolder;
+
+  @Value("${algo.loadablestudy.api.url}")
+  private String loadableStudyUrl;
 
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
@@ -202,6 +208,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @Autowired private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
   @Autowired private EntityManager entityManager;
+  @Autowired private RestTemplate restTemplate;
   @Autowired private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
 
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
@@ -240,9 +247,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long BUNKERING_OPERATION_ID = 3L;
   private static final Long TRANSIT_OPERATION_ID = 4L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
+  private static final Long LOADABLE_STUDY_PROCESSING_STARTED_ID = 1L;
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
   private static final Long CONFIRMED_STATUS_ID = 2L;
   private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
+  private static final String ERRO_CALLING_ALGO = "ERROR_CALLING_ALGO";
   private static final int CASE_1 = 1;
   private static final int CASE_2 = 2;
   private static final int CASE_3 = 3;
@@ -582,8 +591,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Voyage does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       List<LoadableStudy> loadableStudyEntityList =
-          this.loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveOrderByLastModifiedDateTimeDesc(
-              request.getVesselId(), voyageOpt.get(), true);
+          this.loadableStudyRepository
+              .findByVesselXIdAndVoyageAndIsActiveOrderByLastModifiedDateTimeDesc(
+                  request.getVesselId(), voyageOpt.get(), true);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT);
       for (LoadableStudy entity : loadableStudyEntityList) {
@@ -1804,6 +1814,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       this.cargoNominationOperationDetailsRepository.deleteCargoNominationPortDetails(
           request.getCargoNominationId());
+      /*
+       * delete respective loading ports from port rotation table if ports
+       * not associated with any other cargo nomination belonging
+       * to the same loadable study
+       */
+      if (!existingCargoNomination.get().getCargoNominationPortDetails().isEmpty()) {
+        List<Long> requestedPortIds =
+            existingCargoNomination.get().getCargoNominationPortDetails().stream()
+                .map(CargoNominationPortDetails::getPortId)
+                .collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(requestedPortIds)) {
+          requestedPortIds.forEach(
+              requestPortId -> {
+                Long otherCargoRefExistCount =
+                    this.cargoNominationRepository.getCountCargoNominationWithPortIds(
+                        existingCargoNomination.get().getLoadableStudyXId(),
+                        existingCargoNomination.get(),
+                        requestPortId);
+                if (Objects.equals(otherCargoRefExistCount, Long.valueOf("0"))
+                    && loadableStudyOpt.isPresent()) {
+                  loadableStudyPortRotationRepository.deleteLoadingPortRotation(
+                      loadableStudyOpt.get(), requestPortId);
+                }
+              });
+        }
+      }
       this.cargoNominationRepository.deleteCargoNomination(request.getCargoNominationId());
       cargoNominationReplyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (Exception e) {
@@ -2803,296 +2839,28 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
             new com.cpdss.loadablestudy.domain.LoadableStudy();
 
-        loadableStudy.setId(loadableStudyOpt.get().getId());
-        loadableStudy.setVesselId(loadableStudyOpt.get().getVesselXId());
-        Optional.ofNullable(loadableStudyOpt.get().getDetails())
-            .ifPresent(details -> loadableStudy.setDetails(details));
-
-        Optional.ofNullable(loadableStudyOpt.get().getVoyage())
-            .ifPresent(voyage -> loadableStudy.setVoyageNo(voyage.getVoyageNo()));
-
-        Optional.ofNullable(loadableStudyOpt.get().getName())
-            .ifPresent(name -> loadableStudy.setName(name));
-        Optional.ofNullable(loadableStudyOpt.get().getCharterer())
-            .ifPresent(charterer -> loadableStudy.setCharterer(charterer));
-        Optional.ofNullable(loadableStudyOpt.get().getSubCharterer())
-            .ifPresent(subCharterer -> loadableStudy.setSubCharterer(subCharterer));
-
-        Optional.ofNullable(loadableStudyOpt.get().getDraftMark())
-            .ifPresent(draftMark -> loadableStudy.setDraftMark(String.valueOf(draftMark)));
-
-        Optional.ofNullable(loadableStudyOpt.get().getDraftRestriction())
-            .ifPresent(
-                draftRestriction ->
-                    loadableStudy.setDraftRestriction(String.valueOf(draftRestriction)));
-
-        Optional.ofNullable(loadableStudyOpt.get().getLoadLineXId())
-            .ifPresent(loadLineId -> loadableStudy.setLoadlineId(loadLineId));
-        Optional.ofNullable(loadableStudyOpt.get().getEstimatedMaxSag())
-            .ifPresent(
-                estimatedMaxSag ->
-                    loadableStudy.setEstimatedMaxSG(String.valueOf(estimatedMaxSag)));
-        Optional.ofNullable(loadableStudyOpt.get().getMaxAirTemperature())
-            .ifPresent(
-                maxAirTemperature ->
-                    loadableStudy.setMaxAirTemp(String.valueOf(maxAirTemperature)));
-        Optional.ofNullable(loadableStudyOpt.get().getMaxWaterTemperature())
-            .ifPresent(
-                maxWaterTemperature ->
-                    loadableStudy.setMaxWaterTemp(String.valueOf(maxWaterTemperature)));
-
-        List<CargoNomination> cargoNominations =
-            cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
-                request.getLoadableStudyId(), true);
-
-        loadableStudy.setCargoNomination(new ArrayList<>());
-        cargoNominations.forEach(
-            cargoNomination -> {
-              com.cpdss.loadablestudy.domain.CargoNomination cargoNominationDto =
-                  new com.cpdss.loadablestudy.domain.CargoNomination();
-              cargoNominationDto =
-                  modelMapper.map(
-                      cargoNomination, com.cpdss.loadablestudy.domain.CargoNomination.class);
-              loadableStudy.getCargoNomination().add(cargoNominationDto);
-            });
-
-        loadableStudy.setCommingleCargos(new ArrayList<>());
-        List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargos =
-            commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
-                loadableStudyOpt.get().getId(), true);
-        commingleCargos.forEach(
-            commingleCargo -> {
-              com.cpdss.loadablestudy.domain.CommingleCargo commingleCargoDto =
-                  new com.cpdss.loadablestudy.domain.CommingleCargo();
-              commingleCargoDto =
-                  modelMapper.map(
-                      commingleCargo, com.cpdss.loadablestudy.domain.CommingleCargo.class);
-              commingleCargoDto.setCargo1Id(commingleCargo.getCargo1Xid());
-              commingleCargoDto.setCargo2Id(commingleCargo.getCargo2Xid());
-              commingleCargoDto.setCargo1Percentage(commingleCargo.getCargo1Pct().toString());
-              commingleCargoDto.setCargo2Percentage(commingleCargo.getCargo2Pct().toString());
-              loadableStudy.getCommingleCargos().add(commingleCargoDto);
-            });
-
-        List<LoadableQuantity> loadableQuantity =
-            loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
-                request.getLoadableStudyId(), true);
-        if (!loadableQuantity.isEmpty()) {
-
-          loadableQuantity.forEach(
-              loadableQunty -> {
-                com.cpdss.loadablestudy.domain.LoadableQuantity loadableQuantityDto =
-                    new com.cpdss.loadablestudy.domain.LoadableQuantity();
-
-                Optional.ofNullable(loadableQunty.getBallast())
-                    .ifPresent(ballast -> loadableQuantityDto.setBallast(String.valueOf(ballast)));
-                Optional.ofNullable(loadableQunty.getBoilerWaterOnBoard())
-                    .ifPresent(
-                        boilerWaterOnBoard ->
-                            loadableQuantityDto.setBoilerWaterOnBoard(
-                                String.valueOf(boilerWaterOnBoard)));
-                Optional.ofNullable(loadableQunty.getConstant())
-                    .ifPresent(
-                        constant -> loadableQuantityDto.setConstant(String.valueOf(constant)));
-                Optional.ofNullable(loadableQunty.getDeadWeight())
-                    .ifPresent(
-                        deadWeight ->
-                            loadableQuantityDto.setDeadWeight(String.valueOf(deadWeight)));
-                Optional.ofNullable(loadableQunty.getDisplacementAtDraftRestriction())
-                    .ifPresent(
-                        displacementAtDraftRestriction ->
-                            loadableQuantityDto.setDisplacmentDraftRestriction(
-                                String.valueOf(displacementAtDraftRestriction)));
-                Optional.ofNullable(loadableQunty.getDistanceFromLastPort())
-                    .ifPresent(
-                        distanceFromLastPort ->
-                            loadableQuantityDto.setDistanceFromLastPort(
-                                String.valueOf(distanceFromLastPort)));
-                Optional.ofNullable(loadableQunty.getDraftRestriction())
-                    .ifPresent(
-                        draftRestriction ->
-                            loadableQuantityDto.setDraftRestriction(
-                                String.valueOf(draftRestriction)));
-                Optional.ofNullable(loadableQunty.getEstimatedDOOnBoard())
-                    .ifPresent(
-                        estimatedDOOnBoard ->
-                            loadableQuantityDto.setEstDOOnBoard(
-                                String.valueOf(estimatedDOOnBoard)));
-                Optional.ofNullable(loadableQunty.getEstimatedFOOnBoard())
-                    .ifPresent(
-                        estimatedFOOnBoard ->
-                            loadableQuantityDto.setEstDOOnBoard(
-                                String.valueOf(estimatedFOOnBoard)));
-                Optional.ofNullable(loadableQunty.getEstimatedFWOnBoard())
-                    .ifPresent(
-                        estimatedFWOnBoard ->
-                            loadableQuantityDto.setEstFreshWaterOnBoard(
-                                String.valueOf(estimatedFWOnBoard)));
-                Optional.ofNullable(loadableQunty.getEstimatedSagging())
-                    .ifPresent(
-                        estimatedSagging ->
-                            loadableQuantityDto.setEstSagging(String.valueOf(estimatedSagging)));
-                Optional.ofNullable(loadableQunty.getEstimatedSeaDensity())
-                    .ifPresent(
-                        estimatedSeaDensity ->
-                            loadableQuantityDto.setEstSeaDensity(
-                                String.valueOf(estimatedSeaDensity)));
-                Optional.ofNullable(loadableQunty.getFoConsumptionInSZ())
-                    .ifPresent(
-                        foConsumptionInSZ ->
-                            loadableQuantityDto.setFoConInSZ(String.valueOf(foConsumptionInSZ)));
-                Optional.ofNullable(loadableQunty.getId())
-                    .ifPresent(id -> loadableQuantityDto.setId(id));
-                Optional.ofNullable(loadableQunty.getLightWeight())
-                    .ifPresent(
-                        vesselLightWeight ->
-                            loadableQuantityDto.setVesselLightWeight(
-                                String.valueOf(vesselLightWeight)));
-                Optional.ofNullable(loadableQunty.getOtherIfAny())
-                    .ifPresent(
-                        otherIfAny ->
-                            loadableQuantityDto.setOtherIfAny(String.valueOf(otherIfAny)));
-                Optional.ofNullable(loadableQunty.getPortId())
-                    .ifPresent(
-                        portId -> loadableQuantityDto.setPortId(Long.valueOf(portId.toString())));
-                Optional.ofNullable(loadableQunty.getRunningDays())
-                    .ifPresent(
-                        runningDays ->
-                            loadableQuantityDto.setRunningDays(String.valueOf(runningDays)));
-                Optional.ofNullable(loadableQunty.getRunningHours())
-                    .ifPresent(
-                        runningHours ->
-                            loadableQuantityDto.setRunningHours(String.valueOf(runningHours)));
-                Optional.ofNullable(loadableQunty.getSaggingDeduction())
-                    .ifPresent(
-                        saggingDeduction ->
-                            loadableQuantityDto.setSaggingDeduction(
-                                String.valueOf(saggingDeduction)));
-                Optional.ofNullable(loadableQunty.getSgCorrection())
-                    .ifPresent(
-                        sgCorrection ->
-                            loadableQuantityDto.setSgCorrection(String.valueOf(sgCorrection)));
-                Optional.ofNullable(loadableQunty.getSubTotal())
-                    .ifPresent(
-                        subTotal -> loadableQuantityDto.setSubTotal(String.valueOf(subTotal)));
-                Optional.ofNullable(loadableQunty.getTotalFoConsumption())
-                    .ifPresent(
-                        totalFoConsumption ->
-                            loadableQuantityDto.setTotalFoConsumption(
-                                String.valueOf(totalFoConsumption)));
-                Optional.ofNullable(loadableQunty.getTotalQuantity())
-                    .ifPresent(
-                        totalQuantity ->
-                            loadableQuantityDto.setTotalQuantity(String.valueOf(totalQuantity)));
-                Optional.ofNullable(loadableQunty.getTpcatDraft())
-                    .ifPresent(
-                        tpcatDraft -> loadableQuantityDto.setTpc(String.valueOf(tpcatDraft)));
-                Optional.ofNullable(loadableQunty.getVesselAverageSpeed())
-                    .ifPresent(
-                        VesselAverageSpeed ->
-                            loadableQuantityDto.setVesselAverageSpeed(
-                                String.valueOf(VesselAverageSpeed)));
-
-                loadableStudy.setLoadableQuantity(loadableQuantityDto);
-              });
-        }
-
-        List<LoadableStudyPortRotation> loadableStudyPortRotations =
-            loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
-                request.getLoadableStudyId(), true);
-
-        loadableStudy.setLoadableStudyPortRotation(new ArrayList<>());
-        if (!loadableStudyPortRotations.isEmpty()) {
-          loadableStudyPortRotations.forEach(
-              loadableStudyPortRotation -> {
-                com.cpdss.loadablestudy.domain.LoadableStudyPortRotation
-                    loadableStudyPortRotationDto =
-                        new com.cpdss.loadablestudy.domain.LoadableStudyPortRotation();
-                loadableStudyPortRotationDto =
-                    modelMapper.map(
-                        loadableStudyPortRotation,
-                        com.cpdss.loadablestudy.domain.LoadableStudyPortRotation.class);
-                loadableStudy.getLoadableStudyPortRotation().add(loadableStudyPortRotationDto);
-              });
-        }
-
-        loadableStudy.setCargoNominationOperationDetails(new ArrayList<>());
-        List<CargoNominationPortDetails> cargoNominationOperationDetails =
-            cargoNominationOperationDetailsRepository.findByCargoNominationAndIsActive(
-                cargoNominations, true);
-        cargoNominationOperationDetails.forEach(
-            cargoNominationOperationDetail -> {
-              com.cpdss.loadablestudy.domain.CargoNominationOperationDetails
-                  cargoNominationOperationDetailDto =
-                      new com.cpdss.loadablestudy.domain.CargoNominationOperationDetails();
-              cargoNominationOperationDetailDto.setCargoNominationXId(
-                  cargoNominationOperationDetail.getCargoNomination().getId());
-              cargoNominationOperationDetailDto.setId(cargoNominationOperationDetail.getId());
-              cargoNominationOperationDetailDto.setPortId(
-                  cargoNominationOperationDetail.getPortId());
-              cargoNominationOperationDetailDto.setQuantity(
-                  String.valueOf(cargoNominationOperationDetail.getQuantity()));
-              loadableStudy
-                  .getCargoNominationOperationDetails()
-                  .add(cargoNominationOperationDetailDto);
-            });
-
-        loadableStudy.setOnHandQuantity(new ArrayList<>());
-        List<OnHandQuantity> onHandQuantities =
-            onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudyOpt.get(), true);
-        onHandQuantities.forEach(
-            onHandQuantity -> {
-              com.cpdss.loadablestudy.domain.OnHandQuantity onHandQuantityDto =
-                  new com.cpdss.loadablestudy.domain.OnHandQuantity();
-              onHandQuantityDto =
-                  modelMapper.map(
-                      onHandQuantity, com.cpdss.loadablestudy.domain.OnHandQuantity.class);
-              loadableStudy.getOnHandQuantity().add(onHandQuantityDto);
-            });
-
-        loadableStudy.setOnBoardQuantity(new ArrayList<>());
-        List<OnBoardQuantity> onBoardQuantities =
-            onBoardQuantityRepository.findByLoadableStudyAndIsActive(loadableStudyOpt.get(), true);
-        onBoardQuantities.forEach(
-            onBoardQuantity -> {
-              com.cpdss.loadablestudy.domain.OnBoardQuantity onBoardQuantityDto =
-                  new com.cpdss.loadablestudy.domain.OnBoardQuantity();
-              onBoardQuantityDto =
-                  modelMapper.map(
-                      onBoardQuantity, com.cpdss.loadablestudy.domain.OnBoardQuantity.class);
-              loadableStudy.getOnBoardQuantity().add(onBoardQuantityDto);
-            });
-
-        GetPortInfoByPortIdsRequest.Builder portsBuilder = GetPortInfoByPortIdsRequest.newBuilder();
-        Set<Long> portIds =
-            loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
-                loadableStudyOpt.get(), true);
-        portIds.forEach(
-            portId -> {
-              portsBuilder.addId(portId);
-            });
-
-        loadableStudy.setPortDetails(new ArrayList<PortDetails>());
-        PortReply portReply = portInfoGrpcService.getPortInfoByPortIds(portsBuilder.build());
-        portReply
-            .getPortsList()
-            .forEach(
-                portList -> {
-                  PortDetails portDetails = new PortDetails();
-                  portDetails.setAverageTideHeight(portList.getAverageTideHeight());
-                  portDetails.setCode(portList.getCode());
-                  portDetails.setDensitySeaWater(portList.getWaterDensity());
-                  portDetails.setId(portList.getId());
-                  portDetails.setName(portList.getName());
-                  portDetails.setTideHeight(portList.getTideHeight());
-                  loadableStudy.getPortDetails().add(portDetails);
-                });
+        buildLoadableStuydDetails(loadableStudyOpt, loadableStudy);
+        buildCargoNominationDetails(request.getLoadableStudyId(), loadableStudy, modelMapper);
+        buildCommingleCargoDetails(loadableStudyOpt.get().getId(), loadableStudy, modelMapper);
+        buildLoadableQuantityDetails(request.getLoadableStudyId(), loadableStudy);
+        buildLoadableStudyPortRotationDetails(
+            request.getLoadableStudyId(), loadableStudy, modelMapper);
+        buildCargoNominationPortDetails(request.getLoadableStudyId(), loadableStudy);
+        buildOnHandQuantityDetails(loadableStudyOpt.get(), loadableStudy, modelMapper);
+        buildOnBoardQuantityDetails(loadableStudyOpt.get(), loadableStudy, modelMapper);
+        buildportRotationDetails(loadableStudyOpt.get(), loadableStudy);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
         objectMapper.writeValue(new File("loadableStudy.json"), loadableStudy);
+
+        AlgoResponse algoResponse =
+            restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
+        updateProcessId(algoResponse, loadableStudyOpt.get());
+
         replyBuilder =
             AlgoReply.newBuilder()
+                .setProcesssId(algoResponse.getProcessId())
                 .setResponseStatus(
                     ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
       } else {
@@ -3106,6 +2874,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
                         .build());
       }
+    } catch (ResourceAccessException e) {
+      log.info("Error calling ALGO ", request.getLoadableStudyId());
+      replyBuilder =
+          AlgoReply.newBuilder()
+              .setResponseStatus(
+                  ResponseStatus.newBuilder()
+                      .setStatus(FAILED)
+                      .setMessage(ERRO_CALLING_ALGO)
+                      .setCode(CommonErrorCodes.E_CPDSS_ALGO_ISSUE)
+                      .build());
     } catch (Exception e) {
       log.error("Exception when when calling algo  ", e);
       replyBuilder =
@@ -3120,6 +2898,376 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * @param algoResponse
+   * @param loadableStudy void
+   */
+  private void updateProcessId(AlgoResponse algoResponse, LoadableStudy loadableStudy) {
+    LoadableStudyAlgoStatus status = new LoadableStudyAlgoStatus();
+    status.setLoadableStudy(loadableStudy);
+    status.setIsActive(true);
+    status.setLoadableStudyStatus(
+        loadableStudyStatusRepository.getOne(LOADABLE_STUDY_PROCESSING_STARTED_ID));
+    status.setProcessId(algoResponse.getProcessId());
+    status.setVesselxid(loadableStudy.getVesselXId());
+    loadableStudyAlgoStatusRepository.save(status);
+  }
+
+  /**
+   * @param loadableStudy
+   * @param loadableStudyEntity void
+   */
+  private void buildportRotationDetails(
+      LoadableStudy loadableStudyEntity,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+    GetPortInfoByPortIdsRequest.Builder portsBuilder = GetPortInfoByPortIdsRequest.newBuilder();
+    Set<Long> portIds =
+        loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+            loadableStudyEntity, true);
+    portIds.forEach(
+        portId -> {
+          portsBuilder.addId(portId);
+        });
+
+    loadableStudy.setPortDetails(new ArrayList<PortDetails>());
+    PortReply portReply = getPortInfo(portsBuilder.build());
+    portReply
+        .getPortsList()
+        .forEach(
+            portList -> {
+              PortDetails portDetails = new PortDetails();
+              portDetails.setAverageTideHeight(portList.getAverageTideHeight());
+              portDetails.setCode(portList.getCode());
+              portDetails.setDensitySeaWater(portList.getWaterDensity());
+              portDetails.setId(portList.getId());
+              portDetails.setName(portList.getName());
+              portDetails.setTideHeight(portList.getTideHeight());
+              loadableStudy.getPortDetails().add(portDetails);
+            });
+  }
+
+  /**
+   * @param loadableStudy
+   * @param loadableStudy2
+   * @param modelMapper void
+   */
+  private void buildOnBoardQuantityDetails(
+      LoadableStudy loadableStudyEntity,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper) {
+    loadableStudy.setOnBoardQuantity(new ArrayList<>());
+    List<OnBoardQuantity> onBoardQuantities =
+        onBoardQuantityRepository.findByLoadableStudyAndIsActive(loadableStudyEntity, true);
+    onBoardQuantities.forEach(
+        onBoardQuantity -> {
+          com.cpdss.loadablestudy.domain.OnBoardQuantity onBoardQuantityDto =
+              new com.cpdss.loadablestudy.domain.OnBoardQuantity();
+          onBoardQuantityDto =
+              modelMapper.map(
+                  onBoardQuantity, com.cpdss.loadablestudy.domain.OnBoardQuantity.class);
+          loadableStudy.getOnBoardQuantity().add(onBoardQuantityDto);
+        });
+  }
+
+  /**
+   * @param loadableStudy
+   * @param loadableStudy2
+   * @param modelMapper void
+   */
+  private void buildOnHandQuantityDetails(
+      LoadableStudy loadableStudyEntity,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper) {
+    loadableStudy.setOnHandQuantity(new ArrayList<>());
+    List<OnHandQuantity> onHandQuantities =
+        onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudyEntity, true);
+    onHandQuantities.forEach(
+        onHandQuantity -> {
+          com.cpdss.loadablestudy.domain.OnHandQuantity onHandQuantityDto =
+              new com.cpdss.loadablestudy.domain.OnHandQuantity();
+          onHandQuantityDto =
+              modelMapper.map(onHandQuantity, com.cpdss.loadablestudy.domain.OnHandQuantity.class);
+          loadableStudy.getOnHandQuantity().add(onHandQuantityDto);
+        });
+  }
+
+  /**
+   * @param loadableStudyId
+   * @param loadableStudy void
+   */
+  private void buildCargoNominationPortDetails(
+      long loadableStudyId, com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+    List<CargoNomination> cargoNominations =
+        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+    loadableStudy.setCargoNominationOperationDetails(new ArrayList<>());
+    List<CargoNominationPortDetails> cargoNominationOperationDetails =
+        cargoNominationOperationDetailsRepository.findByCargoNominationAndIsActive(
+            cargoNominations, true);
+    cargoNominationOperationDetails.forEach(
+        cargoNominationOperationDetail -> {
+          com.cpdss.loadablestudy.domain.CargoNominationOperationDetails
+              cargoNominationOperationDetailDto =
+                  new com.cpdss.loadablestudy.domain.CargoNominationOperationDetails();
+          cargoNominationOperationDetailDto.setCargoNominationXId(
+              cargoNominationOperationDetail.getCargoNomination().getId());
+          cargoNominationOperationDetailDto.setId(cargoNominationOperationDetail.getId());
+          cargoNominationOperationDetailDto.setPortId(cargoNominationOperationDetail.getPortId());
+          cargoNominationOperationDetailDto.setQuantity(
+              String.valueOf(cargoNominationOperationDetail.getQuantity()));
+          loadableStudy.getCargoNominationOperationDetails().add(cargoNominationOperationDetailDto);
+        });
+  }
+
+  /**
+   * @param loadableStudyId
+   * @param loadableStudy
+   * @param modelMapper void
+   */
+  private void buildLoadableStudyPortRotationDetails(
+      long loadableStudyId,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper) {
+    List<LoadableStudyPortRotation> loadableStudyPortRotations =
+        loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(loadableStudyId, true);
+
+    loadableStudy.setLoadableStudyPortRotation(new ArrayList<>());
+    if (!loadableStudyPortRotations.isEmpty()) {
+      loadableStudyPortRotations.forEach(
+          loadableStudyPortRotation -> {
+            com.cpdss.loadablestudy.domain.LoadableStudyPortRotation loadableStudyPortRotationDto =
+                new com.cpdss.loadablestudy.domain.LoadableStudyPortRotation();
+            loadableStudyPortRotationDto =
+                modelMapper.map(
+                    loadableStudyPortRotation,
+                    com.cpdss.loadablestudy.domain.LoadableStudyPortRotation.class);
+            loadableStudy.getLoadableStudyPortRotation().add(loadableStudyPortRotationDto);
+          });
+    }
+  }
+
+  /**
+   * @param loadableStudyId
+   * @param loadableStudy void
+   */
+  private void buildLoadableQuantityDetails(
+      long loadableStudyId, com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+    List<LoadableQuantity> loadableQuantity =
+        loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+    if (!loadableQuantity.isEmpty()) {
+
+      loadableQuantity.forEach(
+          loadableQunty -> {
+            com.cpdss.loadablestudy.domain.LoadableQuantity loadableQuantityDto =
+                new com.cpdss.loadablestudy.domain.LoadableQuantity();
+
+            Optional.ofNullable(loadableQunty.getBallast())
+                .ifPresent(ballast -> loadableQuantityDto.setBallast(String.valueOf(ballast)));
+            Optional.ofNullable(loadableQunty.getBoilerWaterOnBoard())
+                .ifPresent(
+                    boilerWaterOnBoard ->
+                        loadableQuantityDto.setBoilerWaterOnBoard(
+                            String.valueOf(boilerWaterOnBoard)));
+            Optional.ofNullable(loadableQunty.getConstant())
+                .ifPresent(constant -> loadableQuantityDto.setConstant(String.valueOf(constant)));
+            Optional.ofNullable(loadableQunty.getDeadWeight())
+                .ifPresent(
+                    deadWeight -> loadableQuantityDto.setDeadWeight(String.valueOf(deadWeight)));
+            Optional.ofNullable(loadableQunty.getDisplacementAtDraftRestriction())
+                .ifPresent(
+                    displacementAtDraftRestriction ->
+                        loadableQuantityDto.setDisplacmentDraftRestriction(
+                            String.valueOf(displacementAtDraftRestriction)));
+            Optional.ofNullable(loadableQunty.getDistanceFromLastPort())
+                .ifPresent(
+                    distanceFromLastPort ->
+                        loadableQuantityDto.setDistanceFromLastPort(
+                            String.valueOf(distanceFromLastPort)));
+            Optional.ofNullable(loadableQunty.getDraftRestriction())
+                .ifPresent(
+                    draftRestriction ->
+                        loadableQuantityDto.setDraftRestriction(String.valueOf(draftRestriction)));
+            Optional.ofNullable(loadableQunty.getEstimatedDOOnBoard())
+                .ifPresent(
+                    estimatedDOOnBoard ->
+                        loadableQuantityDto.setEstDOOnBoard(String.valueOf(estimatedDOOnBoard)));
+            Optional.ofNullable(loadableQunty.getEstimatedFOOnBoard())
+                .ifPresent(
+                    estimatedFOOnBoard ->
+                        loadableQuantityDto.setEstDOOnBoard(String.valueOf(estimatedFOOnBoard)));
+            Optional.ofNullable(loadableQunty.getEstimatedFWOnBoard())
+                .ifPresent(
+                    estimatedFWOnBoard ->
+                        loadableQuantityDto.setEstFreshWaterOnBoard(
+                            String.valueOf(estimatedFWOnBoard)));
+            Optional.ofNullable(loadableQunty.getEstimatedSagging())
+                .ifPresent(
+                    estimatedSagging ->
+                        loadableQuantityDto.setEstSagging(String.valueOf(estimatedSagging)));
+            Optional.ofNullable(loadableQunty.getEstimatedSeaDensity())
+                .ifPresent(
+                    estimatedSeaDensity ->
+                        loadableQuantityDto.setEstSeaDensity(String.valueOf(estimatedSeaDensity)));
+            Optional.ofNullable(loadableQunty.getFoConsumptionInSZ())
+                .ifPresent(
+                    foConsumptionInSZ ->
+                        loadableQuantityDto.setFoConInSZ(String.valueOf(foConsumptionInSZ)));
+            Optional.ofNullable(loadableQunty.getId())
+                .ifPresent(id -> loadableQuantityDto.setId(id));
+            Optional.ofNullable(loadableQunty.getLightWeight())
+                .ifPresent(
+                    vesselLightWeight ->
+                        loadableQuantityDto.setVesselLightWeight(
+                            String.valueOf(vesselLightWeight)));
+            Optional.ofNullable(loadableQunty.getOtherIfAny())
+                .ifPresent(
+                    otherIfAny -> loadableQuantityDto.setOtherIfAny(String.valueOf(otherIfAny)));
+            Optional.ofNullable(loadableQunty.getPortId())
+                .ifPresent(
+                    portId -> loadableQuantityDto.setPortId(Long.valueOf(portId.toString())));
+            Optional.ofNullable(loadableQunty.getRunningDays())
+                .ifPresent(
+                    runningDays -> loadableQuantityDto.setRunningDays(String.valueOf(runningDays)));
+            Optional.ofNullable(loadableQunty.getRunningHours())
+                .ifPresent(
+                    runningHours ->
+                        loadableQuantityDto.setRunningHours(String.valueOf(runningHours)));
+            Optional.ofNullable(loadableQunty.getSaggingDeduction())
+                .ifPresent(
+                    saggingDeduction ->
+                        loadableQuantityDto.setSaggingDeduction(String.valueOf(saggingDeduction)));
+            Optional.ofNullable(loadableQunty.getSgCorrection())
+                .ifPresent(
+                    sgCorrection ->
+                        loadableQuantityDto.setSgCorrection(String.valueOf(sgCorrection)));
+            Optional.ofNullable(loadableQunty.getSubTotal())
+                .ifPresent(subTotal -> loadableQuantityDto.setSubTotal(String.valueOf(subTotal)));
+            Optional.ofNullable(loadableQunty.getTotalFoConsumption())
+                .ifPresent(
+                    totalFoConsumption ->
+                        loadableQuantityDto.setTotalFoConsumption(
+                            String.valueOf(totalFoConsumption)));
+            Optional.ofNullable(loadableQunty.getTotalQuantity())
+                .ifPresent(
+                    totalQuantity ->
+                        loadableQuantityDto.setTotalQuantity(String.valueOf(totalQuantity)));
+            Optional.ofNullable(loadableQunty.getTpcatDraft())
+                .ifPresent(tpcatDraft -> loadableQuantityDto.setTpc(String.valueOf(tpcatDraft)));
+            Optional.ofNullable(loadableQunty.getVesselAverageSpeed())
+                .ifPresent(
+                    VesselAverageSpeed ->
+                        loadableQuantityDto.setVesselAverageSpeed(
+                            String.valueOf(VesselAverageSpeed)));
+
+            loadableStudy.setLoadableQuantity(loadableQuantityDto);
+          });
+    }
+  }
+
+  /**
+   * @param id
+   * @param loadableStudy void
+   * @param modelMapper
+   */
+  private void buildCommingleCargoDetails(
+      Long loadableStudyId,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper) {
+
+    List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargos =
+        commingleCargoRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+
+    loadableStudy.setCommingleCargos(new ArrayList<>());
+
+    commingleCargos.forEach(
+        commingleCargo -> {
+          com.cpdss.loadablestudy.domain.CommingleCargo commingleCargoDto =
+              new com.cpdss.loadablestudy.domain.CommingleCargo();
+          commingleCargoDto =
+              modelMapper.map(commingleCargo, com.cpdss.loadablestudy.domain.CommingleCargo.class);
+          commingleCargoDto.setCargo1Id(commingleCargo.getCargo1Xid());
+          commingleCargoDto.setCargo2Id(commingleCargo.getCargo2Xid());
+          commingleCargoDto.setCargo1Percentage(commingleCargo.getCargo1Pct().toString());
+          commingleCargoDto.setCargo2Percentage(commingleCargo.getCargo2Pct().toString());
+          loadableStudy.getCommingleCargos().add(commingleCargoDto);
+        });
+  }
+
+  /**
+   * @param loadableStudyId
+   * @param loadableStudy void
+   * @param modelMapper
+   */
+  private void buildCargoNominationDetails(
+      long loadableStudyId,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper) {
+    List<CargoNomination> cargoNominations =
+        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+
+    loadableStudy.setCargoNomination(new ArrayList<>());
+    cargoNominations.forEach(
+        cargoNomination -> {
+          com.cpdss.loadablestudy.domain.CargoNomination cargoNominationDto =
+              new com.cpdss.loadablestudy.domain.CargoNomination();
+          cargoNominationDto =
+              modelMapper.map(
+                  cargoNomination, com.cpdss.loadablestudy.domain.CargoNomination.class);
+          loadableStudy.getCargoNomination().add(cargoNominationDto);
+        });
+  }
+
+  /**
+   * @param loadableStudyOpt
+   * @param loadableStudy void
+   */
+  private void buildLoadableStuydDetails(
+      Optional<LoadableStudy> loadableStudyOpt,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+    loadableStudy.setId(loadableStudyOpt.get().getId());
+    loadableStudy.setVesselId(loadableStudyOpt.get().getVesselXId());
+    Optional.ofNullable(loadableStudyOpt.get().getDetails())
+        .ifPresent(details -> loadableStudy.setDetails(details));
+
+    Optional.ofNullable(loadableStudyOpt.get().getVoyage())
+        .ifPresent(voyage -> loadableStudy.setVoyageNo(voyage.getVoyageNo()));
+
+    Optional.ofNullable(loadableStudyOpt.get().getName())
+        .ifPresent(name -> loadableStudy.setName(name));
+    Optional.ofNullable(loadableStudyOpt.get().getCharterer())
+        .ifPresent(charterer -> loadableStudy.setCharterer(charterer));
+    Optional.ofNullable(loadableStudyOpt.get().getSubCharterer())
+        .ifPresent(subCharterer -> loadableStudy.setSubCharterer(subCharterer));
+
+    Optional.ofNullable(loadableStudyOpt.get().getDraftMark())
+        .ifPresent(draftMark -> loadableStudy.setDraftMark(String.valueOf(draftMark)));
+
+    Optional.ofNullable(loadableStudyOpt.get().getDraftRestriction())
+        .ifPresent(
+            draftRestriction ->
+                loadableStudy.setDraftRestriction(String.valueOf(draftRestriction)));
+
+    Optional.ofNullable(loadableStudyOpt.get().getLoadLineXId())
+        .ifPresent(loadLineId -> loadableStudy.setLoadlineId(loadLineId));
+    Optional.ofNullable(loadableStudyOpt.get().getEstimatedMaxSag())
+        .ifPresent(
+            estimatedMaxSag -> loadableStudy.setEstimatedMaxSG(String.valueOf(estimatedMaxSag)));
+    Optional.ofNullable(loadableStudyOpt.get().getMaxAirTemperature())
+        .ifPresent(
+            maxAirTemperature -> loadableStudy.setMaxAirTemp(String.valueOf(maxAirTemperature)));
+    Optional.ofNullable(loadableStudyOpt.get().getMaxWaterTemperature())
+        .ifPresent(
+            maxWaterTemperature ->
+                loadableStudy.setMaxWaterTemp(String.valueOf(maxWaterTemperature)));
+  }
+
+  /**
+   * @param build
+   * @return PortReply
+   */
+  public PortReply getPortInfo(GetPortInfoByPortIdsRequest build) {
+    return portInfoGrpcService.getPortInfoByPortIds(build);
   }
 
   /** Get on board quantity details corresponding to a loadable study */

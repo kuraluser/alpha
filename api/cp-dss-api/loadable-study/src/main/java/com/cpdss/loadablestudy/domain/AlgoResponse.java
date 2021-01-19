@@ -6,5 +6,5 @@ import lombok.Data;
 /** @Author jerin.g */
 @Data
 public class AlgoResponse {
-  private LoadableStudy loadableStudy;
+  private String processId;
 }

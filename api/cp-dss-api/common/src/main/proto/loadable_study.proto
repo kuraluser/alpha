@@ -261,6 +261,7 @@ message AlgoRequest {
 
 message AlgoReply {
 	ResponseStatus responseStatus = 1;
+	string processsId = 2;
 }
 
 message VoyageRequest {

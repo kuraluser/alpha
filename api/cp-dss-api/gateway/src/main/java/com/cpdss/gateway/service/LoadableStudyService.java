@@ -2012,8 +2012,11 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to call algo",
           reply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+          reply.getResponseStatus().getCode().equals(CommonErrorCodes.E_CPDSS_ALGO_ISSUE)
+              ? HttpStatusCode.SERVICE_UNAVAILABLE
+              : HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
     }
+    algoPatternResponse.setProcessId(reply.getProcesssId());
     algoPatternResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return algoPatternResponse;

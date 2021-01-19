@@ -7,7 +7,9 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import java.util.List;
 import java.util.Set;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface LoadableStudyPortRotationRepository
     extends CommonCrudRepository<LoadableStudyPortRotation, Long> {
@@ -74,4 +76,10 @@ public interface LoadableStudyPortRotationRepository
       "SELECT portXId FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy = ?1 AND LSPR.isActive = ?2 AND LSPR.portOrder =?3")
   public Long findByLoadableStudyAndIsActiveAndPortOrder(
       final LoadableStudy loadableStudy, final boolean isActive, final Long portOrder);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "Update LoadableStudyPortRotation set isActive = false where loadableStudy = ?1 AND operation.id = 1 AND portXId = ?2 ")
+  public void deleteLoadingPortRotation(final LoadableStudy loadableStudy, Long portId);
 }

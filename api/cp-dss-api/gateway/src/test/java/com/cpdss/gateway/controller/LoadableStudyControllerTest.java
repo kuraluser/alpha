@@ -14,6 +14,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
+import com.cpdss.gateway.domain.AlgoPatternResponse;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.AlgoStatusResponse;
 import com.cpdss.gateway.domain.CargoNomination;
@@ -160,6 +161,13 @@ class LoadableStudyControllerTest {
       CLOUD_API_URL_PREFIX + SAVE_ON_HAND_QUANTITIES_API_URL;
   private static final String SAVE_ON_HAND_QUANTITIES_SHIP_API_URL =
       SHIP_API_URL_PREFIX + SAVE_ON_HAND_QUANTITIES_API_URL;
+
+  private static final String GENERATE_LOADABLE_PATTERN_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/generate-loadable-patterns";
+  private static final String GET_GENERATE_LOADABLE_PATTERN_DETAILS_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + GENERATE_LOADABLE_PATTERN_API_URL;
+  private static final String GET_GENERATE_LOADABLE_PATTERN_DETAILS_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + GENERATE_LOADABLE_PATTERN_API_URL;
 
   private static final String GET_LOADABLE_PATTERN_API_URL =
       "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-patterns";
@@ -1080,6 +1088,76 @@ class LoadableStudyControllerTest {
         .perform(
             MockMvcRequestBuilders.post(
                     GET_CONFIRM_PLAN_CLOUD_API_URL, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  /**
+   * @param url
+   * @throws Exception void
+   */
+  @ValueSource(
+      strings = {
+        GET_GENERATE_LOADABLE_PATTERN_DETAILS_CLOUD_API_URL,
+        GET_GENERATE_LOADABLE_PATTERN_DETAILS_SHIP_API_URL
+      })
+  @ParameterizedTest
+  void testGenerateLoadablePatterns(String url) throws Exception {
+    when(this.loadableStudyService.generateLoadablePatterns(anyLong(), anyString()))
+        .thenReturn(new AlgoPatternResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  /**
+   * @param exceptionClass
+   * @throws Exception void
+   */
+  @Test
+  void testGenerateLoadablePatternsGenericServiceException() throws Exception {
+
+    when(this.loadableStudyService.generateLoadablePatterns(anyLong(), anyString()))
+        .thenThrow(RuntimeException.class);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(
+                    GET_GENERATE_LOADABLE_PATTERN_DETAILS_CLOUD_API_URL,
+                    TEST_VESSEL_ID,
+                    TEST_VOYAGE_ID,
+                    1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().is(HttpStatusCode.SERVICE_UNAVAILABLE.value()));
+  }
+
+  /**
+   * @param exceptionClass
+   * @throws Exception void
+   */
+  @Test
+  void testGenerateLoadablePatternsRuntimeException() throws Exception {
+
+    when(this.loadableStudyService.generateLoadablePatterns(anyLong(), anyString()))
+        .thenThrow(
+            new GenericServiceException(
+                "exception",
+                CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                HttpStatusCode.INTERNAL_SERVER_ERROR));
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(
+                    GET_GENERATE_LOADABLE_PATTERN_DETAILS_CLOUD_API_URL,
+                    TEST_VESSEL_ID,
+                    TEST_VOYAGE_ID,
+                    1)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))

@@ -11,6 +11,8 @@ import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.AlgoReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
@@ -48,6 +50,9 @@ import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
+import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
+import com.cpdss.common.generated.PortInfo.PortDetail;
+import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
@@ -133,6 +138,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @Author jerin.g
@@ -187,7 +193,7 @@ class LoadableStudyServiceTest {
   @MockBean private SynopticalTableRepository synopticalTableRepository;
   @Mock private CargoNomination cargoNomination;
   @Mock private CargoNominationPortDetails cargoNominationPortDetails;
-
+  @MockBean private RestTemplate restTemplate;
   @MockBean private EntityManager entityManager;
 
   @MockBean private EntityManagerFactory entityManagerFactory;
@@ -426,8 +432,9 @@ class LoadableStudyServiceTest {
     LoadableStudyRequest request = this.createLoadableStudyRequest();
     StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
     when(this.voyageRepository.findById(anyLong())).thenReturn(Optional.of(new Voyage()));
-    when(this.loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveOrderByLastModifiedDateTimeDesc(
-            anyLong(), any(Voyage.class), anyBoolean()))
+    when(this.loadableStudyRepository
+            .findByVesselXIdAndVoyageAndIsActiveOrderByLastModifiedDateTimeDesc(
+                anyLong(), any(Voyage.class), anyBoolean()))
         .thenReturn(this.createLoadableStudyEntityList());
     this.loadableStudyService.findLoadableStudiesByVesselAndVoyage(request, responseObserver);
     List<LoadableStudyReply> replies = responseObserver.getValues();
@@ -441,8 +448,9 @@ class LoadableStudyServiceTest {
     LoadableStudyRequest request = this.createLoadableStudyRequest();
     StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
     when(this.voyageRepository.findById(anyLong())).thenReturn(Optional.of(new Voyage()));
-    when(this.loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveOrderByLastModifiedDateTimeDesc(
-            anyLong(), any(Voyage.class), anyBoolean()))
+    when(this.loadableStudyRepository
+            .findByVesselXIdAndVoyageAndIsActiveOrderByLastModifiedDateTimeDesc(
+                anyLong(), any(Voyage.class), anyBoolean()))
         .thenThrow(RuntimeException.class);
     this.loadableStudyService.findLoadableStudiesByVesselAndVoyage(request, responseObserver);
     List<LoadableStudyReply> replies = responseObserver.getValues();
@@ -1801,30 +1809,107 @@ class LoadableStudyServiceTest {
   }
 
   @Test
-  void testGetLoadablePatternDetails() {
+  void testGenerateLoadablePatterns() {
     Optional<LoadableStudy> optional = Optional.of(new LoadableStudy());
     LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
-    optional.get().setVesselXId(1L);
-    Mockito.doReturn(this.createVesselReply().build())
-        .when(spyService)
-        .getVesselTanks(any(VesselRequest.class));
     when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(optional);
-    when(this.loadablePatternComingleDetailsRepository.findByLoadablePatternDetailsIdAndIsActive(
+    Mockito.doReturn(this.createPortReply())
+        .when(spyService)
+        .getPortInfo(any(GetPortInfoByPortIdsRequest.class));
+
+    when(this.onBoardQuantityRepository.findByLoadableStudyAndIsActive(any(), anyBoolean()))
+        .thenReturn(prepareOnBoardQuantity());
+
+    when(this.onHandQuantityRepository.findByLoadableStudyAndIsActive(any(), anyBoolean()))
+        .thenReturn(prepareHandQuantity());
+    when(this.cargoNominationOperationDetailsRepository.findByCargoNominationAndIsActive(
+            Mockito.anyList(), anyBoolean()))
+        .thenReturn(prepareCargoNominationOperationDetails());
+
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
             anyLong(), anyBoolean()))
-        .thenReturn(Optional.of(new LoadablePatternComingleDetails()));
-    when(this.loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
-            any(LoadableStudy.class), anyBoolean()))
-        .thenReturn(prepareLoadablePatterns());
-    when(this.loadablePatternDetailsRepository.findByLoadablePatternAndIsActive(
-            any(LoadablePattern.class), anyBoolean()))
-        .thenReturn(prepareLoadablePatternDetails());
-    StreamRecorder<LoadablePatternReply> responseObserver = StreamRecorder.create();
-    spyService.getLoadablePatternDetails(this.createGetLoadablePatternDetails(), responseObserver);
-    List<LoadablePatternReply> results = responseObserver.getValues();
+        .thenReturn(prepareLoadableStudyPortRotationDetails());
+
+    when(this.loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(prepareLoadableQuantityDetails());
+
+    when(this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(prepareCommingleCargoDetails());
+
+    when(this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(prepareCargoNomination());
+
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+    spyService.generateLoadablePatterns(AlgoRequest.newBuilder().build(), responseObserver);
+    List<AlgoReply> results = responseObserver.getValues();
     assertEquals(1, results.size());
     assertNull(responseObserver.getError());
     assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /** @return List<CargoNomination> */
+  private List<CargoNomination> prepareCargoNomination() {
+    List<CargoNomination> cargoNominations = new ArrayList<CargoNomination>();
+    cargoNominations.add(new CargoNomination());
+    return cargoNominations;
+  }
+
+  /** @return List<CommingleCargo> */
+  private List<CommingleCargo> prepareCommingleCargoDetails() {
+    List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargos =
+        new ArrayList<com.cpdss.loadablestudy.entity.CommingleCargo>();
+    commingleCargos.add(new com.cpdss.loadablestudy.entity.CommingleCargo());
+    return commingleCargos;
+  }
+
+  /** @return List<LoadableQuantity> */
+  private List<LoadableQuantity> prepareLoadableQuantityDetails() {
+    List<LoadableQuantity> loadableQuantities = new ArrayList<LoadableQuantity>();
+    loadableQuantities.add(new LoadableQuantity());
+    return loadableQuantities;
+  }
+
+  /** @return List<LoadableStudyPortRotation> */
+  private List<LoadableStudyPortRotation> prepareLoadableStudyPortRotationDetails() {
+    List<LoadableStudyPortRotation> loadableStudyPortRotations =
+        new ArrayList<LoadableStudyPortRotation>();
+    loadableStudyPortRotations.add(new LoadableStudyPortRotation());
+    return loadableStudyPortRotations;
+  }
+
+  /** @return List<CargoNominationPortDetails> */
+  private List<CargoNominationPortDetails> prepareCargoNominationOperationDetails() {
+    List<CargoNominationPortDetails> cargoNominationPortDetails =
+        new ArrayList<CargoNominationPortDetails>();
+    CargoNomination cargoNomination = new CargoNomination();
+    cargoNomination.setId(1L);
+    CargoNominationPortDetails details = new CargoNominationPortDetails();
+    details.setCargoNomination(cargoNomination);
+    cargoNominationPortDetails.add(details);
+    return cargoNominationPortDetails;
+  }
+
+  /** @return List<OnHandQuantity> */
+  private List<OnHandQuantity> prepareHandQuantity() {
+    List<OnHandQuantity> onHandQuantities = new ArrayList<OnHandQuantity>();
+    onHandQuantities.add(new OnHandQuantity());
+    return onHandQuantities;
+  }
+
+  /** @return List<OnBoardQuantity> */
+  private List<OnBoardQuantity> prepareOnBoardQuantity() {
+    List<OnBoardQuantity> onBoardQuantities = new ArrayList<OnBoardQuantity>();
+    onBoardQuantities.add(new OnBoardQuantity());
+    return onBoardQuantities;
+  }
+
+  /** @return Builder */
+  private PortReply createPortReply() {
+    PortReply.Builder builder = PortReply.newBuilder();
+    PortDetail.Builder portDetailBuilder = PortDetail.newBuilder();
+    builder.addPorts(portDetailBuilder);
+    return builder.build();
   }
 
   @Test
