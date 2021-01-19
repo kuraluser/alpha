@@ -201,6 +201,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
     this.ngxSpinnerService.show();
     this.selectedDischargeCargo = { id: this.selectedLoadableStudy.dischargingCargoId }
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
+    !this.dischargingPorts ? this.dischargingPorts = [] : '';
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
     // if no loadable study is selected set 1st loadable study as selected one and reload
     if (!loadableStudyId) {
@@ -263,10 +264,18 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @memberof LoadableStudyDetailsComponent
    */
   async onDischargePortChange(event) {
-    if (!event.originalEvent?.target?.className.toString().includes('disabled')) {
-      const sucessKeys = ['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS', 'LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY']
-      this.updateDischargeData(sucessKeys)
-    }
+    let isPortSelected;
+    this.dischargingPorts.map((dischargingPort,index) => { if(dischargingPort.id === event.itemValue.id) { isPortSelected = index }});
+    isPortSelected ? (this.dischargingPorts.splice(isPortSelected,1) , this.updatingDischargingPort()) : this.dischargingPorts.length < 5 ? (this.dischargingPorts.push(event.itemValue), this.updatingDischargingPort()) : '';
+  }
+
+  /**
+   * updating discharging port
+   * @memberof LoadableStudyDetailsComponent
+   */
+  updatingDischargingPort() {
+    const sucessKeys = ['LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS', 'LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY']
+    this.updateDischargeData(sucessKeys);
   }
 
   /**

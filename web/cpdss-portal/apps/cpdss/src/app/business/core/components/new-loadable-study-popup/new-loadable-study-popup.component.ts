@@ -129,7 +129,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       subCharterer: this.formBuilder.control('', [Validators.maxLength(30)]),
       loadLine: '',
       draftMark: '',
-      draftRestriction: this.formBuilder.control('', [numberValidator(2, 2)]),
+      draftRestriction: this.formBuilder.control('', [numberValidator(2, 2), Validators.min(0.01)]),
       maxAirTempExpected: this.formBuilder.control('', [numberValidator(2, 2) , Validators.min(-99)]),
       maxWaterTempExpected: this.formBuilder.control('', [numberValidator(2, 3) , Validators.min(-99)])
     });

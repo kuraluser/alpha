@@ -128,6 +128,11 @@
                         <div class="col">
                             <input class="form-control" type="text" cpdssPortalNumberDecimal id="txt_draftRestriction"
                                 formControlName="draftRestriction" focusTrap>
+                                <span
+                                *ngIf="form.draftRestriction.invalid && form.draftRestriction.touched && form.draftRestriction.errors?.min"
+                                class="text-danger">
+                                {{'DRAFT_RESTRICTION_MIN' | translate}}
+                            </span>
                         </div>
                     </div>
 

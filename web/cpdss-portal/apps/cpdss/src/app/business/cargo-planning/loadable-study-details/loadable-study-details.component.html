@@ -149,7 +149,7 @@
                     <div class="col-sm-12" *ngIf="loadableStudies?.length">
                         <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
                             <label class="col-form-label pr-10">{{'DISCHARGE_DROPDOWN_LABEL' | translate}}</label>
-                            <p-multiSelect id="discharge_ports" [(ngModel)]="dischargingPorts" [options]="ports"
+                            <p-multiSelect id="discharge_ports" [ngModel]="dischargingPorts" [options]="ports"
                                 optionLabel="name" placeholder="{{ 'DISCHARGE_DROPDOWN_SELECT_PORT'| translate }}"
                                 (onChange)="onDischargePortChange($event)" [selectionLimit]="5">
                             </p-multiSelect>

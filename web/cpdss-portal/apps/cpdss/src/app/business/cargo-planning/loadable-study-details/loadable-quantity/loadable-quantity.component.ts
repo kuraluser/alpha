@@ -115,7 +115,7 @@ export class LoadableQuantityComponent implements OnInit {
 
       if (this.caseNo === 1) {
         this.loadableQuantityForm.addControl('distanceInSummerzone', this.fb.control('', [Validators.required, numberValidator(2, 2), Validators.min(0)]));
-        this.loadableQuantityForm.addControl('speedInSz', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
+        this.loadableQuantityForm.addControl('speedInSz', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0.01)]));
         this.loadableQuantityForm.addControl('runningHours', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
         this.loadableQuantityForm.addControl('runningDays', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
         this.loadableQuantityForm.addControl('foConday', this.fb.control('', [Validators.required, numberValidator(2, 7), Validators.min(0)]));
@@ -144,7 +144,7 @@ export class LoadableQuantityComponent implements OnInit {
     this.loadableQuantityForm.controls.dwt.setValue(this.loadableQuantity.dwt);
     this.loadableQuantityForm.controls.tpc.setValue(this.loadableQuantity.tpc);
     this.loadableQuantityForm.controls.estimateSag.setValue(this.loadableQuantity.estSagging);
-    this.loadableQuantityForm.controls.safCorrection.setValue(this.loadableQuantity.estFOOnBoard);
+    this.loadableQuantityForm.controls.safCorrection.setValue(this.loadableQuantity.saggingDeduction);
     this.loadableQuantityForm.controls.foOnboard.setValue(Number(this.loadableQuantity.estFOOnBoard));
     this.loadableQuantityForm.controls.doOnboard.setValue(Number(this.loadableQuantity.estDOOnBoard));
 
@@ -199,7 +199,7 @@ export class LoadableQuantityComponent implements OnInit {
       if (this.caseNo === 1) {
         this.loadableQuantity = {
 
-          id: this.loadableQuantityId,
+          loadableQuantityId: this.loadableQuantityId,
           portId: this.loadableQuantityForm.controls.portName.value.id,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
           dwt: this.loadableQuantityForm.controls.dwt.value,
@@ -226,7 +226,7 @@ export class LoadableQuantityComponent implements OnInit {
       }
       else if (this.caseNo === 2) {
         this.loadableQuantity = {
-          id: this.loadableQuantityId,
+          loadableQuantityId: this.loadableQuantityId,
           portId: this.loadableQuantityForm.controls.portName.value.id,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
           dwt: this.loadableQuantityForm.controls.dwt.value,
@@ -245,7 +245,7 @@ export class LoadableQuantityComponent implements OnInit {
       }
       else {
         this.loadableQuantity = {
-          id: this.loadableQuantityId,
+          loadableQuantityId: this.loadableQuantityId,
           portId: this.loadableQuantityForm.controls.portName.value.id,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
           displacmentDraftRestriction: this.loadableQuantityForm.controls.displacement.value,
@@ -266,7 +266,8 @@ export class LoadableQuantityComponent implements OnInit {
           totalQuantity: this.loadableQuantityForm.controls.totalQuantity.value,
         }
       }
-      const translationKeys = await this.translateService.get(['LOADABLE_QUANTITY_SUCCESS', 'LOADABLE_QUANTITY_SAVED_SUCCESSFULLY']).toPromise();
+      this.loadableQuantityId ? this.loadableQuantity['loadableStudyId'] = this.selectedLoadableStudy.id: null; 
+      const translationKeys = await this.translateService.get(['LOADABLE_QUANTITY_SUCCESS', 'LOADABLE_QUANTITY_SAVED_SUCCESSFULLY','LOADABLE_QUANTITY_UPDATE_SUCCESS','LOADABLE_QUANTITY_UPDATE_SUCCESSFULLY']).toPromise();
       const result = await this.loadableQuantityApiService.saveLoadableQuantity(this.vesselId, this.voyage.id, this.selectedLoadableStudy.id, this.loadableQuantity).toPromise();
       this.newLoadableQuantity.emit(this.loadableQuantity.totalQuantity);
       if (result.responseStatus.status === "200") {
@@ -330,8 +331,9 @@ export class LoadableQuantityComponent implements OnInit {
    */
   getRunningHours() {
     // Auto calculate (Distance/ Speed)
-    this.loadableQuantityForm.controls['runningHours'].setValue(Number(this.loadableQuantityForm.get('distanceInSummerzone').value) / Number(this.loadableQuantityForm.get('speedInSz').value));
-    this.getRunningDays();
+    this.loadableQuantityForm.get('speedInSz').valid ? 
+      (this.loadableQuantityForm.controls['runningHours'].setValue(Number(this.loadableQuantityForm.get('distanceInSummerzone').value) / Number(this.loadableQuantityForm.get('speedInSz').value)),
+      this.getRunningDays()) : '';
   }
 
   /**

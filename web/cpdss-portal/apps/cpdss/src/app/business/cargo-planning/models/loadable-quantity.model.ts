@@ -41,6 +41,7 @@ export class LodadableQuantity {
     public totalQuantity?: string;
     public loadableQuantityId?: number;
     public id?: number;
+    private loadableStudyId?: number
 }
 
 /**

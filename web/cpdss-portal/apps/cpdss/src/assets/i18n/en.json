@@ -528,5 +528,6 @@
 	"Max_WATER_TEMP_MIN": "Max water tem. should be above -99",
 	"COMMENTS_TIME": "IST",
 	"LOADABLE_QUANTITY_UPDATE_SUCCESS": "Success",
-    "LOADABLE_QUANTITY_UPDATE_SUCCESSFULLY": "Loadable quantity updated successfully"
+	"LOADABLE_QUANTITY_UPDATE_SUCCESSFULLY": "Loadable quantity updated successfully",
+	"DRAFT_RESTRICTION_MIN": "Draft Restriction should be above 0"
 }
