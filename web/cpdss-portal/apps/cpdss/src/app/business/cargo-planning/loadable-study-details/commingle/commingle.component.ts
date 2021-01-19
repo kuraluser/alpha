@@ -495,4 +495,18 @@ export class CommingleComponent implements OnInit {
 
   }
 
+  /**
+   * reset cargo
+   * @memberof CommingleComponent
+   */
+  clearCargo() {
+    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'COMMINGLE_CARGO_DELETE_SUMMARY', detail: 'COMMINGLE_CARGO_DELETE_DETAILS', data: { confirmLabel: 'COMMINGLE_CARGO_DELETE_CONFIRM_LABEL', rejectLabel: 'COMMINGLE_CARGO_DELETE_REJECT_LABEL' } });
+    this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
+      if (response) {
+        this.commingleForm.controls['cargo1'].setValue(null);
+        this.commingleForm.controls['cargo2'].setValue(null);
+      }
+    });
+  }
+
 }
