@@ -91,6 +91,7 @@ import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadablePlanBallastDetails;
 import com.cpdss.gateway.domain.LoadablePlanComments;
 import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
+import com.cpdss.gateway.domain.LoadablePlanRequest;
 import com.cpdss.gateway.domain.LoadablePlanStowageDetails;
 import com.cpdss.gateway.domain.LoadablePlanSynopticalRecord;
 import com.cpdss.gateway.domain.LoadableQuantity;
@@ -2588,6 +2589,22 @@ public class LoadableStudyService {
   public ConfirmPlanReply confirmPlan(
       com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.Builder request) {
     return this.loadableStudyServiceBlockingStub.confirmPlan(request.build());
+  }
+
+  /**
+   * @param loadablePlanDetailsResponses
+   * @param loadableStudiesId
+   * @param first
+   * @return AlgoPatternResponse
+   */
+  public AlgoPatternResponse saveLoadablePatterns(
+      LoadablePlanRequest loadablePlanRequest, Long loadableStudiesId, String correlationId)
+      throws GenericServiceException {
+    log.info("Inside saveLoadablePatterns gateway service with correlationId : " + correlationId);
+    AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
+    algoPatternResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return algoPatternResponse;
   }
 
   /**

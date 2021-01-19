@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class CargoNominationOperationDetails {
   private Long id;
-  private Long cargoNominationXId;
+  private Long cargoNominationId;
   private Long portId;
   private String quantity;
 }
