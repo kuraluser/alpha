@@ -426,8 +426,9 @@ class LoadableStudyServiceTest {
     LoadableStudyRequest request = this.createLoadableStudyRequest();
     StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
     when(this.voyageRepository.findById(anyLong())).thenReturn(Optional.of(new Voyage()));
-    when(this.loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveOrderByLastModifiedDateTimeDesc(
-            anyLong(), any(Voyage.class), anyBoolean()))
+    when(this.loadableStudyRepository
+            .findByVesselXIdAndVoyageAndIsActiveOrderByLastModifiedDateTimeDesc(
+                anyLong(), any(Voyage.class), anyBoolean()))
         .thenReturn(this.createLoadableStudyEntityList());
     this.loadableStudyService.findLoadableStudiesByVesselAndVoyage(request, responseObserver);
     List<LoadableStudyReply> replies = responseObserver.getValues();
@@ -441,8 +442,9 @@ class LoadableStudyServiceTest {
     LoadableStudyRequest request = this.createLoadableStudyRequest();
     StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
     when(this.voyageRepository.findById(anyLong())).thenReturn(Optional.of(new Voyage()));
-    when(this.loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveOrderByLastModifiedDateTimeDesc(
-            anyLong(), any(Voyage.class), anyBoolean()))
+    when(this.loadableStudyRepository
+            .findByVesselXIdAndVoyageAndIsActiveOrderByLastModifiedDateTimeDesc(
+                anyLong(), any(Voyage.class), anyBoolean()))
         .thenThrow(RuntimeException.class);
     this.loadableStudyService.findLoadableStudiesByVesselAndVoyage(request, responseObserver);
     List<LoadableStudyReply> replies = responseObserver.getValues();

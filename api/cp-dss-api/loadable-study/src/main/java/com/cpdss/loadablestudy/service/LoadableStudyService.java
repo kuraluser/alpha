@@ -582,8 +582,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Voyage does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       List<LoadableStudy> loadableStudyEntityList =
-          this.loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveOrderByLastModifiedDateTimeDesc(
-              request.getVesselId(), voyageOpt.get(), true);
+          this.loadableStudyRepository
+              .findByVesselXIdAndVoyageAndIsActiveOrderByLastModifiedDateTimeDesc(
+                  request.getVesselId(), voyageOpt.get(), true);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT);
       for (LoadableStudy entity : loadableStudyEntityList) {
@@ -1804,6 +1805,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       this.cargoNominationOperationDetailsRepository.deleteCargoNominationPortDetails(
           request.getCargoNominationId());
+      /*
+       * delete respective loading ports from port rotation table if ports
+       * not associated with any other cargo nomination belonging
+       * to the same loadable study
+       */
+      if (!existingCargoNomination.get().getCargoNominationPortDetails().isEmpty()) {
+        List<Long> requestedPortIds =
+            existingCargoNomination.get().getCargoNominationPortDetails().stream()
+                .map(CargoNominationPortDetails::getPortId)
+                .collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(requestedPortIds)) {
+          requestedPortIds.forEach(
+              requestPortId -> {
+                Long otherCargoRefExistCount =
+                    this.cargoNominationRepository.getCountCargoNominationWithPortIds(
+                        existingCargoNomination.get().getLoadableStudyXId(),
+                        existingCargoNomination.get(),
+                        requestPortId);
+                if (Objects.equals(otherCargoRefExistCount, Long.valueOf("0"))
+                    && loadableStudyOpt.isPresent()) {
+                  loadableStudyPortRotationRepository.deleteLoadingPortRotation(
+                      loadableStudyOpt.get(), requestPortId);
+                }
+              });
+        }
+      }
       this.cargoNominationRepository.deleteCargoNomination(request.getCargoNominationId());
       cargoNominationReplyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (Exception e) {
