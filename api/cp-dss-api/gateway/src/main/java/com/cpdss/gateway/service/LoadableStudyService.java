@@ -50,8 +50,6 @@ import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
-import com.cpdss.common.generated.LoadableStudy.SynopticalDataReply;
-import com.cpdss.common.generated.LoadableStudy.SynopticalDataRequest;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
@@ -76,6 +74,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.AlgoPatternResponse;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.AlgoStatusResponse;
+import com.cpdss.gateway.domain.BunkerConditions;
 import com.cpdss.gateway.domain.Cargo;
 import com.cpdss.gateway.domain.CargoGroup;
 import com.cpdss.gateway.domain.CargoNomination;
@@ -119,6 +118,8 @@ import com.cpdss.gateway.domain.ValveSegregation;
 import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
+import com.cpdss.gateway.domain.VoyageStatusRequest;
+import com.cpdss.gateway.domain.VoyageStatusResponse;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.google.protobuf.ByteString;
@@ -129,6 +130,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -248,6 +250,7 @@ public class LoadableStudyService {
     LoadableQuantityResponse loadableQuantityResponse = new LoadableQuantityResponse();
     LoadableQuantityRequest.Builder builder = LoadableQuantityRequest.newBuilder();
     builder.setConstant(loadableQuantity.getConstant());
+    Optional.ofNullable(loadableQuantity.getLoadableQuantityId()).ifPresent(builder::setId);
     Optional.ofNullable(loadableQuantity.getDisplacmentDraftRestriction())
         .ifPresent(builder::setDisplacmentDraftRestriction);
     Optional.ofNullable(loadableQuantity.getDistanceFromLastPort())
@@ -787,13 +790,13 @@ public class LoadableStudyService {
       port.setLayCanFrom(portDetail.getLayCanFrom());
       port.setLayCanTo(portDetail.getLayCanTo());
       // Fetch distance, eta/etd actual values from synoptical table
-      SynopticalDataRequest synopticalRequest =
-          SynopticalDataRequest.newBuilder()
+      SynopticalTableRequest synopticalRequest =
+          SynopticalTableRequest.newBuilder()
               .setLoadableStudyId(loadableStudyId)
               .setPortId(portDetail.getPortId())
               .build();
-      SynopticalDataReply synopticalDataReply =
-          loadableStudyServiceBlockingStub.getSynopticalDataByPortId(synopticalRequest);
+      SynopticalTableReply synopticalDataReply =
+          loadableStudyServiceBlockingStub.getSynopticalPortDataByPortId(synopticalRequest);
       if (synopticalDataReply != null
           && synopticalDataReply.getResponseStatus() != null
           && !SUCCESS.equalsIgnoreCase(synopticalDataReply.getResponseStatus().getStatus())) {
@@ -1021,7 +1024,8 @@ public class LoadableStudyService {
           HttpStatusCode.valueOf(
               Integer.valueOf(loadableQuantityResponse.getResponseStatus().getCode())));
     }
-
+    loadableQuantity.setLoadableQuantityId(
+        loadableQuantityResponse.getLoadableQuantityRequest().getId());
     loadableQuantity.setConstant(
         loadableQuantityResponse.getLoadableQuantityRequest().getConstant());
     loadableQuantity.setDwt(loadableQuantityResponse.getLoadableQuantityRequest().getDwt());
@@ -1075,6 +1079,8 @@ public class LoadableStudyService {
     loadableQuantity.setSubTotal(
         loadableQuantityResponse.getLoadableQuantityRequest().getSubTotal());
     loadableQuantity.setDwt(loadableQuantityResponse.getLoadableQuantityRequest().getDwt());
+    loadableQuantityResponseDto.setLoadableQuantityId(
+        loadableQuantityResponse.getLoadableQuantityRequest().getId());
     loadableQuantityResponseDto.setLoadableQuantity(loadableQuantity);
     loadableQuantityResponseDto.setSelectedZone(loadableQuantityResponse.getSelectedZone());
     loadableQuantityResponseDto.setCaseNo(loadableQuantityResponse.getCaseNo());
@@ -2074,6 +2080,10 @@ public class LoadableStudyService {
           isEmpty(detail.getSounding()) ? BigDecimal.ZERO : new BigDecimal(detail.getSounding()));
       dto.setWeight(
           isEmpty(detail.getWeight()) ? BigDecimal.ZERO : new BigDecimal(detail.getWeight()));
+      dto.setActualWeight(
+          isEmpty(detail.getActualWeight())
+              ? BigDecimal.ZERO
+              : new BigDecimal(detail.getActualWeight()));
       dto.setVolume(
           isEmpty(detail.getVolume()) ? BigDecimal.ZERO : new BigDecimal(detail.getVolume()));
       dto.setTankId(detail.getTankId());
@@ -2338,6 +2348,7 @@ public class LoadableStudyService {
     synopticalRecord.setId(synopticalProtoRecord.getId());
     synopticalRecord.setPortId(synopticalProtoRecord.getPortId());
     synopticalRecord.setPortName(synopticalProtoRecord.getPortName());
+    synopticalRecord.setPortOrder(synopticalProtoRecord.getPortOrder());
     synopticalRecord.setSpecificGravity(
         !isEmpty(synopticalProtoRecord.getSpecificGravity())
             ? new BigDecimal(synopticalProtoRecord.getSpecificGravity())
@@ -3206,5 +3217,202 @@ public class LoadableStudyService {
   public Users getUsersEntity() {
     return this.usersRepository.findByKeycloakIdAndIsActive(
         "4b5608ff-b77b-40c6-9645-d69856d4aafa", true);
+  }
+
+  /**
+   * Get loadable pattern list for a loadable study
+   *
+   * @param loadableStudiesId
+   * @param correlationId
+   * @return
+   * @throws GenericServiceException
+   */
+  public LoadablePatternResponse getLoadablePatternList(Long loadableStudyId, String correlationId)
+      throws GenericServiceException {
+    LoadablePatternResponse response = new LoadablePatternResponse();
+    LoadablePatternRequest grpcRequest =
+        LoadablePatternRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
+    LoadablePatternReply grpcReply = this.getLoadablePatternList(grpcRequest);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to get pattern list from grpc service",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    response.setLoadablePatterns(new ArrayList<>());
+    for (com.cpdss.common.generated.LoadableStudy.LoadablePattern pattern :
+        grpcReply.getLoadablePatternList()) {
+      LoadablePattern patternDto = new LoadablePattern();
+      patternDto.setLoadablePatternId(pattern.getLoadablePatternId());
+      patternDto.setCaseNumber(pattern.getCaseNumber());
+      response.getLoadablePatterns().add(patternDto);
+    }
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * Call grpc service for loadable pattern list
+   *
+   * @param grpcRequest
+   * @return
+   */
+  public LoadablePatternReply getLoadablePatternList(LoadablePatternRequest grpcRequest) {
+    return this.loadableStudyServiceBlockingStub.getLoadablePatternList(grpcRequest);
+  }
+
+  /**
+   * Get voyage status information
+   *
+   * @param loadableStudyId
+   * @param vesselId
+   * @return
+   * @throws GenericServiceException
+   */
+  public VoyageStatusResponse getVoyageStatus(
+      VoyageStatusRequest voyageStatusRequest,
+      Long vesselId,
+      Long voyageId,
+      Long loadableStudyId,
+      Long portId,
+      String correlationId)
+      throws GenericServiceException {
+    VoyageStatusResponse voyageStatusResponse = new VoyageStatusResponse();
+    // Build response with response status
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    voyageStatusResponse.setResponseStatus(commonSuccessResponse);
+    // Retrieve on board cargo for the loadable study and port
+    OnBoardQuantityRequest request =
+        OnBoardQuantityRequest.newBuilder()
+            .setVoyageId(voyageId)
+            .setLoadableStudyId(loadableStudyId)
+            .setVesselId(vesselId)
+            .setPortId(portId)
+            .build();
+    OnBoardQuantityReply onBoardQtyReply = this.getOnBoardQuantites(request);
+    if (!SUCCESS.equals(onBoardQtyReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Error calling getVoyageStatus - getOnBoardQuantites grpc service",
+          onBoardQtyReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(onBoardQtyReply.getResponseStatus().getCode())));
+    }
+    OnBoardQuantityResponse cargoResponse =
+        buildOnBoardQuantityResponse(onBoardQtyReply, correlationId);
+    // Retrieve bunker data for the loadable study and port
+    OnHandQuantityRequest ohqRequest =
+        OnHandQuantityRequest.newBuilder()
+            .setVesselId(vesselId)
+            .setLoadableStudyId(loadableStudyId)
+            .setPortId(portId)
+            .build();
+    OnHandQuantityReply onHandQtyReply = this.getOnHandQuantity(ohqRequest);
+    if (!SUCCESS.equals(onHandQtyReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Error calling getVoyageStatus - getOnHandQuantity grpc service",
+          onHandQtyReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(onHandQtyReply.getResponseStatus().getCode())));
+    }
+    OnHandQuantityResponse bunkerResponse =
+        buildOnHandQuantityResponse(onHandQtyReply, correlationId);
+    // Retrieve synoptical data
+    SynopticalTableRequest synopticalTableRequest =
+        SynopticalTableRequest.newBuilder()
+            .setLoadableStudyId(loadableStudyId)
+            .setVesselId(vesselId)
+            .setPortId(portId)
+            .build();
+    SynopticalTableReply synopticalTableReply =
+        loadableStudyServiceBlockingStub.getSynopticalDataByPortId(synopticalTableRequest);
+    SynopticalTableResponse synopticalTableResponse = new SynopticalTableResponse();
+    if (!SUCCESS.equalsIgnoreCase(synopticalTableReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Error calling getSynopticalTable service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    buildSynopticalTableResponse(synopticalTableResponse, synopticalTableReply);
+    buildVoyageStatusResponse(
+        voyageStatusResponse,
+        voyageStatusRequest,
+        portId,
+        cargoResponse,
+        bunkerResponse,
+        synopticalTableResponse);
+    return voyageStatusResponse;
+  }
+
+  private void buildVoyageStatusResponse(
+      VoyageStatusResponse voyageStatusResponse,
+      VoyageStatusRequest request,
+      Long portId,
+      OnBoardQuantityResponse cargoResponse,
+      OnHandQuantityResponse bunkerResponse,
+      SynopticalTableResponse synopticalTableResponse) {
+    voyageStatusResponse.setCargoQuantities(cargoResponse.getOnBoardQuantities());
+    voyageStatusResponse.setCargoTanks(cargoResponse.getTanks());
+    // group on-board-quantities by cargo for Cargo conditions
+    if (!CollectionUtils.isEmpty(cargoResponse.getOnBoardQuantities())) {
+      List<Cargo> cargoConditions = new ArrayList<>();
+      cargoResponse.getOnBoardQuantities().stream()
+          .collect(
+              Collectors.groupingBy(
+                  onBoardQty ->
+                      onBoardQty.getCargoId() != null ? onBoardQty.getCargoId() : Long.valueOf("0"),
+                  Collectors.collectingAndThen(
+                      Collectors.reducing(
+                          (index, accum) ->
+                              new OnBoardQuantity(
+                                  index.getId(),
+                                  index.getPortId(),
+                                  index.getTankId(),
+                                  index.getTankName(),
+                                  index.getCargoId(),
+                                  index.getSounding(),
+                                  index.getWeight().add(accum.getWeight()),
+                                  index.getActualWeight().add(accum.getActualWeight()),
+                                  index.getVolume(),
+                                  index.getColorCode(),
+                                  index.getAbbreviation(),
+                                  index.getLoadableStudyId())),
+                      Optional::get)))
+          .forEach(
+              (id, onBoardQuantity) -> {
+                if (onBoardQuantity.getCargoId() != null) {
+                  Cargo cargo = new Cargo();
+                  cargo.setId(onBoardQuantity.getCargoId());
+                  cargo.setPlannedWeight(onBoardQuantity.getWeight());
+                  cargo.setActualWeight(onBoardQuantity.getActualWeight());
+                  cargoConditions.add(cargo);
+                }
+              });
+      voyageStatusResponse.setCargoConditions(cargoConditions);
+    }
+    // group ohq, vessel and port details for Bunker conditions
+    if (synopticalTableResponse != null
+        && !CollectionUtils.isEmpty(synopticalTableResponse.getSynopticalRecords())
+        && request != null) {
+      Optional<SynopticalRecord> synopticalRecord =
+          synopticalTableResponse.getSynopticalRecords().stream()
+              .filter(
+                  record ->
+                      ARR.equalsIgnoreCase(record.getOperationType())
+                          && Objects.equals(record.getPortId(), portId)
+                          && Objects.equals(record.getPortOrder(), request.getPortOrder()))
+              .findFirst();
+      if (synopticalRecord.isPresent()) {
+        BunkerConditions bunkerConditions = new BunkerConditions();
+        bunkerConditions.setFuelOilWeight(synopticalRecord.get().getActualFOTotal());
+        bunkerConditions.setDieselOilWeight(synopticalRecord.get().getActualDOTotal());
+        bunkerConditions.setBallastWeight(synopticalRecord.get().getBallastActual());
+        bunkerConditions.setFreshWaterWeight(synopticalRecord.get().getActualFWTotal());
+        bunkerConditions.setOthersWeight(synopticalRecord.get().getOthersActual());
+        bunkerConditions.setTotalDwtWeight(synopticalRecord.get().getTotalDwtActual());
+        bunkerConditions.setDisplacement(synopticalRecord.get().getDisplacementActual());
+        bunkerConditions.setSpecificGravity(synopticalRecord.get().getSpecificGravity());
+        voyageStatusResponse.setBunkerConditions(bunkerConditions);
+      }
+    }
   }
 }

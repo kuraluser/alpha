@@ -11,4 +11,7 @@ public interface LoadableQuantityRepository extends CommonCrudRepository<Loadabl
   @Query("FROM LoadableQuantity LQ WHERE LQ.loadableStudyXId.id = ?1 and isActive = ?2")
   public List<LoadableQuantity> findByLoadableStudyXIdAndIsActive(
       Long loadableStudyXId, Boolean isActive);
+
+  @Query("FROM LoadableQuantity LQ WHERE LQ.id = ?1 and isActive = ?2")
+  public LoadableQuantity findByIdAndIsActive(Long id, Boolean isActive);
 }

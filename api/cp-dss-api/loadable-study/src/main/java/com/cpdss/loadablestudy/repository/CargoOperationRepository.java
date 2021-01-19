@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CargoOperationRepository extends CommonCrudRepository<CargoOperation, Long> {
 
-  public List<CargoOperation> findByIdNotAndIsActiveOrderById(Long id, boolean isActive);
+  public List<CargoOperation> findByIsActiveOrderById(boolean isActive);
 }

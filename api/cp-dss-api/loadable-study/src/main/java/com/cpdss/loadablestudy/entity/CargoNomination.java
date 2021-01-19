@@ -64,6 +64,6 @@ public class CargoNomination extends EntityDoc {
       mappedBy = "cargoNomination",
       cascade = CascadeType.ALL,
       orphanRemoval = true,
-      fetch = FetchType.EAGER)
+      fetch = FetchType.LAZY)
   private Set<CargoNominationPortDetails> cargoNominationPortDetails;
 }

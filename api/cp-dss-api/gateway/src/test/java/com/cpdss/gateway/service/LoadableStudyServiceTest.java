@@ -114,6 +114,8 @@ class LoadableStudyServiceTest {
   private static final Long TEST_COMPANY_ID = 1L;
   private static final Long TEST_VESSEL_ID = 1L;
   private static final Long TEST_VOYAGE_ID = 1L;
+  private static final Long ID_TEST_VALUE = 1L;
+  private static final String STRING_TEST_VALUE = "1";
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -1674,7 +1676,7 @@ class LoadableStudyServiceTest {
 
     final Comment comment = new Comment();
     comment.setComment("comment");
-     comment.setUser(1L);
+    comment.setUser(1L);
 
     SaveCommentResponse commentResponse = spy.saveComment(comment, "corelationId", (long) 1);
 
@@ -1694,5 +1696,68 @@ class LoadableStudyServiceTest {
     roleUserMappingList.add(roleUserMapping);
     user.setRoleUserMappings(roleUserMappingList);
     return user;
+  }
+
+  @Test
+  void testGetLoadablePatternList() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.getLoadablePatternList(anyLong(), anyString()))
+        .thenCallRealMethod();
+
+    Mockito.when(
+            this.loadableStudyService.getLoadablePatternList(any(LoadablePatternRequest.class)))
+        .thenReturn(
+            LoadablePatternReply.newBuilder()
+                .addAllLoadablePattern(this.createLoadablePatternList())
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    LoadablePatternResponse response =
+        this.loadableStudyService.getLoadablePatternList(
+            ID_TEST_VALUE, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "Invalid response status"));
+  }
+
+  @Test
+  void testGetLoadablePatternListGrpcFailure() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.getLoadablePatternList(anyLong(), anyString()))
+        .thenCallRealMethod();
+
+    Mockito.when(
+            this.loadableStudyService.getLoadablePatternList(any(LoadablePatternRequest.class)))
+        .thenReturn(
+            LoadablePatternReply.newBuilder()
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.getLoadablePatternList(
+                    ID_TEST_VALUE, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  private List<LoadablePattern> createLoadablePatternList() {
+    List<LoadablePattern> list = new ArrayList<>();
+    IntStream.of(1, 3)
+        .forEach(
+            i -> {
+              list.add(
+                  LoadablePattern.newBuilder()
+                      .setLoadablePatternId(ID_TEST_VALUE)
+                      .setCaseNumber(STRING_TEST_VALUE)
+                      .build());
+            });
+    return list;
   }
 }

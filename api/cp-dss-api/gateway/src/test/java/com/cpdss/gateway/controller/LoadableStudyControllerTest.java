@@ -169,7 +169,7 @@ class LoadableStudyControllerTest {
       SHIP_API_URL_PREFIX + GET_LOADABLE_PATTERN_API_URL;
 
   private static final String GET_LOADABLE_STUDY_ALGO_STATUS_API_URL =
-      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-study-status/{loadableStudystatusId}";
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-study-status";
   private static final String GET_LOADABLE_STUDY_ALGO_STATUS_CLOUD_API_URL =
       CLOUD_API_URL_PREFIX + GET_LOADABLE_STUDY_ALGO_STATUS_API_URL;
   private static final String GET_LOADABLE_STUDY_ALGO_STATUS_SHIP_API_URL =
@@ -195,6 +195,13 @@ class LoadableStudyControllerTest {
       CLOUD_API_URL_PREFIX + GET_CONFIRM_PLAN_API_URL;
   private static final String GET_CONFIRM_PLAN_SHIP_API_URL =
       SHIP_API_URL_PREFIX + GET_CONFIRM_PLAN_API_URL;
+
+  private static final String GET_PATTERN_LIST_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/patterns";
+  private static final String GET_PATTERN_LIST_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + GET_PATTERN_LIST_API_URL;
+  private static final String GET_PATTERN_LIST_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + GET_PATTERN_LIST_API_URL;
 
   private static final String AUTHORIZATION_HEADER = "Authorization";
 
@@ -985,7 +992,7 @@ class LoadableStudyControllerTest {
         .thenReturn(new AlgoStatusResponse());
     this.mockMvc
         .perform(
-            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1, 1)
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1)
                 .content(this.createAlgoStatusRequest())
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -1015,11 +1022,7 @@ class LoadableStudyControllerTest {
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.post(
-                    GET_LOADABLE_STUDY_ALGO_STATUS_CLOUD_API_URL,
-                    TEST_VESSEL_ID,
-                    TEST_VOYAGE_ID,
-                    1,
-                    1)
+                    GET_LOADABLE_STUDY_ALGO_STATUS_CLOUD_API_URL, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1)
                 .content(this.createAlgoStatusRequest())
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -1271,5 +1274,38 @@ class LoadableStudyControllerTest {
     portRotationRequest.setPortList(portRotationList);
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(request);
+  }
+
+  @ValueSource(strings = {GET_PATTERN_LIST_CLOUD_API_URL, GET_PATTERN_LIST_SHIP_API_URL})
+  @ParameterizedTest
+  void testGetLoadablePatternList(String url) throws Exception {
+    when(this.loadableStudyService.getLoadablePatternList(anyLong(), anyString()))
+        .thenReturn(new LoadablePatternResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testGetLoadablePatternListRuntimeException(Class<? extends Exception> exceptionClass)
+      throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.loadableStudyService.getLoadablePatternList(anyLong(), anyString())).thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(
+                    GET_PATTERN_LIST_CLOUD_API_URL, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
+        .andExpect(status().isInternalServerError());
   }
 }

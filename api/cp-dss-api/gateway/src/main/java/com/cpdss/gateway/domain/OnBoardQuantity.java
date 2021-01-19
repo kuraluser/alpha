@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.math.BigDecimal;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * On hand quantity response
@@ -14,6 +16,8 @@ import lombok.Data;
  * @author suhail.k
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(Include.NON_EMPTY)
 public class OnBoardQuantity {
 
@@ -32,6 +36,8 @@ public class OnBoardQuantity {
 
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal weight;
+
+  private BigDecimal actualWeight;
 
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal volume;

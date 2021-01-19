@@ -36,6 +36,8 @@ import com.cpdss.gateway.domain.SynopticalTableRequest;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
 import com.cpdss.gateway.domain.Voyage;
 import com.cpdss.gateway.domain.VoyageResponse;
+import com.cpdss.gateway.domain.VoyageStatusRequest;
+import com.cpdss.gateway.domain.VoyageStatusResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
 import java.io.File;
 import java.io.FileInputStream;
@@ -1208,6 +1210,17 @@ public class LoadableStudyController {
     return remoteAddr;
   }
 
+  /**
+   * Download loadable study attachment
+   *
+   * @param vesselId
+   * @param voyageId
+   * @param loadableStudyId
+   * @param attachmentId
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
   @GetMapping(
       value =
           "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/attachments/{attachmentId}")
@@ -1258,6 +1271,15 @@ public class LoadableStudyController {
     }
   }
 
+  /**
+   * Save comment
+   *
+   * @param loadablePatternId
+   * @param request
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
   @PostMapping(
       value =
           "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-patten/{loadablePatternId}/comment",
@@ -1277,6 +1299,68 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error when saving comment", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @GetMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/patterns")
+  public LoadablePatternResponse getLoadablePatternList(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudiesId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("get pattern list: {}", getClientIp());
+      log.info(
+          "get loadable pattern API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+      return loadableStudyService.getLoadablePatternList(
+          loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in get loadable pattern list", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in get loadable pattern list", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @PostMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{portId}/voyage-status")
+  public VoyageStatusResponse getVoyageStatus(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portId,
+      @RequestBody @Valid VoyageStatusRequest voyageStatusRequest,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("getVoyageStatus: {}", getClientIp());
+      return this.loadableStudyService.getVoyageStatus(
+          voyageStatusRequest,
+          vesselId,
+          voyageId,
+          loadableStudyId,
+          portId,
+          headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException getVoyageStatus", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception getVoyageStatus", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
