@@ -8,4 +8,5 @@ import lombok.Data;
 @Data
 public class AlgoPatternResponse {
   private CommonSuccessResponse responseStatus;
+  private String processId;
 }
