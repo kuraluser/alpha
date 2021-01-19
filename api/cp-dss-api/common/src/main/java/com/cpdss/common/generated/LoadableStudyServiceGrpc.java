@@ -1034,6 +1034,59 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+      getSaveLoadablePatternDetailsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveLoadablePatternDetails",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.AlgoReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+      getSaveLoadablePatternDetailsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest,
+            com.cpdss.common.generated.LoadableStudy.AlgoReply>
+        getSaveLoadablePatternDetailsMethod;
+    if ((getSaveLoadablePatternDetailsMethod =
+            LoadableStudyServiceGrpc.getSaveLoadablePatternDetailsMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveLoadablePatternDetailsMethod =
+                LoadableStudyServiceGrpc.getSaveLoadablePatternDetailsMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getSaveLoadablePatternDetailsMethod =
+              getSaveLoadablePatternDetailsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest,
+                          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveLoadablePatternDetails"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "SaveLoadablePatternDetails"))
+                      .build();
+        }
+      }
+    }
+    return getSaveLoadablePatternDetailsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest,
           com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>
       getGetPurposeOfCommingleMethod;
@@ -2160,6 +2213,14 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void saveLoadablePatternDetails(
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveLoadablePatternDetailsMethod(), responseObserver);
+    }
+
+    /** */
     public void getPurposeOfCommingle(
         com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request,
         io.grpc.stub.StreamObserver<
@@ -2451,6 +2512,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest,
                       com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>(
                       this, METHODID_GET_LOADABLE_PATTERN_DETAILS)))
+          .addMethod(
+              getSaveLoadablePatternDetailsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest,
+                      com.cpdss.common.generated.LoadableStudy.AlgoReply>(
+                      this, METHODID_SAVE_LOADABLE_PATTERN_DETAILS)))
           .addMethod(
               getGetPurposeOfCommingleMethod(),
               asyncUnaryCall(
@@ -2816,6 +2884,17 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void saveLoadablePatternDetails(
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveLoadablePatternDetailsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
     public void getPurposeOfCommingle(
         com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request,
         io.grpc.stub.StreamObserver<
@@ -3176,6 +3255,13 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public com.cpdss.common.generated.LoadableStudy.AlgoReply saveLoadablePatternDetails(
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getSaveLoadablePatternDetailsMethod(), getCallOptions(), request);
+    }
+
+    /** */
     public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply getPurposeOfCommingle(
         com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request) {
       return blockingUnaryCall(
@@ -3496,6 +3582,15 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.AlgoReply>
+        saveLoadablePatternDetails(
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveLoadablePatternDetailsMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>
         getPurposeOfCommingle(
             com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request) {
@@ -3676,24 +3771,25 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_ON_HAND_QUANTITY = 17;
   private static final int METHODID_SAVE_ON_HAND_QUANTITY = 18;
   private static final int METHODID_GET_LOADABLE_PATTERN_DETAILS = 19;
-  private static final int METHODID_GET_PURPOSE_OF_COMMINGLE = 20;
-  private static final int METHODID_GET_COMMINGLE_CARGO = 21;
-  private static final int METHODID_SAVE_COMMINGLE_CARGO = 22;
-  private static final int METHODID_GET_LOADABLE_PATTERN_COMMINGLE_DETAILS = 23;
-  private static final int METHODID_GENERATE_LOADABLE_PATTERNS = 24;
-  private static final int METHODID_GET_LOADABLE_PATTERN_LIST = 25;
-  private static final int METHODID_GET_ON_BOARD_QUANTITY = 26;
-  private static final int METHODID_SAVE_ON_BOARD_QUANTITY = 27;
-  private static final int METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS = 28;
-  private static final int METHODID_SAVE_SYNOPTICAL_TABLE = 29;
-  private static final int METHODID_GET_SYNOPTICAL_TABLE = 30;
-  private static final int METHODID_GET_SYNOPTICAL_DATA_BY_PORT_ID = 31;
-  private static final int METHODID_GET_SYNOPTICAL_PORT_DATA_BY_PORT_ID = 32;
-  private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 33;
-  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 34;
-  private static final int METHODID_CONFIRM_PLAN = 35;
-  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 36;
-  private static final int METHODID_SAVE_COMMENT = 37;
+  private static final int METHODID_SAVE_LOADABLE_PATTERN_DETAILS = 20;
+  private static final int METHODID_GET_PURPOSE_OF_COMMINGLE = 21;
+  private static final int METHODID_GET_COMMINGLE_CARGO = 22;
+  private static final int METHODID_SAVE_COMMINGLE_CARGO = 23;
+  private static final int METHODID_GET_LOADABLE_PATTERN_COMMINGLE_DETAILS = 24;
+  private static final int METHODID_GENERATE_LOADABLE_PATTERNS = 25;
+  private static final int METHODID_GET_LOADABLE_PATTERN_LIST = 26;
+  private static final int METHODID_GET_ON_BOARD_QUANTITY = 27;
+  private static final int METHODID_SAVE_ON_BOARD_QUANTITY = 28;
+  private static final int METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS = 29;
+  private static final int METHODID_SAVE_SYNOPTICAL_TABLE = 30;
+  private static final int METHODID_GET_SYNOPTICAL_TABLE = 31;
+  private static final int METHODID_GET_SYNOPTICAL_DATA_BY_PORT_ID = 32;
+  private static final int METHODID_GET_SYNOPTICAL_PORT_DATA_BY_PORT_ID = 33;
+  private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 34;
+  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 35;
+  private static final int METHODID_CONFIRM_PLAN = 36;
+  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 37;
+  private static final int METHODID_SAVE_COMMENT = 38;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -3849,6 +3945,12 @@ public final class LoadableStudyServiceGrpc {
               (com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_LOADABLE_PATTERN_DETAILS:
+          serviceImpl.saveLoadablePatternDetails(
+              (com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>)
                   responseObserver);
           break;
         case METHODID_GET_PURPOSE_OF_COMMINGLE:
@@ -4062,6 +4164,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetOnHandQuantityMethod())
                       .addMethod(getSaveOnHandQuantityMethod())
                       .addMethod(getGetLoadablePatternDetailsMethod())
+                      .addMethod(getSaveLoadablePatternDetailsMethod())
                       .addMethod(getGetPurposeOfCommingleMethod())
                       .addMethod(getGetCommingleCargoMethod())
                       .addMethod(getSaveCommingleCargoMethod())

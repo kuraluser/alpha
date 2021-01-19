@@ -21,4 +21,5 @@ public class LoadableQuantityCargoDetails {
   private String loadableKL;
   private String differencePercentage;
   private String differenceColor;
+  private Long cargoId;
 }

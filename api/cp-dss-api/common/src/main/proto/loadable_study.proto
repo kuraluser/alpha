@@ -67,6 +67,9 @@ service LoadableStudyService {
 	rpc GetLoadablePatternDetails(LoadablePatternRequest) returns (LoadablePatternReply){
 	}
 	
+	rpc SaveLoadablePatternDetails(LoadablePatternAlgoRequest) returns (AlgoReply){
+	}
+	
 	rpc GetPurposeOfCommingle (PurposeOfCommingleRequest) returns (PurposeOfCommingleReply){
 	}
 	
@@ -121,6 +124,23 @@ service LoadableStudyService {
 	rpc SaveComment(SaveCommentRequest) returns (SaveCommentReply){
 	}
 	
+}
+
+message LoadablePatternAlgoRequest {
+	string processsId = 1;
+	repeated LoadablePlanDetails loadablePlanDetails = 2;
+}
+
+message LoadablePlanDetails {
+	int32 caseNumber = 1;
+	repeated LoadablePlanPortWiseDetails loadablePlanPortWiseDetails = 2;
+}
+
+message LoadablePlanPortWiseDetails {
+	int64 portId = 1;
+	string portCode = 2;
+	repeated LoadablePlanDetailsReply arrivalCondition = 3;
+	repeated LoadablePlanDetailsReply departureCondition = 4;
 }
 
 message LoadablePlanDetailsRequest {

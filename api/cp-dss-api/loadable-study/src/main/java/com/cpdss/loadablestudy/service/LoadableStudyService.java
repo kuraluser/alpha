@@ -18,6 +18,7 @@ import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
@@ -2337,6 +2338,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   /** Get list of patterns for a loadable study */
   @Override
+  public void saveLoadablePatternDetails(
+      LoadablePatternAlgoRequest request, StreamObserver<AlgoReply> responseObserver) {
+    // TODO Auto-generated method stub
+    super.saveLoadablePatternDetails(request, responseObserver);
+  }
+
+  @Override
   public void getLoadablePatternList(
       LoadablePatternRequest request, StreamObserver<LoadablePatternReply> responseObserver) {
     LoadablePatternReply.Builder replyBuilder = LoadablePatternReply.newBuilder();
@@ -3010,7 +3018,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           com.cpdss.loadablestudy.domain.CargoNominationOperationDetails
               cargoNominationOperationDetailDto =
                   new com.cpdss.loadablestudy.domain.CargoNominationOperationDetails();
-          cargoNominationOperationDetailDto.setCargoNominationXId(
+          cargoNominationOperationDetailDto.setCargoNominationId(
               cargoNominationOperationDetail.getCargoNomination().getId());
           cargoNominationOperationDetailDto.setId(cargoNominationOperationDetail.getId());
           cargoNominationOperationDetailDto.setPortId(cargoNominationOperationDetail.getPortId());
