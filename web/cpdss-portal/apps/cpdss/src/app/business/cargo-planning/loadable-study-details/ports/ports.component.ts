@@ -236,7 +236,7 @@ export class PortsComponent implements OnInit {
     ports = ports ?? <IPortList>{ id: 0, loadableStudyId: null, portOrder: 0, portId: null, operationId: null, seaWaterDensity: null, distanceBetweenPorts: null, timeOfStay: null, maxDraft: null, maxAirDraft: null, eta: null, etd: null, layCanFrom: null, layCanTo: null };
     const _ports = this.loadableStudyDetailsTransformationService.getPortAsValueObject(ports, true, true, this.listData);
     const dataTableControl = <FormArray>this.portsForm.get('dataTable');
-    dataTableControl.push(this.initPortsFormGroup(_ports, this.portsLists.length - 1));
+    dataTableControl.push(this.initPortsFormGroup(_ports, this.portsLists.length));
     this.portsLists = [...this.portsLists, _ports];
   }
 

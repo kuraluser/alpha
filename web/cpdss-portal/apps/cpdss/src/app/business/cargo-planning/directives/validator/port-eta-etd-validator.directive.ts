@@ -9,19 +9,23 @@ export function portEtaEtdValidator(key: string, index: number): ValidatorFn {
     if (control.parent && control.value && control.root) {
       const formArray = control.root.value?.dataTable;
       if (formArray && formArray.length) {
-        let firstValue, secondValue, error;
-        if (key == 'eta' && index > 0) {
+        let firstValue: Date, secondValue: Date, error;
+        if (key === 'eta' && index > 0) {
           firstValue = formArray[index - 1].etd;
           secondValue = control.value;
           error = { etaFailed: true };
         }
-        if (key == 'etd' && index < formArray.length - 1) {
+        if (key === 'etd' && index < formArray.length - 1) {
           secondValue = formArray[index + 1].eta;
           firstValue = control.value;
           error = { etdFailed: true };
         }
-        if (firstValue && secondValue && error && secondValue <= firstValue) {
-          return error;
+        if (firstValue && secondValue && error) {
+          firstValue.setSeconds(0,0)
+          secondValue.setSeconds(0,0)
+          if (secondValue <= firstValue) {
+            return error;
+          }
         }
       }
     }
