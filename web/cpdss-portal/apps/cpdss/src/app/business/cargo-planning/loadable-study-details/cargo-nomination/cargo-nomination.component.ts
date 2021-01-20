@@ -349,6 +349,19 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     } else {
       this.row(event.index).markAllAsTouched();
       this.cargoNominationForm.updateValueAndValidity();
+      const formControl = this.row(event.index);
+      const controls = formControl['controls'];
+      for (let col = 0; col < this.columns.length; col++) {
+        if (controls[this.columns[col].field]?.invalid) {
+          const element: HTMLElement = document.getElementById('cell' + this.columns[col].field + '_' + event.index);
+          if (this.columns[col].fieldType === 'ARRAY') {
+            element.focus();
+          } else {
+            element.getElementsByTagName('input')[0].focus();
+          }
+          break;
+        }
+      }
     }
   }
 

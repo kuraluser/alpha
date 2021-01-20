@@ -113,7 +113,7 @@
                             [pEditableColumn]="rowData" [pEditableColumnField]="col.field"
                             [pEditableColumnRowIndex]="rowIndex" (click)="onClick($event, rowData, rowIndex, col)">
                             <div [attr.tabindex]="col.field !== 'actions' && col.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+rowIndex : null"
-                                (keyup)="onFocus($event, rowData, col, colIndex)">
+                                (keyup)="onFocus($event, rowData, col, colIndex)" id="{{'cell'+col.field + '_' + rowIndex}}">
                                 <span *ngSwitchCase="fieldType.SLNO">{{rowData[col.field] ? rowData[col.field] :
                                     rowIndex+ 1}}</span>
                                 <span *ngSwitchCase="fieldType.ICON"><i
