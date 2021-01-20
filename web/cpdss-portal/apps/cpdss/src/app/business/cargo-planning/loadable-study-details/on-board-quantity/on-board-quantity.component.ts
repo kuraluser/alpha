@@ -375,7 +375,8 @@ export class OnBoardQuantityComponent implements OnInit {
         const tank = Object.assign({}, groupItem);
         const selectedPortOBQTankDetail = this.selectedPortOBQTankDetails.find((item) => (item.tankId === groupItem.id) && item);
         tank.commodity = {
-          volume: selectedPortOBQTankDetail?.volume?.value ?? 0
+          volume: selectedPortOBQTankDetail?.volume?.value ?? 0,
+          colorCode: selectedPortOBQTankDetail?.colorCode
         }
         return tank;
       });
