@@ -46,8 +46,6 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   get duplicateLoadableStudy(): LoadableStudy { return this._duplicateLoadableStudy; }
   set duplicateLoadableStudy(duplicateLoadableStudy: LoadableStudy) {
     this._duplicateLoadableStudy = duplicateLoadableStudy;
-    if (duplicateLoadableStudy)
-      this.updateLoadableStudyFormGroup(duplicateLoadableStudy, false);
   }
   @Input() isEdit = false;
   @Input() selectedLoadableStudy: LoadableStudy;
@@ -96,7 +94,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     if (this.isEdit) {
       this.updateLoadableStudyFormGroup(this.selectedLoadableStudy, true)
     } else {
-      if (this.duplicateLoadableStudy) {
+      let isLoadableStudyAvailable;
+      isLoadableStudyAvailable = this.duplicateLoadableStudy && Object.keys(this.duplicateLoadableStudy)?.length === 0 && this.duplicateLoadableStudy.constructor === Object
+      if (!isLoadableStudyAvailable && this.duplicateLoadableStudy) {
         this.updateLoadableStudyFormGroup(this.duplicateLoadableStudy, false);
       } else {
         this.getLoadlineSummer();
@@ -247,7 +247,6 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     this.newLoadableStudyFormGroup.reset();
     this.displayPopup.emit(false);
     this.uploadError = "";
-    this.getVesselInfo();
   }
 
   /**
@@ -267,11 +266,16 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   //for edit/duplicate update the values 
   updateLoadableStudyFormGroup(loadableStudyObj: LoadableStudy, isEdit: boolean) {
     if (isEdit) {
-      this.savedloadableDetails = loadableStudyObj;
-      !this.savedloadableDetails.draftRestriction ? this.savedloadableDetails.draftRestriction  = '' : null;
+      this.savedloadableDetails = {
+        draftMark: loadableStudyObj.draftMark,
+        loadLineXId: loadableStudyObj.loadLineXId,
+        draftRestriction: loadableStudyObj.draftRestriction ? loadableStudyObj.draftRestriction : ''
+      }
+      
       this.newLoadableStudyFormGroup.patchValue({
-        duplicateExisting: null
+        duplicateExisting: loadableStudyObj.createdFromId ? loadableStudyObj : null
       })
+      this.newLoadableStudyFormGroup.controls['duplicateExisting'].disable();
     } else {
       this.newLoadableStudyFormGroup.patchValue({
         duplicateExisting: loadableStudyObj
@@ -279,7 +283,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     }
     this.newLoadableStudyFormGroup.patchValue({
       newLoadableStudyName: loadableStudyObj.name,
-      enquiryDetails: loadableStudyObj.detail,
+      enquiryDetails: loadableStudyObj.detail ? loadableStudyObj.detail : '',
       charterer: loadableStudyObj.charterer,
       subCharterer: loadableStudyObj?.subCharterer,
       loadLine: loadableStudyObj,
@@ -288,7 +292,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       maxAirTempExpected: loadableStudyObj.maxAirTemperature,
       maxWaterTempExpected: loadableStudyObj.maxWaterTemperature
     });
-    this.savedloadableDetails.draftRestriction = this.newLoadableStudyFormGroup.controls['draftRestriction']?.value;
+    
+    
     const result = this.loadlineLists.filter(loadline => loadline.id === loadableStudyObj.loadLineXId);
     if (result.length > 0) {
       this.loadlineList = result[0];
@@ -299,8 +304,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       });
     }
     const loadLine = this.newLoadableStudyFormGroup.get('loadLine').value;
-    this.draftMarkList = loadLine.draftMarks.map(draftMarks => ({ id: draftMarks, name: draftMarks }));
-    this.uploadedFiles = [...loadableStudyObj.loadableStudyAttachment];
+    this.draftMarkList = loadLine.draftMarks?.map(draftMarks => ({ id: draftMarks, name: draftMarks }));
+    loadableStudyObj.loadableStudyAttachment ? this.uploadedFiles = [...loadableStudyObj.loadableStudyAttachment] : this.uploadedFiles = [];
   }
 
   /**
@@ -309,9 +314,10 @@ export class NewLoadableStudyPopupComponent implements OnInit {
    * @memberof NewLoadableStudyPopupComponent
   */
   isLoadlineChanged() {
-    if(this.savedloadableDetails?.draftMark !== this.newLoadableStudyFormGroup.controls['draftMark'].value?.id ||
-       this.savedloadableDetails?.loadLineXId !== this.newLoadableStudyFormGroup.controls['loadLine'].value?.id ||
-       (this.savedloadableDetails?.draftRestriction !== this.newLoadableStudyFormGroup.controls['draftRestriction']?.value)) {
+    const savedloadableDetails = this.savedloadableDetails;
+    if(savedloadableDetails && (this.savedloadableDetails.draftMark !== this.newLoadableStudyFormGroup.controls['draftMark'].value?.id ||
+       this.savedloadableDetails.loadLineXId !== this.newLoadableStudyFormGroup.controls['loadLine'].value?.id ||
+       (this.savedloadableDetails.draftRestriction !== this.newLoadableStudyFormGroup.controls['draftRestriction']?.value))) {
       return true;
     }
   }

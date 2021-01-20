@@ -20,6 +20,7 @@ export class LoadableStudy {
     public dischargingPortIds?: number[];
     loadableStudyAttachment?: ILoadableStudyAttachment[];
     dischargingCargoId: number;
+    createdFromId?: string;
 }
 
 /**

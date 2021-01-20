@@ -51,6 +51,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
     private confirmationAlertService: ConfirmationAlertService) { }
 
   ngOnInit(): void {
+    this.duplicateLoadableStudy = <LoadableStudy>{};
     this.getGridColumns();
   }
 
@@ -71,7 +72,8 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
    */
   onDuplicate(event) {
     this.duplicateLoadableStudy = event?.data;
-    this.openLoadableStudyPopup();
+    this.isEdit = false;
+    this.display = true;
   }
 
   /**
@@ -102,6 +104,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
    * @memberof SidePanelLoadableStudyListComponent
    */
   openLoadableStudyPopup() {
+    this.duplicateLoadableStudy = <LoadableStudy>{};
     this.isEdit = false;
     this.display = true;
   }
