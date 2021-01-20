@@ -605,6 +605,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         builder.setName(entity.getName());
         Optional.ofNullable(entity.getDischargeCargoId()).ifPresent(builder::setDischargingCargoId);
         builder.setCreatedDate(dateTimeFormatter.format(entity.getCreatedDate()));
+        Optional.ofNullable(entity.getDuplicatedFrom())
+            .ifPresent(
+                duplicatedFrom -> {
+                  builder.setCreatedFromId(duplicatedFrom.getId());
+                });
         Optional.ofNullable(entity.getLoadableStudyStatus())
             .ifPresent(
                 status -> {
@@ -2042,10 +2047,27 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+
+      Voyage previousVoyage =
+          this.voyageRepository
+              .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveOrderByVoyageEndDateDesc(
+                  loadableStudyOpt.get().getVoyage().getVoyageStartDate(),
+                  loadableStudyOpt.get().getVoyage().getVesselXId(),
+                  true);
+
       VesselReply vesselReply = this.getOhqTanks(request);
       List<OnHandQuantity> onHandQuantities =
           this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
               loadableStudyOpt.get(), request.getPortId(), true);
+      Optional<LoadableStudy> confirmedLoadableStudyOpt =
+          this.loadableStudyRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
+              previousVoyage, CONFIRMED_STATUS_ID, true);
+      List<OnHandQuantity> onHandQuantityList = null;
+      if (confirmedLoadableStudyOpt.isPresent()) {
+        onHandQuantityList =
+            this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                confirmedLoadableStudyOpt.get(), request.getPortId(), true);
+      }
       for (VesselTankDetail tankDetail : vesselReply.getVesselTanksList()) {
         if (!tankDetail.getShowInOhqObq()
             || OHQ_VOID_TANK_CATEGORIES.contains(tankDetail.getTankCategoryId())) {
@@ -2076,6 +2098,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(item -> detailBuilder.setDepartureQuantity(valueOf(item)));
           Optional.ofNullable(qty.getDepartureVolume())
               .ifPresent(item -> detailBuilder.setDepartureVolume(valueOf(item)));
+        } else {
+          if (onHandQuantityList != null && !onHandQuantityList.isEmpty()) {
+            Optional<OnHandQuantity> ohqQtyOpt =
+                onHandQuantityList.stream()
+                    .filter(
+                        entity ->
+                            entity.getFuelTypeXId().equals(tankDetail.getTankCategoryId())
+                                && entity.getTankXId().equals(tankDetail.getTankId()))
+                    .findAny();
+            if (ohqQtyOpt.isPresent()) {
+              OnHandQuantity ohqQty = ohqQtyOpt.get();
+              Optional.ofNullable(ohqQty.getDensity())
+                  .ifPresent(item -> detailBuilder.setDensity(valueOf(item)));
+            }
+          }
         }
         replyBuilder.addOnHandQuantity(detailBuilder.build());
       }
@@ -2300,6 +2337,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         isEmpty(request.getDepartureVolume())
             ? null
             : new BigDecimal(request.getDepartureVolume()));
+    entity.setDensity(isEmpty(request.getDensity()) ? null : new BigDecimal(request.getDensity()));
     return entity;
   }
 

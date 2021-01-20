@@ -380,7 +380,7 @@ public class LoadableStudyService {
 
       dto.setDischargingCargoId(
           0 != grpcReply.getDischargingCargoId() ? grpcReply.getDischargingCargoId() : null);
-
+      dto.setCreatedFromId(grpcReply.getCreatedFromId());
       list.add(dto);
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
@@ -1519,6 +1519,8 @@ public class LoadableStudyService {
               ? BigDecimal.ZERO
               : new BigDecimal(detail.getDepartureVolume()));
       onHandQuantity.setColorCode(isEmpty(detail.getColorCode()) ? null : detail.getColorCode());
+      onHandQuantity.setDensity(
+          isEmpty(detail.getDensity()) ? BigDecimal.ZERO : new BigDecimal(detail.getDensity()));
       response.getOnHandQuantities().add(onHandQuantity);
     }
     response.setResponseStatus(
@@ -1614,6 +1616,7 @@ public class LoadableStudyService {
         .ifPresent(item -> builder.setDepartureQuantity(valueOf(item)));
     Optional.ofNullable(request.getDepartureVolume())
         .ifPresent(item -> builder.setDepartureVolume(valueOf(item)));
+    Optional.ofNullable(request.getDensity()).ifPresent(item -> builder.setDensity(valueOf(item)));
     OnHandQuantityReply grpcReply = this.saveOnHandQuantity(builder.build());
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(

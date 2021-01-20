@@ -36,6 +36,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
@@ -2940,6 +2941,96 @@ class LoadableStudyServiceTest {
     assertEquals(1, results.size());
     assertNull(responseObserver.getError());
     assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @ParameterizedTest
+  @ValueSource(longs = {0L, 1L})
+  void testSaveOnBoardQuantity(Long id) {
+    if (id.equals(1L)) {
+      when(this.onBoardQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+          .thenReturn(new OnBoardQuantity());
+    }
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadableStudy()));
+    OnBoardQuantity entity = new OnBoardQuantity();
+    entity.setId(1L);
+    when(this.onBoardQuantityRepository.save(any(OnBoardQuantity.class))).thenReturn(entity);
+    StreamRecorder<OnBoardQuantityReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveOnBoardQuantity(
+        this.createOnBoardQuantityDetailSaveRequest().setId(id).build(), responseObserver);
+    List<OnBoardQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveOnBoardQuantityWithLoadableStudyNull() {
+
+    when(this.onBoardQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(new OnBoardQuantity());
+
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.<LoadableStudy>empty());
+    OnBoardQuantity entity = new OnBoardQuantity();
+    entity.setId(1L);
+    when(this.onBoardQuantityRepository.save(any(OnBoardQuantity.class))).thenReturn(entity);
+    StreamRecorder<OnBoardQuantityReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveOnBoardQuantity(
+        this.createOnBoardQuantityDetailSaveRequest().build(), responseObserver);
+    List<OnBoardQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveOnBoardQuantityWhenOBQNull() {
+
+    when(this.onBoardQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(null);
+
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadableStudy()));
+    OnBoardQuantity entity = new OnBoardQuantity();
+    entity.setId(1L);
+    when(this.onBoardQuantityRepository.save(any(OnBoardQuantity.class))).thenReturn(entity);
+    StreamRecorder<OnBoardQuantityReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveOnBoardQuantity(
+        this.createOnBoardQuantityDetailSaveRequest().setId(1L).build(), responseObserver);
+    List<OnBoardQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveOnBoardQuantityWithException() {
+
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(NullPointerException.class);
+    OnBoardQuantity entity = new OnBoardQuantity();
+    entity.setId(1L);
+    when(this.onBoardQuantityRepository.save(any(OnBoardQuantity.class))).thenReturn(entity);
+    StreamRecorder<OnBoardQuantityReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveOnBoardQuantity(
+        this.createOnBoardQuantityDetailSaveRequest().build(), responseObserver);
+    List<OnBoardQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  private OnBoardQuantityDetail.Builder createOnBoardQuantityDetailSaveRequest() {
+    OnBoardQuantityDetail.Builder detail =
+        OnBoardQuantityDetail.newBuilder()
+            .setTankId(1L)
+            .setTankName("tank-1")
+            .setCargoId(1L)
+            .setCargoName("cargo-1")
+            .setWeight("100")
+            .setVolume("100");
+    return detail;
   }
 
   @ValueSource(longs = {0L, 1L})

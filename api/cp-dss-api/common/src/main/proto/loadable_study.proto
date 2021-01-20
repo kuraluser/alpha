@@ -391,6 +391,7 @@ message LoadableStudyDetail{
 	repeated LoadableStudyAttachment attachments = 17;
 	repeated int64 dischargingPortIds = 18;
 	int64 dischargingCargoId=19;
+	int64 createdFromId = 20;
 }
 
 message LoadableStudyReply{
@@ -525,6 +526,7 @@ message OnHandQuantityDetail{
 	int64 loadableStudyId = 12;
 	string colorCode = 13;
 	string fuelTypeShortName = 14;
+	string density=15;
 }
 
 message TankDetail{

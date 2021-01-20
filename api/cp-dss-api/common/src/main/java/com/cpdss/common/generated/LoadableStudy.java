@@ -36985,6 +36985,13 @@ public final class LoadableStudy {
      * @return The dischargingCargoId.
      */
     long getDischargingCargoId();
+
+    /**
+     * <code>int64 createdFromId = 20;</code>
+     *
+     * @return The createdFromId.
+     */
+    long getCreatedFromId();
   }
   /** Protobuf type {@code LoadableStudyDetail} */
   public static final class LoadableStudyDetail extends com.google.protobuf.GeneratedMessageV3
@@ -37182,6 +37189,11 @@ public final class LoadableStudy {
             case 152:
               {
                 dischargingCargoId_ = input.readInt64();
+                break;
+              }
+            case 160:
+              {
+                createdFromId_ = input.readInt64();
                 break;
               }
             default:
@@ -37710,6 +37722,17 @@ public final class LoadableStudy {
       return dischargingCargoId_;
     }
 
+    public static final int CREATEDFROMID_FIELD_NUMBER = 20;
+    private long createdFromId_;
+    /**
+     * <code>int64 createdFromId = 20;</code>
+     *
+     * @return The createdFromId.
+     */
+    public long getCreatedFromId() {
+      return createdFromId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -37785,6 +37808,9 @@ public final class LoadableStudy {
       }
       if (dischargingCargoId_ != 0L) {
         output.writeInt64(19, dischargingCargoId_);
+      }
+      if (createdFromId_ != 0L) {
+        output.writeInt64(20, createdFromId_);
       }
       unknownFields.writeTo(output);
     }
@@ -37863,6 +37889,9 @@ public final class LoadableStudy {
       if (dischargingCargoId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(19, dischargingCargoId_);
       }
+      if (createdFromId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(20, createdFromId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -37898,6 +37927,7 @@ public final class LoadableStudy {
       if (!getAttachmentsList().equals(other.getAttachmentsList())) return false;
       if (!getDischargingPortIdsList().equals(other.getDischargingPortIdsList())) return false;
       if (getDischargingCargoId() != other.getDischargingCargoId()) return false;
+      if (getCreatedFromId() != other.getCreatedFromId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -37951,6 +37981,8 @@ public final class LoadableStudy {
       }
       hash = (37 * hash) + DISCHARGINGCARGOID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getDischargingCargoId());
+      hash = (37 * hash) + CREATEDFROMID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCreatedFromId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -38135,6 +38167,8 @@ public final class LoadableStudy {
         bitField0_ = (bitField0_ & ~0x00000002);
         dischargingCargoId_ = 0L;
 
+        createdFromId_ = 0L;
+
         return this;
       }
 
@@ -38195,6 +38229,7 @@ public final class LoadableStudy {
         }
         result.dischargingPortIds_ = dischargingPortIds_;
         result.dischargingCargoId_ = dischargingCargoId_;
+        result.createdFromId_ = createdFromId_;
         onBuilt();
         return result;
       }
@@ -38345,6 +38380,9 @@ public final class LoadableStudy {
         }
         if (other.getDischargingCargoId() != 0L) {
           setDischargingCargoId(other.getDischargingCargoId());
+        }
+        if (other.getCreatedFromId() != 0L) {
+          setCreatedFromId(other.getCreatedFromId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -39684,6 +39722,39 @@ public final class LoadableStudy {
       public Builder clearDischargingCargoId() {
 
         dischargingCargoId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long createdFromId_;
+      /**
+       * <code>int64 createdFromId = 20;</code>
+       *
+       * @return The createdFromId.
+       */
+      public long getCreatedFromId() {
+        return createdFromId_;
+      }
+      /**
+       * <code>int64 createdFromId = 20;</code>
+       *
+       * @param value The createdFromId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCreatedFromId(long value) {
+
+        createdFromId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 createdFromId = 20;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCreatedFromId() {
+
+        createdFromId_ = 0L;
         onChanged();
         return this;
       }
@@ -56275,6 +56346,19 @@ public final class LoadableStudy {
      * @return The bytes for fuelTypeShortName.
      */
     com.google.protobuf.ByteString getFuelTypeShortNameBytes();
+
+    /**
+     * <code>string density = 15;</code>
+     *
+     * @return The density.
+     */
+    java.lang.String getDensity();
+    /**
+     * <code>string density = 15;</code>
+     *
+     * @return The bytes for density.
+     */
+    com.google.protobuf.ByteString getDensityBytes();
   }
   /** Protobuf type {@code OnHandQuantityDetail} */
   public static final class OnHandQuantityDetail extends com.google.protobuf.GeneratedMessageV3
@@ -56297,6 +56381,7 @@ public final class LoadableStudy {
       departureQuantity_ = "";
       colorCode_ = "";
       fuelTypeShortName_ = "";
+      density_ = "";
     }
 
     @java.lang.Override
@@ -56414,6 +56499,13 @@ public final class LoadableStudy {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 fuelTypeShortName_ = s;
+                break;
+              }
+            case 122:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                density_ = s;
                 break;
               }
             default:
@@ -56820,6 +56912,41 @@ public final class LoadableStudy {
       }
     }
 
+    public static final int DENSITY_FIELD_NUMBER = 15;
+    private volatile java.lang.Object density_;
+    /**
+     * <code>string density = 15;</code>
+     *
+     * @return The density.
+     */
+    public java.lang.String getDensity() {
+      java.lang.Object ref = density_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        density_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string density = 15;</code>
+     *
+     * @return The bytes for density.
+     */
+    public com.google.protobuf.ByteString getDensityBytes() {
+      java.lang.Object ref = density_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        density_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -56876,6 +57003,9 @@ public final class LoadableStudy {
       if (!getFuelTypeShortNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 14, fuelTypeShortName_);
       }
+      if (!getDensityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 15, density_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -56927,6 +57057,9 @@ public final class LoadableStudy {
       if (!getFuelTypeShortNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, fuelTypeShortName_);
       }
+      if (!getDensityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, density_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -56957,6 +57090,7 @@ public final class LoadableStudy {
       if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
       if (!getColorCode().equals(other.getColorCode())) return false;
       if (!getFuelTypeShortName().equals(other.getFuelTypeShortName())) return false;
+      if (!getDensity().equals(other.getDensity())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -56996,6 +57130,8 @@ public final class LoadableStudy {
       hash = (53 * hash) + getColorCode().hashCode();
       hash = (37 * hash) + FUELTYPESHORTNAME_FIELD_NUMBER;
       hash = (53 * hash) + getFuelTypeShortName().hashCode();
+      hash = (37 * hash) + DENSITY_FIELD_NUMBER;
+      hash = (53 * hash) + getDensity().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -57164,6 +57300,8 @@ public final class LoadableStudy {
 
         fuelTypeShortName_ = "";
 
+        density_ = "";
+
         return this;
       }
 
@@ -57206,6 +57344,7 @@ public final class LoadableStudy {
         result.loadableStudyId_ = loadableStudyId_;
         result.colorCode_ = colorCode_;
         result.fuelTypeShortName_ = fuelTypeShortName_;
+        result.density_ = density_;
         onBuilt();
         return result;
       }
@@ -57309,6 +57448,10 @@ public final class LoadableStudy {
         }
         if (!other.getFuelTypeShortName().isEmpty()) {
           fuelTypeShortName_ = other.fuelTypeShortName_;
+          onChanged();
+        }
+        if (!other.getDensity().isEmpty()) {
+          density_ = other.density_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -58187,6 +58330,82 @@ public final class LoadableStudy {
         checkByteStringIsUtf8(value);
 
         fuelTypeShortName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object density_ = "";
+      /**
+       * <code>string density = 15;</code>
+       *
+       * @return The density.
+       */
+      public java.lang.String getDensity() {
+        java.lang.Object ref = density_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          density_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string density = 15;</code>
+       *
+       * @return The bytes for density.
+       */
+      public com.google.protobuf.ByteString getDensityBytes() {
+        java.lang.Object ref = density_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          density_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string density = 15;</code>
+       *
+       * @param value The density to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDensity(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        density_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string density = 15;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDensity() {
+
+        density_ = getDefaultInstance().getDensity();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string density = 15;</code>
+       *
+       * @param value The bytes for density to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDensityBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        density_ = value;
         onChanged();
         return this;
       }
@@ -96762,7 +96981,7 @@ public final class LoadableStudy {
           + "Id\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017loadableSt"
           + "udyId\030\004 \001(\003\"K\n\027LoadableStudyAttachment\022\022"
           + "\n\nbyteString\030\001 \001(\014\022\020\n\010fileName\030\002 \001(\t\022\n\n\002"
-          + "id\030\003 \001(\003\"\276\003\n\023LoadableStudyDetail\022\n\n\002id\030\001"
+          + "id\030\003 \001(\003\"\325\003\n\023LoadableStudyDetail\022\n\n\002id\030\001"
           + " \001(\003\022\014\n\004name\030\002 \001(\t\022\016\n\006detail\030\003 \001(\t\022\020\n\010st"
           + "atusId\030\004 \001(\003\022\016\n\006status\030\005 \001(\t\022\023\n\013createdD"
           + "ate\030\006 \001(\t\022\021\n\tcharterer\030\007 \001(\t\022\024\n\014subChart"
@@ -96773,67 +96992,68 @@ public final class LoadableStudy {
           + "\n\010voyageId\030\017 \001(\003\022\020\n\010vesselId\030\020 \001(\003\022-\n\013at"
           + "tachments\030\021 \003(\0132\030.LoadableStudyAttachmen"
           + "t\022\032\n\022dischargingPortIds\030\022 \003(\003\022\032\n\022dischar"
-          + "gingCargoId\030\023 \001(\003\"x\n\022LoadableStudyReply\022"
-          + "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus"
-          + "\022-\n\017loadableStudies\030\002 \003(\0132\024.LoadableStud"
-          + "yDetail\022\n\n\002id\030\003 \001(\003\"5\n\021LoadingPortDetail"
-          + "\022\016\n\006portId\030\001 \001(\003\022\020\n\010quantity\030\002 \001(\t\".\n\021se"
-          + "gregationDetail\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001"
-          + "(\t\"\252\002\n\025CargoNominationDetail\022\n\n\002id\030\001 \001(\003"
-          + "\022\027\n\017loadableStudyId\030\002 \001(\003\022\020\n\010priority\030\003 "
-          + "\001(\003\022\r\n\005color\030\004 \001(\t\022\017\n\007cargoId\030\005 \001(\003\022\024\n\014a"
-          + "bbreviation\030\006 \001(\t\022.\n\022loadingPortDetails\030"
-          + "\007 \003(\0132\022.LoadingPortDetail\022\020\n\010quantity\030\010 "
-          + "\001(\t\022\024\n\014maxTolerance\030\t \001(\t\022\024\n\014minToleranc"
-          + "e\030\n \001(\t\022\016\n\006apiEst\030\013 \001(\t\022\017\n\007tempEst\030\014 \001(\t"
-          + "\022\025\n\rsegregationId\030\r \001(\003\"\247\001\n\026CargoNominat"
-          + "ionRequest\022\020\n\010vesselId\030\001 \001(\003\022\020\n\010voyageId"
-          + "\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\031\n\021cargo"
-          + "NominationId\030\004 \001(\003\0225\n\025cargoNominationDet"
-          + "ail\030\005 \001(\0132\026.CargoNominationDetail\"\214\001\n\024Ca"
-          + "rgoNominationReply\022\'\n\016responseStatus\030\001 \001"
-          + "(\0132\017.ResponseStatus\022\031\n\021cargoNominationId"
-          + "\030\002 \001(\003\0220\n\020cargoNominations\030\003 \003(\0132\026.Cargo"
-          + "NominationDetail\"\310\001\n\023PortRotationRequest"
-          + "\022\027\n\017loadableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 "
-          + "\001(\003\022\020\n\010voyageId\030\003 \001(\003\022\032\n\022dischargingPort"
-          + "Ids\030\004 \003(\003\022\n\n\002id\030\005 \001(\003\0220\n\023portRotationDet"
-          + "ails\030\006 \003(\0132\023.PortRotationDetail\022\032\n\022disch"
-          + "argingCargoId\030\007 \001(\003\"\332\002\n\022PortRotationDeta"
-          + "il\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\017\n\007berthI"
-          + "d\030\003 \001(\003\022\023\n\013operationId\030\004 \001(\003\022\027\n\017seaWater"
-          + "Density\030\005 \001(\t\022\034\n\024distanceBetweenPorts\030\006 "
-          + "\001(\t\022\022\n\ntimeOfStay\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001("
-          + "\t\022\023\n\013maxAirDraft\030\t \001(\t\022\013\n\003eta\030\n \001(\t\022\021\n\te"
-          + "taActual\030\013 \001(\t\022\013\n\003etd\030\014 \001(\t\022\021\n\tetdActual"
-          + "\030\r \001(\t\022\022\n\nlayCanFrom\030\016 \001(\t\022\020\n\010layCanTo\030\017"
-          + " \001(\t\022\027\n\017loadableStudyId\030\020 \001(\003\022\021\n\tportOrd"
-          + "er\030\021 \001(\003\".\n\tOperation\022\n\n\002id\030\001 \001(\003\022\025\n\rope"
-          + "rationName\030\002 \001(\t\"\230\001\n\021PortRotationReply\022\'"
-          + "\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022"
-          + "\"\n\005ports\030\002 \003(\0132\023.PortRotationDetail\022\036\n\no"
-          + "perations\030\003 \003(\0132\n.Operation\022\026\n\016portRotat"
-          + "ionId\030\004 \001(\003\"\241\001\n\030LoadableQuantityResponse"
-          + "\0229\n\027loadableQuantityRequest\030\001 \001(\0132\030.Load"
-          + "ableQuantityRequest\022$\n\016responseStatus\030\002 "
-          + "\001(\0132\014.StatusReply\022\016\n\006caseNo\030\003 \001(\005\022\024\n\014sel"
-          + "ectedZone\030\004 \001(\t\",\n\020ValveSegregation\022\n\n\002i"
-          + "d\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"2\n\027ValveSegregatio"
-          + "nRequest\022\027\n\017loadableStudyId\030\001 \001(\003\"m\n\025Val"
-          + "veSegregationReply\022\'\n\016responseStatus\030\001 \001"
-          + "(\0132\017.ResponseStatus\022+\n\020valveSegregation\030"
-          + "\002 \003(\0132\021.ValveSegregation\"e\n\025OnHandQuanti"
-          + "tyRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId"
-          + "\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\016\n\006portI"
-          + "d\030\004 \001(\003\"\304\002\n\024OnHandQuantityDetail\022\n\n\002id\030\001"
-          + " \001(\003\022\016\n\006portId\030\002 \001(\003\022\022\n\nfuelTypeId\030\003 \001(\003"
-          + "\022\020\n\010fuelType\030\004 \001(\t\022\016\n\006tankId\030\005 \001(\003\022\020\n\010ta"
-          + "nkName\030\006 \001(\t\022\025\n\rarrivalVolume\030\007 \001(\t\022\027\n\017a"
-          + "rrivalQuantity\030\010 \001(\t\022\035\n\025actualArrivalQua"
-          + "ntity\030\t \001(\t\022\027\n\017departureVolume\030\n \001(\t\022\031\n\021"
-          + "departureQuantity\030\013 \001(\t\022\027\n\017loadableStudy"
-          + "Id\030\014 \001(\003\022\021\n\tcolorCode\030\r \001(\t\022\031\n\021fuelTypeS"
-          + "hortName\030\016 \001(\t\"\310\002\n\nTankDetail\022\016\n\006tankId\030"
+          + "gingCargoId\030\023 \001(\003\022\025\n\rcreatedFromId\030\024 \001(\003"
+          + "\"x\n\022LoadableStudyReply\022\'\n\016responseStatus"
+          + "\030\001 \001(\0132\017.ResponseStatus\022-\n\017loadableStudi"
+          + "es\030\002 \003(\0132\024.LoadableStudyDetail\022\n\n\002id\030\003 \001"
+          + "(\003\"5\n\021LoadingPortDetail\022\016\n\006portId\030\001 \001(\003\022"
+          + "\020\n\010quantity\030\002 \001(\t\".\n\021segregationDetail\022\n"
+          + "\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\"\252\002\n\025CargoNomin"
+          + "ationDetail\022\n\n\002id\030\001 \001(\003\022\027\n\017loadableStudy"
+          + "Id\030\002 \001(\003\022\020\n\010priority\030\003 \001(\003\022\r\n\005color\030\004 \001("
+          + "\t\022\017\n\007cargoId\030\005 \001(\003\022\024\n\014abbreviation\030\006 \001(\t"
+          + "\022.\n\022loadingPortDetails\030\007 \003(\0132\022.LoadingPo"
+          + "rtDetail\022\020\n\010quantity\030\010 \001(\t\022\024\n\014maxToleran"
+          + "ce\030\t \001(\t\022\024\n\014minTolerance\030\n \001(\t\022\016\n\006apiEst"
+          + "\030\013 \001(\t\022\017\n\007tempEst\030\014 \001(\t\022\025\n\rsegregationId"
+          + "\030\r \001(\003\"\247\001\n\026CargoNominationRequest\022\020\n\010ves"
+          + "selId\030\001 \001(\003\022\020\n\010voyageId\030\002 \001(\003\022\027\n\017loadabl"
+          + "eStudyId\030\003 \001(\003\022\031\n\021cargoNominationId\030\004 \001("
+          + "\003\0225\n\025cargoNominationDetail\030\005 \001(\0132\026.Cargo"
+          + "NominationDetail\"\214\001\n\024CargoNominationRepl"
+          + "y\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStat"
+          + "us\022\031\n\021cargoNominationId\030\002 \001(\003\0220\n\020cargoNo"
+          + "minations\030\003 \003(\0132\026.CargoNominationDetail\""
+          + "\310\001\n\023PortRotationRequest\022\027\n\017loadableStudy"
+          + "Id\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003"
+          + " \001(\003\022\032\n\022dischargingPortIds\030\004 \003(\003\022\n\n\002id\030\005"
+          + " \001(\003\0220\n\023portRotationDetails\030\006 \003(\0132\023.Port"
+          + "RotationDetail\022\032\n\022dischargingCargoId\030\007 \001"
+          + "(\003\"\332\002\n\022PortRotationDetail\022\n\n\002id\030\001 \001(\003\022\016\n"
+          + "\006portId\030\002 \001(\003\022\017\n\007berthId\030\003 \001(\003\022\023\n\013operat"
+          + "ionId\030\004 \001(\003\022\027\n\017seaWaterDensity\030\005 \001(\t\022\034\n\024"
+          + "distanceBetweenPorts\030\006 \001(\t\022\022\n\ntimeOfStay"
+          + "\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t\022\023\n\013maxAirDraft\030"
+          + "\t \001(\t\022\013\n\003eta\030\n \001(\t\022\021\n\tetaActual\030\013 \001(\t\022\013\n"
+          + "\003etd\030\014 \001(\t\022\021\n\tetdActual\030\r \001(\t\022\022\n\nlayCanF"
+          + "rom\030\016 \001(\t\022\020\n\010layCanTo\030\017 \001(\t\022\027\n\017loadableS"
+          + "tudyId\030\020 \001(\003\022\021\n\tportOrder\030\021 \001(\003\".\n\tOpera"
+          + "tion\022\n\n\002id\030\001 \001(\003\022\025\n\roperationName\030\002 \001(\t\""
+          + "\230\001\n\021PortRotationReply\022\'\n\016responseStatus\030"
+          + "\001 \001(\0132\017.ResponseStatus\022\"\n\005ports\030\002 \003(\0132\023."
+          + "PortRotationDetail\022\036\n\noperations\030\003 \003(\0132\n"
+          + ".Operation\022\026\n\016portRotationId\030\004 \001(\003\"\241\001\n\030L"
+          + "oadableQuantityResponse\0229\n\027loadableQuant"
+          + "ityRequest\030\001 \001(\0132\030.LoadableQuantityReque"
+          + "st\022$\n\016responseStatus\030\002 \001(\0132\014.StatusReply"
+          + "\022\016\n\006caseNo\030\003 \001(\005\022\024\n\014selectedZone\030\004 \001(\t\","
+          + "\n\020ValveSegregation\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002"
+          + " \001(\t\"2\n\027ValveSegregationRequest\022\027\n\017loada"
+          + "bleStudyId\030\001 \001(\003\"m\n\025ValveSegregationRepl"
+          + "y\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStat"
+          + "us\022+\n\020valveSegregation\030\002 \003(\0132\021.ValveSegr"
+          + "egation\"e\n\025OnHandQuantityRequest\022\021\n\tcomp"
+          + "anyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\027\n\017loadabl"
+          + "eStudyId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\"\325\002\n\024OnHan"
+          + "dQuantityDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 "
+          + "\001(\003\022\022\n\nfuelTypeId\030\003 \001(\003\022\020\n\010fuelType\030\004 \001("
+          + "\t\022\016\n\006tankId\030\005 \001(\003\022\020\n\010tankName\030\006 \001(\t\022\025\n\ra"
+          + "rrivalVolume\030\007 \001(\t\022\027\n\017arrivalQuantity\030\010 "
+          + "\001(\t\022\035\n\025actualArrivalQuantity\030\t \001(\t\022\027\n\017de"
+          + "partureVolume\030\n \001(\t\022\031\n\021departureQuantity"
+          + "\030\013 \001(\t\022\027\n\017loadableStudyId\030\014 \001(\003\022\021\n\tcolor"
+          + "Code\030\r \001(\t\022\031\n\021fuelTypeShortName\030\016 \001(\t\022\017\n"
+          + "\007density\030\017 \001(\t\"\310\002\n\nTankDetail\022\016\n\006tankId\030"
           + "\001 \001(\003\022\026\n\016tankCategoryId\030\002 \001(\003\022\030\n\020tankCat"
           + "egoryName\030\003 \001(\t\022\020\n\010tankName\030\004 \001(\t\022\027\n\017fra"
           + "meNumberFrom\030\005 \001(\t\022\025\n\rframeNumberTo\030\006 \001("
@@ -97370,6 +97590,7 @@ public final class LoadableStudy {
               "Attachments",
               "DischargingPortIds",
               "DischargingCargoId",
+              "CreatedFromId",
             });
     internal_static_LoadableStudyReply_descriptor = getDescriptor().getMessageTypes().get(28);
     internal_static_LoadableStudyReply_fieldAccessorTable =
@@ -97533,6 +97754,7 @@ public final class LoadableStudy {
               "LoadableStudyId",
               "ColorCode",
               "FuelTypeShortName",
+              "Density",
             });
     internal_static_TankDetail_descriptor = getDescriptor().getMessageTypes().get(44);
     internal_static_TankDetail_fieldAccessorTable =

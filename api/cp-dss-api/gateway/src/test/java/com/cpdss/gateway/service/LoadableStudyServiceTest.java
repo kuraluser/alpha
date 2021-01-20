@@ -71,6 +71,7 @@ import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.OnBoardQuantity;
 import com.cpdss.gateway.domain.OnBoardQuantityResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
@@ -1859,6 +1860,34 @@ class LoadableStudyServiceTest {
   }
 
   @Test
+  void testSaveOnBoardQuantityGrpcFailure() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.saveOnBoardQuantites(any(OnBoardQuantity.class), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(
+            this.loadableStudyService.saveOnBoardQuantites(
+                any(OnBoardQuantityDetail.class), anyString()))
+        .thenReturn(
+            OnBoardQuantityReply.newBuilder()
+                .addAllOnBoardQuantity(this.createOnBoardQuantityDetail())
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.saveOnBoardQuantites(
+                    this.createOnBoardQuantityRequest(), CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  @Test
   void testGetSynopticalTable() throws GenericServiceException {
     Mockito.when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong()))
         .thenCallRealMethod();
@@ -1894,6 +1923,17 @@ class LoadableStudyServiceTest {
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  private OnBoardQuantity createOnBoardQuantityRequest() {
+    OnBoardQuantity request = new OnBoardQuantity();
+    request.setVolume(TEST_BIGDECIMAL_VALUE);
+    request.setWeight(TEST_BIGDECIMAL_VALUE);
+    request.setTankId(1L);
+    request.setLoadableStudyId(1L);
+    request.setPortId(1L);
+    request.setId(0L);
+    return request;
   }
 
   private SynopticalTableReply createSynopticalTableReply() {
