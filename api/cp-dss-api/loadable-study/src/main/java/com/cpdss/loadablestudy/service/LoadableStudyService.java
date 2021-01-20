@@ -3959,9 +3959,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     return portReply;
   }
 
-  public PortReply getPortInfo(GetPortInfoByPortIdsRequest request) {
-    return portInfoGrpcService.getPortInfoByPortIds(request);
-  }
   /**
    * Build port request to fetch port related fields from port master
    *
