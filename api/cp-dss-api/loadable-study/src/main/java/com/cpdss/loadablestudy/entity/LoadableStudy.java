@@ -79,7 +79,7 @@ public class LoadableStudy extends EntityDoc {
   @Column(name = "is_active")
   private boolean isActive;
 
-  @OneToMany(mappedBy = "loadableStudy", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "loadableStudy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<LoadableStudyAttachments> attachments;
 
   @OneToMany(mappedBy = "loadableStudy", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
