@@ -99,15 +99,21 @@ public class SynopticalTable extends EntityDoc {
   @Column(name = "others_actual")
   private BigDecimal othersActual;
 
+  @Column(name = "constant_planned")
+  private BigDecimal constantPlanned;
+
   @Column(name = "constant_actual")
   private BigDecimal constantActual;
+
+  @Column(name = "deadweight_planned")
+  private BigDecimal deadWeightPlanned;
 
   @Column(name = "dead_weight_actual")
   private BigDecimal deadWeightActual;
 
+  @Column(name = "displacement_planned")
+  private BigDecimal displacementPlanned;
+
   @Column(name = "displacement_actual")
   private BigDecimal displacementActual;
-
-  @Column(name = "ballast_actual")
-  private BigDecimal ballastActual;
 }

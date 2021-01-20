@@ -14,7 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface CargoHistoryRepository extends CommonCrudRepository<CargoHistory, Long> {
 
   @Query(
-      "select new com.cpdss.loadablestudy.domain.CargoHistory(ch.tankId, cn.id, cn.cargoXId, cn.color, cn.abbreviation) "
+      "select new com.cpdss.loadablestudy.domain.CargoHistory(ch.tankId, cn.id, cn.cargoXId, cn.color, cn.abbreviation, ch.quantity) "
           + "from CargoHistory ch "
           + "join CargoNomination cn on ch.cargoNomination = cn "
           + "where ch.isActive = true and ch.voyage.id = ?1 "

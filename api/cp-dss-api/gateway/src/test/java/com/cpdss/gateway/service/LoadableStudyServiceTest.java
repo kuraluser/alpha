@@ -45,6 +45,10 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.TankDetail;
 import com.cpdss.common.generated.LoadableStudy.TankList;
 import com.cpdss.common.generated.LoadableStudy.VoyageDetail;
@@ -86,6 +90,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.Assert;
@@ -133,6 +138,24 @@ class LoadableStudyServiceTest {
   private static final String LOADABLE_QUANTITY_DUMMY = "100";
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
   private static final BigDecimal TEST_BIGDECIMAL_VALUE = new BigDecimal(100);
+
+  private static final Long FRESH_WATER_TANK_CATEGORY_ID = 3L;
+  private static final Long FUEL_OIL_TANK_CATEGORY_ID = 5L;
+  private static final Long DIESEL_OIL_TANK_CATEGORY_ID = 6L;
+  private static final Long LUBRICATING_OIL_TANK_CATEGORY_ID = 14L;
+  private static final Long LUBRICANT_OIL_TANK_CATEGORY_ID = 19L;
+  private static final Long FUEL_VOID_TANK_CATEGORY_ID = 22L;
+  private static final Long FRESH_WATER_VOID_TANK_CATEGORY_ID = 23L;
+
+  private static final List<Long> OHQ_TANK_CATEGORIES =
+      Arrays.asList(
+          FRESH_WATER_TANK_CATEGORY_ID,
+          FUEL_OIL_TANK_CATEGORY_ID,
+          DIESEL_OIL_TANK_CATEGORY_ID,
+          LUBRICATING_OIL_TANK_CATEGORY_ID,
+          LUBRICANT_OIL_TANK_CATEGORY_ID,
+          FUEL_VOID_TANK_CATEGORY_ID,
+          FRESH_WATER_VOID_TANK_CATEGORY_ID);
 
   @MockBean private UsersRepository usersRepository;
 
@@ -1451,7 +1474,7 @@ class LoadableStudyServiceTest {
                 .addLoadablePlanComments(buildLoadablePlanComments())
                 .build());
 
-    Mockito.when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong()))
+    Mockito.when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong()))
         .thenReturn(buildLoadablePlanSynopticalResponse());
 
     LoadablePlanDetailsResponse response =
@@ -1494,7 +1517,7 @@ class LoadableStudyServiceTest {
                 .addLoadablePlanBallastDetails(buildLoadablePlanBallastDetails())
                 .build());
 
-    Mockito.when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong()))
+    Mockito.when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong()))
         .thenReturn(buildLoadablePlanSynopticalFailResponse());
 
     final GenericServiceException ex =
@@ -1833,5 +1856,77 @@ class LoadableStudyServiceTest {
                       .build());
             });
     return list;
+  }
+
+  @Test
+  void testGetSynopticalTable() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong()))
+        .thenCallRealMethod();
+    Mockito.when(this.loadableStudyService.getSynopticalTable(any(SynopticalTableRequest.class)))
+        .thenReturn(this.createSynopticalTableReply());
+    SynopticalTableResponse response = this.loadableStudyService.getSynopticalTable(1L, 1L, 1L);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "Invalid response status"));
+  }
+
+  @Test
+  void testGetSynopticalTableGrpcFailure() throws GenericServiceException {
+    Mockito.when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong()))
+        .thenCallRealMethod();
+
+    Mockito.when(this.loadableStudyService.getSynopticalTable(any(SynopticalTableRequest.class)))
+        .thenReturn(
+            SynopticalTableReply.newBuilder()
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () -> this.loadableStudyService.getSynopticalTable(1L, 1L, 1L));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  private SynopticalTableReply createSynopticalTableReply() {
+    SynopticalTableReply.Builder builder = SynopticalTableReply.newBuilder();
+    com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder record =
+        com.cpdss.common.generated.LoadableStudy.SynopticalRecord.newBuilder();
+    record.addAllOhq(this.createSynopticalOhqRecords());
+    record.addAllCargo(this.createSynopticalCargoRecord());
+    builder.addSynopticalRecords(record.build());
+    builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    return builder.build();
+  }
+
+  private List<SynopticalOhqRecord> createSynopticalOhqRecords() {
+    List<SynopticalOhqRecord> records = new ArrayList<>();
+    OHQ_TANK_CATEGORIES.forEach(
+        cat -> {
+          records.add(
+              SynopticalOhqRecord.newBuilder()
+                  .setActualWeight(STRING_TEST_VALUE)
+                  .setFuelTypeId(cat)
+                  .build());
+        });
+    return records;
+  }
+
+  private List<SynopticalCargoRecord> createSynopticalCargoRecord() {
+    List<SynopticalCargoRecord> records = new ArrayList<>();
+    IntStream.range(0, 5)
+        .forEach(
+            i -> {
+              records.add(SynopticalCargoRecord.newBuilder().setTankId(Long.valueOf(i)).build());
+            });
+    return records;
   }
 }

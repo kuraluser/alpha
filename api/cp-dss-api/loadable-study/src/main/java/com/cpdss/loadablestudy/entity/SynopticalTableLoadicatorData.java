@@ -57,6 +57,12 @@ public class SynopticalTableLoadicatorData extends EntityDoc {
   @Column(name = "is_active")
   private boolean isActive;
 
+  @Column(name = "loadable_pattern_xid")
+  private Long loadablePatternId;
+
+  @Column(name = "ballast_actual")
+  private BigDecimal ballastActual;
+
   @OneToOne
   @JoinColumn(name = "synoptical_table_xid")
   private SynopticalTable synopticalTable;

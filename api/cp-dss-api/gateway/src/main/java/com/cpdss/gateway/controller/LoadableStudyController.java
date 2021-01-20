@@ -584,6 +584,7 @@ public class LoadableStudyController {
           e);
     }
   }
+
   /**
    * @param vesselId
    * @param voyageId
@@ -851,6 +852,7 @@ public class LoadableStudyController {
           e);
     }
   }
+
   /**
    * Get commingle cargo
    *
@@ -923,6 +925,7 @@ public class LoadableStudyController {
           e);
     }
   }
+
   /**
    * @param vesselId
    * @param voyageId
@@ -1100,16 +1103,19 @@ public class LoadableStudyController {
 
   @GetMapping(
       value =
-          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/synoptical-table")
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-pattern/{loadablePatternId}/synoptical-table")
   public SynopticalTableResponse getSynopticalTable(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudyId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadablePatternId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
       log.info("getSynopticalTable: {}", getClientIp());
-      return this.loadableStudyService.getSynopticalTable(vesselId, loadableStudyId);
+      return this.loadableStudyService.getSynopticalTable(
+          vesselId, loadableStudyId, loadablePatternId);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException getSynopticalTable", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
