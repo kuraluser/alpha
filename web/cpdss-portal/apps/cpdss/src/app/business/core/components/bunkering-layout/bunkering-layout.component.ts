@@ -128,7 +128,7 @@ export class BunkeringLayoutComponent implements OnInit {
    */
   getFillingPercentage(tank: ITank) {
     let fillingratio: any = ((tank?.commodity?.volume / Number(tank?.fullCapacityCubm)) * 100).toFixed(2);
-    if (Number(fillingratio) >= 100) {
+    if (Number(fillingratio) === 100) {
       fillingratio = 100;
     }
     if (isNaN(fillingratio) || !fillingratio) {

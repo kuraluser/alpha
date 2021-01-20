@@ -320,9 +320,9 @@ export interface IPortOHQTankDetail {
     fuelTypeName: string;
     tankId: number;
     tankName: string;
-    arrivalVolume: number;
+    arrivalDensity: number;
     arrivalQuantity: number;
-    departureVolume: number;
+    departureDensity: number;
     departureQuantity: number;
     portId: number;
     storeKey: number;
@@ -347,9 +347,9 @@ export interface IPortOHQTankDetailValueObject {
     fuelTypeName: string;
     tankId: number;
     tankName: string;
-    arrivalVolume: ValueObject<number>;
+    arrivalDensity: ValueObject<number>;
     arrivalQuantity: ValueObject<number>;
-    departureVolume: ValueObject<number>;
+    departureDensity: ValueObject<number>;
     departureQuantity: ValueObject<number>;
     portId: number;
     storeKey: number;

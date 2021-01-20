@@ -638,5 +638,22 @@ export class DatatableComponent implements OnInit {
     return ""
   }
 
+  /**
+   * Method to get rowspan
+   *
+   * @param {IDataTableColumn[]} columns
+   * @param {*} filterable
+   * @returns
+   * @memberof DatatableComponent
+   */
+  getRowSpan(columns: IDataTableColumn[], filterable) {
+    let rowSpan = filterable ? 1 : 0;
+    columns.forEach(col => {
+      rowSpan = rowSpan < col?.columns?.length ? col?.columns?.length : rowSpan;
+    });
+
+    return rowSpan;
+  }
+
 }
 

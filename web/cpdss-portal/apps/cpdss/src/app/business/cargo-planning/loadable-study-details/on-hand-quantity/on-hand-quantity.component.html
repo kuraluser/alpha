@@ -105,15 +105,15 @@
                                 [ngClass]="{'order-last': ohqForm.controls.mode.value === OHQ_MODE.DEPARTURE}">
                                 <div class="row mb-15">
                                     <label for="" class="col-12 text-center">{{'OHQ_ARRIVAL'| translate}}
-                                        {{'OHQ_VOL'| translate}}</label>
+                                        {{'OHQ_DENSITY'| translate}}</label>
                                     <div class="col">
                                         <input type="text" cpdssPortalNumberDecimal class="form-control"
-                                            formControlName="arrivalVolume"
-                                            (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalVolume')"
+                                            formControlName="arrivalDensity"
+                                            (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalDensity')"
                                             [readOnly]="!permission?.edit">
                                         <cpdss-portal-validation-error
-                                            [errors]="fieldError(selectedTankFormGroupIndex, 'arrivalVolume')| async"
-                                            [errorMessages]="getErrorMessages('arrivalVolume')">
+                                            [errors]="fieldError(selectedTankFormGroupIndex, 'arrivalDensity')| async"
+                                            [errorMessages]="getErrorMessages('arrivalDensity')">
                                         </cpdss-portal-validation-error>
                                     </div>
                                 </div>
@@ -123,7 +123,7 @@
                                 [ngClass]="{'order-last': ohqForm.controls.mode.value === OHQ_MODE.DEPARTURE}">
                                 <div class="row mb-15">
                                     <label for="" class="col-12 text-center">{{'OHQ_ARRIVAL'| translate}}
-                                        {{'OHQ_WEIGHT'| translate}}</label>
+                                        {{'OHQ_QUANTITY'| translate}}</label>
                                     <div class="col">
                                         <input type="text" cpdssPortalNumberDecimal class="form-control"
                                             formControlName="arrivalQuantity"
@@ -140,15 +140,15 @@
                                 [ngStyle]="{'visibility': ohqForm.controls.mode.value === OHQ_MODE.DEPARTURE ? 'visible': 'hidden'}">
                                 <div class="row mb-15">
                                     <label for="" class="col-12 text-center">{{'OHQ_DEPARTURE'| translate}}
-                                        {{'OHQ_VOL'| translate}}</label>
+                                        {{'OHQ_DENSITY'| translate}}</label>
                                     <div class="col">
                                         <input type="text" cpdssPortalNumberDecimal class="form-control"
-                                            formControlName="departureVolume"
-                                            (change)="onChange($event, selectedTankFormGroupIndex, 'departureVolume')"
+                                            formControlName="departureDensity"
+                                            (change)="onChange($event, selectedTankFormGroupIndex, 'departureDensity')"
                                             [readOnly]="!permission?.edit">
                                         <cpdss-portal-validation-error
-                                            [errors]="fieldError(selectedTankFormGroupIndex, 'departureVolume')| async"
-                                            [errorMessages]="getErrorMessages('departureVolume')">
+                                            [errors]="fieldError(selectedTankFormGroupIndex, 'departureDensity')| async"
+                                            [errorMessages]="getErrorMessages('departureDensity')">
                                         </cpdss-portal-validation-error>
                                     </div>
                                 </div>
@@ -157,7 +157,7 @@
                                 [ngStyle]="{'visibility': ohqForm.controls.mode.value === OHQ_MODE.DEPARTURE ? 'visible': 'hidden'}">
                                 <div class="row mb-15">
                                     <label for="" class="col-12 text-center">{{'OHQ_DEPARTURE'| translate}}
-                                        {{'OHQ_WEIGHT'| translate}}</label>
+                                        {{'OHQ_QUANTITY'| translate}}</label>
                                     <div class="col">
                                         <input type="text" cpdssPortalNumberDecimal class="form-control"
                                             formControlName="departureQuantity"

@@ -783,27 +783,26 @@ export class LoadableStudyDetailsTransformationService {
         header: 'OHQ_ARRIVAL',
         columns: [
           {
-            field: 'arrivalVolume',
-            header: 'OHQ_VOL',
+            field: 'arrivalDensity',
+            header: 'OHQ_DENSITY',
             fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-            fieldPlaceholder: 'OHQ_PLACEHOLDER_VOL',
+            fieldPlaceholder: 'OHQ_PLACEHOLDER_DENSITY',
             filter: true,
-            filterField: 'arrivalVolume.value',
+            filterField: 'arrivalDensity.value',
             filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
             filterType: DATATABLE_FILTER_TYPE.NUMBER,
-            filterPlaceholder: 'OHQ_SEARCH_VOL',
+            filterPlaceholder: 'OHQ_SEARCH_DENSITY',
             fieldHeaderClass: 'column-volume',
             errorMessages: {
               'required': 'OHQ_VALUE_REQUIRED',
               'min': 'OHQ_MIN_VALUE',
               'groupTotal': 'OHQ_GROUP_TOTAL',
-              'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY",
               'pattern': 'OHQ_PATTERN_ERROR'
             }
           },
           {
             field: 'arrivalQuantity',
-            header: 'OHQ_WEIGHT',
+            header: 'OHQ_QUANTITY',
             fieldType: DATATABLE_FIELD_TYPE.NUMBER,
             fieldPlaceholder: 'OHQ_PLACEHOLDER_WEIGHT',
             filter: true,
@@ -816,7 +815,8 @@ export class LoadableStudyDetailsTransformationService {
               'required': 'OHQ_VALUE_REQUIRED',
               'min': 'OHQ_MIN_VALUE',
               'groupTotal': 'OHQ_GROUP_TOTAL',
-              'pattern': 'OHQ_PATTERN_ERROR'
+              'pattern': 'OHQ_PATTERN_ERROR',
+              'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY"
             }
           }
         ]
@@ -826,27 +826,26 @@ export class LoadableStudyDetailsTransformationService {
         header: 'OHQ_DEPARTURE',
         columns: [
           {
-            field: 'departureVolume',
-            header: 'OHQ_VOL',
+            field: 'departureDensity',
+            header: 'OHQ_DENSITY',
             fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-            fieldPlaceholder: 'OHQ_PLACEHOLDER_VOL',
+            fieldPlaceholder: 'OHQ_PLACEHOLDER_DENSITY',
             filter: true,
-            filterField: 'departureVolume.value',
+            filterField: 'departureDensity.value',
             filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
             filterType: DATATABLE_FILTER_TYPE.NUMBER,
-            filterPlaceholder: 'OHQ_SEARCH_VOL',
+            filterPlaceholder: 'OHQ_SEARCH_DENSITY',
             fieldHeaderClass: 'column-volume',
             errorMessages: {
               'required': 'OHQ_VALUE_REQUIRED',
               'min': 'OHQ_MIN_VALUE',
               'groupTotal': 'OHQ_GROUP_TOTAL',
-              'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY",
               'pattern': 'OHQ_PATTERN_ERROR'
             }
           },
           {
             field: 'departureQuantity',
-            header: 'OHQ_WEIGHT',
+            header: 'OHQ_QUANTITY',
             fieldType: DATATABLE_FIELD_TYPE.NUMBER,
             fieldPlaceholder: 'OHQ_PLACEHOLDER_WEIGHT',
             filter: true,
@@ -859,7 +858,8 @@ export class LoadableStudyDetailsTransformationService {
               'required': 'OHQ_VALUE_REQUIRED',
               'min': 'OHQ_MIN_VALUE',
               'groupTotal': 'OHQ_GROUP_TOTAL',
-              'pattern': 'OHQ_PATTERN_ERROR'
+              'pattern': 'OHQ_PATTERN_ERROR',              
+              'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY",
             }
           }
         ]
@@ -885,9 +885,9 @@ export class LoadableStudyDetailsTransformationService {
     _ohqTankDetail.tankName = ohqTankDetail?.tankName;
     _ohqTankDetail.colorCode = ohqTankDetail?.colorCode;
     _ohqTankDetail.fullCapacityCubm = ohqTankDetail?.fullCapacityCubm;
-    _ohqTankDetail.arrivalVolume = new ValueObject<number>(ohqTankDetail.arrivalVolume, true, isNewValue);
+    _ohqTankDetail.arrivalDensity = new ValueObject<number>(ohqTankDetail.arrivalDensity, true, isNewValue);
     _ohqTankDetail.arrivalQuantity = new ValueObject<number>(ohqTankDetail.arrivalQuantity, true, isNewValue);
-    _ohqTankDetail.departureVolume = new ValueObject<number>(ohqTankDetail.departureVolume, true, isNewValue);
+    _ohqTankDetail.departureDensity = new ValueObject<number>(ohqTankDetail.departureDensity, true, isNewValue);
     _ohqTankDetail.departureQuantity = new ValueObject<number>(ohqTankDetail.departureQuantity, true, isNewValue);
 
     return _ohqTankDetail;
