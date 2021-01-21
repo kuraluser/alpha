@@ -11,8 +11,8 @@ export interface INewLoadableStudy {
     draftMark: number;
     loadLineXId: number;
     draftRestriction: number;
-    maxAirTempExpected: number;
-    maxWaterTempExpected: number;
+    maxAirTempExpected: string;
+    maxWaterTempExpected: string;
     attachMail: string[];
 }
 

@@ -122,7 +122,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   async createNewLoadableStudyFormGroup() {
     this.newLoadableStudyFormGroup = this.formBuilder.group({
       duplicateExisting: '',
-      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100) , whiteSpaceValidator ]),
+      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100), whiteSpaceValidator]),
       enquiryDetails: this.formBuilder.control('', [Validators.maxLength(1000)]),
       attachMail: null,
       charterer: this.vesselInfoList?.charterer,
@@ -130,13 +130,16 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       loadLine: '',
       draftMark: '',
       draftRestriction: this.formBuilder.control('', [numberValidator(2, 2), Validators.min(0.01)]),
-      maxAirTempExpected: this.formBuilder.control('', [numberValidator(2, 2) , Validators.min(-99)]),
-      maxWaterTempExpected: this.formBuilder.control('', [numberValidator(2, 3) , Validators.min(-99)])
+      maxAirTempExpected: this.formBuilder.control('', [numberValidator(2, 2), Validators.min(-99) , Validators.max(99)]),
+      maxWaterTempExpected: this.formBuilder.control('', [numberValidator(2, 3), Validators.min(-99) , Validators.max(999)])
     });
   }
 
-  
-
+  // is Loadable Study Name Exist
+  isNewLoadableStudyExist() {
+    const nameExistence = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
+    this.newLoadableStudyNameExist = this.isEdit ? (this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim() === this.selectedLoadableStudy.name.toLocaleLowerCase() ? false : nameExistence) : nameExistence;
+  }
 
   // post newLoadableStudyFormGroup for saving newly created loadable-study
   public async saveLoadableStudy() {
@@ -156,15 +159,15 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           loadLineXId: this.newLoadableStudyFormGroup.controls.loadLine.value?.id,
           draftMark: this.newLoadableStudyFormGroup.controls.draftMark.value?.id,
           draftRestriction: this.newLoadableStudyFormGroup.controls.draftRestriction.value,
-          maxAirTempExpected: this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value ? this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value : "",
-          maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value ? this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value : ""
+          maxAirTempExpected:  this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value + '',
+          maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value + ''
         }
         this.ngxSpinnerService.show();
         try {
           const result = await this.loadableStudyListApiService.setLodableStudy(this.vesselInfoList?.id, this.voyage.id, this.newLoadableStudyPopupModel).toPromise();
           if (result.responseStatus.status === "200") {
             if (this.isEdit) {
-              this.isLoadlineChanged() ? sessionStorage.setItem('loadableStudyInfo', JSON.stringify({ voyageId: this.voyage.id , vesselId: this.vesselInfoList?.id})): null;
+              this.isLoadlineChanged() ? sessionStorage.setItem('loadableStudyInfo', JSON.stringify({ voyageId: this.voyage.id, vesselId: this.vesselInfoList?.id })) : null;
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
             } else {
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });

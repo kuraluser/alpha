@@ -529,5 +529,7 @@
 	"COMMENTS_TIME": "IST",
 	"LOADABLE_QUANTITY_UPDATE_SUCCESS": "Success",
 	"LOADABLE_QUANTITY_UPDATE_SUCCESSFULLY": "Loadable quantity updated successfully",
-	"DRAFT_RESTRICTION_MIN": "Draft Restriction should be above 0"
+	"DRAFT_RESTRICTION_MIN": "Draft Restriction should be above 0",
+	"Max_AIR_TEMP_MAX": "Max air tem. should be below 99",
+	"Max_WATER_TEMP_MAX": "Max water tem. should be below 999"
 }
