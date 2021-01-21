@@ -257,7 +257,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
    */
   onloadLineChange() {
     const loadLine = this.newLoadableStudyFormGroup.get('loadLine').value;
-    this.draftMarkList = loadLine.draftMarks.map(draftMarks => ({ id: draftMarks, name: draftMarks }));
+    this.draftMarkList = loadLine.draftMarks.map(draftMarks => ({ id: draftMarks, name: draftMarks.toFixed(2) }));
     this.newLoadableStudyFormGroup.controls.draftMark.setValue(this.draftMarkList[0]);
   }
 
@@ -307,7 +307,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       });
     }
     const loadLine = this.newLoadableStudyFormGroup.get('loadLine').value;
-    this.draftMarkList = loadLine.draftMarks?.map(draftMarks => ({ id: draftMarks, name: draftMarks }));
+    this.draftMarkList = loadLine.draftMarks?.map(draftMarks => ({ id: draftMarks, name: draftMarks.toFixed(2) }));
     loadableStudyObj.loadableStudyAttachment ? this.uploadedFiles = [...loadableStudyObj.loadableStudyAttachment] : this.uploadedFiles = [];
   }
 
