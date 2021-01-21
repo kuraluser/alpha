@@ -132,54 +132,54 @@ public class UserService {
   public ScreenResponse getScreens(Long companyId, Long roleId, String corelationId) {
     ScreenResponse screenResponse = new ScreenResponse();
 
-      List<ScreenInfo> list = new ArrayList<>();
+    List<ScreenInfo> list = new ArrayList<>();
 
-      List<Screen> screens =
-          (List<Screen>) this.screenRepository.findByCompanyXIdAndIsActive(companyId, true);
+    List<Screen> screens =
+        (List<Screen>) this.screenRepository.findByCompanyXIdAndIsActive(companyId, true);
 
-      List<ScreenInfo> info = new ArrayList<>();
+    List<ScreenInfo> info = new ArrayList<>();
 
-      if (screens != null && !screens.isEmpty()) {
-        screens.forEach(
-            sc -> {
-              ScreenInfo in =
-                  new ScreenInfo(
-                      sc.getId(),
-                      sc.getName(),
-                      sc.getLanguageKey(),
-                      sc.getIsAvailableAdd(),
-                      sc.getIsAvailableEdit(),
-                      sc.getIsAvailableDelete(),
-                      sc.getIsAvailableView(),
-                      sc.getModuleId(),
-                      new ArrayList<>(),
-                      new RoleScreen());
+    if (screens != null && !screens.isEmpty()) {
+      screens.forEach(
+          sc -> {
+            ScreenInfo in =
+                new ScreenInfo(
+                    sc.getId(),
+                    sc.getName(),
+                    sc.getLanguageKey(),
+                    sc.getIsAvailableAdd(),
+                    sc.getIsAvailableEdit(),
+                    sc.getIsAvailableDelete(),
+                    sc.getIsAvailableView(),
+                    sc.getModuleId(),
+                    new ArrayList<>(),
+                    new RoleScreen());
 
-              info.add(in);
-            });
-        list.addAll(
-            info.stream()
-                .filter(in -> in.getId().equals(in.getModuleId()))
+            info.add(in);
+          });
+      list.addAll(
+          info.stream()
+              .filter(in -> in.getId().equals(in.getModuleId()))
+              .collect(Collectors.toList()));
+
+      for (ScreenInfo screen : list) {
+        screens.removeAll(
+            screens.stream()
+                .filter(s -> s.getId().equals(screen.getId()))
                 .collect(Collectors.toList()));
-
-        for (ScreenInfo screen : list) {
-          screens.removeAll(
-              screens.stream()
-                  .filter(s -> s.getId().equals(screen.getId()))
-                  .collect(Collectors.toList()));
-          screen.getChilds().addAll(this.findInnerScreens(screen, screens, roleId, companyId));
-        }
+        screen.getChilds().addAll(this.findInnerScreens(screen, screens, roleId, companyId));
       }
-      if (list != null && !list.isEmpty()) {
-        list.forEach(
-            screen -> {
-              screen.setRoleScreen(this.getRoleScreen(roleId, screen.getId(), companyId));
-            });
-      }
-      CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
-      commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
-      screenResponse.setResponseStatus(commonSuccessResponse);
-      screenResponse.setScreens(list);
+    }
+    if (list != null && !list.isEmpty()) {
+      list.forEach(
+          screen -> {
+            screen.setRoleScreen(this.getRoleScreen(roleId, screen.getId(), companyId));
+          });
+    }
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    screenResponse.setResponseStatus(commonSuccessResponse);
+    screenResponse.setScreens(list);
 
     return screenResponse;
   }

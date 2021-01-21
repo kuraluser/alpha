@@ -22,4 +22,6 @@ public class VesselDetailsResponse {
   private List<VesselTankTCG> vesselTankTCGs;
 
   private BMAndSF bMAndSF;
+
+  private List<UllageDetails> ullageDetails;
 }

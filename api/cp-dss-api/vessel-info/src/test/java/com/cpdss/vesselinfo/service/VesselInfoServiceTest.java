@@ -20,6 +20,7 @@ import com.cpdss.vesselinfo.entity.MinMaxValuesForBmsf;
 import com.cpdss.vesselinfo.entity.ShearingForce;
 import com.cpdss.vesselinfo.entity.StationValues;
 import com.cpdss.vesselinfo.entity.TankCategory;
+import com.cpdss.vesselinfo.entity.UllageTableData;
 import com.cpdss.vesselinfo.entity.Vessel;
 import com.cpdss.vesselinfo.entity.VesselDraftCondition;
 import com.cpdss.vesselinfo.entity.VesselTank;
@@ -33,6 +34,7 @@ import com.cpdss.vesselinfo.repository.MinMaxValuesForBmsfRepository;
 import com.cpdss.vesselinfo.repository.ShearingForceRepository;
 import com.cpdss.vesselinfo.repository.StationValuesRepository;
 import com.cpdss.vesselinfo.repository.TankCategoryRepository;
+import com.cpdss.vesselinfo.repository.UllageTableDataRepository;
 import com.cpdss.vesselinfo.repository.VesselChartererMappingRepository;
 import com.cpdss.vesselinfo.repository.VesselDraftConditionRepository;
 import com.cpdss.vesselinfo.repository.VesselRepository;
@@ -68,6 +70,7 @@ class VesselInfoServiceTest {
   @MockBean private MinMaxValuesForBmsfRepository minMaxValuesForBmsfRepository;
   @MockBean private StationValuesRepository stationValuesRepository;
   @MockBean private InnerBulkHeadValuesRepository innerBulkHeadValuesRepository;
+  @MockBean private UllageTableDataRepository ullageTableDataRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -172,6 +175,8 @@ class VesselInfoServiceTest {
         .thenReturn(Arrays.asList(new StationValues()));
     when(this.innerBulkHeadValuesRepository.findByVesselId((any())))
         .thenReturn(Arrays.asList(new InnerBulkHeadValues()));
+    when(this.ullageTableDataRepository.findByVessel((any(Vessel.class))))
+        .thenReturn(Arrays.asList(new UllageTableData()));
 
     StreamRecorder<VesselAlgoReply> responseObserver = StreamRecorder.create();
     this.vesselInfoService.getVesselDetailsForAlgo(

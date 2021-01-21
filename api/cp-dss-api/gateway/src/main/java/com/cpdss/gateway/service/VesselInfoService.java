@@ -22,6 +22,7 @@ import com.cpdss.gateway.domain.LoadLine;
 import com.cpdss.gateway.domain.MinMaxValuesForBMAndSf;
 import com.cpdss.gateway.domain.ShearingForce;
 import com.cpdss.gateway.domain.StationValues;
+import com.cpdss.gateway.domain.UllageDetails;
 import com.cpdss.gateway.domain.Vessel;
 import com.cpdss.gateway.domain.VesselDetailsResponse;
 import com.cpdss.gateway.domain.VesselDraftCondition;
@@ -195,10 +196,31 @@ public class VesselInfoService {
     bmAndSF.setStationValues(this.createStationValues(vesselAlgoReply, correlationId));
     bmAndSF.setInnerBulkHeadValues(this.createInnerBulkHeadValues(vesselAlgoReply, correlationId));
     vesselDetailsResponse.setBMAndSF(bmAndSF);
+    vesselDetailsResponse.setUllageDetails(createVesselUllageDetails(vesselAlgoReply));
     vesselDetailsResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
 
     return vesselDetailsResponse;
+  }
+
+  /**
+   * @param vesselAlgoReply
+   * @return List<UllageDetails>
+   */
+  private List<UllageDetails> createVesselUllageDetails(VesselAlgoReply vesselAlgoReply) {
+    List<UllageDetails> ullageDetails = new ArrayList<UllageDetails>();
+    vesselAlgoReply
+        .getUllageDetailsList()
+        .forEach(
+            ullage -> {
+              UllageDetails ullageDetail = new UllageDetails();
+              ullageDetail.setId(ullage.getId());
+              ullageDetail.setTankId(ullage.getTankId());
+              ullageDetail.setUllageDepth(ullage.getUllageDepth());
+              ullageDetail.setEvenKeelCapacityCubm(ullage.getEvenKeelCapacityCubm());
+              ullageDetails.add(ullageDetail);
+            });
+    return ullageDetails;
   }
 
   /**

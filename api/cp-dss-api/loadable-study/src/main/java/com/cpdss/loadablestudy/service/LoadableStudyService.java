@@ -249,7 +249,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long BUNKERING_OPERATION_ID = 3L;
   private static final Long TRANSIT_OPERATION_ID = 4L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
-  private static final Long LOADABLE_STUDY_PROCESSING_STARTED_ID = 1L;
+  private static final Long LOADABLE_STUDY_PROCESSING_STARTED_ID = 4L;
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
   private static final Long CONFIRMED_STATUS_ID = 2L;
   private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
