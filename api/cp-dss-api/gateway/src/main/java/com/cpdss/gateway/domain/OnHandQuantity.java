@@ -35,7 +35,6 @@ public class OnHandQuantity {
 
   private Long loadableStudyId;
 
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal arrivalVolume;
 
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
@@ -48,4 +47,7 @@ public class OnHandQuantity {
   private BigDecimal departureQuantity;
 
   private String colorCode;
+
+  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+  private BigDecimal density;
 }

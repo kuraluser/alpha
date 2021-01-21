@@ -36,6 +36,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
@@ -47,6 +48,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
@@ -59,17 +62,20 @@ import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.domain.CargoHistory;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.CommingleCargo;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
+import com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternComingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePatternDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanComments;
 import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
@@ -80,12 +86,14 @@ import com.cpdss.loadablestudy.entity.OnBoardQuantity;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.entity.VoyageHistory;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
@@ -111,6 +119,8 @@ import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.google.protobuf.ByteString;
 import io.grpc.internal.testing.StreamRecorder;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -199,6 +209,8 @@ class LoadableStudyServiceTest {
   @MockBean private EntityManagerFactory entityManagerFactory;
 
   @MockBean private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
+  @MockBean private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
+
   private static final String SUCCESS = "SUCCESS";
   private static final String VOYAGE = "VOYAGE";
   private static final String VOYAGEEXISTS = "VOYAGE_EXISTS";
@@ -217,12 +229,39 @@ class LoadableStudyServiceTest {
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
   private static final String NUMERICAL_TEST_VALUE = "100";
   private static final Long ID_TEST_VALUE = 1L;
+  private static final String STRING_TEST_VALUES = "TEST";
   private static final String DATE_TEST_VALUE = "10-10-2020";
   private static final String DATE_TIME_TEST_VALUE = "10-10-2020 12:20";
   private static final Long LOADING_OPERATION_ID = 1L;
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
   private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
+
+  private static final Long FRESH_WATER_TANK_CATEGORY_ID = 3L;
+  private static final Long FUEL_OIL_TANK_CATEGORY_ID = 5L;
+  private static final Long DIESEL_OIL_TANK_CATEGORY_ID = 6L;
+  private static final Long LUBRICATING_OIL_TANK_CATEGORY_ID = 14L;
+  private static final Long LUBRICANT_OIL_TANK_CATEGORY_ID = 19L;
+  private static final Long FUEL_VOID_TANK_CATEGORY_ID = 22L;
+  private static final Long FRESH_WATER_VOID_TANK_CATEGORY_ID = 23L;
+
+  private static final List<Long> OHQ_TANK_CATEGORIES =
+      Arrays.asList(
+          FRESH_WATER_TANK_CATEGORY_ID,
+          FUEL_OIL_TANK_CATEGORY_ID,
+          DIESEL_OIL_TANK_CATEGORY_ID,
+          LUBRICATING_OIL_TANK_CATEGORY_ID,
+          LUBRICANT_OIL_TANK_CATEGORY_ID,
+          FUEL_VOID_TANK_CATEGORY_ID,
+          FRESH_WATER_VOID_TANK_CATEGORY_ID);
+
+  private static final Long CARGO_TANK_CATEGORY_ID = 1L;
+  private static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;
+  private static final Long CARGO_VOID_TANK_CATEGORY_ID = 15L;
+
+  private static final List<Long> CARGO_TANK_CATEGORIES =
+      Arrays.asList(
+          CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID, CARGO_VOID_TANK_CATEGORY_ID);
 
   @BeforeAll
   public static void beforeAll() {
@@ -758,11 +797,11 @@ class LoadableStudyServiceTest {
     assertEquals(true, results.size() > 0);
     CargoNominationReply returnedCargoNominationReply = results.get(0);
     CargoNominationReply.Builder cargoNominationReply = CargoNominationReply.newBuilder();
-    //    ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-    //    responseStatus.setStatus(SUCCESS);
-    //    cargoNominationReply.setResponseStatus(responseStatus);
-    //    assertEquals(
-    //        cargoNominationReply.getResponseStatus(),
+    // ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+    // responseStatus.setStatus(SUCCESS);
+    // cargoNominationReply.setResponseStatus(responseStatus);
+    // assertEquals(
+    // cargoNominationReply.getResponseStatus(),
     // returnedCargoNominationReply.getResponseStatus());
   }
 
@@ -779,13 +818,14 @@ class LoadableStudyServiceTest {
     // get results when no errors
     List<CargoNominationReply> results = responseObserver.getValues();
     assertEquals(true, results.size() > 0);
-    //    CargoNominationReply returnedCargoNominationReply = results.get(0);
-    //    CargoNominationReply.Builder cargoNominationReply = CargoNominationReply.newBuilder();
-    //    ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-    //    responseStatus.setStatus(SUCCESS);
-    //    cargoNominationReply.setResponseStatus(responseStatus);
-    //    assertEquals(
-    //        cargoNominationReply.getResponseStatus(),
+    // CargoNominationReply returnedCargoNominationReply = results.get(0);
+    // CargoNominationReply.Builder cargoNominationReply =
+    // CargoNominationReply.newBuilder();
+    // ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+    // responseStatus.setStatus(SUCCESS);
+    // cargoNominationReply.setResponseStatus(responseStatus);
+    // assertEquals(
+    // cargoNominationReply.getResponseStatus(),
     // returnedCargoNominationReply.getResponseStatus());
   }
 
@@ -1231,9 +1271,11 @@ class LoadableStudyServiceTest {
   private List<LoadableStudyPortRotation> createPortRotationEntityList() {
     List<LoadableStudyPortRotation> entityList = new ArrayList<>();
     LoadableStudyPortRotation entity = new LoadableStudyPortRotation();
+    entity.setId(ID_TEST_VALUE);
     entity.setPortXId(1L);
     entityList.add(entity);
     entity = new LoadableStudyPortRotation();
+    entity.setId(ID_TEST_VALUE);
     entity.setPortXId(10L);
     entityList.add(entity);
     return entityList;
@@ -1521,6 +1563,7 @@ class LoadableStudyServiceTest {
             .build(),
         response.getResponseStatus());
   }
+
   /**
    * negative test case
    *
@@ -2898,5 +2941,389 @@ class LoadableStudyServiceTest {
     assertEquals(1, results.size());
     assertNull(responseObserver.getError());
     assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @ParameterizedTest
+  @ValueSource(longs = {0L, 1L})
+  void testSaveOnBoardQuantity(Long id) {
+    if (id.equals(1L)) {
+      when(this.onBoardQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+          .thenReturn(new OnBoardQuantity());
+    }
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadableStudy()));
+    OnBoardQuantity entity = new OnBoardQuantity();
+    entity.setId(1L);
+    when(this.onBoardQuantityRepository.save(any(OnBoardQuantity.class))).thenReturn(entity);
+    StreamRecorder<OnBoardQuantityReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveOnBoardQuantity(
+        this.createOnBoardQuantityDetailSaveRequest().setId(id).build(), responseObserver);
+    List<OnBoardQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveOnBoardQuantityWithLoadableStudyNull() {
+
+    when(this.onBoardQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(new OnBoardQuantity());
+
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.<LoadableStudy>empty());
+    OnBoardQuantity entity = new OnBoardQuantity();
+    entity.setId(1L);
+    when(this.onBoardQuantityRepository.save(any(OnBoardQuantity.class))).thenReturn(entity);
+    StreamRecorder<OnBoardQuantityReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveOnBoardQuantity(
+        this.createOnBoardQuantityDetailSaveRequest().build(), responseObserver);
+    List<OnBoardQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveOnBoardQuantityWhenOBQNull() {
+
+    when(this.onBoardQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(null);
+
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadableStudy()));
+    OnBoardQuantity entity = new OnBoardQuantity();
+    entity.setId(1L);
+    when(this.onBoardQuantityRepository.save(any(OnBoardQuantity.class))).thenReturn(entity);
+    StreamRecorder<OnBoardQuantityReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveOnBoardQuantity(
+        this.createOnBoardQuantityDetailSaveRequest().setId(1L).build(), responseObserver);
+    List<OnBoardQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveOnBoardQuantityWithException() {
+
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(NullPointerException.class);
+    OnBoardQuantity entity = new OnBoardQuantity();
+    entity.setId(1L);
+    when(this.onBoardQuantityRepository.save(any(OnBoardQuantity.class))).thenReturn(entity);
+    StreamRecorder<OnBoardQuantityReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveOnBoardQuantity(
+        this.createOnBoardQuantityDetailSaveRequest().build(), responseObserver);
+    List<OnBoardQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  private OnBoardQuantityDetail.Builder createOnBoardQuantityDetailSaveRequest() {
+    OnBoardQuantityDetail.Builder detail =
+        OnBoardQuantityDetail.newBuilder()
+            .setTankId(1L)
+            .setTankName("tank-1")
+            .setCargoId(1L)
+            .setCargoName("cargo-1")
+            .setWeight("100")
+            .setVolume("100");
+    return detail;
+  }
+
+  @ValueSource(longs = {0L, 1L})
+  @ParameterizedTest
+  void testGetSynopticalTable(Long patternId)
+      throws InstantiationException, IllegalAccessException {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    this.setSynopticalGetMocks(spyService, patternId);
+    SynopticalTableRequest request =
+        SynopticalTableRequest.newBuilder()
+            .setLoadableStudyId(ID_TEST_VALUE)
+            .setLoadablePatternId(patternId)
+            .setVesselId(ID_TEST_VALUE)
+            .build();
+    StreamRecorder<SynopticalTableReply> responseObserver = StreamRecorder.create();
+    spyService.getSynopticalTable(request, responseObserver);
+    List<SynopticalTableReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  private void setSynopticalGetMocks(LoadableStudyService spyService, Long patternId)
+      throws InstantiationException, IllegalAccessException {
+    Voyage voyage = (Voyage) this.createDummmObject(Voyage.class);
+    when(this.loadableStudyRepository.findById(anyLong()))
+        .thenReturn(Optional.of(this.createLoadableStudyEntity(voyage)));
+    when(this.synopticalTableRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(this.createSynopticalEntities());
+    Mockito.doReturn(this.createSynopticalVesselReply().build())
+        .when(spyService)
+        .getVesselDetailForSynopticalTable(any(VesselRequest.class));
+    Mockito.doReturn(this.createSynopticalPortReply())
+        .when(spyService)
+        .getPortInfo(any(GetPortInfoByPortIdsRequest.class));
+    Mockito.when(
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+                any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(this.createSynopticalPortRotationEntityList(patternId > 0));
+    Mockito.when(
+            this.onBoardQuantityRepository.findByLoadableStudyAndIsActive(
+                any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(this.createObqEntities());
+
+    Mockito.when(
+            this.onHandQuantityRepository.findByLoadableStudyAndIsActive(
+                any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(this.createOhqEntities());
+
+    Mockito.when(
+            this.loadablePlanStowageBallastDetailsRepository.findBallastDetailsForLoadableStudy(
+                anyLong(), anyLong()))
+        .thenReturn(this.createBallastEntities());
+
+    Mockito.when(
+            this.voyageRepository
+                .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveOrderByVoyageEndDateDesc(
+                    any(LocalDateTime.class), anyLong(), anyBoolean()))
+        .thenReturn(voyage);
+    Mockito.when(
+            this.voyageHistoryRepository.findFirstByVoyageOrderByPortOrderDesc(any(Voyage.class)))
+        .thenReturn((VoyageHistory) this.createDummmObject(VoyageHistory.class));
+    Mockito.when(this.cargoHistoryRepository.findCargoHistory(anyLong(), anyLong()))
+        .thenReturn(this.createCargoHistory());
+    Mockito.when(
+            this.loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
+                anyLong(), anyBoolean()))
+        .thenReturn(this.createSynopticalCargoDetails(patternId));
+    Mockito.when(
+            this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
+                anyLong(), anyBoolean()))
+        .thenReturn(
+            (com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData)
+                this.createDummmObject(
+                    com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData.class));
+  }
+
+  private List<LoadablePatternCargoDetails> createSynopticalCargoDetails(Long patternId) {
+    List<LoadablePatternCargoDetails> list = new ArrayList<>();
+    IntStream.of(1, 4)
+        .forEach(
+            i -> {
+              try {
+                LoadablePatternCargoDetails entity =
+                    (LoadablePatternCargoDetails)
+                        createDummmObject(LoadablePatternCargoDetails.class);
+                entity.setOperationType(i % 2 == 0 ? "ARR" : "DEP");
+                list.add(entity);
+              } catch (InstantiationException e) {
+                e.printStackTrace();
+              } catch (IllegalAccessException e) {
+                e.printStackTrace();
+              }
+            });
+    return list;
+  }
+
+  private VesselReply.Builder createSynopticalVesselReply() {
+    List<Long> tankCategories = new ArrayList<>();
+    tankCategories.addAll(OHQ_TANK_CATEGORIES);
+    tankCategories.addAll(CARGO_TANK_CATEGORIES);
+    VesselReply.Builder builder = VesselReply.newBuilder();
+    tankCategories.forEach(
+        i -> {
+          VesselTankDetail.Builder detailBuilder = VesselTankDetail.newBuilder();
+          detailBuilder.setTankId(ID_TEST_VALUE);
+          detailBuilder.setTankCategoryId(Long.valueOf(i));
+          detailBuilder.setTankCategoryName("category-" + i);
+          detailBuilder.setShortName("name" + i);
+          detailBuilder.setFrameNumberFrom("from-" + i);
+          detailBuilder.setFrameNumberTo("to" + i);
+          detailBuilder.setShowInOhqObq(true);
+          builder.addVesselTanks(detailBuilder.build());
+        });
+    builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    return builder;
+  }
+
+  private List<CargoHistory> createCargoHistory() {
+    List<CargoHistory> list = new ArrayList<>();
+    IntStream.of(1, 3)
+        .forEach(
+            i -> {
+              try {
+                list.add((CargoHistory) createDummmObject(CargoHistory.class));
+              } catch (InstantiationException e) {
+                e.printStackTrace();
+              } catch (IllegalAccessException e) {
+                e.printStackTrace();
+              }
+            });
+    return list;
+  }
+
+  private LoadableStudy createLoadableStudyEntity(Voyage voyage)
+      throws InstantiationException, IllegalAccessException {
+    LoadableStudy entity = (LoadableStudy) this.createDummmObject(LoadableStudy.class);
+    entity.setVoyage(voyage);
+    return entity;
+  }
+
+  private List<LoadableStudyPortRotation> createSynopticalPortRotationEntityList(boolean hasEtd) {
+    List<LoadableStudyPortRotation> list = new ArrayList<>();
+    IntStream.of(1, 3)
+        .forEach(
+            i -> {
+              try {
+                LoadableStudyPortRotation entity =
+                    (LoadableStudyPortRotation) createDummmObject(LoadableStudyPortRotation.class);
+                if (!hasEtd) {
+                  entity.setEtd(null);
+                } else {
+                  entity.setEta(null);
+                }
+                list.add(entity);
+              } catch (InstantiationException e) {
+                e.printStackTrace();
+              } catch (IllegalAccessException e) {
+                e.printStackTrace();
+              }
+            });
+    return list;
+  }
+
+  private List<LoadablePlanStowageBallastDetails> createBallastEntities() {
+    List<LoadablePlanStowageBallastDetails> list = new ArrayList<>();
+    IntStream.of(1, 3)
+        .forEach(
+            i -> {
+              try {
+                list.add(
+                    (LoadablePlanStowageBallastDetails)
+                        createDummmObject(LoadablePlanStowageBallastDetails.class));
+              } catch (InstantiationException e) {
+                e.printStackTrace();
+              } catch (IllegalAccessException e) {
+                e.printStackTrace();
+              }
+            });
+    return list;
+  }
+
+  private List<OnHandQuantity> createOhqEntities() {
+    List<OnHandQuantity> list = new ArrayList<>();
+    IntStream.of(1, 3)
+        .forEach(
+            i -> {
+              try {
+                list.add((OnHandQuantity) createDummmObject(OnHandQuantity.class));
+              } catch (InstantiationException e) {
+                e.printStackTrace();
+              } catch (IllegalAccessException e) {
+                e.printStackTrace();
+              }
+            });
+    return list;
+  }
+
+  private List<OnBoardQuantity> createObqEntities() {
+    List<OnBoardQuantity> list = new ArrayList<>();
+    IntStream.of(1, 3)
+        .forEach(
+            i -> {
+              try {
+                list.add((OnBoardQuantity) createDummmObject(OnBoardQuantity.class));
+              } catch (InstantiationException e) {
+                e.printStackTrace();
+              } catch (IllegalAccessException e) {
+                e.printStackTrace();
+              }
+            });
+    return list;
+  }
+
+  private PortReply createSynopticalPortReply() {
+    PortDetail.Builder b = PortDetail.newBuilder();
+    b.setId(ID_TEST_VALUE);
+    b.setName(STRING_TEST_VALUES);
+    b.setWaterDensity(NUMERICAL_TEST_VALUE);
+    return PortReply.newBuilder()
+        .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+        .addPorts(b.build())
+        .build();
+  }
+
+  private List<SynopticalTable> createSynopticalEntities() {
+    List<SynopticalTable> list = new ArrayList<>();
+    IntStream.of(1, 4)
+        .forEach(
+            i -> {
+              try {
+                SynopticalTable entity = (SynopticalTable) createDummmObject(SynopticalTable.class);
+                entity.setLoadableStudyPortRotation(
+                    (LoadableStudyPortRotation)
+                        this.createDummmObject(LoadableStudyPortRotation.class));
+                entity.setOperationType(i % 2 == 0 ? "ARR" : "DEP");
+                list.add(entity);
+              } catch (InstantiationException e) {
+                e.printStackTrace();
+              } catch (IllegalAccessException e) {
+                e.printStackTrace();
+              }
+            });
+    return list;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  private Object createDummmObject(Class<?> cls)
+      throws InstantiationException, IllegalAccessException {
+    Object obj = cls.newInstance();
+    for (Field field : obj.getClass().getDeclaredFields()) {
+      this.setFieldValue(field, obj);
+    }
+    if (obj.getClass().getSuperclass() != null && obj.getClass().getSuperclass() != Object.class) {
+      for (Field field : obj.getClass().getSuperclass().getDeclaredFields()) {
+        this.setFieldValue(field, obj);
+      }
+    }
+
+    return obj;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  private void setFieldValue(Field field, Object obj)
+      throws IllegalArgumentException, IllegalAccessException {
+    field.setAccessible(true);
+    if (field.getType().equals(String.class)) {
+      field.set(obj, field.getName() + "-test");
+    } else if (field.getType().equals(Long.class)) {
+      field.set(obj, ID_TEST_VALUE);
+    } else if (field.getType().equals(Integer.class)) {
+      field.set(obj, 1);
+    } else if (field.getType().equals(BigDecimal.class)) {
+      field.set(obj, BigDecimal.ONE);
+    } else if (field.getType().equals(List.class)) {
+      ParameterizedType stringListType = (ParameterizedType) field.getGenericType();
+      Class<?> stringListClass = (Class<?>) stringListType.getActualTypeArguments()[0];
+      List list = new ArrayList<>();
+      if (stringListClass.getName().startsWith("java.")) {
+        IntStream.of(1, 3)
+            .forEach(
+                i -> {
+                  try {
+                    list.add(createDummmObject(stringListClass));
+                  } catch (InstantiationException e) {
+                    e.printStackTrace();
+                  } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                  }
+                });
+      }
+    } else if (field.getType().equals(LocalDateTime.class)) {
+      field.set(obj, LocalDateTime.now());
+    }
   }
 }

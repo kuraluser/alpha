@@ -43,7 +43,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
   public void getPortInfo(PortRequest request, StreamObserver<PortReply> responseObserver) {
     PortReply.Builder portReply = PortReply.newBuilder();
     try {
-      List<PortInfo> portList = portRepository.findAll();
+      List<PortInfo> portList = portRepository.findAllByOrderByName();
       getPorts(portReply, portList);
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
       responseStatus.setStatus(SUCCESS);

@@ -380,7 +380,7 @@ public class LoadableStudyService {
 
       dto.setDischargingCargoId(
           0 != grpcReply.getDischargingCargoId() ? grpcReply.getDischargingCargoId() : null);
-
+      dto.setCreatedFromId(grpcReply.getCreatedFromId());
       list.add(dto);
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
@@ -1190,10 +1190,10 @@ public class LoadableStudyService {
     log.info("Inside savePortRotation");
     PortRotationRequest.Builder portRotationRequestBuilder = PortRotationRequest.newBuilder();
 
-    portRotationRequestBuilder
-        .addAllDischargingPortIds(request.getPortIds())
-        .setLoadableStudyId(request.getLoadableStudyId());
-
+    portRotationRequestBuilder.setLoadableStudyId(request.getLoadableStudyId());
+    if (null != request.getPortIds() && !request.getPortIds().isEmpty()) {
+      portRotationRequestBuilder.addAllDischargingPortIds(request.getPortIds());
+    }
     Optional.ofNullable(request.getDischargingCargoId())
         .ifPresent(portRotationRequestBuilder::setDischargingCargoId);
 
@@ -1519,6 +1519,8 @@ public class LoadableStudyService {
               ? BigDecimal.ZERO
               : new BigDecimal(detail.getDepartureVolume()));
       onHandQuantity.setColorCode(isEmpty(detail.getColorCode()) ? null : detail.getColorCode());
+      onHandQuantity.setDensity(
+          isEmpty(detail.getDensity()) ? BigDecimal.ZERO : new BigDecimal(detail.getDensity()));
       response.getOnHandQuantities().add(onHandQuantity);
     }
     response.setResponseStatus(
@@ -1614,6 +1616,7 @@ public class LoadableStudyService {
         .ifPresent(item -> builder.setDepartureQuantity(valueOf(item)));
     Optional.ofNullable(request.getDepartureVolume())
         .ifPresent(item -> builder.setDepartureVolume(valueOf(item)));
+    Optional.ofNullable(request.getDensity()).ifPresent(item -> builder.setDensity(valueOf(item)));
     OnHandQuantityReply grpcReply = this.saveOnHandQuantity(builder.build());
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -2226,11 +2229,12 @@ public class LoadableStudyService {
    *
    * @param loadableStudyId
    * @param vesselId
+   * @param loadablePatternId
    * @return
    * @throws GenericServiceException
    */
-  public SynopticalTableResponse getSynopticalTable(Long vesselId, Long loadableStudyId)
-      throws GenericServiceException {
+  public SynopticalTableResponse getSynopticalTable(
+      Long vesselId, Long loadableStudyId, Long loadablePatternId) throws GenericServiceException {
     SynopticalTableResponse synopticalTableResponse = new SynopticalTableResponse();
     // Build response with response status
     CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
@@ -2241,9 +2245,9 @@ public class LoadableStudyService {
         SynopticalTableRequest.newBuilder()
             .setLoadableStudyId(loadableStudyId)
             .setVesselId(vesselId)
+            .setLoadablePatternId(loadablePatternId)
             .build();
-    SynopticalTableReply synopticalTableReply =
-        loadableStudyServiceBlockingStub.getSynopticalTable(synopticalTableRequest);
+    SynopticalTableReply synopticalTableReply = this.getSynopticalTable(synopticalTableRequest);
     if (SUCCESS.equalsIgnoreCase(synopticalTableReply.getResponseStatus().getStatus())) {
       buildSynopticalTableResponse(synopticalTableResponse, synopticalTableReply);
     } else {
@@ -2254,6 +2258,10 @@ public class LoadableStudyService {
               Integer.valueOf(synopticalTableReply.getResponseStatus().getCode())));
     }
     return synopticalTableResponse;
+  }
+
+  public SynopticalTableReply getSynopticalTable(SynopticalTableRequest synopticalTableRequest) {
+    return this.loadableStudyServiceBlockingStub.getSynopticalTable(synopticalTableRequest);
   }
 
   private void buildSynopticalTableResponse(
@@ -2638,7 +2646,7 @@ public class LoadableStudyService {
     response.setRearBallastTanks(createGroupWiseTankList(grpcReply.getBallastRearTanksList()));
     buildLoadableStudyBallastDetails(response, grpcReply);
     buildSynopticalTableDetails(
-        response, 716L, vesselId); // ToDo change loadable study to actual one
+        response, 716L, vesselId, loadablePatternId); // ToDo change loadable study to actual one
     buildLoadablePlanComments(response, grpcReply);
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
@@ -2683,10 +2691,14 @@ public class LoadableStudyService {
    * @throws GenericServiceException
    */
   private void buildSynopticalTableDetails(
-      LoadablePlanDetailsResponse response, Long loadableStudyId, Long vesselId)
+      LoadablePlanDetailsResponse response,
+      Long loadableStudyId,
+      Long vesselId,
+      Long loadablePatternId)
       throws GenericServiceException {
 
-    SynopticalTableResponse synopticalTableResponse = getSynopticalTable(vesselId, loadableStudyId);
+    SynopticalTableResponse synopticalTableResponse =
+        getSynopticalTable(vesselId, loadableStudyId, loadablePatternId);
     if (!synopticalTableResponse
         .getResponseStatus()
         .getStatus()

@@ -1,6 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.loadablestudy.domain;
 
+import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,6 @@ public class CargoHistory {
   private String cargoColor;
 
   private String abbreviation;
+
+  private BigDecimal quantity;
 }

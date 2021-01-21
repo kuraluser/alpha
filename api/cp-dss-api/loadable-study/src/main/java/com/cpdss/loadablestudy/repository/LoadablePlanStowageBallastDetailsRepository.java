@@ -15,5 +15,7 @@ public interface LoadablePlanStowageBallastDetailsRepository
           + "(select p.id from LoadablePlan p "
           + "where p.loadableStudyXId=?1 and p.isActive=true and p.loadablePlanStatus=?2)")
   public List<LoadablePlanStowageBallastDetails> findBallastDetailsForLoadableStudy(
-      Long loadableStudyId, Long loadablePlanStatusId);
+      Long loadableStudyId, Long loadablePatternId);
+
+  public List<LoadablePlanStowageBallastDetails> findByLoadablePatternId(Long loadablePatternId);
 }

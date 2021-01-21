@@ -7,5 +7,8 @@ import java.util.List;
 
 /** Repository for the portinfo table in port master */
 public interface PortInfoRepository extends CommonCrudRepository<PortInfo, Long> {
+
   List<PortInfo> findByIdInAndIsActive(List<Long> primaryKey, Boolean isActive);
+
+  List<PortInfo> findAllByOrderByName();
 }
