@@ -1,4 +1,5 @@
 import { FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { OPERATIONS } from '../../models/cargo-planning.model';
 
 /**
  * Validator Function for date range 
@@ -12,10 +13,15 @@ export function portDateCompareValidator(field, compareOperation): ValidatorFn {
                 const checkDate: Date = control.value;
                 compareDate.setSeconds(0, 0)
                 checkDate.setSeconds(0, 0)
-                if (compareOperation === '<' && compareDate <= checkDate) {
+                if (compareOperation === '<' && compareDate < checkDate) {
                     return { failedCompare: true };
-                } else if (compareOperation === '>' && compareDate >= checkDate) {
+                } else if (compareOperation === '>' && compareDate > checkDate) {
                     return { failedCompare: true };
+                } else {
+                    const operation = control.parent.value['operation'];
+                    if ((!operation || operation.id !== OPERATIONS.TRANSIT) && compareDate.getTime() === checkDate.getTime()) {
+                        return { failedCompare: true };
+                    }
                 }
             }
         }
