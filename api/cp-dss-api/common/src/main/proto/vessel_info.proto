@@ -138,6 +138,15 @@ message VesselReply {
 		repeated VesselTankTCG vesselTankTCG = 5;
 		BMAndSF bMAndSF = 6;
 		ResponseStatus responseStatus = 7;
+		repeated UllageDetails ullageDetails = 8;
+	}
+	
+	message UllageDetails {
+	int64 id = 1;
+	int64 tankId = 2;
+	string ullageDepth = 3;
+	string evenKeelCapacityCubm = 4;
+	string soundDepth = 5;
 	}
 
 	message VesselDraftCondition {

@@ -19,6 +19,7 @@ import com.cpdss.common.generated.VesselInfo.InnerBulkHeadSF;
 import com.cpdss.common.generated.VesselInfo.MinMaxValuesForBMAndSf;
 import com.cpdss.common.generated.VesselInfo.ShearingForce;
 import com.cpdss.common.generated.VesselInfo.StationValues;
+import com.cpdss.common.generated.VesselInfo.UllageDetails;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselDraftCondition;
@@ -55,6 +56,7 @@ public class VesselInfoServiceTest {
     Mockito.when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString()))
         .thenCallRealMethod();
     VesselDraftCondition.Builder vesselDraftConditionBuilder = VesselDraftCondition.newBuilder();
+    UllageDetails.Builder ullageBuilder = UllageDetails.newBuilder();
     VesselTankDetail.Builder vesselTankBuilder = VesselTankDetail.newBuilder();
     HydrostaticData.Builder hydrostaticDataBuilder = HydrostaticData.newBuilder();
     VesselTankTCG.Builder vesselTankTcgBuilder = VesselTankTCG.newBuilder();
@@ -83,6 +85,7 @@ public class VesselInfoServiceTest {
                 .addHydrostaticData(hydrostaticDataBuilder.build())
                 .addVesselTankTCG(vesselTankTcgBuilder.build())
                 .setBMAndSF(bMAndSFBuilder)
+                .addUllageDetails(ullageBuilder.build())
                 .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
                 .build());
 

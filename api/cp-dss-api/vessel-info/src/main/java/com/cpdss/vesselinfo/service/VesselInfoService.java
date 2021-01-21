@@ -13,6 +13,7 @@ import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
 import com.cpdss.common.generated.VesselInfo.MinMaxValuesForBMAndSf;
 import com.cpdss.common.generated.VesselInfo.ShearingForce;
 import com.cpdss.common.generated.VesselInfo.StationValues;
+import com.cpdss.common.generated.VesselInfo.UllageDetails;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
@@ -32,6 +33,7 @@ import com.cpdss.vesselinfo.entity.HydrostaticTable;
 import com.cpdss.vesselinfo.entity.InnerBulkHeadValues;
 import com.cpdss.vesselinfo.entity.MinMaxValuesForBmsf;
 import com.cpdss.vesselinfo.entity.TankCategory;
+import com.cpdss.vesselinfo.entity.UllageTableData;
 import com.cpdss.vesselinfo.entity.Vessel;
 import com.cpdss.vesselinfo.entity.VesselChartererMapping;
 import com.cpdss.vesselinfo.entity.VesselDraftCondition;
@@ -46,6 +48,7 @@ import com.cpdss.vesselinfo.repository.MinMaxValuesForBmsfRepository;
 import com.cpdss.vesselinfo.repository.ShearingForceRepository;
 import com.cpdss.vesselinfo.repository.StationValuesRepository;
 import com.cpdss.vesselinfo.repository.TankCategoryRepository;
+import com.cpdss.vesselinfo.repository.UllageTableDataRepository;
 import com.cpdss.vesselinfo.repository.VesselChartererMappingRepository;
 import com.cpdss.vesselinfo.repository.VesselDraftConditionRepository;
 import com.cpdss.vesselinfo.repository.VesselRepository;
@@ -92,6 +95,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired private MinMaxValuesForBmsfRepository minMaxValuesForBmsfRepository;
   @Autowired private StationValuesRepository stationValuesRepository;
   @Autowired private InnerBulkHeadValuesRepository innerBulkHeadValuesRepository;
+  @Autowired private UllageTableDataRepository ullageTableDataRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -509,6 +513,15 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                       createInnerBulkHeadSFBuilder(innerBulkHeadSF, innerBulkHeadSFBuilder));
                 });
 
+        ullageTableDataRepository
+            .findByVessel(vessel)
+            .forEach(
+                ullageTableData -> {
+                  UllageDetails.Builder ullageDetailsBuilder = UllageDetails.newBuilder();
+                  replyBuilder.addUllageDetails(
+                      ullageDetailsBuilder(ullageTableData, ullageDetailsBuilder));
+                });
+
         replyBuilder.setBMAndSF(bMAndSFBuilder);
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
@@ -524,6 +537,26 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * @param ullageTableData
+   * @param ullageDetailsBuilder
+   * @return UllageDetails
+   */
+  private UllageDetails ullageDetailsBuilder(
+      UllageTableData ullageTableData,
+      com.cpdss.common.generated.VesselInfo.UllageDetails.Builder ullageDetailsBuilder) {
+    Optional.ofNullable(ullageTableData.getId()).ifPresent(id -> ullageDetailsBuilder.setId(id));
+    Optional.ofNullable(ullageTableData.getVesselTank())
+        .ifPresent(vesselTank -> ullageDetailsBuilder.setTankId(vesselTank.getId()));
+    Optional.ofNullable(ullageTableData.getUllageDepth())
+        .ifPresent(ullageDepth -> ullageDetailsBuilder.setUllageDepth(String.valueOf(ullageDepth)));
+    Optional.ofNullable(ullageTableData.getEvenKeelCapacityCubm())
+        .ifPresent(
+            evenKeelCapacityCubm ->
+                ullageDetailsBuilder.setEvenKeelCapacityCubm(String.valueOf(evenKeelCapacityCubm)));
+    return ullageDetailsBuilder.build();
   }
 
   /**
