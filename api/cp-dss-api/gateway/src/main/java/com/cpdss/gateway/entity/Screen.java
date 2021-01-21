@@ -41,9 +41,15 @@ public class Screen extends EntityDoc {
   @Column(name = "is_available_view")
   private Boolean isAvailableView;
 
-  @Column(name = "isactive")
+  @Column(name = "is_active")
   private Boolean isActive;
 
   @OneToMany(mappedBy = "screen")
   private Collection<RoleScreen> roleScreenList;
+
+  @Column(name = "module_xid")
+  private Long moduleId;
+
+  @Column(name = "company_xid")
+  private Long companyXId;
 }
