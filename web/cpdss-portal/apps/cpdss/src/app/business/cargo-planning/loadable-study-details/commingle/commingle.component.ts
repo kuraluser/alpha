@@ -341,7 +341,7 @@ export class CommingleComponent implements OnInit {
         if (event?.data?.isDelete) {
           this.manualCommingleList.splice(event.index, 1);
           this.manualCommingleList = [...this.manualCommingleList];
-
+          (<FormArray>this.commingleManualForm.get('dataTable')).removeAt(event.index);
         }
       }
     });
