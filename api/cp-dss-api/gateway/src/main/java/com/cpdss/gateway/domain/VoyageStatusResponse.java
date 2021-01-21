@@ -16,7 +16,13 @@ public class VoyageStatusResponse {
 
   private List<OnBoardQuantity> cargoQuantities;
 
+  private List<OnHandQuantity> bunkerQuantities;
+
   private List<List<VesselTank>> cargoTanks;
+
+  private List<List<VesselTank>> bunkerTanks;
+
+  private List<List<VesselTank>> bunkerRearTanks;
 
   private List<Cargo> cargoConditions;
 

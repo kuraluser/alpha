@@ -543,8 +543,9 @@ message TankDetail{
 	string heightFrom = 11;
 	string heightTo = 12;
 	int32 tankOrder = 13;
-	int32 tankGroup = 14;
-	string fullCapacityCubm = 15;
+	int32 tankDisplayOrder = 14;
+	int32 tankGroup = 15;
+	string fullCapacityCubm = 16;
 }
 
 message TankList{
@@ -651,12 +652,14 @@ message CommingleCargo{
 
 message CommingleCargoRequest{
 	int64 loadableStudyId = 1;
-	repeated CommingleCargo commingleCargo = 2;
+	int64 vesselId = 2;
+	repeated CommingleCargo commingleCargo = 3;
 }
 
 message CommingleCargoReply{
 	ResponseStatus responseStatus = 1;
 	repeated CommingleCargo commingleCargo = 2;
+	repeated TankList tanks = 3;
 }
 
 

@@ -2241,6 +2241,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     builder.setHeightFrom(detail.getHeightFrom());
     builder.setHeightTo(detail.getHeightTo());
     builder.setTankOrder(detail.getTankOrder());
+    builder.setTankDisplayOrder(detail.getTankDisplayOrder());
     builder.setTankGroup(detail.getTankGroup());
     builder.setFullCapacityCubm(detail.getFullCapacityCubm());
     return builder.build();
@@ -2597,7 +2598,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargoList =
           this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
               request.getLoadableStudyId(), true);
-      buildCommingleCargoReply(commingleCargoList, replyBuilder);
+      // get preferred tanks
+      VesselRequest.Builder vesselGrpcRequest = VesselRequest.newBuilder();
+      vesselGrpcRequest.setVesselId(request.getVesselId());
+      vesselGrpcRequest.addAllTankCategories(CARGO_TANK_CATEGORIES);
+      VesselReply vesselReply = this.getVesselTanks(vesselGrpcRequest.build());
+      if (!SUCCESS.equals(vesselReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Failed to fetch vessel particualrs",
+            vesselReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(Integer.valueOf(vesselReply.getResponseStatus().getCode())));
+      }
+      buildCommingleCargoReply(commingleCargoList, replyBuilder, vesselReply);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching loadable study - getCommingleCargo", e);
@@ -2619,7 +2631,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   private void buildCommingleCargoReply(
       List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargoList,
-      CommingleCargoReply.Builder replyBuilder) {
+      CommingleCargoReply.Builder replyBuilder,
+      VesselReply vesselReply) {
     if (!CollectionUtils.isEmpty(commingleCargoList)) {
       commingleCargoList.forEach(
           commingleCargo -> {
@@ -2647,6 +2660,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             replyBuilder.addCommingleCargo(builder);
           });
     }
+    // build preferred tanks
+    replyBuilder.addAllTanks(groupTanks(vesselReply.getVesselTanksList()));
   }
 
   /** Save commingle cargo for the specific loadable study */
