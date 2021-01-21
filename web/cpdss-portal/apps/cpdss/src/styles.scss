@@ -562,28 +562,30 @@ a {
 }
 
 .sidebar{
-  // max-width: 220px;
-  // min-width: 220px;
-  .p-datatable .p-datatable-thead > tr{
+  .p-datatable-scrollable-wrapper .p-datatable-thead > tr{
      > th{
     position: sticky;
     top: 0;
     z-index: 1;
     &:last-child{
     width: 35px;
+      }
+    }
+
   }
-}
-&:nth-child(2) th{
-  top: 16px;
-}
-}
-  .p-datatable table{
+  .p-datatable-scrollable-wrapper table{
     table-layout: fixed!important;
     width: 100%!important;
   }
   .column-class.column-actions {
-    min-width: 34px !important;
-    width: 34px !important;
+    min-width: 25px !important;
+    width: 25px !important;
+}
+.column-class{
+  width: auto!important;
+  &:nth-child(2){
+    width: 55px!important;
+  }
 }
 }
 
@@ -604,11 +606,6 @@ h5{
 .p-datatable .p-datatable-thead{
 
   > tr{
-  &:last-child{
-    th{
-      padding-bottom: 10px;
-    }
-  }
    > th{
     padding: 0 5px;
   }
@@ -620,6 +617,7 @@ h5{
   border: 0;
   padding-left: 0px;
   max-width: 100%;
+  margin-bottom: 7px;
   &:enabled:focus, &:enabled:hover{
     box-shadow: none;
     outline: none;
@@ -826,13 +824,13 @@ tr{
   display: inline-block;
 }
 .column-class{
-  min-width: 150px!important;
+  width: 130px!important;
 }
 .column-sl{
   width: 50px!important;
 }
 .column-color{
-  width: 70px;
+  width: 70px !important;
 }
 .icon-api-temp{
   display: inline-block;
@@ -974,7 +972,7 @@ input[type=number] {
   margin-right: 2px;
 }
 
-.p-datatable-wrapper{
+.p-datatable-wrapper, .p-datatable-scrollable-wrapper{
  td{
     > div{
       position: relative;
@@ -1009,6 +1007,8 @@ input[type=number] {
         line-height: 25px;
         .icon-api-temp{
           right: -20px!important;
+          position: absolute;
+          top: 5px;
         }
       }
     }
@@ -1016,9 +1016,6 @@ input[type=number] {
 }
 
 .cargo-nomination-table .p-datatable table{
-  min-width: 100%!important;
-  // table-layout: auto!important;
-  width: auto!important;
   td{
     .icon-api-temp{
       position: absolute;
@@ -1026,9 +1023,6 @@ input[type=number] {
       right: 5px;
     }
     &.eta, &.etd{
-      div{
-        min-width: 130px;
-      }
     }
   }
 }
@@ -1051,35 +1045,9 @@ input[type=number] {
     width: 100%;
   }
 }
-.cargo-nomination-table .column-class{
- /* width: 150px;*/
-}
 
-.cargo-nomination-table{
-  .p-datatable-thead{
-    tr{
-      th{
-        position: sticky;
-        top: 0;
-        z-index: 1;
-      }
-      &:nth-child(2){
-        th{
-        top: 16px;
-        }
-      }
-    }
-  }
- .p-datatable-tbody{
-    tr{
-    td{
-      > div{
-        min-width: 85px;
-      }
-    }
-  }
-}
-} 
+
+
 .pointer{
   cursor: pointer;
 }
@@ -1094,7 +1062,7 @@ input[type=number] {
 .table-responsive-custom{
   width: 100%;
   height: calc(100vh - 260px);
-  overflow: auto;
+  /*overflow: auto;*/
   padding-left: 15px;
   padding-right: 15px;
 }
@@ -1108,9 +1076,8 @@ input[type=number] {
   width: 50px!important;
 }
 
-.column-class.column-weight{
-  /*width: 6vw!important;
-  max-width: 6vw!important;*/
+.column-class.column-weight,  .column-class.column-volume{
+  width: 100px!important;
 }
 
 
@@ -1313,50 +1280,11 @@ td.sl div{
   }
 } 
 
-.cargo-nomination-table.ohq .p-datatable-thead tr:nth-child(2) th{
-top: 35px;
-}
-.cargo-nomination-table.ohq .p-datatable-thead tr th{
-  table{
-    tr:nth-child(2){
-      th:last-child{
-        width: 50%;
-        max-width: 50%;
-      }
-    }
-  }
-}
+
 
  
 
-//   @media (max-width: 1450px){
-//     .cargo-nomination-table.ohq .p-datatable-thead tr th{
-//   table{
-//     th:last-child{
-//       width: 50%;
-//       max-width: 50%;
-//     }
-//   }
-//   }
-//   .column-class.column-weight{
-//     width: 11%!important;
-//     max-width: 11%!important;
-//   }
-// }
-@media (max-width: 1699px){
-  .cargo-nomination-table.ohq .p-datatable-thead tr th{
-table{
-  th{
-    width: 5vw!important;
-    max-width: 5vw !important;
-  }
-  }
-}
-.column-class.column-weight, .column-class.column-volume{
-  width: 5vw!important;
-  max-width: 5vw!important;
-}
-}
+
 .error-icon{
   width: 12px;
   height: 12px;
@@ -1687,16 +1615,7 @@ th .p-calendar .p-inputtext{
   outline: none!important;
 }
 
-.cargo-nomination-table.ohq{
-  .p-column-filter, .p-column-filter .p-inputtext{
-    max-width: 120px!important;
-    width: 100%!important;
-  }
-  .column-class{
-    min-width: 80px!important;
-  }
-  
-}
+
 
 .cargo-nomination-table.ohq table > thead > tr:nth-child(2) th:nth-child(5), .cargo-nomination-table.ohq table > thead > tr:nth-child(2) th:nth-child(7){
   padding-left: 0;
@@ -1774,4 +1693,12 @@ th .p-calendar .p-inputtext{
 
 .datatable-loading .col, .datatable-loading .p-datatable{
   position: static;
+}
+
+.p-datatable .p-datatable-scrollable-header, .p-datatable .p-datatable-scrollable-footer{
+  background: none!important;
+}
+
+.cargo-nomination-table .p-datatable-tbody tr td.color > div{
+  min-width: 40px;
 }

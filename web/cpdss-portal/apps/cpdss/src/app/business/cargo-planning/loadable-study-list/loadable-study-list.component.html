@@ -35,7 +35,7 @@
 
     </div>
     <div class="row">
-        <div class="col">
+        <div class="col loadable-study-table-wrapper">
             <cpdss-portal-datatable *ngIf="loadableStudyList" [tableId]="'loadable_studies'" [form]="loadableStudyListForm" [columns]="columns"
                 [value]="loadableStudyList" [filterable]="true" (viewRow)="onRowSelect($event)"
                 (columnClick)="columnClick($event)">

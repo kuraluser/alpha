@@ -2,7 +2,7 @@
     <form [formGroup]="portsForm">
         <div class="form-group row">
             <div class="col" [ngClass]="{'datatable-loading': dataTableLoading }">
-                <div class="table-responsive-custom cargo-nomination-table" >
+                <div class="table-responsive-custom" >
                     <cpdss-portal-datatable [tableId]="'ports'" [form]="portsForm" [columns]="columns"
                         [value]="portsLists" [editMode]="editMode" [listData]="listData" [filterable]="true"
                         [loading]="dataTableLoading" (editComplete)="onEditComplete($event)"
