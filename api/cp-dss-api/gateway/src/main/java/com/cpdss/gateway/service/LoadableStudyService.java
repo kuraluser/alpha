@@ -65,8 +65,6 @@ import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceB
 import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfo.PortRequest;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
-import com.cpdss.common.generated.VesselInfo.VesselReply;
-import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -129,6 +127,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -1670,7 +1669,10 @@ public class LoadableStudyService {
     }
     // Retrieve commingle cargo information from commingle cargo table
     CommingleCargoRequest commingleCargoRequest =
-        CommingleCargoRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
+        CommingleCargoRequest.newBuilder()
+            .setVesselId(vesselId)
+            .setLoadableStudyId(loadableStudyId)
+            .build();
     CommingleCargoReply commingleCargoReply =
         loadableStudyServiceBlockingStub.getCommingleCargo(commingleCargoRequest);
     if (SUCCESS.equalsIgnoreCase(commingleCargoReply.getResponseStatus().getStatus())) {
@@ -1678,17 +1680,6 @@ public class LoadableStudyService {
     } else {
       throw new GenericServiceException(
           "Error calling getCommingleCargo service",
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
-    }
-    // Retrieve vessel info preferred tanks lookup
-    VesselRequest vesselRequest = VesselRequest.newBuilder().setVesselId(vesselId).build();
-    VesselReply vesselReply = vesselInfoGrpcService.getVesselCargoTanks(vesselRequest);
-    if (SUCCESS.equalsIgnoreCase(vesselReply.getResponseStatus().getStatus())) {
-      buildCommingleCargoResponseWithVesselTanks(commingleCargoResponse, vesselReply);
-    } else {
-      throw new GenericServiceException(
-          "Error calling getVesselCargoTanks service",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
@@ -1741,6 +1732,35 @@ public class LoadableStudyService {
               });
       commingleCargo.setCargoGroups(cargoGroups);
       commingleCargoResponse.setCommingleCargo(commingleCargo);
+    }
+    // build preferred tanks
+    if (commingleCargoReply != null
+        && !CollectionUtils.isEmpty(commingleCargoReply.getTanksList())) {
+      List<VesselTank> vesselTankList = new ArrayList<>();
+      commingleCargoReply
+          .getTanksList()
+          .forEach(
+              tankDetailList -> {
+                if (tankDetailList != null
+                    && !CollectionUtils.isEmpty(tankDetailList.getVesselTankList())) {
+                  tankDetailList
+                      .getVesselTankList()
+                      .forEach(
+                          tankDetail -> {
+                            VesselTank vesselTank = new VesselTank();
+                            vesselTank.setId(tankDetail.getTankId());
+                            vesselTank.setName(tankDetail.getTankName());
+                            vesselTank.setShortName(tankDetail.getShortName());
+                            vesselTank.setGroup(tankDetail.getTankGroup());
+                            vesselTank.setOrder(tankDetail.getTankOrder());
+                            vesselTank.setDisplayOrder(tankDetail.getTankDisplayOrder());
+                            vesselTankList.add(vesselTank);
+                          });
+                }
+              });
+      // Sort by display order
+      vesselTankList.sort(Comparator.comparing(VesselTank::getDisplayOrder));
+      commingleCargoResponse.setVesselTanks(vesselTankList);
     }
   }
 
@@ -1798,30 +1818,6 @@ public class LoadableStudyService {
   public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
     Map<Object, Boolean> seen = new ConcurrentHashMap<>();
     return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
-  }
-
-  /**
-   * Builds commingle response with vessel tanks
-   *
-   * @param commingleCargoResponse
-   * @param vesselReply
-   */
-  private void buildCommingleCargoResponseWithVesselTanks(
-      CommingleCargoResponse commingleCargoResponse, VesselReply vesselReply) {
-    if (vesselReply != null && !vesselReply.getVesselTanksList().isEmpty()) {
-      List<VesselTank> vesselTankList = new ArrayList<>();
-      vesselReply
-          .getVesselTanksList()
-          .forEach(
-              vesselTankDetail -> {
-                VesselTank vesselTank = new VesselTank();
-                vesselTank.setId(vesselTankDetail.getTankId());
-                vesselTank.setName(vesselTankDetail.getTankName());
-                vesselTank.setShortName(vesselTankDetail.getShortName());
-                vesselTankList.add(vesselTank);
-              });
-      commingleCargoResponse.setVesselTanks(vesselTankList);
-    }
   }
 
   /**
@@ -3445,6 +3441,12 @@ public class LoadableStudyService {
         bunkerConditions.setSpecificGravity(synopticalRecord.get().getSpecificGravity());
         voyageStatusResponse.setBunkerConditions(bunkerConditions);
       }
+    }
+    // build bunker quantities
+    if (!CollectionUtils.isEmpty(bunkerResponse.getOnHandQuantities())) {
+      voyageStatusResponse.setBunkerQuantities(bunkerResponse.getOnHandQuantities());
+      voyageStatusResponse.setBunkerTanks(bunkerResponse.getTanks());
+      voyageStatusResponse.setBunkerRearTanks(bunkerResponse.getRearTanks());
     }
   }
 }

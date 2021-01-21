@@ -48,5 +48,7 @@ public class VesselTank {
 
   private Integer order;
 
+  private Integer displayOrder;
+
   private BigDecimal fullCapcityCubm;
 }
