@@ -4,6 +4,7 @@ package com.cpdss.gateway.entity;
 import com.cpdss.common.utils.EntityDoc;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -35,11 +36,14 @@ public class RoleScreen extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "role_xid")
   private Roles roles;
 
   @ManyToOne
   @JoinColumn(name = "screen_xid")
   private Screen screen;
+
+  @Column(name = "company_xid")
+  private Long companyXId;
 }
