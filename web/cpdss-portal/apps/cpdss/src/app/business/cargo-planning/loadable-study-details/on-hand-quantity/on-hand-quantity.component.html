@@ -5,6 +5,13 @@
                 <div class="row h-100 no-wrap">
                     <div class="col">
                         <div class="row">
+                            <div class="col">
+                                <div class="header-info-pop-up mb-5"><span class="info-icon mr-5">!</span>
+                                    {{'OHQ_LOADABLE_QUANTITY_UPDATE_INFO' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col" style="max-width: 120px;">
                                 <span class="text-secondary text-uppercase">{{'OHQ_SELECTED_PORT'| translate}}</span>
                             </div>
@@ -20,12 +27,13 @@
                             <div class="col">
                                 <div class="form-group row">
                                     <div class="col" [ngClass]="{'datatable-loading': dataTableLoading }">
-                                        <div class="table-responsive-custom cargo-nomination-table ohq"  #ohqDatatable>
+                                        <div class="table-responsive-custom cargo-nomination-table ohq" #ohqDatatable>
                                             <cpdss-portal-datatable [tableId]="'ohq'" [form]="ohqForm"
                                                 [columns]="columns" [value]="selectedPortOHQTankDetails"
                                                 [editMode]="editMode" [filterable]="true" [listData]="listData"
-                                                [selectionMode]="selectionMode" [selection]="selectedTank"
-                                                [loading]="dataTableLoading" (editComplete)="onEditComplete($event)" (columnClick)="onRowSelection($event)"
+                                                [selectionMode]="selectionMode" [(selection)]="selectedTank"
+                                                [loading]="dataTableLoading" (editComplete)="onEditComplete($event)"
+                                                (columnClick)="onRowSelection($event)"
                                                 (rowSelection)="onRowSelection($event)" (filter)="onFilter($event)"
                                                 (sort)="onSort($event)">
                                             </cpdss-portal-datatable>
@@ -43,10 +51,6 @@
                 <div class="row">
                     <div class="col">
                         <p class="text-uppercase text-center text-secondary">{{'OHQ_TANK_FILLS' | translate}}</p>
-                        <!-- TODO:Need confirmation for removing button -->
-                        <!-- <div class="text-center mb-10">
-                            <button id="ohq_save_btn" class="btn btn-main">{{'OHQ_SAVE_CHANGES' | translate}}</button>
-                        </div> -->
                     </div>
                 </div>
                 <div class="row">
@@ -100,20 +104,17 @@
                     </div>
                     <div class="col-8">
                         <div class="row">
-                            <div class="col-6"
-                                [ngStyle]="{'visibility': ohqForm.controls.mode.value === OHQ_MODE.ARRIVAL ? 'visible': 'hidden'}"
-                                [ngClass]="{'order-last': ohqForm.controls.mode.value === OHQ_MODE.DEPARTURE}">
+                            <div class="col-6">
                                 <div class="row mb-15">
-                                    <label for="" class="col-12 text-center">{{'OHQ_ARRIVAL'| translate}}
-                                        {{'OHQ_DENSITY'| translate}}</label>
+                                    <label for="" class="col-12 text-center">{{'OHQ_DENSITY'| translate}}</label>
                                     <div class="col">
                                         <input type="text" cpdssPortalNumberDecimal class="form-control"
-                                            formControlName="arrivalDensity"
-                                            (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalDensity')"
+                                            formControlName="density"
+                                            (change)="onChange($event, selectedTankFormGroupIndex, 'density')"
                                             [readOnly]="!permission?.edit">
                                         <cpdss-portal-validation-error
-                                            [errors]="fieldError(selectedTankFormGroupIndex, 'arrivalDensity')| async"
-                                            [errorMessages]="getErrorMessages('arrivalDensity')">
+                                            [errors]="fieldError(selectedTankFormGroupIndex, 'density')| async"
+                                            [errorMessages]="getErrorMessages('density')">
                                         </cpdss-portal-validation-error>
                                     </div>
                                 </div>
@@ -132,23 +133,6 @@
                                         <cpdss-portal-validation-error
                                             [errors]="fieldError(selectedTankFormGroupIndex, 'arrivalQuantity')| async"
                                             [errorMessages]="getErrorMessages('arrivalQuantity')">
-                                        </cpdss-portal-validation-error>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6"
-                                [ngStyle]="{'visibility': ohqForm.controls.mode.value === OHQ_MODE.DEPARTURE ? 'visible': 'hidden'}">
-                                <div class="row mb-15">
-                                    <label for="" class="col-12 text-center">{{'OHQ_DEPARTURE'| translate}}
-                                        {{'OHQ_DENSITY'| translate}}</label>
-                                    <div class="col">
-                                        <input type="text" cpdssPortalNumberDecimal class="form-control"
-                                            formControlName="departureDensity"
-                                            (change)="onChange($event, selectedTankFormGroupIndex, 'departureDensity')"
-                                            [readOnly]="!permission?.edit">
-                                        <cpdss-portal-validation-error
-                                            [errors]="fieldError(selectedTankFormGroupIndex, 'departureDensity')| async"
-                                            [errorMessages]="getErrorMessages('departureDensity')">
                                         </cpdss-portal-validation-error>
                                     </div>
                                 </div>

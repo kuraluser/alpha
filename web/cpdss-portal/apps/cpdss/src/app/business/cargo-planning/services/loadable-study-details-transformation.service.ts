@@ -779,90 +779,60 @@ export class LoadableStudyDetailsTransformationService {
         filterPlaceholder: 'OHQ_SEARCH_TANK'
       },
       {
-        field: '',
-        header: 'OHQ_ARRIVAL',
-        columns: [
-          {
-            field: 'arrivalDensity',
-            header: 'OHQ_DENSITY',
-            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-            fieldPlaceholder: 'OHQ_PLACEHOLDER_DENSITY',
-            filter: true,
-            filterField: 'arrivalDensity.value',
-            filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
-            filterType: DATATABLE_FILTER_TYPE.NUMBER,
-            filterPlaceholder: 'OHQ_SEARCH_DENSITY',
-            fieldHeaderClass: 'column-volume',
-            errorMessages: {
-              'required': 'OHQ_VALUE_REQUIRED',
-              'min': 'OHQ_MIN_VALUE',
-              'groupTotal': 'OHQ_GROUP_TOTAL',
-              'pattern': 'OHQ_PATTERN_ERROR'
-            }
-          },
-          {
-            field: 'arrivalQuantity',
-            header: 'OHQ_QUANTITY',
-            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-            fieldPlaceholder: 'OHQ_PLACEHOLDER_WEIGHT',
-            filter: true,
-            filterField: 'arrivalQuantity.value',
-            filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
-            filterType: DATATABLE_FILTER_TYPE.NUMBER,
-            filterPlaceholder: 'OHQ_SEARCH_WEIGHT',
-            fieldHeaderClass: 'column-weight',
-            errorMessages: {
-              'required': 'OHQ_VALUE_REQUIRED',
-              'min': 'OHQ_MIN_VALUE',
-              'groupTotal': 'OHQ_GROUP_TOTAL',
-              'pattern': 'OHQ_PATTERN_ERROR',
-              'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY"
-            }
-          }
-        ]
+        field: 'density',
+        header: 'OHQ_DENSITY',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: 'OHQ_PLACEHOLDER_DENSITY',
+        filter: true,
+        filterField: 'density.value',
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+        filterType: DATATABLE_FILTER_TYPE.NUMBER,
+        filterPlaceholder: 'OHQ_SEARCH_DENSITY',
+        fieldHeaderClass: 'column-volume',
+        errorMessages: {
+          'required': 'OHQ_VALUE_REQUIRED',
+          'min': 'OHQ_MIN_VALUE',
+          'groupTotal': 'OHQ_GROUP_TOTAL',
+          'pattern': 'OHQ_PATTERN_ERROR'
+        }
       },
       {
-        field: '',
-        header: 'OHQ_DEPARTURE',
-        columns: [
-          {
-            field: 'departureDensity',
-            header: 'OHQ_DENSITY',
-            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-            fieldPlaceholder: 'OHQ_PLACEHOLDER_DENSITY',
-            filter: true,
-            filterField: 'departureDensity.value',
-            filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
-            filterType: DATATABLE_FILTER_TYPE.NUMBER,
-            filterPlaceholder: 'OHQ_SEARCH_DENSITY',
-            fieldHeaderClass: 'column-volume',
-            errorMessages: {
-              'required': 'OHQ_VALUE_REQUIRED',
-              'min': 'OHQ_MIN_VALUE',
-              'groupTotal': 'OHQ_GROUP_TOTAL',
-              'pattern': 'OHQ_PATTERN_ERROR'
-            }
-          },
-          {
-            field: 'departureQuantity',
-            header: 'OHQ_QUANTITY',
-            fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-            fieldPlaceholder: 'OHQ_PLACEHOLDER_WEIGHT',
-            filter: true,
-            filterField: 'departureQuantity.value',
-            filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
-            filterType: DATATABLE_FILTER_TYPE.NUMBER,
-            fieldHeaderClass: 'column-weight',
-            filterPlaceholder: 'OHQ_SEARCH_WEIGHT',
-            errorMessages: {
-              'required': 'OHQ_VALUE_REQUIRED',
-              'min': 'OHQ_MIN_VALUE',
-              'groupTotal': 'OHQ_GROUP_TOTAL',
-              'pattern': 'OHQ_PATTERN_ERROR',              
-              'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY",
-            }
-          }
-        ]
+        field: 'arrivalQuantity',
+        header: 'OHQ_ARRIVAL_QUANTITY',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: 'OHQ_PLACEHOLDER_WEIGHT',
+        filter: true,
+        filterField: 'arrivalQuantity.value',
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+        filterType: DATATABLE_FILTER_TYPE.NUMBER,
+        filterPlaceholder: 'OHQ_SEARCH_WEIGHT',
+        fieldHeaderClass: 'column-weight',
+        errorMessages: {
+          'required': 'OHQ_VALUE_REQUIRED',
+          'min': 'OHQ_MIN_VALUE',
+          'groupTotal': 'OHQ_GROUP_TOTAL',
+          'pattern': 'OHQ_PATTERN_ERROR',
+          'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY"
+        }
+      },
+      {
+        field: 'departureQuantity',
+        header: 'OHQ_DEPARTURE_QUANTITY',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: 'OHQ_PLACEHOLDER_WEIGHT',
+        filter: true,
+        filterField: 'departureQuantity.value',
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+        filterType: DATATABLE_FILTER_TYPE.NUMBER,
+        fieldHeaderClass: 'column-weight',
+        filterPlaceholder: 'OHQ_SEARCH_WEIGHT',
+        errorMessages: {
+          'required': 'OHQ_VALUE_REQUIRED',
+          'min': 'OHQ_MIN_VALUE',
+          'groupTotal': 'OHQ_GROUP_TOTAL',
+          'pattern': 'OHQ_PATTERN_ERROR',
+          'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY",
+        }
       }
     ]
   }
@@ -885,9 +855,8 @@ export class LoadableStudyDetailsTransformationService {
     _ohqTankDetail.tankName = ohqTankDetail?.tankName;
     _ohqTankDetail.colorCode = ohqTankDetail?.colorCode;
     _ohqTankDetail.fullCapacityCubm = ohqTankDetail?.fullCapacityCubm;
-    _ohqTankDetail.arrivalDensity = new ValueObject<number>(ohqTankDetail.arrivalDensity, true, isNewValue);
+    _ohqTankDetail.density = new ValueObject<number>(ohqTankDetail.density, true, isNewValue);
     _ohqTankDetail.arrivalQuantity = new ValueObject<number>(ohqTankDetail.arrivalQuantity, true, isNewValue);
-    _ohqTankDetail.departureDensity = new ValueObject<number>(ohqTankDetail.departureDensity, true, isNewValue);
     _ohqTankDetail.departureQuantity = new ValueObject<number>(ohqTankDetail.departureQuantity, true, isNewValue);
 
     return _ohqTankDetail;

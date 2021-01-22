@@ -48,19 +48,19 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                 const isLoggedIn = await keycloak.init({
                     config: keycloakConfig,
                     initOptions: {
-                        onLoad: 'login-required',
+                        onLoad: 'check-sso',
                         silentCheckSsoRedirectUri: window.location.origin + '/assets/keycloak/silent-check-sso.html',
                         checkLoginIframe: false
                     },
                     bearerExcludedUrls: ['/assets']
                 });
 
+                const keycloakInstance = keycloak.getKeycloakInstance();
+
                 // If not logged in redirect to login app
                 if (!isLoggedIn) {
-                    window.location.href = logoutUrl;
+                    keycloakInstance.login();
                 } else {
-                    const keycloakInstance = keycloak.getKeycloakInstance();
-
                     //If token expired
                     keycloakInstance.onTokenExpired = () => {
                         
@@ -69,10 +69,10 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                             if (res) {
                                 return keycloakInstance.token;
                             } else {
-                                window.location.href = logoutUrl;
+                                keycloakInstance.login();
                             }
                         } else {
-                            window.location.href = logoutUrl;
+                            keycloakInstance.login();
                         }
                     };
                 }
