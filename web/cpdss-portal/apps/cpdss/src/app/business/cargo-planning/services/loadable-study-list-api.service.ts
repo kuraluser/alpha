@@ -42,7 +42,9 @@ export class LoadableStudyListApiService {
     formData.append('maxAirTemperature', loadableStudy.maxAirTempExpected ? loadableStudy.maxAirTempExpected?.toString() : "");
     formData.append('maxWaterTemperature', loadableStudy.maxWaterTempExpected ? loadableStudy.maxWaterTempExpected?.toString() : "");
     for (let i = 0; i < loadableStudy.attachMail.length; i++) {
-      formData.append('files', loadableStudy.attachMail[i]);
+      if(loadableStudy.attachMail[i]?.size){
+        formData.append('files', loadableStudy.attachMail[i]);
+      }
 
     }
     return this.commonApiService.postFormData<ILoadableStudyResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudy.id}`, formData);

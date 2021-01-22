@@ -159,8 +159,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           loadLineXId: this.newLoadableStudyFormGroup.controls.loadLine.value?.id,
           draftMark: this.newLoadableStudyFormGroup.controls.draftMark.value?.id,
           draftRestriction: this.newLoadableStudyFormGroup.controls.draftRestriction.value,
-          maxAirTempExpected:  this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value + '',
-          maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value + ''
+          maxAirTempExpected:  this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value ? this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value : '',
+          maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value ? this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value : ''
         }
         this.ngxSpinnerService.show();
         try {
@@ -292,8 +292,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       loadLine: loadableStudyObj,
       draftMark: loadableStudyObj,
       draftRestriction: loadableStudyObj.draftRestriction ? loadableStudyObj.draftRestriction : '',
-      maxAirTempExpected: loadableStudyObj.maxAirTemperature,
-      maxWaterTempExpected: loadableStudyObj.maxWaterTemperature
+      maxAirTempExpected: loadableStudyObj.maxAirTemperature ? loadableStudyObj.maxAirTemperature : '',
+      maxWaterTempExpected: loadableStudyObj.maxWaterTemperature ? loadableStudyObj.maxWaterTemperature : ''
     });
     
     

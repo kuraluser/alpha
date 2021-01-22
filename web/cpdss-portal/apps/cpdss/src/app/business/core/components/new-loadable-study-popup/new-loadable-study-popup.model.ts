@@ -13,7 +13,7 @@ export interface INewLoadableStudy {
     draftRestriction: number;
     maxAirTempExpected: string;
     maxWaterTempExpected: string;
-    attachMail: string[];
+    attachMail: any[];
 }
 
 

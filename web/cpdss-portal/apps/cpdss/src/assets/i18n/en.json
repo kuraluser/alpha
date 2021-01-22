@@ -102,7 +102,7 @@
 	"VIEW": "View",
 	"DUPLICATE": "Duplicate",
 	"NEW_VOYAGE_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED": "Special characters are not allowed",
-	"NEW_VOYAGE_POPUP_CHARACTER_LIMIT": "Maximum allowed character length is 100",
+	"NEW_VOYAGE_POPUP_CHARACTER_LIMIT": "Maximum allowed character length is 10",
 	"VESSEL_INFO_IMO": "IMO",
 	"NEW_VOYAGE_ALREADY_EXIST": "This Voyage No already exist",
 	"LOADABLE_STUDY_LIST_SEARCH_BY_NAME": "Search name",

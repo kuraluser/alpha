@@ -234,8 +234,14 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @private
    * @memberof LoadableStudyDetailsComponent
    */
-  private initSubsciptions() {
+  private async initSubsciptions() {
+    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR']).toPromise();
     this.totalQuantity$ = this.loadableStudyDetailsTransformationService.totalQuantityCargoNomination$;
+    this.loadableStudyDetailsTransformationService.totalQuantityCargoNomination$.subscribe((totalQuantity) => {
+      if (Number(totalQuantity) > Number(this.loadableQuantityNew)) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['TOTAL_QUANTITY_ERROR'], detail: translationKeys['TOTAL_QUANTITY_ERROR'] });
+      }
+    })
     this.cargoNominationComplete$ = this.loadableStudyDetailsTransformationService.cargoNominationValidity$;
     this.portsComplete$ = this.loadableStudyDetailsTransformationService.portValidity$;
     this.ohqComplete$ = this.loadableStudyDetailsTransformationService.ohqValidity$;
