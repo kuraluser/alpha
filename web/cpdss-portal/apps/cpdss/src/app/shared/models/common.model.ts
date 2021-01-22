@@ -135,6 +135,20 @@ export class CPDSSDB extends Dexie {
 }
 
 /**
+ * ENUM for units of quantity
+ *
+ * @export
+ * @enum {number}
+ */
+export enum QUANTITY_UNIT {
+    MT = "MT",
+    KL = "KL",
+    BBLS = "BBLS",
+    OBSBBLS = "OBSBBLS",
+    LT = "LT"
+}
+
+/**
  * Interface for port
  *
  * @export
