@@ -322,8 +322,8 @@ export class PortsComponent implements OnInit {
       this.portsLists[valueIndex]['layCanTo'].value = layCanTo;
       this.updateField(event.index, 'layCanFrom', this.convertToDate(layCanFrom));
       this.updateField(event.index, 'layCanTo', this.convertToDate(layCanTo));
-      form.controls.eta.updateValueAndValidity();
-      form.controls.etd.updateValueAndValidity();
+      this.updateValidityAndEditMode(index, 'eta');
+      this.updateValidityAndEditMode(index, 'etd');
     }
     if (event.field === 'etd') {
       this.updateValidityAndEditMode(index, 'eta');
@@ -613,7 +613,7 @@ export class PortsComponent implements OnInit {
       case 'eta':
         return [Validators.required, portDateRangeValidator, portDateCompareValidator('etd', '<'), portEtaEtdValidator('eta', index)];
       case 'etd':
-        return [Validators.required, portDateCompareValidator('eta', '>'), portEtaEtdValidator('etd', index)];
+        return [Validators.required, portDateRangeValidator, portDateCompareValidator('eta', '>'), portEtaEtdValidator('etd', index)];
       default:
         return [];
     }

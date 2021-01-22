@@ -657,6 +657,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldClass: 'etd',
         errorMessages: {
           'required': 'PORT_ETD_REQUIRED_ERROR',
+          'notInRange': 'PORT_ETD_NOT_IN_DATE_RANGE',
           'failedCompare': 'PORT_ETD_COMPARE_ERROR',
           'etdFailed': 'PORT_ETD_COMAPRE_WITH_ETA_ERROR'
         }

@@ -5,23 +5,18 @@ import { FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
  * @param control 
  */
 export const portDateRangeValidator: ValidatorFn = (control: FormControl): ValidationErrors | null => {
-    if (!control.root || !control.parent) {
-        return null;
-    }
-    if (control.parent?.value.layCan) {
-        const fromDate = control.parent.value.layCanFrom;
-        const toDate = control.parent.value.layCanTo;
+    if (control.root && control.parent && control.parent?.value.layCan) {
+        const fromDate: Date = control.parent.value.layCanFrom;
+        const toDate: Date = control.parent.value.layCanTo;
+        fromDate.setHours(0, 0, 0, 0)
+        toDate.setHours(23,59,59,0)
         if (control.value) {
             const checkDate = control.value;
-            if (checkDate >= fromDate && checkDate <= toDate) {
-                return null;
-            } else {
+            checkDate.setSeconds(0, 0)
+            if (checkDate < fromDate || checkDate > toDate) {
                 return { notInRange: true };
             }
-        } else {
-            return null;
         }
-    } else {
-        return null;
     }
+    return null;
 };
