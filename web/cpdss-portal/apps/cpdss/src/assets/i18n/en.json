@@ -535,5 +535,7 @@
 	"LOADABLE_QUANTITY_UPDATE_SUCCESSFULLY": "Loadable quantity updated successfully",
 	"DRAFT_RESTRICTION_MIN": "Draft Restriction should be above 0",
 	"Max_AIR_TEMP_MAX": "Max air tem. should be below 99",
-	"Max_WATER_TEMP_MAX": "Max water tem. should be below 999"
+	"Max_WATER_TEMP_MAX": "Max water tem. should be below 999",
+	"COMMINGLE_POPUP_CARGO_MAX_LIMIT": "More than 3 commingle cargo cannot be added.",
+	"COMMINGLE_POPUP_PREFERRED_TANK_MAX_LIMIT": "Cannot select more than 5 preferred tanks."
 }

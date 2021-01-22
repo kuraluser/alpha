@@ -33,11 +33,11 @@
                             class=" col-form-label">{{'COMMINGLE_PREFERRED_TANK' | translate}}</label></div>
                     <div class="col pr-10" *ngIf="!isVolumeMaximum">
                         <p-multiSelect [options]="preferredTankList" styleClass="w-100" appendTo="body"
-                            defaultLabel="{{'COMMINGLE_SELECT_PREFERRED_TANK' | translate}}"
+                            defaultLabel="{{'COMMINGLE_SELECT_PREFERRED_TANK' | translate}}" (onChange)="onPreferredTankSelect()"
                             id="commingle_preferred_tank" optionLabel="shortName" formControlName="preferredTanks"
                             [readonly]="!isEditable" [selectionLimit]="5">
                         </p-multiSelect>
-
+                        <div class="text-danger" *ngIf="isMaxPreferredTank">{{'COMMINGLE_POPUP_PREFERRED_TANK_MAX_LIMIT' | translate}}</div>
                     </div>
                     <div class="col pl-0 pr-0 pt-5" style="max-width: 20px;">
                         <cpdss-portal-validation-error [errors]="fieldError('preferredTanks')"
@@ -118,6 +118,7 @@
                             [value]="manualCommingleList" [filterable]="true" (editComplete)="onEditComplete($event)"
                             (deleteRow)="onDeleteRow($event)">
                         </cpdss-portal-datatable>
+                        <div class="text-danger" *ngIf="isMaxCargo">{{'COMMINGLE_POPUP_CARGO_MAX_LIMIT'  | translate }}</div>
                     </div>
                 </div>
             </form>

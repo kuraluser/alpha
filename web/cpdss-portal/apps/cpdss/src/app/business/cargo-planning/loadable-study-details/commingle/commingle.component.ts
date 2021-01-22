@@ -67,6 +67,9 @@ export class CommingleComponent implements OnInit {
   cargoNominationPermissionContext: IPermissionContext;
   permission: IPermission;
   isEditable = false;
+  isMaxCargo = false;
+  isMaxPreferredTank = false;
+  extraPreferred = 0;
 
   constructor(private commingleApiService: CommingleApiService,
     private ngxSpinnerService: NgxSpinnerService,
@@ -327,6 +330,9 @@ export class CommingleComponent implements OnInit {
       const dataTableControl = <FormArray>this.commingleManualForm.get('dataTable');
       dataTableControl.insert(0, this.initCommingleManualFormGroup(_commingle));
     }
+    else{
+      this.isMaxCargo = true;
+    }
 
   }
 
@@ -507,6 +513,22 @@ export class CommingleComponent implements OnInit {
         this.commingleForm.controls['cargo2'].setValue(null);
       }
     });
+  }
+
+  /**
+   * Method to show preferred tank notification
+   */
+  onPreferredTankSelect(){
+    if (this.commingleForm.value?.preferredTanks?.length === 5 ) {
+      this.extraPreferred = this.extraPreferred +1;
+      if(this.extraPreferred > 1){
+        this.isMaxPreferredTank = true;
+      }
+      
+    }
+    else{
+      this.isMaxPreferredTank = false;
+    }
   }
 
 }
