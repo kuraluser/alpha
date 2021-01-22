@@ -13,6 +13,7 @@ import com.cpdss.gateway.domain.ScreenInfo;
 import com.cpdss.gateway.domain.ScreenResponse;
 import com.cpdss.gateway.domain.User;
 import com.cpdss.gateway.domain.UserAuthorizationsResponse;
+import com.cpdss.gateway.domain.UserResponse;
 import com.cpdss.gateway.entity.RoleUserMapping;
 import com.cpdss.gateway.entity.Screen;
 import com.cpdss.gateway.entity.Users;
@@ -230,5 +231,28 @@ public class UserService {
       roleScreenDto.setCanView(roleScreenEntity.get().getCanView());
     }
     return roleScreenDto;
+  }
+
+  public UserResponse getUsers(Long companyId, String correlationIdHeader) {
+    UserResponse userResponse = new UserResponse();
+    List<User> userList = new ArrayList<User>();
+    List<Users> users = this.usersRepository.findByCompanyXIdAndIsActive(companyId, true);
+    if (users != null && !users.isEmpty()) {
+      users.forEach(
+          userEntity -> {
+            User user = new User();
+            user.setId(userEntity.getId());
+            user.setFirstName(userEntity.getFirstName());
+            user.setLastName(userEntity.getLastName());
+            user.setUsername(userEntity.getUsername());
+            userList.add(user);
+          });
+    }
+
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK));
+    userResponse.setResponseStatus(commonSuccessResponse);
+    userResponse.setUsers(userList);
+    return userResponse;
   }
 }

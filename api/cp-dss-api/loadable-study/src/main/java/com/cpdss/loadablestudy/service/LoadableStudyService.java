@@ -744,6 +744,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         String folderLocation = this.constructFolderPath(entity);
         Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
         Set<LoadableStudyAttachments> attachmentCollection = new HashSet<>();
+
         for (LoadableStudyAttachment attachment : request.getAttachmentsList()) {
           Path path = Paths.get(this.rootFolder + folderLocation + attachment.getFileName());
           Files.createFile(path);
@@ -755,6 +756,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           attachmentEntity.setIsActive(true);
           attachmentCollection.add(attachmentEntity);
         }
+
         entity.setAttachments(attachmentCollection);
       }
 
@@ -1286,9 +1288,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 onHandQuantityList.stream()
                     .filter(
                         ohq ->
-                            ohq.getFuelTypeXId() == FUEL_OIL_TANK_CATEGORY_ID
-                                && ohq.getPortXId() == firstPort
-                                && ohq.getIsActive() == true)
+                            ohq.getFuelTypeXId().equals(FUEL_OIL_TANK_CATEGORY_ID)
+                                && ohq.getPortXId().equals(firstPort)
+                                && ohq.getIsActive())
                     .mapToLong(
                         foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
                     .sum());
@@ -1297,9 +1299,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 onHandQuantityList.stream()
                     .filter(
                         ohq ->
-                            ohq.getFuelTypeXId() == DIESEL_OIL_TANK_CATEGORY_ID
-                                && ohq.getPortXId() == firstPort
-                                && ohq.getIsActive() == true)
+                            ohq.getFuelTypeXId().equals(DIESEL_OIL_TANK_CATEGORY_ID)
+                                && ohq.getPortXId().equals(firstPort)
+                                && ohq.getIsActive())
                     .mapToLong(
                         doOnboardQuantity -> doOnboardQuantity.getArrivalQuantity().longValue())
                     .sum());
@@ -1310,7 +1312,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         ohq ->
                             ohq.getFuelTypeXId() == FRESH_WATER_TANK_CATEGORY_ID
                                 && ohq.getPortXId() == firstPort
-                                && ohq.getIsActive() == true)
+                                && ohq.getIsActive())
                     .mapToLong(
                         fwOnboardQuantity -> fwOnboardQuantity.getArrivalQuantity().longValue())
                     .sum());
@@ -1319,9 +1321,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 onHandQuantityList.stream()
                     .filter(
                         ohq ->
-                            ohq.getFuelTypeXId() == FRESH_WATER_TANK_CATEGORY_ID
-                                && ohq.getPortXId() == firstPort
-                                && ohq.getIsActive() == true)
+                            ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
+                                && ohq.getPortXId().equals(firstPort)
+                                && ohq.getIsActive())
                     .mapToLong(
                         bwOnboardQuantity -> bwOnboardQuantity.getArrivalQuantity().longValue())
                     .sum());
@@ -1697,16 +1699,66 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           portIds.remove(portRoation.getPortXId());
         }
       }
-      if (!portIds.isEmpty()) {
+      if (!CollectionUtils.isEmpty(portIds)) {
+        GetPortInfoByPortIdsRequest.Builder reqBuilder = GetPortInfoByPortIdsRequest.newBuilder();
         portIds.forEach(
-            id -> {
-              LoadableStudyPortRotation port = new LoadableStudyPortRotation();
-              port.setPortXId(id);
-              port.setLoadableStudy(loadableStudyOpt.get());
-              port.setOperation(discharging);
-              dischargingPorts.add(port);
+            port -> {
+              reqBuilder.addId(port);
             });
+        PortReply portReply = portInfoGrpcService.getPortInfoByPortIds(reqBuilder.build());
+
+        if (!SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
+          throw new GenericServiceException(
+              "Error in calling port service",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+        } else {
+
+          if (!CollectionUtils.isEmpty(portIds)
+              && portReply != null
+              && !CollectionUtils.isEmpty(portReply.getPortsList())) {
+            portIds.stream()
+                .forEach(
+                    requestedPortId -> {
+                      Optional<PortDetail> portOpt =
+                          portReply.getPortsList().stream()
+                              .filter(
+                                  portDetail -> Objects.equals(requestedPortId, portDetail.getId()))
+                              .findAny();
+
+                      if (portOpt.isPresent()) {
+                        PortDetail port = portOpt.get();
+                        LoadableStudyPortRotation portRotationEntity =
+                            new LoadableStudyPortRotation();
+                        portRotationEntity.setLoadableStudy(loadableStudy);
+                        portRotationEntity.setPortXId(port.getId());
+                        portRotationEntity.setOperation(
+                            this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID));
+                        portRotationEntity.setSeaWaterDensity(
+                            !StringUtils.isEmpty(port.getWaterDensity())
+                                ? new BigDecimal(port.getWaterDensity())
+                                : null);
+                        portRotationEntity.setMaxDraft(
+                            !StringUtils.isEmpty(port.getMaxDraft())
+                                ? new BigDecimal(port.getMaxDraft())
+                                : null);
+
+                        portRotationEntity.setAirDraftRestriction(
+                            !StringUtils.isEmpty(port.getMaxAirDraft())
+                                ? new BigDecimal(port.getMaxAirDraft())
+                                : null);
+
+                        // add ports to synoptical table by reusing the function called by
+                        // port-rotation flow
+                        buildPortsInfoSynopticalTable(
+                            portRotationEntity, DISCHARGING_OPERATION_ID, port.getId());
+                        dischargingPorts.add(portRotationEntity);
+                      }
+                    });
+          }
+        }
       }
+
       this.loadableStudyPortRotationRepository.saveAll(dischargingPorts);
 
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());

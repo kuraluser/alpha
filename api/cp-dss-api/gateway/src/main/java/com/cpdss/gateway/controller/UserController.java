@@ -6,6 +6,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.ScreenResponse;
 import com.cpdss.gateway.domain.UserAuthorizationsResponse;
+import com.cpdss.gateway.domain.UserResponse;
 import com.cpdss.gateway.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,26 @@ public class UserController {
     try {
       log.info("getScreens: {}");
       response = userService.getScreens(companyId, roleId, CORRELATION_ID_HEADER);
+
+    } catch (Exception e) {
+      log.error("Error in getScreens ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return response;
+  }
+
+  @GetMapping("/company/{companyId}/users")
+  public UserResponse getUsers(@PathVariable Long companyId, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    UserResponse response = null;
+    try {
+      log.info("getScreens: {}");
+      response = userService.getUsers(companyId, CORRELATION_ID_HEADER);
 
     } catch (Exception e) {
       log.error("Error in getScreens ", e);

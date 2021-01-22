@@ -224,7 +224,6 @@ public class LoadableStudyController {
       request.setVoyageId(voyageId);
       request.setCompanyId(1L);
       request.setId(loadableStudyId);
-
       return this.loadableStudyService.saveLoadableStudy(
           request, headers.getFirst(CORRELATION_ID_HEADER), files);
     } catch (GenericServiceException e) {

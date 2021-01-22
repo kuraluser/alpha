@@ -40,7 +40,6 @@ public class OnHandQuantity {
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal arrivalQuantity;
 
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal departureVolume;
 
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
