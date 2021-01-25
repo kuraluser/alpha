@@ -5,6 +5,7 @@ export interface IAppConfiguration {
     keycloakUrl: string;
     redirectPort: string;
     clientId: string;
+    baseUnit: string;
     permissionMapping?: IDictionary<string>;
 }
 

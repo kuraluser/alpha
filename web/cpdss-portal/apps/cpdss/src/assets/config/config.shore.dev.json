@@ -2,5 +2,6 @@
     "apiUrl": "",
     "keycloakUrl": "https://keyclock.thinkpalm.info:8443/auth/",
     "redirectPort": "9002",
-    "clientId": "frontend"
+    "clientId": "frontend",
+    "baseUnit": "MT"
 }
