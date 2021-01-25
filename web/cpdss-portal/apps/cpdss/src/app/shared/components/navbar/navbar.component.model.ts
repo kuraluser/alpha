@@ -12,4 +12,5 @@ export interface IMenuItem {
  */
 export interface ISubMenu {
     name: string;
+    subMenuLink: string;
 }

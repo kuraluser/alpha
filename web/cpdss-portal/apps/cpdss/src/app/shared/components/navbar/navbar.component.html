@@ -10,7 +10,7 @@
                 <div class="menu-item-icon {{list.menuIcon}}"></div>
                 <div class="menu-item-text">{{ list.menu | translate}}</div>
                 <div class="dropdown-menu" *ngIf="list.subMenu.length>0 && isSubMenu[i]">
-                    <a class="dropdown-item" href="#" *ngFor="let subMenu of list.subMenu">{{subMenu.name}}</a>
+                    <a class="dropdown-item"  *ngFor="let subMenuItem of list.subMenu;let subIndex = index" (click)="subRoute(subMenuItem)">{{subMenuItem.name | translate}}</a>
                 </div>
             </li>
         </ul>

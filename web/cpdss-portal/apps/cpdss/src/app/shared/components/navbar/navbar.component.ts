@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
 import { Observable } from 'rxjs';
 import { AppConfigurationService } from '../../services/app-configuration/app-configuration.service';
@@ -19,7 +20,8 @@ export class NavbarComponent implements OnInit {
   showUserIconDropdown = false;
   companyLogo = '';
 
-  constructor(private themeService: ThemeService, private keycloakService: KeycloakService) { }
+  constructor(private themeService: ThemeService, private keycloakService: KeycloakService,
+    private router: Router) { }
 
   ngOnInit(): void {
 
@@ -45,6 +47,14 @@ export class NavbarComponent implements OnInit {
         'menuIcon': 'voyages',
         'menuLink': 'synoptical',
         'subMenu': []
+      },
+      {
+        'menu': 'ADMIN',
+        'menuIcon': 'voyages',
+        'menuLink': 'admin',
+        'subMenu': [
+          { 'name': 'User Role Permission' , 'subMenuLink': '/business/admin/user-role-listing'}
+        ]
       },
       /* {
         'menu': 'OPERATIONS',
@@ -137,6 +147,15 @@ export class NavbarComponent implements OnInit {
    */
   onUserIconMenuToggle() {
     this.showUserIconDropdown = !this.showUserIconDropdown;
+  }
+
+  /**
+   * Handler sub routes in List 
+   *
+   * @memberof NavbarComponent
+   */
+  subRoute(subMenu) {
+    this.router.navigate([subMenu.subMenuLink]);
   }
 
 }

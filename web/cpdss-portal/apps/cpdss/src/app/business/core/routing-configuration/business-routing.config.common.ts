@@ -13,7 +13,8 @@ export class BusinessRoutingCommonConfig {
                 loadChildren: () => import('../../cargo-planning/cargo-planning.module').then(m => m.CargoPlanningModule)
             },
             { path: 'operations', loadChildren: () => import('../../operations/operations.module').then(m => m.OperationsModule) },
-            { path: 'synoptical', loadChildren: () => import('../../synoptical/synoptical.module').then(m => m.SynopticalModule) }
+            { path: 'synoptical', loadChildren: () => import('../../synoptical/synoptical.module').then(m => m.SynopticalModule) },
+            { path: 'admin', loadChildren: () => import('../../admin/admin.module').then(m => m.AdminModule) }
         ];
     }
 }

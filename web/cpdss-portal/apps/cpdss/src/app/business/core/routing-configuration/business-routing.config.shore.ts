@@ -10,7 +10,6 @@ export class BusinessRoutingConfig {
                 component: BusinessComponent,
                 children: [
                     ...BusinessRoutingCommonConfig.getRoutesForEnvironment(),                  
-                    { path: 'admin', loadChildren: () => import('../../admin/admin.module').then(m => m.AdminModule) },
                     { path: 'voyages', loadChildren: () => import('../../voyages/voyages.module').then(m => m.VoyagesModule) }
                 ]
             }

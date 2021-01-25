@@ -1,0 +1,49 @@
+
+<div>
+    <form>
+        <div>
+            <label for="user_role_name">Name</label>
+            <input type="text" id="user_role_name"/>
+        </div>
+        <div>
+            <label for="user_role_description">Description</label>
+            <input type="text" id="user_role_description"/>
+        </div>
+    </form>
+
+     <div>
+         <div>
+             <button type="button" id="shore">Shore</button>
+         </div>
+         <div>
+            <button type="button" id="shore">Ship</button>
+        </div>
+     </div>
+</div>
+
+
+<div>
+    <p-treeTable [value]="treeNode"  selectionMode="checkbox" [(selection)]="selectedNodes" (onNodeSelect)="nodeSelect($event,true)" (onNodeUnselect)="nodeSelect($event,false)">
+        <ng-template pTemplate="body" let-rowNode  let-rowData="rowData">
+            <tr>
+                <td>
+                    <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                    <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
+                    {{rowData.name}}
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                
+                <ng-container *ngFor = "let col of cols">
+                        <td [ttEditableColumn]="rowData" [ttEditableColumnField]="col.field"> 
+                            {{col.header}}
+                            <input type="checkbox" [checked]="rowData[col.field]" (change)="checkboxChange($event,rowData, rowNode,col.field)"/>
+                        </td>
+                </ng-container>
+            </tr>
+        </ng-template>
+    </p-treeTable>
+</div>
+
+
