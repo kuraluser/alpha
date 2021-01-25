@@ -6,8 +6,7 @@ import { IEditPortRotationModel } from '../models/edit-port-rotation.model';
 import { Voyage } from '../../core/models/common.model';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { VoyageService } from '../../core/services/voyage.service';
-import { IPortList, IPortsDetailsResponse } from '../../../shared/models/common.model';
+import { IPortList, IPortsDetailsResponse } from '../../core/models/common.model';
 
 /**
  * Component class of EditPortRotation
@@ -93,13 +92,13 @@ export class EditPortRotationComponent implements OnInit {
     const i = 0;
     const  current = new Date();
     this.portList.map(async (port, i) => {
-      let dateAndTime = (port?.etaActual).split(" ");
-      let date = dateAndTime[0];
-      let time = dateAndTime[1];
-      let newdate = date.split("-").reverse().join("-");
-      let formatedDate = new Date(newdate + ' ' + time);
-      let d1 = current.getTime();
-      let d2 = formatedDate.getTime();
+      const dateAndTime = (port?.etaActual).split(" ");
+      const date = dateAndTime[0];
+      const time = dateAndTime[1];
+      const newdate = date.split("-").reverse().join("-");
+      const formatedDate = new Date(newdate + ' ' + time);
+      const d1 = current.getTime();
+      const d2 = formatedDate.getTime();
 
       if (port.portOrder !== i + 1) {
         if (d1 > d2) {

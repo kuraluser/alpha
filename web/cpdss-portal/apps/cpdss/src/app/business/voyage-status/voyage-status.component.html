@@ -5,19 +5,36 @@
 
                 <cpdss-portal-vessel-info *ngIf="vesselInfo" [vesselDetails]="vesselInfo"></cpdss-portal-vessel-info>
             </div>
+            <div class=""  *ngIf="vesselInfo && voyageInfo">
+                <label for="">{{'VOYAGE_STATUS_ACTIVE_VOYAGE'| translate }}</label>
+                <p-dropdown styleClass="dropdown-w-100" [options]="voyageInfo"  optionLabel="voyageNo" [(ngModel)]="selectedVoyage"
+               ></p-dropdown>
+            </div> 
             <div class="col">
                 <a class="btn btn-link icon-btn plus-icon-rounded" (click)="showDialog()" 
                     id="show-popup">{{'NEW_VOYAGE_BUTTON_VOYAGE_STATUS' | translate}}</a>
                 <a class="" (click)="showEditPortRotation()" id="show-edit-port-rotation-popup">{{'EDIT_PORT_ROTATION' |
                     translate}}</a>
             </div>
+            <div class="pr-15" >
+                {{'SHIP_LANDING_VOYAGE_DISTANCE' | translate}}
+            </div>
+            <div class="pr-15" >
+                 {{voyageDistance}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <cpdss-portal-port-rotation-ribbon [vesselDetails]="vesselInfo" *ngIf="vesselInfo && selectedVoyage"  [voyageDetails]="selectedVoyage" ></cpdss-portal-port-rotation-ribbon>
+            </div>
+           
         </div>
         <cpdss-portal-new-voyage-popup [vesselDetails]="vesselInfo" *ngIf="display && vesselInfo"
             (displayPopUp)="displayPopUpTab($event)">
         </cpdss-portal-new-voyage-popup>
 
-        <cpdss-portal-edit-port-rotation  *ngIf="displayEditPortPopup && vesselInfo && voyageInfo"
-            (displayPopUp)="displayEditPortRotationPopUpTab($event)" [vesselDetails]="vesselInfo"  [voyageDetails]="voyageInfo">
+        <cpdss-portal-edit-port-rotation  *ngIf="displayEditPortPopup && vesselInfo && selectedVoyage"
+            (displayPopUp)="displayEditPortRotationPopUpTab($event)" [vesselDetails]="vesselInfo"  [voyageDetails]="selectedVoyage">
         </cpdss-portal-edit-port-rotation>
     </div>
 </div>

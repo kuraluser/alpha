@@ -8,7 +8,7 @@ import { ILoadingPort, ILoadingPortValueObject, ILoadingPopupData } from '../../
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
 import { ConfirmationAlertService } from '../../../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { first } from 'rxjs/operators';
-import { IPort } from '../../../../../shared/models/common.model';
+import { IPort } from '../../../../core/models/common.model';
 
 /**
  * Component class for loading ports popup

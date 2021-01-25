@@ -7,9 +7,8 @@ import { IPortOBQListData, IPortOBQTankDetailValueObject } from '../../models/ca
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { CommingleApiService } from '../../services/commingle-api.service';
-import { ITank } from '../../../core/models/common.model';
+import { ITank, IPort } from '../../../core/models/common.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { IPort } from '../../../../shared/models/common.model';
 
 /**
  * Component for OBQ tab 

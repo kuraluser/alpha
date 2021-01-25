@@ -11,15 +11,18 @@ import { VesselInfoModule } from '../core/components/vessel-info/vessel-info.mod
 import { EditPortRotationComponent } from './edit-port-rotation/edit-port-rotation.component';
 import { CalendarModule } from 'primeng/calendar';
 import { ValidationErrorModule } from '../../shared/components/validation-error/validation-error.module';
+import { PortRotationRibbonComponent } from './port-rotation-ribbon/port-rotation-ribbon.component';
+import { CarouselModule } from 'primeng/carousel';
 import { OrderListModule } from 'primeng/orderlist';
 import { EditPortRotationApiService } from './services/edit-port-rotation-api.service';
+import { DropdownModule } from 'primeng/dropdown';
 
 /**
  * Module for new voyage-status
  */
 
 @NgModule({
-  declarations: [VoyageStatusComponent, NewVoyagePopupComponent, EditPortRotationComponent],
+  declarations: [VoyageStatusComponent, NewVoyagePopupComponent, EditPortRotationComponent, PortRotationRibbonComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -30,7 +33,9 @@ import { EditPortRotationApiService } from './services/edit-port-rotation-api.se
     VesselInfoModule,
     VoyageStatusRoutingModule,
     CalendarModule,
-    OrderListModule
+    CarouselModule,
+    OrderListModule,
+    DropdownModule
   ],
   providers: [
     VoyageApiService,

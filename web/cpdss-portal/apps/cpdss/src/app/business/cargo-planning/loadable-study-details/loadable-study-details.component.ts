@@ -4,7 +4,7 @@ import { ICargo, LOADABLE_STUDY_DETAILS_TABS } from '../models/cargo-planning.mo
 import { LoadableStudyDetailsTransformationService } from '../services/loadable-study-details-transformation.service';
 import { LoadableStudyDetailsApiService } from '../services/loadable-study-details-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Voyage } from '../../core/models/common.model';
+import { Voyage, IPort } from '../../core/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
 import { IDischargingPortIds, LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
@@ -15,10 +15,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
-import { IPermissionContext, IPort, PERMISSION_ACTION } from '../../../shared/models/common.model';
+import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/common.model';
 import { LoadableQuantityModel } from '../models/loadable-quantity.model';
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
+
 
 /**
  * Component class for loadable study details component

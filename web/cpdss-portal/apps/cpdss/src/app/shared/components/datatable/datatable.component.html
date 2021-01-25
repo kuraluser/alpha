@@ -269,7 +269,7 @@
                                         <p-calendar appendTo="body" [showTime]="true" [showButtonBar]="true"
                                             [readonlyInput]="true"
                                             (onClose)="onDatePanelClosed($event,rowIndex, col.field,rowData)"
-                                            [formControlName]= "col.field"
+                                            [formControlName]="col.field"
                                             [placeholder]="col.fieldPlaceholder| translate"
                                             inputId="{{col.field+'_'+rowIndex + 'input'}}"
                                             id="{{col.field+'_'+rowIndex}}" [minDate]="col.minDate"

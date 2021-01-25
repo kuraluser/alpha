@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { EditPortRotationComponent } from './edit-port-rotation.component';
+import { PortRotationRibbonComponent } from './port-rotation-ribbon.component';
 
-describe('EditPortRotationComponent', () => {
-  let component: EditPortRotationComponent;
-  let fixture: ComponentFixture<EditPortRotationComponent>;
+describe('PortRotationRibbonComponent', () => {
+  let component: PortRotationRibbonComponent;
+  let fixture: ComponentFixture<PortRotationRibbonComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ EditPortRotationComponent ]
+      declarations: [ PortRotationRibbonComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EditPortRotationComponent);
+    fixture = TestBed.createComponent(PortRotationRibbonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

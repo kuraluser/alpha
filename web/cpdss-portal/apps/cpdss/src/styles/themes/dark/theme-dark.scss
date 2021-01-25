@@ -1115,3 +1115,23 @@ a{
 .p-datatable .p-datatable-scrollable-header{
   border-bottom: 1px solid $table-border;
 }
+
+.card-border{
+  border-top: 2px dashed $card-border;
+}
+.carousel-card{
+  &.active{
+    background: $border-color;
+    color: $text-secondary;
+  }
+}
+.distance-port{
+  background: url($images-theme + 'carousel-card-arrow.png') no-repeat;
+  color: $card-border;
+}
+.distance-port:after{
+  border-top:1px solid $card-border;
+}
+.ship-location{
+  background: url($images-theme + 'ship-location.png') no-repeat;
+}

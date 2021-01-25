@@ -12,7 +12,7 @@ import { IPermission } from '../../../../shared/models/user-profile.model';
 import { portDateRangeValidator } from '../../directives/validator/port-daterange-validator.directive';
 import { portDateCompareValidator } from '../../directives/validator/port-date-compare-validator.directive';
 import { portDuplicationValidator } from '../../directives/validator/port-duplication-validator.directive';
-import { IPortList, IPortsDetailsResponse } from '../../../../shared/models/common.model';
+import { IPortList, IPortsDetailsResponse } from '../../../core/models/common.model';
 import { portEtaEtdValidator } from '../../directives/validator/port-eta-etd-validator.directive'
 
 

@@ -9,7 +9,7 @@ import { numberValidator } from '../../directives/validator/number-validator.dir
 import { groupTotalValidator } from '../../directives/validator/group-total.directive';
 import { maximumVolumeValidator } from '../../directives/validator/maximum-volumn.directive';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { IPort } from '../../../../shared/models/common.model';
+import { IPort } from '../../../core/models/common.model';
 import { Observable, of } from 'rxjs';
 
 /**

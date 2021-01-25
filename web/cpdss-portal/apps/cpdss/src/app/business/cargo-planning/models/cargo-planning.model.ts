@@ -1,7 +1,8 @@
 import { SelectItem } from 'primeng/api';
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
-import { CPDSSDB, IOperations, IPort, IPortList, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
+import { CPDSSDB, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
 import { ITank } from '../../core/models/common.model';
+import {  IPort, IPortList } from '../../core/models/common.model';
 
 /**
  * Interface for cargo nomination value object
@@ -206,6 +207,30 @@ export interface IPortAllDropdownData {
     portList: IPort[];
     operationList: IOperations[];
     operationListComplete: IOperations[];
+}
+
+/**
+ * Interface for Operations
+ *
+ * @export
+ * @interface IOperations
+ */
+export interface IOperations {
+    id: number;
+    operationName: string;
+}
+
+/**
+ * Interface for Ports api response
+ *
+ * @export
+ * @interface IPortsDetailsResponse
+ */
+export interface IPortsDetailsResponse {
+    responseStatus: IResponseStatus;
+    portList: IPortList[];
+    operations: IOperations[];
+    portId?: number;
 }
 
 /**

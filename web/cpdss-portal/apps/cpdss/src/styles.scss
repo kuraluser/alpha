@@ -768,6 +768,7 @@ tr{
   padding: 2px 5px!important;
   height: auto!important;
   min-width: 20px!important;
+  font-size: 10px;
 }
 
 .grid-dropdown-icon .p-splitbutton-defaultbutton{
@@ -1701,4 +1702,21 @@ th .p-calendar .p-inputtext{
 
 .cargo-nomination-table .p-datatable-tbody tr td.color > div{
   min-width: 40px;
+}
+.carousel-card{
+  .p-calendar .p-inputtext{
+    height: 14px;
+  }
+  .form-control{
+    height: 14px;
+  }
+  .error-icon{
+    position: absolute;
+    right: 0;
+    top:1px;
+  }
+
+}
+.p-carousel .p-carousel-indicators{
+  display: none;
 }

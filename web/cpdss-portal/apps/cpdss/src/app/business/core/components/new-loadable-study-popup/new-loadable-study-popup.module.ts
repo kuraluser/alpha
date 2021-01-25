@@ -7,7 +7,7 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { TranslateModule } from '@ngx-translate/core';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
-import { NumberDirectiveModule } from 'apps/cpdss/src/app/shared/directives/number-directive/number-directive.module';
+import { NumberDirectiveModule } from '../../../../shared/directives/number-directive/number-directive.module';
 
 /**
  *  this module will load all the dependencies of new-loadable-study-popup component

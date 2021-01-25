@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { IPort, IPortsDetailsResponse, IPortsResponse } from '../../../shared/models/common.model';
+import { IPort, IPortList, IPortsDetailsResponse, IPortsResponse } from '../../core/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { IEditPortRotationModel, IPortResponseModel } from '../models/edit-port-rotation.model';
+import { IEditPortRotation, IEditPortRotationModel, IPortResponseModel } from '../models/edit-port-rotation.model';
 
 /**
  * Service for edit port rotation
@@ -42,5 +42,43 @@ export class EditPortRotationApiService {
 */
   getPortsDetails(vesselId: number, voyageId: number, loadableStudyId: number): Observable<IPortsDetailsResponse> {
     return this.commonApiService.get<IPortsDetailsResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports`);
+  }
+
+  /**
+   * Delete Port
+   */
+  deletePort(port: IPortList, vesselId, voyageId: number, loadableStudyId: number): Observable<IPortResponseModel>{
+    return this.commonApiService.delete< IPortResponseModel>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports/${port.id}`);
+  }
+
+  /**
+   * Save port rotation
+   */
+  savePortRotationRibbon(vesselId: number, voyageId: number, loadableStudyId: number, ports: IEditPortRotation): Observable<IPortResponseModel>{
+    return this.commonApiService.post<IEditPortRotation, IPortResponseModel>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports/${ports.id}`, ports);
+  }
+
+ /**
+  * Set validation Error to form control
+  */
+  setValidationErrorMessageForPortRotationRibbon() {
+    return {
+
+      eta: {
+        'required': 'PORT_ROTATION_RIBBON_ETA_REQUIRED',
+      },
+      etd: {
+        'required': 'PORT_ROTATION_RIBBON_ETD_REQUIRED',
+      },
+      etaTime: {
+        'required': 'PORT_ROTATION_RIBBON_TIME_REQUIRED',
+      },
+      etdTime: {
+        'required': 'PORT_ROTATION_RIBBON_TIME_REQUIRED',
+      },
+      distance: {
+        'required': 'PORT_ROTATION_RIBBON_DISTANCE_REQUIRED',
+      }
+    }
   }
 }
