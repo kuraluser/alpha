@@ -120,10 +120,10 @@ export class LoadableStudyDetailsTransformationService {
           _cargoNomination.cargoId = cargoNomination[key].value?.id;
         } else if (key === 'segregation') {
           _cargoNomination.segregationId = cargoNomination[key].value?.id;
-        } else if (key === 'loadinPorts') {
-          _cargoNomination.segregationId = cargoNomination[key].value?.map(port => port.value);
+        } else if (key === 'loadingPorts') {
+          _cargoNomination.loadingPorts = cargoNomination[key]?.value;
         } else {
-          _cargoNomination[key] = cargoNomination[key]?.value ?? cargoNomination[key];
+          _cargoNomination[key] = cargoNomination[key]?.hasOwnProperty('_isEditMode') ? cargoNomination[key]?.value : cargoNomination[key];
         }
       }
     }

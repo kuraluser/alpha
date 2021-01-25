@@ -39,10 +39,8 @@ export class LoadableStudyDetailsComponent implements OnInit {
   }
   set selectedLoadableStudy(selectedLoadableStudy: LoadableStudy) {
     this._selectedLoadableStudy = selectedLoadableStudy;
-    this.loadableStudyId = selectedLoadableStudy?.id;
-    if (selectedLoadableStudy) {
-      this.getLoadableStudyDetails(this.vesselId, this.voyageId, this.loadableStudyId);
-    }
+    this.loadableStudyId = selectedLoadableStudy ? selectedLoadableStudy?.id : this.loadableStudies[0].id;
+    this.getLoadableStudyDetails(this.vesselId, this.voyageId, selectedLoadableStudy?.id);
   }
 
   private _selectedLoadableStudy: LoadableStudy;
@@ -199,7 +197,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
   async getLoadableStudyDetails(vesselId: number, voyageId: number, loadableStudyId: number) {
     const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR']).toPromise();
     this.ngxSpinnerService.show();
-    this.selectedDischargeCargo = { id: this.selectedLoadableStudy.dischargingCargoId }
+    this.selectedDischargeCargo = { id: this.selectedLoadableStudy?.dischargingCargoId }
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
     !this.dischargingPorts ? this.dischargingPorts = [] : '';
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
@@ -465,12 +463,12 @@ export class LoadableStudyDetailsComponent implements OnInit {
     this.updateDischargeData(sucessKeys)
   }
 
-/**
- * Method to save discharge data for loadable study
- *
- * @param {string[]} sucessKeys
- * @memberof LoadableStudyDetailsComponent
- */
+  /**
+   * Method to save discharge data for loadable study
+   *
+   * @param {string[]} sucessKeys
+   * @memberof LoadableStudyDetailsComponent
+   */
   async updateDischargeData(sucessKeys: string[]) {
     this.ngxSpinnerService.show();
     this.selectedLoadableStudy.dischargingPortIds = this.dischargingPorts?.map(port => port.id);
