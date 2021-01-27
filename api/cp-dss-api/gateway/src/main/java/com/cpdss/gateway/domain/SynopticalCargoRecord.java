@@ -14,4 +14,6 @@ public class SynopticalCargoRecord {
   private BigDecimal actualWeight;
 
   private BigDecimal plannedWeight;
+
+  private BigDecimal capacity;
 }

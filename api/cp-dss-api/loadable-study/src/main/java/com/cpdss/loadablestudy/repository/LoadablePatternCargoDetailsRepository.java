@@ -10,4 +10,8 @@ public interface LoadablePatternCargoDetailsRepository
 
   public List<LoadablePatternCargoDetails> findByLoadablePatternIdAndIsActive(
       Long loadablePatternId, boolean isActive);
+
+  public List<LoadablePatternCargoDetails>
+      findByLoadablePatternIdAndPortIdAndOperationTypeAndIsActive(
+          Long loadablePatternId, Long portId, String operationType, boolean isActive);
 }

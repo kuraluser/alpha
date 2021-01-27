@@ -6,9 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class ScreenResponse {
+public class UserResponse {
   private CommonSuccessResponse responseStatus;
-  private List<ScreenData> screens;
-
-  private Role role;
+  private List<User> users;
 }

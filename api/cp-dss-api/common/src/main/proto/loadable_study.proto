@@ -392,6 +392,9 @@ message LoadableStudyDetail{
 	repeated int64 dischargingPortIds = 18;
 	int64 dischargingCargoId=19;
 	int64 createdFromId = 20;
+	repeated int64 deletedAttachments = 21;
+	
+	
 }
 
 message LoadableStudyReply{
@@ -729,6 +732,7 @@ message SynopticalCargoRecord{
 	string plannedWeight = 3;
 	string actualWeight = 4;
 	int64 obqId = 5;
+	string capacity = 6;
 }
 
 message SynopticalOhqRecord{
