@@ -555,7 +555,6 @@
 	"Max_AIR_TEMP_MAX": "Max air tem. should be below 99",
 	"Max_WATER_TEMP_MAX": "Max water tem. should be below 999",
 	"COMMINGLE_POPUP_CARGO_MAX_LIMIT": "More than 3 commingle cargo cannot be added.",
-	"COMMINGLE_POPUP_PREFERRED_TANK_MAX_LIMIT": "Cannot select more than 5 preferred tanks.",
 	"USER": "USER",
 	"USER_PRIVILEGES": "User Privileges",
 	"SELECT_ALL": "Select All",
@@ -565,5 +564,7 @@
 	"USER_ROLE_SHORE_BUTTON_LABEL": "Shore",
 	"USER_ROLE_SHIP_BUTTON_LABEL": "Ship",
 	"ROLE_MAPPING": "Role Mapping",
-	"ROLE_MAPPING_HEADING": "Pages"
+	"ROLE_MAPPING_HEADING": "Pages",
+	"COMMINGLE_POPUP_PREFERRED_TANK_MAX_LIMIT": "Cannot select more than 5 preferred tanks.",
+	"EDIT_PORT_ROTATION_VALIDATION_MESSAGE": "The port you are changing is already visited. Please recheck."
 }

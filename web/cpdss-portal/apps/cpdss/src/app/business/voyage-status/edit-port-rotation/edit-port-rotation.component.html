@@ -2,6 +2,7 @@
     styleClass="edit-port-rotation" [closable]="false" [draggable]="false" [modal]="true">
     <div class="relative">
         <div class="port-rotation-border"></div>
+        <div class="text-danger" *ngIf="isPortVisited">{{'EDIT_PORT_ROTATION_VALIDATION_MESSAGE' | translate }}</div>
     <p-orderList [value]="portList" dragdrop="true" [(selection)]="selectedPorts"  
     (onReorder)="portOrderChange($event)">
         <ng-template let-port let-i="index" pTemplate="item">

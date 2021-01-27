@@ -33,6 +33,7 @@ export class PortRotationRibbonComponent implements OnInit {
   minDate = new Date();
   isCurrentPortSelected = false;
   errorMesages: any;
+  isSelected = false;
   responsiveOptions: { breakpoint: string; numVisible: number; numScroll: number; }[];
 
 
@@ -98,6 +99,7 @@ export class PortRotationRibbonComponent implements OnInit {
       portArrival.isTimeEditable = false;
       portArrival.isEtdEditable = false;
       portArrival.currentPort = false;
+      portArrival.isSelected = false;
 
       const portDeparture = { ...portData[i] };
       portDeparture.isFutureDate = false;
@@ -107,6 +109,7 @@ export class PortRotationRibbonComponent implements OnInit {
       portDeparture.isEtdEditable = false;
       portDeparture.isDistanceEditable = false;
       portDeparture.currentPort = false;
+      portArrival.isSelected = false;
 
       this.portList.push(portArrival);
       this.portList.push(portDeparture);
@@ -125,30 +128,33 @@ export class PortRotationRibbonComponent implements OnInit {
   onClickArrival(port: IEditPortRotation) {
     this.portList.map(ports => {
       ports.isFutureDate = false;
+      ports.isSelected = false;
     });
-    if (port?.etaActual) {
+
+    port.isSelected = true;
+    if (port?.eta) {
       const current = new Date();
-      const dateAndTime = (port?.etaActual)?.split(" ");
+      const dateAndTime = (port?.eta)?.split(" ");
       const date = dateAndTime[0];
       const time = dateAndTime[1];
       const newdate = date.split("-").reverse().join("-");
       const date2 = new Date(newdate + ' ' + time);
       const d1 = current.getTime();
       const d2 = date2.getTime();
-      if (d1 < d2) {
-        port.isFutureDate = true;
+      if (d1 > d2 || port?.etaActual) {
+        port.isFutureDate = false;
       }
       else {
-        port.isFutureDate = false;
+        port.isFutureDate = true;
       }
       this.updateForm(port);
     }
   }
-/**
- * Enable editing
- * @param port 
- * @param field 
- */
+  /**
+   * Enable editing
+   * @param port 
+   * @param field 
+   */
   editPort(port: IEditPortRotation, field: string) {
     if (port.isFutureDate === true) {
       if (field === 'eta') {
@@ -167,9 +173,9 @@ export class PortRotationRibbonComponent implements OnInit {
     }
   }
 
-   /**
-   * Method to get current position of the ship
-   */
+  /**
+  * Method to get current position of the ship
+  */
   currentPosition() {
     this.portList?.map(port => {
       if (!this.isCurrentPortSelected) {
@@ -228,8 +234,12 @@ export class PortRotationRibbonComponent implements OnInit {
       port: this.fb.control(newPortList?.name, [Validators.required]),
       eta: this.fb.control(newPortList?.eta?.split(" ")[0], [Validators.required]),
       etaTime: this.fb.control(newPortList?.eta?.split(" ")[1], [Validators.required]),
+      etaActual: this.fb.control(newPortList?.etaActual?.split(" ")[0], [Validators.required]),
+      etaActualTime: this.fb.control(newPortList?.etaActual?.split(" ")[1], [Validators.required]),
       etd: this.fb.control(newPortList?.etd?.split(" ")[0], [Validators.required]),
       etdTime: this.fb.control(newPortList?.etd?.split(" ")[1], [Validators.required]),
+      etdActual: this.fb.control(newPortList?.etdActual?.split(" ")[0], [Validators.required]),
+      etdActualTime: this.fb.control(newPortList?.etdActual?.split(" ")[1], [Validators.required]),
       distance: this.fb.control(newPortList?.distanceBetweenPorts ? newPortList?.distanceBetweenPorts : 0, [Validators.required])
 
     });

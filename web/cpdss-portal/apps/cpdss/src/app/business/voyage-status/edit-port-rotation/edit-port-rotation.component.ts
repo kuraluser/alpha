@@ -34,6 +34,7 @@ export class EditPortRotationComponent implements OnInit {
   portListOriginal: IPortList[];
   isFutureDate = true;
   voyageName: string;
+  isPortVisited = false;
 
   constructor(private ngxSpinnerService: NgxSpinnerService,
     private editPortRotationApiService: EditPortRotationApiService,
@@ -92,7 +93,7 @@ export class EditPortRotationComponent implements OnInit {
     const i = 0;
     const  current = new Date();
     this.portList.map(async (port, i) => {
-      const dateAndTime = (port?.etaActual).split(" ");
+      const dateAndTime = (port?.eta).split(" ");
       const date = dateAndTime[0];
       const time = dateAndTime[1];
       const newdate = date.split("-").reverse().join("-");
@@ -103,7 +104,8 @@ export class EditPortRotationComponent implements OnInit {
       if (port.portOrder !== i + 1) {
         if (d1 > d2) {
           this.isFutureDate = false;
-          this.portList = JSON.parse(JSON.stringify(this.portListOriginal));
+          this.isPortVisited = true;
+          this.portList = JSON.parse(JSON.stringify(this.portListOriginal));        
           return;
         }
         else {
@@ -114,6 +116,7 @@ export class EditPortRotationComponent implements OnInit {
               }
               ports.portOrder = i + 1;
               i++;
+              this.isPortVisited = false;
               return ports
             });
             this.portListOriginal = JSON.parse(JSON.stringify(this.portList));

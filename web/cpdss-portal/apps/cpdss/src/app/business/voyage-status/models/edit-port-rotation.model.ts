@@ -50,4 +50,5 @@ export interface IEditPortRotation{
     isDistanceEditable?: boolean;
     currentPort?: boolean;
     isEditable?: boolean;
+    isSelected?: boolean;
 }
