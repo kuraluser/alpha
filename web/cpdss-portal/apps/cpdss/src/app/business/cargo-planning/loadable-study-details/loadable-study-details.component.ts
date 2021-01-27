@@ -101,9 +101,9 @@ export class LoadableStudyDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadableQuantityNew = '0';
     this.initSubsciptions();
     this.activatedRoute.paramMap.subscribe(params => {
+      this.loadableQuantityNew = '0';
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));
@@ -182,8 +182,13 @@ export class LoadableStudyDetailsComponent implements OnInit {
     this.ports = await this.getPorts();
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
-    this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
-    sessionStorage.getItem('loadableStudyInfo') ?  (this.displayLoadableQuntity = true , sessionStorage.removeItem('loadableStudyInfo')) : '';
+    if (this.loadableStudies.length) {
+      this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
+      if (sessionStorage.getItem('loadableStudyInfo')) {
+        this.displayLoadableQuntity = true;
+        sessionStorage.removeItem('loadableStudyInfo');
+      }
+    }
     this.ngxSpinnerService.hide();
   }
 
@@ -270,8 +275,8 @@ export class LoadableStudyDetailsComponent implements OnInit {
    */
   async onDischargePortChange(event) {
     let isPortSelected;
-    this.dischargingPorts.map((dischargingPort,index) => { if(dischargingPort.id === event.itemValue.id) { isPortSelected = index }});
-    isPortSelected ? (this.dischargingPorts.splice(isPortSelected,1) , this.updatingDischargingPort()) : this.dischargingPorts.length < 5 ? (this.dischargingPorts.push(event.itemValue), this.updatingDischargingPort()) : '';
+    this.dischargingPorts.map((dischargingPort, index) => { if (dischargingPort.id === event.itemValue.id) { isPortSelected = index } });
+    isPortSelected ? (this.dischargingPorts.splice(isPortSelected, 1), this.updatingDischargingPort()) : this.dischargingPorts.length < 5 ? (this.dischargingPorts.push(event.itemValue), this.updatingDischargingPort()) : '';
   }
 
   /**
