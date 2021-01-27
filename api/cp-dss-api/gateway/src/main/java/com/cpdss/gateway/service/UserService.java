@@ -6,8 +6,12 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.Permission;
+import com.cpdss.gateway.domain.PermissionResponse;
 import com.cpdss.gateway.domain.Resource;
+import com.cpdss.gateway.domain.Role;
+import com.cpdss.gateway.domain.RolePermission;
 import com.cpdss.gateway.domain.RolePermissions;
+import com.cpdss.gateway.domain.RoleResponse;
 import com.cpdss.gateway.domain.RoleScreen;
 import com.cpdss.gateway.domain.ScreenInfo;
 import com.cpdss.gateway.domain.ScreenResponse;
@@ -15,15 +19,19 @@ import com.cpdss.gateway.domain.User;
 import com.cpdss.gateway.domain.UserAuthorizationsResponse;
 import com.cpdss.gateway.domain.UserResponse;
 import com.cpdss.gateway.entity.RoleUserMapping;
+import com.cpdss.gateway.entity.Roles;
 import com.cpdss.gateway.entity.Screen;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.RoleScreenRepository;
+import com.cpdss.gateway.repository.RoleUserRepository;
+import com.cpdss.gateway.repository.RolesRepository;
 import com.cpdss.gateway.repository.ScreenRepository;
 import com.cpdss.gateway.repository.UsersRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -41,6 +49,8 @@ public class UserService {
   @Autowired private RoleScreenRepository roleScreenRepository;
 
   @Autowired private ScreenRepository screenRepository;
+  @Autowired private RolesRepository rolesRepository;
+  @Autowired private RoleUserRepository roleUserRepository;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -221,10 +231,12 @@ public class UserService {
 
   private RoleScreen getRoleScreen(long roleId, long screenId, long companyId) {
     Optional<com.cpdss.gateway.entity.RoleScreen> roleScreenEntity =
-        this.roleScreenRepository.findByRolesAndScreenAndCompanyXId(roleId, screenId, companyId);
+        this.roleScreenRepository.findByRolesAndScreenAndCompanyXIdAndIsActive(
+            roleId, screenId, companyId, true);
 
     RoleScreen roleScreenDto = new RoleScreen();
     if (roleScreenEntity.isPresent()) {
+      roleScreenDto.setId(roleScreenEntity.get().getId());
       roleScreenDto.setCanAdd(roleScreenEntity.get().getCanAdd());
       roleScreenDto.setCanEdit(roleScreenEntity.get().getCanEdit());
       roleScreenDto.setCanDelete(roleScreenEntity.get().getCanDelete());
@@ -250,9 +262,137 @@ public class UserService {
     }
 
     CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
-    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK));
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
     userResponse.setResponseStatus(commonSuccessResponse);
     userResponse.setUsers(userList);
     return userResponse;
+  }
+
+  @Transactional
+  public PermissionResponse savePermission(RolePermission permission, Long companyId, String first)
+      throws GenericServiceException {
+
+    PermissionResponse permissionResponse = new PermissionResponse();
+    Optional<Roles> role = this.rolesRepository.findByIdAndIsActive(permission.getRoleId(), true);
+    if (!role.isPresent()) {
+      throw new GenericServiceException(
+          "Role with given id does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    Optional<Users> user = this.usersRepository.findByIdIdAndIsActive(permission.getUserId(), true);
+    if (!user.isPresent()) {
+      throw new GenericServiceException(
+          "User with given id does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    Optional<Screen> screen =
+        this.screenRepository.findByIdIdAndIsActive(permission.getScreenId(), true);
+    if (!screen.isPresent()) {
+      throw new GenericServiceException(
+          "Screen with given id does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    Optional<RoleUserMapping> roleUserOpt =
+        this.roleUserRepository.findByUsersAndRolesAndIsActive(
+            user.get().getId(), role.get().getId(), true);
+    RoleUserMapping roleUser = null;
+    if (roleUserOpt.isEmpty()) {
+      roleUser = new RoleUserMapping();
+    } else {
+      roleUser = roleUserOpt.get();
+    }
+    roleUser.setIsActive(true);
+    roleUser.setRoles(role.get());
+    roleUser.setUsers(user.get());
+    this.roleUserRepository.save(roleUser);
+
+    Optional<com.cpdss.gateway.entity.RoleScreen> roleScreenrOpt =
+        this.roleScreenRepository.findByScreenAndRolesAndIsActive(
+            screen.get().getId(), role.get().getId(), true);
+    com.cpdss.gateway.entity.RoleScreen roleScreen = null;
+    if (roleScreenrOpt.isEmpty()) {
+      roleScreen = new com.cpdss.gateway.entity.RoleScreen();
+    } else {
+      roleScreen = roleScreenrOpt.get();
+    }
+    roleScreen.setIsActive(true);
+    roleScreen.setScreen(screen.get());
+    roleScreen.setRoles(role.get());
+    roleScreen.setCanAdd(permission.getCanAdd());
+    roleScreen.setCanDelete(permission.getCanDelete());
+    roleScreen.setCanEdit(permission.getCanEdit());
+    roleScreen.setCanView(permission.getCanView());
+
+    this.roleScreenRepository.save(roleScreen);
+
+    if (permission.getRoleName() != null) {
+      role.get().setName(permission.getRoleName());
+    }
+    if (permission.getRoleDescription() != null) {
+      role.get().setDescription(permission.getRoleDescription());
+    }
+    this.rolesRepository.save(role.get());
+
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    permissionResponse.setResponseStatus(commonSuccessResponse);
+    permissionResponse.setMessage(SUCCESS);
+    permissionResponse.setUserId(user.get().getId());
+    permissionResponse.setRoleId(role.get().getId());
+    return permissionResponse;
+  }
+
+  public RoleResponse saveRole(Role role, Long companyId, String first) {
+    RoleResponse roleResponse = new RoleResponse();
+    Optional<Roles> roleEntityOpt =
+        this.rolesRepository.findByNameAndIsActive(role.getName(), true);
+    Roles roleEntity = null;
+    if (roleEntityOpt.isEmpty()) {
+      roleEntity = new Roles();
+    } else {
+      roleEntity = roleEntityOpt.get();
+    }
+    roleEntity.setIsActive(true);
+    roleEntity.setName(role.getName());
+    roleEntity.setDescription(role.getDescription());
+    roleEntity.setCompanyXId(role.getCompanyId());
+    roleEntity = this.rolesRepository.save(roleEntity);
+
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    roleResponse.setResponseStatus(commonSuccessResponse);
+    roleResponse.setMessage(SUCCESS);
+    roleResponse.setRoleId(roleEntity.getId());
+    return roleResponse;
+  }
+
+  public RoleResponse deleteRole(Long roleId, Long companyId, String first)
+      throws GenericServiceException {
+    RoleResponse roleResponse = new RoleResponse();
+    Optional<Roles> roleEntityOpt = this.rolesRepository.findByIdAndIsActive(roleId, true);
+    Roles roleEntity = null;
+    if (!roleEntityOpt.isPresent()) {
+      throw new GenericServiceException(
+          "Role with given id does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } else {
+      roleEntity = roleEntityOpt.get();
+    }
+    roleEntity.setIsActive(false);
+    roleEntity = this.rolesRepository.save(roleEntity);
+
+    this.roleScreenRepository.deleteRoles(roleEntity.getId());
+    this.roleUserRepository.deleteRoles(roleEntity.getId());
+
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    roleResponse.setResponseStatus(commonSuccessResponse);
+    roleResponse.setMessage(SUCCESS);
+    roleResponse.setRoleId(roleEntity.getId());
+    return roleResponse;
   }
 }

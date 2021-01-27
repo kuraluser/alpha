@@ -757,6 +757,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           attachmentCollection.add(attachmentEntity);
         }
 
+        if (request.getId() != 0) {
+          Set<LoadableStudyAttachments> deletedAttachmentsList =
+              this.loadableStudyAttachmentsRepository.findByIdInAndIsActive(
+                  request.getDeletedAttachmentsList(), true);
+
+          if (deletedAttachmentsList != null && deletedAttachmentsList.size() != 0) {
+            deletedAttachmentsList.forEach(
+                attachment -> {
+                  attachment.setIsActive(false);
+                });
+          }
+          attachmentCollection.addAll(deletedAttachmentsList);
+        }
+
         entity.setAttachments(attachmentCollection);
       }
 
@@ -2150,6 +2164,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(item -> detailBuilder.setDepartureQuantity(valueOf(item)));
           Optional.ofNullable(qty.getDepartureVolume())
               .ifPresent(item -> detailBuilder.setDepartureVolume(valueOf(item)));
+          Optional.ofNullable(qty.getDensity())
+          .ifPresent(item -> detailBuilder.setDensity(valueOf(item)));
         } else {
           if (onHandQuantityList != null && !onHandQuantityList.isEmpty()) {
             Optional<OnHandQuantity> ohqQtyOpt =
@@ -2161,6 +2177,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     .findAny();
             if (ohqQtyOpt.isPresent()) {
               OnHandQuantity ohqQty = ohqQtyOpt.get();
+              detailBuilder.setId(ohqQty.getId());
+              Optional.ofNullable(ohqQty.getArrivalQuantity())
+                  .ifPresent(item -> detailBuilder.setArrivalQuantity(valueOf(item)));
+              Optional.ofNullable(ohqQty.getArrivalVolume())
+                  .ifPresent(item -> detailBuilder.setArrivalVolume(valueOf(item)));
+              Optional.ofNullable(ohqQty.getDepartureQuantity())
+                  .ifPresent(item -> detailBuilder.setDepartureQuantity(valueOf(item)));
+              Optional.ofNullable(ohqQty.getDepartureVolume())
+                  .ifPresent(item -> detailBuilder.setDepartureVolume(valueOf(item)));
               Optional.ofNullable(ohqQty.getDensity())
                   .ifPresent(item -> detailBuilder.setDensity(valueOf(item)));
             }

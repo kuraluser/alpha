@@ -404,6 +404,8 @@ public class LoadableStudyService {
       throws GenericServiceException, IOException {
     this.validateLoadableStudyFiles(files);
     Builder builder = LoadableStudyDetail.newBuilder();
+    Optional.ofNullable(request.getDeletedAttachments())
+        .ifPresent(builder::addAllDeletedAttachments);
     Optional.ofNullable(request.getName()).ifPresent(builder::setName);
     Optional.ofNullable(request.getDetail()).ifPresent(builder::setDetail);
     Optional.ofNullable(request.getCharterer()).ifPresent(builder::setCharterer);

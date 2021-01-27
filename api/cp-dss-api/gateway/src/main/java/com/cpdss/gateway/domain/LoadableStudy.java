@@ -61,4 +61,6 @@ public class LoadableStudy {
   private List<LoadableStudyAttachmentData> LoadableStudyAttachment;
 
   private Long dischargingCargoId;
+
+  private List<Long> deletedAttachments;
 }

@@ -6,8 +6,10 @@ import com.cpdss.gateway.entity.RoleScreen;
 import com.cpdss.gateway.entity.Roles;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface RoleScreenRepository extends CrudRepository<RoleScreen, Long> {
 
@@ -15,7 +17,17 @@ public interface RoleScreenRepository extends CrudRepository<RoleScreen, Long> {
       "Select new com.cpdss.gateway.domain.ScreenInfo(r.screen.id, r.screen.name, r.screen.languageKey, r.screen.isAvailableAdd, r.screen.isAvailableEdit, r.screen.isAvailableDelete, r.screen.isAvailableView) from RoleScreen r where r.roles = ?1 and r.isActive = ?2")
   List<ScreenInfo> findByRolesAndIsActive(Roles roles, Boolean isActive);
 
-  @Query("FROM RoleScreen RS WHERE RS.roles.id = ?1 and RS.screen.id = ?2 and RS.companyXId = ?3")
-  Optional<RoleScreen> findByRolesAndScreenAndCompanyXId(
-      long roleId, long screenId, long companyId);
+  @Query(
+      "FROM RoleScreen RS WHERE RS.roles.id = ?1 and RS.screen.id = ?2 and RS.companyXId = ?3 and RS.isActive =?4")
+  Optional<RoleScreen> findByRolesAndScreenAndCompanyXIdAndIsActive(
+      Long roleId, Long screenId, Long companyId, Boolean isActive);
+
+  @Query("FROM RoleScreen RS WHERE RS.screen.id = ?1 and RS.roles.id = ?2 and RS.isActive = ?3")
+  Optional<RoleScreen> findByScreenAndRolesAndIsActive(
+      Long screenId, Long roleId, Boolean isActive);
+
+  @Transactional
+  @Modifying
+  @Query("Update RoleScreen RS  set RS.isActive = false where  RS.roles.id = ?1 ")
+  public void deleteRoles(Long id);
 }

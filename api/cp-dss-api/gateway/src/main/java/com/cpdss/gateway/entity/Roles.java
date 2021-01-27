@@ -35,4 +35,13 @@ public class Roles extends EntityDoc {
 
   @OneToMany(mappedBy = "roles")
   private Collection<RoleScreen> roleScreens;
+
+  @Column(name = "is_active")
+  private Boolean isActive;
+
+  @Column(name = "description")
+  private String description;
+
+  @Column(name = "company_xid")
+  private Long companyXId;
 }
