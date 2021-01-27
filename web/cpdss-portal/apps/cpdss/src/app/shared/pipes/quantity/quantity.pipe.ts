@@ -24,7 +24,7 @@ export class QuantityPipe implements PipeTransform {
    * @returns {number}
    * @memberof QuantityPipe
    */
-  transform(value: string, unitFrom: QUANTITY_UNIT, unitTo: QUANTITY_UNIT, api: string, temperature?: string): number {
+  transform(value: string | number, unitFrom: QUANTITY_UNIT, unitTo: QUANTITY_UNIT, api: string | number, temperature?: string | number): number {
     if (!value || value === '' || !api || api === '' || !unitFrom || !unitTo) {
       return null;
     }

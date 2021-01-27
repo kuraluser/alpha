@@ -355,7 +355,8 @@ export interface IPortOHQTankDetail {
     loadableStudyId: number;
     colorCode: string;
     fuelTypeShortName: string;
-    fullCapacityCubm: string;
+    fullCapacityCubm: number;
+    fullCapacity: number;
 }
 
 /**
@@ -380,7 +381,8 @@ export interface IPortOHQTankDetailValueObject {
     quantity: number;
     volume: number;
     percentageFilled: string;
-    fullCapacityCubm: string;
+    fullCapacityCubm: number;
+    fullCapacity: number;
 }
 
 /**

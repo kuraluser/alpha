@@ -9,16 +9,15 @@ import { FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
  * @param {any} gridData
  * @returns {ValidatorFn}
  */
-export function maximumVolumeValidator(densityKey: string, fullCapacity: number): ValidatorFn {
+export function maximumVolumeValidator(densityKey: string, rowData = null): ValidatorFn {
   return (control: FormControl): ValidationErrors | null => {
     if (!control.root || !control.parent) {
       return null;
     }
     const density = Number(control.parent?.value[densityKey]) ?? 0;
     const weight = Number(control.value) ?? 0;
-    fullCapacity = Number(fullCapacity) ?? 0;
-    const maxWeight = fullCapacity * density;
+    const fullCapacity = Number(rowData?.fullCapacity) ?? 0;
 
-    return weight > maxWeight ? { max: { max: maxWeight, actual: weight } } : null;
+    return fullCapacity && weight > fullCapacity ? { max: { max: fullCapacity, actual: weight } } : null;
   }
 } 

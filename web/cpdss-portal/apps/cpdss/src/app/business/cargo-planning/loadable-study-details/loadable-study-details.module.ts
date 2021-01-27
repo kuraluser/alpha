@@ -29,7 +29,9 @@ import { OnBoardQuantityComponent } from './on-board-quantity/on-board-quantity.
 import { BunkeringLayoutModule } from '../../core/components/bunkering-layout/bunkering-layout.module';
 import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/cargo-tank-layout.module';
 import { NumberDirectiveModule } from '../../../shared/directives/number-directive/number-directive.module';
-import { UnitDropdownModule } from '../../../shared/components/unit-dropdown/unit-dropdown.module'
+import { UnitDropdownModule } from '../../../shared/components/unit-dropdown/unit-dropdown.module';
+import { QuantityPipeModule } from '../../../shared/pipes/quantity/quantity-pipe.module';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 
 /**
  * Routing Module for Loadable Study Details Screen
@@ -59,10 +61,11 @@ import { UnitDropdownModule } from '../../../shared/components/unit-dropdown/uni
     BunkeringLayoutModule,
     CargoTankLayoutModule,
     NumberDirectiveModule,
-    UnitDropdownModule
+    UnitDropdownModule,
+    QuantityPipeModule
   ],
   providers: [
-    LoadableQuantityApiService, CommingleApiService
+    LoadableQuantityApiService, CommingleApiService, QuantityPipe
   ]
 })
 export class LoadableStudyDetailsModule { }

@@ -102,7 +102,6 @@ export class DatatableComponent implements OnInit {
   @Output() filter = new EventEmitter<IDataTableFilterEvent>();
   @Output() sort = new EventEmitter<IDataTableSortEvent>();
   @Output() editRow = new EventEmitter<IDataTableEvent>();
-  @Output() selectionChange = new EventEmitter<Object>();
 
   // public fields
   readonly fieldType = DATATABLE_FIELD_TYPE;
@@ -359,7 +358,6 @@ export class DatatableComponent implements OnInit {
    */
   onRowSelect(event: IDataTableEvent) {
     this.rowSelection.emit(event);
-    this.selectionChange.emit(event?.data);
   }
 
   /**

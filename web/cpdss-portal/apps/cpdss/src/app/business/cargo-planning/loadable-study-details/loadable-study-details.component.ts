@@ -15,7 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
-import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/common.model';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { LoadableQuantityModel } from '../models/loadable-quantity.model';
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
@@ -46,6 +46,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
 
   private _selectedLoadableStudy: LoadableStudy;
 
+  quantitySelectedUnit: QUANTITY_UNIT;
   LOADABLE_STUDY_DETAILS_TABS = LOADABLE_STUDY_DETAILS_TABS;
   dischargingPorts: IPort[] = [];//TODO to be populated form loadable study details
   dischargingPortsNames: string;//TODO to be populated form loadable study details
@@ -183,7 +184,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
     if (this.loadableStudies.length) {
-      this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
+    this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
       if (sessionStorage.getItem('loadableStudyInfo')) {
         this.displayLoadableQuntity = true;
         sessionStorage.removeItem('loadableStudyInfo');
@@ -539,5 +540,15 @@ export class LoadableStudyDetailsComponent implements OnInit {
 
     }
 
+  }
+
+  /**
+   * Handler for unit change event
+   *
+   * @param {*} event
+   * @memberof LoadableStudyDetailsComponent
+   */
+  onUnitChange(event) {
+    this.quantitySelectedUnit = event?.unit;
   }
 }
