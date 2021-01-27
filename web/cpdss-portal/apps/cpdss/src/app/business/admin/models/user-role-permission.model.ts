@@ -39,7 +39,7 @@ export interface IScreenNode {
  */
 export interface IUserDetailsResponse {
     responseStatus: IResponseStatus;
-    IUserDetails: IUserDetail[]
+    users: IUserDetail[]
 }
 
 /**
@@ -53,7 +53,8 @@ export interface IUserDetail {
     rolePermissions: null,
     username: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    name?: string
 }
 
 /**

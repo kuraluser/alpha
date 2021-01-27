@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { TreeNode } from 'primeng/api';
-import { ITreeNodeData } from '../../../models/user-role-permission.model';
+import { ITreeNodeData , IUserDetail , IUserRolePermissionResponse } from '../../../models/user-role-permission.model';
 
 import { UserRolePermissionApiService } from '../../../services/user-role-permission-api.service';
 
@@ -30,6 +30,7 @@ export class RolePermissionComponent implements OnInit {
         { field: 'edit', header: 'Edit' },
     ];
     roleId: number;
+    selectedUser:IUserDetail[];
 
     // public method
     constructor(
@@ -56,20 +57,24 @@ export class RolePermissionComponent implements OnInit {
     * @memberof RolePermissionComponent
     */
     async getUserRolePermission() {
-        let data = this.getDetails();
-        data.screens.map((data, index) => {
-            let isChecked: boolean;
-            const treeStructure = this.dataTreeStructure(data);
-            const value: TreeNode = {
-                data: treeStructure,
-                expanded: false,
-                children: []
-            }
-            this.treeNode.push(value);
-            data.childs?.length ? isChecked = this.innerNodes(this.treeNode[index], data.childs) : null;
-            const selectedNodes = this.selectedNodes;
-            isChecked && treeStructure.isChecked ? (this.selectedNodes = [], selectedNodes.push(this.treeNode[index]), this.selectedNodes = [...selectedNodes]) : null
-        })
+        const userDetailsRes: IUserRolePermissionResponse = await this.userRolePermissionApiService.getUserRolePermission(this.roleId).toPromise();
+        if(userDetailsRes.responseStatus === '200') {
+            const userDetails = userDetailsRes.screens;
+            userDetails.map((data, index) => {
+                let isChecked: boolean;
+                const treeStructure = this.dataTreeStructure(data);
+                const value: TreeNode = {
+                    data: treeStructure,
+                    expanded: false,
+                    children: []
+                }
+                this.treeNode.push(value);
+                data.childs?.length ? isChecked = this.innerNodes(this.treeNode[index], data.childs) : null;
+                const selectedNodes = this.selectedNodes;
+                isChecked && treeStructure.isChecked ? (this.selectedNodes = [], selectedNodes.push(this.treeNode[index]), this.selectedNodes = [...selectedNodes]) : null
+            })
+        }
+       
     }
 
     /**
@@ -384,6 +389,14 @@ export class RolePermissionComponent implements OnInit {
                 }
             ]
         }
+    }
+
+    /**
+    * selected user details
+    * @memberof RolePermissionComponent
+    */
+    userSelected(selectedUser) {
+        this.selectedUser = selectedUser;
     }
 
 }

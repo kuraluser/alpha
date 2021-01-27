@@ -35,10 +35,9 @@ export class UserRolePermissionApiService {
 
   /**
   * 
-  * @param {number} roleId
   * Get api for get User Details
   */
- getUserDetails(roleId: number): Observable<IUserDetailsResponse> {
-  return this.commonApiService.get<IUserDetailsResponse>(`screens/role/${roleId}`);
+ getUserDetails(): Observable<IUserDetailsResponse> {
+  return this.commonApiService.get<IUserDetailsResponse>(`users`);
  }
 }

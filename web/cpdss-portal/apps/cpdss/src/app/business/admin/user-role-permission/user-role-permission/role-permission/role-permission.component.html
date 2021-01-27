@@ -2,27 +2,29 @@
 <div>
     <form>
         <div>
-            <label for="user_role_name">Name</label>
+            <label for="user_role_name">{{'USER_ROLE_NAME'| translate }}</label>
             <input type="text" id="user_role_name"/>
         </div>
         <div>
-            <label for="user_role_description">Description</label>
+            <label for="user_role_description">{{'USER_ROLE_DESCRIPTION'| translate }}</label>
             <input type="text" id="user_role_description"/>
         </div>
     </form>
 
      <div>
          <div>
-             <button type="button" id="shore">Shore</button>
+             <button type="button" id="user_role_shore">{{'USER_ROLE_SHORE_BUTTON_LABEL'| translate }}</button>
          </div>
          <div>
-            <button type="button" id="shore">Ship</button>
+            <button type="button" id="user_role_ship">{{'USER_ROLE_SHIP_BUTTON_LABEL'| translate }}</button>
         </div>
      </div>
 </div>
 
 
 <div>
+    <h4>{{'ROLE_MAPPING'| translate }}</h4>
+    <p>{{'ROLE_MAPPING_HEADING'| translate }}</p>
     <p-treeTable [value]="treeNode"  selectionMode="checkbox" [(selection)]="selectedNodes" (onNodeSelect)="nodeSelect($event,true)" (onNodeUnselect)="nodeSelect($event,false)">
         <ng-template pTemplate="body" let-rowNode  let-rowData="rowData">
             <tr>
@@ -47,3 +49,4 @@
 </div>
 
 
+<cpdss-portal-user-allocate (selectedUserDetails)="userSelected($event)"></cpdss-portal-user-allocate>
