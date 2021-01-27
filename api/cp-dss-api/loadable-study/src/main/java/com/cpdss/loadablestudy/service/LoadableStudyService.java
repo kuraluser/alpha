@@ -2165,7 +2165,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(qty.getDepartureVolume())
               .ifPresent(item -> detailBuilder.setDepartureVolume(valueOf(item)));
           Optional.ofNullable(qty.getDensity())
-          .ifPresent(item -> detailBuilder.setDensity(valueOf(item)));
+              .ifPresent(item -> detailBuilder.setDensity(valueOf(item)));
         } else {
           if (onHandQuantityList != null && !onHandQuantityList.isEmpty()) {
             Optional<OnHandQuantity> ohqQtyOpt =

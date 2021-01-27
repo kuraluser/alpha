@@ -73,6 +73,7 @@ public class UserController {
     try {
       log.info("getScreens: {}");
       Long companyId = 1L;
+
       response = userService.getScreens(companyId, roleId, CORRELATION_ID_HEADER);
 
     } catch (Exception e) {
@@ -107,26 +108,52 @@ public class UserController {
     return response;
   }
 
-	@PostMapping("/user/role/permission")
-	public PermissionResponse savePermission(@RequestBody @Valid RolePermission permission,
-			@RequestHeader HttpHeaders headers) throws CommonRestException {
-		PermissionResponse permissionResponse = new PermissionResponse();
+  @GetMapping("/roles")
+  public RoleResponse getRoles(@RequestHeader HttpHeaders headers) throws CommonRestException {
+    RoleResponse response = null;
+    try {
+      log.info("getScreens: {}");
+      Long companyId = 1L;
+      response = userService.getRoles(companyId, CORRELATION_ID_HEADER);
 
-		try {
-			log.info("save permission API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
-			Long companyId = 1L;
-			permissionResponse = userService.savePermission(permission, companyId,
-					headers.getFirst(CORRELATION_ID_HEADER));
-		} catch (GenericServiceException e) {
-			log.error("GenericServiceException in save voyage", e);
-			throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
-		} catch (Exception e) {
-			log.error("Error in save permission ", e);
-			throw new CommonRestException(CommonErrorCodes.E_GEN_INTERNAL_ERR, headers,
-					HttpStatusCode.SERVICE_UNAVAILABLE, e.getMessage(), e);
-		}
-		return permissionResponse;
-	}
+    } catch (Exception e) {
+      log.error("Error in getScreens ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return response;
+  }
+
+  @PostMapping("/user/role/permission")
+  public PermissionResponse savePermission(
+      @RequestBody @Valid RolePermission permission, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    PermissionResponse permissionResponse = new PermissionResponse();
+
+    try {
+      log.info("save permission API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
+      Long companyId = 1L;
+      permissionResponse =
+          userService.savePermission(
+              permission, companyId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in save voyage", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in save permission ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+    return permissionResponse;
+  }
 
   @PostMapping("/user/role")
   public RoleResponse saveRole(@RequestBody @Valid Role role, @RequestHeader HttpHeaders headers)
