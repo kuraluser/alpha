@@ -732,6 +732,7 @@ message SynopticalCargoRecord{
 	string plannedWeight = 3;
 	string actualWeight = 4;
 	int64 obqId = 5;
+	string capacity = 6;
 }
 
 message SynopticalOhqRecord{

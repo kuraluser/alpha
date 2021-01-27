@@ -36,7 +36,6 @@ public class Roles extends EntityDoc {
   @OneToMany(mappedBy = "roles")
   private Collection<RoleScreen> roleScreens;
 
-
   @Column(name = "is_active")
   private Boolean isActive;
 

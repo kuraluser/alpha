@@ -9,6 +9,6 @@ import lombok.Data;
 public class ScreenResponse {
   private CommonSuccessResponse responseStatus;
   private List<ScreenData> screens;
-  
+
   private Role role;
 }

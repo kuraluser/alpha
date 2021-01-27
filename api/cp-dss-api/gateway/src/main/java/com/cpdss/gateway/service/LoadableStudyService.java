@@ -180,6 +180,7 @@ public class LoadableStudyService {
   private static final Long LUBRICANT_OIL_TANK_CATEGORY_ID = 19L;
 
   @Autowired private UsersRepository usersRepository;
+
   /**
    * method for voyage save
    *
@@ -2552,6 +2553,8 @@ public class LoadableStudyService {
           isEmpty(protoRec.getPlannedWeight())
               ? BigDecimal.ZERO
               : new BigDecimal(protoRec.getPlannedWeight()));
+      rec.setCapacity(
+          isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
       list.add(rec);
     }
     synopticalRecord.setCargos(list);
@@ -2644,7 +2647,8 @@ public class LoadableStudyService {
     response.setRearBallastTanks(createGroupWiseTankList(grpcReply.getBallastRearTanksList()));
     buildLoadableStudyBallastDetails(response, grpcReply);
     buildSynopticalTableDetails(
-        response, 716L, vesselId, loadablePatternId); // ToDo change loadable study to actual one
+        response, 716L, vesselId, loadablePatternId); // ToDo change loadable study to
+    // actual one
     buildLoadablePlanComments(response, grpcReply);
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
@@ -2936,6 +2940,7 @@ public class LoadableStudyService {
       com.cpdss.gateway.domain.SynopticalTableRequest request,
       Long voyageId,
       Long loadableStudyId,
+      Long loadablePatternId,
       String correlationId)
       throws GenericServiceException, InterruptedException {
     log.info("LoadableStudyService: saveSynopticalTable, correlationId:{}", correlationId);
@@ -2954,7 +2959,8 @@ public class LoadableStudyService {
     CountDownLatch latch = new CountDownLatch(portIds.size());
     for (Long portId : portIds) {
       SynopticalTableRequest grpcRequest =
-          this.buildSynopticalTableRequest(portId, request, loadableStudyId, correlationId);
+          this.buildSynopticalTableRequest(
+              portId, request, loadableStudyId, loadablePatternId, correlationId);
       workers.add(
           new Thread(
               () -> this.saveSynopticalTable(grpcRequest, correlationId, failedRecords, latch)));
@@ -2986,8 +2992,7 @@ public class LoadableStudyService {
       CountDownLatch latch) {
     try {
       log.debug("calling grpc serice: saveSynopticalTable, correationId: {}", correlationId);
-      SynopticalTableReply grpcReply =
-          this.loadableStudyServiceBlockingStub.saveSynopticalTable(grpcRequest);
+      SynopticalTableReply grpcReply = this.saveSynopticalTable(grpcRequest);
       if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
         grpcRequest.getSynopticalRecordList().forEach(rec -> failedRecords.add(rec.getId()));
       }
@@ -2996,6 +3001,16 @@ public class LoadableStudyService {
     } finally {
       latch.countDown();
     }
+  }
+
+  /**
+   * Calling grpc service to save synoptical table
+   *
+   * @param grpcRequest
+   * @return
+   */
+  public SynopticalTableReply saveSynopticalTable(SynopticalTableRequest grpcRequest) {
+    return this.loadableStudyServiceBlockingStub.saveSynopticalTable(grpcRequest);
   }
 
   /**
@@ -3010,11 +3025,13 @@ public class LoadableStudyService {
       Long portId,
       com.cpdss.gateway.domain.SynopticalTableRequest request,
       Long loadableStudyId,
+      Long loadablePatternId,
       String correlationId)
       throws GenericServiceException {
     log.debug("building grpc request, correlationId:{}", correlationId);
     SynopticalTableRequest.Builder builder = SynopticalTableRequest.newBuilder();
     builder.setLoadableStudyId(loadableStudyId);
+    builder.setLoadablePatternId(loadablePatternId);
     List<SynopticalRecord> records =
         request.getSynopticalRecords().stream()
             .filter(rec -> rec.getPortId().equals(portId))
@@ -3029,7 +3046,9 @@ public class LoadableStudyService {
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder =
           com.cpdss.common.generated.LoadableStudy.SynopticalRecord.newBuilder();
       this.buildSynopticalRequestRecord(recordBuilder, rec);
-      this.buildSynopticalRequestLoadicatorData(recordBuilder, rec);
+      if (loadablePatternId != null && loadablePatternId > 0) {
+        this.buildSynopticalRequestLoadicatorData(recordBuilder, rec);
+      }
       this.buildSynopticalRequestCargoData(recordBuilder, rec);
       this.buildSynopticalRequestOhqData(recordBuilder, rec);
       builder.addSynopticalRecord(recordBuilder.build());
@@ -3132,8 +3151,6 @@ public class LoadableStudyService {
         .ifPresent(item -> recordBuilder.setRunningHours(valueOf(request.getRunningHours())));
     Optional.ofNullable(request.getInPortHours())
         .ifPresent(item -> recordBuilder.setInPortHours(valueOf(request.getInPortHours())));
-    Optional.ofNullable(request.getInPortHours())
-        .ifPresent(item -> recordBuilder.setInPortHours(valueOf(request.getInPortHours())));
     Optional.ofNullable(request.getTimeOfSunrise()).ifPresent(recordBuilder::setTimeOfSunrise);
     Optional.ofNullable(request.getTimeOfSunset()).ifPresent(recordBuilder::setTimeOfSunset);
 
@@ -3161,8 +3178,6 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getEtaEtdPlanned()).ifPresent(recordBuilder::setEtaEtdEstimated);
     Optional.ofNullable(request.getOthersPlanned())
         .ifPresent(item -> recordBuilder.setOthersPlanned(valueOf(item)));
-    Optional.ofNullable(request.getOthersActual())
-        .ifPresent(item -> recordBuilder.setOthersActual(valueOf(item)));
     Optional.ofNullable(request.getOthersActual())
         .ifPresent(item -> recordBuilder.setOthersActual(valueOf(item)));
     Optional.ofNullable(request.getConstantPlanned())

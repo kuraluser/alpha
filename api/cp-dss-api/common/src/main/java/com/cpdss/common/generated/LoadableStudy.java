@@ -87587,6 +87587,19 @@ public final class LoadableStudy {
      * @return The obqId.
      */
     long getObqId();
+
+    /**
+     * <code>string capacity = 6;</code>
+     *
+     * @return The capacity.
+     */
+    java.lang.String getCapacity();
+    /**
+     * <code>string capacity = 6;</code>
+     *
+     * @return The bytes for capacity.
+     */
+    com.google.protobuf.ByteString getCapacityBytes();
   }
   /** Protobuf type {@code SynopticalCargoRecord} */
   public static final class SynopticalCargoRecord extends com.google.protobuf.GeneratedMessageV3
@@ -87603,6 +87616,7 @@ public final class LoadableStudy {
       tankName_ = "";
       plannedWeight_ = "";
       actualWeight_ = "";
+      capacity_ = "";
     }
 
     @java.lang.Override
@@ -87663,6 +87677,13 @@ public final class LoadableStudy {
             case 40:
               {
                 obqId_ = input.readInt64();
+                break;
+              }
+            case 50:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                capacity_ = s;
                 break;
               }
             default:
@@ -87826,6 +87847,41 @@ public final class LoadableStudy {
       return obqId_;
     }
 
+    public static final int CAPACITY_FIELD_NUMBER = 6;
+    private volatile java.lang.Object capacity_;
+    /**
+     * <code>string capacity = 6;</code>
+     *
+     * @return The capacity.
+     */
+    public java.lang.String getCapacity() {
+      java.lang.Object ref = capacity_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        capacity_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string capacity = 6;</code>
+     *
+     * @return The bytes for capacity.
+     */
+    public com.google.protobuf.ByteString getCapacityBytes() {
+      java.lang.Object ref = capacity_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        capacity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -87855,6 +87911,9 @@ public final class LoadableStudy {
       if (obqId_ != 0L) {
         output.writeInt64(5, obqId_);
       }
+      if (!getCapacityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, capacity_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -87879,6 +87938,9 @@ public final class LoadableStudy {
       if (obqId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, obqId_);
       }
+      if (!getCapacityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, capacity_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -87900,6 +87962,7 @@ public final class LoadableStudy {
       if (!getPlannedWeight().equals(other.getPlannedWeight())) return false;
       if (!getActualWeight().equals(other.getActualWeight())) return false;
       if (getObqId() != other.getObqId()) return false;
+      if (!getCapacity().equals(other.getCapacity())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -87921,6 +87984,8 @@ public final class LoadableStudy {
       hash = (53 * hash) + getActualWeight().hashCode();
       hash = (37 * hash) + OBQID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getObqId());
+      hash = (37 * hash) + CAPACITY_FIELD_NUMBER;
+      hash = (53 * hash) + getCapacity().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -88071,6 +88136,8 @@ public final class LoadableStudy {
 
         obqId_ = 0L;
 
+        capacity_ = "";
+
         return this;
       }
 
@@ -88104,6 +88171,7 @@ public final class LoadableStudy {
         result.plannedWeight_ = plannedWeight_;
         result.actualWeight_ = actualWeight_;
         result.obqId_ = obqId_;
+        result.capacity_ = capacity_;
         onBuilt();
         return result;
       }
@@ -88175,6 +88243,10 @@ public final class LoadableStudy {
         }
         if (other.getObqId() != 0L) {
           setObqId(other.getObqId());
+        }
+        if (!other.getCapacity().isEmpty()) {
+          capacity_ = other.capacity_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -88497,6 +88569,82 @@ public final class LoadableStudy {
       public Builder clearObqId() {
 
         obqId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object capacity_ = "";
+      /**
+       * <code>string capacity = 6;</code>
+       *
+       * @return The capacity.
+       */
+      public java.lang.String getCapacity() {
+        java.lang.Object ref = capacity_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          capacity_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string capacity = 6;</code>
+       *
+       * @return The bytes for capacity.
+       */
+      public com.google.protobuf.ByteString getCapacityBytes() {
+        java.lang.Object ref = capacity_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          capacity_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string capacity = 6;</code>
+       *
+       * @param value The capacity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCapacity(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        capacity_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string capacity = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCapacity() {
+
+        capacity_ = getDefaultInstance().getCapacity();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string capacity = 6;</code>
+       *
+       * @param value The bytes for capacity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCapacityBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        capacity_ = value;
         onChanged();
         return this;
       }
@@ -97811,114 +97959,114 @@ public final class LoadableStudy {
           + "entPlanned\030! \001(\t\022\032\n\022displacementActual\030\""
           + " \001(\t\0226\n\016loadicatorData\030# \001(\0132\036.Synoptica"
           + "lTableLoadicatorData\022\026\n\016ballastPlanned\030$"
-          + " \001(\t\022\025\n\rballastActual\030% \001(\t\"u\n\025Synoptica"
-          + "lCargoRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName"
-          + "\030\002 \001(\t\022\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014actualW"
-          + "eight\030\004 \001(\t\022\r\n\005obqId\030\005 \001(\003\"\212\001\n\023Synoptica"
-          + "lOhqRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002"
-          + " \001(\t\022\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014actualWei"
-          + "ght\030\004 \001(\t\022\022\n\nfuelTypeId\030\005 \001(\003\022\020\n\010fuelTyp"
-          + "e\030\006 \001(\t\"\233\001\n\026SynopticalTableRequest\022\027\n\017lo"
-          + "adableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\016\n"
-          + "\006portId\030\003 \001(\003\022+\n\020synopticalRecord\030\004 \003(\0132"
-          + "\021.SynopticalRecord\022\031\n\021loadablePatternId\030"
-          + "\005 \001(\003\"y\n\024SynopticalTableReply\022\'\n\016respons"
-          + "eStatus\030\001 \001(\0132\017.ResponseStatus\022,\n\021synopt"
-          + "icalRecords\030\002 \003(\0132\021.SynopticalRecord\022\n\n\002"
-          + "id\030\003 \001(\003\"\255\003\n\035SynopticalTableLoadicatorDa"
-          + "ta\022\016\n\006hogSag\030\001 \001(\t\022\025\n\rfinalDraftFwd\030\002 \001("
-          + "\t\022\025\n\rfinalDraftAft\030\003 \001(\t\022\025\n\rfinalDraftMi"
-          + "d\030\004 \001(\t\022\026\n\016finalDraftTrim\030\005 \001(\t\022!\n\031calcu"
-          + "latedDraftFwdPlanned\030\006 \001(\t\022 \n\030calculated"
-          + "DraftFwdActual\030\007 \001(\t\022!\n\031calculatedDraftA"
-          + "ftPlanned\030\010 \001(\t\022 \n\030calculatedDraftAftAct"
-          + "ual\030\t \001(\t\022!\n\031calculatedDraftMidPlanned\030\n"
-          + " \001(\t\022 \n\030calculatedDraftMidActual\030\013 \001(\t\022\035"
-          + "\n\025calculatedTrimPlanned\030\014 \001(\t\022\034\n\024calcula"
-          + "tedTrimActual\030\r \001(\t\022\023\n\013blindSector\030\016 \001(\t"
-          + "\"I\n\036LoadableStudyAttachmentRequest\022\016\n\006fi"
-          + "leId\030\001 \001(\003\022\027\n\017loadableStudyId\030\002 \001(\003\"m\n\034L"
-          + "oadableStudyAttachmentReply\022\'\n\016responseS"
-          + "tatus\030\001 \001(\0132\017.ResponseStatus\022\020\n\010filePath"
-          + "\030\002 \001(\t\022\022\n\nbyteString\030\003 \001(\014\";\n\020SaveCommen"
+          + " \001(\t\022\025\n\rballastActual\030% \001(\t\"\207\001\n\025Synoptic"
+          + "alCargoRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankNam"
+          + "e\030\002 \001(\t\022\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014actual"
+          + "Weight\030\004 \001(\t\022\r\n\005obqId\030\005 \001(\003\022\020\n\010capacity\030"
+          + "\006 \001(\t\"\212\001\n\023SynopticalOhqRecord\022\016\n\006tankId\030"
+          + "\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rplannedWeight"
+          + "\030\003 \001(\t\022\024\n\014actualWeight\030\004 \001(\t\022\022\n\nfuelType"
+          + "Id\030\005 \001(\003\022\020\n\010fuelType\030\006 \001(\t\"\233\001\n\026Synoptica"
+          + "lTableRequest\022\027\n\017loadableStudyId\030\001 \001(\003\022\020"
+          + "\n\010vesselId\030\002 \001(\003\022\016\n\006portId\030\003 \001(\003\022+\n\020syno"
+          + "pticalRecord\030\004 \003(\0132\021.SynopticalRecord\022\031\n"
+          + "\021loadablePatternId\030\005 \001(\003\"y\n\024SynopticalTa"
+          + "bleReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
+          + "nseStatus\022,\n\021synopticalRecords\030\002 \003(\0132\021.S"
+          + "ynopticalRecord\022\n\n\002id\030\003 \001(\003\"\255\003\n\035Synoptic"
+          + "alTableLoadicatorData\022\016\n\006hogSag\030\001 \001(\t\022\025\n"
+          + "\rfinalDraftFwd\030\002 \001(\t\022\025\n\rfinalDraftAft\030\003 "
+          + "\001(\t\022\025\n\rfinalDraftMid\030\004 \001(\t\022\026\n\016finalDraft"
+          + "Trim\030\005 \001(\t\022!\n\031calculatedDraftFwdPlanned\030"
+          + "\006 \001(\t\022 \n\030calculatedDraftFwdActual\030\007 \001(\t\022"
+          + "!\n\031calculatedDraftAftPlanned\030\010 \001(\t\022 \n\030ca"
+          + "lculatedDraftAftActual\030\t \001(\t\022!\n\031calculat"
+          + "edDraftMidPlanned\030\n \001(\t\022 \n\030calculatedDra"
+          + "ftMidActual\030\013 \001(\t\022\035\n\025calculatedTrimPlann"
+          + "ed\030\014 \001(\t\022\034\n\024calculatedTrimActual\030\r \001(\t\022\023"
+          + "\n\013blindSector\030\016 \001(\t\"I\n\036LoadableStudyAtta"
+          + "chmentRequest\022\016\n\006fileId\030\001 \001(\003\022\027\n\017loadabl"
+          + "eStudyId\030\002 \001(\003\"m\n\034LoadableStudyAttachmen"
           + "tReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respons"
-          + "eStatus\"N\n\022SaveCommentRequest\022\031\n\021loadabl"
-          + "ePatternId\030\001 \001(\003\022\017\n\007comment\030\002 \001(\t\022\014\n\004use"
-          + "r\030\003 \001(\0032\340\026\n\024LoadableStudyService\022,\n\nSave"
-          + "Voyage\022\016.VoyageRequest\032\014.VoyageReply\"\000\0228"
-          + "\n\022GetVoyagesByVessel\022\016.VoyageRequest\032\020.V"
-          + "oyageListReply\"\000\022J\n\024SaveLoadableQuantity"
-          + "\022\030.LoadableQuantityRequest\032\026.LoadableQua"
-          + "ntityReply\"\000\022T\n$FindLoadableStudiesByVes"
-          + "selAndVoyage\022\025.LoadableStudyRequest\032\023.Lo"
-          + "adableStudyReply\"\000\022@\n\021SaveLoadableStudy\022"
-          + "\024.LoadableStudyDetail\032\023.LoadableStudyRep"
-          + "ly\"\000\022G\n\023SaveCargoNomination\022\027.CargoNomin"
-          + "ationRequest\032\025.CargoNominationReply\"\000\022J\n"
-          + "\034GetLoadableStudyPortRotation\022\024.PortRota"
-          + "tionRequest\032\022.PortRotationReply\"\000\022J\n\026Get"
-          + "CargoNominationById\022\027.CargoNominationReq"
-          + "uest\032\025.CargoNominationReply\"\000\022I\n\023GetValv"
-          + "eSegregation\022\030.ValveSegregationRequest\032\026"
-          + ".ValveSegregationReply\"\000\022J\n\023getLoadableQ"
-          + "uantity\022\026.LoadableQuantityReply\032\031.Loadab"
-          + "leQuantityResponse\"\000\022J\n\035SaveLoadableStud"
-          + "yPortRotation\022\023.PortRotationDetail\032\022.Por"
-          + "tRotationReply\"\000\022O\n!SaveLoadableStudyPor"
-          + "tRotationList\022\024.PortRotationRequest\032\022.Po"
-          + "rtRotationReply\"\000\022I\n\025DeleteCargoNominati"
-          + "on\022\027.CargoNominationRequest\032\025.CargoNomin"
-          + "ationReply\"\000\022B\n\024SaveDischargingPorts\022\024.P"
-          + "ortRotationRequest\032\022.PortRotationReply\"\000"
-          + "\022N\n GetPortRotationByLoadableStudyId\022\024.P"
-          + "ortRotationRequest\032\022.PortRotationReply\"\000"
-          + "\022C\n\023DeleteLoadableStudy\022\025.LoadableStudyR"
-          + "equest\032\023.LoadableStudyReply\"\000\022@\n\022DeleteP"
-          + "ortRotation\022\024.PortRotationRequest\032\022.Port"
-          + "RotationReply\"\000\022C\n\021GetOnHandQuantity\022\026.O"
-          + "nHandQuantityRequest\032\024.OnHandQuantityRep"
-          + "ly\"\000\022C\n\022SaveOnHandQuantity\022\025.OnHandQuant"
-          + "ityDetail\032\024.OnHandQuantityReply\"\000\022M\n\031Get"
-          + "LoadablePatternDetails\022\027.LoadablePattern"
-          + "Request\032\025.LoadablePatternReply\"\000\022G\n\032Save"
-          + "LoadablePatternDetails\022\033.LoadablePattern"
-          + "AlgoRequest\032\n.AlgoReply\"\000\022O\n\025GetPurposeO"
-          + "fCommingle\022\032.PurposeOfCommingleRequest\032\030"
-          + ".PurposeOfCommingleReply\"\000\022C\n\021GetComming"
-          + "leCargo\022\026.CommingleCargoRequest\032\024.Commin"
-          + "gleCargoReply\"\000\022D\n\022SaveCommingleCargo\022\026."
-          + "CommingleCargoRequest\032\024.CommingleCargoRe"
-          + "ply\"\000\022v\n\"GetLoadablePatternCommingleDeta"
-          + "ils\022\'.LoadablePatternCommingleDetailsReq"
-          + "uest\032%.LoadablePatternCommingleDetailsRe"
-          + "ply\"\000\0226\n\030GenerateLoadablePatterns\022\014.Algo"
-          + "Request\032\n.AlgoReply\"\000\022J\n\026getLoadablePatt"
-          + "ernList\022\027.LoadablePatternRequest\032\025.Loada"
-          + "blePatternReply\"\000\022F\n\022GetOnBoardQuantity\022"
-          + "\027.OnBoardQuantityRequest\032\025.OnBoardQuanti"
-          + "tyReply\"\000\022F\n\023SaveOnBoardQuantity\022\026.OnBoa"
-          + "rdQuantityDetail\032\025.OnBoardQuantityReply\""
-          + "\000\022E\n\033SaveAlgoLoadableStudyStatus\022\022.AlgoS"
-          + "tatusRequest\032\020.AlgoStatusReply\"\000\022G\n\023Save"
-          + "SynopticalTable\022\027.SynopticalTableRequest"
-          + "\032\025.SynopticalTableReply\"\000\022F\n\022GetSynoptic"
-          + "alTable\022\027.SynopticalTableRequest\032\025.Synop"
-          + "ticalTableReply\"\000\022M\n\031GetSynopticalDataBy"
-          + "PortId\022\027.SynopticalTableRequest\032\025.Synopt"
-          + "icalTableReply\"\000\022Q\n\035GetSynopticalPortDat"
-          + "aByPortId\022\027.SynopticalTableRequest\032\025.Syn"
-          + "opticalTableReply\"\000\022R\n\026GetLoadableStudyS"
-          + "tatus\022\033.LoadableStudyStatusRequest\032\031.Loa"
-          + "dableStudyStatusReply\"\000\022R\n\026GetLoadablePl"
-          + "anDetails\022\033.LoadablePlanDetailsRequest\032\031"
-          + ".LoadablePlanDetailsReply\"\000\0227\n\013ConfirmPl"
-          + "an\022\023.ConfirmPlanRequest\032\021.ConfirmPlanRep"
-          + "ly\"\000\022c\n\037DownloadLoadableStudyAttachment\022"
-          + "\037.LoadableStudyAttachmentRequest\032\035.Loada"
-          + "bleStudyAttachmentReply\"\000\0227\n\013SaveComment"
-          + "\022\023.SaveCommentRequest\032\021.SaveCommentReply"
-          + "\"\000B\036\n\032com.cpdss.common.generatedP\000b\006prot"
-          + "o3"
+          + "eStatus\022\020\n\010filePath\030\002 \001(\t\022\022\n\nbyteString\030"
+          + "\003 \001(\014\";\n\020SaveCommentReply\022\'\n\016responseSta"
+          + "tus\030\001 \001(\0132\017.ResponseStatus\"N\n\022SaveCommen"
+          + "tRequest\022\031\n\021loadablePatternId\030\001 \001(\003\022\017\n\007c"
+          + "omment\030\002 \001(\t\022\014\n\004user\030\003 \001(\0032\340\026\n\024LoadableS"
+          + "tudyService\022,\n\nSaveVoyage\022\016.VoyageReques"
+          + "t\032\014.VoyageReply\"\000\0228\n\022GetVoyagesByVessel\022"
+          + "\016.VoyageRequest\032\020.VoyageListReply\"\000\022J\n\024S"
+          + "aveLoadableQuantity\022\030.LoadableQuantityRe"
+          + "quest\032\026.LoadableQuantityReply\"\000\022T\n$FindL"
+          + "oadableStudiesByVesselAndVoyage\022\025.Loadab"
+          + "leStudyRequest\032\023.LoadableStudyReply\"\000\022@\n"
+          + "\021SaveLoadableStudy\022\024.LoadableStudyDetail"
+          + "\032\023.LoadableStudyReply\"\000\022G\n\023SaveCargoNomi"
+          + "nation\022\027.CargoNominationRequest\032\025.CargoN"
+          + "ominationReply\"\000\022J\n\034GetLoadableStudyPort"
+          + "Rotation\022\024.PortRotationRequest\032\022.PortRot"
+          + "ationReply\"\000\022J\n\026GetCargoNominationById\022\027"
+          + ".CargoNominationRequest\032\025.CargoNominatio"
+          + "nReply\"\000\022I\n\023GetValveSegregation\022\030.ValveS"
+          + "egregationRequest\032\026.ValveSegregationRepl"
+          + "y\"\000\022J\n\023getLoadableQuantity\022\026.LoadableQua"
+          + "ntityReply\032\031.LoadableQuantityResponse\"\000\022"
+          + "J\n\035SaveLoadableStudyPortRotation\022\023.PortR"
+          + "otationDetail\032\022.PortRotationReply\"\000\022O\n!S"
+          + "aveLoadableStudyPortRotationList\022\024.PortR"
+          + "otationRequest\032\022.PortRotationReply\"\000\022I\n\025"
+          + "DeleteCargoNomination\022\027.CargoNominationR"
+          + "equest\032\025.CargoNominationReply\"\000\022B\n\024SaveD"
+          + "ischargingPorts\022\024.PortRotationRequest\032\022."
+          + "PortRotationReply\"\000\022N\n GetPortRotationBy"
+          + "LoadableStudyId\022\024.PortRotationRequest\032\022."
+          + "PortRotationReply\"\000\022C\n\023DeleteLoadableStu"
+          + "dy\022\025.LoadableStudyRequest\032\023.LoadableStud"
+          + "yReply\"\000\022@\n\022DeletePortRotation\022\024.PortRot"
+          + "ationRequest\032\022.PortRotationReply\"\000\022C\n\021Ge"
+          + "tOnHandQuantity\022\026.OnHandQuantityRequest\032"
+          + "\024.OnHandQuantityReply\"\000\022C\n\022SaveOnHandQua"
+          + "ntity\022\025.OnHandQuantityDetail\032\024.OnHandQua"
+          + "ntityReply\"\000\022M\n\031GetLoadablePatternDetail"
+          + "s\022\027.LoadablePatternRequest\032\025.LoadablePat"
+          + "ternReply\"\000\022G\n\032SaveLoadablePatternDetail"
+          + "s\022\033.LoadablePatternAlgoRequest\032\n.AlgoRep"
+          + "ly\"\000\022O\n\025GetPurposeOfCommingle\022\032.PurposeO"
+          + "fCommingleRequest\032\030.PurposeOfCommingleRe"
+          + "ply\"\000\022C\n\021GetCommingleCargo\022\026.CommingleCa"
+          + "rgoRequest\032\024.CommingleCargoReply\"\000\022D\n\022Sa"
+          + "veCommingleCargo\022\026.CommingleCargoRequest"
+          + "\032\024.CommingleCargoReply\"\000\022v\n\"GetLoadableP"
+          + "atternCommingleDetails\022\'.LoadablePattern"
+          + "CommingleDetailsRequest\032%.LoadablePatter"
+          + "nCommingleDetailsReply\"\000\0226\n\030GenerateLoad"
+          + "ablePatterns\022\014.AlgoRequest\032\n.AlgoReply\"\000"
+          + "\022J\n\026getLoadablePatternList\022\027.LoadablePat"
+          + "ternRequest\032\025.LoadablePatternReply\"\000\022F\n\022"
+          + "GetOnBoardQuantity\022\027.OnBoardQuantityRequ"
+          + "est\032\025.OnBoardQuantityReply\"\000\022F\n\023SaveOnBo"
+          + "ardQuantity\022\026.OnBoardQuantityDetail\032\025.On"
+          + "BoardQuantityReply\"\000\022E\n\033SaveAlgoLoadable"
+          + "StudyStatus\022\022.AlgoStatusRequest\032\020.AlgoSt"
+          + "atusReply\"\000\022G\n\023SaveSynopticalTable\022\027.Syn"
+          + "opticalTableRequest\032\025.SynopticalTableRep"
+          + "ly\"\000\022F\n\022GetSynopticalTable\022\027.SynopticalT"
+          + "ableRequest\032\025.SynopticalTableReply\"\000\022M\n\031"
+          + "GetSynopticalDataByPortId\022\027.SynopticalTa"
+          + "bleRequest\032\025.SynopticalTableReply\"\000\022Q\n\035G"
+          + "etSynopticalPortDataByPortId\022\027.Synoptica"
+          + "lTableRequest\032\025.SynopticalTableReply\"\000\022R"
+          + "\n\026GetLoadableStudyStatus\022\033.LoadableStudy"
+          + "StatusRequest\032\031.LoadableStudyStatusReply"
+          + "\"\000\022R\n\026GetLoadablePlanDetails\022\033.LoadableP"
+          + "lanDetailsRequest\032\031.LoadablePlanDetailsR"
+          + "eply\"\000\0227\n\013ConfirmPlan\022\023.ConfirmPlanReque"
+          + "st\032\021.ConfirmPlanReply\"\000\022c\n\037DownloadLoada"
+          + "bleStudyAttachment\022\037.LoadableStudyAttach"
+          + "mentRequest\032\035.LoadableStudyAttachmentRep"
+          + "ly\"\000\0227\n\013SaveComment\022\023.SaveCommentRequest"
+          + "\032\021.SaveCommentReply\"\000B\036\n\032com.cpdss.commo"
+          + "n.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -98665,7 +98813,7 @@ public final class LoadableStudy {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SynopticalCargoRecord_descriptor,
             new java.lang.String[] {
-              "TankId", "TankName", "PlannedWeight", "ActualWeight", "ObqId",
+              "TankId", "TankName", "PlannedWeight", "ActualWeight", "ObqId", "Capacity",
             });
     internal_static_SynopticalOhqRecord_descriptor = getDescriptor().getMessageTypes().get(64);
     internal_static_SynopticalOhqRecord_fieldAccessorTable =

@@ -2,20 +2,17 @@
 package com.cpdss.gateway.repository;
 
 import com.cpdss.gateway.entity.Roles;
-
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.repository.CrudRepository;
 
 public interface RolesRepository extends CrudRepository<Roles, Long> {
 
-	public List<Roles> findByCompanyXIdAndIsActive(Long companyXId, Boolean isActive);
+  public List<Roles> findByCompanyXIdAndIsActive(Long companyXId, Boolean isActive);
 
-	public Roles findByIdAndCompanyXIdAndIsActive(Long id, Long companyXId, Boolean isActive);
+  public Roles findByIdAndCompanyXIdAndIsActive(Long id, Long companyXId, Boolean isActive);
 
-	Optional<Roles> findByIdAndIsActive(Long roleId, boolean isActive);
+  Optional<Roles> findByIdAndIsActive(Long roleId, boolean isActive);
 
-	Optional<Roles> findByNameAndIsActive(String name, boolean isActive);
-
+  Optional<Roles> findByNameAndIsActive(String name, boolean isActive);
 }

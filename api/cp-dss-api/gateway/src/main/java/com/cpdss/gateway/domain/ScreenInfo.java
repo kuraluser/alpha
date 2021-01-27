@@ -26,7 +26,6 @@ public class ScreenInfo {
   private boolean isEditVisible;
   private boolean isDeleteVisible;
   private boolean isViewVisible;
-  
 
   public ScreenInfo(
       Long id,
@@ -45,5 +44,4 @@ public class ScreenInfo {
     this.delete = delete;
     this.view = view;
   }
-
 }

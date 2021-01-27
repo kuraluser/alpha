@@ -1,6 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.controller;
 
+import static com.cpdss.common.util.CommonTestUtils.createDummyObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -33,6 +34,8 @@ import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationRequest;
 import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.SynopticalRecord;
+import com.cpdss.gateway.domain.SynopticalTableRequest;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
@@ -1430,5 +1433,63 @@ class LoadableStudyControllerTest {
                     1L)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
         .andExpect(status().isInternalServerError());
+  }
+
+  @ValueSource(strings = {GET_SYNOPTICAL_TABLE_CLOUD_API_URL, GET_SYNOPTICAL_TABLE_SHIP_API_URL})
+  @ParameterizedTest
+  void testSaveSynopticalTable(String url) throws Exception {
+    when(this.loadableStudyService.saveSynopticalTable(
+            any(SynopticalTableRequest.class), anyLong(), anyLong(), anyLong(), anyString()))
+        .thenReturn(new SynopticalTableResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(
+                    url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_LODABLE_STUDY_ID, 1L)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .content(this.createSynopticalSaveRequest()))
+        .andExpect(status().isOk());
+  }
+
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testSaveSynopticalTableException(Class<? extends Exception> exceptionClass)
+      throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.loadableStudyService.saveSynopticalTable(
+            any(SynopticalTableRequest.class), anyLong(), anyLong(), anyLong(), anyString()))
+        .thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(
+                    GET_SYNOPTICAL_TABLE_CLOUD_API_URL,
+                    TEST_VESSEL_ID,
+                    TEST_VOYAGE_ID,
+                    TEST_LODABLE_STUDY_ID,
+                    1L)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .content(this.createSynopticalSaveRequest()))
+        .andExpect(status().isInternalServerError());
+  }
+
+  private String createSynopticalSaveRequest()
+      throws JsonProcessingException, InstantiationException, IllegalAccessException {
+    SynopticalTableRequest request = new SynopticalTableRequest();
+    request.setSynopticalRecords(new ArrayList<>());
+    for (int i = 0; i < 4; i++) {
+      SynopticalRecord record = (SynopticalRecord) createDummyObject(SynopticalRecord.class);
+      request.getSynopticalRecords().add(record);
+    }
+    return new ObjectMapper().writeValueAsString(request);
   }
 }

@@ -1,6 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.common.util.CommonTestUtils.createDummyObject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,6 +49,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
@@ -85,6 +88,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudyStatus;
 import com.cpdss.loadablestudy.entity.OnBoardQuantity;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
+import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.entity.VoyageHistory;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
@@ -119,8 +123,6 @@ import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.google.protobuf.ByteString;
 import io.grpc.internal.testing.StreamRecorder;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -148,6 +150,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -262,6 +266,8 @@ class LoadableStudyServiceTest {
   private static final List<Long> CARGO_TANK_CATEGORIES =
       Arrays.asList(
           CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID, CARGO_VOID_TANK_CATEGORY_ID);
+  private static final String OPERATION_TYPE_ARR = "ARR";
+  private static final String OPERATION_TYPE_DEP = "DEP";
 
   @BeforeAll
   public static void beforeAll() {
@@ -274,6 +280,14 @@ class LoadableStudyServiceTest {
         .when(() -> Files.deleteIfExists(any(Path.class)))
         .thenReturn(true)
         .thenThrow(IOException.class);
+
+    TransactionStatus status = Mockito.mock(TransactionStatus.class);
+    MockedStatic<TransactionAspectSupport> mockedTransactionStatic =
+        Mockito.mockStatic(TransactionAspectSupport.class);
+    mockedTransactionStatic
+        .when(() -> TransactionAspectSupport.currentTransactionStatus())
+        .thenReturn(status);
+
     MockitoAnnotations.openMocks(LoadableStudyServiceTest.class);
   }
 
@@ -3038,7 +3052,7 @@ class LoadableStudyServiceTest {
   void testGetSynopticalTable(Long patternId)
       throws InstantiationException, IllegalAccessException {
     LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
-    this.setSynopticalGetMocks(spyService, patternId);
+    this.setSynopticalGetRequestMocks(spyService, patternId);
     SynopticalTableRequest request =
         SynopticalTableRequest.newBuilder()
             .setLoadableStudyId(ID_TEST_VALUE)
@@ -3053,9 +3067,83 @@ class LoadableStudyServiceTest {
     assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
   }
 
-  private void setSynopticalGetMocks(LoadableStudyService spyService, Long patternId)
+  @Test
+  void testGetSynopticalTableInvalidLs() throws InstantiationException, IllegalAccessException {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.empty());
+    SynopticalTableRequest request =
+        SynopticalTableRequest.newBuilder()
+            .setLoadableStudyId(ID_TEST_VALUE)
+            .setLoadablePatternId(ID_TEST_VALUE)
+            .setVesselId(ID_TEST_VALUE)
+            .build();
+    StreamRecorder<SynopticalTableReply> responseObserver = StreamRecorder.create();
+    spyService.getSynopticalTable(request, responseObserver);
+    List<SynopticalTableReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetSynopticalTableRuntimeException()
       throws InstantiationException, IllegalAccessException {
-    Voyage voyage = (Voyage) this.createDummmObject(Voyage.class);
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    when(this.loadableStudyRepository.findById(anyLong())).thenThrow(RuntimeException.class);
+    SynopticalTableRequest request =
+        SynopticalTableRequest.newBuilder()
+            .setLoadableStudyId(ID_TEST_VALUE)
+            .setLoadablePatternId(ID_TEST_VALUE)
+            .setVesselId(ID_TEST_VALUE)
+            .build();
+    StreamRecorder<SynopticalTableReply> responseObserver = StreamRecorder.create();
+    spyService.getSynopticalTable(request, responseObserver);
+    List<SynopticalTableReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {1, 2})
+  void testGetSynopticalTableInvalidPortReply(int repetition)
+      throws InstantiationException, IllegalAccessException {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    Voyage voyage = (Voyage) createDummyObject(Voyage.class);
+    when(this.loadableStudyRepository.findById(anyLong()))
+        .thenReturn(Optional.of(this.createLoadableStudyEntity(voyage)));
+    when(this.synopticalTableRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(this.createSynopticalEntities());
+    Mockito.doReturn(this.createSynopticalVesselReply().build())
+        .when(spyService)
+        .getVesselDetailForSynopticalTable(any(VesselRequest.class));
+    if (repetition == 1) {
+      Mockito.doReturn(
+              PortReply.newBuilder()
+                  .setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build())
+                  .build())
+          .when(spyService)
+          .getPortInfo(any(GetPortInfoByPortIdsRequest.class));
+    } else {
+      Mockito.doReturn(null).when(spyService).getPortInfo(any(GetPortInfoByPortIdsRequest.class));
+    }
+    SynopticalTableRequest request =
+        SynopticalTableRequest.newBuilder()
+            .setLoadableStudyId(ID_TEST_VALUE)
+            .setLoadablePatternId(ID_TEST_VALUE)
+            .setVesselId(ID_TEST_VALUE)
+            .build();
+    StreamRecorder<SynopticalTableReply> responseObserver = StreamRecorder.create();
+    spyService.getSynopticalTable(request, responseObserver);
+    List<SynopticalTableReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  private void setSynopticalGetRequestMocks(LoadableStudyService spyService, Long patternId)
+      throws InstantiationException, IllegalAccessException {
+    Voyage voyage = (Voyage) createDummyObject(Voyage.class);
     when(this.loadableStudyRepository.findById(anyLong()))
         .thenReturn(Optional.of(this.createLoadableStudyEntity(voyage)));
     when(this.synopticalTableRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
@@ -3092,7 +3180,7 @@ class LoadableStudyServiceTest {
         .thenReturn(voyage);
     Mockito.when(
             this.voyageHistoryRepository.findFirstByVoyageOrderByPortOrderDesc(any(Voyage.class)))
-        .thenReturn((VoyageHistory) this.createDummmObject(VoyageHistory.class));
+        .thenReturn((VoyageHistory) createDummyObject(VoyageHistory.class));
     Mockito.when(this.cargoHistoryRepository.findCargoHistory(anyLong(), anyLong()))
         .thenReturn(this.createCargoHistory());
     Mockito.when(
@@ -3104,7 +3192,7 @@ class LoadableStudyServiceTest {
                 anyLong(), anyBoolean()))
         .thenReturn(
             (com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData)
-                this.createDummmObject(
+                createDummyObject(
                     com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData.class));
   }
 
@@ -3116,8 +3204,8 @@ class LoadableStudyServiceTest {
               try {
                 LoadablePatternCargoDetails entity =
                     (LoadablePatternCargoDetails)
-                        createDummmObject(LoadablePatternCargoDetails.class);
-                entity.setOperationType(i % 2 == 0 ? "ARR" : "DEP");
+                        createDummyObject(LoadablePatternCargoDetails.class);
+                entity.setOperationType(i % 2 == 0 ? OPERATION_TYPE_ARR : OPERATION_TYPE_DEP);
                 list.add(entity);
               } catch (InstantiationException e) {
                 e.printStackTrace();
@@ -3155,7 +3243,7 @@ class LoadableStudyServiceTest {
         .forEach(
             i -> {
               try {
-                list.add((CargoHistory) createDummmObject(CargoHistory.class));
+                list.add((CargoHistory) createDummyObject(CargoHistory.class));
               } catch (InstantiationException e) {
                 e.printStackTrace();
               } catch (IllegalAccessException e) {
@@ -3167,7 +3255,7 @@ class LoadableStudyServiceTest {
 
   private LoadableStudy createLoadableStudyEntity(Voyage voyage)
       throws InstantiationException, IllegalAccessException {
-    LoadableStudy entity = (LoadableStudy) this.createDummmObject(LoadableStudy.class);
+    LoadableStudy entity = (LoadableStudy) createDummyObject(LoadableStudy.class);
     entity.setVoyage(voyage);
     return entity;
   }
@@ -3179,7 +3267,7 @@ class LoadableStudyServiceTest {
             i -> {
               try {
                 LoadableStudyPortRotation entity =
-                    (LoadableStudyPortRotation) createDummmObject(LoadableStudyPortRotation.class);
+                    (LoadableStudyPortRotation) createDummyObject(LoadableStudyPortRotation.class);
                 if (!hasEtd) {
                   entity.setEtd(null);
                 } else {
@@ -3197,13 +3285,17 @@ class LoadableStudyServiceTest {
 
   private List<LoadablePlanStowageBallastDetails> createBallastEntities() {
     List<LoadablePlanStowageBallastDetails> list = new ArrayList<>();
-    IntStream.of(1, 3)
+    IntStream.of(1, 4)
         .forEach(
             i -> {
               try {
-                list.add(
+
+                LoadablePlanStowageBallastDetails entity =
                     (LoadablePlanStowageBallastDetails)
-                        createDummmObject(LoadablePlanStowageBallastDetails.class));
+                        createDummyObject(LoadablePlanStowageBallastDetails.class);
+                entity.setOperationType(i % 2 == 0 ? OPERATION_TYPE_ARR : OPERATION_TYPE_DEP);
+                list.add(entity);
+
               } catch (InstantiationException e) {
                 e.printStackTrace();
               } catch (IllegalAccessException e) {
@@ -3219,7 +3311,7 @@ class LoadableStudyServiceTest {
         .forEach(
             i -> {
               try {
-                list.add((OnHandQuantity) createDummmObject(OnHandQuantity.class));
+                list.add((OnHandQuantity) createDummyObject(OnHandQuantity.class));
               } catch (InstantiationException e) {
                 e.printStackTrace();
               } catch (IllegalAccessException e) {
@@ -3235,7 +3327,7 @@ class LoadableStudyServiceTest {
         .forEach(
             i -> {
               try {
-                list.add((OnBoardQuantity) createDummmObject(OnBoardQuantity.class));
+                list.add((OnBoardQuantity) createDummyObject(OnBoardQuantity.class));
               } catch (InstantiationException e) {
                 e.printStackTrace();
               } catch (IllegalAccessException e) {
@@ -3262,11 +3354,10 @@ class LoadableStudyServiceTest {
         .forEach(
             i -> {
               try {
-                SynopticalTable entity = (SynopticalTable) createDummmObject(SynopticalTable.class);
+                SynopticalTable entity = (SynopticalTable) createDummyObject(SynopticalTable.class);
                 entity.setLoadableStudyPortRotation(
-                    (LoadableStudyPortRotation)
-                        this.createDummmObject(LoadableStudyPortRotation.class));
-                entity.setOperationType(i % 2 == 0 ? "ARR" : "DEP");
+                    (LoadableStudyPortRotation) createDummyObject(LoadableStudyPortRotation.class));
+                entity.setOperationType(i % 2 == 0 ? OPERATION_TYPE_ARR : OPERATION_TYPE_DEP);
                 list.add(entity);
               } catch (InstantiationException e) {
                 e.printStackTrace();
@@ -3277,53 +3368,292 @@ class LoadableStudyServiceTest {
     return list;
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  private Object createDummmObject(Class<?> cls)
+  @ParameterizedTest
+  @ValueSource(strings = {OPERATION_TYPE_ARR, OPERATION_TYPE_DEP})
+  void testSaveSynopticalTable(String operation)
       throws InstantiationException, IllegalAccessException {
-    Object obj = cls.newInstance();
-    for (Field field : obj.getClass().getDeclaredFields()) {
-      this.setFieldValue(field, obj);
+    this.setSynopticalPostRequestMocks(this.loadableStudyService, false, operation);
+    SynopticalTableRequest.Builder request = this.createSynopticalSaveRequest(false, operation);
+    if (OPERATION_TYPE_ARR.equals(operation)) {
+      request.setLoadablePatternId(0);
     }
-    if (obj.getClass().getSuperclass() != null && obj.getClass().getSuperclass() != Object.class) {
-      for (Field field : obj.getClass().getSuperclass().getDeclaredFields()) {
-        this.setFieldValue(field, obj);
-      }
-    }
-
-    return obj;
+    StreamRecorder<SynopticalTableReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveSynopticalTable(request.build(), responseObserver);
+    List<SynopticalTableReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  private void setFieldValue(Field field, Object obj)
-      throws IllegalArgumentException, IllegalAccessException {
-    field.setAccessible(true);
-    if (field.getType().equals(String.class)) {
-      field.set(obj, field.getName() + "-test");
-    } else if (field.getType().equals(Long.class)) {
-      field.set(obj, ID_TEST_VALUE);
-    } else if (field.getType().equals(Integer.class)) {
-      field.set(obj, 1);
-    } else if (field.getType().equals(BigDecimal.class)) {
-      field.set(obj, BigDecimal.ONE);
-    } else if (field.getType().equals(List.class)) {
-      ParameterizedType stringListType = (ParameterizedType) field.getGenericType();
-      Class<?> stringListClass = (Class<?>) stringListType.getActualTypeArguments()[0];
-      List list = new ArrayList<>();
-      if (stringListClass.getName().startsWith("java.")) {
-        IntStream.of(1, 3)
-            .forEach(
-                i -> {
-                  try {
-                    list.add(createDummmObject(stringListClass));
-                  } catch (InstantiationException e) {
-                    e.printStackTrace();
-                  } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                  }
-                });
-      }
-    } else if (field.getType().equals(LocalDateTime.class)) {
-      field.set(obj, LocalDateTime.now());
+  @ParameterizedTest
+  @ValueSource(strings = {OPERATION_TYPE_ARR, OPERATION_TYPE_DEP})
+  void testSaveSynopticalTableEmptyData(String operation)
+      throws InstantiationException, IllegalAccessException {
+    this.setSynopticalPostRequestMocks(this.loadableStudyService, true, operation);
+    SynopticalTableRequest.Builder request = this.createSynopticalSaveRequest(true, operation);
+    StreamRecorder<SynopticalTableReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveSynopticalTable(request.build(), responseObserver);
+    List<SynopticalTableReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveSynopticalTableEmptyPorts() throws InstantiationException, IllegalAccessException {
+    this.setSynopticalPostRequestMocks(this.loadableStudyService, true, OPERATION_TYPE_ARR);
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+            any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(new ArrayList<>());
+    SynopticalTableRequest.Builder request =
+        this.createSynopticalSaveRequest(true, OPERATION_TYPE_ARR);
+    StreamRecorder<SynopticalTableReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveSynopticalTable(request.build(), responseObserver);
+    List<SynopticalTableReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveSynopticalTableInvalidLoadableStudy()
+      throws InstantiationException, IllegalAccessException {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    SynopticalTableRequest request =
+        this.createSynopticalSaveRequest(false, OPERATION_TYPE_ARR).build();
+    StreamRecorder<SynopticalTableReply> responseObserver = StreamRecorder.create();
+    spyService.saveSynopticalTable(request, responseObserver);
+    List<SynopticalTableReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveSynopticalTableInvalidLoadablePattern()
+      throws InstantiationException, IllegalAccessException {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    Voyage voyage = (Voyage) createDummyObject(Voyage.class);
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(this.createLoadableStudyEntity(voyage)));
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    SynopticalTableRequest request =
+        this.createSynopticalSaveRequest(false, OPERATION_TYPE_ARR).build();
+    StreamRecorder<SynopticalTableReply> responseObserver = StreamRecorder.create();
+    spyService.saveSynopticalTable(request, responseObserver);
+    List<SynopticalTableReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveSynopticalTableInvalidEntity()
+      throws InstantiationException, IllegalAccessException {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    Voyage voyage = (Voyage) createDummyObject(Voyage.class);
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(this.createLoadableStudyEntity(voyage)));
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of((LoadablePattern) createDummyObject(LoadablePattern.class)));
+    when(this.synopticalTableRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    SynopticalTableRequest request =
+        this.createSynopticalSaveRequest(false, OPERATION_TYPE_ARR).build();
+    StreamRecorder<SynopticalTableReply> responseObserver = StreamRecorder.create();
+    spyService.saveSynopticalTable(request, responseObserver);
+    List<SynopticalTableReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveSynopticalTableRuntimeException()
+      throws InstantiationException, IllegalAccessException {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(RuntimeException.class);
+    SynopticalTableRequest request =
+        this.createSynopticalSaveRequest(false, OPERATION_TYPE_ARR).build();
+    StreamRecorder<SynopticalTableReply> responseObserver = StreamRecorder.create();
+    spyService.saveSynopticalTable(request, responseObserver);
+    List<SynopticalTableReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveSynopticalTableEmptyPortRotation()
+      throws InstantiationException, IllegalAccessException {
+    Voyage voyage = (Voyage) createDummyObject(Voyage.class);
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(this.createLoadableStudyEntity(voyage)));
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of((LoadablePattern) createDummyObject(LoadablePattern.class)));
+    SynopticalTable entity = (SynopticalTable) createDummyObject(SynopticalTable.class);
+    entity.setLoadableStudyPortRotation(null);
+    when(this.synopticalTableRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(entity));
+    when(this.synopticalTableRepository.save(any(SynopticalTable.class))).thenReturn(entity);
+    SynopticalTableRequest.Builder request =
+        this.createSynopticalSaveRequest(true, OPERATION_TYPE_ARR);
+    StreamRecorder<SynopticalTableReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveSynopticalTable(request.build(), responseObserver);
+    List<SynopticalTableReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @SuppressWarnings("unchecked")
+  private void setSynopticalPostRequestMocks(
+      LoadableStudyService spyService, boolean emptyData, String operation)
+      throws InstantiationException, IllegalAccessException {
+    Voyage voyage = (Voyage) createDummyObject(Voyage.class);
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(this.createLoadableStudyEntity(voyage)));
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of((LoadablePattern) createDummyObject(LoadablePattern.class)));
+    LoadableStudyPortRotation portRotation =
+        (LoadableStudyPortRotation) createDummyObject(LoadableStudyPortRotation.class);
+    SynopticalTable entity = (SynopticalTable) createDummyObject(SynopticalTable.class);
+    entity.setOperationType(operation);
+    entity.setLoadableStudyPortRotation(portRotation);
+    when(this.synopticalTableRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(entity));
+    when(this.synopticalTableRepository.save(any(SynopticalTable.class))).thenReturn(entity);
+    if (!emptyData) {
+      SynopticalTableLoadicatorData loadicatorEntity =
+          (SynopticalTableLoadicatorData) createDummyObject(SynopticalTableLoadicatorData.class);
+      when(this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
+              anyLong(), anyBoolean()))
+          .thenReturn(loadicatorEntity);
+      when(this.synopticalTableLoadicatorDataRepository.save(
+              any(SynopticalTableLoadicatorData.class)))
+          .thenReturn(loadicatorEntity);
+    } else {
+      when(this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
+              anyLong(), anyBoolean()))
+          .thenReturn(null);
     }
+    List<OnBoardQuantity> obqEntities = this.createObqEntities();
+    when(this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
+            any(LoadableStudy.class), anyLong(), anyBoolean()))
+        .thenReturn(obqEntities);
+    when(this.onBoardQuantityRepository.saveAll(any(List.class))).thenReturn(obqEntities);
+    List<LoadablePatternCargoDetails> cargoList = this.createLoadablePatternCargoDetails();
+    when(this.loadablePatternCargoDetailsRepository
+            .findByLoadablePatternIdAndPortIdAndOperationTypeAndIsActive(
+                anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(cargoList);
+    when(this.loadablePatternCargoDetailsRepository.saveAll(any(List.class))).thenReturn(cargoList);
+    List<OnHandQuantity> ohqEntities = this.createOhqEntities();
+    ohqEntities.get(0).setTankXId(2L);
+    when(this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
+            any(LoadableStudy.class), anyLong(), anyBoolean()))
+        .thenReturn(ohqEntities);
+    when(this.onHandQuantityRepository.saveAll(any(List.class))).thenReturn(ohqEntities);
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+            any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(Arrays.asList(ID_TEST_VALUE));
+  }
+
+  private List<LoadablePatternCargoDetails> createLoadablePatternCargoDetails()
+      throws InstantiationException, IllegalAccessException {
+    List<LoadablePatternCargoDetails> list = new ArrayList<>();
+    for (int i = 0; i < 5; i++) {
+      list.add((LoadablePatternCargoDetails) createDummyObject(LoadablePatternCargoDetails.class));
+    }
+    return list;
+  }
+
+  private SynopticalTableRequest.Builder createSynopticalSaveRequest(
+      boolean empty, String operation) {
+    String TIME_TEST_VALUE = "19:30";
+    String DATE_TEST_VALUE = "12-12-2020 10:20";
+    SynopticalTableRequest.Builder requestBuilder = SynopticalTableRequest.newBuilder();
+    requestBuilder.setLoadableStudyId(ID_TEST_VALUE);
+    requestBuilder.setLoadablePatternId(ID_TEST_VALUE);
+    for (int i = 1; i <= 2; i++) {
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder =
+          com.cpdss.common.generated.LoadableStudy.SynopticalRecord.newBuilder();
+      recordBuilder.setId(ID_TEST_VALUE);
+      recordBuilder.setPortId(Long.valueOf(i));
+      recordBuilder.setOperationType(operation);
+      recordBuilder.setDistance(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setSpeed(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setRunningHours(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setInPortHours(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setSpecificGravity(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setHwTideFrom(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setHwTideTo(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setLwTideFrom(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setLwTideTo(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setTimeOfSunrise(empty ? "" : TIME_TEST_VALUE);
+      recordBuilder.setTimeOfSunset(empty ? "" : TIME_TEST_VALUE);
+      recordBuilder.setHwTideTimeFrom(empty ? "" : TIME_TEST_VALUE);
+      recordBuilder.setHwTideTimeTo(empty ? "" : TIME_TEST_VALUE);
+      recordBuilder.setLwTideTimeFrom(empty ? "" : TIME_TEST_VALUE);
+      recordBuilder.setLwTideTimeTo(empty ? "" : TIME_TEST_VALUE);
+      recordBuilder.setEtaEtdEstimated(empty ? "" : DATE_TEST_VALUE);
+      recordBuilder.setEtaEtdActual(empty ? "" : DATE_TEST_VALUE);
+
+      recordBuilder.setOthersPlanned(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setOthersActual(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setConstantPlanned(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setConstantActual(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setTotalDwtPlanned(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setTotalDwtActual(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setDisplacementPlanned(empty ? "" : NUMERICAL_TEST_VALUE);
+      recordBuilder.setDisplacementActual(empty ? "" : NUMERICAL_TEST_VALUE);
+
+      recordBuilder.addOhq(
+          SynopticalOhqRecord.newBuilder()
+              .setFuelTypeId(ID_TEST_VALUE)
+              .setTankId(ID_TEST_VALUE)
+              .build());
+      recordBuilder.addOhq(
+          SynopticalOhqRecord.newBuilder()
+              .setFuelTypeId(2L)
+              .setTankId(2L)
+              .setPlannedWeight(empty ? "" : NUMERICAL_TEST_VALUE)
+              .setActualWeight(empty ? "" : NUMERICAL_TEST_VALUE)
+              .build());
+      recordBuilder.addOhq(
+          SynopticalOhqRecord.newBuilder()
+              .setFuelTypeId(3L)
+              .setTankId(3L)
+              .setPlannedWeight(empty ? "" : NUMERICAL_TEST_VALUE)
+              .setActualWeight(empty ? "" : NUMERICAL_TEST_VALUE)
+              .build());
+
+      recordBuilder.addCargo(SynopticalCargoRecord.newBuilder().setTankId(ID_TEST_VALUE).build());
+      recordBuilder.addCargo(SynopticalCargoRecord.newBuilder().setTankId(3L).build());
+      recordBuilder.addCargo(
+          SynopticalCargoRecord.newBuilder()
+              .setTankId(ID_TEST_VALUE)
+              .setPlannedWeight(empty ? "" : NUMERICAL_TEST_VALUE)
+              .setActualWeight(empty ? "" : NUMERICAL_TEST_VALUE)
+              .build());
+      com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData data =
+          com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.newBuilder()
+              .setHogSag(i == 1 ? "" : NUMERICAL_TEST_VALUE)
+              .setCalculatedDraftFwdActual(i == 1 ? "" : NUMERICAL_TEST_VALUE)
+              .setCalculatedDraftAftActual(i == 1 ? "" : NUMERICAL_TEST_VALUE)
+              .setCalculatedDraftMidActual(i == 1 ? "" : NUMERICAL_TEST_VALUE)
+              .setCalculatedTrimActual(i == 1 ? "" : NUMERICAL_TEST_VALUE)
+              .setBlindSector(i == 1 ? "" : NUMERICAL_TEST_VALUE)
+              .setHogSag(i == 1 ? "" : NUMERICAL_TEST_VALUE)
+              .build();
+      recordBuilder.setLoadicatorData(data);
+      recordBuilder.setBallastActual(i == 1 ? "" : NUMERICAL_TEST_VALUE);
+      requestBuilder.addSynopticalRecord(recordBuilder.build());
+    }
+    return requestBuilder;
   }
 }

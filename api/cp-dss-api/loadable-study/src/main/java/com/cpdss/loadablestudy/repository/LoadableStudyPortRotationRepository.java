@@ -6,7 +6,6 @@ import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import java.util.List;
-import java.util.Set;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +68,7 @@ public interface LoadableStudyPortRotationRepository
    */
   @Query(
       "SELECT portXId FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy = ?1 AND LSPR.isActive = ?2 ORDER BY LSPR.portOrder")
-  public Set<Long> findByLoadableStudyAndIsActive(
+  public List<Long> findByLoadableStudyAndIsActive(
       final LoadableStudy loadableStudy, final boolean isActive);
 
   @Query(

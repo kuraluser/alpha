@@ -1,6 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.service;
 
+import static com.cpdss.common.util.CommonTestUtils.createDummyObject;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -1968,5 +1969,62 @@ class LoadableStudyServiceTest {
               records.add(SynopticalCargoRecord.newBuilder().setTankId(Long.valueOf(i)).build());
             });
     return records;
+  }
+
+  @Test
+  void testSaveSynopticalTable() throws Exception {
+    com.cpdss.gateway.domain.SynopticalTableRequest request = this.createSynopticalSaveRequest();
+    LoadableStudyService spy = Mockito.spy(this.loadableStudyService);
+    Mockito.when(
+            spy.saveSynopticalTable(
+                any(com.cpdss.gateway.domain.SynopticalTableRequest.class),
+                anyLong(),
+                anyLong(),
+                anyLong(),
+                anyString()))
+        .thenCallRealMethod();
+    Mockito.when(spy.saveSynopticalTable(any(SynopticalTableRequest.class)))
+        .thenReturn(
+            SynopticalTableReply.newBuilder()
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    SynopticalTableResponse response =
+        spy.saveSynopticalTable(
+            request, ID_TEST_VALUE, ID_TEST_VALUE, ID_TEST_VALUE, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "Invalid response status"));
+  }
+
+  private com.cpdss.gateway.domain.SynopticalTableRequest createSynopticalSaveRequest()
+      throws InstantiationException, IllegalAccessException {
+    com.cpdss.gateway.domain.SynopticalTableRequest request =
+        new com.cpdss.gateway.domain.SynopticalTableRequest();
+    request.setSynopticalRecords(new ArrayList<>());
+    for (int i = 0; i < 2; i++) {
+      SynopticalRecord record = (SynopticalRecord) createDummyObject(SynopticalRecord.class);
+      record.setCargos(new ArrayList<>());
+      record
+          .getCargos()
+          .add(
+              (com.cpdss.gateway.domain.SynopticalCargoRecord)
+                  createDummyObject(com.cpdss.gateway.domain.SynopticalCargoRecord.class));
+      record.setFoList(new ArrayList<>());
+      record.setDoList(new ArrayList<>());
+      record.setFwList(new ArrayList<>());
+      record.setLubeList(new ArrayList<>());
+      com.cpdss.gateway.domain.SynopticalOhqRecord ohq =
+          (com.cpdss.gateway.domain.SynopticalOhqRecord)
+              createDummyObject(com.cpdss.gateway.domain.SynopticalOhqRecord.class);
+      record.getFoList().add(ohq);
+      record.getDoList().add(ohq);
+      record.getFwList().add(ohq);
+      record.getLubeList().add(ohq);
+      request.getSynopticalRecords().add(record);
+    }
+    return request;
   }
 }

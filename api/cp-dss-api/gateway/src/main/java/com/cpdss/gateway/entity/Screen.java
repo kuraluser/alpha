@@ -52,18 +52,16 @@ public class Screen extends EntityDoc {
 
   @Column(name = "company_xid")
   private Long companyXId;
-  
+
   @Column(name = "is_vew_visible")
   private Boolean isViewVisisble;
-  
+
   @Column(name = "is_add_visible")
   private Boolean isAddVisisble;
-  
+
   @Column(name = "is_delete_visible")
   private Boolean isDeleteVisisble;
-  
+
   @Column(name = "is_edit_visible")
   private Boolean isEditVisisble;
-  
-  
 }

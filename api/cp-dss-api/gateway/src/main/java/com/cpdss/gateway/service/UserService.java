@@ -9,7 +9,6 @@ import com.cpdss.gateway.domain.Permission;
 import com.cpdss.gateway.domain.PermissionResponse;
 import com.cpdss.gateway.domain.Resource;
 import com.cpdss.gateway.domain.Role;
-
 import com.cpdss.gateway.domain.RolePermission;
 import com.cpdss.gateway.domain.RolePermissions;
 import com.cpdss.gateway.domain.RoleResponse;
@@ -51,8 +50,8 @@ public class UserService {
   @Autowired private RoleScreenRepository roleScreenRepository;
 
   @Autowired private ScreenRepository screenRepository;
-  
-  @Autowired private RolesRepository  rolesRepository;
+
+  @Autowired private RolesRepository rolesRepository;
 
   @Autowired private RoleUserRepository roleUserRepository;
 
@@ -146,15 +145,16 @@ public class UserService {
 
   public ScreenResponse getScreens(Long companyId, Long roleId, String corelationId) {
     ScreenResponse screenResponse = new ScreenResponse();
-	Roles roleEntity = this.rolesRepository.findByIdAndCompanyXIdAndIsActive(roleId, companyId, true);
-	if (roleEntity != null) {
-		Role role = new Role();
-		role.setId(roleEntity.getId());
-		role.setName(roleEntity.getName());
-		role.setDescription(roleEntity.getDescription());
-		screenResponse.setRole(role);
-	}
-    
+    Roles roleEntity =
+        this.rolesRepository.findByIdAndCompanyXIdAndIsActive(roleId, companyId, true);
+    if (roleEntity != null) {
+      Role role = new Role();
+      role.setId(roleEntity.getId());
+      role.setName(roleEntity.getName());
+      role.setDescription(roleEntity.getDescription());
+      screenResponse.setRole(role);
+    }
+
     List<ScreenData> list = new ArrayList<>();
 
     List<Screen> screens =
@@ -164,15 +164,14 @@ public class UserService {
     if (screens != null && !screens.isEmpty()) {
       screens.forEach(
           sc -> {
-        	  ScreenData screenInfo =
-                new ScreenData();
+            ScreenData screenInfo = new ScreenData();
             screenInfo.setId(sc.getId());
             screenInfo.setName(sc.getName());
             screenInfo.setModuleId(sc.getModuleId());
-    		screenInfo.setIsAddVisible(sc.getIsAddVisisble());
-    		screenInfo.setIsEditVisible(sc.getIsEditVisisble());
-    		screenInfo.setIsViewVisible(sc.getIsViewVisisble());
-    		screenInfo.setIsDeleteVisible(sc.getIsDeleteVisisble());
+            screenInfo.setIsAddVisible(sc.getIsAddVisisble());
+            screenInfo.setIsEditVisible(sc.getIsEditVisisble());
+            screenInfo.setIsViewVisible(sc.getIsViewVisisble());
+            screenInfo.setIsDeleteVisible(sc.getIsDeleteVisisble());
             screenInfo.setChilds(new ArrayList<ScreenData>());
 
             info.add(screenInfo);
@@ -204,7 +203,7 @@ public class UserService {
   }
 
   private List<ScreenData> findInnerScreens(
-		  ScreenData parentScreen, List<Screen> screens, Long roleId, Long companyId) {
+      ScreenData parentScreen, List<Screen> screens, Long roleId, Long companyId) {
     RoleScreen roleScreen = this.getRoleScreen(roleId, parentScreen.getId(), 1L);
     List<ScreenData> list =
         screens.stream()
@@ -223,18 +222,18 @@ public class UserService {
     return list;
   }
 
-	private ScreenData createInfo(Screen sc) {
-		ScreenData screenInfo = new ScreenData();
-		screenInfo.setId(sc.getId());
-		screenInfo.setName(sc.getName());
-		sc.setModuleId(sc.getModuleId());
-		screenInfo.setIsAddVisible(sc.getIsAddVisisble());
-		screenInfo.setIsEditVisible(sc.getIsEditVisisble());
-		screenInfo.setIsViewVisible(sc.getIsViewVisisble());
-		screenInfo.setIsDeleteVisible(sc.getIsDeleteVisisble());
-		screenInfo.setChilds(new ArrayList<ScreenData>());
-		return screenInfo;
-	}
+  private ScreenData createInfo(Screen sc) {
+    ScreenData screenInfo = new ScreenData();
+    screenInfo.setId(sc.getId());
+    screenInfo.setName(sc.getName());
+    sc.setModuleId(sc.getModuleId());
+    screenInfo.setIsAddVisible(sc.getIsAddVisisble());
+    screenInfo.setIsEditVisible(sc.getIsEditVisisble());
+    screenInfo.setIsViewVisible(sc.getIsViewVisisble());
+    screenInfo.setIsDeleteVisible(sc.getIsDeleteVisisble());
+    screenInfo.setChilds(new ArrayList<ScreenData>());
+    return screenInfo;
+  }
 
   private RoleScreen getRoleScreen(long roleId, long screenId, long companyId) {
     Optional<com.cpdss.gateway.entity.RoleScreen> roleScreenEntity =
@@ -252,33 +251,27 @@ public class UserService {
     return roleScreenDto;
   }
 
+  public RoleResponse getRoles(Long companyId, String correlationIdHeader) {
+    RoleResponse roleResponse = new RoleResponse();
+    List<Role> roleList = new ArrayList<Role>();
+    List<Roles> roles = this.rolesRepository.findByCompanyXIdAndIsActive(companyId, true);
+    if (roles != null && !roles.isEmpty()) {
+      roles.forEach(
+          roleEntity -> {
+            Role role = new Role();
+            role.setId(roleEntity.getId());
+            role.setName(roleEntity.getName());
+            role.setDescription(roleEntity.getDescription());
+            roleList.add(role);
+          });
+    }
 
-  
-  
-  
-public RoleResponse getRoles(Long companyId, String correlationIdHeader) {
-	RoleResponse roleResponse = new RoleResponse();
-	    List<Role> roleList = new ArrayList<Role>();
-	    List<Roles> roles = this.rolesRepository.findByCompanyXIdAndIsActive(companyId, true);
-	    if (roles != null && !roles.isEmpty()) {
-	    	roles.forEach(
-	          roleEntity -> {
-	        	  Role role = new Role();
-	        	  role.setId(roleEntity.getId());
-	        	  role.setName(roleEntity.getName());
-	            role.setDescription(roleEntity.getDescription());
-	            roleList.add(role);
-	          });
-	    }
-
-	    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
-	    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
-	    roleResponse.setResponseStatus(commonSuccessResponse);
-	    roleResponse.setUsers(roleList);
-	    return roleResponse;
-	  }
-	
-
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    roleResponse.setResponseStatus(commonSuccessResponse);
+    roleResponse.setUsers(roleList);
+    return roleResponse;
+  }
 
   public UserResponse getUsers(Long companyId, String correlationIdHeader) {
     UserResponse userResponse = new UserResponse();
@@ -334,7 +327,7 @@ public RoleResponse getRoles(Long companyId, String correlationIdHeader) {
         this.roleUserRepository.findByUsersAndRolesAndIsActive(
             user.get().getId(), role.get().getId(), true);
     RoleUserMapping roleUser = null;
-    if (roleUserOpt.isEmpty()) {
+    if (!roleUserOpt.isPresent()) {
       roleUser = new RoleUserMapping();
     } else {
       roleUser = roleUserOpt.get();
@@ -348,7 +341,7 @@ public RoleResponse getRoles(Long companyId, String correlationIdHeader) {
         this.roleScreenRepository.findByScreenAndRolesAndIsActive(
             screen.get().getId(), role.get().getId(), true);
     com.cpdss.gateway.entity.RoleScreen roleScreen = null;
-    if (roleScreenrOpt.isEmpty()) {
+    if (!roleScreenrOpt.isPresent()) {
       roleScreen = new com.cpdss.gateway.entity.RoleScreen();
     } else {
       roleScreen = roleScreenrOpt.get();
@@ -385,7 +378,7 @@ public RoleResponse getRoles(Long companyId, String correlationIdHeader) {
     Optional<Roles> roleEntityOpt =
         this.rolesRepository.findByNameAndIsActive(role.getName(), true);
     Roles roleEntity = null;
-    if (roleEntityOpt.isEmpty()) {
+    if (!roleEntityOpt.isPresent()) {
       roleEntity = new Roles();
     } else {
       roleEntity = roleEntityOpt.get();
