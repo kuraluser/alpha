@@ -587,6 +587,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       },
       {
         header: "Ballast",
+        dynamicKey: 'ballast',
+        expandable: true,
         subHeaders: [
           {
             header: "",
@@ -594,7 +596,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               {
                 header: "Plan",
                 fields: [{
-                  key: "ballastPlanned",
+                  key: "ballastPlannedTotal",
                   type: this.fieldType.NUMBER
                 }],
                 editable: false
@@ -602,14 +604,15 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               {
                 header: "Actual",
                 fields: [{
-                  key: "ballastActual",
+                  key: "ballastActualTotal",
                   type: this.fieldType.NUMBER
                 }],
                 editable: this.checkIfConfirmed(),
               },
             ]
           }
-        ]
+        ],
+        expandedFields: []
       },
       {
         header: 'Others',
@@ -836,6 +839,32 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       },
       {
         fieldKey: 'lubeList',
+        primaryKey: 'tankId',
+        headerLabel: 'tankName',
+        subHeaders: [
+          {
+            fields: [{
+              key: 'plannedWeight',
+              type: this.fieldType.NUMBER,
+              validators: ['required', 'ddddddd.+']
+            }],
+            header: 'Plan',
+            editable: !this.checkIfConfirmed(),
+
+          },
+          {
+            fields: [{
+              key: 'actualWeight',
+              type: this.fieldType.NUMBER,
+              validators: ['required', 'ddddddd.+']
+            }],
+            header: 'Actual',
+            editable: this.checkIfConfirmed(),
+          },
+        ],
+      },
+      {
+        fieldKey: 'ballast',
         primaryKey: 'tankId',
         headerLabel: 'tankName',
         subHeaders: [

@@ -13,7 +13,7 @@
                 <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.voyages" [(ngModel)]="synopticalService.selectedVoyage"
                     optionLabel="voyageNo" [filter]="true"
                     placeholder="{{ 'LOADABLE_STUDY_LIST_VOYAGE_NO_PLACEHOLDER' | translate }}"
-                    (onChange)="showLoadableStudyList()">
+                    (onChange)="onVoyageSelected()">
                 </p-dropdown>
                 <!-- <span class="pl-15 text-danger" *ngIf="!synopticalService.isVoyageIdSelected">
                     {{'NO_VOYAGE_NO_SELECTED' | translate }}</span> -->
