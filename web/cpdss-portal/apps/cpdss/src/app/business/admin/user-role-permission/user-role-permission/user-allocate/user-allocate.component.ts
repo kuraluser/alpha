@@ -44,24 +44,8 @@ export class UserAllocateComponent implements OnInit {
   */
   async getUserDetails() {
     const userDetailsRes: IUserDetailsResponse = await this.userRolePermissionApiService.getUserDetails().toPromise();
-    if (userDetailsRes.responseStatus === '200') {
+    if (userDetailsRes.responseStatus.status === '200') {
       let userDetails = userDetailsRes.users;
-      userDetails = [
-        {
-          "id": 1,
-          "rolePermissions": null,
-          "username": "thomas",
-          "firstName": "Thomas",
-          "lastName": "Alex"
-        },
-        {
-          "id": 10,
-          "rolePermissions": null,
-          "username": "john",
-          "firstName": "John",
-          "lastName": "Carter"
-        }
-      ]
       userDetails?.map((userDetail) => {
         this.userDetails.push({...userDetail , 'name': userDetail.firstName + ' ' + userDetail.lastName})
       });

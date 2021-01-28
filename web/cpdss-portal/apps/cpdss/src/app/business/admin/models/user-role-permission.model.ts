@@ -71,5 +71,69 @@ export interface ITreeNodeData {
     view: boolean, 
     id: number, 
     moduleId: number, 
-    isChecked: boolean
+    isChecked: boolean,
+    isAddVisible: boolean,
+    isDeleteVisible: boolean,
+    isEditVisible: boolean,
+    isViewVisible: boolean
+}
+
+/**
+ * Interface for  role response
+ *
+ * @export
+ * @interface IRoleResponse
+ */
+export interface IRoleResponse {
+    responseStatus: IResponseStatus;
+    roles: IRoleDetail[]
+}
+
+/**
+ * Interface for  Role detail
+ *
+ * @export
+ * @interface IRoleDetail
+ */
+export interface IRoleDetail {
+    id: number,
+    name: string,
+    description: string
+}
+
+/**
+ * Interface for  Role delete response
+ *
+ * @export
+ * @interface IRoleDeleteResponse
+ */
+export interface IRoleDeleteResponse {
+    responseStatus: IResponseStatus,
+    roleId: number,
+    message: string
+}
+
+/**
+ * Interface for creating a new user
+ *
+ * @export
+ * @interface IUserRoleModel
+ */
+export interface IUserRoleModel {
+    name: string,
+    description: string,
+    roleId?:number
+}
+
+/**
+ * Interface for saved user response 
+ *
+ * @export
+ * @interface ISaveUserRoleResponse
+ */
+export interface ISaveUserRoleResponse {
+    roles: string,
+    responseStatus: IResponseStatus,
+    roleId: number,
+    message: string
 }

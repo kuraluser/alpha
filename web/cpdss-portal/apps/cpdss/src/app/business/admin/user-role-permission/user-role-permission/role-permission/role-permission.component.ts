@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { TreeNode } from 'primeng/api';
-import { ITreeNodeData , IUserDetail , IUserRolePermissionResponse } from '../../../models/user-role-permission.model';
+import { ITreeNodeData , IUserDetail , IUserRolePermissionResponse , IScreenNode} from '../../../models/user-role-permission.model';
 
 import { UserRolePermissionApiService } from '../../../services/user-role-permission-api.service';
 
@@ -24,10 +24,10 @@ export class RolePermissionComponent implements OnInit {
     treeNode: any;
     selectedNodes: TreeNode[] = [];
     cols = [
-        { field: 'view', header: 'View' },
-        { field: 'add', header: 'Add' },
-        { field: 'delete', header: 'Delete' },
-        { field: 'edit', header: 'Edit' },
+        { field: 'view', header: 'View' , isViewable: 'isViewVisible'},
+        { field: 'add', header: 'Add' , isViewable: 'isAddVisible' },
+        { field: 'delete', header: 'Delete' , isViewable: 'isDeleteVisible'},
+        { field: 'edit', header: 'Edit' , isViewable: 'isEditVisible'},
     ];
     roleId: number;
     selectedUser:IUserDetail[];
@@ -58,23 +58,29 @@ export class RolePermissionComponent implements OnInit {
     */
     async getUserRolePermission() {
         const userDetailsRes: IUserRolePermissionResponse = await this.userRolePermissionApiService.getUserRolePermission(this.roleId).toPromise();
-        if(userDetailsRes.responseStatus === '200') {
+        const treeNode =[];
+        if(userDetailsRes.responseStatus.status === '200') {
             const userDetails = userDetailsRes.screens;
-            userDetails.map((data, index) => {
+            userDetails.map((userDetail:IScreenNode, index) => {
                 let isChecked: boolean;
-                const treeStructure = this.dataTreeStructure(data);
+                const treeStructure = this.dataTreeStructure(userDetail);
                 const value: TreeNode = {
                     data: treeStructure,
                     expanded: false,
                     children: []
                 }
-                this.treeNode.push(value);
-                data.childs?.length ? isChecked = this.innerNodes(this.treeNode[index], data.childs) : null;
-                const selectedNodes = this.selectedNodes;
-                isChecked && treeStructure.isChecked ? (this.selectedNodes = [], selectedNodes.push(this.treeNode[index]), this.selectedNodes = [...selectedNodes]) : null
+                treeNode.push(value);
+                if(userDetail.childs && userDetail.childs.length) {
+                    isChecked = this.innerNodes(treeNode[index], userDetail.childs);
+                    const selectedNodes = this.selectedNodes;
+                    isChecked && treeStructure.isChecked ? (this.selectedNodes = [], selectedNodes.push(treeNode[index]), this.selectedNodes = [...selectedNodes]) : null
+                } else {
+                    const selectedNodes = this.selectedNodes;
+                    treeStructure.isChecked ? (this.selectedNodes = [], selectedNodes.push(treeNode[index]), this.selectedNodes = [...selectedNodes]) : null
+                }
             })
         }
-       
+        this.treeNode = [...treeNode];
     }
 
     /**
@@ -111,9 +117,23 @@ export class RolePermissionComponent implements OnInit {
     * @memberof RolePermissionComponent
     */
     dataTreeStructure(data) {
+        const roleScreen = data.roleScreen;
         let isChecked: boolean;
-        data.edit && data.delete && data.view && data.add ? isChecked = true : isChecked = false;
-        return <ITreeNodeData>{ name: data.name, add: data.add, "edit": data.edit, "delete": data.delete, "view": data.view, id: data.id, moduleId: data.moduleId, isChecked: isChecked }
+        roleScreen?.canAdd && roleScreen?.canEdit && roleScreen?.canDelete && roleScreen?.canView ? isChecked = true : isChecked = false;
+        return <ITreeNodeData>{ 
+            name: data.name, 
+            add: roleScreen?.canAdd ? true : false ,
+            edit: roleScreen?.canEdit ? true : false , 
+            delete: roleScreen?.canDelete ? true : false,
+            view: roleScreen?.canView  ? true : false , 
+            id: data.id, 
+            moduleId: data.moduleId, 
+            isChecked: isChecked ,
+            isAddVisible: data.isAddVisible,
+            isDeleteVisible: data.isDeleteVisible,
+            isEditVisible: data.isEditVisible,
+            isViewVisible: data.isViewVisible
+        }
     }
 
     /**

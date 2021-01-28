@@ -1,6 +1,6 @@
 
 <div>
-    <form>
+    <div>
         <div>
             <label for="user_role_name">{{'USER_ROLE_NAME'| translate }}</label>
             <input type="text" id="user_role_name"/>
@@ -9,7 +9,7 @@
             <label for="user_role_description">{{'USER_ROLE_DESCRIPTION'| translate }}</label>
             <input type="text" id="user_role_description"/>
         </div>
-    </form>
+    </div>
 
      <div>
          <div>
@@ -38,9 +38,9 @@
                 <td></td>
                 
                 <ng-container *ngFor = "let col of cols">
-                        <td [ttEditableColumn]="rowData" [ttEditableColumnField]="col.field"> 
+                        <td [ttEditableColumn]="rowData" [ttEditableColumnField]="col.field" *ngIf="rowData[col.isViewable]"> 
                             {{col.header}}
-                            <input type="checkbox" [checked]="rowData[col.field]" (change)="checkboxChange($event,rowData, rowNode,col.field)"/>
+                            <input type="checkbox"  [checked]="rowData[col.field]" (change)="checkboxChange($event,rowData, rowNode,col.field)"/>
                         </td>
                 </ng-container>
             </tr>

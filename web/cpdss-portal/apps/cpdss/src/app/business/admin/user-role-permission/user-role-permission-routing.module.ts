@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { RolePermissionComponent } from './user-role-permission/role-permission/role-permission.component';
+import { UserRoleListingComponent } from './user-role-listing/user-role-listing.component';
 
 const routes: Routes = [
     {
         path: '',
-        component: RolePermissionComponent
+        component: UserRoleListingComponent
     },
     {
         path: ':roleId',
