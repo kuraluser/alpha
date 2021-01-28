@@ -283,14 +283,20 @@ export class PortsComponent implements OnInit {
     const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
     if (event.field === 'port') {
       this.portsLists[valueIndex]['portcode'].value = event.data.port.value.code;
-      this.portsLists[valueIndex]['maxDraft'].value = event.data.port.value.maxDraft;
-      this.portsLists[valueIndex]['maxAirDraft'].value = event.data.port.value.maxAirDraft;
-      this.portsLists[valueIndex]['seaWaterDensity'].value = event.data.port.value.waterDensity;
       this.portsLists[valueIndex]['portOrder'] = this.portOrder;
       this.updateField(event.index, 'portcode', event.data.port.value.code);
-      this.updateField(event.index, 'maxDraft', event.data.port.value.maxDraft);
-      this.updateField(event.index, 'maxAirDraft', event.data.port.value.maxAirDraft);
-      this.updateField(event.index, 'seaWaterDensity', event.data.port.value.waterDensity);
+      if(event.data.port.value.maxDraft){
+        this.portsLists[valueIndex]['maxDraft'].value = event.data.port.value.maxDraft;
+        this.updateField(event.index, 'maxDraft', event.data.port.value.maxDraft);
+      }
+      if(event.data.port.value.maxAirDraft){
+        this.portsLists[valueIndex]['maxAirDraft'].value = event.data.port.value.maxAirDraft;
+        this.updateField(event.index, 'maxAirDraft', event.data.port.value.maxAirDraft);
+      }
+      if(event.data.port.value.waterDensity){
+        this.portsLists[valueIndex]['seaWaterDensity'].value = event.data.port.value.waterDensity;
+        this.updateField(event.index, 'seaWaterDensity', event.data.port.value.waterDensity);
+      }
       this.updateField(event.index, 'portOrder', this.portOrder);
       form.controls.operation.updateValueAndValidity();
       this.updateValuesIfBunkering(event.data, form, index);
@@ -338,11 +344,11 @@ export class PortsComponent implements OnInit {
     }
     const formArray = (<FormArray>this.portsForm.get('dataTable')).controls;
     formArray.forEach(async (row: FormGroup, rowIndex) => {
-      if((event.field === 'port' || event.field === 'operation') && form.controls.port.valid && form.controls.operation.valid){
-        if(row.controls.port.hasError('duplicate')){
+      if ((event.field === 'port' || event.field === 'operation') && form.controls.port.valid && form.controls.operation.valid) {
+        if (row.controls.port.hasError('duplicate')) {
           row.controls.port.updateValueAndValidity()
         }
-        if(row.controls.operation.hasError('duplicate')){
+        if (row.controls.operation.hasError('duplicate')) {
           row.controls.operation.updateValueAndValidity()
         }
       }
@@ -441,11 +447,18 @@ export class PortsComponent implements OnInit {
       this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORTS_DELETE_SUMMARY', detail: 'PORTS_DELETE_DETAILS', data: { confirmLabel: 'PORTS_DELETE_CONFIRM_LABEL', rejectLabel: 'PORTS_DELETE_REJECT_LABEL' } });
       this.confirmationAlertService.confirmAlert$.subscribe(async (response) => {
         if (response) {
-          const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
-          if (res) {
+          if (event?.data?.isAdd) {
             this.portsLists.splice(event.index, 1);
             this.portsLists = [...this.portsLists];
+          } else {
+            const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+            if (res) {
+              this.portsLists.splice(event.index, 1);
+              this.portsLists = [...this.portsLists];
+            }
           }
+          const formArray = <FormArray>this.portsForm.get('dataTable');
+          formArray.removeAt(event.index)
         }
       });
     }
@@ -575,7 +588,7 @@ export class PortsComponent implements OnInit {
   updateValuesIfBunkering(data, form, index) {
     if (data && data.operation?.value?.id === OPERATIONS.BUNKERING && data.port.value) {
       const portId = Number(data.port.value.id);
-      const loadingPortData = this.portsLists.find(row => row.port?.value?.id === portId && [OPERATIONS.LOADING,OPERATIONS.DISCHARGING].includes(row.operation?.value?.id));
+      const loadingPortData = this.portsLists.find(row => row.port?.value?.id === portId && [OPERATIONS.LOADING, OPERATIONS.DISCHARGING].includes(row.operation?.value?.id));
       if (loadingPortData) {
         const loadingPortForm = this.row(Number(loadingPortData.slNo - 1));
         form.controls.eta.setValue(loadingPortForm.value.eta);
