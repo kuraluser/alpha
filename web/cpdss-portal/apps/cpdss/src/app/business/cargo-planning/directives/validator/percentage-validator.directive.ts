@@ -11,7 +11,7 @@ export function PercentageValidator(field): ValidatorFn {
         }
         if (control?.parent?.value[field] && control?.value) {
             const total = control?.parent?.value[field]?.id + control?.value?.id;
-            if (total > 100) {
+            if (total !== 100) {
                 return { percentageTotal: true };
             } else {
                 return null;

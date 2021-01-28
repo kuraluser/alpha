@@ -112,7 +112,7 @@
                         </div>
                     </div>
 
-                    <div class="row form-group" *ngIf="draftMarkList.length > 0">
+                    <div class="row form-group" *ngIf="draftMarkList?.length > 0">
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DRAFT_MARK' | translate}}</div>
                         <div class="col">
                             <p-dropdown styleClass="form-control" [options]="draftMarkList" id="ddl_draftMark"
@@ -145,12 +145,12 @@
                                 <span
                                     *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && form.maxAirTempExpected.errors?.min"
                                     class="text-danger">
-                                    {{'Max_AIR_TEMP_MIN' | translate}}
+                                    {{'MAX_AIR_TEMP_MIN' | translate}}
                                 </span>
                                 <span
                                     *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && form.maxAirTempExpected.errors?.max"
                                     class="text-danger">
-                                    {{'Max_AIR_TEMP_MAX' | translate}}
+                                    {{'MAX_AIR_TEMP_MAX' | translate}}
                                 </span>
                         </div>
                     </div>
@@ -163,12 +163,12 @@
                                 <span
                                     *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && form.maxWaterTempExpected.errors?.min"
                                     class="text-danger">
-                                    {{'Max_WATER_TEMP_MIN' | translate}}
+                                    {{'MAX_WATER_TEMP_MIN' | translate}}
                                 </span>
                                 <span
                                     *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && form.maxWaterTempExpected.errors?.max"
                                     class="text-danger">
-                                    {{'Max_WATER_TEMP_MAX' | translate}}
+                                    {{'MAX_WATER_TEMP_MAX' | translate}}
                                 </span>
                         </div>
                     </div>

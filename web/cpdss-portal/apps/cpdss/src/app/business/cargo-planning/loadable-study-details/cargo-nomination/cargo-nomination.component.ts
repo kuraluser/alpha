@@ -466,7 +466,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       priority: this.fb.control(cargoNomination.priority.value, Validators.required),
       color: this.fb.control(cargoNomination.color.value, [Validators.required, cargoNominationColorValidator]),
       cargo: this.fb.control(cargoNomination.cargo.value, Validators.required),
-      abbreviation: this.fb.control(cargoNomination.abbreviation.value, [Validators.required, alphabetsOnlyValidator, Validators.maxLength(4)]),
+      abbreviation: this.fb.control(cargoNomination.abbreviation.value, [Validators.required, alphabetsOnlyValidator, Validators.maxLength(6)]),
       loadingPorts: this.fb.control(cargoNomination.loadingPorts.value, [Validators.required, cargoNominationLoadingPortValidator]),
       quantity: this.fb.control({ value: Number(cargoNomination.quantity.value), disabled: true }),
       api: this.fb.control(cargoNomination.api.value, [Validators.required, Validators.min(0), numberValidator(2, 3)]),

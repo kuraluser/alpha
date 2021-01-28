@@ -942,7 +942,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldClass: 'commingle-cargo1-pct',
         errorMessages: {
           'required': 'COMMINGLE_PERCENTAGE_SELECT_ERROR',
-          'percentageTotal': 'COMMINGLE_MANUAL_SAME_PERCENTAGE_VALIDATION'
+          'percentageTotal': 'COMMINGLE_MANUAL_PERCENTAGE_VALIDATION'
         }
       },
       {
@@ -977,7 +977,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldClass: 'commingle-cargo2-pct',
         errorMessages: {
           'required': 'COMMINGLE_PERCENTAGE_SELECT_ERROR',
-          'percentageTotal': 'COMMINGLE_MANUAL_SAME_PERCENTAGE_VALIDATION'
+          'percentageTotal': 'COMMINGLE_MANUAL_PERCENTAGE_VALIDATION'
         }
       },
       {
