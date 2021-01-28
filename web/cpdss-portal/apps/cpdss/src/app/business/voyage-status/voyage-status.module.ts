@@ -16,6 +16,7 @@ import { CarouselModule } from 'primeng/carousel';
 import { OrderListModule } from 'primeng/orderlist';
 import { EditPortRotationApiService } from './services/edit-port-rotation-api.service';
 import { DropdownModule } from 'primeng/dropdown';
+import { VoyageStatusTransformationService } from '../voyage-status/services/voyage-status-transformation.service'
 
 /**
  * Module for new voyage-status
@@ -39,7 +40,8 @@ import { DropdownModule } from 'primeng/dropdown';
   ],
   providers: [
     VoyageApiService,
-    EditPortRotationApiService
+    EditPortRotationApiService,
+    VoyageStatusTransformationService
   ]
 })
 export class VoyageStatusModule { }

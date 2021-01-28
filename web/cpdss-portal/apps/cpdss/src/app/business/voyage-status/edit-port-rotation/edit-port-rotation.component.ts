@@ -7,6 +7,7 @@ import { Voyage } from '../../core/models/common.model';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { IPortList, IPortsDetailsResponse } from '../../core/models/common.model';
+import { VoyageStatusTransformationService } from '../services/voyage-status-transformation.service';
 
 /**
  * Component class of EditPortRotation
@@ -39,7 +40,8 @@ export class EditPortRotationComponent implements OnInit {
   constructor(private ngxSpinnerService: NgxSpinnerService,
     private editPortRotationApiService: EditPortRotationApiService,
     private messageService: MessageService,
-    private translateService: TranslateService) { }
+    private translateService: TranslateService,
+    private voyageStatusTransformationService: VoyageStatusTransformationService ) { }
 
   /**
    * Component lifecycle ngOnit
@@ -69,11 +71,12 @@ export class EditPortRotationComponent implements OnInit {
   async saveEditPortRotation() {
     this.ngxSpinnerService.show();
     const translationKeys = await this.translateService.get(['EDIT_PORT_ROTATION_POPUP_SUCCESS', 'EDIT_PORT_ROTATION_POPUP_SAVED_SUCCESSFULLY']).toPromise();
-    const portSave: IEditPortRotationModel = {portList:[]};
+    const portSave: IEditPortRotationModel = { portList: [] };
     portSave.portList = JSON.parse(JSON.stringify(this.portList));
     const res = await this.editPortRotationApiService.saveEditPortRotation(this.vesselDetails.id, this.voyageId, this.loadableStudyId, portSave).toPromise();
     this.ngxSpinnerService.hide();
-    if (res?.responseStatus?.status  === '200') {
+    if (res?.responseStatus?.status === '200') {
+      this.voyageStatusTransformationService.portOrderChange.next(true);
       this.messageService.add({ severity: 'success', summary: translationKeys['EDIT_PORT_ROTATION_POPUP_SUCCESS'], detail: translationKeys['EDIT_PORT_ROTATION_POPUP_SAVED_SUCCESSFULLY'] });
       this.cancel();
     }
@@ -85,42 +88,25 @@ export class EditPortRotationComponent implements OnInit {
   cancel() {
     this.displayPopUp.emit(false);
   }
-/**
- * Method to reorder ports
- * @param event 
- */
+  /**
+   * Method to reorder ports
+   * @param event 
+   */
   async portOrderChange(event) {
     const i = 0;
-    const  current = new Date();
+    const current = new Date();
     this.portList.map(async (port, i) => {
-      const dateAndTime = (port?.eta).split(" ");
-      const date = dateAndTime[0];
-      const time = dateAndTime[1];
-      const newdate = date.split("-").reverse().join("-");
-      const formatedDate = new Date(newdate + ' ' + time);
-      const d1 = current.getTime();
-      const d2 = formatedDate.getTime();
-
-      if (port.portOrder !== i + 1) {
-        if (d1 > d2) {
+      if (port?.portOrder !== i + 1) {
+        if (port?.etaActual) {
           this.isFutureDate = false;
           this.isPortVisited = true;
-          this.portList = JSON.parse(JSON.stringify(this.portListOriginal));        
+          this.portList = JSON.parse(JSON.stringify(this.portListOriginal));
           return;
         }
-        else {
-          if (this.isFutureDate) {
-            this.portList = this.portList.map((ports, i) => {
-              if (ports.portOrder !== i + 1) {
-                this.updateEtaAndEtd(i);
-              }
-              ports.portOrder = i + 1;
-              i++;
-              this.isPortVisited = false;
-              return ports
-            });
-            this.portListOriginal = JSON.parse(JSON.stringify(this.portList));
-          }
+        else if (port?.portOrder !== i + 1) {
+          port.portOrder = i + 1;
+          this.isPortVisited = false;
+          this.updateEtaAndEtd(i);
         }
       }
     });
@@ -136,6 +122,7 @@ export class EditPortRotationComponent implements OnInit {
       this.portList[j].eta = '';
       this.portList[j].etd = '';
       this.portList[j].distanceBetweenPorts = 0;
+      this.portList[j].portOrder = i + 1; 
     }
   }
 }

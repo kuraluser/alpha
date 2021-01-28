@@ -1,5 +1,5 @@
 <div *ngIf="portRotationForm" [formGroup]="portRotationForm" class="row pt-10">
-    <div formArrayName="portsData" class="col pl-0 pr-0">
+    <div formArrayName="portsData" class="col pl-0 pr-0" *ngIf="portList">
         <p-carousel [value]="portList" [numVisible]="4" [numScroll]="1" [responsiveOptions]="responsiveOptions">
             <ng-template let-port pTemplate="item">
                 <div class="container-fluid " formGroupName="{{portList.indexOf(port)}}">

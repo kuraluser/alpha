@@ -58,27 +58,4 @@ export class EditPortRotationApiService {
     return this.commonApiService.post<IEditPortRotation, IPortResponseModel>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports/${ports.id}`, ports);
   }
 
- /**
-  * Set validation Error to form control
-  */
-  setValidationErrorMessageForPortRotationRibbon() {
-    return {
-
-      eta: {
-        'required': 'PORT_ROTATION_RIBBON_ETA_REQUIRED',
-      },
-      etd: {
-        'required': 'PORT_ROTATION_RIBBON_ETD_REQUIRED',
-      },
-      etaTime: {
-        'required': 'PORT_ROTATION_RIBBON_TIME_REQUIRED',
-      },
-      etdTime: {
-        'required': 'PORT_ROTATION_RIBBON_TIME_REQUIRED',
-      },
-      distance: {
-        'required': 'PORT_ROTATION_RIBBON_DISTANCE_REQUIRED',
-      }
-    }
-  }
 }

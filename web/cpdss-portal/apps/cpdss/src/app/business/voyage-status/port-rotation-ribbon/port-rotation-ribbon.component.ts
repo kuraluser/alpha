@@ -8,6 +8,9 @@ import { MessageService } from 'primeng/api';
 import { IEditPortRotation } from '../models/edit-port-rotation.model';
 import { IPortsDetailsResponse } from '../../core/models/common.model';
 import { Voyage } from '../../core/models/common.model';
+import { Subscription } from 'rxjs';
+import { OnDestroy } from '@angular/core';
+import { VoyageStatusTransformationService } from '../services/voyage-status-transformation.service';
 /**
  * Component class of PortRotationRibbonComponent
  *
@@ -20,7 +23,7 @@ import { Voyage } from '../../core/models/common.model';
   templateUrl: './port-rotation-ribbon.component.html',
   styleUrls: ['./port-rotation-ribbon.component.scss']
 })
-export class PortRotationRibbonComponent implements OnInit {
+export class PortRotationRibbonComponent implements OnInit, OnDestroy {
 
   @Input() vesselDetails: IVessel;
   @Input() voyageDetails: Voyage;
@@ -34,6 +37,7 @@ export class PortRotationRibbonComponent implements OnInit {
   isCurrentPortSelected = false;
   errorMesages: any;
   isSelected = false;
+  portOrderSubscription$: Subscription;
   responsiveOptions: { breakpoint: string; numVisible: number; numScroll: number; }[];
 
 
@@ -42,7 +46,8 @@ export class PortRotationRibbonComponent implements OnInit {
     private fb: FormBuilder,
     private editPortRotationApiService: EditPortRotationApiService,
     private translateService: TranslateService,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private voyageStatusTransformationService: VoyageStatusTransformationService) {}
 
   /**
    * Component lifecycle ngOnit
@@ -51,6 +56,11 @@ export class PortRotationRibbonComponent implements OnInit {
    * @memberof PortRotationRibbonComponent
    */
   async ngOnInit(): Promise<void> {
+    this.portOrderSubscription$ = this.voyageStatusTransformationService.portOrderChange.subscribe(data => {
+      if (data) {
+        this.getPortRotationRibbonData();
+      }
+    })
     this.responsiveOptions = [
       {
         breakpoint: '1921px',
@@ -79,47 +89,7 @@ export class PortRotationRibbonComponent implements OnInit {
       }
     ];
 
-    this.ngxSpinnerService.show();
-    this.voyageName = this.voyageDetails?.voyageNo;
-    this.voyageId = this.voyageDetails?.id;
-    this.loadableStudyId = this.voyageDetails?.confirmedLoadableStudyId;
-    const result = await this.editPortRotationApiService.getPorts().toPromise();
-    const portsFormData: IPortsDetailsResponse = await this.editPortRotationApiService.getPortsDetails(this.vesselDetails.id, this.voyageId, this.loadableStudyId).toPromise();
-    const portData: IEditPortRotation[] = portsFormData?.portList?.map(itm => ({
-      ...result.find((item) => (item.id === itm.portId) && item),
-      ...itm
-    }));
-
-    for (let i = 0; i < portData.length; i++) {
-
-      const portArrival = { ...portData[i] };
-      portArrival.isFutureDate = false;
-      portArrival.type = 'Arrival';
-      portArrival.isEtaEditable = false;
-      portArrival.isTimeEditable = false;
-      portArrival.isEtdEditable = false;
-      portArrival.currentPort = false;
-      portArrival.isSelected = false;
-
-      const portDeparture = { ...portData[i] };
-      portDeparture.isFutureDate = false;
-      portDeparture.type = 'Departure';
-      portDeparture.isEtaEditable = false;
-      portDeparture.isTimeEditable = false;
-      portDeparture.isEtdEditable = false;
-      portDeparture.isDistanceEditable = false;
-      portDeparture.currentPort = false;
-      portArrival.isSelected = false;
-
-      this.portList.push(portArrival);
-      this.portList.push(portDeparture);
-
-    }
-    this.initPortRotationArray()
-    this.currentPosition();
-    this.errorMesages = this.editPortRotationApiService.setValidationErrorMessageForPortRotationRibbon();
-    this.ngxSpinnerService.hide();
-
+    this.getPortRotationRibbonData();
   }
   /**
    * Method to select port
@@ -149,6 +119,9 @@ export class PortRotationRibbonComponent implements OnInit {
       }
       this.updateForm(port);
     }
+    else {
+      port.isFutureDate = true;
+    }
   }
   /**
    * Enable editing
@@ -177,24 +150,17 @@ export class PortRotationRibbonComponent implements OnInit {
   * Method to get current position of the ship
   */
   currentPosition() {
+    const currentPort: IEditPortRotation[] = [];
     this.portList?.map(port => {
       if (!this.isCurrentPortSelected) {
-        const current = new Date();
-        if (port?.etaActual) {
-          const dateAndTime = (port?.etaActual)?.split(" ");
-          const date = dateAndTime[0];
-          const time = dateAndTime[1];
-          const newdate = date.split("-").reverse().join("-");
-          const date2 = new Date(newdate + ' ' + time);
-          const d1 = current.getTime();
-          const d2 = date2.getTime();
-          if (d1 < d2) {
-            this.portList[this.portList.indexOf(port)].currentPort = true;
-            this.isCurrentPortSelected = true;
-          }
+        if(!port.etaActual){
+          currentPort.push(port);
         }
       }
     })
+    if(currentPort){
+      this.portList[this.portList.indexOf(currentPort[0])-1].currentPort = true;
+    }
   }
   /**
    * Method to delete port
@@ -369,5 +335,60 @@ export class PortRotationRibbonComponent implements OnInit {
   private row(formGroupIndex: number): FormGroup {
     const formGroup = <FormGroup>(<FormArray>this.portRotationForm.get('portsData')).at(formGroupIndex);
     return formGroup;
+  }
+  /**
+   * Component lifecycle ngOnDestroy
+   *
+   * @returns {Promise<void>}
+   * @memberof PortRotationRibbonComponent
+   */
+  ngOnDestroy(){
+    this.portOrderSubscription$.unsubscribe();
+  }
+/**
+ * Get port rotation ribbon data
+ */
+  async getPortRotationRibbonData(){
+    this.ngxSpinnerService.show();
+    this.voyageName = this.voyageDetails?.voyageNo;
+    this.voyageId = this.voyageDetails?.id;
+    this.loadableStudyId = this.voyageDetails?.confirmedLoadableStudyId;
+    const result = await this.editPortRotationApiService.getPorts().toPromise();
+    const portsFormData: IPortsDetailsResponse = await this.editPortRotationApiService.getPortsDetails(this.vesselDetails.id, this.voyageId, this.loadableStudyId).toPromise();
+    const portData: IEditPortRotation[] = portsFormData?.portList?.map(itm => ({
+      ...result.find((item) => (item.id === itm.portId) && item),
+      ...itm
+    }));
+    this.portList = [];
+    for (let i = 0; i < portData.length; i++) {
+
+      const portArrival = { ...portData[i] };
+      portArrival.isFutureDate = false;
+      portArrival.type = 'Arrival';
+      portArrival.isEtaEditable = false;
+      portArrival.isTimeEditable = false;
+      portArrival.isEtdEditable = false;
+      portArrival.currentPort = false;
+      portArrival.isSelected = false;
+
+      const portDeparture = { ...portData[i] };
+      portDeparture.isFutureDate = false;
+      portDeparture.type = 'Departure';
+      portDeparture.isEtaEditable = false;
+      portDeparture.isTimeEditable = false;
+      portDeparture.isEtdEditable = false;
+      portDeparture.isDistanceEditable = false;
+      portDeparture.currentPort = false;
+      portArrival.isSelected = false;
+     
+      this.portList.push(portArrival);
+      this.portList.push(portDeparture);
+
+    }
+    this.initPortRotationArray();
+    this.currentPosition();
+    this.errorMesages = this.voyageStatusTransformationService.setValidationErrorMessageForPortRotationRibbon();
+    this.ngxSpinnerService.hide();
+
   }
 }
