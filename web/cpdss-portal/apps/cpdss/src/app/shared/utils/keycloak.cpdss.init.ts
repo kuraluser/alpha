@@ -13,7 +13,7 @@ let keycloakConfig: KeycloakConfig = { url: '', realm: '', clientId: '' }
 export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpClient, appConfig: AppConfigurationService): () => Promise<any> {
     return async (): Promise<any> => {
         const appSettings: IAppConfiguration = await appConfig.load();
-        const logoutUrl = window.location.protocol + '//' + window.location.hostname + ':' + appSettings.redirectPort;
+        const logoutUrl = window.location.protocol + '//' + window.location.hostname + appSettings.redirectPath;
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -49,7 +49,7 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                     config: keycloakConfig,
                     initOptions: {
                         onLoad: 'check-sso',
-                        silentCheckSsoRedirectUri: window.location.origin + '/assets/keycloak/silent-check-sso.html',
+                        silentCheckSsoRedirectUri: window.location.origin + appSettings?.path + '/assets/keycloak/silent-check-sso.html',
                         checkLoginIframe: false
                     },
                     bearerExcludedUrls: ['/assets']

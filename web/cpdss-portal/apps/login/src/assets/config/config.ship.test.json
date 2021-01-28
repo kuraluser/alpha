@@ -1,6 +1,6 @@
 {
-    "apiUrl": "",
+    "apiUrl" : "",
     "keycloakUrl": "https://keyclock.thinkpalm.info:8443/auth/",
-    "path": ":9004/",
+    "path": "/cpdss",
     "clientId": "frontend"
 }

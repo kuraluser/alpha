@@ -1,6 +1,6 @@
 export const environment = {
-  production: false,
-  name: 'ship',
+  production: true,
+  name: 'shore',
   uriPath: 'api/cloud/',
-  config: 'dev'
+  config: 'test'
 };

@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
-  name: 'ship',
+  name: 'shore',
   uriPath: 'api/cloud/',
-  config: 'prod'
+  serviceWorkerScript: 'sw-master.js',
+  config: 'test'
 };

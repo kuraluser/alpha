@@ -130,7 +130,7 @@ export class NavbarComponent implements OnInit {
    */
   logout() {
     try {
-      const redirectUrl = window.location.protocol + '//' + window.location.hostname + ':' + AppConfigurationService.settings.redirectPort;
+      const redirectUrl = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
       SecurityService.userLogoutAction();
       this.keycloakService.logout(redirectUrl);
 
