@@ -39,4 +39,16 @@ public class LoadablePatternCargoDetails extends EntityDoc {
 
   @Column(name = "operation_type")
   private String operationType;
+
+  @Column(name = "abbreviation")
+  private String abbreviation;
+
+  @Column(name = "corrected_ullage")
+  private BigDecimal correctedUllage;
+
+  @Column(name = "color_code")
+  private String colorCode;
+
+  @Column(name = "cargo_xid")
+  private Long cargoId;
 }

@@ -1246,7 +1246,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       List<CargoNomination> cargoNominationList =
-          this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
+          this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(
               request.getLoadableStudyId(), true);
       buildCargoNominationReply(cargoNominationList, replyBuilder);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
@@ -2160,10 +2160,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           detailBuilder.setId(qty.getId());
           Optional.ofNullable(qty.getArrivalQuantity())
               .ifPresent(item -> detailBuilder.setArrivalQuantity(valueOf(item)));
+          Optional.ofNullable(qty.getActualArrivalQuantity())
+              .ifPresent(item -> detailBuilder.setActualArrivalQuantity(valueOf(item)));
           Optional.ofNullable(qty.getArrivalVolume())
               .ifPresent(item -> detailBuilder.setArrivalVolume(valueOf(item)));
           Optional.ofNullable(qty.getDepartureQuantity())
               .ifPresent(item -> detailBuilder.setDepartureQuantity(valueOf(item)));
+          Optional.ofNullable(qty.getActualDepartureQuantity())
+              .ifPresent(item -> detailBuilder.setActualDepartureQuantity(valueOf(item)));
           Optional.ofNullable(qty.getDepartureVolume())
               .ifPresent(item -> detailBuilder.setDepartureVolume(valueOf(item)));
           Optional.ofNullable(qty.getDensity())
@@ -4538,6 +4542,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(item -> cargoBuilder.setPlannedWeight(valueOf(item)));
           Optional.ofNullable(tankDataOpt.get().getActualQuantity())
               .ifPresent(item -> cargoBuilder.setActualWeight(valueOf(item)));
+          // attributes for landing page
+          Optional.ofNullable(tankDataOpt.get().getCargoId())
+          .ifPresent(cargoBuilder::setCargoId);
+          Optional.ofNullable(tankDataOpt.get().getAbbreviation())
+          .ifPresent(cargoBuilder::setCargoAbbreviation);
+          Optional.ofNullable(tankDataOpt.get().getColorCode())
+          .ifPresent(cargoBuilder::setColorCode);
+          Optional.ofNullable(tankDataOpt.get().getCorrectedUllage())
+          .ifPresent(ullage -> cargoBuilder.setCorrectedUllage(valueOf(ullage)));
         }
       }
       builder.addCargo(cargoBuilder.build());
@@ -5108,6 +5121,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         throw new GenericServiceException(
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
+      /**
+       * updated the request object with confirmed loadable pattern id which
+       * is needed only for voyage status initiated flow. In case this method is reused for any 
+       * other flow then the loadable pattern id should be updated accordingly using
+       * probably a flag to track initiated flow
+       */
+      List<LoadablePattern> confirmedLoadablePatternList =
+              loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
+            		  request.getVoyageId(),
+                  CONFIRMED_STATUS_ID,
+                  true);
+      Optional<LoadablePattern> confirmedLoadablePattern = confirmedLoadablePatternList.stream().findFirst();
+      if (!confirmedLoadablePattern.isPresent()) {
+    	  throw new GenericServiceException(
+    			  "Confirmed loadable pattern does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+      }
+      Long confirmedLoadablePatternId = confirmedLoadablePattern.get().getId();
+      SynopticalTableRequest.Builder requestBuilder = request.toBuilder();
+      requestBuilder.setLoadablePatternId(confirmedLoadablePatternId);
       // fetching synoptical entity list
       List<SynopticalTable> synopticalTableList =
           this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveAndPortXid(
@@ -5121,7 +5153,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         Collections.sort(
             sortedTankList, Comparator.comparing(VesselTankDetail::getTankDisplayOrder));
         buildSynopticalTableReply(
-            request,
+        		requestBuilder.build(),
             synopticalTableList,
             this.getSynopticalTablePortDetails(synopticalTableList),
             this.getSynopticalTablePortRotations(loadableStudyOpt.get()),
@@ -5129,6 +5161,31 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             sortedTankList,
             vesselReply.getVesselLoadableQuantityDetails(),
             replyBuilder);
+        // build ballast tank details not available in synoptical
+        List<VesselTankDetail> ballastTankList =
+            sortedTankList.stream()
+                .filter(tankList -> BALLAST_TANK_CATEGORIES.contains(tankList.getTankCategoryId()))
+                .collect(Collectors.toList());
+        List<VesselTankDetail> frontBallastTanks = new ArrayList<>();
+        List<VesselTankDetail> centerBallastTanks = new ArrayList<>();
+        List<VesselTankDetail> rearBallastTanks = new ArrayList<>();
+        frontBallastTanks.addAll(
+            ballastTankList.stream()
+                .filter(tank -> BALLAST_FRONT_TANK.equals(tank.getTankPositionCategory()))
+                .collect(Collectors.toList()));
+        centerBallastTanks.addAll(
+            ballastTankList.stream()
+                .filter(tank -> BALLAST_CENTER_TANK.equals(tank.getTankPositionCategory()))
+                .collect(Collectors.toList()));
+
+        rearBallastTanks.addAll(
+            ballastTankList.stream()
+                .filter(tank -> BALLAST_REAR_TANK.equals(tank.getTankPositionCategory()))
+                .collect(Collectors.toList()));
+
+        replyBuilder.addAllBallastFrontTanks(this.groupTanks(frontBallastTanks));
+        replyBuilder.addAllBallastCenterTanks(this.groupTanks(centerBallastTanks));
+        replyBuilder.addAllBallastRearTanks(this.groupTanks(rearBallastTanks));
       }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (GenericServiceException e) {

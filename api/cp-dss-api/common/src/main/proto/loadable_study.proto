@@ -526,10 +526,11 @@ message OnHandQuantityDetail{
 	string actualArrivalQuantity = 9;
 	string departureVolume = 10;
 	string departureQuantity = 11;
-	int64 loadableStudyId = 12;
-	string colorCode = 13;
-	string fuelTypeShortName = 14;
-	string density=15;
+	string actualDepartureQuantity = 12;
+	int64 loadableStudyId = 13;
+	string colorCode = 14;
+	string fuelTypeShortName = 15;
+	string density=16;
 }
 
 message TankDetail{
@@ -733,7 +734,11 @@ message SynopticalCargoRecord{
 	string plannedWeight = 3;
 	string actualWeight = 4;
 	int64 obqId = 5;
-	string capacity = 6;
+	string colorCode = 6;
+	string correctedUllage = 7;
+	string cargoAbbreviation = 8;
+	int64 cargoId = 9;
+	string capacity = 10;
 }
 
 message SynopticalOhqRecord{
@@ -756,15 +761,19 @@ message SynopticalBallastRecord{
 message SynopticalTableRequest{
 	int64 loadableStudyId = 1;
 	int64 vesselId = 2;
-	int64 portId = 3;
-	repeated SynopticalRecord synopticalRecord = 4;
-	int64 loadablePatternId = 5;	
+	int64 voyageId = 3;
+	int64 portId = 4;
+	repeated SynopticalRecord synopticalRecord = 5;
+	int64 loadablePatternId = 6;	
 }
 
 message SynopticalTableReply{
 	ResponseStatus responseStatus = 1;
 	repeated SynopticalRecord synopticalRecords = 2;
 	int64 id = 3;
+	repeated TankList ballastFrontTanks = 4;
+	repeated TankList ballastCenterTanks = 5;
+	repeated TankList ballastRearTanks = 6;	
 }
 
 message SynopticalTableLoadicatorData{
@@ -783,17 +792,6 @@ message SynopticalTableLoadicatorData{
 	string calculatedTrimActual = 13;
 	string blindSector = 14;
 }
-
-//message SynopticalDataRequest{
-//	int64 loadableStudyId = 1;
-//	int64 portId = 2;
-//	SynopticalRecord synopticalRecord = 3;
-//}
-
-//message SynopticalDataReply{
-//	ResponseStatus responseStatus = 1;
-//	repeated SynopticalRecord synopticalRecords = 2;
-//}
 
 message LoadableStudyAttachmentRequest{
  	int64 fileId = 1 ;
@@ -815,6 +813,3 @@ message SaveCommentRequest{
 	string comment =2;
 	int64 user=3;
 }
-
-
-
