@@ -633,7 +633,7 @@ export class DatatableComponent implements OnInit {
           total += value
         }
       })
-      return total;
+      return total.toFixed(2);
     }
     return ""
   }
