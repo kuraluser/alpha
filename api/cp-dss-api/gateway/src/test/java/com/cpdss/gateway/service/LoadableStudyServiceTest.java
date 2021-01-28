@@ -1,7 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.service;
 
-import static com.cpdss.common.util.CommonTestUtils.createDummyObject;
+import static com.cpdss.gateway.TestUtils.createDummyObject;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
