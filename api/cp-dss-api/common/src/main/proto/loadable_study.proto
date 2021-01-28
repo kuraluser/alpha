@@ -724,6 +724,7 @@ message SynopticalRecord{
 	SynopticalTableLoadicatorData loadicatorData = 35;
 	string ballastPlanned = 36;
 	string ballastActual = 37;
+	repeated SynopticalBallastRecord ballast = 38;
 }
 
 message SynopticalCargoRecord{
@@ -742,6 +743,14 @@ message SynopticalOhqRecord{
 	string actualWeight = 4;
 	int64 fuelTypeId = 5;
 	string fuelType = 6;
+}
+
+message SynopticalBallastRecord{
+	int64 tankId = 1;
+	string tankName = 2;
+	string plannedWeight = 3;
+	string actualWeight = 4;
+	string capacity = 5;
 }
 
 message SynopticalTableRequest{

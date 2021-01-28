@@ -2010,8 +2010,8 @@ class LoadableStudyServiceTest {
       record
           .getCargos()
           .add(
-              (com.cpdss.gateway.domain.SynopticalCargoRecord)
-                  createDummyObject(com.cpdss.gateway.domain.SynopticalCargoRecord.class));
+              (com.cpdss.gateway.domain.SynopticalCargoBallastRecord)
+                  createDummyObject(com.cpdss.gateway.domain.SynopticalCargoBallastRecord.class));
       record.setFoList(new ArrayList<>());
       record.setDoList(new ArrayList<>());
       record.setFwList(new ArrayList<>());

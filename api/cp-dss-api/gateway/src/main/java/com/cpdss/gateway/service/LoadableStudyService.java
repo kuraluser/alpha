@@ -50,6 +50,7 @@ import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
+import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
@@ -109,7 +110,7 @@ import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Purpose;
 import com.cpdss.gateway.domain.SaveCommentResponse;
-import com.cpdss.gateway.domain.SynopticalCargoRecord;
+import com.cpdss.gateway.domain.SynopticalCargoBallastRecord;
 import com.cpdss.gateway.domain.SynopticalOhqRecord;
 import com.cpdss.gateway.domain.SynopticalRecord;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
@@ -2277,10 +2278,46 @@ public class LoadableStudyService {
                 this.buildOhqDataForSynopticalTable(synopticalRecord, synopticalProtoRecord);
                 this.buildVesselDataForSynopticalTable(synopticalRecord, synopticalProtoRecord);
                 this.buildSynopticalLoadicatorRecord(synopticalRecord, synopticalProtoRecord);
+                this.buildSynopticalBallastRecords(synopticalRecord, synopticalProtoRecord);
                 synopticalTableList.add(synopticalRecord);
               });
       synopticalTableResponse.setSynopticalRecords(synopticalTableList);
     }
+  }
+
+  /**
+   * Build ballast list
+   *
+   * @param synopticalRecord
+   * @param synopticalProtoRecord
+   */
+  private void buildSynopticalBallastRecords(
+      SynopticalRecord synopticalRecord,
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
+    List<SynopticalCargoBallastRecord> list = new ArrayList<>();
+    for (SynopticalBallastRecord ballast : synopticalProtoRecord.getBallastList()) {
+      SynopticalCargoBallastRecord record = new SynopticalCargoBallastRecord();
+      record.setTankId(ballast.getTankId());
+      record.setTankName(ballast.getTankName());
+      record.setCapacity(
+          isEmpty(ballast.getCapacity()) ? null : new BigDecimal(ballast.getCapacity()));
+      record.setPlannedWeight(
+          isEmpty(ballast.getPlannedWeight()) ? null : new BigDecimal(ballast.getPlannedWeight()));
+      record.setActualWeight(
+          isEmpty(ballast.getActualWeight()) ? null : new BigDecimal(ballast.getActualWeight()));
+      list.add(record);
+    }
+    if (!list.isEmpty()) {
+      synopticalRecord.setBallastPlannedTotal(
+          list.stream()
+              .map(SynopticalCargoBallastRecord::getPlannedWeight)
+              .reduce(BigDecimal.ZERO, BigDecimal::add));
+      synopticalRecord.setBallastActualTotal(
+          list.stream()
+              .map(SynopticalCargoBallastRecord::getActualWeight)
+              .reduce(BigDecimal.ZERO, BigDecimal::add));
+    }
+    synopticalRecord.setBallast(list);
   }
 
   /**
@@ -2405,14 +2442,6 @@ public class LoadableStudyService {
     synopticalRecord.setLwTideTimeTo(synopticalProtoRecord.getLwTideTimeTo());
     synopticalRecord.setEtaEtdActual(synopticalProtoRecord.getEtaEtdActual());
     synopticalRecord.setEtaEtdPlanned(synopticalProtoRecord.getEtaEtdEstimated());
-    synopticalRecord.setBallastPlanned(
-        isEmpty(synopticalProtoRecord.getBallastPlanned())
-            ? BigDecimal.ZERO
-            : new BigDecimal(synopticalProtoRecord.getBallastPlanned()));
-    synopticalRecord.setBallastActual(
-        isEmpty(synopticalProtoRecord.getBallastActual())
-            ? BigDecimal.ZERO
-            : new BigDecimal(synopticalProtoRecord.getBallastActual()));
   }
 
   /**
@@ -2539,10 +2568,10 @@ public class LoadableStudyService {
   private void buildSynopticalTableCargos(
       SynopticalRecord synopticalRecord,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
-    List<SynopticalCargoRecord> list = new ArrayList<>();
+    List<SynopticalCargoBallastRecord> list = new ArrayList<>();
     for (com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord protoRec :
         synopticalProtoRecord.getCargoList()) {
-      SynopticalCargoRecord rec = new SynopticalCargoRecord();
+      SynopticalCargoBallastRecord rec = new SynopticalCargoBallastRecord();
       rec.setTankId(protoRec.getTankId());
       rec.setTankName(protoRec.getTankName());
       rec.setActualWeight(
@@ -2733,7 +2762,7 @@ public class LoadableStudyService {
               synopticalRecord.setFinalDraftMid(str.getFinalDraftMid());
               synopticalRecord.setCalculatedTrimPlanned(str.getCalculatedTrimPlanned());
               synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
-              synopticalRecord.setBallastPlanned(str.getBallastPlanned());
+              // synopticalRecord.setBallastPlanned(str.getBallastPlanned());
               response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
             });
   }
@@ -3092,7 +3121,7 @@ public class LoadableStudyService {
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder,
       SynopticalRecord request) {
     if (null != request.getCargos()) {
-      for (SynopticalCargoRecord cargo : request.getCargos()) {
+      for (SynopticalCargoBallastRecord cargo : request.getCargos()) {
         com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord.Builder builder =
             com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord.newBuilder();
         Optional.ofNullable(cargo.getTankId()).ifPresent(builder::setTankId);
@@ -3450,7 +3479,7 @@ public class LoadableStudyService {
         BunkerConditions bunkerConditions = new BunkerConditions();
         bunkerConditions.setFuelOilWeight(synopticalRecord.get().getActualFOTotal());
         bunkerConditions.setDieselOilWeight(synopticalRecord.get().getActualDOTotal());
-        bunkerConditions.setBallastWeight(synopticalRecord.get().getBallastActual());
+        // bunkerConditions.setBallastWeight(synopticalRecord.get().getBallastActual());
         bunkerConditions.setFreshWaterWeight(synopticalRecord.get().getActualFWTotal());
         bunkerConditions.setOthersWeight(synopticalRecord.get().getOthersActual());
         bunkerConditions.setTotalDwtWeight(synopticalRecord.get().getTotalDwtActual());

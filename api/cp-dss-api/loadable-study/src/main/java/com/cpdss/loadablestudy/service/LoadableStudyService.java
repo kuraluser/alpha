@@ -56,6 +56,7 @@ import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalRecord;
@@ -338,7 +339,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           FUEL_OIL_TANK_CATEGORY_ID,
           DIESEL_OIL_TANK_CATEGORY_ID,
           LUBRICATING_OIL_TANK_CATEGORY_ID,
-          LUBRICANT_OIL_TANK_CATEGORY_ID);
+          LUBRICANT_OIL_TANK_CATEGORY_ID,
+          BALLAST_TANK_CATEGORY_ID);
 
   private static final String SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL = "ARR";
   private static final String SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE = "DEP";
@@ -1884,9 +1886,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       this.cargoNominationOperationDetailsRepository.deleteCargoNominationPortDetails(
           request.getCargoNominationId());
       /*
-       * delete respective loading ports from port rotation table if ports
-       * not associated with any other cargo nomination belonging
-       * to the same loadable study
+       * delete respective loading ports from port rotation table if ports not
+       * associated with any other cargo nomination belonging to the same loadable
+       * study
        */
       if (!existingCargoNomination.get().getCargoNominationPortDetails().isEmpty()) {
         List<Long> requestedPortIds =
@@ -4213,15 +4215,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<SynopticalRecord> records = new ArrayList<>();
       List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> cargoDetails = null;
       List<LoadablePlanStowageBallastDetails> ballastDetails = new ArrayList<>();
-      // if there is loadable pattern selected, fetch corresponding loadicator and ballast data of
+      // if there is loadable pattern selected, fetch corresponding loadicator and
+      // ballast data of
       // all ports
       if (request.getLoadablePatternId() > 0) {
         cargoDetails =
             this.loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
                 request.getLoadablePatternId(), true);
         ballastDetails.addAll(
-            this.loadablePlanStowageBallastDetailsRepository.findByLoadablePatternId(
-                request.getLoadablePatternId()));
+            this.loadablePlanStowageBallastDetailsRepository.findByLoadablePatternIdAndIsActive(
+                request.getLoadablePatternId(), true));
       }
       for (SynopticalTable synopticalEntity : synopticalTableList) {
         SynopticalRecord.Builder builder = SynopticalRecord.newBuilder();
@@ -4242,7 +4245,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             synopticalEntity, builder, vesselLoadableQuantityDetails);
         if (request.getLoadablePatternId() > 0) {
           this.setSynopticalTableLoadicatorData(request.getLoadablePatternId(), builder);
-          this.setBallastDetails(synopticalEntity, builder, ballastDetails);
+          this.setBallastDetails(
+              synopticalEntity,
+              builder,
+              ballastDetails,
+              sortedTankList,
+              request.getLoadablePatternId());
         }
         records.add(builder.build());
       }
@@ -4260,11 +4268,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param synopticalEntity
    * @param builder
    * @param ballastDetails
+   * @param sortedTankList
+   * @param paatternId
    */
   private void setBallastDetails(
       SynopticalTable synopticalEntity,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builder,
-      List<LoadablePlanStowageBallastDetails> ballastDetails) {
+      List<LoadablePlanStowageBallastDetails> ballastDetails,
+      List<VesselTankDetail> sortedTankList,
+      Long paatternId) {
     List<LoadablePlanStowageBallastDetails> portBallastList =
         ballastDetails.stream()
             .filter(
@@ -4273,11 +4285,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         && synopticalEntity.getOperationType().equals(bd.getOperationType()))
             .collect(Collectors.toList());
     if (null != portBallastList && !portBallastList.isEmpty()) {
-      BigDecimal plannedSum =
-          portBallastList.stream()
-              .map(LoadablePlanStowageBallastDetails::getQuantity)
-              .reduce(BigDecimal.ZERO, BigDecimal::add);
-      builder.setBallastPlanned(valueOf(plannedSum));
+      for (VesselTankDetail tank : sortedTankList) {
+        if (!BALLAST_TANK_CATEGORY_ID.equals(tank.getTankCategoryId())) {
+          continue;
+        }
+        SynopticalBallastRecord.Builder ballastBuilder = SynopticalBallastRecord.newBuilder();
+        ballastBuilder.setTankId(tank.getTankId());
+        ballastBuilder.setTankName(tank.getTankName());
+        ballastBuilder.setCapacity(tank.getFullCapacityCubm());
+        Optional<LoadablePlanStowageBallastDetails> tankBallastDetail =
+            portBallastList.stream()
+                .filter(b -> b.getTankXId().longValue() == tank.getTankId())
+                .findAny();
+        if (tankBallastDetail.isPresent()) {
+          LoadablePlanStowageBallastDetails ballast = tankBallastDetail.get();
+          Optional.ofNullable(ballast.getQuantity())
+              .ifPresent(item -> ballastBuilder.setPlannedWeight(valueOf(item)));
+          Optional.ofNullable(ballast.getActualQuantity())
+              .ifPresent(item -> ballastBuilder.setActualWeight(valueOf(item)));
+        } else {
+          log.info(
+              "Ballast details not available for the tank: {}, pattern: {}",
+              tank.getTankId(),
+              paatternId);
+        }
+        builder.addBallast(ballastBuilder.build());
+      }
     }
   }
 
