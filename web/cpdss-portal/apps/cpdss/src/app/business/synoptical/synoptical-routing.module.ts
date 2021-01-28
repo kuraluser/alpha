@@ -11,6 +11,10 @@ const routes: Routes = [
       {
         path:':vesselId/:voyageId/:loadableStudyId',
         component: SynopticalTableComponent
+      },
+      {
+        path:':vesselId/:voyageId/:loadableStudyId/:loadablePatternId',
+        component: SynopticalTableComponent
       }
     ]
   }

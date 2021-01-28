@@ -25,6 +25,14 @@
                     placeholder="{{'SYNOPTICAL_LOADABLESTUDY_PLACEHOLDER' | translate }}"
                     (onChange)="onSelectLoadableStudy()">
                 </p-dropdown>
+
+                <span class="ml-20 mr-10">
+                    {{'SYNOPTICAL_LOADABLE_PATTERN_LABEL' | translate }}</span>
+                <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.loadablePatternsList"
+                    [(ngModel)]="synopticalService.selectedLoadablePattern" optionLabel="caseNumber" [filter]="true"
+                    placeholder="{{'SYNOPTICAL_LOADABLEPATTERN_PLACEHOLDER' | translate }}"
+                    (onChange)="onSelectLoadablePattern()">
+                </p-dropdown>
             </div>
         </div>
         <div class="row">

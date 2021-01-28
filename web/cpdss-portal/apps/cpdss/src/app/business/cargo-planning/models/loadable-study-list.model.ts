@@ -73,3 +73,24 @@ export interface ILoadableStudiesResponse {
     requestStatus: any;
     loadableStudies: LoadableStudy[];
 }
+
+/**
+ * Interface for loadable pattern response
+ *
+ * @export
+ * @interface LoadablePattern
+ */
+export interface LoadablePattern {
+    loadablePatternId: number;
+    caseNumber: number;
+}
+
+/* Interface for loadable Patterns response
+*
+* @export
+* @interface ILoadablePatternsResponse
+*/
+export interface ILoadablePatternsResponse {
+   requestStatus: any;
+   loadablePatterns: LoadablePattern[];
+}

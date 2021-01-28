@@ -368,7 +368,8 @@
 	"SYNOPTICAL_LOADABLE_STUDY_LABEL": "Loadable study",
 	"SYNOPTICAL_VOYAGE_LABEL": "Voyage",
 	"SYNOPTICAL_LOADABLESTUDY_PLACEHOLDER": "Select loadable study",
-
+	"SYNOPTICAL_LOADABLE_PATTERN_LABEL": "Loadable Pattern",
+	"SYNOPTICAL_LOADABLEPATTERN_PLACEHOLDER": "Select loadable pattern",
 	"SYNOPTICAL_REQUIRED": "Required",
     "SYNOPTICAL_INVALID": "Invalid",
     "SYNOPTICAL_FROM_MAX": "From Tide should be less than To Tide",

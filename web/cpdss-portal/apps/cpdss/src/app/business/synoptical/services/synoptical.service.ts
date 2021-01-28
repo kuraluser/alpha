@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { LoadableStudy } from '../../cargo-planning/models/loadable-study-list.model';
+import { LoadablePattern, LoadableStudy } from '../../cargo-planning/models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../../cargo-planning/services/loadable-study-list-api.service';
 import { Voyage } from '../../core/models/common.model';
 import { IVessel } from '../../core/models/vessel-details.model';
@@ -22,17 +22,21 @@ export class SynopticalService {
   loadableStudyList: LoadableStudy[];
   selectedLoadableStudy: LoadableStudy;
   loadableStudyId: number;
+  loadablePatternsList: LoadablePattern[];
+  selectedLoadablePattern: LoadablePattern;
   vesselId: number;
   voyageId: number;
   isVoyageIdSelected = false;
   onInitCompleted = new BehaviorSubject(false);
   onInitCompleted$: Observable<boolean> = this.onInitCompleted.asObservable()
+  loadablePatternId: number;
 
   constructor(
     private loadableStudyListApiService: LoadableStudyListApiService,
     private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,
-  ) { }
+  ) {
+  }
 
   // Init function to intialize data
   async init() {
@@ -45,17 +49,18 @@ export class SynopticalService {
 
   // Method to set selected voyages
   async setSelectedVoyage() {
-    if (!this.selectedVoyage && this.voyages && this.voyageId) {
-      this.selectedVoyage = this.voyages.find(voyage => voyage.id == this.voyageId)
-      await this.getLoadableStudyInfo(this.vesselInfo.id, this.selectedVoyage.id)
-    } else if (this.selectedVoyage) {
+    if (this.selectedVoyage) {
       this.voyageId = this.selectedVoyage.id;
+    } else if (this.voyages && this.voyageId) {
+      this.selectedVoyage = this.voyages.find(voyage => voyage.id === this.voyageId)
+      await this.getLoadableStudyInfo(this.vesselInfo.id, this.selectedVoyage.id)
     }
   }
 
   // Method to set selected loadable study
   setSelectedLoadableStudy() {
-    this.selectedLoadableStudy = this.loadableStudyList.find(loadableStudy => loadableStudy.id == this.loadableStudyId)
+    this.selectedLoadableStudy = this.loadableStudyList.find(loadableStudy => loadableStudy.id === this.loadableStudyId);
+    this.getLoadablePatterns();
   }
 
   /**
@@ -66,10 +71,10 @@ export class SynopticalService {
       this.isVoyageIdSelected = true;
       const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
       this.loadableStudyList = result.loadableStudies;
-      if (!this.selectedLoadableStudy && this.loadableStudyId) {
-        this.setSelectedLoadableStudy();
-      } else if (this.selectedLoadableStudy) {
+      if (this.selectedLoadableStudy) {
         this.loadableStudyId = this.selectedLoadableStudy.id;
+      } else if (this.loadableStudyId) {
+        this.setSelectedLoadableStudy();
       }
     }
     else {
@@ -77,4 +82,16 @@ export class SynopticalService {
     }
   }
 
+  /**
+  * Get loadable pattern list for selected loadable study
+  */
+  async getLoadablePatterns() {
+    const result = await this.loadableStudyListApiService.getLoadablePatterns(this.vesselId, this.voyageId, this.selectedLoadableStudy.id).toPromise();
+    this.loadablePatternsList = result.loadablePatterns;
+    if (this.selectedLoadablePattern) {
+      this.loadablePatternId = this.selectedLoadablePattern.loadablePatternId;
+    } else if (this.loadablePatternId) {
+      this.selectedLoadablePattern = this.loadablePatternsList.find(pattern => pattern.loadablePatternId === this.loadablePatternId)
+    }
+  }
 }

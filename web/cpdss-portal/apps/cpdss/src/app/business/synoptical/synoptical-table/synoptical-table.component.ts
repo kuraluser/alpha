@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -10,6 +10,7 @@ import { numberValidator } from '../../cargo-planning/directives/validator/numbe
 import { ISynopticalRecords, SynopticalColumn, SynopticalDynamicColumn, SynopticField } from '../models/synoptical-table.model';
 import { SynopticalApiService } from '../services/synoptical-api.service';
 import { SynopticalService } from '../services/synoptical.service';
+import * as XLSX from 'xlsx';
 
 /**
  * Component class of synoptical table
@@ -23,7 +24,7 @@ import { SynopticalService } from '../services/synoptical.service';
   templateUrl: './synoptical-table.component.html',
   styleUrls: ['./synoptical-table.component.scss']
 })
-export class SynopticalTableComponent implements OnInit {
+export class SynopticalTableComponent implements OnInit, OnDestroy {
   readonly fieldType = DATATABLE_FIELD_TYPE;
 
   synopticalRecords: ISynopticalRecords[] = [];
@@ -48,6 +49,7 @@ export class SynopticalTableComponent implements OnInit {
     'etdMax': "SYNOPTICAL_ETD_MAX",
   };
   editMode = false;
+  expandedRows = [];
   ngUnsubscribe: Subject<void> = new Subject();
 
   constructor(
@@ -72,9 +74,12 @@ export class SynopticalTableComponent implements OnInit {
           this.route.params
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(async route => {
-              this.synopticalService.loadableStudyId = route.loadableStudyId;
-              this.synopticalService.vesselId = route.vesselId;
-              this.synopticalService.voyageId = route.voyageId;
+              this.synopticalService.loadableStudyId = Number(route.loadableStudyId);
+              this.synopticalService.vesselId = Number(route.vesselId);
+              this.synopticalService.voyageId = Number(route.voyageId);
+              if (route.loadablePatternId) {
+                this.synopticalService.loadablePatternId = Number(route.loadablePatternId);
+              }
               await this.synopticalService.setSelectedVoyage();
               this.initData();
             });
@@ -104,7 +109,7 @@ export class SynopticalTableComponent implements OnInit {
     this.initColumns();
     this.initDynamicColumns();
     this.setColumnHeader();
-    const result = await this.synoticalApiService.getSynopticalTable(this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId).toPromise();
+    const result = await this.synoticalApiService.getSynopticalTable(this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId, this.synopticalService.loadablePatternId).toPromise();
     if (result.responseStatus.status === "200") {
       this.synopticalRecords = result.synopticalRecords ?? [];
       this.dynamicColumns.forEach(dynamicColumn => {
@@ -196,7 +201,7 @@ export class SynopticalTableComponent implements OnInit {
           type: this.fieldType.NUMBER,
         }],
         header: 'Running Hours',
-        editable: false,
+        editable: true,
       },
       {
         header: 'ETA/ETD',
@@ -867,14 +872,14 @@ export class SynopticalTableComponent implements OnInit {
   addToColumns(dynamicColumn: SynopticalDynamicColumn) {
     const keys = dynamicColumn.subHeaders;
     const fieldKey = dynamicColumn.fieldKey;
-    let col = this.cols.find(col => col.dynamicKey == fieldKey);
+    const col = this.cols.find(column => column.dynamicKey === fieldKey);
     this.listData[fieldKey].forEach(item => {
-      let subHeaders = [];
+      const subHeaders = [];
       keys.forEach(key => {
-        let subHeader = JSON.parse(JSON.stringify(key))
+        const subHeader = JSON.parse(JSON.stringify(key))
         subHeader['fields'] = []
         key.fields.forEach(field => {
-          let tempField = JSON.parse(JSON.stringify(field))
+          const tempField = JSON.parse(JSON.stringify(field))
           tempField['key'] = fieldKey + item.id + field['key']
           subHeader.fields.push(tempField)
         })
@@ -909,8 +914,8 @@ export class SynopticalTableComponent implements OnInit {
     this.synopticalRecords.forEach(synopticalRecord => {
       if (synopticalRecord[fieldKey]) {
         synopticalRecord[fieldKey].forEach(record => {
-          const index = this.listData[fieldKey].findIndex(item => item.id == record[primaryKey]);
-          if (!index || index < 0) {
+          const index = this.listData[fieldKey].findIndex(item => item.id === record[primaryKey]);
+          if (index < 0) {
             this.listData[fieldKey].push({
               id: record[primaryKey],
               header: record[headerLabel]
@@ -946,18 +951,18 @@ export class SynopticalTableComponent implements OnInit {
     const columns = this.getAllColumns(this.cols);
 
     this.synopticalRecords.forEach((record, colIndex) => {
-      let fg = new FormGroup({})
+      const fg = new FormGroup({})
       columns.forEach(column => {
         if (column.editable) {
           column.fields?.forEach(field => {
             fg.addControl(field.key, new FormControl(this.getValue(record[field.key], field.type)))
           });
           column.fields?.forEach(field => {
-            let validators: ValidatorFn[] = []
+            const validators: ValidatorFn[] = []
             field.validators?.forEach(validator => {
               validators.push(this.getValidators(validator))
             })
-            let fc = fg.get(field.key);
+            const fc = fg.get(field.key);
             fc.setValidators(validators)
           })
         }
@@ -1019,7 +1024,7 @@ export class SynopticalTableComponent implements OnInit {
    * @memberof SynopticalTableComponent
   */
   getValidators(validator: string): ValidatorFn {
-    if (validator == 'required')
+    if (validator === 'required')
       return Validators.required;
     else if (/^(d*(.d)?d*(.\+)?)$/.test(validator)) {
       let decimals = 0;
@@ -1092,6 +1097,29 @@ export class SynopticalTableComponent implements OnInit {
   }
 
   /**
+ * Method to update other fields on keyup of an input
+ *
+ * @param {SynopticField} field
+ * @param {number} colIndex
+ * @returns {any}
+ * @memberof SynopticalTableComponent
+*/
+  onKeyUp(field: SynopticField, colIndex: number) {
+    const fc = this.getControl(colIndex, field.key)
+    const operationType = this.synopticalRecords[colIndex].operationType;
+    const otherIndex = operationType === 'ARR' ? colIndex + 1 : colIndex - 1;
+    switch (field.key) {
+      case 'speed': case 'distance': case 'runningHours':
+      case 'inPortHours':
+        if (otherIndex >= 0 && otherIndex < this.synopticalRecords.length) {
+          this.getControl(otherIndex, field.key)?.setValue(fc.value)
+        }
+        break;
+      default:
+        break;
+    }
+  }
+  /**
    * Method to do validations on focusing out of an input
    *
    * @param {SynopticField} field
@@ -1100,7 +1128,9 @@ export class SynopticalTableComponent implements OnInit {
    * @memberof SynopticalTableComponent
   */
   onBlur(field: SynopticField, colIndex: number) {
-    let fc = this.getControl(colIndex, field.key)
+    const fc = this.getControl(colIndex, field.key)
+    const operationType = this.synopticalRecords[colIndex].operationType;
+    const otherIndex = operationType === 'ARR' ? colIndex + 1 : colIndex - 1;
     if (fc.invalid)
       return;
     let fcMax, fcMin;
@@ -1169,12 +1199,11 @@ export class SynopticalTableComponent implements OnInit {
           fcMin.setValue(fcMin.value, { emitEvent: false })
         }
         break;
-
       case 'etaEtdPlanned': case 'etaEtdActual':
         if (colIndex > 0) {
           fcMin = this.getControl(colIndex - 1, field.key)
           if (fc.value < fcMin.value) {
-            if (this.synopticalRecords[colIndex].operationType == 'ARR')
+            if (this.synopticalRecords[colIndex].operationType === 'ARR')
               fc.setErrors({ etaMin: true })
             else
               fc.setErrors({ etdMin: true })
@@ -1185,7 +1214,7 @@ export class SynopticalTableComponent implements OnInit {
         if (colIndex < this.synopticalRecords.length - 1) {
           fcMax = this.getControl(colIndex + 1, field.key)
           if (fc.value > fcMax.value) {
-            if (this.synopticalRecords[colIndex].operationType == 'ARR')
+            if (this.synopticalRecords[colIndex].operationType === 'ARR')
               fc.setErrors({ etaMax: true })
             else
               fc.setErrors({ etdMax: true })
@@ -1193,6 +1222,40 @@ export class SynopticalTableComponent implements OnInit {
             fcMax.setValue(fcMax.value, { emitEvent: false })
           }
         }
+        let inPortHours = 0;
+        if (fc.valid) {
+          const otherControl = this.getControl(otherIndex, field.key);
+          if (otherControl.valid) {
+            let arrDate, depDate;
+            if (otherIndex > colIndex) {
+              arrDate = fc.value;
+              depDate = otherControl.value;
+            } else {
+              depDate = fc.value;
+              arrDate = otherControl.value;
+            }
+            inPortHours = Math.abs(depDate - arrDate) / 36e5;
+            inPortHours = Number(inPortHours.toFixed(2))
+          }
+        }
+        this.getControl(colIndex, 'inPortHours')?.setValue(inPortHours)
+        this.getControl(otherIndex, 'inPortHours')?.setValue(inPortHours)
+        break;
+      case 'speed': case 'distance':
+        const speedControl = this.getControl(colIndex, 'speed')
+        const distanceControl = this.getControl(colIndex, 'distance')
+        let speed = 0, distance = 0, runningHours = 0;
+        if (speedControl.valid) {
+          speed = Number(speedControl.value);
+        }
+        if (distanceControl.valid) {
+          distance = Number(distanceControl.value);
+        }
+        if (speed && distance) {
+          runningHours = Number(Number(distance / speed).toFixed(2));
+        }
+        this.getControl(colIndex, 'runningHours')?.setValue(runningHours)
+        this.getControl(otherIndex, 'runningHours')?.setValue(runningHours)
         break;
       default:
         break;
@@ -1206,7 +1269,7 @@ export class SynopticalTableComponent implements OnInit {
    * @memberof SynopticalTableComponent
   */
   checkIfConfirmed(): boolean {
-    return this.synopticalService.selectedLoadableStudy?.status == "Confirmed" ?? false
+    return this.synopticalService.selectedLoadableStudy?.status === "Confirmed" ?? false
   }
 
   /**
@@ -1218,5 +1281,39 @@ export class SynopticalTableComponent implements OnInit {
   */
   isNotBlankOrNull(value): boolean {
     return (typeof value !== 'undefined' && value !== '');
+  }
+
+  exportExcelFromTable(): void {
+    const fileName= 'synoptic.xlsx';
+    const expandableRows = ['Final Draft', 'Cargo', 'Total F.O', 'Total D.O', 'Fresh W.T', 'Lube Oil Total'];
+    const expanded = {...this.expandedRows}
+    expandableRows.forEach(key => {
+      this.expandedRows[key] = true;
+    });
+    setTimeout(()=>{
+      /* table id is passed over here */
+      const element = document.getElementById('synoptic-table');
+      const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+
+      /* setting back all the expanded rows */
+      this.expandedRows = expanded;
+
+      /* Removing unwanted strings from the values */
+      Object.keys(ws).forEach(key => {
+        if(ws[key].t && ws[key].t === 's' && ws[key].v){
+          let v = String(ws[key].v)
+          v = v.replace('&nbsp;','');
+          ws[key].v = v;
+        }
+      })
+
+
+      /* generate workbook and add the worksheet */
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+      
+      /* save to file */
+      XLSX.writeFile(wb, fileName);
+    },1000)
   }
 }

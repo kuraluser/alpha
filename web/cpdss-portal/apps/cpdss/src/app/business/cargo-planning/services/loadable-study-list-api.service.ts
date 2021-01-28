@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { IResponse } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { INewLoadableStudy } from '../../core/components/new-loadable-study-popup/new-loadable-study-popup.model';
-import { ILoadableStudiesResponse, ILoadableStudyResponse, LoadableStudy } from '../models/loadable-study-list.model'
+import { ILoadablePatternsResponse, ILoadableStudiesResponse, ILoadableStudyResponse, LoadableStudy } from '../models/loadable-study-list.model'
 
 @Injectable()
 export class LoadableStudyListApiService {
@@ -17,6 +17,14 @@ export class LoadableStudyListApiService {
    */
   getLoadableStudies(vesselId: number, voyageId: number): Observable<ILoadableStudiesResponse> {
     return this.commonApiService.get<ILoadableStudiesResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies
+    `);
+  }
+
+  /**
+ * Get loadable pattern list
+ */
+  getLoadablePatterns(vesselId: number, voyageId: number, loadableStudyId: number): Observable<ILoadablePatternsResponse> {
+    return this.commonApiService.get<ILoadablePatternsResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/patterns
     `);
   }
 
@@ -42,7 +50,7 @@ export class LoadableStudyListApiService {
     formData.append('maxAirTemperature', loadableStudy.maxAirTempExpected ? loadableStudy.maxAirTempExpected?.toString() : "");
     formData.append('maxWaterTemperature', loadableStudy.maxWaterTempExpected ? loadableStudy.maxWaterTempExpected?.toString() : "");
     for (let i = 0; i < loadableStudy.attachMail.length; i++) {
-      if(loadableStudy.attachMail[i]?.size){
+      if (loadableStudy.attachMail[i]?.size) {
         formData.append('files', loadableStudy.attachMail[i]);
       }
 

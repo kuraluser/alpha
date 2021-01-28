@@ -15,6 +15,7 @@ import { ValidationErrorModule } from '../../shared/components/validation-error/
 import { CalendarModule } from 'primeng/calendar';
 import { SynopticalService } from './services/synoptical.service';
 import { NumberDirectiveModule } from '../../shared/directives/number-directive/number-directive.module';
+import { SynopticalApiService } from './services/synoptical-api.service';
 
 /**
  * Module for Synoptical Table
@@ -42,6 +43,7 @@ import { NumberDirectiveModule } from '../../shared/directives/number-directive/
   providers: [
     LoadableStudyListApiService,
     SynopticalService,
+    SynopticalApiService
   ]
 })
 export class SynopticalModule { }
