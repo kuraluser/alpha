@@ -317,6 +317,8 @@ export class CommingleComponent implements OnInit {
  */
   private addNew(commingle: ICargoGroup = null) {
     if (this.manualCommingleList.length <= 2) {
+      this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo1;
+      this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2;
       commingle = commingle ?? <ICargoGroup>{
         id: 0,
         cargo1Id: null,
@@ -330,7 +332,7 @@ export class CommingleComponent implements OnInit {
       const dataTableControl = <FormArray>this.commingleManualForm.get('dataTable');
       dataTableControl.insert(0, this.initCommingleManualFormGroup(_commingle));
     }
-    else{
+    else {
       this.isMaxCargo = true;
     }
 
@@ -518,15 +520,15 @@ export class CommingleComponent implements OnInit {
   /**
    * Method to show preferred tank notification
    */
-  onPreferredTankSelect(){
-    if (this.commingleForm.value?.preferredTanks?.length === 5 ) {
-      this.extraPreferred = this.extraPreferred +1;
-      if(this.extraPreferred > 1){
+  onPreferredTankSelect() {
+    if (this.commingleForm.value?.preferredTanks?.length === 5) {
+      this.extraPreferred = this.extraPreferred + 1;
+      if (this.extraPreferred > 1) {
         this.isMaxPreferredTank = true;
       }
-      
+
     }
-    else{
+    else {
       this.isMaxPreferredTank = false;
     }
   }
