@@ -2310,11 +2310,17 @@ public class LoadableStudyService {
       record.setCapacity(
           isEmpty(ballast.getCapacity()) ? null : new BigDecimal(ballast.getCapacity()));
       record.setPlannedWeight(
-          isEmpty(ballast.getPlannedWeight()) ? null : new BigDecimal(ballast.getPlannedWeight()));
+          isEmpty(ballast.getPlannedWeight())
+              ? BigDecimal.ZERO
+              : new BigDecimal(ballast.getPlannedWeight()));
       record.setActualWeight(
-          isEmpty(ballast.getActualWeight()) ? null : new BigDecimal(ballast.getActualWeight()));
+          isEmpty(ballast.getActualWeight())
+              ? BigDecimal.ZERO
+              : new BigDecimal(ballast.getActualWeight()));
       list.add(record);
     }
+    synopticalRecord.setBallastPlannedTotal(BigDecimal.ZERO);
+    synopticalRecord.setBallastActualTotal(BigDecimal.ZERO);
     if (!list.isEmpty()) {
       synopticalRecord.setBallastPlannedTotal(
           list.stream()
@@ -3093,12 +3099,33 @@ public class LoadableStudyService {
       this.buildSynopticalRequestRecord(recordBuilder, rec);
       if (loadablePatternId != null && loadablePatternId > 0) {
         this.buildSynopticalRequestLoadicatorData(recordBuilder, rec);
+        this.buildSynopticalRequestBallastData(recordBuilder, rec);
       }
       this.buildSynopticalRequestCargoData(recordBuilder, rec);
       this.buildSynopticalRequestOhqData(recordBuilder, rec);
       builder.addSynopticalRecord(recordBuilder.build());
     }
     return builder.build();
+  }
+
+  /**
+   * Build ballast data for synoptical save request
+   *
+   * @param recordBuilder
+   * @param rec
+   */
+  private void buildSynopticalRequestBallastData(
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder,
+      SynopticalRecord rec) {
+    if (null != rec.getBallast() && !rec.getBallast().isEmpty()) {
+      for (SynopticalCargoBallastRecord ballast : rec.getBallast()) {
+        SynopticalBallastRecord.Builder protoBuilder = SynopticalBallastRecord.newBuilder();
+        Optional.ofNullable(ballast.getActualWeight())
+            .ifPresent(item -> protoBuilder.setActualWeight(valueOf(item)));
+        protoBuilder.setTankId(ballast.getTankId());
+        recordBuilder.addBallast(protoBuilder.build());
+      }
+    }
   }
 
   /**
