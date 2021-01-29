@@ -1312,50 +1312,50 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         List<OnHandQuantity> onHandQuantityList =
             this.onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudy.get(), true);
 
-        foOnboard =
-            BigDecimal.valueOf(
-                onHandQuantityList.stream()
-                    .filter(
-                        ohq ->
-                            ohq.getFuelTypeXId().equals(FUEL_OIL_TANK_CATEGORY_ID)
-                                && ohq.getPortXId().equals(firstPort)
-                                && ohq.getIsActive())
-                    .mapToLong(
-                        foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
-                    .sum());
-        doOnboard =
-            BigDecimal.valueOf(
-                onHandQuantityList.stream()
-                    .filter(
-                        ohq ->
-                            ohq.getFuelTypeXId().equals(DIESEL_OIL_TANK_CATEGORY_ID)
-                                && ohq.getPortXId().equals(firstPort)
-                                && ohq.getIsActive())
-                    .mapToLong(
-                        doOnboardQuantity -> doOnboardQuantity.getArrivalQuantity().longValue())
-                    .sum());
-        freshWaterOnBoard =
-            BigDecimal.valueOf(
-                onHandQuantityList.stream()
-                    .filter(
-                        ohq ->
-                            ohq.getFuelTypeXId() == FRESH_WATER_TANK_CATEGORY_ID
-                                && ohq.getPortXId() == firstPort
-                                && ohq.getIsActive())
-                    .mapToLong(
-                        fwOnboardQuantity -> fwOnboardQuantity.getArrivalQuantity().longValue())
-                    .sum());
-        boileWaterOnBoard =
-            BigDecimal.valueOf(
-                onHandQuantityList.stream()
-                    .filter(
-                        ohq ->
-                            ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
-                                && ohq.getPortXId().equals(firstPort)
-                                && ohq.getIsActive())
-                    .mapToLong(
-                        bwOnboardQuantity -> bwOnboardQuantity.getArrivalQuantity().longValue())
-                    .sum());
+        if (!onHandQuantityList.isEmpty()) {
+          foOnboard =
+              onHandQuantityList.stream()
+                  .filter(
+                      ohq ->
+                          null != ohq.getFuelTypeXId()
+                              && null != ohq.getPortXId()
+                              && ohq.getFuelTypeXId().equals(FUEL_OIL_TANK_CATEGORY_ID)
+                              && ohq.getPortXId().equals(firstPort)
+                              && ohq.getIsActive())
+                  .map(OnHandQuantity::getArrivalQuantity)
+                  .reduce(BigDecimal.ZERO, BigDecimal::add);
+          doOnboard =
+              onHandQuantityList.stream()
+                  .filter(
+                      ohq ->
+                          null != ohq.getFuelTypeXId()
+                              && null != ohq.getPortXId()
+                              && ohq.getFuelTypeXId().equals(DIESEL_OIL_TANK_CATEGORY_ID)
+                              && ohq.getPortXId().equals(firstPort)
+                              && ohq.getIsActive())
+                  .map(OnHandQuantity::getArrivalQuantity)
+                  .reduce(BigDecimal.ZERO, BigDecimal::add);
+          freshWaterOnBoard =
+              onHandQuantityList.stream()
+                  .filter(
+                      ohq ->
+                          null != ohq.getFuelTypeXId()
+                              && null != ohq.getPortXId()
+                              && ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
+                              && ohq.getPortXId() == firstPort
+                              && ohq.getIsActive())
+                  .map(OnHandQuantity::getArrivalQuantity)
+                  .reduce(BigDecimal.ZERO, BigDecimal::add);
+          boileWaterOnBoard =
+              onHandQuantityList.stream()
+                  .filter(
+                      ohq ->
+                          ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
+                              && ohq.getPortXId().equals(firstPort)
+                              && ohq.getIsActive())
+                  .map(OnHandQuantity::getArrivalQuantity)
+                  .reduce(BigDecimal.ZERO, BigDecimal::add);
+        }
       }
 
       VesselRequest replyBuilder =
@@ -4943,7 +4943,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .ifPresent(time -> builder.setTimeOfSunrise(timeFormatter.format(time)));
     Optional.ofNullable(synopticalEntity.getTimeOfSunSet())
         .ifPresent(time -> builder.setTimeOfSunset(timeFormatter.format(time)));
-    // If specific port related data is available in synoptical table then replace the port master
+    // If specific port related data is available in synoptical table then replace
+    // the port master
     // value
     Optional.ofNullable(synopticalEntity.getSpecificGravity())
         .ifPresent(sg -> builder.setSpecificGravity(valueOf(sg)));
@@ -5026,9 +5027,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     if (portRotation.isPresent()) {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
       if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(synopticalEntity.getOperationType())) {
-        builder.setEtaEtdEstimated(formatter.format(portRotation.get().getEta()));
+        builder.setEtaEtdEstimated(
+            null == portRotation.get().getEta()
+                ? ""
+                : formatter.format(portRotation.get().getEta()));
       } else {
-        builder.setEtaEtdEstimated(formatter.format(portRotation.get().getEtd()));
+        builder.setEtaEtdEstimated(
+            null == portRotation.get().getEtd()
+                ? ""
+                : formatter.format(portRotation.get().getEtd()));
       }
       if (null != portRotation.get().getPortOrder()) {
         builder.setPortOrder(portRotation.get().getPortOrder());
