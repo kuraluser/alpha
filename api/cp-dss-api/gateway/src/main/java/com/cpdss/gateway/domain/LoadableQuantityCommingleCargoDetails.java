@@ -26,4 +26,7 @@ public class LoadableQuantityCommingleCargoDetails {
   private String cargo2MT;
   private String cargo1KL;
   private String cargo2KL;
+  private String orderedQuantity;
+  private Integer priority;
+  private Integer loadingOrder;
 }

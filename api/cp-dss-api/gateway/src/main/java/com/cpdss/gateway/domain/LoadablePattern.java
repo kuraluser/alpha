@@ -8,9 +8,9 @@ import lombok.Data;
 @Data
 public class LoadablePattern {
   private Long loadablePatternId;
-  private String constraints;
-  private String totalDifferenceColor;
+  private List<String> constraints;
   private List<LoadablePatternCargoDetails> loadablePatternCargoDetails;
+  private List<LoadablePlanStowageDetails> loadablePlanStowageDetails;
   private Long loadableStudyStatusId;
-  private String caseNumber;
+  private Integer caseNumber;
 }

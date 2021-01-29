@@ -22,4 +22,9 @@ public class LoadableQuantityCargoDetails {
   private String differencePercentage;
   private String differenceColor;
   private Long cargoId;
+  private String orderedQuantity;
+  private String cargoAbbreviation;
+  private String colorCode;
+  private Integer priority;
+  private Integer loadingOrder;
 }
