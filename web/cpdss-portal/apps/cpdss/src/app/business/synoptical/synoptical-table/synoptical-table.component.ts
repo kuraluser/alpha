@@ -11,6 +11,9 @@ import { ISynopticalRecords, SynopticalColumn, SynopticalDynamicColumn, Synoptic
 import { SynopticalApiService } from '../services/synoptical-api.service';
 import { SynopticalService } from '../services/synoptical.service';
 import * as XLSX from 'xlsx';
+import { DatePipe } from '@angular/common';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Component class of synoptical table
@@ -48,15 +51,18 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     'etaMax': 'SYNOPTICAL_ETA_MAX',
     'etdMax': "SYNOPTICAL_ETD_MAX",
   };
-  editMode = false;
   expandedRows = [];
   ngUnsubscribe: Subject<void> = new Subject();
+  allColumns: SynopticalColumn[]
+  datePipe: DatePipe = new DatePipe('en-US');
 
   constructor(
     private synoticalApiService: SynopticalApiService,
     private route: ActivatedRoute,
     private ngxSpinner: NgxSpinnerService,
-    private synopticalService: SynopticalService
+    private synopticalService: SynopticalService,
+    private messageService: MessageService,
+    private translateService: TranslateService,
   ) {
   }
 
@@ -118,6 +124,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       })
       this.initForm();
     }
+    this.initActionSubscriptions()
+
     this.ngxSpinner.hide();
   }
 
@@ -241,12 +249,18 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       },
       {
         header: 'Time of Sunrise',
-        fields: [{ key: 'timeOfSunrise' }],
+        fields: [{
+          key: 'timeOfSunrise',
+          type: this.fieldType.TIME
+        }],
         editable: true,
       },
       {
         header: 'Time of Sunset',
-        fields: [{ key: 'timeOfSunset' }],
+        fields: [{
+          key: 'timeOfSunset',
+          type: this.fieldType.TIME
+        }],
         editable: true,
       },
       {
@@ -977,11 +991,11 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
  * @memberof SynopticalTableComponent
  */
   initForm() {
-    const columns = this.getAllColumns(this.cols);
+    this.allColumns = this.getAllColumns(this.cols);
 
-    this.synopticalRecords.forEach((record, colIndex) => {
+    this.synopticalRecords.forEach((record) => {
       const fg = new FormGroup({})
-      columns.forEach(column => {
+      this.allColumns.forEach(column => {
         if (column.editable) {
           column.fields?.forEach(field => {
             fg.addControl(field.key, new FormControl(this.getValue(record[field.key], field.type)))
@@ -1312,14 +1326,20 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     return (typeof value !== 'undefined' && value !== '');
   }
 
+  /**
+   * Method to export table data
+   *
+   * @returns {void}
+   * @memberof SynopticalTableComponent
+  */
   exportExcelFromTable(): void {
-    const fileName= 'synoptic.xlsx';
+    const fileName = 'synoptic.xlsx';
     const expandableRows = ['Final Draft', 'Cargo', 'Total F.O', 'Total D.O', 'Fresh W.T', 'Lube Oil Total'];
-    const expanded = {...this.expandedRows}
+    const expanded = { ...this.expandedRows }
     expandableRows.forEach(key => {
       this.expandedRows[key] = true;
     });
-    setTimeout(()=>{
+    setTimeout(() => {
       /* table id is passed over here */
       const element = document.getElementById('synoptic-table');
       const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
@@ -1329,9 +1349,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
 
       /* Removing unwanted strings from the values */
       Object.keys(ws).forEach(key => {
-        if(ws[key].t && ws[key].t === 's' && ws[key].v){
+        if (ws[key].t && ws[key].t === 's' && ws[key].v) {
           let v = String(ws[key].v)
-          v = v.replace('&nbsp;','');
+          v = v.replace('&nbsp;', '');
           ws[key].v = v;
         }
       })
@@ -1340,9 +1360,212 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       /* generate workbook and add the worksheet */
       const wb: XLSX.WorkBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-      
+
       /* save to file */
       XLSX.writeFile(wb, fileName);
-    },1000)
+    }, 1000)
   }
+
+  /**
+  * Method to save changes
+  *
+  * @returns {void}
+  * @memberof SynopticalTableComponent
+ */
+  async saveChanges() {
+    let msgkeys, severity;
+    this.tableForm.markAllAsTouched()
+    if (this.tableForm.valid) {
+      this.ngxSpinner.show();
+      const synopticalRecords = []
+      this.synopticalRecords.forEach((row, index: number) => {
+        const saveJson = {};
+        saveJson['id'] = row.id;
+        saveJson['portId'] = row.portId;
+        this.cols.forEach(col => {
+          this.setColValue(col, saveJson, index)
+        })
+        synopticalRecords.push(saveJson)
+      })
+      const postData = {
+        synopticalRecords: synopticalRecords
+      }
+      const res = await this.synoticalApiService.saveSynopticalTable(postData, this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId, this.synopticalService.loadablePatternId).toPromise()
+      if (res?.responseStatus?.status === '200') {
+        msgkeys = ['SYNOPTICAL_UPDATE_SUCCESS', 'SYNOPTICAL_UPDATE_SUCCESSFULLY']
+        severity = 'success';
+        this.synopticalService.editMode = false;
+        this.updateSynopticalRecords(synopticalRecords);
+      } else {
+        msgkeys = ['SYNOPTICAL_UPDATE_FAILED', 'SYNOPTICAL_UPDATE_FAILURE']
+        severity = 'error';
+      }
+      this.ngxSpinner.hide();
+    } else {
+      msgkeys = ['SYNOPTICAL_UPDATE_INVALID', 'SYNOPTICAL_UPDATE_FIELDS_INVALID']
+      severity = 'warn';
+    }
+    const translationKeys = await this.translateService.get(msgkeys).toPromise();
+    this.messageService.add({ severity: severity, summary: translationKeys[msgkeys[0]], detail: translationKeys[msgkeys[1]] });
+  }
+
+  /**
+   * Method to set all values of a particular column
+   *
+   * @returns {void}
+   * @memberof SynopticalTableComponent
+  */
+  setColValue(column: SynopticalColumn, record, index: number) {
+    if (column.dynamicKey) {
+      const values = [];
+      const fieldKey = column.dynamicKey
+      const dynamicColumn = this.dynamicColumns.find(col => col.fieldKey === fieldKey)
+      const primaryKey = dynamicColumn.primaryKey;
+      const subColumns = this.getAllColumns(dynamicColumn.subHeaders)
+      this.listData[fieldKey].forEach(item => {
+        const json = {};
+        json[primaryKey] = item.id
+        subColumns.forEach(subCol => {
+          subCol.fields.forEach(field => {
+            const key = field.key;
+            const value = this.getValueFromTable(fieldKey + item.id + key, subCol, index, field.type)
+            json[key] = value;
+          })
+        })
+        values.push(json)
+      })
+      record[fieldKey] = values
+    } else if (column.subHeaders) {
+      column.subHeaders.forEach(col => {
+        this.setColValue(col, record, index)
+      })
+    } else if (column.fields) {
+      column.fields.forEach(field => {
+        const key = field.key;
+        const value = this.getValueFromTable(key, column, index, field.type)
+        record[key] = value;
+      })
+    }
+  }
+
+  /**
+  * Method to get value of a particular key based on condition
+  *
+  * @returns {void}
+  * @memberof SynopticalTableComponent
+  */
+  getValueFromTable(key: string, column: SynopticalColumn, index: number, type: string) {
+    if (column.editable) {
+      return this.convertToString(this.getControl(index, key).value, type)
+    } else {
+      return this.synopticalRecords[index][key]
+    }
+  }
+
+  /**
+    * Method to convert values to string based on type
+    *
+    * @returns {void}
+    * @memberof SynopticalTableComponent
+   */
+  convertToString(value, type) {
+    switch (type) {
+      case this.fieldType.DATETIME:
+        return this.datePipe.transform(value, 'dd-MM-yyyy hh:mm')
+      case this.fieldType.TIME:
+        return this.datePipe.transform(value, 'hh:mm')
+      default:
+        return value;
+    }
+  }
+
+  /**
+  * Method to update records after saving
+  *
+  * @returns {void}
+  * @memberof SynopticalTableComponent
+  */
+  updateSynopticalRecords(synopticalRecords) {
+    this.synopticalRecords.forEach((record, index) => {
+      if (synopticalRecords[index]) {
+        const newRow = synopticalRecords[index];
+        Object.keys(newRow).forEach(key => {
+          record[key] = newRow[key]
+        })
+      }
+    })
+  }
+
+  /**
+  * Method to reset form values on cancelling
+  *
+  * @returns {void}
+  * @memberof SynopticalTableComponent
+  */
+  resetFormValues() {
+    this.allColumns.forEach(col => {
+      this.synopticalRecords.forEach((record, index) => {
+        col.fields.forEach(field => {
+          const fc = this.getControl(index, field.key)
+          if (fc) {
+            fc.setValue(this.getValue(record[field.key], field.type))
+          }
+        })
+      })
+    })
+  }
+
+  /**
+  * Method to init all action subscriptions 
+  *
+  * @returns {void}
+  * @memberof SynopticalTableComponent
+  */
+  initActionSubscriptions() {
+    this.synopticalService.save
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        this.saveChanges()
+      })
+
+    this.synopticalService.export
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        this.exportExcelFromTable()
+      })
+
+    this.synopticalService.edit
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        this.editChanges()
+      })
+
+    this.synopticalService.cancel
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        this.cancelChanges()
+      })
+  }
+
+  /**
+  * Method to edit changes
+  *
+  * @returns {void}
+  * @memberof SynopticalTableComponent
+  */
+  editChanges() {
+    this.synopticalService.editMode = true;
+  }
+
+  /**
+  * Method to cancel changes
+  *
+  * @returns {void}
+  * @memberof SynopticalTableComponent
+  */
+  cancelChanges() {
+    this.resetFormValues();
+    this.synopticalService.editMode = false;
+  }
+
 }

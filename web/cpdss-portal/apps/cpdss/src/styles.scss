@@ -1728,3 +1728,20 @@ th .p-calendar .p-inputtext{
 td > div .p-calendar{
   width: 100%;
 }
+.p-button.p-button-text{
+  
+}
+th .p-button.p-button-icon-only.p-button-rounded{
+  vertical-align: middle;
+  &:focus{
+    box-shadow: none!important;
+  }
+}
+.synoptical-table-wrapper{
+  .error-icon-wrapper{
+    input[type="text"]{
+      width: 131px;
+      max-width: 131px;
+    }
+  }
+}

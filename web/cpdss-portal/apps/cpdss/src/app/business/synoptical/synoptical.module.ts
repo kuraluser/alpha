@@ -42,7 +42,7 @@ import { SynopticalApiService } from './services/synoptical-api.service';
   ],
   providers: [
     LoadableStudyListApiService,
-    SynopticalService,
+    // SynopticalService,
     SynopticalApiService
   ]
 })

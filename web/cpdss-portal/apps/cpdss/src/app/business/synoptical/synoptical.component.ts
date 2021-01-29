@@ -13,7 +13,8 @@ import { SynopticalService } from './services/synoptical.service';
 @Component({
   selector: 'cpdss-portal-synoptical',
   templateUrl: './synoptical.component.html',
-  styleUrls: ['./synoptical.component.scss']
+  styleUrls: ['./synoptical.component.scss'],
+  providers: [SynopticalService]
 })
 export class SynopticalComponent implements OnInit {
 
@@ -44,6 +45,7 @@ export class SynopticalComponent implements OnInit {
     this.synopticalService.selectedLoadablePattern = null;
     this.synopticalService.loadablePatternId = null; 
     this.synopticalService.getLoadableStudyInfo(this.synopticalService.vesselInfo?.id, this.synopticalService.selectedVoyage.id);
+    this.router.navigateByUrl('/business/synoptical')
   }
 
   /**

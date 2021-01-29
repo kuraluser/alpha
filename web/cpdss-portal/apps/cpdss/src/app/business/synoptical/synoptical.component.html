@@ -1,8 +1,9 @@
-<div class="container-fluid">
+
     <div class="container-fluid">
         <div class="row">
             <div class="col vessel-info-wrapper">
-                <cpdss-portal-vessel-info *ngIf="synopticalService.vesselInfo" [vesselDetails]="synopticalService.vesselInfo"></cpdss-portal-vessel-info>
+                <cpdss-portal-vessel-info *ngIf="synopticalService.vesselInfo"
+                    [vesselDetails]="synopticalService.vesselInfo"></cpdss-portal-vessel-info>
             </div>
             <div class="col">
                 <h5 class="main-head inline-block">{{'SYNOPTICAL_TABLE' | translate }}
@@ -10,8 +11,8 @@
                 <span class="ml-20 mr-10">
                     {{'SYNOPTICAL_VOYAGE_LABEL' | translate }}</span>
 
-                <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.voyages" [(ngModel)]="synopticalService.selectedVoyage"
-                    optionLabel="voyageNo" [filter]="true"
+                <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.voyages"
+                    [(ngModel)]="synopticalService.selectedVoyage" optionLabel="voyageNo" [filter]="true"
                     placeholder="{{ 'LOADABLE_STUDY_LIST_VOYAGE_NO_PLACEHOLDER' | translate }}"
                     (onChange)="onVoyageSelected()">
                 </p-dropdown>
@@ -33,11 +34,18 @@
                     placeholder="{{'SYNOPTICAL_LOADABLEPATTERN_PLACEHOLDER' | translate }}"
                     (onChange)="onSelectLoadablePattern()">
                 </p-dropdown>
+               
+            </div>
+            <div class="ml-auto pr-15" *ngIf="synopticalService.loadableStudyId">
+     			<button class="btn btn-main mr-10" (click)="synopticalService.onEditOrCancel()">{{synopticalService.editMode? 'Cancel':'Edit'}}</button>
+                <button class="btn btn-main mr-10"  *ngIf="synopticalService.editMode" (click)="synopticalService.saveChanges()">Save</button>
+                <button class="btn btn-main mr-10" *ngIf="!synopticalService.editMode"(click)="synopticalService.exportExcelFromTable()">Export</button>
             </div>
         </div>
         <div class="row">
-            <router-outlet></router-outlet>
+            <div class="col synoptical-table-wrapper">
+                <router-outlet></router-outlet>
+            </div>
         </div>
 
     </div>
-</div>

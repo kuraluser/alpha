@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { LoadablePattern, LoadableStudy } from '../../cargo-planning/models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../../cargo-planning/services/loadable-study-list-api.service';
 import { Voyage } from '../../core/models/common.model';
@@ -29,7 +29,12 @@ export class SynopticalService {
   isVoyageIdSelected = false;
   onInitCompleted = new BehaviorSubject(false);
   onInitCompleted$: Observable<boolean> = this.onInitCompleted.asObservable()
+  save = new Subject();
+  export = new Subject();
+  edit = new Subject();
+  cancel = new Subject();
   loadablePatternId: number;
+  editMode = false;
 
   constructor(
     private loadableStudyListApiService: LoadableStudyListApiService,
@@ -92,6 +97,31 @@ export class SynopticalService {
       this.loadablePatternId = this.selectedLoadablePattern.loadablePatternId;
     } else if (this.loadablePatternId) {
       this.selectedLoadablePattern = this.loadablePatternsList.find(pattern => pattern.loadablePatternId === this.loadablePatternId)
+    }
+  }
+
+  /**
+  * Method to save changes
+  */
+  saveChanges() {
+    this.save.next()
+  }
+
+  /**
+  * Method to export table data to excel
+  */
+  exportExcelFromTable() {
+    this.export.next()
+  }
+
+  /**
+  * Method to edit and cancel 
+  */
+  onEditOrCancel() {
+    if (this.editMode) {
+      this.cancel.next()
+    } else {
+      this.edit.next()
     }
   }
 }

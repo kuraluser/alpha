@@ -1,8 +1,7 @@
-<button (click)="editMode = !editMode">Edit</button>
-<button (click)="exportExcelFromTable()">Export</button>
-<form>
+
+<form style="height: 100%;">
     <p-table *ngIf="synopticalRecords.length; else empty" [columns]="synopticalRecords" [value]="cols" dataKey="header"
-     id="synoptic-table" [expandedRowKeys]="expandedRows" styleClass="body-header-row-span-table">
+        id="synoptic-table" [expandedRowKeys]="expandedRows" styleClass="body-header-row-span-table" [scrollable]="true" scrollHeight="flex">
         <ng-template pTemplate="header" let-columns let-rowData>
             <tr>
                 <th>{{headerColumn.header | translate}}</th>
@@ -36,7 +35,8 @@
                     </th>
                     <th *ngFor="let x of getBlanks(subRowLevel)"></th>
                     <ng-container *ngFor="let col of columns; let colIndex = index">
-                        <ng-container *ngTemplateOutlet="cell;context:{rowData:rowData, column:col, colIndex: colIndex }">
+                        <ng-container
+                            *ngTemplateOutlet="cell;context:{rowData:rowData, column:col, colIndex: colIndex }">
                         </ng-container>
                     </ng-container>
                 </tr>
@@ -60,7 +60,7 @@
                     <div class="error-icon-wrapper">
                         <span *ngIf="i > 0">&nbsp;-&nbsp;</span>
                         <ng-container
-                            *ngIf="rowData.editable && editMode && (!rowData.editableIfValue || isNotBlankOrNull(column[field.key])); else noEdit">
+                            *ngIf="rowData.editable && synopticalService.editMode && (!rowData.editableIfValue || isNotBlankOrNull(column[field.key])); else noEdit">
                             <ng-container [ngSwitch]="field.type">
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
                                     <p-calendar appendTo="body" [showButtonBar]="true" [showTime]="true"
@@ -82,8 +82,9 @@
                                     </p-calendar>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.NUMBER">
-                                    <input type="text" cpdssPortalNumberDecimal class="form-control" id="{{field.key + colIndex}}"
-                                        [formControl]="getControl(colIndex,field.key)" (blur)="onBlur(field,colIndex)" (keyup)="onKeyUp(field,colIndex)">
+                                    <input type="text" cpdssPortalNumberDecimal class="form-control"
+                                        id="{{field.key + colIndex}}" [formControl]="getControl(colIndex,field.key)"
+                                        (blur)="onBlur(field,colIndex)" (keyup)="onKeyUp(field,colIndex)">
                                 </ng-container>
                                 <ng-container *ngSwitchDefault>
                                     <input type="text" class="form-control" id="{{field.key + colIndex}}"
