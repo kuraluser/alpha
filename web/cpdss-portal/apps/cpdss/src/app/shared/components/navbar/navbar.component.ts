@@ -44,7 +44,7 @@ export class NavbarComponent implements OnInit {
       },
       {
         'menu': 'SYNOPTICAL',
-        'menuIcon': 'voyages',
+        'menuIcon': 'synoptical-table',
         'menuLink': 'synoptical',
         'subMenu': []
       },

@@ -139,6 +139,15 @@ a {
             background: url($images-menu-icons + 'voyage-icon-hover.png') no-repeat;
         }
     }
+    &.synoptical-table {
+      &:before {
+          background: url($images-menu-icons + 'synoptical-table-icon.png') no-repeat;
+      }
+
+      &:after {
+          background: url($images-menu-icons + 'synoptical-table-icon-hover.png') no-repeat;
+      }
+  }
 }
 
 header .header-nav .nav li.active {
