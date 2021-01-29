@@ -501,6 +501,10 @@ div{
   background: url($images-theme + 'view-icon.png') no-repeat center center;
 }
 
+.delete-icon{
+  background: url($images-theme + 'delete-icon.png') no-repeat center center;
+}
+
 .p-datatable .p-sortable-column.p-highlight:hover .p-sortable-column-icon{
   color: $text-secondary!important;
 }
@@ -900,4 +904,36 @@ tr:hover a{
 
 .p-dropdown-label.p-inputtext {
   color: $text-secondary;
+}
+
+.card-border{
+  border-top: 2px dashed $card-border;
+}
+.carousel-card{
+  h5{
+    color: $main-head;
+  }
+  &.active{
+    background:$selected-bg;
+    color: $hover-color;
+    .text-secondary{
+      color: $hover-color!important;
+    }
+    .distance-port{
+      color: $hover-color!important;
+    }
+    h5{
+      color: $hover-color;
+    }
+  }
+}
+.distance-port{
+  background: url($images-theme + 'carousel-card-arrow.png') no-repeat;
+  color:$card-distance;
+}
+.distance-port:after{
+  border-top:1px solid $card-border;
+}
+.ship-location{
+  background: url($images-theme + 'ship-location.png') no-repeat;
 }
