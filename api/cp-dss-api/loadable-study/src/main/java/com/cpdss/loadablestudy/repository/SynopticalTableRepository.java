@@ -5,7 +5,6 @@ import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +25,10 @@ public interface SynopticalTableRepository extends CommonCrudRepository<Synoptic
 
   public List<SynopticalTable> findByLoadableStudyXIdAndIsActiveAndPortXid(
       Long loadableStudyXId, boolean isActive, Long portId);
-  
+
   @Transactional
   @Modifying
-  @Query("Update SynopticalTable set isActive = false where loadableStudyXId = ?1 AND portXid in ?2 ")
+  @Query(
+      "Update SynopticalTable set isActive = false where loadableStudyXId = ?1 AND portXid in ?2 ")
   public void deleteSynopticalPorts(long loadableStudyXId, List<Long> portIds);
 }

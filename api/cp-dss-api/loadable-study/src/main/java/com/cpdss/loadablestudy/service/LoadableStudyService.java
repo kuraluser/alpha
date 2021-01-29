@@ -926,11 +926,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
         cargoNomination = existingCargoNomination.get();
         if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
-        	existingCargoPortIds =
-                cargoNomination.getCargoNominationPortDetails().stream()
-                    .map(CargoNominationPortDetails::getPortId)
-                    .collect(Collectors.toList());
-          }
+          existingCargoPortIds =
+              cargoNomination.getCargoNominationPortDetails().stream()
+                  .map(CargoNominationPortDetails::getPortId)
+                  .collect(Collectors.toList());
+        }
         cargoNomination = buildCargoNomination(cargoNomination, request);
       } else if (request.getCargoNominationDetail() != null
           && request.getCargoNominationDetail().getId() == 0) {
@@ -940,7 +940,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       this.cargoNominationRepository.save(cargoNomination);
       // update port rotation table with loading ports from cargo nomination
       LoadableStudy loadableStudyRecord = loadableStudy.get();
-      this.updatePortRotationWithLoadingPorts(loadableStudyRecord, cargoNomination, existingCargoPortIds);
+      this.updatePortRotationWithLoadingPorts(
+          loadableStudyRecord, cargoNomination, existingCargoPortIds);
       cargoNominationReplyBuilder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS))
           .setCargoNominationId((cargoNomination.getId() != null) ? cargoNomination.getId() : 0);
@@ -962,7 +963,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @throws GenericServiceException
    */
   private void updatePortRotationWithLoadingPorts(
-      LoadableStudy loadableStudy, CargoNomination cargoNomination, List<Long> existingCargoPortIds) throws GenericServiceException {
+      LoadableStudy loadableStudy, CargoNomination cargoNomination, List<Long> existingCargoPortIds)
+      throws GenericServiceException {
     List<LoadableStudyPortRotation> loadableStudyPortRotations =
         this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
             loadableStudy, cargoOperationRepository.getOne(LOADING_OPERATION_ID), true);
@@ -980,12 +982,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .map(LoadableStudyPortRotation::getPortXId)
               .collect(Collectors.toList());
     }
-    // remove existing cargo portIds from port rotation and synoptical if not available in request
-    if (!CollectionUtils.isEmpty(requestedPortIds) && !CollectionUtils.isEmpty(existingCargoPortIds)) {
-    	existingCargoPortIds.removeAll(requestedPortIds);
-    	 loadableStudyPortRotationRepository.deleteLoadingPortRotation(
-    			 loadableStudy, existingCargoPortIds);
-    	 synopticalTableRepository.deleteSynopticalPorts(loadableStudy.getId(), existingCargoPortIds);
+    // remove existing cargo portIds from port rotation and synoptical if not
+    // available in request
+    if (!CollectionUtils.isEmpty(requestedPortIds)
+        && !CollectionUtils.isEmpty(existingCargoPortIds)) {
+      existingCargoPortIds.removeAll(requestedPortIds);
+      loadableStudyPortRotationRepository.deleteLoadingPortRotation(
+          loadableStudy, existingCargoPortIds);
+      synopticalTableRepository.deleteSynopticalPorts(loadableStudy.getId(), existingCargoPortIds);
     }
     int existingPortsCount = 0;
     // remove loading portIds from request which are already available in port
@@ -1934,20 +1938,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .map(CargoNominationPortDetails::getPortId)
                 .collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(requestedPortIds)) {
-        	requestedPortIds.forEach(
-                    requestPortId -> {
-        	Long otherCargoRefExistCount =
-        			this.cargoNominationRepository.getCountCargoNominationWithPortIds(
-        					existingCargoNomination.get().getLoadableStudyXId(),
-        					existingCargoNomination.get(),
-        					requestPortId);
-        	if (Objects.equals(otherCargoRefExistCount, Long.valueOf("0"))
-        			&& loadableStudyOpt.isPresent()) {
-        		loadableStudyPortRotationRepository.deleteLoadingPortRotationByPort(
-        				loadableStudyOpt.get(), requestPortId);
-        		synopticalTableRepository.deleteSynopticalPorts(loadableStudyOpt.get().getId(), requestedPortIds);
-        	}
-                    });
+          requestedPortIds.forEach(
+              requestPortId -> {
+                Long otherCargoRefExistCount =
+                    this.cargoNominationRepository.getCountCargoNominationWithPortIds(
+                        existingCargoNomination.get().getLoadableStudyXId(),
+                        existingCargoNomination.get(),
+                        requestPortId);
+                if (Objects.equals(otherCargoRefExistCount, Long.valueOf("0"))
+                    && loadableStudyOpt.isPresent()) {
+                  loadableStudyPortRotationRepository.deleteLoadingPortRotationByPort(
+                      loadableStudyOpt.get(), requestPortId);
+                  synopticalTableRepository.deleteSynopticalPorts(
+                      loadableStudyOpt.get().getId(), requestedPortIds);
+                }
+              });
         }
       }
       this.cargoNominationRepository.deleteCargoNomination(request.getCargoNominationId());
@@ -4738,12 +4743,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Optional.ofNullable(synopticalEntity.getOthersActual())
         .ifPresent(item -> builder.setOthersActual(valueOf(item)));
     builder.setConstantPlanned(vesselLoadableQuantityDetails.getConstant());
+    Optional.ofNullable(synopticalEntity.getConstantPlanned())
+        .ifPresent(item -> builder.setConstantPlanned(valueOf(item)));
     Optional.ofNullable(synopticalEntity.getConstantActual())
         .ifPresent(item -> builder.setConstantActual(valueOf(item)));
     builder.setTotalDwtPlanned(vesselLoadableQuantityDetails.getDwt());
+    Optional.ofNullable(synopticalEntity.getDeadWeightPlanned())
+        .ifPresent(item -> builder.setTotalDwtPlanned(valueOf(item)));
     Optional.ofNullable(synopticalEntity.getDeadWeightActual())
         .ifPresent(item -> builder.setTotalDwtActual(valueOf(item)));
     builder.setDisplacementPlanned(vesselLoadableQuantityDetails.getDisplacmentDraftRestriction());
+    Optional.ofNullable(synopticalEntity.getDisplacementPlanned())
+        .ifPresent(item -> builder.setDisplacementPlanned(valueOf(item)));
     Optional.ofNullable(synopticalEntity.getDisplacementActual())
         .ifPresent(item -> builder.setDisplacementActual(valueOf(item)));
   }
