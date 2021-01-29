@@ -19,4 +19,8 @@ public interface LoadablePlanStowageBallastDetailsRepository
 
   public List<LoadablePlanStowageBallastDetails> findByLoadablePatternIdAndIsActive(
       Long loadablePatternId, boolean isActive);
+
+  public List<LoadablePlanStowageBallastDetails>
+      findByLoadablePatternIdAndPortXIdAndOperationTypeAndIsActive(
+          Long loadablePatternId, Long portId, String operationType, boolean isActive);
 }

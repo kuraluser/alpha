@@ -81,4 +81,7 @@ public interface LoadableStudyPortRotationRepository
   @Query(
       "Update LoadableStudyPortRotation set isActive = false where loadableStudy = ?1 AND operation.id = 1 AND portXId = ?2 ")
   public void deleteLoadingPortRotation(final LoadableStudy loadableStudy, Long portId);
+
+  public LoadableStudyPortRotation findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(
+      LoadableStudy loadableStudy, boolean isActive);
 }

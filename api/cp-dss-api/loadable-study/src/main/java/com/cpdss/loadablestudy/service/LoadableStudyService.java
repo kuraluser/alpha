@@ -1707,6 +1707,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       for (LoadableStudyPortRotation portRoation : dischargingPorts) {
         if (!request.getDischargingPortIdsList().contains(portRoation.getPortXId())) {
           portRoation.setActive(false);
+          portIds.remove(portRoation.getPortXId());
         } else {
           portIds.remove(portRoation.getPortXId());
         }
@@ -1718,61 +1719,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               reqBuilder.addId(port);
             });
         PortReply portReply = portInfoGrpcService.getPortInfoByPortIds(reqBuilder.build());
-
         if (!SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
           throw new GenericServiceException(
               "Error in calling port service",
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR);
-        } else {
+        }
 
-          if (!CollectionUtils.isEmpty(portIds)
-              && portReply != null
-              && !CollectionUtils.isEmpty(portReply.getPortsList())) {
-            portIds.stream()
-                .forEach(
-                    requestedPortId -> {
-                      Optional<PortDetail> portOpt =
-                          portReply.getPortsList().stream()
-                              .filter(
-                                  portDetail -> Objects.equals(requestedPortId, portDetail.getId()))
-                              .findAny();
-
-                      if (portOpt.isPresent()) {
-                        PortDetail port = portOpt.get();
-                        LoadableStudyPortRotation portRotationEntity =
-                            new LoadableStudyPortRotation();
-                        portRotationEntity.setLoadableStudy(loadableStudy);
-                        portRotationEntity.setPortXId(port.getId());
-                        portRotationEntity.setOperation(
-                            this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID));
-                        portRotationEntity.setSeaWaterDensity(
-                            !StringUtils.isEmpty(port.getWaterDensity())
-                                ? new BigDecimal(port.getWaterDensity())
-                                : null);
-                        portRotationEntity.setMaxDraft(
-                            !StringUtils.isEmpty(port.getMaxDraft())
-                                ? new BigDecimal(port.getMaxDraft())
-                                : null);
-
-                        portRotationEntity.setAirDraftRestriction(
-                            !StringUtils.isEmpty(port.getMaxAirDraft())
-                                ? new BigDecimal(port.getMaxAirDraft())
-                                : null);
-
-                        // add ports to synoptical table by reusing the function called by
-                        // port-rotation flow
-                        buildPortsInfoSynopticalTable(
-                            portRotationEntity, DISCHARGING_OPERATION_ID, port.getId());
-                        dischargingPorts.add(portRotationEntity);
-                      }
-                    });
-          }
+        if (!CollectionUtils.isEmpty(portIds)
+            && !CollectionUtils.isEmpty(portReply.getPortsList())) {
+          dischargingPorts =
+              this.buildDischargingPorts(portReply, loadableStudy, dischargingPorts, portIds);
+          this.loadableStudyPortRotationRepository.saveAll(dischargingPorts);
         }
       }
-
-      this.loadableStudyPortRotationRepository.saveAll(dischargingPorts);
-
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving discharging ports", e);
@@ -1794,6 +1754,62 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * Build discharging ports
+   *
+   * @param portReply
+   * @param loadableStudy
+   * @param dischargingPorts
+   * @param portIds
+   * @return
+   */
+  private List<LoadableStudyPortRotation> buildDischargingPorts(
+      PortReply portReply,
+      LoadableStudy loadableStudy,
+      List<LoadableStudyPortRotation> dischargingPorts,
+      List<Long> portIds) {
+    Long maxPorOrder = 0L;
+    LoadableStudyPortRotation maxPortOrderEntity =
+        this.loadableStudyPortRotationRepository
+            .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(loadableStudy, true);
+    if (maxPortOrderEntity != null) {
+      maxPorOrder = maxPortOrderEntity.getPortOrder();
+    }
+    for (Long requestedPortId : portIds) {
+      Optional<PortDetail> portOpt =
+          portReply.getPortsList().stream()
+              .filter(portDetail -> Objects.equals(requestedPortId, portDetail.getId()))
+              .findAny();
+
+      if (portOpt.isPresent()) {
+        PortDetail port = portOpt.get();
+        LoadableStudyPortRotation portRotationEntity = new LoadableStudyPortRotation();
+        portRotationEntity.setLoadableStudy(loadableStudy);
+        portRotationEntity.setPortXId(port.getId());
+        portRotationEntity.setOperation(
+            this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID));
+        portRotationEntity.setSeaWaterDensity(
+            !StringUtils.isEmpty(port.getWaterDensity())
+                ? new BigDecimal(port.getWaterDensity())
+                : null);
+        portRotationEntity.setMaxDraft(
+            !StringUtils.isEmpty(port.getMaxDraft()) ? new BigDecimal(port.getMaxDraft()) : null);
+
+        portRotationEntity.setAirDraftRestriction(
+            !StringUtils.isEmpty(port.getMaxAirDraft())
+                ? new BigDecimal(port.getMaxAirDraft())
+                : null);
+        portRotationEntity.setPortOrder(++maxPorOrder);
+
+        // add ports to synoptical table by reusing the function called by
+        // port-rotation flow
+        buildPortsInfoSynopticalTable(portRotationEntity, DISCHARGING_OPERATION_ID, port.getId());
+        dischargingPorts.add(portRotationEntity);
+      }
+    }
+    return dischargingPorts;
   }
 
   /**
@@ -3721,6 +3737,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         this.saveSynopticalEtaEtdEstimates(entity, record);
         if (request.getLoadablePatternId() > 0) {
           this.saveSynopticalLoadicatorData(request.getLoadablePatternId(), record);
+          this.saveSynopticalBallastData(request.getLoadablePatternId(), record, entity);
         }
         this.saveSynopticalCargoData(request, loadableStudyOpt.get(), entity, record);
         this.saveSynopticalOhqData(loadableStudyOpt.get(), entity, record);
@@ -3747,6 +3764,37 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Save synoptical ballast data
+   *
+   * @param loadablePatternId
+   * @param record
+   * @param entity
+   */
+  private void saveSynopticalBallastData(
+      long loadablePatternId, SynopticalRecord record, SynopticalTable entity) {
+    List<LoadablePlanStowageBallastDetails> ballastEntities =
+        this.loadablePlanStowageBallastDetailsRepository
+            .findByLoadablePatternIdAndPortXIdAndOperationTypeAndIsActive(
+                loadablePatternId, entity.getPortXid(), entity.getOperationType(), true);
+    List<LoadablePlanStowageBallastDetails> toBeSaved = new ArrayList<>();
+    if (!record.getBallastList().isEmpty()) {
+      for (SynopticalBallastRecord rec : record.getBallastList()) {
+        Optional<LoadablePlanStowageBallastDetails> entityOpt =
+            ballastEntities.stream()
+                .filter(b -> b.getTankXId().longValue() == rec.getTankId())
+                .findAny();
+        if (entityOpt.isPresent()) {
+          LoadablePlanStowageBallastDetails ent = entityOpt.get();
+          ent.setActualQuantity(
+              isEmpty(rec.getActualWeight()) ? null : new BigDecimal(rec.getActualWeight()));
+          toBeSaved.add(ent);
+        }
+      }
+      this.loadablePlanStowageBallastDetailsRepository.saveAll(toBeSaved);
     }
   }
 
@@ -4295,7 +4343,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
         SynopticalBallastRecord.Builder ballastBuilder = SynopticalBallastRecord.newBuilder();
         ballastBuilder.setTankId(tank.getTankId());
-        ballastBuilder.setTankName(tank.getTankName());
+        ballastBuilder.setTankName(tank.getShortName());
         ballastBuilder.setCapacity(tank.getFullCapacityCubm());
         Optional<LoadablePlanStowageBallastDetails> tankBallastDetail =
             portBallastList.stream()
