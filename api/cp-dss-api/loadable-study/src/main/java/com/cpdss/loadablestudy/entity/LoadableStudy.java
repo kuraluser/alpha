@@ -91,6 +91,9 @@ public class LoadableStudy extends EntityDoc {
   @Column(name = "first_cargo_to_be_discharged")
   private Long dischargeCargoId;
 
+  @Column(name = "load_on_top")
+  private Boolean loadOnTop;
+
   @PrePersist
   void prePersist() {
     this.isActive = true;

@@ -155,12 +155,35 @@ public class UserService {
       screenResponse.setRole(role);
     }
 
+    List<Users> users = this.usersRepository.findByCompanyXIdAndIsActive(companyId, true);
+    List<RoleUserMapping> roleUserList =
+        this.roleUserRepository.findByRolesAndIsActive(roleId, true);
+    List<User> userList = new ArrayList<User>();
+
+    roleUserList.forEach(
+        roleUser -> {
+          Optional<Users> userEntityOpt =
+              users.stream()
+                  .filter(user -> user.getId().equals(roleUser.getUsers().getId()))
+                  .findAny();
+          if (userEntityOpt.isPresent()) {
+            Users userEntity = userEntityOpt.get();
+            User userDto = new User();
+            userDto.setId(userEntity.getId());
+            userDto.setFirstName(userEntity.getFirstName());
+            userDto.setLastName(userEntity.getLastName());
+            userDto.setUsername(userEntity.getUsername());
+            userList.add(userDto);
+          }
+        });
+
+    screenResponse.setUsers(userList);
+
     List<ScreenData> list = new ArrayList<>();
 
-    List<Screen> screens =
-        (List<Screen>) this.screenRepository.findByCompanyXIdAndIsActive(companyId, true);
-    List<ScreenData> info = new ArrayList<>();
+    List<Screen> screens = this.screenRepository.findByCompanyXIdAndIsActive(companyId, true);
 
+    List<ScreenData> info = new ArrayList<>();
     if (screens != null && !screens.isEmpty()) {
       screens.forEach(
           sc -> {
@@ -180,6 +203,7 @@ public class UserService {
           info.stream()
               .filter(in -> in.getId().equals(in.getModuleId()))
               .collect(Collectors.toList()));
+
       for (ScreenData screen : list) {
         screens.removeAll(
             screens.stream()
@@ -192,11 +216,14 @@ public class UserService {
       list.forEach(
           screen -> {
             screen.setRoleScreen(this.getRoleScreen(roleId, screen.getId(), companyId));
+            screen.setIsViewVisible(true);
           });
     }
+
     CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
     commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
     screenResponse.setResponseStatus(commonSuccessResponse);
+
     screenResponse.setScreens(list);
 
     return screenResponse;
@@ -204,34 +231,35 @@ public class UserService {
 
   private List<ScreenData> findInnerScreens(
       ScreenData parentScreen, List<Screen> screens, Long roleId, Long companyId) {
-    RoleScreen roleScreen = this.getRoleScreen(roleId, parentScreen.getId(), 1L);
     List<ScreenData> list =
         screens.stream()
             .filter(s -> s.getModuleId().equals(parentScreen.getId()))
-            .map(this::createInfo)
+            .map(s -> this.createInfo(s, roleId, companyId))
             .collect(Collectors.toList());
     for (ScreenData inner : list) {
-      inner.setRoleScreen(roleScreen);
       List<ScreenData> innerList = this.findInnerScreens(inner, screens, roleId, companyId);
       if (!innerList.isEmpty()) {
         inner.getChilds().addAll(innerList);
       } else {
+        System.out.println(inner.getName());
         break;
       }
     }
     return list;
   }
 
-  private ScreenData createInfo(Screen sc) {
+  private ScreenData createInfo(Screen sc, Long roleId, Long companyId) {
+    RoleScreen roleScreen = this.getRoleScreen(roleId, sc.getId(), companyId);
     ScreenData screenInfo = new ScreenData();
     screenInfo.setId(sc.getId());
     screenInfo.setName(sc.getName());
-    sc.setModuleId(sc.getModuleId());
+    screenInfo.setModuleId(sc.getModuleId());
     screenInfo.setIsAddVisible(sc.getIsAddVisisble());
     screenInfo.setIsEditVisible(sc.getIsEditVisisble());
     screenInfo.setIsViewVisible(sc.getIsViewVisisble());
     screenInfo.setIsDeleteVisible(sc.getIsDeleteVisisble());
     screenInfo.setChilds(new ArrayList<ScreenData>());
+    screenInfo.setRoleScreen(roleScreen);
     return screenInfo;
   }
 
@@ -262,14 +290,14 @@ public class UserService {
             role.setId(roleEntity.getId());
             role.setName(roleEntity.getName());
             role.setDescription(roleEntity.getDescription());
+            role.setCompanyId(roleEntity.getCompanyXId());
             roleList.add(role);
           });
     }
-
     CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
     commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
     roleResponse.setResponseStatus(commonSuccessResponse);
-    roleResponse.setUsers(roleList);
+    roleResponse.setRoles(roleList);
     return roleResponse;
   }
 
@@ -297,7 +325,8 @@ public class UserService {
   }
 
   @Transactional
-  public PermissionResponse savePermission(RolePermission permission, Long companyId, String first)
+  public PermissionResponse savePermission(
+      RolePermission permission, Long companyId, String correlationId)
       throws GenericServiceException {
 
     PermissionResponse permissionResponse = new PermissionResponse();
@@ -308,59 +337,71 @@ public class UserService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    Optional<Users> user = this.usersRepository.findByIdIdAndIsActive(permission.getUserId(), true);
-    if (!user.isPresent()) {
-      throw new GenericServiceException(
-          "User with given id does not exist",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
-    Optional<Screen> screen =
-        this.screenRepository.findByIdIdAndIsActive(permission.getScreenId(), true);
-    if (!screen.isPresent()) {
-      throw new GenericServiceException(
-          "Screen with given id does not exist",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
-    Optional<RoleUserMapping> roleUserOpt =
-        this.roleUserRepository.findByUsersAndRolesAndIsActive(
-            user.get().getId(), role.get().getId(), true);
-    RoleUserMapping roleUser = null;
-    if (!roleUserOpt.isPresent()) {
-      roleUser = new RoleUserMapping();
-    } else {
-      roleUser = roleUserOpt.get();
-    }
-    roleUser.setIsActive(true);
-    roleUser.setRoles(role.get());
-    roleUser.setUsers(user.get());
-    this.roleUserRepository.save(roleUser);
+    List<Users> users =
+        this.usersRepository.findByCompanyXIdAndIdInAndIsActive(
+            companyId, permission.getUserId(), true);
 
-    Optional<com.cpdss.gateway.entity.RoleScreen> roleScreenrOpt =
-        this.roleScreenRepository.findByScreenAndRolesAndIsActive(
-            screen.get().getId(), role.get().getId(), true);
-    com.cpdss.gateway.entity.RoleScreen roleScreen = null;
-    if (!roleScreenrOpt.isPresent()) {
-      roleScreen = new com.cpdss.gateway.entity.RoleScreen();
-    } else {
-      roleScreen = roleScreenrOpt.get();
+    List<Long> screenIds = new ArrayList<Long>();
+    for (ScreenInfo screenInfo : permission.getScreens()) {
+      screenIds.add(screenInfo.getId());
     }
-    roleScreen.setIsActive(true);
-    roleScreen.setScreen(screen.get());
-    roleScreen.setRoles(role.get());
-    roleScreen.setCanAdd(permission.getCanAdd());
-    roleScreen.setCanDelete(permission.getCanDelete());
-    roleScreen.setCanEdit(permission.getCanEdit());
-    roleScreen.setCanView(permission.getCanView());
 
-    this.roleScreenRepository.save(roleScreen);
-
-    if (permission.getRoleName() != null) {
-      role.get().setName(permission.getRoleName());
+    List<Screen> screens =
+        this.screenRepository.findByCompanyXIdAndIdInAndIsActive(companyId, screenIds, true);
+    if (users != null && users.size() != 0) {
+      users.forEach(
+          user -> {
+            Optional<RoleUserMapping> roleUserOpt =
+                this.roleUserRepository.findByUsersAndRolesAndIsActive(
+                    user.getId(), role.get().getId(), true);
+            RoleUserMapping roleUser = null;
+            if (roleUserOpt.isEmpty()) {
+              roleUser = new RoleUserMapping();
+            } else {
+              roleUser = roleUserOpt.get();
+            }
+            roleUser.setIsActive(true);
+            roleUser.setRoles(role.get());
+            roleUser.setUsers(user);
+            this.roleUserRepository.save(roleUser);
+          });
     }
-    if (permission.getRoleDescription() != null) {
-      role.get().setDescription(permission.getRoleDescription());
+
+    if (screens != null && screens.size() != 0) {
+      screens.forEach(
+          screen -> {
+            Optional<com.cpdss.gateway.entity.RoleScreen> roleScreenrOpt =
+                this.roleScreenRepository.findByCompanyXIdAndScreenAndRolesAndIsActive(
+                    companyId, screen.getId(), role.get().getId(), true);
+            com.cpdss.gateway.entity.RoleScreen roleScreen = null;
+            if (roleScreenrOpt.isEmpty()) {
+              roleScreen = new com.cpdss.gateway.entity.RoleScreen();
+            } else {
+              roleScreen = roleScreenrOpt.get();
+            }
+            roleScreen.setIsActive(true);
+            roleScreen.setScreen(screen);
+            roleScreen.setRoles(role.get());
+            roleScreen.setCompanyXId(companyId);
+            Optional<ScreenInfo> sc =
+                permission.getScreens().stream()
+                    .filter(scr -> scr.getId().equals(screen.getId()))
+                    .findAny();
+            if (sc.isPresent()) {
+              roleScreen.setCanAdd(sc.get().isAdd());
+              roleScreen.setCanDelete(sc.get().isDelete());
+              roleScreen.setCanEdit(sc.get().isEdit());
+              roleScreen.setCanView(sc.get().isView());
+            }
+            this.roleScreenRepository.save(roleScreen);
+          });
+    }
+
+    if (permission.getRole().getName() != null) {
+      role.get().setName(permission.getRole().getName());
+    }
+    if (permission.getRole().getDescription() != null) {
+      role.get().setDescription(permission.getRole().getDescription());
     }
     this.rolesRepository.save(role.get());
 
@@ -368,25 +409,26 @@ public class UserService {
     commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
     permissionResponse.setResponseStatus(commonSuccessResponse);
     permissionResponse.setMessage(SUCCESS);
-    permissionResponse.setUserId(user.get().getId());
     permissionResponse.setRoleId(role.get().getId());
     return permissionResponse;
   }
 
-  public RoleResponse saveRole(Role role, Long companyId, String first) {
+  public RoleResponse saveRole(Role role, Long companyId, String first)
+      throws GenericServiceException {
     RoleResponse roleResponse = new RoleResponse();
     Optional<Roles> roleEntityOpt =
-        this.rolesRepository.findByNameAndIsActive(role.getName(), true);
+        this.rolesRepository.findByCompanyXIdAndNameAndIsActive(companyId, role.getName(), true);
     Roles roleEntity = null;
-    if (!roleEntityOpt.isPresent()) {
+    if (roleEntityOpt.isEmpty()) {
       roleEntity = new Roles();
     } else {
-      roleEntity = roleEntityOpt.get();
+      throw new GenericServiceException(
+          "Role already  exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
     }
     roleEntity.setIsActive(true);
     roleEntity.setName(role.getName());
     roleEntity.setDescription(role.getDescription());
-    roleEntity.setCompanyXId(role.getCompanyId());
+    roleEntity.setCompanyXId(companyId);
     roleEntity = this.rolesRepository.save(roleEntity);
 
     CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
@@ -412,7 +454,6 @@ public class UserService {
     }
     roleEntity.setIsActive(false);
     roleEntity = this.rolesRepository.save(roleEntity);
-
     this.roleScreenRepository.deleteRoles(roleEntity.getId());
     this.roleUserRepository.deleteRoles(roleEntity.getId());
 

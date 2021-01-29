@@ -35,11 +35,10 @@ public class OnBoardQuantity {
   private BigDecimal sounding;
 
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-  private BigDecimal weight;
+  private BigDecimal quantity;
 
   private BigDecimal actualWeight;
 
-  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal volume;
 
   private String colorCode;
@@ -47,4 +46,9 @@ public class OnBoardQuantity {
   private String abbreviation;
 
   private Long loadableStudyId;
+
+  @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+  private BigDecimal api;
+
+  private Boolean loadOnTop;
 }

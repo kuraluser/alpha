@@ -22,9 +22,10 @@ public interface RoleScreenRepository extends CrudRepository<RoleScreen, Long> {
   Optional<RoleScreen> findByRolesAndScreenAndCompanyXIdAndIsActive(
       Long roleId, Long screenId, Long companyId, Boolean isActive);
 
-  @Query("FROM RoleScreen RS WHERE RS.screen.id = ?1 and RS.roles.id = ?2 and RS.isActive = ?3")
-  Optional<RoleScreen> findByScreenAndRolesAndIsActive(
-      Long screenId, Long roleId, Boolean isActive);
+  @Query(
+      "FROM RoleScreen RS WHERE RS.companyXId = ?1 and RS.screen.id = ?2 and RS.roles.id = ?3 and RS.isActive = ?4")
+  Optional<RoleScreen> findByCompanyXIdAndScreenAndRolesAndIsActive(
+      Long companyId, Long screenId, Long roleId, Boolean isActive);
 
   @Transactional
   @Modifying

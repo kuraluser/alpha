@@ -1931,7 +1931,7 @@ class LoadableStudyServiceTest {
   private OnBoardQuantity createOnBoardQuantityRequest() {
     OnBoardQuantity request = new OnBoardQuantity();
     request.setVolume(TEST_BIGDECIMAL_VALUE);
-    request.setWeight(TEST_BIGDECIMAL_VALUE);
+    request.setQuantity(TEST_BIGDECIMAL_VALUE);
     request.setTankId(1L);
     request.setLoadableStudyId(1L);
     request.setPortId(1L);

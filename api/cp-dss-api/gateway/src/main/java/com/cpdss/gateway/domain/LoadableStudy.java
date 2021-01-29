@@ -63,4 +63,6 @@ public class LoadableStudy {
   private Long dischargingCargoId;
 
   private List<Long> deletedAttachments;
+
+  private Boolean loadOnTop;
 }

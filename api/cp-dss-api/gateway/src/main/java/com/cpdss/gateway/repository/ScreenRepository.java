@@ -16,4 +16,7 @@ public interface ScreenRepository extends CrudRepository<Screen, Long> {
 
   @Query("FROM Screen SC WHERE SC.id =?1 AND SC.isActive = ?2")
   Optional<Screen> findByIdIdAndIsActive(Long screenId, boolean isActive);
+
+  public List<Screen> findByCompanyXIdAndIdInAndIsActive(
+      Long companyId, List<Long> screenId, boolean isActive);
 }

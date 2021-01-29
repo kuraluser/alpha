@@ -631,6 +631,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(maxTemp -> builder.setMaxAirTemperature(valueOf(maxTemp)));
         Optional.ofNullable(entity.getMaxWaterTemperature())
             .ifPresent(maxTemp -> builder.setMaxWaterTemperature(valueOf(maxTemp)));
+
+        Optional.ofNullable(entity.getLoadOnTop())
+            .ifPresent(loadOnTop -> builder.setLoadOnTop(loadOnTop));
+
         Set<LoadableStudyPortRotation> portRotations = entity.getPortRotations();
         if (null != portRotations && !portRotations.isEmpty()) {
           portRotations.forEach(
@@ -743,11 +747,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               ? null
               : new BigDecimal(request.getMaxWaterTemperature()));
       entity.setDischargeCargoId(request.getDischargingCargoId());
+
+      Set<LoadableStudyAttachments> attachmentCollection = new HashSet<>();
       if (!request.getAttachmentsList().isEmpty()) {
         String folderLocation = this.constructFolderPath(entity);
         Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
-        Set<LoadableStudyAttachments> attachmentCollection = new HashSet<>();
-
         for (LoadableStudyAttachment attachment : request.getAttachmentsList()) {
           Path path = Paths.get(this.rootFolder + folderLocation + attachment.getFileName());
           Files.createFile(path);
@@ -759,22 +763,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           attachmentEntity.setIsActive(true);
           attachmentCollection.add(attachmentEntity);
         }
-
-        if (request.getId() != 0) {
-          Set<LoadableStudyAttachments> deletedAttachmentsList =
-              this.loadableStudyAttachmentsRepository.findByIdInAndIsActive(
-                  request.getDeletedAttachmentsList(), true);
-
-          if (deletedAttachmentsList != null && deletedAttachmentsList.size() != 0) {
-            deletedAttachmentsList.forEach(
-                attachment -> {
-                  attachment.setIsActive(false);
-                });
-          }
-          attachmentCollection.addAll(deletedAttachmentsList);
-        }
-
         entity.setAttachments(attachmentCollection);
+      }
+
+      if (request.getId() != 0) {
+        Set<LoadableStudyAttachments> deletedAttachmentsList =
+            this.loadableStudyAttachmentsRepository.findByIdInAndIsActive(
+                request.getDeletedAttachmentsList(), true);
+
+        if (deletedAttachmentsList != null && deletedAttachmentsList.size() != 0) {
+          deletedAttachmentsList.forEach(
+              attachment -> {
+                attachment.setIsActive(false);
+              });
+        }
+        attachmentCollection.addAll(deletedAttachmentsList);
       }
 
       this.setCaseNo(entity);
@@ -3760,6 +3763,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(item -> builder.setVolume(item.toString()));
         Optional.ofNullable(entity.getColorCode()).ifPresent(builder::setColorCode);
         Optional.ofNullable(entity.getAbbreviation()).ifPresent(builder::setAbbreviation);
+        Optional.ofNullable(entity.getDensity())
+            .ifPresent(item -> builder.setDensity(item.toString()));
       } else {
         // lazy loading the cargo history
         if (null == cargoHistories) {
@@ -3864,6 +3869,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       this.buildOnBoardQuantityEntity(entity, request);
       entity = this.onBoardQuantityRepository.save(entity);
+      loadableStudyOpt.get().setLoadOnTop(request.getLoadOnTop());
+      this.loadableStudyRepository.save(loadableStudyOpt.get());
       replyBuilder.setId(entity.getId());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
@@ -3905,6 +3912,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     entity.setVolume(isEmpty(request.getVolume()) ? null : new BigDecimal(request.getVolume()));
     entity.setColorCode(isEmpty(request.getColorCode()) ? null : request.getColorCode());
     entity.setAbbreviation(isEmpty(request.getAbbreviation()) ? null : request.getAbbreviation());
+    entity.setDensity(isEmpty(request.getDensity()) ? null : new BigDecimal(request.getDensity()));
     entity.setIsActive(true);
   }
 

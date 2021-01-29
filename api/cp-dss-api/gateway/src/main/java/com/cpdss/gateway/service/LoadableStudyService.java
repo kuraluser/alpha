@@ -386,6 +386,7 @@ public class LoadableStudyService {
       dto.setDischargingCargoId(
           0 != grpcReply.getDischargingCargoId() ? grpcReply.getDischargingCargoId() : null);
       dto.setCreatedFromId(grpcReply.getCreatedFromId());
+      dto.setLoadOnTop(grpcReply.getLoadOnTop());
       list.add(dto);
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
@@ -2127,7 +2128,7 @@ public class LoadableStudyService {
       dto.setAbbreviation(isEmpty(detail.getAbbreviation()) ? null : detail.getAbbreviation());
       dto.setSounding(
           isEmpty(detail.getSounding()) ? BigDecimal.ZERO : new BigDecimal(detail.getSounding()));
-      dto.setWeight(
+      dto.setQuantity(
           isEmpty(detail.getWeight()) ? BigDecimal.ZERO : new BigDecimal(detail.getWeight()));
       dto.setActualWeight(
           isEmpty(detail.getActualWeight())
@@ -2137,6 +2138,8 @@ public class LoadableStudyService {
           isEmpty(detail.getVolume()) ? BigDecimal.ZERO : new BigDecimal(detail.getVolume()));
       dto.setTankId(detail.getTankId());
       dto.setTankName(detail.getTankName());
+      dto.setApi(
+          isEmpty(detail.getDensity()) ? BigDecimal.ZERO : new BigDecimal(detail.getDensity()));
       response.getOnBoardQuantities().add(dto);
     }
     response.setTanks(this.createGroupWiseTankList(grpcReply.getTanksList()));
@@ -2197,12 +2200,14 @@ public class LoadableStudyService {
     builder.setPortId(request.getPortId());
     builder.setLoadableStudyId(request.getLoadableStudyId());
     builder.setTankId(request.getTankId());
-    builder.setWeight(valueOf(request.getWeight()));
-    builder.setVolume(valueOf(request.getVolume()));
+    builder.setWeight(valueOf(request.getQuantity()));
+    builder.setDensity(valueOf(request.getApi()));
+    Optional.ofNullable(request.getVolume()).ifPresent(item -> builder.setVolume(valueOf(item)));
     Optional.ofNullable(request.getSounding())
         .ifPresent(sounding -> builder.setSounding(valueOf(request.getSounding())));
     Optional.ofNullable(request.getColorCode()).ifPresent(builder::setColorCode);
     Optional.ofNullable(request.getAbbreviation()).ifPresent(builder::setAbbreviation);
+    Optional.ofNullable(request.getLoadOnTop()).ifPresent(item -> builder.setLoadOnTop(item));
     return builder.build();
   }
 
@@ -3669,6 +3674,45 @@ public class LoadableStudyService {
       SynopticalTableReply synopticalTableReply) {
     String operationType = request.getOperationType();
     voyageStatusResponse.setCargoTanks(cargoResponse.getTanks());
+    // group on-board-quantities by cargo for Cargo conditions
+    if (!CollectionUtils.isEmpty(cargoResponse.getOnBoardQuantities())) {
+      List<Cargo> cargoConditions = new ArrayList<>();
+      cargoResponse.getOnBoardQuantities().stream()
+          .collect(
+              Collectors.groupingBy(
+                  onBoardQty ->
+                      onBoardQty.getCargoId() != null ? onBoardQty.getCargoId() : Long.valueOf("0"),
+                  Collectors.collectingAndThen(
+                      Collectors.reducing(
+                          (index, accum) ->
+                              new OnBoardQuantity(
+                                  index.getId(),
+                                  index.getPortId(),
+                                  index.getTankId(),
+                                  index.getTankName(),
+                                  index.getCargoId(),
+                                  index.getSounding(),
+                                  index.getQuantity().add(accum.getQuantity()),
+                                  index.getActualWeight().add(accum.getActualWeight()),
+                                  index.getVolume(),
+                                  index.getColorCode(),
+                                  index.getAbbreviation(),
+                                  index.getLoadableStudyId(),
+                                  index.getApi(),
+                                  index.getLoadOnTop())),
+                      Optional::get)))
+          .forEach(
+              (id, onBoardQuantity) -> {
+                if (onBoardQuantity.getCargoId() != null) {
+                  Cargo cargo = new Cargo();
+                  cargo.setId(onBoardQuantity.getCargoId());
+                  cargo.setPlannedWeight(onBoardQuantity.getQuantity());
+                  cargo.setActualWeight(onBoardQuantity.getActualWeight());
+                  cargoConditions.add(cargo);
+                }
+              });
+      voyageStatusResponse.setCargoConditions(cargoConditions);
+    }
     // group ohq, vessel and port details for Bunker conditions and Cargo conditions
     if (synopticalTableResponse != null
         && !CollectionUtils.isEmpty(synopticalTableResponse.getSynopticalRecords())) {

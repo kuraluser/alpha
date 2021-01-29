@@ -14,5 +14,8 @@ public interface RolesRepository extends CrudRepository<Roles, Long> {
 
   Optional<Roles> findByIdAndIsActive(Long roleId, boolean isActive);
 
+  Optional<Roles> findByCompanyXIdAndNameAndIsActive(
+      Long companyXId, String name, boolean isActive);
+
   Optional<Roles> findByNameAndIsActive(String name, boolean isActive);
 }

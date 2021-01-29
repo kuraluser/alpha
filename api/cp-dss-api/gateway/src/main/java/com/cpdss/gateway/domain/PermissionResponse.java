@@ -8,7 +8,6 @@ import lombok.Data;
 public class PermissionResponse {
 
   private CommonSuccessResponse responseStatus;
-  private Long userId;
   private Long roleId;
   private String message;
 }
