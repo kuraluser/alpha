@@ -1431,8 +1431,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       const primaryKey = dynamicColumn.primaryKey;
       const subColumns = this.getAllColumns(dynamicColumn.subHeaders)
       this.listData[fieldKey].forEach(item => {
-        const json = {};
+        let json = {};
         json[primaryKey] = item.id
+        json = this.setFuelTypeId(json, fieldKey, this.synopticalRecords[index], item, primaryKey)
         subColumns.forEach(subCol => {
           subCol.fields.forEach(field => {
             const key = field.key;
@@ -1575,5 +1576,19 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       editable = true
     }
     return editable;
+  }
+
+  /**
+  * Method to set fuel type in ohq data
+  *
+  * @returns {boolean}
+  * @memberof SynopticalTableComponent
+  */
+  setFuelTypeId(json, fieldKey, record, item, primaryKey){
+    if(['foList','doList','fwList','lubeList'].indexOf(fieldKey) >= 0){
+      const listItem = record[fieldKey].find( data => data[primaryKey] === item.id)
+      json['fuelTypeId'] = listItem.fuelTypeId
+    }
+    return json
   }
 }
