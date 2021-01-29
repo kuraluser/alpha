@@ -4091,6 +4091,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         ohqEntity = new OnHandQuantity();
         ohqEntity.setTankXId(ohqRecord.getTankId());
         ohqEntity.setPortXId(record.getPortId());
+        ohqEntity.setFuelTypeXId(ohqRecord.getFuelTypeId());
         ohqEntity.setLoadableStudy(loadableStudy);
         ohqEntity.setIsActive(true);
       }

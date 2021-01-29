@@ -1823,7 +1823,9 @@ public class LoadableStudyService {
     if (reply != null && !reply.getCargoNominationsList().isEmpty()) {
       List<CargoNomination> cargoNominationList = new ArrayList<>();
       List<CargoNominationDetail> cargoNominationDetailsFiltered =
-          reply.getCargoNominationsList().stream()
+          reply
+              .getCargoNominationsList()
+              .stream()
               .filter(distinctByKey(cargoNominationDetail -> cargoNominationDetail.getCargoId()))
               .collect(Collectors.toList());
       cargoNominationDetailsFiltered.forEach(
@@ -2587,26 +2589,30 @@ public class LoadableStudyService {
     synopticalRecord.setActualFOTotal(
         foList.stream().map(fo -> fo.getActualWeight()).reduce(BigDecimal.ZERO, BigDecimal::add));
     synopticalRecord.setActualDOTotal(
-        doList.stream()
+        doList
+            .stream()
             .map(doTank -> doTank.getActualWeight())
             .reduce(BigDecimal.ZERO, BigDecimal::add));
     synopticalRecord.setActualFWTotal(
         fwList.stream().map(fw -> fw.getActualWeight()).reduce(BigDecimal.ZERO, BigDecimal::add));
     synopticalRecord.setActualLubeTotal(
-        lubeList.stream()
+        lubeList
+            .stream()
             .map(lube -> lube.getActualWeight())
             .reduce(BigDecimal.ZERO, BigDecimal::add));
 
     synopticalRecord.setPlannedFOTotal(
         foList.stream().map(fo -> fo.getPlannedWeight()).reduce(BigDecimal.ZERO, BigDecimal::add));
     synopticalRecord.setPlannedDOTotal(
-        doList.stream()
+        doList
+            .stream()
             .map(doTank -> doTank.getPlannedWeight())
             .reduce(BigDecimal.ZERO, BigDecimal::add));
     synopticalRecord.setPlannedFWTotal(
         fwList.stream().map(fw -> fw.getPlannedWeight()).reduce(BigDecimal.ZERO, BigDecimal::add));
     synopticalRecord.setPlannedLubeTotal(
-        lubeList.stream()
+        lubeList
+            .stream()
             .map(lube -> lube.getPlannedWeight())
             .reduce(BigDecimal.ZERO, BigDecimal::add));
   }
@@ -3206,7 +3212,9 @@ public class LoadableStudyService {
     List<Long> failedRecords = new ArrayList<>();
     List<Thread> workers = new ArrayList<>();
     Set<Long> portIds =
-        request.getSynopticalRecords().stream()
+        request
+            .getSynopticalRecords()
+            .stream()
             .map(SynopticalRecord::getPortId)
             .collect(Collectors.toSet());
     CountDownLatch latch = new CountDownLatch(portIds.size());
@@ -3286,7 +3294,9 @@ public class LoadableStudyService {
     builder.setLoadableStudyId(loadableStudyId);
     builder.setLoadablePatternId(loadablePatternId);
     List<SynopticalRecord> records =
-        request.getSynopticalRecords().stream()
+        request
+            .getSynopticalRecords()
+            .stream()
             .filter(rec -> rec.getPortId().equals(portId))
             .collect(Collectors.toList());
     if (records.size() != 2) {
@@ -3352,6 +3362,7 @@ public class LoadableStudyService {
           .ifPresent(item -> ohqBuilder.setActualWeight(valueOf(item)));
       Optional.ofNullable(record.getPlannedWeight())
           .ifPresent(item -> ohqBuilder.setPlannedWeight(valueOf(item)));
+      Optional.ofNullable(record.getFuelTypeId()).ifPresent(ohqBuilder::setFuelTypeId);
       recordBuilder.addOhq(ohqBuilder.build());
     }
   }
@@ -3677,7 +3688,9 @@ public class LoadableStudyService {
     // group on-board-quantities by cargo for Cargo conditions
     if (!CollectionUtils.isEmpty(cargoResponse.getOnBoardQuantities())) {
       List<Cargo> cargoConditions = new ArrayList<>();
-      cargoResponse.getOnBoardQuantities().stream()
+      cargoResponse
+          .getOnBoardQuantities()
+          .stream()
           .collect(
               Collectors.groupingBy(
                   onBoardQty ->
@@ -3717,7 +3730,9 @@ public class LoadableStudyService {
     if (synopticalTableResponse != null
         && !CollectionUtils.isEmpty(synopticalTableResponse.getSynopticalRecords())) {
       Optional<SynopticalRecord> synopticalRecord =
-          synopticalTableResponse.getSynopticalRecords().stream()
+          synopticalTableResponse
+              .getSynopticalRecords()
+              .stream()
               .filter(
                   record ->
                       operationType.equalsIgnoreCase(record.getOperationType())
@@ -3730,7 +3745,10 @@ public class LoadableStudyService {
           voyageStatusResponse.setCargoQuantities(synopticalRecord.get().getCargos());
           // group on-board-quantities by cargo for Cargo conditions
           List<Cargo> cargoConditions = new ArrayList<>();
-          synopticalRecord.get().getCargos().stream()
+          synopticalRecord
+              .get()
+              .getCargos()
+              .stream()
               .collect(
                   Collectors.groupingBy(
                       synopticalCargoRecord ->
