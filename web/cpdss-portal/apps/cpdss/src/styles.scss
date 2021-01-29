@@ -528,7 +528,6 @@ a {
   font-size: $font-size-normal;
   &:focus{
     outline: none;
-    box-shadow: none;
   }
 }
 
@@ -579,7 +578,7 @@ a {
   }
   .column-class.column-actions {
     min-width: 25px !important;
-    width: 25px !important;
+    width: 43px !important;
 }
 .column-class{
   width: auto!important;
@@ -654,7 +653,7 @@ h5{
   font-size: $font-size-normal;
 }
 
-.p-datatable .p-datatable-tbody > tr > td{
+.p-datatable .p-datatable-tbody > tr > td, .p-datatable .p-datatable-tbody > tr > th{
   padding: 11px 5px;
   cursor: pointer;
 }
@@ -768,7 +767,6 @@ tr{
   padding: 2px 5px!important;
   height: auto!important;
   min-width: 20px!important;
-  font-size: 10px;
 }
 
 .grid-dropdown-icon .p-splitbutton-defaultbutton{
@@ -978,6 +976,7 @@ input[type=number] {
     > div{
       position: relative;
       padding-right: 20px;
+      display: inline-block;
     }
     .error-icon{
       position: absolute;
@@ -1703,20 +1702,29 @@ th .p-calendar .p-inputtext{
 .cargo-nomination-table .p-datatable-tbody tr td.color > div{
   min-width: 40px;
 }
-.carousel-card{
-  .p-calendar .p-inputtext{
-    height: 14px;
-  }
-  .form-control{
-    height: 14px;
-  }
-  .error-icon{
-    position: absolute;
-    right: 0;
-    top:1px;
-  }
 
+.icon-btn.pencil-icon{
+  width: auto;
+  height: auto;
+  background-position: left center;
 }
-.p-carousel .p-carousel-indicators{
-  display: none;
+
+.body-header-row-span-table.p-datatable .p-datatable-tbody > tr:hover{
+  background: none!important;
+}
+
+.p-orderlist .p-orderlist-list .p-orderlist-item:not(.p-highlight):hover, .p-orderlist .p-orderlist-list .p-orderlist-item.p-highlight{
+  background-position: 95% 15px;
+}
+
+.p-datatable .p-button.p-button-text.p-button-plain:enabled:hover{
+    background: none!important;
+}
+
+.w-auto{
+  width: auto!important;
+  min-width: 5px!important;
+}
+td > div .p-calendar{
+  width: 100%;
 }

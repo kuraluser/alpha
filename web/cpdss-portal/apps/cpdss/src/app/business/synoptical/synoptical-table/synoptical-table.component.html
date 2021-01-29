@@ -2,7 +2,7 @@
 <button (click)="exportExcelFromTable()">Export</button>
 <form>
     <p-table *ngIf="synopticalRecords.length; else empty" [columns]="synopticalRecords" [value]="cols" dataKey="header"
-     id="synoptic-table" [expandedRowKeys]="expandedRows">
+     id="synoptic-table" [expandedRowKeys]="expandedRows" styleClass="body-header-row-span-table">
         <ng-template pTemplate="header" let-columns let-rowData>
             <tr>
                 <th>{{headerColumn.header | translate}}</th>

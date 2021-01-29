@@ -929,13 +929,10 @@ a{
 .cargo-nomination-table.ohq td:nth-child(3), .cargo-nomination-table.ohq td:nth-child(5){
   border-right: 1px solid $table-border;
 }
-.cargo-nomination-table.ohq table > thead > tr:first-child th:nth-child(3), .cargo-nomination-table.ohq table > thead > tr:nth-child(3) th:nth-child(3){
+.cargo-nomination-table.ohq table > thead > tr > th:nth-child(3), .cargo-nomination-table.ohq table > thead > tr:first-child th:nth-child(4){
   border-right: 1px solid $table-border;
 }
-
-
-
-.cargo-nomination-table.ohq table > thead > tr:first-child  th:nth-child(4), .cargo-nomination-table.ohq table > thead > tr:nth-child(2)  th:nth-child(2), .cargo-nomination-table.ohq table > thead > tr:nth-child(4)  th:nth-child(2){
+.cargo-nomination-table.ohq table > thead > tr:nth-child(2)  th:nth-child(5){
   border-right: 1px solid $table-border;
 }
 
@@ -1111,27 +1108,4 @@ a{
 }
 .p-component-overlay{
   background: rgba($body-bg, 0.6)!important;
-}
-.p-datatable .p-datatable-scrollable-header{
-  border-bottom: 1px solid $table-border;
-}
-
-.card-border{
-  border-top: 2px dashed $card-border;
-}
-.carousel-card{
-  &.active{
-    background: $border-color;
-    color: $text-secondary;
-  }
-}
-.distance-port{
-  background: url($images-theme + 'carousel-card-arrow.png') no-repeat;
-  color: $card-border;
-}
-.distance-port:after{
-  border-top:1px solid $card-border;
-}
-.ship-location{
-  background: url($images-theme + 'ship-location.png') no-repeat;
 }
