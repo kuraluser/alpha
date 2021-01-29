@@ -1,7 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.service;
 
-import static com.cpdss.common.util.CommonTestUtils.createDummyObject;
+import static com.cpdss.gateway.TestUtils.createDummyObject;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -2010,8 +2010,8 @@ class LoadableStudyServiceTest {
       record
           .getCargos()
           .add(
-              (com.cpdss.gateway.domain.SynopticalCargoRecord)
-                  createDummyObject(com.cpdss.gateway.domain.SynopticalCargoRecord.class));
+              (com.cpdss.gateway.domain.SynopticalCargoBallastRecord)
+                  createDummyObject(com.cpdss.gateway.domain.SynopticalCargoBallastRecord.class));
       record.setFoList(new ArrayList<>());
       record.setDoList(new ArrayList<>());
       record.setFwList(new ArrayList<>());

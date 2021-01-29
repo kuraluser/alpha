@@ -31,6 +31,9 @@ public class LoadablePlanStowageBallastDetails extends EntityDoc {
   @Column(name = "quantity")
   private BigDecimal quantity;
 
+  @Column(name = "actual_quantity")
+  private BigDecimal actualQuantity;
+
   @Column(name = "port_xid")
   private Long portXId;
 
@@ -39,4 +42,7 @@ public class LoadablePlanStowageBallastDetails extends EntityDoc {
 
   @Column(name = "loadable_pattern_xid")
   private Long loadablePatternId;
+
+  @Column(name = "is_active")
+  private Boolean isActive;
 }

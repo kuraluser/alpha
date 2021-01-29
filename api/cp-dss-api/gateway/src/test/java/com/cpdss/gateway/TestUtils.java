@@ -1,5 +1,5 @@
 /* Licensed under Apache-2.0 */
-package com.cpdss.common.util;
+package com.cpdss.gateway;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -9,15 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-/**
- * Common test utility methods
- *
- * @author suhail.k
- */
-public class CommonTestUtils {
-
-  private CommonTestUtils() {}
-
+public class TestUtils {
   public static Object createDummyObject(Class<?> cls)
       throws InstantiationException, IllegalAccessException {
     Object obj = cls.newInstance();

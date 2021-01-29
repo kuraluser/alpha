@@ -1,7 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.common.util.CommonTestUtils.createDummyObject;
+import static com.cpdss.loadablestudy.TestUtils.createDummyObject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;

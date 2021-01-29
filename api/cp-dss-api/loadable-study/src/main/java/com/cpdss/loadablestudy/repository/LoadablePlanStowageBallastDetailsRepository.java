@@ -17,5 +17,6 @@ public interface LoadablePlanStowageBallastDetailsRepository
   public List<LoadablePlanStowageBallastDetails> findBallastDetailsForLoadableStudy(
       Long loadableStudyId, Long loadablePatternId);
 
-  public List<LoadablePlanStowageBallastDetails> findByLoadablePatternId(Long loadablePatternId);
+  public List<LoadablePlanStowageBallastDetails> findByLoadablePatternIdAndIsActive(
+      Long loadablePatternId, boolean isActive);
 }

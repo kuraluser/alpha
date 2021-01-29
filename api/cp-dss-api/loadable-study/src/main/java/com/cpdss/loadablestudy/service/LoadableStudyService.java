@@ -56,6 +56,7 @@ import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalRecord;
@@ -338,7 +339,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           FUEL_OIL_TANK_CATEGORY_ID,
           DIESEL_OIL_TANK_CATEGORY_ID,
           LUBRICATING_OIL_TANK_CATEGORY_ID,
-          LUBRICANT_OIL_TANK_CATEGORY_ID);
+          LUBRICANT_OIL_TANK_CATEGORY_ID,
+          BALLAST_TANK_CATEGORY_ID);
 
   private static final String SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL = "ARR";
   private static final String SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE = "DEP";
@@ -1244,7 +1246,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
       List<CargoNomination> cargoNominationList =
-          this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
+          this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(
               request.getLoadableStudyId(), true);
       buildCargoNominationReply(cargoNominationList, replyBuilder);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
@@ -1884,9 +1886,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       this.cargoNominationOperationDetailsRepository.deleteCargoNominationPortDetails(
           request.getCargoNominationId());
       /*
-       * delete respective loading ports from port rotation table if ports
-       * not associated with any other cargo nomination belonging
-       * to the same loadable study
+       * delete respective loading ports from port rotation table if ports not
+       * associated with any other cargo nomination belonging to the same loadable
+       * study
        */
       if (!existingCargoNomination.get().getCargoNominationPortDetails().isEmpty()) {
         List<Long> requestedPortIds =
@@ -2158,10 +2160,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           detailBuilder.setId(qty.getId());
           Optional.ofNullable(qty.getArrivalQuantity())
               .ifPresent(item -> detailBuilder.setArrivalQuantity(valueOf(item)));
+          Optional.ofNullable(qty.getActualArrivalQuantity())
+              .ifPresent(item -> detailBuilder.setActualArrivalQuantity(valueOf(item)));
           Optional.ofNullable(qty.getArrivalVolume())
               .ifPresent(item -> detailBuilder.setArrivalVolume(valueOf(item)));
           Optional.ofNullable(qty.getDepartureQuantity())
               .ifPresent(item -> detailBuilder.setDepartureQuantity(valueOf(item)));
+          Optional.ofNullable(qty.getActualDepartureQuantity())
+              .ifPresent(item -> detailBuilder.setActualDepartureQuantity(valueOf(item)));
           Optional.ofNullable(qty.getDepartureVolume())
               .ifPresent(item -> detailBuilder.setDepartureVolume(valueOf(item)));
           Optional.ofNullable(qty.getDensity())
@@ -4213,15 +4219,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<SynopticalRecord> records = new ArrayList<>();
       List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> cargoDetails = null;
       List<LoadablePlanStowageBallastDetails> ballastDetails = new ArrayList<>();
-      // if there is loadable pattern selected, fetch corresponding loadicator and ballast data of
+      // if there is loadable pattern selected, fetch corresponding loadicator and
+      // ballast data of
       // all ports
       if (request.getLoadablePatternId() > 0) {
         cargoDetails =
             this.loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
                 request.getLoadablePatternId(), true);
         ballastDetails.addAll(
-            this.loadablePlanStowageBallastDetailsRepository.findByLoadablePatternId(
-                request.getLoadablePatternId()));
+            this.loadablePlanStowageBallastDetailsRepository.findByLoadablePatternIdAndIsActive(
+                request.getLoadablePatternId(), true));
       }
       for (SynopticalTable synopticalEntity : synopticalTableList) {
         SynopticalRecord.Builder builder = SynopticalRecord.newBuilder();
@@ -4242,7 +4249,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             synopticalEntity, builder, vesselLoadableQuantityDetails);
         if (request.getLoadablePatternId() > 0) {
           this.setSynopticalTableLoadicatorData(request.getLoadablePatternId(), builder);
-          this.setBallastDetails(synopticalEntity, builder, ballastDetails);
+          this.setBallastDetails(
+              synopticalEntity,
+              builder,
+              ballastDetails,
+              sortedTankList,
+              request.getLoadablePatternId());
         }
         records.add(builder.build());
       }
@@ -4260,11 +4272,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param synopticalEntity
    * @param builder
    * @param ballastDetails
+   * @param sortedTankList
+   * @param paatternId
    */
   private void setBallastDetails(
       SynopticalTable synopticalEntity,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builder,
-      List<LoadablePlanStowageBallastDetails> ballastDetails) {
+      List<LoadablePlanStowageBallastDetails> ballastDetails,
+      List<VesselTankDetail> sortedTankList,
+      Long paatternId) {
     List<LoadablePlanStowageBallastDetails> portBallastList =
         ballastDetails.stream()
             .filter(
@@ -4273,11 +4289,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         && synopticalEntity.getOperationType().equals(bd.getOperationType()))
             .collect(Collectors.toList());
     if (null != portBallastList && !portBallastList.isEmpty()) {
-      BigDecimal plannedSum =
-          portBallastList.stream()
-              .map(LoadablePlanStowageBallastDetails::getQuantity)
-              .reduce(BigDecimal.ZERO, BigDecimal::add);
-      builder.setBallastPlanned(valueOf(plannedSum));
+      for (VesselTankDetail tank : sortedTankList) {
+        if (!BALLAST_TANK_CATEGORY_ID.equals(tank.getTankCategoryId())) {
+          continue;
+        }
+        SynopticalBallastRecord.Builder ballastBuilder = SynopticalBallastRecord.newBuilder();
+        ballastBuilder.setTankId(tank.getTankId());
+        ballastBuilder.setTankName(tank.getTankName());
+        ballastBuilder.setCapacity(tank.getFullCapacityCubm());
+        Optional<LoadablePlanStowageBallastDetails> tankBallastDetail =
+            portBallastList.stream()
+                .filter(b -> b.getTankXId().longValue() == tank.getTankId())
+                .findAny();
+        if (tankBallastDetail.isPresent()) {
+          LoadablePlanStowageBallastDetails ballast = tankBallastDetail.get();
+          Optional.ofNullable(ballast.getQuantity())
+              .ifPresent(item -> ballastBuilder.setPlannedWeight(valueOf(item)));
+          Optional.ofNullable(ballast.getActualQuantity())
+              .ifPresent(item -> ballastBuilder.setActualWeight(valueOf(item)));
+        } else {
+          log.info(
+              "Ballast details not available for the tank: {}, pattern: {}",
+              tank.getTankId(),
+              paatternId);
+        }
+        builder.addBallast(ballastBuilder.build());
+      }
     }
   }
 
@@ -4505,6 +4542,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(item -> cargoBuilder.setPlannedWeight(valueOf(item)));
           Optional.ofNullable(tankDataOpt.get().getActualQuantity())
               .ifPresent(item -> cargoBuilder.setActualWeight(valueOf(item)));
+          // attributes for landing page
+          Optional.ofNullable(tankDataOpt.get().getCargoId())
+          .ifPresent(cargoBuilder::setCargoId);
+          Optional.ofNullable(tankDataOpt.get().getAbbreviation())
+          .ifPresent(cargoBuilder::setCargoAbbreviation);
+          Optional.ofNullable(tankDataOpt.get().getColorCode())
+          .ifPresent(cargoBuilder::setColorCode);
+          Optional.ofNullable(tankDataOpt.get().getCorrectedUllage())
+          .ifPresent(ullage -> cargoBuilder.setCorrectedUllage(valueOf(ullage)));
         }
       }
       builder.addCargo(cargoBuilder.build());
@@ -5075,6 +5121,25 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         throw new GenericServiceException(
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
+      /**
+       * updated the request object with confirmed loadable pattern id which
+       * is needed only for voyage status initiated flow. In case this method is reused for any 
+       * other flow then the loadable pattern id should be updated accordingly using
+       * probably a flag to track initiated flow
+       */
+      List<LoadablePattern> confirmedLoadablePatternList =
+              loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
+            		  request.getVoyageId(),
+                  CONFIRMED_STATUS_ID,
+                  true);
+      Optional<LoadablePattern> confirmedLoadablePattern = confirmedLoadablePatternList.stream().findFirst();
+      if (!confirmedLoadablePattern.isPresent()) {
+    	  throw new GenericServiceException(
+    			  "Confirmed loadable pattern does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+      }
+      Long confirmedLoadablePatternId = confirmedLoadablePattern.get().getId();
+      SynopticalTableRequest.Builder requestBuilder = request.toBuilder();
+      requestBuilder.setLoadablePatternId(confirmedLoadablePatternId);
       // fetching synoptical entity list
       List<SynopticalTable> synopticalTableList =
           this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveAndPortXid(
@@ -5088,7 +5153,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         Collections.sort(
             sortedTankList, Comparator.comparing(VesselTankDetail::getTankDisplayOrder));
         buildSynopticalTableReply(
-            request,
+        		requestBuilder.build(),
             synopticalTableList,
             this.getSynopticalTablePortDetails(synopticalTableList),
             this.getSynopticalTablePortRotations(loadableStudyOpt.get()),
@@ -5096,6 +5161,31 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             sortedTankList,
             vesselReply.getVesselLoadableQuantityDetails(),
             replyBuilder);
+        // build ballast tank details not available in synoptical
+        List<VesselTankDetail> ballastTankList =
+            sortedTankList.stream()
+                .filter(tankList -> BALLAST_TANK_CATEGORIES.contains(tankList.getTankCategoryId()))
+                .collect(Collectors.toList());
+        List<VesselTankDetail> frontBallastTanks = new ArrayList<>();
+        List<VesselTankDetail> centerBallastTanks = new ArrayList<>();
+        List<VesselTankDetail> rearBallastTanks = new ArrayList<>();
+        frontBallastTanks.addAll(
+            ballastTankList.stream()
+                .filter(tank -> BALLAST_FRONT_TANK.equals(tank.getTankPositionCategory()))
+                .collect(Collectors.toList()));
+        centerBallastTanks.addAll(
+            ballastTankList.stream()
+                .filter(tank -> BALLAST_CENTER_TANK.equals(tank.getTankPositionCategory()))
+                .collect(Collectors.toList()));
+
+        rearBallastTanks.addAll(
+            ballastTankList.stream()
+                .filter(tank -> BALLAST_REAR_TANK.equals(tank.getTankPositionCategory()))
+                .collect(Collectors.toList()));
+
+        replyBuilder.addAllBallastFrontTanks(this.groupTanks(frontBallastTanks));
+        replyBuilder.addAllBallastCenterTanks(this.groupTanks(centerBallastTanks));
+        replyBuilder.addAllBallastRearTanks(this.groupTanks(rearBallastTanks));
       }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (GenericServiceException e) {

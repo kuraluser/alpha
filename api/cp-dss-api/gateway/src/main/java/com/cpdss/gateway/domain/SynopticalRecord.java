@@ -33,7 +33,7 @@ public class SynopticalRecord {
   private Long portId;
   private String portName;
   private Long portOrder;
-  private List<SynopticalCargoRecord> cargos;
+  private List<SynopticalCargoBallastRecord> cargos;
   private BigDecimal cargoPlannedTotal;
   private BigDecimal cargoActualTotal;
   private List<SynopticalOhqRecord> foList;
@@ -56,8 +56,8 @@ public class SynopticalRecord {
   private BigDecimal totalDwtActual;
   private BigDecimal displacementPlanned;
   private BigDecimal displacementActual;
-  private BigDecimal ballastPlanned;
-  private BigDecimal ballastActual;
+  private BigDecimal ballastPlannedTotal;
+  private BigDecimal ballastActualTotal;
 
   private BigDecimal hogSag;
   private BigDecimal finalDraftFwd;
@@ -72,4 +72,5 @@ public class SynopticalRecord {
   private BigDecimal calculatedTrimPlanned;
   private BigDecimal calculatedTrimActual;
   private BigDecimal blindSector;
+  private List<SynopticalCargoBallastRecord> ballast;
 }

@@ -1,7 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.controller;
 
-import static com.cpdss.common.util.CommonTestUtils.createDummyObject;
+import static com.cpdss.gateway.TestUtils.createDummyObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;

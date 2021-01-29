@@ -50,6 +50,7 @@ import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
+import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
@@ -109,7 +110,7 @@ import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Purpose;
 import com.cpdss.gateway.domain.SaveCommentResponse;
-import com.cpdss.gateway.domain.SynopticalCargoRecord;
+import com.cpdss.gateway.domain.SynopticalCargoBallastRecord;
 import com.cpdss.gateway.domain.SynopticalOhqRecord;
 import com.cpdss.gateway.domain.SynopticalRecord;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
@@ -1508,6 +1509,10 @@ public class LoadableStudyService {
           isEmpty(detail.getArrivalQuantity())
               ? BigDecimal.ZERO
               : new BigDecimal(detail.getArrivalQuantity()));
+      onHandQuantity.setActualArrivalQuantity(
+              isEmpty(detail.getActualArrivalQuantity())
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(detail.getActualArrivalQuantity()));
       onHandQuantity.setArrivalVolume(
           isEmpty(detail.getArrivalVolume())
               ? BigDecimal.ZERO
@@ -1516,6 +1521,10 @@ public class LoadableStudyService {
           isEmpty(detail.getDepartureQuantity())
               ? BigDecimal.ZERO
               : new BigDecimal(detail.getDepartureQuantity()));
+      onHandQuantity.setActualDepartureQuantity(
+              isEmpty(detail.getActualDepartureQuantity())
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(detail.getActualDepartureQuantity()));
       onHandQuantity.setDepartureVolume(
           isEmpty(detail.getDepartureVolume())
               ? BigDecimal.ZERO
@@ -2277,10 +2286,46 @@ public class LoadableStudyService {
                 this.buildOhqDataForSynopticalTable(synopticalRecord, synopticalProtoRecord);
                 this.buildVesselDataForSynopticalTable(synopticalRecord, synopticalProtoRecord);
                 this.buildSynopticalLoadicatorRecord(synopticalRecord, synopticalProtoRecord);
+                this.buildSynopticalBallastRecords(synopticalRecord, synopticalProtoRecord);
                 synopticalTableList.add(synopticalRecord);
               });
       synopticalTableResponse.setSynopticalRecords(synopticalTableList);
     }
+  }
+
+  /**
+   * Build ballast list
+   *
+   * @param synopticalRecord
+   * @param synopticalProtoRecord
+   */
+  private void buildSynopticalBallastRecords(
+      SynopticalRecord synopticalRecord,
+      com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
+    List<SynopticalCargoBallastRecord> list = new ArrayList<>();
+    for (SynopticalBallastRecord ballast : synopticalProtoRecord.getBallastList()) {
+      SynopticalCargoBallastRecord record = new SynopticalCargoBallastRecord();
+      record.setTankId(ballast.getTankId());
+      record.setTankName(ballast.getTankName());
+      record.setCapacity(
+          isEmpty(ballast.getCapacity()) ? null : new BigDecimal(ballast.getCapacity()));
+      record.setPlannedWeight(
+          isEmpty(ballast.getPlannedWeight()) ? null : new BigDecimal(ballast.getPlannedWeight()));
+      record.setActualWeight(
+          isEmpty(ballast.getActualWeight()) ? null : new BigDecimal(ballast.getActualWeight()));
+      list.add(record);
+    }
+    if (!list.isEmpty()) {
+      synopticalRecord.setBallastPlannedTotal(
+          list.stream()
+              .map(SynopticalCargoBallastRecord::getPlannedWeight)
+              .reduce(BigDecimal.ZERO, BigDecimal::add));
+      synopticalRecord.setBallastActualTotal(
+          list.stream()
+              .map(SynopticalCargoBallastRecord::getActualWeight)
+              .reduce(BigDecimal.ZERO, BigDecimal::add));
+    }
+    synopticalRecord.setBallast(list);
   }
 
   /**
@@ -2405,14 +2450,6 @@ public class LoadableStudyService {
     synopticalRecord.setLwTideTimeTo(synopticalProtoRecord.getLwTideTimeTo());
     synopticalRecord.setEtaEtdActual(synopticalProtoRecord.getEtaEtdActual());
     synopticalRecord.setEtaEtdPlanned(synopticalProtoRecord.getEtaEtdEstimated());
-    synopticalRecord.setBallastPlanned(
-        isEmpty(synopticalProtoRecord.getBallastPlanned())
-            ? BigDecimal.ZERO
-            : new BigDecimal(synopticalProtoRecord.getBallastPlanned()));
-    synopticalRecord.setBallastActual(
-        isEmpty(synopticalProtoRecord.getBallastActual())
-            ? BigDecimal.ZERO
-            : new BigDecimal(synopticalProtoRecord.getBallastActual()));
   }
 
   /**
@@ -2539,10 +2576,10 @@ public class LoadableStudyService {
   private void buildSynopticalTableCargos(
       SynopticalRecord synopticalRecord,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
-    List<SynopticalCargoRecord> list = new ArrayList<>();
+    List<SynopticalCargoBallastRecord> list = new ArrayList<>();
     for (com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord protoRec :
         synopticalProtoRecord.getCargoList()) {
-      SynopticalCargoRecord rec = new SynopticalCargoRecord();
+      SynopticalCargoBallastRecord rec = new SynopticalCargoBallastRecord();
       rec.setTankId(protoRec.getTankId());
       rec.setTankName(protoRec.getTankName());
       rec.setActualWeight(
@@ -2553,6 +2590,14 @@ public class LoadableStudyService {
           isEmpty(protoRec.getPlannedWeight())
               ? BigDecimal.ZERO
               : new BigDecimal(protoRec.getPlannedWeight()));
+      // parameters for landing page
+      rec.setAbbreviation(protoRec.getCargoAbbreviation());
+      rec.setCargoId(protoRec.getCargoId());
+      rec.setColorCode(protoRec.getColorCode());
+      rec.setCorrectedUllage(
+          isEmpty(protoRec.getCorrectedUllage())
+              ? BigDecimal.ZERO
+              : new BigDecimal(protoRec.getCorrectedUllage()));
       rec.setCapacity(
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
       list.add(rec);
@@ -2733,7 +2778,7 @@ public class LoadableStudyService {
               synopticalRecord.setFinalDraftMid(str.getFinalDraftMid());
               synopticalRecord.setCalculatedTrimPlanned(str.getCalculatedTrimPlanned());
               synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
-              synopticalRecord.setBallastPlanned(str.getBallastPlanned());
+              // synopticalRecord.setBallastPlanned(str.getBallastPlanned());
               response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
             });
   }
@@ -3092,7 +3137,7 @@ public class LoadableStudyService {
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder,
       SynopticalRecord request) {
     if (null != request.getCargos()) {
-      for (SynopticalCargoRecord cargo : request.getCargos()) {
+      for (SynopticalCargoBallastRecord cargo : request.getCargos()) {
         com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord.Builder builder =
             com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord.newBuilder();
         Optional.ofNullable(cargo.getTankId()).ifPresent(builder::setTankId);
@@ -3364,6 +3409,7 @@ public class LoadableStudyService {
     // Retrieve synoptical data
     SynopticalTableRequest synopticalTableRequest =
         SynopticalTableRequest.newBuilder()
+            .setVoyageId(voyageId)
             .setLoadableStudyId(loadableStudyId)
             .setVesselId(vesselId)
             .setPortId(portId)
@@ -3384,7 +3430,7 @@ public class LoadableStudyService {
         portId,
         cargoResponse,
         bunkerResponse,
-        synopticalTableResponse);
+        synopticalTableResponse, synopticalTableReply);
     return voyageStatusResponse;
   }
 
@@ -3394,69 +3440,70 @@ public class LoadableStudyService {
       Long portId,
       OnBoardQuantityResponse cargoResponse,
       OnHandQuantityResponse bunkerResponse,
-      SynopticalTableResponse synopticalTableResponse) {
-    voyageStatusResponse.setCargoQuantities(cargoResponse.getOnBoardQuantities());
+      SynopticalTableResponse synopticalTableResponse,
+      SynopticalTableReply synopticalTableReply) {
+	String operationType = request.getOperationType();
     voyageStatusResponse.setCargoTanks(cargoResponse.getTanks());
-    // group on-board-quantities by cargo for Cargo conditions
-    if (!CollectionUtils.isEmpty(cargoResponse.getOnBoardQuantities())) {
-      List<Cargo> cargoConditions = new ArrayList<>();
-      cargoResponse.getOnBoardQuantities().stream()
-          .collect(
-              Collectors.groupingBy(
-                  onBoardQty ->
-                      onBoardQty.getCargoId() != null ? onBoardQty.getCargoId() : Long.valueOf("0"),
-                  Collectors.collectingAndThen(
-                      Collectors.reducing(
-                          (index, accum) ->
-                              new OnBoardQuantity(
-                                  index.getId(),
-                                  index.getPortId(),
-                                  index.getTankId(),
-                                  index.getTankName(),
-                                  index.getCargoId(),
-                                  index.getSounding(),
-                                  index.getWeight().add(accum.getWeight()),
-                                  index.getActualWeight().add(accum.getActualWeight()),
-                                  index.getVolume(),
-                                  index.getColorCode(),
-                                  index.getAbbreviation(),
-                                  index.getLoadableStudyId())),
-                      Optional::get)))
-          .forEach(
-              (id, onBoardQuantity) -> {
-                if (onBoardQuantity.getCargoId() != null) {
-                  Cargo cargo = new Cargo();
-                  cargo.setId(onBoardQuantity.getCargoId());
-                  cargo.setPlannedWeight(onBoardQuantity.getWeight());
-                  cargo.setActualWeight(onBoardQuantity.getActualWeight());
-                  cargoConditions.add(cargo);
-                }
-              });
-      voyageStatusResponse.setCargoConditions(cargoConditions);
-    }
-    // group ohq, vessel and port details for Bunker conditions
+    // group ohq, vessel and port details for Bunker conditions and Cargo conditions
     if (synopticalTableResponse != null
-        && !CollectionUtils.isEmpty(synopticalTableResponse.getSynopticalRecords())
-        && request != null) {
+        && !CollectionUtils.isEmpty(synopticalTableResponse.getSynopticalRecords())) {
       Optional<SynopticalRecord> synopticalRecord =
           synopticalTableResponse.getSynopticalRecords().stream()
               .filter(
                   record ->
-                      ARR.equalsIgnoreCase(record.getOperationType())
+                  operationType.equalsIgnoreCase(record.getOperationType())
                           && Objects.equals(record.getPortId(), portId)
                           && Objects.equals(record.getPortOrder(), request.getPortOrder()))
               .findFirst();
       if (synopticalRecord.isPresent()) {
-        BunkerConditions bunkerConditions = new BunkerConditions();
-        bunkerConditions.setFuelOilWeight(synopticalRecord.get().getActualFOTotal());
-        bunkerConditions.setDieselOilWeight(synopticalRecord.get().getActualDOTotal());
-        bunkerConditions.setBallastWeight(synopticalRecord.get().getBallastActual());
-        bunkerConditions.setFreshWaterWeight(synopticalRecord.get().getActualFWTotal());
-        bunkerConditions.setOthersWeight(synopticalRecord.get().getOthersActual());
-        bunkerConditions.setTotalDwtWeight(synopticalRecord.get().getTotalDwtActual());
-        bunkerConditions.setDisplacement(synopticalRecord.get().getDisplacementActual());
-        bunkerConditions.setSpecificGravity(synopticalRecord.get().getSpecificGravity());
-        voyageStatusResponse.setBunkerConditions(bunkerConditions);
+    	  if (!CollectionUtils.isEmpty(synopticalRecord.get().getCargos())) {
+    		// build cargo quantities
+    		  voyageStatusResponse.setCargoQuantities(synopticalRecord.get().getCargos());
+    		// group on-board-quantities by cargo for Cargo conditions
+    		  List<Cargo> cargoConditions = new ArrayList<>();
+    		  synopticalRecord.get().getCargos().stream()
+    		  .collect(
+    				  Collectors.groupingBy(
+    						  synopticalCargoRecord ->
+    						  synopticalCargoRecord.getCargoId() != null ? synopticalCargoRecord.getCargoId() : Long.valueOf("0"),
+    								  Collectors.collectingAndThen(
+    										  Collectors.reducing(
+    												  (index, accum) ->
+    												  new SynopticalCargoBallastRecord(
+    														  index.getTankId(),
+    														  index.getTankName(),
+    														  index.getActualWeight().add(accum.getActualWeight()),
+    														  index.getPlannedWeight().add(accum.getPlannedWeight()),
+    														  index.getCapacity(),
+    														  index.getAbbreviation(),
+    														  index.getCargoId(),
+    														  index.getColorCode(),
+    														  index.getCorrectedUllage()
+    														  )),
+    										  Optional::get)))
+    		  .forEach(
+    				  (id, synopticalCargoRecord) -> {
+    					  if (synopticalCargoRecord.getCargoId() != null) {
+    						  Cargo cargo = new Cargo();
+    						  cargo.setId(synopticalCargoRecord.getCargoId());
+    						  cargo.setPlannedWeight(synopticalCargoRecord.getPlannedWeight());
+    						  cargo.setActualWeight(synopticalCargoRecord.getActualWeight());
+    						  cargoConditions.add(cargo);
+    					  }
+    				  });
+    		  voyageStatusResponse.setCargoConditions(cargoConditions);
+    	  }
+    	  // build bunker conditions
+    	  BunkerConditions bunkerConditions = new BunkerConditions();
+    	  bunkerConditions.setFuelOilWeight(synopticalRecord.get().getActualFOTotal());
+    	  bunkerConditions.setDieselOilWeight(synopticalRecord.get().getActualDOTotal());
+    	  bunkerConditions.setBallastWeight(synopticalRecord.get().getBallastActualTotal());
+    	  bunkerConditions.setFreshWaterWeight(synopticalRecord.get().getActualFWTotal());
+    	  bunkerConditions.setOthersWeight(synopticalRecord.get().getOthersActual());
+    	  bunkerConditions.setTotalDwtWeight(synopticalRecord.get().getTotalDwtActual());
+    	  bunkerConditions.setDisplacement(synopticalRecord.get().getDisplacementActual());
+    	  bunkerConditions.setSpecificGravity(synopticalRecord.get().getSpecificGravity());
+    	  voyageStatusResponse.setBunkerConditions(bunkerConditions);
       }
     }
     // build bunker quantities
@@ -3465,5 +3512,9 @@ public class LoadableStudyService {
       voyageStatusResponse.setBunkerTanks(bunkerResponse.getTanks());
       voyageStatusResponse.setBunkerRearTanks(bunkerResponse.getRearTanks());
     }
+    // build ballast tanks
+    voyageStatusResponse.setBallastFrontTanks(createGroupWiseTankList(synopticalTableReply.getBallastFrontTanksList()));
+    voyageStatusResponse.setBallastCenterTanks(createGroupWiseTankList(synopticalTableReply.getBallastCenterTanksList()));
+    voyageStatusResponse.setBallastRearTanks(createGroupWiseTankList(synopticalTableReply.getBallastRearTanksList()));
   }
 }
