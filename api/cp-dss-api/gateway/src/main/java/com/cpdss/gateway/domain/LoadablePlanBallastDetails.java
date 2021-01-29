@@ -21,4 +21,6 @@ public class LoadablePlanBallastDetails {
   private String inertia;
   private String tankName;
   private String colorCode;
+  private String quantityMT; // for saving result
+  private String fillingRatio; // for saving result
 }

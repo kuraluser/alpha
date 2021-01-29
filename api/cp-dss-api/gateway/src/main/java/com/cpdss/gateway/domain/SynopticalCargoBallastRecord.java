@@ -2,7 +2,6 @@
 package com.cpdss.gateway.domain;
 
 import java.math.BigDecimal;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,12 +20,12 @@ public class SynopticalCargoBallastRecord {
   private BigDecimal plannedWeight;
 
   private BigDecimal capacity;
-  
+
   private String abbreviation;
-  
+
   private Long cargoId;
-  
+
   private String colorCode;
-  
+
   private BigDecimal correctedUllage;
 }

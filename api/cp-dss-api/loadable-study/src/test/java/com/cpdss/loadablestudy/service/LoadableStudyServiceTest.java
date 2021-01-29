@@ -65,6 +65,7 @@ import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CargoHistory;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
@@ -104,6 +105,7 @@ import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanConstraintsRespository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
@@ -182,7 +184,7 @@ class LoadableStudyServiceTest {
   @MockBean private LoadablePlanCommentsRepository loadablePlanCommentsRepository;
   @MockBean private LoadablePatternDetailsRepository loadablePatternDetailsRepository;
   @MockBean private LoadablePatternRepository loadablePatternRepository;
-
+  @MockBean private LoadablePlanConstraintsRespository loadablePlanConstraintsRespository;
   @MockBean private PurposeOfCommingleRepository purposeOfCommingleRepository;
 
   @MockBean private CommingleCargoRepository commingleCargoRepository;
@@ -1865,6 +1867,7 @@ class LoadableStudyServiceTest {
     return LoadablePatternRequest.newBuilder().setLoadableStudyId(0L).build();
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   void testGenerateLoadablePatterns() {
     Optional<LoadableStudy> optional = Optional.of(new LoadableStudy());
@@ -1874,6 +1877,14 @@ class LoadableStudyServiceTest {
     Mockito.doReturn(this.createPortReply())
         .when(spyService)
         .getPortInfo(any(GetPortInfoByPortIdsRequest.class));
+    AlgoResponse algoResponse = new AlgoResponse();
+    algoResponse.setProcessId("");
+    Mockito.when(
+            restTemplate.postForObject(
+                anyString(),
+                any(com.cpdss.loadablestudy.domain.LoadableStudy.class),
+                any(Class.class)))
+        .thenReturn(algoResponse);
 
     when(this.onBoardQuantityRepository.findByLoadableStudyAndIsActive(any(), anyBoolean()))
         .thenReturn(prepareOnBoardQuantity());

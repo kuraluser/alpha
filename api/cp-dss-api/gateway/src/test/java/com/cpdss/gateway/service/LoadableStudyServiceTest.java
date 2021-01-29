@@ -1314,6 +1314,8 @@ class LoadableStudyServiceTest {
                         LoadablePatternCargoDetails.Builder loadablePatternCargoDetailsBuilder =
                             LoadablePatternCargoDetails.newBuilder();
                         loadablePatternCargoDetailsBuilder.setPriority(Long.valueOf(j));
+                        loadablePatternBuilder.addLoadablePlanStowageDetails(
+                            buildLoadablePlanStowageDetails());
                         loadablePatternBuilder.addLoadablePatternCargoDetails(
                             loadablePatternCargoDetailsBuilder);
                       });
@@ -1854,7 +1856,7 @@ class LoadableStudyServiceTest {
               list.add(
                   LoadablePattern.newBuilder()
                       .setLoadablePatternId(ID_TEST_VALUE)
-                      .setCaseNumber(STRING_TEST_VALUE)
+                      .setCaseNumber(1)
                       .build());
             });
     return list;

@@ -89,4 +89,13 @@ public class LoadablePlanCommingleDetails extends EntityDoc {
   @JoinColumn(name = "loadable_pattern_xid")
   @ManyToOne
   private LoadablePattern loadablePattern;
+
+  @Column(name = "priority")
+  private Integer priority;
+
+  @Column(name = "order_quantity")
+  private String orderQuantity;
+
+  @Column(name = "loading_order")
+  private Integer loadingOrder;
 }

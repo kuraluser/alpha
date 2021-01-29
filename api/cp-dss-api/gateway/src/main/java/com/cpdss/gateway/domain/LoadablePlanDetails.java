@@ -8,5 +8,6 @@ import lombok.Data;
 @Data
 public class LoadablePlanDetails {
   private Integer caseNumber;
+  private List<String> constraints;
   private List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails;
 }

@@ -41,6 +41,13 @@ public final class LoadableStudy {
     /** <code>repeated .LoadablePlanDetails loadablePlanDetails = 2;</code> */
     com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsOrBuilder
         getLoadablePlanDetailsOrBuilder(int index);
+
+    /**
+     * <code>int64 loadableStudyId = 3;</code>
+     *
+     * @return The loadableStudyId.
+     */
+    long getLoadableStudyId();
   }
   /** Protobuf type {@code LoadablePatternAlgoRequest} */
   public static final class LoadablePatternAlgoRequest
@@ -108,6 +115,11 @@ public final class LoadableStudy {
                     input.readMessage(
                         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetails.parser(),
                         extensionRegistry));
+                break;
+              }
+            case 24:
+              {
+                loadableStudyId_ = input.readInt64();
                 break;
               }
             default:
@@ -211,6 +223,17 @@ public final class LoadableStudy {
       return loadablePlanDetails_.get(index);
     }
 
+    public static final int LOADABLESTUDYID_FIELD_NUMBER = 3;
+    private long loadableStudyId_;
+    /**
+     * <code>int64 loadableStudyId = 3;</code>
+     *
+     * @return The loadableStudyId.
+     */
+    public long getLoadableStudyId() {
+      return loadableStudyId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -231,6 +254,9 @@ public final class LoadableStudy {
       for (int i = 0; i < loadablePlanDetails_.size(); i++) {
         output.writeMessage(2, loadablePlanDetails_.get(i));
       }
+      if (loadableStudyId_ != 0L) {
+        output.writeInt64(3, loadableStudyId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -247,6 +273,9 @@ public final class LoadableStudy {
         size +=
             com.google.protobuf.CodedOutputStream.computeMessageSize(
                 2, loadablePlanDetails_.get(i));
+      }
+      if (loadableStudyId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, loadableStudyId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -266,6 +295,7 @@ public final class LoadableStudy {
 
       if (!getProcesssId().equals(other.getProcesssId())) return false;
       if (!getLoadablePlanDetailsList().equals(other.getLoadablePlanDetailsList())) return false;
+      if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -283,6 +313,8 @@ public final class LoadableStudy {
         hash = (37 * hash) + LOADABLEPLANDETAILS_FIELD_NUMBER;
         hash = (53 * hash) + getLoadablePlanDetailsList().hashCode();
       }
+      hash = (37 * hash) + LOADABLESTUDYID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -435,6 +467,8 @@ public final class LoadableStudy {
         } else {
           loadablePlanDetailsBuilder_.clear();
         }
+        loadableStudyId_ = 0L;
+
         return this;
       }
 
@@ -475,6 +509,7 @@ public final class LoadableStudy {
         } else {
           result.loadablePlanDetails_ = loadablePlanDetailsBuilder_.build();
         }
+        result.loadableStudyId_ = loadableStudyId_;
         onBuilt();
         return result;
       }
@@ -560,6 +595,9 @@ public final class LoadableStudy {
               loadablePlanDetailsBuilder_.addAllMessages(other.loadablePlanDetails_);
             }
           }
+        }
+        if (other.getLoadableStudyId() != 0L) {
+          setLoadableStudyId(other.getLoadableStudyId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -897,6 +935,39 @@ public final class LoadableStudy {
         return loadablePlanDetailsBuilder_;
       }
 
+      private long loadableStudyId_;
+      /**
+       * <code>int64 loadableStudyId = 3;</code>
+       *
+       * @return The loadableStudyId.
+       */
+      public long getLoadableStudyId() {
+        return loadableStudyId_;
+      }
+      /**
+       * <code>int64 loadableStudyId = 3;</code>
+       *
+       * @param value The loadableStudyId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadableStudyId(long value) {
+
+        loadableStudyId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadableStudyId = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadableStudyId() {
+
+        loadableStudyId_ = 0L;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -979,6 +1050,33 @@ public final class LoadableStudy {
     /** <code>repeated .LoadablePlanPortWiseDetails loadablePlanPortWiseDetails = 2;</code> */
     com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetailsOrBuilder
         getLoadablePlanPortWiseDetailsOrBuilder(int index);
+
+    /**
+     * <code>repeated string constraints = 3;</code>
+     *
+     * @return A list containing the constraints.
+     */
+    java.util.List<java.lang.String> getConstraintsList();
+    /**
+     * <code>repeated string constraints = 3;</code>
+     *
+     * @return The count of constraints.
+     */
+    int getConstraintsCount();
+    /**
+     * <code>repeated string constraints = 3;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The constraints at the given index.
+     */
+    java.lang.String getConstraints(int index);
+    /**
+     * <code>repeated string constraints = 3;</code>
+     *
+     * @param index The index of the value to return.
+     * @return The bytes of the constraints at the given index.
+     */
+    com.google.protobuf.ByteString getConstraintsBytes(int index);
   }
   /** Protobuf type {@code LoadablePlanDetails} */
   public static final class LoadablePlanDetails extends com.google.protobuf.GeneratedMessageV3
@@ -993,6 +1091,7 @@ public final class LoadableStudy {
 
     private LoadablePlanDetails() {
       loadablePlanPortWiseDetails_ = java.util.Collections.emptyList();
+      constraints_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
 
     @java.lang.Override
@@ -1045,6 +1144,16 @@ public final class LoadableStudy {
                         extensionRegistry));
                 break;
               }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+                if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                  constraints_ = new com.google.protobuf.LazyStringArrayList();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                constraints_.add(s);
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -1062,6 +1171,9 @@ public final class LoadableStudy {
         if (((mutable_bitField0_ & 0x00000001) != 0)) {
           loadablePlanPortWiseDetails_ =
               java.util.Collections.unmodifiableList(loadablePlanPortWiseDetails_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) != 0)) {
+          constraints_ = constraints_.getUnmodifiableView();
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -1123,6 +1235,43 @@ public final class LoadableStudy {
       return loadablePlanPortWiseDetails_.get(index);
     }
 
+    public static final int CONSTRAINTS_FIELD_NUMBER = 3;
+    private com.google.protobuf.LazyStringList constraints_;
+    /**
+     * <code>repeated string constraints = 3;</code>
+     *
+     * @return A list containing the constraints.
+     */
+    public com.google.protobuf.ProtocolStringList getConstraintsList() {
+      return constraints_;
+    }
+    /**
+     * <code>repeated string constraints = 3;</code>
+     *
+     * @return The count of constraints.
+     */
+    public int getConstraintsCount() {
+      return constraints_.size();
+    }
+    /**
+     * <code>repeated string constraints = 3;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The constraints at the given index.
+     */
+    public java.lang.String getConstraints(int index) {
+      return constraints_.get(index);
+    }
+    /**
+     * <code>repeated string constraints = 3;</code>
+     *
+     * @param index The index of the value to return.
+     * @return The bytes of the constraints at the given index.
+     */
+    public com.google.protobuf.ByteString getConstraintsBytes(int index) {
+      return constraints_.getByteString(index);
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -1143,6 +1292,9 @@ public final class LoadableStudy {
       for (int i = 0; i < loadablePlanPortWiseDetails_.size(); i++) {
         output.writeMessage(2, loadablePlanPortWiseDetails_.get(i));
       }
+      for (int i = 0; i < constraints_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, constraints_.getRaw(i));
+      }
       unknownFields.writeTo(output);
     }
 
@@ -1159,6 +1311,14 @@ public final class LoadableStudy {
         size +=
             com.google.protobuf.CodedOutputStream.computeMessageSize(
                 2, loadablePlanPortWiseDetails_.get(i));
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < constraints_.size(); i++) {
+          dataSize += computeStringSizeNoTag(constraints_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getConstraintsList().size();
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -1179,6 +1339,7 @@ public final class LoadableStudy {
       if (getCaseNumber() != other.getCaseNumber()) return false;
       if (!getLoadablePlanPortWiseDetailsList().equals(other.getLoadablePlanPortWiseDetailsList()))
         return false;
+      if (!getConstraintsList().equals(other.getConstraintsList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -1195,6 +1356,10 @@ public final class LoadableStudy {
       if (getLoadablePlanPortWiseDetailsCount() > 0) {
         hash = (37 * hash) + LOADABLEPLANPORTWISEDETAILS_FIELD_NUMBER;
         hash = (53 * hash) + getLoadablePlanPortWiseDetailsList().hashCode();
+      }
+      if (getConstraintsCount() > 0) {
+        hash = (37 * hash) + CONSTRAINTS_FIELD_NUMBER;
+        hash = (53 * hash) + getConstraintsList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -1346,6 +1511,8 @@ public final class LoadableStudy {
         } else {
           loadablePlanPortWiseDetailsBuilder_.clear();
         }
+        constraints_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -1386,6 +1553,11 @@ public final class LoadableStudy {
         } else {
           result.loadablePlanPortWiseDetails_ = loadablePlanPortWiseDetailsBuilder_.build();
         }
+        if (((bitField0_ & 0x00000002) != 0)) {
+          constraints_ = constraints_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.constraints_ = constraints_;
         onBuilt();
         return result;
       }
@@ -1469,6 +1641,16 @@ public final class LoadableStudy {
                   other.loadablePlanPortWiseDetails_);
             }
           }
+        }
+        if (!other.constraints_.isEmpty()) {
+          if (constraints_.isEmpty()) {
+            constraints_ = other.constraints_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureConstraintsIsMutable();
+            constraints_.addAll(other.constraints_);
+          }
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1773,6 +1955,120 @@ public final class LoadableStudy {
         return loadablePlanPortWiseDetailsBuilder_;
       }
 
+      private com.google.protobuf.LazyStringList constraints_ =
+          com.google.protobuf.LazyStringArrayList.EMPTY;
+
+      private void ensureConstraintsIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          constraints_ = new com.google.protobuf.LazyStringArrayList(constraints_);
+          bitField0_ |= 0x00000002;
+        }
+      }
+      /**
+       * <code>repeated string constraints = 3;</code>
+       *
+       * @return A list containing the constraints.
+       */
+      public com.google.protobuf.ProtocolStringList getConstraintsList() {
+        return constraints_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string constraints = 3;</code>
+       *
+       * @return The count of constraints.
+       */
+      public int getConstraintsCount() {
+        return constraints_.size();
+      }
+      /**
+       * <code>repeated string constraints = 3;</code>
+       *
+       * @param index The index of the element to return.
+       * @return The constraints at the given index.
+       */
+      public java.lang.String getConstraints(int index) {
+        return constraints_.get(index);
+      }
+      /**
+       * <code>repeated string constraints = 3;</code>
+       *
+       * @param index The index of the value to return.
+       * @return The bytes of the constraints at the given index.
+       */
+      public com.google.protobuf.ByteString getConstraintsBytes(int index) {
+        return constraints_.getByteString(index);
+      }
+      /**
+       * <code>repeated string constraints = 3;</code>
+       *
+       * @param index The index to set the value at.
+       * @param value The constraints to set.
+       * @return This builder for chaining.
+       */
+      public Builder setConstraints(int index, java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureConstraintsIsMutable();
+        constraints_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string constraints = 3;</code>
+       *
+       * @param value The constraints to add.
+       * @return This builder for chaining.
+       */
+      public Builder addConstraints(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureConstraintsIsMutable();
+        constraints_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string constraints = 3;</code>
+       *
+       * @param values The constraints to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllConstraints(java.lang.Iterable<java.lang.String> values) {
+        ensureConstraintsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, constraints_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string constraints = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearConstraints() {
+        constraints_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string constraints = 3;</code>
+       *
+       * @param value The bytes of the constraints to add.
+       * @return This builder for chaining.
+       */
+      public Builder addConstraintsBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+        ensureConstraintsIsMutable();
+        constraints_.add(value);
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1853,37 +2149,37 @@ public final class LoadableStudy {
      */
     com.google.protobuf.ByteString getPortCodeBytes();
 
-    /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-    java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
-        getArrivalConditionList();
-    /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-    com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply getArrivalCondition(
-        int index);
-    /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-    int getArrivalConditionCount();
-    /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-    java.util.List<
-            ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder>
-        getArrivalConditionOrBuilderList();
-    /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
+    /**
+     * <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code>
+     *
+     * @return Whether the arrivalCondition field is set.
+     */
+    boolean hasArrivalCondition();
+    /**
+     * <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code>
+     *
+     * @return The arrivalCondition.
+     */
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply getArrivalCondition();
+    /** <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code> */
     com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder
-        getArrivalConditionOrBuilder(int index);
+        getArrivalConditionOrBuilder();
 
-    /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-    java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
-        getDepartureConditionList();
-    /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-    com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply getDepartureCondition(
-        int index);
-    /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-    int getDepartureConditionCount();
-    /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-    java.util.List<
-            ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder>
-        getDepartureConditionOrBuilderList();
-    /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
+    /**
+     * <code>.LoadablePlanDetailsReply departureCondition = 4;</code>
+     *
+     * @return Whether the departureCondition field is set.
+     */
+    boolean hasDepartureCondition();
+    /**
+     * <code>.LoadablePlanDetailsReply departureCondition = 4;</code>
+     *
+     * @return The departureCondition.
+     */
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply getDepartureCondition();
+    /** <code>.LoadablePlanDetailsReply departureCondition = 4;</code> */
     com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder
-        getDepartureConditionOrBuilder(int index);
+        getDepartureConditionOrBuilder();
   }
   /** Protobuf type {@code LoadablePlanPortWiseDetails} */
   public static final class LoadablePlanPortWiseDetails
@@ -1899,8 +2195,6 @@ public final class LoadableStudy {
 
     private LoadablePlanPortWiseDetails() {
       portCode_ = "";
-      arrivalCondition_ = java.util.Collections.emptyList();
-      departureCondition_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -1922,7 +2216,6 @@ public final class LoadableStudy {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
-      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -1947,30 +2240,38 @@ public final class LoadableStudy {
               }
             case 26:
               {
-                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                  arrivalCondition_ =
-                      new java.util.ArrayList<
-                          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>();
-                  mutable_bitField0_ |= 0x00000001;
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
+                    subBuilder = null;
+                if (arrivalCondition_ != null) {
+                  subBuilder = arrivalCondition_.toBuilder();
                 }
-                arrivalCondition_.add(
+                arrivalCondition_ =
                     input.readMessage(
                         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.parser(),
-                        extensionRegistry));
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(arrivalCondition_);
+                  arrivalCondition_ = subBuilder.buildPartial();
+                }
+
                 break;
               }
             case 34:
               {
-                if (!((mutable_bitField0_ & 0x00000002) != 0)) {
-                  departureCondition_ =
-                      new java.util.ArrayList<
-                          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>();
-                  mutable_bitField0_ |= 0x00000002;
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
+                    subBuilder = null;
+                if (departureCondition_ != null) {
+                  subBuilder = departureCondition_.toBuilder();
                 }
-                departureCondition_.add(
+                departureCondition_ =
                     input.readMessage(
                         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.parser(),
-                        extensionRegistry));
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(departureCondition_);
+                  departureCondition_ = subBuilder.buildPartial();
+                }
+
                 break;
               }
             default:
@@ -1987,12 +2288,6 @@ public final class LoadableStudy {
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          arrivalCondition_ = java.util.Collections.unmodifiableList(arrivalCondition_);
-        }
-        if (((mutable_bitField0_ & 0x00000002) != 0)) {
-          departureCondition_ = java.util.Collections.unmodifiableList(departureCondition_);
-        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -2060,61 +2355,56 @@ public final class LoadableStudy {
     }
 
     public static final int ARRIVALCONDITION_FIELD_NUMBER = 3;
-    private java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
-        arrivalCondition_;
-    /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-    public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
-        getArrivalConditionList() {
-      return arrivalCondition_;
+    private com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply arrivalCondition_;
+    /**
+     * <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code>
+     *
+     * @return Whether the arrivalCondition field is set.
+     */
+    public boolean hasArrivalCondition() {
+      return arrivalCondition_ != null;
     }
-    /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-    public java.util.List<
-            ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder>
-        getArrivalConditionOrBuilderList() {
-      return arrivalCondition_;
+    /**
+     * <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code>
+     *
+     * @return The arrivalCondition.
+     */
+    public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply getArrivalCondition() {
+      return arrivalCondition_ == null
+          ? com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.getDefaultInstance()
+          : arrivalCondition_;
     }
-    /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-    public int getArrivalConditionCount() {
-      return arrivalCondition_.size();
-    }
-    /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-    public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply getArrivalCondition(
-        int index) {
-      return arrivalCondition_.get(index);
-    }
-    /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
+    /** <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code> */
     public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder
-        getArrivalConditionOrBuilder(int index) {
-      return arrivalCondition_.get(index);
+        getArrivalConditionOrBuilder() {
+      return getArrivalCondition();
     }
 
     public static final int DEPARTURECONDITION_FIELD_NUMBER = 4;
-    private java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
-        departureCondition_;
-    /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-    public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
-        getDepartureConditionList() {
-      return departureCondition_;
+    private com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply departureCondition_;
+    /**
+     * <code>.LoadablePlanDetailsReply departureCondition = 4;</code>
+     *
+     * @return Whether the departureCondition field is set.
+     */
+    public boolean hasDepartureCondition() {
+      return departureCondition_ != null;
     }
-    /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-    public java.util.List<
-            ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder>
-        getDepartureConditionOrBuilderList() {
-      return departureCondition_;
+    /**
+     * <code>.LoadablePlanDetailsReply departureCondition = 4;</code>
+     *
+     * @return The departureCondition.
+     */
+    public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply
+        getDepartureCondition() {
+      return departureCondition_ == null
+          ? com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.getDefaultInstance()
+          : departureCondition_;
     }
-    /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-    public int getDepartureConditionCount() {
-      return departureCondition_.size();
-    }
-    /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-    public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply getDepartureCondition(
-        int index) {
-      return departureCondition_.get(index);
-    }
-    /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
+    /** <code>.LoadablePlanDetailsReply departureCondition = 4;</code> */
     public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder
-        getDepartureConditionOrBuilder(int index) {
-      return departureCondition_.get(index);
+        getDepartureConditionOrBuilder() {
+      return getDepartureCondition();
     }
 
     private byte memoizedIsInitialized = -1;
@@ -2137,11 +2427,11 @@ public final class LoadableStudy {
       if (!getPortCodeBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, portCode_);
       }
-      for (int i = 0; i < arrivalCondition_.size(); i++) {
-        output.writeMessage(3, arrivalCondition_.get(i));
+      if (arrivalCondition_ != null) {
+        output.writeMessage(3, getArrivalCondition());
       }
-      for (int i = 0; i < departureCondition_.size(); i++) {
-        output.writeMessage(4, departureCondition_.get(i));
+      if (departureCondition_ != null) {
+        output.writeMessage(4, getDepartureCondition());
       }
       unknownFields.writeTo(output);
     }
@@ -2158,13 +2448,12 @@ public final class LoadableStudy {
       if (!getPortCodeBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, portCode_);
       }
-      for (int i = 0; i < arrivalCondition_.size(); i++) {
-        size +=
-            com.google.protobuf.CodedOutputStream.computeMessageSize(3, arrivalCondition_.get(i));
+      if (arrivalCondition_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, getArrivalCondition());
       }
-      for (int i = 0; i < departureCondition_.size(); i++) {
+      if (departureCondition_ != null) {
         size +=
-            com.google.protobuf.CodedOutputStream.computeMessageSize(4, departureCondition_.get(i));
+            com.google.protobuf.CodedOutputStream.computeMessageSize(4, getDepartureCondition());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -2184,8 +2473,14 @@ public final class LoadableStudy {
 
       if (getPortId() != other.getPortId()) return false;
       if (!getPortCode().equals(other.getPortCode())) return false;
-      if (!getArrivalConditionList().equals(other.getArrivalConditionList())) return false;
-      if (!getDepartureConditionList().equals(other.getDepartureConditionList())) return false;
+      if (hasArrivalCondition() != other.hasArrivalCondition()) return false;
+      if (hasArrivalCondition()) {
+        if (!getArrivalCondition().equals(other.getArrivalCondition())) return false;
+      }
+      if (hasDepartureCondition() != other.hasDepartureCondition()) return false;
+      if (hasDepartureCondition()) {
+        if (!getDepartureCondition().equals(other.getDepartureCondition())) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -2201,13 +2496,13 @@ public final class LoadableStudy {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
       hash = (37 * hash) + PORTCODE_FIELD_NUMBER;
       hash = (53 * hash) + getPortCode().hashCode();
-      if (getArrivalConditionCount() > 0) {
+      if (hasArrivalCondition()) {
         hash = (37 * hash) + ARRIVALCONDITION_FIELD_NUMBER;
-        hash = (53 * hash) + getArrivalConditionList().hashCode();
+        hash = (53 * hash) + getArrivalCondition().hashCode();
       }
-      if (getDepartureConditionCount() > 0) {
+      if (hasDepartureCondition()) {
         hash = (37 * hash) + DEPARTURECONDITION_FIELD_NUMBER;
-        hash = (53 * hash) + getDepartureConditionList().hashCode();
+        hash = (53 * hash) + getDepartureCondition().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -2345,10 +2640,7 @@ public final class LoadableStudy {
       }
 
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
-          getArrivalConditionFieldBuilder();
-          getDepartureConditionFieldBuilder();
-        }
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
       }
 
       @java.lang.Override
@@ -2359,16 +2651,16 @@ public final class LoadableStudy {
         portCode_ = "";
 
         if (arrivalConditionBuilder_ == null) {
-          arrivalCondition_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
+          arrivalCondition_ = null;
         } else {
-          arrivalConditionBuilder_.clear();
+          arrivalCondition_ = null;
+          arrivalConditionBuilder_ = null;
         }
         if (departureConditionBuilder_ == null) {
-          departureCondition_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
+          departureCondition_ = null;
         } else {
-          departureConditionBuilder_.clear();
+          departureCondition_ = null;
+          departureConditionBuilder_ = null;
         }
         return this;
       }
@@ -2400,23 +2692,14 @@ public final class LoadableStudy {
       public com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails buildPartial() {
         com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails result =
             new com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails(this);
-        int from_bitField0_ = bitField0_;
         result.portId_ = portId_;
         result.portCode_ = portCode_;
         if (arrivalConditionBuilder_ == null) {
-          if (((bitField0_ & 0x00000001) != 0)) {
-            arrivalCondition_ = java.util.Collections.unmodifiableList(arrivalCondition_);
-            bitField0_ = (bitField0_ & ~0x00000001);
-          }
           result.arrivalCondition_ = arrivalCondition_;
         } else {
           result.arrivalCondition_ = arrivalConditionBuilder_.build();
         }
         if (departureConditionBuilder_ == null) {
-          if (((bitField0_ & 0x00000002) != 0)) {
-            departureCondition_ = java.util.Collections.unmodifiableList(departureCondition_);
-            bitField0_ = (bitField0_ & ~0x00000002);
-          }
           result.departureCondition_ = departureCondition_;
         } else {
           result.departureCondition_ = departureConditionBuilder_.build();
@@ -2483,59 +2766,11 @@ public final class LoadableStudy {
           portCode_ = other.portCode_;
           onChanged();
         }
-        if (arrivalConditionBuilder_ == null) {
-          if (!other.arrivalCondition_.isEmpty()) {
-            if (arrivalCondition_.isEmpty()) {
-              arrivalCondition_ = other.arrivalCondition_;
-              bitField0_ = (bitField0_ & ~0x00000001);
-            } else {
-              ensureArrivalConditionIsMutable();
-              arrivalCondition_.addAll(other.arrivalCondition_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.arrivalCondition_.isEmpty()) {
-            if (arrivalConditionBuilder_.isEmpty()) {
-              arrivalConditionBuilder_.dispose();
-              arrivalConditionBuilder_ = null;
-              arrivalCondition_ = other.arrivalCondition_;
-              bitField0_ = (bitField0_ & ~0x00000001);
-              arrivalConditionBuilder_ =
-                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
-                      ? getArrivalConditionFieldBuilder()
-                      : null;
-            } else {
-              arrivalConditionBuilder_.addAllMessages(other.arrivalCondition_);
-            }
-          }
+        if (other.hasArrivalCondition()) {
+          mergeArrivalCondition(other.getArrivalCondition());
         }
-        if (departureConditionBuilder_ == null) {
-          if (!other.departureCondition_.isEmpty()) {
-            if (departureCondition_.isEmpty()) {
-              departureCondition_ = other.departureCondition_;
-              bitField0_ = (bitField0_ & ~0x00000002);
-            } else {
-              ensureDepartureConditionIsMutable();
-              departureCondition_.addAll(other.departureCondition_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.departureCondition_.isEmpty()) {
-            if (departureConditionBuilder_.isEmpty()) {
-              departureConditionBuilder_.dispose();
-              departureConditionBuilder_ = null;
-              departureCondition_ = other.departureCondition_;
-              bitField0_ = (bitField0_ & ~0x00000002);
-              departureConditionBuilder_ =
-                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
-                      ? getDepartureConditionFieldBuilder()
-                      : null;
-            } else {
-              departureConditionBuilder_.addAllMessages(other.departureCondition_);
-            }
-          }
+        if (other.hasDepartureCondition()) {
+          mergeDepartureCondition(other.getDepartureCondition());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -2567,8 +2802,6 @@ public final class LoadableStudy {
         }
         return this;
       }
-
-      private int bitField0_;
 
       private long portId_;
       /**
@@ -2679,471 +2912,255 @@ public final class LoadableStudy {
         return this;
       }
 
-      private java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
-          arrivalCondition_ = java.util.Collections.emptyList();
-
-      private void ensureArrivalConditionIsMutable() {
-        if (!((bitField0_ & 0x00000001) != 0)) {
-          arrivalCondition_ =
-              new java.util.ArrayList<
-                  com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>(
-                  arrivalCondition_);
-          bitField0_ |= 0x00000001;
-        }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilderV3<
+      private com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply arrivalCondition_;
+      private com.google.protobuf.SingleFieldBuilderV3<
               com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply,
               com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder,
               com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder>
           arrivalConditionBuilder_;
-
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
-          getArrivalConditionList() {
+      /**
+       * <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code>
+       *
+       * @return Whether the arrivalCondition field is set.
+       */
+      public boolean hasArrivalCondition() {
+        return arrivalConditionBuilder_ != null || arrivalCondition_ != null;
+      }
+      /**
+       * <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code>
+       *
+       * @return The arrivalCondition.
+       */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply
+          getArrivalCondition() {
         if (arrivalConditionBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(arrivalCondition_);
+          return arrivalCondition_ == null
+              ? com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply
+                  .getDefaultInstance()
+              : arrivalCondition_;
         } else {
-          return arrivalConditionBuilder_.getMessageList();
+          return arrivalConditionBuilder_.getMessage();
         }
       }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public int getArrivalConditionCount() {
-        if (arrivalConditionBuilder_ == null) {
-          return arrivalCondition_.size();
-        } else {
-          return arrivalConditionBuilder_.getCount();
-        }
-      }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply getArrivalCondition(
-          int index) {
-        if (arrivalConditionBuilder_ == null) {
-          return arrivalCondition_.get(index);
-        } else {
-          return arrivalConditionBuilder_.getMessage(index);
-        }
-      }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
+      /** <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code> */
       public Builder setArrivalCondition(
-          int index, com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply value) {
-        if (arrivalConditionBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureArrivalConditionIsMutable();
-          arrivalCondition_.set(index, value);
-          onChanged();
-        } else {
-          arrivalConditionBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public Builder setArrivalCondition(
-          int index,
-          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
-              builderForValue) {
-        if (arrivalConditionBuilder_ == null) {
-          ensureArrivalConditionIsMutable();
-          arrivalCondition_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          arrivalConditionBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public Builder addArrivalCondition(
           com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply value) {
         if (arrivalConditionBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          ensureArrivalConditionIsMutable();
-          arrivalCondition_.add(value);
+          arrivalCondition_ = value;
           onChanged();
         } else {
-          arrivalConditionBuilder_.addMessage(value);
+          arrivalConditionBuilder_.setMessage(value);
         }
+
         return this;
       }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public Builder addArrivalCondition(
-          int index, com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply value) {
+      /** <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code> */
+      public Builder setArrivalCondition(
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
+              builderForValue) {
         if (arrivalConditionBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
+          arrivalCondition_ = builderForValue.build();
+          onChanged();
+        } else {
+          arrivalConditionBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code> */
+      public Builder mergeArrivalCondition(
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply value) {
+        if (arrivalConditionBuilder_ == null) {
+          if (arrivalCondition_ != null) {
+            arrivalCondition_ =
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.newBuilder(
+                        arrivalCondition_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            arrivalCondition_ = value;
           }
-          ensureArrivalConditionIsMutable();
-          arrivalCondition_.add(index, value);
           onChanged();
         } else {
-          arrivalConditionBuilder_.addMessage(index, value);
+          arrivalConditionBuilder_.mergeFrom(value);
         }
+
         return this;
       }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public Builder addArrivalCondition(
-          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
-              builderForValue) {
-        if (arrivalConditionBuilder_ == null) {
-          ensureArrivalConditionIsMutable();
-          arrivalCondition_.add(builderForValue.build());
-          onChanged();
-        } else {
-          arrivalConditionBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public Builder addArrivalCondition(
-          int index,
-          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
-              builderForValue) {
-        if (arrivalConditionBuilder_ == null) {
-          ensureArrivalConditionIsMutable();
-          arrivalCondition_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          arrivalConditionBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public Builder addAllArrivalCondition(
-          java.lang.Iterable<
-                  ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
-              values) {
-        if (arrivalConditionBuilder_ == null) {
-          ensureArrivalConditionIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, arrivalCondition_);
-          onChanged();
-        } else {
-          arrivalConditionBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
+      /** <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code> */
       public Builder clearArrivalCondition() {
         if (arrivalConditionBuilder_ == null) {
-          arrivalCondition_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
+          arrivalCondition_ = null;
           onChanged();
         } else {
-          arrivalConditionBuilder_.clear();
+          arrivalCondition_ = null;
+          arrivalConditionBuilder_ = null;
         }
-        return this;
-      }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public Builder removeArrivalCondition(int index) {
-        if (arrivalConditionBuilder_ == null) {
-          ensureArrivalConditionIsMutable();
-          arrivalCondition_.remove(index);
-          onChanged();
-        } else {
-          arrivalConditionBuilder_.remove(index);
-        }
-        return this;
-      }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
-          getArrivalConditionBuilder(int index) {
-        return getArrivalConditionFieldBuilder().getBuilder(index);
-      }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder
-          getArrivalConditionOrBuilder(int index) {
-        if (arrivalConditionBuilder_ == null) {
-          return arrivalCondition_.get(index);
-        } else {
-          return arrivalConditionBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public java.util.List<
-              ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder>
-          getArrivalConditionOrBuilderList() {
-        if (arrivalConditionBuilder_ != null) {
-          return arrivalConditionBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(arrivalCondition_);
-        }
-      }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
-          addArrivalConditionBuilder() {
-        return getArrivalConditionFieldBuilder()
-            .addBuilder(
-                com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply
-                    .getDefaultInstance());
-      }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
-          addArrivalConditionBuilder(int index) {
-        return getArrivalConditionFieldBuilder()
-            .addBuilder(
-                index,
-                com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply
-                    .getDefaultInstance());
-      }
-      /** <code>repeated .LoadablePlanDetailsReply arrivalCondition = 3;</code> */
-      public java.util.List<
-              com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder>
-          getArrivalConditionBuilderList() {
-        return getArrivalConditionFieldBuilder().getBuilderList();
-      }
 
-      private com.google.protobuf.RepeatedFieldBuilderV3<
+        return this;
+      }
+      /** <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
+          getArrivalConditionBuilder() {
+
+        onChanged();
+        return getArrivalConditionFieldBuilder().getBuilder();
+      }
+      /** <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder
+          getArrivalConditionOrBuilder() {
+        if (arrivalConditionBuilder_ != null) {
+          return arrivalConditionBuilder_.getMessageOrBuilder();
+        } else {
+          return arrivalCondition_ == null
+              ? com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply
+                  .getDefaultInstance()
+              : arrivalCondition_;
+        }
+      }
+      /** <code>.LoadablePlanDetailsReply arrivalCondition = 3;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
               com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply,
               com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder,
               com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder>
           getArrivalConditionFieldBuilder() {
         if (arrivalConditionBuilder_ == null) {
           arrivalConditionBuilder_ =
-              new com.google.protobuf.RepeatedFieldBuilderV3<
+              new com.google.protobuf.SingleFieldBuilderV3<
                   com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply,
                   com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder,
                   com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder>(
-                  arrivalCondition_,
-                  ((bitField0_ & 0x00000001) != 0),
-                  getParentForChildren(),
-                  isClean());
+                  getArrivalCondition(), getParentForChildren(), isClean());
           arrivalCondition_ = null;
         }
         return arrivalConditionBuilder_;
       }
 
-      private java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
-          departureCondition_ = java.util.Collections.emptyList();
-
-      private void ensureDepartureConditionIsMutable() {
-        if (!((bitField0_ & 0x00000002) != 0)) {
-          departureCondition_ =
-              new java.util.ArrayList<
-                  com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>(
-                  departureCondition_);
-          bitField0_ |= 0x00000002;
-        }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilderV3<
+      private com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply departureCondition_;
+      private com.google.protobuf.SingleFieldBuilderV3<
               com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply,
               com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder,
               com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder>
           departureConditionBuilder_;
-
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
-          getDepartureConditionList() {
-        if (departureConditionBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(departureCondition_);
-        } else {
-          return departureConditionBuilder_.getMessageList();
-        }
+      /**
+       * <code>.LoadablePlanDetailsReply departureCondition = 4;</code>
+       *
+       * @return Whether the departureCondition field is set.
+       */
+      public boolean hasDepartureCondition() {
+        return departureConditionBuilder_ != null || departureCondition_ != null;
       }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public int getDepartureConditionCount() {
-        if (departureConditionBuilder_ == null) {
-          return departureCondition_.size();
-        } else {
-          return departureConditionBuilder_.getCount();
-        }
-      }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
+      /**
+       * <code>.LoadablePlanDetailsReply departureCondition = 4;</code>
+       *
+       * @return The departureCondition.
+       */
       public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply
-          getDepartureCondition(int index) {
+          getDepartureCondition() {
         if (departureConditionBuilder_ == null) {
-          return departureCondition_.get(index);
+          return departureCondition_ == null
+              ? com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply
+                  .getDefaultInstance()
+              : departureCondition_;
         } else {
-          return departureConditionBuilder_.getMessage(index);
+          return departureConditionBuilder_.getMessage();
         }
       }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
+      /** <code>.LoadablePlanDetailsReply departureCondition = 4;</code> */
       public Builder setDepartureCondition(
-          int index, com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply value) {
-        if (departureConditionBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureDepartureConditionIsMutable();
-          departureCondition_.set(index, value);
-          onChanged();
-        } else {
-          departureConditionBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public Builder setDepartureCondition(
-          int index,
-          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
-              builderForValue) {
-        if (departureConditionBuilder_ == null) {
-          ensureDepartureConditionIsMutable();
-          departureCondition_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          departureConditionBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public Builder addDepartureCondition(
           com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply value) {
         if (departureConditionBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          ensureDepartureConditionIsMutable();
-          departureCondition_.add(value);
+          departureCondition_ = value;
           onChanged();
         } else {
-          departureConditionBuilder_.addMessage(value);
+          departureConditionBuilder_.setMessage(value);
         }
+
         return this;
       }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public Builder addDepartureCondition(
-          int index, com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply value) {
+      /** <code>.LoadablePlanDetailsReply departureCondition = 4;</code> */
+      public Builder setDepartureCondition(
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
+              builderForValue) {
         if (departureConditionBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
+          departureCondition_ = builderForValue.build();
+          onChanged();
+        } else {
+          departureConditionBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.LoadablePlanDetailsReply departureCondition = 4;</code> */
+      public Builder mergeDepartureCondition(
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply value) {
+        if (departureConditionBuilder_ == null) {
+          if (departureCondition_ != null) {
+            departureCondition_ =
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.newBuilder(
+                        departureCondition_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            departureCondition_ = value;
           }
-          ensureDepartureConditionIsMutable();
-          departureCondition_.add(index, value);
           onChanged();
         } else {
-          departureConditionBuilder_.addMessage(index, value);
+          departureConditionBuilder_.mergeFrom(value);
         }
+
         return this;
       }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public Builder addDepartureCondition(
-          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
-              builderForValue) {
-        if (departureConditionBuilder_ == null) {
-          ensureDepartureConditionIsMutable();
-          departureCondition_.add(builderForValue.build());
-          onChanged();
-        } else {
-          departureConditionBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public Builder addDepartureCondition(
-          int index,
-          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
-              builderForValue) {
-        if (departureConditionBuilder_ == null) {
-          ensureDepartureConditionIsMutable();
-          departureCondition_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          departureConditionBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public Builder addAllDepartureCondition(
-          java.lang.Iterable<
-                  ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>
-              values) {
-        if (departureConditionBuilder_ == null) {
-          ensureDepartureConditionIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, departureCondition_);
-          onChanged();
-        } else {
-          departureConditionBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
+      /** <code>.LoadablePlanDetailsReply departureCondition = 4;</code> */
       public Builder clearDepartureCondition() {
         if (departureConditionBuilder_ == null) {
-          departureCondition_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
+          departureCondition_ = null;
           onChanged();
         } else {
-          departureConditionBuilder_.clear();
+          departureCondition_ = null;
+          departureConditionBuilder_ = null;
         }
-        return this;
-      }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public Builder removeDepartureCondition(int index) {
-        if (departureConditionBuilder_ == null) {
-          ensureDepartureConditionIsMutable();
-          departureCondition_.remove(index);
-          onChanged();
-        } else {
-          departureConditionBuilder_.remove(index);
-        }
-        return this;
-      }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
-          getDepartureConditionBuilder(int index) {
-        return getDepartureConditionFieldBuilder().getBuilder(index);
-      }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder
-          getDepartureConditionOrBuilder(int index) {
-        if (departureConditionBuilder_ == null) {
-          return departureCondition_.get(index);
-        } else {
-          return departureConditionBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public java.util.List<
-              ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder>
-          getDepartureConditionOrBuilderList() {
-        if (departureConditionBuilder_ != null) {
-          return departureConditionBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(departureCondition_);
-        }
-      }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
-          addDepartureConditionBuilder() {
-        return getDepartureConditionFieldBuilder()
-            .addBuilder(
-                com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply
-                    .getDefaultInstance());
-      }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
-          addDepartureConditionBuilder(int index) {
-        return getDepartureConditionFieldBuilder()
-            .addBuilder(
-                index,
-                com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply
-                    .getDefaultInstance());
-      }
-      /** <code>repeated .LoadablePlanDetailsReply departureCondition = 4;</code> */
-      public java.util.List<
-              com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder>
-          getDepartureConditionBuilderList() {
-        return getDepartureConditionFieldBuilder().getBuilderList();
-      }
 
-      private com.google.protobuf.RepeatedFieldBuilderV3<
+        return this;
+      }
+      /** <code>.LoadablePlanDetailsReply departureCondition = 4;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder
+          getDepartureConditionBuilder() {
+
+        onChanged();
+        return getDepartureConditionFieldBuilder().getBuilder();
+      }
+      /** <code>.LoadablePlanDetailsReply departureCondition = 4;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder
+          getDepartureConditionOrBuilder() {
+        if (departureConditionBuilder_ != null) {
+          return departureConditionBuilder_.getMessageOrBuilder();
+        } else {
+          return departureCondition_ == null
+              ? com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply
+                  .getDefaultInstance()
+              : departureCondition_;
+        }
+      }
+      /** <code>.LoadablePlanDetailsReply departureCondition = 4;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
               com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply,
               com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder,
               com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder>
           getDepartureConditionFieldBuilder() {
         if (departureConditionBuilder_ == null) {
           departureConditionBuilder_ =
-              new com.google.protobuf.RepeatedFieldBuilderV3<
+              new com.google.protobuf.SingleFieldBuilderV3<
                   com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply,
                   com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder,
                   com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReplyOrBuilder>(
-                  departureCondition_,
-                  ((bitField0_ & 0x00000002) != 0),
-                  getParentForChildren(),
-                  isClean());
+                  getDepartureCondition(), getParentForChildren(), isClean());
           departureCondition_ = null;
         }
         return departureConditionBuilder_;
@@ -9134,12 +9151,24 @@ public final class LoadableStudy {
     com.google.protobuf.ByteString getCorrectedLevelBytes();
 
     /**
+     *
+     *
+     * <pre>
+     * quantity
+     * </pre>
+     *
      * <code>string metricTon = 6;</code>
      *
      * @return The metricTon.
      */
     java.lang.String getMetricTon();
     /**
+     *
+     *
+     * <pre>
+     * quantity
+     * </pre>
+     *
      * <code>string metricTon = 6;</code>
      *
      * @return The bytes for metricTon.
@@ -9585,6 +9614,12 @@ public final class LoadableStudy {
     public static final int METRICTON_FIELD_NUMBER = 6;
     private volatile java.lang.Object metricTon_;
     /**
+     *
+     *
+     * <pre>
+     * quantity
+     * </pre>
+     *
      * <code>string metricTon = 6;</code>
      *
      * @return The metricTon.
@@ -9601,6 +9636,12 @@ public final class LoadableStudy {
       }
     }
     /**
+     *
+     *
+     * <pre>
+     * quantity
+     * </pre>
+     *
      * <code>string metricTon = 6;</code>
      *
      * @return The bytes for metricTon.
@@ -10773,6 +10814,12 @@ public final class LoadableStudy {
 
       private java.lang.Object metricTon_ = "";
       /**
+       *
+       *
+       * <pre>
+       * quantity
+       * </pre>
+       *
        * <code>string metricTon = 6;</code>
        *
        * @return The metricTon.
@@ -10789,6 +10836,12 @@ public final class LoadableStudy {
         }
       }
       /**
+       *
+       *
+       * <pre>
+       * quantity
+       * </pre>
+       *
        * <code>string metricTon = 6;</code>
        *
        * @return The bytes for metricTon.
@@ -10805,6 +10858,12 @@ public final class LoadableStudy {
         }
       }
       /**
+       *
+       *
+       * <pre>
+       * quantity
+       * </pre>
+       *
        * <code>string metricTon = 6;</code>
        *
        * @param value The metricTon to set.
@@ -10820,6 +10879,12 @@ public final class LoadableStudy {
         return this;
       }
       /**
+       *
+       *
+       * <pre>
+       * quantity
+       * </pre>
+       *
        * <code>string metricTon = 6;</code>
        *
        * @return This builder for chaining.
@@ -10831,6 +10896,12 @@ public final class LoadableStudy {
         return this;
       }
       /**
+       *
+       *
+       * <pre>
+       * quantity
+       * </pre>
+       *
        * <code>string metricTon = 6;</code>
        *
        * @param value The bytes for metricTon to set.
@@ -14517,6 +14588,33 @@ public final class LoadableStudy {
      * @return The bytes for cargo2KL.
      */
     com.google.protobuf.ByteString getCargo2KLBytes();
+
+    /**
+     * <code>string orderedMT = 21;</code>
+     *
+     * @return The orderedMT.
+     */
+    java.lang.String getOrderedMT();
+    /**
+     * <code>string orderedMT = 21;</code>
+     *
+     * @return The bytes for orderedMT.
+     */
+    com.google.protobuf.ByteString getOrderedMTBytes();
+
+    /**
+     * <code>int32 priority = 22;</code>
+     *
+     * @return The priority.
+     */
+    int getPriority();
+
+    /**
+     * <code>int32 loadingOrder = 23;</code>
+     *
+     * @return The loadingOrder.
+     */
+    int getLoadingOrder();
   }
   /** Protobuf type {@code LoadableQuantityCommingleCargoDetails} */
   public static final class LoadableQuantityCommingleCargoDetails
@@ -14551,6 +14649,7 @@ public final class LoadableStudy {
       cargo2MT_ = "";
       cargo1KL_ = "";
       cargo2KL_ = "";
+      orderedMT_ = "";
     }
 
     @java.lang.Override
@@ -14718,6 +14817,23 @@ public final class LoadableStudy {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 cargo2KL_ = s;
+                break;
+              }
+            case 170:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                orderedMT_ = s;
+                break;
+              }
+            case 176:
+              {
+                priority_ = input.readInt32();
+                break;
+              }
+            case 184:
+              {
+                loadingOrder_ = input.readInt32();
                 break;
               }
             default:
@@ -15431,6 +15547,63 @@ public final class LoadableStudy {
       }
     }
 
+    public static final int ORDEREDMT_FIELD_NUMBER = 21;
+    private volatile java.lang.Object orderedMT_;
+    /**
+     * <code>string orderedMT = 21;</code>
+     *
+     * @return The orderedMT.
+     */
+    public java.lang.String getOrderedMT() {
+      java.lang.Object ref = orderedMT_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        orderedMT_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string orderedMT = 21;</code>
+     *
+     * @return The bytes for orderedMT.
+     */
+    public com.google.protobuf.ByteString getOrderedMTBytes() {
+      java.lang.Object ref = orderedMT_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        orderedMT_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PRIORITY_FIELD_NUMBER = 22;
+    private int priority_;
+    /**
+     * <code>int32 priority = 22;</code>
+     *
+     * @return The priority.
+     */
+    public int getPriority() {
+      return priority_;
+    }
+
+    public static final int LOADINGORDER_FIELD_NUMBER = 23;
+    private int loadingOrder_;
+    /**
+     * <code>int32 loadingOrder = 23;</code>
+     *
+     * @return The loadingOrder.
+     */
+    public int getLoadingOrder() {
+      return loadingOrder_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -15505,6 +15678,15 @@ public final class LoadableStudy {
       if (!getCargo2KLBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 20, cargo2KL_);
       }
+      if (!getOrderedMTBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 21, orderedMT_);
+      }
+      if (priority_ != 0) {
+        output.writeInt32(22, priority_);
+      }
+      if (loadingOrder_ != 0) {
+        output.writeInt32(23, loadingOrder_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -15574,6 +15756,15 @@ public final class LoadableStudy {
       if (!getCargo2KLBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(20, cargo2KL_);
       }
+      if (!getOrderedMTBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(21, orderedMT_);
+      }
+      if (priority_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(22, priority_);
+      }
+      if (loadingOrder_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(23, loadingOrder_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -15612,6 +15803,9 @@ public final class LoadableStudy {
       if (!getCargo2MT().equals(other.getCargo2MT())) return false;
       if (!getCargo1KL().equals(other.getCargo1KL())) return false;
       if (!getCargo2KL().equals(other.getCargo2KL())) return false;
+      if (!getOrderedMT().equals(other.getOrderedMT())) return false;
+      if (getPriority() != other.getPriority()) return false;
+      if (getLoadingOrder() != other.getLoadingOrder()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -15663,6 +15857,12 @@ public final class LoadableStudy {
       hash = (53 * hash) + getCargo1KL().hashCode();
       hash = (37 * hash) + CARGO2KL_FIELD_NUMBER;
       hash = (53 * hash) + getCargo2KL().hashCode();
+      hash = (37 * hash) + ORDEREDMT_FIELD_NUMBER;
+      hash = (53 * hash) + getOrderedMT().hashCode();
+      hash = (37 * hash) + PRIORITY_FIELD_NUMBER;
+      hash = (53 * hash) + getPriority();
+      hash = (37 * hash) + LOADINGORDER_FIELD_NUMBER;
+      hash = (53 * hash) + getLoadingOrder();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -15852,6 +16052,12 @@ public final class LoadableStudy {
 
         cargo2KL_ = "";
 
+        orderedMT_ = "";
+
+        priority_ = 0;
+
+        loadingOrder_ = 0;
+
         return this;
       }
 
@@ -15905,6 +16111,9 @@ public final class LoadableStudy {
         result.cargo2MT_ = cargo2MT_;
         result.cargo1KL_ = cargo1KL_;
         result.cargo2KL_ = cargo2KL_;
+        result.orderedMT_ = orderedMT_;
+        result.priority_ = priority_;
+        result.loadingOrder_ = loadingOrder_;
         onBuilt();
         return result;
       }
@@ -16041,6 +16250,16 @@ public final class LoadableStudy {
         if (!other.getCargo2KL().isEmpty()) {
           cargo2KL_ = other.cargo2KL_;
           onChanged();
+        }
+        if (!other.getOrderedMT().isEmpty()) {
+          orderedMT_ = other.orderedMT_;
+          onChanged();
+        }
+        if (other.getPriority() != 0) {
+          setPriority(other.getPriority());
+        }
+        if (other.getLoadingOrder() != 0) {
+          setLoadingOrder(other.getLoadingOrder());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -17551,6 +17770,148 @@ public final class LoadableStudy {
         return this;
       }
 
+      private java.lang.Object orderedMT_ = "";
+      /**
+       * <code>string orderedMT = 21;</code>
+       *
+       * @return The orderedMT.
+       */
+      public java.lang.String getOrderedMT() {
+        java.lang.Object ref = orderedMT_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          orderedMT_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string orderedMT = 21;</code>
+       *
+       * @return The bytes for orderedMT.
+       */
+      public com.google.protobuf.ByteString getOrderedMTBytes() {
+        java.lang.Object ref = orderedMT_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          orderedMT_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string orderedMT = 21;</code>
+       *
+       * @param value The orderedMT to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOrderedMT(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        orderedMT_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string orderedMT = 21;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearOrderedMT() {
+
+        orderedMT_ = getDefaultInstance().getOrderedMT();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string orderedMT = 21;</code>
+       *
+       * @param value The bytes for orderedMT to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOrderedMTBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        orderedMT_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int priority_;
+      /**
+       * <code>int32 priority = 22;</code>
+       *
+       * @return The priority.
+       */
+      public int getPriority() {
+        return priority_;
+      }
+      /**
+       * <code>int32 priority = 22;</code>
+       *
+       * @param value The priority to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPriority(int value) {
+
+        priority_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 priority = 22;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPriority() {
+
+        priority_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int loadingOrder_;
+      /**
+       * <code>int32 loadingOrder = 23;</code>
+       *
+       * @return The loadingOrder.
+       */
+      public int getLoadingOrder() {
+        return loadingOrder_;
+      }
+      /**
+       * <code>int32 loadingOrder = 23;</code>
+       *
+       * @param value The loadingOrder to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadingOrder(int value) {
+
+        loadingOrder_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 loadingOrder = 23;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadingOrder() {
+
+        loadingOrder_ = 0;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -17801,6 +18162,66 @@ public final class LoadableStudy {
      * @return The bytes for differenceColor.
      */
     com.google.protobuf.ByteString getDifferenceColorBytes();
+
+    /**
+     * <code>int64 cargoId = 16;</code>
+     *
+     * @return The cargoId.
+     */
+    long getCargoId();
+
+    /**
+     * <code>string orderedMT = 17;</code>
+     *
+     * @return The orderedMT.
+     */
+    java.lang.String getOrderedMT();
+    /**
+     * <code>string orderedMT = 17;</code>
+     *
+     * @return The bytes for orderedMT.
+     */
+    com.google.protobuf.ByteString getOrderedMTBytes();
+
+    /**
+     * <code>string cargoAbbreviation = 18;</code>
+     *
+     * @return The cargoAbbreviation.
+     */
+    java.lang.String getCargoAbbreviation();
+    /**
+     * <code>string cargoAbbreviation = 18;</code>
+     *
+     * @return The bytes for cargoAbbreviation.
+     */
+    com.google.protobuf.ByteString getCargoAbbreviationBytes();
+
+    /**
+     * <code>string colorCode = 19;</code>
+     *
+     * @return The colorCode.
+     */
+    java.lang.String getColorCode();
+    /**
+     * <code>string colorCode = 19;</code>
+     *
+     * @return The bytes for colorCode.
+     */
+    com.google.protobuf.ByteString getColorCodeBytes();
+
+    /**
+     * <code>int32 priority = 20;</code>
+     *
+     * @return The priority.
+     */
+    int getPriority();
+
+    /**
+     * <code>int32 loadingOrder = 21;</code>
+     *
+     * @return The loadingOrder.
+     */
+    int getLoadingOrder();
   }
   /** Protobuf type {@code LoadableQuantityCargoDetails} */
   public static final class LoadableQuantityCargoDetails
@@ -17830,6 +18251,9 @@ public final class LoadableStudy {
       loadableKL_ = "";
       differencePercentage_ = "";
       differenceColor_ = "";
+      orderedMT_ = "";
+      cargoAbbreviation_ = "";
+      colorCode_ = "";
     }
 
     @java.lang.Override
@@ -17962,6 +18386,42 @@ public final class LoadableStudy {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 differenceColor_ = s;
+                break;
+              }
+            case 128:
+              {
+                cargoId_ = input.readInt64();
+                break;
+              }
+            case 138:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                orderedMT_ = s;
+                break;
+              }
+            case 146:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                cargoAbbreviation_ = s;
+                break;
+              }
+            case 154:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                colorCode_ = s;
+                break;
+              }
+            case 160:
+              {
+                priority_ = input.readInt32();
+                break;
+              }
+            case 168:
+              {
+                loadingOrder_ = input.readInt32();
                 break;
               }
             default:
@@ -18499,6 +18959,144 @@ public final class LoadableStudy {
       }
     }
 
+    public static final int CARGOID_FIELD_NUMBER = 16;
+    private long cargoId_;
+    /**
+     * <code>int64 cargoId = 16;</code>
+     *
+     * @return The cargoId.
+     */
+    public long getCargoId() {
+      return cargoId_;
+    }
+
+    public static final int ORDEREDMT_FIELD_NUMBER = 17;
+    private volatile java.lang.Object orderedMT_;
+    /**
+     * <code>string orderedMT = 17;</code>
+     *
+     * @return The orderedMT.
+     */
+    public java.lang.String getOrderedMT() {
+      java.lang.Object ref = orderedMT_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        orderedMT_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string orderedMT = 17;</code>
+     *
+     * @return The bytes for orderedMT.
+     */
+    public com.google.protobuf.ByteString getOrderedMTBytes() {
+      java.lang.Object ref = orderedMT_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        orderedMT_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CARGOABBREVIATION_FIELD_NUMBER = 18;
+    private volatile java.lang.Object cargoAbbreviation_;
+    /**
+     * <code>string cargoAbbreviation = 18;</code>
+     *
+     * @return The cargoAbbreviation.
+     */
+    public java.lang.String getCargoAbbreviation() {
+      java.lang.Object ref = cargoAbbreviation_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        cargoAbbreviation_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string cargoAbbreviation = 18;</code>
+     *
+     * @return The bytes for cargoAbbreviation.
+     */
+    public com.google.protobuf.ByteString getCargoAbbreviationBytes() {
+      java.lang.Object ref = cargoAbbreviation_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        cargoAbbreviation_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int COLORCODE_FIELD_NUMBER = 19;
+    private volatile java.lang.Object colorCode_;
+    /**
+     * <code>string colorCode = 19;</code>
+     *
+     * @return The colorCode.
+     */
+    public java.lang.String getColorCode() {
+      java.lang.Object ref = colorCode_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        colorCode_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string colorCode = 19;</code>
+     *
+     * @return The bytes for colorCode.
+     */
+    public com.google.protobuf.ByteString getColorCodeBytes() {
+      java.lang.Object ref = colorCode_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        colorCode_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PRIORITY_FIELD_NUMBER = 20;
+    private int priority_;
+    /**
+     * <code>int32 priority = 20;</code>
+     *
+     * @return The priority.
+     */
+    public int getPriority() {
+      return priority_;
+    }
+
+    public static final int LOADINGORDER_FIELD_NUMBER = 21;
+    private int loadingOrder_;
+    /**
+     * <code>int32 loadingOrder = 21;</code>
+     *
+     * @return The loadingOrder.
+     */
+    public int getLoadingOrder() {
+      return loadingOrder_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -18558,6 +19156,24 @@ public final class LoadableStudy {
       if (!getDifferenceColorBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 15, differenceColor_);
       }
+      if (cargoId_ != 0L) {
+        output.writeInt64(16, cargoId_);
+      }
+      if (!getOrderedMTBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 17, orderedMT_);
+      }
+      if (!getCargoAbbreviationBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 18, cargoAbbreviation_);
+      }
+      if (!getColorCodeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 19, colorCode_);
+      }
+      if (priority_ != 0) {
+        output.writeInt32(20, priority_);
+      }
+      if (loadingOrder_ != 0) {
+        output.writeInt32(21, loadingOrder_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -18612,6 +19228,24 @@ public final class LoadableStudy {
       if (!getDifferenceColorBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, differenceColor_);
       }
+      if (cargoId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(16, cargoId_);
+      }
+      if (!getOrderedMTBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(17, orderedMT_);
+      }
+      if (!getCargoAbbreviationBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(18, cargoAbbreviation_);
+      }
+      if (!getColorCodeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(19, colorCode_);
+      }
+      if (priority_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(20, priority_);
+      }
+      if (loadingOrder_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(21, loadingOrder_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -18643,6 +19277,12 @@ public final class LoadableStudy {
       if (!getLoadableKL().equals(other.getLoadableKL())) return false;
       if (!getDifferencePercentage().equals(other.getDifferencePercentage())) return false;
       if (!getDifferenceColor().equals(other.getDifferenceColor())) return false;
+      if (getCargoId() != other.getCargoId()) return false;
+      if (!getOrderedMT().equals(other.getOrderedMT())) return false;
+      if (!getCargoAbbreviation().equals(other.getCargoAbbreviation())) return false;
+      if (!getColorCode().equals(other.getColorCode())) return false;
+      if (getPriority() != other.getPriority()) return false;
+      if (getLoadingOrder() != other.getLoadingOrder()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -18684,6 +19324,18 @@ public final class LoadableStudy {
       hash = (53 * hash) + getDifferencePercentage().hashCode();
       hash = (37 * hash) + DIFFERENCECOLOR_FIELD_NUMBER;
       hash = (53 * hash) + getDifferenceColor().hashCode();
+      hash = (37 * hash) + CARGOID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoId());
+      hash = (37 * hash) + ORDEREDMT_FIELD_NUMBER;
+      hash = (53 * hash) + getOrderedMT().hashCode();
+      hash = (37 * hash) + CARGOABBREVIATION_FIELD_NUMBER;
+      hash = (53 * hash) + getCargoAbbreviation().hashCode();
+      hash = (37 * hash) + COLORCODE_FIELD_NUMBER;
+      hash = (53 * hash) + getColorCode().hashCode();
+      hash = (37 * hash) + PRIORITY_FIELD_NUMBER;
+      hash = (53 * hash) + getPriority();
+      hash = (37 * hash) + LOADINGORDER_FIELD_NUMBER;
+      hash = (53 * hash) + getLoadingOrder();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -18857,6 +19509,18 @@ public final class LoadableStudy {
 
         differenceColor_ = "";
 
+        cargoId_ = 0L;
+
+        orderedMT_ = "";
+
+        cargoAbbreviation_ = "";
+
+        colorCode_ = "";
+
+        priority_ = 0;
+
+        loadingOrder_ = 0;
+
         return this;
       }
 
@@ -18902,6 +19566,12 @@ public final class LoadableStudy {
         result.loadableKL_ = loadableKL_;
         result.differencePercentage_ = differencePercentage_;
         result.differenceColor_ = differenceColor_;
+        result.cargoId_ = cargoId_;
+        result.orderedMT_ = orderedMT_;
+        result.cargoAbbreviation_ = cargoAbbreviation_;
+        result.colorCode_ = colorCode_;
+        result.priority_ = priority_;
+        result.loadingOrder_ = loadingOrder_;
         onBuilt();
         return result;
       }
@@ -19016,6 +19686,27 @@ public final class LoadableStudy {
         if (!other.getDifferenceColor().isEmpty()) {
           differenceColor_ = other.differenceColor_;
           onChanged();
+        }
+        if (other.getCargoId() != 0L) {
+          setCargoId(other.getCargoId());
+        }
+        if (!other.getOrderedMT().isEmpty()) {
+          orderedMT_ = other.orderedMT_;
+          onChanged();
+        }
+        if (!other.getCargoAbbreviation().isEmpty()) {
+          cargoAbbreviation_ = other.cargoAbbreviation_;
+          onChanged();
+        }
+        if (!other.getColorCode().isEmpty()) {
+          colorCode_ = other.colorCode_;
+          onChanged();
+        }
+        if (other.getPriority() != 0) {
+          setPriority(other.getPriority());
+        }
+        if (other.getLoadingOrder() != 0) {
+          setLoadingOrder(other.getLoadingOrder());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -20141,6 +20832,333 @@ public final class LoadableStudy {
         checkByteStringIsUtf8(value);
 
         differenceColor_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long cargoId_;
+      /**
+       * <code>int64 cargoId = 16;</code>
+       *
+       * @return The cargoId.
+       */
+      public long getCargoId() {
+        return cargoId_;
+      }
+      /**
+       * <code>int64 cargoId = 16;</code>
+       *
+       * @param value The cargoId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoId(long value) {
+
+        cargoId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 cargoId = 16;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargoId() {
+
+        cargoId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object orderedMT_ = "";
+      /**
+       * <code>string orderedMT = 17;</code>
+       *
+       * @return The orderedMT.
+       */
+      public java.lang.String getOrderedMT() {
+        java.lang.Object ref = orderedMT_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          orderedMT_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string orderedMT = 17;</code>
+       *
+       * @return The bytes for orderedMT.
+       */
+      public com.google.protobuf.ByteString getOrderedMTBytes() {
+        java.lang.Object ref = orderedMT_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          orderedMT_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string orderedMT = 17;</code>
+       *
+       * @param value The orderedMT to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOrderedMT(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        orderedMT_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string orderedMT = 17;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearOrderedMT() {
+
+        orderedMT_ = getDefaultInstance().getOrderedMT();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string orderedMT = 17;</code>
+       *
+       * @param value The bytes for orderedMT to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOrderedMTBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        orderedMT_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object cargoAbbreviation_ = "";
+      /**
+       * <code>string cargoAbbreviation = 18;</code>
+       *
+       * @return The cargoAbbreviation.
+       */
+      public java.lang.String getCargoAbbreviation() {
+        java.lang.Object ref = cargoAbbreviation_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          cargoAbbreviation_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string cargoAbbreviation = 18;</code>
+       *
+       * @return The bytes for cargoAbbreviation.
+       */
+      public com.google.protobuf.ByteString getCargoAbbreviationBytes() {
+        java.lang.Object ref = cargoAbbreviation_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          cargoAbbreviation_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string cargoAbbreviation = 18;</code>
+       *
+       * @param value The cargoAbbreviation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoAbbreviation(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        cargoAbbreviation_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargoAbbreviation = 18;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargoAbbreviation() {
+
+        cargoAbbreviation_ = getDefaultInstance().getCargoAbbreviation();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string cargoAbbreviation = 18;</code>
+       *
+       * @param value The bytes for cargoAbbreviation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoAbbreviationBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        cargoAbbreviation_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object colorCode_ = "";
+      /**
+       * <code>string colorCode = 19;</code>
+       *
+       * @return The colorCode.
+       */
+      public java.lang.String getColorCode() {
+        java.lang.Object ref = colorCode_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          colorCode_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string colorCode = 19;</code>
+       *
+       * @return The bytes for colorCode.
+       */
+      public com.google.protobuf.ByteString getColorCodeBytes() {
+        java.lang.Object ref = colorCode_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          colorCode_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string colorCode = 19;</code>
+       *
+       * @param value The colorCode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setColorCode(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        colorCode_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string colorCode = 19;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearColorCode() {
+
+        colorCode_ = getDefaultInstance().getColorCode();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string colorCode = 19;</code>
+       *
+       * @param value The bytes for colorCode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setColorCodeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        colorCode_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int priority_;
+      /**
+       * <code>int32 priority = 20;</code>
+       *
+       * @return The priority.
+       */
+      public int getPriority() {
+        return priority_;
+      }
+      /**
+       * <code>int32 priority = 20;</code>
+       *
+       * @param value The priority to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPriority(int value) {
+
+        priority_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 priority = 20;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPriority() {
+
+        priority_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int loadingOrder_;
+      /**
+       * <code>int32 loadingOrder = 21;</code>
+       *
+       * @return The loadingOrder.
+       */
+      public int getLoadingOrder() {
+        return loadingOrder_;
+      }
+      /**
+       * <code>int32 loadingOrder = 21;</code>
+       *
+       * @param value The loadingOrder to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadingOrder(int value) {
+
+        loadingOrder_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 loadingOrder = 21;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadingOrder() {
+
+        loadingOrder_ = 0;
         onChanged();
         return this;
       }
@@ -71568,50 +72586,61 @@ public final class LoadableStudy {
         getLoadablePatternCargoDetailsOrBuilder(int index);
 
     /**
-     * <code>string constraints = 3;</code>
+     * <code>repeated string constraints = 3;</code>
      *
-     * @return The constraints.
+     * @return A list containing the constraints.
      */
-    java.lang.String getConstraints();
+    java.util.List<java.lang.String> getConstraintsList();
     /**
-     * <code>string constraints = 3;</code>
+     * <code>repeated string constraints = 3;</code>
      *
-     * @return The bytes for constraints.
+     * @return The count of constraints.
      */
-    com.google.protobuf.ByteString getConstraintsBytes();
+    int getConstraintsCount();
+    /**
+     * <code>repeated string constraints = 3;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The constraints at the given index.
+     */
+    java.lang.String getConstraints(int index);
+    /**
+     * <code>repeated string constraints = 3;</code>
+     *
+     * @param index The index of the value to return.
+     * @return The bytes of the constraints at the given index.
+     */
+    com.google.protobuf.ByteString getConstraintsBytes(int index);
 
     /**
-     * <code>string totalDifferenceColor = 4;</code>
-     *
-     * @return The totalDifferenceColor.
-     */
-    java.lang.String getTotalDifferenceColor();
-    /**
-     * <code>string totalDifferenceColor = 4;</code>
-     *
-     * @return The bytes for totalDifferenceColor.
-     */
-    com.google.protobuf.ByteString getTotalDifferenceColorBytes();
-
-    /**
-     * <code>int64 loadableStudyStatusId = 5;</code>
+     * <code>int64 loadableStudyStatusId = 4;</code>
      *
      * @return The loadableStudyStatusId.
      */
     long getLoadableStudyStatusId();
 
     /**
-     * <code>string caseNumber = 6;</code>
+     * <code>int32 caseNumber = 5;</code>
      *
      * @return The caseNumber.
      */
-    java.lang.String getCaseNumber();
-    /**
-     * <code>string caseNumber = 6;</code>
-     *
-     * @return The bytes for caseNumber.
-     */
-    com.google.protobuf.ByteString getCaseNumberBytes();
+    int getCaseNumber();
+
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+    java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+        getLoadablePlanStowageDetailsList();
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+        getLoadablePlanStowageDetails(int index);
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+    int getLoadablePlanStowageDetailsCount();
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+    java.util.List<
+            ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+        getLoadablePlanStowageDetailsOrBuilderList();
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder
+        getLoadablePlanStowageDetailsOrBuilder(int index);
   }
   /** Protobuf type {@code LoadablePattern} */
   public static final class LoadablePattern extends com.google.protobuf.GeneratedMessageV3
@@ -71626,9 +72655,8 @@ public final class LoadableStudy {
 
     private LoadablePattern() {
       loadablePatternCargoDetails_ = java.util.Collections.emptyList();
-      constraints_ = "";
-      totalDifferenceColor_ = "";
-      caseNumber_ = "";
+      constraints_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      loadablePlanStowageDetails_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -71684,27 +72712,36 @@ public final class LoadableStudy {
             case 26:
               {
                 java.lang.String s = input.readStringRequireUtf8();
-
-                constraints_ = s;
+                if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                  constraints_ = new com.google.protobuf.LazyStringArrayList();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                constraints_.add(s);
                 break;
               }
-            case 34:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                totalDifferenceColor_ = s;
-                break;
-              }
-            case 40:
+            case 32:
               {
                 loadableStudyStatusId_ = input.readInt64();
                 break;
               }
+            case 40:
+              {
+                caseNumber_ = input.readInt32();
+                break;
+              }
             case 50:
               {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                caseNumber_ = s;
+                if (!((mutable_bitField0_ & 0x00000004) != 0)) {
+                  loadablePlanStowageDetails_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>();
+                  mutable_bitField0_ |= 0x00000004;
+                }
+                loadablePlanStowageDetails_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+                            .parser(),
+                        extensionRegistry));
                 break;
               }
             default:
@@ -71724,6 +72761,13 @@ public final class LoadableStudy {
         if (((mutable_bitField0_ & 0x00000001) != 0)) {
           loadablePatternCargoDetails_ =
               java.util.Collections.unmodifiableList(loadablePatternCargoDetails_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) != 0)) {
+          constraints_ = constraints_.getUnmodifiableView();
+        }
+        if (((mutable_bitField0_ & 0x00000004) != 0)) {
+          loadablePlanStowageDetails_ =
+              java.util.Collections.unmodifiableList(loadablePlanStowageDetails_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -71785,79 +72829,46 @@ public final class LoadableStudy {
     }
 
     public static final int CONSTRAINTS_FIELD_NUMBER = 3;
-    private volatile java.lang.Object constraints_;
+    private com.google.protobuf.LazyStringList constraints_;
     /**
-     * <code>string constraints = 3;</code>
+     * <code>repeated string constraints = 3;</code>
      *
-     * @return The constraints.
+     * @return A list containing the constraints.
      */
-    public java.lang.String getConstraints() {
-      java.lang.Object ref = constraints_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        constraints_ = s;
-        return s;
-      }
+    public com.google.protobuf.ProtocolStringList getConstraintsList() {
+      return constraints_;
     }
     /**
-     * <code>string constraints = 3;</code>
+     * <code>repeated string constraints = 3;</code>
      *
-     * @return The bytes for constraints.
+     * @return The count of constraints.
      */
-    public com.google.protobuf.ByteString getConstraintsBytes() {
-      java.lang.Object ref = constraints_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        constraints_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int TOTALDIFFERENCECOLOR_FIELD_NUMBER = 4;
-    private volatile java.lang.Object totalDifferenceColor_;
-    /**
-     * <code>string totalDifferenceColor = 4;</code>
-     *
-     * @return The totalDifferenceColor.
-     */
-    public java.lang.String getTotalDifferenceColor() {
-      java.lang.Object ref = totalDifferenceColor_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        totalDifferenceColor_ = s;
-        return s;
-      }
+    public int getConstraintsCount() {
+      return constraints_.size();
     }
     /**
-     * <code>string totalDifferenceColor = 4;</code>
+     * <code>repeated string constraints = 3;</code>
      *
-     * @return The bytes for totalDifferenceColor.
+     * @param index The index of the element to return.
+     * @return The constraints at the given index.
      */
-    public com.google.protobuf.ByteString getTotalDifferenceColorBytes() {
-      java.lang.Object ref = totalDifferenceColor_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        totalDifferenceColor_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    public java.lang.String getConstraints(int index) {
+      return constraints_.get(index);
+    }
+    /**
+     * <code>repeated string constraints = 3;</code>
+     *
+     * @param index The index of the value to return.
+     * @return The bytes of the constraints at the given index.
+     */
+    public com.google.protobuf.ByteString getConstraintsBytes(int index) {
+      return constraints_.getByteString(index);
     }
 
-    public static final int LOADABLESTUDYSTATUSID_FIELD_NUMBER = 5;
+    public static final int LOADABLESTUDYSTATUSID_FIELD_NUMBER = 4;
     private long loadableStudyStatusId_;
     /**
-     * <code>int64 loadableStudyStatusId = 5;</code>
+     * <code>int64 loadableStudyStatusId = 4;</code>
      *
      * @return The loadableStudyStatusId.
      */
@@ -71865,39 +72876,44 @@ public final class LoadableStudy {
       return loadableStudyStatusId_;
     }
 
-    public static final int CASENUMBER_FIELD_NUMBER = 6;
-    private volatile java.lang.Object caseNumber_;
+    public static final int CASENUMBER_FIELD_NUMBER = 5;
+    private int caseNumber_;
     /**
-     * <code>string caseNumber = 6;</code>
+     * <code>int32 caseNumber = 5;</code>
      *
      * @return The caseNumber.
      */
-    public java.lang.String getCaseNumber() {
-      java.lang.Object ref = caseNumber_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        caseNumber_ = s;
-        return s;
-      }
+    public int getCaseNumber() {
+      return caseNumber_;
     }
-    /**
-     * <code>string caseNumber = 6;</code>
-     *
-     * @return The bytes for caseNumber.
-     */
-    public com.google.protobuf.ByteString getCaseNumberBytes() {
-      java.lang.Object ref = caseNumber_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        caseNumber_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+
+    public static final int LOADABLEPLANSTOWAGEDETAILS_FIELD_NUMBER = 6;
+    private java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+        loadablePlanStowageDetails_;
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+    public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+        getLoadablePlanStowageDetailsList() {
+      return loadablePlanStowageDetails_;
+    }
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+        getLoadablePlanStowageDetailsOrBuilderList() {
+      return loadablePlanStowageDetails_;
+    }
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+    public int getLoadablePlanStowageDetailsCount() {
+      return loadablePlanStowageDetails_.size();
+    }
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+    public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+        getLoadablePlanStowageDetails(int index) {
+      return loadablePlanStowageDetails_.get(index);
+    }
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+    public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder
+        getLoadablePlanStowageDetailsOrBuilder(int index) {
+      return loadablePlanStowageDetails_.get(index);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -71920,17 +72936,17 @@ public final class LoadableStudy {
       for (int i = 0; i < loadablePatternCargoDetails_.size(); i++) {
         output.writeMessage(2, loadablePatternCargoDetails_.get(i));
       }
-      if (!getConstraintsBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, constraints_);
-      }
-      if (!getTotalDifferenceColorBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, totalDifferenceColor_);
+      for (int i = 0; i < constraints_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, constraints_.getRaw(i));
       }
       if (loadableStudyStatusId_ != 0L) {
-        output.writeInt64(5, loadableStudyStatusId_);
+        output.writeInt64(4, loadableStudyStatusId_);
       }
-      if (!getCaseNumberBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, caseNumber_);
+      if (caseNumber_ != 0) {
+        output.writeInt32(5, caseNumber_);
+      }
+      for (int i = 0; i < loadablePlanStowageDetails_.size(); i++) {
+        output.writeMessage(6, loadablePlanStowageDetails_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -71949,17 +72965,24 @@ public final class LoadableStudy {
             com.google.protobuf.CodedOutputStream.computeMessageSize(
                 2, loadablePatternCargoDetails_.get(i));
       }
-      if (!getConstraintsBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, constraints_);
-      }
-      if (!getTotalDifferenceColorBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, totalDifferenceColor_);
+      {
+        int dataSize = 0;
+        for (int i = 0; i < constraints_.size(); i++) {
+          dataSize += computeStringSizeNoTag(constraints_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getConstraintsList().size();
       }
       if (loadableStudyStatusId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, loadableStudyStatusId_);
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, loadableStudyStatusId_);
       }
-      if (!getCaseNumberBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, caseNumber_);
+      if (caseNumber_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(5, caseNumber_);
+      }
+      for (int i = 0; i < loadablePlanStowageDetails_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(
+                6, loadablePlanStowageDetails_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -71980,10 +73003,11 @@ public final class LoadableStudy {
       if (getLoadablePatternId() != other.getLoadablePatternId()) return false;
       if (!getLoadablePatternCargoDetailsList().equals(other.getLoadablePatternCargoDetailsList()))
         return false;
-      if (!getConstraints().equals(other.getConstraints())) return false;
-      if (!getTotalDifferenceColor().equals(other.getTotalDifferenceColor())) return false;
+      if (!getConstraintsList().equals(other.getConstraintsList())) return false;
       if (getLoadableStudyStatusId() != other.getLoadableStudyStatusId()) return false;
-      if (!getCaseNumber().equals(other.getCaseNumber())) return false;
+      if (getCaseNumber() != other.getCaseNumber()) return false;
+      if (!getLoadablePlanStowageDetailsList().equals(other.getLoadablePlanStowageDetailsList()))
+        return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -72001,14 +73025,18 @@ public final class LoadableStudy {
         hash = (37 * hash) + LOADABLEPATTERNCARGODETAILS_FIELD_NUMBER;
         hash = (53 * hash) + getLoadablePatternCargoDetailsList().hashCode();
       }
-      hash = (37 * hash) + CONSTRAINTS_FIELD_NUMBER;
-      hash = (53 * hash) + getConstraints().hashCode();
-      hash = (37 * hash) + TOTALDIFFERENCECOLOR_FIELD_NUMBER;
-      hash = (53 * hash) + getTotalDifferenceColor().hashCode();
+      if (getConstraintsCount() > 0) {
+        hash = (37 * hash) + CONSTRAINTS_FIELD_NUMBER;
+        hash = (53 * hash) + getConstraintsList().hashCode();
+      }
       hash = (37 * hash) + LOADABLESTUDYSTATUSID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyStatusId());
       hash = (37 * hash) + CASENUMBER_FIELD_NUMBER;
-      hash = (53 * hash) + getCaseNumber().hashCode();
+      hash = (53 * hash) + getCaseNumber();
+      if (getLoadablePlanStowageDetailsCount() > 0) {
+        hash = (37 * hash) + LOADABLEPLANSTOWAGEDETAILS_FIELD_NUMBER;
+        hash = (53 * hash) + getLoadablePlanStowageDetailsList().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -72144,6 +73172,7 @@ public final class LoadableStudy {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
           getLoadablePatternCargoDetailsFieldBuilder();
+          getLoadablePlanStowageDetailsFieldBuilder();
         }
       }
 
@@ -72158,14 +73187,18 @@ public final class LoadableStudy {
         } else {
           loadablePatternCargoDetailsBuilder_.clear();
         }
-        constraints_ = "";
-
-        totalDifferenceColor_ = "";
-
+        constraints_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000002);
         loadableStudyStatusId_ = 0L;
 
-        caseNumber_ = "";
+        caseNumber_ = 0;
 
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          loadablePlanStowageDetails_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+        } else {
+          loadablePlanStowageDetailsBuilder_.clear();
+        }
         return this;
       }
 
@@ -72204,10 +73237,23 @@ public final class LoadableStudy {
         } else {
           result.loadablePatternCargoDetails_ = loadablePatternCargoDetailsBuilder_.build();
         }
+        if (((bitField0_ & 0x00000002) != 0)) {
+          constraints_ = constraints_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
         result.constraints_ = constraints_;
-        result.totalDifferenceColor_ = totalDifferenceColor_;
         result.loadableStudyStatusId_ = loadableStudyStatusId_;
         result.caseNumber_ = caseNumber_;
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) != 0)) {
+            loadablePlanStowageDetails_ =
+                java.util.Collections.unmodifiableList(loadablePlanStowageDetails_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.loadablePlanStowageDetails_ = loadablePlanStowageDetails_;
+        } else {
+          result.loadablePlanStowageDetails_ = loadablePlanStowageDetailsBuilder_.build();
+        }
         onBuilt();
         return result;
       }
@@ -72291,20 +73337,48 @@ public final class LoadableStudy {
             }
           }
         }
-        if (!other.getConstraints().isEmpty()) {
-          constraints_ = other.constraints_;
-          onChanged();
-        }
-        if (!other.getTotalDifferenceColor().isEmpty()) {
-          totalDifferenceColor_ = other.totalDifferenceColor_;
+        if (!other.constraints_.isEmpty()) {
+          if (constraints_.isEmpty()) {
+            constraints_ = other.constraints_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureConstraintsIsMutable();
+            constraints_.addAll(other.constraints_);
+          }
           onChanged();
         }
         if (other.getLoadableStudyStatusId() != 0L) {
           setLoadableStudyStatusId(other.getLoadableStudyStatusId());
         }
-        if (!other.getCaseNumber().isEmpty()) {
-          caseNumber_ = other.caseNumber_;
-          onChanged();
+        if (other.getCaseNumber() != 0) {
+          setCaseNumber(other.getCaseNumber());
+        }
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (!other.loadablePlanStowageDetails_.isEmpty()) {
+            if (loadablePlanStowageDetails_.isEmpty()) {
+              loadablePlanStowageDetails_ = other.loadablePlanStowageDetails_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureLoadablePlanStowageDetailsIsMutable();
+              loadablePlanStowageDetails_.addAll(other.loadablePlanStowageDetails_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.loadablePlanStowageDetails_.isEmpty()) {
+            if (loadablePlanStowageDetailsBuilder_.isEmpty()) {
+              loadablePlanStowageDetailsBuilder_.dispose();
+              loadablePlanStowageDetailsBuilder_ = null;
+              loadablePlanStowageDetails_ = other.loadablePlanStowageDetails_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+              loadablePlanStowageDetailsBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getLoadablePlanStowageDetailsFieldBuilder()
+                      : null;
+            } else {
+              loadablePlanStowageDetailsBuilder_.addAllMessages(other.loadablePlanStowageDetails_);
+            }
+          }
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -72608,161 +73682,123 @@ public final class LoadableStudy {
         return loadablePatternCargoDetailsBuilder_;
       }
 
-      private java.lang.Object constraints_ = "";
-      /**
-       * <code>string constraints = 3;</code>
-       *
-       * @return The constraints.
-       */
-      public java.lang.String getConstraints() {
-        java.lang.Object ref = constraints_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          constraints_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
+      private com.google.protobuf.LazyStringList constraints_ =
+          com.google.protobuf.LazyStringArrayList.EMPTY;
+
+      private void ensureConstraintsIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          constraints_ = new com.google.protobuf.LazyStringArrayList(constraints_);
+          bitField0_ |= 0x00000002;
         }
       }
       /**
-       * <code>string constraints = 3;</code>
+       * <code>repeated string constraints = 3;</code>
        *
-       * @return The bytes for constraints.
+       * @return A list containing the constraints.
        */
-      public com.google.protobuf.ByteString getConstraintsBytes() {
-        java.lang.Object ref = constraints_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          constraints_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
+      public com.google.protobuf.ProtocolStringList getConstraintsList() {
+        return constraints_.getUnmodifiableView();
       }
       /**
-       * <code>string constraints = 3;</code>
+       * <code>repeated string constraints = 3;</code>
        *
+       * @return The count of constraints.
+       */
+      public int getConstraintsCount() {
+        return constraints_.size();
+      }
+      /**
+       * <code>repeated string constraints = 3;</code>
+       *
+       * @param index The index of the element to return.
+       * @return The constraints at the given index.
+       */
+      public java.lang.String getConstraints(int index) {
+        return constraints_.get(index);
+      }
+      /**
+       * <code>repeated string constraints = 3;</code>
+       *
+       * @param index The index of the value to return.
+       * @return The bytes of the constraints at the given index.
+       */
+      public com.google.protobuf.ByteString getConstraintsBytes(int index) {
+        return constraints_.getByteString(index);
+      }
+      /**
+       * <code>repeated string constraints = 3;</code>
+       *
+       * @param index The index to set the value at.
        * @param value The constraints to set.
        * @return This builder for chaining.
        */
-      public Builder setConstraints(java.lang.String value) {
+      public Builder setConstraints(int index, java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
-
-        constraints_ = value;
+        ensureConstraintsIsMutable();
+        constraints_.set(index, value);
         onChanged();
         return this;
       }
       /**
-       * <code>string constraints = 3;</code>
+       * <code>repeated string constraints = 3;</code>
+       *
+       * @param value The constraints to add.
+       * @return This builder for chaining.
+       */
+      public Builder addConstraints(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureConstraintsIsMutable();
+        constraints_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string constraints = 3;</code>
+       *
+       * @param values The constraints to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllConstraints(java.lang.Iterable<java.lang.String> values) {
+        ensureConstraintsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, constraints_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string constraints = 3;</code>
        *
        * @return This builder for chaining.
        */
       public Builder clearConstraints() {
-
-        constraints_ = getDefaultInstance().getConstraints();
+        constraints_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
       /**
-       * <code>string constraints = 3;</code>
+       * <code>repeated string constraints = 3;</code>
        *
-       * @param value The bytes for constraints to set.
+       * @param value The bytes of the constraints to add.
        * @return This builder for chaining.
        */
-      public Builder setConstraintsBytes(com.google.protobuf.ByteString value) {
+      public Builder addConstraintsBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
-
-        constraints_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object totalDifferenceColor_ = "";
-      /**
-       * <code>string totalDifferenceColor = 4;</code>
-       *
-       * @return The totalDifferenceColor.
-       */
-      public java.lang.String getTotalDifferenceColor() {
-        java.lang.Object ref = totalDifferenceColor_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          totalDifferenceColor_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string totalDifferenceColor = 4;</code>
-       *
-       * @return The bytes for totalDifferenceColor.
-       */
-      public com.google.protobuf.ByteString getTotalDifferenceColorBytes() {
-        java.lang.Object ref = totalDifferenceColor_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          totalDifferenceColor_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string totalDifferenceColor = 4;</code>
-       *
-       * @param value The totalDifferenceColor to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTotalDifferenceColor(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        totalDifferenceColor_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string totalDifferenceColor = 4;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearTotalDifferenceColor() {
-
-        totalDifferenceColor_ = getDefaultInstance().getTotalDifferenceColor();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string totalDifferenceColor = 4;</code>
-       *
-       * @param value The bytes for totalDifferenceColor to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTotalDifferenceColorBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        totalDifferenceColor_ = value;
+        ensureConstraintsIsMutable();
+        constraints_.add(value);
         onChanged();
         return this;
       }
 
       private long loadableStudyStatusId_;
       /**
-       * <code>int64 loadableStudyStatusId = 5;</code>
+       * <code>int64 loadableStudyStatusId = 4;</code>
        *
        * @return The loadableStudyStatusId.
        */
@@ -72770,7 +73806,7 @@ public final class LoadableStudy {
         return loadableStudyStatusId_;
       }
       /**
-       * <code>int64 loadableStudyStatusId = 5;</code>
+       * <code>int64 loadableStudyStatusId = 4;</code>
        *
        * @param value The loadableStudyStatusId to set.
        * @return This builder for chaining.
@@ -72782,7 +73818,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>int64 loadableStudyStatusId = 5;</code>
+       * <code>int64 loadableStudyStatusId = 4;</code>
        *
        * @return This builder for chaining.
        */
@@ -72793,80 +73829,274 @@ public final class LoadableStudy {
         return this;
       }
 
-      private java.lang.Object caseNumber_ = "";
+      private int caseNumber_;
       /**
-       * <code>string caseNumber = 6;</code>
+       * <code>int32 caseNumber = 5;</code>
        *
        * @return The caseNumber.
        */
-      public java.lang.String getCaseNumber() {
-        java.lang.Object ref = caseNumber_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          caseNumber_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public int getCaseNumber() {
+        return caseNumber_;
       }
       /**
-       * <code>string caseNumber = 6;</code>
-       *
-       * @return The bytes for caseNumber.
-       */
-      public com.google.protobuf.ByteString getCaseNumberBytes() {
-        java.lang.Object ref = caseNumber_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          caseNumber_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string caseNumber = 6;</code>
+       * <code>int32 caseNumber = 5;</code>
        *
        * @param value The caseNumber to set.
        * @return This builder for chaining.
        */
-      public Builder setCaseNumber(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
+      public Builder setCaseNumber(int value) {
 
         caseNumber_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string caseNumber = 6;</code>
+       * <code>int32 caseNumber = 5;</code>
        *
        * @return This builder for chaining.
        */
       public Builder clearCaseNumber() {
 
-        caseNumber_ = getDefaultInstance().getCaseNumber();
+        caseNumber_ = 0;
         onChanged();
         return this;
       }
-      /**
-       * <code>string caseNumber = 6;</code>
-       *
-       * @param value The bytes for caseNumber to set.
-       * @return This builder for chaining.
-       */
-      public Builder setCaseNumberBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
 
-        caseNumber_ = value;
-        onChanged();
+      private java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+          loadablePlanStowageDetails_ = java.util.Collections.emptyList();
+
+      private void ensureLoadablePlanStowageDetailsIsMutable() {
+        if (!((bitField0_ & 0x00000004) != 0)) {
+          loadablePlanStowageDetails_ =
+              new java.util.ArrayList<
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>(
+                  loadablePlanStowageDetails_);
+          bitField0_ |= 0x00000004;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails,
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder,
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+          loadablePlanStowageDetailsBuilder_;
+
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+          getLoadablePlanStowageDetailsList() {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(loadablePlanStowageDetails_);
+        } else {
+          return loadablePlanStowageDetailsBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public int getLoadablePlanStowageDetailsCount() {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          return loadablePlanStowageDetails_.size();
+        } else {
+          return loadablePlanStowageDetailsBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+          getLoadablePlanStowageDetails(int index) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          return loadablePlanStowageDetails_.get(index);
+        } else {
+          return loadablePlanStowageDetailsBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public Builder setLoadablePlanStowageDetails(
+          int index, com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails value) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.set(index, value);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.setMessage(index, value);
+        }
         return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public Builder setLoadablePlanStowageDetails(
+          int index,
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+              builderForValue) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public Builder addLoadablePlanStowageDetails(
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails value) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.add(value);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public Builder addLoadablePlanStowageDetails(
+          int index, com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails value) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.add(index, value);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public Builder addLoadablePlanStowageDetails(
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+              builderForValue) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.add(builderForValue.build());
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public Builder addLoadablePlanStowageDetails(
+          int index,
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+              builderForValue) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public Builder addAllLoadablePlanStowageDetails(
+          java.lang.Iterable<
+                  ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+              values) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, loadablePlanStowageDetails_);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public Builder clearLoadablePlanStowageDetails() {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          loadablePlanStowageDetails_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public Builder removeLoadablePlanStowageDetails(int index) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.remove(index);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+          getLoadablePlanStowageDetailsBuilder(int index) {
+        return getLoadablePlanStowageDetailsFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder
+          getLoadablePlanStowageDetailsOrBuilder(int index) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          return loadablePlanStowageDetails_.get(index);
+        } else {
+          return loadablePlanStowageDetailsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public java.util.List<
+              ? extends
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+          getLoadablePlanStowageDetailsOrBuilderList() {
+        if (loadablePlanStowageDetailsBuilder_ != null) {
+          return loadablePlanStowageDetailsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(loadablePlanStowageDetails_);
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+          addLoadablePlanStowageDetailsBuilder() {
+        return getLoadablePlanStowageDetailsFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+                    .getDefaultInstance());
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+          addLoadablePlanStowageDetailsBuilder(int index) {
+        return getLoadablePlanStowageDetailsFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+                    .getDefaultInstance());
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 6;</code> */
+      public java.util.List<
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder>
+          getLoadablePlanStowageDetailsBuilderList() {
+        return getLoadablePlanStowageDetailsFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails,
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder,
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+          getLoadablePlanStowageDetailsFieldBuilder() {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          loadablePlanStowageDetailsBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails,
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder,
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>(
+                  loadablePlanStowageDetails_,
+                  ((bitField0_ & 0x00000004) != 0),
+                  getParentForChildren(),
+                  isClean());
+          loadablePlanStowageDetails_ = null;
+        }
+        return loadablePlanStowageDetailsBuilder_;
       }
 
       @java.lang.Override
@@ -72960,67 +74190,40 @@ public final class LoadableStudy {
     com.google.protobuf.ByteString getCargoColorBytes();
 
     /**
-     * <code>int64 tankId = 4;</code>
-     *
-     * @return The tankId.
-     */
-    long getTankId();
-
-    /**
-     * <code>string quantity = 5;</code>
+     * <code>string quantity = 4;</code>
      *
      * @return The quantity.
      */
     java.lang.String getQuantity();
     /**
-     * <code>string quantity = 5;</code>
+     * <code>string quantity = 4;</code>
      *
      * @return The bytes for quantity.
      */
     com.google.protobuf.ByteString getQuantityBytes();
 
     /**
-     * <code>string difference = 6;</code>
+     * <code>string orderedQuantity = 5;</code>
      *
-     * @return The difference.
+     * @return The orderedQuantity.
      */
-    java.lang.String getDifference();
+    java.lang.String getOrderedQuantity();
     /**
-     * <code>string difference = 6;</code>
+     * <code>string orderedQuantity = 5;</code>
      *
-     * @return The bytes for difference.
+     * @return The bytes for orderedQuantity.
      */
-    com.google.protobuf.ByteString getDifferenceBytes();
+    com.google.protobuf.ByteString getOrderedQuantityBytes();
 
     /**
-     * <code>string differenceColor = 7;</code>
-     *
-     * @return The differenceColor.
-     */
-    java.lang.String getDifferenceColor();
-    /**
-     * <code>string differenceColor = 7;</code>
-     *
-     * @return The bytes for differenceColor.
-     */
-    com.google.protobuf.ByteString getDifferenceColorBytes();
-
-    /**
-     * <code>int64 loadablePatternDetailsId = 8;</code>
-     *
-     * @return The loadablePatternDetailsId.
-     */
-    long getLoadablePatternDetailsId();
-
-    /**
-     * <code>bool isCommingle = 9;</code>
+     * <code>bool isCommingle = 6;</code>
      *
      * @return The isCommingle.
      */
     boolean getIsCommingle();
 
     /**
-     * <code>int64 loadablePatternCommingleDetailsId = 10;</code>
+     * <code>int64 loadablePatternCommingleDetailsId = 7;</code>
      *
      * @return The loadablePatternCommingleDetailsId.
      */
@@ -73042,8 +74245,7 @@ public final class LoadableStudy {
       cargoAbbreviation_ = "";
       cargoColor_ = "";
       quantity_ = "";
-      difference_ = "";
-      differenceColor_ = "";
+      orderedQuantity_ = "";
     }
 
     @java.lang.Override
@@ -73094,43 +74296,26 @@ public final class LoadableStudy {
                 cargoColor_ = s;
                 break;
               }
-            case 32:
-              {
-                tankId_ = input.readInt64();
-                break;
-              }
-            case 42:
+            case 34:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 quantity_ = s;
                 break;
               }
-            case 50:
+            case 42:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                difference_ = s;
+                orderedQuantity_ = s;
                 break;
               }
-            case 58:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                differenceColor_ = s;
-                break;
-              }
-            case 64:
-              {
-                loadablePatternDetailsId_ = input.readInt64();
-                break;
-              }
-            case 72:
+            case 48:
               {
                 isCommingle_ = input.readBool();
                 break;
               }
-            case 80:
+            case 56:
               {
                 loadablePatternCommingleDetailsId_ = input.readInt64();
                 break;
@@ -73250,21 +74435,10 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int TANKID_FIELD_NUMBER = 4;
-    private long tankId_;
-    /**
-     * <code>int64 tankId = 4;</code>
-     *
-     * @return The tankId.
-     */
-    public long getTankId() {
-      return tankId_;
-    }
-
-    public static final int QUANTITY_FIELD_NUMBER = 5;
+    public static final int QUANTITY_FIELD_NUMBER = 4;
     private volatile java.lang.Object quantity_;
     /**
-     * <code>string quantity = 5;</code>
+     * <code>string quantity = 4;</code>
      *
      * @return The quantity.
      */
@@ -73280,7 +74454,7 @@ public final class LoadableStudy {
       }
     }
     /**
-     * <code>string quantity = 5;</code>
+     * <code>string quantity = 4;</code>
      *
      * @return The bytes for quantity.
      */
@@ -73296,91 +74470,45 @@ public final class LoadableStudy {
       }
     }
 
-    public static final int DIFFERENCE_FIELD_NUMBER = 6;
-    private volatile java.lang.Object difference_;
+    public static final int ORDEREDQUANTITY_FIELD_NUMBER = 5;
+    private volatile java.lang.Object orderedQuantity_;
     /**
-     * <code>string difference = 6;</code>
+     * <code>string orderedQuantity = 5;</code>
      *
-     * @return The difference.
+     * @return The orderedQuantity.
      */
-    public java.lang.String getDifference() {
-      java.lang.Object ref = difference_;
+    public java.lang.String getOrderedQuantity() {
+      java.lang.Object ref = orderedQuantity_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        difference_ = s;
+        orderedQuantity_ = s;
         return s;
       }
     }
     /**
-     * <code>string difference = 6;</code>
+     * <code>string orderedQuantity = 5;</code>
      *
-     * @return The bytes for difference.
+     * @return The bytes for orderedQuantity.
      */
-    public com.google.protobuf.ByteString getDifferenceBytes() {
-      java.lang.Object ref = difference_;
+    public com.google.protobuf.ByteString getOrderedQuantityBytes() {
+      java.lang.Object ref = orderedQuantity_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        difference_ = b;
+        orderedQuantity_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
 
-    public static final int DIFFERENCECOLOR_FIELD_NUMBER = 7;
-    private volatile java.lang.Object differenceColor_;
-    /**
-     * <code>string differenceColor = 7;</code>
-     *
-     * @return The differenceColor.
-     */
-    public java.lang.String getDifferenceColor() {
-      java.lang.Object ref = differenceColor_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        differenceColor_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string differenceColor = 7;</code>
-     *
-     * @return The bytes for differenceColor.
-     */
-    public com.google.protobuf.ByteString getDifferenceColorBytes() {
-      java.lang.Object ref = differenceColor_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        differenceColor_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int LOADABLEPATTERNDETAILSID_FIELD_NUMBER = 8;
-    private long loadablePatternDetailsId_;
-    /**
-     * <code>int64 loadablePatternDetailsId = 8;</code>
-     *
-     * @return The loadablePatternDetailsId.
-     */
-    public long getLoadablePatternDetailsId() {
-      return loadablePatternDetailsId_;
-    }
-
-    public static final int ISCOMMINGLE_FIELD_NUMBER = 9;
+    public static final int ISCOMMINGLE_FIELD_NUMBER = 6;
     private boolean isCommingle_;
     /**
-     * <code>bool isCommingle = 9;</code>
+     * <code>bool isCommingle = 6;</code>
      *
      * @return The isCommingle.
      */
@@ -73388,10 +74516,10 @@ public final class LoadableStudy {
       return isCommingle_;
     }
 
-    public static final int LOADABLEPATTERNCOMMINGLEDETAILSID_FIELD_NUMBER = 10;
+    public static final int LOADABLEPATTERNCOMMINGLEDETAILSID_FIELD_NUMBER = 7;
     private long loadablePatternCommingleDetailsId_;
     /**
-     * <code>int64 loadablePatternCommingleDetailsId = 10;</code>
+     * <code>int64 loadablePatternCommingleDetailsId = 7;</code>
      *
      * @return The loadablePatternCommingleDetailsId.
      */
@@ -73422,26 +74550,17 @@ public final class LoadableStudy {
       if (!getCargoColorBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, cargoColor_);
       }
-      if (tankId_ != 0L) {
-        output.writeInt64(4, tankId_);
-      }
       if (!getQuantityBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, quantity_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, quantity_);
       }
-      if (!getDifferenceBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, difference_);
-      }
-      if (!getDifferenceColorBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, differenceColor_);
-      }
-      if (loadablePatternDetailsId_ != 0L) {
-        output.writeInt64(8, loadablePatternDetailsId_);
+      if (!getOrderedQuantityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, orderedQuantity_);
       }
       if (isCommingle_ != false) {
-        output.writeBool(9, isCommingle_);
+        output.writeBool(6, isCommingle_);
       }
       if (loadablePatternCommingleDetailsId_ != 0L) {
-        output.writeInt64(10, loadablePatternCommingleDetailsId_);
+        output.writeInt64(7, loadablePatternCommingleDetailsId_);
       }
       unknownFields.writeTo(output);
     }
@@ -73461,29 +74580,19 @@ public final class LoadableStudy {
       if (!getCargoColorBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, cargoColor_);
       }
-      if (tankId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, tankId_);
-      }
       if (!getQuantityBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, quantity_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, quantity_);
       }
-      if (!getDifferenceBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, difference_);
-      }
-      if (!getDifferenceColorBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, differenceColor_);
-      }
-      if (loadablePatternDetailsId_ != 0L) {
-        size +=
-            com.google.protobuf.CodedOutputStream.computeInt64Size(8, loadablePatternDetailsId_);
+      if (!getOrderedQuantityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, orderedQuantity_);
       }
       if (isCommingle_ != false) {
-        size += com.google.protobuf.CodedOutputStream.computeBoolSize(9, isCommingle_);
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(6, isCommingle_);
       }
       if (loadablePatternCommingleDetailsId_ != 0L) {
         size +=
             com.google.protobuf.CodedOutputStream.computeInt64Size(
-                10, loadablePatternCommingleDetailsId_);
+                7, loadablePatternCommingleDetailsId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -73504,11 +74613,8 @@ public final class LoadableStudy {
       if (getPriority() != other.getPriority()) return false;
       if (!getCargoAbbreviation().equals(other.getCargoAbbreviation())) return false;
       if (!getCargoColor().equals(other.getCargoColor())) return false;
-      if (getTankId() != other.getTankId()) return false;
       if (!getQuantity().equals(other.getQuantity())) return false;
-      if (!getDifference().equals(other.getDifference())) return false;
-      if (!getDifferenceColor().equals(other.getDifferenceColor())) return false;
-      if (getLoadablePatternDetailsId() != other.getLoadablePatternDetailsId()) return false;
+      if (!getOrderedQuantity().equals(other.getOrderedQuantity())) return false;
       if (getIsCommingle() != other.getIsCommingle()) return false;
       if (getLoadablePatternCommingleDetailsId() != other.getLoadablePatternCommingleDetailsId())
         return false;
@@ -73529,16 +74635,10 @@ public final class LoadableStudy {
       hash = (53 * hash) + getCargoAbbreviation().hashCode();
       hash = (37 * hash) + CARGOCOLOR_FIELD_NUMBER;
       hash = (53 * hash) + getCargoColor().hashCode();
-      hash = (37 * hash) + TANKID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getTankId());
       hash = (37 * hash) + QUANTITY_FIELD_NUMBER;
       hash = (53 * hash) + getQuantity().hashCode();
-      hash = (37 * hash) + DIFFERENCE_FIELD_NUMBER;
-      hash = (53 * hash) + getDifference().hashCode();
-      hash = (37 * hash) + DIFFERENCECOLOR_FIELD_NUMBER;
-      hash = (53 * hash) + getDifferenceColor().hashCode();
-      hash = (37 * hash) + LOADABLEPATTERNDETAILSID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadablePatternDetailsId());
+      hash = (37 * hash) + ORDEREDQUANTITY_FIELD_NUMBER;
+      hash = (53 * hash) + getOrderedQuantity().hashCode();
       hash = (37 * hash) + ISCOMMINGLE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsCommingle());
       hash = (37 * hash) + LOADABLEPATTERNCOMMINGLEDETAILSID_FIELD_NUMBER;
@@ -73693,15 +74793,9 @@ public final class LoadableStudy {
 
         cargoColor_ = "";
 
-        tankId_ = 0L;
-
         quantity_ = "";
 
-        difference_ = "";
-
-        differenceColor_ = "";
-
-        loadablePatternDetailsId_ = 0L;
+        orderedQuantity_ = "";
 
         isCommingle_ = false;
 
@@ -73740,11 +74834,8 @@ public final class LoadableStudy {
         result.priority_ = priority_;
         result.cargoAbbreviation_ = cargoAbbreviation_;
         result.cargoColor_ = cargoColor_;
-        result.tankId_ = tankId_;
         result.quantity_ = quantity_;
-        result.difference_ = difference_;
-        result.differenceColor_ = differenceColor_;
-        result.loadablePatternDetailsId_ = loadablePatternDetailsId_;
+        result.orderedQuantity_ = orderedQuantity_;
         result.isCommingle_ = isCommingle_;
         result.loadablePatternCommingleDetailsId_ = loadablePatternCommingleDetailsId_;
         onBuilt();
@@ -73813,23 +74904,13 @@ public final class LoadableStudy {
           cargoColor_ = other.cargoColor_;
           onChanged();
         }
-        if (other.getTankId() != 0L) {
-          setTankId(other.getTankId());
-        }
         if (!other.getQuantity().isEmpty()) {
           quantity_ = other.quantity_;
           onChanged();
         }
-        if (!other.getDifference().isEmpty()) {
-          difference_ = other.difference_;
+        if (!other.getOrderedQuantity().isEmpty()) {
+          orderedQuantity_ = other.orderedQuantity_;
           onChanged();
-        }
-        if (!other.getDifferenceColor().isEmpty()) {
-          differenceColor_ = other.differenceColor_;
-          onChanged();
-        }
-        if (other.getLoadablePatternDetailsId() != 0L) {
-          setLoadablePatternDetailsId(other.getLoadablePatternDetailsId());
         }
         if (other.getIsCommingle() != false) {
           setIsCommingle(other.getIsCommingle());
@@ -74053,42 +75134,9 @@ public final class LoadableStudy {
         return this;
       }
 
-      private long tankId_;
-      /**
-       * <code>int64 tankId = 4;</code>
-       *
-       * @return The tankId.
-       */
-      public long getTankId() {
-        return tankId_;
-      }
-      /**
-       * <code>int64 tankId = 4;</code>
-       *
-       * @param value The tankId to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTankId(long value) {
-
-        tankId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int64 tankId = 4;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearTankId() {
-
-        tankId_ = 0L;
-        onChanged();
-        return this;
-      }
-
       private java.lang.Object quantity_ = "";
       /**
-       * <code>string quantity = 5;</code>
+       * <code>string quantity = 4;</code>
        *
        * @return The quantity.
        */
@@ -74104,7 +75152,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string quantity = 5;</code>
+       * <code>string quantity = 4;</code>
        *
        * @return The bytes for quantity.
        */
@@ -74120,7 +75168,7 @@ public final class LoadableStudy {
         }
       }
       /**
-       * <code>string quantity = 5;</code>
+       * <code>string quantity = 4;</code>
        *
        * @param value The quantity to set.
        * @return This builder for chaining.
@@ -74135,7 +75183,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string quantity = 5;</code>
+       * <code>string quantity = 4;</code>
        *
        * @return This builder for chaining.
        */
@@ -74146,7 +75194,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>string quantity = 5;</code>
+       * <code>string quantity = 4;</code>
        *
        * @param value The bytes for quantity to set.
        * @return This builder for chaining.
@@ -74162,194 +75210,85 @@ public final class LoadableStudy {
         return this;
       }
 
-      private java.lang.Object difference_ = "";
+      private java.lang.Object orderedQuantity_ = "";
       /**
-       * <code>string difference = 6;</code>
+       * <code>string orderedQuantity = 5;</code>
        *
-       * @return The difference.
+       * @return The orderedQuantity.
        */
-      public java.lang.String getDifference() {
-        java.lang.Object ref = difference_;
+      public java.lang.String getOrderedQuantity() {
+        java.lang.Object ref = orderedQuantity_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          difference_ = s;
+          orderedQuantity_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string difference = 6;</code>
+       * <code>string orderedQuantity = 5;</code>
        *
-       * @return The bytes for difference.
+       * @return The bytes for orderedQuantity.
        */
-      public com.google.protobuf.ByteString getDifferenceBytes() {
-        java.lang.Object ref = difference_;
+      public com.google.protobuf.ByteString getOrderedQuantityBytes() {
+        java.lang.Object ref = orderedQuantity_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          difference_ = b;
+          orderedQuantity_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string difference = 6;</code>
+       * <code>string orderedQuantity = 5;</code>
        *
-       * @param value The difference to set.
+       * @param value The orderedQuantity to set.
        * @return This builder for chaining.
        */
-      public Builder setDifference(java.lang.String value) {
+      public Builder setOrderedQuantity(java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
 
-        difference_ = value;
+        orderedQuantity_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string difference = 6;</code>
+       * <code>string orderedQuantity = 5;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearDifference() {
+      public Builder clearOrderedQuantity() {
 
-        difference_ = getDefaultInstance().getDifference();
+        orderedQuantity_ = getDefaultInstance().getOrderedQuantity();
         onChanged();
         return this;
       }
       /**
-       * <code>string difference = 6;</code>
+       * <code>string orderedQuantity = 5;</code>
        *
-       * @param value The bytes for difference to set.
+       * @param value The bytes for orderedQuantity to set.
        * @return This builder for chaining.
        */
-      public Builder setDifferenceBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        difference_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object differenceColor_ = "";
-      /**
-       * <code>string differenceColor = 7;</code>
-       *
-       * @return The differenceColor.
-       */
-      public java.lang.String getDifferenceColor() {
-        java.lang.Object ref = differenceColor_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          differenceColor_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string differenceColor = 7;</code>
-       *
-       * @return The bytes for differenceColor.
-       */
-      public com.google.protobuf.ByteString getDifferenceColorBytes() {
-        java.lang.Object ref = differenceColor_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          differenceColor_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string differenceColor = 7;</code>
-       *
-       * @param value The differenceColor to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDifferenceColor(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        differenceColor_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string differenceColor = 7;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearDifferenceColor() {
-
-        differenceColor_ = getDefaultInstance().getDifferenceColor();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string differenceColor = 7;</code>
-       *
-       * @param value The bytes for differenceColor to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDifferenceColorBytes(com.google.protobuf.ByteString value) {
+      public Builder setOrderedQuantityBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
 
-        differenceColor_ = value;
-        onChanged();
-        return this;
-      }
-
-      private long loadablePatternDetailsId_;
-      /**
-       * <code>int64 loadablePatternDetailsId = 8;</code>
-       *
-       * @return The loadablePatternDetailsId.
-       */
-      public long getLoadablePatternDetailsId() {
-        return loadablePatternDetailsId_;
-      }
-      /**
-       * <code>int64 loadablePatternDetailsId = 8;</code>
-       *
-       * @param value The loadablePatternDetailsId to set.
-       * @return This builder for chaining.
-       */
-      public Builder setLoadablePatternDetailsId(long value) {
-
-        loadablePatternDetailsId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int64 loadablePatternDetailsId = 8;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearLoadablePatternDetailsId() {
-
-        loadablePatternDetailsId_ = 0L;
+        orderedQuantity_ = value;
         onChanged();
         return this;
       }
 
       private boolean isCommingle_;
       /**
-       * <code>bool isCommingle = 9;</code>
+       * <code>bool isCommingle = 6;</code>
        *
        * @return The isCommingle.
        */
@@ -74357,7 +75296,7 @@ public final class LoadableStudy {
         return isCommingle_;
       }
       /**
-       * <code>bool isCommingle = 9;</code>
+       * <code>bool isCommingle = 6;</code>
        *
        * @param value The isCommingle to set.
        * @return This builder for chaining.
@@ -74369,7 +75308,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>bool isCommingle = 9;</code>
+       * <code>bool isCommingle = 6;</code>
        *
        * @return This builder for chaining.
        */
@@ -74382,7 +75321,7 @@ public final class LoadableStudy {
 
       private long loadablePatternCommingleDetailsId_;
       /**
-       * <code>int64 loadablePatternCommingleDetailsId = 10;</code>
+       * <code>int64 loadablePatternCommingleDetailsId = 7;</code>
        *
        * @return The loadablePatternCommingleDetailsId.
        */
@@ -74390,7 +75329,7 @@ public final class LoadableStudy {
         return loadablePatternCommingleDetailsId_;
       }
       /**
-       * <code>int64 loadablePatternCommingleDetailsId = 10;</code>
+       * <code>int64 loadablePatternCommingleDetailsId = 7;</code>
        *
        * @param value The loadablePatternCommingleDetailsId to set.
        * @return This builder for chaining.
@@ -74402,7 +75341,7 @@ public final class LoadableStudy {
         return this;
       }
       /**
-       * <code>int64 loadablePatternCommingleDetailsId = 10;</code>
+       * <code>int64 loadablePatternCommingleDetailsId = 7;</code>
        *
        * @return This builder for chaining.
        */
@@ -100859,407 +101798,412 @@ public final class LoadableStudy {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\024loadable_study.proto\032\014common.proto\"c\n\032"
+      "\n\024loadable_study.proto\032\014common.proto\"|\n\032"
           + "LoadablePatternAlgoRequest\022\022\n\nprocesssId"
           + "\030\001 \001(\t\0221\n\023loadablePlanDetails\030\002 \003(\0132\024.Lo"
-          + "adablePlanDetails\"l\n\023LoadablePlanDetails"
-          + "\022\022\n\ncaseNumber\030\001 \001(\005\022A\n\033loadablePlanPort"
-          + "WiseDetails\030\002 \003(\0132\034.LoadablePlanPortWise"
-          + "Details\"\253\001\n\033LoadablePlanPortWiseDetails\022"
-          + "\016\n\006portId\030\001 \001(\003\022\020\n\010portCode\030\002 \001(\t\0223\n\020arr"
-          + "ivalCondition\030\003 \003(\0132\031.LoadablePlanDetail"
-          + "sReply\0225\n\022departureCondition\030\004 \003(\0132\031.Loa"
-          + "dablePlanDetailsReply\"7\n\032LoadablePlanDet"
-          + "ailsRequest\022\031\n\021loadablePatternId\030\001 \001(\003\"\346"
-          + "\004\n\030LoadablePlanDetailsReply\022\'\n\016responseS"
-          + "tatus\030\001 \001(\0132\017.ResponseStatus\022U\n%loadable"
-          + "QuantityCommingleCargoDetails\030\002 \003(\0132&.Lo"
-          + "adableQuantityCommingleCargoDetails\022C\n\034l"
-          + "oadableQuantityCargoDetails\030\003 \003(\0132\035.Load"
-          + "ableQuantityCargoDetails\022?\n\032loadablePlan"
-          + "StowageDetails\030\004 \003(\0132\033.LoadablePlanStowa"
-          + "geDetails\022\030\n\005tanks\030\005 \003(\0132\t.TankList\022$\n\021b"
-          + "allastFrontTanks\030\006 \003(\0132\t.TankList\022%\n\022bal"
-          + "lastCenterTanks\030\007 \003(\0132\t.TankList\022#\n\020ball"
-          + "astRearTanks\030\010 \003(\0132\t.TankList\022?\n\032loadabl"
-          + "ePlanBallastDetails\030\t \003(\0132\033.LoadablePlan"
-          + "BallastDetails\0223\n\024loadablePlanComments\030\n"
-          + " \003(\0132\025.LoadablePlanComments\022\022\n\ncaseNumbe"
-          + "r\030\013 \001(\t\022\014\n\004date\030\014 \001(\t\022\024\n\014voyageNumber\030\r "
-          + "\001(\t\022\n\n\002id\030\016 \001(\003\"Z\n\024LoadablePlanComments\022"
-          + "\n\n\002id\030\001 \001(\003\022\020\n\010userName\030\002 \001(\t\022\023\n\013dataAnd"
-          + "Time\030\003 \001(\t\022\017\n\007comment\030\004 \001(\t\"\240\002\n\032Loadable"
-          + "PlanBallastDetails\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId"
-          + "\030\002 \001(\003\022\020\n\010rdgLevel\030\003 \001(\t\022\030\n\020correctionFa"
-          + "ctor\030\004 \001(\t\022\026\n\016correctedLevel\030\005 \001(\t\022\021\n\tme"
-          + "tricTon\030\006 \001(\t\022\022\n\ncubicMeter\030\007 \001(\t\022\022\n\nper"
-          + "centage\030\010 \001(\t\022\n\n\002sg\030\t \001(\t\022\013\n\003lcg\030\n \001(\t\022\013"
-          + "\n\003vcg\030\013 \001(\t\022\013\n\003tcg\030\014 \001(\t\022\017\n\007inertia\030\r \001("
-          + "\t\022\020\n\010tankName\030\016 \001(\t\022\021\n\tcolorCode\030\017 \001(\t\"\320"
-          + "\002\n\032LoadablePlanStowageDetails\022\016\n\006tankId\030"
-          + "\001 \001(\003\022\031\n\021cargoAbbreviation\030\002 \001(\t\022\016\n\006weig"
-          + "ht\030\003 \001(\t\022\027\n\017correctedUllage\030\004 \001(\t\022\024\n\014fil"
-          + "lingRatio\030\005 \001(\t\022\020\n\010tankName\030\006 \001(\t\022\021\n\trdg"
-          + "Ullage\030\007 \001(\t\022\030\n\020correctionFactor\030\010 \001(\t\022\022"
-          + "\n\nobservedM3\030\t \001(\t\022\027\n\017observedBarrels\030\n "
-          + "\001(\t\022\033\n\023observedBarrelsAt60\030\013 \001(\t\022\013\n\003api\030"
-          + "\014 \001(\t\022\023\n\013temperature\030\r \001(\t\022\n\n\002id\030\016 \001(\003\022\021"
-          + "\n\tcolorCode\030\017 \001(\t\"\265\003\n%LoadableQuantityCo"
-          + "mmingleCargoDetails\022\n\n\002id\030\001 \001(\003\022\r\n\005grade"
-          + "\030\002 \001(\t\022\020\n\010tankName\030\003 \001(\t\022\020\n\010quantity\030\004 \001"
-          + "(\t\022\013\n\003api\030\005 \001(\t\022\014\n\004temp\030\006 \001(\t\022\032\n\022cargo1A"
-          + "bbreviation\030\007 \001(\t\022\032\n\022cargo2Abbreviation\030"
-          + "\010 \001(\t\022\030\n\020cargo1Percentage\030\t \001(\t\022\030\n\020cargo"
-          + "2Percentage\030\n \001(\t\022\025\n\rcargo1Bblsdbs\030\013 \001(\t"
-          + "\022\025\n\rcargo2Bblsdbs\030\014 \001(\t\022\025\n\rcargo1Bbls60f"
-          + "\030\r \001(\t\022\025\n\rcargo2Bbls60f\030\016 \001(\t\022\020\n\010cargo1L"
-          + "T\030\017 \001(\t\022\020\n\010cargo2LT\030\020 \001(\t\022\020\n\010cargo1MT\030\021 "
-          + "\001(\t\022\020\n\010cargo2MT\030\022 \001(\t\022\020\n\010cargo1KL\030\023 \001(\t\022"
-          + "\020\n\010cargo2KL\030\024 \001(\t\"\343\002\n\034LoadableQuantityCa"
-          + "rgoDetails\022\n\n\002id\030\001 \001(\003\022\r\n\005grade\030\002 \001(\t\022\024\n"
-          + "\014estimatedAPI\030\003 \001(\t\022\025\n\restimatedTemp\030\004 \001"
-          + "(\t\022\024\n\014orderBblsdbs\030\005 \001(\t\022\024\n\014orderBbls60f"
-          + "\030\006 \001(\t\022\024\n\014minTolerence\030\007 \001(\t\022\024\n\014maxToler"
-          + "ence\030\010 \001(\t\022\027\n\017loadableBblsdbs\030\t \001(\t\022\027\n\017l"
-          + "oadableBbls60f\030\n \001(\t\022\022\n\nloadableLT\030\013 \001(\t"
-          + "\022\022\n\nloadableMT\030\014 \001(\t\022\022\n\nloadableKL\030\r \001(\t"
-          + "\022\034\n\024differencePercentage\030\016 \001(\t\022\027\n\017differ"
-          + "enceColor\030\017 \001(\t\"/\n\022ConfirmPlanRequest\022\031\n"
-          + "\021loadablePatternId\030\001 \001(\003\";\n\020ConfirmPlanR"
-          + "eply\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseS"
-          + "tatus\"5\n\032LoadableStudyStatusRequest\022\027\n\017l"
-          + "oadableStudyId\030\001 \001(\003\"b\n\030LoadableStudySta"
-          + "tusReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
-          + "nseStatus\022\035\n\025loadableStudystatusId\030\002 \001(\003"
-          + "\"F\n\021AlgoStatusRequest\022\022\n\nprocesssId\030\001 \001("
-          + "\t\022\035\n\025loadableStudystatusId\030\002 \001(\003\":\n\017Algo"
-          + "StatusReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Re"
-          + "sponseStatus\"&\n\013AlgoRequest\022\027\n\017loadableS"
-          + "tudyId\030\001 \001(\003\"H\n\tAlgoReply\022\'\n\016responseSta"
-          + "tus\030\001 \001(\0132\017.ResponseStatus\022\022\n\nprocesssId"
-          + "\030\002 \001(\t\"\225\001\n\rVoyageRequest\022\021\n\tcaptainId\030\001 "
-          + "\001(\003\022\026\n\016chiefOfficerId\030\002 \001(\003\022\021\n\tcompanyId"
-          + "\030\003 \001(\003\022\020\n\010vesselId\030\004 \001(\003\022\020\n\010voyageNo\030\005 \001"
-          + "(\t\022\021\n\tstartDate\030\006 \001(\t\022\017\n\007endDate\030\007 \001(\t\"E"
-          + "\n\013VoyageReply\022\020\n\010voyageId\030\001 \001(\003\022$\n\016respo"
-          + "nseStatus\030\002 \001(\0132\014.StatusReply\"\206\001\n\014Voyage"
-          + "Detail\022\n\n\002id\030\001 \001(\003\022\024\n\014voyageNumber\030\002 \001(\t"
-          + "\022\021\n\tstartDate\030\003 \001(\t\022\017\n\007endDate\030\004 \001(\t\022\016\n\006"
-          + "status\030\005 \001(\t\022 \n\030confirmedLoadableStudyId"
-          + "\030\006 \001(\003\"W\n\017VoyageListReply\022$\n\016responseSta"
-          + "tus\030\001 \001(\0132\014.StatusReply\022\036\n\007voyages\030\002 \003(\013"
-          + "2\r.VoyageDetail\"<\n\013StatusReply\022\016\n\006status"
-          + "\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\"\237\005"
-          + "\n\027LoadableQuantityRequest\022\025\n\restSeaDensi"
-          + "ty\030\001 \001(\t\022\013\n\003tpc\030\002 \001(\t\022\022\n\nestSagging\030\003 \001("
-          + "\t\022#\n\033displacmentDraftRestriction\030\004 \001(\t\022\031"
-          + "\n\021vesselLightWeight\030\005 \001(\t\022\013\n\003dwt\030\006 \001(\t\022\024"
-          + "\n\014sgCorrection\030\007 \001(\t\022\030\n\020saggingDeduction"
-          + "\030\010 \001(\t\022\024\n\014estFOOnBoard\030\t \001(\t\022\024\n\014estDOOnB"
-          + "oard\030\n \001(\t\022\034\n\024estFreshWaterOnBoard\030\013 \001(\t"
-          + "\022\020\n\010constant\030\014 \001(\t\022\022\n\notherIfAny\030\r \001(\t\022\025"
-          + "\n\rtotalQuantity\030\016 \001(\t\022\034\n\024distanceFromLas"
-          + "tPort\030\017 \001(\t\022\032\n\022vesselAverageSpeed\030\020 \001(\t\022"
-          + "\027\n\017loadableStudyId\030\021 \001(\003\022\031\n\021updateDateAn"
-          + "dTime\030\022 \001(\t\022\n\n\002sg\030\023 \001(\t\022\032\n\022boilerWaterOn"
-          + "Board\030\024 \001(\t\022\017\n\007ballast\030\025 \001(\t\022\024\n\014runningH"
-          + "ours\030\026 \001(\t\022\023\n\013runningDays\030\027 \001(\t\022\021\n\tfoCon"
-          + "InSZ\030\030 \001(\t\022\016\n\006portId\030\031 \001(\003\022\030\n\020draftRestr"
-          + "iction\030\032 \001(\t\022\020\n\010subTotal\030\033 \001(\t\022\033\n\023foCons"
-          + "umptionPerDay\030\034 \001(\t\022\n\n\002id\030\035 \001(\003\"r\n\025Loada"
-          + "bleQuantityReply\022$\n\016responseStatus\030\001 \001(\013"
-          + "2\014.StatusReply\022\032\n\022loadableQuantityId\030\002 \001"
-          + "(\003\022\027\n\017loadableStudyId\030\003 \001(\003\"f\n\024LoadableS"
-          + "tudyRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vessel"
-          + "Id\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017loadableSt"
-          + "udyId\030\004 \001(\003\"K\n\027LoadableStudyAttachment\022\022"
-          + "\n\nbyteString\030\001 \001(\014\022\020\n\010fileName\030\002 \001(\t\022\n\n\002"
-          + "id\030\003 \001(\003\"\361\003\n\023LoadableStudyDetail\022\n\n\002id\030\001"
-          + " \001(\003\022\014\n\004name\030\002 \001(\t\022\016\n\006detail\030\003 \001(\t\022\020\n\010st"
-          + "atusId\030\004 \001(\003\022\016\n\006status\030\005 \001(\t\022\023\n\013createdD"
-          + "ate\030\006 \001(\t\022\021\n\tcharterer\030\007 \001(\t\022\024\n\014subChart"
-          + "erer\030\010 \001(\t\022\021\n\tdraftMark\030\t \001(\t\022\023\n\013loadLin"
-          + "eXId\030\n \001(\003\022\030\n\020draftRestriction\030\013 \001(\t\022\031\n\021"
-          + "maxAirTemperature\030\014 \001(\t\022\033\n\023maxWaterTempe"
-          + "rature\030\r \001(\t\022\030\n\020duplicatedFromId\030\016 \001(\003\022\020"
-          + "\n\010voyageId\030\017 \001(\003\022\020\n\010vesselId\030\020 \001(\003\022-\n\013at"
-          + "tachments\030\021 \003(\0132\030.LoadableStudyAttachmen"
-          + "t\022\032\n\022dischargingPortIds\030\022 \003(\003\022\032\n\022dischar"
-          + "gingCargoId\030\023 \001(\003\022\025\n\rcreatedFromId\030\024 \001(\003"
-          + "\022\032\n\022deletedAttachments\030\025 \003(\003\"x\n\022Loadable"
-          + "StudyReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Res"
-          + "ponseStatus\022-\n\017loadableStudies\030\002 \003(\0132\024.L"
-          + "oadableStudyDetail\022\n\n\002id\030\003 \001(\003\"5\n\021Loadin"
-          + "gPortDetail\022\016\n\006portId\030\001 \001(\003\022\020\n\010quantity\030"
-          + "\002 \001(\t\".\n\021segregationDetail\022\n\n\002id\030\001 \001(\003\022\r"
-          + "\n\005value\030\002 \001(\t\"\252\002\n\025CargoNominationDetail\022"
-          + "\n\n\002id\030\001 \001(\003\022\027\n\017loadableStudyId\030\002 \001(\003\022\020\n\010"
-          + "priority\030\003 \001(\003\022\r\n\005color\030\004 \001(\t\022\017\n\007cargoId"
-          + "\030\005 \001(\003\022\024\n\014abbreviation\030\006 \001(\t\022.\n\022loadingP"
-          + "ortDetails\030\007 \003(\0132\022.LoadingPortDetail\022\020\n\010"
-          + "quantity\030\010 \001(\t\022\024\n\014maxTolerance\030\t \001(\t\022\024\n\014"
-          + "minTolerance\030\n \001(\t\022\016\n\006apiEst\030\013 \001(\t\022\017\n\007te"
-          + "mpEst\030\014 \001(\t\022\025\n\rsegregationId\030\r \001(\003\"\247\001\n\026C"
-          + "argoNominationRequest\022\020\n\010vesselId\030\001 \001(\003\022"
-          + "\020\n\010voyageId\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001"
-          + "(\003\022\031\n\021cargoNominationId\030\004 \001(\003\0225\n\025cargoNo"
-          + "minationDetail\030\005 \001(\0132\026.CargoNominationDe"
-          + "tail\"\214\001\n\024CargoNominationReply\022\'\n\016respons"
-          + "eStatus\030\001 \001(\0132\017.ResponseStatus\022\031\n\021cargoN"
-          + "ominationId\030\002 \001(\003\0220\n\020cargoNominations\030\003 "
-          + "\003(\0132\026.CargoNominationDetail\"\310\001\n\023PortRota"
-          + "tionRequest\022\027\n\017loadableStudyId\030\001 \001(\003\022\020\n\010"
-          + "vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\032\n\022disc"
-          + "hargingPortIds\030\004 \003(\003\022\n\n\002id\030\005 \001(\003\0220\n\023port"
-          + "RotationDetails\030\006 \003(\0132\023.PortRotationDeta"
-          + "il\022\032\n\022dischargingCargoId\030\007 \001(\003\"\332\002\n\022PortR"
-          + "otationDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001("
-          + "\003\022\017\n\007berthId\030\003 \001(\003\022\023\n\013operationId\030\004 \001(\003\022"
-          + "\027\n\017seaWaterDensity\030\005 \001(\t\022\034\n\024distanceBetw"
-          + "eenPorts\030\006 \001(\t\022\022\n\ntimeOfStay\030\007 \001(\t\022\020\n\010ma"
-          + "xDraft\030\010 \001(\t\022\023\n\013maxAirDraft\030\t \001(\t\022\013\n\003eta"
-          + "\030\n \001(\t\022\021\n\tetaActual\030\013 \001(\t\022\013\n\003etd\030\014 \001(\t\022\021"
-          + "\n\tetdActual\030\r \001(\t\022\022\n\nlayCanFrom\030\016 \001(\t\022\020\n"
-          + "\010layCanTo\030\017 \001(\t\022\027\n\017loadableStudyId\030\020 \001(\003"
-          + "\022\021\n\tportOrder\030\021 \001(\003\".\n\tOperation\022\n\n\002id\030\001"
-          + " \001(\003\022\025\n\roperationName\030\002 \001(\t\"\230\001\n\021PortRota"
-          + "tionReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp"
-          + "onseStatus\022\"\n\005ports\030\002 \003(\0132\023.PortRotation"
-          + "Detail\022\036\n\noperations\030\003 \003(\0132\n.Operation\022\026"
-          + "\n\016portRotationId\030\004 \001(\003\"\241\001\n\030LoadableQuant"
-          + "ityResponse\0229\n\027loadableQuantityRequest\030\001"
-          + " \001(\0132\030.LoadableQuantityRequest\022$\n\016respon"
-          + "seStatus\030\002 \001(\0132\014.StatusReply\022\016\n\006caseNo\030\003"
-          + " \001(\005\022\024\n\014selectedZone\030\004 \001(\t\",\n\020ValveSegre"
-          + "gation\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"2\n\027Valv"
-          + "eSegregationRequest\022\027\n\017loadableStudyId\030\001"
-          + " \001(\003\"m\n\025ValveSegregationReply\022\'\n\016respons"
-          + "eStatus\030\001 \001(\0132\017.ResponseStatus\022+\n\020valveS"
-          + "egregation\030\002 \003(\0132\021.ValveSegregation\"e\n\025O"
-          + "nHandQuantityRequest\022\021\n\tcompanyId\030\001 \001(\003\022"
-          + "\020\n\010vesselId\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001"
-          + "(\003\022\016\n\006portId\030\004 \001(\003\"\366\002\n\024OnHandQuantityDet"
-          + "ail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\022\n\nfuelT"
-          + "ypeId\030\003 \001(\003\022\020\n\010fuelType\030\004 \001(\t\022\016\n\006tankId\030"
-          + "\005 \001(\003\022\020\n\010tankName\030\006 \001(\t\022\025\n\rarrivalVolume"
-          + "\030\007 \001(\t\022\027\n\017arrivalQuantity\030\010 \001(\t\022\035\n\025actua"
-          + "lArrivalQuantity\030\t \001(\t\022\027\n\017departureVolum"
-          + "e\030\n \001(\t\022\031\n\021departureQuantity\030\013 \001(\t\022\037\n\027ac"
-          + "tualDepartureQuantity\030\014 \001(\t\022\027\n\017loadableS"
-          + "tudyId\030\r \001(\003\022\021\n\tcolorCode\030\016 \001(\t\022\031\n\021fuelT"
-          + "ypeShortName\030\017 \001(\t\022\017\n\007density\030\020 \001(\t\"\342\002\n\n"
-          + "TankDetail\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tankCatego"
-          + "ryId\030\002 \001(\003\022\030\n\020tankCategoryName\030\003 \001(\t\022\020\n\010"
-          + "tankName\030\004 \001(\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022"
-          + "\025\n\rframeNumberTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001("
-          + "\t\022\030\n\020fillCapacityCubm\030\010 \001(\t\022\017\n\007density\030\t"
-          + " \001(\t\022\022\n\nisSlopTank\030\n \001(\010\022\022\n\nheightFrom\030\013"
-          + " \001(\t\022\020\n\010heightTo\030\014 \001(\t\022\021\n\ttankOrder\030\r \001("
-          + "\005\022\030\n\020tankDisplayOrder\030\016 \001(\005\022\021\n\ttankGroup"
-          + "\030\017 \001(\005\022\030\n\020fullCapacityCubm\030\020 \001(\t\"+\n\010Tank"
-          + "List\022\037\n\nvesselTank\030\001 \003(\0132\013.TankDetail\"\261\001"
-          + "\n\023OnHandQuantityReply\022\'\n\016responseStatus\030"
-          + "\001 \001(\0132\017.ResponseStatus\022-\n\016onHandQuantity"
-          + "\030\002 \003(\0132\025.OnHandQuantityDetail\022\030\n\005tanks\030\003"
-          + " \003(\0132\t.TankList\022\034\n\trearTanks\030\004 \003(\0132\t.Tan"
-          + "kList\022\n\n\002id\030\005 \001(\003\"x\n\026OnBoardQuantityRequ"
-          + "est\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003"
-          + "\022\027\n\017loadableStudyId\030\003 \001(\003\022\016\n\006portId\030\004 \001("
-          + "\003\022\020\n\010voyageId\030\005 \001(\003\"\203\002\n\025OnBoardQuantityD"
-          + "etail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\016\n\006tan"
-          + "kId\030\003 \001(\003\022\020\n\010tankName\030\004 \001(\t\022\017\n\007cargoId\030\005"
-          + " \001(\003\022\021\n\tcargoName\030\006 \001(\t\022\020\n\010sounding\030\007 \001("
-          + "\t\022\016\n\006weight\030\010 \001(\t\022\024\n\014actualWeight\030\t \001(\t\022"
-          + "\016\n\006volume\030\n \001(\t\022\027\n\017loadableStudyId\030\013 \001(\003"
-          + "\022\021\n\tcolorCode\030\014 \001(\t\022\024\n\014abbreviation\030\r \001("
-          + "\t\"\226\001\n\024OnBoardQuantityReply\022\'\n\016responseSt"
-          + "atus\030\001 \001(\0132\017.ResponseStatus\022/\n\017onBoardQu"
-          + "antity\030\002 \003(\0132\026.OnBoardQuantityDetail\022\030\n\005"
-          + "tanks\030\003 \003(\0132\t.TankList\022\n\n\002id\030\004 \001(\003\".\n\022Pu"
-          + "rposeOfCommingle\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001"
-          + "(\t\"4\n\031PurposeOfCommingleRequest\022\027\n\017loada"
-          + "bleStudyId\030\001 \001(\003\"s\n\027PurposeOfCommingleRe"
-          + "ply\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSt"
-          + "atus\022/\n\022purposeOfCommingle\030\002 \003(\0132\023.Purpo"
-          + "seOfCommingle\"\303\001\n\024LoadablePatternReply\022)"
-          + "\n\017loadablePattern\030\001 \003(\0132\020.LoadablePatter"
-          + "n\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseStat"
-          + "us\022\030\n\005tanks\030\003 \003(\0132\t.TankList\022\"\n\032loadable"
-          + "PatternCreatedDate\030\004 \001(\t\022\031\n\021loadableStud"
-          + "yName\030\005 \001(\t\"\325\001\n\017LoadablePattern\022\031\n\021loada"
-          + "blePatternId\030\001 \001(\003\022A\n\033loadablePatternCar"
-          + "goDetails\030\002 \003(\0132\034.LoadablePatternCargoDe"
-          + "tails\022\023\n\013constraints\030\003 \001(\t\022\034\n\024totalDiffe"
-          + "renceColor\030\004 \001(\t\022\035\n\025loadableStudyStatusI"
-          + "d\030\005 \001(\003\022\022\n\ncaseNumber\030\006 \001(\t\"\217\002\n\033Loadable"
-          + "PatternCargoDetails\022\020\n\010priority\030\001 \001(\003\022\031\n"
-          + "\021cargoAbbreviation\030\002 \001(\t\022\022\n\ncargoColor\030\003"
-          + " \001(\t\022\016\n\006tankId\030\004 \001(\003\022\020\n\010quantity\030\005 \001(\t\022\022"
-          + "\n\ndifference\030\006 \001(\t\022\027\n\017differenceColor\030\007 "
-          + "\001(\t\022 \n\030loadablePatternDetailsId\030\010 \001(\003\022\023\n"
-          + "\013isCommingle\030\t \001(\010\022)\n!loadablePatternCom"
-          + "mingleDetailsId\030\n \001(\003\"1\n\026LoadablePattern"
-          + "Request\022\027\n\017loadableStudyId\030\001 \001(\003\"\265\001\n\016Com"
-          + "mingleCargo\022\n\n\002id\030\001 \001(\003\022\021\n\tpurposeId\030\002 \001"
-          + "(\003\022\020\n\010slopOnly\030\003 \001(\010\022\026\n\016preferredTanks\030\004"
-          + " \003(\003\022\020\n\010cargo1Id\030\005 \001(\003\022\021\n\tcargo1pct\030\006 \001("
-          + "\t\022\020\n\010cargo2Id\030\007 \001(\003\022\021\n\tcargo2pct\030\010 \001(\t\022\020"
-          + "\n\010quantity\030\t \001(\t\"k\n\025CommingleCargoReques"
-          + "t\022\027\n\017loadableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002"
-          + " \001(\003\022\'\n\016commingleCargo\030\003 \003(\0132\017.Commingle"
-          + "Cargo\"\201\001\n\023CommingleCargoReply\022\'\n\016respons"
-          + "eStatus\030\001 \001(\0132\017.ResponseStatus\022\'\n\016commin"
-          + "gleCargo\030\002 \003(\0132\017.CommingleCargo\022\030\n\005tanks"
-          + "\030\003 \003(\0132\t.TankList\"S\n&LoadablePatternComm"
-          + "ingleDetailsRequest\022)\n!loadablePatternCo"
-          + "mmingleDetailsId\030\001 \001(\003\"\317\002\n$LoadablePatte"
-          + "rnCommingleDetailsReply\022\n\n\002id\030\001 \001(\003\022\025\n\rt"
-          + "ankShortName\030\002 \001(\t\022\031\n\021cargo1Abbrivation\030"
-          + "\003 \001(\t\022\031\n\021cargo2Abbrivation\030\004 \001(\t\022\r\n\005grad"
-          + "e\030\005 \001(\t\022\020\n\010quantity\030\006 \001(\t\022\013\n\003api\030\007 \001(\t\022\023"
-          + "\n\013temperature\030\010 \001(\t\022\026\n\016cargo1Quantity\030\t "
-          + "\001(\t\022\026\n\016cargo2Quantity\030\n \001(\t\022\030\n\020cargo1Per"
-          + "centage\030\013 \001(\t\022\030\n\020cargo2Percentage\030\014 \001(\t\022"
-          + "\'\n\016responseStatus\030\r \001(\0132\017.ResponseStatus"
-          + "\"\254\007\n\020SynopticalRecord\022\n\n\002id\030\001 \001(\003\022\016\n\006por"
-          + "tId\030\002 \001(\003\022\020\n\010portName\030\003 \001(\t\022\025\n\roperation"
-          + "Type\030\004 \001(\t\022\020\n\010distance\030\005 \001(\t\022\r\n\005speed\030\006 "
-          + "\001(\t\022\024\n\014runningHours\030\007 \001(\t\022\023\n\013inPortHours"
-          + "\030\010 \001(\t\022\025\n\rtimeOfSunrise\030\t \001(\t\022\024\n\014timeOfS"
-          + "unset\030\n \001(\t\022\022\n\nhwTideFrom\030\013 \001(\t\022\020\n\010hwTid"
-          + "eTo\030\014 \001(\t\022\026\n\016hwTideTimeFrom\030\r \001(\t\022\024\n\014hwT"
-          + "ideTimeTo\030\016 \001(\t\022\022\n\nlwTideFrom\030\017 \001(\t\022\020\n\010l"
-          + "wTideTo\030\020 \001(\t\022\026\n\016lwTideTimeFrom\030\021 \001(\t\022\024\n"
-          + "\014lwTideTimeTo\030\022 \001(\t\022\027\n\017specificGravity\030\023"
-          + " \001(\t\022\024\n\014etaEtdActual\030\024 \001(\t\022\027\n\017etaEtdEsti"
-          + "mated\030\025 \001(\t\022%\n\005cargo\030\026 \003(\0132\026.SynopticalC"
-          + "argoRecord\022\031\n\021cargoPlannedTotal\030\027 \001(\t\022\030\n"
-          + "\020cargoActualTotal\030\030 \001(\t\022!\n\003ohq\030\031 \003(\0132\024.S"
-          + "ynopticalOhqRecord\022\021\n\tportOrder\030\032 \001(\003\022\025\n"
-          + "\rothersPlanned\030\033 \001(\t\022\024\n\014othersActual\030\034 \001"
-          + "(\t\022\027\n\017constantPlanned\030\035 \001(\t\022\026\n\016constantA"
-          + "ctual\030\036 \001(\t\022\027\n\017totalDwtPlanned\030\037 \001(\t\022\026\n\016"
-          + "totalDwtActual\030  \001(\t\022\033\n\023displacementPlan"
-          + "ned\030! \001(\t\022\032\n\022displacementActual\030\" \001(\t\0226\n"
-          + "\016loadicatorData\030# \001(\0132\036.SynopticalTableL"
-          + "oadicatorData\022\026\n\016ballastPlanned\030$ \001(\t\022\025\n"
-          + "\rballastActual\030% \001(\t\022)\n\007ballast\030& \003(\0132\030."
-          + "SynopticalBallastRecord\"\337\001\n\025SynopticalCa"
-          + "rgoRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002 "
-          + "\001(\t\022\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014actualWeig"
-          + "ht\030\004 \001(\t\022\r\n\005obqId\030\005 \001(\003\022\021\n\tcolorCode\030\006 \001"
-          + "(\t\022\027\n\017correctedUllage\030\007 \001(\t\022\031\n\021cargoAbbr"
-          + "eviation\030\010 \001(\t\022\017\n\007cargoId\030\t \001(\003\022\020\n\010capac"
-          + "ity\030\n \001(\t\"\212\001\n\023SynopticalOhqRecord\022\016\n\006tan"
-          + "kId\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rplannedWe"
-          + "ight\030\003 \001(\t\022\024\n\014actualWeight\030\004 \001(\t\022\022\n\nfuel"
-          + "TypeId\030\005 \001(\003\022\020\n\010fuelType\030\006 \001(\t\"z\n\027Synopt"
-          + "icalBallastRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tan"
-          + "kName\030\002 \001(\t\022\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014ac"
-          + "tualWeight\030\004 \001(\t\022\020\n\010capacity\030\005 \001(\t\"\255\001\n\026S"
-          + "ynopticalTableRequest\022\027\n\017loadableStudyId"
-          + "\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001"
-          + "(\003\022\016\n\006portId\030\004 \001(\003\022+\n\020synopticalRecord\030\005"
-          + " \003(\0132\021.SynopticalRecord\022\031\n\021loadablePatte"
-          + "rnId\030\006 \001(\003\"\353\001\n\024SynopticalTableReply\022\'\n\016r"
-          + "esponseStatus\030\001 \001(\0132\017.ResponseStatus\022,\n\021"
-          + "synopticalRecords\030\002 \003(\0132\021.SynopticalReco"
-          + "rd\022\n\n\002id\030\003 \001(\003\022$\n\021ballastFrontTanks\030\004 \003("
-          + "\0132\t.TankList\022%\n\022ballastCenterTanks\030\005 \003(\013"
-          + "2\t.TankList\022#\n\020ballastRearTanks\030\006 \003(\0132\t."
-          + "TankList\"\255\003\n\035SynopticalTableLoadicatorDa"
-          + "ta\022\016\n\006hogSag\030\001 \001(\t\022\025\n\rfinalDraftFwd\030\002 \001("
-          + "\t\022\025\n\rfinalDraftAft\030\003 \001(\t\022\025\n\rfinalDraftMi"
-          + "d\030\004 \001(\t\022\026\n\016finalDraftTrim\030\005 \001(\t\022!\n\031calcu"
-          + "latedDraftFwdPlanned\030\006 \001(\t\022 \n\030calculated"
-          + "DraftFwdActual\030\007 \001(\t\022!\n\031calculatedDraftA"
-          + "ftPlanned\030\010 \001(\t\022 \n\030calculatedDraftAftAct"
-          + "ual\030\t \001(\t\022!\n\031calculatedDraftMidPlanned\030\n"
-          + " \001(\t\022 \n\030calculatedDraftMidActual\030\013 \001(\t\022\035"
-          + "\n\025calculatedTrimPlanned\030\014 \001(\t\022\034\n\024calcula"
-          + "tedTrimActual\030\r \001(\t\022\023\n\013blindSector\030\016 \001(\t"
-          + "\"I\n\036LoadableStudyAttachmentRequest\022\016\n\006fi"
-          + "leId\030\001 \001(\003\022\027\n\017loadableStudyId\030\002 \001(\003\"m\n\034L"
-          + "oadableStudyAttachmentReply\022\'\n\016responseS"
-          + "tatus\030\001 \001(\0132\017.ResponseStatus\022\020\n\010filePath"
-          + "\030\002 \001(\t\022\022\n\nbyteString\030\003 \001(\014\";\n\020SaveCommen"
-          + "tReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respons"
-          + "eStatus\"N\n\022SaveCommentRequest\022\031\n\021loadabl"
-          + "ePatternId\030\001 \001(\003\022\017\n\007comment\030\002 \001(\t\022\014\n\004use"
-          + "r\030\003 \001(\0032\340\026\n\024LoadableStudyService\022,\n\nSave"
-          + "Voyage\022\016.VoyageRequest\032\014.VoyageReply\"\000\0228"
-          + "\n\022GetVoyagesByVessel\022\016.VoyageRequest\032\020.V"
-          + "oyageListReply\"\000\022J\n\024SaveLoadableQuantity"
-          + "\022\030.LoadableQuantityRequest\032\026.LoadableQua"
-          + "ntityReply\"\000\022T\n$FindLoadableStudiesByVes"
-          + "selAndVoyage\022\025.LoadableStudyRequest\032\023.Lo"
-          + "adableStudyReply\"\000\022@\n\021SaveLoadableStudy\022"
-          + "\024.LoadableStudyDetail\032\023.LoadableStudyRep"
-          + "ly\"\000\022G\n\023SaveCargoNomination\022\027.CargoNomin"
-          + "ationRequest\032\025.CargoNominationReply\"\000\022J\n"
-          + "\034GetLoadableStudyPortRotation\022\024.PortRota"
-          + "tionRequest\032\022.PortRotationReply\"\000\022J\n\026Get"
-          + "CargoNominationById\022\027.CargoNominationReq"
-          + "uest\032\025.CargoNominationReply\"\000\022I\n\023GetValv"
-          + "eSegregation\022\030.ValveSegregationRequest\032\026"
-          + ".ValveSegregationReply\"\000\022J\n\023getLoadableQ"
-          + "uantity\022\026.LoadableQuantityReply\032\031.Loadab"
-          + "leQuantityResponse\"\000\022J\n\035SaveLoadableStud"
-          + "yPortRotation\022\023.PortRotationDetail\032\022.Por"
-          + "tRotationReply\"\000\022O\n!SaveLoadableStudyPor"
-          + "tRotationList\022\024.PortRotationRequest\032\022.Po"
-          + "rtRotationReply\"\000\022I\n\025DeleteCargoNominati"
-          + "on\022\027.CargoNominationRequest\032\025.CargoNomin"
-          + "ationReply\"\000\022B\n\024SaveDischargingPorts\022\024.P"
-          + "ortRotationRequest\032\022.PortRotationReply\"\000"
-          + "\022N\n GetPortRotationByLoadableStudyId\022\024.P"
-          + "ortRotationRequest\032\022.PortRotationReply\"\000"
-          + "\022C\n\023DeleteLoadableStudy\022\025.LoadableStudyR"
-          + "equest\032\023.LoadableStudyReply\"\000\022@\n\022DeleteP"
-          + "ortRotation\022\024.PortRotationRequest\032\022.Port"
-          + "RotationReply\"\000\022C\n\021GetOnHandQuantity\022\026.O"
-          + "nHandQuantityRequest\032\024.OnHandQuantityRep"
-          + "ly\"\000\022C\n\022SaveOnHandQuantity\022\025.OnHandQuant"
-          + "ityDetail\032\024.OnHandQuantityReply\"\000\022M\n\031Get"
-          + "LoadablePatternDetails\022\027.LoadablePattern"
-          + "Request\032\025.LoadablePatternReply\"\000\022G\n\032Save"
-          + "LoadablePatternDetails\022\033.LoadablePattern"
-          + "AlgoRequest\032\n.AlgoReply\"\000\022O\n\025GetPurposeO"
-          + "fCommingle\022\032.PurposeOfCommingleRequest\032\030"
-          + ".PurposeOfCommingleReply\"\000\022C\n\021GetComming"
-          + "leCargo\022\026.CommingleCargoRequest\032\024.Commin"
-          + "gleCargoReply\"\000\022D\n\022SaveCommingleCargo\022\026."
-          + "CommingleCargoRequest\032\024.CommingleCargoRe"
-          + "ply\"\000\022v\n\"GetLoadablePatternCommingleDeta"
-          + "ils\022\'.LoadablePatternCommingleDetailsReq"
-          + "uest\032%.LoadablePatternCommingleDetailsRe"
-          + "ply\"\000\0226\n\030GenerateLoadablePatterns\022\014.Algo"
-          + "Request\032\n.AlgoReply\"\000\022J\n\026getLoadablePatt"
-          + "ernList\022\027.LoadablePatternRequest\032\025.Loada"
-          + "blePatternReply\"\000\022F\n\022GetOnBoardQuantity\022"
-          + "\027.OnBoardQuantityRequest\032\025.OnBoardQuanti"
-          + "tyReply\"\000\022F\n\023SaveOnBoardQuantity\022\026.OnBoa"
-          + "rdQuantityDetail\032\025.OnBoardQuantityReply\""
-          + "\000\022E\n\033SaveAlgoLoadableStudyStatus\022\022.AlgoS"
-          + "tatusRequest\032\020.AlgoStatusReply\"\000\022G\n\023Save"
-          + "SynopticalTable\022\027.SynopticalTableRequest"
-          + "\032\025.SynopticalTableReply\"\000\022F\n\022GetSynoptic"
-          + "alTable\022\027.SynopticalTableRequest\032\025.Synop"
-          + "ticalTableReply\"\000\022M\n\031GetSynopticalDataBy"
-          + "PortId\022\027.SynopticalTableRequest\032\025.Synopt"
-          + "icalTableReply\"\000\022Q\n\035GetSynopticalPortDat"
-          + "aByPortId\022\027.SynopticalTableRequest\032\025.Syn"
-          + "opticalTableReply\"\000\022R\n\026GetLoadableStudyS"
-          + "tatus\022\033.LoadableStudyStatusRequest\032\031.Loa"
-          + "dableStudyStatusReply\"\000\022R\n\026GetLoadablePl"
-          + "anDetails\022\033.LoadablePlanDetailsRequest\032\031"
-          + ".LoadablePlanDetailsReply\"\000\0227\n\013ConfirmPl"
-          + "an\022\023.ConfirmPlanRequest\032\021.ConfirmPlanRep"
-          + "ly\"\000\022c\n\037DownloadLoadableStudyAttachment\022"
-          + "\037.LoadableStudyAttachmentRequest\032\035.Loada"
-          + "bleStudyAttachmentReply\"\000\0227\n\013SaveComment"
-          + "\022\023.SaveCommentRequest\032\021.SaveCommentReply",
-      "\"\000B\036\n\032com.cpdss.common.generatedP\000b\006prot" + "o3"
+          + "adablePlanDetails\022\027\n\017loadableStudyId\030\003 \001"
+          + "(\003\"\201\001\n\023LoadablePlanDetails\022\022\n\ncaseNumber"
+          + "\030\001 \001(\005\022A\n\033loadablePlanPortWiseDetails\030\002 "
+          + "\003(\0132\034.LoadablePlanPortWiseDetails\022\023\n\013con"
+          + "straints\030\003 \003(\t\"\253\001\n\033LoadablePlanPortWiseD"
+          + "etails\022\016\n\006portId\030\001 \001(\003\022\020\n\010portCode\030\002 \001(\t"
+          + "\0223\n\020arrivalCondition\030\003 \001(\0132\031.LoadablePla"
+          + "nDetailsReply\0225\n\022departureCondition\030\004 \001("
+          + "\0132\031.LoadablePlanDetailsReply\"7\n\032Loadable"
+          + "PlanDetailsRequest\022\031\n\021loadablePatternId\030"
+          + "\001 \001(\003\"\346\004\n\030LoadablePlanDetailsReply\022\'\n\016re"
+          + "sponseStatus\030\001 \001(\0132\017.ResponseStatus\022U\n%l"
+          + "oadableQuantityCommingleCargoDetails\030\002 \003"
+          + "(\0132&.LoadableQuantityCommingleCargoDetai"
+          + "ls\022C\n\034loadableQuantityCargoDetails\030\003 \003(\013"
+          + "2\035.LoadableQuantityCargoDetails\022?\n\032loada"
+          + "blePlanStowageDetails\030\004 \003(\0132\033.LoadablePl"
+          + "anStowageDetails\022\030\n\005tanks\030\005 \003(\0132\t.TankLi"
+          + "st\022$\n\021ballastFrontTanks\030\006 \003(\0132\t.TankList"
+          + "\022%\n\022ballastCenterTanks\030\007 \003(\0132\t.TankList\022"
+          + "#\n\020ballastRearTanks\030\010 \003(\0132\t.TankList\022?\n\032"
+          + "loadablePlanBallastDetails\030\t \003(\0132\033.Loada"
+          + "blePlanBallastDetails\0223\n\024loadablePlanCom"
+          + "ments\030\n \003(\0132\025.LoadablePlanComments\022\022\n\nca"
+          + "seNumber\030\013 \001(\t\022\014\n\004date\030\014 \001(\t\022\024\n\014voyageNu"
+          + "mber\030\r \001(\t\022\n\n\002id\030\016 \001(\003\"Z\n\024LoadablePlanCo"
+          + "mments\022\n\n\002id\030\001 \001(\003\022\020\n\010userName\030\002 \001(\t\022\023\n\013"
+          + "dataAndTime\030\003 \001(\t\022\017\n\007comment\030\004 \001(\t\"\240\002\n\032L"
+          + "oadablePlanBallastDetails\022\n\n\002id\030\001 \001(\003\022\016\n"
+          + "\006tankId\030\002 \001(\003\022\020\n\010rdgLevel\030\003 \001(\t\022\030\n\020corre"
+          + "ctionFactor\030\004 \001(\t\022\026\n\016correctedLevel\030\005 \001("
+          + "\t\022\021\n\tmetricTon\030\006 \001(\t\022\022\n\ncubicMeter\030\007 \001(\t"
+          + "\022\022\n\npercentage\030\010 \001(\t\022\n\n\002sg\030\t \001(\t\022\013\n\003lcg\030"
+          + "\n \001(\t\022\013\n\003vcg\030\013 \001(\t\022\013\n\003tcg\030\014 \001(\t\022\017\n\007inert"
+          + "ia\030\r \001(\t\022\020\n\010tankName\030\016 \001(\t\022\021\n\tcolorCode\030"
+          + "\017 \001(\t\"\320\002\n\032LoadablePlanStowageDetails\022\016\n\006"
+          + "tankId\030\001 \001(\003\022\031\n\021cargoAbbreviation\030\002 \001(\t\022"
+          + "\016\n\006weight\030\003 \001(\t\022\027\n\017correctedUllage\030\004 \001(\t"
+          + "\022\024\n\014fillingRatio\030\005 \001(\t\022\020\n\010tankName\030\006 \001(\t"
+          + "\022\021\n\trdgUllage\030\007 \001(\t\022\030\n\020correctionFactor\030"
+          + "\010 \001(\t\022\022\n\nobservedM3\030\t \001(\t\022\027\n\017observedBar"
+          + "rels\030\n \001(\t\022\033\n\023observedBarrelsAt60\030\013 \001(\t\022"
+          + "\013\n\003api\030\014 \001(\t\022\023\n\013temperature\030\r \001(\t\022\n\n\002id\030"
+          + "\016 \001(\003\022\021\n\tcolorCode\030\017 \001(\t\"\360\003\n%LoadableQua"
+          + "ntityCommingleCargoDetails\022\n\n\002id\030\001 \001(\003\022\r"
+          + "\n\005grade\030\002 \001(\t\022\020\n\010tankName\030\003 \001(\t\022\020\n\010quant"
+          + "ity\030\004 \001(\t\022\013\n\003api\030\005 \001(\t\022\014\n\004temp\030\006 \001(\t\022\032\n\022"
+          + "cargo1Abbreviation\030\007 \001(\t\022\032\n\022cargo2Abbrev"
+          + "iation\030\010 \001(\t\022\030\n\020cargo1Percentage\030\t \001(\t\022\030"
+          + "\n\020cargo2Percentage\030\n \001(\t\022\025\n\rcargo1Bblsdb"
+          + "s\030\013 \001(\t\022\025\n\rcargo2Bblsdbs\030\014 \001(\t\022\025\n\rcargo1"
+          + "Bbls60f\030\r \001(\t\022\025\n\rcargo2Bbls60f\030\016 \001(\t\022\020\n\010"
+          + "cargo1LT\030\017 \001(\t\022\020\n\010cargo2LT\030\020 \001(\t\022\020\n\010carg"
+          + "o1MT\030\021 \001(\t\022\020\n\010cargo2MT\030\022 \001(\t\022\020\n\010cargo1KL"
+          + "\030\023 \001(\t\022\020\n\010cargo2KL\030\024 \001(\t\022\021\n\torderedMT\030\025 "
+          + "\001(\t\022\020\n\010priority\030\026 \001(\005\022\024\n\014loadingOrder\030\027 "
+          + "\001(\005\"\335\003\n\034LoadableQuantityCargoDetails\022\n\n\002"
+          + "id\030\001 \001(\003\022\r\n\005grade\030\002 \001(\t\022\024\n\014estimatedAPI\030"
+          + "\003 \001(\t\022\025\n\restimatedTemp\030\004 \001(\t\022\024\n\014orderBbl"
+          + "sdbs\030\005 \001(\t\022\024\n\014orderBbls60f\030\006 \001(\t\022\024\n\014minT"
+          + "olerence\030\007 \001(\t\022\024\n\014maxTolerence\030\010 \001(\t\022\027\n\017"
+          + "loadableBblsdbs\030\t \001(\t\022\027\n\017loadableBbls60f"
+          + "\030\n \001(\t\022\022\n\nloadableLT\030\013 \001(\t\022\022\n\nloadableMT"
+          + "\030\014 \001(\t\022\022\n\nloadableKL\030\r \001(\t\022\034\n\024difference"
+          + "Percentage\030\016 \001(\t\022\027\n\017differenceColor\030\017 \001("
+          + "\t\022\017\n\007cargoId\030\020 \001(\003\022\021\n\torderedMT\030\021 \001(\t\022\031\n"
+          + "\021cargoAbbreviation\030\022 \001(\t\022\021\n\tcolorCode\030\023 "
+          + "\001(\t\022\020\n\010priority\030\024 \001(\005\022\024\n\014loadingOrder\030\025 "
+          + "\001(\005\"/\n\022ConfirmPlanRequest\022\031\n\021loadablePat"
+          + "ternId\030\001 \001(\003\";\n\020ConfirmPlanReply\022\'\n\016resp"
+          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\"5\n\032Loa"
+          + "dableStudyStatusRequest\022\027\n\017loadableStudy"
+          + "Id\030\001 \001(\003\"b\n\030LoadableStudyStatusReply\022\'\n\016"
+          + "responseStatus\030\001 \001(\0132\017.ResponseStatus\022\035\n"
+          + "\025loadableStudystatusId\030\002 \001(\003\"F\n\021AlgoStat"
+          + "usRequest\022\022\n\nprocesssId\030\001 \001(\t\022\035\n\025loadabl"
+          + "eStudystatusId\030\002 \001(\003\":\n\017AlgoStatusReply\022"
+          + "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus"
+          + "\"&\n\013AlgoRequest\022\027\n\017loadableStudyId\030\001 \001(\003"
+          + "\"H\n\tAlgoReply\022\'\n\016responseStatus\030\001 \001(\0132\017."
+          + "ResponseStatus\022\022\n\nprocesssId\030\002 \001(\t\"\225\001\n\rV"
+          + "oyageRequest\022\021\n\tcaptainId\030\001 \001(\003\022\026\n\016chief"
+          + "OfficerId\030\002 \001(\003\022\021\n\tcompanyId\030\003 \001(\003\022\020\n\010ve"
+          + "sselId\030\004 \001(\003\022\020\n\010voyageNo\030\005 \001(\t\022\021\n\tstartD"
+          + "ate\030\006 \001(\t\022\017\n\007endDate\030\007 \001(\t\"E\n\013VoyageRepl"
+          + "y\022\020\n\010voyageId\030\001 \001(\003\022$\n\016responseStatus\030\002 "
+          + "\001(\0132\014.StatusReply\"\206\001\n\014VoyageDetail\022\n\n\002id"
+          + "\030\001 \001(\003\022\024\n\014voyageNumber\030\002 \001(\t\022\021\n\tstartDat"
+          + "e\030\003 \001(\t\022\017\n\007endDate\030\004 \001(\t\022\016\n\006status\030\005 \001(\t"
+          + "\022 \n\030confirmedLoadableStudyId\030\006 \001(\003\"W\n\017Vo"
+          + "yageListReply\022$\n\016responseStatus\030\001 \001(\0132\014."
+          + "StatusReply\022\036\n\007voyages\030\002 \003(\0132\r.VoyageDet"
+          + "ail\"<\n\013StatusReply\022\016\n\006status\030\001 \001(\t\022\014\n\004co"
+          + "de\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\"\237\005\n\027LoadableQu"
+          + "antityRequest\022\025\n\restSeaDensity\030\001 \001(\t\022\013\n\003"
+          + "tpc\030\002 \001(\t\022\022\n\nestSagging\030\003 \001(\t\022#\n\033displac"
+          + "mentDraftRestriction\030\004 \001(\t\022\031\n\021vesselLigh"
+          + "tWeight\030\005 \001(\t\022\013\n\003dwt\030\006 \001(\t\022\024\n\014sgCorrecti"
+          + "on\030\007 \001(\t\022\030\n\020saggingDeduction\030\010 \001(\t\022\024\n\014es"
+          + "tFOOnBoard\030\t \001(\t\022\024\n\014estDOOnBoard\030\n \001(\t\022\034"
+          + "\n\024estFreshWaterOnBoard\030\013 \001(\t\022\020\n\010constant"
+          + "\030\014 \001(\t\022\022\n\notherIfAny\030\r \001(\t\022\025\n\rtotalQuant"
+          + "ity\030\016 \001(\t\022\034\n\024distanceFromLastPort\030\017 \001(\t\022"
+          + "\032\n\022vesselAverageSpeed\030\020 \001(\t\022\027\n\017loadableS"
+          + "tudyId\030\021 \001(\003\022\031\n\021updateDateAndTime\030\022 \001(\t\022"
+          + "\n\n\002sg\030\023 \001(\t\022\032\n\022boilerWaterOnBoard\030\024 \001(\t\022"
+          + "\017\n\007ballast\030\025 \001(\t\022\024\n\014runningHours\030\026 \001(\t\022\023"
+          + "\n\013runningDays\030\027 \001(\t\022\021\n\tfoConInSZ\030\030 \001(\t\022\016"
+          + "\n\006portId\030\031 \001(\003\022\030\n\020draftRestriction\030\032 \001(\t"
+          + "\022\020\n\010subTotal\030\033 \001(\t\022\033\n\023foConsumptionPerDa"
+          + "y\030\034 \001(\t\022\n\n\002id\030\035 \001(\003\"r\n\025LoadableQuantityR"
+          + "eply\022$\n\016responseStatus\030\001 \001(\0132\014.StatusRep"
+          + "ly\022\032\n\022loadableQuantityId\030\002 \001(\003\022\027\n\017loadab"
+          + "leStudyId\030\003 \001(\003\"f\n\024LoadableStudyRequest\022"
+          + "\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010"
+          + "voyageId\030\003 \001(\003\022\027\n\017loadableStudyId\030\004 \001(\003\""
+          + "K\n\027LoadableStudyAttachment\022\022\n\nbyteString"
+          + "\030\001 \001(\014\022\020\n\010fileName\030\002 \001(\t\022\n\n\002id\030\003 \001(\003\"\361\003\n"
+          + "\023LoadableStudyDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004name"
+          + "\030\002 \001(\t\022\016\n\006detail\030\003 \001(\t\022\020\n\010statusId\030\004 \001(\003"
+          + "\022\016\n\006status\030\005 \001(\t\022\023\n\013createdDate\030\006 \001(\t\022\021\n"
+          + "\tcharterer\030\007 \001(\t\022\024\n\014subCharterer\030\010 \001(\t\022\021"
+          + "\n\tdraftMark\030\t \001(\t\022\023\n\013loadLineXId\030\n \001(\003\022\030"
+          + "\n\020draftRestriction\030\013 \001(\t\022\031\n\021maxAirTemper"
+          + "ature\030\014 \001(\t\022\033\n\023maxWaterTemperature\030\r \001(\t"
+          + "\022\030\n\020duplicatedFromId\030\016 \001(\003\022\020\n\010voyageId\030\017"
+          + " \001(\003\022\020\n\010vesselId\030\020 \001(\003\022-\n\013attachments\030\021 "
+          + "\003(\0132\030.LoadableStudyAttachment\022\032\n\022dischar"
+          + "gingPortIds\030\022 \003(\003\022\032\n\022dischargingCargoId\030"
+          + "\023 \001(\003\022\025\n\rcreatedFromId\030\024 \001(\003\022\032\n\022deletedA"
+          + "ttachments\030\025 \003(\003\"x\n\022LoadableStudyReply\022\'"
+          + "\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022"
+          + "-\n\017loadableStudies\030\002 \003(\0132\024.LoadableStudy"
+          + "Detail\022\n\n\002id\030\003 \001(\003\"5\n\021LoadingPortDetail\022"
+          + "\016\n\006portId\030\001 \001(\003\022\020\n\010quantity\030\002 \001(\t\".\n\021seg"
+          + "regationDetail\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001("
+          + "\t\"\252\002\n\025CargoNominationDetail\022\n\n\002id\030\001 \001(\003\022"
+          + "\027\n\017loadableStudyId\030\002 \001(\003\022\020\n\010priority\030\003 \001"
+          + "(\003\022\r\n\005color\030\004 \001(\t\022\017\n\007cargoId\030\005 \001(\003\022\024\n\014ab"
+          + "breviation\030\006 \001(\t\022.\n\022loadingPortDetails\030\007"
+          + " \003(\0132\022.LoadingPortDetail\022\020\n\010quantity\030\010 \001"
+          + "(\t\022\024\n\014maxTolerance\030\t \001(\t\022\024\n\014minTolerance"
+          + "\030\n \001(\t\022\016\n\006apiEst\030\013 \001(\t\022\017\n\007tempEst\030\014 \001(\t\022"
+          + "\025\n\rsegregationId\030\r \001(\003\"\247\001\n\026CargoNominati"
+          + "onRequest\022\020\n\010vesselId\030\001 \001(\003\022\020\n\010voyageId\030"
+          + "\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\031\n\021cargoN"
+          + "ominationId\030\004 \001(\003\0225\n\025cargoNominationDeta"
+          + "il\030\005 \001(\0132\026.CargoNominationDetail\"\214\001\n\024Car"
+          + "goNominationReply\022\'\n\016responseStatus\030\001 \001("
+          + "\0132\017.ResponseStatus\022\031\n\021cargoNominationId\030"
+          + "\002 \001(\003\0220\n\020cargoNominations\030\003 \003(\0132\026.CargoN"
+          + "ominationDetail\"\310\001\n\023PortRotationRequest\022"
+          + "\027\n\017loadableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001"
+          + "(\003\022\020\n\010voyageId\030\003 \001(\003\022\032\n\022dischargingPortI"
+          + "ds\030\004 \003(\003\022\n\n\002id\030\005 \001(\003\0220\n\023portRotationDeta"
+          + "ils\030\006 \003(\0132\023.PortRotationDetail\022\032\n\022discha"
+          + "rgingCargoId\030\007 \001(\003\"\332\002\n\022PortRotationDetai"
+          + "l\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\017\n\007berthId"
+          + "\030\003 \001(\003\022\023\n\013operationId\030\004 \001(\003\022\027\n\017seaWaterD"
+          + "ensity\030\005 \001(\t\022\034\n\024distanceBetweenPorts\030\006 \001"
+          + "(\t\022\022\n\ntimeOfStay\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t"
+          + "\022\023\n\013maxAirDraft\030\t \001(\t\022\013\n\003eta\030\n \001(\t\022\021\n\tet"
+          + "aActual\030\013 \001(\t\022\013\n\003etd\030\014 \001(\t\022\021\n\tetdActual\030"
+          + "\r \001(\t\022\022\n\nlayCanFrom\030\016 \001(\t\022\020\n\010layCanTo\030\017 "
+          + "\001(\t\022\027\n\017loadableStudyId\030\020 \001(\003\022\021\n\tportOrde"
+          + "r\030\021 \001(\003\".\n\tOperation\022\n\n\002id\030\001 \001(\003\022\025\n\roper"
+          + "ationName\030\002 \001(\t\"\230\001\n\021PortRotationReply\022\'\n"
+          + "\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022\""
+          + "\n\005ports\030\002 \003(\0132\023.PortRotationDetail\022\036\n\nop"
+          + "erations\030\003 \003(\0132\n.Operation\022\026\n\016portRotati"
+          + "onId\030\004 \001(\003\"\241\001\n\030LoadableQuantityResponse\022"
+          + "9\n\027loadableQuantityRequest\030\001 \001(\0132\030.Loada"
+          + "bleQuantityRequest\022$\n\016responseStatus\030\002 \001"
+          + "(\0132\014.StatusReply\022\016\n\006caseNo\030\003 \001(\005\022\024\n\014sele"
+          + "ctedZone\030\004 \001(\t\",\n\020ValveSegregation\022\n\n\002id"
+          + "\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"2\n\027ValveSegregation"
+          + "Request\022\027\n\017loadableStudyId\030\001 \001(\003\"m\n\025Valv"
+          + "eSegregationReply\022\'\n\016responseStatus\030\001 \001("
+          + "\0132\017.ResponseStatus\022+\n\020valveSegregation\030\002"
+          + " \003(\0132\021.ValveSegregation\"e\n\025OnHandQuantit"
+          + "yRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId\030"
+          + "\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\016\n\006portId"
+          + "\030\004 \001(\003\"\366\002\n\024OnHandQuantityDetail\022\n\n\002id\030\001 "
+          + "\001(\003\022\016\n\006portId\030\002 \001(\003\022\022\n\nfuelTypeId\030\003 \001(\003\022"
+          + "\020\n\010fuelType\030\004 \001(\t\022\016\n\006tankId\030\005 \001(\003\022\020\n\010tan"
+          + "kName\030\006 \001(\t\022\025\n\rarrivalVolume\030\007 \001(\t\022\027\n\017ar"
+          + "rivalQuantity\030\010 \001(\t\022\035\n\025actualArrivalQuan"
+          + "tity\030\t \001(\t\022\027\n\017departureVolume\030\n \001(\t\022\031\n\021d"
+          + "epartureQuantity\030\013 \001(\t\022\037\n\027actualDepartur"
+          + "eQuantity\030\014 \001(\t\022\027\n\017loadableStudyId\030\r \001(\003"
+          + "\022\021\n\tcolorCode\030\016 \001(\t\022\031\n\021fuelTypeShortName"
+          + "\030\017 \001(\t\022\017\n\007density\030\020 \001(\t\"\342\002\n\nTankDetail\022\016"
+          + "\n\006tankId\030\001 \001(\003\022\026\n\016tankCategoryId\030\002 \001(\003\022\030"
+          + "\n\020tankCategoryName\030\003 \001(\t\022\020\n\010tankName\030\004 \001"
+          + "(\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025\n\rframeNumb"
+          + "erTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t\022\030\n\020fillCap"
+          + "acityCubm\030\010 \001(\t\022\017\n\007density\030\t \001(\t\022\022\n\nisSl"
+          + "opTank\030\n \001(\010\022\022\n\nheightFrom\030\013 \001(\t\022\020\n\010heig"
+          + "htTo\030\014 \001(\t\022\021\n\ttankOrder\030\r \001(\005\022\030\n\020tankDis"
+          + "playOrder\030\016 \001(\005\022\021\n\ttankGroup\030\017 \001(\005\022\030\n\020fu"
+          + "llCapacityCubm\030\020 \001(\t\"+\n\010TankList\022\037\n\nvess"
+          + "elTank\030\001 \003(\0132\013.TankDetail\"\261\001\n\023OnHandQuan"
+          + "tityReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp"
+          + "onseStatus\022-\n\016onHandQuantity\030\002 \003(\0132\025.OnH"
+          + "andQuantityDetail\022\030\n\005tanks\030\003 \003(\0132\t.TankL"
+          + "ist\022\034\n\trearTanks\030\004 \003(\0132\t.TankList\022\n\n\002id\030"
+          + "\005 \001(\003\"x\n\026OnBoardQuantityRequest\022\021\n\tcompa"
+          + "nyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\027\n\017loadable"
+          + "StudyId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\022\020\n\010voyageI"
+          + "d\030\005 \001(\003\"\203\002\n\025OnBoardQuantityDetail\022\n\n\002id\030"
+          + "\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\016\n\006tankId\030\003 \001(\003\022\020\n"
+          + "\010tankName\030\004 \001(\t\022\017\n\007cargoId\030\005 \001(\003\022\021\n\tcarg"
+          + "oName\030\006 \001(\t\022\020\n\010sounding\030\007 \001(\t\022\016\n\006weight\030"
+          + "\010 \001(\t\022\024\n\014actualWeight\030\t \001(\t\022\016\n\006volume\030\n "
+          + "\001(\t\022\027\n\017loadableStudyId\030\013 \001(\003\022\021\n\tcolorCod"
+          + "e\030\014 \001(\t\022\024\n\014abbreviation\030\r \001(\t\"\226\001\n\024OnBoar"
+          + "dQuantityReply\022\'\n\016responseStatus\030\001 \001(\0132\017"
+          + ".ResponseStatus\022/\n\017onBoardQuantity\030\002 \003(\013"
+          + "2\026.OnBoardQuantityDetail\022\030\n\005tanks\030\003 \003(\0132"
+          + "\t.TankList\022\n\n\002id\030\004 \001(\003\".\n\022PurposeOfCommi"
+          + "ngle\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"4\n\031Purpos"
+          + "eOfCommingleRequest\022\027\n\017loadableStudyId\030\001"
+          + " \001(\003\"s\n\027PurposeOfCommingleReply\022\'\n\016respo"
+          + "nseStatus\030\001 \001(\0132\017.ResponseStatus\022/\n\022purp"
+          + "oseOfCommingle\030\002 \003(\0132\023.PurposeOfCommingl"
+          + "e\"\303\001\n\024LoadablePatternReply\022)\n\017loadablePa"
+          + "ttern\030\001 \003(\0132\020.LoadablePattern\022\'\n\016respons"
+          + "eStatus\030\002 \001(\0132\017.ResponseStatus\022\030\n\005tanks\030"
+          + "\003 \003(\0132\t.TankList\022\"\n\032loadablePatternCreat"
+          + "edDate\030\004 \001(\t\022\031\n\021loadableStudyName\030\005 \001(\t\""
+          + "\370\001\n\017LoadablePattern\022\031\n\021loadablePatternId"
+          + "\030\001 \001(\003\022A\n\033loadablePatternCargoDetails\030\002 "
+          + "\003(\0132\034.LoadablePatternCargoDetails\022\023\n\013con"
+          + "straints\030\003 \003(\t\022\035\n\025loadableStudyStatusId\030"
+          + "\004 \001(\003\022\022\n\ncaseNumber\030\005 \001(\005\022?\n\032loadablePla"
+          + "nStowageDetails\030\006 \003(\0132\033.LoadablePlanStow"
+          + "ageDetails\"\311\001\n\033LoadablePatternCargoDetai"
+          + "ls\022\020\n\010priority\030\001 \001(\003\022\031\n\021cargoAbbreviatio"
+          + "n\030\002 \001(\t\022\022\n\ncargoColor\030\003 \001(\t\022\020\n\010quantity\030"
+          + "\004 \001(\t\022\027\n\017orderedQuantity\030\005 \001(\t\022\023\n\013isComm"
+          + "ingle\030\006 \001(\010\022)\n!loadablePatternCommingleD"
+          + "etailsId\030\007 \001(\003\"1\n\026LoadablePatternRequest"
+          + "\022\027\n\017loadableStudyId\030\001 \001(\003\"\265\001\n\016CommingleC"
+          + "argo\022\n\n\002id\030\001 \001(\003\022\021\n\tpurposeId\030\002 \001(\003\022\020\n\010s"
+          + "lopOnly\030\003 \001(\010\022\026\n\016preferredTanks\030\004 \003(\003\022\020\n"
+          + "\010cargo1Id\030\005 \001(\003\022\021\n\tcargo1pct\030\006 \001(\t\022\020\n\010ca"
+          + "rgo2Id\030\007 \001(\003\022\021\n\tcargo2pct\030\010 \001(\t\022\020\n\010quant"
+          + "ity\030\t \001(\t\"k\n\025CommingleCargoRequest\022\027\n\017lo"
+          + "adableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\'\n"
+          + "\016commingleCargo\030\003 \003(\0132\017.CommingleCargo\"\201"
+          + "\001\n\023CommingleCargoReply\022\'\n\016responseStatus"
+          + "\030\001 \001(\0132\017.ResponseStatus\022\'\n\016commingleCarg"
+          + "o\030\002 \003(\0132\017.CommingleCargo\022\030\n\005tanks\030\003 \003(\0132"
+          + "\t.TankList\"S\n&LoadablePatternCommingleDe"
+          + "tailsRequest\022)\n!loadablePatternCommingle"
+          + "DetailsId\030\001 \001(\003\"\317\002\n$LoadablePatternCommi"
+          + "ngleDetailsReply\022\n\n\002id\030\001 \001(\003\022\025\n\rtankShor"
+          + "tName\030\002 \001(\t\022\031\n\021cargo1Abbrivation\030\003 \001(\t\022\031"
+          + "\n\021cargo2Abbrivation\030\004 \001(\t\022\r\n\005grade\030\005 \001(\t"
+          + "\022\020\n\010quantity\030\006 \001(\t\022\013\n\003api\030\007 \001(\t\022\023\n\013tempe"
+          + "rature\030\010 \001(\t\022\026\n\016cargo1Quantity\030\t \001(\t\022\026\n\016"
+          + "cargo2Quantity\030\n \001(\t\022\030\n\020cargo1Percentage"
+          + "\030\013 \001(\t\022\030\n\020cargo2Percentage\030\014 \001(\t\022\'\n\016resp"
+          + "onseStatus\030\r \001(\0132\017.ResponseStatus\"\254\007\n\020Sy"
+          + "nopticalRecord\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001"
+          + "(\003\022\020\n\010portName\030\003 \001(\t\022\025\n\roperationType\030\004 "
+          + "\001(\t\022\020\n\010distance\030\005 \001(\t\022\r\n\005speed\030\006 \001(\t\022\024\n\014"
+          + "runningHours\030\007 \001(\t\022\023\n\013inPortHours\030\010 \001(\t\022"
+          + "\025\n\rtimeOfSunrise\030\t \001(\t\022\024\n\014timeOfSunset\030\n"
+          + " \001(\t\022\022\n\nhwTideFrom\030\013 \001(\t\022\020\n\010hwTideTo\030\014 \001"
+          + "(\t\022\026\n\016hwTideTimeFrom\030\r \001(\t\022\024\n\014hwTideTime"
+          + "To\030\016 \001(\t\022\022\n\nlwTideFrom\030\017 \001(\t\022\020\n\010lwTideTo"
+          + "\030\020 \001(\t\022\026\n\016lwTideTimeFrom\030\021 \001(\t\022\024\n\014lwTide"
+          + "TimeTo\030\022 \001(\t\022\027\n\017specificGravity\030\023 \001(\t\022\024\n"
+          + "\014etaEtdActual\030\024 \001(\t\022\027\n\017etaEtdEstimated\030\025"
+          + " \001(\t\022%\n\005cargo\030\026 \003(\0132\026.SynopticalCargoRec"
+          + "ord\022\031\n\021cargoPlannedTotal\030\027 \001(\t\022\030\n\020cargoA"
+          + "ctualTotal\030\030 \001(\t\022!\n\003ohq\030\031 \003(\0132\024.Synoptic"
+          + "alOhqRecord\022\021\n\tportOrder\030\032 \001(\003\022\025\n\rothers"
+          + "Planned\030\033 \001(\t\022\024\n\014othersActual\030\034 \001(\t\022\027\n\017c"
+          + "onstantPlanned\030\035 \001(\t\022\026\n\016constantActual\030\036"
+          + " \001(\t\022\027\n\017totalDwtPlanned\030\037 \001(\t\022\026\n\016totalDw"
+          + "tActual\030  \001(\t\022\033\n\023displacementPlanned\030! \001"
+          + "(\t\022\032\n\022displacementActual\030\" \001(\t\0226\n\016loadic"
+          + "atorData\030# \001(\0132\036.SynopticalTableLoadicat"
+          + "orData\022\026\n\016ballastPlanned\030$ \001(\t\022\025\n\rballas"
+          + "tActual\030% \001(\t\022)\n\007ballast\030& \003(\0132\030.Synopti"
+          + "calBallastRecord\"\337\001\n\025SynopticalCargoReco"
+          + "rd\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\r"
+          + "plannedWeight\030\003 \001(\t\022\024\n\014actualWeight\030\004 \001("
+          + "\t\022\r\n\005obqId\030\005 \001(\003\022\021\n\tcolorCode\030\006 \001(\t\022\027\n\017c"
+          + "orrectedUllage\030\007 \001(\t\022\031\n\021cargoAbbreviatio"
+          + "n\030\010 \001(\t\022\017\n\007cargoId\030\t \001(\003\022\020\n\010capacity\030\n \001"
+          + "(\t\"\212\001\n\023SynopticalOhqRecord\022\016\n\006tankId\030\001 \001"
+          + "(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rplannedWeight\030\003 "
+          + "\001(\t\022\024\n\014actualWeight\030\004 \001(\t\022\022\n\nfuelTypeId\030"
+          + "\005 \001(\003\022\020\n\010fuelType\030\006 \001(\t\"z\n\027SynopticalBal"
+          + "lastRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002"
+          + " \001(\t\022\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014actualWei"
+          + "ght\030\004 \001(\t\022\020\n\010capacity\030\005 \001(\t\"\255\001\n\026Synoptic"
+          + "alTableRequest\022\027\n\017loadableStudyId\030\001 \001(\003\022"
+          + "\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\016\n\006p"
+          + "ortId\030\004 \001(\003\022+\n\020synopticalRecord\030\005 \003(\0132\021."
+          + "SynopticalRecord\022\031\n\021loadablePatternId\030\006 "
+          + "\001(\003\"\353\001\n\024SynopticalTableReply\022\'\n\016response"
+          + "Status\030\001 \001(\0132\017.ResponseStatus\022,\n\021synopti"
+          + "calRecords\030\002 \003(\0132\021.SynopticalRecord\022\n\n\002i"
+          + "d\030\003 \001(\003\022$\n\021ballastFrontTanks\030\004 \003(\0132\t.Tan"
+          + "kList\022%\n\022ballastCenterTanks\030\005 \003(\0132\t.Tank"
+          + "List\022#\n\020ballastRearTanks\030\006 \003(\0132\t.TankLis"
+          + "t\"\255\003\n\035SynopticalTableLoadicatorData\022\016\n\006h"
+          + "ogSag\030\001 \001(\t\022\025\n\rfinalDraftFwd\030\002 \001(\t\022\025\n\rfi"
+          + "nalDraftAft\030\003 \001(\t\022\025\n\rfinalDraftMid\030\004 \001(\t"
+          + "\022\026\n\016finalDraftTrim\030\005 \001(\t\022!\n\031calculatedDr"
+          + "aftFwdPlanned\030\006 \001(\t\022 \n\030calculatedDraftFw"
+          + "dActual\030\007 \001(\t\022!\n\031calculatedDraftAftPlann"
+          + "ed\030\010 \001(\t\022 \n\030calculatedDraftAftActual\030\t \001"
+          + "(\t\022!\n\031calculatedDraftMidPlanned\030\n \001(\t\022 \n"
+          + "\030calculatedDraftMidActual\030\013 \001(\t\022\035\n\025calcu"
+          + "latedTrimPlanned\030\014 \001(\t\022\034\n\024calculatedTrim"
+          + "Actual\030\r \001(\t\022\023\n\013blindSector\030\016 \001(\t\"I\n\036Loa"
+          + "dableStudyAttachmentRequest\022\016\n\006fileId\030\001 "
+          + "\001(\003\022\027\n\017loadableStudyId\030\002 \001(\003\"m\n\034Loadable"
+          + "StudyAttachmentReply\022\'\n\016responseStatus\030\001"
+          + " \001(\0132\017.ResponseStatus\022\020\n\010filePath\030\002 \001(\t\022"
+          + "\022\n\nbyteString\030\003 \001(\014\";\n\020SaveCommentReply\022"
+          + "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus"
+          + "\"N\n\022SaveCommentRequest\022\031\n\021loadablePatter"
+          + "nId\030\001 \001(\003\022\017\n\007comment\030\002 \001(\t\022\014\n\004user\030\003 \001(\003"
+          + "2\332\026\n\024LoadableStudyService\022,\n\nSaveVoyage\022"
+          + "\016.VoyageRequest\032\014.VoyageReply\"\000\0228\n\022GetVo"
+          + "yagesByVessel\022\016.VoyageRequest\032\020.VoyageLi"
+          + "stReply\"\000\022J\n\024SaveLoadableQuantity\022\030.Load"
+          + "ableQuantityRequest\032\026.LoadableQuantityRe"
+          + "ply\"\000\022T\n$FindLoadableStudiesByVesselAndV"
+          + "oyage\022\025.LoadableStudyRequest\032\023.LoadableS"
+          + "tudyReply\"\000\022@\n\021SaveLoadableStudy\022\024.Loada"
+          + "bleStudyDetail\032\023.LoadableStudyReply\"\000\022G\n"
+          + "\023SaveCargoNomination\022\027.CargoNominationRe"
+          + "quest\032\025.CargoNominationReply\"\000\022J\n\034GetLoa"
+          + "dableStudyPortRotation\022\024.PortRotationReq"
+          + "uest\032\022.PortRotationReply\"\000\022J\n\026GetCargoNo"
+          + "minationById\022\027.CargoNominationRequest\032\025."
+          + "CargoNominationReply\"\000\022I\n\023GetValveSegreg"
+          + "ation\022\030.ValveSegregationRequest\032\026.ValveS"
+          + "egregationReply\"\000\022J\n\023getLoadableQuantity"
+          + "\022\026.LoadableQuantityReply\032\031.LoadableQuant"
+          + "ityResponse\"\000\022J\n\035SaveLoadableStudyPortRo"
+          + "tation\022\023.PortRotationDetail\032\022.PortRotati"
+          + "onReply\"\000\022O\n!SaveLoadableStudyPortRotati"
+          + "onList\022\024.PortRotationRequest\032\022.PortRotat"
+          + "ionReply\"\000\022I\n\025DeleteCargoNomination\022\027.Ca"
+          + "rgoNominationRequest\032\025.CargoNominationRe"
+          + "ply\"\000\022B\n\024SaveDischargingPorts\022\024.PortRota"
+          + "tionRequest\032\022.PortRotationReply\"\000\022N\n Get"
+          + "PortRotationByLoadableStudyId\022\024.PortRota"
+          + "tionRequest\032\022.PortRotationReply\"\000\022C\n\023Del"
+          + "eteLoadableStudy\022\025.LoadableStudyRequest\032"
+          + "\023.LoadableStudyReply\"\000\022@\n\022DeletePortRota"
+          + "tion\022\024.PortRotationRequest\032\022.PortRotatio"
+          + "nReply\"\000\022C\n\021GetOnHandQuantity\022\026.OnHandQu"
+          + "antityRequest\032\024.OnHandQuantityReply\"\000\022C\n"
+          + "\022SaveOnHandQuantity\022\025.OnHandQuantityDeta"
+          + "il\032\024.OnHandQuantityReply\"\000\022M\n\031GetLoadabl"
+          + "ePatternDetails\022\027.LoadablePatternRequest"
+          + "\032\025.LoadablePatternReply\"\000\022A\n\024SaveLoadabl"
+          + "ePatterns\022\033.LoadablePatternAlgoRequest\032\n"
+          + ".AlgoReply\"\000\022O\n\025GetPurposeOfCommingle\022\032."
+          + "PurposeOfCommingleRequest\032\030.PurposeOfCom"
+          + "mingleReply\"\000\022C\n\021GetCommingleCargo\022\026.Com"
+          + "mingleCargoRequest\032\024.CommingleCargoReply"
+          + "\"\000\022D\n\022SaveCommingleCargo\022\026.CommingleCarg"
+          + "oRequest\032\024.CommingleCargoReply\"\000\022v\n\"GetL"
+          + "oadablePatternCommingleDetails\022\'.Loadabl"
+          + "ePatternCommingleDetailsRequest\032%.Loadab"
+          + "lePatternCommingleDetailsReply\"\000\0226\n\030Gene"
+          + "rateLoadablePatterns\022\014.AlgoRequest\032\n.Alg"
+          + "oReply\"\000\022J\n\026getLoadablePatternList\022\027.Loa"
+          + "dablePatternRequest\032\025.LoadablePatternRep"
+          + "ly\"\000\022F\n\022GetOnBoardQuantity\022\027.OnBoardQuan"
+          + "tityRequest\032\025.OnBoardQuantityReply\"\000\022F\n\023"
+          + "SaveOnBoardQuantity\022\026.OnBoardQuantityDet"
+          + "ail\032\025.OnBoardQuantityReply\"\000\022E\n\033SaveAlgo"
+          + "LoadableStudyStatus\022\022.AlgoStatusRequest\032"
+          + "\020.AlgoStatusReply\"\000\022G\n\023SaveSynopticalTab"
+          + "le\022\027.SynopticalTableRequest\032\025.Synoptical"
+          + "TableReply\"\000\022F\n\022GetSynopticalTable\022\027.Syn"
+          + "opticalTableRequest\032\025.SynopticalTableRep"
+          + "ly\"\000\022M\n\031GetSynopticalDataByPortId\022\027.Syno"
+          + "pticalTableRequest\032\025.SynopticalTableRepl"
+          + "y\"\000\022Q\n\035GetSynopticalPortDataByPortId\022\027.S"
+          + "ynopticalTableRequest\032\025.SynopticalTableR"
+          + "eply\"\000\022R\n\026GetLoadableStudyStatus\022\033.Loada"
+          + "bleStudyStatusRequest\032\031.LoadableStudySta"
+          + "tusReply\"\000\022R\n\026GetLoadablePlanDetails\022\033.L"
+          + "oadablePlanDetailsRequest\032\031.LoadablePlan"
+          + "DetailsReply\"\000\0227\n\013ConfirmPlan\022\023.ConfirmP",
+      "lanRequest\032\021.ConfirmPlanReply\"\000\022c\n\037Downl"
+          + "oadLoadableStudyAttachment\022\037.LoadableStu"
+          + "dyAttachmentRequest\032\035.LoadableStudyAttac"
+          + "hmentReply\"\000\0227\n\013SaveComment\022\023.SaveCommen"
+          + "tRequest\032\021.SaveCommentReply\"\000B\036\n\032com.cpd"
+          + "ss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -101273,14 +102217,14 @@ public final class LoadableStudy {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePatternAlgoRequest_descriptor,
             new java.lang.String[] {
-              "ProcesssId", "LoadablePlanDetails",
+              "ProcesssId", "LoadablePlanDetails", "LoadableStudyId",
             });
     internal_static_LoadablePlanDetails_descriptor = getDescriptor().getMessageTypes().get(1);
     internal_static_LoadablePlanDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePlanDetails_descriptor,
             new java.lang.String[] {
-              "CaseNumber", "LoadablePlanPortWiseDetails",
+              "CaseNumber", "LoadablePlanPortWiseDetails", "Constraints",
             });
     internal_static_LoadablePlanPortWiseDetails_descriptor =
         getDescriptor().getMessageTypes().get(2);
@@ -101395,6 +102339,9 @@ public final class LoadableStudy {
               "Cargo2MT",
               "Cargo1KL",
               "Cargo2KL",
+              "OrderedMT",
+              "Priority",
+              "LoadingOrder",
             });
     internal_static_LoadableQuantityCargoDetails_descriptor =
         getDescriptor().getMessageTypes().get(9);
@@ -101417,6 +102364,12 @@ public final class LoadableStudy {
               "LoadableKL",
               "DifferencePercentage",
               "DifferenceColor",
+              "CargoId",
+              "OrderedMT",
+              "CargoAbbreviation",
+              "ColorCode",
+              "Priority",
+              "LoadingOrder",
             });
     internal_static_ConfirmPlanRequest_descriptor = getDescriptor().getMessageTypes().get(10);
     internal_static_ConfirmPlanRequest_fieldAccessorTable =
@@ -101874,9 +102827,9 @@ public final class LoadableStudy {
               "LoadablePatternId",
               "LoadablePatternCargoDetails",
               "Constraints",
-              "TotalDifferenceColor",
               "LoadableStudyStatusId",
               "CaseNumber",
+              "LoadablePlanStowageDetails",
             });
     internal_static_LoadablePatternCargoDetails_descriptor =
         getDescriptor().getMessageTypes().get(55);
@@ -101887,11 +102840,8 @@ public final class LoadableStudy {
               "Priority",
               "CargoAbbreviation",
               "CargoColor",
-              "TankId",
               "Quantity",
-              "Difference",
-              "DifferenceColor",
-              "LoadablePatternDetailsId",
+              "OrderedQuantity",
               "IsCommingle",
               "LoadablePatternCommingleDetailsId",
             });

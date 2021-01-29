@@ -67,7 +67,7 @@ service LoadableStudyService {
 	rpc GetLoadablePatternDetails(LoadablePatternRequest) returns (LoadablePatternReply){
 	}
 	
-	rpc SaveLoadablePatternDetails(LoadablePatternAlgoRequest) returns (AlgoReply){
+	rpc SaveLoadablePatterns(LoadablePatternAlgoRequest) returns (AlgoReply){
 	}
 	
 	rpc GetPurposeOfCommingle (PurposeOfCommingleRequest) returns (PurposeOfCommingleReply){
@@ -129,18 +129,20 @@ service LoadableStudyService {
 message LoadablePatternAlgoRequest {
 	string processsId = 1;
 	repeated LoadablePlanDetails loadablePlanDetails = 2;
+	int64 loadableStudyId = 3;
 }
 
 message LoadablePlanDetails {
 	int32 caseNumber = 1;
 	repeated LoadablePlanPortWiseDetails loadablePlanPortWiseDetails = 2;
+	repeated string constraints = 3;
 }
 
 message LoadablePlanPortWiseDetails {
 	int64 portId = 1;
 	string portCode = 2;
-	repeated LoadablePlanDetailsReply arrivalCondition = 3;
-	repeated LoadablePlanDetailsReply departureCondition = 4;
+	LoadablePlanDetailsReply arrivalCondition = 3;
+	LoadablePlanDetailsReply departureCondition = 4;
 }
 
 message LoadablePlanDetailsRequest {
@@ -177,7 +179,7 @@ message LoadablePlanBallastDetails {
  	string rdgLevel = 3;
 	string correctionFactor = 4;
 	string correctedLevel = 5;
-	string metricTon = 6;
+	string metricTon = 6; //quantity
 	string cubicMeter = 7;
 	string percentage = 8;
 	string sg = 9;
@@ -229,6 +231,9 @@ message LoadableQuantityCommingleCargoDetails {
 	 string cargo2MT = 18;
 	 string cargo1KL = 19;
 	 string cargo2KL = 20;
+	 string orderedMT = 21;
+	 int32 priority = 22;
+	 int32 loadingOrder = 23;
 }
 
 message LoadableQuantityCargoDetails {
@@ -247,6 +252,12 @@ message LoadableQuantityCargoDetails {
 	 string loadableKL = 13;
 	 string differencePercentage = 14;
 	 string differenceColor = 15;
+	 int64 cargoId = 16;
+	 string orderedMT = 17;
+	 string cargoAbbreviation = 18;
+	 string colorCode = 19;
+	 int32 priority = 20;
+	 int32 loadingOrder = 21;
 }
 
 message ConfirmPlanRequest {
@@ -619,23 +630,20 @@ message LoadablePatternReply {
 message LoadablePattern {
 	int64 loadablePatternId = 1;
 	repeated LoadablePatternCargoDetails loadablePatternCargoDetails = 2;
-	string constraints = 3;
-	string totalDifferenceColor = 4;
-	int64 loadableStudyStatusId = 5;
-	string caseNumber = 6;
+	repeated string constraints = 3;
+	int64 loadableStudyStatusId = 4;
+	int32 caseNumber = 5;
+	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 6;
 }
 
 message LoadablePatternCargoDetails {
  	int64 priority = 1;
   	string cargoAbbreviation = 2;
   	string cargoColor = 3;
- 	int64 tankId = 4;
- 	string quantity = 5;
- 	string difference = 6;
- 	string differenceColor = 7;
- 	int64 loadablePatternDetailsId = 8;
- 	bool isCommingle = 9;
- 	int64 loadablePatternCommingleDetailsId = 10;
+ 	string quantity = 4;
+ 	string orderedQuantity = 5;
+ 	bool isCommingle = 6;
+ 	int64 loadablePatternCommingleDetailsId = 7;
 }
 
 message LoadablePatternRequest {

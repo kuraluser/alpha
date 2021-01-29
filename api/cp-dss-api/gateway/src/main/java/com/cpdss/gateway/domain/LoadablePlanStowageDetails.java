@@ -9,7 +9,7 @@ public class LoadablePlanStowageDetails {
   private Long id;
   private Long tankId;
   private String cargoAbbreviation;
-  private String weight; // MT
+  private String weight; // MT to UI
   private String correctedUllage; // ullage(M)
   private String fillingRatio;
   private String tankName;
@@ -21,4 +21,5 @@ public class LoadablePlanStowageDetails {
   private String api;
   private String temperature;
   private String colorCode;
+  private String quantityMT; // by ALGO
 }

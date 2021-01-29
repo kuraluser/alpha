@@ -18,12 +18,16 @@ import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
@@ -1377,8 +1381,7 @@ public class LoadableStudyService {
             loadablePattern -> {
               LoadablePattern loadablePatternDto = new LoadablePattern();
               loadablePatternDto.setLoadablePatternId(loadablePattern.getLoadablePatternId());
-              loadablePatternDto.setConstraints(loadablePattern.getConstraints());
-              loadablePatternDto.setTotalDifferenceColor(loadablePattern.getTotalDifferenceColor());
+              loadablePatternDto.setConstraints(buildLoadableStudyConstraints(loadablePattern));
               loadablePatternDto.setLoadableStudyStatusId(
                   loadablePattern.getLoadableStudyStatusId());
               loadablePatternDto.setLoadablePatternCargoDetails(
@@ -1397,8 +1400,13 @@ public class LoadableStudyService {
                                 quantity ->
                                     loadablePatternCargoDetails.setQuantity(
                                         String.valueOf(quantity)));
-                        Optional.ofNullable(loadablePatternCargoDetail.getTankId())
-                            .ifPresent(tankId -> loadablePatternCargoDetails.setTankId(tankId));
+
+                        Optional.ofNullable(loadablePatternCargoDetail.getOrderedQuantity())
+                            .ifPresent(
+                                orderedQuantity ->
+                                    loadablePatternCargoDetails.setOrderedQuantity(
+                                        String.valueOf(orderedQuantity)));
+
                         Optional.ofNullable(loadablePatternCargoDetail.getCargoAbbreviation())
                             .ifPresent(
                                 cargoAbbreviation ->
@@ -1408,23 +1416,7 @@ public class LoadableStudyService {
                             .ifPresent(
                                 cargoColor ->
                                     loadablePatternCargoDetails.setCargoColor(cargoColor));
-                        Optional.ofNullable(loadablePatternCargoDetail.getDifference())
-                            .ifPresent(
-                                difference ->
-                                    loadablePatternCargoDetails.setDifference(
-                                        String.valueOf(difference)));
 
-                        Optional.ofNullable(loadablePatternCargoDetail.getDifferenceColor())
-                            .ifPresent(
-                                differenceColor ->
-                                    loadablePatternCargoDetails.setDifferenceColor(
-                                        differenceColor));
-                        Optional.ofNullable(
-                                loadablePatternCargoDetail.getLoadablePatternDetailsId())
-                            .ifPresent(
-                                loadablePatternDetailsId ->
-                                    loadablePatternCargoDetails.setLoadablePatternDetailsId(
-                                        loadablePatternDetailsId));
                         Optional.ofNullable(loadablePatternCargoDetail.getIsCommingle())
                             .ifPresent(
                                 commingle -> loadablePatternCargoDetails.setIsCommingle(commingle));
@@ -1438,11 +1430,53 @@ public class LoadableStudyService {
                             .getLoadablePatternCargoDetails()
                             .add(loadablePatternCargoDetails);
                       });
+
+              loadablePatternDto.setLoadablePlanStowageDetails(
+                  buildLoadableStudyStowageDetails(loadablePattern));
+              loadablePatternDto.setCaseNumber(loadablePattern.getCaseNumber());
               loadablePatternResponse.getLoadablePatterns().add(loadablePatternDto);
             });
     loadablePatternResponse.setResponseStatus(
         new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
     return loadablePatternResponse;
+  }
+
+  /**
+   * @param loadablePattern
+   * @return List<String>
+   */
+  private List<String> buildLoadableStudyConstraints(
+      com.cpdss.common.generated.LoadableStudy.LoadablePattern loadablePattern) {
+    List<String> constrains = new ArrayList<String>();
+    loadablePattern
+        .getConstraintsList()
+        .forEach(
+            constrain -> {
+              constrains.add(constrain);
+            });
+    return constrains;
+  }
+
+  /**
+   * @param loadablePattern
+   * @return List<LoadablePlanStowageDetails>
+   */
+  private List<LoadablePlanStowageDetails> buildLoadableStudyStowageDetails(
+      com.cpdss.common.generated.LoadableStudy.LoadablePattern loadablePattern) {
+    List<LoadablePlanStowageDetails> loadablePlanStowageDetails =
+        new ArrayList<LoadablePlanStowageDetails>();
+    loadablePattern
+        .getLoadablePlanStowageDetailsList()
+        .forEach(
+            lpsdl -> {
+              LoadablePlanStowageDetails details = new LoadablePlanStowageDetails();
+              details.setTankId(lpsdl.getTankId());
+              details.setQuantityMT(lpsdl.getWeight());
+              details.setColorCode(lpsdl.getColorCode());
+              details.setFillingRatio(lpsdl.getFillingRatio());
+              loadablePlanStowageDetails.add(details);
+            });
+    return loadablePlanStowageDetails;
   }
 
   /**
@@ -1510,9 +1544,9 @@ public class LoadableStudyService {
               ? BigDecimal.ZERO
               : new BigDecimal(detail.getArrivalQuantity()));
       onHandQuantity.setActualArrivalQuantity(
-              isEmpty(detail.getActualArrivalQuantity())
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(detail.getActualArrivalQuantity()));
+          isEmpty(detail.getActualArrivalQuantity())
+              ? BigDecimal.ZERO
+              : new BigDecimal(detail.getActualArrivalQuantity()));
       onHandQuantity.setArrivalVolume(
           isEmpty(detail.getArrivalVolume())
               ? BigDecimal.ZERO
@@ -1522,9 +1556,9 @@ public class LoadableStudyService {
               ? BigDecimal.ZERO
               : new BigDecimal(detail.getDepartureQuantity()));
       onHandQuantity.setActualDepartureQuantity(
-              isEmpty(detail.getActualDepartureQuantity())
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(detail.getActualDepartureQuantity()));
+          isEmpty(detail.getActualDepartureQuantity())
+              ? BigDecimal.ZERO
+              : new BigDecimal(detail.getActualDepartureQuantity()));
       onHandQuantity.setDepartureVolume(
           isEmpty(detail.getDepartureVolume())
               ? BigDecimal.ZERO
@@ -2662,9 +2696,172 @@ public class LoadableStudyService {
       throws GenericServiceException {
     log.info("Inside saveLoadablePatterns gateway service with correlationId : " + correlationId);
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
+    LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
+    request.setLoadableStudyId(loadableStudiesId);
+    buildLoadableQuantityCommingleAndCargoDetails(loadablePlanRequest, request);
+    AlgoReply algoReply = this.saveLoadablePatterns(request);
     algoPatternResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return algoPatternResponse;
+  }
+
+  /**
+   * @param loadablePlanRequest
+   * @param request void
+   */
+  private void buildLoadableQuantityCommingleAndCargoDetails(
+      LoadablePlanRequest loadablePlanRequest,
+      com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
+    LoadablePlanDetails.Builder planBuilder = LoadablePlanDetails.newBuilder();
+
+    loadablePlanRequest
+        .getLoadablePlanDetails()
+        .forEach(
+            lpd -> {
+              planBuilder.clearLoadablePlanPortWiseDetails();
+              LoadablePlanPortWiseDetails.Builder portWiseBuilder =
+                  LoadablePlanPortWiseDetails.newBuilder();
+              lpd.getLoadablePlanPortWiseDetails()
+                  .forEach(
+                      lppwd -> {
+                        LoadablePlanDetailsReply.Builder detailsBuilder =
+                            LoadablePlanDetailsReply.newBuilder();
+                        lppwd
+                            .getDepartureCondition()
+                            .getLoadableQuantityCommingleCargoDetails()
+                            .forEach(
+                                lqccd -> {
+                                  buildCommingleDetails(lqccd, detailsBuilder);
+                                });
+                        lppwd
+                            .getDepartureCondition()
+                            .getLoadableQuantityCargoDetails()
+                            .forEach(
+                                lpqcd -> {
+                                  buildLoadableCargoDetails(lpqcd, detailsBuilder);
+                                });
+                        lppwd
+                            .getDepartureCondition()
+                            .getLoadablePlanStowageDetails()
+                            .forEach(
+                                lpsd -> {
+                                  buildLoadablePlanStowageDetails(lpsd, detailsBuilder);
+                                });
+                        lppwd
+                            .getDepartureCondition()
+                            .getLoadablePlanBallastDetails()
+                            .forEach(
+                                lpbd -> {
+                                  buildLoadablePlanBallstDetails(lpbd, detailsBuilder);
+                                });
+                        portWiseBuilder.setDepartureCondition(detailsBuilder);
+                        portWiseBuilder.setPortId(lppwd.getPortId());
+                        planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
+                      });
+              planBuilder.setCaseNumber(lpd.getCaseNumber());
+
+              // todo add constain
+              // todo add loading order
+              request.addLoadablePlanDetails(planBuilder);
+            });
+  }
+
+  /**
+   * @param lpbd
+   * @param detailsBuilder void
+   */
+  private void buildLoadablePlanBallstDetails(
+      LoadablePlanBallastDetails lpbd,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder detailsBuilder) {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails.newBuilder();
+    Optional.ofNullable(lpbd.getQuantityMT()).ifPresent(builder::setMetricTon);
+    Optional.ofNullable(lpbd.getFillingRatio()).ifPresent(builder::setPercentage);
+    Optional.ofNullable(lpbd.getSg()).ifPresent(builder::setSg);
+    Optional.ofNullable(lpbd.getTankName()).ifPresent(builder::setTankName);
+    Optional.ofNullable(lpbd.getTankId()).ifPresent(builder::setTankId);
+    Optional.ofNullable(lpbd.getRdgLevel()).ifPresent(builder::setRdgLevel);
+    detailsBuilder.addLoadablePlanBallastDetails(builder.build());
+  }
+
+  /**
+   * @param lpsd
+   * @param detailsBuilder void
+   */
+  private void buildLoadablePlanStowageDetails(
+      LoadablePlanStowageDetails lpsd,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder detailsBuilder) {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
+    Optional.ofNullable(lpsd.getApi()).ifPresent(builder::setApi);
+    Optional.ofNullable(lpsd.getCargoAbbreviation()).ifPresent(builder::setCargoAbbreviation);
+    Optional.ofNullable(lpsd.getColorCode()).ifPresent(builder::setColorCode);
+    Optional.ofNullable(lpsd.getFillingRatio()).ifPresent(builder::setFillingRatio);
+    Optional.ofNullable(lpsd.getRdgUllage()).ifPresent(builder::setRdgUllage);
+    Optional.ofNullable(lpsd.getTankId()).ifPresent(builder::setTankId);
+    Optional.ofNullable(lpsd.getTankName()).ifPresent(builder::setTankName);
+    Optional.ofNullable(lpsd.getQuantityMT()).ifPresent(builder::setWeight);
+    Optional.ofNullable(lpsd.getTemperature()).ifPresent(builder::setTemperature);
+    detailsBuilder.addLoadablePlanStowageDetails(builder.build());
+  }
+
+  /**
+   * @param lpqcd
+   * @param detailsBuilder void
+   */
+  private void buildLoadableCargoDetails(
+      com.cpdss.gateway.domain.LoadableQuantityCargoDetails lpqcd,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder detailsBuilder) {
+    LoadableQuantityCargoDetails.Builder qunatityBuilder =
+        LoadableQuantityCargoDetails.newBuilder();
+    Optional.ofNullable(lpqcd.getEstimatedAPI()).ifPresent(qunatityBuilder::setEstimatedAPI);
+    Optional.ofNullable(lpqcd.getCargoId()).ifPresent(qunatityBuilder::setCargoId);
+    Optional.ofNullable(lpqcd.getEstimatedTemp()).ifPresent(qunatityBuilder::setEstimatedTemp);
+    Optional.ofNullable(lpqcd.getOrderedQuantity()).ifPresent(qunatityBuilder::setOrderedMT);
+    Optional.ofNullable(lpqcd.getLoadableMT()).ifPresent(qunatityBuilder::setLoadableMT);
+    Optional.ofNullable(lpqcd.getDifferencePercentage())
+        .ifPresent(qunatityBuilder::setDifferencePercentage);
+    Optional.ofNullable(lpqcd.getCargoAbbreviation())
+        .ifPresent(qunatityBuilder::setCargoAbbreviation);
+    Optional.ofNullable(lpqcd.getColorCode()).ifPresent(qunatityBuilder::setColorCode);
+    Optional.ofNullable(lpqcd.getPriority()).ifPresent(qunatityBuilder::setPriority);
+    Optional.ofNullable(lpqcd.getLoadingOrder()).ifPresent(qunatityBuilder::setLoadingOrder);
+    detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
+  }
+
+  /**
+   * @param lqccd
+   * @param detailsBuilder void
+   */
+  private void buildCommingleDetails(
+      LoadableQuantityCommingleCargoDetails lqccd,
+      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder detailsBuilder) {
+    com.cpdss.common.generated.LoadableStudy.LoadableQuantityCommingleCargoDetails.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadableQuantityCommingleCargoDetails.newBuilder();
+    Optional.ofNullable(lqccd.getApi()).ifPresent(builder::setApi);
+    Optional.ofNullable(lqccd.getCargo1Abbreviation()).ifPresent(builder::setCargo1Abbreviation);
+    Optional.ofNullable(lqccd.getCargo1MT()).ifPresent(builder::setCargo1MT);
+    Optional.ofNullable(lqccd.getCargo1Percentage()).ifPresent(builder::setCargo1Percentage);
+    Optional.ofNullable(lqccd.getCargo1Abbreviation()).ifPresent(builder::setCargo1Abbreviation);
+    Optional.ofNullable(lqccd.getCargo2MT()).ifPresent(builder::setCargo2MT);
+    Optional.ofNullable(lqccd.getCargo2Percentage()).ifPresent(builder::setCargo2Percentage);
+    Optional.ofNullable(lqccd.getCargo2Abbreviation()).ifPresent(builder::setCargo2Abbreviation);
+    Optional.ofNullable(lqccd.getQuantity()).ifPresent(builder::setQuantity);
+    Optional.ofNullable(lqccd.getTankName()).ifPresent(builder::setTankName);
+    Optional.ofNullable(lqccd.getTemp()).ifPresent(builder::setTemp);
+    Optional.ofNullable(lqccd.getOrderedQuantity()).ifPresent(builder::setOrderedMT);
+    Optional.ofNullable(lqccd.getPriority()).ifPresent(builder::setPriority);
+    Optional.ofNullable(lqccd.getLoadingOrder()).ifPresent(builder::setLoadingOrder);
+    detailsBuilder.addLoadableQuantityCommingleCargoDetails(builder.build());
+  }
+
+  /**
+   * @param request
+   * @return AlgoReply
+   */
+  public AlgoReply saveLoadablePatterns(
+      com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
+    return this.loadableStudyServiceBlockingStub.saveLoadablePatterns(request.build());
   }
 
   /**
@@ -3457,7 +3654,8 @@ public class LoadableStudyService {
         portId,
         cargoResponse,
         bunkerResponse,
-        synopticalTableResponse, synopticalTableReply);
+        synopticalTableResponse,
+        synopticalTableReply);
     return voyageStatusResponse;
   }
 
@@ -3469,7 +3667,7 @@ public class LoadableStudyService {
       OnHandQuantityResponse bunkerResponse,
       SynopticalTableResponse synopticalTableResponse,
       SynopticalTableReply synopticalTableReply) {
-	String operationType = request.getOperationType();
+    String operationType = request.getOperationType();
     voyageStatusResponse.setCargoTanks(cargoResponse.getTanks());
     // group ohq, vessel and port details for Bunker conditions and Cargo conditions
     if (synopticalTableResponse != null
@@ -3478,59 +3676,60 @@ public class LoadableStudyService {
           synopticalTableResponse.getSynopticalRecords().stream()
               .filter(
                   record ->
-                  operationType.equalsIgnoreCase(record.getOperationType())
+                      operationType.equalsIgnoreCase(record.getOperationType())
                           && Objects.equals(record.getPortId(), portId)
                           && Objects.equals(record.getPortOrder(), request.getPortOrder()))
               .findFirst();
       if (synopticalRecord.isPresent()) {
-    	  if (!CollectionUtils.isEmpty(synopticalRecord.get().getCargos())) {
-    		// build cargo quantities
-    		  voyageStatusResponse.setCargoQuantities(synopticalRecord.get().getCargos());
-    		// group on-board-quantities by cargo for Cargo conditions
-    		  List<Cargo> cargoConditions = new ArrayList<>();
-    		  synopticalRecord.get().getCargos().stream()
-    		  .collect(
-    				  Collectors.groupingBy(
-    						  synopticalCargoRecord ->
-    						  synopticalCargoRecord.getCargoId() != null ? synopticalCargoRecord.getCargoId() : Long.valueOf("0"),
-    								  Collectors.collectingAndThen(
-    										  Collectors.reducing(
-    												  (index, accum) ->
-    												  new SynopticalCargoBallastRecord(
-    														  index.getTankId(),
-    														  index.getTankName(),
-    														  index.getActualWeight().add(accum.getActualWeight()),
-    														  index.getPlannedWeight().add(accum.getPlannedWeight()),
-    														  index.getCapacity(),
-    														  index.getAbbreviation(),
-    														  index.getCargoId(),
-    														  index.getColorCode(),
-    														  index.getCorrectedUllage()
-    														  )),
-    										  Optional::get)))
-    		  .forEach(
-    				  (id, synopticalCargoRecord) -> {
-    					  if (synopticalCargoRecord.getCargoId() != null) {
-    						  Cargo cargo = new Cargo();
-    						  cargo.setId(synopticalCargoRecord.getCargoId());
-    						  cargo.setPlannedWeight(synopticalCargoRecord.getPlannedWeight());
-    						  cargo.setActualWeight(synopticalCargoRecord.getActualWeight());
-    						  cargoConditions.add(cargo);
-    					  }
-    				  });
-    		  voyageStatusResponse.setCargoConditions(cargoConditions);
-    	  }
-    	  // build bunker conditions
-    	  BunkerConditions bunkerConditions = new BunkerConditions();
-    	  bunkerConditions.setFuelOilWeight(synopticalRecord.get().getActualFOTotal());
-    	  bunkerConditions.setDieselOilWeight(synopticalRecord.get().getActualDOTotal());
-    	  bunkerConditions.setBallastWeight(synopticalRecord.get().getBallastActualTotal());
-    	  bunkerConditions.setFreshWaterWeight(synopticalRecord.get().getActualFWTotal());
-    	  bunkerConditions.setOthersWeight(synopticalRecord.get().getOthersActual());
-    	  bunkerConditions.setTotalDwtWeight(synopticalRecord.get().getTotalDwtActual());
-    	  bunkerConditions.setDisplacement(synopticalRecord.get().getDisplacementActual());
-    	  bunkerConditions.setSpecificGravity(synopticalRecord.get().getSpecificGravity());
-    	  voyageStatusResponse.setBunkerConditions(bunkerConditions);
+        if (!CollectionUtils.isEmpty(synopticalRecord.get().getCargos())) {
+          // build cargo quantities
+          voyageStatusResponse.setCargoQuantities(synopticalRecord.get().getCargos());
+          // group on-board-quantities by cargo for Cargo conditions
+          List<Cargo> cargoConditions = new ArrayList<>();
+          synopticalRecord.get().getCargos().stream()
+              .collect(
+                  Collectors.groupingBy(
+                      synopticalCargoRecord ->
+                          synopticalCargoRecord.getCargoId() != null
+                              ? synopticalCargoRecord.getCargoId()
+                              : Long.valueOf("0"),
+                      Collectors.collectingAndThen(
+                          Collectors.reducing(
+                              (index, accum) ->
+                                  new SynopticalCargoBallastRecord(
+                                      index.getTankId(),
+                                      index.getTankName(),
+                                      index.getActualWeight().add(accum.getActualWeight()),
+                                      index.getPlannedWeight().add(accum.getPlannedWeight()),
+                                      index.getCapacity(),
+                                      index.getAbbreviation(),
+                                      index.getCargoId(),
+                                      index.getColorCode(),
+                                      index.getCorrectedUllage())),
+                          Optional::get)))
+              .forEach(
+                  (id, synopticalCargoRecord) -> {
+                    if (synopticalCargoRecord.getCargoId() != null) {
+                      Cargo cargo = new Cargo();
+                      cargo.setId(synopticalCargoRecord.getCargoId());
+                      cargo.setPlannedWeight(synopticalCargoRecord.getPlannedWeight());
+                      cargo.setActualWeight(synopticalCargoRecord.getActualWeight());
+                      cargoConditions.add(cargo);
+                    }
+                  });
+          voyageStatusResponse.setCargoConditions(cargoConditions);
+        }
+        // build bunker conditions
+        BunkerConditions bunkerConditions = new BunkerConditions();
+        bunkerConditions.setFuelOilWeight(synopticalRecord.get().getActualFOTotal());
+        bunkerConditions.setDieselOilWeight(synopticalRecord.get().getActualDOTotal());
+        bunkerConditions.setBallastWeight(synopticalRecord.get().getBallastActualTotal());
+        bunkerConditions.setFreshWaterWeight(synopticalRecord.get().getActualFWTotal());
+        bunkerConditions.setOthersWeight(synopticalRecord.get().getOthersActual());
+        bunkerConditions.setTotalDwtWeight(synopticalRecord.get().getTotalDwtActual());
+        bunkerConditions.setDisplacement(synopticalRecord.get().getDisplacementActual());
+        bunkerConditions.setSpecificGravity(synopticalRecord.get().getSpecificGravity());
+        voyageStatusResponse.setBunkerConditions(bunkerConditions);
       }
     }
     // build bunker quantities
@@ -3540,8 +3739,11 @@ public class LoadableStudyService {
       voyageStatusResponse.setBunkerRearTanks(bunkerResponse.getRearTanks());
     }
     // build ballast tanks
-    voyageStatusResponse.setBallastFrontTanks(createGroupWiseTankList(synopticalTableReply.getBallastFrontTanksList()));
-    voyageStatusResponse.setBallastCenterTanks(createGroupWiseTankList(synopticalTableReply.getBallastCenterTanksList()));
-    voyageStatusResponse.setBallastRearTanks(createGroupWiseTankList(synopticalTableReply.getBallastRearTanksList()));
+    voyageStatusResponse.setBallastFrontTanks(
+        createGroupWiseTankList(synopticalTableReply.getBallastFrontTanksList()));
+    voyageStatusResponse.setBallastCenterTanks(
+        createGroupWiseTankList(synopticalTableReply.getBallastCenterTanksList()));
+    voyageStatusResponse.setBallastRearTanks(
+        createGroupWiseTankList(synopticalTableReply.getBallastRearTanksList()));
   }
 }

@@ -17,7 +17,7 @@ public class VoyageStatusResponse {
   private List<SynopticalCargoBallastRecord> cargoQuantities;
 
   private List<OnHandQuantity> bunkerQuantities;
-  
+
   private List<OnHandQuantity> ballastQuantities;
 
   private List<List<VesselTank>> cargoTanks;
@@ -25,11 +25,11 @@ public class VoyageStatusResponse {
   private List<List<VesselTank>> bunkerTanks;
 
   private List<List<VesselTank>> bunkerRearTanks;
-  
+
   private List<List<VesselTank>> ballastFrontTanks;
-  
+
   private List<List<VesselTank>> ballastCenterTanks;
-  
+
   private List<List<VesselTank>> ballastRearTanks;
 
   private List<Cargo> cargoConditions;

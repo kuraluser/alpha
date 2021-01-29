@@ -39,14 +39,14 @@ public class OnHandQuantity {
 
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal arrivalQuantity;
-  
+
   private BigDecimal actualArrivalQuantity;
 
   private BigDecimal departureVolume;
 
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private BigDecimal departureQuantity;
-  
+
   private BigDecimal actualDepartureQuantity;
 
   private String colorCode;

@@ -43,7 +43,7 @@ public class LoadablePlanQuantity extends EntityDoc {
   private BigDecimal loadableQuantity;
 
   @Column(name = "difference_percentage")
-  private BigDecimal differencePercentage;
+  private String differencePercentage;
 
   @Column(name = "is_active")
   private Boolean isActive;
@@ -81,4 +81,19 @@ public class LoadablePlanQuantity extends EntityDoc {
   @JoinColumn(name = "loadable_pattern_xid")
   @ManyToOne
   private LoadablePattern loadablePattern;
+
+  @Column(name = "cargo_xid")
+  private Long cargoXId;
+
+  @Column(name = "priority")
+  private Integer priority;
+
+  @Column(name = "cargo_abbreviation")
+  private String cargoAbbreviation;
+
+  @Column(name = "cargo_color")
+  private String cargoColor;
+
+  @Column(name = "loading_order")
+  private Integer loadingOrder;
 }
