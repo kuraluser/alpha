@@ -61,7 +61,7 @@ export interface SynopticalColumn {
     header: string;
     expandable?: boolean;
     editable?: boolean;
-    editableIfValue?: boolean;
+    editableByCondition?: boolean;
     subHeaders?: SynopticalColumn[];
     expandedFields?: SynopticalColumn[];
     inputs?: SynopticField[];

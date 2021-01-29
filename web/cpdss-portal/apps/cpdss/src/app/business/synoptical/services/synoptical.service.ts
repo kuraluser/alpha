@@ -35,7 +35,8 @@ export class SynopticalService {
   cancel = new Subject();
   loadablePatternId: number;
   editMode = false;
-
+  showActions = false;
+  
   constructor(
     private loadableStudyListApiService: LoadableStudyListApiService,
     private vesselsApiService: VesselsApiService,

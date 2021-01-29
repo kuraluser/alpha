@@ -21,14 +21,14 @@
                 <tr>
                     <ng-container *ngFor="let header of headers; let headerIndex = index">
                         <th [attr.rowspan]="calculateRowSpan(header)">
-                            <button type="button" *ngIf="header.expandable" pButton pRipple [pRowToggler]="header"
+                            <button type="button" *ngIf="header.expandable && header.expandedFields && header.expandedFields.length" pButton pRipple [pRowToggler]="header"
                                 class="p-button-text p-button-rounded p-button-plain"
                                 [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
                             <span class="row-header">{{header.header | translate}}</span>
                         </th>
                     </ng-container>
                     <th [attr.rowspan]="calculateRowSpan(rowData)">
-                        <button type="button" *ngIf="rowData.expandable" pButton pRipple [pRowToggler]="rowData"
+                        <button type="button" *ngIf="rowData.expandable && rowData.expandedFields && rowData.expandedFields.length" pButton pRipple [pRowToggler]="rowData"
                             class="p-button-text p-button-rounded p-button-plain"
                             [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
                         <span class="row-header">{{rowData.header | translate}}</span>
@@ -60,7 +60,7 @@
                     <div class="error-icon-wrapper">
                         <span *ngIf="i > 0">&nbsp;-&nbsp;</span>
                         <ng-container
-                            *ngIf="rowData.editable && synopticalService.editMode && (!rowData.editableIfValue || isNotBlankOrNull(column[field.key])); else noEdit">
+                            *ngIf="rowData.editable && synopticalService.editMode && (!rowData.editableByCondition || checkEditableCondition(field.key,colIndex)); else noEdit">
                             <ng-container [ngSwitch]="field.type">
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
                                     <p-calendar appendTo="body" [showButtonBar]="true" [showTime]="true"

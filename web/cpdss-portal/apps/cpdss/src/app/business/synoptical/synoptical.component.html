@@ -36,7 +36,7 @@
                 </p-dropdown>
                
             </div>
-            <div class="ml-auto pr-15" *ngIf="synopticalService.loadableStudyId">
+            <div class="ml-auto pr-15" *ngIf="synopticalService.showActions">
      			<button class="btn btn-main mr-10" (click)="synopticalService.onEditOrCancel()">{{synopticalService.editMode? 'Cancel':'Edit'}}</button>
                 <button class="btn btn-main mr-10"  *ngIf="synopticalService.editMode" (click)="synopticalService.saveChanges()">Save</button>
                 <button class="btn btn-main mr-10" *ngIf="!synopticalService.editMode"(click)="synopticalService.exportExcelFromTable()">Export</button>

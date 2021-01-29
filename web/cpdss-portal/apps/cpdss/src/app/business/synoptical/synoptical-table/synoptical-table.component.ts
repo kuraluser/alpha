@@ -55,6 +55,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   ngUnsubscribe: Subject<void> = new Subject();
   allColumns: SynopticalColumn[]
   datePipe: DatePipe = new DatePipe('en-US');
+  synopticalRecordsCopy: ISynopticalRecords[] = [];
 
   constructor(
     private synoticalApiService: SynopticalApiService,
@@ -102,6 +103,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+    this.synopticalService.showActions = false;
   }
 
   /**
@@ -118,6 +120,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     const result = await this.synoticalApiService.getSynopticalTable(this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId, this.synopticalService.loadablePatternId).toPromise();
     if (result.responseStatus.status === "200") {
       this.synopticalRecords = result.synopticalRecords ?? [];
+      this.synopticalService.showActions = true;
       this.dynamicColumns.forEach(dynamicColumn => {
         this.formatData(dynamicColumn)
         this.addToColumns(dynamicColumn);
@@ -393,8 +396,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       type: this.fieldType.NUMBER,
                       validators: ['required']
                     }],
-                    editable: !this.checkIfConfirmed(),
-                    editableIfValue: true
+                    editable: false,
                   },
                   {
                     header: "Actual",
@@ -404,7 +406,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       validators: ['required']
                     }],
                     editable: this.checkIfConfirmed(),
-                    editableIfValue: true
                   },
                 ]
               },
@@ -418,8 +419,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       type: this.fieldType.NUMBER,
                       validators: ['required']
                     }],
-                    editable: !this.checkIfConfirmed(),
-                    editableIfValue: true
+                    editable: false,
                   },
                   {
                     header: "Actual",
@@ -429,7 +429,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       validators: ['required']
                     }],
                     editable: this.checkIfConfirmed(),
-                    editableIfValue: true
                   },
                 ]
               },
@@ -443,8 +442,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       type: this.fieldType.NUMBER,
                       validators: ['required']
                     }],
-                    editable: !this.checkIfConfirmed(),
-                    editableIfValue: true
+                    editable: false,
                   },
                   {
                     header: "Actual",
@@ -454,7 +452,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                       validators: ['required']
                     }],
                     editable: this.checkIfConfirmed(),
-                    editableIfValue: true
                   },
                 ]
               },
@@ -470,8 +467,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                   type: this.fieldType.NUMBER,
                   validators: ['required']
                 }],
-                editable: !this.checkIfConfirmed(),
-                editableIfValue: true
+                editable: false,
               },
               {
                 header: "Actual",
@@ -481,7 +477,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                   validators: ['required']
                 }],
                 editable: this.checkIfConfirmed(),
-                editableIfValue: true
               },
             ]
           }
@@ -492,7 +487,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fields: [{
           key: "blindSector"
         }],
-        editable: true,
+        editable: false,
       },
       {
         header: 'Cargo',
@@ -758,6 +753,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             }],
             header: 'Plan',
             editable: !this.checkIfConfirmed(),
+            editableByCondition: true
           },
           {
             header: 'Actual',
@@ -889,7 +885,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               validators: ['required', 'ddddddd.+']
             }],
             header: 'Plan',
-            editable: !this.checkIfConfirmed(),
+            editable: false,
 
           },
           {
@@ -1301,6 +1297,19 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         this.getControl(otherIndex, 'runningHours')?.setValue(runningHours)
         break;
       default:
+        const planIndex = field.key.includes('plan') ? 0 : 1
+        const dynamicCols = this.cols.filter(col => col.dynamicKey)
+        dynamicCols.forEach( col => {
+          const dynamicKey = col.dynamicKey;
+          const totalCols = this.getAllColumns(col.subHeaders)
+          const totalKeys = totalCols.map(totalCol => totalCol.fields[0].key)
+          if (field.key.startsWith(dynamicKey)) {
+            const totalValue = this.synopticalRecords[colIndex][totalKeys[planIndex]]
+            const currentFieldValue = this.synopticalRecords[colIndex][field.key]
+            this.synopticalRecords[colIndex][totalKeys[planIndex]] = totalValue - currentFieldValue + fc.value
+            this.synopticalRecords[colIndex][field.key] = fc.value;
+          }
+        })
         break;
     }
   }
@@ -1395,7 +1404,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         msgkeys = ['SYNOPTICAL_UPDATE_SUCCESS', 'SYNOPTICAL_UPDATE_SUCCESSFULLY']
         severity = 'success';
         this.synopticalService.editMode = false;
-        this.updateSynopticalRecords(synopticalRecords);
       } else {
         msgkeys = ['SYNOPTICAL_UPDATE_FAILED', 'SYNOPTICAL_UPDATE_FAILURE']
         severity = 'error';
@@ -1430,6 +1438,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             const key = field.key;
             const value = this.getValueFromTable(fieldKey + item.id + key, subCol, index, field.type)
             json[key] = value;
+            this.synopticalRecords[index][fieldKey + item.id + key] = value;
           })
         })
         values.push(json)
@@ -1444,6 +1453,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         const key = field.key;
         const value = this.getValueFromTable(key, column, index, field.type)
         record[key] = value;
+        this.synopticalRecords[index][key] = value;
       })
     }
   }
@@ -1477,23 +1487,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       default:
         return value;
     }
-  }
-
-  /**
-  * Method to update records after saving
-  *
-  * @returns {void}
-  * @memberof SynopticalTableComponent
-  */
-  updateSynopticalRecords(synopticalRecords) {
-    this.synopticalRecords.forEach((record, index) => {
-      if (synopticalRecords[index]) {
-        const newRow = synopticalRecords[index];
-        Object.keys(newRow).forEach(key => {
-          record[key] = newRow[key]
-        })
-      }
-    })
   }
 
   /**
@@ -1555,6 +1548,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   */
   editChanges() {
     this.synopticalService.editMode = true;
+    this.synopticalRecordsCopy = JSON.parse(JSON.stringify(this.synopticalRecords))
   }
 
   /**
@@ -1564,8 +1558,22 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   * @memberof SynopticalTableComponent
   */
   cancelChanges() {
+    this.synopticalRecords = JSON.parse(JSON.stringify(this.synopticalRecordsCopy))
     this.resetFormValues();
     this.synopticalService.editMode = false;
   }
 
+  /**
+  * Method to check if editable by special conditions
+  *
+  * @returns {boolean}
+  * @memberof SynopticalTableComponent
+  */
+  checkEditableCondition(key: string, index: number) {
+    let editable = false;
+    if (key.startsWith('cargos') && index === 0) {
+      editable = true
+    }
+    return editable;
+  }
 }
