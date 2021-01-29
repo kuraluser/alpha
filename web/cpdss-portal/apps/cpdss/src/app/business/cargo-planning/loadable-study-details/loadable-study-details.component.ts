@@ -277,7 +277,13 @@ export class LoadableStudyDetailsComponent implements OnInit {
   async onDischargePortChange(event) {
     let isPortSelected;
     this.dischargingPorts.map((dischargingPort, index) => { if (dischargingPort.id === event.itemValue.id) { isPortSelected = index } });
-    isPortSelected ? (this.dischargingPorts.splice(isPortSelected, 1), this.updatingDischargingPort()) : this.dischargingPorts.length < 5 ? (this.dischargingPorts.push(event.itemValue), this.updatingDischargingPort()) : '';
+    if(isPortSelected >= 0) {
+      this.dischargingPorts.splice(isPortSelected, 1); 
+      this.updatingDischargingPort();
+    } else if(this.dischargingPorts.length < 5) {
+      this.dischargingPorts.push(event.itemValue);
+      this.updatingDischargingPort();
+    }
   }
 
   /**

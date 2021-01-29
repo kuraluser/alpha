@@ -20,24 +20,18 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                 const logoKey = 'logoUrl';
                 const imageIndex = window.location.search.indexOf(logoKey);
                 let imgUri = window.location.search.substring(imageIndex + logoKey.length + 1);
-                if (localStorage.getItem('companyLogo') !== undefined && localStorage.getItem('companyLogo') !== 'undefined' && localStorage.getItem('companyLogo') !== '' && localStorage.getItem('companyLogo') !== null) {
+                if(imgUri) {
+                    localStorage.setItem('companyLogo', imgUri);
+                } else if(localStorage.getItem('companyLogo') !== undefined && localStorage.getItem('companyLogo') !== 'undefined' && localStorage.getItem('companyLogo') !== '' && localStorage.getItem('companyLogo') !== null) {
                     imgUri = localStorage.getItem('companyLogo');
                 }
-                else {
-                    localStorage.setItem('companyLogo', imgUri);
-                }
 
-                let realm;
-                if (localStorage.getItem('realm') !== undefined && localStorage.getItem('realm') !== 'undefined' && localStorage.getItem('realm') !== '' && localStorage.getItem('realm') !== null) {
+                let realm = window.location.search.split('&')[0].split('=')[1];
+                if (realm) {
+                    localStorage.setItem('realm', realm);
+                } else if (localStorage.getItem('realm') !== undefined && localStorage.getItem('realm') !== 'undefined' && localStorage.getItem('realm') !== '' && localStorage.getItem('realm') !== null) {
                     realm = localStorage.getItem('realm');
                 }
-                else {
-                    realm = window.location.search.split('&')[0].split('=')[1];
-                    if (realm) {
-                        localStorage.setItem('realm', realm);
-                    }
-                }
-
 
                 keycloakConfig = {
                     url: appSettings.keycloakUrl,
@@ -59,7 +53,7 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
 
                 // If not logged in redirect to login app
                 if (!isLoggedIn) {
-                    keycloakInstance.login();
+                    window.location.href = logoutUrl;
                 } else {
                     //If token expired
                     keycloakInstance.onTokenExpired = () => {
@@ -69,10 +63,10 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                             if (res) {
                                 return keycloakInstance.token;
                             } else {
-                                keycloakInstance.login();
+                                window.location.href = logoutUrl;
                             }
                         } else {
-                            keycloakInstance.login();
+                            window.location.href = logoutUrl;
                         }
                     };
                 }
