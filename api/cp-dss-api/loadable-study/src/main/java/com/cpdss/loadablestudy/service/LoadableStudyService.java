@@ -980,11 +980,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .map(LoadableStudyPortRotation::getPortXId)
               .collect(Collectors.toList());
     }
-    // remove existing cargo portIds from port rotation if not available in request
+    // remove existing cargo portIds from port rotation and synoptical if not available in request
     if (!CollectionUtils.isEmpty(requestedPortIds) && !CollectionUtils.isEmpty(existingCargoPortIds)) {
     	existingCargoPortIds.removeAll(requestedPortIds);
     	 loadableStudyPortRotationRepository.deleteLoadingPortRotation(
-    			 loadableStudy, requestedPortIds);   
+    			 loadableStudy, existingCargoPortIds);
+    	 synopticalTableRepository.deleteSynopticalPorts(loadableStudy.getId(), existingCargoPortIds);
     }
     int existingPortsCount = 0;
     // remove loading portIds from request which are already available in port
@@ -1933,16 +1934,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .map(CargoNominationPortDetails::getPortId)
                 .collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(requestedPortIds)) {
+        	requestedPortIds.forEach(
+                    requestPortId -> {
         	Long otherCargoRefExistCount =
         			this.cargoNominationRepository.getCountCargoNominationWithPortIds(
         					existingCargoNomination.get().getLoadableStudyXId(),
         					existingCargoNomination.get(),
-        					requestedPortIds);
+        					requestPortId);
         	if (Objects.equals(otherCargoRefExistCount, Long.valueOf("0"))
         			&& loadableStudyOpt.isPresent()) {
-        		loadableStudyPortRotationRepository.deleteLoadingPortRotation(
-        				loadableStudyOpt.get(), requestedPortIds);
+        		loadableStudyPortRotationRepository.deleteLoadingPortRotationByPort(
+        				loadableStudyOpt.get(), requestPortId);
+        		synopticalTableRepository.deleteSynopticalPorts(loadableStudyOpt.get().getId(), requestedPortIds);
         	}
+                    });
         }
       }
       this.cargoNominationRepository.deleteCargoNomination(request.getCargoNominationId());
