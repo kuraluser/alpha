@@ -355,7 +355,7 @@ public class UserService {
                 this.roleUserRepository.findByUsersAndRolesAndIsActive(
                     user.getId(), role.get().getId(), true);
             RoleUserMapping roleUser = null;
-            if (roleUserOpt.isEmpty()) {
+            if (!roleUserOpt.isPresent()) {
               roleUser = new RoleUserMapping();
             } else {
               roleUser = roleUserOpt.get();
@@ -374,7 +374,7 @@ public class UserService {
                 this.roleScreenRepository.findByCompanyXIdAndScreenAndRolesAndIsActive(
                     companyId, screen.getId(), role.get().getId(), true);
             com.cpdss.gateway.entity.RoleScreen roleScreen = null;
-            if (roleScreenrOpt.isEmpty()) {
+            if (!roleScreenrOpt.isPresent()) {
               roleScreen = new com.cpdss.gateway.entity.RoleScreen();
             } else {
               roleScreen = roleScreenrOpt.get();
@@ -419,7 +419,7 @@ public class UserService {
     Optional<Roles> roleEntityOpt =
         this.rolesRepository.findByCompanyXIdAndNameAndIsActive(companyId, role.getName(), true);
     Roles roleEntity = null;
-    if (roleEntityOpt.isEmpty()) {
+    if (!roleEntityOpt.isPresent()) {
       roleEntity = new Roles();
     } else {
       throw new GenericServiceException(
