@@ -5,7 +5,7 @@ import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,8 +47,9 @@ public class LoadableStudyPortRotation extends EntityDoc {
   @OneToMany(
       mappedBy = "loadableStudyPortRotation",
       cascade = CascadeType.ALL,
-      orphanRemoval = true)
-  private Set<SynopticalTable> synopticalTable;
+      orphanRemoval = true,
+      fetch = FetchType.LAZY)
+  private List<SynopticalTable> synopticalTable;
 
   @Column(name = "port_xid")
   private Long portXId;

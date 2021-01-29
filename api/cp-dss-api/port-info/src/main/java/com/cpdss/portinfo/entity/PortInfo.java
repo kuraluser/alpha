@@ -3,6 +3,7 @@ package com.cpdss.portinfo.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -48,4 +49,34 @@ public class PortInfo extends EntityDoc {
 
   @OneToMany(mappedBy = "portInfo", fetch = FetchType.EAGER)
   private Set<BerthInfo> berthInfoSet;
+
+  @Column(name = "time_of_sunrise")
+  private LocalTime timeOfSunrise;
+
+  @Column(name = "time_of_sunset")
+  private LocalTime timeOfSunSet;
+
+  @Column(name = "hw_tide_from")
+  private BigDecimal hwTideFrom;
+
+  @Column(name = "hw_tide_to")
+  private BigDecimal hwTideTo;
+
+  @Column(name = "hw_tide_time_from")
+  private LocalTime hwTideTimeFrom;
+
+  @Column(name = "hw_tide_time_to")
+  private LocalTime hwTideTimeTo;
+
+  @Column(name = "lw_tide_from")
+  private BigDecimal lwTideFrom;
+
+  @Column(name = "lw_tide_to")
+  private BigDecimal lwTideTo;
+
+  @Column(name = "lw_tide_time_from")
+  private LocalTime lwTideTimeFrom;
+
+  @Column(name = "lw_tide_time_to")
+  private LocalTime lwTideTimeTo;
 }

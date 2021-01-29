@@ -1705,12 +1705,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
               loadableStudyOpt.get(), discharging, true);
       List<Long> portIds = new ArrayList<>(request.getDischargingPortIdsList());
-      for (LoadableStudyPortRotation portRoation : dischargingPorts) {
-        if (!request.getDischargingPortIdsList().contains(portRoation.getPortXId())) {
-          portRoation.setActive(false);
-          portIds.remove(portRoation.getPortXId());
+      for (LoadableStudyPortRotation portRotation : dischargingPorts) {
+        if (!request.getDischargingPortIdsList().contains(portRotation.getPortXId())) {
+          portRotation.setActive(false);
+          List<SynopticalTable> synopticalEntities = portRotation.getSynopticalTable();
+          if (null != synopticalEntities && !synopticalEntities.isEmpty()) {
+            synopticalEntities.forEach(entity -> entity.setIsActive(false));
+          }
+          portIds.remove(portRotation.getPortXId());
         } else {
-          portIds.remove(portRoation.getPortXId());
+          portIds.remove(portRotation.getPortXId());
         }
       }
       if (!CollectionUtils.isEmpty(portIds)) {
@@ -1838,7 +1842,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     if (requestedOperationId != 0
         && !StringUtils.isEmpty(
             com.cpdss.loadablestudy.domain.CargoOperation.getOperation(requestedOperationId))) {
-      Set<SynopticalTable> synopticalTableEntityList = new HashSet<>();
+      List<SynopticalTable> synopticalTableEntityList = new ArrayList<>();
       if (CARGO_OPERATION_ARR_DEP_SYNOPTICAL.contains(requestedOperationId)) {
         buildSynopticalTableRecord(
             requestedPortId, entity, synopticalTableEntityList, SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL);
@@ -1864,7 +1868,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private void buildSynopticalTableRecord(
       Long portId,
       LoadableStudyPortRotation entity,
-      Set<SynopticalTable> synopticalTableList,
+      List<SynopticalTable> synopticalTableList,
       String portStage) {
     SynopticalTable synopticalTable = new SynopticalTable();
     synopticalTable.setLoadableStudyPortRotation(entity);
@@ -4898,14 +4902,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       SynopticalTable synopticalEntity, SynopticalRecord.Builder builder, PortReply portReply) {
     Optional.ofNullable(synopticalEntity.getId()).ifPresent(builder::setId);
     Optional.ofNullable(synopticalEntity.getPortXid()).ifPresent(builder::setPortId);
+    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     if (portReply != null) {
       portReply.getPortsList().stream()
           .filter(p -> synopticalEntity.getPortXid().equals(p.getId()))
           .findAny()
           .ifPresent(
               port -> {
-                Optional.ofNullable(port.getName()).ifPresent(builder::setPortName);
-                Optional.ofNullable(port.getWaterDensity()).ifPresent(builder::setSpecificGravity);
+                this.setSynopticalPortValues(port, builder);
               });
     }
     Optional.ofNullable(synopticalEntity.getOperationType()).ifPresent(builder::setOperationType);
@@ -4917,12 +4921,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .ifPresent(runningHours -> builder.setRunningHours(String.valueOf(runningHours)));
     Optional.ofNullable(synopticalEntity.getInPortHours())
         .ifPresent(inPortHours -> builder.setInPortHours(String.valueOf(inPortHours)));
-    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     Optional.ofNullable(synopticalEntity.getTimeOfSunrise())
         .ifPresent(time -> builder.setTimeOfSunrise(timeFormatter.format(time)));
     Optional.ofNullable(synopticalEntity.getTimeOfSunSet())
         .ifPresent(time -> builder.setTimeOfSunset(timeFormatter.format(time)));
-    // If specific gravity is available in database then replace the port master
+    // If specific port related data is available in synoptical table then replace the port master
     // value
     Optional.ofNullable(synopticalEntity.getSpecificGravity())
         .ifPresent(sg -> builder.setSpecificGravity(valueOf(sg)));
@@ -4953,6 +4956,40 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
+   * * Set port values to synoptical response
+   *
+   * @param port
+   * @param builder
+   */
+  private void setSynopticalPortValues(
+      PortDetail port, com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builder) {
+    builder.setPortName(port.getName());
+    builder.setSpecificGravity(port.getWaterDensity());
+    builder.setHwTideFrom(port.getHwTideFrom());
+    builder.setHwTideTo(port.getHwTideTo());
+    builder.setLwTideFrom(port.getLwTideFrom());
+    builder.setLwTideTo(port.getLwTideTo());
+    if (!isEmpty(port.getHwTideTimeFrom())) {
+      builder.setHwTideTimeFrom(port.getHwTideTimeFrom());
+    }
+    if (!isEmpty(port.getHwTideTimeTo())) {
+      builder.setHwTideTimeTo(port.getHwTideTimeTo());
+    }
+    if (!isEmpty(port.getLwTideTimeFrom())) {
+      builder.setLwTideTimeFrom(port.getLwTideTimeFrom());
+    }
+    if (!isEmpty(port.getLwTideTimeTo())) {
+      builder.setLwTideTimeTo(port.getLwTideTimeTo());
+    }
+    if (!isEmpty(port.getSunriseTime())) {
+      builder.setTimeOfSunrise(port.getSunriseTime());
+    }
+    if (!isEmpty(port.getSunsetTime())) {
+      builder.setTimeOfSunset(port.getSunsetTime());
+    }
+  }
+
+  /**
    * Set eta and etd estimated values
    *
    * @param synopticalEntity
@@ -4970,9 +5007,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .findFirst();
     if (portRotation.isPresent()) {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-      if (null != portRotation.get().getEta()) {
+      if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(synopticalEntity.getOperationType())) {
         builder.setEtaEtdEstimated(formatter.format(portRotation.get().getEta()));
-      } else if (null != portRotation.get().getEtd()) {
+      } else {
         builder.setEtaEtdEstimated(formatter.format(portRotation.get().getEtd()));
       }
       if (null != portRotation.get().getPortOrder()) {

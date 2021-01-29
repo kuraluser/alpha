@@ -53,6 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -1134,7 +1135,7 @@ public class LoadableStudyController {
           "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-pattern/{loadablePatternId}/synoptical-table",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public SynopticalTableResponse saveSynopticalTable(
+  public ResponseEntity<SynopticalTableResponse> saveSynopticalTable(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudyId,
@@ -1151,12 +1152,15 @@ public class LoadableStudyController {
           "saveSynopticalTable, request: {}, correlationId:{}",
           request,
           headers.getFirst(CORRELATION_ID_HEADER));
-      return this.loadableStudyService.saveSynopticalTable(
-          request,
-          voyageId,
-          loadableStudyId,
-          loadablePatternId,
-          headers.getFirst(CORRELATION_ID_HEADER));
+      SynopticalTableResponse response =
+          this.loadableStudyService.saveSynopticalTable(
+              request,
+              voyageId,
+              loadableStudyId,
+              loadablePatternId,
+              headers.getFirst(CORRELATION_ID_HEADER));
+      return new ResponseEntity<>(
+          response, HttpStatus.valueOf(Integer.valueOf(response.getResponseStatus().getStatus())));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving snynoptical table record", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

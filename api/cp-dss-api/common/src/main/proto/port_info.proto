@@ -40,6 +40,16 @@ message PortDetail {
 	string maxAirDraft = 6;
 	string averageTideHeight = 7;
 	string tideHeight = 8;
+	string hwTideFrom = 9;
+	string hwTideTo = 10;
+	string lwTideFrom = 11;
+	string lwTideTo = 12;
+	string hwTideTimeFrom = 13;
+	string hwTideTimeTo = 14;
+	string lwTideTimeFrom = 15;
+	string lwTideTimeTo = 16;
+	string sunriseTime = 17;
+	string sunsetTime = 18;
 }
 
 message PortReply {
