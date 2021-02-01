@@ -594,7 +594,8 @@ export interface IPortOBQTankDetail {
     vesselId: number;
     voyageId: number;
     loadableStudyId: number;
-    fullCapacityCubm: string;
+    fullCapacityCubm: number;
+    fullCapacity: number;
     abbreviation: string;
     loadOnTop: boolean;
 }
@@ -618,7 +619,8 @@ export interface IPortOBQTankDetailValueObject {
     colorCode: string;
     portId: number;
     percentageFilled: string;
-    fullCapacityCubm: string;
+    fullCapacityCubm: number;
+    fullCapacity: number;
     abbreviation: string;
     loadOnTop: boolean;
 }

@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Valid
 import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
-import { IPortOBQListData, IPortOBQTankDetailValueObject } from '../../models/cargo-planning.model';
+import { IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject } from '../../models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { CommingleApiService } from '../../services/commingle-api.service';
@@ -13,6 +13,9 @@ import { maximumVolumeValidator } from '../../directives/validator/maximum-volum
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
+import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 
 /**
  * Component for OBQ tab 
@@ -46,6 +49,20 @@ export class OnBoardQuantityComponent implements OnInit {
   @Input() loadableStudy: LoadableStudy;
   @Input() permission: IPermission;
 
+  @Input()
+  get quantitySelectedUnit(): QUANTITY_UNIT {
+    return this._quantitySelectedUnit;
+
+  }
+
+  set quantitySelectedUnit(value: QUANTITY_UNIT) {
+    this._prevQuantitySelectedUnit = this.quantitySelectedUnit;
+    this._quantitySelectedUnit = value;
+    if (this._prevQuantitySelectedUnit) {
+      this.convertSelectedPortOBQTankDetails();
+    }
+  }
+
   get selectedPortOBQTankDetails() {
     return this._selectedPortOBQTankDetails;
 
@@ -71,14 +88,15 @@ export class OnBoardQuantityComponent implements OnInit {
   }
 
   set selectedTankId(id: number) {
-    this.selectedIndex = this.selectedPortOBQTankDetails.findIndex(obqDetails => obqDetails.tankId === id);
+    this.selectedIndex = this.selectedPortOBQTankDetails?.findIndex(obqDetails => obqDetails.tankId === id);
     this.selectedTank = this.selectedPortOBQTankDetails[this.selectedIndex];
     this.setFillingPercentage(this.selectedTankId);
     this.scrollToSelectedRow(this.selectedIndex);
     this.onRowSelection({ data: this.selectedTank, index: this.selectedIndex });
   }
-
-
+  
+  
+  readonly editMode = DATATABLE_EDITMODE.CELL;
   cargoList = [];
   selectedPort: IPort;
   obqForm: FormGroup;
@@ -89,12 +107,13 @@ export class OnBoardQuantityComponent implements OnInit {
   tanks: ITank[][] = [];
   isEditable = false;
   dataTableLoading: boolean;
-  ohqCheckUpdatesTimer;
+  obqCheckUpdatesTimer;
 
   private _selectedTank: IPortOBQTankDetailValueObject;
   private _loadableStudyId: number;
-  private _selectedPortOBQTankDetails: IPortOBQTankDetailValueObject[];
-  readonly editMode = DATATABLE_EDITMODE.CELL;
+  private _selectedPortOBQTankDetails: IPortOBQTankDetailValueObject[];  
+  private _quantitySelectedUnit: QUANTITY_UNIT;
+  private _prevQuantitySelectedUnit: QUANTITY_UNIT;
 
 
 
@@ -104,7 +123,8 @@ export class OnBoardQuantityComponent implements OnInit {
     private commingleApiService: CommingleApiService,
     private fb: FormBuilder,
     private translateService: TranslateService,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private quantityPipe: QuantityPipe) { }
 
   /**
    * Method called on intialization of the component
@@ -130,22 +150,19 @@ export class OnBoardQuantityComponent implements OnInit {
     if (result?.portList) {
       const obqPorts = result?.portList?.map((obqPort) => ports?.find((port) => port.id === obqPort.portId));
       this.selectedPort = obqPorts[0];
-      this.selectedPortOBQTankDetails = await this.getPortOBQDetails(this.selectedPort?.id);
+      await this.getPortOBQDetails(this.selectedPort?.id);
       this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
-      this.getGradeData();
-      this.updateTankList();
+      
       const hasPendingUpdates = await this.checkForPendingUpdates();
       if (hasPendingUpdates) {
         this.dataTableLoading = true;
-        this.ohqCheckUpdatesTimer = setInterval(async () => {
+        this.obqCheckUpdatesTimer = setInterval(async () => {
           const _hasPendingUpdates = await this.checkForPendingUpdates();
           if (!_hasPendingUpdates) {
-            this.selectedPortOBQTankDetails = await this.getPortOBQDetails(this.selectedPort?.id);
+            await this.getPortOBQDetails(this.selectedPort?.id);
             this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
-            this.getGradeData();
-            this.updateTankList();
             this.dataTableLoading = false;
-            clearInterval(this.ohqCheckUpdatesTimer);
+            clearInterval(this.obqCheckUpdatesTimer);
           }
         }, 500);
       }
@@ -159,7 +176,7 @@ export class OnBoardQuantityComponent implements OnInit {
  * @param {number} portId
  * @memberof OnBoardQuantityComponent
  */
-  async getPortOBQDetails(portId: number): Promise<IPortOBQTankDetailValueObject[]> {
+  async getPortOBQDetails(portId: number) {
     this.listData = await this.getDropdownData();
     const result = await this.loadableStudyDetailsApiService.getPortOBQDetails(this.vesselId, this.voyageId, this.loadableStudyId, portId).toPromise();
     const selectedPortOBQTankDetails = result?.onBoardQuantities ?? [];
@@ -168,23 +185,26 @@ export class OnBoardQuantityComponent implements OnInit {
       obqTankDetail.portId = portId;
       [...result?.tanks].forEach(group => group.find(tank => {
         if (tank.id === obqTankDetail.tankId) {
-          obqTankDetail.fullCapacityCubm = tank?.fullCapacityCubm;
+          obqTankDetail.fullCapacityCubm = Number(tank?.fullCapacityCubm);
         }
       }));
       const _obqTankDetail = this.loadableStudyDetailsTransformationService.getOBQTankDetailsAsValueObject(obqTankDetail, false, this.listData);
       return _obqTankDetail;
     });
-    const obqTankDetailsArray = _selectedPortOBQTankDetails?.map(obqTankDetails => this.initOBQFormGroup(obqTankDetails));
+
     this.obqForm = this.fb.group({
-      dataTable: this.fb.array([...obqTankDetailsArray]),
+      dataTable: this.fb.array([]),
       loadOnTop: this.fb.control(this.loadableStudy?.loadOnTop),
       cargo: new FormControl('', Validators.required),
       api: this.fb.control('', [Validators.required, Validators.min(0), numberValidator(2, 2)]),
       quantity: this.fb.control('', [Validators.required, Validators.min(0), numberValidator(2, 7)]),
     });
     this.enableOrDisableControls(this.obqForm, ['api', 'quantity'], false);
+    this.selectedPortOBQTankDetails = [..._selectedPortOBQTankDetails];
+    this.convertSelectedPortOBQTankDetails();
     this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
-    return [..._selectedPortOBQTankDetails];
+    this.getGradeData();
+    this.updateTankList();
   }
 
   /**
@@ -217,7 +237,7 @@ export class OnBoardQuantityComponent implements OnInit {
       cargo: this.fb.control(obqTankDetail.cargo),
       tankName: this.fb.control(obqTankDetail.tankName, Validators.required),
       api: this.fb.control(obqTankDetail.api.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
-      quantity: this.fb.control(obqTankDetail.quantity.value, [Validators.required, Validators.min(0), numberValidator(2, 7), maximumVolumeValidator('density', obqTankDetail)]),
+      quantity: this.fb.control(obqTankDetail.quantity.value, [Validators.required, Validators.min(0), numberValidator(2, 7), maximumVolumeValidator('api', obqTankDetail)]),
     });
   }
 
@@ -243,10 +263,17 @@ export class OnBoardQuantityComponent implements OnInit {
   async onEditComplete(event) {
     this.ngxSpinnerService.show();
     const formGroup = this.row(event.index);
+    const _prevFullcapacitySelectedUnit = AppConfigurationService.settings.volumeBaseUnit;
+    if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {
+      const fullCapacity = this.quantityPipe.transform(event?.data?.fullCapacityCubm, _prevFullcapacitySelectedUnit, this.quantitySelectedUnit, event?.data?.api.value);
+      event.data.fullCapacity = fullCapacity ?? 0;
+    } else {
+      event.data.fullCapacity = event?.data?.fullCapacityCubm;
+    }
     if (formGroup.valid) {
-      const tankDetails = this.loadableStudyDetailsTransformationService.getOBQTankDetailAsValue(event.data);
-      tankDetails.loadOnTop = this.obqForm.controls?.loadOnTop?.value;
-      const res = await this.loadableStudyDetailsApiService.setOBQTankDetails(tankDetails, this.vesselId, this.voyageId, this.loadableStudyId);
+      const _selectedPortOBQTankDetail = this.convertToStandardUnitForSave(event.data);     
+      _selectedPortOBQTankDetail.loadOnTop = this.obqForm.controls?.loadOnTop?.value;
+      const res = await this.loadableStudyDetailsApiService.setOBQTankDetails(_selectedPortOBQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId);
       this.updateTankList();
       this.setFillingPercentage(this.selectedTankId);
       this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
@@ -379,8 +406,9 @@ export class OnBoardQuantityComponent implements OnInit {
       const newGroup = group.map((groupItem) => {
         const tank = Object.assign({}, groupItem);
         const selectedPortOBQTankDetail = this.selectedPortOBQTankDetails.find((item) => (item.tankId === groupItem.id) && item);
-        const volume = Number(selectedPortOBQTankDetail?.quantity?.value) / Number(selectedPortOBQTankDetail?.api?.value);
+        const volume = this.quantityPipe.transform(selectedPortOBQTankDetail.quantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, selectedPortOBQTankDetail?.api?.value);
         tank.commodity = {
+          quantity: selectedPortOBQTankDetail.quantity?.value,
           volume: volume ?? 0,
           colorCode: selectedPortOBQTankDetail?.colorCode
         }
@@ -478,6 +506,46 @@ export class OnBoardQuantityComponent implements OnInit {
       this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS_DETAIL'] });
     }
     this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Converting obq quantities in selected unit
+   *
+   * @memberof OnBoardQuantityComponent
+   */
+  convertSelectedPortOBQTankDetails() {
+    const _selectedPortOBQTankDetails = this.selectedPortOBQTankDetails?.map(obqTankDetail => {
+      if (obqTankDetail.api.value) {
+        const _prevQuantitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
+        if (_prevQuantitySelectedUnit !== this.quantitySelectedUnit) {
+          obqTankDetail.quantity.value = this.quantityPipe.transform(obqTankDetail.quantity.value, _prevQuantitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value);
+          obqTankDetail.quantity.value = obqTankDetail.quantity.value ? Number(obqTankDetail.quantity.value.toFixed(2)) : 0;
+        }
+        const _prevFullcapacitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.volumeBaseUnit;
+        if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {
+          const fullCapacity = this.quantityPipe.transform(obqTankDetail.fullCapacityCubm, _prevFullcapacitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value);
+          obqTankDetail.fullCapacity = fullCapacity ?? 0;
+        }
+      }
+
+      return obqTankDetail;
+    });
+    this.selectedPortOBQTankDetails = [..._selectedPortOBQTankDetails];
+    const obqTankDetailsArray = _selectedPortOBQTankDetails?.map(obqTankDetails => this.initOBQFormGroup(obqTankDetails));
+    this.obqForm.setControl('dataTable', this.fb.array([...obqTankDetailsArray]));
+  }
+
+  /**
+   * Method to convert obq quantity to standard unit for saving
+   *
+   * @param {IPortOBQTankDetailValueObject} selectedPortOBQTankDetails
+   * @returns {IPortOBQTankDetail}
+   * @memberof OnBoardQuantityComponent
+   */
+  convertToStandardUnitForSave(selectedPortOBQTankDetails: IPortOBQTankDetailValueObject): IPortOBQTankDetail {
+    const _selectedPortOBQTankDetail = this.loadableStudyDetailsTransformationService.getOBQTankDetailAsValue(selectedPortOBQTankDetails);
+    _selectedPortOBQTankDetail.quantity = this.quantityPipe.transform(_selectedPortOBQTankDetail?.quantity, this.quantitySelectedUnit, QUANTITY_UNIT?.MT, _selectedPortOBQTankDetail?.api);
+    return _selectedPortOBQTankDetail;
   }
 
 }
