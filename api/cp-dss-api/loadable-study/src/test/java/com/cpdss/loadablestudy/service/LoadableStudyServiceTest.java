@@ -21,12 +21,15 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse;
@@ -2058,6 +2061,96 @@ class LoadableStudyServiceTest {
               list.add(loadablePattern);
             });
     return list;
+  }
+
+  @Test
+  void testSaveLoadablePatternsRuntimeException() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(RuntimeException.class);
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.saveLoadablePatterns(
+        this.createLoadablePatternRequest(), responseObserver);
+    List<AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadablePatternsInvalidLoadableStudy() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.saveLoadablePatterns(
+        this.createLoadablePatternRequest(), responseObserver);
+    List<AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, results.get(0).getResponseStatus().getCode());
+  }
+
+  /**
+   * testSaveLoadablePatterns
+   *
+   * <p>void
+   */
+  @Test
+  void testSaveLoadablePatterns() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadableStudy()));
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.saveLoadablePatterns(
+        this.createLoadablePatternRequest(), responseObserver);
+    List<AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /** @return LoadablePatternAlgoRequest */
+  private LoadablePatternAlgoRequest createLoadablePatternRequest() {
+    LoadablePatternAlgoRequest.Builder builder = LoadablePatternAlgoRequest.newBuilder();
+    builder.addLoadablePlanDetails(builderLoadablePlanDetails());
+    return builder.build();
+  }
+
+  /** @return LoadablePlanDetails */
+  private LoadablePlanDetails builderLoadablePlanDetails() {
+    LoadablePlanDetails.Builder builder = LoadablePlanDetails.newBuilder();
+    builder.addLoadablePlanPortWiseDetails(builderLoadablePlanPortWiseDetails());
+    return builder.build();
+  }
+
+  /** @return LoadablePlanPortWiseDetails */
+  private LoadablePlanPortWiseDetails builderLoadablePlanPortWiseDetails() {
+    LoadablePlanPortWiseDetails.Builder builder = LoadablePlanPortWiseDetails.newBuilder();
+    builder.setArrivalCondition(buildArrivalDepartureCondition());
+    builder.setDepartureCondition(buildArrivalDepartureCondition());
+    return builder.build();
+  }
+
+  /** @return LoadablePlanDetailsReply */
+  private LoadablePlanDetailsReply buildArrivalDepartureCondition() {
+    LoadablePlanDetailsReply.Builder builder = LoadablePlanDetailsReply.newBuilder();
+    builder.addLoadablePlanStowageDetails(buildLoadablePlanStowageDetails());
+    builder.addLoadablePlanBallastDetails(buildLoadablePlanBallastDetails());
+    return builder.build();
+  }
+
+  /** @return com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails */
+  private com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails
+      buildLoadablePlanBallastDetails() {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails.newBuilder();
+    return builder.build();
+  }
+
+  /** @return com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails */
+  private com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+      buildLoadablePlanStowageDetails() {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
+    return builder.build();
   }
 
   /**

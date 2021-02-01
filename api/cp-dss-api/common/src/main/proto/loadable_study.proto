@@ -646,6 +646,7 @@ message LoadablePatternCargoDetails {
  	string orderedQuantity = 5;
  	bool isCommingle = 6;
  	int64 loadablePatternCommingleDetailsId = 7;
+ 	int32 loadingOrder = 8;
 }
 
 message LoadablePatternRequest {

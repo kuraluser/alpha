@@ -1427,6 +1427,12 @@ public class LoadableStudyService {
                                 id ->
                                     loadablePatternCargoDetails
                                         .setLoadablePatternCommingleDetailsId(id));
+
+                        Optional.ofNullable(loadablePatternCargoDetail.getLoadingOrder())
+                            .ifPresent(
+                                loadingOrder ->
+                                    loadablePatternCargoDetails.setLoadingOrder(loadingOrder));
+
                         loadablePatternDto
                             .getLoadablePatternCargoDetails()
                             .add(loadablePatternCargoDetails);
@@ -2703,8 +2709,14 @@ public class LoadableStudyService {
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
-    buildLoadableQuantityCommingleAndCargoDetails(loadablePlanRequest, request);
+    buildLoadablePlanDetails(loadablePlanRequest, request);
     AlgoReply algoReply = this.saveLoadablePatterns(request);
+    if (!SUCCESS.equals(algoReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to save loadable pattern",
+          algoReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(algoReply.getResponseStatus().getCode())));
+    }
     algoPatternResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return algoPatternResponse;
@@ -2714,7 +2726,7 @@ public class LoadableStudyService {
    * @param loadablePlanRequest
    * @param request void
    */
-  private void buildLoadableQuantityCommingleAndCargoDetails(
+  private void buildLoadablePlanDetails(
       LoadablePlanRequest loadablePlanRequest,
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
     LoadablePlanDetails.Builder planBuilder = LoadablePlanDetails.newBuilder();
@@ -2729,44 +2741,75 @@ public class LoadableStudyService {
               lpd.getLoadablePlanPortWiseDetails()
                   .forEach(
                       lppwd -> {
-                        LoadablePlanDetailsReply.Builder detailsBuilder =
+                        LoadablePlanDetailsReply.Builder detailsBuilderDeparture =
                             LoadablePlanDetailsReply.newBuilder();
                         lppwd
                             .getDepartureCondition()
                             .getLoadableQuantityCommingleCargoDetails()
                             .forEach(
                                 lqccd -> {
-                                  buildCommingleDetails(lqccd, detailsBuilder);
+                                  buildCommingleDetails(lqccd, detailsBuilderDeparture);
                                 });
                         lppwd
                             .getDepartureCondition()
                             .getLoadableQuantityCargoDetails()
                             .forEach(
                                 lpqcd -> {
-                                  buildLoadableCargoDetails(lpqcd, detailsBuilder);
+                                  buildLoadableCargoDetails(lpqcd, detailsBuilderDeparture);
                                 });
                         lppwd
                             .getDepartureCondition()
                             .getLoadablePlanStowageDetails()
                             .forEach(
                                 lpsd -> {
-                                  buildLoadablePlanStowageDetails(lpsd, detailsBuilder);
+                                  buildLoadablePlanStowageDetails(lpsd, detailsBuilderDeparture);
                                 });
                         lppwd
                             .getDepartureCondition()
                             .getLoadablePlanBallastDetails()
                             .forEach(
                                 lpbd -> {
-                                  buildLoadablePlanBallstDetails(lpbd, detailsBuilder);
+                                  buildLoadablePlanBallstDetails(lpbd, detailsBuilderDeparture);
                                 });
-                        portWiseBuilder.setDepartureCondition(detailsBuilder);
+                        portWiseBuilder.setDepartureCondition(detailsBuilderDeparture);
+
+                        LoadablePlanDetailsReply.Builder detailsBuilderArrival =
+                            LoadablePlanDetailsReply.newBuilder();
+                        lppwd
+                            .getArrivalCondition()
+                            .getLoadableQuantityCommingleCargoDetails()
+                            .forEach(
+                                lqccd -> {
+                                  buildCommingleDetails(lqccd, detailsBuilderArrival);
+                                });
+                        lppwd
+                            .getArrivalCondition()
+                            .getLoadableQuantityCargoDetails()
+                            .forEach(
+                                lpqcd -> {
+                                  buildLoadableCargoDetails(lpqcd, detailsBuilderArrival);
+                                });
+                        lppwd
+                            .getArrivalCondition()
+                            .getLoadablePlanStowageDetails()
+                            .forEach(
+                                lpsd -> {
+                                  buildLoadablePlanStowageDetails(lpsd, detailsBuilderArrival);
+                                });
+                        lppwd
+                            .getArrivalCondition()
+                            .getLoadablePlanBallastDetails()
+                            .forEach(
+                                lpbd -> {
+                                  buildLoadablePlanBallstDetails(lpbd, detailsBuilderArrival);
+                                });
+                        portWiseBuilder.setArrivalCondition(detailsBuilderArrival);
+
                         portWiseBuilder.setPortId(lppwd.getPortId());
                         planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                       });
               planBuilder.setCaseNumber(lpd.getCaseNumber());
 
-              // todo add constain
-              // todo add loading order
               request.addLoadablePlanDetails(planBuilder);
             });
   }

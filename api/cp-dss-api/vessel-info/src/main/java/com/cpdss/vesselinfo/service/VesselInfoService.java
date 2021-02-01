@@ -514,7 +514,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                 });
 
         ullageTableDataRepository
-            .findByVessel(vessel)
+            .findByVesselOrderById(vessel)
             .forEach(
                 ullageTableData -> {
                   UllageDetails.Builder ullageDetailsBuilder = UllageDetails.newBuilder();
