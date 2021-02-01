@@ -53,7 +53,7 @@ export class NavbarComponent implements OnInit {
         'menuIcon': 'voyages',
         'menuLink': 'admin',
         'subMenu': [
-          { 'name': 'User Role Permission' , 'subMenuLink': '/business/admin/user-role-listing'}
+          { 'name': 'User Role Permission' , 'subMenuLink': '/business/admin/user-role-permission'}
         ]
       },
       /* {
@@ -154,8 +154,9 @@ export class NavbarComponent implements OnInit {
    *
    * @memberof NavbarComponent
    */
-  subRoute(subMenu) {
+  subRoute(subMenu: any,list: any, index: number) {
     this.router.navigate([subMenu.subMenuLink]);
+    this.hide(list,index);
   }
 
 }

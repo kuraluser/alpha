@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { TreeTableModule } from 'primeng/treetable';
 import { TableModule } from 'primeng/table';
@@ -26,6 +27,7 @@ import { AddUserRoleComponent } from './add-user-role/add-user-role.component';
   declarations: [RolePermissionComponent, UserAllocateComponent, UserRoleListingComponent , AddUserRoleComponent ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     TranslateModule,
     TreeTableModule,
     DatatableModule,
