@@ -346,6 +346,15 @@ public class UserService {
       screenIds.add(screenInfo.getId());
     }
 
+    List<RoleUserMapping> roleUserList =
+        this.roleUserRepository.findByRolesAndIsActive(role.get().getId(), true);
+    if (roleUserList != null && roleUserList.size() != 0) {
+      roleUserList.forEach(
+          a -> {
+            a.setIsActive(false);
+          });
+    }
+
     List<Screen> screens =
         this.screenRepository.findByCompanyXIdAndIdInAndIsActive(companyId, screenIds, true);
     if (users != null && users.size() != 0) {

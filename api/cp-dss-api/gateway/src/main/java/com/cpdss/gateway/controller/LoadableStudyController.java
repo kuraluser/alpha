@@ -15,6 +15,7 @@ import com.cpdss.gateway.domain.CommingleCargo;
 import com.cpdss.gateway.domain.CommingleCargoResponse;
 import com.cpdss.gateway.domain.CommonResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
+import com.cpdss.gateway.domain.LoadOnTopRequest;
 import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
@@ -1415,6 +1416,43 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception getVoyageStatus", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * save load on top
+   *
+   * @param loadableStudyId
+   * @param request
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/load-on-top",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public SaveCommentResponse saveLoadOnTop(
+      @PathVariable Long loadableStudyId,
+      @RequestBody @Valid LoadOnTopRequest request,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("save load on top: {}", getClientIp());
+      return this.loadableStudyService.saveLoadOnTop(
+          request, headers.getFirst(CORRELATION_ID_HEADER), loadableStudyId);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving LoadOnTop", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error when saving LoadOnTop", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

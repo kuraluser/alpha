@@ -2003,6 +2003,53 @@ public final class LoadableStudyServiceGrpc {
     return getSaveCommentMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest,
+          com.cpdss.common.generated.LoadableStudy.SaveCommentReply>
+      getSaveLoadOnTopMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveLoadOnTop",
+      requestType = com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.SaveCommentReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest,
+          com.cpdss.common.generated.LoadableStudy.SaveCommentReply>
+      getSaveLoadOnTopMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest,
+            com.cpdss.common.generated.LoadableStudy.SaveCommentReply>
+        getSaveLoadOnTopMethod;
+    if ((getSaveLoadOnTopMethod = LoadableStudyServiceGrpc.getSaveLoadOnTopMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveLoadOnTopMethod = LoadableStudyServiceGrpc.getSaveLoadOnTopMethod) == null) {
+          LoadableStudyServiceGrpc.getSaveLoadOnTopMethod =
+              getSaveLoadOnTopMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest,
+                          com.cpdss.common.generated.LoadableStudy.SaveCommentReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveLoadOnTop"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.SaveCommentReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("SaveLoadOnTop"))
+                      .build();
+        }
+      }
+    }
+    return getSaveLoadOnTopMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -2366,6 +2413,14 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getSaveCommentMethod(), responseObserver);
     }
 
+    /** */
+    public void saveLoadOnTop(
+        com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SaveCommentReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getSaveLoadOnTopMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -2644,6 +2699,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.SaveCommentRequest,
                       com.cpdss.common.generated.LoadableStudy.SaveCommentReply>(
                       this, METHODID_SAVE_COMMENT)))
+          .addMethod(
+              getSaveLoadOnTopMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest,
+                      com.cpdss.common.generated.LoadableStudy.SaveCommentReply>(
+                      this, METHODID_SAVE_LOAD_ON_TOP)))
           .build();
     }
   }
@@ -3093,6 +3155,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void saveLoadOnTop(
+        com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SaveCommentReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSaveLoadOnTopMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -3384,6 +3457,12 @@ public final class LoadableStudyServiceGrpc {
     public com.cpdss.common.generated.LoadableStudy.SaveCommentReply saveComment(
         com.cpdss.common.generated.LoadableStudy.SaveCommentRequest request) {
       return blockingUnaryCall(getChannel(), getSaveCommentMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.SaveCommentReply saveLoadOnTop(
+        com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest request) {
+      return blockingUnaryCall(getChannel(), getSaveLoadOnTopMethod(), getCallOptions(), request);
     }
   }
 
@@ -3746,6 +3825,14 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getSaveCommentMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.SaveCommentReply>
+        saveLoadOnTop(com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSaveLoadOnTopMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -3787,6 +3874,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_CONFIRM_PLAN = 36;
   private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 37;
   private static final int METHODID_SAVE_COMMENT = 38;
+  private static final int METHODID_SAVE_LOAD_ON_TOP = 39;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -4077,6 +4165,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.SaveCommentReply>)
                   responseObserver);
           break;
+        case METHODID_SAVE_LOAD_ON_TOP:
+          serviceImpl.saveLoadOnTop(
+              (com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.SaveCommentReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -4180,6 +4275,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getConfirmPlanMethod())
                       .addMethod(getDownloadLoadableStudyAttachmentMethod())
                       .addMethod(getSaveCommentMethod())
+                      .addMethod(getSaveLoadOnTopMethod())
                       .build();
         }
       }
