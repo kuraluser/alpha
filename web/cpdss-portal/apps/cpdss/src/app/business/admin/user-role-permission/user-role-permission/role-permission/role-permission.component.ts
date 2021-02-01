@@ -1,10 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { FormControl, FormBuilder, FormGroup, Validators, ValidationErrors } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+
+
+import { TranslateService } from '@ngx-translate/core';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { MessageService } from 'primeng/api';
 
 import { TreeNode } from 'primeng/api';
-import { ITreeNodeData , IUserDetail , IUserRolePermissionResponse , IScreenNode} from '../../../models/user-role-permission.model';
+import { ITreeNodeData, IUserDetail, IUserRolePermissionResponse, IScreenNode, IUserPermissionModel, IUserDetailsResponse, IUserPermissionScreen, ISavePermissionResponse } from '../../../models/user-role-permission.model';
 
 import { UserRolePermissionApiService } from '../../../services/user-role-permission-api.service';
+import { UserRolePermissionTransformationService } from '../../../services/user-role-permission-transformation.service';
 
 /**
  * Component class of role permission for user role
@@ -24,18 +31,27 @@ export class RolePermissionComponent implements OnInit {
     treeNode: any;
     selectedNodes: TreeNode[] = [];
     cols = [
-        { field: 'view', header: 'View' , isViewable: 'isViewVisible'},
-        { field: 'add', header: 'Add' , isViewable: 'isAddVisible' },
-        { field: 'delete', header: 'Delete' , isViewable: 'isDeleteVisible'},
-        { field: 'edit', header: 'Edit' , isViewable: 'isEditVisible'},
+        { field: 'view', header: 'View', isViewable: 'isViewVisible' },
+        { field: 'add', header: 'Add', isViewable: 'isAddVisible' },
+        { field: 'delete', header: 'Delete', isViewable: 'isDeleteVisible' },
+        { field: 'edit', header: 'Edit', isViewable: 'isEditVisible' },
     ];
     roleId: number;
-    selectedUser:IUserDetail[];
+    selectedUser: IUserDetail[] = [];
+    roleDetailsForm: FormGroup;
+    errorMessages: any;
+    userDetails: IUserDetail[] = [];
 
     // public method
     constructor(
+        private fb: FormBuilder,
         private activatedRoute: ActivatedRoute,
-        private userRolePermissionApiService: UserRolePermissionApiService
+        private ngxSpinnerService: NgxSpinnerService,
+        private translateService: TranslateService,
+        private router: Router,
+        private messageService: MessageService,
+        private userRolePermissionApiService: UserRolePermissionApiService,
+        private userRolePermissionTransformationService: UserRolePermissionTransformationService
     ) { }
 
     /**
@@ -45,6 +61,12 @@ export class RolePermissionComponent implements OnInit {
      * @memberof RolePermissionComponent
      */
     ngOnInit(): void {
+        this.errorMessages = this.userRolePermissionTransformationService.setValidationErrorMessage();
+        this.roleDetailsForm = this.fb.group({
+            'roleName': ['', [Validators.required]],
+            'roleDescription': ['', [Validators.required]],
+            'type': ['shore']
+        });
         this.activatedRoute.paramMap.subscribe(params => {
             this.roleId = Number(params.get('roleId'));
             this.treeNode = [];
@@ -57,11 +79,16 @@ export class RolePermissionComponent implements OnInit {
     * @memberof RolePermissionComponent
     */
     async getUserRolePermission() {
+        this.ngxSpinnerService.show();
         const userDetailsRes: IUserRolePermissionResponse = await this.userRolePermissionApiService.getUserRolePermission(this.roleId).toPromise();
-        const treeNode =[];
-        if(userDetailsRes.responseStatus.status === '200') {
+        this.ngxSpinnerService.hide();
+        const treeNode = [];
+        if (userDetailsRes.responseStatus.status === '200') {
+            this.getUserDetails(userDetailsRes.users);
+            this.roleDetailsForm.controls['roleName'].setValue(userDetailsRes.role?.name);
+            this.roleDetailsForm.controls['roleDescription'].setValue(userDetailsRes.role?.description);
             const userDetails = userDetailsRes.screens;
-            userDetails.map((userDetail:IScreenNode, index) => {
+            userDetails.map((userDetail: IScreenNode, index) => {
                 let isChecked: boolean;
                 const treeStructure = this.dataTreeStructure(userDetail);
                 const value: TreeNode = {
@@ -70,17 +97,16 @@ export class RolePermissionComponent implements OnInit {
                     children: []
                 }
                 treeNode.push(value);
-                if(userDetail.childs && userDetail.childs.length) {
+                if (userDetail.childs && userDetail.childs.length) {
                     isChecked = this.innerNodes(treeNode[index], userDetail.childs);
-                    const selectedNodes = this.selectedNodes;
-                    isChecked && treeStructure.isChecked ? (this.selectedNodes = [], selectedNodes.push(treeNode[index]), this.selectedNodes = [...selectedNodes]) : null
+                    isChecked && treeStructure.isChecked ? (this.selectedNodes = [...this.selectedNodes , treeNode[index]]) : null
                 } else {
-                    const selectedNodes = this.selectedNodes;
-                    treeStructure.isChecked ? (this.selectedNodes = [], selectedNodes.push(treeNode[index]), this.selectedNodes = [...selectedNodes]) : null
+                    treeStructure.isChecked ? (this.selectedNodes = [...this.selectedNodes, treeNode[index]]) : null;
                 }
             })
         }
         this.treeNode = [...treeNode];
+
     }
 
     /**
@@ -91,20 +117,26 @@ export class RolePermissionComponent implements OnInit {
     innerNodes(parentNode, childs) {
         const treeNodesData = [];
         childs.map((child, index) => {
+            let isChecked: boolean;
             let treeStructure = this.dataTreeStructure(child);
             const value: TreeNode = {
                 data: treeStructure,
                 expanded: false,
                 children: []
             }
-            treeStructure.isChecked ? treeNodesData.push(value) : '';
             parentNode['children'].push(value)
-            if (childs?.length) {
-                this.innerNodes(parentNode['children'][index], child.childs);
+            if (child.childs?.length) {
+                isChecked = this.innerNodes(parentNode['children'][index], child.childs);
+                if(isChecked && treeStructure.isChecked){
+                    this.selectedNodes = [...this.selectedNodes , parentNode['children'][index]];
+                    treeNodesData.push(value)
+                } 
+            } else if(treeStructure.isChecked){
+                    this.selectedNodes = ([...this.selectedNodes , value]);
+                    treeNodesData.push(value);
             }
         })
         if (parentNode['children'].length === treeNodesData.length) {
-            this.selectedNodes = [...this.selectedNodes, ...treeNodesData];
             return true
         } else {
             return false
@@ -119,16 +151,16 @@ export class RolePermissionComponent implements OnInit {
     dataTreeStructure(data) {
         const roleScreen = data.roleScreen;
         let isChecked: boolean;
-        roleScreen?.canAdd && roleScreen?.canEdit && roleScreen?.canDelete && roleScreen?.canView ? isChecked = true : isChecked = false;
-        return <ITreeNodeData>{ 
-            name: data.name, 
-            add: roleScreen?.canAdd ? true : false ,
-            edit: roleScreen?.canEdit ? true : false , 
+        (!data.isAddVisible || roleScreen?.canAdd) && (!data.isEditVisible || roleScreen?.canEdit) && (!data.isDeleteVisible || roleScreen?.canDelete) && (!data.isViewVisible || roleScreen?.canView) ? isChecked = true : isChecked = false;
+        return <ITreeNodeData>{
+            name: data.name,
+            add: roleScreen?.canAdd ? true : false,
+            edit: roleScreen?.canEdit ? true : false,
             delete: roleScreen?.canDelete ? true : false,
-            view: roleScreen?.canView  ? true : false , 
-            id: data.id, 
-            moduleId: data.moduleId, 
-            isChecked: isChecked ,
+            view: roleScreen?.canView ? true : false,
+            id: data.id,
+            moduleId: data.moduleId,
+            isChecked: isChecked,
             isAddVisible: data.isAddVisible,
             isDeleteVisible: data.isDeleteVisible,
             isEditVisible: data.isEditVisible,
@@ -140,23 +172,29 @@ export class RolePermissionComponent implements OnInit {
     * select or unselect node based on status 
     * @memberof RolePermissionComponent
     */
-    nodeSelect(event, selctionStatus) {
+    nodeSelect(event: any, selctionStatus: boolean) {
         let node = event?.originalEvent?.rowNode?.node;
         node?.children?.length ? this.nodeSelectUnSelect(node, selctionStatus) : null;
         this.cols.map((col) => {
-            node.data[col.field] = selctionStatus;
+            node.data[col.isViewable] ? node.data[col.field] = selctionStatus : null;
         })
-
+        const selectedNodes = this.selectedNodes;
+        this.selectedNodes?.map((selectedNode, index) => {
+            if (!this.checkNodeSelected(selectedNode.data)) {
+                selectedNodes.splice(index, 1);
+            }
+        });
+        this.selectedNodes = [...selectedNodes];
     }
 
     /**
     * select or unselect node based on status 
     * @memberof RolePermissionComponent
     */
-    nodeSelectUnSelect(node, selctionStatus) {
+    nodeSelectUnSelect(node: any, selctionStatus: boolean) {
         node.children.map((value) => {
             this.cols.map((col) => {
-                value.data[col.field] = selctionStatus;
+                value.data[col.isViewable] ? value.data[col.field] = selctionStatus : null;
                 value.children?.length ? this.nodeSelectUnSelect(value, selctionStatus) : null
             })
         })
@@ -178,8 +216,69 @@ export class RolePermissionComponent implements OnInit {
                 }
             });
             rowNode.parent ? this.getParentDetails(rowNode, selectedNodes) : (this.selectedNodes = [...selectedNodes]);
-        }
+        } else {
+            let nodeData = rowNode.node?.data;
+            let allNodeChildren = [];
+            rowNode.node?.children?.length ? allNodeChildren = this.getAllNodeChildren(rowNode.node?.children, allNodeChildren) : null;
+            if (this.checkNodeSelected(nodeData)) {
+                let childNodeSelected: boolean = true;
+                for (let i = 0; i < allNodeChildren.length; i++) {
+                    let userselected;
+                    for (let user = 0; user < this.selectedNodes.length; user++) {
+                        if (this.selectedNodes[user].data?.id == allNodeChildren[i].id) {
+                            userselected = true;
+                        }
+                    }
+                    if (!userselected) {
+                        childNodeSelected = false;
+                        break;
+                    }
+                }
+                childNodeSelected ? this.selectedNodes = [... this.selectedNodes, rowNode.node] : null;
+                childNodeSelected && rowNode.parent ? this.checkParentNodeSelected(rowNode.parent) : null;
+            }
 
+        }
+    }
+
+    /**
+    * get all node children 
+    * @memberof RolePermissionComponent
+    */
+    getAllNodeChildren(nodeChildren, nodeChildrenArray) {
+        nodeChildren?.map((childrenTreeNode) => {
+            nodeChildrenArray.push({ name: childrenTreeNode.data.name, id: childrenTreeNode.data.id });
+            childrenTreeNode.children?.length ? this.getAllNodeChildren(childrenTreeNode.children, nodeChildrenArray) : null;
+        })
+        return nodeChildrenArray;
+    }
+
+    /**
+    * check parent node selected
+    * @memberof RolePermissionComponent
+    */
+    checkParentNodeSelected(parentNode) {
+        let parentSelectedNode = [];
+        parentNode?.children?.map((node) => {
+            this.selectedNodes?.map((selectedNode) => {
+                if (node.data.name === selectedNode.data.name) {
+                    parentSelectedNode.push(node);
+                }
+            })
+        });
+
+        if (parentSelectedNode.length === parentNode?.children.length && this.checkNodeSelected(parentNode.data)) {
+            this.selectedNodes = [... this.selectedNodes, parentNode];
+            parentNode.parent ? this.checkParentNodeSelected(parentNode.parent) : null;
+        }
+    }
+
+    /**
+    * is current node ready to check
+    * @memberof RolePermissionComponent
+    */
+    checkNodeSelected(nodeData) {
+        return (!nodeData.isAddVisible || nodeData?.add) && (!nodeData.isEditVisible || nodeData?.edit) && (!nodeData.isDeleteVisible || nodeData?.delete) && (!nodeData.isViewVisible || nodeData?.view);
     }
 
     /**
@@ -194,6 +293,91 @@ export class RolePermissionComponent implements OnInit {
             }
         })
         rowNode.parent ? this.getParentDetails(rowNode, selectedNodes) : this.selectedNodes = [...selectedNodes];
+    }
+
+    /**
+     * Get field errors
+     * @param {string} formControlName
+     * @returns {ValidationErrors}
+     * @memberof RolePermissionComponent
+     */
+    fieldError(formControlName: string): ValidationErrors {
+        const formControl = this.field(formControlName);
+        return formControl?.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
+    }
+
+    /**
+    * Get form control of  roleDetailsForm
+    * @param {string} formControlName
+    * @returns {FormControl}
+    * @memberof RolePermissionComponent
+    */
+    field(formControlName: string): FormControl {
+        const formControl = <FormControl>this.roleDetailsForm.get(formControlName);
+        return formControl;
+    }
+
+    /**
+    * Save permission
+    * @memberof RolePermissionComponent
+    */
+    async saveRoleDetails() {
+        if (this.roleDetailsForm.valid) {
+            const selectedUser = this.selectedUser?.map((user) => {
+                return user.id
+            })
+            const treeNodeScreen: IUserPermissionScreen[] = [];
+            this.treeNode?.map((node) => {
+                this.setTreeNode(node, node.data, treeNodeScreen)
+            })
+            const userPermission: IUserPermissionModel = {
+                role: {
+                    description: this.roleDetailsForm.value.roleDescription,
+                    name: this.roleDetailsForm.value.roleName
+                },
+                screens: treeNodeScreen,
+                roleId: this.roleId,
+                userId: selectedUser ? selectedUser : []
+            }
+            this.ngxSpinnerService.show();
+            const translationKeys = await this.translateService.get(['USER_PERMISSION_CREATE_SUCCESS', 'USER_PERMISSION_CREATED_SUCCESSFULLY', 'USER_PERMISSION_CREATE_ERROR', 'USER_PERMISSION_ALREADY_EXIST']).toPromise();
+            const savePermissionRes: ISavePermissionResponse = await this.userRolePermissionApiService.rolePermission(userPermission).toPromise();
+            try {
+                this.ngxSpinnerService.hide();
+                if (savePermissionRes.responseStatus.status === '200') {
+                    this.messageService.add({ severity: 'success', summary: translationKeys['USER_PERMISSION_CREATE_SUCCESS'], detail: translationKeys['USER_PERMISSION_CREATED_SUCCESSFULLY'] });
+                    this.router.navigate(['./'], { relativeTo: this.activatedRoute.parent });
+                }
+            }
+            catch (error) {
+                if (error.error.errorCode === 'ERR-RICO-400') {
+                    this.messageService.add({ severity: 'error', summary: translationKeys['NEW_ROLE_CREATE_ERROR'], detail: translationKeys['ROLE_ALREADY_EXIST'] });
+                }
+                this.ngxSpinnerService.hide();
+            }
+        } else {
+            this.roleDetailsForm.markAllAsTouched();
+        }
+    }
+
+    /**
+    * Set tree nodes
+    * @memberof RolePermissionComponent
+    */
+    setTreeNode(node: TreeNode, nodeData: ITreeNodeData, treeNodeScreen: IUserPermissionScreen[]) {
+        treeNodeScreen.push({
+            id: nodeData.id,
+            name: nodeData.name,
+            add: nodeData.add,
+            edit: nodeData.edit,
+            view: nodeData.view,
+            delete: nodeData.delete
+        })
+        if (node.children?.length) {
+            node.children?.map((children) => {
+                this.setTreeNode(children, children.data, treeNodeScreen)
+            })
+        }
     }
 
     /**
@@ -419,4 +603,31 @@ export class RolePermissionComponent implements OnInit {
         this.selectedUser = selectedUser;
     }
 
+    /**
+    * cancel button to , navigate to listing page
+    * @memberof RolePermissionComponent
+    */
+    cancel() {
+        this.router.navigate(['./'], { relativeTo: this.activatedRoute.parent });
+    }
+
+    /**
+     * get User Details
+     * @memberof RolePermissionComponent
+    */
+    async getUserDetails(users) {
+        this.ngxSpinnerService.show();
+        const userDetailsRes: IUserDetailsResponse = await this.userRolePermissionApiService.getUserDetails().toPromise();
+        this.ngxSpinnerService.hide();
+        if (userDetailsRes.responseStatus.status === '200') {
+            let userDetails = userDetailsRes.users;
+            userDetails?.map((userDetail) => {
+                this.userDetails.push({ ...userDetail, 'name': userDetail.firstName + ' ' + userDetail.lastName });
+            });
+            users?.map((userId) => {
+                const selectedUser = this.userDetails?.filter((userDetail) => userDetail.id === userId.id);
+                selectedUser && selectedUser.length ? this.selectedUser = [...this.selectedUser, selectedUser[0]] : null;
+            })
+        }
+    }
 }

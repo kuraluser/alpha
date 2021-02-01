@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { AdminModule } from '../admin.module';
 
-import { IUserRolePermissionResponse , IUserDetailsResponse , IRoleResponse , IRoleDeleteResponse , IUserRoleModel , ISaveUserRoleResponse } from '../models/user-role-permission.model';
+import { IUserRolePermissionResponse , IUserDetailsResponse , IRoleResponse , ISavePermissionResponse , IUserPermissionModel , IRoleDeleteResponse , IUserRoleModel , ISaveUserRoleResponse } from '../models/user-role-permission.model';
 
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 
@@ -53,7 +53,7 @@ export class UserRolePermissionApiService {
   /**
  *
  * delete role
- * @param {roleId} roleId
+ * @param {number} roleId
  * @memberof UserRolePermissionApiService
  */
   deleteRole(roleId: number): Observable<IRoleDeleteResponse> {
@@ -63,11 +63,21 @@ export class UserRolePermissionApiService {
   /**
  *
  * add new role
- * @param {IUserRoleModel} IUserRoleModel
+ * @param {IUserRoleModel} newUserRoleData
  * @memberof UserRolePermissionApiService
  */
   saveNewRoleData(newUserRoleData: IUserRoleModel): Observable<ISaveUserRoleResponse> {
     return this.commonApiService.post<IUserRoleModel, ISaveUserRoleResponse>(`user/role`, newUserRoleData);
+  }
+
+  /**
+ *
+ * role permission
+ * @param {IUserPermissionModel} savePermission
+ * @memberof UserRolePermissionApiService
+ */
+  rolePermission(savePermission: IUserPermissionModel): Observable<ISavePermissionResponse>{
+    return this.commonApiService.post<IUserPermissionModel, ISavePermissionResponse>(`user/role/permission`, savePermission);
   }
 
 }

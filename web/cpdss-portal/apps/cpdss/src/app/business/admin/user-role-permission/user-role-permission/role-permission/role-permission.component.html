@@ -1,24 +1,22 @@
 
 <div>
-    <div>
+    <form [formGroup]="roleDetailsForm" (submit)="saveRoleDetails()" *ngIf="roleDetailsForm">
         <div>
             <label for="user_role_name">{{'USER_ROLE_NAME'| translate }}</label>
-            <input type="text" id="user_role_name"/>
+            <input type="text" id="user_role_name" formControlName="roleName"/>
+            <cpdss-portal-validation-error [errors]="fieldError('roleName')" [errorMessages]="errorMessages.roleName">
+            </cpdss-portal-validation-error>
         </div>
         <div>
             <label for="user_role_description">{{'USER_ROLE_DESCRIPTION'| translate }}</label>
-            <input type="text" id="user_role_description"/>
+            <input type="text" id="user_role_description" formControlName="roleDescription"/>
+            <cpdss-portal-validation-error  [errors]="fieldError('roleDescription')" [errorMessages]="errorMessages.roleDescription">
+            </cpdss-portal-validation-error>
         </div>
-    </div>
 
-     <div>
-         <div>
-             <button type="button" id="user_role_shore">{{'USER_ROLE_SHORE_BUTTON_LABEL'| translate }}</button>
-         </div>
-         <div>
-            <button type="button" id="user_role_ship">{{'USER_ROLE_SHIP_BUTTON_LABEL'| translate }}</button>
-        </div>
-     </div>
+    </form>
+    <button (click)="saveRoleDetails()" id="user_role_save">{{'SAVE_BUTTON_ROLE_DETAILS'| translate}}</button>
+    <button (click)="cancel()" id="user_role_cancel">{{'CANCEL_BUTTON_ROLE_DETAILS_LABEL'| translate}}</button>
 </div>
 
 
@@ -38,9 +36,12 @@
                 <td></td>
                 
                 <ng-container *ngFor = "let col of cols">
-                        <td [ttEditableColumn]="rowData" [ttEditableColumnField]="col.field" *ngIf="rowData[col.isViewable]"> 
-                            {{col.header}}
-                            <input type="checkbox"  [checked]="rowData[col.field]" (change)="checkboxChange($event,rowData, rowNode,col.field)"/>
+                        <td [ttEditableColumn]="rowData" [ttEditableColumnField]="col.field">
+                            <ng-container> 
+                                {{col.header}}
+                                <input type="checkbox"  [checked]="rowData[col.field]" (change)="checkboxChange($event,rowData, rowNode,col.field)" [disabled]="!rowData[col.isViewable]"/>
+                            </ng-container> 
+                           
                         </td>
                 </ng-container>
             </tr>
@@ -49,4 +50,4 @@
 </div>
 
 
-<cpdss-portal-user-allocate (selectedUserDetails)="userSelected($event)"></cpdss-portal-user-allocate>
+<cpdss-portal-user-allocate (selectedUserDetails)="userSelected($event)" [userDetails]="userDetails" [selectedUser]="selectedUser"></cpdss-portal-user-allocate>

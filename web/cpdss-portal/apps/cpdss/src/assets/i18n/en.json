@@ -597,8 +597,14 @@
 	"NEW_USER_ROLE_ALREADY_EXIST": "This Role already exist",
 	"ROLE_DELETE_SUCCESSFULLY": "Role delete successfully",
 	"ROLE_DELETED_SUCCESS": "Success",
-	"ROLE_MAPPING_HEADING": "Pages",
 	"COMMINGLE_POPUP_PREFERRED_TANK_MAX_LIMIT": "Cannot select more than 5 preferred tanks.",
 	"EDIT_PORT_ROTATION_VALIDATION_MESSAGE": "The port you are changing is already visited. Please recheck.",
-	"COMMINGLE_MANUAL_PERCENTAGE_VALIDATION" : "Sum of the percentage is should be equal to 100 please correct."
+	"COMMINGLE_MANUAL_PERCENTAGE_VALIDATION" : "Sum of the percentage is should be equal to 100 please correct.",
+	"SAVE_BUTTON_ROLE_DETAILS":"Save",
+	"USER_PERMISSION_CREATE_SUCCESS": "Success",
+	"USER_PERMISSION_CREATED_SUCCESSFULLY": "User Permission saved successfully",
+	"USER_PERMISSION_CREATE_ERROR": "Error",
+	"USER_PERMISSION_ALREADY_EXIST": "This Role already exist",
+	"USER_ROLE_BOTH_BUTTON_LABEL": "Both",
+	"CANCEL_BUTTON_ROLE_DETAILS_LABEL":"Cancel"
 }

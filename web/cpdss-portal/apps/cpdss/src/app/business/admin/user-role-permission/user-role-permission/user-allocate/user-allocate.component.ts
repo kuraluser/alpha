@@ -1,7 +1,13 @@
-import { Component, OnInit , Output , EventEmitter } from '@angular/core';
+import { Component, OnInit , Output , EventEmitter, Input } from '@angular/core';
 
 import { IUserDetail, IUserDetailsResponse } from '../../../models/user-role-permission.model';
 import { UserRolePermissionApiService } from '../../../services/user-role-permission-api.service';
+
+@Component({
+  selector: 'cpdss-portal-user-allocate',
+  templateUrl: './user-allocate.component.html',
+  styleUrls: ['./user-allocate.component.scss']
+})
 
 /**
  * Component class of user allocation
@@ -10,18 +16,28 @@ import { UserRolePermissionApiService } from '../../../services/user-role-permis
  * @class UserAllocateComponent
  * @implements {OnInit}
  */
-@Component({
-  selector: 'cpdss-portal-user-allocate',
-  templateUrl: './user-allocate.component.html',
-  styleUrls: ['./user-allocate.component.scss']
-})
 export class UserAllocateComponent implements OnInit {
 
-  userDetails: IUserDetail[] = [];
-  selectedUser: IUserDetail[] = [];
+  _userDetails: IUserDetail[] = [];
+  _selectedUser: IUserDetail[] = [];
   totalColSpan: number = 3;
   
   @Output() selectedUserDetails = new EventEmitter<IUserDetail[]>();
+  @Input()
+  set selectedUser(selectedUser: IUserDetail[]) {
+    this._selectedUser = selectedUser;
+  }
+  get selectedUser() {
+    return [...this._selectedUser];
+  }
+
+  @Input()
+  set userDetails(userDetails: IUserDetail[]) {
+    this._userDetails = userDetails;
+  }
+  get userDetails() {
+    return this._userDetails;
+  }
 
   // public method
   constructor(
@@ -35,21 +51,6 @@ export class UserAllocateComponent implements OnInit {
  * @memberof UserAllocateComponent
  */
   ngOnInit(): void {
-    this.getUserDetails();
-  }
-
-  /**
-  * get User Details
-  * @memberof UserAllocateComponent
-  */
-  async getUserDetails() {
-    const userDetailsRes: IUserDetailsResponse = await this.userRolePermissionApiService.getUserDetails().toPromise();
-    if (userDetailsRes.responseStatus.status === '200') {
-      let userDetails = userDetailsRes.users;
-      userDetails?.map((userDetail) => {
-        this.userDetails.push({...userDetail , 'name': userDetail.firstName + ' ' + userDetail.lastName})
-      });
-    }
   }
 
   /**

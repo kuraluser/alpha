@@ -11,7 +11,23 @@ import { ICargoTank, ILoadableCargo } from '../../core/models/common.model';
 export interface IUserRolePermissionResponse {
     responseStatus: IResponseStatus;
     screens: IScreenNode[]
+    role: roleDetail,
+    users: number[],
 }
+
+/**
+ * Interface for  role detail
+ *
+ * @export
+ * @interface roleDetail
+ */
+export interface roleDetail {
+    id: number, 
+    name: string, 
+    description: string , 
+    companyId: string
+}
+
 
 /**
  * Interface for  user role permission inner nodes
@@ -133,6 +149,56 @@ export interface IUserRoleModel {
  */
 export interface ISaveUserRoleResponse {
     roles: string,
+    responseStatus: IResponseStatus,
+    roleId: number,
+    message: string
+}
+/**
+ * Interface for user permission 
+ *
+ * @export
+ * @interface IUserPermissionModel
+ */
+export interface IUserPermissionModel {
+    screens: IUserPermissionScreen[],
+    roleId: number,
+    userId: number[],
+    role: IUserPermissionRole
+}
+
+/**
+ * Interface for user permission  screen
+ *
+ * @export
+ * @interface IUserPermissionScreen
+ */
+export interface IUserPermissionScreen {
+    id: number,
+    name: string,
+    add: boolean,
+    edit: boolean,
+    view: boolean,
+    delete: boolean
+}
+
+/**
+ * Interface for user permission role
+ *
+ * @export
+ * @interface IUserPermissionRole
+ */
+export interface IUserPermissionRole {
+    name: string,
+    description: string
+}
+
+/**
+ * Interface for save user permission
+ *
+ * @export
+ * @interface ISavePermissionResponse
+ */
+export interface ISavePermissionResponse {
     responseStatus: IResponseStatus,
     roleId: number,
     message: string
