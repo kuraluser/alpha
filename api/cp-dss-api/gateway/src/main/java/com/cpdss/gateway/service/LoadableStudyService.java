@@ -54,6 +54,7 @@ import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
+import com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
@@ -87,6 +88,7 @@ import com.cpdss.gateway.domain.CommingleCargo;
 import com.cpdss.gateway.domain.CommingleCargoResponse;
 import com.cpdss.gateway.domain.CommonResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
+import com.cpdss.gateway.domain.LoadOnTopRequest;
 import com.cpdss.gateway.domain.LoadablePattern;
 import com.cpdss.gateway.domain.LoadablePatternCargoDetails;
 import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
@@ -1427,12 +1429,6 @@ public class LoadableStudyService {
                                 id ->
                                     loadablePatternCargoDetails
                                         .setLoadablePatternCommingleDetailsId(id));
-
-                        Optional.ofNullable(loadablePatternCargoDetail.getLoadingOrder())
-                            .ifPresent(
-                                loadingOrder ->
-                                    loadablePatternCargoDetails.setLoadingOrder(loadingOrder));
-
                         loadablePatternDto
                             .getLoadablePatternCargoDetails()
                             .add(loadablePatternCargoDetails);
@@ -2709,14 +2705,8 @@ public class LoadableStudyService {
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
-    buildLoadablePlanDetails(loadablePlanRequest, request);
+    buildLoadableQuantityCommingleAndCargoDetails(loadablePlanRequest, request);
     AlgoReply algoReply = this.saveLoadablePatterns(request);
-    if (!SUCCESS.equals(algoReply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "Failed to save loadable pattern",
-          algoReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(algoReply.getResponseStatus().getCode())));
-    }
     algoPatternResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return algoPatternResponse;
@@ -2726,7 +2716,7 @@ public class LoadableStudyService {
    * @param loadablePlanRequest
    * @param request void
    */
-  private void buildLoadablePlanDetails(
+  private void buildLoadableQuantityCommingleAndCargoDetails(
       LoadablePlanRequest loadablePlanRequest,
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
     LoadablePlanDetails.Builder planBuilder = LoadablePlanDetails.newBuilder();
@@ -2741,75 +2731,44 @@ public class LoadableStudyService {
               lpd.getLoadablePlanPortWiseDetails()
                   .forEach(
                       lppwd -> {
-                        LoadablePlanDetailsReply.Builder detailsBuilderDeparture =
+                        LoadablePlanDetailsReply.Builder detailsBuilder =
                             LoadablePlanDetailsReply.newBuilder();
                         lppwd
                             .getDepartureCondition()
                             .getLoadableQuantityCommingleCargoDetails()
                             .forEach(
                                 lqccd -> {
-                                  buildCommingleDetails(lqccd, detailsBuilderDeparture);
+                                  buildCommingleDetails(lqccd, detailsBuilder);
                                 });
                         lppwd
                             .getDepartureCondition()
                             .getLoadableQuantityCargoDetails()
                             .forEach(
                                 lpqcd -> {
-                                  buildLoadableCargoDetails(lpqcd, detailsBuilderDeparture);
+                                  buildLoadableCargoDetails(lpqcd, detailsBuilder);
                                 });
                         lppwd
                             .getDepartureCondition()
                             .getLoadablePlanStowageDetails()
                             .forEach(
                                 lpsd -> {
-                                  buildLoadablePlanStowageDetails(lpsd, detailsBuilderDeparture);
+                                  buildLoadablePlanStowageDetails(lpsd, detailsBuilder);
                                 });
                         lppwd
                             .getDepartureCondition()
                             .getLoadablePlanBallastDetails()
                             .forEach(
                                 lpbd -> {
-                                  buildLoadablePlanBallstDetails(lpbd, detailsBuilderDeparture);
+                                  buildLoadablePlanBallstDetails(lpbd, detailsBuilder);
                                 });
-                        portWiseBuilder.setDepartureCondition(detailsBuilderDeparture);
-
-                        LoadablePlanDetailsReply.Builder detailsBuilderArrival =
-                            LoadablePlanDetailsReply.newBuilder();
-                        lppwd
-                            .getArrivalCondition()
-                            .getLoadableQuantityCommingleCargoDetails()
-                            .forEach(
-                                lqccd -> {
-                                  buildCommingleDetails(lqccd, detailsBuilderArrival);
-                                });
-                        lppwd
-                            .getArrivalCondition()
-                            .getLoadableQuantityCargoDetails()
-                            .forEach(
-                                lpqcd -> {
-                                  buildLoadableCargoDetails(lpqcd, detailsBuilderArrival);
-                                });
-                        lppwd
-                            .getArrivalCondition()
-                            .getLoadablePlanStowageDetails()
-                            .forEach(
-                                lpsd -> {
-                                  buildLoadablePlanStowageDetails(lpsd, detailsBuilderArrival);
-                                });
-                        lppwd
-                            .getArrivalCondition()
-                            .getLoadablePlanBallastDetails()
-                            .forEach(
-                                lpbd -> {
-                                  buildLoadablePlanBallstDetails(lpbd, detailsBuilderArrival);
-                                });
-                        portWiseBuilder.setArrivalCondition(detailsBuilderArrival);
-
+                        portWiseBuilder.setDepartureCondition(detailsBuilder);
                         portWiseBuilder.setPortId(lppwd.getPortId());
                         planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                       });
               planBuilder.setCaseNumber(lpd.getCaseNumber());
 
+              // todo add constain
+              // todo add loading order
               request.addLoadablePlanDetails(planBuilder);
             });
   }
@@ -3395,7 +3354,6 @@ public class LoadableStudyService {
           .ifPresent(item -> ohqBuilder.setActualWeight(valueOf(item)));
       Optional.ofNullable(record.getPlannedWeight())
           .ifPresent(item -> ohqBuilder.setPlannedWeight(valueOf(item)));
-      Optional.ofNullable(record.getFuelTypeId()).ifPresent(ohqBuilder::setFuelTypeId);
       recordBuilder.addOhq(ohqBuilder.build());
     }
   }
@@ -3833,5 +3791,28 @@ public class LoadableStudyService {
         createGroupWiseTankList(synopticalTableReply.getBallastCenterTanksList()));
     voyageStatusResponse.setBallastRearTanks(
         createGroupWiseTankList(synopticalTableReply.getBallastRearTanksList()));
+  }
+
+  public SaveCommentResponse saveLoadOnTop(
+      LoadOnTopRequest request, String correlationId, Long loadableStudyId)
+      throws NumberFormatException, GenericServiceException {
+    SaveLoadOnTopRequest.Builder builder = SaveLoadOnTopRequest.newBuilder();
+    builder.setLoadableStudyId(loadableStudyId);
+    builder.setLoadOnTop(request.getIsLoadOnTop());
+    SaveCommentReply reply = this.saveLoadOnTop(builder.build());
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to save LoadOnTop",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+    }
+    SaveCommentResponse response = new SaveCommentResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  public SaveCommentReply saveLoadOnTop(SaveLoadOnTopRequest grpcRequest) {
+    return this.loadableStudyServiceBlockingStub.saveLoadOnTop(grpcRequest);
   }
 }

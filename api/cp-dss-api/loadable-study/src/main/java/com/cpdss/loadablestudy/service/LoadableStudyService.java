@@ -6161,4 +6161,37 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  public void saveLoadOnTop(
+      com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest request,
+      io.grpc.stub.StreamObserver<SaveCommentReply> responseObserver) {
+    SaveCommentReply.Builder replyBuilder = SaveCommentReply.newBuilder();
+    try {
+      Optional<LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+
+      if (!loadableStudyOpt.isPresent()) {
+        throw new GenericServiceException(
+            "LoadableStudy does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      LoadableStudy entity = loadableStudyOpt.get();
+      entity.setLoadOnTop(request.getLoadOnTop());
+      entity = this.loadableStudyRepository.save(entity);
+
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      log.error("Error saving load on top", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Error saving load on top")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }
