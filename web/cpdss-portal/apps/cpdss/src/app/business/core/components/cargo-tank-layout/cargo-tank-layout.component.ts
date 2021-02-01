@@ -33,6 +33,7 @@ export class CargoTankLayoutComponent implements OnInit {
 
       return tank;
     }));
+    this.selectedTankIdChange.emit(this.selectedTankId);
   }
 
   @Input() selectedTankId: number;

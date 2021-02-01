@@ -303,6 +303,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
    */
   onVoyageChange(event) {
     this.voyageId = event?.value?.id;
+    this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
     this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/0`]);
   }
 

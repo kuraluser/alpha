@@ -141,7 +141,7 @@
                 </cpdss-portal-on-hand-quantity>
                 <cpdss-portal-on-board-quantity
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ && loadableStudyId && loadableStudies && loadableQuantityNew"
-                    [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId">
+                    [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy">
                 </cpdss-portal-on-board-quantity>
 
 
@@ -161,7 +161,7 @@
                             <ng-container *ngIf="dischargingPorts && dischargingPorts.length && dischargeCargos && dischargeCargos.length">
                                 <label class="col-form-label pr-10 ml-15">{{'CARGO_DISCHARGE_FIRST' | translate}}</label>
                                 <p-dropdown id="cargo_discharge" [(ngModel)]="selectedDischargeCargo"
-                                    [options]="dischargeCargos" optionLabel="name"
+                                    [options]="dischargeCargos" optionLabel="name" [showClear]="true"
                                     placeholder="{{ 'CARGO_DISCHARGE_SELECT'| translate }}"
                                     (onChange)="onDischargeCargoChange($event)">
                                 </p-dropdown>

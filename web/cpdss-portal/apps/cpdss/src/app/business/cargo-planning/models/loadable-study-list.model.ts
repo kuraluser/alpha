@@ -21,6 +21,7 @@ export class LoadableStudy {
     loadableStudyAttachment?: ILoadableStudyAttachment[];
     dischargingCargoId: number;
     createdFromId?: string;
+    loadOnTop: boolean;
 }
 
 /**

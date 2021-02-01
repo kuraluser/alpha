@@ -9,6 +9,10 @@ import { LoadableStudyDetailsTransformationService } from '../../services/loadab
 import { CommingleApiService } from '../../services/commingle-api.service';
 import { ITank, IPort } from '../../../core/models/common.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
+import { maximumVolumeValidator } from '../../directives/validator/maximum-volumn.directive';
+import { LoadableStudy } from '../../models/loadable-study-list.model';
+import { TranslateService } from '@ngx-translate/core';
+import { MessageService } from 'primeng/api';
 
 /**
  * Component for OBQ tab 
@@ -39,6 +43,7 @@ export class OnBoardQuantityComponent implements OnInit {
   }
 
   @Input() vesselId: number;
+  @Input() loadableStudy: LoadableStudy;
   @Input() permission: IPermission;
 
   get selectedPortOBQTankDetails() {
@@ -97,7 +102,9 @@ export class OnBoardQuantityComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private commingleApiService: CommingleApiService,
-    private fb: FormBuilder,) { }
+    private fb: FormBuilder,
+    private translateService: TranslateService,
+    private messageService: MessageService) { }
 
   /**
    * Method called on intialization of the component
@@ -170,12 +177,12 @@ export class OnBoardQuantityComponent implements OnInit {
     const obqTankDetailsArray = _selectedPortOBQTankDetails?.map(obqTankDetails => this.initOBQFormGroup(obqTankDetails));
     this.obqForm = this.fb.group({
       dataTable: this.fb.array([...obqTankDetailsArray]),
+      loadOnTop: this.fb.control(this.loadableStudy?.loadOnTop),
       cargo: new FormControl('', Validators.required),
-      sounding: this.fb.control('', [Validators.required, Validators.min(0), numberValidator(2, 4)]),
-      volume: this.fb.control(''),
-      weight: this.fb.control('', [Validators.required, Validators.min(0), numberValidator(2, 7)]),
+      api: this.fb.control('', [Validators.required, Validators.min(0), numberValidator(2, 2)]),
+      quantity: this.fb.control('', [Validators.required, Validators.min(0), numberValidator(2, 7)]),
     });
-    this.enableOrDisableControls(this.obqForm, ['sounding', 'weight', 'volume'], false);
+    this.enableOrDisableControls(this.obqForm, ['api', 'quantity'], false);
     this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
     return [..._selectedPortOBQTankDetails];
   }
@@ -209,9 +216,8 @@ export class OnBoardQuantityComponent implements OnInit {
     return this.fb.group({
       cargo: this.fb.control(obqTankDetail.cargo),
       tankName: this.fb.control(obqTankDetail.tankName, Validators.required),
-      sounding: this.fb.control(obqTankDetail.sounding.value, [Validators.required, Validators.min(0), numberValidator(2, 4)]),
-      volume: this.fb.control(obqTankDetail.volume.value, [Validators.required, Validators.min(0), numberValidator(2, 7), Validators.max(Number(obqTankDetail?.fullCapacityCubm))]),
-      weight: this.fb.control(obqTankDetail.weight.value, [Validators.required, Validators.min(0), numberValidator(2, 7)]),
+      api: this.fb.control(obqTankDetail.api.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
+      quantity: this.fb.control(obqTankDetail.quantity.value, [Validators.required, Validators.min(0), numberValidator(2, 7), maximumVolumeValidator('density', obqTankDetail)]),
     });
   }
 
@@ -239,6 +245,7 @@ export class OnBoardQuantityComponent implements OnInit {
     const formGroup = this.row(event.index);
     if (formGroup.valid) {
       const tankDetails = this.loadableStudyDetailsTransformationService.getOBQTankDetailAsValue(event.data);
+      tankDetails.loadOnTop = this.obqForm.controls?.loadOnTop?.value;
       const res = await this.loadableStudyDetailsApiService.setOBQTankDetails(tankDetails, this.vesselId, this.voyageId, this.loadableStudyId);
       this.updateTankList();
       this.setFillingPercentage(this.selectedTankId);
@@ -252,7 +259,7 @@ export class OnBoardQuantityComponent implements OnInit {
           this.obqForm.updateValueAndValidity()
         }
       });
-    }
+    }    
     this.ngxSpinnerService.hide();
   }
 
@@ -263,15 +270,14 @@ export class OnBoardQuantityComponent implements OnInit {
    * @memberof OnBoardQuantityComponent
    */
   onRowSelection(event) {
-    this.enableOrDisableControls(this.obqForm, ['sounding', 'weight', 'volume']);
+    this.enableOrDisableControls(this.obqForm, ['api', 'quantity']);
     const data = event.data
     this.selectedTank = data;
     this.selectedIndex = event.index
-    this.obqForm.controls.cargo.setValue(data.cargo.value?.name)
-    this.obqForm.controls.sounding.setValue(data.sounding.value)
-    this.obqForm.controls.weight.setValue(data.weight.value)
-    this.obqForm.controls.volume.setValue(data.volume.value)
-    this.obqForm.controls.volume.setValidators([Validators.required, Validators.min(0), numberValidator(2, 7), Validators.max(Number(event.data?.fullCapacityCubm))])
+    this.obqForm.controls.cargo.setValue(data?.cargo?.value?.name)
+    this.obqForm.controls.api.setValue(data?.api.value);
+    this.obqForm.controls.quantity.setValue(data?.quantity.value);
+    this.obqForm.controls.quantity.setValidators([Validators.required, Validators.min(0), numberValidator(2, 7), Validators.max(Number(event.data?.fullCapacityCubm * event?.data?.api?.value))]);
     this.setFillingPercentage(this.selectedTankId);
     this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
   }
@@ -373,8 +379,9 @@ export class OnBoardQuantityComponent implements OnInit {
       const newGroup = group.map((groupItem) => {
         const tank = Object.assign({}, groupItem);
         const selectedPortOBQTankDetail = this.selectedPortOBQTankDetails.find((item) => (item.tankId === groupItem.id) && item);
+        const volume = Number(selectedPortOBQTankDetail?.quantity?.value) / Number(selectedPortOBQTankDetail?.api?.value);
         tank.commodity = {
-          volume: selectedPortOBQTankDetail?.volume?.value ?? 0,
+          volume: volume ?? 0,
           colorCode: selectedPortOBQTankDetail?.colorCode
         }
         return tank;
@@ -397,12 +404,11 @@ export class OnBoardQuantityComponent implements OnInit {
       const formGroup = this.row(this.selectedIndex);
       formGroup.controls[field]?.setValue(event?.target.value);
     }
-    if (this.obqForm.valid || (controls.sounding.valid && controls.weight.valid && controls.volume.valid)) {
+    if (this.obqForm.valid || (controls.api.valid && controls.quantity.valid)) {
       this.onEditComplete({ originalEvent: event, data: this.selectedTank, field: field, index: this.selectedIndex });
     } else {
-      controls.sounding.markAsTouched();
-      controls.weight.markAsTouched();
-      controls.volume.markAsTouched();
+      controls.api.markAsTouched();
+      controls.quantity.markAsTouched();
       this.obqForm.updateValueAndValidity();
     }
   }
@@ -455,6 +461,23 @@ export class OnBoardQuantityComponent implements OnInit {
         block: 'center'
       });
     }
+  }
+
+  /**
+   * Method for toggling load on top checkbox
+   *
+   * @param {*} event
+   * @memberof OnBoardQuantityComponent
+   */
+  async toggleLoadOnTop(event) {
+    this.loadableStudy.loadOnTop = event.target.checked;
+    this.ngxSpinnerService.show();
+    const translationKeys = await this.translateService.get(['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS', 'LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS_DETAIL']).toPromise();
+    const res = await this.loadableStudyDetailsApiService.saveLoadableStudyLoadOnTop(this.vesselId, this.voyageId, this.loadableStudyId, { isLoadOnTop: event.target.checked }).toPromise();
+    if (res?.responseStatus?.status === "200") {
+      this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS_DETAIL'] });
+    }
+    this.ngxSpinnerService.hide();
   }
 
 }

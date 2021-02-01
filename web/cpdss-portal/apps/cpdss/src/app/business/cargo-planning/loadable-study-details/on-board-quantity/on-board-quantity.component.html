@@ -13,6 +13,12 @@
                                     {{selectedPort?.name}}</li>
                             </ul>
                         </div>
+                        <div class="col">
+                            <label class="checkbox-custom">{{'OBQ_SLOP_TANK_LOAD_ON_TOP' | translate}}
+                                <input type="checkbox" formControlName="loadOnTop" (change)="toggleLoadOnTop($event)" [readonly]="!permission?.edit">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col" *ngIf="obqForm"> 
@@ -65,7 +71,7 @@
             </div>
             <form *ngIf="obqForm && selectedIndex >= 0" [formGroup]="obqForm">
                 <div class="row text-uppercase text-secondary mt-10">
-                    <div class="col-3">
+                    <div class="col-4">
                         <div class="row mb-15">
                             <label for="" class="col-12 text-center">{{'OBQ_CARGO'| translate}}</label>
                             <div class="col">
@@ -73,38 +79,26 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-4">
                         <div class="row mb-15">
-                            <label for="" class="col-12 text-center">{{'OBQ_SOUNDING'| translate}}</label>
+                            <label for="" class="col-12 text-center">{{'OBQ_API'| translate}}</label>
                             <div class="col">
-                                <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="sounding"
-                                    (change)="onChange($event,'sounding')" [readonly]="isEditable">
-                                <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'sounding')"
-                                    [errorMessages]="getErrorMessages('sounding')">
+                                <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="api"
+                                    (change)="onChange($event,'api')" [readonly]="isEditable">
+                                <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'api')"
+                                    [errorMessages]="getErrorMessages('api')">
                                 </cpdss-portal-validation-error>
                             </div>
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-4">
                         <div class="row mb-15">
-                            <label for="" class="col-12 text-center">{{'OBQ_WEIGHT'| translate}}</label>
+                            <label for="" class="col-12 text-center">{{'OBQ_QUANTITY'| translate}}</label>
                             <div class="col">
-                                <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="weight"
-                                    (change)="onChange($event,'weight')" [readonly]="isEditable">
-                                <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'weight')"
-                                    [errorMessages]="getErrorMessages('weight')">
-                                </cpdss-portal-validation-error>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="row mb-15">
-                            <label for="" class="col-12 text-center">{{'OBQ_VOL'| translate}}</label>
-                            <div class="col">
-                                <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="volume"
-                                    (change)="onChange($event,'volume')" [readonly]="isEditable">
-                                <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'volume')"
-                                    [errorMessages]="getErrorMessages('volume')">
+                                <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="quantity"
+                                    (change)="onChange($event,'quantity')" [readonly]="isEditable">
+                                <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'quantity')"
+                                    [errorMessages]="getErrorMessages('quantity')">
                                 </cpdss-portal-validation-error>
                             </div>
                         </div>

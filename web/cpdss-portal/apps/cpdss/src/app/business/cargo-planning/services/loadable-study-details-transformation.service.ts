@@ -790,7 +790,7 @@ export class LoadableStudyDetailsTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
         filterType: DATATABLE_FILTER_TYPE.NUMBER,
         filterPlaceholder: 'OHQ_SEARCH_DENSITY',
-        fieldHeaderClass: 'column-volume',
+        fieldHeaderClass: 'column-density',
         errorMessages: {
           'required': 'OHQ_VALUE_REQUIRED',
           'min': 'OHQ_MIN_VALUE',
@@ -802,12 +802,12 @@ export class LoadableStudyDetailsTransformationService {
         field: 'arrivalQuantity',
         header: 'OHQ_ARRIVAL_QUANTITY',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        fieldPlaceholder: 'OHQ_PLACEHOLDER_WEIGHT',
+        fieldPlaceholder: 'OHQ_PLACEHOLDER_QUANTITY',
         filter: true,
         filterField: 'arrivalQuantity.value',
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
         filterType: DATATABLE_FILTER_TYPE.NUMBER,
-        filterPlaceholder: 'OHQ_SEARCH_WEIGHT',
+        filterPlaceholder: 'OHQ_SEARCH_QUANTITY',
         fieldHeaderClass: 'column-weight',
         errorMessages: {
           'required': 'OHQ_VALUE_REQUIRED',
@@ -821,13 +821,13 @@ export class LoadableStudyDetailsTransformationService {
         field: 'departureQuantity',
         header: 'OHQ_DEPARTURE_QUANTITY',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        fieldPlaceholder: 'OHQ_PLACEHOLDER_WEIGHT',
+        fieldPlaceholder: 'OHQ_PLACEHOLDER_QUANTITY',
         filter: true,
         filterField: 'departureQuantity.value',
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
         filterType: DATATABLE_FILTER_TYPE.NUMBER,
         fieldHeaderClass: 'column-weight',
-        filterPlaceholder: 'OHQ_SEARCH_WEIGHT',
+        filterPlaceholder: 'OHQ_SEARCH_QUANTITY',
         errorMessages: {
           'required': 'OHQ_VALUE_REQUIRED',
           'min': 'OHQ_MIN_VALUE',
@@ -1097,15 +1097,15 @@ export class LoadableStudyDetailsTransformationService {
         }
       },
       {
-        field: 'sounding',
-        header: 'OBQ_SOUNDING',
+        field: 'api',
+        header: 'OBQ_API',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        fieldPlaceholder: 'OBQ_PLACEHOLDER_SOUNDING',
+        fieldPlaceholder: 'OBQ_PLACEHOLDER_API',
         filter: true,
-        filterField: 'sounding.value',
+        filterField: 'api.value',
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
         filterType: DATATABLE_FILTER_TYPE.NUMBER,
-        filterPlaceholder: 'OBQ_SEARCH_SOUNDING',
+        filterPlaceholder: 'OBQ_SEARCH_API',
         errorMessages: {
           'required': 'OBQ_VALUE_REQUIRED',
           'min': 'OBQ_MIN_VALUE',
@@ -1114,38 +1114,22 @@ export class LoadableStudyDetailsTransformationService {
 
       },
       {
-        field: 'weight',
-        header: 'OBQ_WEIGHT',
+        field: 'quantity',
+        header: 'OBQ_QUANTITY',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        fieldPlaceholder: 'OBQ_PLACEHOLDER_WEIGHT',
+        fieldPlaceholder: 'OBQ_PLACEHOLDER_QUANTITY',
         filter: true,
-        filterField: 'weight.value',
+        filterField: 'quantity.value',
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
         filterType: DATATABLE_FILTER_TYPE.NUMBER,
-        filterPlaceholder: 'OBQ_SEARCH_WEIGHT',
+        filterPlaceholder: 'OBQ_SEARCH_QUANTITY',
         errorMessages: {
           'required': 'OBQ_VALUE_REQUIRED',
           'min': 'OBQ_MIN_VALUE',
-          'groupTotal': 'OBQ_GROUP_TOTAL'
-        }
-      },
-      {
-        field: 'volume',
-        header: 'OBQ_VOL',
-        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        fieldPlaceholder: 'OBQ_PLACEHOLDER_VOL',
-        filter: true,
-        filterField: 'volume.value',
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
-        filterType: DATATABLE_FILTER_TYPE.NUMBER,
-        filterPlaceholder: 'OBQ_SEARCH_VOL',
-        errorMessages: {
-          'required': 'OBQ_VALUE_REQUIRED',
-          'min': 'OBQ_MIN_VALUE',
+          'groupTotal': 'OBQ_GROUP_TOTAL',
           'max': "OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY"
         }
-
-      },
+      }
     ]
   }
 
@@ -1166,9 +1150,8 @@ export class LoadableStudyDetailsTransformationService {
     const cargoObj: ICargo = listData.cargoList.find(cargo => cargo.id === obqTankDetail.cargoId);
     _obqTankDetail.cargo = new ValueObject<ICargo>(cargoObj, true, isNewValue, false);
     _obqTankDetail.fullCapacityCubm = obqTankDetail?.fullCapacityCubm;
-    _obqTankDetail.sounding = new ValueObject<number>(obqTankDetail.sounding, true, isNewValue, isEditable);
-    _obqTankDetail.weight = new ValueObject<number>(obqTankDetail.weight, true, isNewValue, isEditable);
-    _obqTankDetail.volume = new ValueObject<number>(obqTankDetail.volume, true, isNewValue, isEditable);
+    _obqTankDetail.api = new ValueObject<number>(obqTankDetail.api, true, isNewValue, isEditable);
+    _obqTankDetail.quantity = new ValueObject<number>(obqTankDetail.quantity, true, isNewValue, isEditable);
     _obqTankDetail.colorCode = obqTankDetail.colorCode;
     _obqTankDetail.abbreviation = obqTankDetail.abbreviation;
 

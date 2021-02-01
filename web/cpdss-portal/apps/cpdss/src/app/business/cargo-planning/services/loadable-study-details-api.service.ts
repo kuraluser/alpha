@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { IResponse } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, PortsDB, IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, OHQDB, IPortOBQResponse, IPortOBQTankDetail, OBQDB, ICargoNominationValueObject } from '../models/cargo-planning.model';
+import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, PortsDB, IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, OHQDB, IPortOBQResponse, IPortOBQTankDetail, OBQDB, ICargoNominationValueObject, ILoadOnTop } from '../models/cargo-planning.model';
 import { IDischargingPortIds } from '../models/loadable-study-list.model';
 import { IPort, IPortList, IPortsDetailsResponse, IPortsResponse } from '../../core/models/common.model';
 
@@ -253,4 +253,19 @@ export class LoadableStudyDetailsApiService {
     getOBQTankDetailsPendingUpdatesCount(vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
         return this._obqDb.obq.where({ 'vesselId': vesselId, 'voyageId': voyageId, 'loadableStudyId': loadableStudyId }).count();
     }
+
+    /**
+     * Save load on top is enable or not for loadable study
+     *
+     * @param {number} vesselId
+     * @param {number} voyageId
+     * @param {number} loadableStudyId
+     * @param {ILoadOnTop} loadOnTop
+     * @returns {Observable<IResponse>}
+     * @memberof LoadableStudyDetailsApiService
+     */
+    saveLoadableStudyLoadOnTop(vesselId: number, voyageId: number, loadableStudyId: number, loadOnTop: ILoadOnTop): Observable<IResponse> {
+        return this.commonApiService.post<ILoadOnTop, IResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/load-on-top`, loadOnTop);
+    }
+
 }

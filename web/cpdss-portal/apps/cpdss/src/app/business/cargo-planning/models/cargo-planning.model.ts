@@ -587,9 +587,8 @@ export interface IPortOBQTankDetail {
     cargoId: number;
     tankId: number;
     tankName: string;
-    sounding: number;
-    weight: number;
-    volume: number;
+    api: number;
+    quantity: number;
     colorCode: string;
     portId: number;
     vesselId: number;
@@ -597,6 +596,7 @@ export interface IPortOBQTankDetail {
     loadableStudyId: number;
     fullCapacityCubm: string;
     abbreviation: string;
+    loadOnTop: boolean;
 }
 
 /**
@@ -612,14 +612,25 @@ export interface IPortOBQTankDetailValueObject {
     tankId: number;
     tankName: string;
     cargo: ValueObject<ICargo>;
-    sounding: ValueObject<number>;
-    weight: ValueObject<number>;
-    volume: ValueObject<number>;
+    api: ValueObject<number>;
+    quantity: ValueObject<number>;
+    volume: number;
     colorCode: string;
     portId: number;
     percentageFilled: string;
     fullCapacityCubm: string;
     abbreviation: string;
+    loadOnTop: boolean;
+}
+
+/**
+ * Interface for load on top object for loadable study
+ *
+ * @export
+ * @interface ILoadOnTop
+ */
+export interface ILoadOnTop {
+    isLoadOnTop: boolean
 }
 
 /**

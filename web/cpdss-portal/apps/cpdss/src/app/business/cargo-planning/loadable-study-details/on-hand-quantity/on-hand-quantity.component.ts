@@ -395,7 +395,7 @@ export class OnHandQuantityComponent implements OnInit {
 
     if (this.selectedTankId && this.selectedTankFormGroupIndex === event?.index) {
       this.setFillingPercentage(this.selectedTankId);
-      this.selectedTankFormGroup.get(event?.field).setValue((this.field(event?.index, event?.field)).value);
+      this.selectedTankFormGroup.get(event?.field).setValue(Number((this.field(event?.index, event?.field)).value));
     }
 
     this.tanks = [...this.tanks];
