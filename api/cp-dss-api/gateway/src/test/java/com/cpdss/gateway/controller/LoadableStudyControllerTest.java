@@ -26,6 +26,7 @@ import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
+import com.cpdss.gateway.domain.LoadablePlanRequest;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.LoadingPort;
@@ -951,6 +952,64 @@ class LoadableStudyControllerTest {
             result ->
                 assertEquals(
                     "Error in getCommingleCargo", result.getResolvedException().getMessage()));
+  }
+
+  /**
+   * @param url
+   * @throws Exception void
+   */
+  @ValueSource(strings = {GET_LOADABLE_PATTERN_CLOUD_API_URL, GET_LOADABLE_PATTERN_SHIP_API_URL})
+  @ParameterizedTest
+  void testSaveLoadablePatternDetails(String url) throws Exception {
+    when(this.loadableStudyService.saveLoadablePatterns(
+            any(LoadablePlanRequest.class), anyLong(), anyString()))
+        .thenReturn(new AlgoPatternResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .content(this.createLoadablePattern())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  /**
+   * @param exceptionClass
+   * @throws Exception void
+   */
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testSaveLoadablePatternDetailsRuntimeException(Class<? extends Exception> exceptionClass)
+      throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.loadableStudyService.saveLoadablePatterns(
+            any(LoadablePlanRequest.class), anyLong(), anyString()))
+        .thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(
+                    GET_LOADABLE_PATTERN_CLOUD_API_URL, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .content(this.createLoadablePattern())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  /** @return Object */
+  private String createLoadablePattern() throws JsonProcessingException {
+    LoadablePlanRequest request = new LoadablePlanRequest();
+    request.setProcessId("ID");
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.writeValueAsString(request);
   }
 
   /**

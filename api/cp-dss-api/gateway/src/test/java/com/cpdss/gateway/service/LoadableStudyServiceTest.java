@@ -67,7 +67,10 @@ import com.cpdss.gateway.domain.CommonResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
+import com.cpdss.gateway.domain.LoadablePlanDetails;
 import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
+import com.cpdss.gateway.domain.LoadablePlanPortWiseDetails;
+import com.cpdss.gateway.domain.LoadablePlanRequest;
 import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
@@ -1452,6 +1455,149 @@ class LoadableStudyServiceTest {
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  @Test
+  void testSaveLoadablePatternDetailsGrpcFailure() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.saveLoadablePatterns(
+                any(LoadablePlanRequest.class), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(
+            this.loadableStudyService.saveLoadablePatterns(
+                any(
+                    com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder
+                        .class)))
+        .thenReturn(
+            AlgoReply.newBuilder()
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.saveLoadablePatterns(
+                    createAlgoPatternResponse(), 1L, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  /** @throws GenericServiceException void */
+  @Test
+  void testSaveLoadablePatternDetails() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.saveLoadablePatterns(
+                any(LoadablePlanRequest.class), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(
+            this.loadableStudyService.saveLoadablePatterns(
+                any(
+                    com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder
+                        .class)))
+        .thenReturn(
+            AlgoReply.newBuilder()
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+
+    AlgoPatternResponse response =
+        this.loadableStudyService.saveLoadablePatterns(
+            createAlgoPatternResponse(), 1L, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "response valid"));
+  }
+
+  /** @return LoadablePlanRequest */
+  private LoadablePlanRequest createAlgoPatternResponse() {
+    LoadablePlanRequest loadablePlanRequest = new LoadablePlanRequest();
+    loadablePlanRequest.setLoadablePlanDetails(createLoadablePlanDetails());
+    return loadablePlanRequest;
+  }
+
+  /** @return List<LoadablePlanDetails> */
+  private List<LoadablePlanDetails> createLoadablePlanDetails() {
+    List<LoadablePlanDetails> loadablePlanDetails = new ArrayList<LoadablePlanDetails>();
+    LoadablePlanDetails planDetails = new LoadablePlanDetails();
+    planDetails.setLoadablePlanPortWiseDetails(createLoadablePlanPortWiseDetails());
+    planDetails.setCaseNumber(1);
+    loadablePlanDetails.add(planDetails);
+    return loadablePlanDetails;
+  }
+
+  /** @return List<LoadablePlanPortWiseDetails> */
+  private List<LoadablePlanPortWiseDetails> createLoadablePlanPortWiseDetails() {
+    List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails =
+        new ArrayList<LoadablePlanPortWiseDetails>();
+    LoadablePlanPortWiseDetails details = new LoadablePlanPortWiseDetails();
+    details.setDepartureCondition(createArrivalDepartureCondition());
+    details.setArrivalCondition(createArrivalDepartureCondition());
+    details.setPortId(1L);
+    loadablePlanPortWiseDetails.add(details);
+    return loadablePlanPortWiseDetails;
+  }
+
+  /** @return LoadablePlanDetailsResponse */
+  private LoadablePlanDetailsResponse createArrivalDepartureCondition() {
+    LoadablePlanDetailsResponse loadablePlanDetailsResponse = new LoadablePlanDetailsResponse();
+    loadablePlanDetailsResponse.setLoadableQuantityCommingleCargoDetails(
+        buildLoadableQuantityCommingleCargoDetail());
+    loadablePlanDetailsResponse.setLoadableQuantityCargoDetails(buildLoadableQuantityCargoDetail());
+    loadablePlanDetailsResponse.setLoadablePlanStowageDetails(createLoadablePlanStowageDetails());
+    loadablePlanDetailsResponse.setLoadablePlanBallastDetails(createLoadablePlanBallastDetails());
+    return loadablePlanDetailsResponse;
+  }
+
+  /** @return List<com.cpdss.gateway.domain.LoadablePlanBallastDetails> */
+  private List<com.cpdss.gateway.domain.LoadablePlanBallastDetails>
+      createLoadablePlanBallastDetails() {
+    List<com.cpdss.gateway.domain.LoadablePlanBallastDetails> details =
+        new ArrayList<com.cpdss.gateway.domain.LoadablePlanBallastDetails>();
+    com.cpdss.gateway.domain.LoadablePlanBallastDetails ballastDetails =
+        new com.cpdss.gateway.domain.LoadablePlanBallastDetails();
+    details.add(ballastDetails);
+    return details;
+  }
+
+  /** @return List<com.cpdss.gateway.domain.LoadablePlanStowageDetails> */
+  private List<com.cpdss.gateway.domain.LoadablePlanStowageDetails>
+      createLoadablePlanStowageDetails() {
+    List<com.cpdss.gateway.domain.LoadablePlanStowageDetails> details =
+        new ArrayList<com.cpdss.gateway.domain.LoadablePlanStowageDetails>();
+    com.cpdss.gateway.domain.LoadablePlanStowageDetails stowageDetails =
+        new com.cpdss.gateway.domain.LoadablePlanStowageDetails();
+    details.add(stowageDetails);
+    return details;
+  }
+
+  /** @return List<com.cpdss.gateway.domain.LoadableQuantityCargoDetails> */
+  private List<com.cpdss.gateway.domain.LoadableQuantityCargoDetails>
+      buildLoadableQuantityCargoDetail() {
+    List<com.cpdss.gateway.domain.LoadableQuantityCargoDetails> details =
+        new ArrayList<com.cpdss.gateway.domain.LoadableQuantityCargoDetails>();
+    com.cpdss.gateway.domain.LoadableQuantityCargoDetails cargoDetails =
+        new com.cpdss.gateway.domain.LoadableQuantityCargoDetails();
+    details.add(cargoDetails);
+    return details;
+  }
+
+  /** @return List<com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails> */
+  private List<com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails>
+      buildLoadableQuantityCommingleCargoDetail() {
+    List<com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails> details =
+        new ArrayList<com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails>();
+    com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails commingleCargoDetails =
+        new com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails();
+    details.add(commingleCargoDetails);
+    return details;
   }
 
   /** @throws GenericServiceException void */

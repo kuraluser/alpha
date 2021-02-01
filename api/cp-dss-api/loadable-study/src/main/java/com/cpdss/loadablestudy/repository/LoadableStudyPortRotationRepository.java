@@ -57,7 +57,7 @@ public interface LoadableStudyPortRotationRepository
    * @return List<LoadableStudyPortRotation>
    */
   @Query(
-      "FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy.id = ?1 AND LSPR.isActive = ?2")
+      "FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy.id = ?1 AND LSPR.isActive = ?2 ORDER BY LSPR.portOrder")
   public List<LoadableStudyPortRotation> findByLoadableStudyAndIsActive(
       Long loadableStudyId, Boolean isActive);
 

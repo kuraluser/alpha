@@ -13,4 +13,5 @@ public class LoadablePatternCargoDetails {
   private Boolean isCommingle;
   private Long loadablePatternCommingleDetailsId;
   private String orderedQuantity;
+  private Integer loadingOrder;
 }

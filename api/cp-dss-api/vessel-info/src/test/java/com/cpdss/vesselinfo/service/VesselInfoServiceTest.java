@@ -175,7 +175,7 @@ class VesselInfoServiceTest {
         .thenReturn(Arrays.asList(new StationValues()));
     when(this.innerBulkHeadValuesRepository.findByVesselId((any())))
         .thenReturn(Arrays.asList(new InnerBulkHeadValues()));
-    when(this.ullageTableDataRepository.findByVessel((any(Vessel.class))))
+    when(this.ullageTableDataRepository.findByVesselOrderById((any(Vessel.class))))
         .thenReturn(Arrays.asList(new UllageTableData()));
 
     StreamRecorder<VesselAlgoReply> responseObserver = StreamRecorder.create();
