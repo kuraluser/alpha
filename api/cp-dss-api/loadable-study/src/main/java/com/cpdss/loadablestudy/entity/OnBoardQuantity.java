@@ -66,4 +66,7 @@ public class OnBoardQuantity extends EntityDoc {
 
   @Column(name = "abbreviation")
   private String abbreviation;
+
+  @Column(name = "density")
+  private BigDecimal density;
 }

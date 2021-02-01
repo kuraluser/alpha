@@ -631,6 +631,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(maxTemp -> builder.setMaxAirTemperature(valueOf(maxTemp)));
         Optional.ofNullable(entity.getMaxWaterTemperature())
             .ifPresent(maxTemp -> builder.setMaxWaterTemperature(valueOf(maxTemp)));
+
+        Optional.ofNullable(entity.getLoadOnTop())
+            .ifPresent(loadOnTop -> builder.setLoadOnTop(loadOnTop));
+
         Set<LoadableStudyPortRotation> portRotations = entity.getPortRotations();
         if (null != portRotations && !portRotations.isEmpty()) {
           portRotations.forEach(
@@ -743,11 +747,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               ? null
               : new BigDecimal(request.getMaxWaterTemperature()));
       entity.setDischargeCargoId(request.getDischargingCargoId());
+
+      Set<LoadableStudyAttachments> attachmentCollection = new HashSet<>();
       if (!request.getAttachmentsList().isEmpty()) {
         String folderLocation = this.constructFolderPath(entity);
         Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
-        Set<LoadableStudyAttachments> attachmentCollection = new HashSet<>();
-
         for (LoadableStudyAttachment attachment : request.getAttachmentsList()) {
           Path path = Paths.get(this.rootFolder + folderLocation + attachment.getFileName());
           Files.createFile(path);
@@ -759,22 +763,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           attachmentEntity.setIsActive(true);
           attachmentCollection.add(attachmentEntity);
         }
-
-        if (request.getId() != 0) {
-          Set<LoadableStudyAttachments> deletedAttachmentsList =
-              this.loadableStudyAttachmentsRepository.findByIdInAndIsActive(
-                  request.getDeletedAttachmentsList(), true);
-
-          if (deletedAttachmentsList != null && deletedAttachmentsList.size() != 0) {
-            deletedAttachmentsList.forEach(
-                attachment -> {
-                  attachment.setIsActive(false);
-                });
-          }
-          attachmentCollection.addAll(deletedAttachmentsList);
-        }
-
         entity.setAttachments(attachmentCollection);
+      }
+
+      if (request.getId() != 0) {
+        Set<LoadableStudyAttachments> deletedAttachmentsList =
+            this.loadableStudyAttachmentsRepository.findByIdInAndIsActive(
+                request.getDeletedAttachmentsList(), true);
+
+        if (deletedAttachmentsList != null && deletedAttachmentsList.size() != 0) {
+          deletedAttachmentsList.forEach(
+              attachment -> {
+                attachment.setIsActive(false);
+              });
+        }
+        attachmentCollection.addAll(deletedAttachmentsList);
       }
 
       this.setCaseNo(entity);
@@ -909,6 +912,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       CargoNomination cargoNomination = null;
+      List<Long> existingCargoPortIds = null;
       if (request.getCargoNominationDetail() != null
           && request.getCargoNominationDetail().getId() != 0) {
         Optional<CargoNomination> existingCargoNomination =
@@ -921,6 +925,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               HttpStatusCode.BAD_REQUEST);
         }
         cargoNomination = existingCargoNomination.get();
+        if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
+          existingCargoPortIds =
+              cargoNomination.getCargoNominationPortDetails().stream()
+                  .map(CargoNominationPortDetails::getPortId)
+                  .collect(Collectors.toList());
+        }
         cargoNomination = buildCargoNomination(cargoNomination, request);
       } else if (request.getCargoNominationDetail() != null
           && request.getCargoNominationDetail().getId() == 0) {
@@ -930,7 +940,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       this.cargoNominationRepository.save(cargoNomination);
       // update port rotation table with loading ports from cargo nomination
       LoadableStudy loadableStudyRecord = loadableStudy.get();
-      this.updatePortRotationWithLoadingPorts(loadableStudyRecord, cargoNomination);
+      this.updatePortRotationWithLoadingPorts(
+          loadableStudyRecord, cargoNomination, existingCargoPortIds);
       cargoNominationReplyBuilder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS))
           .setCargoNominationId((cargoNomination.getId() != null) ? cargoNomination.getId() : 0);
@@ -952,7 +963,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @throws GenericServiceException
    */
   private void updatePortRotationWithLoadingPorts(
-      LoadableStudy loadableStudy, CargoNomination cargoNomination) throws GenericServiceException {
+      LoadableStudy loadableStudy, CargoNomination cargoNomination, List<Long> existingCargoPortIds)
+      throws GenericServiceException {
     List<LoadableStudyPortRotation> loadableStudyPortRotations =
         this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
             loadableStudy, cargoOperationRepository.getOne(LOADING_OPERATION_ID), true);
@@ -969,6 +981,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableStudyPortRotations.stream()
               .map(LoadableStudyPortRotation::getPortXId)
               .collect(Collectors.toList());
+    }
+    // remove existing cargo portIds from port rotation and synoptical if not
+    // available in request
+    if (!CollectionUtils.isEmpty(requestedPortIds)
+        && !CollectionUtils.isEmpty(existingCargoPortIds)) {
+      existingCargoPortIds.removeAll(requestedPortIds);
+      loadableStudyPortRotationRepository.deleteLoadingPortRotation(
+          loadableStudy, existingCargoPortIds);
+      synopticalTableRepository.deleteSynopticalPorts(loadableStudy.getId(), existingCargoPortIds);
     }
     int existingPortsCount = 0;
     // remove loading portIds from request which are already available in port
@@ -1296,50 +1317,50 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         List<OnHandQuantity> onHandQuantityList =
             this.onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudy.get(), true);
 
-        foOnboard =
-            BigDecimal.valueOf(
-                onHandQuantityList.stream()
-                    .filter(
-                        ohq ->
-                            ohq.getFuelTypeXId().equals(FUEL_OIL_TANK_CATEGORY_ID)
-                                && ohq.getPortXId().equals(firstPort)
-                                && ohq.getIsActive())
-                    .mapToLong(
-                        foOnboardQuantity -> foOnboardQuantity.getArrivalQuantity().longValue())
-                    .sum());
-        doOnboard =
-            BigDecimal.valueOf(
-                onHandQuantityList.stream()
-                    .filter(
-                        ohq ->
-                            ohq.getFuelTypeXId().equals(DIESEL_OIL_TANK_CATEGORY_ID)
-                                && ohq.getPortXId().equals(firstPort)
-                                && ohq.getIsActive())
-                    .mapToLong(
-                        doOnboardQuantity -> doOnboardQuantity.getArrivalQuantity().longValue())
-                    .sum());
-        freshWaterOnBoard =
-            BigDecimal.valueOf(
-                onHandQuantityList.stream()
-                    .filter(
-                        ohq ->
-                            ohq.getFuelTypeXId() == FRESH_WATER_TANK_CATEGORY_ID
-                                && ohq.getPortXId() == firstPort
-                                && ohq.getIsActive())
-                    .mapToLong(
-                        fwOnboardQuantity -> fwOnboardQuantity.getArrivalQuantity().longValue())
-                    .sum());
-        boileWaterOnBoard =
-            BigDecimal.valueOf(
-                onHandQuantityList.stream()
-                    .filter(
-                        ohq ->
-                            ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
-                                && ohq.getPortXId().equals(firstPort)
-                                && ohq.getIsActive())
-                    .mapToLong(
-                        bwOnboardQuantity -> bwOnboardQuantity.getArrivalQuantity().longValue())
-                    .sum());
+        if (!onHandQuantityList.isEmpty()) {
+          foOnboard =
+              onHandQuantityList.stream()
+                  .filter(
+                      ohq ->
+                          null != ohq.getFuelTypeXId()
+                              && null != ohq.getPortXId()
+                              && ohq.getFuelTypeXId().equals(FUEL_OIL_TANK_CATEGORY_ID)
+                              && ohq.getPortXId().equals(firstPort)
+                              && ohq.getIsActive())
+                  .map(OnHandQuantity::getArrivalQuantity)
+                  .reduce(BigDecimal.ZERO, BigDecimal::add);
+          doOnboard =
+              onHandQuantityList.stream()
+                  .filter(
+                      ohq ->
+                          null != ohq.getFuelTypeXId()
+                              && null != ohq.getPortXId()
+                              && ohq.getFuelTypeXId().equals(DIESEL_OIL_TANK_CATEGORY_ID)
+                              && ohq.getPortXId().equals(firstPort)
+                              && ohq.getIsActive())
+                  .map(OnHandQuantity::getArrivalQuantity)
+                  .reduce(BigDecimal.ZERO, BigDecimal::add);
+          freshWaterOnBoard =
+              onHandQuantityList.stream()
+                  .filter(
+                      ohq ->
+                          null != ohq.getFuelTypeXId()
+                              && null != ohq.getPortXId()
+                              && ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
+                              && ohq.getPortXId() == firstPort
+                              && ohq.getIsActive())
+                  .map(OnHandQuantity::getArrivalQuantity)
+                  .reduce(BigDecimal.ZERO, BigDecimal::add);
+          boileWaterOnBoard =
+              onHandQuantityList.stream()
+                  .filter(
+                      ohq ->
+                          ohq.getFuelTypeXId().equals(FRESH_WATER_TANK_CATEGORY_ID)
+                              && ohq.getPortXId().equals(firstPort)
+                              && ohq.getIsActive())
+                  .map(OnHandQuantity::getArrivalQuantity)
+                  .reduce(BigDecimal.ZERO, BigDecimal::add);
+        }
       }
 
       VesselRequest replyBuilder =
@@ -1705,12 +1726,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
               loadableStudyOpt.get(), discharging, true);
       List<Long> portIds = new ArrayList<>(request.getDischargingPortIdsList());
-      for (LoadableStudyPortRotation portRoation : dischargingPorts) {
-        if (!request.getDischargingPortIdsList().contains(portRoation.getPortXId())) {
-          portRoation.setActive(false);
-          portIds.remove(portRoation.getPortXId());
+      for (LoadableStudyPortRotation portRotation : dischargingPorts) {
+        if (!request.getDischargingPortIdsList().contains(portRotation.getPortXId())) {
+          portRotation.setActive(false);
+          List<SynopticalTable> synopticalEntities = portRotation.getSynopticalTable();
+          if (null != synopticalEntities && !synopticalEntities.isEmpty()) {
+            synopticalEntities.forEach(entity -> entity.setIsActive(false));
+          }
+          portIds.remove(portRotation.getPortXId());
         } else {
-          portIds.remove(portRoation.getPortXId());
+          portIds.remove(portRotation.getPortXId());
         }
       }
       if (!CollectionUtils.isEmpty(portIds)) {
@@ -1838,7 +1863,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     if (requestedOperationId != 0
         && !StringUtils.isEmpty(
             com.cpdss.loadablestudy.domain.CargoOperation.getOperation(requestedOperationId))) {
-      Set<SynopticalTable> synopticalTableEntityList = new HashSet<>();
+      List<SynopticalTable> synopticalTableEntityList = new ArrayList<>();
       if (CARGO_OPERATION_ARR_DEP_SYNOPTICAL.contains(requestedOperationId)) {
         buildSynopticalTableRecord(
             requestedPortId, entity, synopticalTableEntityList, SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL);
@@ -1864,7 +1889,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private void buildSynopticalTableRecord(
       Long portId,
       LoadableStudyPortRotation entity,
-      Set<SynopticalTable> synopticalTableList,
+      List<SynopticalTable> synopticalTableList,
       String portStage) {
     SynopticalTable synopticalTable = new SynopticalTable();
     synopticalTable.setLoadableStudyPortRotation(entity);
@@ -1922,8 +1947,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         requestPortId);
                 if (Objects.equals(otherCargoRefExistCount, Long.valueOf("0"))
                     && loadableStudyOpt.isPresent()) {
-                  loadableStudyPortRotationRepository.deleteLoadingPortRotation(
+                  loadableStudyPortRotationRepository.deleteLoadingPortRotationByPort(
                       loadableStudyOpt.get(), requestPortId);
+                  synopticalTableRepository.deleteSynopticalPorts(
+                      loadableStudyOpt.get().getId(), requestedPortIds);
                 }
               });
         }
@@ -3756,6 +3783,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(item -> builder.setVolume(item.toString()));
         Optional.ofNullable(entity.getColorCode()).ifPresent(builder::setColorCode);
         Optional.ofNullable(entity.getAbbreviation()).ifPresent(builder::setAbbreviation);
+        Optional.ofNullable(entity.getDensity())
+            .ifPresent(item -> builder.setDensity(item.toString()));
       } else {
         // lazy loading the cargo history
         if (null == cargoHistories) {
@@ -3860,6 +3889,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       this.buildOnBoardQuantityEntity(entity, request);
       entity = this.onBoardQuantityRepository.save(entity);
+      loadableStudyOpt.get().setLoadOnTop(request.getLoadOnTop());
+      this.loadableStudyRepository.save(loadableStudyOpt.get());
       replyBuilder.setId(entity.getId());
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
@@ -3901,6 +3932,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     entity.setVolume(isEmpty(request.getVolume()) ? null : new BigDecimal(request.getVolume()));
     entity.setColorCode(isEmpty(request.getColorCode()) ? null : request.getColorCode());
     entity.setAbbreviation(isEmpty(request.getAbbreviation()) ? null : request.getAbbreviation());
+    entity.setDensity(isEmpty(request.getDensity()) ? null : new BigDecimal(request.getDensity()));
     entity.setIsActive(true);
   }
 
@@ -4064,6 +4096,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         ohqEntity = new OnHandQuantity();
         ohqEntity.setTankXId(ohqRecord.getTankId());
         ohqEntity.setPortXId(record.getPortId());
+        ohqEntity.setFuelTypeXId(ohqRecord.getFuelTypeId());
         ohqEntity.setLoadableStudy(loadableStudy);
         ohqEntity.setIsActive(true);
       }
@@ -4710,12 +4743,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Optional.ofNullable(synopticalEntity.getOthersActual())
         .ifPresent(item -> builder.setOthersActual(valueOf(item)));
     builder.setConstantPlanned(vesselLoadableQuantityDetails.getConstant());
+    Optional.ofNullable(synopticalEntity.getConstantPlanned())
+        .ifPresent(item -> builder.setConstantPlanned(valueOf(item)));
     Optional.ofNullable(synopticalEntity.getConstantActual())
         .ifPresent(item -> builder.setConstantActual(valueOf(item)));
     builder.setTotalDwtPlanned(vesselLoadableQuantityDetails.getDwt());
+    Optional.ofNullable(synopticalEntity.getDeadWeightPlanned())
+        .ifPresent(item -> builder.setTotalDwtPlanned(valueOf(item)));
     Optional.ofNullable(synopticalEntity.getDeadWeightActual())
         .ifPresent(item -> builder.setTotalDwtActual(valueOf(item)));
     builder.setDisplacementPlanned(vesselLoadableQuantityDetails.getDisplacmentDraftRestriction());
+    Optional.ofNullable(synopticalEntity.getDisplacementPlanned())
+        .ifPresent(item -> builder.setDisplacementPlanned(valueOf(item)));
     Optional.ofNullable(synopticalEntity.getDisplacementActual())
         .ifPresent(item -> builder.setDisplacementActual(valueOf(item)));
   }
@@ -4898,14 +4937,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       SynopticalTable synopticalEntity, SynopticalRecord.Builder builder, PortReply portReply) {
     Optional.ofNullable(synopticalEntity.getId()).ifPresent(builder::setId);
     Optional.ofNullable(synopticalEntity.getPortXid()).ifPresent(builder::setPortId);
+    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     if (portReply != null) {
       portReply.getPortsList().stream()
           .filter(p -> synopticalEntity.getPortXid().equals(p.getId()))
           .findAny()
           .ifPresent(
               port -> {
-                Optional.ofNullable(port.getName()).ifPresent(builder::setPortName);
-                Optional.ofNullable(port.getWaterDensity()).ifPresent(builder::setSpecificGravity);
+                this.setSynopticalPortValues(port, builder);
               });
     }
     Optional.ofNullable(synopticalEntity.getOperationType()).ifPresent(builder::setOperationType);
@@ -4917,12 +4956,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .ifPresent(runningHours -> builder.setRunningHours(String.valueOf(runningHours)));
     Optional.ofNullable(synopticalEntity.getInPortHours())
         .ifPresent(inPortHours -> builder.setInPortHours(String.valueOf(inPortHours)));
-    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     Optional.ofNullable(synopticalEntity.getTimeOfSunrise())
         .ifPresent(time -> builder.setTimeOfSunrise(timeFormatter.format(time)));
     Optional.ofNullable(synopticalEntity.getTimeOfSunSet())
         .ifPresent(time -> builder.setTimeOfSunset(timeFormatter.format(time)));
-    // If specific gravity is available in database then replace the port master
+    // If specific port related data is available in synoptical table then replace
+    // the port master
     // value
     Optional.ofNullable(synopticalEntity.getSpecificGravity())
         .ifPresent(sg -> builder.setSpecificGravity(valueOf(sg)));
@@ -4953,6 +4992,40 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
+   * * Set port values to synoptical response
+   *
+   * @param port
+   * @param builder
+   */
+  private void setSynopticalPortValues(
+      PortDetail port, com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builder) {
+    builder.setPortName(port.getName());
+    builder.setSpecificGravity(port.getWaterDensity());
+    builder.setHwTideFrom(port.getHwTideFrom());
+    builder.setHwTideTo(port.getHwTideTo());
+    builder.setLwTideFrom(port.getLwTideFrom());
+    builder.setLwTideTo(port.getLwTideTo());
+    if (!isEmpty(port.getHwTideTimeFrom())) {
+      builder.setHwTideTimeFrom(port.getHwTideTimeFrom());
+    }
+    if (!isEmpty(port.getHwTideTimeTo())) {
+      builder.setHwTideTimeTo(port.getHwTideTimeTo());
+    }
+    if (!isEmpty(port.getLwTideTimeFrom())) {
+      builder.setLwTideTimeFrom(port.getLwTideTimeFrom());
+    }
+    if (!isEmpty(port.getLwTideTimeTo())) {
+      builder.setLwTideTimeTo(port.getLwTideTimeTo());
+    }
+    if (!isEmpty(port.getSunriseTime())) {
+      builder.setTimeOfSunrise(port.getSunriseTime());
+    }
+    if (!isEmpty(port.getSunsetTime())) {
+      builder.setTimeOfSunset(port.getSunsetTime());
+    }
+  }
+
+  /**
    * Set eta and etd estimated values
    *
    * @param synopticalEntity
@@ -4970,10 +5043,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .findFirst();
     if (portRotation.isPresent()) {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-      if (null != portRotation.get().getEta()) {
-        builder.setEtaEtdEstimated(formatter.format(portRotation.get().getEta()));
-      } else if (null != portRotation.get().getEtd()) {
-        builder.setEtaEtdEstimated(formatter.format(portRotation.get().getEtd()));
+      if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(synopticalEntity.getOperationType())) {
+        builder.setEtaEtdEstimated(
+            null == portRotation.get().getEta()
+                ? ""
+                : formatter.format(portRotation.get().getEta()));
+      } else {
+        builder.setEtaEtdEstimated(
+            null == portRotation.get().getEtd()
+                ? ""
+                : formatter.format(portRotation.get().getEtd()));
       }
       if (null != portRotation.get().getPortOrder()) {
         builder.setPortOrder(portRotation.get().getPortOrder());

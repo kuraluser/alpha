@@ -16,6 +16,7 @@ import com.cpdss.portinfo.entity.PortInfo;
 import com.cpdss.portinfo.repository.CargoPortMappingRepository;
 import com.cpdss.portinfo.repository.PortInfoRepository;
 import io.grpc.stub.StreamObserver;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -128,6 +129,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
     Comparator<BerthInfo> byAirDraftComparator =
         Comparator.comparing(
             BerthInfo::getAirDraft, Comparator.nullsFirst(Comparator.naturalOrder()));
+    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     portList.forEach(
         port -> {
           PortDetail.Builder portDetail = PortDetail.newBuilder();
@@ -142,6 +144,30 @@ public class PortInfoService extends PortInfoServiceImplBase {
                       portDetail.setAverageTideHeight(String.valueOf(averageTideHeight)));
           Optional.ofNullable(port.getTideHeight())
               .ifPresent(tideHeight -> portDetail.setTideHeight(String.valueOf(tideHeight)));
+
+          Optional.ofNullable(port.getHwTideFrom())
+              .ifPresent(item -> portDetail.setHwTideFrom(String.valueOf(item)));
+          Optional.ofNullable(port.getHwTideTo())
+              .ifPresent(item -> portDetail.setHwTideTo(String.valueOf(item)));
+          Optional.ofNullable(port.getHwTideTimeFrom())
+              .ifPresent(item -> portDetail.setHwTideTimeFrom(timeFormatter.format(item)));
+          Optional.ofNullable(port.getHwTideTimeTo())
+              .ifPresent(item -> portDetail.setHwTideTimeTo(timeFormatter.format(item)));
+
+          Optional.ofNullable(port.getLwTideFrom())
+              .ifPresent(item -> portDetail.setLwTideFrom(String.valueOf(item)));
+          Optional.ofNullable(port.getLwTideTo())
+              .ifPresent(item -> portDetail.setLwTideTo(String.valueOf(item)));
+          Optional.ofNullable(port.getLwTideTimeFrom())
+              .ifPresent(item -> portDetail.setLwTideTimeFrom(timeFormatter.format(item)));
+          Optional.ofNullable(port.getLwTideTimeTo())
+              .ifPresent(item -> portDetail.setLwTideTimeTo(timeFormatter.format(item)));
+
+          Optional.ofNullable(port.getTimeOfSunrise())
+              .ifPresent(item -> portDetail.setSunriseTime(timeFormatter.format(item)));
+          Optional.ofNullable(port.getTimeOfSunSet())
+              .ifPresent(item -> portDetail.setSunsetTime(timeFormatter.format(item)));
+
           if (!port.getBerthInfoSet().isEmpty()) {
             BerthInfo maxDraftBerthInfo =
                 Collections.max(port.getBerthInfoSet(), byMaxDraftComparator);

@@ -1,7 +1,6 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.domain;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,12 +19,6 @@ public class ScreenInfo {
   private boolean delete;
   private boolean view;
   private Long moduleId;
-  List<ScreenInfo> childs;
-  private RoleScreen roleScreen;
-  private boolean isAddVisible;
-  private boolean isEditVisible;
-  private boolean isDeleteVisible;
-  private boolean isViewVisible;
 
   public ScreenInfo(
       Long id,

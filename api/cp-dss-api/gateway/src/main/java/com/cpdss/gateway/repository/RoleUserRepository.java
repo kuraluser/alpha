@@ -2,6 +2,7 @@
 package com.cpdss.gateway.repository;
 
 import com.cpdss.gateway.entity.RoleUserMapping;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +19,7 @@ public interface RoleUserRepository extends CrudRepository<RoleUserMapping, Long
   @Modifying
   @Query("Update RoleUserMapping RM set RM.isActive = false where RM.roles.id = ?1 ")
   public void deleteRoles(Long id);
+
+  @Query("FROM RoleUserMapping RM WHERE RM.roles.id = ?1 and RM.isActive = ?2")
+  List<RoleUserMapping> findByRolesAndIsActive(Long roleId, boolean b);
 }

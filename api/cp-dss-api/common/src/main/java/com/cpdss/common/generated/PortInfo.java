@@ -1470,6 +1470,136 @@ public final class PortInfo {
      * @return The bytes for tideHeight.
      */
     com.google.protobuf.ByteString getTideHeightBytes();
+
+    /**
+     * <code>string hwTideFrom = 9;</code>
+     *
+     * @return The hwTideFrom.
+     */
+    java.lang.String getHwTideFrom();
+    /**
+     * <code>string hwTideFrom = 9;</code>
+     *
+     * @return The bytes for hwTideFrom.
+     */
+    com.google.protobuf.ByteString getHwTideFromBytes();
+
+    /**
+     * <code>string hwTideTo = 10;</code>
+     *
+     * @return The hwTideTo.
+     */
+    java.lang.String getHwTideTo();
+    /**
+     * <code>string hwTideTo = 10;</code>
+     *
+     * @return The bytes for hwTideTo.
+     */
+    com.google.protobuf.ByteString getHwTideToBytes();
+
+    /**
+     * <code>string lwTideFrom = 11;</code>
+     *
+     * @return The lwTideFrom.
+     */
+    java.lang.String getLwTideFrom();
+    /**
+     * <code>string lwTideFrom = 11;</code>
+     *
+     * @return The bytes for lwTideFrom.
+     */
+    com.google.protobuf.ByteString getLwTideFromBytes();
+
+    /**
+     * <code>string lwTideTo = 12;</code>
+     *
+     * @return The lwTideTo.
+     */
+    java.lang.String getLwTideTo();
+    /**
+     * <code>string lwTideTo = 12;</code>
+     *
+     * @return The bytes for lwTideTo.
+     */
+    com.google.protobuf.ByteString getLwTideToBytes();
+
+    /**
+     * <code>string hwTideTimeFrom = 13;</code>
+     *
+     * @return The hwTideTimeFrom.
+     */
+    java.lang.String getHwTideTimeFrom();
+    /**
+     * <code>string hwTideTimeFrom = 13;</code>
+     *
+     * @return The bytes for hwTideTimeFrom.
+     */
+    com.google.protobuf.ByteString getHwTideTimeFromBytes();
+
+    /**
+     * <code>string hwTideTimeTo = 14;</code>
+     *
+     * @return The hwTideTimeTo.
+     */
+    java.lang.String getHwTideTimeTo();
+    /**
+     * <code>string hwTideTimeTo = 14;</code>
+     *
+     * @return The bytes for hwTideTimeTo.
+     */
+    com.google.protobuf.ByteString getHwTideTimeToBytes();
+
+    /**
+     * <code>string lwTideTimeFrom = 15;</code>
+     *
+     * @return The lwTideTimeFrom.
+     */
+    java.lang.String getLwTideTimeFrom();
+    /**
+     * <code>string lwTideTimeFrom = 15;</code>
+     *
+     * @return The bytes for lwTideTimeFrom.
+     */
+    com.google.protobuf.ByteString getLwTideTimeFromBytes();
+
+    /**
+     * <code>string lwTideTimeTo = 16;</code>
+     *
+     * @return The lwTideTimeTo.
+     */
+    java.lang.String getLwTideTimeTo();
+    /**
+     * <code>string lwTideTimeTo = 16;</code>
+     *
+     * @return The bytes for lwTideTimeTo.
+     */
+    com.google.protobuf.ByteString getLwTideTimeToBytes();
+
+    /**
+     * <code>string sunriseTime = 17;</code>
+     *
+     * @return The sunriseTime.
+     */
+    java.lang.String getSunriseTime();
+    /**
+     * <code>string sunriseTime = 17;</code>
+     *
+     * @return The bytes for sunriseTime.
+     */
+    com.google.protobuf.ByteString getSunriseTimeBytes();
+
+    /**
+     * <code>string sunsetTime = 18;</code>
+     *
+     * @return The sunsetTime.
+     */
+    java.lang.String getSunsetTime();
+    /**
+     * <code>string sunsetTime = 18;</code>
+     *
+     * @return The bytes for sunsetTime.
+     */
+    com.google.protobuf.ByteString getSunsetTimeBytes();
   }
   /** Protobuf type {@code PortDetail} */
   public static final class PortDetail extends com.google.protobuf.GeneratedMessageV3
@@ -1490,6 +1620,16 @@ public final class PortInfo {
       maxAirDraft_ = "";
       averageTideHeight_ = "";
       tideHeight_ = "";
+      hwTideFrom_ = "";
+      hwTideTo_ = "";
+      lwTideFrom_ = "";
+      lwTideTo_ = "";
+      hwTideTimeFrom_ = "";
+      hwTideTimeTo_ = "";
+      lwTideTimeFrom_ = "";
+      lwTideTimeTo_ = "";
+      sunriseTime_ = "";
+      sunsetTime_ = "";
     }
 
     @java.lang.Override
@@ -1573,6 +1713,76 @@ public final class PortInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 tideHeight_ = s;
+                break;
+              }
+            case 74:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                hwTideFrom_ = s;
+                break;
+              }
+            case 82:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                hwTideTo_ = s;
+                break;
+              }
+            case 90:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                lwTideFrom_ = s;
+                break;
+              }
+            case 98:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                lwTideTo_ = s;
+                break;
+              }
+            case 106:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                hwTideTimeFrom_ = s;
+                break;
+              }
+            case 114:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                hwTideTimeTo_ = s;
+                break;
+              }
+            case 122:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                lwTideTimeFrom_ = s;
+                break;
+              }
+            case 130:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                lwTideTimeTo_ = s;
+                break;
+              }
+            case 138:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                sunriseTime_ = s;
+                break;
+              }
+            case 146:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                sunsetTime_ = s;
                 break;
               }
             default:
@@ -1863,6 +2073,356 @@ public final class PortInfo {
       }
     }
 
+    public static final int HWTIDEFROM_FIELD_NUMBER = 9;
+    private volatile java.lang.Object hwTideFrom_;
+    /**
+     * <code>string hwTideFrom = 9;</code>
+     *
+     * @return The hwTideFrom.
+     */
+    public java.lang.String getHwTideFrom() {
+      java.lang.Object ref = hwTideFrom_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hwTideFrom_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string hwTideFrom = 9;</code>
+     *
+     * @return The bytes for hwTideFrom.
+     */
+    public com.google.protobuf.ByteString getHwTideFromBytes() {
+      java.lang.Object ref = hwTideFrom_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        hwTideFrom_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int HWTIDETO_FIELD_NUMBER = 10;
+    private volatile java.lang.Object hwTideTo_;
+    /**
+     * <code>string hwTideTo = 10;</code>
+     *
+     * @return The hwTideTo.
+     */
+    public java.lang.String getHwTideTo() {
+      java.lang.Object ref = hwTideTo_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hwTideTo_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string hwTideTo = 10;</code>
+     *
+     * @return The bytes for hwTideTo.
+     */
+    public com.google.protobuf.ByteString getHwTideToBytes() {
+      java.lang.Object ref = hwTideTo_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        hwTideTo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LWTIDEFROM_FIELD_NUMBER = 11;
+    private volatile java.lang.Object lwTideFrom_;
+    /**
+     * <code>string lwTideFrom = 11;</code>
+     *
+     * @return The lwTideFrom.
+     */
+    public java.lang.String getLwTideFrom() {
+      java.lang.Object ref = lwTideFrom_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lwTideFrom_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string lwTideFrom = 11;</code>
+     *
+     * @return The bytes for lwTideFrom.
+     */
+    public com.google.protobuf.ByteString getLwTideFromBytes() {
+      java.lang.Object ref = lwTideFrom_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lwTideFrom_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LWTIDETO_FIELD_NUMBER = 12;
+    private volatile java.lang.Object lwTideTo_;
+    /**
+     * <code>string lwTideTo = 12;</code>
+     *
+     * @return The lwTideTo.
+     */
+    public java.lang.String getLwTideTo() {
+      java.lang.Object ref = lwTideTo_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lwTideTo_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string lwTideTo = 12;</code>
+     *
+     * @return The bytes for lwTideTo.
+     */
+    public com.google.protobuf.ByteString getLwTideToBytes() {
+      java.lang.Object ref = lwTideTo_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lwTideTo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int HWTIDETIMEFROM_FIELD_NUMBER = 13;
+    private volatile java.lang.Object hwTideTimeFrom_;
+    /**
+     * <code>string hwTideTimeFrom = 13;</code>
+     *
+     * @return The hwTideTimeFrom.
+     */
+    public java.lang.String getHwTideTimeFrom() {
+      java.lang.Object ref = hwTideTimeFrom_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hwTideTimeFrom_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string hwTideTimeFrom = 13;</code>
+     *
+     * @return The bytes for hwTideTimeFrom.
+     */
+    public com.google.protobuf.ByteString getHwTideTimeFromBytes() {
+      java.lang.Object ref = hwTideTimeFrom_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        hwTideTimeFrom_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int HWTIDETIMETO_FIELD_NUMBER = 14;
+    private volatile java.lang.Object hwTideTimeTo_;
+    /**
+     * <code>string hwTideTimeTo = 14;</code>
+     *
+     * @return The hwTideTimeTo.
+     */
+    public java.lang.String getHwTideTimeTo() {
+      java.lang.Object ref = hwTideTimeTo_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hwTideTimeTo_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string hwTideTimeTo = 14;</code>
+     *
+     * @return The bytes for hwTideTimeTo.
+     */
+    public com.google.protobuf.ByteString getHwTideTimeToBytes() {
+      java.lang.Object ref = hwTideTimeTo_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        hwTideTimeTo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LWTIDETIMEFROM_FIELD_NUMBER = 15;
+    private volatile java.lang.Object lwTideTimeFrom_;
+    /**
+     * <code>string lwTideTimeFrom = 15;</code>
+     *
+     * @return The lwTideTimeFrom.
+     */
+    public java.lang.String getLwTideTimeFrom() {
+      java.lang.Object ref = lwTideTimeFrom_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lwTideTimeFrom_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string lwTideTimeFrom = 15;</code>
+     *
+     * @return The bytes for lwTideTimeFrom.
+     */
+    public com.google.protobuf.ByteString getLwTideTimeFromBytes() {
+      java.lang.Object ref = lwTideTimeFrom_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lwTideTimeFrom_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LWTIDETIMETO_FIELD_NUMBER = 16;
+    private volatile java.lang.Object lwTideTimeTo_;
+    /**
+     * <code>string lwTideTimeTo = 16;</code>
+     *
+     * @return The lwTideTimeTo.
+     */
+    public java.lang.String getLwTideTimeTo() {
+      java.lang.Object ref = lwTideTimeTo_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lwTideTimeTo_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string lwTideTimeTo = 16;</code>
+     *
+     * @return The bytes for lwTideTimeTo.
+     */
+    public com.google.protobuf.ByteString getLwTideTimeToBytes() {
+      java.lang.Object ref = lwTideTimeTo_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lwTideTimeTo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SUNRISETIME_FIELD_NUMBER = 17;
+    private volatile java.lang.Object sunriseTime_;
+    /**
+     * <code>string sunriseTime = 17;</code>
+     *
+     * @return The sunriseTime.
+     */
+    public java.lang.String getSunriseTime() {
+      java.lang.Object ref = sunriseTime_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        sunriseTime_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string sunriseTime = 17;</code>
+     *
+     * @return The bytes for sunriseTime.
+     */
+    public com.google.protobuf.ByteString getSunriseTimeBytes() {
+      java.lang.Object ref = sunriseTime_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        sunriseTime_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SUNSETTIME_FIELD_NUMBER = 18;
+    private volatile java.lang.Object sunsetTime_;
+    /**
+     * <code>string sunsetTime = 18;</code>
+     *
+     * @return The sunsetTime.
+     */
+    public java.lang.String getSunsetTime() {
+      java.lang.Object ref = sunsetTime_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        sunsetTime_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string sunsetTime = 18;</code>
+     *
+     * @return The bytes for sunsetTime.
+     */
+    public com.google.protobuf.ByteString getSunsetTimeBytes() {
+      java.lang.Object ref = sunsetTime_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        sunsetTime_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -1901,6 +2461,36 @@ public final class PortInfo {
       if (!getTideHeightBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 8, tideHeight_);
       }
+      if (!getHwTideFromBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, hwTideFrom_);
+      }
+      if (!getHwTideToBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, hwTideTo_);
+      }
+      if (!getLwTideFromBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, lwTideFrom_);
+      }
+      if (!getLwTideToBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, lwTideTo_);
+      }
+      if (!getHwTideTimeFromBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 13, hwTideTimeFrom_);
+      }
+      if (!getHwTideTimeToBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 14, hwTideTimeTo_);
+      }
+      if (!getLwTideTimeFromBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 15, lwTideTimeFrom_);
+      }
+      if (!getLwTideTimeToBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 16, lwTideTimeTo_);
+      }
+      if (!getSunriseTimeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 17, sunriseTime_);
+      }
+      if (!getSunsetTimeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 18, sunsetTime_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -1934,6 +2524,36 @@ public final class PortInfo {
       if (!getTideHeightBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, tideHeight_);
       }
+      if (!getHwTideFromBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, hwTideFrom_);
+      }
+      if (!getHwTideToBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, hwTideTo_);
+      }
+      if (!getLwTideFromBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, lwTideFrom_);
+      }
+      if (!getLwTideToBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, lwTideTo_);
+      }
+      if (!getHwTideTimeFromBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, hwTideTimeFrom_);
+      }
+      if (!getHwTideTimeToBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, hwTideTimeTo_);
+      }
+      if (!getLwTideTimeFromBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, lwTideTimeFrom_);
+      }
+      if (!getLwTideTimeToBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(16, lwTideTimeTo_);
+      }
+      if (!getSunriseTimeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(17, sunriseTime_);
+      }
+      if (!getSunsetTimeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(18, sunsetTime_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -1958,6 +2578,16 @@ public final class PortInfo {
       if (!getMaxAirDraft().equals(other.getMaxAirDraft())) return false;
       if (!getAverageTideHeight().equals(other.getAverageTideHeight())) return false;
       if (!getTideHeight().equals(other.getTideHeight())) return false;
+      if (!getHwTideFrom().equals(other.getHwTideFrom())) return false;
+      if (!getHwTideTo().equals(other.getHwTideTo())) return false;
+      if (!getLwTideFrom().equals(other.getLwTideFrom())) return false;
+      if (!getLwTideTo().equals(other.getLwTideTo())) return false;
+      if (!getHwTideTimeFrom().equals(other.getHwTideTimeFrom())) return false;
+      if (!getHwTideTimeTo().equals(other.getHwTideTimeTo())) return false;
+      if (!getLwTideTimeFrom().equals(other.getLwTideTimeFrom())) return false;
+      if (!getLwTideTimeTo().equals(other.getLwTideTimeTo())) return false;
+      if (!getSunriseTime().equals(other.getSunriseTime())) return false;
+      if (!getSunsetTime().equals(other.getSunsetTime())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -1985,6 +2615,26 @@ public final class PortInfo {
       hash = (53 * hash) + getAverageTideHeight().hashCode();
       hash = (37 * hash) + TIDEHEIGHT_FIELD_NUMBER;
       hash = (53 * hash) + getTideHeight().hashCode();
+      hash = (37 * hash) + HWTIDEFROM_FIELD_NUMBER;
+      hash = (53 * hash) + getHwTideFrom().hashCode();
+      hash = (37 * hash) + HWTIDETO_FIELD_NUMBER;
+      hash = (53 * hash) + getHwTideTo().hashCode();
+      hash = (37 * hash) + LWTIDEFROM_FIELD_NUMBER;
+      hash = (53 * hash) + getLwTideFrom().hashCode();
+      hash = (37 * hash) + LWTIDETO_FIELD_NUMBER;
+      hash = (53 * hash) + getLwTideTo().hashCode();
+      hash = (37 * hash) + HWTIDETIMEFROM_FIELD_NUMBER;
+      hash = (53 * hash) + getHwTideTimeFrom().hashCode();
+      hash = (37 * hash) + HWTIDETIMETO_FIELD_NUMBER;
+      hash = (53 * hash) + getHwTideTimeTo().hashCode();
+      hash = (37 * hash) + LWTIDETIMEFROM_FIELD_NUMBER;
+      hash = (53 * hash) + getLwTideTimeFrom().hashCode();
+      hash = (37 * hash) + LWTIDETIMETO_FIELD_NUMBER;
+      hash = (53 * hash) + getLwTideTimeTo().hashCode();
+      hash = (37 * hash) + SUNRISETIME_FIELD_NUMBER;
+      hash = (53 * hash) + getSunriseTime().hashCode();
+      hash = (37 * hash) + SUNSETTIME_FIELD_NUMBER;
+      hash = (53 * hash) + getSunsetTime().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2138,6 +2788,26 @@ public final class PortInfo {
 
         tideHeight_ = "";
 
+        hwTideFrom_ = "";
+
+        hwTideTo_ = "";
+
+        lwTideFrom_ = "";
+
+        lwTideTo_ = "";
+
+        hwTideTimeFrom_ = "";
+
+        hwTideTimeTo_ = "";
+
+        lwTideTimeFrom_ = "";
+
+        lwTideTimeTo_ = "";
+
+        sunriseTime_ = "";
+
+        sunsetTime_ = "";
+
         return this;
       }
 
@@ -2172,6 +2842,16 @@ public final class PortInfo {
         result.maxAirDraft_ = maxAirDraft_;
         result.averageTideHeight_ = averageTideHeight_;
         result.tideHeight_ = tideHeight_;
+        result.hwTideFrom_ = hwTideFrom_;
+        result.hwTideTo_ = hwTideTo_;
+        result.lwTideFrom_ = lwTideFrom_;
+        result.lwTideTo_ = lwTideTo_;
+        result.hwTideTimeFrom_ = hwTideTimeFrom_;
+        result.hwTideTimeTo_ = hwTideTimeTo_;
+        result.lwTideTimeFrom_ = lwTideTimeFrom_;
+        result.lwTideTimeTo_ = lwTideTimeTo_;
+        result.sunriseTime_ = sunriseTime_;
+        result.sunsetTime_ = sunsetTime_;
         onBuilt();
         return result;
       }
@@ -2253,6 +2933,46 @@ public final class PortInfo {
         }
         if (!other.getTideHeight().isEmpty()) {
           tideHeight_ = other.tideHeight_;
+          onChanged();
+        }
+        if (!other.getHwTideFrom().isEmpty()) {
+          hwTideFrom_ = other.hwTideFrom_;
+          onChanged();
+        }
+        if (!other.getHwTideTo().isEmpty()) {
+          hwTideTo_ = other.hwTideTo_;
+          onChanged();
+        }
+        if (!other.getLwTideFrom().isEmpty()) {
+          lwTideFrom_ = other.lwTideFrom_;
+          onChanged();
+        }
+        if (!other.getLwTideTo().isEmpty()) {
+          lwTideTo_ = other.lwTideTo_;
+          onChanged();
+        }
+        if (!other.getHwTideTimeFrom().isEmpty()) {
+          hwTideTimeFrom_ = other.hwTideTimeFrom_;
+          onChanged();
+        }
+        if (!other.getHwTideTimeTo().isEmpty()) {
+          hwTideTimeTo_ = other.hwTideTimeTo_;
+          onChanged();
+        }
+        if (!other.getLwTideTimeFrom().isEmpty()) {
+          lwTideTimeFrom_ = other.lwTideTimeFrom_;
+          onChanged();
+        }
+        if (!other.getLwTideTimeTo().isEmpty()) {
+          lwTideTimeTo_ = other.lwTideTimeTo_;
+          onChanged();
+        }
+        if (!other.getSunriseTime().isEmpty()) {
+          sunriseTime_ = other.sunriseTime_;
+          onChanged();
+        }
+        if (!other.getSunsetTime().isEmpty()) {
+          sunsetTime_ = other.sunsetTime_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -2845,6 +3565,766 @@ public final class PortInfo {
         checkByteStringIsUtf8(value);
 
         tideHeight_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object hwTideFrom_ = "";
+      /**
+       * <code>string hwTideFrom = 9;</code>
+       *
+       * @return The hwTideFrom.
+       */
+      public java.lang.String getHwTideFrom() {
+        java.lang.Object ref = hwTideFrom_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hwTideFrom_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string hwTideFrom = 9;</code>
+       *
+       * @return The bytes for hwTideFrom.
+       */
+      public com.google.protobuf.ByteString getHwTideFromBytes() {
+        java.lang.Object ref = hwTideFrom_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          hwTideFrom_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string hwTideFrom = 9;</code>
+       *
+       * @param value The hwTideFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideFrom(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        hwTideFrom_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideFrom = 9;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearHwTideFrom() {
+
+        hwTideFrom_ = getDefaultInstance().getHwTideFrom();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideFrom = 9;</code>
+       *
+       * @param value The bytes for hwTideFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideFromBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        hwTideFrom_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object hwTideTo_ = "";
+      /**
+       * <code>string hwTideTo = 10;</code>
+       *
+       * @return The hwTideTo.
+       */
+      public java.lang.String getHwTideTo() {
+        java.lang.Object ref = hwTideTo_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hwTideTo_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string hwTideTo = 10;</code>
+       *
+       * @return The bytes for hwTideTo.
+       */
+      public com.google.protobuf.ByteString getHwTideToBytes() {
+        java.lang.Object ref = hwTideTo_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          hwTideTo_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string hwTideTo = 10;</code>
+       *
+       * @param value The hwTideTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideTo(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        hwTideTo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideTo = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearHwTideTo() {
+
+        hwTideTo_ = getDefaultInstance().getHwTideTo();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideTo = 10;</code>
+       *
+       * @param value The bytes for hwTideTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideToBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        hwTideTo_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lwTideFrom_ = "";
+      /**
+       * <code>string lwTideFrom = 11;</code>
+       *
+       * @return The lwTideFrom.
+       */
+      public java.lang.String getLwTideFrom() {
+        java.lang.Object ref = lwTideFrom_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lwTideFrom_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string lwTideFrom = 11;</code>
+       *
+       * @return The bytes for lwTideFrom.
+       */
+      public com.google.protobuf.ByteString getLwTideFromBytes() {
+        java.lang.Object ref = lwTideFrom_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          lwTideFrom_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string lwTideFrom = 11;</code>
+       *
+       * @param value The lwTideFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideFrom(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        lwTideFrom_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideFrom = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLwTideFrom() {
+
+        lwTideFrom_ = getDefaultInstance().getLwTideFrom();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideFrom = 11;</code>
+       *
+       * @param value The bytes for lwTideFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideFromBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        lwTideFrom_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lwTideTo_ = "";
+      /**
+       * <code>string lwTideTo = 12;</code>
+       *
+       * @return The lwTideTo.
+       */
+      public java.lang.String getLwTideTo() {
+        java.lang.Object ref = lwTideTo_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lwTideTo_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string lwTideTo = 12;</code>
+       *
+       * @return The bytes for lwTideTo.
+       */
+      public com.google.protobuf.ByteString getLwTideToBytes() {
+        java.lang.Object ref = lwTideTo_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          lwTideTo_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string lwTideTo = 12;</code>
+       *
+       * @param value The lwTideTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideTo(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        lwTideTo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideTo = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLwTideTo() {
+
+        lwTideTo_ = getDefaultInstance().getLwTideTo();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideTo = 12;</code>
+       *
+       * @param value The bytes for lwTideTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideToBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        lwTideTo_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object hwTideTimeFrom_ = "";
+      /**
+       * <code>string hwTideTimeFrom = 13;</code>
+       *
+       * @return The hwTideTimeFrom.
+       */
+      public java.lang.String getHwTideTimeFrom() {
+        java.lang.Object ref = hwTideTimeFrom_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hwTideTimeFrom_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string hwTideTimeFrom = 13;</code>
+       *
+       * @return The bytes for hwTideTimeFrom.
+       */
+      public com.google.protobuf.ByteString getHwTideTimeFromBytes() {
+        java.lang.Object ref = hwTideTimeFrom_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          hwTideTimeFrom_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string hwTideTimeFrom = 13;</code>
+       *
+       * @param value The hwTideTimeFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideTimeFrom(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        hwTideTimeFrom_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideTimeFrom = 13;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearHwTideTimeFrom() {
+
+        hwTideTimeFrom_ = getDefaultInstance().getHwTideTimeFrom();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideTimeFrom = 13;</code>
+       *
+       * @param value The bytes for hwTideTimeFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideTimeFromBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        hwTideTimeFrom_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object hwTideTimeTo_ = "";
+      /**
+       * <code>string hwTideTimeTo = 14;</code>
+       *
+       * @return The hwTideTimeTo.
+       */
+      public java.lang.String getHwTideTimeTo() {
+        java.lang.Object ref = hwTideTimeTo_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hwTideTimeTo_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string hwTideTimeTo = 14;</code>
+       *
+       * @return The bytes for hwTideTimeTo.
+       */
+      public com.google.protobuf.ByteString getHwTideTimeToBytes() {
+        java.lang.Object ref = hwTideTimeTo_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          hwTideTimeTo_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string hwTideTimeTo = 14;</code>
+       *
+       * @param value The hwTideTimeTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideTimeTo(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        hwTideTimeTo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideTimeTo = 14;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearHwTideTimeTo() {
+
+        hwTideTimeTo_ = getDefaultInstance().getHwTideTimeTo();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string hwTideTimeTo = 14;</code>
+       *
+       * @param value The bytes for hwTideTimeTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwTideTimeToBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        hwTideTimeTo_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lwTideTimeFrom_ = "";
+      /**
+       * <code>string lwTideTimeFrom = 15;</code>
+       *
+       * @return The lwTideTimeFrom.
+       */
+      public java.lang.String getLwTideTimeFrom() {
+        java.lang.Object ref = lwTideTimeFrom_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lwTideTimeFrom_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string lwTideTimeFrom = 15;</code>
+       *
+       * @return The bytes for lwTideTimeFrom.
+       */
+      public com.google.protobuf.ByteString getLwTideTimeFromBytes() {
+        java.lang.Object ref = lwTideTimeFrom_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          lwTideTimeFrom_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string lwTideTimeFrom = 15;</code>
+       *
+       * @param value The lwTideTimeFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideTimeFrom(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        lwTideTimeFrom_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideTimeFrom = 15;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLwTideTimeFrom() {
+
+        lwTideTimeFrom_ = getDefaultInstance().getLwTideTimeFrom();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideTimeFrom = 15;</code>
+       *
+       * @param value The bytes for lwTideTimeFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideTimeFromBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        lwTideTimeFrom_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lwTideTimeTo_ = "";
+      /**
+       * <code>string lwTideTimeTo = 16;</code>
+       *
+       * @return The lwTideTimeTo.
+       */
+      public java.lang.String getLwTideTimeTo() {
+        java.lang.Object ref = lwTideTimeTo_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lwTideTimeTo_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string lwTideTimeTo = 16;</code>
+       *
+       * @return The bytes for lwTideTimeTo.
+       */
+      public com.google.protobuf.ByteString getLwTideTimeToBytes() {
+        java.lang.Object ref = lwTideTimeTo_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          lwTideTimeTo_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string lwTideTimeTo = 16;</code>
+       *
+       * @param value The lwTideTimeTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideTimeTo(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        lwTideTimeTo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideTimeTo = 16;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLwTideTimeTo() {
+
+        lwTideTimeTo_ = getDefaultInstance().getLwTideTimeTo();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lwTideTimeTo = 16;</code>
+       *
+       * @param value The bytes for lwTideTimeTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLwTideTimeToBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        lwTideTimeTo_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object sunriseTime_ = "";
+      /**
+       * <code>string sunriseTime = 17;</code>
+       *
+       * @return The sunriseTime.
+       */
+      public java.lang.String getSunriseTime() {
+        java.lang.Object ref = sunriseTime_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          sunriseTime_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string sunriseTime = 17;</code>
+       *
+       * @return The bytes for sunriseTime.
+       */
+      public com.google.protobuf.ByteString getSunriseTimeBytes() {
+        java.lang.Object ref = sunriseTime_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          sunriseTime_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string sunriseTime = 17;</code>
+       *
+       * @param value The sunriseTime to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSunriseTime(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        sunriseTime_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string sunriseTime = 17;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearSunriseTime() {
+
+        sunriseTime_ = getDefaultInstance().getSunriseTime();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string sunriseTime = 17;</code>
+       *
+       * @param value The bytes for sunriseTime to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSunriseTimeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        sunriseTime_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object sunsetTime_ = "";
+      /**
+       * <code>string sunsetTime = 18;</code>
+       *
+       * @return The sunsetTime.
+       */
+      public java.lang.String getSunsetTime() {
+        java.lang.Object ref = sunsetTime_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          sunsetTime_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string sunsetTime = 18;</code>
+       *
+       * @return The bytes for sunsetTime.
+       */
+      public com.google.protobuf.ByteString getSunsetTimeBytes() {
+        java.lang.Object ref = sunsetTime_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          sunsetTime_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string sunsetTime = 18;</code>
+       *
+       * @param value The sunsetTime to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSunsetTime(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        sunsetTime_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string sunsetTime = 18;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearSunsetTime() {
+
+        sunsetTime_ = getDefaultInstance().getSunsetTime();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string sunsetTime = 18;</code>
+       *
+       * @param value The bytes for sunsetTime to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSunsetTimeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        sunsetTime_ = value;
         onChanged();
         return this;
       }
@@ -5361,25 +6841,30 @@ public final class PortInfo {
           + "rtInfoByPortIdsRequest\022\n\n\002id\030\001 \003(\003\"]\n\013Po"
           + "rtRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId"
           + "\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017loadableStud"
-          + "yId\030\004 \001(\003\"\240\001\n\nPortDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004"
+          + "yId\030\004 \001(\003\"\361\002\n\nPortDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004"
           + "name\030\002 \001(\t\022\014\n\004code\030\003 \001(\t\022\024\n\014waterDensity"
           + "\030\004 \001(\t\022\020\n\010maxDraft\030\005 \001(\t\022\023\n\013maxAirDraft\030"
           + "\006 \001(\t\022\031\n\021averageTideHeight\030\007 \001(\t\022\022\n\ntide"
-          + "Height\030\010 \001(\t\"P\n\tPortReply\022\'\n\016responseSta"
-          + "tus\030\001 \001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003("
-          + "\0132\013.PortDetail\".\n\033GetPortInfoByCargoIdRe"
-          + "quest\022\017\n\007cargoId\030\001 \001(\003\"`\n\031GetPortInfoByC"
-          + "argoIdReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Re"
-          + "sponseStatus\022\032\n\005ports\030\002 \003(\0132\013.PortDetail"
-          + "2\235\002\n\017PortInfoService\022)\n\013GetPortInfo\022\014.Po"
-          + "rtRequest\032\n.PortReply\"\000\022R\n\024GetPortInfoBy"
-          + "CargoId\022\034.GetPortInfoByCargoIdRequest\032\032."
-          + "GetPortInfoByCargoIdReply\"\000\022B\n\024GetPortIn"
-          + "foByPortIds\022\034.GetPortInfoByPortIdsReques"
-          + "t\032\n.PortReply\"\000\022G\n\031GetPortInfoDetailsFor"
-          + "Algo\022\034.GetPortInfoByPortIdsRequest\032\n.Por"
-          + "tReply\"\000B\036\n\032com.cpdss.common.generatedP\000"
-          + "b\006proto3"
+          + "Height\030\010 \001(\t\022\022\n\nhwTideFrom\030\t \001(\t\022\020\n\010hwTi"
+          + "deTo\030\n \001(\t\022\022\n\nlwTideFrom\030\013 \001(\t\022\020\n\010lwTide"
+          + "To\030\014 \001(\t\022\026\n\016hwTideTimeFrom\030\r \001(\t\022\024\n\014hwTi"
+          + "deTimeTo\030\016 \001(\t\022\026\n\016lwTideTimeFrom\030\017 \001(\t\022\024"
+          + "\n\014lwTideTimeTo\030\020 \001(\t\022\023\n\013sunriseTime\030\021 \001("
+          + "\t\022\022\n\nsunsetTime\030\022 \001(\t\"P\n\tPortReply\022\'\n\016re"
+          + "sponseStatus\030\001 \001(\0132\017.ResponseStatus\022\032\n\005p"
+          + "orts\030\002 \003(\0132\013.PortDetail\".\n\033GetPortInfoBy"
+          + "CargoIdRequest\022\017\n\007cargoId\030\001 \001(\003\"`\n\031GetPo"
+          + "rtInfoByCargoIdReply\022\'\n\016responseStatus\030\001"
+          + " \001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003(\0132\013.P"
+          + "ortDetail2\235\002\n\017PortInfoService\022)\n\013GetPort"
+          + "Info\022\014.PortRequest\032\n.PortReply\"\000\022R\n\024GetP"
+          + "ortInfoByCargoId\022\034.GetPortInfoByCargoIdR"
+          + "equest\032\032.GetPortInfoByCargoIdReply\"\000\022B\n\024"
+          + "GetPortInfoByPortIds\022\034.GetPortInfoByPort"
+          + "IdsRequest\032\n.PortReply\"\000\022G\n\031GetPortInfoD"
+          + "etailsForAlgo\022\034.GetPortInfoByPortIdsRequ"
+          + "est\032\n.PortReply\"\000B\036\n\032com.cpdss.common.ge"
+          + "neratedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -5415,6 +6900,16 @@ public final class PortInfo {
               "MaxAirDraft",
               "AverageTideHeight",
               "TideHeight",
+              "HwTideFrom",
+              "HwTideTo",
+              "LwTideFrom",
+              "LwTideTo",
+              "HwTideTimeFrom",
+              "HwTideTimeTo",
+              "LwTideTimeFrom",
+              "LwTideTimeTo",
+              "SunriseTime",
+              "SunsetTime",
             });
     internal_static_PortReply_descriptor = getDescriptor().getMessageTypes().get(3);
     internal_static_PortReply_fieldAccessorTable =
