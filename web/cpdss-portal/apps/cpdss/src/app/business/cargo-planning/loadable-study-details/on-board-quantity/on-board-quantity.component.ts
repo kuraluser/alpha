@@ -263,6 +263,12 @@ export class OnBoardQuantityComponent implements OnInit {
   async onEditComplete(event) {
     this.ngxSpinnerService.show();
     const formGroup = this.row(event.index);
+    this.obqForm.controls.cargo.setValue(formGroup.controls.cargo.value?.name);
+    this.obqForm.controls.sounding.setValue(formGroup.controls.sounding.value);
+    this.obqForm.controls.weight.setValue(formGroup.controls.weight.value);
+    this.obqForm.controls.volume.setValue(formGroup.controls.volume.value);
+    this.obqForm.controls.volume.setValidators([Validators.required, Validators.min(0), numberValidator(2, 7), Validators.max(Number(event.data?.fullCapacityCubm))])
+    this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
     const _prevFullcapacitySelectedUnit = AppConfigurationService.settings.volumeBaseUnit;
     if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {
       const fullCapacity = this.quantityPipe.transform(event?.data?.fullCapacityCubm, _prevFullcapacitySelectedUnit, this.quantitySelectedUnit, event?.data?.api.value);
