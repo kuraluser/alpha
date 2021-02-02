@@ -99,9 +99,9 @@ export class LoadableQuantityComponent implements OnInit {
         tpc: ['', [Validators.required, numberValidator(1, 3)]],
         estimateSag: ['', [Validators.required, numberValidator(2, 2), , Validators.min(0)]],
         safCorrection: ['', [Validators.required, numberValidator(5, 7), Validators.min(0)]],
-        foOnboard: [{ value: '', disabled: true} , [Validators.required, numberValidator(2, 7)]],
-        doOnboard: [{ value: '', disabled: true}, [Validators.required, numberValidator(2, 7)]],
-        freshWaterOnboard: [{ value: '', disabled: true}, [Validators.required, numberValidator(2, 7)]],
+        foOnboard: [{ value: '', disabled: true} , [Validators.required, numberValidator(2, 7), Validators.min(0)]],
+        doOnboard: [{ value: '', disabled: true}, [Validators.required, numberValidator(2, 7), Validators.min(0)]],
+        freshWaterOnboard: [{ value: '', disabled: true}, [Validators.required, numberValidator(2, 7), Validators.min(0)]],
 
         boilerWaterOnboard: [{ value: '', disabled: true}, [Validators.required, numberValidator(0, 7), Validators.pattern(/^[0-9]\d{0,6}$/)]],
 

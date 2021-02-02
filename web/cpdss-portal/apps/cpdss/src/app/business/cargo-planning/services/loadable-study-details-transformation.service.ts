@@ -1245,15 +1245,15 @@ export class LoadableStudyDetailsTransformationService {
       },
       foOnboard: {
         'required': 'LOADABLE_QUANTITY_FO_ONBOARD_REQUIRED',
-        'pattern': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR'
       },
       doOnboard: {
         'required': 'LOADABLE_QUANTITY_DO_ONBOARD_REQUIRED',
-        'pattern': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR'
       },
       freshWaterOnboard: {
         'required': 'LOADABLE_QUANTITY_FRESH_WATER_REQUIRED',
-        'pattern': 'LOADABLE_QUANTITY_ERROR'
+        'min': 'LOADABLE_QUANTITY_ERROR'
       },
       boilerWaterOnboard: {
         'required': 'LOADABLE_QUANTITY_BOILER_WATER_ONBOARD_REQUIRED',
