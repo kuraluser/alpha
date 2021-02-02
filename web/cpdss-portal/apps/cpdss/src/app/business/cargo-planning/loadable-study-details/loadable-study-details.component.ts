@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 import { ICargo, LOADABLE_STUDY_DETAILS_TABS } from '../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../services/loadable-study-details-transformation.service';
 import { LoadableStudyDetailsApiService } from '../services/loadable-study-details-api.service';
@@ -19,6 +19,7 @@ import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../s
 import { LoadableQuantityModel } from '../models/loadable-quantity.model';
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
+import { takeUntil } from 'rxjs/operators';
 
 
 /**
@@ -33,24 +34,25 @@ import { IPermission } from '../../../shared/models/user-profile.model';
   templateUrl: './loadable-study-details.component.html',
   styleUrls: ['./loadable-study-details.component.scss']
 })
-export class LoadableStudyDetailsComponent implements OnInit {
+export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
 
   get selectedLoadableStudy(): LoadableStudy {
     return this._selectedLoadableStudy;
   }
   set selectedLoadableStudy(selectedLoadableStudy: LoadableStudy) {
     this._selectedLoadableStudy = selectedLoadableStudy;
-    this.loadableStudyId = selectedLoadableStudy ? selectedLoadableStudy?.id : this.loadableStudies[0].id;
+    this.loadableStudyId = selectedLoadableStudy ? selectedLoadableStudy?.id : this.loadableStudies.length && this.loadableStudies[0]?.id;
     this.getLoadableStudyDetails(this.vesselId, this.voyageId, selectedLoadableStudy?.id);
   }
 
   private _selectedLoadableStudy: LoadableStudy;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   quantitySelectedUnit: QUANTITY_UNIT;
   LOADABLE_STUDY_DETAILS_TABS = LOADABLE_STUDY_DETAILS_TABS;
   dischargingPorts: IPort[] = [];//TODO to be populated form loadable study details
   dischargingPortsNames: string;//TODO to be populated form loadable study details
-  totalQuantity$: Observable<number>;
+  totalQuantity: number;
   ports: IPort[];
   cargoNominationComplete$: Observable<boolean>;
   ohqComplete$: Observable<boolean>;
@@ -113,6 +115,16 @@ export class LoadableStudyDetailsComponent implements OnInit {
     });
     this.errorMesages = this.loadableStudyDetailsTransformationService.setValidationErrorMessage();
     this.setPagePermissionContext();
+  }
+
+  /**
+   * NgOnDestroy lifecycle hook
+   *
+   * @memberof LoadableStudyDetailsComponent
+   */
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**
@@ -202,7 +214,7 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @memberof LoadableStudyDetailsComponent
    */
   async getLoadableStudyDetails(vesselId: number, voyageId: number, loadableStudyId: number) {
-    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR']).toPromise();
+    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
     this.ngxSpinnerService.show();
     this.selectedDischargeCargo = { id: this.selectedLoadableStudy?.dischargingCargoId }
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
@@ -215,8 +227,8 @@ export class LoadableStudyDetailsComponent implements OnInit {
       const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id).toPromise();
       if (loadableQuantityResult.responseStatus.status === "200") {
         loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
-        if (Number(this.totalQuantity$) > Number(this.loadableQuantityNew)) {
-          this.messageService.add({ severity: 'error', summary: translationKeys['TOTAL_QUANTITY_ERROR'], detail: translationKeys['TOTAL_QUANTITY_ERROR'] });
+        if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
+          this.messageService.add({ severity: 'error', summary: translationKeys['TOTAL_QUANTITY_ERROR'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
         }
         this.loadableQuantityModel = loadableQuantityResult;
       }
@@ -240,13 +252,9 @@ export class LoadableStudyDetailsComponent implements OnInit {
    * @memberof LoadableStudyDetailsComponent
    */
   private async initSubsciptions() {
-    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR']).toPromise();
-    this.totalQuantity$ = this.loadableStudyDetailsTransformationService.totalQuantityCargoNomination$;
-    this.loadableStudyDetailsTransformationService.totalQuantityCargoNomination$.subscribe((totalQuantity) => {
-      if (Number(totalQuantity) > Number(this.loadableQuantityNew)) {
-        this.messageService.add({ severity: 'error', summary: translationKeys['TOTAL_QUANTITY_ERROR'], detail: translationKeys['TOTAL_QUANTITY_ERROR'] });
-      }
-    })
+    this.loadableStudyDetailsTransformationService.totalQuantityCargoNomination$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(totalQuantity => {
+      this.totalQuantity = totalQuantity;
+    });
     this.cargoNominationComplete$ = this.loadableStudyDetailsTransformationService.cargoNominationValidity$;
     this.portsComplete$ = this.loadableStudyDetailsTransformationService.portValidity$;
     this.ohqComplete$ = this.loadableStudyDetailsTransformationService.ohqValidity$;
@@ -329,10 +337,8 @@ export class LoadableStudyDetailsComponent implements OnInit {
       if (loadableStudies && loadableStudies.length) {
         this.selectedLoadableStudy = loadableStudies[0];
       } else {
-        this.loadableStudyId = 0;
-        this.loadableQuantityNew = '0';
-        this.selectedLoadableStudy = null;
-        this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(0);
+        this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
+        this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/0`]);
       }
     }
     this.loadableStudies.splice(event?.index, 1);
@@ -386,9 +392,9 @@ export class LoadableStudyDetailsComponent implements OnInit {
    */
   async loadableQuantity(newloadableQuantity: string) {
     this.loadableQuantityNew = newloadableQuantity;
-    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR']).toPromise();
-    if (Number(this.totalQuantity$) > Number(this.loadableQuantityNew)) {
-      this.messageService.add({ severity: 'error', summary: translationKeys['TOTAL_QUANTITY_ERROR'], detail: translationKeys['TOTAL_QUANTITY_ERROR'] });
+    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
+    if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
+      this.messageService.add({ severity: 'error', summary: translationKeys['TOTAL_QUANTITY_ERROR'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
     }
   }
 
@@ -407,10 +413,17 @@ export class LoadableStudyDetailsComponent implements OnInit {
   }
 
   /**
- * Value from commingle button
+ * Cargo nomination update event haandler get value from commingle button
  */
-  toggleCommingleButton(event) {
+  async cargoNominationUpdate(event) {
     this.showCommingleButton = event;
+    // Show alert if total quantity exceeds loadable quantity
+    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
+    if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
+      this.messageService.clear();
+      this.messageService.add({ severity: 'error', summary: translationKeys['TOTAL_QUANTITY_ERROR'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
+    }
+    
   }
 
   /**

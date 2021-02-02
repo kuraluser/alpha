@@ -261,6 +261,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.updateField(event.index, 'cargo', event?.data?.cargo?.value);
     }
 
+    this.updateCommingleButton();
+
     if (!event.data?.isAdd) {
       if (this.cargoNominationForm.valid) {
         this.ngxSpinnerService.show();
