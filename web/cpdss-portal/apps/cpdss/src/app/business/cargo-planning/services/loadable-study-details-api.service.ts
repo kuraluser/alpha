@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { from, Observable, of, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { IResponse } from '../../../shared/models/common.model';
+import { IResponse, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { CargoPlanningModule } from '../cargo-planning.module';
 import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, PortsDB, IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, OHQDB, IPortOBQResponse, IPortOBQTankDetail, OBQDB, ICargoNominationValueObject, ILoadOnTop } from '../models/cargo-planning.model';
 import { IDischargingPortIds } from '../models/loadable-study-list.model';
 import { IPort, IPortList, IPortsDetailsResponse, IPortsResponse } from '../../core/models/common.model';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 
 /**
  * Api Service for Loadable Study Details module
@@ -23,12 +25,19 @@ export class LoadableStudyDetailsApiService {
     private _portsDb: PortsDB;
     private _ohqDb: OHQDB;
     private _obqDb: OBQDB;
-    private  _cargoNominations: ICargoNominationValueObject[];
+    private _cargoNominations: ICargoNominationValueObject[];
+    public unitChange = new Subject();
+    public unitChangeBlocked = new Subject();
+    baseUnit = <QUANTITY_UNIT>AppConfigurationService.settings.baseUnit;
+    currentUnit = <QUANTITY_UNIT>AppConfigurationService.settings.baseUnit;
+    quantityPipe: QuantityPipe = new QuantityPipe()
+    disableUnitChange = false;
+
     public cargoNominationChange = new Subject();
-    get cargoNominations(){
+    get cargoNominations() {
         return this._cargoNominations;
     }
-    set cargoNominations(cargoNominations: ICargoNominationValueObject[]){
+    set cargoNominations(cargoNominations: ICargoNominationValueObject[]) {
         this._cargoNominations = cargoNominations;
         this.cargoNominationChange.next(true);
     }
@@ -255,15 +264,38 @@ export class LoadableStudyDetailsApiService {
     }
 
     /**
-     * Save load on top is enable or not for loadable study
+     * Converts the quantity from one unit to another
      *
-     * @param {number} vesselId
-     * @param {number} voyageId
-     * @param {number} loadableStudyId
-     * @param {ILoadOnTop} loadOnTop
-     * @returns {Observable<IResponse>}
+     * @param  currentValue
+     * @param  api
+     * @param  temp
+     * @param  unitFrom
+     * @param  Quick
+     * @returns {number}
      * @memberof LoadableStudyDetailsApiService
      */
+    updateQuantityByUnit(currentValue, unitFrom, unitTo, api, temp?) {
+        if (!api || api === '') {
+            api = 1;
+        }
+        let newValue;
+        if (temp) {
+            newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString(), temp.toString());
+        } else {
+            newValue = this.quantityPipe.transform(currentValue.toString(), unitFrom, unitTo, api.toString());
+        }
+        return Number(newValue.toFixed(2));
+    }
+
+    /* Save load on top is enable or not for loadable study
+    *
+    * @param {number} vesselId
+    * @param {number} voyageId
+    * @param {number} loadableStudyId
+    * @param {ILoadOnTop} loadOnTop
+    * @returns {Observable<IResponse>}
+    * @memberof LoadableStudyDetailsApiService
+    */
     saveLoadableStudyLoadOnTop(vesselId: number, voyageId: number, loadableStudyId: number, loadOnTop: ILoadOnTop): Observable<IResponse> {
         return this.commonApiService.post<ILoadOnTop, IResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/load-on-top`, loadOnTop);
     }

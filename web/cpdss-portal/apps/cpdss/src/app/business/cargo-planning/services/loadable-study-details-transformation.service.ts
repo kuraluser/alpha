@@ -226,6 +226,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'quantity',
         header: 'CARGO_QUANTITY',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        editable: false,
         filter: true,
         filterPlaceholder: 'SEARCH_QUANTITY',
         filterType: DATATABLE_FILTER_TYPE.NUMBER,

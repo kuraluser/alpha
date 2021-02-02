@@ -14,16 +14,16 @@ export function numberValidator(decimalPlaces: number, digitLength: number = nul
     if (!control || typeof control.value == 'undefined' || control.value == null || control.value == '') {
       return;
     }
-    let oldValue = control.value.toString();;
+    const oldValue = control.value.toString();;
     let value = control.value.toString();;
     let negative = false;
     let dotEntered = false;
     value = value.replace('+', '');
-    if (isNegativeAccept && value[0] == '-') {
+    if (isNegativeAccept && value[0] === '-') {
       negative = true;
     }
     value = value.replace('-', '');
-    let number: string[] = value.split('.');
+    const number: string[] = value.split('.');
     if (number[0] && number[0].length) {
       dotEntered = number[0].length !== value.length
       number[0] = number[0].replace('.', '')
@@ -37,8 +37,9 @@ export function numberValidator(decimalPlaces: number, digitLength: number = nul
     if (digitLength && digitLength > 0 && number[0] && number[0].length > digitLength)
       number[0] = number[0].slice(0, digitLength);
     value = (negative ? '-' : '') + number[0] + (decimalPlaces && dotEntered ? ('.' + (number[1] ? number[1] : '')) : '');
-    if (oldValue !== value)
-      control.setValue(Number(value));
+    if (oldValue !== value){
+      control.setValue(Number(value), { emitEvent: false });
+    }
   }
 }
 

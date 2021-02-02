@@ -82,13 +82,13 @@
                 <span>{{selectedLoadableStudy?.name}}</span></label>
 
 
-            <label class="pr-20">{{'LOADABLE_STUDY_DETAILS_LOADABLE_QUANTITY_LABEL'| translate}}
+            <label class="pr-20">{{'LOADABLE_STUDY_DETAILS_LOADABLE_QUANTITY_LABEL'| translate}}{{' (' + baseUnit + ')'}}
                 <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button"
                     [disabled]="!loadableStudies?.length" (click)="showLoadableQuantityPopup()"
                     *cpdssPortalPermission="loadableQuantityPermissionContext">{{loadableQuantityNew | number :
-                    '1.2-2'}}</button>
+                        '1.2-2' }}</button>
             </label>
-            <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)"></cpdss-portal-unit-dropdown>
+            <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)" [disableUnitChange]="loadableStudyDetailsApiService.disableUnitChange" (changeBlocked)="unitChangeBlocked()"></cpdss-portal-unit-dropdown>
         </div>
         <div class="pr-15" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
             <button id="commingle_btn" class="btn btn-main  ml-10" type="button" (click)="showComminglePopup()"
@@ -137,11 +137,11 @@
                 <cpdss-portal-on-hand-quantity
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ && loadableStudyId && loadableStudies && loadableQuantityNew"
                     [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
-                    [permission]="ohqTabPermission" [quantitySelectedUnit]="quantitySelectedUnit">
+                    [permission]="ohqTabPermission" [quantitySelectedUnit]="currentUnit">
                 </cpdss-portal-on-hand-quantity>
                 <cpdss-portal-on-board-quantity
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ && loadableStudyId && loadableStudies && loadableQuantityNew"
-                    [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy" [quantitySelectedUnit]="quantitySelectedUnit">
+                    [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy" [quantitySelectedUnit]="currentUnit">
                 </cpdss-portal-on-board-quantity>
 
 

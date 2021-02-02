@@ -48,7 +48,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   private _selectedLoadableStudy: LoadableStudy;
   private ngUnsubscribe: Subject<any> = new Subject();
 
-  quantitySelectedUnit: QUANTITY_UNIT;
   LOADABLE_STUDY_DETAILS_TABS = LOADABLE_STUDY_DETAILS_TABS;
   dischargingPorts: IPort[] = [];//TODO to be populated form loadable study details
   dischargingPortsNames: string;//TODO to be populated form loadable study details
@@ -87,9 +86,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   isSelectedDischargePort = true;
   selectedDischargeCargo: ICargo;
   dischargeCargos: ICargo[] = [];
+  currentUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+  baseUnit = this.loadableStudyDetailsApiService.baseUnit;
 
-
-  constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
+  constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private loadableStudyListApiService: LoadableStudyListApiService,
     private activatedRoute: ActivatedRoute,
@@ -105,14 +105,15 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initSubsciptions();
-    this.activatedRoute.paramMap.subscribe(params => {
-      this.loadableQuantityNew = '0';
-      this.vesselId = Number(params.get('vesselId'));
-      this.voyageId = Number(params.get('voyageId'));
-      this.loadableStudyId = Number(params.get('loadableStudyId'));
-      this.loadableStudies = null;
-      this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
-    });
+    this.activatedRoute.paramMap
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(params => {
+        this.vesselId = Number(params.get('vesselId'));
+        this.voyageId = Number(params.get('voyageId'));
+        this.loadableStudyId = Number(params.get('loadableStudyId'));
+        this.loadableStudies = null;
+        this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+      });
     this.errorMesages = this.loadableStudyDetailsTransformationService.setValidationErrorMessage();
     this.setPagePermissionContext();
   }
@@ -196,7 +197,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
     if (this.loadableStudies.length) {
-    this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
+      this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
       if (sessionStorage.getItem('loadableStudyInfo')) {
         this.displayLoadableQuntity = true;
         sessionStorage.removeItem('loadableStudyInfo');
@@ -260,6 +261,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.ohqComplete$ = this.loadableStudyDetailsTransformationService.ohqValidity$;
     this.obqComplete$ = this.loadableStudyDetailsTransformationService.obqValidity$;
     this.loadableStudyDetailsApiService.cargoNominationChange.asObservable()
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => {
         this.onCargoNominationChange();
       })
@@ -517,7 +519,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   */
   getSubTotal(loadableQuantityResult: any) {
     const loadableQuantity = loadableQuantityResult.loadableQuantity;
-    let subTotal: number = 0;
+    let subTotal = 0;
     if (loadableQuantityResult.caseNo === 1 || loadableQuantityResult.caseNo === 2) {
       subTotal = Number(loadableQuantity.dwt)
         + Number(loadableQuantity.estFOOnBoard)
@@ -569,6 +571,16 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   onUnitChange(event) {
-    this.quantitySelectedUnit = event?.unit;
+    this.loadableStudyDetailsApiService.unitChange.next();
+    this.currentUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+  }
+
+   /**
+   * Handler for unit change blocked event
+   *
+   * @memberof LoadableStudyDetailsComponent
+   */
+  unitChangeBlocked(){
+    this.loadableStudyDetailsApiService.unitChangeBlocked.next();
   }
 }

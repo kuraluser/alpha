@@ -18,6 +18,7 @@ import { commingleQuantityValidator } from '../../directives/validator/commingle
 import { PercentageValidator } from '../../directives/validator/percentage-validator.directive';
 import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { first } from 'rxjs/operators';
+import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 
 /**
  * Component class of commingle pop up
@@ -78,7 +79,9 @@ export class CommingleComponent implements OnInit {
     private translateService: TranslateService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private permissionsService: PermissionsService,
-    private confirmationAlertService: ConfirmationAlertService) { }
+    private confirmationAlertService: ConfirmationAlertService,
+    private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
+    ) { }
 
 
   /**
@@ -234,13 +237,13 @@ export class CommingleComponent implements OnInit {
     if (event.field === 'cargo1') {
       this.listData.cargoNominationsCargo2 = this.listData.cargoNominationsCargo2.filter(cargos => cargos.cargoId !== event.data.cargo1.value.cargoId);
       this.manualCommingleList[event.index]['cargo1Color'].value = event?.data?.cargo1?.value?.color
-      this.updateField(event.index, 'cargo1Color', event?.data?.cargo1?.value?.color);
+      // this.updateField(event.index, 'cargo1Color', event?.data?.cargo1?.value?.color);
       form.controls.quantity.updateValueAndValidity();
     }
     if (event.field === 'cargo2') {
       this.listData.cargoNominationsCargo1 = this.listData.cargoNominationsCargo1.filter(cargos => cargos.cargoId !== event.data.cargo2.value.cargoId);
       this.manualCommingleList[event.index]['cargo2Color'].value = event?.data?.cargo2?.value?.color
-      this.updateField(event.index, 'cargo2Color', event?.data?.cargo2?.value?.color);
+      // this.updateField(event.index, 'cargo2Color', event?.data?.cargo2?.value?.color);
       form.controls.quantity.updateValueAndValidity();
     }
     if (event.field === 'cargo1IdPct') {
@@ -456,11 +459,11 @@ export class CommingleComponent implements OnInit {
       this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
       this.commingleForm.controls['cargo1'].updateValueAndValidity();
       this.commingleForm.controls['cargo2'].updateValueAndValidity();
-      this.selectedTanks = this.commingleCargo.preferredTanks.map(preferredTank => ({
+      this.selectedTanks = this.commingleCargo?.preferredTanks.map(preferredTank => ({
         ...this.preferredTankList.find((item) => (item.id === Number(preferredTank)) && item),
         ...preferredTank
       }));
-      this.commingleForm.get('preferredTanks').setValue(this.commingleCargo.preferredTanks);
+      this.commingleForm.get('preferredTanks').setValue(this.commingleCargo?.preferredTanks);
       this.commingleForm.patchValue({
         purpose: this.purposeOfCommingle.find(purpose => purpose.id === 2),
         preferredTanks: this.selectedTanks
@@ -532,5 +535,26 @@ export class CommingleComponent implements OnInit {
       this.isMaxPreferredTank = false;
     }
   }
+
+  /**
+   * Method to convert the quantities to current unit
+   */
+  convertToCurrentUnit(){
+    const unitTo = localStorage.getItem('unit')
+    this.manualCommingleList.forEach( row => {
+      row.quantity.value = this.loadableStudyDetailsApiService.updateQuantityByUnit(row.quantity.value, this.loadableStudyDetailsApiService.baseUnit, unitTo, '')
+    })
+  }
+
+  /**
+   * Method to convert the quantities to current unit
+   */
+  convertToBaseUnit(){
+    const unitFrom = localStorage.getItem('unit')
+    this.manualCommingleList.forEach( row => {
+      row.quantity.value = this.loadableStudyDetailsApiService.updateQuantityByUnit(row.quantity.value, unitFrom, this.loadableStudyDetailsApiService.baseUnit, '')
+    })
+  }
+
 
 }

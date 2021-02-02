@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Form, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { ICargoNominationValueObject, ICargoNominationAllDropdownData, ICargoNominationDetailsResponse, ICargoNominationEvent, ICargoNomination, ILoadingPopupData } from '../../models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
@@ -12,6 +12,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { first, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Component class of cargonomination screen
@@ -49,7 +52,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   }
   set cargoNominations(cargoNominations: ICargoNominationValueObject[]) {
     this.totalQuantity = 0;
-    this.loadableStudyDetailsApiService.cargoNominations = cargoNominations.map((cargoNomination, index) => {
+    this.loadableStudyDetailsApiService.cargoNominations = cargoNominations.map((cargoNomination, _index) => {
       const _cargoNomination = this.loadableStudyDetailsTransformationService.formatCargoNomination(cargoNomination);
       this.totalQuantity += _cargoNomination?.isDelete ? 0 : Number(_cargoNomination.quantity.value);
       _cargoNomination.priority.value = _cargoNomination.priority.value > cargoNominations.length ? cargoNominations.length : _cargoNomination.priority.value;
@@ -105,10 +108,13 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
 
 
   // public methods
-  constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
+  constructor(
+    private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private fb: FormBuilder,
     private ngxSpinnerService: NgxSpinnerService,
+    private messageService: MessageService,
+    private translateService: TranslateService,
     private confirmationAlertService: ConfirmationAlertService) {
   }
 
@@ -132,6 +138,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+    this.loadableStudyDetailsApiService.disableUnitChange = false;
   }
 
   /**
@@ -172,6 +179,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.listData.segregationList = cargoNominationFormData?.segregations;
       this.cargoNominationDetails = cargoNominationFormData;
       this.initCargoNominationArray(this.cargoNominationDetails?.cargoNominations);
+      this.onUnitChange();
     }
   }
 
@@ -266,7 +274,10 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     if (!event.data?.isAdd) {
       if (this.cargoNominationForm.valid) {
         this.ngxSpinnerService.show();
+        const row = this.cargoNominations[event.index]
+        this.updateRowByUnit(row, this.loadableStudyDetailsApiService.currentUnit, this.loadableStudyDetailsApiService.baseUnit);
         const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+        this.updateRowByUnit(row, this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit);
         if (res) {
           for (const key in this.cargoNominations[valueIndex]) {
             if (this.cargoNominations[valueIndex].hasOwnProperty(key) && this.cargoNominations[valueIndex][key].hasOwnProperty('_isEditMode')) {
@@ -286,6 +297,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         this.cargoNominationForm.updateValueAndValidity();
       }
     }
+    this.setDisableUnitChange()
   }
 
   /**
@@ -491,6 +503,17 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.addCargoNomination();
       });
+    this.loadableStudyDetailsApiService.unitChange.asObservable()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        this.onUnitChange();
+      })
+
+    this.loadableStudyDetailsApiService.unitChangeBlocked.asObservable()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        this.onUnitChangeBlocked();
+      })
 
     navigator.serviceWorker.addEventListener('message', async event => {
       if (event.data.type === 'cargo_nomination_sync_finished') {
@@ -630,4 +653,69 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     this.ngxSpinnerService.hide();
   }
 
+  /**
+   * Handler for unit change event
+   *
+   * @memberof CargoNominationComponent
+   */
+    onUnitChange() {
+    const unitFrom = this.loadableStudyDetailsApiService.currentUnit
+    const unitTo = <QUANTITY_UNIT>localStorage.getItem('unit');
+    this.loadableStudyDetailsApiService.currentUnit = unitTo;
+    const formArray = <FormArray>this.cargoNominationForm.controls.dataTable;
+    this.cargoNominations.forEach(row => {
+      this.updateRowByUnit(row, unitFrom, unitTo);
+    })
+  }
+
+  /**
+   * Method to update a specific row by unit
+   *
+   * @memberof CargoNominationComponent
+   */
+  updateRowByUnit(row, unitFrom, unitTo) {
+    if (!row.isAdd) {
+      const api = row.api.value;
+      const temp = row.temperature.value;
+      row.quantity.value = this.loadableStudyDetailsApiService.updateQuantityByUnit(row.quantity.value, unitFrom, unitTo, api, temp)
+      if (row?.loadingPorts?.value?.length) {
+        row.loadingPorts.value.forEach(loadingPort => {
+          loadingPort.quantity = this.loadableStudyDetailsApiService.updateQuantityByUnit(loadingPort.quantity, unitFrom, unitTo, api, temp)
+        })
+      }
+    }
+  }
+
+  /**
+   * Handler for unit change blocked event
+   *
+   * @memberof CargoNominationComponent
+   */
+  async onUnitChangeBlocked(){
+    const translationKeys = await this.translateService.get(['UNIT_CHANGE_API_ERROR']).toPromise();
+    this.messageService.add({ severity: 'error', summary: translationKeys['UNIT_CHANGE_API_ERROR'], detail: translationKeys['UNIT_CHANGE_API_ERROR'] });
+
+  }
+
+  /**
+   * Method to desable/enable unit change
+   *
+   * @memberof CargoNominationComponent
+   */
+  setDisableUnitChange(){
+    let disable = false;
+    if(!this.cargoNominationForm.valid){
+      this.cargoNominations.forEach((row,index) =>{
+        if(!row.isAdd){
+          const api = this.field(index,'api')
+          const temp = this.field(index,'temperature')
+          if(api.invalid || temp.invalid){
+            disable = true;
+            return;
+          }
+        }
+      })
+    }
+    this.loadableStudyDetailsApiService.disableUnitChange = disable;
+  }
 }
