@@ -25,3 +25,4 @@ export class NewVoyageResponseModel implements IResponse {
 export class Status {
     status: string;
 }
+

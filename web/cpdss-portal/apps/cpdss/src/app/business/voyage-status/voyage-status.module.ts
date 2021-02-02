@@ -17,13 +17,16 @@ import { OrderListModule } from 'primeng/orderlist';
 import { EditPortRotationApiService } from './services/edit-port-rotation-api.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { VoyageStatusTransformationService } from '../voyage-status/services/voyage-status-transformation.service'
+import {TableModule} from 'primeng/table';
+import { ParameterListComponent } from './parameter-list/parameter-list.component';
+import { CargoDetailsComponent } from './cargo-details/cargo-details.component';
 
 /**
  * Module for new voyage-status
  */
 
 @NgModule({
-  declarations: [VoyageStatusComponent, NewVoyagePopupComponent, EditPortRotationComponent, PortRotationRibbonComponent],
+  declarations: [VoyageStatusComponent, NewVoyagePopupComponent, EditPortRotationComponent,PortRotationRibbonComponent, ParameterListComponent, CargoDetailsComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -36,7 +39,8 @@ import { VoyageStatusTransformationService } from '../voyage-status/services/voy
     CalendarModule,
     CarouselModule,
     OrderListModule,
-    DropdownModule
+    DropdownModule,
+    TableModule
   ],
   providers: [
     VoyageApiService,

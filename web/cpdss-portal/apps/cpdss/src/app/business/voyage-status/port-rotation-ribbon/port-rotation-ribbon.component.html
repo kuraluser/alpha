@@ -15,7 +15,7 @@
                                 <div class="col pl-0" *ngIf="port?.type==='Arrival'">
                                     <div class="card-border"></div>
                                 </div>
-                                <div class="mr-10" (click)="editPort(port, 'distance')">
+                                <div class="mr-10" (click)="editPort($event, port, 'distance')">
                                     <div class="distance-port" *ngIf="!port?.isDistanceEditable">
                                         <div *ngIf="port?.currentPort" class="ship-location"></div>
                                         {{getControlLabel(port,'distance')}}
@@ -23,7 +23,8 @@
                                     </div>
                                     <div class="relative pr-15" *ngIf="port?.isDistanceEditable">
                                         <input class="form-control" type="number" name="distance"
-                                            id="distance_{{portList.indexOf(port)}}" formControlName="distance">
+                                            id="distance_{{portList.indexOf(port)}}" formControlName="distance"
+                                            (onBlur)="onBlur($event, port, 'distance')">
                                         <cpdss-portal-validation-error
                                             [errors]="fieldError(portList.indexOf(port), 'distance' )"
                                             [errorMessages]="errorMesages.distance">
@@ -41,7 +42,7 @@
                                 <div class="col text-secondary">{{getControlLabel(port,'port')}}</div>
 
                             </div>
-                            <div class="row" *ngIf=" port.type === 'Arrival'" (click)="editPort(port, 'eta')">
+                            <div class="row" *ngIf=" port.type === 'Arrival'" (click)="editPort($event, port, 'eta')">
                                 <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_ETA' | translate }}</label>
                                 <div *ngIf="!port?.isEtaEditable && port?.etaActual" class="col text-secondary">
                                     {{getControlLabel(port,'etaActual')}}</div>
@@ -49,6 +50,7 @@
                                     {{getControlLabel(port,'eta')}}</div>
                                 <div class="col text-secondary relative mr-10" *ngIf="port?.isEtaEditable">
                                     <p-calendar appendTo="body" formControlName="eta"
+                                        (onSelect)="onDateSelect($event, 'eta', port)"
                                         id="eta_date_{{portList.indexOf(port)}}" [minDate]="minDate"
                                         dateFormat="dd-mm-yy">
                                     </p-calendar>
@@ -56,9 +58,8 @@
                                         [errorMessages]="errorMesages.eta">
                                     </cpdss-portal-validation-error>
                                 </div>
-
                             </div>
-                            <div class="row" *ngIf=" port.type === 'Departure'" (click)="editPort(port, 'etd')">
+                            <div class="row" *ngIf=" port.type === 'Departure'" (click)="editPort($event, port, 'etd')">
                                 <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_ETD' | translate }}</label>
                                 <div *ngIf="!port?.isEtdEditable && port?.etdActual" class="col text-secondary">
                                     {{getControlLabel(port,'etdActual')}}</div>
@@ -66,7 +67,9 @@
                                     {{getControlLabel(port,'etd')}}</div>
                                 <div class="col text-secondary relative mr-10" *ngIf="port?.isEtdEditable">
                                     <p-calendar appendTo="body" formControlName="etd"
-                                        id="etd_date_{{portList.indexOf(port)}}" [minDate]="minDate">
+                                        (onSelect)="onDateSelect($event, 'etd', port)"
+                                        id="etd_date_{{portList.indexOf(port)}}" [minDate]="minDate"
+                                        dateFormat="dd-mm-yy">
                                     </p-calendar>
                                     <cpdss-portal-validation-error [errors]="fieldError(portList.indexOf(port), 'etd' )"
                                         [errorMessages]="errorMesages.etd">
@@ -74,7 +77,8 @@
                                 </div>
 
                             </div>
-                            <div (click)="editPort(port, 'etaTime')" class="row" *ngIf=" port.type === 'Arrival'">
+                            <div (click)="editPort($event, port, 'etaTime')" class="row"
+                                *ngIf=" port.type === 'Arrival'">
                                 <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_TIME' | translate }}</label>
                                 <div *ngIf="!port?.isTimeEditable && port?.etaActual" class="col text-secondary">
                                     {{getControlLabel(port,'etaActualTime')}}
@@ -88,7 +92,9 @@
                                     <p-calendar appendTo="body"
                                         placeholder="{{'PORT_ROTATION_RIBBON_ENTER_TIME'  | translate}}"
                                         formControlName="etaTime" [timeOnly]="true"
-                                        id="eta_time_{{portList.indexOf(port)}}">
+                                        (onSelect)="onDateSelect($event, 'etaTime', port)"
+                                        id="eta_time_{{portList.indexOf(port)}}"
+                                        (onBlur)="onBlur($event, port, 'etaTime')">
                                     </p-calendar>
                                     <cpdss-portal-validation-error
                                         [errors]="fieldError(portList.indexOf(port), 'etaTime' )"
@@ -97,7 +103,8 @@
                                 </div>
 
                             </div>
-                            <div (click)="editPort(port, 'etdTime')" class="row" *ngIf=" port.type === 'Departure'">
+                            <div (click)="editPort($event, port, 'etdTime')" class="row"
+                                *ngIf=" port.type === 'Departure'">
                                 <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_TIME' | translate }}</label>
                                 <div *ngIf="!port?.isTimeEditable && port?.etdActual" class="col text-secondary">
                                     {{getControlLabel(port,'etdActualTime')}}
@@ -111,7 +118,9 @@
                                     <p-calendar appendTo="body"
                                         placeholder="{{'PORT_ROTATION_RIBBON_ENTER_TIME'  | translate}}"
                                         formControlName="etdTime" [timeOnly]="true" inputId="timeonly"
-                                        id="etd_time_{{portList.indexOf(port)}}"></p-calendar>
+                                        (onSelect)="onDateSelect($event, 'etdTime', port)"
+                                        id="etd_time_{{portList.indexOf(port)}}"
+                                        (onBlur)="onBlur($event, port, 'etdTime')"></p-calendar>
                                     <cpdss-portal-validation-error
                                         [errors]="fieldError(portList.indexOf(port), 'etdTime')"
                                         [errorMessages]="errorMesages.etdTime">

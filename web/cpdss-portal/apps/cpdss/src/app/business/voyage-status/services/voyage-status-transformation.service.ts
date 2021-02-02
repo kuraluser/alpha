@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
+import { IDataTableColumn } from "../../../shared/components/datatable/datatable.model";
 /**
  * Service for voyage-status tranformation
  *
@@ -8,7 +9,10 @@ import { Subject } from "rxjs";
 */
 @Injectable()
 export class VoyageStatusTransformationService {
+    columns: IDataTableColumn[];
+
     public portOrderChange = new Subject();
+    voyageDistance: number;
 
     constructor() { }
 
@@ -35,4 +39,15 @@ export class VoyageStatusTransformationService {
             }
         }
     }
+
+   getColumnFields(){
+       this.columns = [
+        { field: 'abbreviation', header: 'VOYAGE_STATUS_CARGO_CONDITION_GRADES' },
+        { field: 'plannedWeight', header: 'VOYAGE_STATUS_CARGO_CONDITION_PLANNED' },
+        { field: 'actualWeight', header: 'VOYAGE_STATUS_CARGO_CONDITION_Actual' },
+        { field: 'difference', header: 'VOYAGE_STATUS_CARGO_CONDITION_DIFFERENCE' }
+    ];
+
+    return this.columns
+   }
 }

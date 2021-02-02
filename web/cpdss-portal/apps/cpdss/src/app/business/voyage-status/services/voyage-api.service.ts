@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { NewVoyageModel } from '../models/new-voyage.model';
+import { IVoyageDetails, IVoyageStatus } from '../models/voyage-status.model';
 import { NewVoyageResponseModel } from '../models/new-voyage.model'
 
 /**
@@ -38,5 +39,12 @@ export class VoyageApiService {
         'failedCompare': 'VOYAGE_POPUP_END_DATE_COMPARE_ERROR'
       }
     }
+  }
+  /**
+   * Api to get voyage status
+   */
+  getVoyageDetails(vesselId: number, voyageId: number, loadableStudyId: number, voyageDetails: IVoyageDetails): Observable<IVoyageStatus> {
+    const portId = voyageDetails.portId;
+    return this.commonApiService.post<IVoyageDetails, IVoyageStatus>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports/${portId}/voyage-status`, voyageDetails);
   }
 }

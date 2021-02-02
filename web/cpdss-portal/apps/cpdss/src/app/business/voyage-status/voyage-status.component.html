@@ -11,7 +11,7 @@
                ></p-dropdown>
             </div> 
             <div class="col">
-                <a class="btn btn-link icon-btn plus-icon-rounded" (click)="showDialog()" 
+                <a class="btn btn-link icon-btn plus-icon-rounded" (click)="showDialog()"
                     id="show-popup">{{'NEW_VOYAGE_BUTTON_VOYAGE_STATUS' | translate}}</a>
                 <a class="btn btn-link icon-btn pencil-icon" (click)="showEditPortRotation()" id="show-edit-port-rotation-popup">{{'EDIT_PORT_ROTATION' |
                     translate}}</a>
@@ -20,12 +20,12 @@
                 {{'SHIP_LANDING_VOYAGE_DISTANCE' | translate}}
             </div>
             <div class="pr-15" >
-                 {{voyageDistance}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
+                 {{voyageStatusTransformationService.voyageDistance}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
             </div>
         </div>
         <div class="row">
             <div class="col">
-                <cpdss-portal-port-rotation-ribbon [vesselDetails]="vesselInfo" *ngIf="vesselInfo && selectedVoyage"  [voyageDetails]="selectedVoyage" ></cpdss-portal-port-rotation-ribbon>
+                <cpdss-portal-port-rotation-ribbon [vesselDetails]="vesselInfo" *ngIf="vesselInfo && selectedVoyage"  [voyageDetails]="selectedVoyage"  (portDetails)="getPortDetails($event)"></cpdss-portal-port-rotation-ribbon>
             </div>
            
         </div>
@@ -36,5 +36,15 @@
         <cpdss-portal-edit-port-rotation  *ngIf="displayEditPortPopup && vesselInfo && selectedVoyage"
             (displayPopUp)="displayEditPortRotationPopUpTab($event)" [vesselDetails]="vesselInfo"  [voyageDetails]="selectedVoyage">
         </cpdss-portal-edit-port-rotation>
+        <br>
+        <div class="row">
+            <div class="col-sm-4">
+                <cpdss-portal-parameter-list  *ngIf="bunkerConditions"  [bunkerConditions]="bunkerConditions"></cpdss-portal-parameter-list>
+            </div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <cpdss-portal-cargo-details *ngIf="cargoConditions && cargoQuantities" [cargoConditions]="cargoConditions" [cargoQuantities]="cargoQuantities"></cpdss-portal-cargo-details>
+            </div>
+        </div>
     </div>
 </div>

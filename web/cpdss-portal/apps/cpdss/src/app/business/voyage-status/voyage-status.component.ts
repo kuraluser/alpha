@@ -5,8 +5,13 @@ import { VoyageService } from '../core/services/voyage.service';
 import { Voyage } from '../core/models/common.model';
 import { EditPortRotationApiService } from './services/edit-port-rotation-api.service';
 import { IPortsDetailsResponse } from '../core/models/common.model';
-import { IEditPortRotation } from './models/edit-port-rotation.model';
-
+import { VoyageApiService } from './services/voyage-api.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { IBunkerConditions, ICargoConditions, ICargoQuantities, IVoyageDetails } from './models/voyage-status.model';
+import { VoyageStatusTransformationService } from './services/voyage-status-transformation.service';
+/**
+ * Component for voyage status
+ */
 @Component({
   selector: 'cpdss-portal-voyage-status',
   templateUrl: './voyage-status.component.html',
@@ -20,16 +25,23 @@ export class VoyageStatusComponent implements OnInit {
   voyageInfo: Voyage[];
   selectedVoyage: Voyage;
   voyageDistance: number;
+  bunkerConditions: IBunkerConditions;
+  cargoConditions: ICargoConditions[];
+  cargoQuantities: ICargoQuantities[];
+  selectedPortDetails: IVoyageDetails;
 
   constructor(private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,
-    private editPortRotationApiService: EditPortRotationApiService) { }
+    private voyageApiService: VoyageApiService,
+    private ngxSpinnerService: NgxSpinnerService,
+    public voyageStatusTransformationService: VoyageStatusTransformationService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.ngxSpinnerService.show();
     this.display = false;
     this.showData = false;
     this.getVesselInfo();
-    this.portDetails();
+    this.ngxSpinnerService.hide();
   }
 
   /**
@@ -40,7 +52,7 @@ export class VoyageStatusComponent implements OnInit {
   async getVesselInfo() {
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
     this.vesselInfo = res[0] ?? <IVessel>{};
-    if(this.vesselInfo?.id){
+    if (this.vesselInfo?.id) {
       this.getVoyageInfo(this.vesselInfo?.id);
     }
   }
@@ -62,7 +74,7 @@ export class VoyageStatusComponent implements OnInit {
   /**
    * Show edit port rotation popup
    */
-  showEditPortRotation(){
+  showEditPortRotation() {
     this.displayEditPortPopup = true;
   }
 
@@ -76,23 +88,35 @@ export class VoyageStatusComponent implements OnInit {
   /**
    * Get voyage info
    */
-  async getVoyageInfo(vesselId: number){
-      const voyages = await this.voyageService.getVoyagesByVesselId(vesselId).toPromise();
-      const voyage = voyages.filter(voyageActive => (voyageActive?.status === 'Active'));
-      this.voyageInfo = voyage;
-      this.selectedVoyage = voyage[0];
+  async getVoyageInfo(vesselId: number) {
+    const voyages = await this.voyageService.getVoyagesByVesselId(vesselId).toPromise();
+    const voyage = voyages.filter(voyageActive => (voyageActive?.status === 'Active'));
+    this.voyageInfo = voyage;
+    this.selectedVoyage = voyage[0];
+  }
+
+
+  /**
+   * Get voyage status details
+   */
+  async getVoyageStatus(vesselId: number, voyageId: number, loadableStudyId: number) {
+    this.ngxSpinnerService.show();
+    const res = await this.voyageApiService.getVoyageDetails(vesselId, voyageId, loadableStudyId, this.selectedPortDetails).toPromise();
+    if (res?.responseStatus?.status === '200') {
+      this.bunkerConditions = res?.bunkerConditions;
+      this.cargoConditions = res?.cargoConditions;
+      this.cargoQuantities = res?.cargoQuantities;
+    }
+    this.ngxSpinnerService.hide();
   }
 
   /**
-   * Method to get port details
+   * Emit port data from port rotation ribbon
+   * @param portData 
    */
-  async portDetails(){
-    const result = await this.editPortRotationApiService.getPorts().toPromise();
-    const portsFormData: IPortsDetailsResponse = await this.editPortRotationApiService.getPortsDetails(this.vesselInfo.id, this.selectedVoyage.id, this.selectedVoyage.confirmedLoadableStudyId).toPromise();
-    this.voyageDistance = 0;
-    for(let i=0; i< portsFormData?.portList?.length; i++){
-      this.voyageDistance = portsFormData?.portList[i].distanceBetweenPorts + this.voyageDistance;
-    }
+  getPortDetails(portData: IVoyageDetails) {
+    this.selectedPortDetails = portData;
+    this.getVoyageStatus(this.vesselInfo?.id, this.selectedVoyage?.id, this.selectedVoyage?.confirmedLoadableStudyId);
   }
 
 }
