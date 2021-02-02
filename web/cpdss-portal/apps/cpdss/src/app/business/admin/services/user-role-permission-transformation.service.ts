@@ -66,6 +66,7 @@ export class UserRolePermissionTransformationService {
     return {
       roleName: {
         'required': 'ADD_ROLE_POPUP_ROLE_REQUIRED_ERROR',
+        'pattern':'ROLE_NAME_VALIDATION_ERROR'
       },
       roleDescription: {
         'required': 'ADD_ROLE_POPUP_DESCRIPTION_REQUIRED_ERROR'

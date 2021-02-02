@@ -63,7 +63,7 @@ export class RolePermissionComponent implements OnInit {
     ngOnInit(): void {
         this.errorMessages = this.userRolePermissionTransformationService.setValidationErrorMessage();
         this.roleDetailsForm = this.fb.group({
-            'roleName': ['', [Validators.required]],
+            'roleName': ['', [Validators.required , Validators.pattern('^[a-zA-Z0-9 ]+')]],
             'roleDescription': ['', [Validators.required]],
             'type': ['shore']
         });

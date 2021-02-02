@@ -1,5 +1,6 @@
 
 <div>
+    <h2>{{'ROLE_HEADING'| translate}}</h2>
     <form [formGroup]="roleDetailsForm" (submit)="saveRoleDetails()" *ngIf="roleDetailsForm">
         <div>
             <label for="user_role_name">{{'USER_ROLE_NAME'| translate }}</label>
@@ -9,7 +10,7 @@
         </div>
         <div>
             <label for="user_role_description">{{'USER_ROLE_DESCRIPTION'| translate }}</label>
-            <input type="text" id="user_role_description" formControlName="roleDescription"/>
+            <input type="text" id="user_role_description" formControlName="roleDescription" maxlength="100"/>
             <cpdss-portal-validation-error  [errors]="fieldError('roleDescription')" [errorMessages]="errorMessages.roleDescription">
             </cpdss-portal-validation-error>
         </div>

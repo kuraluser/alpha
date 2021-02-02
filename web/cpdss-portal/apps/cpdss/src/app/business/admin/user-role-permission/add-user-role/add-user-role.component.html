@@ -19,7 +19,7 @@
           <div class="form-group row">
             <label for="role_description" class="col-md-6 col-form-label text-secondary">{{'ADD_NEW_DESCRIPTION' | translate}}</label>
             <div class="col-md-6">
-              <input type="text" class="form-control" id="role_description" formControlName="roleDescription"
+              <input type="text" class="form-control" id="role_description" maxlength="100" formControlName="roleDescription"
               (change)="trimFormControl('roleDescription')" >
             </div>
             <cpdss-portal-validation-error  [errors]="fieldError('roleDescription')" [errorMessages]="errorMessages.roleDescription">
