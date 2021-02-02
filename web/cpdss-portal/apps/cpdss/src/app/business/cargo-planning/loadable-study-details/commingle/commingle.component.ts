@@ -319,7 +319,7 @@ export class CommingleComponent implements OnInit {
  * @memberof CommingleComponent
  */
   private addNew(commingle: ICargoGroup = null) {
-    if (this.manualCommingleList.length <= 2) {
+    if (this.manualCommingleList?.length <= 2) {
       this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo1;
       this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2;
       commingle = commingle ?? <ICargoGroup>{
@@ -335,7 +335,7 @@ export class CommingleComponent implements OnInit {
       const dataTableControl = <FormArray>this.commingleManualForm.get('dataTable');
       dataTableControl.insert(0, this.initCommingleManualFormGroup(_commingle));
     }
-    else {
+    else if(this.manualCommingleList?.length >= 3){
       this.isMaxCargo = true;
     }
 
@@ -453,6 +453,7 @@ export class CommingleComponent implements OnInit {
       this.commingleForm.controls['cargo2'].updateValueAndValidity();
     }
     else {
+      this.addNew();
       this.commingleForm.controls['preferredTanks'].setValidators([Validators.required]);
       this.commingleForm.controls['cargo1'].clearValidators();
       this.commingleForm.controls['cargo2'].clearValidators();
