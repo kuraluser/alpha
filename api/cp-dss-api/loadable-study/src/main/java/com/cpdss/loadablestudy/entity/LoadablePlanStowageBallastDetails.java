@@ -45,7 +45,7 @@ public class LoadablePlanStowageBallastDetails extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
-  
+
   @Column(name = "corrected_ullage")
   private String correctedUllage;
 }

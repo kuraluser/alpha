@@ -3024,9 +3024,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpq.getCargoColor())
               .ifPresent(
                   cargoColor -> loadablePatternCargoDetailsBuilder.setCargoColor(cargoColor));
+
           Optional.ofNullable(lpq.getLoadingOrder())
               .ifPresent(
                   loadingOrder -> loadablePatternCargoDetailsBuilder.setLoadingOrder(loadingOrder));
+
           loadablePatternCargoDetailsBuilder.setIsCommingle(false);
           loadablePatternBuilder.addLoadablePatternCargoDetails(loadablePatternCargoDetailsBuilder);
         });
@@ -3060,9 +3062,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(
                   id ->
                       loadablePatternCargoDetailsBuilder.setLoadablePatternCommingleDetailsId(id));
+
           Optional.ofNullable(lpcd.getLoadingOrder())
               .ifPresent(
                   loadingOrder -> loadablePatternCargoDetailsBuilder.setLoadingOrder(loadingOrder));
+
           loadablePatternBuilder.addLoadablePatternCargoDetails(loadablePatternCargoDetailsBuilder);
         });
   }
@@ -4771,7 +4775,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(ballast.getActualQuantity())
               .ifPresent(item -> ballastBuilder.setActualWeight(valueOf(item)));
           Optional.ofNullable(ballast.getCorrectedUllage())
-          .ifPresent(ullage -> ballastBuilder.setCorrectedUllage(ullage));
+              .ifPresent(ullage -> ballastBuilder.setCorrectedUllage(ullage));
         } else {
           log.info(
               "Ballast details not available for the tank: {}, pattern: {}",

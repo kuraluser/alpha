@@ -3786,8 +3786,8 @@ public class LoadableStudyService {
         voyageStatusResponse.setBunkerConditions(bunkerConditions);
         // build ballast quantities
         if (!CollectionUtils.isEmpty(synopticalRecord.get().getBallast())) {
-         // build ballast quantities
-            voyageStatusResponse.setBallastQuantities(synopticalRecord.get().getBallast());
+          // build ballast quantities
+          voyageStatusResponse.setBallastQuantities(synopticalRecord.get().getBallast());
         }
       }
     }
