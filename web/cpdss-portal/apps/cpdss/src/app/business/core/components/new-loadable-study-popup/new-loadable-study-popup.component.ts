@@ -147,6 +147,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       const nameExistence = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
       this.newLoadableStudyNameExist = this.isEdit ? (this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim() === this.selectedLoadableStudy.name.toLocaleLowerCase() ? false : nameExistence) : nameExistence;
       const translationKeys = await this.translateService.get(['LOADABLE_STUDY_CREATE_SUCCESS', 'LOADABLE_STUDY_CREATED_SUCCESSFULLY', 'LOADABLE_STUDY_CREATE_ERROR', 'LOADABLE_STUDY_ALREADY_EXIST', 'LOADABLE_STUDY_UPDATE_SUCCESS', 'LOADABLE_STUDY_UPDATED_SUCCESSFULLY']).toPromise();
+      
       if (!this.newLoadableStudyNameExist) {
         this.newLoadableStudyPopupModel = {
           id: this.isEdit ? this.selectedLoadableStudy.id : 0,
@@ -159,8 +160,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           loadLineXId: this.newLoadableStudyFormGroup.controls.loadLine.value?.id,
           draftMark: this.newLoadableStudyFormGroup.controls.draftMark.value?.id,
           draftRestriction: this.newLoadableStudyFormGroup.controls.draftRestriction.value,
-          maxAirTempExpected:  this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value ? this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value : '',
-          maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value ? this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value : ''
+          maxAirTempExpected:  this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value !== undefined ? this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value + '': '',
+          maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value !== undefined ? this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value+ '' : ''
         }
         this.ngxSpinnerService.show();
         try {
@@ -292,11 +293,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       loadLine: loadableStudyObj,
       draftMark: loadableStudyObj,
       draftRestriction: loadableStudyObj.draftRestriction ? loadableStudyObj.draftRestriction : '',
-      maxAirTempExpected: loadableStudyObj.maxAirTemperature ? loadableStudyObj.maxAirTemperature : '',
-      maxWaterTempExpected: loadableStudyObj.maxWaterTemperature ? loadableStudyObj.maxWaterTemperature : ''
+      maxAirTempExpected: loadableStudyObj.maxAirTemperature !== undefined ? loadableStudyObj.maxAirTemperature : '',
+      maxWaterTempExpected: loadableStudyObj.maxWaterTemperature !== undefined ? loadableStudyObj.maxWaterTemperature : ''
     });
-    
-    
     const result = this.loadlineLists.filter(loadline => loadline.id === loadableStudyObj.loadLineXId);
     if (result.length > 0) {
       this.loadlineList = result[0];
@@ -323,6 +322,15 @@ export class NewLoadableStudyPopupComponent implements OnInit {
        (this.savedloadableDetails.draftRestriction !== this.newLoadableStudyFormGroup.controls['draftRestriction']?.value))) {
       return true;
     }
+  }
+
+  /**
+   *
+   * @param type 
+   * Get form control value to label
+   */
+  getControlLabel(type: string) {
+    return this.newLoadableStudyFormGroup.controls[type].value;
   }
 
 }

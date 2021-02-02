@@ -45,7 +45,7 @@
                         <label for="loadable_quantity_displacement"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_DISPLACEMENT' | translate}}</label>
                         <div class="col pt-5">
-                            <label id="loadable_quantity_displacement">{{getControlLabel('displacement')?.toString()}}</label>
+                            <label id="loadable_quantity_displacement">{{getControlLabel('displacement')| number : '1.0-2'}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -57,7 +57,7 @@
                         <label for="loadable_quantity_lwt"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_LWT' | translate}}</label>
                         <div class="col pt-5">
-                            <label id="loadable_quantity_lwt">{{getControlLabel('lwt')?.toString()}}</label>
+                            <label id="loadable_quantity_lwt">{{getControlLabel('lwt')| number : '1.0-2'}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="error-column text-center">
@@ -109,7 +109,7 @@
                         <label for="loadable_quantity_sg_correction"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SG_CORRECTION' | translate}}</label>
                         <div class="col">
-                            <label id="loadable_quantity_sg_correction">{{getControlLabel('sgCorrection')?.toString()}}</label>
+                            <label id="loadable_quantity_sg_correction">{{getControlLabel('sgCorrection') | number : '1.0-2'}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -134,7 +134,7 @@
                         <label for="loadable_quantity_sag_correction"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SAG_CORRECTION' | translate}}</label>
                         <div class="col pt-5">
-                            <label id="loadable_quantity_sag_correction">{{getControlLabel('safCorrection')?.toString()}}</label>
+                            <label id="loadable_quantity_sag_correction">{{getControlLabel('safCorrection')| number : '1.0-2'}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">

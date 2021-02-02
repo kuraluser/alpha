@@ -10,7 +10,7 @@
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DUPLICATE_EXISTING' | translate}}
                         </div>
                         <div class="col dropdowm-medium">
-                            <p-dropdown styleClass="form-control" [options]="loadableStudyList"
+                            <p-dropdown styleClass="form-control" [options]="loadableStudyList" [tooltipPosition]="'top'" [tooltip]="getControlLabel('duplicateExisting')?.name?.length > 13 ? getControlLabel('duplicateExisting')?.name: ''"
                                 id="ddl_duplicateExisting" formControlName="duplicateExisting" optionLabel="name"
                                 (onChange)="onDuplicateExisting($event)"
                                 placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" [disabled]="isEdit" focusTrap>
