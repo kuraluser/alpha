@@ -15,10 +15,10 @@ public class VoyageStatusResponse {
   private CommonSuccessResponse responseStatus;
 
   private List<SynopticalCargoBallastRecord> cargoQuantities;
+  
+  private List<SynopticalCargoBallastRecord> ballastQuantities;
 
   private List<OnHandQuantity> bunkerQuantities;
-
-  private List<OnHandQuantity> ballastQuantities;
 
   private List<List<VesselTank>> cargoTanks;
 

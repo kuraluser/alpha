@@ -116,6 +116,7 @@ message VesselTankDetail{
 	bool showInOhqObq = 23;
 	int32 tankDisplayOrder = 24;
 	string tankPositionCategory = 25;
+	bool isLoadicatorUsing = 26;
 }
 
 message VesselReply {

@@ -4770,6 +4770,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(item -> ballastBuilder.setPlannedWeight(valueOf(item)));
           Optional.ofNullable(ballast.getActualQuantity())
               .ifPresent(item -> ballastBuilder.setActualWeight(valueOf(item)));
+          Optional.ofNullable(ballast.getCorrectedUllage())
+          .ifPresent(ullage -> ballastBuilder.setCorrectedUllage(ullage));
         } else {
           log.info(
               "Ballast details not available for the tank: {}, pattern: {}",
@@ -5532,6 +5534,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpq.getMinTolerence()).ifPresent(builder::setMinTolerence);
           Optional.ofNullable(lpq.getOrderBbls60f()).ifPresent(builder::setOrderBbls60F);
           Optional.ofNullable(lpq.getOrderBblsDbs()).ifPresent(builder::setOrderBblsdbs);
+          Optional.ofNullable(lpq.getCargoXId()).ifPresent(builder::setCargoId);
           replyBuilder.addLoadableQuantityCargoDetails(builder);
         });
   }

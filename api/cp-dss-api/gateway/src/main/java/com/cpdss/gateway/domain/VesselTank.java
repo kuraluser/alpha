@@ -51,4 +51,6 @@ public class VesselTank {
   private Integer displayOrder;
 
   private BigDecimal fullCapcityCubm;
+
+  private Boolean isLoadicatorUsing;
 }

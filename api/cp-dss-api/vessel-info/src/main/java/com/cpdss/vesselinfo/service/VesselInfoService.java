@@ -514,7 +514,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                 });
 
         ullageTableDataRepository
-            .findByVesselOrderById(vessel)
+            .findByVesselOrderByVesselTankAscUllageDepthAsc(vessel)
             .forEach(
                 ullageTableData -> {
                   UllageDetails.Builder ullageDetailsBuilder = UllageDetails.newBuilder();
@@ -901,6 +901,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                 vesselTankBuilder.setFillCapacityCubm(String.valueOf(fillCapacityCubm)));
     Optional.ofNullable(vesselTank.getShortName())
         .ifPresent(shortName -> vesselTankBuilder.setShortName(shortName));
+    Optional.ofNullable(vesselTank.getIsLoadicatorUsing())
+        .ifPresent(isLoadicatorUsing -> vesselTankBuilder.setIsLoadicatorUsing(isLoadicatorUsing));
     return vesselTankBuilder.build();
   }
 
