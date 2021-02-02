@@ -69,4 +69,7 @@ public class OnBoardQuantity extends EntityDoc {
 
   @Column(name = "density")
   private BigDecimal density;
+
+  @Column(name = "volume_in_m3")
+  private String volumeInM3;
 }

@@ -505,6 +505,7 @@ public class VesselInfoService {
               tank.setShortName(vesselTank.getShortName());
               tank.setTcg(vesselTank.getTcg());
               tank.setVcg(vesselTank.getVcg());
+              tank.setIsLoadicatorUsing(vesselTank.getIsLoadicatorUsing());
               vesselTanks.add(tank);
             });
     return vesselTanks;

@@ -5534,6 +5534,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpq.getMinTolerence()).ifPresent(builder::setMinTolerence);
           Optional.ofNullable(lpq.getOrderBbls60f()).ifPresent(builder::setOrderBbls60F);
           Optional.ofNullable(lpq.getOrderBblsDbs()).ifPresent(builder::setOrderBblsdbs);
+          Optional.ofNullable(lpq.getCargoXId()).ifPresent(builder::setCargoId);
           replyBuilder.addLoadableQuantityCargoDetails(builder);
         });
   }

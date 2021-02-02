@@ -148,4 +148,7 @@ public class VesselTank extends EntityDoc {
 
   @Column(name = "tank_position_category")
   private String tankPositionCategory;
+
+  @Column(name = "is_loadicator_using")
+  private Boolean isLoadicatorUsing;
 }

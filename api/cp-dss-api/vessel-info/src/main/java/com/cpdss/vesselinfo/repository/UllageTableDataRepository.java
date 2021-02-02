@@ -8,5 +8,5 @@ import java.util.List;
 
 /** @Author jerin.g */
 public interface UllageTableDataRepository extends CommonCrudRepository<UllageTableData, Long> {
-  public List<UllageTableData> findByVesselOrderById(Vessel vessel);
+  public List<UllageTableData> findByVesselOrderByVesselTankAscUllageDepthAsc(Vessel vessel);
 }
