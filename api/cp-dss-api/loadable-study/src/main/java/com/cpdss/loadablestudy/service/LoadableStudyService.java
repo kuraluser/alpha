@@ -4770,6 +4770,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(item -> ballastBuilder.setPlannedWeight(valueOf(item)));
           Optional.ofNullable(ballast.getActualQuantity())
               .ifPresent(item -> ballastBuilder.setActualWeight(valueOf(item)));
+          Optional.ofNullable(ballast.getCorrectedUllage())
+          .ifPresent(ullage -> ballastBuilder.setCorrectedUllage(ullage));
         } else {
           log.info(
               "Ballast details not available for the tank: {}, pattern: {}",

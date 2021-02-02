@@ -2358,6 +2358,10 @@ public class LoadableStudyService {
           isEmpty(ballast.getActualWeight())
               ? BigDecimal.ZERO
               : new BigDecimal(ballast.getActualWeight()));
+      record.setCorrectedUllage(
+          isEmpty(ballast.getCorrectedUllage())
+              ? BigDecimal.ZERO
+              : new BigDecimal(ballast.getCorrectedUllage()));
       list.add(record);
     }
     synopticalRecord.setBallastPlannedTotal(BigDecimal.ZERO);
@@ -3676,45 +3680,6 @@ public class LoadableStudyService {
       SynopticalTableReply synopticalTableReply) {
     String operationType = request.getOperationType();
     voyageStatusResponse.setCargoTanks(cargoResponse.getTanks());
-    // group on-board-quantities by cargo for Cargo conditions
-    if (!CollectionUtils.isEmpty(cargoResponse.getOnBoardQuantities())) {
-      List<Cargo> cargoConditions = new ArrayList<>();
-      cargoResponse.getOnBoardQuantities().stream()
-          .collect(
-              Collectors.groupingBy(
-                  onBoardQty ->
-                      onBoardQty.getCargoId() != null ? onBoardQty.getCargoId() : Long.valueOf("0"),
-                  Collectors.collectingAndThen(
-                      Collectors.reducing(
-                          (index, accum) ->
-                              new OnBoardQuantity(
-                                  index.getId(),
-                                  index.getPortId(),
-                                  index.getTankId(),
-                                  index.getTankName(),
-                                  index.getCargoId(),
-                                  index.getSounding(),
-                                  index.getQuantity().add(accum.getQuantity()),
-                                  index.getActualWeight().add(accum.getActualWeight()),
-                                  index.getVolume(),
-                                  index.getColorCode(),
-                                  index.getAbbreviation(),
-                                  index.getLoadableStudyId(),
-                                  index.getApi(),
-                                  index.getLoadOnTop())),
-                      Optional::get)))
-          .forEach(
-              (id, onBoardQuantity) -> {
-                if (onBoardQuantity.getCargoId() != null) {
-                  Cargo cargo = new Cargo();
-                  cargo.setId(onBoardQuantity.getCargoId());
-                  cargo.setPlannedWeight(onBoardQuantity.getQuantity());
-                  cargo.setActualWeight(onBoardQuantity.getActualWeight());
-                  cargoConditions.add(cargo);
-                }
-              });
-      voyageStatusResponse.setCargoConditions(cargoConditions);
-    }
     // group ohq, vessel and port details for Bunker conditions and Cargo conditions
     if (synopticalTableResponse != null
         && !CollectionUtils.isEmpty(synopticalTableResponse.getSynopticalRecords())) {
@@ -3776,6 +3741,11 @@ public class LoadableStudyService {
         bunkerConditions.setDisplacement(synopticalRecord.get().getDisplacementActual());
         bunkerConditions.setSpecificGravity(synopticalRecord.get().getSpecificGravity());
         voyageStatusResponse.setBunkerConditions(bunkerConditions);
+        // build ballast quantities
+        if (!CollectionUtils.isEmpty(synopticalRecord.get().getBallast())) {
+         // build ballast quantities
+            voyageStatusResponse.setBallastQuantities(synopticalRecord.get().getBallast());
+        }
       }
     }
     // build bunker quantities

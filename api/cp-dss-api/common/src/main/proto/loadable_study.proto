@@ -770,6 +770,7 @@ message SynopticalBallastRecord{
 	string plannedWeight = 3;
 	string actualWeight = 4;
 	string capacity = 5;
+	string correctedUllage = 6;
 }
 
 message SynopticalTableRequest{
