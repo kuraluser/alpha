@@ -53,3 +53,14 @@ body{
 .login-footer{
     background: url($images-theme + 'logo-alpha-ori.png') no-repeat;
 }
+
+.login-textfield {
+    background: $login-textfield;
+    color: $textfield-color !important;
+    &:focus{
+        background: $login-textfield;
+    }
+}
+a{
+    color: $link-text;
+}
