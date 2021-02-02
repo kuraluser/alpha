@@ -285,15 +285,15 @@ export class PortsComponent implements OnInit {
       this.portsLists[valueIndex]['portcode'].value = event.data.port.value.code;
       this.portsLists[valueIndex]['portOrder'] = this.portOrder;
       this.updateField(event.index, 'portcode', event.data.port.value.code);
-      if(event.data.port.value.maxDraft){
+      if (event.data.port.value.maxDraft) {
         this.portsLists[valueIndex]['maxDraft'].value = event.data.port.value.maxDraft;
         this.updateField(event.index, 'maxDraft', event.data.port.value.maxDraft);
       }
-      if(event.data.port.value.maxAirDraft){
+      if (event.data.port.value.maxAirDraft) {
         this.portsLists[valueIndex]['maxAirDraft'].value = event.data.port.value.maxAirDraft;
         this.updateField(event.index, 'maxAirDraft', event.data.port.value.maxAirDraft);
       }
-      if(event.data.port.value.waterDensity){
+      if (event.data.port.value.waterDensity) {
         this.portsLists[valueIndex]['seaWaterDensity'].value = event.data.port.value.waterDensity;
         this.updateField(event.index, 'seaWaterDensity', event.data.port.value.waterDensity);
       }
@@ -316,7 +316,7 @@ export class PortsComponent implements OnInit {
         form.controls.layCanTo.setValidators([Validators.required]);
       }
       form.controls.port.updateValueAndValidity();
-      form.controls.layCan.updateValueAndValidity();
+      this.updateValidityAndEditMode(index, 'layCan')
       form.controls.layCanTo.updateValueAndValidity();
       form.controls.layCanFrom.updateValueAndValidity();
       this.updateValuesIfBunkering(event.data, form, index);
@@ -352,9 +352,10 @@ export class PortsComponent implements OnInit {
           row.controls.operation.updateValueAndValidity()
         }
       }
-      if (row.valid && !event.data?.isAdd) {
+      if (row.valid && !event.data?.isAdd && row.touched) {
         const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
         if (res) {
+          row.markAsUntouched();
           for (const key in this.portsLists[rowIndex]) {
             if (this.portsLists[rowIndex].hasOwnProperty(key) && this.portsLists[rowIndex][key].hasOwnProperty('_isEditMode')) {
               this.portsLists[rowIndex][key].isEditMode = false;
@@ -533,6 +534,7 @@ export class PortsComponent implements OnInit {
  * @memberof PortsComponent
  */
   updateFormValidity(portListArray) {
+    console.log(portListArray)
     for (let i = 0; i < portListArray.length; i++) {
       const fromGroup = this.row(i);
       const invalidFormControls = this.findInvalidControlsRecursive(fromGroup);
@@ -588,20 +590,23 @@ export class PortsComponent implements OnInit {
   updateValuesIfBunkering(data, form, index) {
     if (data && data.operation?.value?.id === OPERATIONS.BUNKERING && data.port.value) {
       const portId = Number(data.port.value.id);
-      const loadingPortData = this.portsLists.find(row => row.port?.value?.id === portId && [OPERATIONS.LOADING, OPERATIONS.DISCHARGING].includes(row.operation?.value?.id));
-      if (loadingPortData) {
-        const loadingPortForm = this.row(Number(loadingPortData.slNo - 1));
-        form.controls.eta.setValue(loadingPortForm.value.eta);
-        form.controls.etd.setValue(loadingPortForm.value.etd);
-        form.controls.eta.disable();
-        form.controls.etd.disable();
-        this.portsLists[index].eta.value = loadingPortData.eta.value;
-        this.portsLists[index].etd.value = loadingPortData.etd.value;
-        this.portsLists[index].eta.isEditable = false;
-        this.portsLists[index].etd.isEditable = false;
-        this.updateValidityAndEditMode(index, 'eta');
-        this.updateValidityAndEditMode(index, 'etd');
-        return;
+      if (index > 0) {
+        const row = this.portsLists[index - 1]
+        if (row.port?.value?.id === portId && [OPERATIONS.LOADING, OPERATIONS.DISCHARGING].includes(row.operation?.value?.id)) {
+          const loadingPortData = row;
+          const loadingPortForm = this.row(Number(loadingPortData.slNo - 1));
+          form.controls.eta.setValue(loadingPortForm.value.eta);
+          form.controls.etd.setValue(loadingPortForm.value.etd);
+          form.controls.eta.disable();
+          form.controls.etd.disable();
+          this.portsLists[index].eta.value = loadingPortData.eta.value;
+          this.portsLists[index].etd.value = loadingPortData.etd.value;
+          this.portsLists[index].eta.isEditable = false;
+          this.portsLists[index].etd.isEditable = false;
+          this.updateValidityAndEditMode(index, 'eta');
+          this.updateValidityAndEditMode(index, 'etd');
+          return;
+        }
       }
     }
     if (form.controls.eta.disabled && form.controls.etd.disabled) {
@@ -626,7 +631,7 @@ export class PortsComponent implements OnInit {
       case 'eta':
         return [Validators.required, portDateRangeValidator, portDateCompareValidator('etd', '<'), portEtaEtdValidator('eta', index)];
       case 'etd':
-        return [Validators.required, portDateRangeValidator, portDateCompareValidator('eta', '>'), portEtaEtdValidator('etd', index)];
+        return [Validators.required, portDateCompareValidator('eta', '>'), portEtaEtdValidator('etd', index)];
       default:
         return [];
     }
