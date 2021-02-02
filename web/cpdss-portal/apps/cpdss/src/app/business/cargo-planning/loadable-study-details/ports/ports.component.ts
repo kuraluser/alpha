@@ -534,7 +534,6 @@ export class PortsComponent implements OnInit {
  * @memberof PortsComponent
  */
   updateFormValidity(portListArray) {
-    console.log(portListArray)
     for (let i = 0; i < portListArray.length; i++) {
       const fromGroup = this.row(i);
       const invalidFormControls = this.findInvalidControlsRecursive(fromGroup);

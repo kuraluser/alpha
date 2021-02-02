@@ -13,10 +13,13 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./constraint.component.scss']
 })
 export class ConstraintComponent implements OnInit {
-@Input() constraint: string;
+@Input() constraint: string[];
+ssss:string[] = ['check'];
+constraints: string;
   constructor() { }
 
   ngOnInit(): void {
+    this.constraints = this.constraint.join('\n')
   }
 
 }

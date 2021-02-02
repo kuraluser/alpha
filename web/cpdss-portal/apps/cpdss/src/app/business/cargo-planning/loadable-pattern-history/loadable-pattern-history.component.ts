@@ -55,6 +55,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   display = false;
   selectedLoadablePatterns: ILoadablePatternCargoDetail;
   loadablePatternPermissionContext: IPermissionContext;
+  loadablePatternDetailsId: number;
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -182,8 +183,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @memberof LoadablePatternHistoryComponent
    */
   displayCommingleDetailPopup(emittedValue) {
-    this.selectedLoadablePatterns = emittedValue.isCommingle ? emittedValue : null;
-    this.display = emittedValue.isCommingle;
+    this.loadablePatternDetailsId = emittedValue?.loadablePatternDetailsId;
+    this.selectedLoadablePatterns = emittedValue?.loadablePatternCargoDetail?.isCommingle ? emittedValue?.loadablePatternCargoDetail : null;
+    this.display = emittedValue?.loadablePatternCargoDetail?.isCommingle;
   }
 
   /**

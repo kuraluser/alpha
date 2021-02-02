@@ -27,6 +27,7 @@ export class CommingleCargoDetailsPopUpComponent implements OnInit {
   @Input() loadableStudyId: number;
   @Input() vesselId: number;
   @Input() selectedLoadablePatterns: ILoadablePatternCargoDetail;
+  @Input() loadablePatternDetailsId: number;
   @Input() display;
 
   commingleDetailsForm: FormGroup;
@@ -43,9 +44,9 @@ export class CommingleCargoDetailsPopUpComponent implements OnInit {
    * @returns {Promise<void>}
    * @memberof CommingleCargoDetailsPopUpComponent
    */
-  async ngOnInit(): Promise<void> {
+  ngOnInit() {
     this.columns = this.loadableStudyPatternTransformationService.getCommingleDetailsDatatableColumns();
-    this.getCommingleCargoDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.selectedLoadablePatterns?.loadablePatternDetailsId, this.selectedLoadablePatterns?.loadablePatternCommingleDetailsId);
+   this.getCommingleCargoDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternDetailsId, this.selectedLoadablePatterns?.loadablePatternCommingleDetailsId);
   }
 
   // for closing active modal commingle popup

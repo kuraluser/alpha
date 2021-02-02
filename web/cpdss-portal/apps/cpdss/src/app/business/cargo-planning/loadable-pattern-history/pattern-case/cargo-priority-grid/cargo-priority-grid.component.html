@@ -16,14 +16,14 @@
                         {{priorityData.priority}}
                     </td>
                     <td>
-                        <span
-                            [ngStyle]="{'background': priorityData.cargoColor}">{{priorityData.cargoAbbreviation}}</span>
+                        <span class="badge-custom" [ngClass]="priorityData?.isCommingle ? 'commingle' : ''"
+                            [ngStyle]="!priorityData?.isCommingle && {'background': priorityData.cargoColor}">{{priorityData.cargoAbbreviation}}</span>
                     </td>
                     <td>
                         {{priorityData.quantity}}
                     </td>
                     <td>
-                        <span [ngStyle]="{'background': priorityData.differenceColor}"> {{priorityData.difference}}
+                        <span class="badge-custom" [ngClass]="(priorityData.orderedQuantity - priorityData.quantity) > 0 ? 'success' : 'error'"> {{priorityData.orderedQuantity - priorityData.quantity}}
                         </span>
                     </td>
                 </tr>
@@ -33,7 +33,7 @@
                     <td></td>
                     <td>{{'CARGO_PRIORITY_GRID_FOOTER_TOTAL' | translate}}</td>
                     <td>{{totalQuantity}}</td>
-                    <td><span [ngStyle]="{'background': totalDifferenceColor}"> {{totalDifference}} </span></td>
+                    <td><span class="badge-custom" [ngClass]="totalDifference > 0 ? 'success' : 'error'"> {{totalDifference}} </span></td>
                 </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">
@@ -46,7 +46,7 @@
     
 </div>
 <div class="row">
-    <div class="col text-center pt-20">
+    <!-- <div class="col text-center pt-20">
         <button class="btn btn-main mr-10">{{'CARGO_PRIORITY_GRID_MORE_BUTTON_LABEL' | translate}}</button>
-    </div>
+    </div> -->
 </div>

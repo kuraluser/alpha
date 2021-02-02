@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ICargoTank } from '../../../core/models/common.model';
+import { ICargoTank, ITankOptions } from '../../../core/models/common.model';
 import { ILoadablePattern } from '../../models/loadable-pattern.model';
 
 /**
@@ -21,7 +21,10 @@ export class PatternCaseComponent implements OnInit {
   @Input() index: number;
   @Input() loadablePattern: ILoadablePattern;
   @Input() tankList: ICargoTank[][];
+  
+  loadablePatternDetailsId: number;
   tanks: ICargoTank[][];
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, fillingPercentageField: 'fillingRatio' }
   constructor() { }
 
   /**
@@ -31,6 +34,7 @@ export class PatternCaseComponent implements OnInit {
    * @memberof PatternCaseComponent
    */
   ngOnInit(): void {
+    this.loadablePatternDetailsId = this.loadablePattern?.loadablePatternId;
     this.updateTankLIst()
   }
 
@@ -43,7 +47,7 @@ export class PatternCaseComponent implements OnInit {
     this.tanks = this.tankList.map(group => {
       const newGroup = group.map((groupItem) => {
         const tank = Object.assign({}, groupItem);
-        tank.commodity = this.loadablePattern.loadablePatternCargoDetails.find((item) => (item.tankId === groupItem.id) && item);
+        tank.commodity = this.loadablePattern.loadablePlanStowageDetails.find((item) => (item.tankId === groupItem.id) && item);
         return tank;
       });
       return newGroup;
@@ -56,6 +60,10 @@ export class PatternCaseComponent implements OnInit {
    * @memberof PatternCaseComponent
    */
   showComminglePopup(event) {
-    this.displayCommingleDetailPopup.emit(event)
+    const commingleData = {
+      loadablePatternDetailsId: this.loadablePatternDetailsId,
+      loadablePatternCargoDetail: event
+    }
+    this.displayCommingleDetailPopup.emit(commingleData)
   }
 }

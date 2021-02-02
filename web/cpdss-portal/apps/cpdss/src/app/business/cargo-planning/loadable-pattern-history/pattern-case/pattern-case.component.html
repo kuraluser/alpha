@@ -1,12 +1,13 @@
 <div class="row">
     <div class="col">
-        <cpdss-portal-grade-loading-order [loadablePatternCargoDetails]="loadablePattern.loadablePatternCargoDetails" [index]="index">
+        <cpdss-portal-grade-loading-order [loadablePatternCargoDetails]="loadablePattern.loadablePatternCargoDetails"
+            [index]="index">
         </cpdss-portal-grade-loading-order>
         <cpdss-portal-constraint [constraint]="loadablePattern.constraints"></cpdss-portal-constraint>
-        <cpdss-portal-cargo-tank-layout [options]="{'isFullyFilled': true}" [tanks]="tanks"></cpdss-portal-cargo-tank-layout>
+        <cpdss-portal-cargo-tank-layout [options]="cargoTankOptions" [tanks]="tanks"></cpdss-portal-cargo-tank-layout>
     </div>
     <div class="col-5">
         <cpdss-portal-cargo-priority-grid [loadablePatternCargoDetails]="loadablePattern.loadablePatternCargoDetails"
-            [totalDifferenceColor]="loadablePattern.totalDifferenceColor" (isCommingle)="showComminglePopup($event)"></cpdss-portal-cargo-priority-grid>
+            (isCommingle)="showComminglePopup($event)"></cpdss-portal-cargo-priority-grid>
     </div>
 </div>

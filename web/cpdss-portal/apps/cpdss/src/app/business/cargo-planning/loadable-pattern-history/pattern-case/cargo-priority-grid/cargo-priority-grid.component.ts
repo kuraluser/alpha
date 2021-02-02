@@ -19,7 +19,6 @@ export class CargoPriorityGridComponent implements OnInit {
   @Output() isCommingle = new EventEmitter();
 
   @Input() loadablePatternCargoDetails: ILoadablePatternCargoDetail[];
-  @Input() totalDifferenceColor: string;
   totalQuantity = 0;
   totalDifference = 0;
   constructor() { }
@@ -34,9 +33,10 @@ export class CargoPriorityGridComponent implements OnInit {
     this.totalQuantity = this.loadablePatternCargoDetails.map(a => Number(a.quantity)).reduce(function (a, b) {
       return Number(a) + Number(b);
     });
-    this.totalDifference = this.loadablePatternCargoDetails.map(a => Number(a.difference)).reduce(function (a, b) {
+    this.totalDifference = this.loadablePatternCargoDetails.map(a => Number(a.orderedQuantity) - Number(a.quantity)).reduce(function (a, b) {
       return Number(a) + Number(b);
     });
+    this.loadablePatternCargoDetails = this.loadablePatternCargoDetails.sort((a, b) => (a.loadingOrder > b.loadingOrder) ? 1 : -1);
   }
 
   /**

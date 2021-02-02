@@ -25,9 +25,11 @@ export interface ILoadablePatternResponse {
  */
 export interface ILoadablePattern {
     loadablePatternId: number;
-    constraints: string;
-    totalDifferenceColor: string;
+    constraints: string[];
     loadablePatternCargoDetails: ILoadablePatternCargoDetail[];
+    loadablePlanStowageDetails: ILoadablePlanStowageDetails[];
+    loadableStudyStatusId: number;
+    caseNumber: number;
 }
 
 /**
@@ -39,14 +41,37 @@ export interface ILoadablePattern {
 export interface ILoadablePatternCargoDetail extends ILoadableCargo {
     priority: number;
     cargoAbbreviation: string;
-    colorCode: string;
-    tankId: number;
+    cargoColor: string;
     quantity: string;
-    difference: string;
-    differenceColor: string;
-    loadablePatternDetailsId: number;
     isCommingle: boolean;
     loadablePatternCommingleDetailsId: number;
+    orderedQuantity: string;
+    loadingOrder: number;
+}
+
+/**
+ * Interface for cargo tank details
+ *
+ * @export
+ * @interface ILoadablePlanStowageDetails
+ */
+export interface ILoadablePlanStowageDetails extends ILoadableCargo {
+    id: number;
+    tankId: number;
+    cargoAbbreviation: string;
+    weight: number;
+    correctedUllage: number;
+    fillingRatio: number;
+    tankName: string;
+    rdgUllage: number;
+    correctionFactor: number;
+    observedM3: number;
+    observedBarrels: number;
+    observedBarrelsAt60: number;
+    api: number;
+    temperature: number;
+    colorCode: string;
+    quantityMT: string;
 }
 
 

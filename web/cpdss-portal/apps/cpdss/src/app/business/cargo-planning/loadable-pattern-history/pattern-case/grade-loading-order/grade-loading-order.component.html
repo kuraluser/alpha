@@ -6,7 +6,8 @@
         <div class="col" style="margin-right: 65px;">
             <ul class="list-inline text-center tank-order mb-5">
                 <li class="list-inline-item" *ngFor="let cargoDetail of loadablePatternCargoDetails">
-                    <span class="badge-custom mr-5" [ngStyle]="{'background': cargoDetail.cargoColor}">
+                    <span class="badge-custom mr-5" class="badge-custom" [ngClass]="cargoDetail?.isCommingle ? 'commingle' : ''"
+                    [ngStyle]="!cargoDetail?.isCommingle && {'background': cargoDetail.cargoColor}">
                         {{cargoDetail.cargoAbbreviation}} </span> <span>></span>
                 </li>
             </ul>
