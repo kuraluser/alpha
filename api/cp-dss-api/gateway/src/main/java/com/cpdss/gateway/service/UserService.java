@@ -241,7 +241,6 @@ public class UserService {
       if (!innerList.isEmpty()) {
         inner.getChilds().addAll(innerList);
       } else {
-        System.out.println(inner.getName());
         break;
       }
     }
@@ -328,7 +327,6 @@ public class UserService {
   public PermissionResponse savePermission(
       RolePermission permission, Long companyId, String correlationId)
       throws GenericServiceException {
-
     PermissionResponse permissionResponse = new PermissionResponse();
     Optional<Roles> role = this.rolesRepository.findByIdAndIsActive(permission.getRoleId(), true);
     if (!role.isPresent()) {
@@ -337,6 +335,7 @@ public class UserService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+
     List<Users> users =
         this.usersRepository.findByCompanyXIdAndIdInAndIsActive(
             companyId, permission.getUserId(), true);

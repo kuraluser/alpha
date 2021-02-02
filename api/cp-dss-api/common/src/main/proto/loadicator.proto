@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+option java_multiple_files = false;
+option java_package = "com.cpdss.common.generated";
+
+// import common definitions like ResponseStatus
+import "common.proto";
+
+service LoadicatorService {
+
+rpc saveLoadicatorInfo (LoadicatorRequest) returns (LoadicatorReply) {
+
+	}
+}
+
+message LoadicatorRequest{
+ StowagePlanDetails stowagePlanDetails=1;
+StowageDetailsInfo stowageDetailsInfo=2;
+CargoInfo cargoInfo=3;
+OtherTankInfo otherTankInfo=4;
+
+}
+
+message StowagePlanDetails{
+int64 id = 1;
+int64 vesselId = 2;
+string imoNumber = 3;
+int64 companyId = 4;
+int64 shipType = 5;
+string vesselCode = 6;
+int64 bookingListId = 7;
+int64 stowageId = 8;
+int64 portId = 9;
+string portCode = 10;
+int64 status = 11;
+int64 deadweightConstant = 12;
+int64 provisionalConstant = 13;
+int64 calCount = 14;
+string saveStatus = 15;
+string saveMessage = 16;
+bool damageCal=17;
+bool dataSave=18;
+
+}
+
+message StowageDetailsInfo{
+int64 stowagePlanId = 1;
+int64 cargoId = 2;
+int64 cargoBookId = 3;
+string cargoName = 4;
+string specificGravity = 5;
+string quantity = 6;
+int64 tankId = 7;
+string shortName = 8;
+string tankName = 9;
+
+}
+
+message CargoInfo{
+int64 stowagePlanId = 1;
+int64 cargoId = 2;
+string cargoName = 3;
+string cargoAbbrev = 4;
+string standardTemp = 5;
+string grade = 6;
+string density = 7;
+string api = 8;
+string degf = 9;
+string degc = 10;
+}
+
+message OtherTankInfo{
+int64 stowagePlanId = 1;
+int64 tankId = 2;
+string tankName = 3;
+string quantity = 4;
+string shortName = 5;
+}
+
+message LoadicatorReply{
+	ResponseStatus responseStatus = 1;
+
+}
