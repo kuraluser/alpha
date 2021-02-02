@@ -1,4 +1,4 @@
-<h3>{{ 'USER' | translate }}</h3>
+<p class="text-secondary text-uppercase">{{ 'USER' | translate }}</p>
 <div >{{ 'USER_PRIVILEGES' | translate }}</div>
 
 <p-table #datatable [value]="userDetails" [(selection)]="selectedUser" selectionMode="multiple"  (onRowSelect)="onRowSelect()" (onRowUnselect)="onRowSelect()" >
@@ -8,7 +8,7 @@
                 <p-tableHeaderCheckbox (click)="onRowSelect()"></p-tableHeaderCheckbox>
             </th>
             <th>{{'SELECT_ALL' | translate}}</th>
-            <td><input type="text" id="search_user" [placeholder]="'SEARCH' | translate" (input)="datatable.filter(($event.target.value).trim(), 'name' , 'contains')"/></td>
+            <td><input type="text" id="search_user" class="form-control mb-5" [placeholder]="'SEARCH' | translate" (input)="datatable.filter(($event.target.value).trim(), 'name' , 'contains')"/></td>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-userDetail>

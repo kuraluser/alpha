@@ -13,7 +13,7 @@
                                     {{selectedPort?.name}}</li>
                             </ul>
                         </div>
-                        <div class="col">
+                        <div class="col text-right">
                             <label class="checkbox-custom">{{'OBQ_SLOP_TANK_LOAD_ON_TOP' | translate}}
                                 <input type="checkbox" formControlName="loadOnTop" (change)="toggleLoadOnTop($event)" [readonly]="!permission?.edit">
                                 <span class="checkmark"></span>

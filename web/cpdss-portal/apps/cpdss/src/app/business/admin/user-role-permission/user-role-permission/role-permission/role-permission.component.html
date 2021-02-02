@@ -1,46 +1,56 @@
 
-<div>
-    <h2>{{'ROLE_HEADING'| translate}}</h2>
-    <form [formGroup]="roleDetailsForm" (submit)="saveRoleDetails()" *ngIf="roleDetailsForm">
-        <div>
-            <label for="user_role_name">{{'USER_ROLE_NAME'| translate }}</label>
-            <input type="text" id="user_role_name" formControlName="roleName"/>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h5 class="main-head inline-block">{{'ROLE_HEADING'| translate}}</h5>
+        </div>
+       
+    </div>
+    <div class="row">
+        
+            <label for="user_role_name" class="col-form-label pl-15">{{'USER_ROLE_NAME'| translate }}</label>
+            <div class="col-2">
+            <input type="text" id="user_role_name" class="form-control" formControlName="roleName"/>
             <cpdss-portal-validation-error [errors]="fieldError('roleName')" [errorMessages]="errorMessages.roleName">
             </cpdss-portal-validation-error>
         </div>
-        <div>
-            <label for="user_role_description">{{'USER_ROLE_DESCRIPTION'| translate }}</label>
-            <input type="text" id="user_role_description" formControlName="roleDescription" maxlength="100"/>
-            <cpdss-portal-validation-error  [errors]="fieldError('roleDescription')" [errorMessages]="errorMessages.roleDescription">
-            </cpdss-portal-validation-error>
+        <label for="user_role_description" class="col-form-label">{{'USER_ROLE_DESCRIPTION'| translate }}</label>
+        <div class="col-4">
+            <input type="text" id="user_role_description" class="form-control" formControlName="roleDescription" maxlength="100"/>
+                <cpdss-portal-validation-error  [errors]="fieldError('roleDescription')" [errorMessages]="errorMessages.roleDescription">
+                </cpdss-portal-validation-error>
         </div>
-
-    </form>
-    <button (click)="saveRoleDetails()" id="user_role_save">{{'SAVE_BUTTON_ROLE_DETAILS'| translate}}</button>
-    <button (click)="cancel()" id="user_role_cancel">{{'CANCEL_BUTTON_ROLE_DETAILS_LABEL'| translate}}</button>
+        <div class="ml-auto pr-15">
+            <button (click)="saveRoleDetails()" id="user_role_save" class="btn btn-main mr-10">{{'SAVE_BUTTON_ROLE_DETAILS'| translate}}</button>
+    <button (click)="cancel()" id="user_role_cancel" class="btn btn-main">{{'CANCEL_BUTTON_ROLE_DETAILS_LABEL'| translate}}</button>
+        </div>
+    </div>
+<div> 
 </div>
-
-
-<div>
-    <h4>{{'ROLE_MAPPING'| translate }}</h4>
+<div class="row pt-15">
+    <div class="col-8">
+        <p class="text-secondary text-uppercase">{{'ROLE_MAPPING'| translate }}</p>
     <p>{{'ROLE_MAPPING_HEADING'| translate }}</p>
     <p-treeTable [value]="treeNode"  selectionMode="checkbox" [(selection)]="selectedNodes" (onNodeSelect)="nodeSelect($event,true)" (onNodeUnselect)="nodeSelect($event,false)">
         <ng-template pTemplate="body" let-rowNode  let-rowData="rowData">
             <tr>
-                <td>
+                <td colspan="4">
                     <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                   
                     <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
                     {{rowData.name}}
+                    
                 </td>
-                <td></td>
-                <td></td>
-                <td></td>
+                
                 
                 <ng-container *ngFor = "let col of cols">
-                        <td [ttEditableColumn]="rowData" [ttEditableColumnField]="col.field">
+                        <td [ttEditableColumn]="rowData" [ttEditableColumnField]="col.field" class="permission-colum">
                             <ng-container> 
-                                {{col.header}}
+                                <label class="checkbox-custom mb-0">
                                 <input type="checkbox"  [checked]="rowData[col.field]" (change)="checkboxChange($event,rowData, rowNode,col.field)" [disabled]="!rowData[col.isViewable]"/>
+                                {{col.header}}
+                                <span class="checkmark"></span>
+                                </label>
                             </ng-container> 
                            
                         </td>
@@ -48,7 +58,13 @@
             </tr>
         </ng-template>
     </p-treeTable>
+    </div>
+    <div class="col-4">
+        <cpdss-portal-user-allocate (selectedUserDetails)="userSelected($event)" [userDetails]="userDetails" [selectedUser]="selectedUser"></cpdss-portal-user-allocate>
+    </div>
+    
 </div>
 
 
-<cpdss-portal-user-allocate (selectedUserDetails)="userSelected($event)" [userDetails]="userDetails" [selectedUser]="selectedUser"></cpdss-portal-user-allocate>
+
+</div>

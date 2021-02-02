@@ -148,6 +148,15 @@ a {
           background: url($images-menu-icons + 'synoptical-table-icon-hover.png') no-repeat;
       }
   }
+  &.admin {
+    &:before {
+        background: url($images-menu-icons + 'admin-icon.png') no-repeat;
+    }
+
+    &:after {
+        background: url($images-menu-icons + 'admin-icon-hover.png') no-repeat;
+    }
+  }
 }
 
 header .header-nav .nav li.active {
@@ -377,6 +386,9 @@ hr{
 ::-webkit-scrollbar-thumb:hover {
   background: $scrollbar; 
 }
+::-webkit-scrollbar-corner{
+  background: $body-bg;
+}
 
 .upload-file {
   border-color: $table-textarea-border;
@@ -384,7 +396,7 @@ hr{
 }
 
 .form-control:disabled, .form-control[readonly]{
-  background: $text-area-bg;
+  background: $body-bg;
   color: $text-secondary;
 }
 
@@ -559,7 +571,7 @@ a{
 }
 
 .badge-custom{
-  color: $text-secondary;
+  color: $hover-color;
 }
 .tanks-inner-outer-ohq{
   border-color: $tank-ohq-border;  
@@ -576,7 +588,7 @@ a{
 .rear-tank-wrapper-ohq{ 
   border-left:2px solid $tank-ohq-border;
   > div{
-    border-color: $tank-ohq-border;
+    border-color: $tank-ohq-border!important;
   .tank-name{
     color: $text-secondary;
   }
@@ -633,7 +645,7 @@ a{
 .p-toast .p-toast-message.p-toast-message-error{
   color: $red;
   border-color: $red;
-  background: $card-bg;
+  background: $toast-bg;
 } 
 .p-toast-icon-close-icon {
   color: $text-primary; 
@@ -710,12 +722,11 @@ a{
 
 .checkbox-custom {
   .checkmark {
-    border: 1px solid $text-secondary;
+    border: 1px solid $radio-btn;
     &:after {
-      border: solid $text-secondary;
+      border: solid $radio-btn;
     }
   }
-
 }
 
 .ship-rear-pattern{
@@ -936,4 +947,32 @@ tr:hover a{
 }
 .ship-location{
   background: url($images-theme + 'ship-location.png') no-repeat;
+}
+
+.radio-custom {
+  .checkmark {
+    border: 1px solid $radio-btn;
+    &:after {
+      background: $radio-btn;
+    }
+  }
+}
+
+.p-treetable .p-treetable-tbody > tr > td{
+  border-top: 1px solid $table-border !important;
+  border-bottom: 1px solid $table-border !important;
+}
+.p-checkbox .p-checkbox-box{
+  border: 1px solid $radio-btn;
+  color: $radio-btn;
+}
+
+.p-checkbox .p-checkbox-box .p-checkbox-icon{
+  color: $radio-btn;
+}
+.p-checkbox .p-checkbox-box.p-highlight{
+  border: 1px solid $radio-btn;
+}
+.p-treetable .p-treetable-tbody > tr > td .p-treetable-toggler:enabled:hover{
+  background: none!important;
 }

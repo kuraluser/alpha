@@ -160,7 +160,7 @@
                             </span>
                             <ng-container *ngIf="dischargingPorts && dischargingPorts.length && dischargeCargos && dischargeCargos.length">
                                 <label class="col-form-label pr-10 ml-15">{{'CARGO_DISCHARGE_FIRST' | translate}}</label>
-                                <p-dropdown id="cargo_discharge" [(ngModel)]="selectedDischargeCargo"
+                                <p-dropdown id="cargo_discharge" styleClass="w-150" [(ngModel)]="selectedDischargeCargo"
                                     [options]="dischargeCargos" optionLabel="name" [showClear]="true"
                                     placeholder="{{ 'CARGO_DISCHARGE_SELECT'| translate }}"
                                     (onChange)="onDischargeCargoChange($event)">

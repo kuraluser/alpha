@@ -50,7 +50,7 @@ export class NavbarComponent implements OnInit {
       },
       {
         'menu': 'ADMIN',
-        'menuIcon': 'voyages',
+        'menuIcon': 'admin',
         'menuLink': 'admin',
         'subMenu': [
           { 'name': 'User Role Permission' , 'subMenuLink': '/business/admin/user-role-permission'}

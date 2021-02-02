@@ -1749,3 +1749,48 @@ th .p-button.p-button-icon-only.p-button-rounded{
 .p-carousel .p-carousel-indicators{
   display: none;
 }
+
+.w-150{
+  width: 150px;
+}
+.p-dropdown .p-dropdown-clear-icon {
+  right: 18px;
+  font-size: 9px;
+  margin-top: -5px;
+}
+.p-datatable .p-datatable-tbody > tr > td.color{
+  padding-top: 3px;
+  padding-bottom: 0px;
+}
+
+.p-treetable .p-treetable-tbody > tr{
+  background: none!important;
+}
+
+.p-checkbox {
+    width: 14px;
+    height: 14px;
+  .p-checkbox-box{
+    background: none;
+    width: 14px;
+    height: 14px;
+  }
+}
+.p-checkbox .p-checkbox-box .p-checkbox-icon{
+  font-size: 8px;
+}
+.p-checkbox .p-checkbox-box.p-highlight{
+  background: none!important;
+}
+.p-treetable .p-treetable-tbody > tr > td .p-treetable-toggler:focus{
+  box-shadow: none!important;
+}
+
+.p-treetable .p-treetable-tbody > tr > td{
+  padding: 11px 5px!important;
+}
+
+.p-treetable .p-treetable-tbody > tr > td .p-treetable-toggler{
+width: 15px;
+height: 15px;
+}
