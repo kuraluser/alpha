@@ -42,11 +42,13 @@ export interface ILoadablePatternCargoDetail extends ILoadableCargo {
     priority: number;
     cargoAbbreviation: string;
     cargoColor: string;
-    quantity: string;
+    quantity: number;
     isCommingle: boolean;
     loadablePatternCommingleDetailsId: number;
-    orderedQuantity: string;
+    orderedQuantity: number;
     loadingOrder: number;
+    api: number;
+    difference:number;
 }
 
 /**

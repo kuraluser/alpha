@@ -23,7 +23,7 @@
                         {{priorityData.quantity}}
                     </td>
                     <td>
-                        <span class="badge-custom" [ngClass]="(priorityData.orderedQuantity - priorityData.quantity) > 0 ? 'success' : 'error'"> {{priorityData.orderedQuantity - priorityData.quantity}}
+                        <span class="badge-custom" [ngClass]="(priorityData?.difference) > 0 ? 'success' : 'error'"> {{priorityData.difference}}
                         </span>
                     </td>
                 </tr>

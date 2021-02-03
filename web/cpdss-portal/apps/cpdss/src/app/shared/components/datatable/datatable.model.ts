@@ -39,7 +39,7 @@ export interface IDataTableColumn {
     virtualScroll?: boolean;
     rowspan?: number;
     colspan?: number;
-    className?: string,
+    fieldColumnClass?: string,
     subColumns? : IDataTableColumn[],
     subHeader?: string;
     numberFormat?: string;

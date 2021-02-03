@@ -8,7 +8,7 @@
         <p-table #datatable [columns]="columns" [value]="loadableQuantityCargoDetails">
             <ng-template pTemplate="header" let-columns>
                 <tr>
-                    <th *ngFor="let col of columns; let colIndex = index" [attr.colspan]="col.colspan" [attr.rowspan]="col.rowspan"><div [class]="col.className">{{col.header | translate}}</div></th>
+                    <th *ngFor="let col of columns; let colIndex = index" [attr.colspan]="col.colspan" [attr.rowspan]="col.rowspan"><div [class]="col.fieldColumnClass">{{col.header | translate}}</div></th>
                 </tr>
                 <tr>
                     <ng-container *ngFor="let col of columns; let colIndex = index">

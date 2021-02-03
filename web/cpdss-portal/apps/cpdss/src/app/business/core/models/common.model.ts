@@ -170,7 +170,7 @@ export interface ILoadableCargo {
     cargoAbbreviation: string;
     colorCode: string;
     tankId: number;
-    quantity: string;
+    quantity: number;
     isCommingle: boolean;
     volume?: number;
     ullage?: number;

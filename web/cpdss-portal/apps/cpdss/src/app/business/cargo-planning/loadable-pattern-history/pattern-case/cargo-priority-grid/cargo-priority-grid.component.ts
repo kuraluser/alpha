@@ -18,9 +18,27 @@ export class CargoPriorityGridComponent implements OnInit {
 
   @Output() isCommingle = new EventEmitter();
 
-  @Input() loadablePatternCargoDetails: ILoadablePatternCargoDetail[];
+  @Input() get loadablePatternCargoDetails(): ILoadablePatternCargoDetail[] {
+    return this._loadablePatternCargoDetails;
+  }
+
+  set loadablePatternCargoDetails(loadablePatternCargoDetails: ILoadablePatternCargoDetail[]) {
+    if (loadablePatternCargoDetails) {
+      this._loadablePatternCargoDetails = loadablePatternCargoDetails.sort((a, b) => (a.loadingOrder > b.loadingOrder) ? 1 : -1);
+      this.totalQuantity = this.loadablePatternCargoDetails.reduce(function (a, b) {
+        return Number(a) + Number(b?.quantity);
+      }, 0);
+      this.totalDifference = this.loadablePatternCargoDetails.reduce(function (a, b) {
+        return Number(a) + Number(b?.difference);
+      }, 0);
+    }
+  }
+
   totalQuantity = 0;
   totalDifference = 0;
+
+  private _loadablePatternCargoDetails: ILoadablePatternCargoDetail[];
+
   constructor() { }
 
   /**
@@ -30,13 +48,7 @@ export class CargoPriorityGridComponent implements OnInit {
   * @memberof CargoPriorityGridComponent
   */
   ngOnInit(): void {
-    this.totalQuantity = this.loadablePatternCargoDetails.map(a => Number(a.quantity)).reduce(function (a, b) {
-      return Number(a) + Number(b);
-    });
-    this.totalDifference = this.loadablePatternCargoDetails.map(a => Number(a.orderedQuantity) - Number(a.quantity)).reduce(function (a, b) {
-      return Number(a) + Number(b);
-    });
-    this.loadablePatternCargoDetails = this.loadablePatternCargoDetails.sort((a, b) => (a.loadingOrder > b.loadingOrder) ? 1 : -1);
+    
   }
 
   /**

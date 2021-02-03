@@ -12,10 +12,8 @@
 
         <div class="ml-auto pr-15">
             <span class="ml-20 mr-10">
-                {{'LOADABLE_PATTERN_HISTORY_UNIT_LABEL' | translate}}</span>
-            <p-dropdown id="pattern_history_dropdown" [filter]="true" class="mr-10 "
-                styleClass="form-control dropdown-w-100" [options]="units" optionLabel="name" placeholder="Unit" [disabled]="true">
-            </p-dropdown>
+                <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)"></cpdss-portal-unit-dropdown>
+            </span>
             <button class="btn btn-main mr-10" id="btn_callNewLoadableStudyPopup"
                 (click)="openSidePane=!openSidePane">{{'LOADABLE_PATTERN_HISTORY_BUTTON_LABEL' | translate}}</button>
             <button class="btn btn-main" id="btn_callNewLoadableStudyPopup"
@@ -53,4 +51,4 @@
         </div>
     </div>
 </div>
-<cpdss-portal-commingle-cargo-details-pop-up [display]="display" [selectedLoadablePatterns]="selectedLoadablePatterns" [loadablePatternDetailsId]="loadablePatternDetailsId" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" (displayPopup)="setPopupVisibility($event)" *ngIf="display"></cpdss-portal-commingle-cargo-details-pop-up>
+<cpdss-portal-commingle-cargo-details-pop-up [display]="display" [selectedLoadablePatterns]="selectedLoadablePatterns" [loadablePatternDetailsId]="loadablePatternDetailsId" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" (displayPopup)="setPopupVisibility($event)" *ngIf="display"></cpdss-portal-commingle-cargo-details-pop-up>

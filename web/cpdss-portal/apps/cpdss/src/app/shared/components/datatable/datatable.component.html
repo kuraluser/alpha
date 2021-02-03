@@ -19,7 +19,7 @@
                     <th *ngIf="tableRowReOrder"></th>
                     <th *ngFor="let col of columns" [pSortableColumn]="col?.sortField ? col?.sortField : col.field"
                         [pSortableColumnDisabled]="!col.sortable" [colSpan]="col?.columns?.length"
-                        [rowSpan]="col?.columns?.length ? 1 : getRowSpan(columns, filterable)">
+                        [rowSpan]="col?.columns?.length ? 1 : getRowSpan(columns, filterable)" [class]="col?.fieldColumnClass">
                         <span>{{col.header| translate}}</span>
                         <p-sortIcon [field]="col?.sortField ? col?.sortField : col.field" *ngIf="col.sortable">
                         </p-sortIcon>
@@ -29,7 +29,7 @@
                     <th *ngIf="tableRowReOrder"></th>
                     <ng-container *ngFor="let col of columns; let colIndex = index">
                         <ng-container *ngIf="col?.columns?.length;">
-                            <th *ngFor="let subCol of col?.columns">
+                            <th *ngFor="let subCol of col?.columns" [class]="subCol?.fieldColumnClass">
                                 <span>{{subCol.header| translate}}</span>
                                 <p-sortIcon [field]="subCol?.sortField ? subCol?.sortField : subCol.field"
                                     *ngIf="subCol.sortable"></p-sortIcon>

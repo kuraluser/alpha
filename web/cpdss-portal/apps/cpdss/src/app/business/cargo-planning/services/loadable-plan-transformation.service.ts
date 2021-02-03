@@ -63,7 +63,7 @@ export class LoadablePlanTransformationService {
       { field: 'api', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_API', rowspan: 2 },
       { field: 'temp', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_TEMP', rowspan: 2 },
       {
-        header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN', colspan: 6, className: "th-border", subColumns: [
+        header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN', colspan: 6, fieldColumnClass: "th-border", subColumns: [
           { field: 'cargoPercentage', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN_PERCENTAGE' },
           { field: 'cargoBblsdbs', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN_BBLS@DBS.TEMP' },
           { field: 'cargoBbls60f', header: 'LOADABLE_PLAN_COMMINGLED_CARGO_COMPOSITION_BREAKDOWN_BBL@60F' },
@@ -84,25 +84,25 @@ export class LoadablePlanTransformationService {
     return [
       { field: 'grade', header: 'LOADABLE_PLAN_GRADE', rowspan: 2 },
       {
-        header: 'LOADABLE_PLAN_ESTIMATED', colspan: 2, className: "th-border", subColumns: [
+        header: 'LOADABLE_PLAN_ESTIMATED', colspan: 2, fieldColumnClass: "th-border", subColumns: [
           { field: 'estimatedAPI', header: 'LOADABLE_PLAN_ESTIMATED_API' },
           { field: 'estimatedTemp', header: 'LOADABLE_PLAN_ESTIMATED_TEMP' }
         ]
       },
       {
-        header: 'LOADABLE_PLAN_ORDER', colspan: 2, className: "th-border", subColumns: [
+        header: 'LOADABLE_PLAN_ORDER', colspan: 2, fieldColumnClass: "th-border", subColumns: [
           { field: 'orderBblsdbs', header: 'LOADABLE_PLAN_ORDER_BBLS@OBS_TEMP' },
           { field: 'orderBbls60f', header: 'LOADABLE_PLAN_ORDER_BBLS@60F' }
         ]
       },
       {
-        header: 'LOADABLE_PLAN_TLRNC', colspan: 2, className: "th-border", subColumns: [
+        header: 'LOADABLE_PLAN_TLRNC', colspan: 2, fieldColumnClass: "th-border", subColumns: [
           { field: 'minTolerence', header: 'LOADABLE_PLAN_TLRNC_MIN' },
           { field: 'maxTolerence', header: 'LOADABLE_PLAN_TLRNC_MAX' }
         ]
       },
       {
-        header: 'LOADABLE_PLAN_LOADABLE', colspan: 5, className: "th-border", subColumns: [
+        header: 'LOADABLE_PLAN_LOADABLE', colspan: 5, fieldColumnClass: "th-border", subColumns: [
           { field: 'loadableBblsdbs', header: 'LOADABLE_PLAN_LOADABLE_BBLS@DBS_TEMP' },
           { field: 'loadableBbls60f', header: 'LOADABLE_PLAN_LOADABLE_BBLS@60F' },
           { field: 'loadableLT', header: 'LOADABLE_PLAN_LOADABLE_LT' },

@@ -1,10 +1,9 @@
-<p-dialog id="dialog_commingleCargoDetailsPopup" header="{{'COMMINGLE_CARGO_DETAILS_POPUP_HEADER' | translate}}"
+<p-dialog id="dialog_commingle_cargo_details_popup" header="{{'COMMINGLE_CARGO_DETAILS_POPUP_HEADER' | translate}}"
     [(visible)]="display" [modal]="true" styleClass="commingle-cargo-details-popup" [draggable]="false"
     [responsive]="true" [closable]="false" *ngIf="display">
-    <div class="col">
+    <div class="col" *ngIf="comingleCargoDetailsData">
 
-        <cpdss-portal-datatable [tableId]="'comminglePopup'" [columns]="columns" [form]="comingleCargoDetailForm"
-            [value]="comingleCargoDetailsData" (onCellValueClick)="onCellValueClick($event)">
+        <cpdss-portal-datatable [tableId]="'comminglePopup'" [columns]="columns" [value]="comingleCargoDetailsData">
         </cpdss-portal-datatable>
 
     </div>

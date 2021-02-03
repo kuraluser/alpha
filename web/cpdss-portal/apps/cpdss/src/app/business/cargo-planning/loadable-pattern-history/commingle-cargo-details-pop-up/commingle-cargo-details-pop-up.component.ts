@@ -1,11 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
+import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
-import { ICommingleCargoDetailsResponse, ICommingleDetails, ICommingleDetailValueObject } from '../../models/cargo-planning.model';
+import { ICommingleCargoDetailsResponse, ICommingleDetails } from '../../models/cargo-planning.model';
 import { ILoadablePatternCargoDetail } from '../../models/loadable-pattern.model';
 import { LoadablePatternHistoryApiService } from '../../services/loadable-pattern-history-api.service';
 import { LoadableStudyPatternTransformationService } from '../../services/loadable-study-pattern-transformation.service'
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
+import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
 
 /**
  * Component for priority grid
@@ -29,14 +32,18 @@ export class CommingleCargoDetailsPopUpComponent implements OnInit {
   @Input() selectedLoadablePatterns: ILoadablePatternCargoDetail;
   @Input() loadablePatternDetailsId: number;
   @Input() display;
+  @Input() currentQuantitySelectedUnit: QUANTITY_UNIT;
 
   commingleDetailsForm: FormGroup;
   columns: IDataTableColumn[];
-  comingleCargoDetailsData = [];
+  comingleCargoDetailsData;
   commingleDetail: ICommingleDetails;
-  comingleCargoDetailForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private loadableStudyPatternTransformationService: LoadableStudyPatternTransformationService, private loadablePatternApiService: LoadablePatternHistoryApiService, private ngxSpinnerService: NgxSpinnerService) { }
+  constructor(
+    private loadableStudyPatternTransformationService: LoadableStudyPatternTransformationService,
+    private loadablePatternApiService: LoadablePatternHistoryApiService,
+    private ngxSpinnerService: NgxSpinnerService,
+    private quantityPipe: QuantityPipe) { }
 
   /**
    * Component lifecycle ngOnit
@@ -46,7 +53,7 @@ export class CommingleCargoDetailsPopUpComponent implements OnInit {
    */
   ngOnInit() {
     this.columns = this.loadableStudyPatternTransformationService.getCommingleDetailsDatatableColumns();
-   this.getCommingleCargoDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternDetailsId, this.selectedLoadablePatterns?.loadablePatternCommingleDetailsId);
+    this.getCommingleCargoDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternDetailsId, this.selectedLoadablePatterns?.loadablePatternCommingleDetailsId);
   }
 
   // for closing active modal commingle popup
@@ -55,54 +62,41 @@ export class CommingleCargoDetailsPopUpComponent implements OnInit {
   }
 
   /**
- * Method for initializing commingle details row
- * @private
- * @param {ICommingleDetailValueObject} ports
- * @returns
- * @memberof CommingleCargoDetailsPopUpComponent
- */
-  private initCommingleDetailFormGroup(commingleDetail: ICommingleDetailValueObject) {
-    return this.fb.group({
-      id: this.fb.control(commingleDetail.id),
-      tankShortName: this.fb.control(commingleDetail.tankShortName),
-      cargo1Abbrivation: this.fb.control(commingleDetail.cargo1Abbrivation),
-      cargo2Abbrivation: this.fb.control(commingleDetail.cargo2Abbrivation),
-      grade: this.fb.control(commingleDetail.grade),
-      quantity: this.fb.control(commingleDetail.quantity),
-      api: this.fb.control(commingleDetail.api),
-      temperature: this.fb.control(commingleDetail.temperature),
-      cargo1Quantity: this.fb.control(commingleDetail.cargo1Quantity),
-      cargo2Quantity: this.fb.control(commingleDetail.cargo2Quantity),
-      cargo1Percentage: this.fb.control(commingleDetail.cargo1Percentage),
-      cargo2Percentage: this.fb.control(commingleDetail.cargo2Percentage),
-      cargoQuantity: this.fb.control(commingleDetail.cargoQuantity),
-      cargoTotalQuantity: this.fb.control(commingleDetail.cargoTotalQuantity),
-      cargoPercentage: this.fb.control(commingleDetail.cargoPercentage)
-    });
-  }
-
-  /**
-    * Fetch loadable study details
-    *
-    * @param {number} vesselId
-    * @param {number} voyageId
-    * @param {number} loadableStudyId
-    * @param {number} loadablePatternId
-    * @param {number} loadablePatternCommingleDetailsId
-    * @memberof CommingleCargoDetailsPopUpComponent
-    */
+  * Fetch loadable study details
+  *
+  * @param {number} vesselId
+  * @param {number} voyageId
+  * @param {number} loadableStudyId
+  * @param {number} loadablePatternId
+  * @param {number} loadablePatternCommingleDetailsId
+  * @memberof CommingleCargoDetailsPopUpComponent
+  */
   async getCommingleCargoDetails(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number, loadablePatternCommingleDetailsId: number) {
     this.ngxSpinnerService.show();
     const commingleCargoDetailsResponse: ICommingleCargoDetailsResponse = await this.loadablePatternApiService.getCommingleCargoDetails(vesselId, voyageId, loadableStudyId, loadablePatternId, loadablePatternCommingleDetailsId).toPromise();
     if (commingleCargoDetailsResponse.responseStatus.status === '200') {
-      const commingleDetail = this.loadableStudyPatternTransformationService.getCommingleDetailAsValueObject(commingleCargoDetailsResponse, false, false);
-      const commingleCargoDetailsArray = [];
-      commingleCargoDetailsArray.push(this.initCommingleDetailFormGroup(commingleDetail))
-      this.comingleCargoDetailForm = this.fb.group({
-        dataTable: this.fb.array([...commingleCargoDetailsArray])
-      });
-      this.comingleCargoDetailsData.push(commingleDetail)
+      this.comingleCargoDetailsData = [commingleCargoDetailsResponse];
+      this.convertQuantityToSelectedUnit();
     }
     this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Method for converting quantities to slected unit
+   *
+   * @memberof CommingleCargoDetailsPopUpComponent
+   */
+  convertQuantityToSelectedUnit() {
+    const comingleCargoDetailsData = this.comingleCargoDetailsData.map((cargo: ICommingleCargoDetailsResponse) => {
+      const cargo1Quantity = this.quantityPipe.transform(cargo.cargo1Quantity, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, cargo?.api);
+      cargo.cargo1Quantity = cargo1Quantity ? Number(cargo1Quantity.toFixed(2)) : 0;
+      const cargo2Quantity = this.quantityPipe.transform(cargo.cargo2Quantity, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, cargo?.api);
+      cargo.cargo2Quantity = cargo1Quantity ? Number(cargo2Quantity.toFixed(2)) : 0;
+      const quantity = this.quantityPipe.transform(cargo.quantity, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, cargo?.api);
+      cargo.quantity = quantity ? Number(quantity.toFixed(2)) : 0;
+      return cargo;
+    });
+
+    this.comingleCargoDetailsData = [this.loadableStudyPatternTransformationService.formatCommingleDetail(comingleCargoDetailsData[0])];
   }
 }

@@ -11,7 +11,8 @@ import { LoadablePatternHistoryApiService } from '../services/loadable-pattern-h
 import { ILoadablePattern, ILoadablePatternCargoDetail, ILoadablePatternResponse } from '../models/loadable-pattern.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
-import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/common.model';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 
 /**
  * Component class of pattern history screen
@@ -49,13 +50,14 @@ export class LoadablePatternHistoryComponent implements OnInit {
   loadablePatternResponse: ILoadablePatternResponse;
   loadablePatterns: ILoadablePattern[];
   tankLists: ICargoTank[][];
-  units = [{ name: '2020-20-22', statusId: 1 }];
   loadablePatternCreatedDate: string;
   loadableStudyName: string;
   display = false;
   selectedLoadablePatterns: ILoadablePatternCargoDetail;
   loadablePatternPermissionContext: IPermissionContext;
   loadablePatternDetailsId: number;
+  currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+  prevQuantitySelectedUnit: QUANTITY_UNIT;
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -64,7 +66,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService,
     private loadableStudyListApiService: LoadableStudyListApiService,
     private loadablePatternApiService: LoadablePatternHistoryApiService,
-    private permissionsService: PermissionsService) { }
+    private permissionsService: PermissionsService,
+    private quantityPipe: QuantityPipe) { }
 
   /**
    * Component lifecycle ngOnit
@@ -158,6 +161,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
     this.loadablePatternResponse = await this.loadablePatternApiService.getLoadablePatterns(vesselId, voyageId, loadableStudyId).toPromise();
     if (this.loadablePatternResponse.responseStatus.status === '200') {
       this.loadablePatterns = this.loadablePatternResponse.loadablePatterns;
+      this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;    
+      this.convertQuantityToSelectedUnit();
       this.tankLists = this.loadablePatternResponse.tankLists;
       this.loadablePatternCreatedDate = this.loadablePatternResponse.loadablePatternCreatedDate;
       this.loadableStudyName = this.loadablePatternResponse.loadableStudyName;
@@ -209,5 +214,42 @@ export class LoadablePatternHistoryComponent implements OnInit {
   viewPlan(loadablePattern:ILoadablePattern) {
     this.router.navigate([`/business/cargo-planning/loadable-plan/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}/${loadablePattern.loadablePatternId}`]);
   }
-  
+
+  /**
+   * Handler for unit change event
+   *
+   * @param {*} event
+   * @memberof LoadablePatternHistoryComponent
+   */
+  onUnitChange() {
+    this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit;
+    this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+    if (this.prevQuantitySelectedUnit) {
+      this.convertQuantityToSelectedUnit();
+    }
+  }
+
+  /**
+   * Method to convert to selected unit
+   *
+   * @memberof LoadablePatternHistoryComponent
+   */
+  convertQuantityToSelectedUnit() {
+    const loadablePatterns = this.loadablePatterns?.map(pattern => {
+      const loadablePatternCargoDetails = pattern.loadablePatternCargoDetails.map(cargo => {
+        const orderedQuantity = this.quantityPipe.transform(cargo.orderedQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.api);
+        cargo.orderedQuantity = orderedQuantity ? Number(orderedQuantity.toFixed(2)) : 0;
+        const quantity = this.quantityPipe.transform(cargo.quantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.api);
+        cargo.quantity = quantity ? Number(quantity.toFixed(2)) : 0;
+        const difference = cargo.orderedQuantity - cargo.quantity;
+        cargo.difference = difference ? Number(difference.toFixed(2)) : 0;
+        return cargo;
+      });
+      pattern.loadablePatternCargoDetails = loadablePatternCargoDetails;
+
+      return pattern;
+    });
+    this.loadablePatterns = loadablePatterns;
+  }
+
 }

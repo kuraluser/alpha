@@ -19,6 +19,9 @@ import { CommingleCargoDetailsPopUpComponent } from './commingle-cargo-details-p
 import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/cargo-tank-layout.module';
 import { PermissionDirectiveModule } from '../../../shared/directives/permission/permission-directive.module';
 import { TooltipModule } from 'primeng/tooltip';
+import { UnitDropdownModule } from '../../../shared/components/unit-dropdown/unit-dropdown.module';
+import { QuantityPipeModule } from '../../../shared/pipes/quantity/quantity-pipe.module';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 
 /**
  * Routing Module for Loadable Pattern History Screen
@@ -41,8 +44,11 @@ import { TooltipModule } from 'primeng/tooltip';
     DialogModule,
     CargoTankLayoutModule,
     PermissionDirectiveModule,
-    TooltipModule
+    TooltipModule,
+	UnitDropdownModule,
+	QuantityPipeModule
   ],
-  exports : [PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, ConstraintComponent, CommingleCargoDetailsPopUpComponent]
+  exports : [PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, ConstraintComponent, CommingleCargoDetailsPopUpComponent],
+  providers: [QuantityPipe]
 })
 export class LoadablePatternHistoryModule { }

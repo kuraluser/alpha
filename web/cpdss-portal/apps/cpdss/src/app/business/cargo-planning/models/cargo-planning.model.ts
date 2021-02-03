@@ -520,37 +520,15 @@ export interface ICommingleDetails {
     cargo1Abbrivation: string;
     cargo2Abbrivation: string;
     grade: string;
-    quantity: string;
+    quantity: number;
     api: string;
     temperature: string;
-    cargo1Quantity: string;
-    cargo2Quantity: string;
+    cargo1Quantity: number;
+    cargo2Quantity: number;
     cargo1Percentage: string;
     cargo2Percentage: string;
-}
-
-/**
- * Interface for commingle cargo details value object
- *
- * @export
- * @interface ICommingleDetailValueObject
- */
-export interface ICommingleDetailValueObject {
-    id: number;
-    tankShortName: ValueObject<string>;
-    cargo1Abbrivation: ValueObject<string>;
-    cargo2Abbrivation: ValueObject<string>;
-    grade: ValueObject<string>;
-    quantity: ValueObject<string>;
-    api: ValueObject<string>;
-    temperature: ValueObject<string>;
-    cargo1Quantity: ValueObject<string>;
-    cargo2Quantity: ValueObject<string>;
-    cargo1Percentage: ValueObject<string>;
-    cargo2Percentage: ValueObject<string>
-    cargoQuantity: ValueObject<string>;
-    cargoTotalQuantity: ValueObject<number>;
-    cargoPercentage: ValueObject<string>;
+    cargoQuantity: string;
+    cargoPercentage: string;
 }
 
 /**
