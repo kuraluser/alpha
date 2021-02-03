@@ -753,6 +753,7 @@ message SynopticalCargoRecord{
 	string cargoAbbreviation = 8;
 	int64 cargoId = 9;
 	string capacity = 10;
+	string density = 11;
 }
 
 message SynopticalOhqRecord{
@@ -762,6 +763,7 @@ message SynopticalOhqRecord{
 	string actualWeight = 4;
 	int64 fuelTypeId = 5;
 	string fuelType = 6;
+	string density = 7;
 }
 
 message SynopticalBallastRecord{
@@ -771,6 +773,7 @@ message SynopticalBallastRecord{
 	string actualWeight = 4;
 	string capacity = 5;
 	string correctedUllage = 6;
+	string spGravity = 7;
 }
 
 message SynopticalTableRequest{

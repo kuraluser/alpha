@@ -48,4 +48,7 @@ public class LoadablePlanStowageBallastDetails extends EntityDoc {
 
   @Column(name = "corrected_ullage")
   private String correctedUllage;
+
+  @Column(name = "sg")
+  private String sg;
 }

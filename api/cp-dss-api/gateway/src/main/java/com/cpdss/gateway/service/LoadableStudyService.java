@@ -2368,6 +2368,7 @@ public class LoadableStudyService {
           isEmpty(ballast.getCorrectedUllage())
               ? BigDecimal.ZERO
               : new BigDecimal(ballast.getCorrectedUllage()));
+      record.setSg(ballast.getSpGravity());
       list.add(record);
     }
     synopticalRecord.setBallastPlannedTotal(BigDecimal.ZERO);
@@ -2581,6 +2582,10 @@ public class LoadableStudyService {
           isEmpty(protoRec.getPlannedWeight())
               ? BigDecimal.ZERO
               : new BigDecimal(protoRec.getPlannedWeight()));
+      rec.setDensity(
+              isEmpty(protoRec.getDensity())
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(protoRec.getDensity()));
       if (FUEL_OIL_TANK_CATEGORY_ID.equals(protoRec.getFuelTypeId())) {
         foList.add(rec);
       } else if (DIESEL_OIL_TANK_CATEGORY_ID.equals(protoRec.getFuelTypeId())) {
@@ -2655,6 +2660,10 @@ public class LoadableStudyService {
           isEmpty(protoRec.getCorrectedUllage())
               ? BigDecimal.ZERO
               : new BigDecimal(protoRec.getCorrectedUllage()));
+      rec.setApi(
+              isEmpty(protoRec.getDensity())
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(protoRec.getDensity()));
       rec.setCapacity(
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
       list.add(rec);
@@ -3759,7 +3768,9 @@ public class LoadableStudyService {
                                       index.getAbbreviation(),
                                       index.getCargoId(),
                                       index.getColorCode(),
-                                      index.getCorrectedUllage())),
+                                      index.getCorrectedUllage(),
+                                      index.getApi(),
+                                      index.getSg())),
                           Optional::get)))
               .forEach(
                   (id, synopticalCargoRecord) -> {

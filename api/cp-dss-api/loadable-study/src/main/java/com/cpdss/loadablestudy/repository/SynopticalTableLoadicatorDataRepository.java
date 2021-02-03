@@ -12,6 +12,6 @@ public interface SynopticalTableLoadicatorDataRepository
   public SynopticalTableLoadicatorData findBySynopticalTableAndIsActive(
       SynopticalTable synopticalTable, boolean isActive);
 
-  public SynopticalTableLoadicatorData findByLoadablePatternIdAndIsActive(
-      Long loadablePatternId, boolean isActive);
+  public SynopticalTableLoadicatorData findBySynopticalTableAndLoadablePatternIdAndIsActive(
+      SynopticalTable synopticalTable, Long loadablePatternId, boolean isActive);
 }
