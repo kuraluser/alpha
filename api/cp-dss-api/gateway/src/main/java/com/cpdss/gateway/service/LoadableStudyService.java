@@ -2257,7 +2257,6 @@ public class LoadableStudyService {
             HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
       }
     }
-
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
@@ -2591,7 +2590,9 @@ public class LoadableStudyService {
               ? BigDecimal.ZERO
               : new BigDecimal(protoRec.getPlannedWeight()));
       rec.setDensity(
-          isEmpty(protoRec.getDensity()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getDensity()));
+              isEmpty(protoRec.getDensity())
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(protoRec.getDensity()));
       if (FUEL_OIL_TANK_CATEGORY_ID.equals(protoRec.getFuelTypeId())) {
         foList.add(rec);
       } else if (DIESEL_OIL_TANK_CATEGORY_ID.equals(protoRec.getFuelTypeId())) {
@@ -2667,7 +2668,9 @@ public class LoadableStudyService {
               ? BigDecimal.ZERO
               : new BigDecimal(protoRec.getCorrectedUllage()));
       rec.setApi(
-          isEmpty(protoRec.getDensity()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getDensity()));
+              isEmpty(protoRec.getDensity())
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(protoRec.getDensity()));
       rec.setCapacity(
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
       list.add(rec);

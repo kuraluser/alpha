@@ -51,7 +51,7 @@ public class LoadablePatternCargoDetails extends EntityDoc {
 
   @Column(name = "cargo_xid")
   private Long cargoId;
-
+  
   @Column(name = "density")
   private BigDecimal density;
 }
