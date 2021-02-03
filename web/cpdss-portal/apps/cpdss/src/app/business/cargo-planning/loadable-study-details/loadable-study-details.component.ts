@@ -313,6 +313,11 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    */
   onVoyageChange(event) {
     this.voyageId = event?.value?.id;
+    this.loadableStudies = null;
+    this.loadableStudyId = 0;
+    this.loadableQuantityNew = '0';
+    this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(0);
+    this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
     this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
     this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/0`]);
   }
@@ -333,17 +338,20 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   onDeleteLoadableStudy(event) {
+    this.loadableStudies.splice(event?.index, 1);
     //If deleted loadable study is equal to currently selected loadable study then we need reset the selection
     if (event?.data?.id === this.loadableStudyId) {
-      const loadableStudies = this.loadableStudies?.filter(loadableStudy => event?.data?.id !== loadableStudy?.id);
-      if (loadableStudies && loadableStudies.length) {
-        this.selectedLoadableStudy = loadableStudies[0];
+      if (this.loadableStudies && this.loadableStudies.length) {
+        this.selectedLoadableStudy = this.loadableStudies[0];
       } else {
+        this.loadableStudyId = 0;
+        this.loadableQuantityNew = '0';
+        this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(0);
+        this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
         this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
         this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/0`]);
       }
     }
-    this.loadableStudies.splice(event?.index, 1);
   }
 
   /**
