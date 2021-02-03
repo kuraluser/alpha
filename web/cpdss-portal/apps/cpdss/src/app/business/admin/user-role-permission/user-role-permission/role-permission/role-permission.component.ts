@@ -81,31 +81,40 @@ export class RolePermissionComponent implements OnInit {
     async getUserRolePermission() {
         this.ngxSpinnerService.show();
         const userDetailsRes: IUserRolePermissionResponse = await this.userRolePermissionApiService.getUserRolePermission(this.roleId).toPromise();
-        this.ngxSpinnerService.hide();
-        const treeNode = [];
-        if (userDetailsRes.responseStatus.status === '200') {
-            this.getUserDetails(userDetailsRes.users);
-            this.roleDetailsForm.controls['roleName'].setValue(userDetailsRes.role?.name);
-            this.roleDetailsForm.controls['roleDescription'].setValue(userDetailsRes.role?.description);
-            const userDetails = userDetailsRes.screens;
-            userDetails.map((userDetail: IScreenNode, index) => {
-                let isChecked: boolean;
-                const treeStructure = this.dataTreeStructure(userDetail);
-                const value: TreeNode = {
-                    data: treeStructure,
-                    expanded: false,
-                    children: []
-                }
-                treeNode.push(value);
-                if (userDetail.childs && userDetail.childs.length) {
-                    isChecked = this.innerNodes(treeNode[index], userDetail.childs);
-                    isChecked && treeStructure.isChecked ? (this.selectedNodes = [...this.selectedNodes , treeNode[index]]) : null
-                } else {
-                    treeStructure.isChecked ? (this.selectedNodes = [...this.selectedNodes, treeNode[index]]) : null;
-                }
-            })
+        try {
+            this.ngxSpinnerService.hide();
+            const treeNode = [];
+            if (userDetailsRes.responseStatus.status === '200') {
+                this.getUserDetails(userDetailsRes.users);
+                this.roleDetailsForm.controls['roleName'].setValue(userDetailsRes.role?.name);
+                this.roleDetailsForm.controls['roleDescription'].setValue(userDetailsRes.role?.description);
+                const userDetails = userDetailsRes.screens;
+                userDetails.map((userDetail: IScreenNode, index) => {
+                    let isChecked: boolean;
+                    const treeStructure = this.dataTreeStructure(userDetail);
+                    const value: TreeNode = {
+                        data: treeStructure,
+                        expanded: false,
+                        children: []
+                    }
+                    treeNode.push(value);
+                    if (userDetail.childs && userDetail.childs.length) {
+                        isChecked = this.innerNodes(treeNode[index], userDetail.childs);
+                        isChecked && treeStructure.isChecked ? (this.selectedNodes = [...this.selectedNodes , treeNode[index]]) : null
+                    } else {
+                        treeStructure.isChecked ? (this.selectedNodes = [...this.selectedNodes, treeNode[index]]) : null;
+                    }
+                })
+            }
+            this.treeNode = [...treeNode];
         }
-        this.treeNode = [...treeNode];
+        catch (error) {
+            const translationKeys = await this.translateService.get(['USER_PERMISSION_INVALID_USER_ERROR', 'USER_PERMISSION_INVALID_USER']).toPromise();
+            if (error.error.errorCode === 'ERR-RICO-205') {
+                this.messageService.add({ severity: 'error', summary: translationKeys['USER_PERMISSION_INVALID_USER_ERROR'], detail: translationKeys['USER_PERMISSION_INVALID_USER'] });
+            }
+            this.ngxSpinnerService.hide();
+        }
 
     }
 

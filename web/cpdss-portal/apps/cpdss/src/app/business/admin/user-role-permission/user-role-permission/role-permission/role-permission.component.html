@@ -6,7 +6,7 @@
         </div>
        
     </div>
-    <div class="row">
+    <div class="row" [formGroup]="roleDetailsForm" *ngIf="roleDetailsForm">
         
             <label for="user_role_name" class="col-form-label pl-15">{{'USER_ROLE_NAME'| translate }}</label>
             <div class="col-2">
