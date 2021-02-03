@@ -3422,6 +3422,7 @@ public class LoadableStudyService {
       com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.Builder ohqBuilder =
           com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord.newBuilder();
       ohqBuilder.setTankId(record.getTankId());
+      ohqBuilder.setFuelTypeId(record.getFuelTypeId());
       Optional.ofNullable(record.getActualWeight())
           .ifPresent(item -> ohqBuilder.setActualWeight(valueOf(item)));
       Optional.ofNullable(record.getPlannedWeight())

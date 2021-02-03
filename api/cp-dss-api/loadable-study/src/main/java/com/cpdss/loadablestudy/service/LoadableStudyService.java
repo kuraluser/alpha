@@ -989,13 +989,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableStudy, existingCargoPortIds);
       synopticalTableRepository.deleteSynopticalPorts(loadableStudy.getId(), existingCargoPortIds);
     }
-    int existingPortsCount = 0;
     // remove loading portIds from request which are already available in port
     // rotation for the
     // specific loadable study
     if (!CollectionUtils.isEmpty(requestedPortIds) && !CollectionUtils.isEmpty(existingPortIds)) {
       requestedPortIds.removeAll(existingPortIds);
-      existingPortsCount = existingPortIds.size();
     }
     // fetch the specific ports attributes like waterDensity and draft values from
     // port master
@@ -1013,8 +1011,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       // update loadable-study-port-rotation with ports from cargoNomination and port
       // attributes
-      buildAndSaveLoadableStudyPortRotationEntities(
-          loadableStudy, requestedPortIds, portReply, existingPortsCount);
+      buildAndSaveLoadableStudyPortRotationEntities(loadableStudy, requestedPortIds, portReply);
     }
   }
 
@@ -1026,14 +1023,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @return
    */
   private void buildAndSaveLoadableStudyPortRotationEntities(
-      LoadableStudy loadableStudy,
-      List<Long> requestedPortIds,
-      PortReply portReply,
-      int existingPortsCount) {
+      LoadableStudy loadableStudy, List<Long> requestedPortIds, PortReply portReply) {
     if (!CollectionUtils.isEmpty(requestedPortIds)
         && portReply != null
         && !CollectionUtils.isEmpty(portReply.getPortsList())) {
-      AtomicLong atomLong = new AtomicLong(existingPortsCount);
+      AtomicLong atomLong = new AtomicLong(this.findMaxPortOrderForLoadableStudy(loadableStudy));
       List<LoadableStudyPortRotation> portRotationList = new ArrayList<>();
       requestedPortIds.stream()
           .forEach(
@@ -1794,13 +1788,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableStudy loadableStudy,
       List<LoadableStudyPortRotation> dischargingPorts,
       List<Long> portIds) {
-    Long maxPorOrder = 0L;
-    LoadableStudyPortRotation maxPortOrderEntity =
-        this.loadableStudyPortRotationRepository
-            .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(loadableStudy, true);
-    if (maxPortOrderEntity != null) {
-      maxPorOrder = maxPortOrderEntity.getPortOrder();
-    }
+    Long maxPortOrder = this.findMaxPortOrderForLoadableStudy(loadableStudy);
     for (Long requestedPortId : portIds) {
       Optional<PortDetail> portOpt =
           portReply.getPortsList().stream()
@@ -1825,7 +1813,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             !StringUtils.isEmpty(port.getMaxAirDraft())
                 ? new BigDecimal(port.getMaxAirDraft())
                 : null);
-        portRotationEntity.setPortOrder(++maxPorOrder);
+        portRotationEntity.setPortOrder(++maxPortOrder);
 
         // add ports to synoptical table by reusing the function called by
         // port-rotation flow
@@ -1834,6 +1822,23 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
     }
     return dischargingPorts;
+  }
+
+  /**
+   * Get max port order for a LS
+   *
+   * @param loadableStudy
+   * @return
+   */
+  private Long findMaxPortOrderForLoadableStudy(LoadableStudy loadableStudy) {
+    Long maxPortOrder = 0L;
+    LoadableStudyPortRotation maxPortOrderEntity =
+        this.loadableStudyPortRotationRepository
+            .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(loadableStudy, true);
+    if (maxPortOrderEntity != null) {
+      maxPortOrder = maxPortOrderEntity.getPortOrder();
+    }
+    return maxPortOrder;
   }
 
   /**
