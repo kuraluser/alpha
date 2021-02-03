@@ -32,6 +32,7 @@ export class NumberDecimalDirective {
   @Input() min = -Infinity;
   @Input() max = Infinity;
   @Input() pattern?: string | RegExp;
+  @Input() negative = true;
   private regex: RegExp;
   inputElement: HTMLInputElement;
   ngControl: NgControl;
@@ -89,7 +90,7 @@ export class NumberDecimalDirective {
     }
 
     // Allow - if it is in first position and if no - exists
-    if (e.key == '-' && this.inputElement.selectionStart == 0 && this.inputElement.value.indexOf('-') == -1) {
+    if (e.key == '-' && this.negative && this.inputElement.selectionStart == 0 && this.inputElement.value.indexOf('-') == -1) {
       return;
     }
 
