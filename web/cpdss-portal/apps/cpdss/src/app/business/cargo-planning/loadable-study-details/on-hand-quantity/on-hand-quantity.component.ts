@@ -253,7 +253,7 @@ export class OnHandQuantityComponent implements OnInit {
           if (selectedPortOHQTankDetails[index]?.tankId === tanks[groupIndex][tankIndex]?.id) {
             tanks[groupIndex][tankIndex].commodity = selectedPortOHQTankDetails[index];
             tanks[groupIndex][tankIndex].commodity.quantity = mode === OHQ_MODE.ARRIVAL ? tanks[groupIndex][tankIndex]?.commodity?.arrivalQuantity?.value : tanks[groupIndex][tankIndex]?.commodity?.departureQuantity?.value;
-            tanks[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(tanks[groupIndex][tankIndex].commodity.quantity, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, tanks[groupIndex][tankIndex].commodity?.density?.value);
+            tanks[groupIndex][tankIndex].commodity.volume = mode === OHQ_MODE.ARRIVAL ? tanks[groupIndex][tankIndex]?.commodity?.arrivalVolume : tanks[groupIndex][tankIndex]?.commodity?.departureVolume;
             break;
           }
         }
@@ -305,6 +305,14 @@ export class OnHandQuantityComponent implements OnInit {
     this.ngxSpinnerService.show();
     const fromGroup = this.row(event.index);
 
+    const _prevFullcapacitySelectedUnit = AppConfigurationService.settings.volumeBaseUnit;
+    if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {
+      const fullCapacity = this.quantityPipe.transform(event?.data?.fullCapacityCubm, _prevFullcapacitySelectedUnit, this.quantitySelectedUnit, event?.data?.density.value);
+      event.data.fullCapacity = fullCapacity ?? 0;
+    } else {
+      event.data.fullCapacity = event?.data?.fullCapacityCubm;
+    }
+
     let dependentKeys = [];
     switch (event?.field) {
       case 'density':
@@ -324,10 +332,14 @@ export class OnHandQuantityComponent implements OnInit {
       const formControl1 = this.field(event?.index, dependentKeys[0]);
       if (!formControl1.value) {
         formControl1.setValue(null);
+      } else {
+        formControl1.updateValueAndValidity();
       }
       const formControl2 = this.field(event?.index, dependentKeys[1]);
       if (!formControl2.value) {
         formControl2.setValue(null);
+      } else {
+        formControl2.updateValueAndValidity();
       }
     } else {
       const formControl = this.field(event?.index, event?.field);
@@ -335,14 +347,11 @@ export class OnHandQuantityComponent implements OnInit {
         formControl.setValue(null);
       }
     }
+    const arrivalVolume = this.quantityPipe.transform(event?.data?.arrivalQuantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, event?.data?.density?.value);
+    event.data.arrivalVolume = arrivalVolume ?? 0;
 
-    const _prevFullcapacitySelectedUnit = AppConfigurationService.settings.volumeBaseUnit;
-    if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {
-      const fullCapacity = this.quantityPipe.transform(event?.data?.fullCapacityCubm, _prevFullcapacitySelectedUnit, this.quantitySelectedUnit, event?.data?.density.value);
-      event.data.fullCapacity = fullCapacity ?? 0;
-    } else {
-      event.data.fullCapacity = event?.data?.fullCapacityCubm;
-    }
+    const departureVolume = this.quantityPipe.transform(event?.data.departureQuantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, event?.data?.density?.value);
+    event.data.departureVolume = departureVolume ?? 0;
 
     this.loadableStudyDetailsTransformationService.setOHQValidity(this.ohqForm.valid && this.ohqGroupValidity(this._selectedPortOHQTankDetails));
     const valueIndex = this.selectedPortOHQTankDetails.findIndex(ohqDetails => ohqDetails?.storeKey === event?.data?.storeKey);
@@ -649,6 +658,10 @@ export class OnHandQuantityComponent implements OnInit {
           ohqTankDetail.arrivalQuantity.value = ohqTankDetail.arrivalQuantity.value ? Number(ohqTankDetail.arrivalQuantity.value.toFixed(2)) : 0;
           ohqTankDetail.departureQuantity.value = this.quantityPipe.transform(ohqTankDetail.departureQuantity.value, _prevQuantitySelectedUnit, this.quantitySelectedUnit, ohqTankDetail.density.value);
           ohqTankDetail.departureQuantity.value = ohqTankDetail.departureQuantity.value ? Number(ohqTankDetail.departureQuantity.value.toFixed(2)) : 0;
+          const arrivalVolume = this.quantityPipe.transform(ohqTankDetail.arrivalQuantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, ohqTankDetail?.density?.value);
+          ohqTankDetail.arrivalVolume = arrivalVolume ?? 0;
+          const departureVolume = this.quantityPipe.transform(ohqTankDetail.departureQuantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, ohqTankDetail?.density?.value);
+          ohqTankDetail.departureVolume = departureVolume ?? 0;
         }
         const _prevFullcapacitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.volumeBaseUnit;
         if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {

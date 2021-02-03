@@ -263,12 +263,6 @@ export class OnBoardQuantityComponent implements OnInit {
   async onEditComplete(event) {
     this.ngxSpinnerService.show();
     const formGroup = this.row(event.index);
-    this.obqForm.controls.cargo.setValue(formGroup.controls.cargo.value?.name);
-    this.obqForm.controls.sounding.setValue(formGroup.controls.sounding.value);
-    this.obqForm.controls.weight.setValue(formGroup.controls.weight.value);
-    this.obqForm.controls.volume.setValue(formGroup.controls.volume.value);
-    this.obqForm.controls.volume.setValidators([Validators.required, Validators.min(0), numberValidator(2, 7), Validators.max(Number(event.data?.fullCapacityCubm))])
-    this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
     const _prevFullcapacitySelectedUnit = AppConfigurationService.settings.volumeBaseUnit;
     if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {
       const fullCapacity = this.quantityPipe.transform(event?.data?.fullCapacityCubm, _prevFullcapacitySelectedUnit, this.quantitySelectedUnit, event?.data?.api.value);
@@ -276,23 +270,33 @@ export class OnBoardQuantityComponent implements OnInit {
     } else {
       event.data.fullCapacity = event?.data?.fullCapacityCubm;
     }
+    const volume = this.quantityPipe.transform(event?.data?.quantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, event?.data?.api?.value);
+    event.data.volume = volume ?? 0;
+
+    if(event?.field === 'api'){
+      formGroup.controls.quantity.updateValueAndValidity();   
+    }
+
     if (formGroup.valid) {
       const _selectedPortOBQTankDetail = this.convertToStandardUnitForSave(event.data);     
       _selectedPortOBQTankDetail.loadOnTop = this.obqForm.controls?.loadOnTop?.value;
       const res = await this.loadableStudyDetailsApiService.setOBQTankDetails(_selectedPortOBQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId);
       this.updateTankList();
       this.setFillingPercentage(this.selectedTankId);
-      this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
-    } else {
-      Object.keys(formGroup.controls).forEach(key => {
-        const control = formGroup.get(key);
-        if (control.invalid) {
-          this.selectedPortOBQTankDetails[event.index][key].isEditMode = true;
-          control.markAsTouched();
-          this.obqForm.updateValueAndValidity()
-        }
-      });
-    }    
+    } 
+    Object.keys(formGroup.controls).forEach(key => {
+      const control = formGroup.get(key);
+      if((this.selectedPortOBQTankDetails[event.index][key]).hasOwnProperty('_isEditMode')) {
+        this.selectedPortOBQTankDetails[event.index][key].isEditMode = control.invalid;
+        control.markAsTouched();
+        this.obqForm.updateValueAndValidity();
+      }
+    });  
+
+    this.obqForm.controls.cargo.setValue(formGroup.controls.cargo.value?.name);
+    this.obqForm.controls.api.setValue(formGroup.controls.api.value);
+    this.obqForm.controls.quantity.setValue(formGroup.controls.quantity.value);
+    this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
     this.ngxSpinnerService.hide();
   }
 
@@ -412,10 +416,9 @@ export class OnBoardQuantityComponent implements OnInit {
       const newGroup = group.map((groupItem) => {
         const tank = Object.assign({}, groupItem);
         const selectedPortOBQTankDetail = this.selectedPortOBQTankDetails.find((item) => (item.tankId === groupItem.id) && item);
-        const volume = this.quantityPipe.transform(selectedPortOBQTankDetail.quantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, selectedPortOBQTankDetail?.api?.value);
         tank.commodity = {
           quantity: selectedPortOBQTankDetail.quantity?.value,
-          volume: volume ?? 0,
+          volume: selectedPortOBQTankDetail?.volume ?? 0,
           colorCode: selectedPortOBQTankDetail?.colorCode
         }
         return tank;
@@ -526,6 +529,8 @@ export class OnBoardQuantityComponent implements OnInit {
         if (_prevQuantitySelectedUnit !== this.quantitySelectedUnit) {
           obqTankDetail.quantity.value = this.quantityPipe.transform(obqTankDetail.quantity.value, _prevQuantitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value);
           obqTankDetail.quantity.value = obqTankDetail.quantity.value ? Number(obqTankDetail.quantity.value.toFixed(2)) : 0;
+          const volume = this.quantityPipe.transform(obqTankDetail.quantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, obqTankDetail?.api?.value);
+          obqTankDetail.volume = volume ?? 0;
         }
         const _prevFullcapacitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.volumeBaseUnit;
         if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {

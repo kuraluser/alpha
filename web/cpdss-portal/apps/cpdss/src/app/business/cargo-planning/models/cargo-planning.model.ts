@@ -348,6 +348,8 @@ export interface IPortOHQTankDetail {
     density: number;
     arrivalQuantity: number;
     departureQuantity: number;
+    arrivalVolume: number;
+    departureVolume: number;
     portId: number;
     storeKey: number;
     vesselId: number;
@@ -375,6 +377,8 @@ export interface IPortOHQTankDetailValueObject {
     density: ValueObject<number>;
     arrivalQuantity: ValueObject<number>;
     departureQuantity: ValueObject<number>;
+    arrivalVolume: number;
+    departureVolume: number;
     portId: number;
     storeKey: number;
     colorCode: string;
