@@ -154,9 +154,10 @@ export class NavbarComponent implements OnInit {
    *
    * @memberof NavbarComponent
    */
-  subRoute(subMenu: any,list: any, index: number) {
+  subRoute(event: any,subMenu: any,list: any, index: number) {
     this.router.navigate([subMenu.subMenuLink]);
     this.hide(list,index);
+    event.stopPropagation();
   }
 
 }

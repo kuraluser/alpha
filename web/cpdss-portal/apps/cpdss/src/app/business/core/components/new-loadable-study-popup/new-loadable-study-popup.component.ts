@@ -147,11 +147,13 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       const nameExistence = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
       this.newLoadableStudyNameExist = this.isEdit ? (this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim() === this.selectedLoadableStudy.name.toLocaleLowerCase() ? false : nameExistence) : nameExistence;
       const translationKeys = await this.translateService.get(['LOADABLE_STUDY_CREATE_SUCCESS', 'LOADABLE_STUDY_CREATED_SUCCESSFULLY', 'LOADABLE_STUDY_CREATE_ERROR', 'LOADABLE_STUDY_ALREADY_EXIST', 'LOADABLE_STUDY_UPDATE_SUCCESS', 'LOADABLE_STUDY_UPDATED_SUCCESSFULLY']).toPromise();
-      
+      let isLoadableStudyAvailable;
+      isLoadableStudyAvailable = this.duplicateLoadableStudy && Object.keys(this.duplicateLoadableStudy)?.length === 0 && this.duplicateLoadableStudy.constructor === Object;
       if (!this.newLoadableStudyNameExist) {
         this.newLoadableStudyPopupModel = {
           id: this.isEdit ? this.selectedLoadableStudy.id : 0,
-          createdFromId: this.newLoadableStudyFormGroup.controls.duplicateExisting.value?.id,
+          createdFromId: (!isLoadableStudyAvailable && this.duplicateLoadableStudy && !this.isEdit) ? 
+            this.newLoadableStudyFormGroup.controls.duplicateExisting.value?.id : '',
           name: this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.trim(),
           detail: this.newLoadableStudyFormGroup.controls.enquiryDetails.value,
           attachMail: this.uploadedFiles,

@@ -331,7 +331,7 @@ export class LoadableQuantityComponent implements OnInit {
    */
   getRunningHours() {
     // Auto calculate (Distance/ Speed)
-    this.loadableQuantityForm.get('speedInSz').valid ? 
+    this.loadableQuantityForm.get('speedInSz').valid && this.loadableQuantityForm.get('distanceInSummerzone').valid ? 
       (this.loadableQuantityForm.controls['runningHours'].setValue(Number(this.loadableQuantityForm.get('distanceInSummerzone').value) / Number(this.loadableQuantityForm.get('speedInSz').value)),
       this.getRunningDays()) : (this.loadableQuantityForm.controls['runningHours'].setValue(0) , this.loadableQuantityForm.controls['runningDays'].setValue(0));
   }
