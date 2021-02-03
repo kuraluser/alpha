@@ -3024,11 +3024,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpq.getCargoColor())
               .ifPresent(
                   cargoColor -> loadablePatternCargoDetailsBuilder.setCargoColor(cargoColor));
-
           Optional.ofNullable(lpq.getLoadingOrder())
               .ifPresent(
                   loadingOrder -> loadablePatternCargoDetailsBuilder.setLoadingOrder(loadingOrder));
-
           loadablePatternCargoDetailsBuilder.setIsCommingle(false);
           loadablePatternBuilder.addLoadablePatternCargoDetails(loadablePatternCargoDetailsBuilder);
         });
@@ -3062,11 +3060,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(
                   id ->
                       loadablePatternCargoDetailsBuilder.setLoadablePatternCommingleDetailsId(id));
-
           Optional.ofNullable(lpcd.getLoadingOrder())
               .ifPresent(
                   loadingOrder -> loadablePatternCargoDetailsBuilder.setLoadingOrder(loadingOrder));
-
           loadablePatternBuilder.addLoadablePatternCargoDetails(loadablePatternCargoDetailsBuilder);
         });
   }
@@ -4154,7 +4150,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         entity = this.synopticalTableRepository.save(entity);
         this.saveSynopticalEtaEtdEstimates(entity, record);
         if (request.getLoadablePatternId() > 0) {
-          this.saveSynopticalLoadicatorData(request.getLoadablePatternId(), record);
+          this.saveSynopticalLoadicatorData(entity, request.getLoadablePatternId(), record);
           this.saveSynopticalBallastData(request.getLoadablePatternId(), record, entity);
         }
         this.saveSynopticalCargoData(request, loadableStudyOpt.get(), entity, record);
@@ -4382,13 +4378,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param request
    * @throws GenericServiceException
    */
-  public void saveSynopticalLoadicatorData(Long loadablepatternId, SynopticalRecord record)
+  public void saveSynopticalLoadicatorData(SynopticalTable entity, Long loadablepatternId, SynopticalRecord record)
       throws GenericServiceException {
     com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData data =
         record.getLoadicatorData();
     SynopticalTableLoadicatorData ldEntity =
-        this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
-            loadablepatternId, true);
+        this.synopticalTableLoadicatorDataRepository.findBySynopticalTableAndLoadablePatternIdAndIsActive(
+        		entity, loadablepatternId, true);
     if (null == ldEntity) {
       log.info(
           "Loadicator data does not exist for given synoptical record with id {}", record.getId());
@@ -4715,7 +4711,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         this.setSynopticalTableVesselParticulars(
             synopticalEntity, builder, vesselLoadableQuantityDetails);
         if (request.getLoadablePatternId() > 0) {
-          this.setSynopticalTableLoadicatorData(request.getLoadablePatternId(), builder);
+          this.setSynopticalTableLoadicatorData(synopticalEntity, request.getLoadablePatternId(), builder);
           this.setBallastDetails(
               synopticalEntity,
               builder,
@@ -4775,7 +4771,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(ballast.getActualQuantity())
               .ifPresent(item -> ballastBuilder.setActualWeight(valueOf(item)));
           Optional.ofNullable(ballast.getCorrectedUllage())
-              .ifPresent(ullage -> ballastBuilder.setCorrectedUllage(ullage));
+          .ifPresent(ullage -> ballastBuilder.setCorrectedUllage(ullage));
+          Optional.ofNullable(ballast.getSg())
+          .ifPresent(sg -> ballastBuilder.setSpGravity(sg));
         } else {
           log.info(
               "Ballast details not available for the tank: {}, pattern: {}",
@@ -4794,10 +4792,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param builder
    */
   private void setSynopticalTableLoadicatorData(
+	  SynopticalTable synopticalEntity,
       Long loadablePatternId,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builder) {
     SynopticalTableLoadicatorData loadicatorData =
-        this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
+        this.synopticalTableLoadicatorDataRepository.findBySynopticalTableAndLoadablePatternIdAndIsActive(synopticalEntity,
             loadablePatternId, true);
     if (null != loadicatorData) {
       com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder dataBuilder =
@@ -4931,6 +4930,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .findAny();
       if (ohqOpt.isPresent()) {
         OnHandQuantity ohq = ohqOpt.get();
+        if (null != ohq.getDensity()) {
+            ohqBuilder.setDensity(valueOf(ohq.getDensity()));
+          }
         if (synopticalEntity.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL)) {
           if (null != ohq.getArrivalQuantity()) {
             ohqBuilder.setPlannedWeight(valueOf(ohq.getArrivalQuantity()));
@@ -5025,6 +5027,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(cargoBuilder::setColorCode);
           Optional.ofNullable(tankDataOpt.get().getCorrectedUllage())
               .ifPresent(ullage -> cargoBuilder.setCorrectedUllage(valueOf(ullage)));
+          Optional.ofNullable(tankDataOpt.get().getDensity())
+          .ifPresent(density -> cargoBuilder.setDensity(valueOf(density)));
         }
       }
       builder.addCargo(cargoBuilder.build());
@@ -5049,6 +5053,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       if (null != obqEntity.getPlannedArrivalWeight()) {
         cargoBuilder.setPlannedWeight(valueOf(obqEntity.getPlannedArrivalWeight()));
+      }
+      if (null != obqEntity.getDensity()) {
+    	  cargoBuilder.setDensity(valueOf(obqEntity.getDensity()));
       }
     } else {
       // data has to be populated from previous voyage - cargo history table

@@ -18,4 +18,6 @@ public class SynopticalOhqRecord {
   private BigDecimal plannedWeight;
 
   private BigDecimal actualWeight;
+  
+  private BigDecimal density;
 }
