@@ -43,7 +43,8 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                     config: keycloakConfig,
                     initOptions: {
                         onLoad: 'check-sso',
-                        silentCheckSsoRedirectUri: window.location.origin + appSettings?.path + '/assets/keycloak/silent-check-sso.html',
+                        // TODO: Code commented as per requested by Suhail 
+                        //silentCheckSsoRedirectUri: window.location.origin + appSettings?.path + '/assets/keycloak/silent-check-sso.html',
                         checkLoginIframe: false
                     },
                     bearerExcludedUrls: ['/assets']
