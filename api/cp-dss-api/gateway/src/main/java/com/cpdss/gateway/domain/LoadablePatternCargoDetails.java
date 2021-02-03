@@ -14,4 +14,5 @@ public class LoadablePatternCargoDetails {
   private Long loadablePatternCommingleDetailsId;
   private String orderedQuantity;
   private Integer loadingOrder;
+  private String api;
 }

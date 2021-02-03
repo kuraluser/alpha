@@ -128,7 +128,9 @@ import com.cpdss.gateway.domain.VoyageStatusRequest;
 import com.cpdss.gateway.domain.VoyageStatusResponse;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -1435,6 +1437,9 @@ public class LoadableStudyService {
                                 loadingOrder ->
                                     loadablePatternCargoDetails.setLoadingOrder(loadingOrder));
 
+                        Optional.ofNullable(loadablePatternCargoDetail.getApi())
+                            .ifPresent(api -> loadablePatternCargoDetails.setApi(api));
+
                         loadablePatternDto
                             .getLoadablePatternCargoDetails()
                             .add(loadablePatternCargoDetails);
@@ -2241,15 +2246,18 @@ public class LoadableStudyService {
     log.info(
         "Inside updateLoadableStudyStatus gateway service with correlationId : " + correlationId);
     AlgoStatusResponse response = new AlgoStatusResponse();
-    AlgoStatusReply grpcReply =
-        this.saveAlgoLoadableStudyStatus(
-            this.buildAlgoLoadableStudyStatusRequest(request, correlationId));
-    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "Failed to update Loadable Study Status",
-          grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    if (request.getLoadableStudyStatusId() != 4) {
+      AlgoStatusReply grpcReply =
+          this.saveAlgoLoadableStudyStatus(
+              this.buildAlgoLoadableStudyStatusRequest(request, correlationId));
+      if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Failed to update Loadable Study Status",
+            grpcReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+      }
     }
+
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
@@ -2583,9 +2591,7 @@ public class LoadableStudyService {
               ? BigDecimal.ZERO
               : new BigDecimal(protoRec.getPlannedWeight()));
       rec.setDensity(
-              isEmpty(protoRec.getDensity())
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(protoRec.getDensity()));
+          isEmpty(protoRec.getDensity()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getDensity()));
       if (FUEL_OIL_TANK_CATEGORY_ID.equals(protoRec.getFuelTypeId())) {
         foList.add(rec);
       } else if (DIESEL_OIL_TANK_CATEGORY_ID.equals(protoRec.getFuelTypeId())) {
@@ -2661,9 +2667,7 @@ public class LoadableStudyService {
               ? BigDecimal.ZERO
               : new BigDecimal(protoRec.getCorrectedUllage()));
       rec.setApi(
-              isEmpty(protoRec.getDensity())
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(protoRec.getDensity()));
+          isEmpty(protoRec.getDensity()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getDensity()));
       rec.setCapacity(
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
       list.add(rec);
@@ -2721,6 +2725,14 @@ public class LoadableStudyService {
       LoadablePlanRequest loadablePlanRequest, Long loadableStudiesId, String correlationId)
       throws GenericServiceException {
     log.info("Inside saveLoadablePatterns gateway service with correlationId : " + correlationId);
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    try {
+      objectMapper.writeValue(new File("loadableStudyResult.json"), loadablePlanRequest);
+    } catch (IOException e) {
+      log.error("Error in json writing ", e);
+    }
+
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
@@ -3179,6 +3191,7 @@ public class LoadableStudyService {
               cargoDetails.setOrderBbls60f(lqcd.getOrderBbls60F());
               cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
               cargoDetails.setCargoId(lqcd.getCargoId());
+              cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
               response.getLoadableQuantityCargoDetails().add(cargoDetails);
             });
   }

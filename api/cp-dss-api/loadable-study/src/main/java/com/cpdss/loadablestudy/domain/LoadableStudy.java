@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 public class LoadableStudy {
   private Long id;
+  private Long voyageId;
   private String voyageNo;
   private Long vesselId;
   private String name;
