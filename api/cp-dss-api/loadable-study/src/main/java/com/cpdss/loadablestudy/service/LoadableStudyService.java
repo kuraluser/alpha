@@ -3027,6 +3027,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpq.getLoadingOrder())
               .ifPresent(
                   loadingOrder -> loadablePatternCargoDetailsBuilder.setLoadingOrder(loadingOrder));
+          Optional.ofNullable(lpq.getEstimatedApi())
+              .ifPresent(api -> loadablePatternCargoDetailsBuilder.setApi(String.valueOf(api)));
+
           loadablePatternCargoDetailsBuilder.setIsCommingle(false);
           loadablePatternBuilder.addLoadablePatternCargoDetails(loadablePatternCargoDetailsBuilder);
         });
@@ -3063,6 +3066,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpcd.getLoadingOrder())
               .ifPresent(
                   loadingOrder -> loadablePatternCargoDetailsBuilder.setLoadingOrder(loadingOrder));
+          Optional.ofNullable(lpcd.getApi())
+              .ifPresent(api -> loadablePatternCargoDetailsBuilder.setApi(String.valueOf(api)));
+
           loadablePatternBuilder.addLoadablePatternCargoDetails(loadablePatternCargoDetailsBuilder);
         });
   }
@@ -3370,7 +3376,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Optional.ofNullable(loadablePlanCommingleDetails.getGrade())
         .ifPresent(grade -> builder.setGrade(grade));
 
-    Optional.ofNullable(loadablePlanCommingleDetails.getQuantity())
+    Optional.ofNullable(loadablePlanCommingleDetails.getOrderQuantity())
         .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
 
     Optional.ofNullable(loadablePlanCommingleDetails.getTankName())
@@ -3803,7 +3809,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     loadableStudy.setVesselId(loadableStudyOpt.get().getVesselXId());
     Optional.ofNullable(loadableStudyOpt.get().getDetails())
         .ifPresent(details -> loadableStudy.setDetails(details));
-
+    Optional.ofNullable(loadableStudyOpt.get().getVoyage())
+        .ifPresent(voyage -> loadableStudy.setVoyageId(voyage.getId()));
     Optional.ofNullable(loadableStudyOpt.get().getVoyage())
         .ifPresent(voyage -> loadableStudy.setVoyageNo(voyage.getVoyageNo()));
 
@@ -4063,7 +4070,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         isEmpty(request.getSounding()) ? null : new BigDecimal(request.getSounding()));
     entity.setPlannedArrivalWeight(
         isEmpty(request.getWeight()) ? null : new BigDecimal(request.getWeight()));
-    entity.setVolume(isEmpty(request.getVolume()) ? null : new BigDecimal(request.getVolume()));
+    entity.setVolumeInM3(request.getVolume());
     entity.setColorCode(isEmpty(request.getColorCode()) ? null : request.getColorCode());
     entity.setAbbreviation(isEmpty(request.getAbbreviation()) ? null : request.getAbbreviation());
     entity.setDensity(isEmpty(request.getDensity()) ? null : new BigDecimal(request.getDensity()));
@@ -4079,21 +4086,26 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       AlgoStatusRequest request, StreamObserver<AlgoStatusReply> responseObserver) {
     AlgoStatusReply.Builder replyBuilder = AlgoStatusReply.newBuilder();
     try {
-      log.info("Inside generateLoadablePatterns service");
+      log.info("Inside saveAlgoLoadableStudyStatus service");
       Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOpt =
           loadableStudyAlgoStatusRepository.findByProcessIdAndIsActive(
               request.getProcesssId(), true);
       if (!loadableStudyAlgoStatusOpt.isPresent()) {
-        log.info("Invalid process id for updateing loadable study sttus");
+        log.info("Invalid process id for updating loadable study status");
         replyBuilder.setResponseStatus(
             ResponseStatus.newBuilder()
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
                 .setMessage("Invalid process Id")
                 .build());
       } else {
-
+        log.info(
+            "updated algo status with process-id "
+                + request.getProcesssId()
+                + " to "
+                + request.getLoadableStudystatusId());
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
             request.getLoadableStudystatusId(), request.getProcesssId(), true);
+
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
     } catch (Exception e) {
@@ -4378,13 +4390,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param request
    * @throws GenericServiceException
    */
-  public void saveSynopticalLoadicatorData(SynopticalTable entity, Long loadablepatternId, SynopticalRecord record)
+  public void saveSynopticalLoadicatorData(
+      SynopticalTable entity, Long loadablepatternId, SynopticalRecord record)
       throws GenericServiceException {
     com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData data =
         record.getLoadicatorData();
     SynopticalTableLoadicatorData ldEntity =
-        this.synopticalTableLoadicatorDataRepository.findBySynopticalTableAndLoadablePatternIdAndIsActive(
-        		entity, loadablepatternId, true);
+        this.synopticalTableLoadicatorDataRepository
+            .findBySynopticalTableAndLoadablePatternIdAndIsActive(entity, loadablepatternId, true);
     if (null == ldEntity) {
       log.info(
           "Loadicator data does not exist for given synoptical record with id {}", record.getId());
@@ -4711,7 +4724,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         this.setSynopticalTableVesselParticulars(
             synopticalEntity, builder, vesselLoadableQuantityDetails);
         if (request.getLoadablePatternId() > 0) {
-          this.setSynopticalTableLoadicatorData(synopticalEntity, request.getLoadablePatternId(), builder);
+          this.setSynopticalTableLoadicatorData(
+              synopticalEntity, request.getLoadablePatternId(), builder);
           this.setBallastDetails(
               synopticalEntity,
               builder,
@@ -4771,9 +4785,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(ballast.getActualQuantity())
               .ifPresent(item -> ballastBuilder.setActualWeight(valueOf(item)));
           Optional.ofNullable(ballast.getCorrectedUllage())
-          .ifPresent(ullage -> ballastBuilder.setCorrectedUllage(ullage));
-          Optional.ofNullable(ballast.getSg())
-          .ifPresent(sg -> ballastBuilder.setSpGravity(sg));
+              .ifPresent(ullage -> ballastBuilder.setCorrectedUllage(ullage));
+          Optional.ofNullable(ballast.getSg()).ifPresent(sg -> ballastBuilder.setSpGravity(sg));
         } else {
           log.info(
               "Ballast details not available for the tank: {}, pattern: {}",
@@ -4792,12 +4805,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param builder
    */
   private void setSynopticalTableLoadicatorData(
-	  SynopticalTable synopticalEntity,
+      SynopticalTable synopticalEntity,
       Long loadablePatternId,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builder) {
     SynopticalTableLoadicatorData loadicatorData =
-        this.synopticalTableLoadicatorDataRepository.findBySynopticalTableAndLoadablePatternIdAndIsActive(synopticalEntity,
-            loadablePatternId, true);
+        this.synopticalTableLoadicatorDataRepository
+            .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                synopticalEntity, loadablePatternId, true);
     if (null != loadicatorData) {
       com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder dataBuilder =
           com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.newBuilder();
@@ -4931,8 +4945,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       if (ohqOpt.isPresent()) {
         OnHandQuantity ohq = ohqOpt.get();
         if (null != ohq.getDensity()) {
-            ohqBuilder.setDensity(valueOf(ohq.getDensity()));
-          }
+          ohqBuilder.setDensity(valueOf(ohq.getDensity()));
+        }
         if (synopticalEntity.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL)) {
           if (null != ohq.getArrivalQuantity()) {
             ohqBuilder.setPlannedWeight(valueOf(ohq.getArrivalQuantity()));
@@ -5028,7 +5042,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(tankDataOpt.get().getCorrectedUllage())
               .ifPresent(ullage -> cargoBuilder.setCorrectedUllage(valueOf(ullage)));
           Optional.ofNullable(tankDataOpt.get().getDensity())
-          .ifPresent(density -> cargoBuilder.setDensity(valueOf(density)));
+              .ifPresent(density -> cargoBuilder.setDensity(valueOf(density)));
         }
       }
       builder.addCargo(cargoBuilder.build());
@@ -5055,7 +5069,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         cargoBuilder.setPlannedWeight(valueOf(obqEntity.getPlannedArrivalWeight()));
       }
       if (null != obqEntity.getDensity()) {
-    	  cargoBuilder.setDensity(valueOf(obqEntity.getDensity()));
+        cargoBuilder.setDensity(valueOf(obqEntity.getDensity()));
       }
     } else {
       // data has to be populated from previous voyage - cargo history table
@@ -5546,6 +5560,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(lpq.getOrderBbls60f()).ifPresent(builder::setOrderBbls60F);
           Optional.ofNullable(lpq.getOrderBblsDbs()).ifPresent(builder::setOrderBblsdbs);
           Optional.ofNullable(lpq.getCargoXId()).ifPresent(builder::setCargoId);
+          Optional.ofNullable(lpq.getOrderQuantity())
+              .ifPresent(orderQuantity -> builder.setOrderedMT(String.valueOf(orderQuantity)));
           replyBuilder.addLoadableQuantityCargoDetails(builder);
         });
   }

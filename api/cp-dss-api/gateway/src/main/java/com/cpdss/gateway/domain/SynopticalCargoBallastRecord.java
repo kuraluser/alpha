@@ -28,9 +28,8 @@ public class SynopticalCargoBallastRecord {
   private String colorCode;
 
   private BigDecimal correctedUllage;
-  
-  private BigDecimal api;
-  
-  private String sg;
 
+  private BigDecimal api;
+
+  private String sg;
 }
