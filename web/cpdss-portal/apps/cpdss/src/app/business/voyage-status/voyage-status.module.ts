@@ -15,18 +15,25 @@ import { PortRotationRibbonComponent } from './port-rotation-ribbon/port-rotatio
 import { CarouselModule } from 'primeng/carousel';
 import { OrderListModule } from 'primeng/orderlist';
 import { EditPortRotationApiService } from './services/edit-port-rotation-api.service';
+import { ShipLandingTanksComponent } from './ship-landing-tanks/ship-landing-tanks.component';
+import { CargoTankLayoutModule } from '../core/components/cargo-tank-layout/cargo-tank-layout.module';
+import { BallastLayoutModule } from '../core/components/ballast-layout/ballast-layout.module';
 import { DropdownModule } from 'primeng/dropdown';
 import { VoyageStatusTransformationService } from '../voyage-status/services/voyage-status-transformation.service'
+import { BunkeringLayoutModule } from '../core/components/bunkering-layout/bunkering-layout.module';
 import {TableModule} from 'primeng/table';
 import { ParameterListComponent } from './parameter-list/parameter-list.component';
 import { CargoDetailsComponent } from './cargo-details/cargo-details.component';
+import { QuantityPipe } from '../../shared/pipes/quantity/quantity.pipe';
+import { DatatableModule } from '../../shared/components/datatable/datatable.module';
+import {InputSwitchModule} from 'primeng/inputswitch';
 
 /**
  * Module for new voyage-status
  */
 
 @NgModule({
-  declarations: [VoyageStatusComponent, NewVoyagePopupComponent, EditPortRotationComponent,PortRotationRibbonComponent, ParameterListComponent, CargoDetailsComponent],
+  declarations: [VoyageStatusComponent, NewVoyagePopupComponent, EditPortRotationComponent,PortRotationRibbonComponent, ParameterListComponent, CargoDetailsComponent, ShipLandingTanksComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -37,15 +44,21 @@ import { CargoDetailsComponent } from './cargo-details/cargo-details.component';
     VesselInfoModule,
     VoyageStatusRoutingModule,
     CalendarModule,
-    CarouselModule,
     OrderListModule,
+    CargoTankLayoutModule,
+    BallastLayoutModule,
+    CarouselModule,
     DropdownModule,
-    TableModule
+    BunkeringLayoutModule,
+    TableModule,
+    DatatableModule,
+    InputSwitchModule
   ],
   providers: [
     VoyageApiService,
     EditPortRotationApiService,
-    VoyageStatusTransformationService
+    VoyageStatusTransformationService,
+    QuantityPipe
   ]
 })
 export class VoyageStatusModule { }

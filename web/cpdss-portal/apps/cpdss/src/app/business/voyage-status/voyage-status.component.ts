@@ -7,7 +7,7 @@ import { EditPortRotationApiService } from './services/edit-port-rotation-api.se
 import { IPortsDetailsResponse } from '../core/models/common.model';
 import { VoyageApiService } from './services/voyage-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { IBunkerConditions, ICargoConditions, ICargoQuantities, IVoyageDetails } from './models/voyage-status.model';
+import { IBunkerConditions, ICargoConditions, ICargoQuantities, IVoyageDetails, IVoyageStatus } from './models/voyage-status.model';
 import { VoyageStatusTransformationService } from './services/voyage-status-transformation.service';
 /**
  * Component for voyage status
@@ -29,6 +29,7 @@ export class VoyageStatusComponent implements OnInit {
   cargoConditions: ICargoConditions[];
   cargoQuantities: ICargoQuantities[];
   selectedPortDetails: IVoyageDetails;
+  voyageStatusResponse: IVoyageStatus;
 
   constructor(private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,
@@ -101,11 +102,11 @@ export class VoyageStatusComponent implements OnInit {
    */
   async getVoyageStatus(vesselId: number, voyageId: number, loadableStudyId: number) {
     this.ngxSpinnerService.show();
-    const res = await this.voyageApiService.getVoyageDetails(vesselId, voyageId, loadableStudyId, this.selectedPortDetails).toPromise();
-    if (res?.responseStatus?.status === '200') {
-      this.bunkerConditions = res?.bunkerConditions;
-      this.cargoConditions = res?.cargoConditions;
-      this.cargoQuantities = res?.cargoQuantities;
+    this.voyageStatusResponse = await this.voyageApiService.getVoyageDetails(vesselId, voyageId, loadableStudyId, this.selectedPortDetails).toPromise();
+    if (this.voyageStatusResponse?.responseStatus?.status === '200') {
+      this.bunkerConditions = this.voyageStatusResponse?.bunkerConditions;
+      this.cargoConditions = this.voyageStatusResponse?.cargoConditions;
+      this.cargoQuantities = this.voyageStatusResponse?.cargoQuantities;
     }
     this.ngxSpinnerService.hide();
   }

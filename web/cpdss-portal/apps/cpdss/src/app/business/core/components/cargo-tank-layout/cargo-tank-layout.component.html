@@ -15,7 +15,9 @@
                     class="tank-level-pattern">
 
                 </div>
-                <h5 class="tank-name">{{tank?.shortName}}</h5>
+                <h5 class="tank-name">
+                    <span class="cargo-bullet" *ngIf="options?.isBullet" [pTooltip]="tank?.commodity && tank?.commodity[options?.ullageField] + options?.ullageUnit"></span>
+                    {{tank?.shortName}}</h5>
                 <ng-container *ngIf="tank?.commodity">
                     <span *ngIf="options?.showCommodityName"
                         class="tank-commodity-name">{{tank?.commodity?.cargoAbbreviation}}</span>

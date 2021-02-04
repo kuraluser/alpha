@@ -146,6 +146,7 @@ export interface ITankOptions {
     ullageField?: string;
     ullageUnit?: string;
     showCommodityName?: boolean;
+    isBullet?: boolean;
 }
 
 /**

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
+import { ILoadablePlanResponse } from '../../cargo-planning/models/loadable-plan.model';
 import { NewVoyageModel } from '../models/new-voyage.model';
 import { IVoyageDetails, IVoyageStatus } from '../models/voyage-status.model';
 import { NewVoyageResponseModel } from '../models/new-voyage.model'
