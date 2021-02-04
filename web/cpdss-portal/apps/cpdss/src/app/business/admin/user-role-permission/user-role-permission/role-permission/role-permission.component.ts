@@ -12,6 +12,9 @@ import { ITreeNodeData, IUserDetail, IUserRolePermissionResponse, IScreenNode, I
 
 import { UserRolePermissionApiService } from '../../../services/user-role-permission-api.service';
 import { UserRolePermissionTransformationService } from '../../../services/user-role-permission-transformation.service';
+import { PermissionsService } from '../../../../../shared/services/permissions/permissions.service';
+import { AppConfigurationService } from '../../../../../shared/services/app-configuration/app-configuration.service';
+import { IPermissionContext, PERMISSION_ACTION } from '../../../../../shared/models/common.model';
 
 /**
  * Component class of role permission for user role
@@ -41,6 +44,7 @@ export class RolePermissionComponent implements OnInit {
     roleDetailsForm: FormGroup;
     errorMessages: any;
     userDetails: IUserDetail[] = [];
+    public saveRoleBtnPermissionContext:IPermissionContext;
 
     // public method
     constructor(
@@ -49,6 +53,7 @@ export class RolePermissionComponent implements OnInit {
         private ngxSpinnerService: NgxSpinnerService,
         private translateService: TranslateService,
         private router: Router,
+        private permissionsService: PermissionsService,
         private messageService: MessageService,
         private userRolePermissionApiService: UserRolePermissionApiService,
         private userRolePermissionTransformationService: UserRolePermissionTransformationService
@@ -61,6 +66,7 @@ export class RolePermissionComponent implements OnInit {
      * @memberof RolePermissionComponent
      */
     ngOnInit(): void {
+        this.getPagePermission();
         this.errorMessages = this.userRolePermissionTransformationService.setValidationErrorMessage();
         this.roleDetailsForm = this.fb.group({
             'roleName': ['', [Validators.required , Validators.pattern('^[a-zA-Z0-9 ]+')]],
@@ -73,6 +79,18 @@ export class RolePermissionComponent implements OnInit {
             this.getUserRolePermission();
         })
     }
+
+      /**
+   * Get page permission
+   *
+   * @memberof RolePermissionComponent
+   */
+  getPagePermission() {
+    const permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['UserRoleListing']);
+    if(!permission.edit) {
+        this.router.navigate(['/access-denied']);
+    }
+  }
 
     /**
     * get User Role Permission
@@ -100,9 +118,9 @@ export class RolePermissionComponent implements OnInit {
                     treeNode.push(value);
                     if (userDetail.childs && userDetail.childs.length) {
                         isChecked = this.innerNodes(treeNode[index], userDetail.childs);
-                        isChecked && treeStructure.isChecked ? (this.selectedNodes = [...this.selectedNodes , treeNode[index]]) : null
+                        isChecked && treeStructure.isChecked ? (treeNode[index]['data']['nodeChecked'] = true , this.selectedNodes = [...this.selectedNodes , treeNode[index]]) : null
                     } else {
-                        treeStructure.isChecked ? (this.selectedNodes = [...this.selectedNodes, treeNode[index]]) : null;
+                        treeStructure.isChecked ? (treeNode[index]['data']['nodeChecked'] = true , this.selectedNodes = [...this.selectedNodes, treeNode[index]]) : null;
                     }
                 })
             }
@@ -137,10 +155,12 @@ export class RolePermissionComponent implements OnInit {
             if (child.childs?.length) {
                 isChecked = this.innerNodes(parentNode['children'][index], child.childs);
                 if(isChecked && treeStructure.isChecked){
+                    value.data['nodeChecked'] = true;
                     this.selectedNodes = [...this.selectedNodes , parentNode['children'][index]];
                     treeNodesData.push(value)
                 } 
             } else if(treeStructure.isChecked){
+                    value.data['nodeChecked'] = true;
                     this.selectedNodes = ([...this.selectedNodes , value]);
                     treeNodesData.push(value);
             }
@@ -173,27 +193,9 @@ export class RolePermissionComponent implements OnInit {
             isAddVisible: data.isAddVisible,
             isDeleteVisible: data.isDeleteVisible,
             isEditVisible: data.isEditVisible,
-            isViewVisible: data.isViewVisible
+            isViewVisible: data.isViewVisible,
+            nodeChecked: false
         }
-    }
-
-    /**
-    * select or unselect node based on status 
-    * @memberof RolePermissionComponent
-    */
-    nodeSelect(event: any, selctionStatus: boolean) {
-        let node = event?.originalEvent?.rowNode?.node;
-        node?.children?.length ? this.nodeSelectUnSelect(node, selctionStatus) : null;
-        this.cols.map((col) => {
-            node.data[col.isViewable] ? node.data[col.field] = selctionStatus : null;
-        })
-        const selectedNodes = this.selectedNodes;
-        this.selectedNodes?.map((selectedNode, index) => {
-            if (!this.checkNodeSelected(selectedNode.data)) {
-                selectedNodes.splice(index, 1);
-            }
-        });
-        this.selectedNodes = [...selectedNodes];
     }
 
     /**
@@ -210,76 +212,73 @@ export class RolePermissionComponent implements OnInit {
     }
 
     /**
+    * select or unselect node based on status 
+    * @memberof RolePermissionComponent
+    */
+    parentNodeChange(node: any, rowData: any) {
+        rowData['nodeChecked'] = !rowData['nodeChecked'];
+        const treeNode = node?.node;
+        treeNode?.children?.length ? this.nodeSelectUnSelect(treeNode, rowData['nodeChecked']) : null;
+        this.cols.map((col) => {
+            treeNode.data[col.isViewable] ? treeNode.data[col.field] = rowData['nodeChecked'] : null;
+        });
+        this.childParentNodeRelation(this.treeNode);
+    }
+
+
+    /**
     * change check box status
     * @memberof RolePermissionComponent
     */
     checkboxChange($event, rowData, rowNode, field) {
         rowData[field] = !rowData[field];
-        let selectedNodes = this.selectedNodes;
         if (!rowData[field]) {
-            let nodeToBeReomoved;
-            this.selectedNodes && this.selectedNodes.map((selectedNode, index) => {
-                if (selectedNode.data.name == rowNode.node.data.name) {
-                    selectedNodes.splice(index, 1);
-                    nodeToBeReomoved = rowNode.node;
-                }
-            });
-            rowNode.parent ? this.getParentDetails(rowNode, selectedNodes) : (this.selectedNodes = [...selectedNodes]);
+            this.childParentNodeRelation(this.treeNode);
         } else {
-            let nodeData = rowNode.node?.data;
-            let allNodeChildren = [];
-            rowNode.node?.children?.length ? allNodeChildren = this.getAllNodeChildren(rowNode.node?.children, allNodeChildren) : null;
-            if (this.checkNodeSelected(nodeData)) {
-                let childNodeSelected: boolean = true;
-                for (let i = 0; i < allNodeChildren.length; i++) {
-                    let userselected;
-                    for (let user = 0; user < this.selectedNodes.length; user++) {
-                        if (this.selectedNodes[user].data?.id == allNodeChildren[i].id) {
-                            userselected = true;
-                        }
-                    }
-                    if (!userselected) {
-                        childNodeSelected = false;
-                        break;
-                    }
+            this.childParentNodeRelation(this.treeNode);
+        }
+    }
+
+    /**
+    * parent child relation ship
+    * @memberof RolePermissionComponent
+    */
+    childParentNodeRelation(treeNode) {
+        const treeNodesData = [];
+        treeNode?.map((node) => {
+            let isChecked: boolean; 
+
+            if(node.children?.length) {
+                isChecked = this.childParentNodeRelation(node.children);
+                if(isChecked && this.isNodeChecked(node.data)) {
+                    node.data['nodeChecked'] = true;
+                    treeNodesData.push(node.children);
+                }  else {
+                    node.data['nodeChecked'] = false;
                 }
-                childNodeSelected ? this.selectedNodes = [... this.selectedNodes, rowNode.node] : null;
-                childNodeSelected && rowNode.parent ? this.checkParentNodeSelected(rowNode.parent) : null;
+            } else if(this.isNodeChecked(node.data)){
+                node.data['nodeChecked'] = true;
+                treeNodesData.push(node);
+            } else {
+                node.data['nodeChecked'] = false;
             }
-
-        }
-    }
-
-    /**
-    * get all node children 
-    * @memberof RolePermissionComponent
-    */
-    getAllNodeChildren(nodeChildren, nodeChildrenArray) {
-        nodeChildren?.map((childrenTreeNode) => {
-            nodeChildrenArray.push({ name: childrenTreeNode.data.name, id: childrenTreeNode.data.id });
-            childrenTreeNode.children?.length ? this.getAllNodeChildren(childrenTreeNode.children, nodeChildrenArray) : null;
+            
         })
-        return nodeChildrenArray;
+        if (treeNode?.length === treeNodesData.length) {
+            return true
+        } else {
+            return false
+        }
     }
 
     /**
-    * check parent node selected
+    * check if node is selected
     * @memberof RolePermissionComponent
     */
-    checkParentNodeSelected(parentNode) {
-        let parentSelectedNode = [];
-        parentNode?.children?.map((node) => {
-            this.selectedNodes?.map((selectedNode) => {
-                if (node.data.name === selectedNode.data.name) {
-                    parentSelectedNode.push(node);
-                }
-            })
-        });
-
-        if (parentSelectedNode.length === parentNode?.children.length && this.checkNodeSelected(parentNode.data)) {
-            this.selectedNodes = [... this.selectedNodes, parentNode];
-            parentNode.parent ? this.checkParentNodeSelected(parentNode.parent) : null;
-        }
+    isNodeChecked(nodeDetails) {
+        let isChecked:boolean;
+        (!nodeDetails.isAddVisible || nodeDetails?.add) && (!nodeDetails.isEditVisible || nodeDetails?.edit) && (!nodeDetails.isDeleteVisible || nodeDetails?.delete) && (!nodeDetails.isViewVisible || nodeDetails?.view) ? isChecked = true : isChecked = false;
+        return isChecked
     }
 
     /**
@@ -288,20 +287,6 @@ export class RolePermissionComponent implements OnInit {
     */
     checkNodeSelected(nodeData) {
         return (!nodeData.isAddVisible || nodeData?.add) && (!nodeData.isEditVisible || nodeData?.edit) && (!nodeData.isDeleteVisible || nodeData?.delete) && (!nodeData.isViewVisible || nodeData?.view);
-    }
-
-    /**
-    * get parent details from current node
-    * @memberof RolePermissionComponent
-    */
-    getParentDetails(rowNodes, selectedNodes) {
-        const rowNode = rowNodes.parent;
-        this.selectedNodes && this.selectedNodes.map((selectedNode, index) => {
-            if (selectedNode.data.name == rowNode.data?.name) {
-                selectedNodes.splice(index, 1);
-            }
-        })
-        rowNode.parent ? this.getParentDetails(rowNode, selectedNodes) : this.selectedNodes = [...selectedNodes];
     }
 
     /**
@@ -332,6 +317,7 @@ export class RolePermissionComponent implements OnInit {
     */
     async saveRoleDetails() {
         if (this.roleDetailsForm.valid) {
+            const translationKeys = await this.translateService.get(['USER_PERMISSION_SELECT_USER_ERROR', 'USER_PERMISSION_SELECT_USER','USER_PERMISSION_CREATE_SUCCESS', 'USER_PERMISSION_CREATED_SUCCESSFULLY', 'USER_PERMISSION_CREATE_ERROR', 'USER_PERMISSION_ALREADY_EXIST']).toPromise();
             const selectedUser = this.selectedUser?.map((user) => {
                 return user.id
             })
@@ -349,7 +335,7 @@ export class RolePermissionComponent implements OnInit {
                 userId: selectedUser ? selectedUser : []
             }
             this.ngxSpinnerService.show();
-            const translationKeys = await this.translateService.get(['USER_PERMISSION_CREATE_SUCCESS', 'USER_PERMISSION_CREATED_SUCCESSFULLY', 'USER_PERMISSION_CREATE_ERROR', 'USER_PERMISSION_ALREADY_EXIST']).toPromise();
+           
             const savePermissionRes: ISavePermissionResponse = await this.userRolePermissionApiService.rolePermission(userPermission).toPromise();
             try {
                 this.ngxSpinnerService.hide();
@@ -386,221 +372,6 @@ export class RolePermissionComponent implements OnInit {
             node.children?.map((children) => {
                 this.setTreeNode(children, children.data, treeNodeScreen)
             })
-        }
-    }
-
-    /**
-    * get dummy details
-    * @memberof RolePermissionComponent
-    */
-    getDetails() {
-        return {
-            "responseStatus": {
-                "status": "200"
-            },
-            "screens": [
-                {
-                    "id": 3,
-                    "name": "Loading",
-                    "languageKey": null,
-                    "add": true,
-                    "edit": true,
-                    "delete": true,
-                    "view": true,
-                    "moduleId": 3,
-                    "childs": [
-                        {
-                            "id": 4,
-                            "name": "Discharging",
-                            "languageKey": null,
-                            "add": true,
-                            "edit": true,
-                            "delete": true,
-                            "view": true,
-                            "moduleId": 3,
-                            "childs": [
-                                {
-                                    "id": 6,
-                                    "name": "Voyage",
-                                    "languageKey": null,
-                                    "add": true,
-                                    "edit": true,
-                                    "delete": true,
-                                    "view": true,
-                                    "moduleId": 4,
-                                    "childs": [],
-                                    "roleScreen": {
-                                        "id": null,
-                                        "role": null,
-                                        "screen": null,
-                                        "canAdd": null,
-                                        "canEdit": null,
-                                        "canView": null,
-                                        "canDelete": null,
-                                        "canPrint": null,
-                                        "companyId": null
-                                    }
-                                }
-                            ],
-                            "roleScreen": {
-                                "id": null,
-                                "role": null,
-                                "screen": null,
-                                "canAdd": null,
-                                "canEdit": null,
-                                "canView": null,
-                                "canDelete": null,
-                                "canPrint": null,
-                                "companyId": null
-                            }
-                        },
-                        {
-                            "id": 5,
-                            "name": "Bunkering",
-                            "languageKey": null,
-                            "add": true,
-                            "edit": true,
-                            "delete": true,
-                            "view": true,
-                            "moduleId": 3,
-                            "childs": [],
-                            "roleScreen": {
-                                "id": null,
-                                "role": null,
-                                "screen": null,
-                                "canAdd": null,
-                                "canEdit": null,
-                                "canView": null,
-                                "canDelete": null,
-                                "canPrint": null,
-                                "companyId": null
-                            }
-                        }
-                    ],
-                    "roleScreen": {
-                        "id": null,
-                        "role": null,
-                        "screen": null,
-                        "canAdd": null,
-                        "canEdit": null,
-                        "canView": null,
-                        "canDelete": null,
-                        "canPrint": null,
-                        "companyId": null
-                    }
-                },
-                {
-                    "id": 2,
-                    "name": "Status",
-                    "languageKey": "STATUS",
-                    "add": true,
-                    "edit": true,
-                    "delete": true,
-                    "view": false,
-                    "moduleId": 2,
-                    "childs": [
-                        {
-                            "id": 10,
-                            "name": "On hand quantities",
-                            "languageKey": "CARGOPLANNING_ONHANDQUANTITITES",
-                            "add": true,
-                            "edit": true,
-                            "delete": true,
-                            "view": true,
-                            "moduleId": 2,
-                            "childs": [],
-                            "roleScreen": {
-                                "id": null,
-                                "role": null,
-                                "screen": null,
-                                "canAdd": null,
-                                "canEdit": null,
-                                "canView": null,
-                                "canDelete": null,
-                                "canPrint": null,
-                                "companyId": null
-                            }
-                        },
-                        {
-                            "id": 11,
-                            "name": "Cargo Nomination",
-                            "languageKey": "CARGOPLANNING_CARGONOMINATION",
-                            "add": true,
-                            "edit": true,
-                            "delete": true,
-                            "view": true,
-                            "moduleId": 2,
-                            "childs": [],
-                            "roleScreen": {
-                                "id": null,
-                                "role": null,
-                                "screen": null,
-                                "canAdd": null,
-                                "canEdit": null,
-                                "canView": null,
-                                "canDelete": null,
-                                "canPrint": null,
-                                "companyId": null
-                            }
-                        },
-                        {
-                            "id": 12,
-                            "name": "Ports",
-                            "languageKey": "CARGOPLANNING_PORTS",
-                            "add": true,
-                            "edit": true,
-                            "delete": true,
-                            "view": true,
-                            "moduleId": 2,
-                            "childs": [],
-                            "roleScreen": {
-                                "id": null,
-                                "role": null,
-                                "screen": null,
-                                "canAdd": null,
-                                "canEdit": null,
-                                "canView": null,
-                                "canDelete": null,
-                                "canPrint": null,
-                                "companyId": null
-                            }
-                        }
-                    ],
-                    "roleScreen": {
-                        "id": null,
-                        "role": null,
-                        "screen": null,
-                        "canAdd": true,
-                        "canEdit": true,
-                        "canView": true,
-                        "canDelete": true,
-                        "canPrint": null,
-                        "companyId": null
-                    }
-                },
-                {
-                    "id": 1,
-                    "name": "Cargo Planning",
-                    "languageKey": "CARGOPLANNING",
-                    "add": false,
-                    "edit": true,
-                    "delete": true,
-                    "view": true,
-                    "moduleId": 1,
-                    "childs": [],
-                    "roleScreen": {
-                        "id": null,
-                        "role": null,
-                        "screen": null,
-                        "canAdd": true,
-                        "canEdit": true,
-                        "canView": true,
-                        "canDelete": true,
-                        "canPrint": null,
-                        "companyId": null
-                    }
-                }
-            ]
         }
     }
 

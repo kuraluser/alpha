@@ -8,11 +8,14 @@ import { MessageService } from 'primeng/api';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { IRoleDetail, IRoleResponse, IRoleDeleteResponse } from '../../models/user-role-permission.model';
-import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
+import { IDataTableColumn , DATATABLE_ACTION } from '../../../../shared/components/datatable/datatable.model';
 
 import { UserRolePermissionApiService } from '../../services/user-role-permission-api.service';
 import { UserRolePermissionTransformationService } from '../../services/user-role-permission-transformation.service';
 import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
+import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
+import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
 
 /**
  * Component class of user allocation
@@ -33,6 +36,7 @@ export class UserRoleListingComponent implements OnInit {
   public editMode: false;
   userRoleForm: FormGroup;
   public addUserRole: boolean;
+  public addRoleBtnPermissionContext: IPermissionContext;
 
   // public method
   constructor(
@@ -44,6 +48,7 @@ export class UserRoleListingComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService,
     private userRolePermissionApiService: UserRolePermissionApiService,
     private confirmationAlertService: ConfirmationAlertService,
+    private permissionsService: PermissionsService,
     private userRolePermissionTransformationService: UserRolePermissionTransformationService
   ) { }
 
@@ -54,8 +59,25 @@ export class UserRoleListingComponent implements OnInit {
  * @memberof UserRoleListingComponent
  */
   ngOnInit(): void {
-    this.getUserDetails();
     this.columns = this.userRolePermissionTransformationService.getRoleListDatatableColumns();
+    this.getPagePermission();
+    this.getUserDetails();
+    this.addRoleBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['UserRoleListing'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+  }
+
+  /**
+   * Get page permission
+   *
+   * @memberof UserRoleListingComponent
+   */
+  getPagePermission() {
+    const permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['UserRoleListing']);
+    if(permission.delete) {
+      this.columns[this.columns.length -1]['actions'].push(DATATABLE_ACTION.DELETE);
+    }
+    if(permission.edit) {
+      this.columns[this.columns.length -1]['actions'].push(DATATABLE_ACTION.EDIT);
+    }
   }
 
   /**

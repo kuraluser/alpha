@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Router } from '@angular/router';
 import { SynopticalService } from './services/synoptical.service';
+import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
+import { PermissionsService } from '../../shared/services/permissions/permissions.service';
 
 /**
  * Component class of synoptical
@@ -21,7 +23,8 @@ export class SynopticalComponent implements OnInit {
   constructor(
     private ngxSpinnerService: NgxSpinnerService,
     public synopticalService: SynopticalService,
-    private router: Router
+    private router: Router,
+    private permissionsService: PermissionsService
   ) { }
 
   /**
@@ -31,9 +34,19 @@ export class SynopticalComponent implements OnInit {
    * @memberof SynopticalComponent
    */
   async ngOnInit(): Promise<void> {
+    this.getPagePermission();
     this.ngxSpinnerService.show();
     await this.synopticalService.init();
     this.ngxSpinnerService.hide();
+  }
+
+    /**
+   * Get page permission
+   *
+   * @memberof SynopticalComponent
+   */
+  getPagePermission() {
+    this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['SynopticalComponent']);
   }
 
   /**

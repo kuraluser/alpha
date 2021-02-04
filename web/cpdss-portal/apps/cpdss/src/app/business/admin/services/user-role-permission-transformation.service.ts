@@ -53,7 +53,7 @@ export class UserRolePermissionTransformationService {
         field: 'actions',
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.DELETE, DATATABLE_ACTION.EDIT]
+        actions: []
       }
     ]
   }

@@ -5,7 +5,8 @@ import { Observable } from 'rxjs';
 import { AppConfigurationService } from '../../services/app-configuration/app-configuration.service';
 import { SecurityService } from '../../services/security/security.service';
 import { ThemeService } from '../../services/theme-service/theme.service';
-import { IMenuItem } from './navbar.component.model';
+import { IMenuItem , IPermission } from './navbar.component.model';
+import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 
 @Component({
   selector: 'cpdss-portal-navbar',
@@ -15,46 +16,57 @@ import { IMenuItem } from './navbar.component.model';
 export class NavbarComponent implements OnInit {
   isToggle = true;
   darkMode$: Observable<boolean>;
-  menuList: IMenuItem[];
-  isSubMenu: boolean[] = [];
+  menuList: IMenuItem[] = [];
   showUserIconDropdown = false;
   companyLogo = '';
+  userPermission: any;
 
   constructor(private themeService: ThemeService, private keycloakService: KeycloakService,
-    private router: Router) { }
+    private router: Router,
+    private permissionsService: PermissionsService) { }
 
   ngOnInit(): void {
 
     this.companyLogo = localStorage.getItem('companyLogo');
+    
+    
     /**
      * Array for showing nav
      */
-    this.menuList = [
+    const menuList = [
       {
         'menu': 'STATUS',
         'menuIcon': 'status',
         'menuLink': 'voyage-status',
-        'subMenu': []
+        'subMenu': [],
+        'isSubMenuOpen': false,
+        'permissionMapping': AppConfigurationService.settings.permissionMapping['VoyageStatusComponent']
       },
       {
         'menu': 'CARGO_PLANNING',
         'menuIcon': 'cargo-planning',
         'menuLink': 'cargo-planning',
-        'subMenu': []
+        'subMenu': [],
+        'isSubMenuOpen': false,
+        'permissionMapping': AppConfigurationService.settings.permissionMapping['CargoPlanningComponent']
       },
       {
         'menu': 'SYNOPTICAL',
         'menuIcon': 'synoptical-table',
         'menuLink': 'synoptical',
-        'subMenu': []
+        'subMenu': [],
+        'isSubMenuOpen': false,
+        'permissionMapping': AppConfigurationService.settings.permissionMapping['SynopticalComponent']
       },
       {
         'menu': 'ADMIN',
         'menuIcon': 'admin',
         'menuLink': 'admin',
+        'isSubMenuOpen': false,
+        'permissionMapping': AppConfigurationService.settings.permissionMapping['AdminComponent'],
         'subMenu': [
-          { 'name': 'User Role Permission' , 'subMenuLink': '/business/admin/user-role-permission'}
-        ]
+          { 'name': 'User Role Permission' , 'subMenuLink': '/business/admin/user-role-permission' , 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserPermission'], 'isVisible': false}
+        ],
       },
       /* {
         'menu': 'OPERATIONS',
@@ -94,15 +106,57 @@ export class NavbarComponent implements OnInit {
       } */
 
     ];
+    let isUserPermissionAvailable = setInterval(() => {
+      if(JSON.parse(window.localStorage.getItem('_USER_PERMISSIONS'))) {
+        this.userPermission = JSON.parse(window.localStorage.getItem('_USER_PERMISSIONS'));
+        this.getPagePermission(menuList);
+        clearInterval(isUserPermissionAvailable);
+      }
+    },50);
+  }
+
+    /**
+   * Get page permission
+   *
+   * @memberof NavbarComponent
+   */
+  getPagePermission(menuList) {
+    const list = [...menuList];
+    list?.map((menuItem , index) => {
+      const permission = this.getPermission(menuItem.permissionMapping);
+      if((permission && permission?.view)) {
+        this.menuList.push(menuItem)
+      }
+      if(menuItem.subMenu.length) {
+        menuItem.subMenu?.map((subMenu, subMenuIndex) => { 
+          const subMenuPermission = this.getPermission(subMenu.permissionMapping);
+          if(subMenuPermission && subMenuPermission?.view) {
+            this.menuList[index]['subMenu'][subMenuIndex] = subMenu;
+          }
+        })
+      }
+    });
+  }
+
+    /**
+   * Method for fetching permission
+   *
+   * @param {string} languageKey
+   * @returns {IPermission}
+   * @memberof PermissionsService
+   */
+  getPermission(languageKey: string): IPermission {
+    const permission = this.userPermission?.find(item => item.languageKey === languageKey)?.permission;
+    return permission;
   }
 
   /**
    * Display submenu when clicked
    */
   showSubmenu(list, index) {
-    this.isSubMenu = [];
+    this.menuList?.map((list: IMenuItem) => list.isSubMenuOpen = false);
     if (list.length > 0) {
-      this.isSubMenu[index] = true;
+      this.menuList[index].isSubMenuOpen = true;
     }
   }
 
@@ -110,10 +164,7 @@ export class NavbarComponent implements OnInit {
    * Hide submenu on focus out
    */
   hide(list, index) {
-    this.isSubMenu = [];
-    if (list.length > 0) {
-      this.isSubMenu[index] = false;
-    }
+    this.menuList?.map((list: IMenuItem) => list.isSubMenuOpen = false);
   }
   /**
    * Change theme on button click

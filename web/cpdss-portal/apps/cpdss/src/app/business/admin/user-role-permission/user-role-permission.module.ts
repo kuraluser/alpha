@@ -16,6 +16,7 @@ import { RolePermissionComponent } from './user-role-permission/role-permission/
 import { UserAllocateComponent } from './user-role-permission/user-allocate/user-allocate.component';
 import { UserRoleListingComponent } from './user-role-listing/user-role-listing.component';
 import { AddUserRoleComponent } from './add-user-role/add-user-role.component';
+import { PermissionDirectiveModule } from '../../../shared/directives/permission/permission-directive.module';
 
 /**
  * Module class User Role Permission Module
@@ -34,6 +35,7 @@ import { AddUserRoleComponent } from './add-user-role/add-user-role.component';
     DialogModule,
     ValidationErrorModule,
     TableModule,
+    PermissionDirectiveModule,
     UserRolePermissionRoutingModule,
   ]
 })

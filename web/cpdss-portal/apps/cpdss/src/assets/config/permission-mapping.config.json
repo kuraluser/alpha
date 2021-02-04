@@ -5,5 +5,9 @@
     "PortsComponent" : "CARGOPLANNING_PORTS",
     "OnHandQuantityComponent" : "CARGOPLANNING_ONHANDQUANTITITES",
     "LoadableQuantityComponent" : "LOADABLE_QUANTITY",
-    "LoadablePatternHistoryComponent": "LOADABLE_PATTERN"
+    "LoadablePatternHistoryComponent": "LOADABLE_PATTERN",
+    "SynopticalComponent": "SYNOPTICAL",
+    "AdminComponent": "ADMIN",
+    "UserPermission": "USER_PERMISSION",
+    "UserRoleListing": "USER_ROLE_LISTING"
 }
