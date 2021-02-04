@@ -299,6 +299,8 @@ export class CommingleComponent implements OnInit {
    */
   private async initCommingleManualArray(commingleData: ICargoGroup[]) {
     this.ngxSpinnerService.show();
+    this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo1;
+    this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2;
     const _commingleLists = commingleData?.map((item) => {
       const manualData = this.loadableStudyDetailsTransformationService.getCommingleValueObject(item, false, this.isEditable, this.listData);
       return manualData;
