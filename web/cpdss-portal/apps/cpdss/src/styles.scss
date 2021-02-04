@@ -1158,6 +1158,9 @@ input[type=number] {
     &:checked ~ .checkmark:after {
       display: block;
     }
+    &:disabled ~ .checkmark{
+      opacity: 0.4;
+    }
   }
 }
 
@@ -1603,9 +1606,9 @@ th{
   max-width: 25px;
 }
 .commingle-cargo1.p-editable-column, .commingle-cargo2.p-editable-column{
-  width: 140px;
-  min-width: 140px;
-  max-width: 140px;
+  width: 130px;
+  min-width: 130px;
+  max-width: 130px;
 }
 
 th .p-calendar .p-inputtext{
