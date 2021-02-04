@@ -209,6 +209,7 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'loadingPorts',
         header: 'LOADINGPORT',
+        editable: false,
         fieldType: DATATABLE_FIELD_TYPE.ARRAY,
         filter: true,
         filterPlaceholder: 'SEARCH_PORT',

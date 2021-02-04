@@ -234,7 +234,9 @@
                                         </cpdss-portal-validation-error>
                                     </ng-container>
                                     <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
-                                        <a>{{rowData[col.arrayLabelField]}}</a>
+                                        <a (click)="onCellValueClick($event, rowData, rowIndex, col)"
+                                            id="{{col.field+'_'+rowIndex}}">{{rowData[col.arrayLabelField] ?
+                                            rowData[col.arrayLabelField]: col.fieldPlaceholder| translate}}</a>
                                     </ng-container>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.DATERANGE">
