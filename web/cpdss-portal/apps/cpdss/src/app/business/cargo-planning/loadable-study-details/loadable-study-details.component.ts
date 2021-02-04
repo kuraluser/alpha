@@ -41,7 +41,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   }
   set selectedLoadableStudy(selectedLoadableStudy: LoadableStudy) {
     this._selectedLoadableStudy = selectedLoadableStudy;
-    this.loadableStudyId = selectedLoadableStudy ? selectedLoadableStudy?.id : this.loadableStudies.length && this.loadableStudies[0]?.id;
+    this.loadableStudyId = selectedLoadableStudy ? selectedLoadableStudy?.id : this.loadableStudies?.length ? this.loadableStudies[0]?.id : 0;
     this.getLoadableStudyDetails(this.vesselId, this.voyageId, selectedLoadableStudy?.id);
   }
 
@@ -112,6 +112,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.voyageId = Number(params.get('voyageId'));
         this.loadableStudyId = Number(params.get('loadableStudyId'));
         this.loadableStudies = null;
+        this.loadableQuantityNew = '0';
+        this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(0);
+        this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
+        this.selectedLoadableStudy = null;
         this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
       });
     this.errorMesages = this.loadableStudyDetailsTransformationService.setValidationErrorMessage();
@@ -349,6 +353,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(0);
         this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
         this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
+        this.selectedLoadableStudy = null;
         this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/0`]);
       }
     }
