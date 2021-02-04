@@ -10,6 +10,10 @@ import com.cpdss.gateway.domain.CommingleCargoResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationRequest;
 import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.VoyageStatusRequest;
+import com.cpdss.gateway.domain.VoyageStatusResponse;
+import com.cpdss.gateway.repository.UsersRepository;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,6 +22,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -41,6 +46,8 @@ class LoadableStudyServiceIntegrationTest {
   private static final String SUCCESS = "SUCCESS";
 
   @Autowired private LoadableStudyService loadableStudyService;
+  
+  @MockBean private UsersRepository usersRepository;
 
   @Test
   void testGetCommingleCargo() throws GenericServiceException {
@@ -97,5 +104,19 @@ class LoadableStudyServiceIntegrationTest {
     portRotationList.add(request);
     portRotationRequest.setPortList(portRotationList);
     return portRotationRequest;
+  }
+  
+  @Test
+  void testGetVoyageStatus() throws GenericServiceException {
+    VoyageStatusResponse response =
+        loadableStudyService.getVoyageStatus(createVoyageStatusRequest(), Long.valueOf(1), Long.valueOf(839), Long.valueOf(1453), Long.valueOf(4), "");
+    assertThat(response.getResponseStatus().getStatus()).isEqualTo(HTTP_STATUS_200);
+  }
+  
+  private VoyageStatusRequest createVoyageStatusRequest() {
+	  VoyageStatusRequest voyageStatusRequest = new VoyageStatusRequest();
+	  voyageStatusRequest.setPortOrder(Long.valueOf(4));
+	  voyageStatusRequest.setOperationType("ARR");
+	  return voyageStatusRequest;
   }
 }

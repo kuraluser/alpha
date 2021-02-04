@@ -793,6 +793,7 @@ message SynopticalTableReply{
 	repeated TankList ballastFrontTanks = 4;
 	repeated TankList ballastCenterTanks = 5;
 	repeated TankList ballastRearTanks = 6;	
+	repeated TankList cargoTanks = 7;
 }
 
 message SynopticalTableLoadicatorData{
@@ -810,6 +811,7 @@ message SynopticalTableLoadicatorData{
 	string calculatedTrimPlanned = 12;
 	string calculatedTrimActual = 13;
 	string blindSector = 14;
+	string list = 15;
 }
 
 message LoadableStudyAttachmentRequest{

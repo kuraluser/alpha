@@ -4789,9 +4789,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(ballast.getActualQuantity())
               .ifPresent(item -> ballastBuilder.setActualWeight(valueOf(item)));
           Optional.ofNullable(ballast.getCorrectedUllage())
-          .ifPresent(ullage -> ballastBuilder.setCorrectedUllage(ullage));
-          Optional.ofNullable(ballast.getSg())
-          .ifPresent(sg -> ballastBuilder.setSpGravity(sg));
+              .ifPresent(ullage -> ballastBuilder.setCorrectedUllage(ullage));
+          Optional.ofNullable(ballast.getSg()).ifPresent(sg -> ballastBuilder.setSpGravity(sg));
         } else {
           log.info(
               "Ballast details not available for the tank: {}, pattern: {}",
@@ -4810,12 +4809,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param builder
    */
   private void setSynopticalTableLoadicatorData(
-	  SynopticalTable synopticalEntity,
+      SynopticalTable synopticalEntity,
       Long loadablePatternId,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder builder) {
     SynopticalTableLoadicatorData loadicatorData =
-        this.synopticalTableLoadicatorDataRepository.findBySynopticalTableAndLoadablePatternIdAndIsActive(synopticalEntity,
-            loadablePatternId, true);
+        this.synopticalTableLoadicatorDataRepository
+            .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                synopticalEntity, loadablePatternId, true);
     if (null != loadicatorData) {
       com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.Builder dataBuilder =
           com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.newBuilder();
@@ -4840,6 +4840,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional.ofNullable(loadicatorData.getCalculatedTrimPlanned())
           .ifPresent(item -> dataBuilder.setCalculatedTrimPlanned(valueOf(item)));
       this.setFinalDraftValues(dataBuilder, loadicatorData);
+      Optional.ofNullable(loadicatorData.getList())
+          .ifPresent(list -> dataBuilder.setList(valueOf(list)));
       builder.setLoadicatorData(dataBuilder.build());
       Optional.ofNullable(loadicatorData.getBallastActual())
           .ifPresent(item -> builder.setBallastActual(valueOf(item)));
@@ -4949,8 +4951,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       if (ohqOpt.isPresent()) {
         OnHandQuantity ohq = ohqOpt.get();
         if (null != ohq.getDensity()) {
-            ohqBuilder.setDensity(valueOf(ohq.getDensity()));
-          }
+          ohqBuilder.setDensity(valueOf(ohq.getDensity()));
+        }
         if (synopticalEntity.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL)) {
           if (null != ohq.getArrivalQuantity()) {
             ohqBuilder.setPlannedWeight(valueOf(ohq.getArrivalQuantity()));
@@ -5046,7 +5048,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(tankDataOpt.get().getCorrectedUllage())
               .ifPresent(ullage -> cargoBuilder.setCorrectedUllage(valueOf(ullage)));
           Optional.ofNullable(tankDataOpt.get().getDensity())
-          .ifPresent(density -> cargoBuilder.setDensity(valueOf(density)));
+              .ifPresent(density -> cargoBuilder.setDensity(valueOf(density)));
         }
       }
       builder.addCargo(cargoBuilder.build());
@@ -5073,7 +5075,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         cargoBuilder.setPlannedWeight(valueOf(obqEntity.getPlannedArrivalWeight()));
       }
       if (null != obqEntity.getDensity()) {
-    	  cargoBuilder.setDensity(valueOf(obqEntity.getDensity()));
+        cargoBuilder.setDensity(valueOf(obqEntity.getDensity()));
       }
     } else {
       // data has to be populated from previous voyage - cargo history table
@@ -5718,15 +5720,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             ballastTankList.stream()
                 .filter(tank -> BALLAST_CENTER_TANK.equals(tank.getTankPositionCategory()))
                 .collect(Collectors.toList()));
-
         rearBallastTanks.addAll(
             ballastTankList.stream()
                 .filter(tank -> BALLAST_REAR_TANK.equals(tank.getTankPositionCategory()))
                 .collect(Collectors.toList()));
-
         replyBuilder.addAllBallastFrontTanks(this.groupTanks(frontBallastTanks));
         replyBuilder.addAllBallastCenterTanks(this.groupTanks(centerBallastTanks));
         replyBuilder.addAllBallastRearTanks(this.groupTanks(rearBallastTanks));
+        // build cargo layout tanks not available in synoptical
+        replyBuilder.addAllCargoTanks(
+            this.groupTanks(
+                sortedTankList.stream()
+                    .filter(
+                        tankList -> CARGO_TANK_CATEGORIES.contains(tankList.getTankCategoryId()))
+                    .collect(Collectors.toList())));
       }
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (GenericServiceException e) {

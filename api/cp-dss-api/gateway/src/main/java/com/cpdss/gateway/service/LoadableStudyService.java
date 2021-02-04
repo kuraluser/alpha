@@ -116,6 +116,7 @@ import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Purpose;
 import com.cpdss.gateway.domain.SaveCommentResponse;
+import com.cpdss.gateway.domain.StabilityConditions;
 import com.cpdss.gateway.domain.SynopticalCargoBallastRecord;
 import com.cpdss.gateway.domain.SynopticalOhqRecord;
 import com.cpdss.gateway.domain.SynopticalRecord;
@@ -2455,6 +2456,8 @@ public class LoadableStudyService {
 
     synopticalRecord.setBlindSector(
         isEmpty(proto.getBlindSector()) ? BigDecimal.ZERO : new BigDecimal(proto.getBlindSector()));
+    synopticalRecord.setList(
+        isEmpty(proto.getList()) ? BigDecimal.ZERO : new BigDecimal(proto.getList()));
   }
 
   /**
@@ -2590,9 +2593,7 @@ public class LoadableStudyService {
               ? BigDecimal.ZERO
               : new BigDecimal(protoRec.getPlannedWeight()));
       rec.setDensity(
-              isEmpty(protoRec.getDensity())
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(protoRec.getDensity()));
+          isEmpty(protoRec.getDensity()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getDensity()));
       if (FUEL_OIL_TANK_CATEGORY_ID.equals(protoRec.getFuelTypeId())) {
         foList.add(rec);
       } else if (DIESEL_OIL_TANK_CATEGORY_ID.equals(protoRec.getFuelTypeId())) {
@@ -2668,9 +2669,7 @@ public class LoadableStudyService {
               ? BigDecimal.ZERO
               : new BigDecimal(protoRec.getCorrectedUllage()));
       rec.setApi(
-              isEmpty(protoRec.getDensity())
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(protoRec.getDensity()));
+          isEmpty(protoRec.getDensity()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getDensity()));
       rec.setCapacity(
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
       list.add(rec);
@@ -3677,23 +3676,6 @@ public class LoadableStudyService {
     CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
     commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
     voyageStatusResponse.setResponseStatus(commonSuccessResponse);
-    // Retrieve on board cargo for the loadable study and port
-    OnBoardQuantityRequest request =
-        OnBoardQuantityRequest.newBuilder()
-            .setVoyageId(voyageId)
-            .setLoadableStudyId(loadableStudyId)
-            .setVesselId(vesselId)
-            .setPortId(portId)
-            .build();
-    OnBoardQuantityReply onBoardQtyReply = this.getOnBoardQuantites(request);
-    if (!SUCCESS.equals(onBoardQtyReply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "Error calling getVoyageStatus - getOnBoardQuantites grpc service",
-          onBoardQtyReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(onBoardQtyReply.getResponseStatus().getCode())));
-    }
-    OnBoardQuantityResponse cargoResponse =
-        buildOnBoardQuantityResponse(onBoardQtyReply, correlationId);
     // Retrieve bunker data for the loadable study and port
     OnHandQuantityRequest ohqRequest =
         OnHandQuantityRequest.newBuilder()
@@ -3732,7 +3714,6 @@ public class LoadableStudyService {
         voyageStatusResponse,
         voyageStatusRequest,
         portId,
-        cargoResponse,
         bunkerResponse,
         synopticalTableResponse,
         synopticalTableReply);
@@ -3743,12 +3724,12 @@ public class LoadableStudyService {
       VoyageStatusResponse voyageStatusResponse,
       VoyageStatusRequest request,
       Long portId,
-      OnBoardQuantityResponse cargoResponse,
       OnHandQuantityResponse bunkerResponse,
       SynopticalTableResponse synopticalTableResponse,
       SynopticalTableReply synopticalTableReply) {
     String operationType = request.getOperationType();
-    voyageStatusResponse.setCargoTanks(cargoResponse.getTanks());
+    voyageStatusResponse.setCargoTanks(
+        createGroupWiseTankList(synopticalTableReply.getCargoTanksList()));
     // group ohq, vessel and port details for Bunker conditions and Cargo conditions
     if (synopticalTableResponse != null
         && !CollectionUtils.isEmpty(synopticalTableResponse.getSynopticalRecords())) {
@@ -3817,6 +3798,22 @@ public class LoadableStudyService {
           // build ballast quantities
           voyageStatusResponse.setBallastQuantities(synopticalRecord.get().getBallast());
         }
+        // build loadicator conditions
+        StabilityConditions stabilityConditions = new StabilityConditions();
+        stabilityConditions.setList(synopticalRecord.get().getList());
+        stabilityConditions.setHogSag(synopticalRecord.get().getHogSag());
+        stabilityConditions.setCalculatedTrimActual(
+            synopticalRecord.get().getCalculatedTrimActual());
+        stabilityConditions.setCalculatedDraftAftActual(
+            synopticalRecord.get().getCalculatedDraftAftActual());
+        stabilityConditions.setCalculatedDraftMidActual(
+            synopticalRecord.get().getCalculatedDraftMidActual());
+        stabilityConditions.setCalculatedDraftFwdActual(
+            synopticalRecord.get().getCalculatedDraftFwdActual());
+        stabilityConditions.setFinalDraftAft(synopticalRecord.get().getFinalDraftAft());
+        stabilityConditions.setFinalDraftMid(synopticalRecord.get().getFinalDraftMid());
+        stabilityConditions.setFinalDraftFwd(synopticalRecord.get().getFinalDraftFwd());
+        voyageStatusResponse.setStabilityConditions(stabilityConditions);
       }
     }
     // build bunker quantities
