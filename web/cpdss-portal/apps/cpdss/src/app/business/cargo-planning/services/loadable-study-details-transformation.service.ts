@@ -530,7 +530,8 @@ export class LoadableStudyDetailsTransformationService {
         virtualScroll: true,
         errorMessages: {
           'required': 'PORT_FIELD_REQUIRED_ERROR',
-          'duplicate': 'PORT_FIELD_DUPLICATE_ERROR'
+          'duplicate': 'PORT_FIELD_DUPLICATE_ERROR',
+          'transitDuplicate': 'PORT_TRANSIT_DUPLICATE_ERROR'
         }
       },
       {
@@ -561,7 +562,8 @@ export class LoadableStudyDetailsTransformationService {
         fieldPlaceholder: 'SELECT_OPERATION',
         errorMessages: {
           'required': 'PORT_OPERATIONS_REQUIRED_ERROR',
-          'duplicate': 'PORT_FIELD_DUPLICATE_ERROR'
+          'duplicate': 'PORT_FIELD_DUPLICATE_ERROR',
+          'transitDuplicate': 'PORT_TRANSIT_DUPLICATE_ERROR'
         }
       },
       {

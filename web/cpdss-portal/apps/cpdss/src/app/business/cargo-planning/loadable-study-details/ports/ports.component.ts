@@ -304,6 +304,7 @@ export class PortsComponent implements OnInit {
     if (event.field === 'operation') {
       const operationId = event.data.operation.value.id;
       if ([OPERATIONS.BUNKERING, OPERATIONS.DISCHARGING, OPERATIONS.TRANSIT].includes(operationId)) {
+        this.portsLists[valueIndex].layCan.value = null
         form.controls.layCan.setValue(null);
         form.controls.layCan.disable();
         form.controls.layCan.setValidators([]);
@@ -344,12 +345,12 @@ export class PortsComponent implements OnInit {
     }
     const formArray = (<FormArray>this.portsForm.get('dataTable')).controls;
     formArray.forEach(async (row: FormGroup, rowIndex) => {
-      if ((event.field === 'port' || event.field === 'operation') && form.controls.port.valid && form.controls.operation.valid) {
-        if (row.controls.port.hasError('duplicate')) {
-          row.controls.port.updateValueAndValidity()
+      if ((event.field === 'port' || event.field === 'operation')) {
+        if (row.controls.port.hasError('duplicate') || row.controls.port.hasError('transitDuplicate')) {
+          this.updateValidityAndEditMode(rowIndex, 'port');
         }
-        if (row.controls.operation.hasError('duplicate')) {
-          row.controls.operation.updateValueAndValidity()
+        if (row.controls.operation.hasError('duplicate') || row.controls.port.hasError('transitDuplicate')) {
+          this.updateValidityAndEditMode(rowIndex, 'operation');
         }
       }
       if (row.valid && !event.data?.isAdd && row.touched) {

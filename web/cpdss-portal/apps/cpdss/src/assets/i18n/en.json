@@ -346,6 +346,7 @@
 	"COMMINGLE_CARGO_DETAILS_POPUP_HEADER": "COMMINGLED CARGO DETAILS",
 	"COMMINGLE_CARGO_DETAILS_POPUP_CANCEL_BUTTON": "Cancel",
 	"PORT_FIELD_DUPLICATE_ERROR": "Already added port with same operation",
+	"PORT_TRANSIT_DUPLICATE_ERROR": "A port with transit operation cannot be added with other operations",
 	"COMMINGLE_QTY_PLACEHOLDER": "Enter quantity",
 	"COMMINGLE_PREFERRED_TANK_REQUIRED": "Required",
 	"COMMINGLE_PREFERRED_TANK_PLACEHOLDER": "Select preferred Tank",
