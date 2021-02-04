@@ -19,7 +19,7 @@ export class IVoyageStatus {
     ballastRearTanks: IShipBallastTank[][];
     cargoConditions: ICargoConditions[];
     bunkerConditions: IBunkerConditions;
-
+    stabilityConditions: IDraftCondition;
 }
 
 /**
@@ -229,4 +229,22 @@ export interface IBallastQuantityValueObject {
     correctedUllage: ValueObject<number>;
     plannedWeight: ValueObject<number>;
     actualWeight: ValueObject<number>;
+}
+
+/**
+ * Interface for draft condition of vessel
+ *
+ * @export
+ * @interface IDraftCondition
+ */
+export interface IDraftCondition {
+    list: number;
+    hogSag: number;
+    finalDraftFwd: number;
+    finalDraftAft: number;
+    finalDraftMid: number;
+    calculatedDraftFwdActual: number;
+    calculatedDraftAftActual: number;
+    calculatedDraftMidActual: number;
+    calculatedTrimActual: number;
 }

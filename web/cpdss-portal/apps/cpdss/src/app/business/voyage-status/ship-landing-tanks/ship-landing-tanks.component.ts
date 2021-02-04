@@ -7,6 +7,7 @@ import { IVoyageStatus } from '../models/voyage-status.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 
 /**
  * Component class of ship landing screen
@@ -27,6 +28,18 @@ export class ShipLandingTanksComponent implements OnInit {
   @Input() loadableStudyId: number;
   @Input() shipLandingTanks: IVoyageStatus;
   @Input() selectedPortDetails: IVoyageDetails;
+  @Input() get currentQuantitySelectedUnit() : QUANTITY_UNIT {
+    return this._currentQuantitySelectedUnit;
+  }
+
+  set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
+    this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit;
+    this._currentQuantitySelectedUnit = value;
+    if (this.prevQuantitySelectedUnit) {
+      // this.convertQuantityToSelectedUnit();
+    }
+  }
+
   cargoTanks: IShipCargoTank[][];
   rearBallastTanks: IShipBallastTank[][];
   frontBallastTanks: IShipBallastTank[][];
@@ -43,11 +56,14 @@ export class ShipLandingTanksComponent implements OnInit {
   cargoQuantitiesGrid: ICargoQuantityValueObject[];
   ballastQuantitiesGrid: IBallastQuantityValueObject[];
   viewAll = false;
+  prevQuantitySelectedUnit: QUANTITY_UNIT;
 
   readonly tankType = TANKTYPE;
 
   cargoTankOptions: ITankOptions = { isBullet: true, ullageField: 'correctedUllage', ullageUnit: 'CM' };
   ballastTankOptions: ITankOptions = { showFillingPercentage: true };
+  
+  private _currentQuantitySelectedUnit: QUANTITY_UNIT;
 
   constructor(private voyageStatusTransformationService: VoyageStatusTransformationService, private fb: FormBuilder) { }
 

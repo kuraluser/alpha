@@ -9,6 +9,8 @@ import { VoyageApiService } from './services/voyage-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { IBunkerConditions, ICargoConditions, ICargoQuantities, IVoyageDetails, IVoyageStatus } from './models/voyage-status.model';
 import { VoyageStatusTransformationService } from './services/voyage-status-transformation.service';
+import { QUANTITY_UNIT } from '../../shared/models/common.model';
+import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
 /**
  * Component for voyage status
  */
@@ -30,6 +32,7 @@ export class VoyageStatusComponent implements OnInit {
   cargoQuantities: ICargoQuantities[];
   selectedPortDetails: IVoyageDetails;
   voyageStatusResponse: IVoyageStatus;
+  currentQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
 
   constructor(private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,
@@ -118,6 +121,16 @@ export class VoyageStatusComponent implements OnInit {
   getPortDetails(portData: IVoyageDetails) {
     this.selectedPortDetails = portData;
     this.getVoyageStatus(this.vesselInfo?.id, this.selectedVoyage?.id, this.selectedVoyage?.confirmedLoadableStudyId);
+  }
+
+  /**
+   * Handler for unit change event
+   *
+   * @param {*} event
+   * @memberof VoyageStatusComponent
+   */
+  onUnitChange(event) {
+    this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
   }
 
 }

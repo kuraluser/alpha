@@ -27,13 +27,16 @@ import { CargoDetailsComponent } from './cargo-details/cargo-details.component';
 import { QuantityPipe } from '../../shared/pipes/quantity/quantity.pipe';
 import { DatatableModule } from '../../shared/components/datatable/datatable.module';
 import {InputSwitchModule} from 'primeng/inputswitch';
+import { UnitDropdownModule } from '../../shared/components/unit-dropdown/unit-dropdown.module';
+import { QuantityPipeModule } from '../../shared/pipes/quantity/quantity-pipe.module';
+import { DraftConditionComponent } from './draft-condition/draft-condition.component';
 
 /**
  * Module for new voyage-status
  */
 
 @NgModule({
-  declarations: [VoyageStatusComponent, NewVoyagePopupComponent, EditPortRotationComponent,PortRotationRibbonComponent, ParameterListComponent, CargoDetailsComponent, ShipLandingTanksComponent],
+  declarations: [VoyageStatusComponent, NewVoyagePopupComponent, EditPortRotationComponent,PortRotationRibbonComponent, ParameterListComponent, CargoDetailsComponent, ShipLandingTanksComponent, DraftConditionComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -52,7 +55,9 @@ import {InputSwitchModule} from 'primeng/inputswitch';
     BunkeringLayoutModule,
     TableModule,
     DatatableModule,
-    InputSwitchModule
+    InputSwitchModule,
+    UnitDropdownModule,
+    QuantityPipeModule
   ],
   providers: [
     VoyageApiService,

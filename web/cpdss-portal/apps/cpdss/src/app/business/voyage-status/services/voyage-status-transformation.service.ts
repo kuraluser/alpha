@@ -243,5 +243,20 @@ export class VoyageStatusTransformationService {
     return _ballastQuantity;
   }
 
+  /**
+   * Get the draft condition table columns
+   *
+   * @returns
+   * @memberof VoyageStatusTransformationService
+   */
+  getDraftConditionColumnFields() {
+    return [
+      { field: 'header', header: '' },
+      { field: 'aft', header: 'VOYAGE_STATUS_DRAFT_CONDITION_AFT' },
+      { field: 'mid', header: 'VOYAGE_STATUS_DRAFT_CONDITION_MID' },
+      { field: 'fore', header: 'VOYAGE_STATUS_DRAFT_CONDITION_FORE' }
+    ];
+  }
+
 
 }
