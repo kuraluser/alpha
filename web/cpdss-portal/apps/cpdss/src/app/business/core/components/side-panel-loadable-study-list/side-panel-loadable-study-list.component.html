@@ -1,9 +1,11 @@
 <button class="btn btn-main btn-sm btn-new-loadable-study" (click)="openLoadableStudyPopup()"
     id="btn_new_loadable_study">{{'LOADABLE_STUDY_DETAILS_LOADABLE_NEW_BUTTON_LABEL' | translate}}</button>
-<cpdss-portal-datatable *ngIf="loadableStudies" [tableId]="'loadable_studies'" [columns]="columns" [value]="loadableStudies"
+<div #sidepaneDatatable>
+    <cpdss-portal-datatable *ngIf="loadableStudies" [tableId]="'loadable_studies'" [columns]="columns" [value]="loadableStudies"
     [selectionMode]="selectionMode" [selection]="selectedLoadableStudy" [filterable]="true" (duplicateRow)="onDuplicate($event)"
     (deleteRow)="onDelete($event)" (rowSelection)="onRowSelection($event)" (editRow)="onEdit($event)">
 </cpdss-portal-datatable>
+</div>
 
 <cpdss-portal-new-loadable-study-popup *ngIf="loadableStudies && voyage && vesselInfo && display" [display]="display"
     (displayPopup)="closeLoadableStudyPopup($event)" [loadableStudyList]="loadableStudies" [vesselInfoList]="vesselInfo"

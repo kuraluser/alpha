@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -17,7 +17,7 @@ import { first } from 'rxjs/operators';
   styleUrls: ['./side-panel-loadable-study-list.component.scss']
 })
 export class SidePanelLoadableStudyListComponent implements OnInit {
-
+  @ViewChild('sidepaneDatatable') sidepaneDatatable: ElementRef;
   @Input()
   get loadableStudies(): LoadableStudy[] {
     return this._loadableStudies;
@@ -26,8 +26,17 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
     this._loadableStudies = loadableStudies;
   }
 
+  @Input()
+  get selectedLoadableStudy(): LoadableStudy {
+    return this._selectedLoadableStudy;
+  }
+  set selectedLoadableStudy(selectedLoadableStudy: LoadableStudy) {
+    this._selectedLoadableStudy = selectedLoadableStudy;
+    const selectedLoadableStudyIndex = this.loadableStudies?.findIndex(loadableStudy => loadableStudy?.id === selectedLoadableStudy?.id);
+    this.scrollToSelectedRow(selectedLoadableStudyIndex)
+  }
+
   @Input() voyage: Voyage;
-  @Input() selectedLoadableStudy: LoadableStudy;
   @Input() vesselInfo: IVessel;
 
   @Output() selectedLoadableStudyChange = new EventEmitter<LoadableStudy>();
@@ -41,6 +50,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
 
 
   private _loadableStudies: LoadableStudy[];
+  private _selectedLoadableStudy: LoadableStudy;
 
   constructor(
     private loadableStudyListApiService: LoadableStudyListApiService,
@@ -150,5 +160,21 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
     this.selectedLoadableStudy = event?.data;
     this.isEdit = true;
     this.display = true;
+  }
+
+  /**
+   * Method to scroll to seletced row in the side pane grid
+   *
+   * @param {number} rowIndex
+   * @memberof SidePanelLoadableStudyListComponent
+   */
+  scrollToSelectedRow(rowIndex: number) {
+    const rows = this.sidepaneDatatable?.nativeElement?.querySelectorAll('table tbody tr');
+    if (rows) {
+      rows[rowIndex]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
   }
 }

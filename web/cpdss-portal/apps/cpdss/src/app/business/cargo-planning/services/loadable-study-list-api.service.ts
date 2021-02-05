@@ -49,6 +49,7 @@ export class LoadableStudyListApiService {
     formData.append('subCharterer', loadableStudy.subCharterer);
     formData.append('maxAirTemperature', loadableStudy.maxAirTempExpected ? loadableStudy.maxAirTempExpected?.toString() : "");
     formData.append('maxWaterTemperature', loadableStudy.maxWaterTempExpected ? loadableStudy.maxWaterTempExpected?.toString() : "");
+    formData.append('deletedAttachments', loadableStudy.deletedAttachments);
     for (let i = 0; i < loadableStudy.attachMail.length; i++) {
       if (loadableStudy.attachMail[i]?.size) {
         formData.append('files', loadableStudy.attachMail[i]);

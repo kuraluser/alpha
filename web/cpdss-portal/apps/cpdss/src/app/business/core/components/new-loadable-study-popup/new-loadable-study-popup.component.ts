@@ -73,6 +73,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   popUpHeader = "";
   saveButtonLabel = "";
   savedloadableDetails: any;
+  deletedAttachments: number[];
   constructor(private loadableStudyListApiService: LoadableStudyListApiService,
     private formBuilder: FormBuilder,
     private router: Router,
@@ -81,6 +82,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService) { }
 
   ngOnInit(): void {
+    this.deletedAttachments = [];
     this.popUpHeader = this.isEdit ? "NEW_LOADABLE_STUDY_POPUP_EDIT_HEADER" : "NEW_LOADABLE_STUDY_POPUP_HEADER"
     this.saveButtonLabel = this.isEdit ? "NEW_LOADABLE_STUDY_POPUP_UPDATE_BUTTON" : "NEW_LOADABLE_STUDY_POPUP_SAVE_BUTTON";
     this.getVesselInfo();
@@ -130,8 +132,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       loadLine: '',
       draftMark: '',
       draftRestriction: this.formBuilder.control('', [numberValidator(2, 2), Validators.min(0.01)]),
-      maxAirTempExpected: this.formBuilder.control('', [numberValidator(2, 2), Validators.min(-99) , Validators.max(99)]),
-      maxWaterTempExpected: this.formBuilder.control('', [numberValidator(2, 3), Validators.min(-99) , Validators.max(999)])
+      maxAirTempExpected: this.formBuilder.control('', [numberValidator(2, 2), Validators.min(-99), Validators.max(99)]),
+      maxWaterTempExpected: this.formBuilder.control('', [numberValidator(2, 3), Validators.min(-99), Validators.max(999)])
     });
   }
 
@@ -162,8 +164,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           loadLineXId: this.newLoadableStudyFormGroup.controls.loadLine.value?.id,
           draftMark: this.newLoadableStudyFormGroup.controls.draftMark.value?.id,
           draftRestriction: this.newLoadableStudyFormGroup.controls.draftRestriction.value,
-          maxAirTempExpected:  this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value !== undefined ? this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value + '': '',
-          maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value !== undefined ? this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value+ '' : ''
+          maxAirTempExpected: this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value !== undefined ? this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value + '' : '',
+          maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value !== undefined ? this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value + '' : '',
+          deletedAttachments: this.deletedAttachments.join(',')
         }
         this.ngxSpinnerService.show();
         try {
@@ -206,9 +209,15 @@ export class NewLoadableStudyPopupComponent implements OnInit {
             this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_SIZE_ERROR";
             continue;
           } else {
-            this.showError = false;
             if (uploadFile.length < 5) {
-              uploadFile.push(uploadedFileVar[i]);
+              const fileNameExist = this.uploadedFiles.some(file => file.name.toLowerCase() === uploadedFileVar[i].name.toLowerCase());
+              if (fileNameExist) {
+                this.showError = true;
+                this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_NAME_EXIST_ERROR"
+              } else {
+                this.showError = false;
+                uploadFile.push(uploadedFileVar[i]);
+              }
             } else {
               this.showError = true;
               this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_LIMIT_ERROR"
@@ -241,7 +250,10 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   }
 
   //remove selected file
-  removeFile(index) {
+  removeFile(index,  fileID = null) {
+    if (fileID) {
+      this.deletedAttachments.push(fileID);
+    }
     this.uploadedFiles.splice(index, 1);
   }
 
@@ -277,7 +289,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
         loadLineXId: loadableStudyObj.loadLineXId,
         draftRestriction: loadableStudyObj.draftRestriction ? loadableStudyObj.draftRestriction : ''
       }
-      
+
       this.newLoadableStudyFormGroup.patchValue({
         duplicateExisting: loadableStudyObj.createdFromId ? loadableStudyObj : null
       })
@@ -319,9 +331,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   */
   isLoadlineChanged() {
     const savedloadableDetails = this.savedloadableDetails;
-    if(savedloadableDetails && (this.savedloadableDetails.draftMark !== this.newLoadableStudyFormGroup.controls['draftMark'].value?.id ||
-       this.savedloadableDetails.loadLineXId !== this.newLoadableStudyFormGroup.controls['loadLine'].value?.id ||
-       (this.savedloadableDetails.draftRestriction !== this.newLoadableStudyFormGroup.controls['draftRestriction']?.value))) {
+    if (savedloadableDetails && (this.savedloadableDetails.draftMark !== this.newLoadableStudyFormGroup.controls['draftMark'].value?.id ||
+      this.savedloadableDetails.loadLineXId !== this.newLoadableStudyFormGroup.controls['loadLine'].value?.id ||
+      (this.savedloadableDetails.draftRestriction !== this.newLoadableStudyFormGroup.controls['draftRestriction']?.value))) {
       return true;
     }
   }

@@ -75,7 +75,7 @@
                             <ol class="pl-10">
                                 <li *ngFor="let file of uploadedFiles; let i = index" [pTooltip]="file?.name ? file?.name : file?.fileName">
                                     <a (click)="openFile(i, file?.id)" class="file-name">{{file?.name ? file?.name : file.fileName}}</a>
-                                    <span class="pi pi-times text-secondary font-x-small ml-5 pointer" (click)="removeFile(i)"></span>
+                                    <span class="pi pi-times text-secondary font-x-small ml-5 pointer" (click)="removeFile(i, file?.id)"></span>
                                 </li>
                             </ol>
                         </div>

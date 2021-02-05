@@ -14,6 +14,7 @@ export interface INewLoadableStudy {
     maxAirTempExpected: string;
     maxWaterTempExpected: string;
     attachMail: any[];
+    deletedAttachments: string;
 }
 
 

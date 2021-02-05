@@ -15,7 +15,7 @@
                     class="tank-level-pattern">
 
                 </div>
-                <p-overlayPanel #op appendTo="body">
+                <p-overlayPanel #op appendTo="body" *ngIf="options?.isBullet">
                     <span>Ullage : {{tank?.commodity[options?.ullageField]}} {{options?.ullageUnit}}</span>
                 </p-overlayPanel>
                 <h5 class="tank-name">
