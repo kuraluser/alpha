@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /** UserService - service class user related operations */
 @Service
@@ -59,6 +62,8 @@ public class UserService {
 
   private static final String FAILED = "FAILED";
 
+  private static final String SHIP_URL_PREFIX = "/api/ship";
+
   /**
    * Retrieves the user information from user database
    *
@@ -73,7 +78,7 @@ public class UserService {
     // Retrieve user information from user database
     String authorizationToken = headers.getFirst(HttpHeaders.AUTHORIZATION);
     if (authorizationToken != null) {
-      //      AccessToken token = parseKeycloakToken(authorizationToken);
+      // AccessToken token = parseKeycloakToken(authorizationToken);
       Users usersEntity =
           this.usersRepository.findByKeycloakIdAndIsActive(
               "4b5608ff-b77b-40c6-9645-d69856d4aafa", true);
@@ -139,9 +144,11 @@ public class UserService {
    * @return {@link AccessToken} - The keycloak access token instance
    * @throws VerificationException
    */
-  //  private AccessToken parseKeycloakToken(String token) throws VerificationException {
-  //    return TokenVerifier.create(token.replace("Bearer ", ""), AccessToken.class).getToken();
-  //  }
+  // private AccessToken parseKeycloakToken(String token) throws
+  // VerificationException {
+  // return TokenVerifier.create(token.replace("Bearer ", ""),
+  // AccessToken.class).getToken();
+  // }
 
   public ScreenResponse getScreens(Long companyId, Long roleId, String corelationId)
       throws GenericServiceException {
@@ -160,7 +167,7 @@ public class UserService {
     role.setDescription(roleEntity.get().getDescription());
     screenResponse.setRole(role);
 
-    List<Users> users = this.usersRepository.findByCompanyXIdAndIsActive(companyId, true);
+    List<Users> users = this.usersRepository.findByIsActive(true);
     List<RoleUserMapping> roleUserList =
         this.roleUserRepository.findByRolesAndIsActive(roleId, true);
     List<User> userList = new ArrayList<User>();
@@ -305,10 +312,33 @@ public class UserService {
     return roleResponse;
   }
 
-  public UserResponse getUsers(Long companyId, String correlationIdHeader) {
+  /**
+   * Get users
+   *
+   * @param correlationId
+   * @param correlationId
+   * @return
+   */
+  public UserResponse getUsers(String correlationId) {
     UserResponse userResponse = new UserResponse();
-    List<User> userList = new ArrayList<User>();
-    List<Users> users = this.usersRepository.findByCompanyXIdAndIsActive(companyId, true);
+    if (this.isShip()) {
+      userResponse.setUsers(this.findShipUsers());
+    } else {
+      // TODO the shore users has to be fetched from keycloak
+    }
+    userResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return userResponse;
+  }
+
+  /**
+   * Find ship users
+   *
+   * @return
+   */
+  private List<User> findShipUsers() {
+    List<User> userList = new ArrayList<>();
+    List<Users> users = this.usersRepository.findByIsActiveOrderById(true);
     if (users != null && !users.isEmpty()) {
       users.forEach(
           userEntity -> {
@@ -317,15 +347,30 @@ public class UserService {
             user.setFirstName(userEntity.getFirstName());
             user.setLastName(userEntity.getLastName());
             user.setUsername(userEntity.getUsername());
+            user.setDesignation(userEntity.getDesignation());
+            if (null != userEntity.getRoles()) {
+              user.setRole(userEntity.getRoles().getName());
+            }
             userList.add(user);
           });
     }
+    return userList;
+  }
 
-    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
-    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
-    userResponse.setResponseStatus(commonSuccessResponse);
-    userResponse.setUsers(userList);
-    return userResponse;
+  /**
+   * Identify ship or shore based on accessed url
+   *
+   * @return
+   */
+  public boolean isShip() {
+    if (null != RequestContextHolder.getRequestAttributes()) {
+      HttpServletRequest request =
+          ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+      if (null != request.getRequestURI()) {
+        return request.getRequestURI().indexOf(SHIP_URL_PREFIX) != -1;
+      }
+    }
+    return false;
   }
 
   @Transactional

@@ -6,9 +6,18 @@ import lombok.Data;
 /** User object with user information */
 @Data
 public class User {
+
   private Long id;
+
   private RolePermissions rolePermissions;
+
   private String username;
+
   private String firstName;
+
   private String lastName;
+
+  private String designation;
+
+  private String role;
 }
