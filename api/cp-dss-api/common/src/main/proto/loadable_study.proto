@@ -273,6 +273,7 @@ message ConfirmPlanReply {
 
 message LoadableStudyStatusRequest {
 	int64 loadableStudyId = 1;
+	string processId = 2;
 }
 
 message LoadableStudyStatusReply {

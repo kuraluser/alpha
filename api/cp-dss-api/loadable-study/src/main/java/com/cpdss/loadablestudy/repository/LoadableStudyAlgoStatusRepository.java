@@ -22,6 +22,6 @@ public interface LoadableStudyAlgoStatusRepository
   public void updateLoadableStudyAlgoStatus(
       Long loadableStudyStatusId, String processId, Boolean isActive);
 
-  public Optional<LoadableStudyAlgoStatus> findByLoadableStudyIdAndIsActive(
-      Long loadableStudyId, Boolean isActive);
+  public Optional<LoadableStudyAlgoStatus> findByLoadableStudyIdAndProcessIdAndIsActive(
+      Long loadableStudyId, String processId, Boolean isActive);
 }

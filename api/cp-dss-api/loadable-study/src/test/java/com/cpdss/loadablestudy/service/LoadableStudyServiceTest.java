@@ -2466,8 +2466,8 @@ class LoadableStudyServiceTest {
    */
   @Test
   void testGetLoadableStudyStatus() {
-    when(this.loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
-            anyLong(), anyBoolean()))
+    when(this.loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndProcessIdAndIsActive(
+            anyLong(), anyString(), anyBoolean()))
         .thenReturn(Optional.of(createLoadableStudyAlgoStatus()));
 
     StreamRecorder<LoadableStudyStatusReply> responseObserver = StreamRecorder.create();
@@ -2495,8 +2495,8 @@ class LoadableStudyServiceTest {
    */
   @Test
   void testGetLoadableStudyStatusInvalidLoadableStudyId() {
-    when(this.loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
-            anyLong(), anyBoolean()))
+    when(this.loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndProcessIdAndIsActive(
+            anyLong(), anyString(), anyBoolean()))
         .thenReturn(Optional.empty());
     StreamRecorder<LoadableStudyStatusReply> responseObserver = StreamRecorder.create();
     this.loadableStudyService.getLoadableStudyStatus(
@@ -2521,8 +2521,8 @@ class LoadableStudyServiceTest {
    */
   @Test
   void testGetLoadableStudyStatusRuntimeException() {
-    when(this.loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
-            anyLong(), anyBoolean()))
+    when(this.loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndProcessIdAndIsActive(
+            anyLong(), anyString(), anyBoolean()))
         .thenThrow(RuntimeException.class);
     StreamRecorder<LoadableStudyStatusReply> responseObserver = StreamRecorder.create();
     this.loadableStudyService.getLoadableStudyStatus(

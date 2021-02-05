@@ -251,6 +251,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
   private static final Long LOADABLE_STUDY_PROCESSING_STARTED_ID = 4L;
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
+  private static final Long LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID = 6L;
   private static final Long CONFIRMED_STATUS_ID = 2L;
   private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
   private static final String ERRO_CALLING_ALGO = "ERROR_CALLING_ALGO";
@@ -2521,46 +2522,56 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      Long lastLoadingPort =
-          getLastPort(
-              loadableStudyOpt.get(), this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
-      request
-          .getLoadablePlanDetailsList()
-          .forEach(
-              lpd -> {
-                LoadablePattern loadablePattern = saveloadablePattern(lpd, loadableStudyOpt.get());
-                Optional<LoadablePlanPortWiseDetails> lppwdOptional =
-                    lpd.getLoadablePlanPortWiseDetailsList().stream()
-                        .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
-                        .findAny();
-                if (lppwdOptional.isPresent()) {
-                  saveLoadableQuantity(lppwdOptional.get(), loadablePattern);
-                  saveLoadablePlanCommingleCargo(
-                      lppwdOptional
-                          .get()
-                          .getDepartureCondition()
-                          .getLoadableQuantityCommingleCargoDetailsList(),
-                      loadablePattern);
-                  saveLoadablePlanStowageDetails(
-                      lppwdOptional
-                          .get()
-                          .getDepartureCondition()
-                          .getLoadablePlanStowageDetailsList(),
-                      loadablePattern);
-                  saveLoadablePlanBallastDetails(
-                      lppwdOptional
-                          .get()
-                          .getDepartureCondition()
-                          .getLoadablePlanBallastDetailsList(),
-                      loadablePattern);
-                }
-                saveLoadablePlanStowageDetails(loadablePattern, lpd);
-                saveLoadablePlanBallastDetails(loadablePattern, lpd);
-              });
 
-      loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-          LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getProcesssId(), true);
+      if (request.getLoadablePlanDetailsList().isEmpty()) {
+        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+            LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, request.getProcesssId(), true);
+        loadableStudyRepository.updateLoadableStudyStatus(
+            LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, loadableStudyOpt.get().getId());
+      } else {
 
+        Long lastLoadingPort =
+            getLastPort(
+                loadableStudyOpt.get(), this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
+        request
+            .getLoadablePlanDetailsList()
+            .forEach(
+                lpd -> {
+                  LoadablePattern loadablePattern =
+                      saveloadablePattern(lpd, loadableStudyOpt.get());
+                  Optional<LoadablePlanPortWiseDetails> lppwdOptional =
+                      lpd.getLoadablePlanPortWiseDetailsList().stream()
+                          .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
+                          .findAny();
+                  if (lppwdOptional.isPresent()) {
+                    saveLoadableQuantity(lppwdOptional.get(), loadablePattern);
+                    saveLoadablePlanCommingleCargo(
+                        lppwdOptional
+                            .get()
+                            .getDepartureCondition()
+                            .getLoadableQuantityCommingleCargoDetailsList(),
+                        loadablePattern);
+                    saveLoadablePlanStowageDetails(
+                        lppwdOptional
+                            .get()
+                            .getDepartureCondition()
+                            .getLoadablePlanStowageDetailsList(),
+                        loadablePattern);
+                    saveLoadablePlanBallastDetails(
+                        lppwdOptional
+                            .get()
+                            .getDepartureCondition()
+                            .getLoadablePlanBallastDetailsList(),
+                        loadablePattern);
+                  }
+                  saveLoadablePlanStowageDetails(loadablePattern, lpd);
+                  saveLoadablePlanBallastDetails(loadablePattern, lpd);
+                });
+        loadableStudyRepository.updateLoadableStudyStatus(
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get().getId());
+        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getProcesssId(), true);
+      }
       builder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
           .build();
@@ -3052,7 +3063,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(
                   quantity ->
                       loadablePatternCargoDetailsBuilder.setQuantity(String.valueOf(quantity)));
-          Optional.ofNullable(lpcd.getOrderQuantity())
+          Optional.ofNullable(lpcd.getQuantity())
               .ifPresent(
                   orderedQuantity ->
                       loadablePatternCargoDetailsBuilder.setOrderedQuantity(
@@ -3381,7 +3392,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Optional.ofNullable(loadablePlanCommingleDetails.getGrade())
         .ifPresent(grade -> builder.setGrade(grade));
 
-    Optional.ofNullable(loadablePlanCommingleDetails.getOrderQuantity())
+    Optional.ofNullable(loadablePlanCommingleDetails.getQuantity())
         .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
 
     Optional.ofNullable(loadablePlanCommingleDetails.getTankName())
@@ -3430,6 +3441,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             algoResponse.getProcessId(),
             loadableStudyOpt.get(),
             LOADABLE_STUDY_PROCESSING_STARTED_ID);
+
+        loadableStudyRepository.updateLoadableStudyStatus(
+            LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());
 
         replyBuilder =
             AlgoReply.newBuilder()
@@ -5625,10 +5639,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       StreamObserver<LoadableStudyStatusReply> responseObserver) {
     LoadableStudyStatusReply.Builder replyBuilder = LoadableStudyStatusReply.newBuilder();
     try {
+      log.info("Inside getLoadableStudyStatus");
       Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOpt =
-          loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
-              request.getLoadableStudyId(), true);
+          loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndProcessIdAndIsActive(
+              request.getLoadableStudyId(), request.getProcessId(), true);
       if (!loadableStudyAlgoStatusOpt.isPresent()) {
+        log.info("Invalid loadable study Id");
         replyBuilder.setResponseStatus(
             ResponseStatus.newBuilder()
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)

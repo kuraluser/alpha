@@ -84,7 +84,7 @@ class LoadableStudyControllerTest {
   @MockBean private PortRotationResponse portRotationResponse;
 
   @MockBean private CommingleCargoResponse commingleCargoResponse;
-  
+
   @MockBean private VoyageStatusResponse voyageStatusResponse;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
@@ -1555,11 +1555,16 @@ class LoadableStudyControllerTest {
     }
     return new ObjectMapper().writeValueAsString(request);
   }
-  
+
   @Test
   void testGetVoyageStatus() throws Exception {
     when(loadableStudyService.getVoyageStatus(
-            Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any()))
         .thenReturn(voyageStatusResponse);
     this.mockMvc
         .perform(
@@ -1569,20 +1574,19 @@ class LoadableStudyControllerTest {
                     1,
                     30,
                     1)
-            	.header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .content(createVoyageStatusRequest())
                 .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isOk());
   }
-  
-  private String createVoyageStatusRequest()
-	      throws JsonProcessingException {
-	    VoyageStatusRequest request = new VoyageStatusRequest();
-	    request.setPortOrder(4L);
-	    request.setOperationType("ARR");
-	    ObjectMapper mapper = new ObjectMapper();
-	    return mapper.writeValueAsString(request);
-	  }
+
+  private String createVoyageStatusRequest() throws JsonProcessingException {
+    VoyageStatusRequest request = new VoyageStatusRequest();
+    request.setPortOrder(4L);
+    request.setOperationType("ARR");
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.writeValueAsString(request);
+  }
 }
