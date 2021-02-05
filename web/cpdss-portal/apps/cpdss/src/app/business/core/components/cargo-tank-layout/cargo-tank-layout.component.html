@@ -15,25 +15,33 @@
                     class="tank-level-pattern">
 
                 </div>
+                <p-overlayPanel #op appendTo="body">
+                    <ng-template pTemplate>
+                       <span>tank?.commodity[options?.ullageField]</span>
+                       <span>options?.ullageUnit</span>
+                    </ng-template>
+                </p-overlayPanel>
                 <h5 class="tank-name">
-                    <span class="cargo-bullet" *ngIf="options?.isBullet" [pTooltip]="tank?.commodity && tank?.commodity[options?.ullageField] + options?.ullageUnit"></span>
-                    {{tank?.shortName}}</h5>
+                    <div class="cargo-bullet" *ngIf="options?.isBullet" (mouseover)="op.toggle($event)" (mouseout)="op.toggle($event)"></div>
+                    {{tank?.shortName}}
+                </h5>
                 <ng-container *ngIf="tank?.commodity">
                     <span *ngIf="options?.showCommodityName"
                         class="tank-commodity-name">{{tank?.commodity?.cargoAbbreviation}}</span>
                     <div class="tank-item-valign">
-                    <div *ngIf="options?.showVolume"
-                        class="tank-commodity-volume">{{tank?.commodity[options?.volumeField]}}
-                        {{options?.volumeUnit}}</div>
-                    <span *ngIf="options?.showWeight"
-                        class="tank-commodity-weight">{{tank?.commodity[options?.weightField]}}
-                        {{options?.weightUnit}}</span>
+                        <div *ngIf="options?.showVolume" class="tank-commodity-volume">
+                            {{tank?.commodity[options?.volumeField]}}
+                            {{options?.volumeUnit}}</div>
+                        <span *ngIf="options?.showWeight"
+                            class="tank-commodity-weight">{{tank?.commodity[options?.weightField]}}
+                            {{options?.weightUnit}}</span>
                     </div>
                     <span *ngIf="options?.showUllage"
                         class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField]}}
                         {{options?.ullageUnit}}</span>
                     <span *ngIf="options?.showFillingPercentage"
-                        class="tank-filling-percentage">{{options?.fillingPercentageField ? tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}%</span>
+                        class="tank-filling-percentage">{{options?.fillingPercentageField ?
+                        tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}%</span>
                 </ng-container>
             </div>
         </div>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from "rxjs";
-import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities, IShipCargoTank, ICargoQuantities, ICargoQuantityValueObject, IBallastQuantityValueObject } from '../models/voyage-status.model';
-import { DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
+import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities, IShipCargoTank, ICargoQuantities } from '../models/voyage-status.model';
+import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { ValueObject } from '../../../shared/models/common.model';
@@ -145,28 +145,23 @@ export class VoyageStatusTransformationService {
     return [
       {
         field: 'tankName',
-        header: 'TANK NAME',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT
+        header: 'TANK NAME'
       },
       {
         field: 'abbreviation',
-        header: 'CARGO NAME',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT
+        header: 'CARGO NAME'
       },
       {
         field: 'correctedUllage',
-        header: 'ULLAGE',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT
+        header: 'ULLAGE'
       },
       {
         field: 'plannedWeight',
-        header: 'QUANTITY BEFORE LOADING',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT
+        header: 'QUANTITY BEFORE LOADING'
       },
       {
         field: 'actualWeight',
-        header: 'QUANTITY AFTER LOADING',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT
+        header: 'QUANTITY AFTER LOADING'
       }
     ]
   }
@@ -181,67 +176,28 @@ export class VoyageStatusTransformationService {
     return [
       {
         field: 'tankName',
-        header: 'TANK NAME',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT
+        header: 'TANK NAME'
       },
       {
         field: 'sg',
-        header: 'CARGO NAME',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT
+        header: 'SG'
       },
       {
         field: 'correctedUllage',
-        header: 'ULLAGE',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT
+        header: 'ULLAGE'
       },
       {
         field: 'plannedWeight',
-        header: 'QUANTITY BEFORE LOADING',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT
+        header: 'QUANTITY BEFORE LOADING'
       },
       {
         field: 'actualWeight',
-        header: 'QUANTITY AFTER LOADING',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT
+        header: 'QUANTITY AFTER LOADING'
       }
     ]
   }
 
-  /**
-   * Method for converting ports data to value object model
-   *
-   * @param {ICargoQuantities} cargoQuantity
-   * @param {boolean} [isNewValue=true]
-   * @returns {ICargoQuantityValueObject}
-   * @memberof LoadableStudyDetailsTransformationService
-   */
-  getCargoQuantityAsValueObject(cargoQuantity: ICargoQuantities, isNewValue = true, isEditable = false): ICargoQuantityValueObject {
-    const _cargoQuantity = <ICargoQuantityValueObject>{};
-    _cargoQuantity.tankName = new ValueObject<string>(cargoQuantity.tankName, true, false, false, false);
-    _cargoQuantity.abbreviation = new ValueObject<string>(cargoQuantity.abbreviation, true, isNewValue, false, isEditable);
-    _cargoQuantity.correctedUllage = new ValueObject<number>(cargoQuantity.correctedUllage, true, isNewValue, false, isEditable);
-    _cargoQuantity.plannedWeight = new ValueObject<number>(cargoQuantity.plannedWeight, true, isNewValue, false, isEditable);
-    _cargoQuantity.actualWeight = new ValueObject<number>(cargoQuantity.actualWeight, true, isNewValue, false, isEditable);
-    return _cargoQuantity;
-  }
 
-  /**
-   * Method for converting ports data to value object model
-   *
-   * @param {IBallastQuantities} ballastQuantity
-   * @param {boolean} [isNewValue=true]
-   * @returns {IBallastQuantityValueObject}
-   * @memberof LoadableStudyDetailsTransformationService
-   */
-  getBallastQuantityAsValueObject(ballastQuantity: IBallastQuantities, isNewValue = true, isEditable = false): IBallastQuantityValueObject {
-    const _ballastQuantity = <IBallastQuantityValueObject>{};
-    _ballastQuantity.tankName = new ValueObject<string>(ballastQuantity.tankName, true, false, false, false);
-    _ballastQuantity.sg = new ValueObject<string>(ballastQuantity.sg, true, isNewValue, false, isEditable);
-    _ballastQuantity.correctedUllage = new ValueObject<number>(ballastQuantity.correctedUllage, true, isNewValue, false, isEditable);
-    _ballastQuantity.plannedWeight = new ValueObject<number>(ballastQuantity.plannedWeight, true, isNewValue, false, isEditable);
-    _ballastQuantity.actualWeight = new ValueObject<number>(ballastQuantity.actualWeight, true, isNewValue, false, isEditable);
-    return _ballastQuantity;
-  }
 
   /**
    * Get the draft condition table columns

@@ -203,33 +203,6 @@ export interface IBallastQuantities {
     volume?: number;
 }
 
-/**
- * Interface for cargo quantity value object
- *
- * @export
- * @interface ICargoQuantityValueObject
- */
-export interface ICargoQuantityValueObject {
-    tankName: ValueObject<string>;
-    abbreviation: ValueObject<string>;
-    correctedUllage: ValueObject<number>;
-    plannedWeight: ValueObject<number>;
-    actualWeight: ValueObject<number>;
-}
-
-/**
-* Interface for ballast quantity value object
-*
-* @export
-* @interface IBallastQuantityValueObject
-*/
-export interface IBallastQuantityValueObject {
-    tankName: ValueObject<string>;
-    sg: ValueObject<string>;
-    correctedUllage: ValueObject<number>;
-    plannedWeight: ValueObject<number>;
-    actualWeight: ValueObject<number>;
-}
 
 /**
  * Interface for draft condition of vessel

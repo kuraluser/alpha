@@ -20,16 +20,16 @@
         <div class="col col-11 m-auto" *ngIf="selectedTab === tankType.CARGO">
             <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks" [options]="cargoTankOptions" *ngIf="!viewAll">
             </cpdss-portal-cargo-tank-layout>
-            <cpdss-portal-datatable [tableId]="'cargoTank'" [form]="cargoQuantityForm" [columns]="cargoColumns"
-            [value]="cargoQuantitiesGrid" *ngIf="viewAll">
+            <cpdss-portal-datatable [tableId]="'cargoTank'"  [columns]="cargoColumns"
+            [value]="cargoQuantities" *ngIf="viewAll">
         </cpdss-portal-datatable>
         </div>
         <div class="col-11 m-auto loadable-plan-ballast" *ngIf="selectedTab === tankType.BALLAST">
             <cpdss-portal-ballast-layout [tanks]="centerBallastTanks" [rearTanks]="rearBallastTanks"
                     [frontTanks]="frontBallastTanks" [options]="ballastTankOptions" *ngIf="!viewAll">
                 </cpdss-portal-ballast-layout>
-                <cpdss-portal-datatable [tableId]="'ballastTank'" [form]="ballastQuantityForm" [columns]="ballastColumns"
-            [value]="ballastQuantitiesGrid" *ngIf="viewAll"></cpdss-portal-datatable>
+                <cpdss-portal-datatable [tableId]="'ballastTank'"  [columns]="ballastColumns"
+            [value]="ballastQuantities" *ngIf="viewAll"></cpdss-portal-datatable>
         </div>
         <div class="col col-11 m-auto" *ngIf="selectedTab === tankType.BUNKER">
             <div class="row">
