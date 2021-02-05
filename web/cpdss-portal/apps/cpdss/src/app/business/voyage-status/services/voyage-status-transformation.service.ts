@@ -84,15 +84,17 @@ export class VoyageStatusTransformationService {
 * @returns {IShipBunkerTank}
 * @memberof VoyageStatusTransformationService
 */
-  formatBunkerTanks(bunkerTank: IShipBunkerTank[][], bunkerTankQuantities: IBunkerQuantities[], mode: OHQ_MODE): IShipBunkerTank[][] {
+  formatBunkerTanks(bunkerTank: IShipBunkerTank[][], bunkerTankQuantities: IBunkerQuantities[], mode: OHQ_MODE, prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT): IShipBunkerTank[][] {
 
     for (let groupIndex = 0; groupIndex < bunkerTank?.length; groupIndex++) {
       for (let tankIndex = 0; tankIndex < bunkerTank[groupIndex].length; tankIndex++) {
         for (let index = 0; index < bunkerTankQuantities.length; index++) {
           if (bunkerTankQuantities[index]?.tankId === bunkerTank[groupIndex][tankIndex]?.id) {
             bunkerTank[groupIndex][tankIndex].commodity = bunkerTankQuantities[index];
-            bunkerTank[groupIndex][tankIndex].commodity.quantity = mode === OHQ_MODE.ARRIVAL ? bunkerTank[groupIndex][tankIndex]?.commodity?.arrivalQuantity : bunkerTank[groupIndex][tankIndex]?.commodity?.departureQuantity;
-            bunkerTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(bunkerTank[groupIndex][tankIndex].commodity.quantity, AppConfigurationService.settings.baseUnit, AppConfigurationService.settings.volumeBaseUnit, bunkerTank[groupIndex][tankIndex].commodity?.density);
+            let quantity = mode === OHQ_MODE.ARRIVAL ? bunkerTank[groupIndex][tankIndex]?.commodity?.arrivalQuantity : bunkerTank[groupIndex][tankIndex]?.commodity?.departureQuantity;
+            quantity = this.quantityPipe.transform(quantity, prevUnit, currUnit, bunkerTank[groupIndex][tankIndex].commodity?.density);
+            bunkerTank[groupIndex][tankIndex].commodity.quantity = quantity ? Number(quantity.toFixed(2)) : 0;
+            bunkerTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(bunkerTank[groupIndex][tankIndex].commodity.quantity, currUnit, AppConfigurationService.settings.volumeBaseUnit, bunkerTank[groupIndex][tankIndex].commodity?.density);
             break;
           }
         }

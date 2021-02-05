@@ -106,8 +106,8 @@ export class ShipLandingTanksComponent implements OnInit {
     const mode = this.selectedPortDetails?.operationType === 'ARR' ? OHQ_MODE.ARRIVAL : OHQ_MODE.DEPARTURE;
     this.cargoQuantities = this.shipLandingTanks?.cargoQuantities ?? [];
     this.ballastQuantities = this.shipLandingTanks?.ballastQuantities ?? [];
-    this.bunkerTanks = this.voyageStatusTransformationService.formatBunkerTanks(this.shipLandingTanks?.bunkerTanks, this.shipLandingTanks?.bunkerQuantities, mode);
-    this.rearBunkerTanks = this.voyageStatusTransformationService.formatBunkerTanks(this.shipLandingTanks?.bunkerRearTanks, this.shipLandingTanks?.bunkerQuantities, mode);
+    this.bunkerTanks = this.voyageStatusTransformationService.formatBunkerTanks(this.shipLandingTanks?.bunkerTanks, this.shipLandingTanks?.bunkerQuantities, mode, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.rearBunkerTanks = this.voyageStatusTransformationService.formatBunkerTanks(this.shipLandingTanks?.bunkerRearTanks, this.shipLandingTanks?.bunkerQuantities, mode, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
     this.cargoTanks = this.voyageStatusTransformationService.formatCargoTanks(this.shipLandingTanks?.cargoTanks, this.shipLandingTanks?.cargoQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
     this.rearBallastTanks = this.voyageStatusTransformationService.formatBallastTanks(this.shipLandingTanks?.ballastRearTanks, this.shipLandingTanks?.ballastQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
     this.centerBallastTanks = this.voyageStatusTransformationService.formatBallastTanks(this.shipLandingTanks?.ballastCenterTanks, this.shipLandingTanks?.ballastQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
