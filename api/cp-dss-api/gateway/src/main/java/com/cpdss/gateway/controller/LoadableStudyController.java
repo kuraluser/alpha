@@ -1222,19 +1222,22 @@ public class LoadableStudyController {
    * @return
    * @throws CommonRestException LoadableStudyStatusResponse
    */
-  @GetMapping(
+  @PostMapping(
       value =
-          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-study-status")
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-pattern-status")
   public LoadableStudyStatusResponse getLoadableStudyStatus(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudyId,
+      @RequestBody LoadablePlanRequest loadablePlanRequest,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
       return this.loadableStudyService.getLoadableStudyStatus(
-          loadableStudyId, headers.getFirst(CORRELATION_ID_HEADER));
+          loadableStudyId,
+          loadablePlanRequest.getProcessId(),
+          headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when get loadable Study status", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

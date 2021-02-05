@@ -2247,16 +2247,14 @@ public class LoadableStudyService {
     log.info(
         "Inside updateLoadableStudyStatus gateway service with correlationId : " + correlationId);
     AlgoStatusResponse response = new AlgoStatusResponse();
-    if (request.getLoadableStudyStatusId() != 4) {
-      AlgoStatusReply grpcReply =
-          this.saveAlgoLoadableStudyStatus(
-              this.buildAlgoLoadableStudyStatusRequest(request, correlationId));
-      if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
-        throw new GenericServiceException(
-            "Failed to update Loadable Study Status",
-            grpcReply.getResponseStatus().getCode(),
-            HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
-      }
+    AlgoStatusReply grpcReply =
+        this.saveAlgoLoadableStudyStatus(
+            this.buildAlgoLoadableStudyStatusRequest(request, correlationId));
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to update Loadable Study Status",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
@@ -2734,7 +2732,6 @@ public class LoadableStudyService {
     } catch (IOException e) {
       log.error("Error in json writing ", e);
     }
-
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
@@ -2760,7 +2757,7 @@ public class LoadableStudyService {
       LoadablePlanRequest loadablePlanRequest,
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
     LoadablePlanDetails.Builder planBuilder = LoadablePlanDetails.newBuilder();
-
+    request.setProcesssId(loadablePlanRequest.getProcessId());
     loadablePlanRequest
         .getLoadablePlanDetails()
         .forEach(
@@ -3209,16 +3206,17 @@ public class LoadableStudyService {
 
   /**
    * @param loadableStudyId
+   * @param processId
    * @param first
    * @return LoadableStudyStatusResponse
    */
   public LoadableStudyStatusResponse getLoadableStudyStatus(
-      Long loadableStudyId, String correlationId) throws GenericServiceException {
+      Long loadableStudyId, String processId, String correlationId) throws GenericServiceException {
     log.info("Inside getLoadableStudyStatus gateway service with correlationId : " + correlationId);
     LoadableStudyStatusResponse response = new LoadableStudyStatusResponse();
     LoadableStudyStatusReply grpcReply =
         this.getLoadableStudyStatus(
-            this.buildLoadableStudyStatusRequest(loadableStudyId, correlationId));
+            this.buildLoadableStudyStatusRequest(loadableStudyId, processId, correlationId));
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "Failed to get Loadable Study Status",
@@ -3243,12 +3241,14 @@ public class LoadableStudyService {
   /**
    * @param loadableStudyId
    * @param correlationId
+   * @param correlationId2
    * @return Long
    */
   private LoadableStudyStatusRequest buildLoadableStudyStatusRequest(
-      Long loadableStudyId, String correlationId) {
+      Long loadableStudyId, String processId, String correlationId) {
     LoadableStudyStatusRequest.Builder builder = LoadableStudyStatusRequest.newBuilder();
     builder.setLoadableStudyId(loadableStudyId);
+    builder.setProcessId(processId);
     return builder.build();
   }
 
