@@ -339,7 +339,7 @@
           }, 10000);
           notifyClients(sync);
         }
-        if (syncView.loadableStudyStatusId === 5) {
+        if (syncView.loadableStudyStatusId === 3) {
           const sync = {};
           sync.pattern = data;
           sync.type = 'loadable-pattern-completed';

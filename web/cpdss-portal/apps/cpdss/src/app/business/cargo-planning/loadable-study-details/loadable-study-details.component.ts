@@ -41,7 +41,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   }
   set selectedLoadableStudy(selectedLoadableStudy: LoadableStudy) {
     this._selectedLoadableStudy = selectedLoadableStudy;
-    this.isPatternGenerated = this._selectedLoadableStudy?.statusId === 5 ? true : false;
+    this.isPatternGenerated = this._selectedLoadableStudy?.statusId === 3 ? true : false;
     this.loadableStudyId = selectedLoadableStudy ? selectedLoadableStudy?.id : this.loadableStudies?.length ? this.loadableStudies[0]?.id : 0;
     this.getLoadableStudyDetails(this.vesselId, this.voyageId, selectedLoadableStudy?.id);
   }
@@ -482,6 +482,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.loadableStudyDetailsTransformationService.setPortValidity(false);
       this.loadableStudyDetailsTransformationService.setOHQValidity(false);
       this.loadableStudyDetailsTransformationService.setObqValidity(false);
+      this.isGenerateClicked = false;
       this.initSubsciptions();
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);

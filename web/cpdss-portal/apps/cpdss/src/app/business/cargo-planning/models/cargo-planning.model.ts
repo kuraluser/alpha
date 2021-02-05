@@ -1,6 +1,6 @@
 import { SelectItem } from 'primeng/api';
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
-import { CPDSSDB, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
+import { CPDSSDB, IFuelType, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
 import { ITank } from '../../core/models/common.model';
 import {  IPort, IPortList } from '../../core/models/common.model';
 
@@ -389,18 +389,7 @@ export interface IPortOHQTankDetailValueObject {
     fullCapacity: number;
 }
 
-/**
- * Interface for fuel type
- *
- * @export
- * @interface IFuelType
- */
-export interface IFuelType {
-    id: number;
-    name: string;
-    colorCode: string;
-    shortName: string;
-}
+
 
 /**
  * Interface for ohq grid list data

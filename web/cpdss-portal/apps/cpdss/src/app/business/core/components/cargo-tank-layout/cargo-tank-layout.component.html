@@ -16,10 +16,7 @@
 
                 </div>
                 <p-overlayPanel #op appendTo="body">
-                    <ng-template pTemplate>
-                       <span>tank?.commodity[options?.ullageField]</span>
-                       <span>options?.ullageUnit</span>
-                    </ng-template>
+                    <span>Ullage : {{tank?.commodity[options?.ullageField]}} {{options?.ullageUnit}}</span>
                 </p-overlayPanel>
                 <h5 class="tank-name">
                     <div class="cargo-bullet" *ngIf="options?.isBullet" (mouseover)="op.toggle($event)" (mouseout)="op.toggle($event)"></div>

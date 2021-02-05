@@ -160,6 +160,7 @@ export interface ICargoQuantities {
     quantity?: number;
     volume?: number;
     api?: number;
+    percentageFilled?: string;
 }
 
 /**
@@ -201,6 +202,7 @@ export interface IBallastQuantities {
     tankName: string;
     sg?: string;
     volume?: number;
+    percentageFilled?: string;
 }
 
 

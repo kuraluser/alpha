@@ -4,8 +4,8 @@ import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantitie
 import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
-import { ValueObject } from '../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { ITank } from '../../core/models/common.model';
 
 /**
  * Transformation Service for Voyage status module
@@ -37,6 +37,7 @@ export class VoyageStatusTransformationService {
           if (ballastTankQuantities[index]?.tankId === ballastTank[groupIndex][tankIndex]?.id) {
             ballastTank[groupIndex][tankIndex].commodity = ballastTankQuantities[index];
             ballastTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(ballastTank[groupIndex][tankIndex].commodity.actualWeight, AppConfigurationService.settings.baseUnit, AppConfigurationService.settings.volumeBaseUnit, ballastTank[groupIndex][tankIndex].commodity?.sg);
+            ballastTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(ballastTank[groupIndex][tankIndex])
             break;
           }
         }
@@ -111,6 +112,7 @@ export class VoyageStatusTransformationService {
           if (cargoTankQuantities[index]?.tankId === cargoTank[groupIndex][tankIndex]?.id) {
             cargoTank[groupIndex][tankIndex].commodity = cargoTankQuantities[index];
             cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, AppConfigurationService.settings.baseUnit, AppConfigurationService.settings.volumeBaseUnit, cargoTank[groupIndex][tankIndex].commodity?.api);
+            cargoTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(cargoTank[groupIndex][tankIndex])
             break;
           }
         }
@@ -162,6 +164,14 @@ export class VoyageStatusTransformationService {
       {
         field: 'actualWeight',
         header: 'QUANTITY AFTER LOADING'
+      },
+      {
+        field: 'api',
+        header: 'API'
+      },
+      {
+        field: 'percentageFilled',
+        header: 'Filling Percentage'
       }
     ]
   }
@@ -193,6 +203,10 @@ export class VoyageStatusTransformationService {
       {
         field: 'actualWeight',
         header: 'QUANTITY AFTER LOADING'
+      },
+      {
+        field: 'percentageFilled',
+        header: 'Filling Percentage'
       }
     ]
   }
@@ -213,6 +227,25 @@ export class VoyageStatusTransformationService {
       { field: 'fore', header: 'VOYAGE_STATUS_DRAFT_CONDITION_FORE' }
     ];
   }
+
+    /**
+   * Method to get percentage filled in tank
+   *
+   * @param {ITank} tank
+   * @returns
+   * @memberof VoyageStatusTransformationService
+   */
+  getFillingPercentage(tank: ITank) {
+    let fillingratio: any = ((tank?.commodity?.volume / Number(tank?.fullCapacityCubm)) * 100).toFixed(3);
+    if (Number(fillingratio) >= 100) {
+      fillingratio = 100;
+    }
+    if (isNaN(fillingratio)) {
+      fillingratio = 0;
+    }
+    return fillingratio;
+  }
+
 
 
 }

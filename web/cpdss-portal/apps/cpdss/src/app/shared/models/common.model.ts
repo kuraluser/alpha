@@ -226,3 +226,16 @@ export interface IPortList {
     etaActual?: string;
     etdActual?: string;
 }
+
+/**
+ * Interface for fuel type
+ *
+ * @export
+ * @interface IFuelType
+ */
+export interface IFuelType {
+    id: number;
+    name: string;
+    colorCode: string;
+    shortName: string;
+}

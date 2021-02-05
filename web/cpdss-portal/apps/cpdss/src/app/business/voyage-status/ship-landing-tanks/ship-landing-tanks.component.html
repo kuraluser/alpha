@@ -32,6 +32,14 @@
             [value]="ballastQuantities" *ngIf="viewAll"></cpdss-portal-datatable>
         </div>
         <div class="col col-11 m-auto" *ngIf="selectedTab === tankType.BUNKER">
+            <div class="col text-center">
+                <span class="mr-10 text-uppercase text-secondary">{{'SHIP_LANDING_TYPE'| translate}}</span>
+                <ng-container *ngFor="let fuelType of fuelTypes">
+                    <span class="badge-custom mr-5" *ngIf="fuelType?.shortName"
+                        [ngStyle]="{'background-color': fuelType?.colorCode}">{{fuelType?.shortName}}</span>
+                </ng-container>
+
+            </div>
             <div class="row">
                 <div class="col">
                     <cpdss-portal-bunkering-layout [tanks]="bunkerTanks" [rearTanks]="rearBunkerTanks"
