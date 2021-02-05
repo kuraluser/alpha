@@ -53,10 +53,10 @@
 
         <div class="row">
             <div class="col">
-                <cpdss-portal-list-condition [list]="voyageStatusResponse?.stabilityConditions?.list"></cpdss-portal-list-condition>
+                <cpdss-portal-list-condition *ngIf="voyageStatusResponse?.stabilityConditions" [list]="voyageStatusResponse?.stabilityConditions?.list"></cpdss-portal-list-condition>
             </div>
             <div class="col">
-                <cpdss-portal-trim-condition [trim]="voyageStatusResponse?.stabilityConditions?.calculatedTrimActual" [hogSag]="voyageStatusResponse?.stabilityConditions?.hogSag"></cpdss-portal-trim-condition>
+                <cpdss-portal-trim-condition *ngIf="voyageStatusResponse?.stabilityConditions" [trim]="voyageStatusResponse?.stabilityConditions?.calculatedTrimActual" [hogSag]="voyageStatusResponse?.stabilityConditions?.hogSag"></cpdss-portal-trim-condition>
             </div>
             <div class="col">
                 <cpdss-portal-draft-condition *ngIf="voyageStatusResponse?.stabilityConditions" [draftCondition]="voyageStatusResponse?.stabilityConditions"></cpdss-portal-draft-condition>

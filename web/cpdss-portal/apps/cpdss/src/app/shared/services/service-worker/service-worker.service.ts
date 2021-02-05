@@ -73,15 +73,17 @@ export class ServiceWorkerService {
         if (response) {
           this.ngxSpinnerService.show();
           this.updates.activateUpdate().then(() => {
-            // delete existing db
-            this.cpdssDb?.delete().then(() => {
+            // TODO: delete existing db logic
+            /* this.cpdssDb?.delete().then(() => {
               console.log("Database successfully deleted");
             }).catch((err) => {
               console.error("Could not delete database");
             }).finally(() => {
               this.ngxSpinnerService.hide();
               document.location.reload();
-            });
+            }); */
+            this.ngxSpinnerService.hide();
+            document.location.reload();
           });
         }
       });
