@@ -24,6 +24,7 @@ import com.cpdss.gateway.entity.Roles;
 import com.cpdss.gateway.entity.Screen;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.RoleScreenRepository;
+import com.cpdss.gateway.repository.RoleUserMappingRepository;
 import com.cpdss.gateway.repository.RoleUserRepository;
 import com.cpdss.gateway.repository.RolesRepository;
 import com.cpdss.gateway.repository.ScreenRepository;
@@ -62,6 +63,8 @@ public class UserService {
 
   private static final String FAILED = "FAILED";
 
+  @Autowired private RoleUserMappingRepository roleUserMappingRepository;
+
   private static final String SHIP_URL_PREFIX = "/api/ship";
 
   /**
@@ -91,7 +94,9 @@ public class UserService {
       if (usersEntity.getId() != null) {
         User user = new User();
         user.setId(usersEntity.getId());
-        List<RoleUserMapping> roleUserList = usersEntity.getRoleUserMappings();
+        List<RoleUserMapping> roleUserList =
+            this.roleUserMappingRepository.findByUsersAndIsActive(
+                usersEntity, true); // usersEntity.getRoleUserMappings();
         if (!CollectionUtils.isEmpty(roleUserList)) {
           roleUserList.forEach(
               roleUser -> {
