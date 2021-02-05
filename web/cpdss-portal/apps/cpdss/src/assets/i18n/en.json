@@ -437,6 +437,10 @@
 	"LOADABLE_PLAN_SAVE_STOWAGE_COMMENT_MAXLENGTH": "Maximum allowed character length is 100",
 	"DATA_TABLE_OK_BUTTON_LABEL": "OK",
 	"OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY": "Volume loaded in tank must not exceed capacity of tank.",
+	"GENERATE_LOADABLE_PATTERN_INFO" : "Info",
+	"GENERATE_LOADABLE_PATTERN_PROCESSING": "Generate pattern processing",
+	"GENERATE_LOADABLE_PATTERN_COMPLETE_DONE" : "Success",
+	"GENERATE_LOADABLE_PATTERN_COMPLETED": "Pattern generated successfully",
 	"COMMINGLE_MANUAL_QUANTITY_MIN_VALUE": "Quantity must be greater than 0",
 	"COMMINGLE_MANUAL_SAME_CARGO_VALIDATION": "This cargo combination already exist",
 	"VOYAGE_POP_UP_START_DATE_LABEL": "Planned Start Date",
@@ -576,6 +580,7 @@
 	"MAX_AIR_TEMP_MAX": "Max air tem. should be above -99 and below 99",
 	"MAX_WATER_TEMP_MAX": "Max water tem. should be above -99 and below 999",
 	"COMMINGLE_POPUP_CARGO_MAX_LIMIT": "More than 3 commingle cargo cannot be added.",
+	"VIEW_PATTERN_BUTTON_LABEL": "View Pattern",
 	"USER": "USER",
 	"USER_PRIVILEGES": "User Privileges",
 	"SELECT_ALL": "Select All",
@@ -592,7 +597,6 @@
 	"USER_ROLE_DELETE_DETAILS": "Please click on yes to proceed",
 	"USER_ROLE_DELETE_CONFIRM_LABEL": "Yes",
 	"USER_ROLE_DELETE_REJECT_LABEL": "No",
-	"ROLE_MAPPING_HEADING": "Pages",
 	"ADD_ROLE_BUTTON_LABEL": "Add Role",
 	"ADD_ROLE_HEADING": "Add Role",
 	"ADD_NEW_ROLE": "Name",
@@ -636,5 +640,7 @@
 	"VOYAGE_STATUS_DRAFT_CONDITION_CORRECTED": "Corrected",
 	"ROLE_LISTING": "Role Listing",
 	"USER_PERMISSION_INVALID_USER": "Invalid user",
-	"USER_PERMISSION_INVALID_USER_ERROR": "Error"
+	"USER_PERMISSION_INVALID_USER_ERROR": "Error",
+	"GENERATE_LOADABLE_PATTERN_NO_PLAN" : "Error",
+	"GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE": "No solution for plan"
 }

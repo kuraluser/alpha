@@ -22,10 +22,10 @@
         </div>
 
     </div>
-    <div class="content-outer" [ngClass]="{'sidebar-collapsed': !openSidePane}">
-        <div class="sidebar  relative">
+    <div  [ngClass]="{'sidebar-collapsed': !openSidePane , 'content-outer': isViewPattern}">
+        <div class="sidebar  relative"  *ngIf="isViewPattern">
             <a class="sidebar-collapse-btn" (click)="openSidePane=!openSidePane"></a>
-            <div class="sidebar-content">
+            <div class="sidebar-content" >
                 <cpdss-portal-side-panel-loadable-study-list [vesselInfo]="vesselInfo" [voyage]="selectedVoyage"
                     [(selectedLoadableStudy)]="selectedLoadableStudy" [loadableStudies]="loadableStudies"
                     (deleteLoadableStudy)="onDeleteLoadableStudy($event)"

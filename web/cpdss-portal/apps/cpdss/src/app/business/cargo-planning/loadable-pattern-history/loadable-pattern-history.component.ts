@@ -53,6 +53,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   loadablePatternCreatedDate: string;
   loadableStudyName: string;
   display = false;
+  isViewPattern: boolean;
   selectedLoadablePatterns: ILoadablePatternCargoDetail;
   loadablePatternPermissionContext: IPermissionContext;
   loadablePatternDetailsId: number;
@@ -79,6 +80,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
     const loadablePatternPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], false);
     this.loadablePatternPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadablePatternHistoryComponent'], actions: [PERMISSION_ACTION.VIEW] };
     this.activatedRoute.paramMap.subscribe(params => {
+      this.isViewPattern = Number(params.get('isViewPattern')) === 0 ? true : false;
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));

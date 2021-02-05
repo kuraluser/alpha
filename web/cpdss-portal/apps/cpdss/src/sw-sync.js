@@ -301,4 +301,64 @@
     }
   }
 
+  const syncStore = {}
+  self.addEventListener('message', event => {
+    if (event.data.type === 'loadable-pattern-status') {
+      // get a unique id to save the data
+      const id = event.data.data.loadableStudyId;
+      syncStore[id] = event.data
+      // register a sync and pass the id as tag for it to get the data
+      self.registration.sync.register(id)
+    }
+  })
+
+
+  self.addEventListener('sync', function (event) {
+    event.waitUntil(checkLoadableStudyStatus(syncStore[event.tag].data));
+  });
+
+  async function checkLoadableStudyStatus(data) {
+    const timer = setInterval(async () => {
+      var headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+      const syncResponse = await fetch(`${apiUrl}/vessels/${data?.vesselId}/voyages/${data?.voyageId}/loadable-studies/${data?.loadableStudyId}/loadable-pattern-status`, {
+        method: 'POST',
+        body: JSON.stringify({ processId: data?.processId }),
+        headers: headers
+      });
+      const syncView = await syncResponse.json();
+      if (syncView.responseStatus.status === '200') {
+        if (syncView.loadableStudyStatusId === 4) {
+          const sync = {};
+          sync.pattern = data;
+          sync.type = 'loadable-pattern-processing';
+          setTimeout(() => {
+            clearInterval(timer);
+          }, 10000);
+          notifyClients(sync);
+        }
+        if (syncView.loadableStudyStatusId === 5) {
+          const sync = {};
+          sync.pattern = data;
+          sync.type = 'loadable-pattern-completed';
+          notifyClients(sync);
+          clearInterval(timer);
+        }
+        if (syncView.loadableStudyStatusId === 6) {
+          const sync = {};
+          sync.pattern = data;
+          sync.type = 'loadable-pattern-no-solution';
+          notifyClients(sync);
+          clearInterval(timer);
+        }
+      }
+      if (syncView.responseStatus.status === '500') {
+        clearInterval(timer);
+      }
+    }, 2500);
+  }
+
+
 }());

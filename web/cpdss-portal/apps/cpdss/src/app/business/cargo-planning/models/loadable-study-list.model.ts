@@ -8,6 +8,7 @@ export class LoadableStudy {
     slNo: number;
     public name: string;
     public status: string;
+    public statusId: number;
     public detail: string;
     public createdDate: string;
     public charterer: string;

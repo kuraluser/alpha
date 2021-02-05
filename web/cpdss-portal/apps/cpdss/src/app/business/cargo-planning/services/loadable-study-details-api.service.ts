@@ -4,12 +4,11 @@ import { map } from 'rxjs/operators';
 import { IResponse, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, PortsDB, IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, OHQDB, IPortOBQResponse, IPortOBQTankDetail, OBQDB, ICargoNominationValueObject, ILoadOnTop } from '../models/cargo-planning.model';
+import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, PortsDB, IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, OHQDB, IPortOBQResponse, IPortOBQTankDetail, OBQDB, ICargoNominationValueObject, ILoadOnTop, IGeneratePatternResponse } from '../models/cargo-planning.model';
 import { IDischargingPortIds } from '../models/loadable-study-list.model';
 import { IPort, IPortList, IPortsDetailsResponse, IPortsResponse } from '../../core/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
-
 /**
  * Api Service for Loadable Study Details module
  *
@@ -250,6 +249,19 @@ export class LoadableStudyDetailsApiService {
         return this._obqDb.obq.add(obqTankDetails);
     }
 
+
+    /**
+ * Method for fetching port specific obq
+ *
+ * @param {number} vesselId
+ * @param {number} voyageId
+ * @param {number} loadableStudyId
+ * @returns {Observable<IResponse>}
+ * @memberof LoadableStudyDetailsApiService
+ */
+    generateLoadablePattern(vesselId: number, voyageId: number, loadableStudyId: number): Observable<IGeneratePatternResponse> {
+        return this.commonApiService.post<any, IGeneratePatternResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/generate-loadable-patterns`,{});
+    }
     /**
      * Get count of pending updates in obq db
      *

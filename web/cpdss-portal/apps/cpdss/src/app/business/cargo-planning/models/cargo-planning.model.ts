@@ -645,3 +645,14 @@ export class OBQDB extends CPDSSDB {
     }
 
 }
+
+/**
+ * Interface for generate loadable pattern response
+ *
+ * @export
+ * @interface IGeneratePatternResponse
+ */
+export interface IGeneratePatternResponse {
+    responseStatus: IResponse;
+    processId: string;
+}
