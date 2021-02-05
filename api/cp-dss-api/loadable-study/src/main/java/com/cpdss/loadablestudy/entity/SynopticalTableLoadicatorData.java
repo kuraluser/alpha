@@ -66,4 +66,7 @@ public class SynopticalTableLoadicatorData extends EntityDoc {
   @OneToOne
   @JoinColumn(name = "synoptical_table_xid")
   private SynopticalTable synopticalTable;
+
+  @Column(name = "list")
+  private BigDecimal list;
 }

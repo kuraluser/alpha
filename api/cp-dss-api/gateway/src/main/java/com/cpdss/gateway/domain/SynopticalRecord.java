@@ -72,5 +72,6 @@ public class SynopticalRecord {
   private BigDecimal calculatedTrimPlanned;
   private BigDecimal calculatedTrimActual;
   private BigDecimal blindSector;
+  private BigDecimal list;
   private List<SynopticalCargoBallastRecord> ballast;
 }

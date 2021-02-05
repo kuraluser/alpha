@@ -3292,8 +3292,9 @@ class LoadableStudyServiceTest {
                 anyLong(), anyBoolean()))
         .thenReturn(this.createSynopticalCargoDetails(patternId));
     Mockito.when(
-            this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
-                anyLong(), anyBoolean()))
+            this.synopticalTableLoadicatorDataRepository
+                .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                    any(SynopticalTable.class), anyLong(), anyBoolean()))
         .thenReturn(
             (com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData)
                 createDummyObject(
@@ -3634,15 +3635,17 @@ class LoadableStudyServiceTest {
     if (!emptyData) {
       SynopticalTableLoadicatorData loadicatorEntity =
           (SynopticalTableLoadicatorData) createDummyObject(SynopticalTableLoadicatorData.class);
-      when(this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
-              anyLong(), anyBoolean()))
+      when(this.synopticalTableLoadicatorDataRepository
+              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                  any(SynopticalTable.class), anyLong(), anyBoolean()))
           .thenReturn(loadicatorEntity);
       when(this.synopticalTableLoadicatorDataRepository.save(
               any(SynopticalTableLoadicatorData.class)))
           .thenReturn(loadicatorEntity);
     } else {
-      when(this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
-              anyLong(), anyBoolean()))
+      when(this.synopticalTableLoadicatorDataRepository
+              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                  any(SynopticalTable.class), anyLong(), anyBoolean()))
           .thenReturn(null);
     }
     List<OnBoardQuantity> obqEntities = this.createObqEntities();

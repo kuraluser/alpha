@@ -34,5 +34,7 @@ public class VoyageStatusResponse {
 
   private List<Cargo> cargoConditions;
 
+  private StabilityConditions stabilityConditions;
+
   private BunkerConditions bunkerConditions;
 }
