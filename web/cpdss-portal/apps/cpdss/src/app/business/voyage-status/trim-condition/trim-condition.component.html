@@ -1,0 +1,5 @@
+<div [ngClass]="{'trim-even-keel': !trim, 'trim-head':  trim < 0, 'trim-stern': trim > 0}">
+    <span>{{'VOYAGE_STATUS_TRIM_WATERLINE' | translate}}</span>
+    <span>{{'VOYAGE_STATUS_TRIM' | translate}} <br /> {{trim}}{{'VOYAGE_STATUS_TRIM_UNIT'| translate}}</span>
+    <span>{{(hogSag < 0 ? 'VOYAGE_STATUS_HOG' : 'VOYAGE_STATUS_SAG') | translate}} {{hogSag}}{{'VOYAGE_STATUS_HOGSAG_UNIT' | translate}} </span>
+</div>

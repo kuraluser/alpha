@@ -1,0 +1,5 @@
+<div [ngClass]="{'list-even-keel': !list, 'list-port': list > 0, 'list-stbo': list < 0}">
+    <span>{{'VOYAGE_STATUS_LIST_PORT' | translate}}</span>
+    <span>{{'VOYAGE_STATUS_LIST' | translate}} <br /> {{list}}&deg;</span>
+    <span>{{'VOYAGE_STATUS_LIST_STBO' | translate}}</span>
+</div>

@@ -30,13 +30,15 @@ import {InputSwitchModule} from 'primeng/inputswitch';
 import { UnitDropdownModule } from '../../shared/components/unit-dropdown/unit-dropdown.module';
 import { QuantityPipeModule } from '../../shared/pipes/quantity/quantity-pipe.module';
 import { DraftConditionComponent } from './draft-condition/draft-condition.component';
+import { ListConditionComponent } from './list-condition/list-condition.component';
+import { TrimConditionComponent } from './trim-condition/trim-condition.component';
 
 /**
  * Module for new voyage-status
  */
 
 @NgModule({
-  declarations: [VoyageStatusComponent, NewVoyagePopupComponent, EditPortRotationComponent,PortRotationRibbonComponent, ParameterListComponent, CargoDetailsComponent, ShipLandingTanksComponent, DraftConditionComponent],
+  declarations: [VoyageStatusComponent, NewVoyagePopupComponent, EditPortRotationComponent,PortRotationRibbonComponent, ParameterListComponent, CargoDetailsComponent, ShipLandingTanksComponent, DraftConditionComponent, ListConditionComponent, TrimConditionComponent],
   imports: [
     CommonModule,
     FormsModule,

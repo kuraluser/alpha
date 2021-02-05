@@ -15,7 +15,16 @@ import { VoyageStatusTransformationService } from '../services/voyage-status-tra
 })
 export class CargoDetailsComponent implements OnInit {
   @Input() cargoConditions: ICargoConditions[];
-  @Input() cargoQuantities: ICargoQuantities[];
+
+  @Input() get cargoQuantities(): ICargoQuantities[] {
+    return this._cargoQuantities;
+  }
+
+  set cargoQuantities(cargoQuantities: ICargoQuantities[]) {
+    this._cargoQuantities = cargoQuantities;
+    this.setCargoDetails();
+  }
+
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
     return this._currentQuantitySelectedUnit;
   }
@@ -37,6 +46,7 @@ export class CargoDetailsComponent implements OnInit {
   prevQuantitySelectedUnit: QUANTITY_UNIT;
 
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
+  private _cargoQuantities: ICargoQuantities[];
 
   constructor(private voyageStatusTransformationService: VoyageStatusTransformationService,
     private quantityPipe: QuantityPipe) { }
@@ -49,6 +59,14 @@ export class CargoDetailsComponent implements OnInit {
   ngOnInit(): void {
 
     this.columns = this.voyageStatusTransformationService.getColumnFields();
+  }
+
+  /**
+   * Set cargo details for grid
+   *
+   * @memberof CargoDetailsComponent
+   */
+  setCargoDetails() {
     this.newCargoList = this.cargoConditions.map(itm => ({
       ...this.cargoQuantities.find((item) => item.cargoId === itm.id),
       ...itm
