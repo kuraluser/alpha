@@ -74,6 +74,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   * @memberof SynopticalTableComponent
   */
   ngOnInit() {
+    this.initActionSubscriptions()
     this.synopticalService.onInitCompleted$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(completed => {
@@ -127,8 +128,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       })
       this.initForm();
     }
-    this.initActionSubscriptions()
-
     this.ngxSpinner.hide();
   }
 
@@ -660,7 +659,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'constantPlanned',
                 type: this.fieldType.NUMBER,
-                validators: ['required']
+                validators: ['required', 'ddddddd.+']
               }],
               editable: true,
             },
@@ -686,7 +685,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'totalDwtPlanned',
                 type: this.fieldType.NUMBER,
-                validators: ['required']
+                validators: ['required', 'ddddddd.+']
               }],
               editable: true,
             },
@@ -712,7 +711,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'displacementPlanned',
                 type: this.fieldType.NUMBER,
-                validators: ['required']
+                validators: ['required', 'ddddddd.+']
               }],
               editable: !this.checkIfConfirmed(),
             },
@@ -749,7 +748,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             fields: [{
               key: 'plannedWeight',
               type: this.fieldType.NUMBER,
-              validators: ['required', 'ddddddd.+']
+              validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Plan',
             editable: !this.checkIfConfirmed(),
@@ -760,7 +759,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             fields: [{
               key: 'actualWeight',
               type: this.fieldType.NUMBER,
-              validators: ['required', 'ddddddd.+']
+              validators: ['required', 'ddddddd.dd.+']
             }],
             editable: this.checkIfConfirmed(),
           },
@@ -775,7 +774,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             fields: [{
               key: 'plannedWeight',
               type: this.fieldType.NUMBER,
-              validators: ['required', 'ddddddd.+']
+              validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Plan',
             editable: !this.checkIfConfirmed(),
@@ -785,7 +784,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             fields: [{
               key: 'actualWeight',
               type: this.fieldType.NUMBER,
-              validators: ['required', 'ddddddd.+']
+              validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Actual',
             editable: this.checkIfConfirmed(),
@@ -802,7 +801,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             fields: [{
               key: 'plannedWeight',
               type: this.fieldType.NUMBER,
-              validators: ['required', 'ddddddd.+']
+              validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Plan',
             editable: !this.checkIfConfirmed()
@@ -812,7 +811,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             fields: [{
               key: 'actualWeight',
               type: this.fieldType.NUMBER,
-              validators: ['required', 'ddddddd.+']
+              validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Actual',
             editable: this.checkIfConfirmed(),
@@ -829,7 +828,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             fields: [{
               key: 'plannedWeight',
               type: this.fieldType.NUMBER,
-              validators: ['required', 'ddddddd.+']
+              validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Plan',
             editable: !this.checkIfConfirmed(),
@@ -839,7 +838,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             fields: [{
               key: 'actualWeight',
               type: this.fieldType.NUMBER,
-              validators: ['required', 'ddddddd.+']
+              validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Actual',
             editable: this.checkIfConfirmed(),
@@ -856,7 +855,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             fields: [{
               key: 'plannedWeight',
               type: this.fieldType.NUMBER,
-              validators: ['required', 'ddddddd.+']
+              validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Plan',
             editable: !this.checkIfConfirmed(),
@@ -866,7 +865,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             fields: [{
               key: 'actualWeight',
               type: this.fieldType.NUMBER,
-              validators: ['required', 'ddddddd.+']
+              validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Actual',
             editable: this.checkIfConfirmed(),
