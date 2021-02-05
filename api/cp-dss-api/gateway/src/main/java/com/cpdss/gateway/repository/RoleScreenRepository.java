@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface RoleScreenRepository extends CrudRepository<RoleScreen, Long> {
 
   @Query(
-      "Select new com.cpdss.gateway.domain.ScreenInfo(r.screen.id, r.screen.name, r.screen.languageKey, r.screen.isAvailableAdd, r.screen.isAvailableEdit, r.screen.isAvailableDelete, r.screen.isAvailableView) from RoleScreen r where r.roles = ?1 and r.isActive = ?2")
+      "Select new com.cpdss.gateway.domain.ScreenInfo(r.screen.id, r.screen.name, r.screen.languageKey, r.canAdd, r.canEdit, r.canDelete, r.canView) from RoleScreen r where r.roles = ?1 and r.isActive = ?2")
   List<ScreenInfo> findByRolesAndIsActive(Roles roles, Boolean isActive);
 
   @Query(

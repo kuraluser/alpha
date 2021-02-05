@@ -143,17 +143,22 @@ public class UserService {
   //    return TokenVerifier.create(token.replace("Bearer ", ""), AccessToken.class).getToken();
   //  }
 
-  public ScreenResponse getScreens(Long companyId, Long roleId, String corelationId) {
+  public ScreenResponse getScreens(Long companyId, Long roleId, String corelationId)
+      throws GenericServiceException {
     ScreenResponse screenResponse = new ScreenResponse();
-    Roles roleEntity =
+    Optional<Roles> roleEntity =
         this.rolesRepository.findByIdAndCompanyXIdAndIsActive(roleId, companyId, true);
-    if (roleEntity != null) {
-      Role role = new Role();
-      role.setId(roleEntity.getId());
-      role.setName(roleEntity.getName());
-      role.setDescription(roleEntity.getDescription());
-      screenResponse.setRole(role);
+    if (!roleEntity.isPresent()) {
+      throw new GenericServiceException(
+          "Role with given id does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
     }
+    Role role = new Role();
+    role.setId(roleEntity.get().getId());
+    role.setName(roleEntity.get().getName());
+    role.setDescription(roleEntity.get().getDescription());
+    screenResponse.setRole(role);
 
     List<Users> users = this.usersRepository.findByCompanyXIdAndIsActive(companyId, true);
     List<RoleUserMapping> roleUserList =
@@ -328,7 +333,9 @@ public class UserService {
       RolePermission permission, Long companyId, String correlationId)
       throws GenericServiceException {
     PermissionResponse permissionResponse = new PermissionResponse();
-    Optional<Roles> role = this.rolesRepository.findByIdAndIsActive(permission.getRoleId(), true);
+    Optional<Roles> role =
+        this.rolesRepository.findByIdAndCompanyXIdAndIsActive(
+            permission.getRoleId(), companyId, true);
     if (!role.isPresent()) {
       throw new GenericServiceException(
           "Role with given id does not exist",
@@ -450,7 +457,8 @@ public class UserService {
   public RoleResponse deleteRole(Long roleId, Long companyId, String first)
       throws GenericServiceException {
     RoleResponse roleResponse = new RoleResponse();
-    Optional<Roles> roleEntityOpt = this.rolesRepository.findByIdAndIsActive(roleId, true);
+    Optional<Roles> roleEntityOpt =
+        this.rolesRepository.findByIdAndCompanyXIdAndIsActive(roleId, companyId, true);
     Roles roleEntity = null;
     if (!roleEntityOpt.isPresent()) {
       throw new GenericServiceException(

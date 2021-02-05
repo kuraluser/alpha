@@ -160,7 +160,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void testGetScreens() {
+  public void testGetScreens() throws GenericServiceException {
     ScreenResponse screenResponse = new ScreenResponse();
 
     Roles roleEntity = new Roles();
@@ -168,7 +168,7 @@ class UserServiceTest {
     roleEntity.setName("test");
     roleEntity.setDescription("test");
     when(this.rolesRepository.findByIdAndCompanyXIdAndIsActive(anyLong(), anyLong(), anyBoolean()))
-        .thenReturn(roleEntity);
+        .thenReturn(Optional.of(roleEntity));
     List<Screen> screenDataList = this.createScreenDataList();
     when(this.screenRepository.findByCompanyXIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(screenDataList);
