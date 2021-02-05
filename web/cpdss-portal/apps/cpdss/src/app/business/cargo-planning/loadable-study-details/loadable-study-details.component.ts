@@ -656,9 +656,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
  */
   async generatedMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
     this.messageService.clear("process");
-    this.messageService.clear(`geerated${selectedLoadableStudyName}`);
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE', 'GENERATE_LOADABLE_PATTERN_COMPLETED']).toPromise();
-    this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETED'], life: 5000, key: `geerated${selectedLoadableStudyName}`, closable: true });
+    this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETED'],closable: true });
   }
 
   /**
@@ -670,9 +669,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
  */
   async noPlanMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
     this.messageService.clear("process");
-    this.messageService.clear(`no-plan${selectedLoadableStudyName}`);
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_NO_PLAN', 'GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE']).toPromise();
-    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE'], life: 5000, key: `no-plan${selectedLoadableStudyName}`, closable: true });
+    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE']});
   }
 
   /* Handler for unit change event
