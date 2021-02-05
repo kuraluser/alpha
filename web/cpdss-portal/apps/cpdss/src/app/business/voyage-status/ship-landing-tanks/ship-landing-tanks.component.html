@@ -31,7 +31,7 @@
                 <cpdss-portal-datatable [tableId]="'ballastTank'"  [columns]="ballastColumns"
             [value]="ballastQuantities" *ngIf="viewAll"></cpdss-portal-datatable>
         </div>
-        <div class="col col-11 m-auto" *ngIf="selectedTab === tankType.BUNKER">
+        <div class="col col-6 m-auto" *ngIf="selectedTab === tankType.BUNKER">
             <div class="col text-center">
                 <span class="mr-10 text-uppercase text-secondary">{{'SHIP_LANDING_TYPE'| translate}}</span>
                 <ng-container *ngFor="let fuelType of fuelTypes">

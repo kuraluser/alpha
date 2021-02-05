@@ -63,7 +63,7 @@ export class ShipLandingTanksComponent implements OnInit {
 
   readonly tankType = TANKTYPE;
 
-  cargoTankOptions: ITankOptions = { isBullet: true, ullageField: 'correctedUllage', ullageUnit: 'CM' };
+  cargoTankOptions: ITankOptions = { showFillingPercentage: true, isBullet: true, ullageField: 'correctedUllage', ullageUnit: 'CM' };
   ballastTankOptions: ITankOptions = { showFillingPercentage: true };
   
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;

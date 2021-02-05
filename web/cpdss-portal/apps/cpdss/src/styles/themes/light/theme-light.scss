@@ -976,3 +976,11 @@ tr:hover a{
 .p-treetable .p-treetable-tbody > tr > td .p-treetable-toggler:enabled:hover{
   background: none!important;
 }
+
+.front-tank-wrapper > div:nth-child(2){
+  border-color: $tank-ohq-border!important;
+}
+
+.cargo-bullet{
+  background: $tank-dot;
+}
