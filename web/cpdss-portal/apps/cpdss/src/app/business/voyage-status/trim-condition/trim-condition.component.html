@@ -1,5 +1,18 @@
-<div [ngClass]="{'trim-even-keel': !trim, 'trim-head':  trim < 0, 'trim-stern': trim > 0}">
-    <span>{{'VOYAGE_STATUS_TRIM_WATERLINE' | translate}}</span>
-    <span>{{'VOYAGE_STATUS_TRIM' | translate}} <br /> {{trim}}{{'VOYAGE_STATUS_TRIM_UNIT'| translate}}</span>
-    <span>{{(hogSag < 0 ? 'VOYAGE_STATUS_HOG' : 'VOYAGE_STATUS_SAG') | translate}} {{hogSag}}{{'VOYAGE_STATUS_HOGSAG_UNIT' | translate}} </span>
+<div class="row">
+    <div class="col-10 m-auto">
+        <div class="trim-condition-wrapper">
+            <div [ngClass]="{'trim-even-keel': !trim, 'trim-head':  trim < 0, 'trim-stern': trim > 0}" class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col text-secondary pt-25">{{'VOYAGE_STATUS_TRIM_WATERLINE' | translate}}</div>
+                        <div class="col text-center pt-10">{{'VOYAGE_STATUS_TRIM' | translate}} <h5 class="text-secondary"> {{trim}}{{'VOYAGE_STATUS_TRIM_UNIT'| translate}}</h5></div>
+                    </div>
+                </div>
+                <div class="col text-center sag">
+                    {{(hogSag < 0 ? 'VOYAGE_STATUS_HOG' : 'VOYAGE_STATUS_SAG') | translate}} <h5 class="text-secondary">{{hogSag}}{{'VOYAGE_STATUS_HOGSAG_UNIT' | translate}}</h5> 
+                </div>
+                <div class="col"></div>
+            </div>
+        </div>
+    </div>
 </div>

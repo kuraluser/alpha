@@ -1,9 +1,17 @@
 .sidebar-landing{
     width: 270px;
-    max-width: 250px;
+    max-width: 270px;
+    min-width: 270px;
 }
 
 .sidebar-right{
     width: 280px;
     max-width: 280px;
+    min-width: 280px;
+}
+
+.port-stbd-list{
+    width: 215px;
+    min-width: 215px;
+    max-width: 215px;
 }

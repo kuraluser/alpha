@@ -274,7 +274,7 @@ hr{
   border-bottom: 1px solid $table-border;
 }
 .p-datatable .p-datatable-tbody > tr:first-child > th{
-  border-top: 1px solid $table-border;
+  border-top: 2px solid $table-border;
 }
 .p-column-filter{
   border-bottom: 1px solid $table-textarea-border;
@@ -875,7 +875,7 @@ a{
   background: rgba($pop-up-overlay, 0.6)!important;
 }
 .p-datatable .p-datatable-tbody > tr:first-child > td{
-  border-top: 1px solid $table-border !important;
+  border-top: 2px solid $table-border !important;
 }
 .vessel-info{
     color: $hover-color;
@@ -983,4 +983,43 @@ tr:hover a{
 
 .cargo-bullet{
   background: $tank-dot;
+}
+
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider{
+  border: 1px solid $radio-btn;
+}
+
+.list-even-keel {
+  background: url($images-theme + 'ship-list-even-keel.png') no-repeat 74px center;
+}
+
+.list-port {
+  background: url($images-theme + 'ship-list-port.png') no-repeat 74px center;
+}
+
+.list-stbo {
+  background: url($images-theme + 'ship-list-stbd.png') no-repeat 74px center;
+}
+
+.list-condition-wrapper{
+  background: url($images-theme + 'water-line-list.png') no-repeat 0 44px;
+}
+
+.trim-even-keel {
+  background: url($images-theme + 'ship-trim-even-keel.png') no-repeat center;
+}
+
+.trim-head {
+  background: url($images-theme + 'ship-trim-head.png') no-repeat center;
+}
+
+.trim-stern {
+  background: url($images-theme + 'ship-trim-stern.png') no-repeat center;
+}
+
+.trim-condition-wrapper{
+  &:after{
+    background: url($images-theme + 'water-line.png') no-repeat center center;
+    border-top: 4px dotted $water-line;
+  }
 }
