@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ITank } from '../../models/common.model';
+import { ITank, ITankOptions } from '../../models/common.model';
 
 /**
  * Class for bunkering layout component
@@ -14,6 +14,8 @@ import { ITank } from '../../models/common.model';
   styleUrls: ['./bunkering-layout.component.scss']
 })
 export class BunkeringLayoutComponent implements OnInit {
+
+  @Input() options: ITankOptions = { 'isFullyFilled': false, 'isBullet': false };
 
   @Input()
   get tanks(): ITank[][] {

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CargoTankLayoutComponent } from './cargo-tank-layout.component';
 import { TooltipModule } from 'primeng/tooltip';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
+import { TranslateModule } from '@ngx-translate/core';
 
 /**
  * Module for cargo tank layout component
@@ -15,7 +16,8 @@ import {OverlayPanelModule} from 'primeng/overlaypanel';
   imports: [
     CommonModule,
     TooltipModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    TranslateModule
   ],
   exports: [CargoTankLayoutComponent]
 })

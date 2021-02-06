@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BunkeringLayoutComponent } from './bunkering-layout.component';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 /**
@@ -12,7 +14,9 @@ import { BunkeringLayoutComponent } from './bunkering-layout.component';
 @NgModule({
   declarations: [BunkeringLayoutComponent],
   imports: [
-    CommonModule
+    CommonModule,
+    OverlayPanelModule,
+    TranslateModule
   ],
   exports: [BunkeringLayoutComponent]
 })

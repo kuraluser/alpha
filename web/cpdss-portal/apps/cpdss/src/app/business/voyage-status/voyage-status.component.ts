@@ -32,7 +32,7 @@ export class VoyageStatusComponent implements OnInit {
   cargoQuantities: ICargoQuantities[];
   selectedPortDetails: IVoyageDetails;
   voyageStatusResponse: IVoyageStatus;
-  currentQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
+  currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit') ?? AppConfigurationService.settings.baseUnit;
 
   constructor(private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,

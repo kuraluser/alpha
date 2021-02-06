@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BallastLayoutComponent } from './ballast-layout.component';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 /**
@@ -12,7 +14,9 @@ import { BallastLayoutComponent } from './ballast-layout.component';
 @NgModule({
   declarations: [BallastLayoutComponent],
   imports: [
-    CommonModule
+    CommonModule,
+    OverlayPanelModule,
+    TranslateModule
   ],
   exports: [BallastLayoutComponent]
 })

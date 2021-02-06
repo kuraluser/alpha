@@ -15,11 +15,21 @@
                     class="tank-level-pattern">
 
                 </div>
-                <p-overlayPanel #op appendTo="body" *ngIf="options?.isBullet">
-                    <span>Ullage : {{tank?.commodity[options?.ullageField]}} {{options?.ullageUnit}}</span>
+                <p-overlayPanel #op appendTo="body">
+                    <ul *ngIf="tank?.commodity">
+                        <li>{{'TANK_LAYOUT_TANK'| translate}} : {{tank?.shortName}}</li>
+                        <li>{{'TANK_LAYOUT_CARGO'| translate}} : {{tank?.commodity[options?.commodityNameField]}}</li>
+                        <li>{{'TANK_LAYOUT_ULLAGE'| translate}} : {{tank?.commodity[options?.ullageField]}}
+                            {{options?.ullageUnit}}</li>
+                        <li>{{'TANK_LAYOUT_API'| translate}} : {{tank?.commodity[options?.densityField]}}</li>
+                        <li>{{'TANK_LAYOUT_QUANTITY'| translate}} : {{tank?.commodity[options?.weightField]}}</li>
+                        <li>{{'TANK_LAYOUT_PERCENTAGE'| translate}} : {{options?.fillingPercentageField ?
+                            tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}%</li>
+                    </ul>
                 </p-overlayPanel>
                 <h5 class="tank-name">
-                    <div class="cargo-bullet" *ngIf="options?.isBullet" (mouseover)="op.toggle($event)" (mouseout)="op.toggle($event)"></div>
+                    <div class="cargo-bullet" *ngIf="options?.isBullet" (mouseover)="tank?.commodity && op.toggle($event)"
+                    (mouseout)="tank?.commodity && op.toggle($event)"></div>
                     {{tank?.shortName}}
                 </h5>
                 <ng-container *ngIf="tank?.commodity">
@@ -36,8 +46,7 @@
                     <span *ngIf="options?.showUllage"
                         class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField]}}
                         {{options?.ullageUnit}}</span>
-                    <span *ngIf="options?.showFillingPercentage"
-                        class="tank-filling-percentage">{{options?.fillingPercentageField ?
+                    <span *ngIf="options?.showFillingPercentage" class="tank-filling-percentage">{{options?.fillingPercentageField ?
                         tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}%</span>
                 </ng-container>
             </div>

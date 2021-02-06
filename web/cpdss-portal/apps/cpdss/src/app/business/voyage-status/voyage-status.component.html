@@ -42,10 +42,10 @@
                 <cpdss-portal-parameter-list  *ngIf="bunkerConditions"  [bunkerConditions]="bunkerConditions"></cpdss-portal-parameter-list>
             </div>
             <div class="col tank-layout-status" *ngIf="voyageStatusResponse">
-                <cpdss-portal-ship-landing-tanks [vesselId]="vesselInfo?.id" [voyageId]="selectedVoyage?.id" [loadableStudyId]="selectedVoyage?.confirmedLoadableStudyId" [shipLandingTanks]="voyageStatusResponse" [selectedPortDetails]="selectedPortDetails"></cpdss-portal-ship-landing-tanks>
+                <cpdss-portal-ship-landing-tanks [vesselId]="vesselInfo?.id" [voyageId]="selectedVoyage?.id" [loadableStudyId]="selectedVoyage?.confirmedLoadableStudyId" [shipLandingTanks]="voyageStatusResponse" [selectedPortDetails]="selectedPortDetails" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"></cpdss-portal-ship-landing-tanks>
             </div>
             <div class="col sidebar-right">
-                <cpdss-portal-cargo-details *ngIf="cargoConditions && cargoQuantities" [cargoConditions]="cargoConditions" [cargoQuantities]="cargoQuantities"></cpdss-portal-cargo-details>
+                <cpdss-portal-cargo-details *ngIf="cargoConditions && cargoQuantities" [cargoConditions]="cargoConditions" [cargoQuantities]="cargoQuantities" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"></cpdss-portal-cargo-details>
             </div>
         </div>
 
