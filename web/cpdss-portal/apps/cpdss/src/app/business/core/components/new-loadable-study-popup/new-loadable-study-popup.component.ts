@@ -210,7 +210,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
             continue;
           } else {
             if (uploadFile.length < 5) {
-              const fileNameExist = this.uploadedFiles.some(file => file.name.toLowerCase() === uploadedFileVar[i].name.toLowerCase());
+              const fileNameExist = this.uploadedFiles.some(file => file?.name?.toLowerCase() === uploadedFileVar[i].name.toLowerCase());
               if (fileNameExist) {
                 this.showError = true;
                 this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_NAME_EXIST_ERROR"
