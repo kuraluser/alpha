@@ -986,7 +986,7 @@ tr:hover a{
 }
 
 .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider{
-  border: 1px solid $radio-btn;
+  background: $radio-btn;
 }
 
 .list-even-keel {
@@ -1021,5 +1021,46 @@ tr:hover a{
   &:after{
     background: url($images-theme + 'water-line.png') no-repeat center center;
     border-top: 4px dotted $water-line;
+  }
+}
+
+.tab-btn{
+  &.tank-icon{
+      background: url($images-theme + 'tank-icon.png') no-repeat center center;
+     
+      &.active, &:hover{
+       background: $selected-bg url($images-theme + 'tank-icon-active.png') no-repeat center center;
+   }
+  } 
+  &.ballast-icon{
+   background:  url($images-theme + 'ballast.png') no-repeat center center;
+  
+   &.active, &:hover{
+    background: $selected-bg url($images-theme + 'ballast-active.png') no-repeat center center;
+       }
+   } 
+   &.bunker-icon{
+       background:  url($images-theme + 'tank-level-gauging-system.png') no-repeat center center;
+      
+       &.active, &:hover{
+        background: $selected-bg url($images-theme + 'tank-level-gauging-system-active.png') no-repeat center center;
+           }
+       } 
+   &.pipeline{
+       background: url($images-theme + 'pipeline.png') no-repeat center center;
+       
+       &.active, &:hover{
+           background: $selected-bg url($images-theme + 'pipeline-active.png') no-repeat center center;
+           }
+       } 
+  
+}
+.p-inputswitch .p-inputswitch-slider{
+  background: $selected-bg;
+}
+
+.parameter-table td{
+  &:last-child{
+    color: $text-secondary;
   }
 }

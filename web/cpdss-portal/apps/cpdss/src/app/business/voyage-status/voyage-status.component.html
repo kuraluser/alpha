@@ -37,7 +37,7 @@
         <cpdss-portal-edit-port-rotation  *ngIf="displayEditPortPopup && vesselInfo && selectedVoyage"
             (displayPopUp)="displayEditPortRotationPopUpTab($event)" [vesselDetails]="vesselInfo"  [voyageDetails]="selectedVoyage">
         </cpdss-portal-edit-port-rotation>
-        <div class="row no-wrap">
+        <div class="row no-wrap pt-10">
             <div class="col sidebar-landing">
                 <cpdss-portal-parameter-list  *ngIf="bunkerConditions"  [bunkerConditions]="bunkerConditions"></cpdss-portal-parameter-list>
             </div>

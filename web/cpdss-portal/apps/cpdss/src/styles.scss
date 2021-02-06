@@ -1844,3 +1844,9 @@ height: 15px;
   height: 10px;
 }
 
+.parameter-table td, .parameter-table th{
+  &:last-child{
+    text-align: right!important;
+    font-size: $heading-font-size;
+  }
+}
