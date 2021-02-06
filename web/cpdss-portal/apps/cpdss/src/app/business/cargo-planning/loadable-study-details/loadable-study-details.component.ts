@@ -223,7 +223,11 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   async getLoadableStudyDetails(vesselId: number, voyageId: number, loadableStudyId: number) {
     const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
     this.ngxSpinnerService.show();
-    this.selectedDischargeCargo = { id: this.selectedLoadableStudy?.dischargingCargoId }
+    if (this.selectedLoadableStudy?.dischargingCargoId){
+      this.selectedDischargeCargo = { id: this.selectedLoadableStudy?.dischargingCargoId }
+    } else {
+      this.selectedDischargeCargo = null;
+    }
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
     !this.dischargingPorts ? this.dischargingPorts = [] : '';
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
@@ -658,7 +662,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   async generatedMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
     this.messageService.clear("process");
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE', 'GENERATE_LOADABLE_PATTERN_COMPLETED']).toPromise();
-    this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETED'],closable: true });
+    this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETED'], closable: true });
   }
 
   /**
@@ -671,7 +675,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   async noPlanMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
     this.messageService.clear("process");
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_NO_PLAN', 'GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE']).toPromise();
-    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE']});
+    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE'] });
   }
 
   /* Handler for unit change event

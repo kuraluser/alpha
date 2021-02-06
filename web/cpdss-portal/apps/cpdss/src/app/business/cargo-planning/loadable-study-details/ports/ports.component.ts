@@ -285,18 +285,12 @@ export class PortsComponent implements OnInit {
       this.portsLists[valueIndex]['portcode'].value = event.data.port.value.code;
       this.portsLists[valueIndex]['portOrder'] = this.portOrder;
       this.updateField(event.index, 'portcode', event.data.port.value.code);
-      if (event.data.port.value.maxDraft) {
-        this.portsLists[valueIndex]['maxDraft'].value = event.data.port.value.maxDraft;
-        this.updateField(event.index, 'maxDraft', event.data.port.value.maxDraft);
-      }
-      if (event.data.port.value.maxAirDraft) {
-        this.portsLists[valueIndex]['maxAirDraft'].value = event.data.port.value.maxAirDraft;
-        this.updateField(event.index, 'maxAirDraft', event.data.port.value.maxAirDraft);
-      }
-      if (event.data.port.value.waterDensity) {
-        this.portsLists[valueIndex]['seaWaterDensity'].value = event.data.port.value.waterDensity;
-        this.updateField(event.index, 'seaWaterDensity', event.data.port.value.waterDensity);
-      }
+      this.portsLists[valueIndex]['maxDraft'].value = event.data.port.value.maxDraft;
+      this.updateField(event.index, 'maxDraft', event.data.port.value.maxDraft);
+      this.portsLists[valueIndex]['maxAirDraft'].value = event.data.port.value.maxAirDraft;
+      this.updateField(event.index, 'maxAirDraft', event.data.port.value.maxAirDraft);
+      this.portsLists[valueIndex]['seaWaterDensity'].value = event.data.port.value.waterDensity;
+      this.updateField(event.index, 'seaWaterDensity', event.data.port.value.waterDensity);
       this.updateField(event.index, 'portOrder', this.portOrder);
       form.controls.operation.updateValueAndValidity();
       this.updateValuesIfBunkering(event.data, form, index);
@@ -445,14 +439,15 @@ export class PortsComponent implements OnInit {
   */
   async onDeleteRow(event: IPortsEvent) {
     if (event?.data?.isDelete) {
-      const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
       this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORTS_DELETE_SUMMARY', detail: 'PORTS_DELETE_DETAILS', data: { confirmLabel: 'PORTS_DELETE_CONFIRM_LABEL', rejectLabel: 'PORTS_DELETE_REJECT_LABEL' } });
-      this.confirmationAlertService.confirmAlert$.subscribe(async (response) => {
+      const subscription = this.confirmationAlertService.confirmAlert$
+      .subscribe(async (response) => {
         if (response) {
           if (event?.data?.isAdd) {
             this.portsLists.splice(event.index, 1);
             this.portsLists = [...this.portsLists];
           } else {
+            const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
             const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
             if (res) {
               this.portsLists.splice(event.index, 1);
@@ -462,6 +457,7 @@ export class PortsComponent implements OnInit {
           const formArray = <FormArray>this.portsForm.get('dataTable');
           formArray.removeAt(event.index)
         }
+        subscription.unsubscribe();
       });
     }
   }
@@ -599,8 +595,8 @@ export class PortsComponent implements OnInit {
           form.controls.etd.setValue(loadingPortForm.value.etd);
           form.controls.eta.disable();
           form.controls.etd.disable();
-          this.portsLists[index].eta.value = loadingPortData.eta.value;
-          this.portsLists[index].etd.value = loadingPortData.etd.value;
+          this.portsLists[index].eta.value = loadingPortData.eta.value ? loadingPortData.eta.value : '';
+          this.portsLists[index].etd.value = loadingPortData.etd.value ? loadingPortData.etd.value : '';
           this.portsLists[index].eta.isEditable = false;
           this.portsLists[index].etd.isEditable = false;
           this.updateValidityAndEditMode(index, 'eta');
