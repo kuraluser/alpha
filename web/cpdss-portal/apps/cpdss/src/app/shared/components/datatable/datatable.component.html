@@ -73,7 +73,7 @@
                             [placeholder]="col.filterPlaceholder| translate" class="p-column-filter">
                             <p-calendar appendTo="body" *ngSwitchCase="filterType.DATE"
                             [maxDate]="col.filterFieldMaxvalue"
-                            (onSelect)="onDateSelect($event, col?.filterField, col?.filterMatchMode)"
+                            (onSelect)="onDateSelect($event, col?.filterField, col?.filterMatchMode)" keepInvalid="true"
                             (onInput)="onDateFilter($event.target.value, col?.filterField, col?.filterMatchMode)"
                             (onClearClick)="datatable.filter('', col?.filterField, 'contains')"
                             [showButtonBar]="true" styleClass="p-column-filter"
