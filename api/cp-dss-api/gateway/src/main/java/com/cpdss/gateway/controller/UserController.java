@@ -90,12 +90,9 @@ public class UserController {
 
   @GetMapping("/users")
   public UserResponse getUsers(@RequestHeader HttpHeaders headers) throws CommonRestException {
-    UserResponse response = null;
     try {
-      log.info("getScreens: {}");
-      Long companyId = 1L;
-      response = userService.getUsers(companyId, CORRELATION_ID_HEADER);
-
+      log.info("getUsers: {}");
+      return this.userService.getUsers(CORRELATION_ID_HEADER);
     } catch (Exception e) {
       log.error("Error in getScreens ", e);
       throw new CommonRestException(
@@ -105,7 +102,6 @@ public class UserController {
           e.getMessage(),
           e);
     }
-    return response;
   }
 
   @GetMapping("/roles")

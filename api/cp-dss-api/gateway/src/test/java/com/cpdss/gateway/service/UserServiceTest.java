@@ -160,7 +160,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void testGetScreens() {
+  public void testGetScreens() throws GenericServiceException {
     ScreenResponse screenResponse = new ScreenResponse();
 
     Roles roleEntity = new Roles();
@@ -168,7 +168,7 @@ class UserServiceTest {
     roleEntity.setName("test");
     roleEntity.setDescription("test");
     when(this.rolesRepository.findByIdAndCompanyXIdAndIsActive(anyLong(), anyLong(), anyBoolean()))
-        .thenReturn(roleEntity);
+        .thenReturn(Optional.of(roleEntity));
     List<Screen> screenDataList = this.createScreenDataList();
     when(this.screenRepository.findByCompanyXIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(screenDataList);
@@ -208,22 +208,18 @@ class UserServiceTest {
   }
 
   @Test
-  public void testGetUsers() {
-    UserResponse userResponse = new UserResponse();
-
+  void testGetUsers() {
     Users users = new Users();
     users.setId(1L);
     List<Users> userList = new ArrayList<Users>();
     userList.add(users);
-    when(this.usersRepository.findByCompanyXIdAndIsActive(anyLong(), anyBoolean()))
-        .thenReturn(userList);
-
-    userResponse = userService.getUsers(anyLong(), anyString());
+    when(this.usersRepository.findByIsActive(anyBoolean())).thenReturn(userList);
+    UserResponse userResponse = userService.getUsers(anyString());
     assertEquals(STATUS, userResponse.getResponseStatus().getStatus());
   }
 
   @Test
-  public void testSavePermission() throws GenericServiceException {
+  void testSavePermission() throws GenericServiceException {
     PermissionResponse permissionResponse = new PermissionResponse();
     Roles roleEntity = new Roles();
     roleEntity.setId(1L);

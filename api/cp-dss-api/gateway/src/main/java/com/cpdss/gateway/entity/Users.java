@@ -67,8 +67,8 @@ public class Users extends EntityDoc {
   @Column(name = "timezone_xid")
   private Long timezoneXId;
 
-  @Column(name = "designation_xid")
-  private Long designationXId;
+  @Column(name = "designation")
+  private String designation;
 
   @Column(name = "session_time")
   private Long sessionTime;

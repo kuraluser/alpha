@@ -10,7 +10,8 @@ public interface RolesRepository extends CrudRepository<Roles, Long> {
 
   public List<Roles> findByCompanyXIdAndIsActive(Long companyXId, Boolean isActive);
 
-  public Roles findByIdAndCompanyXIdAndIsActive(Long id, Long companyXId, Boolean isActive);
+  public Optional<Roles> findByIdAndCompanyXIdAndIsActive(
+      Long id, Long companyXId, Boolean isActive);
 
   Optional<Roles> findByIdAndIsActive(Long roleId, boolean isActive);
 
