@@ -93,7 +93,7 @@ export class CommingleComponent implements OnInit {
   ngOnInit() {
     this.cargoNominationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.EDIT, PERMISSION_ACTION.ADD] };
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], true);
-    this.isEditable = this.permission ? this.permission?.edit : true;
+    this.isEditable = this.permission ? this.permission?.edit : false;
     this.percentage = [{ id: 10, name: "10%" }, { id: 20, name: "20%" }, { id: 30, name: "30%" }, { id: 40, name: "40%" }, { id: 50, name: "50%" }, { id: 60, name: "60%" }, { id: 70, name: "70%" }, { id: 80, name: "80%" }, { id: 90, name: "90%" }, { id: 100, name: "100%" }];
     this.columns = this.loadableStudyDetailsTransformationService.getManualCommingleDatatableColumns();
     this.createVolumeMaximisationFormGroup();
@@ -161,7 +161,7 @@ export class CommingleComponent implements OnInit {
     this.commingleForm = this.fb.group({
       purpose: this.fb.control(null, Validators.required),
       preferredTanks: this.fb.control(null),
-      slopOnly: this.fb.control({ value:false, disabled:!this.isEditable}, [Validators.required]),
+      slopOnly: this.fb.control({ value:false, disabled:this.isEditable}, [Validators.required]),
       cargo1: this.fb.control(null, [Validators.required]),
       cargo2: this.fb.control(null, [Validators.required]),
     });
