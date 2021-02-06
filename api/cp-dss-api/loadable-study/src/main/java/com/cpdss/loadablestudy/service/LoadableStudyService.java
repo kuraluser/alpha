@@ -55,6 +55,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
+import com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply;
+import com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
@@ -3320,6 +3322,40 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
+  public void recalculateVolume(
+      RecalculateVolumeRequest request, StreamObserver<RecalculateVolumeReply> responseObserver) {
+    log.info("Inside get recalculateVolume in loadable study micro service");
+    RecalculateVolumeReply.Builder builder = RecalculateVolumeReply.newBuilder();
+    try {
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+      if (!loadablePatternOpt.isPresent()) {
+        log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
+        builder.setResponseStatus(
+            ResponseStatus.newBuilder()
+                .setStatus(FAILED)
+                .setMessage(INVALID_LOADABLE_PATTERN_ID)
+                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+
+      } else {
+        // ToDo - find corrected ullate
+        // ToDo - from corrected ullage find obsm3
+      }
+    } catch (Exception e) {
+      log.error("Exception while recalculating volume", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception while recalculating volume")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
   public void getLoadablePatternCommingleDetails(
       LoadablePatternCommingleDetailsRequest request,
       StreamObserver<LoadablePatternCommingleDetailsReply> responseObserver) {
@@ -3433,7 +3469,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        objectMapper.writeValue(new File("loadableStudy.json"), loadableStudy);
+        objectMapper.writeValue(
+            new File("json/loadableStudy_" + request.getLoadableStudyId() + ".json"),
+            loadableStudy);
 
         AlgoResponse algoResponse =
             restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);

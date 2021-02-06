@@ -10,6 +10,1897 @@ public final class LoadableStudy {
     registerAllExtensions((com.google.protobuf.ExtensionRegistryLite) registry);
   }
 
+  public interface RecalculateVolumeRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:RecalculateVolumeRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 loadablePatternId = 1;</code>
+     *
+     * @return The loadablePatternId.
+     */
+    long getLoadablePatternId();
+
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+        getLoadablePlanStowageDetailsList();
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+        getLoadablePlanStowageDetails(int index);
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    int getLoadablePlanStowageDetailsCount();
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    java.util.List<
+            ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+        getLoadablePlanStowageDetailsOrBuilderList();
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder
+        getLoadablePlanStowageDetailsOrBuilder(int index);
+  }
+  /** Protobuf type {@code RecalculateVolumeRequest} */
+  public static final class RecalculateVolumeRequest extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:RecalculateVolumeRequest)
+      RecalculateVolumeRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use RecalculateVolumeRequest.newBuilder() to construct.
+    private RecalculateVolumeRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private RecalculateVolumeRequest() {
+      loadablePlanStowageDetails_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new RecalculateVolumeRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private RecalculateVolumeRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                loadablePatternId_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  loadablePlanStowageDetails_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                loadablePlanStowageDetails_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+                            .parser(),
+                        extensionRegistry));
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          loadablePlanStowageDetails_ =
+              java.util.Collections.unmodifiableList(loadablePlanStowageDetails_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_RecalculateVolumeRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_RecalculateVolumeRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest.class,
+              com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest.Builder.class);
+    }
+
+    public static final int LOADABLEPATTERNID_FIELD_NUMBER = 1;
+    private long loadablePatternId_;
+    /**
+     * <code>int64 loadablePatternId = 1;</code>
+     *
+     * @return The loadablePatternId.
+     */
+    public long getLoadablePatternId() {
+      return loadablePatternId_;
+    }
+
+    public static final int LOADABLEPLANSTOWAGEDETAILS_FIELD_NUMBER = 2;
+    private java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+        loadablePlanStowageDetails_;
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+        getLoadablePlanStowageDetailsList() {
+      return loadablePlanStowageDetails_;
+    }
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+        getLoadablePlanStowageDetailsOrBuilderList() {
+      return loadablePlanStowageDetails_;
+    }
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    public int getLoadablePlanStowageDetailsCount() {
+      return loadablePlanStowageDetails_.size();
+    }
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+        getLoadablePlanStowageDetails(int index) {
+      return loadablePlanStowageDetails_.get(index);
+    }
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder
+        getLoadablePlanStowageDetailsOrBuilder(int index) {
+      return loadablePlanStowageDetails_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (loadablePatternId_ != 0L) {
+        output.writeInt64(1, loadablePatternId_);
+      }
+      for (int i = 0; i < loadablePlanStowageDetails_.size(); i++) {
+        output.writeMessage(2, loadablePlanStowageDetails_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (loadablePatternId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, loadablePatternId_);
+      }
+      for (int i = 0; i < loadablePlanStowageDetails_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(
+                2, loadablePlanStowageDetails_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest other =
+          (com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest) obj;
+
+      if (getLoadablePatternId() != other.getLoadablePatternId()) return false;
+      if (!getLoadablePlanStowageDetailsList().equals(other.getLoadablePlanStowageDetailsList()))
+        return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + LOADABLEPATTERNID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadablePatternId());
+      if (getLoadablePlanStowageDetailsCount() > 0) {
+        hash = (37 * hash) + LOADABLEPLANSTOWAGEDETAILS_FIELD_NUMBER;
+        hash = (53 * hash) + getLoadablePlanStowageDetailsList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest parseFrom(
+        byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code RecalculateVolumeRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:RecalculateVolumeRequest)
+        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_RecalculateVolumeRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_RecalculateVolumeRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest.class,
+                com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest.Builder.class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getLoadablePlanStowageDetailsFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        loadablePatternId_ = 0L;
+
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          loadablePlanStowageDetails_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          loadablePlanStowageDetailsBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_RecalculateVolumeRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest build() {
+        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest result =
+            new com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest(this);
+        int from_bitField0_ = bitField0_;
+        result.loadablePatternId_ = loadablePatternId_;
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            loadablePlanStowageDetails_ =
+                java.util.Collections.unmodifiableList(loadablePlanStowageDetails_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.loadablePlanStowageDetails_ = loadablePlanStowageDetails_;
+        } else {
+          result.loadablePlanStowageDetails_ = loadablePlanStowageDetailsBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest) {
+          return mergeFrom(
+              (com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest other) {
+        if (other
+            == com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest
+                .getDefaultInstance()) return this;
+        if (other.getLoadablePatternId() != 0L) {
+          setLoadablePatternId(other.getLoadablePatternId());
+        }
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (!other.loadablePlanStowageDetails_.isEmpty()) {
+            if (loadablePlanStowageDetails_.isEmpty()) {
+              loadablePlanStowageDetails_ = other.loadablePlanStowageDetails_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureLoadablePlanStowageDetailsIsMutable();
+              loadablePlanStowageDetails_.addAll(other.loadablePlanStowageDetails_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.loadablePlanStowageDetails_.isEmpty()) {
+            if (loadablePlanStowageDetailsBuilder_.isEmpty()) {
+              loadablePlanStowageDetailsBuilder_.dispose();
+              loadablePlanStowageDetailsBuilder_ = null;
+              loadablePlanStowageDetails_ = other.loadablePlanStowageDetails_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              loadablePlanStowageDetailsBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getLoadablePlanStowageDetailsFieldBuilder()
+                      : null;
+            } else {
+              loadablePlanStowageDetailsBuilder_.addAllMessages(other.loadablePlanStowageDetails_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private long loadablePatternId_;
+      /**
+       * <code>int64 loadablePatternId = 1;</code>
+       *
+       * @return The loadablePatternId.
+       */
+      public long getLoadablePatternId() {
+        return loadablePatternId_;
+      }
+      /**
+       * <code>int64 loadablePatternId = 1;</code>
+       *
+       * @param value The loadablePatternId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadablePatternId(long value) {
+
+        loadablePatternId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadablePatternId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadablePatternId() {
+
+        loadablePatternId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+          loadablePlanStowageDetails_ = java.util.Collections.emptyList();
+
+      private void ensureLoadablePlanStowageDetailsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          loadablePlanStowageDetails_ =
+              new java.util.ArrayList<
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>(
+                  loadablePlanStowageDetails_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails,
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder,
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+          loadablePlanStowageDetailsBuilder_;
+
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+          getLoadablePlanStowageDetailsList() {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(loadablePlanStowageDetails_);
+        } else {
+          return loadablePlanStowageDetailsBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public int getLoadablePlanStowageDetailsCount() {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          return loadablePlanStowageDetails_.size();
+        } else {
+          return loadablePlanStowageDetailsBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+          getLoadablePlanStowageDetails(int index) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          return loadablePlanStowageDetails_.get(index);
+        } else {
+          return loadablePlanStowageDetailsBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder setLoadablePlanStowageDetails(
+          int index, com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails value) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.set(index, value);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder setLoadablePlanStowageDetails(
+          int index,
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+              builderForValue) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder addLoadablePlanStowageDetails(
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails value) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.add(value);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder addLoadablePlanStowageDetails(
+          int index, com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails value) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.add(index, value);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder addLoadablePlanStowageDetails(
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+              builderForValue) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.add(builderForValue.build());
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder addLoadablePlanStowageDetails(
+          int index,
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+              builderForValue) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder addAllLoadablePlanStowageDetails(
+          java.lang.Iterable<
+                  ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+              values) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, loadablePlanStowageDetails_);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder clearLoadablePlanStowageDetails() {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          loadablePlanStowageDetails_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder removeLoadablePlanStowageDetails(int index) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.remove(index);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+          getLoadablePlanStowageDetailsBuilder(int index) {
+        return getLoadablePlanStowageDetailsFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder
+          getLoadablePlanStowageDetailsOrBuilder(int index) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          return loadablePlanStowageDetails_.get(index);
+        } else {
+          return loadablePlanStowageDetailsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public java.util.List<
+              ? extends
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+          getLoadablePlanStowageDetailsOrBuilderList() {
+        if (loadablePlanStowageDetailsBuilder_ != null) {
+          return loadablePlanStowageDetailsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(loadablePlanStowageDetails_);
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+          addLoadablePlanStowageDetailsBuilder() {
+        return getLoadablePlanStowageDetailsFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+                    .getDefaultInstance());
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+          addLoadablePlanStowageDetailsBuilder(int index) {
+        return getLoadablePlanStowageDetailsFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+                    .getDefaultInstance());
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public java.util.List<
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder>
+          getLoadablePlanStowageDetailsBuilderList() {
+        return getLoadablePlanStowageDetailsFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails,
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder,
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+          getLoadablePlanStowageDetailsFieldBuilder() {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          loadablePlanStowageDetailsBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails,
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder,
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>(
+                  loadablePlanStowageDetails_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          loadablePlanStowageDetails_ = null;
+        }
+        return loadablePlanStowageDetailsBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:RecalculateVolumeRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:RecalculateVolumeRequest)
+    private static final com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RecalculateVolumeRequest> PARSER =
+        new com.google.protobuf.AbstractParser<RecalculateVolumeRequest>() {
+          @java.lang.Override
+          public RecalculateVolumeRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new RecalculateVolumeRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<RecalculateVolumeRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RecalculateVolumeRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface RecalculateVolumeReplyOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:RecalculateVolumeReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+        getLoadablePlanStowageDetailsList();
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+        getLoadablePlanStowageDetails(int index);
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    int getLoadablePlanStowageDetailsCount();
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    java.util.List<
+            ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+        getLoadablePlanStowageDetailsOrBuilderList();
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder
+        getLoadablePlanStowageDetailsOrBuilder(int index);
+  }
+  /** Protobuf type {@code RecalculateVolumeReply} */
+  public static final class RecalculateVolumeReply extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:RecalculateVolumeReply)
+      RecalculateVolumeReplyOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use RecalculateVolumeReply.newBuilder() to construct.
+    private RecalculateVolumeReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private RecalculateVolumeReply() {
+      loadablePlanStowageDetails_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new RecalculateVolumeReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private RecalculateVolumeReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            case 18:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  loadablePlanStowageDetails_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                loadablePlanStowageDetails_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+                            .parser(),
+                        extensionRegistry));
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          loadablePlanStowageDetails_ =
+              java.util.Collections.unmodifiableList(loadablePlanStowageDetails_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_RecalculateVolumeReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.LoadableStudy
+          .internal_static_RecalculateVolumeReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply.class,
+              com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply.Builder.class);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    public static final int LOADABLEPLANSTOWAGEDETAILS_FIELD_NUMBER = 2;
+    private java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+        loadablePlanStowageDetails_;
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+        getLoadablePlanStowageDetailsList() {
+      return loadablePlanStowageDetails_;
+    }
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+        getLoadablePlanStowageDetailsOrBuilderList() {
+      return loadablePlanStowageDetails_;
+    }
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    public int getLoadablePlanStowageDetailsCount() {
+      return loadablePlanStowageDetails_.size();
+    }
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+        getLoadablePlanStowageDetails(int index) {
+      return loadablePlanStowageDetails_.get(index);
+    }
+    /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+    public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder
+        getLoadablePlanStowageDetailsOrBuilder(int index) {
+      return loadablePlanStowageDetails_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (responseStatus_ != null) {
+        output.writeMessage(1, getResponseStatus());
+      }
+      for (int i = 0; i < loadablePlanStowageDetails_.size(); i++) {
+        output.writeMessage(2, loadablePlanStowageDetails_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
+      }
+      for (int i = 0; i < loadablePlanStowageDetails_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(
+                2, loadablePlanStowageDetails_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply other =
+          (com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply) obj;
+
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (!getLoadablePlanStowageDetailsList().equals(other.getLoadablePlanStowageDetailsList()))
+        return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      if (getLoadablePlanStowageDetailsCount() > 0) {
+        hash = (37 * hash) + LOADABLEPLANSTOWAGEDETAILS_FIELD_NUMBER;
+        hash = (53 * hash) + getLoadablePlanStowageDetailsList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply parseFrom(
+        byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code RecalculateVolumeReply} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:RecalculateVolumeReply)
+        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_RecalculateVolumeReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_RecalculateVolumeReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply.class,
+                com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply.Builder.class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getLoadablePlanStowageDetailsFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          loadablePlanStowageDetails_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          loadablePlanStowageDetailsBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.LoadableStudy
+            .internal_static_RecalculateVolumeReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply build() {
+        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply buildPartial() {
+        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply result =
+            new com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply(this);
+        int from_bitField0_ = bitField0_;
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            loadablePlanStowageDetails_ =
+                java.util.Collections.unmodifiableList(loadablePlanStowageDetails_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.loadablePlanStowageDetails_ = loadablePlanStowageDetails_;
+        } else {
+          result.loadablePlanStowageDetails_ = loadablePlanStowageDetailsBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply) {
+          return mergeFrom((com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply other) {
+        if (other
+            == com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply.getDefaultInstance())
+          return this;
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (!other.loadablePlanStowageDetails_.isEmpty()) {
+            if (loadablePlanStowageDetails_.isEmpty()) {
+              loadablePlanStowageDetails_ = other.loadablePlanStowageDetails_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureLoadablePlanStowageDetailsIsMutable();
+              loadablePlanStowageDetails_.addAll(other.loadablePlanStowageDetails_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.loadablePlanStowageDetails_.isEmpty()) {
+            if (loadablePlanStowageDetailsBuilder_.isEmpty()) {
+              loadablePlanStowageDetailsBuilder_.dispose();
+              loadablePlanStowageDetailsBuilder_ = null;
+              loadablePlanStowageDetails_ = other.loadablePlanStowageDetails_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              loadablePlanStowageDetailsBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getLoadablePlanStowageDetailsFieldBuilder()
+                      : null;
+            } else {
+              loadablePlanStowageDetailsBuilder_.addAllMessages(other.loadablePlanStowageDetails_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+          loadablePlanStowageDetails_ = java.util.Collections.emptyList();
+
+      private void ensureLoadablePlanStowageDetailsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          loadablePlanStowageDetails_ =
+              new java.util.ArrayList<
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>(
+                  loadablePlanStowageDetails_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails,
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder,
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+          loadablePlanStowageDetailsBuilder_;
+
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+          getLoadablePlanStowageDetailsList() {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(loadablePlanStowageDetails_);
+        } else {
+          return loadablePlanStowageDetailsBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public int getLoadablePlanStowageDetailsCount() {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          return loadablePlanStowageDetails_.size();
+        } else {
+          return loadablePlanStowageDetailsBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+          getLoadablePlanStowageDetails(int index) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          return loadablePlanStowageDetails_.get(index);
+        } else {
+          return loadablePlanStowageDetailsBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder setLoadablePlanStowageDetails(
+          int index, com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails value) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.set(index, value);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder setLoadablePlanStowageDetails(
+          int index,
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+              builderForValue) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder addLoadablePlanStowageDetails(
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails value) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.add(value);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder addLoadablePlanStowageDetails(
+          int index, com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails value) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.add(index, value);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder addLoadablePlanStowageDetails(
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+              builderForValue) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.add(builderForValue.build());
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder addLoadablePlanStowageDetails(
+          int index,
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+              builderForValue) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder addAllLoadablePlanStowageDetails(
+          java.lang.Iterable<
+                  ? extends com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails>
+              values) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, loadablePlanStowageDetails_);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder clearLoadablePlanStowageDetails() {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          loadablePlanStowageDetails_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public Builder removeLoadablePlanStowageDetails(int index) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          ensureLoadablePlanStowageDetailsIsMutable();
+          loadablePlanStowageDetails_.remove(index);
+          onChanged();
+        } else {
+          loadablePlanStowageDetailsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+          getLoadablePlanStowageDetailsBuilder(int index) {
+        return getLoadablePlanStowageDetailsFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder
+          getLoadablePlanStowageDetailsOrBuilder(int index) {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          return loadablePlanStowageDetails_.get(index);
+        } else {
+          return loadablePlanStowageDetailsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public java.util.List<
+              ? extends
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+          getLoadablePlanStowageDetailsOrBuilderList() {
+        if (loadablePlanStowageDetailsBuilder_ != null) {
+          return loadablePlanStowageDetailsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(loadablePlanStowageDetails_);
+        }
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+          addLoadablePlanStowageDetailsBuilder() {
+        return getLoadablePlanStowageDetailsFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+                    .getDefaultInstance());
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+          addLoadablePlanStowageDetailsBuilder(int index) {
+        return getLoadablePlanStowageDetailsFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails
+                    .getDefaultInstance());
+      }
+      /** <code>repeated .LoadablePlanStowageDetails loadablePlanStowageDetails = 2;</code> */
+      public java.util.List<
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder>
+          getLoadablePlanStowageDetailsBuilderList() {
+        return getLoadablePlanStowageDetailsFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails,
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder,
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>
+          getLoadablePlanStowageDetailsFieldBuilder() {
+        if (loadablePlanStowageDetailsBuilder_ == null) {
+          loadablePlanStowageDetailsBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails,
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder,
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetailsOrBuilder>(
+                  loadablePlanStowageDetails_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          loadablePlanStowageDetails_ = null;
+        }
+        return loadablePlanStowageDetailsBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:RecalculateVolumeReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:RecalculateVolumeReply)
+    private static final com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply();
+    }
+
+    public static com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RecalculateVolumeReply> PARSER =
+        new com.google.protobuf.AbstractParser<RecalculateVolumeReply>() {
+          @java.lang.Override
+          public RecalculateVolumeReply parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new RecalculateVolumeReply(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<RecalculateVolumeReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RecalculateVolumeReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   public interface LoadablePatternAlgoRequestOrBuilder
       extends
       // @@protoc_insertion_point(interface_extends:LoadablePatternAlgoRequest)
@@ -103799,6 +105690,14 @@ public final class LoadableStudy {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_RecalculateVolumeRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_RecalculateVolumeRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_RecalculateVolumeReply_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_RecalculateVolumeReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_LoadablePatternAlgoRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_LoadablePatternAlgoRequest_fieldAccessorTable;
@@ -104103,421 +106002,429 @@ public final class LoadableStudy {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\024loadable_study.proto\032\014common.proto\"|\n\032"
-          + "LoadablePatternAlgoRequest\022\022\n\nprocesssId"
-          + "\030\001 \001(\t\0221\n\023loadablePlanDetails\030\002 \003(\0132\024.Lo"
-          + "adablePlanDetails\022\027\n\017loadableStudyId\030\003 \001"
-          + "(\003\"\201\001\n\023LoadablePlanDetails\022\022\n\ncaseNumber"
-          + "\030\001 \001(\005\022A\n\033loadablePlanPortWiseDetails\030\002 "
-          + "\003(\0132\034.LoadablePlanPortWiseDetails\022\023\n\013con"
-          + "straints\030\003 \003(\t\"\253\001\n\033LoadablePlanPortWiseD"
-          + "etails\022\016\n\006portId\030\001 \001(\003\022\020\n\010portCode\030\002 \001(\t"
-          + "\0223\n\020arrivalCondition\030\003 \001(\0132\031.LoadablePla"
-          + "nDetailsReply\0225\n\022departureCondition\030\004 \001("
-          + "\0132\031.LoadablePlanDetailsReply\"7\n\032Loadable"
-          + "PlanDetailsRequest\022\031\n\021loadablePatternId\030"
-          + "\001 \001(\003\"\346\004\n\030LoadablePlanDetailsReply\022\'\n\016re"
-          + "sponseStatus\030\001 \001(\0132\017.ResponseStatus\022U\n%l"
-          + "oadableQuantityCommingleCargoDetails\030\002 \003"
-          + "(\0132&.LoadableQuantityCommingleCargoDetai"
-          + "ls\022C\n\034loadableQuantityCargoDetails\030\003 \003(\013"
-          + "2\035.LoadableQuantityCargoDetails\022?\n\032loada"
-          + "blePlanStowageDetails\030\004 \003(\0132\033.LoadablePl"
-          + "anStowageDetails\022\030\n\005tanks\030\005 \003(\0132\t.TankLi"
-          + "st\022$\n\021ballastFrontTanks\030\006 \003(\0132\t.TankList"
-          + "\022%\n\022ballastCenterTanks\030\007 \003(\0132\t.TankList\022"
-          + "#\n\020ballastRearTanks\030\010 \003(\0132\t.TankList\022?\n\032"
-          + "loadablePlanBallastDetails\030\t \003(\0132\033.Loada"
-          + "blePlanBallastDetails\0223\n\024loadablePlanCom"
-          + "ments\030\n \003(\0132\025.LoadablePlanComments\022\022\n\nca"
-          + "seNumber\030\013 \001(\t\022\014\n\004date\030\014 \001(\t\022\024\n\014voyageNu"
-          + "mber\030\r \001(\t\022\n\n\002id\030\016 \001(\003\"Z\n\024LoadablePlanCo"
-          + "mments\022\n\n\002id\030\001 \001(\003\022\020\n\010userName\030\002 \001(\t\022\023\n\013"
-          + "dataAndTime\030\003 \001(\t\022\017\n\007comment\030\004 \001(\t\"\240\002\n\032L"
-          + "oadablePlanBallastDetails\022\n\n\002id\030\001 \001(\003\022\016\n"
-          + "\006tankId\030\002 \001(\003\022\020\n\010rdgLevel\030\003 \001(\t\022\030\n\020corre"
-          + "ctionFactor\030\004 \001(\t\022\026\n\016correctedLevel\030\005 \001("
-          + "\t\022\021\n\tmetricTon\030\006 \001(\t\022\022\n\ncubicMeter\030\007 \001(\t"
-          + "\022\022\n\npercentage\030\010 \001(\t\022\n\n\002sg\030\t \001(\t\022\013\n\003lcg\030"
-          + "\n \001(\t\022\013\n\003vcg\030\013 \001(\t\022\013\n\003tcg\030\014 \001(\t\022\017\n\007inert"
-          + "ia\030\r \001(\t\022\020\n\010tankName\030\016 \001(\t\022\021\n\tcolorCode\030"
-          + "\017 \001(\t\"\320\002\n\032LoadablePlanStowageDetails\022\016\n\006"
-          + "tankId\030\001 \001(\003\022\031\n\021cargoAbbreviation\030\002 \001(\t\022"
-          + "\016\n\006weight\030\003 \001(\t\022\027\n\017correctedUllage\030\004 \001(\t"
-          + "\022\024\n\014fillingRatio\030\005 \001(\t\022\020\n\010tankName\030\006 \001(\t"
-          + "\022\021\n\trdgUllage\030\007 \001(\t\022\030\n\020correctionFactor\030"
-          + "\010 \001(\t\022\022\n\nobservedM3\030\t \001(\t\022\027\n\017observedBar"
-          + "rels\030\n \001(\t\022\033\n\023observedBarrelsAt60\030\013 \001(\t\022"
-          + "\013\n\003api\030\014 \001(\t\022\023\n\013temperature\030\r \001(\t\022\n\n\002id\030"
-          + "\016 \001(\003\022\021\n\tcolorCode\030\017 \001(\t\"\360\003\n%LoadableQua"
-          + "ntityCommingleCargoDetails\022\n\n\002id\030\001 \001(\003\022\r"
-          + "\n\005grade\030\002 \001(\t\022\020\n\010tankName\030\003 \001(\t\022\020\n\010quant"
-          + "ity\030\004 \001(\t\022\013\n\003api\030\005 \001(\t\022\014\n\004temp\030\006 \001(\t\022\032\n\022"
-          + "cargo1Abbreviation\030\007 \001(\t\022\032\n\022cargo2Abbrev"
-          + "iation\030\010 \001(\t\022\030\n\020cargo1Percentage\030\t \001(\t\022\030"
-          + "\n\020cargo2Percentage\030\n \001(\t\022\025\n\rcargo1Bblsdb"
-          + "s\030\013 \001(\t\022\025\n\rcargo2Bblsdbs\030\014 \001(\t\022\025\n\rcargo1"
-          + "Bbls60f\030\r \001(\t\022\025\n\rcargo2Bbls60f\030\016 \001(\t\022\020\n\010"
-          + "cargo1LT\030\017 \001(\t\022\020\n\010cargo2LT\030\020 \001(\t\022\020\n\010carg"
-          + "o1MT\030\021 \001(\t\022\020\n\010cargo2MT\030\022 \001(\t\022\020\n\010cargo1KL"
-          + "\030\023 \001(\t\022\020\n\010cargo2KL\030\024 \001(\t\022\021\n\torderedMT\030\025 "
-          + "\001(\t\022\020\n\010priority\030\026 \001(\005\022\024\n\014loadingOrder\030\027 "
-          + "\001(\005\"\335\003\n\034LoadableQuantityCargoDetails\022\n\n\002"
-          + "id\030\001 \001(\003\022\r\n\005grade\030\002 \001(\t\022\024\n\014estimatedAPI\030"
-          + "\003 \001(\t\022\025\n\restimatedTemp\030\004 \001(\t\022\024\n\014orderBbl"
-          + "sdbs\030\005 \001(\t\022\024\n\014orderBbls60f\030\006 \001(\t\022\024\n\014minT"
-          + "olerence\030\007 \001(\t\022\024\n\014maxTolerence\030\010 \001(\t\022\027\n\017"
-          + "loadableBblsdbs\030\t \001(\t\022\027\n\017loadableBbls60f"
-          + "\030\n \001(\t\022\022\n\nloadableLT\030\013 \001(\t\022\022\n\nloadableMT"
-          + "\030\014 \001(\t\022\022\n\nloadableKL\030\r \001(\t\022\034\n\024difference"
-          + "Percentage\030\016 \001(\t\022\027\n\017differenceColor\030\017 \001("
-          + "\t\022\017\n\007cargoId\030\020 \001(\003\022\021\n\torderedMT\030\021 \001(\t\022\031\n"
-          + "\021cargoAbbreviation\030\022 \001(\t\022\021\n\tcolorCode\030\023 "
-          + "\001(\t\022\020\n\010priority\030\024 \001(\005\022\024\n\014loadingOrder\030\025 "
-          + "\001(\005\"/\n\022ConfirmPlanRequest\022\031\n\021loadablePat"
-          + "ternId\030\001 \001(\003\";\n\020ConfirmPlanReply\022\'\n\016resp"
-          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\"H\n\032Loa"
-          + "dableStudyStatusRequest\022\027\n\017loadableStudy"
-          + "Id\030\001 \001(\003\022\021\n\tprocessId\030\002 \001(\t\"b\n\030LoadableS"
-          + "tudyStatusReply\022\'\n\016responseStatus\030\001 \001(\0132"
-          + "\017.ResponseStatus\022\035\n\025loadableStudystatusI"
-          + "d\030\002 \001(\003\"F\n\021AlgoStatusRequest\022\022\n\nprocesss"
-          + "Id\030\001 \001(\t\022\035\n\025loadableStudystatusId\030\002 \001(\003\""
-          + ":\n\017AlgoStatusReply\022\'\n\016responseStatus\030\001 \001"
-          + "(\0132\017.ResponseStatus\"&\n\013AlgoRequest\022\027\n\017lo"
-          + "adableStudyId\030\001 \001(\003\"H\n\tAlgoReply\022\'\n\016resp"
-          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\022\022\n\npro"
-          + "cesssId\030\002 \001(\t\"\225\001\n\rVoyageRequest\022\021\n\tcapta"
-          + "inId\030\001 \001(\003\022\026\n\016chiefOfficerId\030\002 \001(\003\022\021\n\tco"
-          + "mpanyId\030\003 \001(\003\022\020\n\010vesselId\030\004 \001(\003\022\020\n\010voyag"
-          + "eNo\030\005 \001(\t\022\021\n\tstartDate\030\006 \001(\t\022\017\n\007endDate\030"
-          + "\007 \001(\t\"E\n\013VoyageReply\022\020\n\010voyageId\030\001 \001(\003\022$"
-          + "\n\016responseStatus\030\002 \001(\0132\014.StatusReply\"\206\001\n"
-          + "\014VoyageDetail\022\n\n\002id\030\001 \001(\003\022\024\n\014voyageNumbe"
-          + "r\030\002 \001(\t\022\021\n\tstartDate\030\003 \001(\t\022\017\n\007endDate\030\004 "
-          + "\001(\t\022\016\n\006status\030\005 \001(\t\022 \n\030confirmedLoadable"
-          + "StudyId\030\006 \001(\003\"W\n\017VoyageListReply\022$\n\016resp"
-          + "onseStatus\030\001 \001(\0132\014.StatusReply\022\036\n\007voyage"
-          + "s\030\002 \003(\0132\r.VoyageDetail\"<\n\013StatusReply\022\016\n"
-          + "\006status\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\022\017\n\007message\030\003"
-          + " \001(\t\"\237\005\n\027LoadableQuantityRequest\022\025\n\restS"
-          + "eaDensity\030\001 \001(\t\022\013\n\003tpc\030\002 \001(\t\022\022\n\nestSaggi"
-          + "ng\030\003 \001(\t\022#\n\033displacmentDraftRestriction\030"
-          + "\004 \001(\t\022\031\n\021vesselLightWeight\030\005 \001(\t\022\013\n\003dwt\030"
-          + "\006 \001(\t\022\024\n\014sgCorrection\030\007 \001(\t\022\030\n\020saggingDe"
-          + "duction\030\010 \001(\t\022\024\n\014estFOOnBoard\030\t \001(\t\022\024\n\014e"
-          + "stDOOnBoard\030\n \001(\t\022\034\n\024estFreshWaterOnBoar"
-          + "d\030\013 \001(\t\022\020\n\010constant\030\014 \001(\t\022\022\n\notherIfAny\030"
-          + "\r \001(\t\022\025\n\rtotalQuantity\030\016 \001(\t\022\034\n\024distance"
-          + "FromLastPort\030\017 \001(\t\022\032\n\022vesselAverageSpeed"
-          + "\030\020 \001(\t\022\027\n\017loadableStudyId\030\021 \001(\003\022\031\n\021updat"
-          + "eDateAndTime\030\022 \001(\t\022\n\n\002sg\030\023 \001(\t\022\032\n\022boiler"
-          + "WaterOnBoard\030\024 \001(\t\022\017\n\007ballast\030\025 \001(\t\022\024\n\014r"
-          + "unningHours\030\026 \001(\t\022\023\n\013runningDays\030\027 \001(\t\022\021"
-          + "\n\tfoConInSZ\030\030 \001(\t\022\016\n\006portId\030\031 \001(\003\022\030\n\020dra"
-          + "ftRestriction\030\032 \001(\t\022\020\n\010subTotal\030\033 \001(\t\022\033\n"
-          + "\023foConsumptionPerDay\030\034 \001(\t\022\n\n\002id\030\035 \001(\003\"r"
-          + "\n\025LoadableQuantityReply\022$\n\016responseStatu"
-          + "s\030\001 \001(\0132\014.StatusReply\022\032\n\022loadableQuantit"
-          + "yId\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\"f\n\024Lo"
-          + "adableStudyRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n"
-          + "\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017loa"
-          + "dableStudyId\030\004 \001(\003\"K\n\027LoadableStudyAttac"
-          + "hment\022\022\n\nbyteString\030\001 \001(\014\022\020\n\010fileName\030\002 "
-          + "\001(\t\022\n\n\002id\030\003 \001(\003\"\204\004\n\023LoadableStudyDetail\022"
-          + "\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\016\n\006detail\030\003 \001("
-          + "\t\022\020\n\010statusId\030\004 \001(\003\022\016\n\006status\030\005 \001(\t\022\023\n\013c"
-          + "reatedDate\030\006 \001(\t\022\021\n\tcharterer\030\007 \001(\t\022\024\n\014s"
-          + "ubCharterer\030\010 \001(\t\022\021\n\tdraftMark\030\t \001(\t\022\023\n\013"
-          + "loadLineXId\030\n \001(\003\022\030\n\020draftRestriction\030\013 "
-          + "\001(\t\022\031\n\021maxAirTemperature\030\014 \001(\t\022\033\n\023maxWat"
-          + "erTemperature\030\r \001(\t\022\030\n\020duplicatedFromId\030"
-          + "\016 \001(\003\022\020\n\010voyageId\030\017 \001(\003\022\020\n\010vesselId\030\020 \001("
-          + "\003\022-\n\013attachments\030\021 \003(\0132\030.LoadableStudyAt"
-          + "tachment\022\032\n\022dischargingPortIds\030\022 \003(\003\022\032\n\022"
-          + "dischargingCargoId\030\023 \001(\003\022\025\n\rcreatedFromI"
-          + "d\030\024 \001(\003\022\032\n\022deletedAttachments\030\025 \003(\003\022\021\n\tl"
-          + "oadOnTop\030\026 \001(\010\"x\n\022LoadableStudyReply\022\'\n\016"
-          + "responseStatus\030\001 \001(\0132\017.ResponseStatus\022-\n"
-          + "\017loadableStudies\030\002 \003(\0132\024.LoadableStudyDe"
-          + "tail\022\n\n\002id\030\003 \001(\003\"5\n\021LoadingPortDetail\022\016\n"
-          + "\006portId\030\001 \001(\003\022\020\n\010quantity\030\002 \001(\t\".\n\021segre"
-          + "gationDetail\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\""
-          + "\252\002\n\025CargoNominationDetail\022\n\n\002id\030\001 \001(\003\022\027\n"
-          + "\017loadableStudyId\030\002 \001(\003\022\020\n\010priority\030\003 \001(\003"
-          + "\022\r\n\005color\030\004 \001(\t\022\017\n\007cargoId\030\005 \001(\003\022\024\n\014abbr"
-          + "eviation\030\006 \001(\t\022.\n\022loadingPortDetails\030\007 \003"
-          + "(\0132\022.LoadingPortDetail\022\020\n\010quantity\030\010 \001(\t"
-          + "\022\024\n\014maxTolerance\030\t \001(\t\022\024\n\014minTolerance\030\n"
-          + " \001(\t\022\016\n\006apiEst\030\013 \001(\t\022\017\n\007tempEst\030\014 \001(\t\022\025\n"
-          + "\rsegregationId\030\r \001(\003\"\247\001\n\026CargoNomination"
-          + "Request\022\020\n\010vesselId\030\001 \001(\003\022\020\n\010voyageId\030\002 "
-          + "\001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\031\n\021cargoNom"
-          + "inationId\030\004 \001(\003\0225\n\025cargoNominationDetail"
-          + "\030\005 \001(\0132\026.CargoNominationDetail\"\214\001\n\024Cargo"
-          + "NominationReply\022\'\n\016responseStatus\030\001 \001(\0132"
-          + "\017.ResponseStatus\022\031\n\021cargoNominationId\030\002 "
-          + "\001(\003\0220\n\020cargoNominations\030\003 \003(\0132\026.CargoNom"
-          + "inationDetail\"\310\001\n\023PortRotationRequest\022\027\n"
-          + "\017loadableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003"
-          + "\022\020\n\010voyageId\030\003 \001(\003\022\032\n\022dischargingPortIds"
-          + "\030\004 \003(\003\022\n\n\002id\030\005 \001(\003\0220\n\023portRotationDetail"
-          + "s\030\006 \003(\0132\023.PortRotationDetail\022\032\n\022discharg"
-          + "ingCargoId\030\007 \001(\003\"\332\002\n\022PortRotationDetail\022"
-          + "\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\017\n\007berthId\030\003"
-          + " \001(\003\022\023\n\013operationId\030\004 \001(\003\022\027\n\017seaWaterDen"
-          + "sity\030\005 \001(\t\022\034\n\024distanceBetweenPorts\030\006 \001(\t"
-          + "\022\022\n\ntimeOfStay\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t\022\023"
-          + "\n\013maxAirDraft\030\t \001(\t\022\013\n\003eta\030\n \001(\t\022\021\n\tetaA"
-          + "ctual\030\013 \001(\t\022\013\n\003etd\030\014 \001(\t\022\021\n\tetdActual\030\r "
-          + "\001(\t\022\022\n\nlayCanFrom\030\016 \001(\t\022\020\n\010layCanTo\030\017 \001("
-          + "\t\022\027\n\017loadableStudyId\030\020 \001(\003\022\021\n\tportOrder\030"
-          + "\021 \001(\003\".\n\tOperation\022\n\n\002id\030\001 \001(\003\022\025\n\roperat"
-          + "ionName\030\002 \001(\t\"\230\001\n\021PortRotationReply\022\'\n\016r"
-          + "esponseStatus\030\001 \001(\0132\017.ResponseStatus\022\"\n\005"
-          + "ports\030\002 \003(\0132\023.PortRotationDetail\022\036\n\noper"
-          + "ations\030\003 \003(\0132\n.Operation\022\026\n\016portRotation"
-          + "Id\030\004 \001(\003\"\241\001\n\030LoadableQuantityResponse\0229\n"
-          + "\027loadableQuantityRequest\030\001 \001(\0132\030.Loadabl"
-          + "eQuantityRequest\022$\n\016responseStatus\030\002 \001(\013"
-          + "2\014.StatusReply\022\016\n\006caseNo\030\003 \001(\005\022\024\n\014select"
-          + "edZone\030\004 \001(\t\",\n\020ValveSegregation\022\n\n\002id\030\001"
-          + " \001(\003\022\014\n\004name\030\002 \001(\t\"2\n\027ValveSegregationRe"
-          + "quest\022\027\n\017loadableStudyId\030\001 \001(\003\"m\n\025ValveS"
-          + "egregationReply\022\'\n\016responseStatus\030\001 \001(\0132"
-          + "\017.ResponseStatus\022+\n\020valveSegregation\030\002 \003"
-          + "(\0132\021.ValveSegregation\"e\n\025OnHandQuantityR"
-          + "equest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId\030\002 "
-          + "\001(\003\022\027\n\017loadableStudyId\030\003 \001(\003\022\016\n\006portId\030\004"
-          + " \001(\003\"\366\002\n\024OnHandQuantityDetail\022\n\n\002id\030\001 \001("
-          + "\003\022\016\n\006portId\030\002 \001(\003\022\022\n\nfuelTypeId\030\003 \001(\003\022\020\n"
-          + "\010fuelType\030\004 \001(\t\022\016\n\006tankId\030\005 \001(\003\022\020\n\010tankN"
-          + "ame\030\006 \001(\t\022\025\n\rarrivalVolume\030\007 \001(\t\022\027\n\017arri"
-          + "valQuantity\030\010 \001(\t\022\035\n\025actualArrivalQuanti"
-          + "ty\030\t \001(\t\022\027\n\017departureVolume\030\n \001(\t\022\031\n\021dep"
-          + "artureQuantity\030\013 \001(\t\022\037\n\027actualDepartureQ"
-          + "uantity\030\014 \001(\t\022\027\n\017loadableStudyId\030\r \001(\003\022\021"
-          + "\n\tcolorCode\030\016 \001(\t\022\031\n\021fuelTypeShortName\030\017"
-          + " \001(\t\022\017\n\007density\030\020 \001(\t\"\342\002\n\nTankDetail\022\016\n\006"
-          + "tankId\030\001 \001(\003\022\026\n\016tankCategoryId\030\002 \001(\003\022\030\n\020"
-          + "tankCategoryName\030\003 \001(\t\022\020\n\010tankName\030\004 \001(\t"
-          + "\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025\n\rframeNumber"
-          + "To\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t\022\030\n\020fillCapac"
-          + "ityCubm\030\010 \001(\t\022\017\n\007density\030\t \001(\t\022\022\n\nisSlop"
-          + "Tank\030\n \001(\010\022\022\n\nheightFrom\030\013 \001(\t\022\020\n\010height"
-          + "To\030\014 \001(\t\022\021\n\ttankOrder\030\r \001(\005\022\030\n\020tankDispl"
-          + "ayOrder\030\016 \001(\005\022\021\n\ttankGroup\030\017 \001(\005\022\030\n\020full"
-          + "CapacityCubm\030\020 \001(\t\"+\n\010TankList\022\037\n\nvessel"
-          + "Tank\030\001 \003(\0132\013.TankDetail\"\261\001\n\023OnHandQuanti"
-          + "tyReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respon"
-          + "seStatus\022-\n\016onHandQuantity\030\002 \003(\0132\025.OnHan"
-          + "dQuantityDetail\022\030\n\005tanks\030\003 \003(\0132\t.TankLis"
-          + "t\022\034\n\trearTanks\030\004 \003(\0132\t.TankList\022\n\n\002id\030\005 "
-          + "\001(\003\"x\n\026OnBoardQuantityRequest\022\021\n\tcompany"
-          + "Id\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\027\n\017loadableSt"
-          + "udyId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\022\020\n\010voyageId\030"
-          + "\005 \001(\003\"\247\002\n\025OnBoardQuantityDetail\022\n\n\002id\030\001 "
-          + "\001(\003\022\016\n\006portId\030\002 \001(\003\022\016\n\006tankId\030\003 \001(\003\022\020\n\010t"
-          + "ankName\030\004 \001(\t\022\017\n\007cargoId\030\005 \001(\003\022\021\n\tcargoN"
-          + "ame\030\006 \001(\t\022\020\n\010sounding\030\007 \001(\t\022\016\n\006weight\030\010 "
-          + "\001(\t\022\024\n\014actualWeight\030\t \001(\t\022\016\n\006volume\030\n \001("
-          + "\t\022\027\n\017loadableStudyId\030\013 \001(\003\022\021\n\tcolorCode\030"
-          + "\014 \001(\t\022\024\n\014abbreviation\030\r \001(\t\022\017\n\007density\030\016"
-          + " \001(\t\022\021\n\tloadOnTop\030\017 \001(\010\"\226\001\n\024OnBoardQuant"
-          + "ityReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
-          + "nseStatus\022/\n\017onBoardQuantity\030\002 \003(\0132\026.OnB"
-          + "oardQuantityDetail\022\030\n\005tanks\030\003 \003(\0132\t.Tank"
-          + "List\022\n\n\002id\030\004 \001(\003\".\n\022PurposeOfCommingle\022\n"
-          + "\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"4\n\031PurposeOfCom"
-          + "mingleRequest\022\027\n\017loadableStudyId\030\001 \001(\003\"s"
-          + "\n\027PurposeOfCommingleReply\022\'\n\016responseSta"
-          + "tus\030\001 \001(\0132\017.ResponseStatus\022/\n\022purposeOfC"
-          + "ommingle\030\002 \003(\0132\023.PurposeOfCommingle\"\303\001\n\024"
-          + "LoadablePatternReply\022)\n\017loadablePattern\030"
-          + "\001 \003(\0132\020.LoadablePattern\022\'\n\016responseStatu"
-          + "s\030\002 \001(\0132\017.ResponseStatus\022\030\n\005tanks\030\003 \003(\0132"
-          + "\t.TankList\022\"\n\032loadablePatternCreatedDate"
-          + "\030\004 \001(\t\022\031\n\021loadableStudyName\030\005 \001(\t\"\370\001\n\017Lo"
-          + "adablePattern\022\031\n\021loadablePatternId\030\001 \001(\003"
-          + "\022A\n\033loadablePatternCargoDetails\030\002 \003(\0132\034."
-          + "LoadablePatternCargoDetails\022\023\n\013constrain"
-          + "ts\030\003 \003(\t\022\035\n\025loadableStudyStatusId\030\004 \001(\003\022"
-          + "\022\n\ncaseNumber\030\005 \001(\005\022?\n\032loadablePlanStowa"
-          + "geDetails\030\006 \003(\0132\033.LoadablePlanStowageDet"
-          + "ails\"\354\001\n\033LoadablePatternCargoDetails\022\020\n\010"
-          + "priority\030\001 \001(\003\022\031\n\021cargoAbbreviation\030\002 \001("
-          + "\t\022\022\n\ncargoColor\030\003 \001(\t\022\020\n\010quantity\030\004 \001(\t\022"
-          + "\027\n\017orderedQuantity\030\005 \001(\t\022\023\n\013isCommingle\030"
-          + "\006 \001(\010\022)\n!loadablePatternCommingleDetails"
-          + "Id\030\007 \001(\003\022\024\n\014loadingOrder\030\010 \001(\005\022\013\n\003api\030\t "
-          + "\001(\t\"1\n\026LoadablePatternRequest\022\027\n\017loadabl"
-          + "eStudyId\030\001 \001(\003\"\265\001\n\016CommingleCargo\022\n\n\002id\030"
-          + "\001 \001(\003\022\021\n\tpurposeId\030\002 \001(\003\022\020\n\010slopOnly\030\003 \001"
-          + "(\010\022\026\n\016preferredTanks\030\004 \003(\003\022\020\n\010cargo1Id\030\005"
-          + " \001(\003\022\021\n\tcargo1pct\030\006 \001(\t\022\020\n\010cargo2Id\030\007 \001("
-          + "\003\022\021\n\tcargo2pct\030\010 \001(\t\022\020\n\010quantity\030\t \001(\t\"k"
-          + "\n\025CommingleCargoRequest\022\027\n\017loadableStudy"
-          + "Id\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\'\n\016commingleC"
-          + "argo\030\003 \003(\0132\017.CommingleCargo\"\201\001\n\023Commingl"
-          + "eCargoReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Re"
-          + "sponseStatus\022\'\n\016commingleCargo\030\002 \003(\0132\017.C"
-          + "ommingleCargo\022\030\n\005tanks\030\003 \003(\0132\t.TankList\""
-          + "S\n&LoadablePatternCommingleDetailsReques"
-          + "t\022)\n!loadablePatternCommingleDetailsId\030\001"
-          + " \001(\003\"\317\002\n$LoadablePatternCommingleDetails"
-          + "Reply\022\n\n\002id\030\001 \001(\003\022\025\n\rtankShortName\030\002 \001(\t"
-          + "\022\031\n\021cargo1Abbrivation\030\003 \001(\t\022\031\n\021cargo2Abb"
-          + "rivation\030\004 \001(\t\022\r\n\005grade\030\005 \001(\t\022\020\n\010quantit"
-          + "y\030\006 \001(\t\022\013\n\003api\030\007 \001(\t\022\023\n\013temperature\030\010 \001("
-          + "\t\022\026\n\016cargo1Quantity\030\t \001(\t\022\026\n\016cargo2Quant"
-          + "ity\030\n \001(\t\022\030\n\020cargo1Percentage\030\013 \001(\t\022\030\n\020c"
-          + "argo2Percentage\030\014 \001(\t\022\'\n\016responseStatus\030"
-          + "\r \001(\0132\017.ResponseStatus\"\254\007\n\020SynopticalRec"
-          + "ord\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\020\n\010portN"
-          + "ame\030\003 \001(\t\022\025\n\roperationType\030\004 \001(\t\022\020\n\010dist"
-          + "ance\030\005 \001(\t\022\r\n\005speed\030\006 \001(\t\022\024\n\014runningHour"
-          + "s\030\007 \001(\t\022\023\n\013inPortHours\030\010 \001(\t\022\025\n\rtimeOfSu"
-          + "nrise\030\t \001(\t\022\024\n\014timeOfSunset\030\n \001(\t\022\022\n\nhwT"
-          + "ideFrom\030\013 \001(\t\022\020\n\010hwTideTo\030\014 \001(\t\022\026\n\016hwTid"
-          + "eTimeFrom\030\r \001(\t\022\024\n\014hwTideTimeTo\030\016 \001(\t\022\022\n"
-          + "\nlwTideFrom\030\017 \001(\t\022\020\n\010lwTideTo\030\020 \001(\t\022\026\n\016l"
-          + "wTideTimeFrom\030\021 \001(\t\022\024\n\014lwTideTimeTo\030\022 \001("
-          + "\t\022\027\n\017specificGravity\030\023 \001(\t\022\024\n\014etaEtdActu"
-          + "al\030\024 \001(\t\022\027\n\017etaEtdEstimated\030\025 \001(\t\022%\n\005car"
-          + "go\030\026 \003(\0132\026.SynopticalCargoRecord\022\031\n\021carg"
-          + "oPlannedTotal\030\027 \001(\t\022\030\n\020cargoActualTotal\030"
-          + "\030 \001(\t\022!\n\003ohq\030\031 \003(\0132\024.SynopticalOhqRecord"
-          + "\022\021\n\tportOrder\030\032 \001(\003\022\025\n\rothersPlanned\030\033 \001"
-          + "(\t\022\024\n\014othersActual\030\034 \001(\t\022\027\n\017constantPlan"
-          + "ned\030\035 \001(\t\022\026\n\016constantActual\030\036 \001(\t\022\027\n\017tot"
-          + "alDwtPlanned\030\037 \001(\t\022\026\n\016totalDwtActual\030  \001"
-          + "(\t\022\033\n\023displacementPlanned\030! \001(\t\022\032\n\022displ"
-          + "acementActual\030\" \001(\t\0226\n\016loadicatorData\030# "
-          + "\001(\0132\036.SynopticalTableLoadicatorData\022\026\n\016b"
-          + "allastPlanned\030$ \001(\t\022\025\n\rballastActual\030% \001"
-          + "(\t\022)\n\007ballast\030& \003(\0132\030.SynopticalBallastR"
-          + "ecord\"\360\001\n\025SynopticalCargoRecord\022\016\n\006tankI"
-          + "d\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rplannedWeig"
-          + "ht\030\003 \001(\t\022\024\n\014actualWeight\030\004 \001(\t\022\r\n\005obqId\030"
-          + "\005 \001(\003\022\021\n\tcolorCode\030\006 \001(\t\022\027\n\017correctedUll"
-          + "age\030\007 \001(\t\022\031\n\021cargoAbbreviation\030\010 \001(\t\022\017\n\007"
-          + "cargoId\030\t \001(\003\022\020\n\010capacity\030\n \001(\t\022\017\n\007densi"
-          + "ty\030\013 \001(\t\"\233\001\n\023SynopticalOhqRecord\022\016\n\006tank"
-          + "Id\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rplannedWei"
-          + "ght\030\003 \001(\t\022\024\n\014actualWeight\030\004 \001(\t\022\022\n\nfuelT"
-          + "ypeId\030\005 \001(\003\022\020\n\010fuelType\030\006 \001(\t\022\017\n\007density"
-          + "\030\007 \001(\t\"\246\001\n\027SynopticalBallastRecord\022\016\n\006ta"
-          + "nkId\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rplannedW"
-          + "eight\030\003 \001(\t\022\024\n\014actualWeight\030\004 \001(\t\022\020\n\010cap"
-          + "acity\030\005 \001(\t\022\027\n\017correctedUllage\030\006 \001(\t\022\021\n\t"
-          + "spGravity\030\007 \001(\t\"\255\001\n\026SynopticalTableReque"
-          + "st\022\027\n\017loadableStudyId\030\001 \001(\003\022\020\n\010vesselId\030"
-          + "\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\022"
-          + "+\n\020synopticalRecord\030\005 \003(\0132\021.SynopticalRe"
-          + "cord\022\031\n\021loadablePatternId\030\006 \001(\003\"\212\002\n\024Syno"
-          + "pticalTableReply\022\'\n\016responseStatus\030\001 \001(\013"
-          + "2\017.ResponseStatus\022,\n\021synopticalRecords\030\002"
-          + " \003(\0132\021.SynopticalRecord\022\n\n\002id\030\003 \001(\003\022$\n\021b"
-          + "allastFrontTanks\030\004 \003(\0132\t.TankList\022%\n\022bal"
-          + "lastCenterTanks\030\005 \003(\0132\t.TankList\022#\n\020ball"
-          + "astRearTanks\030\006 \003(\0132\t.TankList\022\035\n\ncargoTa"
-          + "nks\030\007 \003(\0132\t.TankList\"\273\003\n\035SynopticalTable"
-          + "LoadicatorData\022\016\n\006hogSag\030\001 \001(\t\022\025\n\rfinalD"
-          + "raftFwd\030\002 \001(\t\022\025\n\rfinalDraftAft\030\003 \001(\t\022\025\n\r"
-          + "finalDraftMid\030\004 \001(\t\022\026\n\016finalDraftTrim\030\005 "
-          + "\001(\t\022!\n\031calculatedDraftFwdPlanned\030\006 \001(\t\022 "
-          + "\n\030calculatedDraftFwdActual\030\007 \001(\t\022!\n\031calc"
-          + "ulatedDraftAftPlanned\030\010 \001(\t\022 \n\030calculate"
-          + "dDraftAftActual\030\t \001(\t\022!\n\031calculatedDraft"
-          + "MidPlanned\030\n \001(\t\022 \n\030calculatedDraftMidAc"
-          + "tual\030\013 \001(\t\022\035\n\025calculatedTrimPlanned\030\014 \001("
-          + "\t\022\034\n\024calculatedTrimActual\030\r \001(\t\022\023\n\013blind"
-          + "Sector\030\016 \001(\t\022\014\n\004list\030\017 \001(\t\"I\n\036LoadableSt"
-          + "udyAttachmentRequest\022\016\n\006fileId\030\001 \001(\003\022\027\n\017"
-          + "loadableStudyId\030\002 \001(\003\"m\n\034LoadableStudyAt"
-          + "tachmentReply\022\'\n\016responseStatus\030\001 \001(\0132\017."
-          + "ResponseStatus\022\020\n\010filePath\030\002 \001(\t\022\022\n\nbyte"
-          + "String\030\003 \001(\014\";\n\020SaveCommentReply\022\'\n\016resp"
-          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\"N\n\022Sav"
-          + "eCommentRequest\022\031\n\021loadablePatternId\030\001 \001"
-          + "(\003\022\017\n\007comment\030\002 \001(\t\022\014\n\004user\030\003 \001(\003\"B\n\024Sav"
-          + "eLoadOnTopRequest\022\021\n\tloadOnTop\030\001 \001(\010\022\027\n\017"
-          + "loadableStudyId\030\002 \001(\0032\227\027\n\024LoadableStudyS"
-          + "ervice\022,\n\nSaveVoyage\022\016.VoyageRequest\032\014.V"
-          + "oyageReply\"\000\0228\n\022GetVoyagesByVessel\022\016.Voy"
-          + "ageRequest\032\020.VoyageListReply\"\000\022J\n\024SaveLo"
-          + "adableQuantity\022\030.LoadableQuantityRequest"
-          + "\032\026.LoadableQuantityReply\"\000\022T\n$FindLoadab"
-          + "leStudiesByVesselAndVoyage\022\025.LoadableStu"
-          + "dyRequest\032\023.LoadableStudyReply\"\000\022@\n\021Save"
-          + "LoadableStudy\022\024.LoadableStudyDetail\032\023.Lo"
-          + "adableStudyReply\"\000\022G\n\023SaveCargoNominatio"
-          + "n\022\027.CargoNominationRequest\032\025.CargoNomina"
-          + "tionReply\"\000\022J\n\034GetLoadableStudyPortRotat"
-          + "ion\022\024.PortRotationRequest\032\022.PortRotation"
-          + "Reply\"\000\022J\n\026GetCargoNominationById\022\027.Carg"
-          + "oNominationRequest\032\025.CargoNominationRepl"
-          + "y\"\000\022I\n\023GetValveSegregation\022\030.ValveSegreg"
-          + "ationRequest\032\026.ValveSegregationReply\"\000\022J"
-          + "\n\023getLoadableQuantity\022\026.LoadableQuantity"
-          + "Reply\032\031.LoadableQuantityResponse\"\000\022J\n\035Sa"
-          + "veLoadableStudyPortRotation\022\023.PortRotati"
-          + "onDetail\032\022.PortRotationReply\"\000\022O\n!SaveLo"
-          + "adableStudyPortRotationList\022\024.PortRotati"
-          + "onRequest\032\022.PortRotationReply\"\000\022I\n\025Delet"
-          + "eCargoNomination\022\027.CargoNominationReques"
-          + "t\032\025.CargoNominationReply\"\000\022B\n\024SaveDischa"
-          + "rgingPorts\022\024.PortRotationRequest\032\022.PortR"
-          + "otationReply\"\000\022N\n GetPortRotationByLoada"
-          + "bleStudyId\022\024.PortRotationRequest\032\022.PortR"
-          + "otationReply\"\000\022C\n\023DeleteLoadableStudy\022\025."
-          + "LoadableStudyRequest\032\023.LoadableStudyRepl"
-          + "y\"\000\022@\n\022DeletePortRotation\022\024.PortRotation"
-          + "Request\032\022.PortRotationReply\"\000\022C\n\021GetOnHa"
-          + "ndQuantity\022\026.OnHandQuantityRequest\032\024.OnH"
-          + "andQuantityReply\"\000\022C\n\022SaveOnHandQuantity"
-          + "\022\025.OnHandQuantityDetail\032\024.OnHandQuantity"
-          + "Reply\"\000\022M\n\031GetLoadablePatternDetails\022\027.L"
-          + "oadablePatternRequest\032\025.LoadablePatternR"
-          + "eply\"\000\022A\n\024SaveLoadablePatterns\022\033.Loadabl"
-          + "ePatternAlgoRequest\032\n.AlgoReply\"\000\022O\n\025Get"
-          + "PurposeOfCommingle\022\032.PurposeOfCommingleR"
-          + "equest\032\030.PurposeOfCommingleReply\"\000\022C\n\021Ge"
-          + "tCommingleCargo\022\026.CommingleCargoRequest\032"
-          + "\024.CommingleCargoReply\"\000\022D\n\022SaveCommingle"
-          + "Cargo\022\026.CommingleCargoRequest\032\024.Commingl"
-          + "eCargoReply\"\000\022v\n\"GetLoadablePatternCommi"
-          + "ngleDetails\022\'.LoadablePatternCommingleDe"
-          + "tailsRequest\032%.LoadablePatternCommingleD"
-          + "etailsReply\"\000\0226\n\030GenerateLoadablePattern"
-          + "s\022\014.AlgoRequest\032\n.AlgoReply\"\000\022J\n\026getLoad"
-          + "ablePatternList\022\027.LoadablePatternRequest"
-          + "\032\025.LoadablePatternReply\"\000\022F\n\022GetOnBoardQ"
-          + "uantity\022\027.OnBoardQuantityRequest\032\025.OnBoa"
-          + "rdQuantityReply\"\000\022F\n\023SaveOnBoardQuantity"
-          + "\022\026.OnBoardQuantityDetail\032\025.OnBoardQuanti"
-          + "tyReply\"\000\022E\n\033SaveAlgoLoadableStudyStatus"
-          + "\022\022.AlgoStatusRequest\032\020.AlgoStatusReply\"\000"
-          + "\022G\n\023SaveSynopticalTable\022\027.SynopticalTabl"
-          + "eRequest\032\025.SynopticalTableReply\"\000\022F\n\022Get"
-          + "SynopticalTable\022\027.SynopticalTableRequest"
-          + "\032\025.SynopticalTableReply\"\000\022M\n\031GetSynoptic"
-          + "alDataByPortId\022\027.SynopticalTableRequest\032",
-      "\025.SynopticalTableReply\"\000\022Q\n\035GetSynoptica"
-          + "lPortDataByPortId\022\027.SynopticalTableReque"
-          + "st\032\025.SynopticalTableReply\"\000\022R\n\026GetLoadab"
-          + "leStudyStatus\022\033.LoadableStudyStatusReque"
-          + "st\032\031.LoadableStudyStatusReply\"\000\022R\n\026GetLo"
-          + "adablePlanDetails\022\033.LoadablePlanDetailsR"
-          + "equest\032\031.LoadablePlanDetailsReply\"\000\0227\n\013C"
-          + "onfirmPlan\022\023.ConfirmPlanRequest\032\021.Confir"
-          + "mPlanReply\"\000\022c\n\037DownloadLoadableStudyAtt"
-          + "achment\022\037.LoadableStudyAttachmentRequest"
-          + "\032\035.LoadableStudyAttachmentReply\"\000\0227\n\013Sav"
-          + "eComment\022\023.SaveCommentRequest\032\021.SaveComm"
-          + "entReply\"\000\022;\n\rSaveLoadOnTop\022\025.SaveLoadOn"
-          + "TopRequest\032\021.SaveCommentReply\"\000B\036\n\032com.c"
-          + "pdss.common.generatedP\000b\006proto3"
+      "\n\024loadable_study.proto\032\014common.proto\"v\n\030"
+          + "RecalculateVolumeRequest\022\031\n\021loadablePatt"
+          + "ernId\030\001 \001(\003\022?\n\032loadablePlanStowageDetail"
+          + "s\030\002 \003(\0132\033.LoadablePlanStowageDetails\"\202\001\n"
+          + "\026RecalculateVolumeReply\022\'\n\016responseStatu"
+          + "s\030\001 \001(\0132\017.ResponseStatus\022?\n\032loadablePlan"
+          + "StowageDetails\030\002 \003(\0132\033.LoadablePlanStowa"
+          + "geDetails\"|\n\032LoadablePatternAlgoRequest\022"
+          + "\022\n\nprocesssId\030\001 \001(\t\0221\n\023loadablePlanDetai"
+          + "ls\030\002 \003(\0132\024.LoadablePlanDetails\022\027\n\017loadab"
+          + "leStudyId\030\003 \001(\003\"\201\001\n\023LoadablePlanDetails\022"
+          + "\022\n\ncaseNumber\030\001 \001(\005\022A\n\033loadablePlanPortW"
+          + "iseDetails\030\002 \003(\0132\034.LoadablePlanPortWiseD"
+          + "etails\022\023\n\013constraints\030\003 \003(\t\"\253\001\n\033Loadable"
+          + "PlanPortWiseDetails\022\016\n\006portId\030\001 \001(\003\022\020\n\010p"
+          + "ortCode\030\002 \001(\t\0223\n\020arrivalCondition\030\003 \001(\0132"
+          + "\031.LoadablePlanDetailsReply\0225\n\022departureC"
+          + "ondition\030\004 \001(\0132\031.LoadablePlanDetailsRepl"
+          + "y\"7\n\032LoadablePlanDetailsRequest\022\031\n\021loada"
+          + "blePatternId\030\001 \001(\003\"\346\004\n\030LoadablePlanDetai"
+          + "lsReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respon"
+          + "seStatus\022U\n%loadableQuantityCommingleCar"
+          + "goDetails\030\002 \003(\0132&.LoadableQuantityCommin"
+          + "gleCargoDetails\022C\n\034loadableQuantityCargo"
+          + "Details\030\003 \003(\0132\035.LoadableQuantityCargoDet"
+          + "ails\022?\n\032loadablePlanStowageDetails\030\004 \003(\013"
+          + "2\033.LoadablePlanStowageDetails\022\030\n\005tanks\030\005"
+          + " \003(\0132\t.TankList\022$\n\021ballastFrontTanks\030\006 \003"
+          + "(\0132\t.TankList\022%\n\022ballastCenterTanks\030\007 \003("
+          + "\0132\t.TankList\022#\n\020ballastRearTanks\030\010 \003(\0132\t"
+          + ".TankList\022?\n\032loadablePlanBallastDetails\030"
+          + "\t \003(\0132\033.LoadablePlanBallastDetails\0223\n\024lo"
+          + "adablePlanComments\030\n \003(\0132\025.LoadablePlanC"
+          + "omments\022\022\n\ncaseNumber\030\013 \001(\t\022\014\n\004date\030\014 \001("
+          + "\t\022\024\n\014voyageNumber\030\r \001(\t\022\n\n\002id\030\016 \001(\003\"Z\n\024L"
+          + "oadablePlanComments\022\n\n\002id\030\001 \001(\003\022\020\n\010userN"
+          + "ame\030\002 \001(\t\022\023\n\013dataAndTime\030\003 \001(\t\022\017\n\007commen"
+          + "t\030\004 \001(\t\"\240\002\n\032LoadablePlanBallastDetails\022\n"
+          + "\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\020\n\010rdgLevel\030\003"
+          + " \001(\t\022\030\n\020correctionFactor\030\004 \001(\t\022\026\n\016correc"
+          + "tedLevel\030\005 \001(\t\022\021\n\tmetricTon\030\006 \001(\t\022\022\n\ncub"
+          + "icMeter\030\007 \001(\t\022\022\n\npercentage\030\010 \001(\t\022\n\n\002sg\030"
+          + "\t \001(\t\022\013\n\003lcg\030\n \001(\t\022\013\n\003vcg\030\013 \001(\t\022\013\n\003tcg\030\014"
+          + " \001(\t\022\017\n\007inertia\030\r \001(\t\022\020\n\010tankName\030\016 \001(\t\022"
+          + "\021\n\tcolorCode\030\017 \001(\t\"\320\002\n\032LoadablePlanStowa"
+          + "geDetails\022\016\n\006tankId\030\001 \001(\003\022\031\n\021cargoAbbrev"
+          + "iation\030\002 \001(\t\022\016\n\006weight\030\003 \001(\t\022\027\n\017correcte"
+          + "dUllage\030\004 \001(\t\022\024\n\014fillingRatio\030\005 \001(\t\022\020\n\010t"
+          + "ankName\030\006 \001(\t\022\021\n\trdgUllage\030\007 \001(\t\022\030\n\020corr"
+          + "ectionFactor\030\010 \001(\t\022\022\n\nobservedM3\030\t \001(\t\022\027"
+          + "\n\017observedBarrels\030\n \001(\t\022\033\n\023observedBarre"
+          + "lsAt60\030\013 \001(\t\022\013\n\003api\030\014 \001(\t\022\023\n\013temperature"
+          + "\030\r \001(\t\022\n\n\002id\030\016 \001(\003\022\021\n\tcolorCode\030\017 \001(\t\"\360\003"
+          + "\n%LoadableQuantityCommingleCargoDetails\022"
+          + "\n\n\002id\030\001 \001(\003\022\r\n\005grade\030\002 \001(\t\022\020\n\010tankName\030\003"
+          + " \001(\t\022\020\n\010quantity\030\004 \001(\t\022\013\n\003api\030\005 \001(\t\022\014\n\004t"
+          + "emp\030\006 \001(\t\022\032\n\022cargo1Abbreviation\030\007 \001(\t\022\032\n"
+          + "\022cargo2Abbreviation\030\010 \001(\t\022\030\n\020cargo1Perce"
+          + "ntage\030\t \001(\t\022\030\n\020cargo2Percentage\030\n \001(\t\022\025\n"
+          + "\rcargo1Bblsdbs\030\013 \001(\t\022\025\n\rcargo2Bblsdbs\030\014 "
+          + "\001(\t\022\025\n\rcargo1Bbls60f\030\r \001(\t\022\025\n\rcargo2Bbls"
+          + "60f\030\016 \001(\t\022\020\n\010cargo1LT\030\017 \001(\t\022\020\n\010cargo2LT\030"
+          + "\020 \001(\t\022\020\n\010cargo1MT\030\021 \001(\t\022\020\n\010cargo2MT\030\022 \001("
+          + "\t\022\020\n\010cargo1KL\030\023 \001(\t\022\020\n\010cargo2KL\030\024 \001(\t\022\021\n"
+          + "\torderedMT\030\025 \001(\t\022\020\n\010priority\030\026 \001(\005\022\024\n\014lo"
+          + "adingOrder\030\027 \001(\005\"\335\003\n\034LoadableQuantityCar"
+          + "goDetails\022\n\n\002id\030\001 \001(\003\022\r\n\005grade\030\002 \001(\t\022\024\n\014"
+          + "estimatedAPI\030\003 \001(\t\022\025\n\restimatedTemp\030\004 \001("
+          + "\t\022\024\n\014orderBblsdbs\030\005 \001(\t\022\024\n\014orderBbls60f\030"
+          + "\006 \001(\t\022\024\n\014minTolerence\030\007 \001(\t\022\024\n\014maxTolere"
+          + "nce\030\010 \001(\t\022\027\n\017loadableBblsdbs\030\t \001(\t\022\027\n\017lo"
+          + "adableBbls60f\030\n \001(\t\022\022\n\nloadableLT\030\013 \001(\t\022"
+          + "\022\n\nloadableMT\030\014 \001(\t\022\022\n\nloadableKL\030\r \001(\t\022"
+          + "\034\n\024differencePercentage\030\016 \001(\t\022\027\n\017differe"
+          + "nceColor\030\017 \001(\t\022\017\n\007cargoId\030\020 \001(\003\022\021\n\torder"
+          + "edMT\030\021 \001(\t\022\031\n\021cargoAbbreviation\030\022 \001(\t\022\021\n"
+          + "\tcolorCode\030\023 \001(\t\022\020\n\010priority\030\024 \001(\005\022\024\n\014lo"
+          + "adingOrder\030\025 \001(\005\"/\n\022ConfirmPlanRequest\022\031"
+          + "\n\021loadablePatternId\030\001 \001(\003\";\n\020ConfirmPlan"
+          + "Reply\022\'\n\016responseStatus\030\001 \001(\0132\017.Response"
+          + "Status\"H\n\032LoadableStudyStatusRequest\022\027\n\017"
+          + "loadableStudyId\030\001 \001(\003\022\021\n\tprocessId\030\002 \001(\t"
+          + "\"b\n\030LoadableStudyStatusReply\022\'\n\016response"
+          + "Status\030\001 \001(\0132\017.ResponseStatus\022\035\n\025loadabl"
+          + "eStudystatusId\030\002 \001(\003\"F\n\021AlgoStatusReques"
+          + "t\022\022\n\nprocesssId\030\001 \001(\t\022\035\n\025loadableStudyst"
+          + "atusId\030\002 \001(\003\":\n\017AlgoStatusReply\022\'\n\016respo"
+          + "nseStatus\030\001 \001(\0132\017.ResponseStatus\"&\n\013Algo"
+          + "Request\022\027\n\017loadableStudyId\030\001 \001(\003\"H\n\tAlgo"
+          + "Reply\022\'\n\016responseStatus\030\001 \001(\0132\017.Response"
+          + "Status\022\022\n\nprocesssId\030\002 \001(\t\"\225\001\n\rVoyageReq"
+          + "uest\022\021\n\tcaptainId\030\001 \001(\003\022\026\n\016chiefOfficerI"
+          + "d\030\002 \001(\003\022\021\n\tcompanyId\030\003 \001(\003\022\020\n\010vesselId\030\004"
+          + " \001(\003\022\020\n\010voyageNo\030\005 \001(\t\022\021\n\tstartDate\030\006 \001("
+          + "\t\022\017\n\007endDate\030\007 \001(\t\"E\n\013VoyageReply\022\020\n\010voy"
+          + "ageId\030\001 \001(\003\022$\n\016responseStatus\030\002 \001(\0132\014.St"
+          + "atusReply\"\206\001\n\014VoyageDetail\022\n\n\002id\030\001 \001(\003\022\024"
+          + "\n\014voyageNumber\030\002 \001(\t\022\021\n\tstartDate\030\003 \001(\t\022"
+          + "\017\n\007endDate\030\004 \001(\t\022\016\n\006status\030\005 \001(\t\022 \n\030conf"
+          + "irmedLoadableStudyId\030\006 \001(\003\"W\n\017VoyageList"
+          + "Reply\022$\n\016responseStatus\030\001 \001(\0132\014.StatusRe"
+          + "ply\022\036\n\007voyages\030\002 \003(\0132\r.VoyageDetail\"<\n\013S"
+          + "tatusReply\022\016\n\006status\030\001 \001(\t\022\014\n\004code\030\002 \001(\t"
+          + "\022\017\n\007message\030\003 \001(\t\"\237\005\n\027LoadableQuantityRe"
+          + "quest\022\025\n\restSeaDensity\030\001 \001(\t\022\013\n\003tpc\030\002 \001("
+          + "\t\022\022\n\nestSagging\030\003 \001(\t\022#\n\033displacmentDraf"
+          + "tRestriction\030\004 \001(\t\022\031\n\021vesselLightWeight\030"
+          + "\005 \001(\t\022\013\n\003dwt\030\006 \001(\t\022\024\n\014sgCorrection\030\007 \001(\t"
+          + "\022\030\n\020saggingDeduction\030\010 \001(\t\022\024\n\014estFOOnBoa"
+          + "rd\030\t \001(\t\022\024\n\014estDOOnBoard\030\n \001(\t\022\034\n\024estFre"
+          + "shWaterOnBoard\030\013 \001(\t\022\020\n\010constant\030\014 \001(\t\022\022"
+          + "\n\notherIfAny\030\r \001(\t\022\025\n\rtotalQuantity\030\016 \001("
+          + "\t\022\034\n\024distanceFromLastPort\030\017 \001(\t\022\032\n\022vesse"
+          + "lAverageSpeed\030\020 \001(\t\022\027\n\017loadableStudyId\030\021"
+          + " \001(\003\022\031\n\021updateDateAndTime\030\022 \001(\t\022\n\n\002sg\030\023 "
+          + "\001(\t\022\032\n\022boilerWaterOnBoard\030\024 \001(\t\022\017\n\007balla"
+          + "st\030\025 \001(\t\022\024\n\014runningHours\030\026 \001(\t\022\023\n\013runnin"
+          + "gDays\030\027 \001(\t\022\021\n\tfoConInSZ\030\030 \001(\t\022\016\n\006portId"
+          + "\030\031 \001(\003\022\030\n\020draftRestriction\030\032 \001(\t\022\020\n\010subT"
+          + "otal\030\033 \001(\t\022\033\n\023foConsumptionPerDay\030\034 \001(\t\022"
+          + "\n\n\002id\030\035 \001(\003\"r\n\025LoadableQuantityReply\022$\n\016"
+          + "responseStatus\030\001 \001(\0132\014.StatusReply\022\032\n\022lo"
+          + "adableQuantityId\030\002 \001(\003\022\027\n\017loadableStudyI"
+          + "d\030\003 \001(\003\"f\n\024LoadableStudyRequest\022\021\n\tcompa"
+          + "nyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId"
+          + "\030\003 \001(\003\022\027\n\017loadableStudyId\030\004 \001(\003\"K\n\027Loada"
+          + "bleStudyAttachment\022\022\n\nbyteString\030\001 \001(\014\022\020"
+          + "\n\010fileName\030\002 \001(\t\022\n\n\002id\030\003 \001(\003\"\204\004\n\023Loadabl"
+          + "eStudyDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\016"
+          + "\n\006detail\030\003 \001(\t\022\020\n\010statusId\030\004 \001(\003\022\016\n\006stat"
+          + "us\030\005 \001(\t\022\023\n\013createdDate\030\006 \001(\t\022\021\n\tcharter"
+          + "er\030\007 \001(\t\022\024\n\014subCharterer\030\010 \001(\t\022\021\n\tdraftM"
+          + "ark\030\t \001(\t\022\023\n\013loadLineXId\030\n \001(\003\022\030\n\020draftR"
+          + "estriction\030\013 \001(\t\022\031\n\021maxAirTemperature\030\014 "
+          + "\001(\t\022\033\n\023maxWaterTemperature\030\r \001(\t\022\030\n\020dupl"
+          + "icatedFromId\030\016 \001(\003\022\020\n\010voyageId\030\017 \001(\003\022\020\n\010"
+          + "vesselId\030\020 \001(\003\022-\n\013attachments\030\021 \003(\0132\030.Lo"
+          + "adableStudyAttachment\022\032\n\022dischargingPort"
+          + "Ids\030\022 \003(\003\022\032\n\022dischargingCargoId\030\023 \001(\003\022\025\n"
+          + "\rcreatedFromId\030\024 \001(\003\022\032\n\022deletedAttachmen"
+          + "ts\030\025 \003(\003\022\021\n\tloadOnTop\030\026 \001(\010\"x\n\022LoadableS"
+          + "tudyReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp"
+          + "onseStatus\022-\n\017loadableStudies\030\002 \003(\0132\024.Lo"
+          + "adableStudyDetail\022\n\n\002id\030\003 \001(\003\"5\n\021Loading"
+          + "PortDetail\022\016\n\006portId\030\001 \001(\003\022\020\n\010quantity\030\002"
+          + " \001(\t\".\n\021segregationDetail\022\n\n\002id\030\001 \001(\003\022\r\n"
+          + "\005value\030\002 \001(\t\"\252\002\n\025CargoNominationDetail\022\n"
+          + "\n\002id\030\001 \001(\003\022\027\n\017loadableStudyId\030\002 \001(\003\022\020\n\010p"
+          + "riority\030\003 \001(\003\022\r\n\005color\030\004 \001(\t\022\017\n\007cargoId\030"
+          + "\005 \001(\003\022\024\n\014abbreviation\030\006 \001(\t\022.\n\022loadingPo"
+          + "rtDetails\030\007 \003(\0132\022.LoadingPortDetail\022\020\n\010q"
+          + "uantity\030\010 \001(\t\022\024\n\014maxTolerance\030\t \001(\t\022\024\n\014m"
+          + "inTolerance\030\n \001(\t\022\016\n\006apiEst\030\013 \001(\t\022\017\n\007tem"
+          + "pEst\030\014 \001(\t\022\025\n\rsegregationId\030\r \001(\003\"\247\001\n\026Ca"
+          + "rgoNominationRequest\022\020\n\010vesselId\030\001 \001(\003\022\020"
+          + "\n\010voyageId\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001("
+          + "\003\022\031\n\021cargoNominationId\030\004 \001(\003\0225\n\025cargoNom"
+          + "inationDetail\030\005 \001(\0132\026.CargoNominationDet"
+          + "ail\"\214\001\n\024CargoNominationReply\022\'\n\016response"
+          + "Status\030\001 \001(\0132\017.ResponseStatus\022\031\n\021cargoNo"
+          + "minationId\030\002 \001(\003\0220\n\020cargoNominations\030\003 \003"
+          + "(\0132\026.CargoNominationDetail\"\310\001\n\023PortRotat"
+          + "ionRequest\022\027\n\017loadableStudyId\030\001 \001(\003\022\020\n\010v"
+          + "esselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\032\n\022disch"
+          + "argingPortIds\030\004 \003(\003\022\n\n\002id\030\005 \001(\003\0220\n\023portR"
+          + "otationDetails\030\006 \003(\0132\023.PortRotationDetai"
+          + "l\022\032\n\022dischargingCargoId\030\007 \001(\003\"\332\002\n\022PortRo"
+          + "tationDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003"
+          + "\022\017\n\007berthId\030\003 \001(\003\022\023\n\013operationId\030\004 \001(\003\022\027"
+          + "\n\017seaWaterDensity\030\005 \001(\t\022\034\n\024distanceBetwe"
+          + "enPorts\030\006 \001(\t\022\022\n\ntimeOfStay\030\007 \001(\t\022\020\n\010max"
+          + "Draft\030\010 \001(\t\022\023\n\013maxAirDraft\030\t \001(\t\022\013\n\003eta\030"
+          + "\n \001(\t\022\021\n\tetaActual\030\013 \001(\t\022\013\n\003etd\030\014 \001(\t\022\021\n"
+          + "\tetdActual\030\r \001(\t\022\022\n\nlayCanFrom\030\016 \001(\t\022\020\n\010"
+          + "layCanTo\030\017 \001(\t\022\027\n\017loadableStudyId\030\020 \001(\003\022"
+          + "\021\n\tportOrder\030\021 \001(\003\".\n\tOperation\022\n\n\002id\030\001 "
+          + "\001(\003\022\025\n\roperationName\030\002 \001(\t\"\230\001\n\021PortRotat"
+          + "ionReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
+          + "nseStatus\022\"\n\005ports\030\002 \003(\0132\023.PortRotationD"
+          + "etail\022\036\n\noperations\030\003 \003(\0132\n.Operation\022\026\n"
+          + "\016portRotationId\030\004 \001(\003\"\241\001\n\030LoadableQuanti"
+          + "tyResponse\0229\n\027loadableQuantityRequest\030\001 "
+          + "\001(\0132\030.LoadableQuantityRequest\022$\n\016respons"
+          + "eStatus\030\002 \001(\0132\014.StatusReply\022\016\n\006caseNo\030\003 "
+          + "\001(\005\022\024\n\014selectedZone\030\004 \001(\t\",\n\020ValveSegreg"
+          + "ation\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"2\n\027Valve"
+          + "SegregationRequest\022\027\n\017loadableStudyId\030\001 "
+          + "\001(\003\"m\n\025ValveSegregationReply\022\'\n\016response"
+          + "Status\030\001 \001(\0132\017.ResponseStatus\022+\n\020valveSe"
+          + "gregation\030\002 \003(\0132\021.ValveSegregation\"e\n\025On"
+          + "HandQuantityRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020"
+          + "\n\010vesselId\030\002 \001(\003\022\027\n\017loadableStudyId\030\003 \001("
+          + "\003\022\016\n\006portId\030\004 \001(\003\"\366\002\n\024OnHandQuantityDeta"
+          + "il\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\022\n\nfuelTy"
+          + "peId\030\003 \001(\003\022\020\n\010fuelType\030\004 \001(\t\022\016\n\006tankId\030\005"
+          + " \001(\003\022\020\n\010tankName\030\006 \001(\t\022\025\n\rarrivalVolume\030"
+          + "\007 \001(\t\022\027\n\017arrivalQuantity\030\010 \001(\t\022\035\n\025actual"
+          + "ArrivalQuantity\030\t \001(\t\022\027\n\017departureVolume"
+          + "\030\n \001(\t\022\031\n\021departureQuantity\030\013 \001(\t\022\037\n\027act"
+          + "ualDepartureQuantity\030\014 \001(\t\022\027\n\017loadableSt"
+          + "udyId\030\r \001(\003\022\021\n\tcolorCode\030\016 \001(\t\022\031\n\021fuelTy"
+          + "peShortName\030\017 \001(\t\022\017\n\007density\030\020 \001(\t\"\342\002\n\nT"
+          + "ankDetail\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tankCategor"
+          + "yId\030\002 \001(\003\022\030\n\020tankCategoryName\030\003 \001(\t\022\020\n\010t"
+          + "ankName\030\004 \001(\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025"
+          + "\n\rframeNumberTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t"
+          + "\022\030\n\020fillCapacityCubm\030\010 \001(\t\022\017\n\007density\030\t "
+          + "\001(\t\022\022\n\nisSlopTank\030\n \001(\010\022\022\n\nheightFrom\030\013 "
+          + "\001(\t\022\020\n\010heightTo\030\014 \001(\t\022\021\n\ttankOrder\030\r \001(\005"
+          + "\022\030\n\020tankDisplayOrder\030\016 \001(\005\022\021\n\ttankGroup\030"
+          + "\017 \001(\005\022\030\n\020fullCapacityCubm\030\020 \001(\t\"+\n\010TankL"
+          + "ist\022\037\n\nvesselTank\030\001 \003(\0132\013.TankDetail\"\261\001\n"
+          + "\023OnHandQuantityReply\022\'\n\016responseStatus\030\001"
+          + " \001(\0132\017.ResponseStatus\022-\n\016onHandQuantity\030"
+          + "\002 \003(\0132\025.OnHandQuantityDetail\022\030\n\005tanks\030\003 "
+          + "\003(\0132\t.TankList\022\034\n\trearTanks\030\004 \003(\0132\t.Tank"
+          + "List\022\n\n\002id\030\005 \001(\003\"x\n\026OnBoardQuantityReque"
+          + "st\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022"
+          + "\027\n\017loadableStudyId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003"
+          + "\022\020\n\010voyageId\030\005 \001(\003\"\247\002\n\025OnBoardQuantityDe"
+          + "tail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\016\n\006tank"
+          + "Id\030\003 \001(\003\022\020\n\010tankName\030\004 \001(\t\022\017\n\007cargoId\030\005 "
+          + "\001(\003\022\021\n\tcargoName\030\006 \001(\t\022\020\n\010sounding\030\007 \001(\t"
+          + "\022\016\n\006weight\030\010 \001(\t\022\024\n\014actualWeight\030\t \001(\t\022\016"
+          + "\n\006volume\030\n \001(\t\022\027\n\017loadableStudyId\030\013 \001(\003\022"
+          + "\021\n\tcolorCode\030\014 \001(\t\022\024\n\014abbreviation\030\r \001(\t"
+          + "\022\017\n\007density\030\016 \001(\t\022\021\n\tloadOnTop\030\017 \001(\010\"\226\001\n"
+          + "\024OnBoardQuantityReply\022\'\n\016responseStatus\030"
+          + "\001 \001(\0132\017.ResponseStatus\022/\n\017onBoardQuantit"
+          + "y\030\002 \003(\0132\026.OnBoardQuantityDetail\022\030\n\005tanks"
+          + "\030\003 \003(\0132\t.TankList\022\n\n\002id\030\004 \001(\003\".\n\022Purpose"
+          + "OfCommingle\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"4\n"
+          + "\031PurposeOfCommingleRequest\022\027\n\017loadableSt"
+          + "udyId\030\001 \001(\003\"s\n\027PurposeOfCommingleReply\022\'"
+          + "\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022"
+          + "/\n\022purposeOfCommingle\030\002 \003(\0132\023.PurposeOfC"
+          + "ommingle\"\303\001\n\024LoadablePatternReply\022)\n\017loa"
+          + "dablePattern\030\001 \003(\0132\020.LoadablePattern\022\'\n\016"
+          + "responseStatus\030\002 \001(\0132\017.ResponseStatus\022\030\n"
+          + "\005tanks\030\003 \003(\0132\t.TankList\022\"\n\032loadablePatte"
+          + "rnCreatedDate\030\004 \001(\t\022\031\n\021loadableStudyName"
+          + "\030\005 \001(\t\"\370\001\n\017LoadablePattern\022\031\n\021loadablePa"
+          + "tternId\030\001 \001(\003\022A\n\033loadablePatternCargoDet"
+          + "ails\030\002 \003(\0132\034.LoadablePatternCargoDetails"
+          + "\022\023\n\013constraints\030\003 \003(\t\022\035\n\025loadableStudySt"
+          + "atusId\030\004 \001(\003\022\022\n\ncaseNumber\030\005 \001(\005\022?\n\032load"
+          + "ablePlanStowageDetails\030\006 \003(\0132\033.LoadableP"
+          + "lanStowageDetails\"\354\001\n\033LoadablePatternCar"
+          + "goDetails\022\020\n\010priority\030\001 \001(\003\022\031\n\021cargoAbbr"
+          + "eviation\030\002 \001(\t\022\022\n\ncargoColor\030\003 \001(\t\022\020\n\010qu"
+          + "antity\030\004 \001(\t\022\027\n\017orderedQuantity\030\005 \001(\t\022\023\n"
+          + "\013isCommingle\030\006 \001(\010\022)\n!loadablePatternCom"
+          + "mingleDetailsId\030\007 \001(\003\022\024\n\014loadingOrder\030\010 "
+          + "\001(\005\022\013\n\003api\030\t \001(\t\"1\n\026LoadablePatternReque"
+          + "st\022\027\n\017loadableStudyId\030\001 \001(\003\"\265\001\n\016Commingl"
+          + "eCargo\022\n\n\002id\030\001 \001(\003\022\021\n\tpurposeId\030\002 \001(\003\022\020\n"
+          + "\010slopOnly\030\003 \001(\010\022\026\n\016preferredTanks\030\004 \003(\003\022"
+          + "\020\n\010cargo1Id\030\005 \001(\003\022\021\n\tcargo1pct\030\006 \001(\t\022\020\n\010"
+          + "cargo2Id\030\007 \001(\003\022\021\n\tcargo2pct\030\010 \001(\t\022\020\n\010qua"
+          + "ntity\030\t \001(\t\"k\n\025CommingleCargoRequest\022\027\n\017"
+          + "loadableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022"
+          + "\'\n\016commingleCargo\030\003 \003(\0132\017.CommingleCargo"
+          + "\"\201\001\n\023CommingleCargoReply\022\'\n\016responseStat"
+          + "us\030\001 \001(\0132\017.ResponseStatus\022\'\n\016commingleCa"
+          + "rgo\030\002 \003(\0132\017.CommingleCargo\022\030\n\005tanks\030\003 \003("
+          + "\0132\t.TankList\"S\n&LoadablePatternCommingle"
+          + "DetailsRequest\022)\n!loadablePatternComming"
+          + "leDetailsId\030\001 \001(\003\"\317\002\n$LoadablePatternCom"
+          + "mingleDetailsReply\022\n\n\002id\030\001 \001(\003\022\025\n\rtankSh"
+          + "ortName\030\002 \001(\t\022\031\n\021cargo1Abbrivation\030\003 \001(\t"
+          + "\022\031\n\021cargo2Abbrivation\030\004 \001(\t\022\r\n\005grade\030\005 \001"
+          + "(\t\022\020\n\010quantity\030\006 \001(\t\022\013\n\003api\030\007 \001(\t\022\023\n\013tem"
+          + "perature\030\010 \001(\t\022\026\n\016cargo1Quantity\030\t \001(\t\022\026"
+          + "\n\016cargo2Quantity\030\n \001(\t\022\030\n\020cargo1Percenta"
+          + "ge\030\013 \001(\t\022\030\n\020cargo2Percentage\030\014 \001(\t\022\'\n\016re"
+          + "sponseStatus\030\r \001(\0132\017.ResponseStatus\"\254\007\n\020"
+          + "SynopticalRecord\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002"
+          + " \001(\003\022\020\n\010portName\030\003 \001(\t\022\025\n\roperationType\030"
+          + "\004 \001(\t\022\020\n\010distance\030\005 \001(\t\022\r\n\005speed\030\006 \001(\t\022\024"
+          + "\n\014runningHours\030\007 \001(\t\022\023\n\013inPortHours\030\010 \001("
+          + "\t\022\025\n\rtimeOfSunrise\030\t \001(\t\022\024\n\014timeOfSunset"
+          + "\030\n \001(\t\022\022\n\nhwTideFrom\030\013 \001(\t\022\020\n\010hwTideTo\030\014"
+          + " \001(\t\022\026\n\016hwTideTimeFrom\030\r \001(\t\022\024\n\014hwTideTi"
+          + "meTo\030\016 \001(\t\022\022\n\nlwTideFrom\030\017 \001(\t\022\020\n\010lwTide"
+          + "To\030\020 \001(\t\022\026\n\016lwTideTimeFrom\030\021 \001(\t\022\024\n\014lwTi"
+          + "deTimeTo\030\022 \001(\t\022\027\n\017specificGravity\030\023 \001(\t\022"
+          + "\024\n\014etaEtdActual\030\024 \001(\t\022\027\n\017etaEtdEstimated"
+          + "\030\025 \001(\t\022%\n\005cargo\030\026 \003(\0132\026.SynopticalCargoR"
+          + "ecord\022\031\n\021cargoPlannedTotal\030\027 \001(\t\022\030\n\020carg"
+          + "oActualTotal\030\030 \001(\t\022!\n\003ohq\030\031 \003(\0132\024.Synopt"
+          + "icalOhqRecord\022\021\n\tportOrder\030\032 \001(\003\022\025\n\rothe"
+          + "rsPlanned\030\033 \001(\t\022\024\n\014othersActual\030\034 \001(\t\022\027\n"
+          + "\017constantPlanned\030\035 \001(\t\022\026\n\016constantActual"
+          + "\030\036 \001(\t\022\027\n\017totalDwtPlanned\030\037 \001(\t\022\026\n\016total"
+          + "DwtActual\030  \001(\t\022\033\n\023displacementPlanned\030!"
+          + " \001(\t\022\032\n\022displacementActual\030\" \001(\t\0226\n\016load"
+          + "icatorData\030# \001(\0132\036.SynopticalTableLoadic"
+          + "atorData\022\026\n\016ballastPlanned\030$ \001(\t\022\025\n\rball"
+          + "astActual\030% \001(\t\022)\n\007ballast\030& \003(\0132\030.Synop"
+          + "ticalBallastRecord\"\360\001\n\025SynopticalCargoRe"
+          + "cord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022\025"
+          + "\n\rplannedWeight\030\003 \001(\t\022\024\n\014actualWeight\030\004 "
+          + "\001(\t\022\r\n\005obqId\030\005 \001(\003\022\021\n\tcolorCode\030\006 \001(\t\022\027\n"
+          + "\017correctedUllage\030\007 \001(\t\022\031\n\021cargoAbbreviat"
+          + "ion\030\010 \001(\t\022\017\n\007cargoId\030\t \001(\003\022\020\n\010capacity\030\n"
+          + " \001(\t\022\017\n\007density\030\013 \001(\t\"\233\001\n\023SynopticalOhqR"
+          + "ecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022"
+          + "\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014actualWeight\030\004"
+          + " \001(\t\022\022\n\nfuelTypeId\030\005 \001(\003\022\020\n\010fuelType\030\006 \001"
+          + "(\t\022\017\n\007density\030\007 \001(\t\"\246\001\n\027SynopticalBallas"
+          + "tRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002 \001("
+          + "\t\022\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014actualWeight"
+          + "\030\004 \001(\t\022\020\n\010capacity\030\005 \001(\t\022\027\n\017correctedUll"
+          + "age\030\006 \001(\t\022\021\n\tspGravity\030\007 \001(\t\"\255\001\n\026Synopti"
+          + "calTableRequest\022\027\n\017loadableStudyId\030\001 \001(\003"
+          + "\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\016\n\006"
+          + "portId\030\004 \001(\003\022+\n\020synopticalRecord\030\005 \003(\0132\021"
+          + ".SynopticalRecord\022\031\n\021loadablePatternId\030\006"
+          + " \001(\003\"\212\002\n\024SynopticalTableReply\022\'\n\016respons"
+          + "eStatus\030\001 \001(\0132\017.ResponseStatus\022,\n\021synopt"
+          + "icalRecords\030\002 \003(\0132\021.SynopticalRecord\022\n\n\002"
+          + "id\030\003 \001(\003\022$\n\021ballastFrontTanks\030\004 \003(\0132\t.Ta"
+          + "nkList\022%\n\022ballastCenterTanks\030\005 \003(\0132\t.Tan"
+          + "kList\022#\n\020ballastRearTanks\030\006 \003(\0132\t.TankLi"
+          + "st\022\035\n\ncargoTanks\030\007 \003(\0132\t.TankList\"\273\003\n\035Sy"
+          + "nopticalTableLoadicatorData\022\016\n\006hogSag\030\001 "
+          + "\001(\t\022\025\n\rfinalDraftFwd\030\002 \001(\t\022\025\n\rfinalDraft"
+          + "Aft\030\003 \001(\t\022\025\n\rfinalDraftMid\030\004 \001(\t\022\026\n\016fina"
+          + "lDraftTrim\030\005 \001(\t\022!\n\031calculatedDraftFwdPl"
+          + "anned\030\006 \001(\t\022 \n\030calculatedDraftFwdActual\030"
+          + "\007 \001(\t\022!\n\031calculatedDraftAftPlanned\030\010 \001(\t"
+          + "\022 \n\030calculatedDraftAftActual\030\t \001(\t\022!\n\031ca"
+          + "lculatedDraftMidPlanned\030\n \001(\t\022 \n\030calcula"
+          + "tedDraftMidActual\030\013 \001(\t\022\035\n\025calculatedTri"
+          + "mPlanned\030\014 \001(\t\022\034\n\024calculatedTrimActual\030\r"
+          + " \001(\t\022\023\n\013blindSector\030\016 \001(\t\022\014\n\004list\030\017 \001(\t\""
+          + "I\n\036LoadableStudyAttachmentRequest\022\016\n\006fil"
+          + "eId\030\001 \001(\003\022\027\n\017loadableStudyId\030\002 \001(\003\"m\n\034Lo"
+          + "adableStudyAttachmentReply\022\'\n\016responseSt"
+          + "atus\030\001 \001(\0132\017.ResponseStatus\022\020\n\010filePath\030"
+          + "\002 \001(\t\022\022\n\nbyteString\030\003 \001(\014\";\n\020SaveComment"
+          + "Reply\022\'\n\016responseStatus\030\001 \001(\0132\017.Response"
+          + "Status\"N\n\022SaveCommentRequest\022\031\n\021loadable"
+          + "PatternId\030\001 \001(\003\022\017\n\007comment\030\002 \001(\t\022\014\n\004user"
+          + "\030\003 \001(\003\"B\n\024SaveLoadOnTopRequest\022\021\n\tloadOn"
+          + "Top\030\001 \001(\010\022\027\n\017loadableStudyId\030\002 \001(\0032\342\027\n\024L"
+          + "oadableStudyService\022,\n\nSaveVoyage\022\016.Voya"
+          + "geRequest\032\014.VoyageReply\"\000\0228\n\022GetVoyagesB"
+          + "yVessel\022\016.VoyageRequest\032\020.VoyageListRepl"
+          + "y\"\000\022J\n\024SaveLoadableQuantity\022\030.LoadableQu"
+          + "antityRequest\032\026.LoadableQuantityReply\"\000\022"
+          + "T\n$FindLoadableStudiesByVesselAndVoyage\022"
+          + "\025.LoadableStudyRequest\032\023.LoadableStudyRe"
+          + "ply\"\000\022@\n\021SaveLoadableStudy\022\024.LoadableStu"
+          + "dyDetail\032\023.LoadableStudyReply\"\000\022G\n\023SaveC"
+          + "argoNomination\022\027.CargoNominationRequest\032"
+          + "\025.CargoNominationReply\"\000\022J\n\034GetLoadableS"
+          + "tudyPortRotation\022\024.PortRotationRequest\032\022"
+          + ".PortRotationReply\"\000\022J\n\026GetCargoNominati"
+          + "onById\022\027.CargoNominationRequest\032\025.CargoN"
+          + "ominationReply\"\000\022I\n\023GetValveSegregation\022"
+          + "\030.ValveSegregationRequest\032\026.ValveSegrega"
+          + "tionReply\"\000\022J\n\023getLoadableQuantity\022\026.Loa"
+          + "dableQuantityReply\032\031.LoadableQuantityRes"
+          + "ponse\"\000\022J\n\035SaveLoadableStudyPortRotation"
+          + "\022\023.PortRotationDetail\032\022.PortRotationRepl"
+          + "y\"\000\022O\n!SaveLoadableStudyPortRotationList"
+          + "\022\024.PortRotationRequest\032\022.PortRotationRep"
+          + "ly\"\000\022I\n\025DeleteCargoNomination\022\027.CargoNom"
+          + "inationRequest\032\025.CargoNominationReply\"\000\022"
+          + "B\n\024SaveDischargingPorts\022\024.PortRotationRe"
+          + "quest\032\022.PortRotationReply\"\000\022N\n GetPortRo"
+          + "tationByLoadableStudyId\022\024.PortRotationRe"
+          + "quest\032\022.PortRotationReply\"\000\022C\n\023DeleteLoa"
+          + "dableStudy\022\025.LoadableStudyRequest\032\023.Load"
+          + "ableStudyReply\"\000\022@\n\022DeletePortRotation\022\024"
+          + ".PortRotationRequest\032\022.PortRotationReply"
+          + "\"\000\022C\n\021GetOnHandQuantity\022\026.OnHandQuantity"
+          + "Request\032\024.OnHandQuantityReply\"\000\022C\n\022SaveO"
+          + "nHandQuantity\022\025.OnHandQuantityDetail\032\024.O"
+          + "nHandQuantityReply\"\000\022M\n\031GetLoadablePatte"
+          + "rnDetails\022\027.LoadablePatternRequest\032\025.Loa"
+          + "dablePatternReply\"\000\022A\n\024SaveLoadablePatte"
+          + "rns\022\033.LoadablePatternAlgoRequest\032\n.AlgoR"
+          + "eply\"\000\022O\n\025GetPurposeOfCommingle\022\032.Purpos"
+          + "eOfCommingleRequest\032\030.PurposeOfCommingle"
+          + "Reply\"\000\022C\n\021GetCommingleCargo\022\026.Commingle"
+          + "CargoRequest\032\024.CommingleCargoReply\"\000\022D\n\022"
+          + "SaveCommingleCargo\022\026.CommingleCargoReque"
+          + "st\032\024.CommingleCargoReply\"\000\022v\n\"GetLoadabl"
+          + "ePatternCommingleDetails\022\'.LoadablePatte"
+          + "rnCommingleDetailsRequest\032%.LoadablePatt"
+          + "ernCommingleDetailsReply\"\000\0226\n\030GenerateLo"
+          + "adablePatterns\022\014.AlgoRequest\032\n.AlgoReply"
+          + "\"\000\022J\n\026getLoadablePatternList\022\027.LoadableP"
+          + "atternRequest\032\025.LoadablePatternReply\"\000\022F"
+          + "\n\022GetOnBoardQuantity\022\027.OnBoardQuantityRe"
+          + "quest\032\025.OnBoardQuantityReply\"\000\022F\n\023SaveOn"
+          + "BoardQuantity\022\026.OnBoardQuantityDetail\032\025."
+          + "OnBoardQuantityReply\"\000\022E\n\033SaveAlgoLoadab",
+      "leStudyStatus\022\022.AlgoStatusRequest\032\020.Algo"
+          + "StatusReply\"\000\022G\n\023SaveSynopticalTable\022\027.S"
+          + "ynopticalTableRequest\032\025.SynopticalTableR"
+          + "eply\"\000\022F\n\022GetSynopticalTable\022\027.Synoptica"
+          + "lTableRequest\032\025.SynopticalTableReply\"\000\022M"
+          + "\n\031GetSynopticalDataByPortId\022\027.Synoptical"
+          + "TableRequest\032\025.SynopticalTableReply\"\000\022Q\n"
+          + "\035GetSynopticalPortDataByPortId\022\027.Synopti"
+          + "calTableRequest\032\025.SynopticalTableReply\"\000"
+          + "\022R\n\026GetLoadableStudyStatus\022\033.LoadableStu"
+          + "dyStatusRequest\032\031.LoadableStudyStatusRep"
+          + "ly\"\000\022R\n\026GetLoadablePlanDetails\022\033.Loadabl"
+          + "ePlanDetailsRequest\032\031.LoadablePlanDetail"
+          + "sReply\"\000\0227\n\013ConfirmPlan\022\023.ConfirmPlanReq"
+          + "uest\032\021.ConfirmPlanReply\"\000\022I\n\021Recalculate"
+          + "Volume\022\031.RecalculateVolumeRequest\032\027.Reca"
+          + "lculateVolumeReply\"\000\022c\n\037DownloadLoadable"
+          + "StudyAttachment\022\037.LoadableStudyAttachmen"
+          + "tRequest\032\035.LoadableStudyAttachmentReply\""
+          + "\000\0227\n\013SaveComment\022\023.SaveCommentRequest\032\021."
+          + "SaveCommentReply\"\000\022;\n\rSaveLoadOnTop\022\025.Sa"
+          + "veLoadOnTopRequest\032\021.SaveCommentReply\"\000B"
+          + "\036\n\032com.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -104525,15 +106432,29 @@ public final class LoadableStudy {
             new com.google.protobuf.Descriptors.FileDescriptor[] {
               com.cpdss.common.generated.Common.getDescriptor(),
             });
+    internal_static_RecalculateVolumeRequest_descriptor = getDescriptor().getMessageTypes().get(0);
+    internal_static_RecalculateVolumeRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_RecalculateVolumeRequest_descriptor,
+            new java.lang.String[] {
+              "LoadablePatternId", "LoadablePlanStowageDetails",
+            });
+    internal_static_RecalculateVolumeReply_descriptor = getDescriptor().getMessageTypes().get(1);
+    internal_static_RecalculateVolumeReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_RecalculateVolumeReply_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus", "LoadablePlanStowageDetails",
+            });
     internal_static_LoadablePatternAlgoRequest_descriptor =
-        getDescriptor().getMessageTypes().get(0);
+        getDescriptor().getMessageTypes().get(2);
     internal_static_LoadablePatternAlgoRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePatternAlgoRequest_descriptor,
             new java.lang.String[] {
               "ProcesssId", "LoadablePlanDetails", "LoadableStudyId",
             });
-    internal_static_LoadablePlanDetails_descriptor = getDescriptor().getMessageTypes().get(1);
+    internal_static_LoadablePlanDetails_descriptor = getDescriptor().getMessageTypes().get(3);
     internal_static_LoadablePlanDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePlanDetails_descriptor,
@@ -104541,7 +106462,7 @@ public final class LoadableStudy {
               "CaseNumber", "LoadablePlanPortWiseDetails", "Constraints",
             });
     internal_static_LoadablePlanPortWiseDetails_descriptor =
-        getDescriptor().getMessageTypes().get(2);
+        getDescriptor().getMessageTypes().get(4);
     internal_static_LoadablePlanPortWiseDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePlanPortWiseDetails_descriptor,
@@ -104549,14 +106470,14 @@ public final class LoadableStudy {
               "PortId", "PortCode", "ArrivalCondition", "DepartureCondition",
             });
     internal_static_LoadablePlanDetailsRequest_descriptor =
-        getDescriptor().getMessageTypes().get(3);
+        getDescriptor().getMessageTypes().get(5);
     internal_static_LoadablePlanDetailsRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePlanDetailsRequest_descriptor,
             new java.lang.String[] {
               "LoadablePatternId",
             });
-    internal_static_LoadablePlanDetailsReply_descriptor = getDescriptor().getMessageTypes().get(4);
+    internal_static_LoadablePlanDetailsReply_descriptor = getDescriptor().getMessageTypes().get(6);
     internal_static_LoadablePlanDetailsReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePlanDetailsReply_descriptor,
@@ -104576,7 +106497,7 @@ public final class LoadableStudy {
               "VoyageNumber",
               "Id",
             });
-    internal_static_LoadablePlanComments_descriptor = getDescriptor().getMessageTypes().get(5);
+    internal_static_LoadablePlanComments_descriptor = getDescriptor().getMessageTypes().get(7);
     internal_static_LoadablePlanComments_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePlanComments_descriptor,
@@ -104584,7 +106505,7 @@ public final class LoadableStudy {
               "Id", "UserName", "DataAndTime", "Comment",
             });
     internal_static_LoadablePlanBallastDetails_descriptor =
-        getDescriptor().getMessageTypes().get(6);
+        getDescriptor().getMessageTypes().get(8);
     internal_static_LoadablePlanBallastDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePlanBallastDetails_descriptor,
@@ -104606,7 +106527,7 @@ public final class LoadableStudy {
               "ColorCode",
             });
     internal_static_LoadablePlanStowageDetails_descriptor =
-        getDescriptor().getMessageTypes().get(7);
+        getDescriptor().getMessageTypes().get(9);
     internal_static_LoadablePlanStowageDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePlanStowageDetails_descriptor,
@@ -104628,7 +106549,7 @@ public final class LoadableStudy {
               "ColorCode",
             });
     internal_static_LoadableQuantityCommingleCargoDetails_descriptor =
-        getDescriptor().getMessageTypes().get(8);
+        getDescriptor().getMessageTypes().get(10);
     internal_static_LoadableQuantityCommingleCargoDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableQuantityCommingleCargoDetails_descriptor,
@@ -104658,7 +106579,7 @@ public final class LoadableStudy {
               "LoadingOrder",
             });
     internal_static_LoadableQuantityCargoDetails_descriptor =
-        getDescriptor().getMessageTypes().get(9);
+        getDescriptor().getMessageTypes().get(11);
     internal_static_LoadableQuantityCargoDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableQuantityCargoDetails_descriptor,
@@ -104685,14 +106606,14 @@ public final class LoadableStudy {
               "Priority",
               "LoadingOrder",
             });
-    internal_static_ConfirmPlanRequest_descriptor = getDescriptor().getMessageTypes().get(10);
+    internal_static_ConfirmPlanRequest_descriptor = getDescriptor().getMessageTypes().get(12);
     internal_static_ConfirmPlanRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ConfirmPlanRequest_descriptor,
             new java.lang.String[] {
               "LoadablePatternId",
             });
-    internal_static_ConfirmPlanReply_descriptor = getDescriptor().getMessageTypes().get(11);
+    internal_static_ConfirmPlanReply_descriptor = getDescriptor().getMessageTypes().get(13);
     internal_static_ConfirmPlanReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ConfirmPlanReply_descriptor,
@@ -104700,49 +106621,49 @@ public final class LoadableStudy {
               "ResponseStatus",
             });
     internal_static_LoadableStudyStatusRequest_descriptor =
-        getDescriptor().getMessageTypes().get(12);
+        getDescriptor().getMessageTypes().get(14);
     internal_static_LoadableStudyStatusRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableStudyStatusRequest_descriptor,
             new java.lang.String[] {
               "LoadableStudyId", "ProcessId",
             });
-    internal_static_LoadableStudyStatusReply_descriptor = getDescriptor().getMessageTypes().get(13);
+    internal_static_LoadableStudyStatusReply_descriptor = getDescriptor().getMessageTypes().get(15);
     internal_static_LoadableStudyStatusReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableStudyStatusReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "LoadableStudystatusId",
             });
-    internal_static_AlgoStatusRequest_descriptor = getDescriptor().getMessageTypes().get(14);
+    internal_static_AlgoStatusRequest_descriptor = getDescriptor().getMessageTypes().get(16);
     internal_static_AlgoStatusRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_AlgoStatusRequest_descriptor,
             new java.lang.String[] {
               "ProcesssId", "LoadableStudystatusId",
             });
-    internal_static_AlgoStatusReply_descriptor = getDescriptor().getMessageTypes().get(15);
+    internal_static_AlgoStatusReply_descriptor = getDescriptor().getMessageTypes().get(17);
     internal_static_AlgoStatusReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_AlgoStatusReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus",
             });
-    internal_static_AlgoRequest_descriptor = getDescriptor().getMessageTypes().get(16);
+    internal_static_AlgoRequest_descriptor = getDescriptor().getMessageTypes().get(18);
     internal_static_AlgoRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_AlgoRequest_descriptor,
             new java.lang.String[] {
               "LoadableStudyId",
             });
-    internal_static_AlgoReply_descriptor = getDescriptor().getMessageTypes().get(17);
+    internal_static_AlgoReply_descriptor = getDescriptor().getMessageTypes().get(19);
     internal_static_AlgoReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_AlgoReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "ProcesssId",
             });
-    internal_static_VoyageRequest_descriptor = getDescriptor().getMessageTypes().get(18);
+    internal_static_VoyageRequest_descriptor = getDescriptor().getMessageTypes().get(20);
     internal_static_VoyageRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VoyageRequest_descriptor,
@@ -104755,35 +106676,35 @@ public final class LoadableStudy {
               "StartDate",
               "EndDate",
             });
-    internal_static_VoyageReply_descriptor = getDescriptor().getMessageTypes().get(19);
+    internal_static_VoyageReply_descriptor = getDescriptor().getMessageTypes().get(21);
     internal_static_VoyageReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VoyageReply_descriptor,
             new java.lang.String[] {
               "VoyageId", "ResponseStatus",
             });
-    internal_static_VoyageDetail_descriptor = getDescriptor().getMessageTypes().get(20);
+    internal_static_VoyageDetail_descriptor = getDescriptor().getMessageTypes().get(22);
     internal_static_VoyageDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VoyageDetail_descriptor,
             new java.lang.String[] {
               "Id", "VoyageNumber", "StartDate", "EndDate", "Status", "ConfirmedLoadableStudyId",
             });
-    internal_static_VoyageListReply_descriptor = getDescriptor().getMessageTypes().get(21);
+    internal_static_VoyageListReply_descriptor = getDescriptor().getMessageTypes().get(23);
     internal_static_VoyageListReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VoyageListReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "Voyages",
             });
-    internal_static_StatusReply_descriptor = getDescriptor().getMessageTypes().get(22);
+    internal_static_StatusReply_descriptor = getDescriptor().getMessageTypes().get(24);
     internal_static_StatusReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_StatusReply_descriptor,
             new java.lang.String[] {
               "Status", "Code", "Message",
             });
-    internal_static_LoadableQuantityRequest_descriptor = getDescriptor().getMessageTypes().get(23);
+    internal_static_LoadableQuantityRequest_descriptor = getDescriptor().getMessageTypes().get(25);
     internal_static_LoadableQuantityRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableQuantityRequest_descriptor,
@@ -104818,28 +106739,28 @@ public final class LoadableStudy {
               "FoConsumptionPerDay",
               "Id",
             });
-    internal_static_LoadableQuantityReply_descriptor = getDescriptor().getMessageTypes().get(24);
+    internal_static_LoadableQuantityReply_descriptor = getDescriptor().getMessageTypes().get(26);
     internal_static_LoadableQuantityReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableQuantityReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "LoadableQuantityId", "LoadableStudyId",
             });
-    internal_static_LoadableStudyRequest_descriptor = getDescriptor().getMessageTypes().get(25);
+    internal_static_LoadableStudyRequest_descriptor = getDescriptor().getMessageTypes().get(27);
     internal_static_LoadableStudyRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableStudyRequest_descriptor,
             new java.lang.String[] {
               "CompanyId", "VesselId", "VoyageId", "LoadableStudyId",
             });
-    internal_static_LoadableStudyAttachment_descriptor = getDescriptor().getMessageTypes().get(26);
+    internal_static_LoadableStudyAttachment_descriptor = getDescriptor().getMessageTypes().get(28);
     internal_static_LoadableStudyAttachment_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableStudyAttachment_descriptor,
             new java.lang.String[] {
               "ByteString", "FileName", "Id",
             });
-    internal_static_LoadableStudyDetail_descriptor = getDescriptor().getMessageTypes().get(27);
+    internal_static_LoadableStudyDetail_descriptor = getDescriptor().getMessageTypes().get(29);
     internal_static_LoadableStudyDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableStudyDetail_descriptor,
@@ -104867,28 +106788,28 @@ public final class LoadableStudy {
               "DeletedAttachments",
               "LoadOnTop",
             });
-    internal_static_LoadableStudyReply_descriptor = getDescriptor().getMessageTypes().get(28);
+    internal_static_LoadableStudyReply_descriptor = getDescriptor().getMessageTypes().get(30);
     internal_static_LoadableStudyReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableStudyReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "LoadableStudies", "Id",
             });
-    internal_static_LoadingPortDetail_descriptor = getDescriptor().getMessageTypes().get(29);
+    internal_static_LoadingPortDetail_descriptor = getDescriptor().getMessageTypes().get(31);
     internal_static_LoadingPortDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadingPortDetail_descriptor,
             new java.lang.String[] {
               "PortId", "Quantity",
             });
-    internal_static_segregationDetail_descriptor = getDescriptor().getMessageTypes().get(30);
+    internal_static_segregationDetail_descriptor = getDescriptor().getMessageTypes().get(32);
     internal_static_segregationDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_segregationDetail_descriptor,
             new java.lang.String[] {
               "Id", "Value",
             });
-    internal_static_CargoNominationDetail_descriptor = getDescriptor().getMessageTypes().get(31);
+    internal_static_CargoNominationDetail_descriptor = getDescriptor().getMessageTypes().get(33);
     internal_static_CargoNominationDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoNominationDetail_descriptor,
@@ -104907,7 +106828,7 @@ public final class LoadableStudy {
               "TempEst",
               "SegregationId",
             });
-    internal_static_CargoNominationRequest_descriptor = getDescriptor().getMessageTypes().get(32);
+    internal_static_CargoNominationRequest_descriptor = getDescriptor().getMessageTypes().get(34);
     internal_static_CargoNominationRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoNominationRequest_descriptor,
@@ -104918,14 +106839,14 @@ public final class LoadableStudy {
               "CargoNominationId",
               "CargoNominationDetail",
             });
-    internal_static_CargoNominationReply_descriptor = getDescriptor().getMessageTypes().get(33);
+    internal_static_CargoNominationReply_descriptor = getDescriptor().getMessageTypes().get(35);
     internal_static_CargoNominationReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoNominationReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "CargoNominationId", "CargoNominations",
             });
-    internal_static_PortRotationRequest_descriptor = getDescriptor().getMessageTypes().get(34);
+    internal_static_PortRotationRequest_descriptor = getDescriptor().getMessageTypes().get(36);
     internal_static_PortRotationRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortRotationRequest_descriptor,
@@ -104938,7 +106859,7 @@ public final class LoadableStudy {
               "PortRotationDetails",
               "DischargingCargoId",
             });
-    internal_static_PortRotationDetail_descriptor = getDescriptor().getMessageTypes().get(35);
+    internal_static_PortRotationDetail_descriptor = getDescriptor().getMessageTypes().get(37);
     internal_static_PortRotationDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortRotationDetail_descriptor,
@@ -104961,56 +106882,56 @@ public final class LoadableStudy {
               "LoadableStudyId",
               "PortOrder",
             });
-    internal_static_Operation_descriptor = getDescriptor().getMessageTypes().get(36);
+    internal_static_Operation_descriptor = getDescriptor().getMessageTypes().get(38);
     internal_static_Operation_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_Operation_descriptor,
             new java.lang.String[] {
               "Id", "OperationName",
             });
-    internal_static_PortRotationReply_descriptor = getDescriptor().getMessageTypes().get(37);
+    internal_static_PortRotationReply_descriptor = getDescriptor().getMessageTypes().get(39);
     internal_static_PortRotationReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortRotationReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "Ports", "Operations", "PortRotationId",
             });
-    internal_static_LoadableQuantityResponse_descriptor = getDescriptor().getMessageTypes().get(38);
+    internal_static_LoadableQuantityResponse_descriptor = getDescriptor().getMessageTypes().get(40);
     internal_static_LoadableQuantityResponse_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableQuantityResponse_descriptor,
             new java.lang.String[] {
               "LoadableQuantityRequest", "ResponseStatus", "CaseNo", "SelectedZone",
             });
-    internal_static_ValveSegregation_descriptor = getDescriptor().getMessageTypes().get(39);
+    internal_static_ValveSegregation_descriptor = getDescriptor().getMessageTypes().get(41);
     internal_static_ValveSegregation_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ValveSegregation_descriptor,
             new java.lang.String[] {
               "Id", "Name",
             });
-    internal_static_ValveSegregationRequest_descriptor = getDescriptor().getMessageTypes().get(40);
+    internal_static_ValveSegregationRequest_descriptor = getDescriptor().getMessageTypes().get(42);
     internal_static_ValveSegregationRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ValveSegregationRequest_descriptor,
             new java.lang.String[] {
               "LoadableStudyId",
             });
-    internal_static_ValveSegregationReply_descriptor = getDescriptor().getMessageTypes().get(41);
+    internal_static_ValveSegregationReply_descriptor = getDescriptor().getMessageTypes().get(43);
     internal_static_ValveSegregationReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ValveSegregationReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "ValveSegregation",
             });
-    internal_static_OnHandQuantityRequest_descriptor = getDescriptor().getMessageTypes().get(42);
+    internal_static_OnHandQuantityRequest_descriptor = getDescriptor().getMessageTypes().get(44);
     internal_static_OnHandQuantityRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_OnHandQuantityRequest_descriptor,
             new java.lang.String[] {
               "CompanyId", "VesselId", "LoadableStudyId", "PortId",
             });
-    internal_static_OnHandQuantityDetail_descriptor = getDescriptor().getMessageTypes().get(43);
+    internal_static_OnHandQuantityDetail_descriptor = getDescriptor().getMessageTypes().get(45);
     internal_static_OnHandQuantityDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_OnHandQuantityDetail_descriptor,
@@ -105032,7 +106953,7 @@ public final class LoadableStudy {
               "FuelTypeShortName",
               "Density",
             });
-    internal_static_TankDetail_descriptor = getDescriptor().getMessageTypes().get(44);
+    internal_static_TankDetail_descriptor = getDescriptor().getMessageTypes().get(46);
     internal_static_TankDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_TankDetail_descriptor,
@@ -105054,28 +106975,28 @@ public final class LoadableStudy {
               "TankGroup",
               "FullCapacityCubm",
             });
-    internal_static_TankList_descriptor = getDescriptor().getMessageTypes().get(45);
+    internal_static_TankList_descriptor = getDescriptor().getMessageTypes().get(47);
     internal_static_TankList_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_TankList_descriptor,
             new java.lang.String[] {
               "VesselTank",
             });
-    internal_static_OnHandQuantityReply_descriptor = getDescriptor().getMessageTypes().get(46);
+    internal_static_OnHandQuantityReply_descriptor = getDescriptor().getMessageTypes().get(48);
     internal_static_OnHandQuantityReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_OnHandQuantityReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "OnHandQuantity", "Tanks", "RearTanks", "Id",
             });
-    internal_static_OnBoardQuantityRequest_descriptor = getDescriptor().getMessageTypes().get(47);
+    internal_static_OnBoardQuantityRequest_descriptor = getDescriptor().getMessageTypes().get(49);
     internal_static_OnBoardQuantityRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_OnBoardQuantityRequest_descriptor,
             new java.lang.String[] {
               "CompanyId", "VesselId", "LoadableStudyId", "PortId", "VoyageId",
             });
-    internal_static_OnBoardQuantityDetail_descriptor = getDescriptor().getMessageTypes().get(48);
+    internal_static_OnBoardQuantityDetail_descriptor = getDescriptor().getMessageTypes().get(50);
     internal_static_OnBoardQuantityDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_OnBoardQuantityDetail_descriptor,
@@ -105096,14 +107017,14 @@ public final class LoadableStudy {
               "Density",
               "LoadOnTop",
             });
-    internal_static_OnBoardQuantityReply_descriptor = getDescriptor().getMessageTypes().get(49);
+    internal_static_OnBoardQuantityReply_descriptor = getDescriptor().getMessageTypes().get(51);
     internal_static_OnBoardQuantityReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_OnBoardQuantityReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "OnBoardQuantity", "Tanks", "Id",
             });
-    internal_static_PurposeOfCommingle_descriptor = getDescriptor().getMessageTypes().get(50);
+    internal_static_PurposeOfCommingle_descriptor = getDescriptor().getMessageTypes().get(52);
     internal_static_PurposeOfCommingle_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PurposeOfCommingle_descriptor,
@@ -105111,21 +107032,21 @@ public final class LoadableStudy {
               "Id", "Name",
             });
     internal_static_PurposeOfCommingleRequest_descriptor =
-        getDescriptor().getMessageTypes().get(51);
+        getDescriptor().getMessageTypes().get(53);
     internal_static_PurposeOfCommingleRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PurposeOfCommingleRequest_descriptor,
             new java.lang.String[] {
               "LoadableStudyId",
             });
-    internal_static_PurposeOfCommingleReply_descriptor = getDescriptor().getMessageTypes().get(52);
+    internal_static_PurposeOfCommingleReply_descriptor = getDescriptor().getMessageTypes().get(54);
     internal_static_PurposeOfCommingleReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PurposeOfCommingleReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "PurposeOfCommingle",
             });
-    internal_static_LoadablePatternReply_descriptor = getDescriptor().getMessageTypes().get(53);
+    internal_static_LoadablePatternReply_descriptor = getDescriptor().getMessageTypes().get(55);
     internal_static_LoadablePatternReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePatternReply_descriptor,
@@ -105136,7 +107057,7 @@ public final class LoadableStudy {
               "LoadablePatternCreatedDate",
               "LoadableStudyName",
             });
-    internal_static_LoadablePattern_descriptor = getDescriptor().getMessageTypes().get(54);
+    internal_static_LoadablePattern_descriptor = getDescriptor().getMessageTypes().get(56);
     internal_static_LoadablePattern_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePattern_descriptor,
@@ -105149,7 +107070,7 @@ public final class LoadableStudy {
               "LoadablePlanStowageDetails",
             });
     internal_static_LoadablePatternCargoDetails_descriptor =
-        getDescriptor().getMessageTypes().get(55);
+        getDescriptor().getMessageTypes().get(57);
     internal_static_LoadablePatternCargoDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePatternCargoDetails_descriptor,
@@ -105164,14 +107085,14 @@ public final class LoadableStudy {
               "LoadingOrder",
               "Api",
             });
-    internal_static_LoadablePatternRequest_descriptor = getDescriptor().getMessageTypes().get(56);
+    internal_static_LoadablePatternRequest_descriptor = getDescriptor().getMessageTypes().get(58);
     internal_static_LoadablePatternRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePatternRequest_descriptor,
             new java.lang.String[] {
               "LoadableStudyId",
             });
-    internal_static_CommingleCargo_descriptor = getDescriptor().getMessageTypes().get(57);
+    internal_static_CommingleCargo_descriptor = getDescriptor().getMessageTypes().get(59);
     internal_static_CommingleCargo_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CommingleCargo_descriptor,
@@ -105186,14 +107107,14 @@ public final class LoadableStudy {
               "Cargo2Pct",
               "Quantity",
             });
-    internal_static_CommingleCargoRequest_descriptor = getDescriptor().getMessageTypes().get(58);
+    internal_static_CommingleCargoRequest_descriptor = getDescriptor().getMessageTypes().get(60);
     internal_static_CommingleCargoRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CommingleCargoRequest_descriptor,
             new java.lang.String[] {
               "LoadableStudyId", "VesselId", "CommingleCargo",
             });
-    internal_static_CommingleCargoReply_descriptor = getDescriptor().getMessageTypes().get(59);
+    internal_static_CommingleCargoReply_descriptor = getDescriptor().getMessageTypes().get(61);
     internal_static_CommingleCargoReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CommingleCargoReply_descriptor,
@@ -105201,7 +107122,7 @@ public final class LoadableStudy {
               "ResponseStatus", "CommingleCargo", "Tanks",
             });
     internal_static_LoadablePatternCommingleDetailsRequest_descriptor =
-        getDescriptor().getMessageTypes().get(60);
+        getDescriptor().getMessageTypes().get(62);
     internal_static_LoadablePatternCommingleDetailsRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePatternCommingleDetailsRequest_descriptor,
@@ -105209,7 +107130,7 @@ public final class LoadableStudy {
               "LoadablePatternCommingleDetailsId",
             });
     internal_static_LoadablePatternCommingleDetailsReply_descriptor =
-        getDescriptor().getMessageTypes().get(61);
+        getDescriptor().getMessageTypes().get(63);
     internal_static_LoadablePatternCommingleDetailsReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadablePatternCommingleDetailsReply_descriptor,
@@ -105228,7 +107149,7 @@ public final class LoadableStudy {
               "Cargo2Percentage",
               "ResponseStatus",
             });
-    internal_static_SynopticalRecord_descriptor = getDescriptor().getMessageTypes().get(62);
+    internal_static_SynopticalRecord_descriptor = getDescriptor().getMessageTypes().get(64);
     internal_static_SynopticalRecord_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SynopticalRecord_descriptor,
@@ -105272,7 +107193,7 @@ public final class LoadableStudy {
               "BallastActual",
               "Ballast",
             });
-    internal_static_SynopticalCargoRecord_descriptor = getDescriptor().getMessageTypes().get(63);
+    internal_static_SynopticalCargoRecord_descriptor = getDescriptor().getMessageTypes().get(65);
     internal_static_SynopticalCargoRecord_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SynopticalCargoRecord_descriptor,
@@ -105289,7 +107210,7 @@ public final class LoadableStudy {
               "Capacity",
               "Density",
             });
-    internal_static_SynopticalOhqRecord_descriptor = getDescriptor().getMessageTypes().get(64);
+    internal_static_SynopticalOhqRecord_descriptor = getDescriptor().getMessageTypes().get(66);
     internal_static_SynopticalOhqRecord_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SynopticalOhqRecord_descriptor,
@@ -105302,7 +107223,7 @@ public final class LoadableStudy {
               "FuelType",
               "Density",
             });
-    internal_static_SynopticalBallastRecord_descriptor = getDescriptor().getMessageTypes().get(65);
+    internal_static_SynopticalBallastRecord_descriptor = getDescriptor().getMessageTypes().get(67);
     internal_static_SynopticalBallastRecord_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SynopticalBallastRecord_descriptor,
@@ -105315,7 +107236,7 @@ public final class LoadableStudy {
               "CorrectedUllage",
               "SpGravity",
             });
-    internal_static_SynopticalTableRequest_descriptor = getDescriptor().getMessageTypes().get(66);
+    internal_static_SynopticalTableRequest_descriptor = getDescriptor().getMessageTypes().get(68);
     internal_static_SynopticalTableRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SynopticalTableRequest_descriptor,
@@ -105327,7 +107248,7 @@ public final class LoadableStudy {
               "SynopticalRecord",
               "LoadablePatternId",
             });
-    internal_static_SynopticalTableReply_descriptor = getDescriptor().getMessageTypes().get(67);
+    internal_static_SynopticalTableReply_descriptor = getDescriptor().getMessageTypes().get(69);
     internal_static_SynopticalTableReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SynopticalTableReply_descriptor,
@@ -105341,7 +107262,7 @@ public final class LoadableStudy {
               "CargoTanks",
             });
     internal_static_SynopticalTableLoadicatorData_descriptor =
-        getDescriptor().getMessageTypes().get(68);
+        getDescriptor().getMessageTypes().get(70);
     internal_static_SynopticalTableLoadicatorData_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SynopticalTableLoadicatorData_descriptor,
@@ -105363,7 +107284,7 @@ public final class LoadableStudy {
               "List",
             });
     internal_static_LoadableStudyAttachmentRequest_descriptor =
-        getDescriptor().getMessageTypes().get(69);
+        getDescriptor().getMessageTypes().get(71);
     internal_static_LoadableStudyAttachmentRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableStudyAttachmentRequest_descriptor,
@@ -105371,28 +107292,28 @@ public final class LoadableStudy {
               "FileId", "LoadableStudyId",
             });
     internal_static_LoadableStudyAttachmentReply_descriptor =
-        getDescriptor().getMessageTypes().get(70);
+        getDescriptor().getMessageTypes().get(72);
     internal_static_LoadableStudyAttachmentReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadableStudyAttachmentReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "FilePath", "ByteString",
             });
-    internal_static_SaveCommentReply_descriptor = getDescriptor().getMessageTypes().get(71);
+    internal_static_SaveCommentReply_descriptor = getDescriptor().getMessageTypes().get(73);
     internal_static_SaveCommentReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SaveCommentReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus",
             });
-    internal_static_SaveCommentRequest_descriptor = getDescriptor().getMessageTypes().get(72);
+    internal_static_SaveCommentRequest_descriptor = getDescriptor().getMessageTypes().get(74);
     internal_static_SaveCommentRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SaveCommentRequest_descriptor,
             new java.lang.String[] {
               "LoadablePatternId", "Comment", "User",
             });
-    internal_static_SaveLoadOnTopRequest_descriptor = getDescriptor().getMessageTypes().get(73);
+    internal_static_SaveLoadOnTopRequest_descriptor = getDescriptor().getMessageTypes().get(75);
     internal_static_SaveLoadOnTopRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_SaveLoadOnTopRequest_descriptor,
