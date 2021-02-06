@@ -967,7 +967,6 @@ input[type=number] {
 .sidebar-content{
   height: calc(100vh - 220px);
   padding-right: 15px;
-  overflow-y: auto;
   margin-right: 2px;
 }
 
@@ -995,8 +994,9 @@ input[type=number] {
       position: static;
       padding-right: 0;
       .error-icon{
-        position: static;
-        margin-left: 5px;
+        position: relative;
+        margin-left: 8px;
+        top: -5px;
       }
       }
     }
@@ -1215,6 +1215,9 @@ td.sl div{
       text-align: right;
       input{
         text-align: right;
+        &.p-dropdown-filter{
+          text-align: left!important;
+        }
       }
     }
   }
@@ -1844,9 +1847,12 @@ height: 15px;
   height: 10px;
 }
 
-.parameter-table td, .parameter-table th{
+.parameter-table td{
   &:last-child{
     text-align: right!important;
     font-size: $heading-font-size;
   }
+}
+.parameter-table th{
+  text-align: right!important;
 }

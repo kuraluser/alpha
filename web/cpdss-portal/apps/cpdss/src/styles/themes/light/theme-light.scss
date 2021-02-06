@@ -1064,3 +1064,9 @@ tr:hover a{
     color: $text-secondary;
   }
 }
+
+.tank-outer-pattern.cargo .ship-rear-pattern{
+  border-top: 2px  solid $tank-ohq-border; 
+  border-left: 0;
+  border-bottom: 2px  solid $tank-ohq-border; 
+}
