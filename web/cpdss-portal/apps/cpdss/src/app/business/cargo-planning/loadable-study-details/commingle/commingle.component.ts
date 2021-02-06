@@ -161,7 +161,7 @@ export class CommingleComponent implements OnInit {
     this.commingleForm = this.fb.group({
       purpose: this.fb.control(null, Validators.required),
       preferredTanks: this.fb.control(null),
-      slopOnly: this.fb.control(false, [Validators.required]),
+      slopOnly: this.fb.control({ value:false, disabled:!this.isEditable}, [Validators.required]),
       cargo1: this.fb.control(null, [Validators.required]),
       cargo2: this.fb.control(null, [Validators.required]),
     });

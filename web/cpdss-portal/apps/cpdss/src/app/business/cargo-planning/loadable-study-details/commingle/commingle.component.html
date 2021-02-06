@@ -22,7 +22,7 @@
                 <div class="row" *ngIf="isVolumeMaximum">
                     <div class="col no-left-padding pt-5">
                         <label class="checkbox-custom">{{'COMMINGLE_SELECT_SLOP_ONLY' | translate}}
-                            <input type="checkbox" formControlName="slopOnly" [readonly]="!isEditable">
+                            <input type="checkbox" formControlName="slopOnly">
 
                             <span class="checkmark"></span>
                         </label>
@@ -70,7 +70,7 @@
                         <div class="col">
                             <p-dropdown id="commingle_cargo1_dropdown" styleClass="form-control" appendTo="body"
                                 [filter]="true" [options]="cargoNominationsCargo1" optionLabel="name"
-                                formControlName="cargo1" (onChange)="onChange($event, 1)"
+                                formControlName="cargo1" (onChange)="onChange($event, 1)" [readonly]="!isEditable"
                                 placeholder="{{'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER' | translate}}">
                             </p-dropdown>
                             <cpdss-portal-validation-error [errors]="fieldError('cargo1')"
@@ -89,7 +89,7 @@
                         <div class="col">
                             <p-dropdown id="commingle_cargo2_dropdown" appendTo="body" styleClass="form-control"
                                 [filter]="true" [options]="cargoNominationsCargo2" optionLabel="name"
-                                formControlName="cargo2" (onChange)="onChange($event, 2)"
+                                formControlName="cargo2" (onChange)="onChange($event, 2)" [readonly]="!isEditable"
                                 placeholder="{{'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER' | translate}}">
                             </p-dropdown>
                             <cpdss-portal-validation-error [errors]="fieldError('cargo2')"
