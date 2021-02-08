@@ -1218,21 +1218,6 @@ export class LoadableStudyDetailsTransformationService {
       portName: {
         'required': 'LOADABLE_QUANTITY_PORTNAME_REQUIRED',
       },
-      displacement: {
-        'required': 'LOADABLE_QUANTITY_DISPLACEMENT_REQUIREDD',
-      },
-      arrivalMaxDraft: {
-        'required': 'LOADABLE_QUANTITY_ARRIVAL_MAX_DRAFT_REQUIRED',
-      },
-      dwt: {
-        'required': 'LOADABLE_QUANTITY_DWT_REQUIRED',
-      },
-      lwt: {
-        'required': 'LOADABLE_QUANTITY_LWT_REQUIRED',
-      },
-      tpc: {
-        'required': 'LOADABLE_QUANTITY_TPC_REQUIRED'
-      },
       estSeaDensity: {
         'required': 'LOADABLE_QUANTITY_SEA_WATER_DENSITTY_REQUIRED',
         'min': 'LOADABLE_QUANTITY_ERROR'
@@ -1266,9 +1251,6 @@ export class LoadableStudyDetailsTransformationService {
       ballast: {
         'required': 'LOADABLE_QUANTITY_BALLAST_REQUIRED',
         'min': 'LOADABLE_QUANTITY_ERROR'
-      },
-      constant: {
-        'required': 'LOADABLE_QUANTITY_CONSTANT_REQUIRED'
       },
       others: {
         'required': 'LOADABLE_QUANTITY_OTHERS_REQUIRED',

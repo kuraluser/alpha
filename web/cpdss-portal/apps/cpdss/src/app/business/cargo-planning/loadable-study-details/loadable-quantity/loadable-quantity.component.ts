@@ -49,6 +49,12 @@ export class LoadableQuantityComponent implements OnInit {
   selectedZone: string;
   loadableQuantityId: number;
   buttonLabel: string;
+  isNoTpc = false;
+  isNoDwt = false;
+  isNoArrivalMaxDraft = false;
+  isNodisplacement = false;
+  isNoLwt = false;
+  isNoConstant = false;
 
   private _loadableStudies: LoadableStudy[];
 
@@ -94,9 +100,9 @@ export class LoadableQuantityComponent implements OnInit {
 
       this.loadableQuantityForm = this.fb.group({
         portName: [this.ports.find(port => port.id === this.loadableQuantity.portId), Validators.required],
-        arrivalMaxDraft: ['', [Validators.required, numberValidator(2, 2)]],
-        dwt: ['', [Validators.required]],
-        tpc: ['', [Validators.required, numberValidator(1, 3)]],
+        arrivalMaxDraft: ['', [numberValidator(2, 2)]],
+        dwt: [''],
+        tpc: ['', [numberValidator(1, 3)]],
         estimateSag: ['', [Validators.required, numberValidator(2, 2), , Validators.min(0)]],
         safCorrection: ['', [Validators.required, numberValidator(5, 7), Validators.min(0)]],
         foOnboard: [{ value: '', disabled: true} , [Validators.required, numberValidator(2, 7), Validators.min(0)]],
@@ -122,8 +128,8 @@ export class LoadableQuantityComponent implements OnInit {
         this.loadableQuantityForm.addControl('foConsInSz', this.fb.control('', [Validators.required, numberValidator(5, 7), Validators.min(0)]));
       }
       if (this.caseNo === 3) {
-        this.loadableQuantityForm.addControl('displacement', this.fb.control('', [Validators.required]));
-        this.loadableQuantityForm.addControl('lwt', this.fb.control('', [Validators.required]));
+        this.loadableQuantityForm.addControl('displacement', this.fb.control(''));
+        this.loadableQuantityForm.addControl('lwt', this.fb.control(''));
         this.loadableQuantityForm.addControl('estSeaDensity', this.fb.control('', [Validators.required, numberValidator(3, 1), Validators.min(0)]));
         this.loadableQuantityForm.addControl('sgCorrection', this.fb.control('', [Validators.required, numberValidator(5, 7)]));
       }
@@ -139,6 +145,24 @@ export class LoadableQuantityComponent implements OnInit {
    * Populate loadable quantity data
    */
   getLoadableQuantityData() {
+
+    if(this.loadableQuantity.tpc === ''){
+      this.isNoTpc =  true;
+    }if(this.loadableQuantity.dwt === ''){
+      this.isNoDwt = true;
+    }if(this.loadableQuantity.draftRestriction === ''){
+      this.isNoArrivalMaxDraft = true;
+    }
+    if(this.loadableQuantity.displacmentDraftRestriction === ''){
+      this.isNodisplacement = true;
+    }
+    if(this.loadableQuantity.vesselLightWeight === ''){
+      this.isNoLwt = true;
+    }
+    if(this.loadableQuantity.constant === ''){
+      this.isNoConstant = true;
+    }
+
     this.loadableQuantityForm.controls.portName.setValue(this.ports.find(port => port.id === this.loadableQuantity.portId));
     this.loadableQuantityForm.controls.arrivalMaxDraft.setValue(this.loadableQuantity.draftRestriction);
     this.loadableQuantityForm.controls.dwt.setValue(this.loadableQuantity.dwt);
@@ -196,7 +220,7 @@ export class LoadableQuantityComponent implements OnInit {
 
     if (this.loadableQuantityForm.valid && !this.isNegative) {
       this.ngxSpinnerService.show();
-      if (this.caseNo === 1) {
+      if (this.caseNo === 1  && !this.isNoTpc && !this.isNoArrivalMaxDraft && !this.isNoDwt && !this.isNoConstant) {
         this.loadableQuantity = {
 
           loadableQuantityId: this.loadableQuantityId,
@@ -224,7 +248,7 @@ export class LoadableQuantityComponent implements OnInit {
         }
 
       }
-      else if (this.caseNo === 2) {
+      else if (this.caseNo === 2 && !this.isNoTpc && !this.isNoArrivalMaxDraft && !this.isNoDwt && !this.isNoConstant) {
         this.loadableQuantity = {
           loadableQuantityId: this.loadableQuantityId,
           portId: this.loadableQuantityForm.controls.portName.value.id,
@@ -243,7 +267,7 @@ export class LoadableQuantityComponent implements OnInit {
           totalQuantity: this.loadableQuantityForm.controls.totalQuantity.value
         }
       }
-      else {
+      else if(!this.isNoTpc && !this.isNoArrivalMaxDraft && !this.isNoDwt && !this.isNoLwt && !this.isNodisplacement && !this.isNoConstant){
         this.loadableQuantity = {
           loadableQuantityId: this.loadableQuantityId,
           portId: this.loadableQuantityForm.controls.portName.value.id,
