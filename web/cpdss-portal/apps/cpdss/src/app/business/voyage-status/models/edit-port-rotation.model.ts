@@ -44,11 +44,11 @@ export interface IEditPortRotation{
     index?: number;
     isFutureDate?: boolean;
     type?: string;
-    isEtaEditable?: boolean;
+    isDateEditable?: boolean;
     isTimeEditable?: boolean;
-    isEtdEditable?: boolean;
     isDistanceEditable?: boolean;
     currentPort?: boolean;
     isEditable?: boolean;
     isSelected?: boolean;
+    isFocused?: boolean;
 }

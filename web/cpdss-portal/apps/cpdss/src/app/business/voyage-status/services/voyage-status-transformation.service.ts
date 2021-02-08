@@ -57,18 +57,25 @@ export class VoyageStatusTransformationService {
    */
   setValidationErrorMessageForPortRotationRibbon() {
     return {
-
       eta: {
         'required': 'PORT_ROTATION_RIBBON_ETA_REQUIRED',
+        'maxError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MAX',
+        'minError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MIN'
       },
       etd: {
         'required': 'PORT_ROTATION_RIBBON_ETD_REQUIRED',
+        'maxError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MAX',
+        'minError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MIN'
       },
       etaTime: {
         'required': 'PORT_ROTATION_RIBBON_TIME_REQUIRED',
+        'maxError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MAX',
+        'minError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MIN'
       },
       etdTime: {
         'required': 'PORT_ROTATION_RIBBON_TIME_REQUIRED',
+        'maxError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MAX',
+        'minError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MIN'
       },
       distance: {
         'required': 'PORT_ROTATION_RIBBON_DISTANCE_REQUIRED',

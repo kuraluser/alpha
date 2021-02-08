@@ -12,6 +12,8 @@ import { Subscription } from 'rxjs';
 import { OnDestroy } from '@angular/core';
 import { VoyageStatusTransformationService } from '../services/voyage-status-transformation.service';
 import { IVoyageDetails } from '../models/voyage-status.model';
+import { portEtaEtdValidator } from '../directive/validator/port-eta-etd-validator.directive';
+import { portTimeValidator } from '../directive/validator/port-time-validator.directive';
 /**
  * Component class of PortRotationRibbonComponent
  *
@@ -27,8 +29,9 @@ import { IVoyageDetails } from '../models/voyage-status.model';
 export class PortRotationRibbonComponent implements OnInit, OnDestroy {
 
   @Input() vesselDetails: IVessel;
-  @Input() 
- 
+  selectedPortIndex = -1;
+  @Input()
+
   get voyageDetails() {
     return this._voyageDetails;
   }
@@ -46,7 +49,6 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   minDate = new Date();
   isCurrentPortSelected = false;
   errorMesages: any;
-  isSelected = false;
   portOrderSubscription$: Subscription;
   responsiveOptions: { breakpoint: string; numVisible: number; numScroll: number; }[];
 
@@ -106,21 +108,25 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * Method to select port
    * @param port 
    */
-  onClickArrival(port: IEditPortRotation) {
+  onClickPort(port: IEditPortRotation) {
     const portDetails: IVoyageDetails = {
       "portOrder": port.portOrder,
       "operationType": port.type === 'Arrival' ? "ARR" : "DEP",
       "portId": port.portId
     }
+    const index = this.portList.indexOf(port);
+    this.resetPreviousPort(index);
     if (!port.isFutureDate) {
       this.portDetails.emit(portDetails);
     }
     this.portList.map(ports => {
       ports.isFutureDate = false;
       ports.isSelected = false;
+      port.isFocused = false;
     });
 
     port.isSelected = true;
+    port.isFocused = true;
     if (port?.eta) {
       if (port?.etaActual) {
         port.isFutureDate = false;
@@ -132,7 +138,6 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     else {
       port.isFutureDate = true;
     }
-    this.updateForm(port);
   }
   /**
    * Enable editing
@@ -140,25 +145,15 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * @param field 
    */
   editPort(event, port: IEditPortRotation, field: string) {
-    this.portList.map(ports => {
-      ports.isEtaEditable = false;
-      port.isEtdEditable = false;
-      ports.isTimeEditable = false;
-      port.isDistanceEditable = false;
-
-    });
+    port.isDateEditable = false;
+    port.isTimeEditable = false;
+    port.isDistanceEditable = false;
     if (port.isFutureDate === true) {
-      if (field === 'eta') {
-        port.isEtaEditable = true;
-      } else if (field === 'etaTime') {
+      if (field === 'date') {
+        port.isDateEditable = true;
+      } else if (field === 'time') {
         port.isTimeEditable = true;
-      }
-      else if (field === 'etd') {
-        port.isEtdEditable = true;
-      } else if (field === 'etdTime') {
-        port.isTimeEditable = true;
-      }
-      else if (field === 'distance') {
+      } else if (field === 'distance') {
         port.isDistanceEditable = true;
       }
     }
@@ -168,17 +163,21 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   * Method to get current position of the ship
   */
   currentPosition() {
-    const currentPort: IEditPortRotation[] = [];
-    this.portList?.map(port => {
-      if (!this.isCurrentPortSelected) {
+    let currentPort = 0;
+    for(let index=0; index < this.portList.length; index++){
+        const port = this.portList[index]
         if (!port.etaActual) {
-          currentPort.push(port);
+          currentPort = index - 1;
+          break;
         }
-      }
-    })
-    if (currentPort.length > 0) {
-      this.portList[this.portList.indexOf(currentPort[0]) - 1].currentPort = true;
     }
+    if (currentPort < 0) {
+      currentPort = 0;
+    }
+    if (currentPort % 2 === 0){
+      currentPort += 1
+    }
+    this.portList[currentPort].currentPort = true;
   }
   /**
    * Method to delete port
@@ -205,7 +204,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * @memberof PortRotationRibbonComponent
    */
   private initPortRotationArray() {
-    const portRibbonDetailsArray = this.portList?.map((port) => this.initPortFormGroup(port));
+    const portRibbonDetailsArray = this.portList?.map((port, index) => this.initPortFormGroup(port, index));
     this.portRotationForm = this.fb.group({
       portsData: this.fb.array([...portRibbonDetailsArray])
     });
@@ -217,17 +216,13 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * @private
    * @memberof PortRotationRibbonComponent
    */
-  initPortFormGroup(newPortList: IEditPortRotation): FormGroup {
+  initPortFormGroup(newPortList: IEditPortRotation, index: number): FormGroup {
+    const date = this.convertToDate(newPortList.type === "Arrival" ? newPortList?.eta : newPortList?.etd);
+    const dateActual = this.convertToDate(newPortList.type === "Arrival" ? newPortList?.etaActual : newPortList?.etdActual);
     return this.fb.group({
       port: this.fb.control(newPortList?.name, [Validators.required]),
-      eta: this.fb.control(newPortList?.eta?.split(" ")[0], [Validators.required]),
-      etaTime: this.fb.control(newPortList?.eta?.split(" ")[1], [Validators.required]),
-      etaActual: this.fb.control(newPortList?.etaActual?.split(" ")[0]),
-      etaActualTime: this.fb.control(newPortList?.etaActual?.split(" ")[1]),
-      etd: this.fb.control(newPortList?.etd?.split(" ")[0], [Validators.required]),
-      etdTime: this.fb.control(newPortList?.etd?.split(" ")[1], [Validators.required]),
-      etdActual: this.fb.control(newPortList?.etdActual?.split(" ")[0]),
-      etdActualTime: this.fb.control(newPortList?.etdActual?.split(" ")[1]),
+      date: this.fb.control(dateActual ? dateActual : date, [Validators.required, portEtaEtdValidator(index)]),
+      time: this.fb.control(dateActual ? dateActual : date, [Validators.required, portTimeValidator(index)]),
       distance: this.fb.control(newPortList?.distanceBetweenPorts ? newPortList?.distanceBetweenPorts : 0, [Validators.required])
     });
   }
@@ -249,24 +244,29 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    */
 
   async save(port: IEditPortRotation) {
-    this.updateForm(port);
-    const form = <FormGroup>(<FormArray>this.portRotationForm.get('portsData')).at(this.portList.indexOf(port));
-    const translationKeys = await this.translateService.get(['PORT_ROTATION_RIBBON_SUCCESS', 'PORT_ROTATION_RIBBON_SAVED_SUCCESSFULLY']).toPromise();
-    if ((<FormGroup>(<FormArray>this.portRotationForm.get('portsData')).at(this.portList.indexOf(port))).valid) {
+    // this.updateForm(port);
+    const index = this.portList.indexOf(port);
+    const form = <FormGroup>(<FormArray>this.portRotationForm.get('portsData')).at(index);
+    form.markAllAsTouched()
+    form.updateValueAndValidity();
+    const translationKeys = await this.translateService.get(['PORT_ROTATION_RIBBON_SUCCESS', 'PORT_ROTATION_RIBBON_SAVED_SUCCESSFULLY', 'PORT_ROTATION_RIBBON_INVALID', 'PORT_ROTATION_RIBBON_INVALID_DATA']).toPromise();
+    if (form.valid) {
       if (port.type === 'Arrival') {
-        port.eta = form.controls['eta'].value + ' ' + form.controls['etaTime'].value;
+        port.etaActual = this.formatDate(form.controls['date'].value) + ' ' + this.formatDate(null, form.controls['time'].value);
       }
       else {
-        port.etd = form.controls['etd'].value + ' ' + form.controls['etdTime'].value;
+        port.etdActual = this.formatDate(form.controls['date'].value) + ' ' + this.formatDate(null, form.controls['time'].value);
         port.distanceBetweenPorts = form.controls['distance'].value;
       }
       const result = await this.editPortRotationApiService.savePortRotationRibbon(this.vesselDetails.id, this.voyageId, this.loadableStudyId, port).toPromise();
       if (result.responseStatus.status === "200") {
+
         this.messageService.add({ severity: 'success', summary: translationKeys['PORT_ROTATION_RIBBON_SUCCESS'], detail: translationKeys['PORT_ROTATION_RIBBON_SAVED_SUCCESSFULLY'] });
       }
     }
     else {
-      (<FormGroup>(<FormArray>this.portRotationForm.get('portsData')).at(this.portList.indexOf(port))).markAllAsTouched();
+      this.setInvalid(port, form)
+      this.messageService.add({ severity: 'warn', summary: translationKeys['PORT_ROTATION_RIBBON_INVALID'], detail: translationKeys['PORT_ROTATION_RIBBON_INVALID_DATA'] });
     }
   }
 
@@ -301,19 +301,14 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   updateForm(port: IEditPortRotation) {
     const form = this.row(this.portList.indexOf(port));
     if (port?.type === 'Arrival') {
-      form.controls['etd']?.clearValidators();
-      form.controls['etdTime']?.clearValidators();
+      form.controls['date']?.clearValidators();
+      form.controls['time']?.clearValidators();
       form.controls['distance']?.clearValidators();
-      form.controls['etd']?.updateValueAndValidity();
-      form.controls['etdTime']?.updateValueAndValidity();
       form.controls['distance']?.updateValueAndValidity();
-
     }
     else {
-      form.controls['eta']?.clearValidators();
-      form.controls['etaTime']?.clearValidators();
-      form.controls['eta']?.updateValueAndValidity();
-      form.controls['etaTime']?.updateValueAndValidity();
+      form.controls['date']?.clearValidators();
+      form.controls['time']?.clearValidators();
     }
   }
 
@@ -359,21 +354,21 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       const portArrival = { ...portData[i] };
       portArrival.isFutureDate = false;
       portArrival.type = 'Arrival';
-      portArrival.isEtaEditable = false;
       portArrival.isTimeEditable = false;
-      portArrival.isEtdEditable = false;
+      portArrival.isDateEditable = false;
       portArrival.currentPort = false;
       portArrival.isSelected = false;
+      portArrival.isFocused = false;
 
       const portDeparture = { ...portData[i] };
       portDeparture.isFutureDate = false;
       portDeparture.type = 'Departure';
-      portDeparture.isEtaEditable = false;
       portDeparture.isTimeEditable = false;
-      portDeparture.isEtdEditable = false;
+      portDeparture.isDateEditable = false;
       portDeparture.isDistanceEditable = false;
       portDeparture.currentPort = false;
       portArrival.isSelected = false;
+      portArrival.isFocused = false;
 
       this.portList.push(portArrival);
       this.portList.push(portDeparture);
@@ -384,7 +379,6 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     this.currentPosition();
     this.errorMesages = this.voyageStatusTransformationService.setValidationErrorMessageForPortRotationRibbon();
     this.ngxSpinnerService.hide();
-
   }
 
   /**
@@ -402,31 +396,31 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   /**
   * Format date and time
   */
-  formatDate(date?, time?) {
-    if (!time) {
-      let month = date?.getMonth() + 1;
-      let day = date.getDate();
-      if (month < 10) {
-        month = '0' + month;
-      }
-
-      if (day < 10) {
-        day = '0' + day;
-      }
-      return day + '-' + month + '-' + date.getFullYear();
-    } else {
-      let hour = date.getHours();
-      let minute = date.getMinutes();
-
-
+  formatDate(date: Date, time?) {
+    if (time) {
+      const hour = time.getHours();
+      const minute = time.getMinutes();
+      let hourString = hour.toString()
+      let timeString = minute.toString();
       if (hour < 10) {
-        hour = '0' + hour;
+        hourString = '0' + hour;
       }
-
       if (minute < 10) {
-        minute = '0' + minute;
+        timeString = '0' + minute;
       }
-      return hour + ':' + minute;
+      return hourString + ':' + timeString;
+    } else {
+      const month = date?.getMonth() + 1;
+      const day = date.getDate();
+      let monthString = month.toString();
+      let dayString = day.toString();
+      if (month < 10) {
+        monthString = '0' + month;
+      }
+      if (day < 10) {
+        dayString = '0' + day;
+      }
+      return dayString + '-' + monthString + '-' + date.getFullYear();
     }
   }
   /**
@@ -438,35 +432,84 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * @param port 
    */
   onDateSelect(event, type, port) {
-    const form = this.row(this.portList.indexOf(port));
-    if (type === 'eta' && event) {
-      form.controls.eta.setValue(this.formatDate(event, false));
-      form.controls.eta.updateValueAndValidity();
-    }
-    else if (type === 'etd' && event) {
-      form.controls.etd.setValue(this.formatDate(event, false));
-      form.controls.etd.updateValueAndValidity();
-    }
-    else if (type === 'etaTime' && event) {
-      form.controls.etaTime.setValue(this.formatDate(event, true));
-      form.controls.etaTime.updateValueAndValidity();
-    }
-    else if (type === 'etdTime' && event) {
-      form.controls.etdTime.setValue(this.formatDate(event, true));
-      form.controls.etdTime.updateValueAndValidity();
-    }
+    const index = this.portList.indexOf(port);
+    document.getElementById(index.toString()).focus();
   }
-/**
- * Method called when focusing out of the input
- * @param event 
- * @param port 
- * @param type 
- */
+  /**
+   * Method called when focusing out of the input
+   * @param event 
+   * @param port 
+   * @param type 
+   */
   onBlur(event, port, type) {
-    if (type === 'etaTime' || type === 'etdTime') {
-      port.isTimeEditable = false;
-    } else if (type === 'distance') {
-      port.isDistanceEditable = false;
+    const form = this.row(this.portList.indexOf(port));
+    if (form.valid) {
+      switch (type) {
+        case 'date':
+          port.isDateEditable = false;
+          form.controls.time.updateValueAndValidity()
+          break;
+        case 'time':
+          port.isTimeEditable = false;
+          form.controls.date.updateValueAndValidity()
+          break;
+        case 'distance':
+          port.isDistanceEditable = false;
+          break;
+        default:
+          break;
+      }
     }
+    this.setInvalid(port, form)
   }
+
+  /**
+  * Convert to date time(dd-mm-yyyy hh:mm)
+  *
+  */
+  convertToDate(value) {
+    if (value) {
+      const arr = value.toString().split(' ')
+      const dateArr = arr[0]?.split('-');
+      if (arr[1]) {
+        const timeArr = arr[1].split(':')
+        if (dateArr.length > 2 && timeArr.length > 1) {
+          return new Date(Number(dateArr[2]), Number(dateArr[1]) - 1, Number(dateArr[0]), Number(timeArr[0]), Number(timeArr[1]));
+        }
+      } else {
+        return new Date(Number(dateArr[2]), Number(dateArr[1]) - 1, Number(dateArr[0]))
+      }
+    }
+    return null
+  }
+
+  /**
+  * Reset previously selected port
+  *
+  */
+  resetPreviousPort(index: number) {
+    if (this.selectedPortIndex >= 0 && this.selectedPortIndex !== index) {
+      const port = this.portList[this.selectedPortIndex];
+      const form = this.row(this.selectedPortIndex)
+      const date = this.convertToDate(port.type === "Arrival" ? port?.eta : port?.etd);
+      const dateActual = this.convertToDate(port.type === "Arrival" ? port?.etaActual : port?.etdActual);
+      form.controls.date.setValue(dateActual ? dateActual : date)
+      form.controls.time.setValue(dateActual ? dateActual : date)
+      form.controls.distance.setValue(port?.distanceBetweenPorts ? port?.distanceBetweenPorts : 0)
+      port.isDateEditable = false;
+      port.isDistanceEditable = false;
+      port.isTimeEditable = false;
+    }
+    this.selectedPortIndex = index;
+  }
+
+  setInvalid(port, form) {
+    let control = form.controls.distance
+    port.isDistanceEditable = control.invalid && control.touched;
+    control = form.controls.date
+    port.isDateEditable = control.invalid && control.touched;
+    control = form.controls.time
+    port.isTimeEditable = control.invalid && control.touched;
+  }
+
 }
