@@ -100,4 +100,15 @@
             position: static;
         }
     }
+   
+}
+
+.ship-front-pattern.ship-front-content{
+    z-index: 2;
+    &:after{
+        display: none;
+    }
+    .front-tank-wrapper > div:nth-child(2){
+        border-top: 0;
+    }
 }

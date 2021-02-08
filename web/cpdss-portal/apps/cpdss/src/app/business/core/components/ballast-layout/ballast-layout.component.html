@@ -8,6 +8,17 @@
                     <div class="tank-level"
                         [ngStyle]="{'height': (tank?.commodity && options?.fillingPercentageField ? tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled) + '%', 'background-color': tank?.commodity?.colorCode}">
                     </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+    <div class="ship-front-pattern ship-front-content">
+        <div class="front-tank-wrapper">
+            <ng-container *ngFor="let group of frontTanks">
+                <div *ngFor="let tank of group" [ngClass]="{'active': tank?.id === selectedTankId}"
+                    [ngStyle]="{'visibility': tank?.categoryId !== 2? 'hidden': 'visible'}"
+                    (click)="onTankSelect($event, tank?.id)">
+                  
                     <div class="front-tank-content">
                         <p-overlayPanel #op appendTo="body"  styleClass="tank-tooltip ballast-tooltip">
                             <ul *ngIf="tank"  class="row list-unstyled">
