@@ -981,13 +981,15 @@ input[type=number] {
     .error-icon{
       position: absolute;
       right: 5px;
-      top: 5px;
+      top: 0px;
       width: 12px;
       height: 12px;
       border-radius: 50%;
       line-height: 12px;
       text-align: center;
       display: inline-block;
+      bottom: 0;
+      margin: auto;
     }
     &.color{
       > div{
@@ -1334,10 +1336,6 @@ td.sl div{
         width: 100%;
         border: 1px solid;
         position: relative;
-        &.active {
-          border-width: 3px;
-          border-color: #ffffff;
-        }
         .tank-level-pattern{
           position: absolute;
           bottom: 0;
@@ -1855,4 +1853,59 @@ height: 15px;
 }
 .parameter-table th{
   text-align: right!important;
+}
+
+.p-overlaypanel{
+  margin-left: -80px;
+    margin-top: -150px!important;
+    &:after, &:before{
+      display: none;
+    }
+}
+
+.p-overlaypanel.tank-tooltip{
+  border-radius: 5px;
+  width: 160px;
+  box-shadow: none;
+  ul{
+    margin-bottom: 0!important;
+    li:nth-child(even){
+
+    }
+  }
+}
+
+  .p-overlaypanel.tank-tooltip.ballast-tooltip{
+    margin-top: -130px!important;
+  }
+  .p-overlaypanel.tank-tooltip.tank-ohq-tooltip,{
+    margin-top: -130px!important;
+  }
+  .p-overlaypanel.tank-tooltip.tank-ohq-tooltip-rear{
+    margin-top: -115px!important;
+  }
+
+.tank-btn-rounded{
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  &:after{
+      position: absolute;
+      content: '';
+      left: 0;
+      right: 0;
+      height: 10px;
+      width: 0px;
+      margin: auto;
+      bottom: 100%;
+      display: none;
+  }
+  &:hover{
+    &:after{
+    display: block;
+    }
+  }
 }

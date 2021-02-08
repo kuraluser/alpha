@@ -773,7 +773,7 @@ a{
 .tanks-column-ohq, .rear-tank-wrapper-ohq{
   > div{
     &.active{
-      outline:3px solid $text-secondary!important;
+      outline:3px solid $tank-ohq-border!important;
     }
   }
 }
@@ -981,7 +981,7 @@ tr:hover a{
   border-color: $tank-ohq-border!important;
 }
 
-.cargo-bullet{
+.tank-btn-rounded{
   background: $tank-dot;
 }
 
@@ -1069,4 +1069,24 @@ tr:hover a{
   border-top: 2px  solid $tank-ohq-border; 
   border-left: 0;
   border-bottom: 2px  solid $tank-ohq-border; 
+}
+
+.p-overlaypanel{
+  background: $tolltip-bg;
+  border: 1px solid $card-distance;
+}
+.p-overlaypanel.tank-tooltip{
+  ul{
+    margin-bottom: 0!important;
+    li:nth-child(even){
+      color: $text-secondary;
+    }
+  }
+}
+.tank-btn-rounded:after{
+  border-left: 1px solid $card-distance;
+}
+
+.tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div.active{
+  outline: 3px solid $tank-ohq-border!important;
 }
