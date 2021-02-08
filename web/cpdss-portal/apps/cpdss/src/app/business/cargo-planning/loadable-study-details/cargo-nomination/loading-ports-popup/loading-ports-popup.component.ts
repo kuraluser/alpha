@@ -104,7 +104,7 @@ export class LoadingPortsPopupComponent implements OnInit {
    * @memberof LoadingPortsPopupComponent
    */
   updatePorts(popupData: ILoadingPopupData) {
-    popupData.ports = this.ports.filter(port => !this.loadingPort?.some(lport => lport.id === port.id));
+    popupData.ports = this.ports?.filter(port => !this.loadingPort?.some(lport => lport.id === port.id));
   }
 
   /**

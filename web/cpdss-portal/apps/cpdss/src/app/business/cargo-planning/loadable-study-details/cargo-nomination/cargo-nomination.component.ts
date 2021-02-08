@@ -618,10 +618,18 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    *
    * @memberof CargoNominationComponent
    */
-  private updateCommingleButton() {
+  private async updateCommingleButton() {
     const addedCargoNominations = this.cargoNominations.filter((cargoNomination) => !cargoNomination.isAdd);
     if (addedCargoNominations.length >= 2) {
-      this.cargoNominationUpdate.emit(false)
+      const _hasPendingUpdates = await this.checkForPendingUpdates();
+      if(_hasPendingUpdates){
+        this.cargoNominationUpdate.emit(true);
+        setTimeout(() => {
+          this.updateCommingleButton();
+        }, 2000);
+      }else{
+        this.cargoNominationUpdate.emit(false)
+      }
     } else {
       this.cargoNominationUpdate.emit(true)
     }

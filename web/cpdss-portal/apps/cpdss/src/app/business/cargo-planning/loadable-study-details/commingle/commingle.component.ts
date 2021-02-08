@@ -121,7 +121,7 @@ export class CommingleComponent implements OnInit {
       this.commingleForm.patchValue({
         purpose: this.purposeOfCommingle[0]
       });
-      this.cargoNominationsCargo = this.commingleData.cargoNominations.map(itm => ({
+      this.cargoNominationsCargo = this.commingleData.cargoNominations?.map(itm => ({
         ...this.cargos.find((item) => (item.id === itm.cargoId) && item),
         ...itm
       }));
