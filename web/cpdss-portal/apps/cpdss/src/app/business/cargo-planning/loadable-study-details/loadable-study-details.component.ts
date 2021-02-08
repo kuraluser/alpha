@@ -231,6 +231,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     } else {
       this.selectedDischargeCargo = null;
     }
+    if (this.selectedDischargeCargo && this.dischargeCargos?.length) {
+      this.selectedDischargeCargo = this.dischargeCargos.find(cargo => cargo.id === this.selectedDischargeCargo.id)
+    }
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
     !this.dischargingPorts ? this.dischargingPorts = [] : '';
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
