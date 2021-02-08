@@ -440,12 +440,9 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getId()).ifPresent(builder::setId);
     Optional.ofNullable(request.getCreatedFromId()).ifPresent(builder::setDuplicatedFromId);
     for (MultipartFile file : files) {
-      String orginalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
-      String fileName = orginalFileName.substring(0, orginalFileName.lastIndexOf("."));
-      String extension = orginalFileName.substring(orginalFileName.lastIndexOf(".")).toLowerCase();
       builder.addAttachments(
           LoadableStudyAttachment.newBuilder()
-              .setFileName(fileName + System.currentTimeMillis() + extension)
+              .setFileName(file.getOriginalFilename() == null ? "" : file.getOriginalFilename())
               .setByteString(ByteString.copyFrom(file.getBytes()))
               .build());
     }
@@ -2585,6 +2582,10 @@ public class LoadableStudyService {
       rec.setTankName(protoRec.getTankName());
       rec.setFuelType(protoRec.getFuelType());
       rec.setFuelTypeId(protoRec.getFuelTypeId());
+      rec.setCapacity(
+          isEmpty(protoRec.getCapacity())
+              ? BigDecimal.ZERO
+              : new BigDecimal(protoRec.getCapacity()));
       rec.setActualWeight(
           isEmpty(protoRec.getActualWeight())
               ? BigDecimal.ZERO

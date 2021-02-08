@@ -20,4 +20,6 @@ public class SynopticalOhqRecord {
   private BigDecimal actualWeight;
 
   private BigDecimal density;
+
+  private BigDecimal capacity;
 }

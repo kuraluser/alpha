@@ -779,6 +779,7 @@ message SynopticalOhqRecord{
 	int64 fuelTypeId = 5;
 	string fuelType = 6;
 	string density = 7;
+	string capacity = 8;
 }
 
 message SynopticalBallastRecord{

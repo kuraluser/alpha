@@ -93433,6 +93433,19 @@ public final class LoadableStudy {
      * @return The bytes for density.
      */
     com.google.protobuf.ByteString getDensityBytes();
+
+    /**
+     * <code>string capacity = 8;</code>
+     *
+     * @return The capacity.
+     */
+    java.lang.String getCapacity();
+    /**
+     * <code>string capacity = 8;</code>
+     *
+     * @return The bytes for capacity.
+     */
+    com.google.protobuf.ByteString getCapacityBytes();
   }
   /** Protobuf type {@code SynopticalOhqRecord} */
   public static final class SynopticalOhqRecord extends com.google.protobuf.GeneratedMessageV3
@@ -93451,6 +93464,7 @@ public final class LoadableStudy {
       actualWeight_ = "";
       fuelType_ = "";
       density_ = "";
+      capacity_ = "";
     }
 
     @java.lang.Override
@@ -93525,6 +93539,13 @@ public final class LoadableStudy {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 density_ = s;
+                break;
+              }
+            case 66:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                capacity_ = s;
                 break;
               }
             default:
@@ -93758,6 +93779,41 @@ public final class LoadableStudy {
       }
     }
 
+    public static final int CAPACITY_FIELD_NUMBER = 8;
+    private volatile java.lang.Object capacity_;
+    /**
+     * <code>string capacity = 8;</code>
+     *
+     * @return The capacity.
+     */
+    public java.lang.String getCapacity() {
+      java.lang.Object ref = capacity_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        capacity_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string capacity = 8;</code>
+     *
+     * @return The bytes for capacity.
+     */
+    public com.google.protobuf.ByteString getCapacityBytes() {
+      java.lang.Object ref = capacity_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        capacity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -93793,6 +93849,9 @@ public final class LoadableStudy {
       if (!getDensityBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 7, density_);
       }
+      if (!getCapacityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, capacity_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -93823,6 +93882,9 @@ public final class LoadableStudy {
       if (!getDensityBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, density_);
       }
+      if (!getCapacityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, capacity_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -93846,6 +93908,7 @@ public final class LoadableStudy {
       if (getFuelTypeId() != other.getFuelTypeId()) return false;
       if (!getFuelType().equals(other.getFuelType())) return false;
       if (!getDensity().equals(other.getDensity())) return false;
+      if (!getCapacity().equals(other.getCapacity())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -93871,6 +93934,8 @@ public final class LoadableStudy {
       hash = (53 * hash) + getFuelType().hashCode();
       hash = (37 * hash) + DENSITY_FIELD_NUMBER;
       hash = (53 * hash) + getDensity().hashCode();
+      hash = (37 * hash) + CAPACITY_FIELD_NUMBER;
+      hash = (53 * hash) + getCapacity().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -94025,6 +94090,8 @@ public final class LoadableStudy {
 
         density_ = "";
 
+        capacity_ = "";
+
         return this;
       }
 
@@ -94060,6 +94127,7 @@ public final class LoadableStudy {
         result.fuelTypeId_ = fuelTypeId_;
         result.fuelType_ = fuelType_;
         result.density_ = density_;
+        result.capacity_ = capacity_;
         onBuilt();
         return result;
       }
@@ -94137,6 +94205,10 @@ public final class LoadableStudy {
         }
         if (!other.getDensity().isEmpty()) {
           density_ = other.density_;
+          onChanged();
+        }
+        if (!other.getCapacity().isEmpty()) {
+          capacity_ = other.capacity_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -94612,6 +94684,82 @@ public final class LoadableStudy {
         checkByteStringIsUtf8(value);
 
         density_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object capacity_ = "";
+      /**
+       * <code>string capacity = 8;</code>
+       *
+       * @return The capacity.
+       */
+      public java.lang.String getCapacity() {
+        java.lang.Object ref = capacity_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          capacity_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string capacity = 8;</code>
+       *
+       * @return The bytes for capacity.
+       */
+      public com.google.protobuf.ByteString getCapacityBytes() {
+        java.lang.Object ref = capacity_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          capacity_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string capacity = 8;</code>
+       *
+       * @param value The capacity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCapacity(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        capacity_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string capacity = 8;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCapacity() {
+
+        capacity_ = getDefaultInstance().getCapacity();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string capacity = 8;</code>
+       *
+       * @param value The bytes for capacity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCapacityBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        capacity_ = value;
         onChanged();
         return this;
       }
@@ -106307,124 +106455,125 @@ public final class LoadableStudy {
           + "\001(\t\022\r\n\005obqId\030\005 \001(\003\022\021\n\tcolorCode\030\006 \001(\t\022\027\n"
           + "\017correctedUllage\030\007 \001(\t\022\031\n\021cargoAbbreviat"
           + "ion\030\010 \001(\t\022\017\n\007cargoId\030\t \001(\003\022\020\n\010capacity\030\n"
-          + " \001(\t\022\017\n\007density\030\013 \001(\t\"\233\001\n\023SynopticalOhqR"
+          + " \001(\t\022\017\n\007density\030\013 \001(\t\"\255\001\n\023SynopticalOhqR"
           + "ecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002 \001(\t\022"
           + "\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014actualWeight\030\004"
           + " \001(\t\022\022\n\nfuelTypeId\030\005 \001(\003\022\020\n\010fuelType\030\006 \001"
-          + "(\t\022\017\n\007density\030\007 \001(\t\"\246\001\n\027SynopticalBallas"
-          + "tRecord\022\016\n\006tankId\030\001 \001(\003\022\020\n\010tankName\030\002 \001("
-          + "\t\022\025\n\rplannedWeight\030\003 \001(\t\022\024\n\014actualWeight"
-          + "\030\004 \001(\t\022\020\n\010capacity\030\005 \001(\t\022\027\n\017correctedUll"
-          + "age\030\006 \001(\t\022\021\n\tspGravity\030\007 \001(\t\"\255\001\n\026Synopti"
-          + "calTableRequest\022\027\n\017loadableStudyId\030\001 \001(\003"
-          + "\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\016\n\006"
-          + "portId\030\004 \001(\003\022+\n\020synopticalRecord\030\005 \003(\0132\021"
-          + ".SynopticalRecord\022\031\n\021loadablePatternId\030\006"
-          + " \001(\003\"\212\002\n\024SynopticalTableReply\022\'\n\016respons"
-          + "eStatus\030\001 \001(\0132\017.ResponseStatus\022,\n\021synopt"
-          + "icalRecords\030\002 \003(\0132\021.SynopticalRecord\022\n\n\002"
-          + "id\030\003 \001(\003\022$\n\021ballastFrontTanks\030\004 \003(\0132\t.Ta"
-          + "nkList\022%\n\022ballastCenterTanks\030\005 \003(\0132\t.Tan"
-          + "kList\022#\n\020ballastRearTanks\030\006 \003(\0132\t.TankLi"
-          + "st\022\035\n\ncargoTanks\030\007 \003(\0132\t.TankList\"\273\003\n\035Sy"
-          + "nopticalTableLoadicatorData\022\016\n\006hogSag\030\001 "
-          + "\001(\t\022\025\n\rfinalDraftFwd\030\002 \001(\t\022\025\n\rfinalDraft"
-          + "Aft\030\003 \001(\t\022\025\n\rfinalDraftMid\030\004 \001(\t\022\026\n\016fina"
-          + "lDraftTrim\030\005 \001(\t\022!\n\031calculatedDraftFwdPl"
-          + "anned\030\006 \001(\t\022 \n\030calculatedDraftFwdActual\030"
-          + "\007 \001(\t\022!\n\031calculatedDraftAftPlanned\030\010 \001(\t"
-          + "\022 \n\030calculatedDraftAftActual\030\t \001(\t\022!\n\031ca"
-          + "lculatedDraftMidPlanned\030\n \001(\t\022 \n\030calcula"
-          + "tedDraftMidActual\030\013 \001(\t\022\035\n\025calculatedTri"
-          + "mPlanned\030\014 \001(\t\022\034\n\024calculatedTrimActual\030\r"
-          + " \001(\t\022\023\n\013blindSector\030\016 \001(\t\022\014\n\004list\030\017 \001(\t\""
-          + "I\n\036LoadableStudyAttachmentRequest\022\016\n\006fil"
-          + "eId\030\001 \001(\003\022\027\n\017loadableStudyId\030\002 \001(\003\"m\n\034Lo"
-          + "adableStudyAttachmentReply\022\'\n\016responseSt"
-          + "atus\030\001 \001(\0132\017.ResponseStatus\022\020\n\010filePath\030"
-          + "\002 \001(\t\022\022\n\nbyteString\030\003 \001(\014\";\n\020SaveComment"
-          + "Reply\022\'\n\016responseStatus\030\001 \001(\0132\017.Response"
-          + "Status\"N\n\022SaveCommentRequest\022\031\n\021loadable"
-          + "PatternId\030\001 \001(\003\022\017\n\007comment\030\002 \001(\t\022\014\n\004user"
-          + "\030\003 \001(\003\"B\n\024SaveLoadOnTopRequest\022\021\n\tloadOn"
-          + "Top\030\001 \001(\010\022\027\n\017loadableStudyId\030\002 \001(\0032\342\027\n\024L"
-          + "oadableStudyService\022,\n\nSaveVoyage\022\016.Voya"
-          + "geRequest\032\014.VoyageReply\"\000\0228\n\022GetVoyagesB"
-          + "yVessel\022\016.VoyageRequest\032\020.VoyageListRepl"
-          + "y\"\000\022J\n\024SaveLoadableQuantity\022\030.LoadableQu"
-          + "antityRequest\032\026.LoadableQuantityReply\"\000\022"
-          + "T\n$FindLoadableStudiesByVesselAndVoyage\022"
-          + "\025.LoadableStudyRequest\032\023.LoadableStudyRe"
-          + "ply\"\000\022@\n\021SaveLoadableStudy\022\024.LoadableStu"
-          + "dyDetail\032\023.LoadableStudyReply\"\000\022G\n\023SaveC"
-          + "argoNomination\022\027.CargoNominationRequest\032"
-          + "\025.CargoNominationReply\"\000\022J\n\034GetLoadableS"
-          + "tudyPortRotation\022\024.PortRotationRequest\032\022"
-          + ".PortRotationReply\"\000\022J\n\026GetCargoNominati"
-          + "onById\022\027.CargoNominationRequest\032\025.CargoN"
-          + "ominationReply\"\000\022I\n\023GetValveSegregation\022"
-          + "\030.ValveSegregationRequest\032\026.ValveSegrega"
-          + "tionReply\"\000\022J\n\023getLoadableQuantity\022\026.Loa"
-          + "dableQuantityReply\032\031.LoadableQuantityRes"
-          + "ponse\"\000\022J\n\035SaveLoadableStudyPortRotation"
-          + "\022\023.PortRotationDetail\032\022.PortRotationRepl"
-          + "y\"\000\022O\n!SaveLoadableStudyPortRotationList"
-          + "\022\024.PortRotationRequest\032\022.PortRotationRep"
-          + "ly\"\000\022I\n\025DeleteCargoNomination\022\027.CargoNom"
-          + "inationRequest\032\025.CargoNominationReply\"\000\022"
-          + "B\n\024SaveDischargingPorts\022\024.PortRotationRe"
-          + "quest\032\022.PortRotationReply\"\000\022N\n GetPortRo"
-          + "tationByLoadableStudyId\022\024.PortRotationRe"
-          + "quest\032\022.PortRotationReply\"\000\022C\n\023DeleteLoa"
-          + "dableStudy\022\025.LoadableStudyRequest\032\023.Load"
-          + "ableStudyReply\"\000\022@\n\022DeletePortRotation\022\024"
-          + ".PortRotationRequest\032\022.PortRotationReply"
-          + "\"\000\022C\n\021GetOnHandQuantity\022\026.OnHandQuantity"
-          + "Request\032\024.OnHandQuantityReply\"\000\022C\n\022SaveO"
-          + "nHandQuantity\022\025.OnHandQuantityDetail\032\024.O"
-          + "nHandQuantityReply\"\000\022M\n\031GetLoadablePatte"
-          + "rnDetails\022\027.LoadablePatternRequest\032\025.Loa"
-          + "dablePatternReply\"\000\022A\n\024SaveLoadablePatte"
-          + "rns\022\033.LoadablePatternAlgoRequest\032\n.AlgoR"
-          + "eply\"\000\022O\n\025GetPurposeOfCommingle\022\032.Purpos"
-          + "eOfCommingleRequest\032\030.PurposeOfCommingle"
-          + "Reply\"\000\022C\n\021GetCommingleCargo\022\026.Commingle"
-          + "CargoRequest\032\024.CommingleCargoReply\"\000\022D\n\022"
-          + "SaveCommingleCargo\022\026.CommingleCargoReque"
-          + "st\032\024.CommingleCargoReply\"\000\022v\n\"GetLoadabl"
-          + "ePatternCommingleDetails\022\'.LoadablePatte"
-          + "rnCommingleDetailsRequest\032%.LoadablePatt"
-          + "ernCommingleDetailsReply\"\000\0226\n\030GenerateLo"
-          + "adablePatterns\022\014.AlgoRequest\032\n.AlgoReply"
-          + "\"\000\022J\n\026getLoadablePatternList\022\027.LoadableP"
-          + "atternRequest\032\025.LoadablePatternReply\"\000\022F"
-          + "\n\022GetOnBoardQuantity\022\027.OnBoardQuantityRe"
-          + "quest\032\025.OnBoardQuantityReply\"\000\022F\n\023SaveOn"
-          + "BoardQuantity\022\026.OnBoardQuantityDetail\032\025."
-          + "OnBoardQuantityReply\"\000\022E\n\033SaveAlgoLoadab",
-      "leStudyStatus\022\022.AlgoStatusRequest\032\020.Algo"
-          + "StatusReply\"\000\022G\n\023SaveSynopticalTable\022\027.S"
-          + "ynopticalTableRequest\032\025.SynopticalTableR"
-          + "eply\"\000\022F\n\022GetSynopticalTable\022\027.Synoptica"
-          + "lTableRequest\032\025.SynopticalTableReply\"\000\022M"
-          + "\n\031GetSynopticalDataByPortId\022\027.Synoptical"
-          + "TableRequest\032\025.SynopticalTableReply\"\000\022Q\n"
-          + "\035GetSynopticalPortDataByPortId\022\027.Synopti"
-          + "calTableRequest\032\025.SynopticalTableReply\"\000"
-          + "\022R\n\026GetLoadableStudyStatus\022\033.LoadableStu"
-          + "dyStatusRequest\032\031.LoadableStudyStatusRep"
-          + "ly\"\000\022R\n\026GetLoadablePlanDetails\022\033.Loadabl"
-          + "ePlanDetailsRequest\032\031.LoadablePlanDetail"
-          + "sReply\"\000\0227\n\013ConfirmPlan\022\023.ConfirmPlanReq"
-          + "uest\032\021.ConfirmPlanReply\"\000\022I\n\021Recalculate"
-          + "Volume\022\031.RecalculateVolumeRequest\032\027.Reca"
-          + "lculateVolumeReply\"\000\022c\n\037DownloadLoadable"
-          + "StudyAttachment\022\037.LoadableStudyAttachmen"
-          + "tRequest\032\035.LoadableStudyAttachmentReply\""
-          + "\000\0227\n\013SaveComment\022\023.SaveCommentRequest\032\021."
-          + "SaveCommentReply\"\000\022;\n\rSaveLoadOnTop\022\025.Sa"
-          + "veLoadOnTopRequest\032\021.SaveCommentReply\"\000B"
-          + "\036\n\032com.cpdss.common.generatedP\000b\006proto3"
+          + "(\t\022\017\n\007density\030\007 \001(\t\022\020\n\010capacity\030\010 \001(\t\"\246\001"
+          + "\n\027SynopticalBallastRecord\022\016\n\006tankId\030\001 \001("
+          + "\003\022\020\n\010tankName\030\002 \001(\t\022\025\n\rplannedWeight\030\003 \001"
+          + "(\t\022\024\n\014actualWeight\030\004 \001(\t\022\020\n\010capacity\030\005 \001"
+          + "(\t\022\027\n\017correctedUllage\030\006 \001(\t\022\021\n\tspGravity"
+          + "\030\007 \001(\t\"\255\001\n\026SynopticalTableRequest\022\027\n\017loa"
+          + "dableStudyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010"
+          + "voyageId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\022+\n\020synopt"
+          + "icalRecord\030\005 \003(\0132\021.SynopticalRecord\022\031\n\021l"
+          + "oadablePatternId\030\006 \001(\003\"\212\002\n\024SynopticalTab"
+          + "leReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respon"
+          + "seStatus\022,\n\021synopticalRecords\030\002 \003(\0132\021.Sy"
+          + "nopticalRecord\022\n\n\002id\030\003 \001(\003\022$\n\021ballastFro"
+          + "ntTanks\030\004 \003(\0132\t.TankList\022%\n\022ballastCente"
+          + "rTanks\030\005 \003(\0132\t.TankList\022#\n\020ballastRearTa"
+          + "nks\030\006 \003(\0132\t.TankList\022\035\n\ncargoTanks\030\007 \003(\013"
+          + "2\t.TankList\"\273\003\n\035SynopticalTableLoadicato"
+          + "rData\022\016\n\006hogSag\030\001 \001(\t\022\025\n\rfinalDraftFwd\030\002"
+          + " \001(\t\022\025\n\rfinalDraftAft\030\003 \001(\t\022\025\n\rfinalDraf"
+          + "tMid\030\004 \001(\t\022\026\n\016finalDraftTrim\030\005 \001(\t\022!\n\031ca"
+          + "lculatedDraftFwdPlanned\030\006 \001(\t\022 \n\030calcula"
+          + "tedDraftFwdActual\030\007 \001(\t\022!\n\031calculatedDra"
+          + "ftAftPlanned\030\010 \001(\t\022 \n\030calculatedDraftAft"
+          + "Actual\030\t \001(\t\022!\n\031calculatedDraftMidPlanne"
+          + "d\030\n \001(\t\022 \n\030calculatedDraftMidActual\030\013 \001("
+          + "\t\022\035\n\025calculatedTrimPlanned\030\014 \001(\t\022\034\n\024calc"
+          + "ulatedTrimActual\030\r \001(\t\022\023\n\013blindSector\030\016 "
+          + "\001(\t\022\014\n\004list\030\017 \001(\t\"I\n\036LoadableStudyAttach"
+          + "mentRequest\022\016\n\006fileId\030\001 \001(\003\022\027\n\017loadableS"
+          + "tudyId\030\002 \001(\003\"m\n\034LoadableStudyAttachmentR"
+          + "eply\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseS"
+          + "tatus\022\020\n\010filePath\030\002 \001(\t\022\022\n\nbyteString\030\003 "
+          + "\001(\014\";\n\020SaveCommentReply\022\'\n\016responseStatu"
+          + "s\030\001 \001(\0132\017.ResponseStatus\"N\n\022SaveCommentR"
+          + "equest\022\031\n\021loadablePatternId\030\001 \001(\003\022\017\n\007com"
+          + "ment\030\002 \001(\t\022\014\n\004user\030\003 \001(\003\"B\n\024SaveLoadOnTo"
+          + "pRequest\022\021\n\tloadOnTop\030\001 \001(\010\022\027\n\017loadableS"
+          + "tudyId\030\002 \001(\0032\342\027\n\024LoadableStudyService\022,\n"
+          + "\nSaveVoyage\022\016.VoyageRequest\032\014.VoyageRepl"
+          + "y\"\000\0228\n\022GetVoyagesByVessel\022\016.VoyageReques"
+          + "t\032\020.VoyageListReply\"\000\022J\n\024SaveLoadableQua"
+          + "ntity\022\030.LoadableQuantityRequest\032\026.Loadab"
+          + "leQuantityReply\"\000\022T\n$FindLoadableStudies"
+          + "ByVesselAndVoyage\022\025.LoadableStudyRequest"
+          + "\032\023.LoadableStudyReply\"\000\022@\n\021SaveLoadableS"
+          + "tudy\022\024.LoadableStudyDetail\032\023.LoadableStu"
+          + "dyReply\"\000\022G\n\023SaveCargoNomination\022\027.Cargo"
+          + "NominationRequest\032\025.CargoNominationReply"
+          + "\"\000\022J\n\034GetLoadableStudyPortRotation\022\024.Por"
+          + "tRotationRequest\032\022.PortRotationReply\"\000\022J"
+          + "\n\026GetCargoNominationById\022\027.CargoNominati"
+          + "onRequest\032\025.CargoNominationReply\"\000\022I\n\023Ge"
+          + "tValveSegregation\022\030.ValveSegregationRequ"
+          + "est\032\026.ValveSegregationReply\"\000\022J\n\023getLoad"
+          + "ableQuantity\022\026.LoadableQuantityReply\032\031.L"
+          + "oadableQuantityResponse\"\000\022J\n\035SaveLoadabl"
+          + "eStudyPortRotation\022\023.PortRotationDetail\032"
+          + "\022.PortRotationReply\"\000\022O\n!SaveLoadableStu"
+          + "dyPortRotationList\022\024.PortRotationRequest"
+          + "\032\022.PortRotationReply\"\000\022I\n\025DeleteCargoNom"
+          + "ination\022\027.CargoNominationRequest\032\025.Cargo"
+          + "NominationReply\"\000\022B\n\024SaveDischargingPort"
+          + "s\022\024.PortRotationRequest\032\022.PortRotationRe"
+          + "ply\"\000\022N\n GetPortRotationByLoadableStudyI"
+          + "d\022\024.PortRotationRequest\032\022.PortRotationRe"
+          + "ply\"\000\022C\n\023DeleteLoadableStudy\022\025.LoadableS"
+          + "tudyRequest\032\023.LoadableStudyReply\"\000\022@\n\022De"
+          + "letePortRotation\022\024.PortRotationRequest\032\022"
+          + ".PortRotationReply\"\000\022C\n\021GetOnHandQuantit"
+          + "y\022\026.OnHandQuantityRequest\032\024.OnHandQuanti"
+          + "tyReply\"\000\022C\n\022SaveOnHandQuantity\022\025.OnHand"
+          + "QuantityDetail\032\024.OnHandQuantityReply\"\000\022M"
+          + "\n\031GetLoadablePatternDetails\022\027.LoadablePa"
+          + "tternRequest\032\025.LoadablePatternReply\"\000\022A\n"
+          + "\024SaveLoadablePatterns\022\033.LoadablePatternA"
+          + "lgoRequest\032\n.AlgoReply\"\000\022O\n\025GetPurposeOf"
+          + "Commingle\022\032.PurposeOfCommingleRequest\032\030."
+          + "PurposeOfCommingleReply\"\000\022C\n\021GetCommingl"
+          + "eCargo\022\026.CommingleCargoRequest\032\024.Comming"
+          + "leCargoReply\"\000\022D\n\022SaveCommingleCargo\022\026.C"
+          + "ommingleCargoRequest\032\024.CommingleCargoRep"
+          + "ly\"\000\022v\n\"GetLoadablePatternCommingleDetai"
+          + "ls\022\'.LoadablePatternCommingleDetailsRequ"
+          + "est\032%.LoadablePatternCommingleDetailsRep"
+          + "ly\"\000\0226\n\030GenerateLoadablePatterns\022\014.AlgoR"
+          + "equest\032\n.AlgoReply\"\000\022J\n\026getLoadablePatte"
+          + "rnList\022\027.LoadablePatternRequest\032\025.Loadab"
+          + "lePatternReply\"\000\022F\n\022GetOnBoardQuantity\022\027"
+          + ".OnBoardQuantityRequest\032\025.OnBoardQuantit"
+          + "yReply\"\000\022F\n\023SaveOnBoardQuantity\022\026.OnBoar"
+          + "dQuantityDetail\032\025.OnBoardQuantityReply\"\000",
+      "\022E\n\033SaveAlgoLoadableStudyStatus\022\022.AlgoSt"
+          + "atusRequest\032\020.AlgoStatusReply\"\000\022G\n\023SaveS"
+          + "ynopticalTable\022\027.SynopticalTableRequest\032"
+          + "\025.SynopticalTableReply\"\000\022F\n\022GetSynoptica"
+          + "lTable\022\027.SynopticalTableRequest\032\025.Synopt"
+          + "icalTableReply\"\000\022M\n\031GetSynopticalDataByP"
+          + "ortId\022\027.SynopticalTableRequest\032\025.Synopti"
+          + "calTableReply\"\000\022Q\n\035GetSynopticalPortData"
+          + "ByPortId\022\027.SynopticalTableRequest\032\025.Syno"
+          + "pticalTableReply\"\000\022R\n\026GetLoadableStudySt"
+          + "atus\022\033.LoadableStudyStatusRequest\032\031.Load"
+          + "ableStudyStatusReply\"\000\022R\n\026GetLoadablePla"
+          + "nDetails\022\033.LoadablePlanDetailsRequest\032\031."
+          + "LoadablePlanDetailsReply\"\000\0227\n\013ConfirmPla"
+          + "n\022\023.ConfirmPlanRequest\032\021.ConfirmPlanRepl"
+          + "y\"\000\022I\n\021RecalculateVolume\022\031.RecalculateVo"
+          + "lumeRequest\032\027.RecalculateVolumeReply\"\000\022c"
+          + "\n\037DownloadLoadableStudyAttachment\022\037.Load"
+          + "ableStudyAttachmentRequest\032\035.LoadableStu"
+          + "dyAttachmentReply\"\000\0227\n\013SaveComment\022\023.Sav"
+          + "eCommentRequest\032\021.SaveCommentReply\"\000\022;\n\r"
+          + "SaveLoadOnTop\022\025.SaveLoadOnTopRequest\032\021.S"
+          + "aveCommentReply\"\000B\036\n\032com.cpdss.common.ge"
+          + "neratedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -107222,6 +107371,7 @@ public final class LoadableStudy {
               "FuelTypeId",
               "FuelType",
               "Density",
+              "Capacity",
             });
     internal_static_SynopticalBallastRecord_descriptor = getDescriptor().getMessageTypes().get(67);
     internal_static_SynopticalBallastRecord_fieldAccessorTable =

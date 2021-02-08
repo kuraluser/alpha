@@ -754,12 +754,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         String folderLocation = this.constructFolderPath(entity);
         Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
         for (LoadableStudyAttachment attachment : request.getAttachmentsList()) {
-          Path path = Paths.get(this.rootFolder + folderLocation + attachment.getFileName());
+          String fileName =
+              attachment.getFileName().substring(0, attachment.getFileName().lastIndexOf("."));
+          String extension =
+              attachment
+                  .getFileName()
+                  .substring(attachment.getFileName().lastIndexOf("."))
+                  .toLowerCase();
+          String filePath =
+              folderLocation + fileName + "_" + System.currentTimeMillis() + extension;
+          Path path = Paths.get(this.rootFolder + filePath);
           Files.createFile(path);
           Files.write(path, attachment.getByteString().toByteArray());
           LoadableStudyAttachments attachmentEntity = new LoadableStudyAttachments();
           attachmentEntity.setUploadedFileName(attachment.getFileName());
-          attachmentEntity.setFilePath(folderLocation);
+          attachmentEntity.setFilePath(filePath);
           attachmentEntity.setLoadableStudy(entity);
           attachmentEntity.setIsActive(true);
           attachmentCollection.add(attachmentEntity);
@@ -886,15 +895,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       return;
     }
     for (LoadableStudyAttachments attachment : entity.getAttachments()) {
-      Path path =
-          Paths.get(this.rootFolder + attachment.getFilePath() + attachment.getUploadedFileName());
+      Path path = Paths.get(this.rootFolder + attachment.getFilePath());
       try {
         Files.deleteIfExists(path);
       } catch (IOException e) {
-        log.error(
-            "unable to delete file : {}",
-            this.rootFolder + attachment.getFilePath() + attachment.getUploadedFileName(),
-            e);
+        log.error("unable to delete file : {}", this.rootFolder + attachment.getFilePath(), e);
       }
     }
   }
@@ -1390,6 +1395,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setTpc(vesselReply.getVesselLoadableQuantityDetails().getTpc())
                 .setDraftRestriction(draftRestictoin)
                 .setDwt(vesselReply.getVesselLoadableQuantityDetails().getDwt())
+                .setEstFOOnBoard(String.valueOf(foOnboard))
+                .setEstDOOnBoard(String.valueOf(doOnboard))
+                .setEstFreshWaterOnBoard(String.valueOf(freshWaterOnBoard))
+                .setBoilerWaterOnBoard(String.valueOf(boileWaterOnBoard))
                 .build();
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
@@ -4996,6 +5005,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       ohqBuilder.setTankName(tank.getShortName());
       ohqBuilder.setFuelTypeId(tank.getTankCategoryId());
       ohqBuilder.setFuelType(tank.getTankCategoryShortName());
+      ohqBuilder.setCapacity(tank.getFullCapacityCubm());
       Optional<OnHandQuantity> ohqOpt =
           portSpecificEntities.stream()
               .filter(ohq -> ohq.getTankXId().equals(tank.getTankId()))
@@ -6042,7 +6052,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       StreamObserver<LoadableStudyAttachmentReply> responseObserver) {
     LoadableStudyAttachmentReply.Builder builder = LoadableStudyAttachmentReply.newBuilder();
     try {
-
       LoadableStudyAttachments attachment =
           loadableStudyAttachmentsRepository.findByIdAndLoadableStudyXIdAndIsActive(
               request.getFileId(), request.getLoadableStudyId(), true);
@@ -6052,13 +6061,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-
-      String FILE_PATH =
-          this.rootFolder + attachment.getFilePath() + attachment.getUploadedFileName();
-
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-      builder.setFilePath(FILE_PATH);
-
+      builder.setFilePath(this.rootFolder + attachment.getFilePath());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in downloadLoadableStudyAttachment", e);
       builder.setResponseStatus(

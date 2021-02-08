@@ -4,19 +4,14 @@ package com.cpdss.loadablestudy.service;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
-import com.cpdss.common.generated.VesselInfo.VesselReply;
-import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
-import com.cpdss.loadablestudy.service.VesselInfoImplForLoadableStudyServiceIntegration;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
@@ -58,13 +53,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 import javax.persistence.EntityManager;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -80,8 +72,11 @@ import org.springframework.web.client.RestTemplate;
       "grpc.client.vesselInfoService.address=in-process:test" // Configure the client to connect to
       // the inProcess server
     })
-@SpringJUnitConfig(classes = {LoadableStudyServiceIntegrationTestConfiguration.class,
-	      VesselInfoImplForLoadableStudyServiceIntegration.class})
+@SpringJUnitConfig(
+    classes = {
+      LoadableStudyServiceIntegrationTestConfiguration.class,
+      VesselInfoImplForLoadableStudyServiceIntegration.class
+    })
 @DirtiesContext
 public class LoadableStudyServiceIntegrationTest {
 
@@ -122,6 +117,7 @@ public class LoadableStudyServiceIntegrationTest {
 
   @MockBean
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
+
   @Mock private LoadableStudy loadableStudy;
   @Mock private CargoOperation cargoOperation;
   @Mock private LoadableStudyPortRotation loadableStudyPortRotation;
@@ -133,13 +129,16 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private PurposeOfCommingleRepository purposeOfCommingleRepository;
   @MockBean private CommingleCargoRepository commingleCargoRepository;
   @MockBean private OnBoardQuantityRepository onBoardQuantityRepository;
-  @MockBean private LoadablePatternComingleDetailsRepository loadablePatternComingleDetailsRepository;
+
+  @MockBean
+  private LoadablePatternComingleDetailsRepository loadablePatternComingleDetailsRepository;
+
   @MockBean private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
   @MockBean private EntityManager entityManager;
   @MockBean private RestTemplate restTemplate;
   @MockBean private LoadablePlanConstraintsRespository loadablePlanConstraintsRespository;
   @MockBean private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
-  
+
   private static final Long CARGO_TANK_CATEGORY_ID = 1L;
   private static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;
   private static final Long CARGO_VOID_TANK_CATEGORY_ID = 15L;
@@ -152,17 +151,17 @@ public class LoadableStudyServiceIntegrationTest {
   private static final Long FRESH_WATER_VOID_TANK_CATEGORY_ID = 23L;
   private static final Long BALLAST_VOID_TANK_CATEGORY_ID = 16L;
   private static final Long BALLAST_TANK_CATEGORY_ID = 2L;
-  
+
   private static final List<Long> SYNOPTICAL_TABLE_TANK_CATEGORIES =
-	      Arrays.asList(
-	          CARGO_TANK_CATEGORY_ID,
-	          CARGO_SLOP_TANK_CATEGORY_ID,
-	          FRESH_WATER_TANK_CATEGORY_ID,
-	          FUEL_OIL_TANK_CATEGORY_ID,
-	          DIESEL_OIL_TANK_CATEGORY_ID,
-	          LUBRICATING_OIL_TANK_CATEGORY_ID,
-	          LUBRICANT_OIL_TANK_CATEGORY_ID,
-	          BALLAST_TANK_CATEGORY_ID);
+      Arrays.asList(
+          CARGO_TANK_CATEGORY_ID,
+          CARGO_SLOP_TANK_CATEGORY_ID,
+          FRESH_WATER_TANK_CATEGORY_ID,
+          FUEL_OIL_TANK_CATEGORY_ID,
+          DIESEL_OIL_TANK_CATEGORY_ID,
+          LUBRICATING_OIL_TANK_CATEGORY_ID,
+          LUBRICANT_OIL_TANK_CATEGORY_ID,
+          BALLAST_TANK_CATEGORY_ID);
 
   @Test
   void testSaveCargoNomination() {
@@ -295,10 +294,10 @@ public class LoadableStudyServiceIntegrationTest {
             .build();
     return request;
   }
-  
+
   @Test
   void testGetSynopticalDataByPortId() {
-	  SynopticalTableRequest synopticalRequest = createSynopticalTableRequest();
+    SynopticalTableRequest synopticalRequest = createSynopticalTableRequest();
     StreamRecorder<SynopticalTableReply> responseObserver = StreamRecorder.create();
     when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.LoadableStudy()));
@@ -306,32 +305,31 @@ public class LoadableStudyServiceIntegrationTest {
     loadablePattern.setId(1L);
     loadablePatternList.add(loadablePattern);
     when(loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
-    		anyLong(), anyLong(), anyBoolean()))
-    		.thenReturn(loadablePatternList);
+            anyLong(), anyLong(), anyBoolean()))
+        .thenReturn(loadablePatternList);
     List<SynopticalTable> synopticalTableList = new ArrayList();
     SynopticalTable synopticalTable = new SynopticalTable();
     synopticalTable.setId(1L);
     synopticalTableList.add(synopticalTable);
     when(synopticalTableRepository.findByLoadableStudyXIdAndIsActiveAndPortXid(
-    		anyLong(), anyBoolean(), anyLong()))
-    	.thenReturn(synopticalTableList);
+            anyLong(), anyBoolean(), anyLong()))
+        .thenReturn(synopticalTableList);
     List<LoadableStudyPortRotation> portRotationList = new ArrayList<LoadableStudyPortRotation>();
     LoadableStudyPortRotation portRotation = new LoadableStudyPortRotation();
     portRotation.setPortXId(1L);
     portRotationList.add(portRotation);
     when(loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
-            loadableStudy, true)).thenReturn(portRotationList);
+            loadableStudy, true))
+        .thenReturn(portRotationList);
     loadableStudyService.getSynopticalDataByPortId(synopticalRequest, responseObserver);
     // get results when no errors
     List<SynopticalTableReply> results = responseObserver.getValues();
     assertEquals(true, results.size() > 0);
   }
-  
+
   private SynopticalTableRequest createSynopticalTableRequest() {
-	  SynopticalTableRequest request =
-			  SynopticalTableRequest.newBuilder()
-			  .setLoadableStudyId(30).build();
-	  return request;
+    SynopticalTableRequest request =
+        SynopticalTableRequest.newBuilder().setLoadableStudyId(30).build();
+    return request;
   }
- 
 }
