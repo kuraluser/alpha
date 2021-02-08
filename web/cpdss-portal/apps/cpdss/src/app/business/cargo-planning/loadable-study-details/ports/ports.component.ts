@@ -44,7 +44,6 @@ export class PortsComponent implements OnInit {
     this._portsLists = portsLists.map((ports, index) => {
       const _ports = this.loadableStudyDetailsTransformationService.formatPorts(ports);
       _ports.slNo = index + 1;
-      this.updateValuesIfBunkering(ports, this.row(index), index)
       return _ports
     });
     this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
@@ -331,11 +330,16 @@ export class PortsComponent implements OnInit {
       if (index + 1 < this.portsLists.length) {
         this.updateValidityAndEditMode(index + 1, 'eta')
       }
+      if (index + 2 < this.portsLists.length) {
+        this.updateValidityAndEditMode(index + 2, 'eta')
+      }
     }
     if (event.field === 'eta') {
       this.updateValidityAndEditMode(index, 'etd');
       if (index > 0)
         this.updateValidityAndEditMode(index - 1, 'etd');
+        if (index - 1 > 0)
+        this.updateValidityAndEditMode(index - 2, 'etd');
     }
     const formArray = (<FormArray>this.portsForm.get('dataTable')).controls;
     formArray.forEach(async (row: FormGroup, rowIndex) => {
@@ -532,13 +536,14 @@ export class PortsComponent implements OnInit {
  */
   updateFormValidity(portListArray) {
     for (let i = 0; i < portListArray.length; i++) {
-      const fromGroup = this.row(i);
-      const invalidFormControls = this.findInvalidControlsRecursive(fromGroup);
+      const form = this.row(i);
+      const invalidFormControls = this.findInvalidControlsRecursive(form);
       invalidFormControls.forEach((key) => {
         this.portsLists[i][key].isEditMode = true;
       });
-      fromGroup.markAllAsTouched();
-      fromGroup.updateValueAndValidity();
+      this.updateValuesIfBunkering(this.portsLists[i], form, i)
+      form.markAllAsTouched();
+      form.updateValueAndValidity();
       this.portsForm.updateValueAndValidity();
     }
     this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0);
@@ -553,6 +558,7 @@ export class PortsComponent implements OnInit {
     const field = this.field(index, key)
     if (field) {
       field.updateValueAndValidity();
+      field.markAsTouched()
       this.portsLists[index][key].isEditMode = field.invalid && field.enabled;
     }
   }
@@ -591,8 +597,8 @@ export class PortsComponent implements OnInit {
         if (row.port?.value?.id === portId && [OPERATIONS.LOADING, OPERATIONS.DISCHARGING].includes(row.operation?.value?.id)) {
           const loadingPortData = row;
           const loadingPortForm = this.row(Number(loadingPortData.slNo - 1));
-          form.controls.eta.setValue(loadingPortForm.value.eta);
-          form.controls.etd.setValue(loadingPortForm.value.etd);
+          form.controls.eta.setValue(loadingPortForm.value.eta ?? null);
+          form.controls.etd.setValue(loadingPortForm.value.etd ?? null);
           form.controls.eta.disable();
           form.controls.etd.disable();
           this.portsLists[index].eta.value = loadingPortData.eta.value ? loadingPortData.eta.value : '';

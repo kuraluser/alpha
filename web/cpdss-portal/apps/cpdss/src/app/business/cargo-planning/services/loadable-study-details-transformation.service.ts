@@ -727,7 +727,7 @@ export class LoadableStudyDetailsTransformationService {
         }
         else {
           if (key !== 'layCanFrom' && key !== 'layCanTo') {
-            _ports[key] = port[key]?.value ?? port[key];
+            _ports[key] = port[key] && typeof port[key] === 'object' ? port[key].value : port[key];
           }
         }
       }
