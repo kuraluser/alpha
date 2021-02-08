@@ -34,10 +34,10 @@ export class RolePermissionComponent implements OnInit {
     treeNode: any;
     selectedNodes: TreeNode[] = [];
     cols = [
-        { field: 'view', header: 'View', isViewable: 'isViewVisible' },
-        { field: 'add', header: 'Add', isViewable: 'isAddVisible' },
-        { field: 'delete', header: 'Delete', isViewable: 'isDeleteVisible' },
-        { field: 'edit', header: 'Edit', isViewable: 'isEditVisible' },
+        { field: 'view', header: 'View', isViewable: 'isViewVisible' , isReadOnly: 'isReadOnlyView'},
+        { field: 'add', header: 'Add', isViewable: 'isAddVisible' , isReadOnly: 'isReadOnlyAdd' },
+        { field: 'delete', header: 'Delete', isViewable: 'isDeleteVisible' , isReadOnly: 'isReadOnlyDelete'},
+        { field: 'edit', header: 'Edit', isViewable: 'isEditVisible', isReadOnly: 'isReadOnlyEdit' },
     ];
     roleId: number;
     selectedUser: IUserDetail[] = [];
@@ -125,6 +125,11 @@ export class RolePermissionComponent implements OnInit {
                 })
             }
             this.treeNode = [...treeNode];
+            this.treeNode.map((node) => {
+                node.children.length ? this.hideCheckBoxBasedOnParentNode(node) : null;
+                node.data['rootNodeStatus'] = true;
+            })
+            
         }
         catch (error) {
             const translationKeys = await this.translateService.get(['USER_PERMISSION_INVALID_USER_ERROR', 'USER_PERMISSION_INVALID_USER']).toPromise();
@@ -133,7 +138,31 @@ export class RolePermissionComponent implements OnInit {
             }
             this.ngxSpinnerService.hide();
         }
+    }
 
+    /**
+    * disable check box based on parent node
+    * @param {TreeNode} treeNode
+    * @memberof RolePermissionComponent
+    */
+    hideCheckBoxBasedOnParentNode(treeNode:TreeNode) {
+        treeNode.children?.map((node) => {
+            this.isCheckBoxIsReadOnly(node.data , treeNode.data);
+            node.children?.length ? this.hideCheckBoxBasedOnParentNode(node) : null
+        })
+    }
+
+    /**
+    * compare node
+    * @memberof RolePermissionComponent
+    */
+    isCheckBoxIsReadOnly(node: any , parentNode: any) {
+        let rootNodeStatus: boolean = false;
+        parentNode.view ?  (node.isReadOnlyView = true , rootNodeStatus = true) : node.isReadOnlyView = false;
+        (parentNode.add || !parentNode.isAddVisible) && node.view ?  node.isReadOnlyAdd = true : (node.isReadOnlyAdd = false , node.add = false);
+        (parentNode.edit || !parentNode.isEditVisible) && node.view ?  node.isReadOnlyEdit = true : (node.isReadOnlyEdit = false , node.edit = false);
+        (parentNode.delete || !parentNode.isDeleteVisible) && node.view ?  node.isReadOnlyDelete = true : (node.isReadOnlyDelete = false , node.delete = false);
+        node.rootNodeStatus = rootNodeStatus;
     }
 
     /**
@@ -194,12 +223,18 @@ export class RolePermissionComponent implements OnInit {
             isDeleteVisible: data.isDeleteVisible,
             isEditVisible: data.isEditVisible,
             isViewVisible: data.isViewVisible,
-            nodeChecked: false
+            nodeChecked: false,
+            isReadOnlyAdd: true,
+            isReadOnlyEdit: true,
+            isReadOnlyDelete: true,
+            isReadOnlyView: true,
+            rootNodeStatus: false
         }
     }
 
     /**
     * select or unselect node based on status 
+    *  @param {boolean} selctionStatus
     * @memberof RolePermissionComponent
     */
     nodeSelectUnSelect(node: any, selctionStatus: boolean) {
@@ -223,6 +258,10 @@ export class RolePermissionComponent implements OnInit {
             treeNode.data[col.isViewable] ? treeNode.data[col.field] = rowData['nodeChecked'] : null;
         });
         this.childParentNodeRelation(this.treeNode);
+        this.treeNode.map((node) => {
+            node.children.length ? this.hideCheckBoxBasedOnParentNode(node) : null;
+            node.data['rootNodeStatus'] = true;
+        })
     }
 
 
@@ -230,13 +269,31 @@ export class RolePermissionComponent implements OnInit {
     * change check box status
     * @memberof RolePermissionComponent
     */
-    checkboxChange($event, rowData, rowNode, field) {
+    checkboxChange(rowData : any, rowNode: any, field: string) {
         rowData[field] = !rowData[field];
-        if (!rowData[field]) {
-            this.childParentNodeRelation(this.treeNode);
-        } else {
-            this.childParentNodeRelation(this.treeNode);
+        if(rowNode.node?.children) {
+            this.childNodeSelectUnselect(rowNode.node?.children , field , rowData[field])
         }
+        this.childParentNodeRelation(this.treeNode);
+        this.treeNode.map((node) => {
+            node.children.length ? this.hideCheckBoxBasedOnParentNode(node) : null;
+            node.data['rootNodeStatus'] = true;
+        })
+    }
+
+    /**
+    * child Node Select or Unselect based on status
+    *  @param {string} fieldName
+    *  @param {boolean} status
+    * @memberof RolePermissionComponent
+    */
+    childNodeSelectUnselect(childNode , fieldName: string , status: boolean) {
+        childNode?.map((nodeChildren) => {
+            nodeChildren.data[fieldName] = status;
+            if (nodeChildren.children?.length) {
+                this.childNodeSelectUnselect(nodeChildren.children , fieldName , status);
+            }                
+        })
     }
 
     /**
@@ -357,6 +414,9 @@ export class RolePermissionComponent implements OnInit {
 
     /**
     * Set tree nodes
+    * @param {TreeNode} nodeData
+    * @param {ITreeNodeData} nodeData
+    * @param {string} treeNodeScreen
     * @memberof RolePermissionComponent
     */
     setTreeNode(node: TreeNode, nodeData: ITreeNodeData, treeNodeScreen: IUserPermissionScreen[]) {

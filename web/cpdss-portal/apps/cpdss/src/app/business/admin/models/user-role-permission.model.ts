@@ -92,7 +92,11 @@ export interface ITreeNodeData {
     isDeleteVisible: boolean,
     isEditVisible: boolean,
     isViewVisible: boolean,
-    nodeChecked: boolean
+    nodeChecked: boolean,
+    isReadOnlyAdd: boolean,
+    isReadOnlyEdit: boolean,
+    isReadOnlyDelete: boolean,
+    isReadOnlyView: boolean,
 }
 
 /**

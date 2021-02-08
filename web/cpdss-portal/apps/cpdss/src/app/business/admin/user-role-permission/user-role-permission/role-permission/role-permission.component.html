@@ -37,8 +37,8 @@
                 <td colspan="4">
                     <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
                     <label class="checkbox-custom mb-0">
-                        <input type="checkbox" [checked]="rowData.nodeChecked" (change)="parentNodeChange(rowNode,rowData)"/>
-                        {{rowData.name}}
+                        <input type="checkbox" [checked]="rowData.nodeChecked" (change)="parentNodeChange(rowNode,rowData)" [disabled]="!rowData.rootNodeStatus"/>
+                        {{rowData.name}} 
                         <span class="checkmark"></span>
                     </label>
                 </td>
@@ -46,7 +46,7 @@
                         <td [ttEditableColumn]="rowData" [ttEditableColumnField]="col.field" class="permission-colum">
                             <ng-container> 
                                 <label class="checkbox-custom mb-0">
-                                <input type="checkbox"  [checked]="rowData[col.field]" (change)="checkboxChange($event,rowData, rowNode,col.field)" [disabled]="!rowData[col.isViewable]"/>
+                                <input type="checkbox" [checked]="rowData[col.field]" (change)="checkboxChange(rowData, rowNode,col.field)" [disabled]="!rowData[col.isViewable] || !rowData[col.isReadOnly]"/>
                                 {{col.header}}
                                 <span class="checkmark"></span>
                                 </label>
