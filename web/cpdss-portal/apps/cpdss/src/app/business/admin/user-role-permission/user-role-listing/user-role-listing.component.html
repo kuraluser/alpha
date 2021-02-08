@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-12 role-listing-wrapper">
             <cpdss-portal-datatable [filterable]="true" [tableId]="'user_role_list'" [columns]="columns" [value]="roleList"
-    [editMode]="editMode" (editRow)="editRow($event)" (deleteRow)="onDeleteRow($event)" [form]="userRoleForm"></cpdss-portal-datatable>
+    [editMode]="editMode" (columnClick)="columnClick($event)" (deleteRow)="onDeleteRow($event)" [form]="userRoleForm" (editRow)="editRow($event)"></cpdss-portal-datatable>
 
     <cpdss-portal-add-user-role *ngIf="addUserRole" (displayPopUp)="addRolePopUp($event)" (roleSaved)="getUserDetails()"></cpdss-portal-add-user-role>
         </div>

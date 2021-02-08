@@ -69,7 +69,7 @@ export class RolePermissionComponent implements OnInit {
         this.getPagePermission();
         this.errorMessages = this.userRolePermissionTransformationService.setValidationErrorMessage();
         this.roleDetailsForm = this.fb.group({
-            'roleName': ['', [Validators.required , Validators.pattern('^[a-zA-Z0-9 ]+')]],
+            'roleName': ['', [Validators.required , Validators.pattern('^[a-zA-Z0-9 ]+') , Validators.maxLength(10)]],
             'roleDescription': ['', [Validators.required]],
             'type': ['shore']
         });
@@ -180,7 +180,7 @@ export class RolePermissionComponent implements OnInit {
                 expanded: false,
                 children: []
             }
-            parentNode['children'].push(value)
+            parentNode['children'].push(value);
             if (child.childs?.length) {
                 isChecked = this.innerNodes(parentNode['children'][index], child.childs);
                 if(isChecked && treeStructure.isChecked){

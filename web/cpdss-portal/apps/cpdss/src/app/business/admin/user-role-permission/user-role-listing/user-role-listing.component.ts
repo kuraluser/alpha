@@ -72,11 +72,11 @@ export class UserRoleListingComponent implements OnInit {
    */
   getPagePermission() {
     const permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['UserRoleListing']);
-    if(permission.delete) {
-      this.columns[this.columns.length -1]['actions'].push(DATATABLE_ACTION.DELETE);
-    }
     if(permission.edit) {
       this.columns[this.columns.length -1]['actions'].push(DATATABLE_ACTION.EDIT);
+    }
+    if(permission.delete) {
+      this.columns[this.columns.length -1]['actions'].push(DATATABLE_ACTION.DELETE);
     }
   }
 
@@ -135,6 +135,21 @@ export class UserRoleListingComponent implements OnInit {
       name: this.fb.control(roleDetail.name),
       description: this.fb.control(roleDetail.description),
     });
+  }
+
+  /**
+   * route to edit role details page while clicking cloumn
+   * @param event 
+   * @memberof UserRoleListingComponent
+   */
+  columnClick(event) {
+    if(event.field === 'actions') {
+      return;
+    }
+    const permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['UserRoleListing']);
+    if(permission.edit) {
+      this.router.navigate([event.data.id], { relativeTo: this.activatedRoute.parent });
+    }
   }
 
   /**

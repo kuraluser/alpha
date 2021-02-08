@@ -51,7 +51,7 @@ export class AddUserRoleComponent implements OnInit {
     this.errorMessages = this.userRolePermissionTransformationService.setValidationErrorMessage();
     this.visible = true;
     this.addUserForm = this.fb.group({
-      'roleName': ['', [Validators.required , Validators.pattern('^[a-zA-Z0-9 ]+')]],
+      'roleName': ['', [Validators.required , Validators.pattern('^[a-zA-Z0-9 ]+') , Validators.maxLength(10)]],
       'roleDescription': ['', [Validators.required]],
     });
   }

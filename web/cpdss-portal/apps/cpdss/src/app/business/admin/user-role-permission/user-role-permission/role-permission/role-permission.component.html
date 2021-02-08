@@ -10,7 +10,7 @@
         
             <label for="user_role_name" class="col-form-label pl-15">{{'USER_ROLE_NAME'| translate }}</label>
             <div class="col-2">
-            <input type="text" id="user_role_name" class="form-control" formControlName="roleName"/>
+            <input type="text" id="user_role_name" class="form-control" formControlName="roleName" maxlength="10"/>
             <cpdss-portal-validation-error [errors]="fieldError('roleName')" [errorMessages]="errorMessages.roleName">
             </cpdss-portal-validation-error>
         </div>
@@ -38,7 +38,7 @@
                     <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
                     <label class="checkbox-custom mb-0">
                         <input type="checkbox" [checked]="rowData.nodeChecked" (change)="parentNodeChange(rowNode,rowData)" [disabled]="!rowData.rootNodeStatus"/>
-                        {{rowData.name}} 
+                        {{rowData.name}}
                         <span class="checkmark"></span>
                     </label>
                 </td>

@@ -28,6 +28,13 @@ export class UserRolePermissionTransformationService {
   getRoleListDatatableColumns(): IDataTableColumn[] {
     return [
       {
+        field: 'slNo',
+        header: 'OBQ_SL',
+        fieldType: DATATABLE_FIELD_TYPE.SLNO,
+        fieldHeaderClass: 'column-sl',
+        fieldClass: 'sl'
+      },
+      {
         field: 'name',
         header: 'ROLE NAME',
         filter: true,
@@ -46,8 +53,6 @@ export class UserRolePermissionTransformationService {
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'description',
-        sortable: true,
-        sortField: 'description',
       },
       {
         field: 'actions',
@@ -66,7 +71,8 @@ export class UserRolePermissionTransformationService {
     return {
       roleName: {
         'required': 'ADD_ROLE_POPUP_ROLE_REQUIRED_ERROR',
-        'pattern':'ROLE_NAME_VALIDATION_ERROR'
+        'pattern':'ROLE_NAME_VALIDATION_ERROR',
+        'maxlength': 'ROLE_NAME_MAX_LENGTH'
       },
       roleDescription: {
         'required': 'ADD_ROLE_POPUP_DESCRIPTION_REQUIRED_ERROR'

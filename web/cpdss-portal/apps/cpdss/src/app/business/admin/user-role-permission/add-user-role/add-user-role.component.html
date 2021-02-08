@@ -10,7 +10,7 @@
             <label for="new_user_role" class="col-md-6 col-form-label text-secondary">{{'ADD_NEW_ROLE' | translate}}</label>
             <div class="col-md-6">
               <input type="text" class="form-control" id="new_user_role" formControlName="roleName"
-               (change)="trimFormControl('roleName')" (input)="isExisting = false">
+               (change)="trimFormControl('roleName')" (input)="isExisting = false" maxlength="10">
             </div>
             <cpdss-portal-validation-error [errors]="fieldError('roleName')" [errorMessages]="errorMessages.roleName">
             </cpdss-portal-validation-error>

@@ -604,7 +604,7 @@
 	"USER_ROLE_SHORE_BUTTON_LABEL": "Shore",
 	"USER_ROLE_SHIP_BUTTON_LABEL": "Ship",
 	"ROLE_MAPPING": "Role Mapping",
-	"Role_MAPPING_HEADING": "Pages",
+	"ROLE_MAPPING_HEADING": "Pages",
 	"SEARCH_ROLE_DESCRIPTION": "Search description",
 	"SEARCH_ROLE_NAME": "Search role name",
 	"USER_ROLE_DELETE_SUMMARY": "Do you want to delete?",
@@ -617,7 +617,7 @@
 	"ADD_NEW_DESCRIPTION": "Description",
 	"SAVE_BUTTON_NEW_ROLE_POPUP": "Save",
 	"CANCEL_BUTTON_NEW_ROLE_POPUP": "Cancel",
-	"ADD_ROLE_POPUP_ROLE_REQUIRED_ERROR": "Role is required",
+	"ADD_ROLE_POPUP_ROLE_REQUIRED_ERROR": "Name is required",
 	"ADD_ROLE_POPUP_DESCRIPTION_REQUIRED_ERROR": "Description is required",
 	"NEW_ROLE_CREATE_SUCCESS": "Success",
 	"NEW_ROLE_CREATED_SUCCESSFULLY": "Role created successfully",
@@ -667,5 +667,6 @@
 	"USER_PERMISSION_INVALID_USER_ERROR": "Error",
 	"GENERATE_LOADABLE_PATTERN_NO_PLAN" : "Error",
 	"GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE": "No solution for plan",
-	"SHIP_LANDING_TYPE": "Type"
+	"SHIP_LANDING_TYPE": "Type",
+	"ROLE_NAME_MAX_LENGTH": "Maximum allowed character length is 10"
 }
