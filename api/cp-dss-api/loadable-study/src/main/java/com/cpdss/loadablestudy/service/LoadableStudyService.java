@@ -55,6 +55,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
+import com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply;
+import com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
@@ -752,12 +754,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         String folderLocation = this.constructFolderPath(entity);
         Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
         for (LoadableStudyAttachment attachment : request.getAttachmentsList()) {
-          Path path = Paths.get(this.rootFolder + folderLocation + attachment.getFileName());
+          String fileName =
+              attachment.getFileName().substring(0, attachment.getFileName().lastIndexOf("."));
+          String extension =
+              attachment
+                  .getFileName()
+                  .substring(attachment.getFileName().lastIndexOf("."))
+                  .toLowerCase();
+          String filePath =
+              folderLocation + fileName + "_" + System.currentTimeMillis() + extension;
+          Path path = Paths.get(this.rootFolder + filePath);
           Files.createFile(path);
           Files.write(path, attachment.getByteString().toByteArray());
           LoadableStudyAttachments attachmentEntity = new LoadableStudyAttachments();
           attachmentEntity.setUploadedFileName(attachment.getFileName());
-          attachmentEntity.setFilePath(folderLocation);
+          attachmentEntity.setFilePath(filePath);
           attachmentEntity.setLoadableStudy(entity);
           attachmentEntity.setIsActive(true);
           attachmentCollection.add(attachmentEntity);
@@ -884,15 +895,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       return;
     }
     for (LoadableStudyAttachments attachment : entity.getAttachments()) {
-      Path path =
-          Paths.get(this.rootFolder + attachment.getFilePath() + attachment.getUploadedFileName());
+      Path path = Paths.get(this.rootFolder + attachment.getFilePath());
       try {
         Files.deleteIfExists(path);
       } catch (IOException e) {
-        log.error(
-            "unable to delete file : {}",
-            this.rootFolder + attachment.getFilePath() + attachment.getUploadedFileName(),
-            e);
+        log.error("unable to delete file : {}", this.rootFolder + attachment.getFilePath(), e);
       }
     }
   }
@@ -1388,6 +1395,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .setTpc(vesselReply.getVesselLoadableQuantityDetails().getTpc())
                 .setDraftRestriction(draftRestictoin)
                 .setDwt(vesselReply.getVesselLoadableQuantityDetails().getDwt())
+                .setEstFOOnBoard(String.valueOf(foOnboard))
+                .setEstDOOnBoard(String.valueOf(doOnboard))
+                .setEstFreshWaterOnBoard(String.valueOf(freshWaterOnBoard))
+                .setBoilerWaterOnBoard(String.valueOf(boileWaterOnBoard))
                 .build();
         builder.setLoadableQuantityRequest(loadableQuantityRequest);
         builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS));
@@ -3320,6 +3331,40 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
+  public void recalculateVolume(
+      RecalculateVolumeRequest request, StreamObserver<RecalculateVolumeReply> responseObserver) {
+    log.info("Inside get recalculateVolume in loadable study micro service");
+    RecalculateVolumeReply.Builder builder = RecalculateVolumeReply.newBuilder();
+    try {
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+      if (!loadablePatternOpt.isPresent()) {
+        log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
+        builder.setResponseStatus(
+            ResponseStatus.newBuilder()
+                .setStatus(FAILED)
+                .setMessage(INVALID_LOADABLE_PATTERN_ID)
+                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+
+      } else {
+        // ToDo - find corrected ullate
+        // ToDo - from corrected ullage find obsm3
+      }
+    } catch (Exception e) {
+      log.error("Exception while recalculating volume", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception while recalculating volume")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
   public void getLoadablePatternCommingleDetails(
       LoadablePatternCommingleDetailsRequest request,
       StreamObserver<LoadablePatternCommingleDetailsReply> responseObserver) {
@@ -3433,7 +3478,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        objectMapper.writeValue(new File("loadableStudy.json"), loadableStudy);
+        objectMapper.writeValue(
+            new File("json/loadableStudy_" + request.getLoadableStudyId() + ".json"),
+            loadableStudy);
 
         AlgoResponse algoResponse =
             restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
@@ -4701,7 +4748,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<VesselTankDetail> sortedTankList,
       VesselLoadableQuantityDetails vesselLoadableQuantityDetails,
       SynopticalTableReply.Builder replyBuilder) {
-    if (!CollectionUtils.isEmpty(synopticalTableList)) {
+    if (!CollectionUtils.isEmpty(synopticalTableList) && !CollectionUtils.isEmpty(portRotations)) {
       Long firstPortId = portRotations.get(0).getPortXId();
       // first port arrival condition data will be same as the data in obq
       List<OnBoardQuantity> obqEntities =
@@ -4958,6 +5005,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       ohqBuilder.setTankName(tank.getShortName());
       ohqBuilder.setFuelTypeId(tank.getTankCategoryId());
       ohqBuilder.setFuelType(tank.getTankCategoryShortName());
+      ohqBuilder.setCapacity(tank.getFullCapacityCubm());
       Optional<OnHandQuantity> ohqOpt =
           portSpecificEntities.stream()
               .filter(ohq -> ohq.getTankXId().equals(tank.getTankId()))
@@ -5676,7 +5724,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     SynopticalTableReply.Builder replyBuilder = SynopticalTableReply.newBuilder();
     try {
       Optional<LoadableStudy> loadableStudyOpt =
-          this.loadableStudyRepository.findById(request.getLoadableStudyId());
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
       if (!loadableStudyOpt.isPresent()) {
         throw new GenericServiceException(
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
@@ -6004,7 +6052,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       StreamObserver<LoadableStudyAttachmentReply> responseObserver) {
     LoadableStudyAttachmentReply.Builder builder = LoadableStudyAttachmentReply.newBuilder();
     try {
-
       LoadableStudyAttachments attachment =
           loadableStudyAttachmentsRepository.findByIdAndLoadableStudyXIdAndIsActive(
               request.getFileId(), request.getLoadableStudyId(), true);
@@ -6014,13 +6061,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-
-      String FILE_PATH =
-          this.rootFolder + attachment.getFilePath() + attachment.getUploadedFileName();
-
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-      builder.setFilePath(FILE_PATH);
-
+      builder.setFilePath(this.rootFolder + attachment.getFilePath());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in downloadLoadableStudyAttachment", e);
       builder.setResponseStatus(

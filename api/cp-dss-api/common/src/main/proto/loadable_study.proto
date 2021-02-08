@@ -118,6 +118,9 @@ service LoadableStudyService {
 	rpc ConfirmPlan(ConfirmPlanRequest) returns (ConfirmPlanReply) {
 	}
 	
+	rpc RecalculateVolume(RecalculateVolumeRequest) returns (RecalculateVolumeReply) {
+	}
+	
 	rpc DownloadLoadableStudyAttachment(LoadableStudyAttachmentRequest) returns (LoadableStudyAttachmentReply){
 	}
 	
@@ -127,6 +130,16 @@ service LoadableStudyService {
 	rpc SaveLoadOnTop(SaveLoadOnTopRequest) returns (SaveCommentReply){
 	}
 	
+}
+
+message RecalculateVolumeRequest {
+	int64 loadablePatternId = 1;
+	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
+}
+
+message RecalculateVolumeReply {
+	ResponseStatus responseStatus = 1;
+	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
 }
 
 message LoadablePatternAlgoRequest {
@@ -766,6 +779,7 @@ message SynopticalOhqRecord{
 	int64 fuelTypeId = 5;
 	string fuelType = 6;
 	string density = 7;
+	string capacity = 8;
 }
 
 message SynopticalBallastRecord{

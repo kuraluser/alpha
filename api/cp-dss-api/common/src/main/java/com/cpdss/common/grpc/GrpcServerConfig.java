@@ -43,6 +43,8 @@ public class GrpcServerConfig extends GrpcServerProperties {
         ((NettyServerBuilder) serverBuilder)
             .keepAliveTime(30, TimeUnit.SECONDS)
             .keepAliveTimeout(5, TimeUnit.SECONDS)
+            .maxInboundMessageSize(
+                8000000) // setting the GRPC message to 8mb to support file transfer
             .permitKeepAliveWithoutCalls(true);
       }
     };

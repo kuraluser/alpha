@@ -1904,6 +1904,55 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest,
+          com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
+      getRecalculateVolumeMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "RecalculateVolume",
+      requestType = com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest,
+          com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
+      getRecalculateVolumeMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest,
+            com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
+        getRecalculateVolumeMethod;
+    if ((getRecalculateVolumeMethod = LoadableStudyServiceGrpc.getRecalculateVolumeMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getRecalculateVolumeMethod = LoadableStudyServiceGrpc.getRecalculateVolumeMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getRecalculateVolumeMethod =
+              getRecalculateVolumeMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest,
+                          com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "RecalculateVolume"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("RecalculateVolume"))
+                      .build();
+        }
+      }
+    }
+    return getRecalculateVolumeMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest,
           com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply>
       getDownloadLoadableStudyAttachmentMethod;
@@ -2397,6 +2446,14 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void recalculateVolume(
+        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getRecalculateVolumeMethod(), responseObserver);
+    }
+
+    /** */
     public void downloadLoadableStudyAttachment(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest request,
         io.grpc.stub.StreamObserver<
@@ -2685,6 +2742,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
                       com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>(
                       this, METHODID_CONFIRM_PLAN)))
+          .addMethod(
+              getRecalculateVolumeMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest,
+                      com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>(
+                      this, METHODID_RECALCULATE_VOLUME)))
           .addMethod(
               getDownloadLoadableStudyAttachmentMethod(),
               asyncUnaryCall(
@@ -3134,6 +3198,17 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void recalculateVolume(
+        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getRecalculateVolumeMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
     public void downloadLoadableStudyAttachment(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest request,
         io.grpc.stub.StreamObserver<
@@ -3443,6 +3518,13 @@ public final class LoadableStudyServiceGrpc {
     public com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply confirmPlan(
         com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
       return blockingUnaryCall(getChannel(), getConfirmPlanMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply recalculateVolume(
+        com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getRecalculateVolumeMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -3810,6 +3892,15 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
+        recalculateVolume(
+            com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getRecalculateVolumeMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply>
         downloadLoadableStudyAttachment(
             com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest request) {
@@ -3872,9 +3963,10 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 34;
   private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 35;
   private static final int METHODID_CONFIRM_PLAN = 36;
-  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 37;
-  private static final int METHODID_SAVE_COMMENT = 38;
-  private static final int METHODID_SAVE_LOAD_ON_TOP = 39;
+  private static final int METHODID_RECALCULATE_VOLUME = 37;
+  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 38;
+  private static final int METHODID_SAVE_COMMENT = 39;
+  private static final int METHODID_SAVE_LOAD_ON_TOP = 40;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -4151,6 +4243,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>)
                   responseObserver);
           break;
+        case METHODID_RECALCULATE_VOLUME:
+          serviceImpl.recalculateVolume(
+              (com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>)
+                  responseObserver);
+          break;
         case METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT:
           serviceImpl.downloadLoadableStudyAttachment(
               (com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest) request,
@@ -4273,6 +4372,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetLoadableStudyStatusMethod())
                       .addMethod(getGetLoadablePlanDetailsMethod())
                       .addMethod(getConfirmPlanMethod())
+                      .addMethod(getRecalculateVolumeMethod())
                       .addMethod(getDownloadLoadableStudyAttachmentMethod())
                       .addMethod(getSaveCommentMethod())
                       .addMethod(getSaveLoadOnTopMethod())

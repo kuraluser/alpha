@@ -52,6 +52,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
+import com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply;
+import com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest;
@@ -115,6 +117,7 @@ import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Purpose;
+import com.cpdss.gateway.domain.RecalculateVolume;
 import com.cpdss.gateway.domain.SaveCommentResponse;
 import com.cpdss.gateway.domain.StabilityConditions;
 import com.cpdss.gateway.domain.SynopticalCargoBallastRecord;
@@ -437,12 +440,9 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getId()).ifPresent(builder::setId);
     Optional.ofNullable(request.getCreatedFromId()).ifPresent(builder::setDuplicatedFromId);
     for (MultipartFile file : files) {
-      String orginalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
-      String fileName = orginalFileName.substring(0, orginalFileName.lastIndexOf("."));
-      String extension = orginalFileName.substring(orginalFileName.lastIndexOf(".")).toLowerCase();
       builder.addAttachments(
           LoadableStudyAttachment.newBuilder()
-              .setFileName(fileName + System.currentTimeMillis() + extension)
+              .setFileName(file.getOriginalFilename() == null ? "" : file.getOriginalFilename())
               .setByteString(ByteString.copyFrom(file.getBytes()))
               .build());
     }
@@ -2582,6 +2582,10 @@ public class LoadableStudyService {
       rec.setTankName(protoRec.getTankName());
       rec.setFuelType(protoRec.getFuelType());
       rec.setFuelTypeId(protoRec.getFuelTypeId());
+      rec.setCapacity(
+          isEmpty(protoRec.getCapacity())
+              ? BigDecimal.ZERO
+              : new BigDecimal(protoRec.getCapacity()));
       rec.setActualWeight(
           isEmpty(protoRec.getActualWeight())
               ? BigDecimal.ZERO
@@ -2726,9 +2730,9 @@ public class LoadableStudyService {
       throws GenericServiceException {
     log.info("Inside saveLoadablePatterns gateway service with correlationId : " + correlationId);
     ObjectMapper objectMapper = new ObjectMapper();
-
     try {
-      objectMapper.writeValue(new File("loadableStudyResult.json"), loadablePlanRequest);
+      objectMapper.writeValue(
+          new File("json/loadableStudyResult_" + loadableStudiesId + ".json"), loadablePlanRequest);
     } catch (IOException e) {
       log.error("Error in json writing ", e);
     }
@@ -2746,6 +2750,7 @@ public class LoadableStudyService {
 
     algoPatternResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+
     return algoPatternResponse;
   }
 
@@ -3653,6 +3658,59 @@ public class LoadableStudyService {
    */
   public LoadablePatternReply getLoadablePatternList(LoadablePatternRequest grpcRequest) {
     return this.loadableStudyServiceBlockingStub.getLoadablePatternList(grpcRequest);
+  }
+  /**
+   * @param recalculateVolumeRequest
+   * @param loadablePatternId
+   * @param first
+   * @return RecalculateVolume
+   */
+  public RecalculateVolume recalculateVolume(
+      RecalculateVolume recalculateVolumeRequest, Long loadablePatternId, String correlationId)
+      throws GenericServiceException {
+    log.info("Inside recalculateVolume in gateway micro service");
+    RecalculateVolume response = new RecalculateVolume();
+    RecalculateVolumeRequest.Builder grpcRequest = RecalculateVolumeRequest.newBuilder();
+    buildRecalculateVolumeRequest(recalculateVolumeRequest, loadablePatternId, grpcRequest);
+    RecalculateVolumeReply grpcReply = this.recalculateVolumeReply(grpcRequest);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to recalculateVolume from grpc service",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    return response;
+  }
+
+  /**
+   * @param grpcRequest
+   * @return RecalculateVolumeReply
+   */
+  private RecalculateVolumeReply recalculateVolumeReply(
+      com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest.Builder grpcRequest) {
+    return this.loadableStudyServiceBlockingStub.recalculateVolume(grpcRequest.build());
+  }
+
+  /**
+   * @param recalculateVolumeRequest
+   * @param grpcRequest void
+   */
+  public void buildRecalculateVolumeRequest(
+      RecalculateVolume recalculateVolumeRequest,
+      Long loadablePatternId,
+      com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest.Builder grpcRequest) {
+    grpcRequest.setLoadablePatternId(loadablePatternId);
+    recalculateVolumeRequest
+        .getCargoDetails()
+        .forEach(
+            cargoDetails -> {
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
+              builder.setId(cargoDetails.getId());
+              builder.setTankId(cargoDetails.getTankId());
+              builder.setRdgUllage(cargoDetails.getRdgUllage());
+              grpcRequest.getLoadablePlanStowageDetailsBuilderList().add(builder);
+            });
   }
 
   /**
