@@ -3,10 +3,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
-import { IBallastStowageDetails, IBallastTank, ICargoTank } from '../../core/models/common.model';
+import { IBallastTank, ICargoTank } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
-import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ILoadablePlanSynopticalRecord, ILoadablePlanCommentsDetails } from '../models/loadable-plan.model';
+import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ILoadablePlanSynopticalRecord, ILoadablePlanCommentsDetails, IBallastStowageDetails } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
+import { DecimalPipe } from '@angular/common';
 
 /**
  * Component class of loadable plan
@@ -66,7 +67,7 @@ export class LoadablePlanComponent implements OnInit {
   loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
   loadablePlanBallastDetails: IBallastStowageDetails[];
   public loadablePlanSynopticalRecords: ILoadablePlanSynopticalRecord[];
-  public loadablePlanComments:ILoadablePlanCommentsDetails[];
+  public loadablePlanComments: ILoadablePlanCommentsDetails[];
   public voyageNumber: string;
   public date: string;
   public caseNumber: string;
@@ -82,8 +83,15 @@ export class LoadablePlanComponent implements OnInit {
     private router: Router,
     private vesselsApiService: VesselsApiService,
     private loadablePlanApiService: LoadablePlanApiService,
-    private loadablePlanTransformationService: LoadablePlanTransformationService) { }
+    private loadablePlanTransformationService: LoadablePlanTransformationService,
+    private _decimalPipe: DecimalPipe
+  ) { }
 
+  /**
+    * Component Lifecycle hook OnInit
+    *
+    * @memberof LoadablePlanComponent
+  */
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(params => {
       this.vesselId = Number(params.get('vesselId'));
@@ -126,9 +134,19 @@ export class LoadablePlanComponent implements OnInit {
     const loadablePlanRes: ILoadablePlanResponse = await this.loadablePlanApiService.getLoadablePlanDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
     this.loadableQuantityCargoDetails = loadablePlanRes.loadableQuantityCargoDetails;
     this.loadableQuantityCommingleCargoDetails = loadablePlanRes.loadableQuantityCommingleCargoDetails;
-    this.cargoTankDetails = loadablePlanRes?.loadablePlanStowageDetails ? loadablePlanRes?.loadablePlanStowageDetails?.map(cargo => this.loadablePlanTransformationService.getCargoTankDetailAsValueObject(cargo)) : [];
-    this.loadablePlanBallastDetails = loadablePlanRes.loadablePlanBallastDetails;
+    this.cargoTankDetails = loadablePlanRes?.loadablePlanStowageDetails ? loadablePlanRes?.loadablePlanStowageDetails?.map(cargo => {
+      const tank = this.findCargoTank(cargo.tankId, loadablePlanRes?.tankLists)
+      cargo.fullCapacityCubm = tank.fullCapacityCubm
+      const formattedCargo = this.loadablePlanTransformationService.getFormatedCargoDetails(cargo)
+      return this.loadablePlanTransformationService.getCargoTankDetailAsValueObject(formattedCargo)
+    }) : [];
     this.cargoTanks = loadablePlanRes?.tankLists;
+    this.loadablePlanBallastDetails = loadablePlanRes.loadablePlanBallastDetails?.map(ballast => {
+      const tank = this.findBallastTank(ballast.tankId, [loadablePlanRes.frontBallastTanks, loadablePlanRes.rearBallastTanks, loadablePlanRes.centerBallastTanks])
+      ballast.fullCapacityCubm = tank?.fullCapacityCubm
+      const formattedCargo = this.loadablePlanTransformationService.getFormattedBallastDetails(this._decimalPipe, ballast)
+      return formattedCargo
+    }) ?? [];;
     this.frontBallastTanks = loadablePlanRes.frontBallastTanks;
     this.rearBallastTanks = loadablePlanRes.rearBallastTanks;
     this.centerBallastTanks = loadablePlanRes.centerBallastTanks;
@@ -138,6 +156,44 @@ export class LoadablePlanComponent implements OnInit {
     this.date = loadablePlanRes.date;
     this.caseNumber = loadablePlanRes.caseNumber;
     this.ngxSpinnerService.hide();
+  }
+
+  /**
+    * Method to get the specific cargo tank
+    *
+    * @memberof LoadablePlanComponent
+  */
+  findCargoTank(tankId, tankLists) {
+    let tankDetails;
+    tankLists.forEach(tankArr => {
+      tankArr.forEach(tank => {
+        if (tank.id === tankId) {
+          tankDetails = tank;
+          return;
+        }
+      })
+    })
+    return tankDetails;
+  }
+
+  /**
+    * Method to get the specific ballast tank
+    *
+    * @memberof LoadablePlanComponent
+  */
+  findBallastTank(tankId, tankLists) {
+    let tankDetails;
+    tankLists.forEach(tankArr => {
+      tankArr.forEach(arr => {
+        arr.forEach(tank => {
+          if (tank.id === tankId) {
+            tankDetails = tank;
+            return;
+          }
+        })
+      })
+    })
+    return tankDetails;
   }
 
 }

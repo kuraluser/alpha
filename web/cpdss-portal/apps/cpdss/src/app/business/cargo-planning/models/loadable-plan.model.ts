@@ -39,6 +39,7 @@ export interface ILoadableQuantityCargo {
     estimatedTemp: string,
     orderBblsdbs: string,
     orderBbls60f: string,
+    orderedQuantity: string,
     minTolerence: string,
     maxTolerence: string,
     loadableBblsdbs: string,
@@ -47,6 +48,7 @@ export interface ILoadableQuantityCargo {
     loadableMT: string,
     loadableKL: string,
     differencePercentage: string,
+    differencePercentageValue: number;
     differenceColor: string
 }
 
@@ -90,11 +92,16 @@ export interface ICommingleCargoDispaly {
     grade: string,
     tankName: string,
     quantity: string,
+    quantityBLS: number;
     api: string,
     temp: string,
     cargoPercentage: string,
     cargoBblsdbs: string,
     cargoBbls60f: string,
+    cargo1LT: number;
+    cargo2LT: number;
+    cargo1KL: number;
+    cargo2KL: number;
     cargoLT: string
     cargoMT: string,
     cargoKL: string,
@@ -106,6 +113,7 @@ export interface ICommingleCargoDispaly {
  * Interface for loadableQuantity total calculate
 */
 export interface ITotalLoadableQuality {
+    orderedQuantity: number;
     orderBblsdbs: number,
     orderBbls60f: number,
     loadableBblsdbs: number,
@@ -138,6 +146,7 @@ export interface ICargoTankDetail extends ILoadableCargo {
     api: number;
     temperature: number;
     colorCode: string;
+    fullCapacityCubm: string;
 }
 
 /**
@@ -200,6 +209,7 @@ export interface IBallastStowageDetails {
     vcg: string,
     tcg: string,
     inertia: string
+    fullCapacityCubm: string;
 }
 
 

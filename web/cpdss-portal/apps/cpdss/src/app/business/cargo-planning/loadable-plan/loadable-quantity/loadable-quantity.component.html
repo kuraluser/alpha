@@ -43,7 +43,7 @@
                 <ng-template pTemplate="footer">
                     <tr>
                         <td colspan="3">{{'LOADABLE_QUANTITY_TOTAL' | translate}}</td>
-                        <td>{{total?.orderBblsdbs | number :'1.0-4'}}</td>
+                        <td>{{total?.orderedQuantity | number :'1.0-4'}}</td>
                         <td>{{total?.orderBbls60f | number :'1.0-4'}}</td>
                         <td colspan="2"></td>
                         <td>{{total?.loadableBblsdbs | number :'1.0-4'}}</td>
