@@ -4739,7 +4739,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<VesselTankDetail> sortedTankList,
       VesselLoadableQuantityDetails vesselLoadableQuantityDetails,
       SynopticalTableReply.Builder replyBuilder) {
-    if (!CollectionUtils.isEmpty(synopticalTableList)) {
+    if (!CollectionUtils.isEmpty(synopticalTableList) && !CollectionUtils.isEmpty(portRotations)) {
       Long firstPortId = portRotations.get(0).getPortXId();
       // first port arrival condition data will be same as the data in obq
       List<OnBoardQuantity> obqEntities =
@@ -5714,7 +5714,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     SynopticalTableReply.Builder replyBuilder = SynopticalTableReply.newBuilder();
     try {
       Optional<LoadableStudy> loadableStudyOpt =
-          this.loadableStudyRepository.findById(request.getLoadableStudyId());
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
       if (!loadableStudyOpt.isPresent()) {
         throw new GenericServiceException(
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
