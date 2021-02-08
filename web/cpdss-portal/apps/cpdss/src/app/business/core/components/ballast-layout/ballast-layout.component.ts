@@ -15,7 +15,7 @@ import { ITank, ITankOptions } from '../../models/common.model';
 })
 export class BallastLayoutComponent implements OnInit {
 
-  @Input() options: ITankOptions = { 'isFullyFilled': false, 'isBullet': false };
+  @Input() options: ITankOptions = { 'isFullyFilled': false, 'showTooltip': false, 'isSelectable': true };
 
   @Input()
   get tanks(): ITank[][] {

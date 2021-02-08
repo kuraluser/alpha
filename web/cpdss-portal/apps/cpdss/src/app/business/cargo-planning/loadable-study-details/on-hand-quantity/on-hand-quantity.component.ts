@@ -9,7 +9,7 @@ import { numberValidator } from '../../directives/validator/number-validator.dir
 import { groupTotalValidator } from '../../directives/validator/group-total.directive';
 import { maximumVolumeValidator } from '../../directives/validator/maximum-volumn.directive';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { IPort } from '../../../core/models/common.model';
+import { IPort, ITankOptions } from '../../../core/models/common.model';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { Observable, of } from 'rxjs';
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
@@ -132,6 +132,7 @@ export class OnHandQuantityComponent implements OnInit {
   selectedTankFormGroupIndex: number;
   dataTableLoading: boolean;
   ohqCheckUpdatesTimer;
+  ohqTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, densityField: 'density', weightField: 'quantity' };
 
   private _selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[];
   private _loadableStudyId: number;

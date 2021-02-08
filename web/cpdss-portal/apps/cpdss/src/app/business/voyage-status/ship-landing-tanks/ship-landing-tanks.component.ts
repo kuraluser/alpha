@@ -64,9 +64,9 @@ export class ShipLandingTanksComponent implements OnInit {
 
   readonly tankType = TANKTYPE;
 
-  cargoTankOptions: ITankOptions = { showFillingPercentage: true, isBullet: true, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'api', weightField: 'actualWeight', commodityNameField: 'abbreviation' };
-  ballastTankOptions: ITankOptions = { showFillingPercentage: true, isBullet: true, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'sg', weightField: 'actualWeight' };
-  ohqTankOptions: ITankOptions = { showFillingPercentage: true, isBullet: true, densityField: 'density', weightField: 'actualWeight' };
+  cargoTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'api', weightField: 'actualWeight', commodityNameField: 'abbreviation' };
+  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'sg', weightField: 'actualWeight' };
+  ohqTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, densityField: 'density', weightField: 'actualWeight' };
   
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
   private _shipLandingTanks: IVoyageStatus;

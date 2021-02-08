@@ -42,6 +42,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   set selectedLoadableStudy(selectedLoadableStudy: LoadableStudy) {
     this._selectedLoadableStudy = selectedLoadableStudy;
     this.isPatternGenerated = this._selectedLoadableStudy?.statusId === 3 ? true : false;
+    this.isPatternOpenOrNoplan = (this._selectedLoadableStudy?.statusId === 1 || this._selectedLoadableStudy?.statusId === 6) ? false: true;
     this.loadableStudyId = selectedLoadableStudy ? selectedLoadableStudy?.id : this.loadableStudies?.length ? this.loadableStudies[0]?.id : 0;
     this.getLoadableStudyDetails(this.vesselId, this.voyageId, selectedLoadableStudy?.id);
   }
@@ -91,6 +92,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   baseUnit = this.loadableStudyDetailsApiService.baseUnit;
   isPatternGenerated = false;
   isGenerateClicked = false;
+  isPatternOpenOrNoplan = false;
   constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private loadableStudyListApiService: LoadableStudyListApiService,
@@ -107,6 +109,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initSubsciptions();
+    this.listenEvents();
     this.activatedRoute.paramMap
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(params => {
@@ -270,6 +273,20 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.portsComplete$ = this.loadableStudyDetailsTransformationService.portValidity$;
     this.ohqComplete$ = this.loadableStudyDetailsTransformationService.ohqValidity$;
     this.obqComplete$ = this.loadableStudyDetailsTransformationService.obqValidity$;
+    this.loadableStudyDetailsApiService.cargoNominationChange.asObservable()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        this.onCargoNominationChange();
+      })
+  }
+
+  /**
+   * Listen events in this page
+   *
+   * @private
+   * @memberof LoadableStudyDetailsComponent
+   */
+  private async listenEvents() {
     navigator.serviceWorker.addEventListener('message', async event => {
       if (event.data.type === 'loadable-pattern-processing' && this.router.url.includes('loadable-study-details')) {
         if (event.data.pattern.loadableStudyId === this.loadableStudyId) {
@@ -278,21 +295,16 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           this.messageService.clear("process");
         }
       }
-      if (event.data.type === 'loadable-pattern-completed') {
+      else if (event.data.type === 'loadable-pattern-completed') {
         if (event.data.pattern.loadableStudyId === this.loadableStudyId) {
           this.isPatternGenerated = true;
         }
         this.generatedMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
       }
-      if (event.data.type === 'loadable-pattern-no-solution') {
+      else if (event.data.type === 'loadable-pattern-no-solution') {
         this.noPlanMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName)
       }
     });
-    this.loadableStudyDetailsApiService.cargoNominationChange.asObservable()
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(() => {
-        this.onCargoNominationChange();
-      })
   }
 
   /**
@@ -346,8 +358,12 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.loadableQuantityNew = '0';
     this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(0);
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
+    this.loadableStudyDetailsTransformationService.setPortValidity(false);
+    this.loadableStudyDetailsTransformationService.setOHQValidity(false);
+    this.loadableStudyDetailsTransformationService.setObqValidity(false);
     this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
     this.selectedLoadableStudy = null;
+    this.initSubsciptions();
     this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/0`]);
   }
 

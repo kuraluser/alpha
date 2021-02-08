@@ -4,7 +4,7 @@
             <ng-container *ngFor="let group of frontTanks">
                 <div *ngFor="let tank of group" [ngClass]="{'active': tank?.id === selectedTankId}"
                     [ngStyle]="{'visibility': tank?.categoryId !== 2? 'hidden': 'visible'}"
-                    (click)="onTankSelect($event, tank?.id)">
+                    (click)="options?.isSelectable && onTankSelect($event, tank?.id)">
                     <div class="tank-level"
                         [ngStyle]="{'height': (tank?.commodity && options?.fillingPercentageField ? tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled) + '%', 'background-color': tank?.commodity?.colorCode}">
                     </div>
@@ -27,7 +27,7 @@
                         </p-overlayPanel>
                         <div class="tank-name">
                             <div class="tank-btn-rounded"
-                                *ngIf="options?.isBullet" (mouseover)="tank && op.toggle($event)"
+                                *ngIf="options?.showTooltip" (mouseover)="tank && op.toggle($event)"
                                 (mouseout)="tank && op.toggle($event)"></div>
                             {{tank?.shortName}}
                         </div>
@@ -72,7 +72,7 @@
                     </p-overlayPanel>
                     <div class="tank-name">
                         <div class="tank-btn-rounded"
-                            *ngIf="options?.isBullet" (mouseover)="tank && op.toggle($event)"
+                            *ngIf="options?.showTooltip" (mouseover)="tank && op.toggle($event)"
                             (mouseout)="tank && op.toggle($event)"></div>
                         {{tank?.shortName}}
                     </div>
@@ -119,7 +119,7 @@
                 <h5 class="tank-name">
                     <div class="tank-btn-rounded"
                         
-                        *ngIf="options?.isBullet" (mouseover)="tank && op.toggle($event)"
+                        *ngIf="options?.showTooltip" (mouseover)="tank && op.toggle($event)"
                         (mouseout)="tank && op.toggle($event)"></div>
                     {{tank?.shortName}}
                 </h5>

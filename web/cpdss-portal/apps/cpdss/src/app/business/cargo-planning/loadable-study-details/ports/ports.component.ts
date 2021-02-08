@@ -320,6 +320,7 @@ export class PortsComponent implements OnInit {
       const layCanTo = event.data.layCan.value.split('to')[1].trim()
       this.portsLists[valueIndex]['layCanFrom'].value = layCanFrom;
       this.portsLists[valueIndex]['layCanTo'].value = layCanTo;
+      this.updateField(event.index, 'layCan', event.data.layCan.value);
       this.updateField(event.index, 'layCanFrom', this.convertToDate(layCanFrom));
       this.updateField(event.index, 'layCanTo', this.convertToDate(layCanTo));
       this.updateValidityAndEditMode(index, 'eta');

@@ -14,18 +14,18 @@
                         <li class="col-7">{{'TANK_LAYOUT_TANK'| translate}} </li>
                         <li class="col-5">{{tank?.shortName}}</li>
                         <li class="col-7">{{'TANK_LAYOUT_DENSITY'| translate}}</li>
-                        <li class="col-5">{{tank?.commodity[options?.densityField]}}</li>
+                        <li class="col-5">{{(tank?.commodity[options?.densityField]?.value || tank?.commodity[options?.densityField]?.value === 0) ? tank?.commodity[options?.densityField].value : tank?.commodity[options?.densityField]}}</li>
                         <li class="col-7">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
                         <li class="col-5">{{tank?.commodity[options?.weightField]}}
                         </li>
                         <li class="col-7">{{'TANK_LAYOUT_PERCENTAGE'| translate}} </li>
                         <li class="col-5">{{options?.fillingPercentageField ?
-                            tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}%</li>
+                            tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}</li>
                     </ul>
                 </p-overlayPanel>
                 <div class="tank-btn-rounded"
                        
-                        *ngIf="options?.isBullet" (mouseover)="tank?.commodity && op.toggle($event)"
+                        *ngIf="options?.showTooltip" (mouseover)="tank?.commodity && op.toggle($event)"
                         (mouseout)="tank?.commodity && op.toggle($event)"></div>
                 <div class="tank-name">
                     
@@ -52,7 +52,7 @@
                             <li class="col-5">{{tank?.commodity[options?.ullageField]}}
                                 {{options?.ullageUnit}}</li>
                                 <li class="col-7">{{'TANK_LAYOUT_SG'| translate}}</li>
-                            <li class="col-5">{{tank?.commodity[options?.densityField]}}</li>
+                            <li class="col-5">{{(tank?.commodity[options?.densityField]?.value || tank?.commodity[options?.densityField]?.value === 0) ? tank?.commodity[options?.densityField].value : tank?.commodity[options?.densityField]}}</li>
                             <li class="col-7">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
                             <li class="col-5">{{tank?.commodity[options?.weightField]}}
                             </li>
@@ -62,7 +62,7 @@
                         </ul>
                     </p-overlayPanel>
                     <div class="tank-btn-rounded"
-                            *ngIf="options?.isBullet" (mouseover)="tank?.commodity && op.toggle($event)"
+                            *ngIf="options?.showTooltip" (mouseover)="tank?.commodity && op.toggle($event)"
                             (mouseout)="tank?.commodity && op.toggle($event)"></div>
                     <div class="tank-name">
                         

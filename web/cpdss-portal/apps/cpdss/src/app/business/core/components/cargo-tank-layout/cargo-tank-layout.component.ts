@@ -17,7 +17,7 @@ import { ICargoTank, ITank, ITankOptions } from '../../../core/models/common.mod
 })
 export class CargoTankLayoutComponent implements OnInit {
 
-  @Input() options: ITankOptions = { 'isFullyFilled': false, 'isBullet': false };
+  @Input() options: ITankOptions = { 'isFullyFilled': false, 'showTooltip': false, 'isSelectable': true };
 
   @Input()
   get tanks(): ICargoTank[][] {

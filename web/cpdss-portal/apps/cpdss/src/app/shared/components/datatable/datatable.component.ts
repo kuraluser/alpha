@@ -536,13 +536,18 @@ export class DatatableComponent implements OnInit {
   */
   onDateRangeSelect(event, formGroupIndex: number, formControlName: string, rowData: Object) {
     const formControl = this.field(formGroupIndex, formControlName);
+    let firstSelectedDate;
+    if (rowData[formControlName].value) {
+      const firstDate = rowData[formControlName].value.split('-')
+      firstSelectedDate = new Date(firstDate[2], firstDate[1] - 1, firstDate[0])
+    }
+    const compareDate = new Date(event);
     if (rowData[formControlName].value.includes('to')) {
       rowData[formControlName].value = this.formatDateTime(event);
       formControl.setValue("");
     }
-    else if (rowData[formControlName].value) {
+    else if (rowData[formControlName].value && compareDate > firstSelectedDate) {
       rowData[formControlName].value = rowData[formControlName].value + ' to ' + this.formatDateTime(event);
-
       formControl.setValue(rowData[formControlName].value.toString());
       this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
     } else {

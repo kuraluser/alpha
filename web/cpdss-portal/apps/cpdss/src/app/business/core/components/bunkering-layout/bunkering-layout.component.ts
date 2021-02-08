@@ -15,7 +15,7 @@ import { ITank, ITankOptions } from '../../models/common.model';
 })
 export class BunkeringLayoutComponent implements OnInit {
 
-  @Input() options: ITankOptions = { 'isFullyFilled': false, 'isBullet': false };
+  @Input() options: ITankOptions = { 'isFullyFilled': false, 'showTooltip': false };
 
   @Input()
   get tanks(): ITank[][] {

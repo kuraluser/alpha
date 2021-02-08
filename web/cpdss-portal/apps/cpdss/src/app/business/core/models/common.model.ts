@@ -146,10 +146,11 @@ export interface ITankOptions {
     ullageField?: string;
     ullageUnit?: string;
     showCommodityName?: boolean;
-    isBullet?: boolean;
+    showTooltip?: boolean;
     densityField?: string;
     showDensity?: boolean;
     commodityNameField?: string;
+    isSelectable?: boolean;
 }
 
 /**

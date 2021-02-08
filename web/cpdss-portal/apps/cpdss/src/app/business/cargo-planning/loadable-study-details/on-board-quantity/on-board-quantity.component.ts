@@ -7,7 +7,7 @@ import { IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject } f
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { CommingleApiService } from '../../services/commingle-api.service';
-import { ITank, IPort } from '../../../core/models/common.model';
+import { ITank, IPort, ITankOptions } from '../../../core/models/common.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { maximumVolumeValidator } from '../../directives/validator/maximum-volumn.directive';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
@@ -108,6 +108,7 @@ export class OnBoardQuantityComponent implements OnInit {
   isEditable = false;
   dataTableLoading: boolean;
   obqCheckUpdatesTimer;
+  cargoTankOptions: ITankOptions = { showTooltip: true, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'api', weightField: 'quantity', commodityNameField: 'abbreviation' };
 
   private _selectedTank: IPortOBQTankDetailValueObject;
   private _loadableStudyId: number;
@@ -419,7 +420,8 @@ export class OnBoardQuantityComponent implements OnInit {
         tank.commodity = {
           quantity: selectedPortOBQTankDetail.quantity?.value,
           volume: selectedPortOBQTankDetail?.volume ?? 0,
-          colorCode: selectedPortOBQTankDetail?.colorCode
+          colorCode: selectedPortOBQTankDetail?.colorCode,
+          api: selectedPortOBQTankDetail?.api?.value 
         }
         return tank;
       });
