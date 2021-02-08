@@ -369,6 +369,17 @@ export class RolePermissionComponent implements OnInit {
     }
 
     /**
+    * unselected user details
+    * @memberof RolePermissionComponent
+    */
+    deselectedUserId ()  {
+        const spreaded = [...this.selectedUser, ...this.userDetails];
+        return spreaded.filter(el => {
+           return !((this.selectedUser.includes(el) && this.userDetails.includes(el)))
+        })
+    };
+
+    /**
     * Save permission
     * @memberof RolePermissionComponent
     */
@@ -378,6 +389,15 @@ export class RolePermissionComponent implements OnInit {
             const selectedUser = this.selectedUser?.map((user) => {
                 return user.id
             })
+            let deselectedUserDetails = [];
+            let deselectedUserId = [];
+            if(this.selectedUser?.length) {
+                deselectedUserDetails = this.deselectedUserId();
+            }
+            deselectedUserDetails?.map((deselectedUserDetail) => {
+                deselectedUserId.push(deselectedUserDetail.id);
+            })
+            
             const treeNodeScreen: IUserPermissionScreen[] = [];
             this.treeNode?.map((node) => {
                 this.setTreeNode(node, node.data, treeNodeScreen)
@@ -389,7 +409,8 @@ export class RolePermissionComponent implements OnInit {
                 },
                 screens: treeNodeScreen,
                 roleId: this.roleId,
-                userId: selectedUser ? selectedUser : []
+                userId: selectedUser ? selectedUser : [],
+                deselectedUserId: deselectedUserId ? deselectedUserId : []
             }
             this.ngxSpinnerService.show();
            

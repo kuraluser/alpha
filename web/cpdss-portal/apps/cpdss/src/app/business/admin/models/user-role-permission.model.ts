@@ -168,6 +168,7 @@ export interface IUserPermissionModel {
     screens: IUserPermissionScreen[],
     roleId: number,
     userId: number[],
+    deselectedUserId: number[],
     role: IUserPermissionRole
 }
 

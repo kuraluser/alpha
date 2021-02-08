@@ -16,6 +16,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { SynopticalService } from './services/synoptical.service';
 import { NumberDirectiveModule } from '../../shared/directives/number-directive/number-directive.module';
 import { SynopticalApiService } from './services/synoptical-api.service';
+import { PermissionDirectiveModule } from '../../shared/directives/permission/permission-directive.module';
 
 /**
  * Module for Synoptical Table
@@ -38,7 +39,8 @@ import { SynopticalApiService } from './services/synoptical-api.service';
     ButtonModule,
     ValidationErrorModule,
     CalendarModule,
-    NumberDirectiveModule
+    NumberDirectiveModule,
+    PermissionDirectiveModule,
   ],
   providers: [
     LoadableStudyListApiService,

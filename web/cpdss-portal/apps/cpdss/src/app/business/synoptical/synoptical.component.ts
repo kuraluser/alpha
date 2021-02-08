@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { SynopticalService } from './services/synoptical.service';
 import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../shared/services/permissions/permissions.service';
+import { IPermissionContext, PERMISSION_ACTION } from '../../shared/models/common.model';
 
 /**
  * Component class of synoptical
@@ -19,6 +20,9 @@ import { PermissionsService } from '../../shared/services/permissions/permission
   providers: [SynopticalService]
 })
 export class SynopticalComponent implements OnInit {
+
+  public editRoleBtnPermissionContext: IPermissionContext;
+  public saveRoleBtnPermissionContext: IPermissionContext;
 
   constructor(
     private ngxSpinnerService: NgxSpinnerService,
@@ -47,6 +51,8 @@ export class SynopticalComponent implements OnInit {
    */
   getPagePermission() {
     this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['SynopticalComponent']);
+    this.editRoleBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['SynopticalComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.EDIT] };
+    this.saveRoleBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['SynopticalComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
   }
 
   /**
