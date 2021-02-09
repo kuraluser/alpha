@@ -14,6 +14,8 @@ import { portDateCompareValidator } from '../../directives/validator/port-date-c
 import { portDuplicationValidator } from '../../directives/validator/port-duplication-validator.directive';
 import { IPortList, IPortsDetailsResponse } from '../../../core/models/common.model';
 import { portEtaEtdValidator } from '../../directives/validator/port-eta-etd-validator.directive'
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
 
 
 /**
@@ -69,7 +71,9 @@ export class PortsComponent implements OnInit {
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private fb: FormBuilder,
     private ngxSpinnerService: NgxSpinnerService,
-    private confirmationAlertService: ConfirmationAlertService) { }
+    private confirmationAlertService: ConfirmationAlertService,
+    private messageService: MessageService,
+    private translateService: TranslateService) { }
 
   ngOnInit(): void {
     this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns(this.permission);
@@ -339,7 +343,7 @@ export class PortsComponent implements OnInit {
       this.updateValidityAndEditMode(index, 'etd');
       if (index > 0)
         this.updateValidityAndEditMode(index - 1, 'etd');
-        if (index - 1 > 0)
+      if (index - 1 > 0)
         this.updateValidityAndEditMode(index - 2, 'etd');
     }
     const formArray = (<FormArray>this.portsForm.get('dataTable')).controls;
@@ -388,6 +392,13 @@ export class PortsComponent implements OnInit {
  * @memberof PortsComponent
  */
   async onRowSave(event: IPortsEvent) {
+    if (event.index > 0) {
+      if (this.portsLists[event.index - 1].isAdd) {
+        const translationKeys = await this.translateService.get(['PORT_ROW_ADD_ERROR', 'PORT_ROW_ADD_ERROR_DETAILS']).toPromise();
+        this.messageService.add({ severity: 'warn', summary: translationKeys['PORT_ROW_ADD_ERROR'], detail: translationKeys['PORT_ROW_ADD_ERROR_DETAILS'] });
+        return;
+      }
+    }
     const form = this.row(event.index);
     const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
     if (form.valid) {
@@ -446,24 +457,24 @@ export class PortsComponent implements OnInit {
     if (event?.data?.isDelete) {
       this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'PORTS_DELETE_SUMMARY', detail: 'PORTS_DELETE_DETAILS', data: { confirmLabel: 'PORTS_DELETE_CONFIRM_LABEL', rejectLabel: 'PORTS_DELETE_REJECT_LABEL' } });
       const subscription = this.confirmationAlertService.confirmAlert$
-      .subscribe(async (response) => {
-        if (response) {
-          if (event?.data?.isAdd) {
-            this.portsLists.splice(event.index, 1);
-            this.portsLists = [...this.portsLists];
-          } else {
-            const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
-            const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
-            if (res) {
+        .subscribe(async (response) => {
+          if (response) {
+            if (event?.data?.isAdd) {
               this.portsLists.splice(event.index, 1);
               this.portsLists = [...this.portsLists];
+            } else {
+              const valueIndex = this.portsLists.findIndex(port => port?.storeKey === event?.data?.storeKey);
+              const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
+              if (res) {
+                this.portsLists.splice(event.index, 1);
+                this.portsLists = [...this.portsLists];
+              }
             }
+            const formArray = <FormArray>this.portsForm.get('dataTable');
+            formArray.removeAt(event.index)
           }
-          const formArray = <FormArray>this.portsForm.get('dataTable');
-          formArray.removeAt(event.index)
-        }
-        subscription.unsubscribe();
-      });
+          subscription.unsubscribe();
+        });
     }
   }
 
