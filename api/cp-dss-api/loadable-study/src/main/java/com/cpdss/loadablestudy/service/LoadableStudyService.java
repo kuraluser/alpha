@@ -330,6 +330,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;
   private static final Long CARGO_VOID_TANK_CATEGORY_ID = 15L;
 
+  private static final String BALLAST_TANK_COLOR_CODE = "#01717D";
+
   private static final List<Long> CARGO_BALLAST_TANK_CATEGORIES =
       Arrays.asList(
           CARGO_TANK_CATEGORY_ID,
@@ -2761,6 +2763,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadablePlanBallastDetails.setRdgLevel(lpbd.getRdgLevel());
           loadablePlanBallastDetails.setIsActive(true);
           loadablePlanBallastDetails.setLoadablePattern(loadablePattern);
+          loadablePlanBallastDetails.setColorCode(BALLAST_TANK_COLOR_CODE);
           loadablePlanBallastDetailsRepository.save(loadablePlanBallastDetails);
         });
   }
@@ -5849,6 +5852,58 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         });
   }
 
+  /**
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void confirmPlanStatus(
+      ConfirmPlanRequest request, StreamObserver<ConfirmPlanReply> responseObserver) {
+    log.info("inside confirmPlanStatus loadable study service");
+    ConfirmPlanReply.Builder replyBuilder = ConfirmPlanReply.newBuilder();
+    try {
+      Optional<LoadablePattern> loadablePatternOpt =
+          this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+      if (!loadablePatternOpt.isPresent()) {
+        log.info(INVALID_LOADABLE_PATTERN_ID, request.getLoadablePatternId());
+        replyBuilder.setResponseStatus(
+            ResponseStatus.newBuilder()
+                .setStatus(FAILED)
+                .setMessage(INVALID_LOADABLE_PATTERN_ID)
+                .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
+      } else {
+        List<LoadablePattern> loadablePatternConfirmedOpt =
+            loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
+                request.getVoyageId(), CONFIRMED_STATUS_ID, true);
+        if (!loadablePatternConfirmedOpt.isEmpty()) {
+          // set confirm status to false since some other plan is already confirmed
+          replyBuilder.setConfirmed(false);
+        } else {
+          loadablePatternRepository.updateLoadablePatternStatus(
+              CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
+          loadableStudyRepository.updateLoadableStudyStatus(
+              CONFIRMED_STATUS_ID, loadablePatternOpt.get().getLoadableStudy().getId());
+          replyBuilder.setConfirmed(true);
+        }
+        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      }
+    } catch (Exception e) {
+      log.error("Exception when confirmPlanStatus ", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when confirmPlanStatus Loadable Study Status"));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * @param request
+   * @param responseObserver
+   */
   @Override
   public void confirmPlan(
       ConfirmPlanRequest request, StreamObserver<ConfirmPlanReply> responseObserver) {
@@ -5885,7 +5940,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
     } catch (Exception e) {
       log.error("Exception when confirmPlan ", e);
-      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when confirmPlan Loadable Study Status"));
+
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();

@@ -121,6 +121,9 @@ service LoadableStudyService {
 	rpc RecalculateVolume(RecalculateVolumeRequest) returns (RecalculateVolumeReply) {
 	}
 	
+	rpc ConfirmPlanStatus(ConfirmPlanRequest) returns (ConfirmPlanReply) {
+	}	
+	
 	rpc ConfirmPlan(ConfirmPlanRequest) returns (ConfirmPlanReply) {
 	}
 	
@@ -373,10 +376,12 @@ message LoadableQuantityCargoDetails {
 
 message ConfirmPlanRequest {
 	int64 loadablePatternId = 1;
+	int64 voyageId = 2;
 }
 
 message ConfirmPlanReply {
 	ResponseStatus responseStatus = 1;
+	bool confirmed = 2;
 }
 
 message LoadableStudyStatusRequest {

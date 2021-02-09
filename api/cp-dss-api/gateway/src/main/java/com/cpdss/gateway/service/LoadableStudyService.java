@@ -89,6 +89,7 @@ import com.cpdss.gateway.domain.Comment;
 import com.cpdss.gateway.domain.CommingleCargo;
 import com.cpdss.gateway.domain.CommingleCargoResponse;
 import com.cpdss.gateway.domain.CommonResponse;
+import com.cpdss.gateway.domain.ConfirmPlanStatusResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadOnTopRequest;
 import com.cpdss.gateway.domain.LoadablePattern;
@@ -3643,6 +3644,7 @@ public class LoadableStudyService {
       LoadablePattern patternDto = new LoadablePattern();
       patternDto.setLoadablePatternId(pattern.getLoadablePatternId());
       patternDto.setCaseNumber(pattern.getCaseNumber());
+      patternDto.setLoadableStudyStatusId(pattern.getLoadableStudyStatusId());
       response.getLoadablePatterns().add(patternDto);
     }
     response.setResponseStatus(
@@ -3659,6 +3661,42 @@ public class LoadableStudyService {
   public LoadablePatternReply getLoadablePatternList(LoadablePatternRequest grpcRequest) {
     return this.loadableStudyServiceBlockingStub.getLoadablePatternList(grpcRequest);
   }
+
+  /**
+   * @param loadablePatternId
+   * @param voyageId
+   * @param first
+   * @return ConfirmPlanStatusResponse
+   */
+  public ConfirmPlanStatusResponse confirmPlanStatus(
+      Long loadablePatternId, Long voyageId, String correlationId) throws GenericServiceException {
+    log.info("Inside confirmPlanStatus in gateway micro service");
+    ConfirmPlanStatusResponse confirmPlanStatusResponse = new ConfirmPlanStatusResponse();
+    ConfirmPlanRequest.Builder requestBuilder = ConfirmPlanRequest.newBuilder();
+    requestBuilder.setLoadablePatternId(loadablePatternId);
+    requestBuilder.setVoyageId(voyageId);
+    ConfirmPlanReply grpcReply = this.confirmPlanStatusReply(requestBuilder);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed in confirmPlanStatus from grpc service",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    confirmPlanStatusResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    confirmPlanStatusResponse.setConfirmed(grpcReply.getConfirmed());
+    return confirmPlanStatusResponse;
+  }
+
+  /**
+   * @param requestBuilder
+   * @return ConfirmPlanReply
+   */
+  private ConfirmPlanReply confirmPlanStatusReply(
+      com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.Builder requestBuilder) {
+    return this.loadableStudyServiceBlockingStub.confirmPlanStatus(requestBuilder.build());
+  }
+
   /**
    * @param recalculateVolumeRequest
    * @param loadablePatternId
@@ -3679,6 +3717,8 @@ public class LoadableStudyService {
           grpcReply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
   }
 
