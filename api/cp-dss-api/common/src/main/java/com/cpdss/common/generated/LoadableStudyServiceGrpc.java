@@ -1495,6 +1495,55 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply>
+      getGetLoadicatorDataMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetLoadicatorData",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply>
+      getGetLoadicatorDataMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply>
+        getGetLoadicatorDataMethod;
+    if ((getGetLoadicatorDataMethod = LoadableStudyServiceGrpc.getGetLoadicatorDataMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadicatorDataMethod = LoadableStudyServiceGrpc.getGetLoadicatorDataMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetLoadicatorDataMethod =
+              getGetLoadicatorDataMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetLoadicatorData"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("GetLoadicatorData"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadicatorDataMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
           com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
       getSaveAlgoLoadableStudyStatusMethod;
@@ -1857,53 +1906,6 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
-          com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
-      getConfirmPlanMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "ConfirmPlan",
-      requestType = com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.class,
-      responseType = com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
-          com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
-      getConfirmPlanMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
-            com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
-        getConfirmPlanMethod;
-    if ((getConfirmPlanMethod = LoadableStudyServiceGrpc.getConfirmPlanMethod) == null) {
-      synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getConfirmPlanMethod = LoadableStudyServiceGrpc.getConfirmPlanMethod) == null) {
-          LoadableStudyServiceGrpc.getConfirmPlanMethod =
-              getConfirmPlanMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
-                          com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ConfirmPlan"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier("ConfirmPlan"))
-                      .build();
-        }
-      }
-    }
-    return getConfirmPlanMethod;
-  }
-
-  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest,
           com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
       getRecalculateVolumeMethod;
@@ -1950,6 +1952,53 @@ public final class LoadableStudyServiceGrpc {
       }
     }
     return getRecalculateVolumeMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+          com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+      getConfirmPlanMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ConfirmPlan",
+      requestType = com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+          com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+      getConfirmPlanMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+            com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+        getConfirmPlanMethod;
+    if ((getConfirmPlanMethod = LoadableStudyServiceGrpc.getConfirmPlanMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getConfirmPlanMethod = LoadableStudyServiceGrpc.getConfirmPlanMethod) == null) {
+          LoadableStudyServiceGrpc.getConfirmPlanMethod =
+              getConfirmPlanMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+                          com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ConfirmPlan"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("ConfirmPlan"))
+                      .build();
+        }
+      }
+    }
+    return getConfirmPlanMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<
@@ -2380,6 +2429,14 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void getLoadicatorData(
+        com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetLoadicatorDataMethod(), responseObserver);
+    }
+
+    /** */
     public void saveAlgoLoadableStudyStatus(
         com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
@@ -2438,19 +2495,19 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
-    public void confirmPlan(
-        com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
-            responseObserver) {
-      asyncUnimplementedUnaryCall(getConfirmPlanMethod(), responseObserver);
-    }
-
-    /** */
     public void recalculateVolume(
         com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
             responseObserver) {
       asyncUnimplementedUnaryCall(getRecalculateVolumeMethod(), responseObserver);
+    }
+
+    /** */
+    public void confirmPlan(
+        com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getConfirmPlanMethod(), responseObserver);
     }
 
     /** */
@@ -2687,6 +2744,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>(
                       this, METHODID_SAVE_ON_BOARD_QUANTITY)))
           .addMethod(
+              getGetLoadicatorDataMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply>(
+                      this, METHODID_GET_LOADICATOR_DATA)))
+          .addMethod(
               getSaveAlgoLoadableStudyStatusMethod(),
               asyncUnaryCall(
                   new MethodHandlers<
@@ -2736,19 +2800,19 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>(
                       this, METHODID_GET_LOADABLE_PLAN_DETAILS)))
           .addMethod(
-              getConfirmPlanMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
-                      com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>(
-                      this, METHODID_CONFIRM_PLAN)))
-          .addMethod(
               getRecalculateVolumeMethod(),
               asyncUnaryCall(
                   new MethodHandlers<
                       com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest,
                       com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>(
                       this, METHODID_RECALCULATE_VOLUME)))
+          .addMethod(
+              getConfirmPlanMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+                      com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>(
+                      this, METHODID_CONFIRM_PLAN)))
           .addMethod(
               getDownloadLoadableStudyAttachmentMethod(),
               asyncUnaryCall(
@@ -3108,6 +3172,17 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void getLoadicatorData(
+        com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetLoadicatorDataMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
     public void saveAlgoLoadableStudyStatus(
         com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
@@ -3187,23 +3262,23 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
-    public void confirmPlan(
-        com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getConfirmPlanMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
     public void recalculateVolume(
         com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
             responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getRecalculateVolumeMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void confirmPlan(
+        com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getConfirmPlanMethod(), getCallOptions()),
           request,
           responseObserver);
     }
@@ -3465,6 +3540,13 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply getLoadicatorData(
+        com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetLoadicatorDataMethod(), getCallOptions(), request);
+    }
+
+    /** */
     public com.cpdss.common.generated.LoadableStudy.AlgoStatusReply saveAlgoLoadableStudyStatus(
         com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request) {
       return blockingUnaryCall(
@@ -3515,16 +3597,16 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
-    public com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply confirmPlan(
-        com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
-      return blockingUnaryCall(getChannel(), getConfirmPlanMethod(), getCallOptions(), request);
-    }
-
-    /** */
     public com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply recalculateVolume(
         com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest request) {
       return blockingUnaryCall(
           getChannel(), getRecalculateVolumeMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply confirmPlan(
+        com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
+      return blockingUnaryCall(getChannel(), getConfirmPlanMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -3820,6 +3902,14 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply>
+        getLoadicatorData(com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetLoadicatorDataMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>
         saveAlgoLoadableStudyStatus(
             com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request) {
@@ -3884,19 +3974,19 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
-        confirmPlan(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getConfirmPlanMethod(), getCallOptions()), request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>
         recalculateVolume(
             com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getRecalculateVolumeMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+        confirmPlan(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getConfirmPlanMethod(), getCallOptions()), request);
     }
 
     /** */
@@ -3955,18 +4045,19 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_LOADABLE_PATTERN_LIST = 26;
   private static final int METHODID_GET_ON_BOARD_QUANTITY = 27;
   private static final int METHODID_SAVE_ON_BOARD_QUANTITY = 28;
-  private static final int METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS = 29;
-  private static final int METHODID_SAVE_SYNOPTICAL_TABLE = 30;
-  private static final int METHODID_GET_SYNOPTICAL_TABLE = 31;
-  private static final int METHODID_GET_SYNOPTICAL_DATA_BY_PORT_ID = 32;
-  private static final int METHODID_GET_SYNOPTICAL_PORT_DATA_BY_PORT_ID = 33;
-  private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 34;
-  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 35;
-  private static final int METHODID_CONFIRM_PLAN = 36;
+  private static final int METHODID_GET_LOADICATOR_DATA = 29;
+  private static final int METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS = 30;
+  private static final int METHODID_SAVE_SYNOPTICAL_TABLE = 31;
+  private static final int METHODID_GET_SYNOPTICAL_TABLE = 32;
+  private static final int METHODID_GET_SYNOPTICAL_DATA_BY_PORT_ID = 33;
+  private static final int METHODID_GET_SYNOPTICAL_PORT_DATA_BY_PORT_ID = 34;
+  private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 35;
+  private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 36;
   private static final int METHODID_RECALCULATE_VOLUME = 37;
-  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 38;
-  private static final int METHODID_SAVE_COMMENT = 39;
-  private static final int METHODID_SAVE_LOAD_ON_TOP = 40;
+  private static final int METHODID_CONFIRM_PLAN = 38;
+  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 39;
+  private static final int METHODID_SAVE_COMMENT = 40;
+  private static final int METHODID_SAVE_LOAD_ON_TOP = 41;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -4187,6 +4278,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>)
                   responseObserver);
           break;
+        case METHODID_GET_LOADICATOR_DATA:
+          serviceImpl.getLoadicatorData(
+              (com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply>)
+                  responseObserver);
+          break;
         case METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS:
           serviceImpl.saveAlgoLoadableStudyStatus(
               (com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest) request,
@@ -4236,18 +4334,18 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>)
                   responseObserver);
           break;
-        case METHODID_CONFIRM_PLAN:
-          serviceImpl.confirmPlan(
-              (com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>)
-                  responseObserver);
-          break;
         case METHODID_RECALCULATE_VOLUME:
           serviceImpl.recalculateVolume(
               (com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply>)
+                  responseObserver);
+          break;
+        case METHODID_CONFIRM_PLAN:
+          serviceImpl.confirmPlan(
+              (com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>)
                   responseObserver);
           break;
         case METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT:
@@ -4364,6 +4462,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetLoadablePatternListMethod())
                       .addMethod(getGetOnBoardQuantityMethod())
                       .addMethod(getSaveOnBoardQuantityMethod())
+                      .addMethod(getGetLoadicatorDataMethod())
                       .addMethod(getSaveAlgoLoadableStudyStatusMethod())
                       .addMethod(getSaveSynopticalTableMethod())
                       .addMethod(getGetSynopticalTableMethod())
@@ -4371,8 +4470,8 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetSynopticalPortDataByPortIdMethod())
                       .addMethod(getGetLoadableStudyStatusMethod())
                       .addMethod(getGetLoadablePlanDetailsMethod())
-                      .addMethod(getConfirmPlanMethod())
                       .addMethod(getRecalculateVolumeMethod())
+                      .addMethod(getConfirmPlanMethod())
                       .addMethod(getDownloadLoadableStudyAttachmentMethod())
                       .addMethod(getSaveCommentMethod())
                       .addMethod(getSaveLoadOnTopMethod())

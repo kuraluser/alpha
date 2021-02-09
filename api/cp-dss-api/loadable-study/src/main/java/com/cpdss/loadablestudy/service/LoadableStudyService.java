@@ -18,6 +18,7 @@ import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
+import com.cpdss.common.generated.LoadableStudy.LDtrim;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
@@ -42,6 +43,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply;
+import com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
@@ -89,6 +92,11 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CargoHistory;
+import com.cpdss.loadablestudy.domain.LDIntactStability;
+import com.cpdss.loadablestudy.domain.LDStrength;
+import com.cpdss.loadablestudy.domain.LDTrim;
+import com.cpdss.loadablestudy.domain.LoadicatorAlgoRequest;
+import com.cpdss.loadablestudy.domain.LoadicatorPatternDetails;
 import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
@@ -197,6 +205,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Value("${algo.loadablestudy.api.url}")
   private String loadableStudyUrl;
 
+  @Value("${algo.loadicator.api.url}")
+  private String loadicatorUrl;
+
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @Autowired private CargoOperationRepository cargoOperationRepository;
@@ -253,6 +264,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
   private static final Long LOADABLE_STUDY_PROCESSING_STARTED_ID = 4L;
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
+  private static final Long LOADABLE_STUDY_STATUS_VERIFICATION_WITH_LOADICATOR_ID = 7L;
+  private static final Long LOADABLE_STUDY_STATUS_VERIFICATION_WITH_LOADICATOR_COMPLETED_ID = 8L;
+  private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID = 9L;
+  private static final Long LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED_ID =
+      10L;
   private static final Long LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID = 6L;
   private static final Long CONFIRMED_STATUS_ID = 2L;
   private static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
@@ -2579,9 +2595,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
                 });
         loadableStudyRepository.updateLoadableStudyStatus(
-            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get().getId());
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
+            loadableStudyOpt
+                .get()
+                .getId()); // ToDo - remove this code once Lodicator is implemented
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getProcesssId(), true);
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
+            request.getProcesssId(),
+            true); // ToDo - remove this code once Lodicator is implemented
       }
       builder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
@@ -3547,6 +3568,199 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     status.setProcessId(processId);
     status.setVesselxid(loadableStudy.getVesselXId());
     loadableStudyAlgoStatusRepository.save(status);
+  }
+
+  @Override
+  public void getLoadicatorData(
+      LoadicatorDataRequest request, StreamObserver<LoadicatorDataReply> responseObserver) {
+    log.info("Inside getLoadicatorData service");
+    LoadicatorDataReply.Builder replyBuilder = LoadicatorDataReply.newBuilder();
+    try {
+      LoadicatorAlgoRequest loadicator = new LoadicatorAlgoRequest();
+      buildLoadicatorUrlRequest(request, loadicator);
+      AlgoResponse algoResponse =
+          restTemplate.postForObject(loadicatorUrl, loadicator, AlgoResponse.class);
+
+      ObjectMapper objectMapper = new ObjectMapper();
+
+      objectMapper.writeValue(
+          new File("json/loadicator_" + request.getLoadableStudyId() + ".json"), loadicator);
+
+      loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+          LOADABLE_STUDY_STATUS_LOADICATOR_VERIFICATION_WITH_ALGO_ID,
+          algoResponse.getProcessId(),
+          true);
+      replyBuilder =
+          LoadicatorDataReply.newBuilder()
+              .setResponseStatus(
+                  ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
+
+    } catch (Exception e) {
+      log.error("Exception when when getLoadicatorData ", e);
+      replyBuilder =
+          LoadicatorDataReply.newBuilder()
+              .setResponseStatus(
+                  ResponseStatus.newBuilder()
+                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                      .setMessage("Error when getLoadicatorData ")
+                      .setStatus(FAILED)
+                      .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * @param request
+   * @param loadicator void
+   */
+  private void buildLoadicatorUrlRequest(
+      LoadicatorDataRequest request, LoadicatorAlgoRequest loadicator) {
+    loadicator.setProcessId(request.getProcessId());
+    loadicator.setLoadicatorPatternDetails(new ArrayList<LoadicatorPatternDetails>());
+    request
+        .getLoadicatorPatternDetailsList()
+        .forEach(
+            patternDetails -> {
+              LoadicatorPatternDetails patterns = new LoadicatorPatternDetails();
+              patterns.setLoadablePatternId(patternDetails.getLoadablePatternId());
+              patterns.setLdTrim(createLdTrim(patternDetails.getLDtrimList()));
+              patterns.setLdStrength(createLdStrength(patternDetails.getLDStrengthList()));
+              patterns.setLdIntactStability(
+                  createLdIntactStability(patternDetails.getLDIntactStabilityList()));
+              loadicator.getLoadicatorPatternDetails().add(patterns);
+            });
+  }
+
+  /**
+   * @param list
+   * @return LDIntactStability
+   */
+  private List<LDIntactStability> createLdIntactStability(
+      List<com.cpdss.common.generated.LoadableStudy.LDIntactStability> list) {
+    List<LDIntactStability> ldIntactStabilities = new ArrayList<LDIntactStability>();
+    list.forEach(
+        lDIntactStability -> {
+          LDIntactStability intactStability = new LDIntactStability();
+          intactStability.setAngleatmaxrleverJudgement(
+              lDIntactStability.getAngleatmaxrleverJudgement());
+          intactStability.setAngleatmaxrleverValue(lDIntactStability.getAngleatmaxrleverValue());
+          intactStability.setAreaofStability030Judgement(
+              lDIntactStability.getAreaofStability030Judgement());
+          intactStability.setAreaofStability030Value(
+              lDIntactStability.getAreaofStability030Value());
+          intactStability.setAreaofStability040Judgement(
+              lDIntactStability.getAreaofStability040Judgement());
+          intactStability.setAreaofStability040Value(
+              lDIntactStability.getAreaofStability040Value());
+          intactStability.setAreaofStability3040Judgement(
+              lDIntactStability.getAreaofStability3040Judgement());
+          intactStability.setAreaofStability3040Value(
+              lDIntactStability.getAreaofStability3040Value());
+          intactStability.setBigIntialGomJudgement(lDIntactStability.getBigIntialGomJudgement());
+          intactStability.setBigintialGomValue(lDIntactStability.getBigintialGomValue());
+          intactStability.setErrorDetails(lDIntactStability.getErrorDetails());
+          intactStability.setErrorStatus(lDIntactStability.getErrorStatus());
+          intactStability.setGmAllowableCurveCheckJudgement(
+              lDIntactStability.getGmAllowableCurveCheckJudgement());
+          intactStability.setGmAllowableCurveCheckValue(
+              lDIntactStability.getGmAllowableCurveCheckValue());
+          intactStability.setHeelBySteadyWindJudgement(
+              lDIntactStability.getHeelBySteadyWindJudgement());
+          intactStability.setHeelBySteadyWindValue(lDIntactStability.getHeelBySteadyWindValue());
+          intactStability.setId(lDIntactStability.getId());
+          intactStability.setMaximumRightingLeverJudgement(
+              lDIntactStability.getMaximumRightingLeverJudgement());
+          intactStability.setMaximumRightingLeverValue(
+              lDIntactStability.getMaximumRightingLeverValue());
+          intactStability.setMessageText(lDIntactStability.getMessageText());
+          intactStability.setStabilityAreaBaJudgement(
+              lDIntactStability.getStabilityAreaBaJudgement());
+          intactStability.setStabilityAreaBaValue(lDIntactStability.getStabilityAreaBaValue());
+          intactStability.setPortId(lDIntactStability.getPortId());
+          ldIntactStabilities.add(intactStability);
+        });
+
+    return ldIntactStabilities;
+  }
+
+  /**
+   * @param list
+   * @return LDStrength
+   */
+  private List<LDStrength> createLdStrength(
+      List<com.cpdss.common.generated.LoadableStudy.LDStrength> list) {
+    List<LDStrength> ldStrengths = new ArrayList<LDStrength>();
+    list.forEach(
+        ldStrength -> {
+          LDStrength strength = new LDStrength();
+          strength.setBendingMomentPersentFrameNumber(
+              ldStrength.getBendingMomentPersentFrameNumber());
+          strength.setBendingMomentPersentJudgement(ldStrength.getBendingMomentPersentJudgement());
+          strength.setBendingMomentPersentValue(ldStrength.getBendingMomentPersentValue());
+          strength.setErrorDetails(ldStrength.getErrorDetails());
+          strength.setId(ldStrength.getId());
+          strength.setInnerLongiBhdFrameNumber(ldStrength.getInnerLongiBhdFrameNumber());
+          strength.setInnerLongiBhdJudgement(ldStrength.getInnerLongiBhdJudgement());
+          strength.setInnerLongiBhdValue(ldStrength.getInnerLongiBhdValue());
+          strength.setMessageText(ldStrength.getMessageText());
+          strength.setOuterLongiBhdFrameNumber(ldStrength.getOuterLongiBhdFrameNumber());
+          strength.setOuterLongiBhdJudgement(ldStrength.getOuterLongiBhdJudgement());
+          strength.setOuterLongiBhdValue(ldStrength.getOuterLongiBhdValue());
+          strength.setSfFrameNumber(ldStrength.getSfFrameNumber());
+          strength.setSfHopperFrameNumber(ldStrength.getSfHopperFrameNumber());
+          strength.setSfHopperJudgement(ldStrength.getSfHopperJudgement());
+          strength.setSfHopperValue(ldStrength.getSfHopperValue());
+          strength.setSfSideShellFrameNumber(ldStrength.getSfSideShellFrameNumber());
+          strength.setSfSideShellJudgement(ldStrength.getSfSideShellJudgement());
+          strength.setSfSideShellValue(ldStrength.getSfSideShellValue());
+          strength.setShearingForceJudgement(ldStrength.getShearingForceJudgement());
+          strength.setShearingForcePersentValue(ldStrength.getShearingForcePersentValue());
+          strength.setPortId(ldStrength.getPortId());
+          ldStrengths.add(strength);
+        });
+
+    return ldStrengths;
+  }
+
+  /**
+   * @param list
+   * @return LDTrim
+   */
+  private List<LDTrim> createLdTrim(List<LDtrim> list) {
+    List<LDTrim> ldTrims = new ArrayList<LDTrim>();
+    list.forEach(
+        ldTrim -> {
+          LDTrim trim = new LDTrim();
+          trim.setAftDraftValue(ldTrim.getAftDraftValue());
+          trim.setAirDraftJudgement(ldTrim.getAirDraftJudgement());
+          trim.setAirDraftValue(ldTrim.getAirDraftValue());
+          trim.setDisplacementJudgement(ldTrim.getDisplacementJudgement());
+          trim.setDisplacementValue(ldTrim.getDisplacementValue());
+          trim.setErrorDetails(ldTrim.getErrorDetails());
+          trim.setErrorStatus(ldTrim.getErrorStatus());
+          trim.setForeDraftValue(ldTrim.getForeDraftValue());
+          trim.setHeelValue(ldTrim.getHeelValue());
+          trim.setId(ldTrim.getId());
+          trim.setMaximumAllowableJudement(ldTrim.getMaximumAllowableJudement());
+          trim.setMaximumAllowableVisibility(ldTrim.getMaximumAllowableVisibility());
+          trim.setMaximumDraftJudgement(ldTrim.getMaximumDraftJudgement());
+          trim.setMeanDraftValue(ldTrim.getMaximumDraftValue());
+          trim.setMaximumDraftValue(ldTrim.getMaximumDraftValue());
+          trim.setMeanDraftJudgement(ldTrim.getMeanDraftJudgement());
+          trim.setMeanDraftValue(ldTrim.getMeanDraftValue());
+          trim.setMessageText(ldTrim.getMessageText());
+          trim.setMinimumForeDraftInRoughWeatherJudgement(
+              ldTrim.getMinimumForeDraftInRoughWeatherJudgement());
+          trim.setMinimumForeDraftInRoughWeatherValue(
+              ldTrim.getMinimumForeDraftInRoughWeatherValue());
+          trim.setTrimValue(ldTrim.getTrimValue());
+          trim.setPortId(ldTrim.getPortId());
+          ldTrims.add(trim);
+        });
+
+    return ldTrims;
   }
 
   /**

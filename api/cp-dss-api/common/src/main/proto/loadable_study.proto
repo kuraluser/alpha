@@ -94,6 +94,9 @@ service LoadableStudyService {
 	rpc SaveOnBoardQuantity(OnBoardQuantityDetail) returns (OnBoardQuantityReply){
 	}
 	
+	rpc GetLoadicatorData(LoadicatorDataRequest) returns (LoadicatorDataReply) {
+	}
+	
 	rpc SaveAlgoLoadableStudyStatus(AlgoStatusRequest) returns (AlgoStatusReply) {
 	}
 	
@@ -115,10 +118,10 @@ service LoadableStudyService {
 	rpc GetLoadablePlanDetails(LoadablePlanDetailsRequest) returns (LoadablePlanDetailsReply) {
 	}
 	
-	rpc ConfirmPlan(ConfirmPlanRequest) returns (ConfirmPlanReply) {
+	rpc RecalculateVolume(RecalculateVolumeRequest) returns (RecalculateVolumeReply) {
 	}
 	
-	rpc RecalculateVolume(RecalculateVolumeRequest) returns (RecalculateVolumeReply) {
+	rpc ConfirmPlan(ConfirmPlanRequest) returns (ConfirmPlanReply) {
 	}
 	
 	rpc DownloadLoadableStudyAttachment(LoadableStudyAttachmentRequest) returns (LoadableStudyAttachmentReply){
@@ -129,7 +132,6 @@ service LoadableStudyService {
 	
 	rpc SaveLoadOnTop(SaveLoadOnTopRequest) returns (SaveCommentReply){
 	}
-	
 }
 
 message RecalculateVolumeRequest {
@@ -142,6 +144,99 @@ message RecalculateVolumeReply {
 	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
 }
 
+message LoadicatorDataRequest {
+	string processId = 1;
+	repeated LoadicatorPatternDetails loadicatorPatternDetails= 2;
+	int64 loadableStudyId = 3;
+}
+message LoadicatorDataReply {
+	string processId = 1;
+	int64 loadableStudyId = 2;
+	ResponseStatus responseStatus = 3;
+}
+
+message LoadicatorPatternDetails {
+	int64 loadablePatternId = 1;
+	repeated LDtrim lDtrim = 2;
+	repeated LDStrength lDStrength = 3;
+	repeated LDIntactStability lDIntactStability = 4;
+}
+
+message LDtrim {
+   int64 id = 1;
+   string foreDraftValue = 2;
+   string aftDraftValue = 3;
+   string trimValue = 4;
+   string heelValue = 5;
+   string meanDraftValue = 6;
+   string meanDraftJudgement = 7;
+   string displacementValue = 8;
+   string displacementJudgement = 9;
+   string maximumDraftValue = 10;
+   string maximumDraftJudgement = 11;
+   string airDraftValue = 12;
+   string airDraftJudgement = 13;
+   string minimumForeDraftInRoughWeatherValue = 14;
+   string minimumForeDraftInRoughWeatherJudgement = 15;
+   string maximumAllowableVisibility = 16;
+   string maximumAllowableJudement = 17;
+   bool errorStatus = 18;
+   string errorDetails = 19;
+   string messageText = 20;
+   int64 portId = 21;
+}
+
+message LDStrength{
+   int64 id = 1;
+   string shearingForcePersentValue = 2;
+   string shearingForceJudgement = 3;
+   string sfFrameNumber = 4;
+   string sfSideShellValue = 5;
+   string sfSideShellJudgement = 6;
+   string sfSideShellFrameNumber = 7;
+   string sfHopperValue = 8;
+   string sfHopperJudgement = 9;
+   string sfHopperFrameNumber = 10;
+   string outerLongiBhdValue = 11;
+   string outerLongiBhdJudgement = 12;
+   string outerLongiBhdFrameNumber = 13;
+   string innerLongiBhdValue = 14;
+   string innerLongiBhdJudgement = 15;
+   string innerLongiBhdFrameNumber = 16;
+   string bendingMomentPersentValue = 17;
+   string bendingMomentPersentJudgement = 18;
+   string bendingMomentPersentFrameNumber = 19;
+   bool errorStatus = 20;
+   string errorDetails = 21;
+   string messageText = 22;
+   int64 portId = 23;
+}
+
+message LDIntactStability {
+   int64 id = 1;
+   string bigintialGomValue = 2;
+   string bigIntialGomJudgement = 3;
+   string maximumRightingLeverValue = 4;
+   string maximumRightingLeverJudgement = 5;
+   string angleatmaxrleverValue = 6;
+   string angleatmaxrleverJudgement = 7;
+   string areaofStability030Value = 8;
+   string areaofStability030Judgement = 9;
+   string areaofStability040Value = 10;
+   string areaofStability040Judgement = 11;
+   string areaofStability3040Value = 12;
+   string areaofStability3040Judgement = 13;
+   string heelBySteadyWindValue = 14;
+   string heelBySteadyWindJudgement = 15;
+   string stabilityAreaBaValue = 16;
+   string stabilityAreaBaJudgement = 17;
+   string gmAllowableCurveCheckValue = 18;
+   string gmAllowableCurveCheckJudgement = 19;
+   bool errorStatus = 20;
+   string errorDetails = 21;
+   string messageText = 22;
+   int64 portId = 23;
+}
 message LoadablePatternAlgoRequest {
 	string processsId = 1;
 	repeated LoadablePlanDetails loadablePlanDetails = 2;
