@@ -23,4 +23,6 @@ public class CargoHistory {
   private String abbreviation;
 
   private BigDecimal quantity;
+
+  private BigDecimal api;
 }
