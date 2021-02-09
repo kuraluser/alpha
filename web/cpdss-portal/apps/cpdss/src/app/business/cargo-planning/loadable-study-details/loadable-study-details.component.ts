@@ -211,6 +211,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.displayLoadableQuntity = true;
         sessionStorage.removeItem('loadableStudyInfo');
       }
+    } else {
+      this.selectedLoadableStudy = null;
     }
     this.ngxSpinnerService.hide();
   }
