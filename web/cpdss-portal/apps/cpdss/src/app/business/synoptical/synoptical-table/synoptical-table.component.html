@@ -55,7 +55,7 @@
             </ng-container>
         </ng-template>
         <ng-template #cell let-rowData="rowData" let-column="column" let-colIndex="colIndex">
-            <td>
+            <td *ngIf="!rowData.colSpan || colIndex%2 == 0" [attr.colSpan]="rowData.colSpan ? rowData.colSpan : 1">
                 <ng-container *ngFor="let field of rowData.fields;let i = index">
                     <div class="error-icon-wrapper">
                         <span *ngIf="i > 0">&nbsp;-&nbsp;</span>
@@ -66,6 +66,7 @@
                                     <p-calendar appendTo="body" [showButtonBar]="true" [showTime]="true"
                                         inputId="{{field.key + colIndex}}" id="{{field.key + colIndex}}"
                                         [formControl]="getControl(colIndex,field.key)" [hideOnDateTimeSelect]="false"
+                                        [minDate]="today"
                                         dateFormat="dd-mm-yy" (onClose)="onBlur(field,colIndex)" #subcoldatetime>
                                         <p-footer>
                                             <button class="btn btn-main"
@@ -76,7 +77,7 @@
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.TIME">
                                     <p-calendar appendTo="body" inputId="{{field.key + colIndex}}"
-                                        id="{{field.key + colIndex}}" [timeOnly]="true"
+                                        id="{{field.key + colIndex}}" [timeOnly]="true" [readonlyInput]="true"
                                         [formControl]="getControl(colIndex,field.key)" (onBlur)="onBlur(field,colIndex)"
                                         #subcoltime>
                                     </p-calendar>

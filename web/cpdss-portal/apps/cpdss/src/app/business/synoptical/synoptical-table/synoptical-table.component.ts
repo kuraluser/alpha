@@ -56,6 +56,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   allColumns: SynopticalColumn[]
   datePipe: DatePipe = new DatePipe('en-US');
   synopticalRecordsCopy: ISynopticalRecords[] = [];
+  today = new Date();
 
   constructor(
     private synoticalApiService: SynopticalApiService,
@@ -65,6 +66,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private translateService: TranslateService,
   ) {
+    this.today.setHours(0,0,0,0);
   }
 
   /**
@@ -195,6 +197,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         }],
         header: 'Distance',
         editable: true,
+        colSpan: 2
       },
       {
         fields: [{
@@ -204,6 +207,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         }],
         header: 'Speed',
         editable: true,
+        colSpan: 2
       },
       {
         fields: [{
@@ -212,6 +216,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         }],
         header: 'Running Hours',
         editable: true,
+        colSpan: 2
       },
       {
         header: 'ETA/ETD',
@@ -248,6 +253,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           validators: ['dddd.dd.+']
         }],
         editable: true,
+        colSpan: 2
       },
       {
         header: 'Time of Sunrise',
@@ -1238,9 +1244,13 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         }
         break;
       case 'etaEtdPlanned': case 'etaEtdActual':
+        const value: Date = fc.value;
+        value.setSeconds(0, 0)
         if (colIndex > 0) {
           fcMin = this.getControl(colIndex - 1, field.key)
-          if (fc.value < fcMin.value) {
+          const minValue: Date = fcMin.value;
+          minValue.setSeconds(0, 0)
+          if (value <= minValue) {
             if (this.synopticalRecords[colIndex].operationType === 'ARR')
               fc.setErrors({ etaMin: true })
             else
@@ -1251,7 +1261,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         }
         if (colIndex < this.synopticalRecords.length - 1) {
           fcMax = this.getControl(colIndex + 1, field.key)
-          if (fc.value > fcMax.value) {
+          const maxValue: Date = fcMax.value;
+          maxValue.setSeconds(0, 0)
+          if (value >= maxValue) {
             if (this.synopticalRecords[colIndex].operationType === 'ARR')
               fc.setErrors({ etaMax: true })
             else
@@ -1298,7 +1310,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       default:
         const planIndex = field.key.includes('plan') ? 0 : 1
         const dynamicCols = this.cols.filter(col => col.dynamicKey)
-        dynamicCols.forEach( col => {
+        dynamicCols.forEach(col => {
           const dynamicKey = col.dynamicKey;
           const totalCols = this.getAllColumns(col.subHeaders)
           const totalKeys = totalCols.map(totalCol => totalCol.fields[0].key)
@@ -1583,9 +1595,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   * @returns {boolean}
   * @memberof SynopticalTableComponent
   */
-  setFuelTypeId(json, fieldKey, record, item, primaryKey){
-    if(['foList','doList','fwList','lubeList'].indexOf(fieldKey) >= 0){
-      const listItem = record[fieldKey].find( data => data[primaryKey] === item.id)
+  setFuelTypeId(json, fieldKey, record, item, primaryKey) {
+    if (['foList', 'doList', 'fwList', 'lubeList'].indexOf(fieldKey) >= 0) {
+      const listItem = record[fieldKey].find(data => data[primaryKey] === item.id)
       json['fuelTypeId'] = listItem.fuelTypeId
     }
     return json

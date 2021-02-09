@@ -66,6 +66,7 @@ export interface SynopticalColumn {
     expandedFields?: SynopticalColumn[];
     inputs?: SynopticField[];
     dynamicKey?: string;
+    colSpan?: number;
 }
 
 /**
