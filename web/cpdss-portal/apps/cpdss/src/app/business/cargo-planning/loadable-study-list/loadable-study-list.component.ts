@@ -11,6 +11,7 @@ import { LoadableStudyListTransformationService } from '../services/loadable-stu
 import { IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Dropdown } from 'primeng/dropdown';
 
 /**
  * Loadable study list
@@ -46,7 +47,7 @@ export class LoadableStudyListComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.activatedRoute.params.subscribe(async params => {
-      this.voyageId = params.id ? Number(params.id): 0;
+      this.voyageId = params.id ? Number(params.id) : 0;
       this.ngxSpinnerService.show();
       const res = await this.vesselsApiService.getVesselsInfo().toPromise();
       this.vesselDetails = res[0] ?? <IVessel>{};
@@ -63,9 +64,9 @@ export class LoadableStudyListComponent implements OnInit {
    * Take the user to particular loadable study
    */
   onRowSelect(event: IDataTableEvent) {
-    if (event?.field !== 'actions'){
+    if (event?.field !== 'actions') {
       this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
-    }else{
+    } else {
       this.callNewLoadableStudyPopup(true, event.data)
     }
   }
@@ -133,19 +134,25 @@ export class LoadableStudyListComponent implements OnInit {
   columnClick(event: IDataTableEvent) {
     if (event?.field === 'actions') {
       this.callNewLoadableStudyPopup(true, event.data)
-    }else{
+    } else {
       this.onRowSelect(event);
     }
   }
 
-    /**
-   * Handler for added new loadable study
-   *
-   * @param {*} event
-   * @memberof LoadableStudyListComponent
-   */
+  /**
+ * Handler for added new loadable study
+ *
+ * @param {*} event
+ * @memberof LoadableStudyListComponent
+ */
   onNewLoadableStudyAdded(event) {
     this.router.navigate(['business/cargo-planning/loadable-study-details/' + this.vesselDetails?.id + '/' + this.selectedVoyage.id + '/' + event]);
   }
 
+  /**
+   * Clear filter data
+   */
+  clearFilter(dropdown: Dropdown) {
+    dropdown.resetFilter();
+  }
 }

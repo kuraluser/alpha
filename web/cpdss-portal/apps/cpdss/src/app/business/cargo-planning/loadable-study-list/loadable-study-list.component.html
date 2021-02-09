@@ -8,8 +8,8 @@
                 {{ 'LOADABLE_STUDY_LIST' | translate }}</h5>
             <span class="ml-20 mr-10">
                 {{ 'LOADABLE_STUDY_LIST_VOYAGE_NO'  | translate }}</span>
-            <p-dropdown styleClass="dropdown-w-100" [options]="voyages" [(ngModel)]="selectedVoyage"
-                optionLabel="voyageNo" [filter]="true"
+            <p-dropdown #dd styleClass="dropdown-w-100" [options]="voyages" [(ngModel)]="selectedVoyage"
+                optionLabel="voyageNo" [filter]="true" (click)="clearFilter(dd)"
                 placeholder="{{ 'LOADABLE_STUDY_LIST_VOYAGE_NO_PLACEHOLDER' | translate }}"
                 (onChange)="showLoadableStudyList()">
                 <ng-template pTemplate="selectedItem">
