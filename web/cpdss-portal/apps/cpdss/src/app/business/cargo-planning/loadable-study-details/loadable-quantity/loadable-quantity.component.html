@@ -18,8 +18,8 @@
                         <label for="loadable_quantity_port_dropdown"
                             class="col no-left-padding">{{'LOADABLE_QUANTITY_PORT_NAME' | translate}}</label>
                         <div class="col dropdown-loadable-quantity">
-                            <p-dropdown id="loadable_quantity_port_dropdown" styleClass="form-control" [filter]="true"
-                                [options]="ports" formControlName="portName" optionLabel="name"
+                            <p-dropdown #dd id="loadable_quantity_port_dropdown" styleClass="form-control" [filter]="true"
+                                [options]="ports" formControlName="portName" optionLabel="name" (click)="clearFilter(dd)"
                                 placeholder="{{ 'LOADABLE_QUANTITY_SELECT_PORT_NAME'  | translate }}"
                                 [readonly]="isEditable">
                             </p-dropdown>

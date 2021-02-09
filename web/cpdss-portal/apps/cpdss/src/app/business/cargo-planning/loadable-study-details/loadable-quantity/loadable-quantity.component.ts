@@ -14,6 +14,7 @@ import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
+import { Dropdown } from 'primeng/dropdown';
 
 /**
  *  popup for loadable quantity
@@ -497,5 +498,12 @@ export class LoadableQuantityComponent implements OnInit {
     const formControl = <FormControl>this.loadableQuantityForm.get(formControlName);
     return formControl;
   }
+
+  /**
+   * Clear filter data
+   */
+  clearFilter(dropdown: Dropdown) {
+    dropdown.resetFilter();
+}
 
 }
