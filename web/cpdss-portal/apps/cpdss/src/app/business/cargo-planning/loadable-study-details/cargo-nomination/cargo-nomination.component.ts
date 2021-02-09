@@ -620,9 +620,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    */
   private async updateCommingleButton() {
     const addedCargoNominations = this.cargoNominations.filter((cargoNomination) => !cargoNomination.isAdd);
-    if (addedCargoNominations.length >= 2) {
-      const _hasPendingUpdates = await this.checkForPendingUpdates();
-      if(_hasPendingUpdates){
+    if (addedCargoNominations.length >= 2) { 
+      if(this.dataTableLoading){
         this.cargoNominationUpdate.emit(true);
         setTimeout(() => {
           this.updateCommingleButton();

@@ -91,7 +91,7 @@ export class CommingleComponent implements OnInit {
  * @memberof CommingleComponent
  */
   ngOnInit() {
-    this.cargoNominationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.EDIT, PERMISSION_ACTION.ADD] };
+    this.cargoNominationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], true);
     this.isEditable = this.permission ? this.permission?.edit : false;
     this.percentage = [{ id: 10, name: "10%" }, { id: 20, name: "20%" }, { id: 30, name: "30%" }, { id: 40, name: "40%" }, { id: 50, name: "50%" }, { id: 60, name: "60%" }, { id: 70, name: "70%" }, { id: 80, name: "80%" }, { id: 90, name: "90%" }, { id: 100, name: "100%" }];
@@ -302,7 +302,7 @@ export class CommingleComponent implements OnInit {
     this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo1;
     this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2;
     const _commingleLists = commingleData?.map((item) => {
-      const manualData = this.loadableStudyDetailsTransformationService.getCommingleValueObject(item, false, this.isEditable, this.listData);
+      const manualData = this.loadableStudyDetailsTransformationService.getCommingleValueObject(item, false, !this.isEditable, this.listData);
       return manualData;
     });
     const commingleListArray = _commingleLists.map(commingle => this.initCommingleManualFormGroup(commingle));
@@ -332,7 +332,7 @@ export class CommingleComponent implements OnInit {
         cargo1Pct: null,
         cargo2Pct: null
       };
-      const _commingle = this.loadableStudyDetailsTransformationService.getCommingleValueObject(commingle, true, this.isEditable, this.listData);
+      const _commingle = this.loadableStudyDetailsTransformationService.getCommingleValueObject(commingle, true, !this.isEditable, this.listData);
       this.manualCommingleList = [_commingle, ...this.manualCommingleList];
       const dataTableControl = <FormArray>this.commingleManualForm.get('dataTable');
       dataTableControl.insert(0, this.initCommingleManualFormGroup(_commingle));
