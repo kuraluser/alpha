@@ -491,11 +491,11 @@ hr{
    .p-multiselect-items .p-multiselect-item{
      color: $text-primary;
      &:hover{
-      color: $text-secondary!important;
+      color: $hover-color!important;
       background:$dropdown-menu-hover-bg!important;
      }
      &.p-highlight{
-      color: $text-secondary!important;
+      color: $hover-color!important;
       background:$dropdown-menu-hover-bg!important;
       &:focus{
         outline: none;

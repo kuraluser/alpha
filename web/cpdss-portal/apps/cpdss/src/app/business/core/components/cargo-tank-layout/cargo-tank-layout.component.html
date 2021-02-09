@@ -32,8 +32,6 @@
                 <h5 class="tank-name">
                     <div class="tank-btn-rounded" *ngIf="options?.showTooltip" (mouseover)="tank?.commodity && op.toggle($event)"
                     (mouseout)="tank?.commodity && op.toggle($event)"></div>
-                    <!-- <div class="tank-btn-rounded" *ngIf="options?.isBullet" (click)="tank?.commodity && op.toggle($event)"
-                    ></div> -->
                     {{tank?.shortName}}
                 </h5>
                 <ng-container *ngIf="tank?.commodity">
