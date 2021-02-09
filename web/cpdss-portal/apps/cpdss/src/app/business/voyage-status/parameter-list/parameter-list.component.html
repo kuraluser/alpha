@@ -10,7 +10,7 @@
 
         <tr>
             <td *ngFor="let col of columns">
-                {{rowData[col.field]}}
+                {{rowData[col.field] |   translate}}
             </td>
         </tr>
     </ng-template>
