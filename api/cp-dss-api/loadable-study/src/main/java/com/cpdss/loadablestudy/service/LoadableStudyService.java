@@ -199,7 +199,7 @@ import org.springframework.web.client.RestTemplate;
 @Transactional
 public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
-  @Value("${loadablestudy.attachement.rooFolder}")
+  @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
 
   @Value("${algo.loadablestudy.api.url}")

@@ -46,6 +46,7 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
@@ -2091,9 +2092,20 @@ class LoadableStudyServiceTest {
         com.cpdss.common.generated.LoadableStudy.SynopticalRecord.newBuilder();
     record.addAllOhq(this.createSynopticalOhqRecords());
     record.addAllCargo(this.createSynopticalCargoRecord());
+    record.addAllBallast(this.createSynopticalBallastRecords());
     builder.addSynopticalRecords(record.build());
     builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return builder.build();
+  }
+
+  private List<SynopticalBallastRecord> createSynopticalBallastRecords() {
+    List<SynopticalBallastRecord> records = new ArrayList<>();
+    IntStream.range(0, 5)
+        .forEach(
+            i -> {
+              records.add(SynopticalBallastRecord.newBuilder().setTankId(Long.valueOf(i)).build());
+            });
+    return records;
   }
 
   private List<SynopticalOhqRecord> createSynopticalOhqRecords() {

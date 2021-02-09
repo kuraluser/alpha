@@ -58,6 +58,7 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
@@ -277,6 +278,10 @@ class LoadableStudyServiceTest {
   private static final List<Long> CARGO_TANK_CATEGORIES =
       Arrays.asList(
           CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID, CARGO_VOID_TANK_CATEGORY_ID);
+  private static final Long BALLAST_VOID_TANK_CATEGORY_ID = 16L;
+  private static final Long BALLAST_TANK_CATEGORY_ID = 2L;
+  private static final List<Long> BALLAST_TANK_CATEGORIES =
+      Arrays.asList(BALLAST_TANK_CATEGORY_ID, BALLAST_VOID_TANK_CATEGORY_ID);
   private static final String OPERATION_TYPE_ARR = "ARR";
   private static final String OPERATION_TYPE_DEP = "DEP";
 
@@ -3354,8 +3359,8 @@ class LoadableStudyServiceTest {
         .thenReturn(this.createOhqEntities());
 
     Mockito.when(
-            this.loadablePlanStowageBallastDetailsRepository.findBallastDetailsForLoadableStudy(
-                anyLong(), anyLong()))
+            this.loadablePlanStowageBallastDetailsRepository.findByLoadablePatternIdAndIsActive(
+                anyLong(), anyBoolean()))
         .thenReturn(this.createBallastEntities());
 
     Mockito.when(
@@ -3406,6 +3411,7 @@ class LoadableStudyServiceTest {
     List<Long> tankCategories = new ArrayList<>();
     tankCategories.addAll(OHQ_TANK_CATEGORIES);
     tankCategories.addAll(CARGO_TANK_CATEGORIES);
+    tankCategories.addAll(BALLAST_TANK_CATEGORIES);
     VesselReply.Builder builder = VesselReply.newBuilder();
     tankCategories.forEach(
         i -> {
@@ -3749,6 +3755,10 @@ class LoadableStudyServiceTest {
     when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
             any(LoadableStudy.class), anyBoolean()))
         .thenReturn(Arrays.asList(ID_TEST_VALUE));
+    when(this.loadablePlanStowageBallastDetailsRepository
+            .findByLoadablePatternIdAndPortXIdAndOperationTypeAndIsActive(
+                anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(this.createBallastEntities());
   }
 
   private List<LoadablePatternCargoDetails> createLoadablePatternCargoDetails()
@@ -3828,6 +3838,16 @@ class LoadableStudyServiceTest {
               .setPlannedWeight(empty ? "" : NUMERICAL_TEST_VALUE)
               .setActualWeight(empty ? "" : NUMERICAL_TEST_VALUE)
               .build());
+
+      recordBuilder.addBallast(
+          SynopticalBallastRecord.newBuilder().setTankId(ID_TEST_VALUE).build());
+      recordBuilder.addBallast(SynopticalBallastRecord.newBuilder().setTankId(13L).build());
+      recordBuilder.addBallast(
+          SynopticalBallastRecord.newBuilder()
+              .setTankId(ID_TEST_VALUE)
+              .setPlannedWeight(empty ? "" : NUMERICAL_TEST_VALUE)
+              .setActualWeight(empty ? "" : NUMERICAL_TEST_VALUE)
+              .build());
       com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData data =
           com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData.newBuilder()
               .setHogSag(i == 1 ? "" : NUMERICAL_TEST_VALUE)
@@ -3839,7 +3859,6 @@ class LoadableStudyServiceTest {
               .setHogSag(i == 1 ? "" : NUMERICAL_TEST_VALUE)
               .build();
       recordBuilder.setLoadicatorData(data);
-      recordBuilder.setBallastActual(i == 1 ? "" : NUMERICAL_TEST_VALUE);
       requestBuilder.addSynopticalRecord(recordBuilder.build());
     }
     return requestBuilder;
