@@ -21,6 +21,9 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
+import com.cpdss.common.generated.LoadableStudy.LDIntactStability;
+import com.cpdss.common.generated.LoadableStudy.LDStrength;
+import com.cpdss.common.generated.LoadableStudy.LDtrim;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
@@ -39,6 +42,9 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply;
+import com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
@@ -2855,6 +2861,81 @@ class LoadableStudyServiceTest {
     assertNull(responseObserver.getError());
     assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
     assertEquals(0L, replies.get(0).getId());
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  void testGetLoadicatorDataRuntimeException() {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    AlgoResponse algoResponse = new AlgoResponse();
+    algoResponse.setProcessId("");
+    Mockito.when(
+            restTemplate.postForObject(
+                anyString(),
+                any(com.cpdss.loadablestudy.domain.LoadicatorAlgoRequest.class),
+                any(Class.class)))
+        .thenThrow(RuntimeException.class);
+
+    StreamRecorder<LoadicatorDataReply> responseObserver = StreamRecorder.create();
+    spyService.getLoadicatorData(this.createLoadicatorDataRequest(), responseObserver);
+    List<LoadicatorDataReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  void testGetLoadicatorData() {
+    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
+    AlgoResponse algoResponse = new AlgoResponse();
+    algoResponse.setProcessId("");
+    Mockito.when(
+            restTemplate.postForObject(
+                anyString(),
+                any(com.cpdss.loadablestudy.domain.LoadicatorAlgoRequest.class),
+                any(Class.class)))
+        .thenReturn(algoResponse);
+    StreamRecorder<LoadicatorDataReply> responseObserver = StreamRecorder.create();
+    spyService.getLoadicatorData(this.createLoadicatorDataRequest(), responseObserver);
+    List<LoadicatorDataReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /** @return LoadicatorDataRequest */
+  private LoadicatorDataRequest createLoadicatorDataRequest() {
+    LoadicatorDataRequest.Builder builder = LoadicatorDataRequest.newBuilder();
+    builder.addLoadicatorPatternDetails(buildLoadicatorPatternDetails());
+    return builder.build();
+  }
+
+  /** @return LoadicatorPatternDetails */
+  private LoadicatorPatternDetails buildLoadicatorPatternDetails() {
+    LoadicatorPatternDetails.Builder builder = LoadicatorPatternDetails.newBuilder();
+    builder.addLDIntactStability(buildLDIntactStability());
+    builder.addLDStrength(buildLDStrength());
+    builder.addLDtrim(buildLDtrim());
+    return builder.build();
+  }
+
+  /** @return LDtrim */
+  private LDtrim buildLDtrim() {
+    LDtrim.Builder builder = LDtrim.newBuilder();
+    return builder.build();
+  }
+
+  /** @return LDStrength */
+  private LDStrength buildLDStrength() {
+    LDStrength.Builder builder = LDStrength.newBuilder();
+    return builder.build();
+  }
+
+  /** @return LDIntactStability */
+  private LDIntactStability buildLDIntactStability() {
+    LDIntactStability.Builder builder = LDIntactStability.newBuilder();
+    return builder.build();
   }
 
   /** Test GetOnBoardQuantity */
