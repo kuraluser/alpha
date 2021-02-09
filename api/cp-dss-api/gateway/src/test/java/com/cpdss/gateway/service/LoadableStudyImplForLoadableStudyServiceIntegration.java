@@ -17,6 +17,8 @@ import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
+import com.cpdss.common.generated.LoadableStudy.ValveSegregationReply;
+import com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceImplBase;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
@@ -150,6 +152,31 @@ public class LoadableStudyImplForLoadableStudyServiceIntegration
     synopticalRecordBuilder.addCargo(synopticalCargoRecord);
     replyBuilder.addSynopticalRecords(synopticalRecordBuilder);
     responseObserver.onNext(replyBuilder.build());
+    responseObserver.onCompleted();
+  }
+
+  @Override
+  public void getValveSegregation(
+      ValveSegregationRequest request, StreamObserver<ValveSegregationReply> responseObserver) {
+    ValveSegregationReply.Builder valveSegregationReply = ValveSegregationReply.newBuilder();
+    ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+    responseStatus.setStatus(SUCCESS);
+    valveSegregationReply.setResponseStatus(responseStatus);
+    responseObserver.onNext(valveSegregationReply.build());
+    responseObserver.onCompleted();
+  }
+
+  @Override
+  public void saveCargoNomination(
+      CargoNominationRequest request, StreamObserver<CargoNominationReply> responseObserver) {
+    CargoNominationReply.Builder cargoNominationReply = CargoNominationReply.newBuilder();
+    ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+    responseStatus.setStatus(SUCCESS);
+    cargoNominationReply.setResponseStatus(responseStatus);
+    CargoNominationDetail.Builder detailBuilder = CargoNominationDetail.newBuilder();
+    detailBuilder.setId(1);
+    cargoNominationReply.addCargoNominations(detailBuilder);
+    responseObserver.onNext(cargoNominationReply.build());
     responseObserver.onCompleted();
   }
 }

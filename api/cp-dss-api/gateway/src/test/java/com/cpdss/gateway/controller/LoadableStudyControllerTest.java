@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -875,6 +876,46 @@ class LoadableStudyControllerTest {
             result ->
                 assertEquals(
                     "Error in saveCargoNomination", result.getResolvedException().getMessage()));
+  }
+
+  @Test
+  void testDeleteCargoNomination() throws Exception {
+    when(loadableStudyService.deleteCargoNomination(Mockito.any(), Mockito.any()))
+        .thenReturn(cargoNominationResponse);
+    this.mockMvc
+        .perform(
+            delete(
+                    "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/cargo-nominations/{id}",
+                    1,
+                    1,
+                    30,
+                    123)
+                .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa"))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  void testDeleteCargoNominationWithException() throws Exception {
+    when(loadableStudyService.deleteCargoNomination(Mockito.any(), Mockito.any()))
+        .thenThrow(
+            new GenericServiceException(
+                "Error in deleteCargoNomination",
+                CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                HttpStatusCode.INTERNAL_SERVER_ERROR));
+    this.mockMvc
+        .perform(
+            delete(
+                    "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/cargo-nominations/{id}",
+                    1,
+                    1,
+                    30,
+                    123)
+                .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa"))
+        .andExpect(status().isInternalServerError())
+        .andExpect(
+            result ->
+                assertEquals(
+                    "Error in deleteCargoNomination", result.getResolvedException().getMessage()));
   }
 
   private String createSaveCargoNominationRequest(boolean existingRecord)

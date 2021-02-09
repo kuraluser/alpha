@@ -5,8 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.gateway.domain.CargoGroup;
+import com.cpdss.gateway.domain.CargoNomination;
+import com.cpdss.gateway.domain.CargoNominationResponse;
 import com.cpdss.gateway.domain.CommingleCargo;
 import com.cpdss.gateway.domain.CommingleCargoResponse;
+import com.cpdss.gateway.domain.LoadingPort;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationRequest;
 import com.cpdss.gateway.domain.PortRotationResponse;
@@ -22,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -30,13 +34,15 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
       "grpc.server.inProcessName=test", // Enable inProcess server
       "grpc.server.port=-1", // Disable external server
       "grpc.client.loadableStudyService.address=in-process:test",
-      "grpc.client.vesselInfoService.address=in-process:test" // Configure the client to connect to
+      "grpc.client.vesselInfoService.address=in-process:test",
+      "grpc.client.cargoInfoService.address=in-process:test" // Configure the client to connect to
       // the inProcess server
     })
 @SpringJUnitConfig(
     classes = {
       LoadableStudyServiceIntegrationConfiguration.class,
-      VesselInfoImplForLoadableStudyServiceIntegration.class
+      VesselInfoImplForLoadableStudyServiceIntegration.class,
+      CargoInfoImplForCargoInfoServiceIntegration.class
     })
 @DirtiesContext
 class LoadableStudyServiceIntegrationTest {
@@ -59,6 +65,25 @@ class LoadableStudyServiceIntegrationTest {
   void testSaveCommingleCargo() throws GenericServiceException {
     CommingleCargoResponse response =
         loadableStudyService.saveCommingleCargo(Long.valueOf(0), createCommingleCargo());
+    assertThat(response.getResponseStatus().getStatus()).isEqualTo(HTTP_STATUS_200);
+  }
+
+  @Test
+  void testGetCargoNomination() throws GenericServiceException {
+    CargoNominationResponse response =
+        loadableStudyService.getCargoNomination(Long.valueOf(0), new HttpHeaders());
+    assertThat(response.getResponseStatus().getStatus()).isEqualTo(HTTP_STATUS_200);
+  }
+
+  @Test
+  void testSaveCargoNomination() throws GenericServiceException {
+    CargoNominationResponse response =
+        loadableStudyService.saveCargoNomination(
+            Long.valueOf(0),
+            Long.valueOf(0),
+            Long.valueOf(0),
+            createCargoNomination(),
+            new HttpHeaders());
     assertThat(response.getResponseStatus().getStatus()).isEqualTo(HTTP_STATUS_200);
   }
 
@@ -123,5 +148,17 @@ class LoadableStudyServiceIntegrationTest {
     voyageStatusRequest.setPortOrder(Long.valueOf(4));
     voyageStatusRequest.setOperationType("ARR");
     return voyageStatusRequest;
+  }
+
+  private CargoNomination createCargoNomination() {
+    CargoNomination cargoNomination = new CargoNomination();
+    cargoNomination.setId(1L);
+    cargoNomination.setAbbreviation("testAbbr");
+    List<LoadingPort> loadingPorts = new ArrayList<>();
+    LoadingPort loadingPort = new LoadingPort();
+    loadingPort.setId(1L);
+    loadingPorts.add(loadingPort);
+    cargoNomination.setLoadingPorts(loadingPorts);
+    return cargoNomination;
   }
 }
