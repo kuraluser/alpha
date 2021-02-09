@@ -13,7 +13,7 @@
                     <div class="col-7">
                         <p-dropdown id="commingle_purpose_dropdown" styleClass="form-control" appendTo="body"
                             [options]="purposeOfCommingle" optionLabel="name" id="purpose_commingle"
-                            (onChange)="selectPurpose($event)" formControlName="purpose" [readonly]="isEditable">
+                            (onChange)="selectPurpose($event)" formControlName="purpose" [readonly]="!isEditable">
                         </p-dropdown>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
                         <p-multiSelect [options]="preferredTankList" styleClass="w-100" appendTo="body"
                             defaultLabel="{{'COMMINGLE_SELECT_PREFERRED_TANK' | translate}}" (onChange)="onPreferredTankSelect()"
                             id="commingle_preferred_tank" optionLabel="shortName" formControlName="preferredTanks"
-                            [readonly]="isEditable" [selectionLimit]="5">
+                            [readonly]="!isEditable" [selectionLimit]="5">
                         </p-multiSelect>
                         <div class="text-danger" *ngIf="isMaxPreferredTank">{{'COMMINGLE_POPUP_PREFERRED_TANK_MAX_LIMIT' | translate}}</div>
                     </div>
@@ -70,7 +70,7 @@
                         <div class="col">
                             <p-dropdown id="commingle_cargo1_dropdown" styleClass="form-control" appendTo="body"
                                 [filter]="true" [options]="cargoNominationsCargo1" optionLabel="name"
-                                formControlName="cargo1" (onChange)="onChange($event, 1)" [readonly]="isEditable"
+                                formControlName="cargo1" (onChange)="onChange($event, 1)" [readonly]="!isEditable"
                                 placeholder="{{'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER' | translate}}">
                             </p-dropdown>
                             <cpdss-portal-validation-error [errors]="fieldError('cargo1')"
@@ -89,7 +89,7 @@
                         <div class="col">
                             <p-dropdown id="commingle_cargo2_dropdown" appendTo="body" styleClass="form-control"
                                 [filter]="true" [options]="cargoNominationsCargo2" optionLabel="name"
-                                formControlName="cargo2" (onChange)="onChange($event, 2)" [readonly]="isEditable"
+                                formControlName="cargo2" (onChange)="onChange($event, 2)" [readonly]="!isEditable"
                                 placeholder="{{'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER' | translate}}">
                             </p-dropdown>
                             <cpdss-portal-validation-error [errors]="fieldError('cargo2')"
