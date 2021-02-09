@@ -94,7 +94,16 @@ export class LoadableQuantityComponent implements OnInit {
    * @returns {number}
    */
   convertToNumber(value: string) {
-    value = value.replace(',', '');
+    value = value?.replace(',', '');
+    return Number(value)
+  }
+
+   /**
+   * parse number from formatted percentage string
+   * @returns {number}
+   */
+  convertPercentageToNumber(value: string) {
+    value = value?.replace('%', '');
     return Number(value)
   }
 
