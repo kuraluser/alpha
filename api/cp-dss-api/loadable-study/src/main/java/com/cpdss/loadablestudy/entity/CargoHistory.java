@@ -48,4 +48,7 @@ public class CargoHistory extends EntityDoc {
 
   @Column(name = "quantity")
   private BigDecimal quantity;
+
+  @Column(name = "api")
+  private BigDecimal api;
 }

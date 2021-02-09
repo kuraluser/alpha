@@ -2403,7 +2403,7 @@ public class LoadableStudyService {
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
     SynopticalTableLoadicatorData proto = synopticalProtoRecord.getLoadicatorData();
     synopticalRecord.setHogSag(
-        isEmpty(proto.getHogSag()) ? null : new BigDecimal(proto.getHogSag()));
+        isEmpty(proto.getHogSag()) ? BigDecimal.ZERO : new BigDecimal(proto.getHogSag()));
     synopticalRecord.setFinalDraftFwd(
         isEmpty(proto.getFinalDraftFwd())
             ? BigDecimal.ZERO

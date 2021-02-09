@@ -199,7 +199,7 @@ import org.springframework.web.client.RestTemplate;
 @Transactional
 public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
-  @Value("${loadablestudy.attachement.rooFolder}")
+  @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
 
   @Value("${algo.loadablestudy.api.url}")
@@ -614,7 +614,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       List<LoadableStudy> loadableStudyEntityList =
           this.loadableStudyRepository
-              .findByVesselXIdAndVoyageAndIsActiveOrderByLastModifiedDateTimeDesc(
+              .findByVesselXIdAndVoyageAndIsActiveOrderByCreatedDateTimeDesc(
                   request.getVesselId(), voyageOpt.get(), true);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT);
@@ -4220,6 +4220,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(dto.getAbbreviation()).ifPresent(builder::setAbbreviation);
           Optional.ofNullable(dto.getQuantity())
               .ifPresent(item -> builder.setWeight(valueOf(item)));
+          Optional.ofNullable(dto.getApi()).ifPresent(item -> builder.setDensity(valueOf(item)));
         }
       }
       obqDetailList.add(builder.build());
