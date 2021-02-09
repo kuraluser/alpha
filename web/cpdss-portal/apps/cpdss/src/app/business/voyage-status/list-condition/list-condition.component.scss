@@ -1,8 +1,5 @@
 .list-even-keel {
     height: 67px;
-    .col:nth-child(2){
-        padding-top: 70px;
-    }
 }
 
 .list-port {
@@ -14,4 +11,8 @@
 }
 .list-condition-wrapper{
     height: 110px;
+}
+
+.list-content{
+    padding-top: 70px;
 }

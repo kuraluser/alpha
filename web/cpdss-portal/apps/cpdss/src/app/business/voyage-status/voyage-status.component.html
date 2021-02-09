@@ -44,7 +44,7 @@
             <div class="col tank-layout-status" *ngIf="voyageStatusResponse">
                 <cpdss-portal-ship-landing-tanks [vesselId]="vesselInfo?.id" [voyageId]="selectedVoyage?.id" [loadableStudyId]="selectedVoyage?.confirmedLoadableStudyId" [shipLandingTanks]="voyageStatusResponse" [selectedPortDetails]="selectedPortDetails" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"></cpdss-portal-ship-landing-tanks>
             </div>
-            <div class="col sidebar-right">
+            <div class="col sidebar-right-landing tank-parameters-righ">
                 <cpdss-portal-cargo-details *ngIf="cargoConditions && cargoQuantities" [cargoConditions]="cargoConditions" [cargoQuantities]="cargoQuantities" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"></cpdss-portal-cargo-details>
             </div>
         </div>
@@ -56,7 +56,7 @@
             <div class="col">
                 <cpdss-portal-trim-condition *ngIf="voyageStatusResponse?.stabilityConditions" [trim]="voyageStatusResponse?.stabilityConditions?.calculatedTrimActual" [hogSag]="voyageStatusResponse?.stabilityConditions?.hogSag"></cpdss-portal-trim-condition>
             </div>
-            <div class="col sidebar-right">
+            <div class="col sidebar-right-landing">
                 <cpdss-portal-draft-condition *ngIf="voyageStatusResponse?.stabilityConditions" [draftCondition]="voyageStatusResponse?.stabilityConditions"></cpdss-portal-draft-condition>
             </div>
         </div>

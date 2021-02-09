@@ -158,6 +158,7 @@ export class LoadableStudyDetailsTransformationService {
         listName: 'priorityList',
         filterField: 'priority.value',
         fieldPlaceholder: 'SELECT_PRIORITY',
+        fieldHeaderClass: 'column-priority',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR'
         }

@@ -1,7 +1,15 @@
-<div class="text-center text-uppercase">
+<div class="text-center text-uppercase table-head-draft">
     <span>{{'VOYAGE_STATUS_DRAFT_CONDITION_HEADER' | translate}}</span>
 </div>
 <p-table *ngIf="draftCondition && value" [columns]="columns" [value]="value">
+    <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+            <col style="width:80px">
+                <col>
+                <col>
+                <col>
+        </colgroup>
+    </ng-template>
     <ng-template pTemplate="header" let-columns>
         <tr>
             <th *ngFor="let col of columns">
