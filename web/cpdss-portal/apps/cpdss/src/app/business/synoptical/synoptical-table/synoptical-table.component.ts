@@ -1443,6 +1443,11 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           const saveJson = {};
           saveJson['id'] = row.id;
           saveJson['portId'] = row.portId;
+          this.headerColumns.forEach( col=> {
+            col.fields.forEach(field => {
+              saveJson[field.key] = this.synopticalRecords[index][field.key]
+            })
+          })
           this.cols.forEach(col => {
             this.setColValue(col, saveJson, index)
           })
