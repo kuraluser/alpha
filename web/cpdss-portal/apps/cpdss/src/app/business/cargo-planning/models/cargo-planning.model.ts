@@ -645,3 +645,14 @@ export interface IGeneratePatternResponse {
     responseStatus: IResponse;
     processId: string;
 }
+
+/**
+ * Interface for get confir status
+ *
+ * @export
+ * @interface IConfirmStatusResponse
+ */
+export interface IConfirmStatusResponse {
+    responseStatus: IResponse;
+    confirmed: boolean;
+}

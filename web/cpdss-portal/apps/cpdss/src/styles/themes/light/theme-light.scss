@@ -1090,3 +1090,11 @@ tr:hover a{
 .tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div.active{
   outline: 3px solid $tank-ohq-border!important;
 }
+
+.check-rounded{
+  border: 1px solid $hover-color;
+}
+.btn.confirmed{
+  background: $btn-highlight !important;
+  color: $hover-color;
+} 

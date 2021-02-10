@@ -41,7 +41,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   }
   set selectedLoadableStudy(selectedLoadableStudy: LoadableStudy) {
     this._selectedLoadableStudy = selectedLoadableStudy;
-    this.isPatternGenerated = this._selectedLoadableStudy?.statusId === 3 ? true : false;
+    this.isPatternGenerated = (this._selectedLoadableStudy?.statusId === 3 || this._selectedLoadableStudy?.statusId === 2) ? true : false;
     this.isPatternOpenOrNoplan = (this._selectedLoadableStudy?.statusId === 1 || this._selectedLoadableStudy?.statusId === 6) ? false: true;
     this.loadableStudyId = selectedLoadableStudy ? selectedLoadableStudy?.id : this.loadableStudies?.length ? this.loadableStudies[0]?.id : 0;
     this.getLoadableStudyDetails(this.vesselId, this.voyageId, selectedLoadableStudy?.id);

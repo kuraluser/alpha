@@ -13,6 +13,7 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
+import { ConfirmationAlertService } from '../../../shared/components/confirmation-alert/confirmation-alert.service';
 
 /**
  * Component class of pattern history screen
@@ -68,7 +69,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
     private loadableStudyListApiService: LoadableStudyListApiService,
     private loadablePatternApiService: LoadablePatternHistoryApiService,
     private permissionsService: PermissionsService,
-    private quantityPipe: QuantityPipe) { }
+    private quantityPipe: QuantityPipe,
+    private confirmationAlertService: ConfirmationAlertService) { }
 
   /**
    * Component lifecycle ngOnit
@@ -163,7 +165,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
     this.loadablePatternResponse = await this.loadablePatternApiService.getLoadablePatterns(vesselId, voyageId, loadableStudyId).toPromise();
     if (this.loadablePatternResponse.responseStatus.status === '200') {
       this.loadablePatterns = this.loadablePatternResponse.loadablePatterns;
-      this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;    
+      this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
       this.convertQuantityToSelectedUnit();
       this.tankLists = this.loadablePatternResponse.tankLists;
       this.loadablePatternCreatedDate = this.loadablePatternResponse.loadablePatternCreatedDate;
@@ -213,7 +215,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @param {*} event
    * @memberof LoadablePatternHistoryComponent
    */
-  viewPlan(loadablePattern:ILoadablePattern) {
+  viewPlan(loadablePattern: ILoadablePattern) {
     this.router.navigate([`/business/cargo-planning/loadable-plan/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}/${loadablePattern.loadablePatternId}`]);
   }
 
@@ -252,6 +254,35 @@ export class LoadablePatternHistoryComponent implements OnInit {
       return pattern;
     });
     this.loadablePatterns = loadablePatterns;
+  }
+
+  /**
+   * for confirm stowage plan
+   *
+   * @param {*} event
+   * @memberof LoadablePatternHistoryComponent
+   */
+  async confirmPlan(loadablePattern: ILoadablePattern) {
+    this.ngxSpinnerService.show();
+    const result = await this.loadablePatternApiService.getConfirmStatus(this.vesselId, this.voyageId, this.loadableStudyId, loadablePattern?.loadablePatternId).toPromise();
+    this.ngxSpinnerService.hide();
+    let detail;
+    if (result.confirmed) {
+      detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_NOT_CONFIRM";
+    } else {
+      detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_CONFIRM";
+    }
+    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_PATTERN_CONFIRM_SUMMARY', detail: detail, data: { confirmLabel: 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', rejectLabel: 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL' } });
+    this.confirmationAlertService.confirmAlert$.pipe().subscribe(async (response) => {
+      if(response){
+        this.ngxSpinnerService.show();
+        const confirmResult = await this.loadablePatternApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, loadablePattern?.loadablePatternId).toPromise();
+        this.ngxSpinnerService.hide();
+        if(confirmResult.responseStatus.status === '200'){
+          this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
+        }
+      }
+    })
   }
 
 }
