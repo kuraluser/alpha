@@ -3,7 +3,7 @@
     <p-table *ngIf="synopticalRecords.length; else empty" [columns]="synopticalRecords" [value]="cols" dataKey="header"
         id="synoptic-table" [expandedRowKeys]="expandedRows" styleClass="body-header-row-span-table" [scrollable]="true" scrollHeight="flex">
         <ng-template pTemplate="header" let-columns let-rowData>
-            <tr>
+            <tr *ngFor="let headerColumn of headerColumns">
                 <th>{{headerColumn.header | translate}}</th>
                 <th></th>
                 <th></th>

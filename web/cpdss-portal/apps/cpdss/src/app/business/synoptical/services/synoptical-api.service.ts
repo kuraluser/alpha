@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
+import { LoadableQuantityModel } from '../../cargo-planning/models/loadable-quantity.model';
 import { ISynopticalResponse } from '../models/synoptical-table.model';
 /**
  * 
@@ -39,6 +40,17 @@ export class SynopticalApiService {
             loadablePatternId = 0;
         }
         return this.commonApiService.post(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-pattern/${loadablePatternId}/synoptical-table`, postData);
+    }
+
+    /**
+     * 
+     * @param vesselId 
+     * @param voyageId 
+     * @param loadableStudyId 
+     * Get api for loadable quantity
+     */
+    getLoadableQuantity(vesselId: number, voyageId: number, loadableStudyId: number): Observable<LoadableQuantityModel> {
+        return this.commonApiService.get<LoadableQuantityModel>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-quantity`);
     }
 
 }

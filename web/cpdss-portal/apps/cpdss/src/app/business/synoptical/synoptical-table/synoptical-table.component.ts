@@ -37,7 +37,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
 
   listData = {};
   dynamicColumns: SynopticalDynamicColumn[];
-  headerColumn: SynopticalColumn;
+  headerColumns: SynopticalColumn[];
   tableForm: FormArray = new FormArray([]);
   errorMessages: IValidationErrorMessages = {
     'required': 'SYNOPTICAL_REQUIRED',
@@ -57,6 +57,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   datePipe: DatePipe = new DatePipe('en-US');
   synopticalRecordsCopy: ISynopticalRecords[] = [];
   today = new Date();
+  loadableQuantityValue: number;
 
   constructor(
     private synoticalApiService: SynopticalApiService,
@@ -66,7 +67,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private translateService: TranslateService,
   ) {
-    this.today.setHours(0,0,0,0);
+    this.today.setHours(0, 0, 0, 0);
   }
 
   /**
@@ -117,6 +118,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
    */
   async initData(): Promise<void> {
     this.ngxSpinner.show()
+    this.synopticalService.editMode = false;
     this.initColumns();
     this.initDynamicColumns();
     this.setColumnHeader();
@@ -129,6 +131,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         this.addToColumns(dynamicColumn);
       })
       this.initForm();
+      this.setLoadableQuantity()
     }
     this.ngxSpinner.hide();
   }
@@ -195,7 +198,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           type: this.fieldType.NUMBER,
           validators: ['dddd.dd.+']
         }],
-        header: 'Distance',
+        header: 'Distance (NM)',
         editable: true,
         colSpan: 2
       },
@@ -205,7 +208,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           type: this.fieldType.NUMBER,
           validators: ['dddd.dd.+']
         }],
-        header: 'Speed',
+        header: 'Speed (NM/Hr)',
         editable: true,
         colSpan: 2
       },
@@ -359,7 +362,13 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         ]
       },
       {
-        header: "Final Draft",
+        header: "Hogging/Sagging",
+        fields: [
+          { key: "hogSag" }
+        ]
+      },
+      {
+        header: "Final Draft (m)",
         expandable: true,
         subHeaders: [
           {
@@ -389,7 +398,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         ],
         expandedFields: [
           {
-            header: "Calculated Draft",
+            header: "Calculated Draft (m)",
             subHeaders: [
               {
                 header: "FWD",
@@ -463,7 +472,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             ]
           },
           {
-            header: "Calculated Trim",
+            header: "Calculated Trim (m)",
             subHeaders: [
               {
                 header: "Plan",
@@ -495,7 +504,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         editable: false,
       },
       {
-        header: 'Cargo',
+        header: 'Cargo (MT)',
         dynamicKey: 'cargos',
         expandable: true,
         subHeaders: [
@@ -516,7 +525,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         expandedFields: []
       },
       {
-        header: 'Total F.O',
+        header: 'Total F.O (MT)',
         dynamicKey: 'foList',
         expandable: true,
         subHeaders: [
@@ -537,7 +546,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         expandedFields: []
       },
       {
-        header: 'Total D.O',
+        header: 'Total D.O (MT)',
         dynamicKey: 'doList',
         expandable: true,
         subHeaders: [
@@ -600,7 +609,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         expandedFields: []
       },
       {
-        header: "Ballast",
+        header: "Ballast (MT)",
         dynamicKey: 'ballast',
         expandable: true,
         subHeaders: [
@@ -682,7 +691,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         ]
       },
       {
-        header: 'Total DWT',
+        header: 'Total DWT (MT)',
         subHeaders: [{
           header: '',
           subHeaders: [
@@ -708,7 +717,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         ]
       },
       {
-        header: 'Displacement',
+        header: 'Displacement (MT)',
         subHeaders: [{
           header: '',
           subHeaders: [
@@ -982,7 +991,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
    * @memberof SynopticalTableComponent
    */
   setColumnHeader() {
-    this.headerColumn = this.cols.splice(0, 1)[0];
+    this.headerColumns = this.cols.splice(0,2);
   }
 
   /**
@@ -1175,7 +1184,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     const fc = this.getControl(colIndex, field.key)
     const operationType = this.synopticalRecords[colIndex].operationType;
     const otherIndex = operationType === 'ARR' ? colIndex + 1 : colIndex - 1;
-    if (fc.invalid)
+    if (!fc || fc.invalid)
       return;
     let fcMax, fcMin;
     switch (field.key) {
@@ -1249,7 +1258,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         if (colIndex > 0) {
           fcMin = this.getControl(colIndex - 1, field.key)
           const minValue: Date = fcMin.value;
-          minValue.setSeconds(0, 0)
+          if (minValue) {
+            minValue.setSeconds(0, 0)
+          }
           if (value <= minValue) {
             if (this.synopticalRecords[colIndex].operationType === 'ARR')
               fc.setErrors({ etaMin: true })
@@ -1262,7 +1273,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         if (colIndex < this.synopticalRecords.length - 1) {
           fcMax = this.getControl(colIndex + 1, field.key)
           const maxValue: Date = fcMax.value;
-          maxValue.setSeconds(0, 0)
+          if (maxValue) {
+            maxValue.setSeconds(0, 0)
+          }
           if (value >= maxValue) {
             if (this.synopticalRecords[colIndex].operationType === 'ARR')
               fc.setErrors({ etaMax: true })
@@ -1393,36 +1406,65 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   * @memberof SynopticalTableComponent
  */
   async saveChanges() {
-    let msgkeys, severity;
-    this.tableForm.markAllAsTouched()
-    if (this.tableForm.valid) {
-      this.ngxSpinner.show();
-      const synopticalRecords = []
-      this.synopticalRecords.forEach((row, index: number) => {
-        const saveJson = {};
-        saveJson['id'] = row.id;
-        saveJson['portId'] = row.portId;
-        this.cols.forEach(col => {
-          this.setColValue(col, saveJson, index)
+    let msgkeys, severity, valid = true;
+    // Prompt all validations
+    this.tableForm.markAllAsTouched();
+    this.synopticalRecords.forEach((_, portIndex) => {
+      this.allColumns.forEach(col => {
+        col.fields.forEach(field => {
+          this.onBlur(field, portIndex)
         })
-        synopticalRecords.push(saveJson)
       })
-      const postData = {
-        synopticalRecords: synopticalRecords
-      }
-      const res = await this.synoticalApiService.saveSynopticalTable(postData, this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId, this.synopticalService.loadablePatternId).toPromise()
-      if (res?.responseStatus?.status === '200') {
-        msgkeys = ['SYNOPTICAL_UPDATE_SUCCESS', 'SYNOPTICAL_UPDATE_SUCCESSFULLY']
-        severity = 'success';
-        this.synopticalService.editMode = false;
+      // check loadable quantity validation
+      this.cols.forEach(col => {
+        if (col.dynamicKey) {
+          const dynamicKey = col.dynamicKey;
+          const totalCols = this.getAllColumns(col.subHeaders)
+          totalCols.forEach(totalCol => {
+            totalCol.fields.forEach(field => {
+              const totalKey = field.key
+              const totalValue = this.synopticalRecords[portIndex][totalKey]
+              if (totalValue > this.loadableQuantityValue) {
+                valid = false;
+                msgkeys = ['TOTAL_QUANTITY_ERROR', 'TOTAL_QUANTITY_ERROR_DETAILS']
+                severity = 'warn';
+              }
+            })
+          })
+        }
+      })
+    })
+    //check if valid and save
+    if (valid) {
+      if (this.tableForm.valid) {
+        this.ngxSpinner.show();
+        const synopticalRecords = []
+        this.synopticalRecords.forEach((row, index: number) => {
+          const saveJson = {};
+          saveJson['id'] = row.id;
+          saveJson['portId'] = row.portId;
+          this.cols.forEach(col => {
+            this.setColValue(col, saveJson, index)
+          })
+          synopticalRecords.push(saveJson)
+        })
+        const postData = {
+          synopticalRecords: synopticalRecords
+        }
+        const res = await this.synoticalApiService.saveSynopticalTable(postData, this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId, this.synopticalService.loadablePatternId).toPromise()
+        if (res?.responseStatus?.status === '200') {
+          msgkeys = ['SYNOPTICAL_UPDATE_SUCCESS', 'SYNOPTICAL_UPDATE_SUCCESSFULLY']
+          severity = 'success';
+          this.synopticalService.editMode = false;
+        } else {
+          msgkeys = ['SYNOPTICAL_UPDATE_FAILED', 'SYNOPTICAL_UPDATE_FAILURE']
+          severity = 'error';
+        }
+        this.ngxSpinner.hide();
       } else {
-        msgkeys = ['SYNOPTICAL_UPDATE_FAILED', 'SYNOPTICAL_UPDATE_FAILURE']
-        severity = 'error';
+        msgkeys = ['SYNOPTICAL_UPDATE_INVALID', 'SYNOPTICAL_UPDATE_FIELDS_INVALID']
+        severity = 'warn';
       }
-      this.ngxSpinner.hide();
-    } else {
-      msgkeys = ['SYNOPTICAL_UPDATE_INVALID', 'SYNOPTICAL_UPDATE_FIELDS_INVALID']
-      severity = 'warn';
     }
     const translationKeys = await this.translateService.get(msgkeys).toPromise();
     this.messageService.add({ severity: severity, summary: translationKeys[msgkeys[0]], detail: translationKeys[msgkeys[1]] });
@@ -1493,9 +1535,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   convertToString(value, type) {
     switch (type) {
       case this.fieldType.DATETIME:
-        return this.datePipe.transform(value, 'dd-MM-yyyy hh:mm')
+        return this.datePipe.transform(value, 'dd-MM-yyyy HH:mm')
       case this.fieldType.TIME:
-        return this.datePipe.transform(value, 'hh:mm')
+        return this.datePipe.transform(value, 'HH:mm')
       default:
         return value;
     }
@@ -1601,5 +1643,67 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       json['fuelTypeId'] = listItem.fuelTypeId
     }
     return json
+  }
+
+  /**
+  * Method to set loadable quantity
+  *
+  * @returns {void}
+  * @memberof SynopticalTableComponent
+  */
+  async setLoadableQuantity() {
+    const loadableQuantityResult = await this.synoticalApiService.getLoadableQuantity(this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId).toPromise();
+    if (loadableQuantityResult.responseStatus.status === "200") {
+      loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityValue = Number(loadableQuantityResult.loadableQuantity.totalQuantity);
+    }
+  }
+
+  /**
+  * Calculation for subtotal
+  */
+  getSubTotal(loadableQuantityResult: any) {
+    const loadableQuantity = loadableQuantityResult.loadableQuantity;
+    let subTotal = 0;
+    if (loadableQuantityResult.caseNo === 1 || loadableQuantityResult.caseNo === 2) {
+      subTotal = Number(loadableQuantity.dwt)
+        + Number(loadableQuantity.estFOOnBoard)
+        - Number(loadableQuantity.estFOOnBoard) - Number(loadableQuantity.estDOOnBoard)
+        - Number(loadableQuantity.estFreshWaterOnBoard) - Number(loadableQuantity.boilerWaterOnBoard)
+        - Number(loadableQuantity.ballast) - Number(loadableQuantity.constant)
+        - Number(loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny);
+      this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
+    }
+    else {
+      subTotal = Number(loadableQuantity.dwt) + Number(loadableQuantity.estFOOnBoard) + Number(loadableQuantity.sgCorrection)
+        - Number(loadableQuantity.estFOOnBoard) - Number(loadableQuantity.estDOOnBoard) - Number(loadableQuantity.estFreshWaterOnBoard) - Number(loadableQuantity.boilerWaterOnBoard) - Number(loadableQuantity.ballast) - Number(loadableQuantity.constant) - Number(loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny);
+      this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
+    }
+  }
+
+  /**
+   * Calculation for Loadable quantity
+  */
+  getTotalLoadableQuantity(subTotal: number, loadableQuantityResult: any) {
+    const loadableQuantity = loadableQuantityResult.loadableQuantity;
+    if (loadableQuantityResult.caseNo === 1) {
+      const total = Number(subTotal) - Number(loadableQuantity.foConInSZ);
+      if (total < 0) {
+        this.loadableQuantityValue = 0;
+      }
+      else {
+        this.loadableQuantityValue = total;
+      }
+
+    }
+    else {
+      if (subTotal < 0) {
+        this.loadableQuantityValue = 0;
+      }
+      else {
+        this.loadableQuantityValue = subTotal;
+      }
+
+    }
+
   }
 }
