@@ -57,6 +57,7 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
+import com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
@@ -3860,5 +3861,47 @@ class LoadableStudyServiceTest {
       requestBuilder.addSynopticalRecord(recordBuilder.build());
     }
     return requestBuilder;
+  }
+
+  @Test
+  public void testSaveLoadOnTop() throws GenericServiceException {
+    SaveLoadOnTopRequest request =
+        SaveLoadOnTopRequest.newBuilder().setLoadableStudyId(1L).setLoadOnTop(true).build();
+    StreamRecorder<SaveCommentReply> responseObserver = StreamRecorder.create();
+
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.LoadableStudy()));
+    LoadableStudy entity = new LoadableStudy();
+
+    Mockito.when(this.loadableStudyRepository.save(ArgumentMatchers.any(LoadableStudy.class)))
+        .thenReturn(entity);
+    loadableStudyService.saveLoadOnTop(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<SaveCommentReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    SaveCommentReply response = results.get(0);
+    assertEquals(SUCCESS, response.getResponseStatus().getMessage());
+  }
+
+  @Test
+  public void testSaveLoadOnTopWithoutLoadableStudy() throws GenericServiceException {
+    SaveLoadOnTopRequest request =
+        SaveLoadOnTopRequest.newBuilder().setLoadableStudyId(1L).setLoadOnTop(true).build();
+    StreamRecorder<SaveCommentReply> responseObserver = StreamRecorder.create();
+
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.<LoadableStudy>empty());
+    LoadableStudy entity = new LoadableStudy();
+
+    Mockito.when(this.loadableStudyRepository.save(ArgumentMatchers.any(LoadableStudy.class)))
+        .thenReturn(entity);
+    loadableStudyService.saveLoadOnTop(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<SaveCommentReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    SaveCommentReply response = results.get(0);
+    assertEquals(FAILED, response.getResponseStatus().getStatus());
   }
 }

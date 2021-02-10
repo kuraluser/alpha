@@ -27,6 +27,7 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceImplBas
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.vesselinfo.domain.VesselDetails;
+import com.cpdss.vesselinfo.domain.VesselInfo;
 import com.cpdss.vesselinfo.entity.CalculationSheetTankgroup;
 import com.cpdss.vesselinfo.entity.DraftCondition;
 import com.cpdss.vesselinfo.entity.HydrostaticTable;
@@ -1095,6 +1096,62 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               .setMessage("GenericServiceException in getVesselDetailForSynopticalTable")
               .setStatus(FAILED)
               .build());
+    } catch (Exception e) {
+      log.error("Exception in getVesselDetailForSynopticalTable", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception in getVesselDetailForSynopticalTable")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getVesselDetailByVesselId(
+      VesselRequest request, StreamObserver<VesselReply> responseObserver) {
+    VesselReply.Builder replyBuilder = VesselReply.newBuilder();
+
+    VesselInfo vesselDetails =
+        vesselRepository.findVesselDetailsByVesselId(request.getVesselId(), true);
+    try {
+      if (null != vesselDetails) {
+        VesselDetail.Builder builder = VesselDetail.newBuilder();
+
+        Optional.ofNullable(vesselDetails.getId()).ifPresent(item -> builder.setId(item));
+        Optional.ofNullable(vesselDetails.getName()).ifPresent(item -> builder.setName(item));
+        Optional.ofNullable(vesselDetails.getImoNumber())
+            .ifPresent(item -> builder.setImoNumber(item));
+        Optional.ofNullable(vesselDetails.getTypeOfShip())
+            .ifPresent(item -> builder.setTypeOfShip(item));
+        Optional.ofNullable(vesselDetails.getCode()).ifPresent(item -> builder.setCode(item));
+        Optional.ofNullable(vesselDetails.getDeadweightConstant())
+            .ifPresent(item -> builder.setDeadweightConstant(item.toString()));
+        Optional.ofNullable(vesselDetails.getProvisionalConstant())
+            .ifPresent(item -> builder.setProvisionalConstant(item.toString()));
+        replyBuilder.addVessels(builder.build());
+
+        Vessel vessel = this.vesselRepository.findByIdAndIsActive(request.getVesselId(), true);
+        if (null == vessel) {
+          log.error("Vessel does not exist");
+          throw new GenericServiceException(
+              "Vessel with given id does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        VesselTankDetail.Builder vesselTankBuilder = VesselTankDetail.newBuilder();
+        vesselTankRepository
+            .findByVesselAndIsActive(vessel, true)
+            .forEach(
+                vesselTank -> {
+                  replyBuilder.addVesselTanks(createVesselTankData(vesselTank, vesselTankBuilder));
+                });
+        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      }
+
     } catch (Exception e) {
       log.error("Exception in getVesselDetailForSynopticalTable", e);
       replyBuilder.setResponseStatus(

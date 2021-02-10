@@ -76,6 +76,9 @@ public class UserController {
 
       response = userService.getScreens(companyId, roleId, CORRELATION_ID_HEADER);
 
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in save voyage", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in getRoles ", e);
       throw new CommonRestException(

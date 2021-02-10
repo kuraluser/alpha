@@ -147,6 +147,7 @@ public class UserService {
    *
    * @param token - The token in string format
    * @return {@link AccessToken} - The keycloak access token instance
+   * @throws GenericServiceException
    * @throws VerificationException
    */
   // private AccessToken parseKeycloakToken(String token) throws
@@ -402,13 +403,12 @@ public class UserService {
       screenIds.add(screenInfo.getId());
     }
 
-    List<RoleUserMapping> roleUserList =
-        this.roleUserRepository.findByRolesAndIsActive(role.get().getId(), true);
-    if (roleUserList != null && roleUserList.size() != 0) {
-      roleUserList.forEach(
-          a -> {
-            a.setIsActive(false);
-          });
+    if (permission.getDeselectedUserId() != null) {
+      List<RoleUserMapping> roleUserList =
+          this.roleUserRepository.findByRolesAndIsActive(role.get().getId(), true);
+      roleUserList.stream()
+          .filter(ru -> permission.getDeselectedUserId().contains(ru.getUsers().getId()))
+          .forEach(roleUser -> roleUser.setIsActive(false));
     }
 
     List<Screen> screens =

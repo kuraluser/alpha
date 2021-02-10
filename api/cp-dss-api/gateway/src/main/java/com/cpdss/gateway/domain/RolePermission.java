@@ -19,4 +19,6 @@ public class RolePermission {
 
   @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
   private Role role;
+
+  private List<Long> deselectedUserId;
 }

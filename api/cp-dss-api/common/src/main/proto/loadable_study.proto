@@ -187,6 +187,8 @@ message LDtrim {
    string errorDetails = 19;
    string messageText = 20;
    int64 portId = 21;
+   int64 stowagePlanId = 22;
+   
 }
 
 message LDStrength{
@@ -213,6 +215,8 @@ message LDStrength{
    string errorDetails = 21;
    string messageText = 22;
    int64 portId = 23;
+   int64 stowagePlanId = 24;
+   
 }
 
 message LDIntactStability {
@@ -239,6 +243,7 @@ message LDIntactStability {
    string errorDetails = 21;
    string messageText = 22;
    int64 portId = 23;
+   int64 stowagePlanId = 24;
 }
 message LoadablePatternAlgoRequest {
 	string processsId = 1;
@@ -954,3 +959,4 @@ message SaveLoadOnTopRequest{
 bool loadOnTop=1;
 int64 loadableStudyId=2;
 }
+

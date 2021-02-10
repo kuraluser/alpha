@@ -18,13 +18,13 @@ import lombok.Setter;
 @AllArgsConstructor
 public class StowagePlan extends EntityDoc {
 
-  @Column(name = "vessel_xid")
+  @Column(name = "vessel_id")
   private Long vesselXId;
 
   @Column(name = "imo_number", length = 100)
   private String imoNumber;
 
-  @Column(name = "company_xid")
+  @Column(name = "compny_id")
   private Long companyXId;
 
   @Column(name = "ship_type")
@@ -68,4 +68,7 @@ public class StowagePlan extends EntityDoc {
 
   @Column(name = "save_message", length = 100)
   private String saveMessage;
+
+  @Column(name = "process_id")
+  private String processId;
 }

@@ -19,7 +19,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CargoData extends EntityDoc {
 
-  @Column(name = "stowage_plan_id")
+  @Column(name = "stowageplan_id")
   private Long stowagePlanId;
 
   @Column(name = "cargo_id")

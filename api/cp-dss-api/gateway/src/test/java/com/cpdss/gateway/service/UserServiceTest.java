@@ -239,7 +239,7 @@ class UserServiceTest {
 
     RoleUserMapping roleUserMapping = new RoleUserMapping();
 
-    when(this.rolesRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+    when(this.rolesRepository.findByIdAndCompanyXIdAndIsActive(anyLong(), anyLong(), anyBoolean()))
         .thenReturn(Optional.of(roleEntity));
     //	when(this.usersRepository.findByIdInAndIsActive(List, anyBoolean())).thenReturn(userList);
     when(this.screenRepository.findByIdIdAndIsActive(anyLong(), anyBoolean()))
@@ -286,7 +286,7 @@ class UserServiceTest {
     List<Users> userList = new ArrayList<Users>();
     userList.add(users);
 
-    when(this.rolesRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+    when(this.rolesRepository.findByIdAndCompanyXIdAndIsActive(anyLong(), anyLong(), anyBoolean()))
         .thenReturn(Optional.of(rolesEntity));
     when(this.rolesRepository.save(rolesEntity)).thenReturn(rolesEntity);
 
