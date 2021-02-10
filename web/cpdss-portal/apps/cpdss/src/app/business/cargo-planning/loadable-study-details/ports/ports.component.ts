@@ -290,8 +290,10 @@ export class PortsComponent implements OnInit {
       this.updateField(event.index, 'portcode', event.data.port.value.code);
       this.portsLists[valueIndex]['maxDraft'].value = event.data.port.value.maxDraft;
       this.updateField(event.index, 'maxDraft', event.data.port.value.maxDraft);
+      this.updateValidityAndEditMode(event.index,'maxDraft')
       this.portsLists[valueIndex]['maxAirDraft'].value = event.data.port.value.maxAirDraft;
       this.updateField(event.index, 'maxAirDraft', event.data.port.value.maxAirDraft);
+      this.updateValidityAndEditMode(event.index,'maxAirDraft')
       this.portsLists[valueIndex]['seaWaterDensity'].value = event.data.port.value.waterDensity;
       this.updateField(event.index, 'seaWaterDensity', event.data.port.value.waterDensity);
       this.updateField(event.index, 'portOrder', this.portOrder);
@@ -472,6 +474,9 @@ export class PortsComponent implements OnInit {
             }
             const formArray = <FormArray>this.portsForm.get('dataTable');
             formArray.removeAt(event.index)
+            setTimeout(() => {
+              this.updateFormValidity(formArray)
+            }, 500);
           }
           subscription.unsubscribe();
         });
