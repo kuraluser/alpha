@@ -388,6 +388,9 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
 
   private LDIntactStability.Builder buildStabilityDetails(IntactStability stability) {
     LDIntactStability.Builder ldStability = LDIntactStability.newBuilder();
+    
+    StowagePlanDetail stowageDetail = this.stowagePlanRepository.findPortForStability(stability.getStowagePlanId());
+    ldStability.setPortId(stowageDetail.getPortId());
     ldStability.setId(stability.getId());
     Optional.ofNullable(stability.getStowagePlanId()).ifPresent(ldStability::setStowagePlanId);
     Optional.ofNullable(stability.getBigintialGomvalue())
@@ -439,6 +442,9 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
 
   LDStrength.Builder buildStrengthDetails(LoadicatorStrength strength) {
     LDStrength.Builder ldStrength = LDStrength.newBuilder();
+    
+    StowagePlanDetail stowageDetail = this.stowagePlanRepository.findPortForStrength(strength.getStowagePlanId());
+    ldStrength.setPortId(stowageDetail.getPortId());
     ldStrength.setId(strength.getId());
     Optional.ofNullable(strength.getStowagePlanId()).ifPresent(ldStrength::setStowagePlanId);
     Optional.ofNullable(strength.getShearingForcePresentValue())
@@ -493,7 +499,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   LDtrim.Builder buildLoadicatorTrimDetails(LoadicatorTrim trim) {
     LDtrim.Builder ldTrim = LDtrim.newBuilder();
     
-	StowagePlanDetail stowageDetail = this.stowagePlanRepository.findPort(trim.getStowagePlanId());
+	StowagePlanDetail stowageDetail = this.stowagePlanRepository.findPortForTrim(trim.getStowagePlanId());
 	ldTrim.setPortId(stowageDetail.getPortId());
 	 
     ldTrim.setId(trim.getId());

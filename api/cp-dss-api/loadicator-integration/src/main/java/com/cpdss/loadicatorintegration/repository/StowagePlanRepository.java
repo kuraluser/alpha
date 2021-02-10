@@ -18,6 +18,18 @@ public interface StowagePlanRepository extends CommonCrudRepository<StowagePlan,
 	      "select new com.cpdss.loadicatorintegration.domain.StowagePlanDetail(sp.id, sp.portId) "
 	          + "from StowagePlan sp "
 	          + "join LoadicatorTrim lt on lt.stowagePlanId = sp.id where sp.id =?1 ")
-	  public com.cpdss.loadicatorintegration.domain.StowagePlanDetail findPort(
+	  public com.cpdss.loadicatorintegration.domain.StowagePlanDetail findPortForTrim(
 	      Long stowagePlanId);
+  
+  @Query(
+	      "select new com.cpdss.loadicatorintegration.domain.StowagePlanDetail(sp.id, sp.portId) "
+	          + "from StowagePlan sp "
+	          + "join LoadicatorStrength ls on ls.stowagePlanId = sp.id where sp.id =?1 ")
+	  public com.cpdss.loadicatorintegration.domain.StowagePlanDetail findPortForStrength(
+	      Long stowagePlanId);
+
+		@Query("select new com.cpdss.loadicatorintegration.domain.StowagePlanDetail(sp.id, sp.portId) "
+				+ "from StowagePlan sp " + "join IntactStability s on s.stowagePlanId = sp.id where sp.id =?1 ")
+	public com.cpdss.loadicatorintegration.domain.StowagePlanDetail findPortForStability(Long stowagePlanId);
+		 
 }
