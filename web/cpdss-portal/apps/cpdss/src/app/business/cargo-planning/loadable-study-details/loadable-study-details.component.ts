@@ -582,7 +582,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     let subTotal = 0;
     if (loadableQuantityResult.caseNo === 1 || loadableQuantityResult.caseNo === 2) {
       subTotal = Number(loadableQuantity.dwt)
-        + Number(loadableQuantity.estFOOnBoard)
+        + Number(loadableQuantity.saggingDeduction)
         - Number(loadableQuantity.estFOOnBoard) - Number(loadableQuantity.estDOOnBoard)
         - Number(loadableQuantity.estFreshWaterOnBoard) - Number(loadableQuantity.boilerWaterOnBoard)
         - Number(loadableQuantity.ballast) - Number(loadableQuantity.constant)
@@ -590,7 +590,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
     }
     else {
-      subTotal = Number(loadableQuantity.dwt) + Number(loadableQuantity.estFOOnBoard) + Number(loadableQuantity.sgCorrection)
+      subTotal = Number(loadableQuantity.dwt) + Number(loadableQuantity.saggingDeduction) + Number(loadableQuantity.sgCorrection)
         - Number(loadableQuantity.estFOOnBoard) - Number(loadableQuantity.estDOOnBoard) - Number(loadableQuantity.estFreshWaterOnBoard) - Number(loadableQuantity.boilerWaterOnBoard) - Number(loadableQuantity.ballast) - Number(loadableQuantity.constant) - Number(loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny);
       this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
     }

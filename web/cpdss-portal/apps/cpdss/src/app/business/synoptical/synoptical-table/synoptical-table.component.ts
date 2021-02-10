@@ -42,6 +42,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   errorMessages: IValidationErrorMessages = {
     'required': 'SYNOPTICAL_REQUIRED',
     'invalid': 'SYNOPTICAL_INVALID',
+    'pattern': 'SYNOPTICAL_INVALID',
     'fromMax': 'SYNOPTICAL_FROM_MAX',
     'toMin': 'SYNOPTICAL_TO_MIN',
     'timeFromMax': 'SYNOPTICAL_TIME_FROM_MAX',
@@ -56,8 +57,11 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   allColumns: SynopticalColumn[]
   datePipe: DatePipe = new DatePipe('en-US');
   synopticalRecordsCopy: ISynopticalRecords[] = [];
-  today = new Date();
   loadableQuantityValue: number;
+  get today(){
+    return new Date();
+  } 
+    
 
   constructor(
     private synoticalApiService: SynopticalApiService,
@@ -67,7 +71,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private translateService: TranslateService,
   ) {
-    this.today.setHours(0, 0, 0, 0);
   }
 
   /**
@@ -222,6 +225,16 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         colSpan: 2
       },
       {
+        header: 'In Port Hours',
+        fields: [{
+          key: 'inPortHours',
+          type: this.fieldType.NUMBER,
+          validators: ['dddd.dd.+']
+        }],
+        editable: true,
+        colSpan: 2
+      },
+      {
         header: 'ETA/ETD',
         subHeaders: [{
           header: '',
@@ -247,16 +260,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           ]
         }
         ]
-      },
-      {
-        header: 'In Port Hours',
-        fields: [{
-          key: 'inPortHours',
-          type: this.fieldType.NUMBER,
-          validators: ['dddd.dd.+']
-        }],
-        editable: true,
-        colSpan: 2
       },
       {
         header: 'Time of Sunrise',
@@ -758,6 +761,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fieldKey: 'cargos',
         primaryKey: 'tankId',
         headerLabel: 'tankName',
+        maxKey: 'capacity',
         subHeaders: [
           {
             fields: [{
@@ -784,6 +788,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fieldKey: 'foList',
         primaryKey: 'tankId',
         headerLabel: 'tankName',
+        maxKey: 'capacity',
         subHeaders: [
           {
             fields: [{
@@ -811,6 +816,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fieldKey: 'doList',
         primaryKey: 'tankId',
         headerLabel: 'tankName',
+        maxKey: 'capacity',
         subHeaders: [
           {
             fields: [{
@@ -838,6 +844,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fieldKey: 'fwList',
         primaryKey: 'tankId',
         headerLabel: 'tankName',
+        maxKey: 'capacity',
         subHeaders: [
           {
             fields: [{
@@ -865,6 +872,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fieldKey: 'lubeList',
         primaryKey: 'tankId',
         headerLabel: 'tankName',
+        maxKey: 'capacity',
         subHeaders: [
           {
             fields: [{
@@ -891,6 +899,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fieldKey: 'ballast',
         primaryKey: 'tankId',
         headerLabel: 'tankName',
+        maxKey: 'capacity',
         subHeaders: [
           {
             fields: [{
@@ -934,6 +943,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         key.fields.forEach(field => {
           const tempField = JSON.parse(JSON.stringify(field))
           tempField['key'] = fieldKey + item.id + field['key']
+          if(item.max){
+            tempField['max'] = item.max;
+          }
           subHeader.fields.push(tempField)
         })
         subHeaders.push(subHeader);
@@ -962,6 +974,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     const fieldKey = dynamicColumn.fieldKey;
     const primaryKey = dynamicColumn.primaryKey;
     const headerLabel = dynamicColumn.headerLabel;
+    const maxKey = dynamicColumn.maxKey;
     const keys = dynamicColumn.subHeaders;
     this.listData[fieldKey] = [];
     this.synopticalRecords.forEach(synopticalRecord => {
@@ -969,10 +982,14 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         synopticalRecord[fieldKey].forEach(record => {
           const index = this.listData[fieldKey].findIndex(item => item.id === record[primaryKey]);
           if (index < 0) {
-            this.listData[fieldKey].push({
+            const fieldJson = {
               id: record[primaryKey],
-              header: record[headerLabel]
-            })
+              header: record[headerLabel],
+            }
+            if(maxKey && record[maxKey]){
+              fieldJson['max'] = record[maxKey]
+            }
+            this.listData[fieldKey].push(fieldJson)
           }
           keys.forEach(key => {
             key.fields.forEach(field => {
@@ -991,7 +1008,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
    * @memberof SynopticalTableComponent
    */
   setColumnHeader() {
-    this.headerColumns = this.cols.splice(0,2);
+    this.headerColumns = this.cols.splice(0, 2);
   }
 
   /**
@@ -1443,7 +1460,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           const saveJson = {};
           saveJson['id'] = row.id;
           saveJson['portId'] = row.portId;
-          this.headerColumns.forEach( col=> {
+          this.headerColumns.forEach(col => {
             col.fields.forEach(field => {
               saveJson[field.key] = this.synopticalRecords[index][field.key]
             })
@@ -1671,7 +1688,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     let subTotal = 0;
     if (loadableQuantityResult.caseNo === 1 || loadableQuantityResult.caseNo === 2) {
       subTotal = Number(loadableQuantity.dwt)
-        + Number(loadableQuantity.estFOOnBoard)
+        + Number(loadableQuantity.saggingDeduction)
         - Number(loadableQuantity.estFOOnBoard) - Number(loadableQuantity.estDOOnBoard)
         - Number(loadableQuantity.estFreshWaterOnBoard) - Number(loadableQuantity.boilerWaterOnBoard)
         - Number(loadableQuantity.ballast) - Number(loadableQuantity.constant)
@@ -1679,7 +1696,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
     }
     else {
-      subTotal = Number(loadableQuantity.dwt) + Number(loadableQuantity.estFOOnBoard) + Number(loadableQuantity.sgCorrection)
+      subTotal = Number(loadableQuantity.dwt) + Number(loadableQuantity.saggingDeduction) + Number(loadableQuantity.sgCorrection)
         - Number(loadableQuantity.estFOOnBoard) - Number(loadableQuantity.estDOOnBoard) - Number(loadableQuantity.estFreshWaterOnBoard) - Number(loadableQuantity.boilerWaterOnBoard) - Number(loadableQuantity.ballast) - Number(loadableQuantity.constant) - Number(loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny);
       this.getTotalLoadableQuantity(subTotal, loadableQuantityResult);
     }

@@ -77,4 +77,5 @@ export interface SynopticalDynamicColumn {
     primaryKey: string;
     headerLabel: string;
     subHeaders?: SynopticalColumn[];
+    maxKey?: string;
 }
