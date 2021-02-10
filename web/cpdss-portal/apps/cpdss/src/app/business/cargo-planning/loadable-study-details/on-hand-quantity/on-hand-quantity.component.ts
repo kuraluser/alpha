@@ -133,6 +133,7 @@ export class OnHandQuantityComponent implements OnInit {
   dataTableLoading: boolean;
   ohqCheckUpdatesTimer;
   ohqTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, densityField: 'density', weightField: 'quantity' };
+  progress = true;
 
   private _selectedPortOHQTankDetails: IPortOHQTankDetailValueObject[];
   private _loadableStudyId: number;
@@ -357,6 +358,7 @@ export class OnHandQuantityComponent implements OnInit {
     this.loadableStudyDetailsTransformationService.setOHQValidity(this.ohqForm.valid && this.ohqGroupValidity(this._selectedPortOHQTankDetails));
     const valueIndex = this.selectedPortOHQTankDetails.findIndex(ohqDetails => ohqDetails?.storeKey === event?.data?.storeKey);
     if (fromGroup.valid) {
+      event.data.processing = true;
       const _selectedPortOHQTankDetail = this.convertToStandardUnitForSave(this.selectedPortOHQTankDetails[valueIndex]);
       const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(_selectedPortOHQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId);
       if (res) {
@@ -388,6 +390,7 @@ export class OnHandQuantityComponent implements OnInit {
           formControl.updateValueAndValidity();
         });
         if (row.valid) {
+          event.data.processing = true;
           const _selectedPortOHQTankDetail = this.convertToStandardUnitForSave(this.selectedPortOHQTankDetails[valueIndex]);
           const res = await this.loadableStudyDetailsApiService.setOHQTankDetails(_selectedPortOHQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId);
           if (res) {
@@ -425,6 +428,7 @@ export class OnHandQuantityComponent implements OnInit {
         const index = this.selectedPortOHQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
         if (index !== -1) {
           this.selectedPortOHQTankDetails[index].id = event.data.id;
+          this.selectedPortOHQTankDetails[index].processing = false;
           this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
         }
       }

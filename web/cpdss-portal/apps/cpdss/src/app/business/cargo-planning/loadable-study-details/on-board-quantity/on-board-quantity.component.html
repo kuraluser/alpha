@@ -29,7 +29,7 @@
                                             <cpdss-portal-datatable [tableId]="'obq'" [form]="obqForm"
                                                 [columns]="columns" [value]="selectedPortOBQTankDetails"
                                                 [editMode]="editMode" [filterable]="true" [listData]="listData"
-                                                [selectionMode]="selectionMode" [loading]="dataTableLoading" (editComplete)="onEditComplete($event)"
+                                                [selectionMode]="selectionMode" [loading]="dataTableLoading" [progress]="progress" (editComplete)="onEditComplete($event)"
                                                 (rowSelection)="onRowSelection($event)" [selection]="selectedTank">
                                             </cpdss-portal-datatable>
                                         </div>

@@ -109,6 +109,7 @@ export class OnBoardQuantityComponent implements OnInit {
   dataTableLoading: boolean;
   obqCheckUpdatesTimer;
   cargoTankOptions: ITankOptions = { showTooltip: true, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'api', weightField: 'quantity', commodityNameField: 'abbreviation' };
+  progress = true;
 
   private _selectedTank: IPortOBQTankDetailValueObject;
   private _loadableStudyId: number;
@@ -279,6 +280,7 @@ export class OnBoardQuantityComponent implements OnInit {
     }
 
     if (formGroup.valid) {
+      event.data.processing = true;
       const _selectedPortOBQTankDetail = this.convertToStandardUnitForSave(event.data);     
       _selectedPortOBQTankDetail.loadOnTop = this.obqForm.controls?.loadOnTop?.value;
       const res = await this.loadableStudyDetailsApiService.setOBQTankDetails(_selectedPortOBQTankDetail, this.vesselId, this.voyageId, this.loadableStudyId);
@@ -349,6 +351,7 @@ export class OnBoardQuantityComponent implements OnInit {
         const index = this.selectedPortOBQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
         if (index !== -1) {
           this.selectedPortOBQTankDetails[index].id = event.data.id;
+          this.selectedPortOBQTankDetails[index].processing = false;
           this.selectedPortOBQTankDetails = [...this.selectedPortOBQTankDetails];
         }
         this.updateTankList()

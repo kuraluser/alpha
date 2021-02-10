@@ -29,6 +29,7 @@ export interface ICargoNominationValueObject {
     isAdd: boolean;
     isDelete?: boolean;
     storeKey: number;
+    processing?: boolean;
 }
 
 /**
@@ -257,7 +258,8 @@ export interface IPortsValueObject {
     isAdd: boolean;
     isDelete?: boolean;
     storeKey: number;
-    isLoadable: boolean;
+    isLoadable: boolean;    
+    processing?: boolean;
 }
 
 
@@ -386,7 +388,8 @@ export interface IPortOHQTankDetailValueObject {
     volume: number;
     percentageFilled: string;
     fullCapacityCubm: number;
-    fullCapacity: number;
+    fullCapacity: number;    
+    processing?: boolean;
 }
 
 
@@ -593,7 +596,8 @@ export interface IPortOBQTankDetailValueObject {
     fullCapacityCubm: number;
     fullCapacity: number;
     abbreviation: string;
-    loadOnTop: boolean;
+    loadOnTop: boolean;    
+    processing?: boolean;
 }
 
 /**

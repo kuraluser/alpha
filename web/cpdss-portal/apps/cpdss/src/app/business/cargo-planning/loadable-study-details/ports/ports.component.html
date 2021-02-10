@@ -5,7 +5,7 @@
                 <div class="table-responsive-custom" >
                     <cpdss-portal-datatable [tableId]="'ports'" [form]="portsForm" [columns]="columns"
                         [value]="portsLists" [editMode]="editMode" [listData]="listData" [filterable]="true"
-                        [loading]="dataTableLoading" (editComplete)="onEditComplete($event)"
+                        [loading]="dataTableLoading" [progress]="progress" (editComplete)="onEditComplete($event)"
                         (saveRow)="onRowSave($event)" (deleteRow)="onDeleteRow($event)" [tableRowReOrder]="true"
                         (rowReorder)="onRowReorder($event)" (sort)="onSort($event)" (filter)="onFilter($event)">
                     </cpdss-portal-datatable>

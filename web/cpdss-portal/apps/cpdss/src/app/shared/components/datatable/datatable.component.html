@@ -6,6 +6,7 @@
             (onFilter)="onFilter($event)" [customSort]="customSort" (sortFunction)="sortFunction($event)">
             <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
+                    <col *ngIf="progress" class="column-class column-loader">
                     <col *ngIf="tableRowReOrder" class="column-class re-order">
                     <ng-container *ngFor="let col of columns">
                         <col *ngIf="!col?.columns?.length" class="column-class" [class]="col.fieldHeaderClass"
@@ -16,6 +17,7 @@
             </ng-template>
             <ng-template pTemplate="header" let-columns>
                 <tr>
+                    <th *ngIf="progress"></th>
                     <th *ngIf="tableRowReOrder"></th>
                     <th *ngFor="let col of columns" [pSortableColumn]="col?.sortField ? col?.sortField : col.field"
                         [pSortableColumnDisabled]="!col.sortable" [colSpan]="col?.columns?.length"
@@ -26,6 +28,7 @@
                     </th>
                 </tr>
                 <tr>
+                    <th *ngIf="progress"></th>
                     <th *ngIf="tableRowReOrder"></th>
                     <ng-container *ngFor="let col of columns; let colIndex = index">
                         <ng-container *ngIf="col?.columns?.length;">
@@ -39,6 +42,7 @@
                 </tr>
                 <ng-container *ngIf="filterable">
                     <tr>
+                        <th *ngIf="progress"></th>
                         <th *ngIf="tableRowReOrder"></th>
                         <th *ngFor="let col of columns" [colSpan]="col?.columns?.length"
                             [rowSpan]="col?.columns?.length ? 1 : getRowSpan(columns, filterable)">
@@ -47,6 +51,7 @@
                         </th>
                     </tr>
                     <tr>
+                        <th *ngIf="progress"></th>
                         <th *ngIf="tableRowReOrder"></th>
                         <ng-container *ngFor="let col of columns">
                             <ng-container *ngIf="col?.columns?.length;">
@@ -91,6 +96,9 @@
             <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
                 <tr formGroupName="{{rowIndex}}" [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex"
                     [pSelectableRowDisabled]="!selectionMode" [pReorderableRow]="row(rowIndex)?.valid && rowIndex">
+                    <td *ngIf="progress">
+                        <i class="pi" [ngClass]="{'pi-spin pi-spinner row-loader': rowData['processing']}"></i>
+                    </td>
                     <td *ngIf="tableRowReOrder">
                         <span class="pi pi-bars" pReorderableRowHandle></span>
                     </td>

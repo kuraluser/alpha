@@ -97,6 +97,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   cargoNominationDetails: ICargoNominationDetailsResponse;
   dataTableLoading: boolean;
   cargoNominationCheckUpdatesTimer;
+  progress = true;
 
   // private fields
   private _loadableStudyId: number;
@@ -274,7 +275,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     if (!event.data?.isAdd) {
       if (this.cargoNominationForm.valid) {
         this.ngxSpinnerService.show();
-        const row = this.cargoNominations[event.index]
+        event.data.processing = true;
+        const row = this.cargoNominations[event.index];
         this.updateRowByUnit(row, this.loadableStudyDetailsApiService.currentUnit, this.loadableStudyDetailsApiService.baseUnit);
         const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
         this.updateRowByUnit(row, this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit);
@@ -520,6 +522,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         const index = this.cargoNominations?.findIndex((item) => item.storeKey === event.data.storeKey);
         if (index !== -1) {
           this.cargoNominations[index].id = event.data.cargoNominationId;
+          this.cargoNominations[index].processing = false;
           this.cargoNominations = [...this.cargoNominations];
         }
       }

@@ -60,6 +60,8 @@ export class DatatableComponent implements OnInit {
 
   @Input() selectionMode: DATATABLE_SELECTIONMODE;
 
+  @Input() progress = false;
+
   @Input()
   get editMode(): DATATABLE_EDITMODE {
     return this._editMode;

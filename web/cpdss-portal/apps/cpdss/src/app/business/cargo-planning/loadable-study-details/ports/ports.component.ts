@@ -62,6 +62,7 @@ export class PortsComponent implements OnInit {
   portOrder = 0;
   dataTableLoading: boolean;
   portCheckUpdatesTimer;
+  progress = true;
 
   // private fields
   private _portsLists: IPortsValueObject[];
@@ -223,6 +224,7 @@ export class PortsComponent implements OnInit {
         const index = this.portsLists.findIndex((item) => item.storeKey === event.data.storeKey);
         if (index !== -1) {
           this.portsLists[index].id = event.data.id;
+          this.portsLists[index].processing = false;
           this.portsLists = [...this.portsLists];
         }
       }
@@ -359,6 +361,7 @@ export class PortsComponent implements OnInit {
         }
       }
       if (row.valid && !event.data?.isAdd && row.touched) {
+        event.data.processing = true;
         const res = await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[rowIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
         if (res) {
           row.markAsUntouched();
