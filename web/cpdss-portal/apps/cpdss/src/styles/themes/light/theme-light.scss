@@ -1101,3 +1101,14 @@ tr:hover a{
 .row-loader {
   color: $login-btn;
 }
+
+.synoptical-table-wrapper{
+  .p-datatable .p-datatable-thead > tr{ 
+    &:first-child{
+      > th{
+        border-bottom: 2px solid $table-border;
+      }
+    }
+    
+}
+}

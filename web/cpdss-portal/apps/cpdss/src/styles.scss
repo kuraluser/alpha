@@ -1935,9 +1935,7 @@ width: 50px !important;
 .column-priority{
   width: 73px!important;
 }
-.landing-page-tank-wrapper{
-  
-}
+
 
 .check-rounded{
   width: 16px;
@@ -1953,5 +1951,17 @@ width: 50px !important;
 @media  (max-width:1400px){
   .tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div .tank-name{
     font-size: 10px;
+  }
+}
+.synoptical-table-wrapper{
+  .p-datatable .p-datatable-thead > tr{ 
+    > th{
+    padding: 2px 5px;
+  }
+}
+}
+.landing-page-tank-wrapper{
+  .p-datatable table{
+    table-layout: auto!important;
   }
 }
