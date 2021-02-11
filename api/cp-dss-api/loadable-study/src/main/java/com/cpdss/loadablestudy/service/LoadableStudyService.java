@@ -756,14 +756,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               CommonErrorCodes.E_HTTP_BAD_REQUEST,
               HttpStatusCode.BAD_REQUEST);
         }
-
         entity = loadableStudy.get();
 
       } else {
         entity = new LoadableStudy();
       }
 
-      this.checkVoyageAndCreatedFrom(request, entity);
+      this.validateLoadableStudySaveRequest(request, entity);
       entity.setName(request.getName());
       entity.setDetails(StringUtils.isEmpty(request.getDetail()) ? null : request.getDetail());
       entity.setCharterer(
@@ -846,6 +845,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           ResponseStatus.newBuilder()
               .setCode(e.getCode())
               .setMessage(e.getMessage())
+              .setHttpStatusCode(e.getStatus().value())
               .setStatus(FAILED)
               .build());
       this.deleteFiles(entity);
@@ -854,6 +854,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value())
               .setMessage("Error saving loadable study")
               .setStatus(FAILED)
               .build());
@@ -880,7 +881,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
-  private void checkVoyageAndCreatedFrom(LoadableStudyDetail request, LoadableStudy entity)
+  private void validateLoadableStudySaveRequest(LoadableStudyDetail request, LoadableStudy entity)
       throws GenericServiceException {
     Optional<Voyage> voyageOpt = this.voyageRepository.findById(request.getVoyageId());
     if (!voyageOpt.isPresent()) {
@@ -898,6 +899,34 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             null);
       }
       entity.setDuplicatedFrom(createdFromOpt.get());
+    }
+
+    this.validateLoadableStudyName(voyageOpt.get(), request);
+  }
+
+  /**
+   * Check for duplicate LS name
+   *
+   * @param voyage
+   * @param request
+   * @throws GenericServiceException
+   */
+  private void validateLoadableStudyName(Voyage voyage, LoadableStudyDetail request)
+      throws GenericServiceException {
+    LoadableStudy duplicate =
+        this.loadableStudyRepository.findByVoyageAndNameAndIsActive(
+            voyage, request.getName(), true);
+    // new LS
+    if (request.getId() == 0 && null != duplicate) {
+      throw new GenericServiceException(
+          "LS already exists with given name",
+          CommonErrorCodes.E_CPDSS_LS_NAME_EXISTS,
+          HttpStatusCode.BAD_REQUEST);
+    } else if (null != duplicate && request.getId() != duplicate.getId().longValue()) {
+      throw new GenericServiceException(
+          "LS already exists with given name",
+          CommonErrorCodes.E_CPDSS_LS_NAME_EXISTS,
+          HttpStatusCode.BAD_REQUEST);
     }
   }
 
@@ -6223,21 +6252,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.cargoNominationRepository.saveAll(crgoNominationList);
         }
 
-        List<LoadableStudyPortRotation> loadableStudyPortRotationList =
+        List<LoadableStudyPortRotation> loadableStudyPortRotationParentList =
             this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
                 request.getDuplicatedFromId(), true);
-        if (!loadableStudyPortRotationList.isEmpty()) {
-          List<LoadableStudyPortRotation> LoadableStudyPorts =
-              new ArrayList<LoadableStudyPortRotation>();
-
-          loadableStudyPortRotationList.forEach(
-              loadableStudyPortRotation -> {
-                entityManager.detach(loadableStudyPortRotation);
-                loadableStudyPortRotation.setId(null);
-                loadableStudyPortRotation.setLoadableStudy(entity);
-                LoadableStudyPorts.add(loadableStudyPortRotation);
-              });
-          this.loadableStudyPortRotationRepository.saveAll(LoadableStudyPorts);
+        List<LoadableStudyPortRotation> loadableStudyDuplicatedPorts = new ArrayList<>();
+        if (!loadableStudyPortRotationParentList.isEmpty()) {
+          for (LoadableStudyPortRotation loadableStudyPortRotation :
+              loadableStudyPortRotationParentList) {
+            entityManager.detach(loadableStudyPortRotation);
+            loadableStudyPortRotation.setId(null);
+            loadableStudyPortRotation.setLoadableStudy(entity);
+            loadableStudyDuplicatedPorts.add(loadableStudyPortRotation);
+          }
+          loadableStudyDuplicatedPorts =
+              this.loadableStudyPortRotationRepository.saveAll(loadableStudyDuplicatedPorts);
         }
 
         Optional<LoadableStudy> loadableStudyOpt =
@@ -6319,16 +6347,31 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 request.getDuplicatedFromId(), true);
 
         if (!synopticalTableList.isEmpty()) {
-          List<SynopticalTable> SynopticalTables = new ArrayList<SynopticalTable>();
+          List<SynopticalTable> synopticalTables = new ArrayList<>();
+          for (SynopticalTable synopticalTable : synopticalTableList) {
+            LoadableStudyPortRotation parent = synopticalTable.getLoadableStudyPortRotation();
+            Optional<LoadableStudyPortRotation> duplicated =
+                loadableStudyDuplicatedPorts.stream()
+                    .filter(
+                        port ->
+                            port.getPortXId().equals(parent.getPortXId())
+                                && port.getOperation().getId().equals(parent.getOperation().getId())
+                                && port.getPortOrder().equals(parent.getPortOrder()))
+                    .findAny();
+            if (!duplicated.isPresent()) {
+              throw new GenericServiceException(
+                  "Could not find the duplicated port rotation entity",
+                  CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                  HttpStatusCode.BAD_REQUEST);
+            }
+            entityManager.detach(synopticalTable);
+            synopticalTable.setId(null);
+            synopticalTable.setLoadableStudyPortRotation(duplicated.get());
+            synopticalTable.setLoadableStudyXId(entity.getId());
 
-          synopticalTableList.forEach(
-              synopticalTable -> {
-                entityManager.detach(synopticalTable);
-                synopticalTable.setId(null);
-                synopticalTable.setLoadableStudyXId(entity.getId());
-                SynopticalTables.add(synopticalTable);
-              });
-          this.synopticalTableRepository.saveAll(SynopticalTables);
+            synopticalTables.add(synopticalTable);
+          }
+          this.synopticalTableRepository.saveAll(synopticalTables);
         }
 
         List<LoadableStudyAttachments> loadableStudyAttachmentsList =

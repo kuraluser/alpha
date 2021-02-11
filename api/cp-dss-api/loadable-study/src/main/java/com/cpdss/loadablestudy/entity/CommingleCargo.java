@@ -49,7 +49,7 @@ public class CommingleCargo extends EntityDoc {
 
   @Column(name = "priority")
   private Integer priority;
-  
+
   @Column(name = "isactive")
   private Boolean isActive;
 }

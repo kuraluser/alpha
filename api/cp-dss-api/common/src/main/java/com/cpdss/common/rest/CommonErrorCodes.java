@@ -20,4 +20,5 @@ public interface CommonErrorCodes {
   String E_CPDSS_VOYAGE_EXISTS = "100";
   String E_CPDSS_INVALID_USER = "101";
   String E_CPDSS_ALGO_ISSUE = "102";
+  String E_CPDSS_LS_NAME_EXISTS = "105";
 }

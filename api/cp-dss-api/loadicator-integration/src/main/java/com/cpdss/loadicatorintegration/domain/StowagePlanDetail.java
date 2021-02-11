@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package com.cpdss.loadicatorintegration.domain;
 
 import lombok.AllArgsConstructor;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StowagePlanDetail {
 
-	Long id;
-	
-	Long portId;
+  Long id;
+
+  Long portId;
 }

@@ -452,7 +452,7 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to save loadable studies",
           reply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
     response.setLoadableStudyId(reply.getId());

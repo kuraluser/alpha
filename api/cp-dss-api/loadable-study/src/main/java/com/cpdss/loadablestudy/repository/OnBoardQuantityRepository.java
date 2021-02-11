@@ -31,5 +31,4 @@ public interface OnBoardQuantityRepository extends CommonCrudRepository<OnBoardQ
    */
   public List<OnBoardQuantity> findByLoadableStudyAndPortIdAndIsActive(
       LoadableStudy loadableStudy, Long portId, Boolean isActive);
-
 }

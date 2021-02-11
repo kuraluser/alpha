@@ -348,38 +348,41 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
         stowagePlanEntityList.stream().map(StowagePlan::getId).collect(Collectors.toList());
     List<StowagePlan> stowagePlanList = this.stowagePlanRepository.findByIdIn(stowagePlanIds);
 
-	for ( StowagePlan stowage : stowagePlanList) {
-		if (null != stowagePlanList) {
-			List<LoadicatorTrim> loadicatorTrimList = this.loadicatorTrimRepository
-					.findByStowagePlanIdIn(stowagePlanIds);
-			LoadicatorPatternDetails.Builder loadicatorPatternDetails = LoadicatorPatternDetails.newBuilder();
+    for (StowagePlan stowage : stowagePlanList) {
+      if (null != stowagePlanList) {
+        List<LoadicatorTrim> loadicatorTrimList =
+            this.loadicatorTrimRepository.findByStowagePlanIdIn(stowagePlanIds);
+        LoadicatorPatternDetails.Builder loadicatorPatternDetails =
+            LoadicatorPatternDetails.newBuilder();
 
-			if (loadicatorTrimList != null) {
-				loadicatorTrimList.forEach(trim -> {
-					LDtrim.Builder ldTrim = this.buildLoadicatorTrimDetails(trim);
-					loadicatorPatternDetails.addLDtrim(ldTrim);
-				});
-			}
-			List<LoadicatorStrength> loadicatorStrengthList = this.loadicatorStrengthRepository
-					.findByStowagePlanIdIn(stowagePlanIds);
-			if (loadicatorStrengthList != null) {
-				loadicatorStrengthList.forEach(strength -> {
-					LDStrength.Builder ldStrength = this.buildStrengthDetails(strength);
-					loadicatorPatternDetails.addLDStrength(ldStrength);
-				});
-			}
-			if (loadicatorStrengthList != null) {
-				List<IntactStability> intactStabilityList = this.loadicatorIntactStabilityRepository
-						.findByStowagePlanIdIn(stowagePlanIds);
-				intactStabilityList.forEach(stability -> {
-					LDIntactStability.Builder ldStability = this.buildStabilityDetails(stability);
-					loadicatorPatternDetails.addLDIntactStability(ldStability);
-				});
-			}
-			loadicatorPatternDetails.setLoadablePatternId(stowage.getStowageId());
-			request.addLoadicatorPatternDetails(loadicatorPatternDetails);
-
-		}
+        if (loadicatorTrimList != null) {
+          loadicatorTrimList.forEach(
+              trim -> {
+                LDtrim.Builder ldTrim = this.buildLoadicatorTrimDetails(trim);
+                loadicatorPatternDetails.addLDtrim(ldTrim);
+              });
+        }
+        List<LoadicatorStrength> loadicatorStrengthList =
+            this.loadicatorStrengthRepository.findByStowagePlanIdIn(stowagePlanIds);
+        if (loadicatorStrengthList != null) {
+          loadicatorStrengthList.forEach(
+              strength -> {
+                LDStrength.Builder ldStrength = this.buildStrengthDetails(strength);
+                loadicatorPatternDetails.addLDStrength(ldStrength);
+              });
+        }
+        if (loadicatorStrengthList != null) {
+          List<IntactStability> intactStabilityList =
+              this.loadicatorIntactStabilityRepository.findByStowagePlanIdIn(stowagePlanIds);
+          intactStabilityList.forEach(
+              stability -> {
+                LDIntactStability.Builder ldStability = this.buildStabilityDetails(stability);
+                loadicatorPatternDetails.addLDIntactStability(ldStability);
+              });
+        }
+        loadicatorPatternDetails.setLoadablePatternId(stowage.getStowageId());
+        request.addLoadicatorPatternDetails(loadicatorPatternDetails);
+      }
       request.setProcessId(stowagePlanList.get(0).getProcessId());
       request.setLoadableStudyId(stowagePlanList.get(0).getBookingListId());
     }
@@ -388,8 +391,9 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
 
   private LDIntactStability.Builder buildStabilityDetails(IntactStability stability) {
     LDIntactStability.Builder ldStability = LDIntactStability.newBuilder();
-    
-    StowagePlanDetail stowageDetail = this.stowagePlanRepository.findPortForStability(stability.getStowagePlanId());
+
+    StowagePlanDetail stowageDetail =
+        this.stowagePlanRepository.findPortForStability(stability.getStowagePlanId());
     ldStability.setPortId(stowageDetail.getPortId());
     ldStability.setId(stability.getId());
     Optional.ofNullable(stability.getStowagePlanId()).ifPresent(ldStability::setStowagePlanId);
@@ -442,8 +446,9 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
 
   LDStrength.Builder buildStrengthDetails(LoadicatorStrength strength) {
     LDStrength.Builder ldStrength = LDStrength.newBuilder();
-    
-    StowagePlanDetail stowageDetail = this.stowagePlanRepository.findPortForStrength(strength.getStowagePlanId());
+
+    StowagePlanDetail stowageDetail =
+        this.stowagePlanRepository.findPortForStrength(strength.getStowagePlanId());
     ldStrength.setPortId(stowageDetail.getPortId());
     ldStrength.setId(strength.getId());
     Optional.ofNullable(strength.getStowagePlanId()).ifPresent(ldStrength::setStowagePlanId);
@@ -498,10 +503,11 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
 
   LDtrim.Builder buildLoadicatorTrimDetails(LoadicatorTrim trim) {
     LDtrim.Builder ldTrim = LDtrim.newBuilder();
-    
-	StowagePlanDetail stowageDetail = this.stowagePlanRepository.findPortForTrim(trim.getStowagePlanId());
-	ldTrim.setPortId(stowageDetail.getPortId());
-	 
+
+    StowagePlanDetail stowageDetail =
+        this.stowagePlanRepository.findPortForTrim(trim.getStowagePlanId());
+    ldTrim.setPortId(stowageDetail.getPortId());
+
     ldTrim.setId(trim.getId());
     Optional.ofNullable(trim.getStowagePlanId()).ifPresent(ldTrim::setStowagePlanId);
     Optional.ofNullable(trim.getAftDraft())
