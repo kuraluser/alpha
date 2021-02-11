@@ -53,7 +53,8 @@ export class LoadableStudyDetailsTransformationService {
       cargoNomination.quantity.value = 0;
       cargoNomination.loadingPorts.value.map(port => {
         cargoNomination.quantity.value += Number(port.quantity);
-      })
+      });
+      cargoNomination.quantity.value = Number(cargoNomination.quantity.value.toFixed(2));
       cargoNomination.loadingPortsNameArray = cargoNomination.loadingPorts.value.map(lport => lport.name);
       const portLength = cargoNomination.loadingPorts.value.length;
       if (portLength > 1) {
@@ -235,6 +236,7 @@ export class LoadableStudyDetailsTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
         filterField: 'quantity.value',
         fieldPlaceholder: 'ENTER_QUANTITY',
+        numberFormat: '1.0-2',
         showTotal: true,
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR'
