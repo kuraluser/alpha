@@ -3329,6 +3329,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       com.cpdss.loadablestudy.entity.CommingleCargo commingleCargoEntity,
       CommingleCargo requestRecord,
       Long loadableStudyId) {
+    List<Long> cargoNominationIds = new ArrayList<>();
+    cargoNominationIds.add(requestRecord.getCargoNomination1Id());
+    cargoNominationIds.add(requestRecord.getCargoNomination2Id());
+    // fetch the max priority for the cargoNomination ids and set as priority for commingle
+    Long maxPriority =
+        cargoNominationRepository.getMaxPriorityCargoNominationIn(cargoNominationIds);
+    commingleCargoEntity.setPriority(maxPriority != null ? maxPriority.intValue() : 0);
     commingleCargoEntity.setLoadableStudyXId(loadableStudyId);
     commingleCargoEntity.setPurposeXid(requestRecord.getPurposeId());
     commingleCargoEntity.setTankIds(

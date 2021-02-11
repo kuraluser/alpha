@@ -31,4 +31,7 @@ public interface CargoNominationRepository extends CommonCrudRepository<CargoNom
           + "AND CN.isActive = true AND CNPD.isActive = true")
   public Long getCountCargoNominationWithPortIds(
       Long loadableStudyId, CargoNomination cargoNomination, Long portId);
+
+  @Query("SELECT MAX(priority) FROM CargoNomination where id in ?1")
+  public Long getMaxPriorityCargoNominationIn(List<Long> cargoNominationIds);
 }

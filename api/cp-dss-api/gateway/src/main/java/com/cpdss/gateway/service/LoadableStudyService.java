@@ -1966,12 +1966,16 @@ public class LoadableStudyService {
                   Optional.ofNullable(slopOnly).ifPresent(commingleCargoBuilder::setSlopOnly);
                   Optional.ofNullable(preferredTanks)
                       .ifPresent(commingleCargoBuilder::addAllPreferredTanks);
+                  Optional.ofNullable(cargoGroup.getCargoNomination1Id())
+                      .ifPresent(commingleCargoBuilder::setCargoNomination1Id);
                   Optional.ofNullable(cargoGroup.getCargo1Id())
                       .ifPresent(commingleCargoBuilder::setCargo1Id);
                   Optional.ofNullable(cargoGroup.getCargo1pct())
                       .ifPresent(
                           cargo1pct ->
                               commingleCargoBuilder.setCargo1Pct(String.valueOf(cargo1pct)));
+                  Optional.ofNullable(cargoGroup.getCargoNomination2Id())
+                      .ifPresent(commingleCargoBuilder::setCargoNomination2Id);
                   Optional.ofNullable(cargoGroup.getCargo2Id())
                       .ifPresent(commingleCargoBuilder::setCargo2Id);
                   Optional.ofNullable(cargoGroup.getCargo2pct())

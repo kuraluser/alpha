@@ -781,11 +781,13 @@ message CommingleCargo{
 	int64 purposeId = 2;
 	bool slopOnly = 3;
 	repeated int64 preferredTanks = 4;
-	int64 cargo1Id = 5;
-	string cargo1pct = 6;
-	int64 cargo2Id = 7;
-	string cargo2pct = 8;
-    string quantity = 9;
+	int64 cargoNomination1Id = 5;
+	int64 cargo1Id = 6;
+	string cargo1pct = 7;
+	int64 cargoNomination2Id = 8;
+	int64 cargo2Id = 9;
+	string cargo2pct = 10;
+     string quantity = 11;
 }
 
 message CommingleCargoRequest{
