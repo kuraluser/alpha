@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { ICargoResponseModel, ICommingleResponseModel } from '../models/commingle.model';
+import { ICommingleResponseModel } from '../models/commingle.model';
+import { ICargoResponseModel } from '../../../shared/models/common.model';
 
 
 /**

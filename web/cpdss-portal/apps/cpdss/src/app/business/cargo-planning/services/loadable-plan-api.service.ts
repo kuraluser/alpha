@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { CargoPlanningModule } from '../cargo-planning.module';
 import { ILoadablePlanResponse , ISaveComment } from '../models/loadable-plan.model';
+import { ICargoResponseModel } from '../../../shared/models/common.model';
 import { IResponse } from '../../../shared/models/common.model';
 
 /**
@@ -34,6 +35,14 @@ export class LoadablePlanApiService {
   */
   getLoadablePlanDetails(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<ILoadablePlanResponse> {
     return this.commonApiService.get<ILoadablePlanResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-pattern-details/${loadablePatternId}`);
+  }
+
+  /**
+  * 
+  * Get api for cargo details
+  */
+  getCargos(): Observable<ICargoResponseModel> {
+    return this.commonApiService.get<ICargoResponseModel>(`cargos`);
   }
 
     /**

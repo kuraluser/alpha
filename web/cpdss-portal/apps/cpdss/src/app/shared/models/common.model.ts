@@ -239,3 +239,27 @@ export interface IFuelType {
     colorCode: string;
     shortName: string;
 }
+
+/**
+ * Interface for cargo response
+ * @export
+ * @interface 
+ */
+export interface ICargoResponseModel {
+    cargos: ICargo[],
+    responseStatus: IResponseStatus;
+}
+
+/**
+ * Interface for cargo
+ *
+ * @export
+ * @interface ICargo
+ */
+export interface ICargo {
+    id: number;
+    name?: string;
+    abbreviation?: string;
+    api?: number;
+    ports?: IPort[];
+}

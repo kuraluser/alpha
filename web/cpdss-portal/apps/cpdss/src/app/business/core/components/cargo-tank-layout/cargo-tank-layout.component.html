@@ -39,17 +39,17 @@
                         class="tank-commodity-name">{{tank?.commodity?.cargoAbbreviation}}</span>
                     <div class="tank-item-valign">
                         <div *ngIf="options?.showVolume" class="tank-commodity-volume">
-                            {{tank?.commodity[options?.volumeField]}}
+                            {{tank?.commodity[options?.volumeField] | number :'1.0-2'}}
                             {{options?.volumeUnit}}</div>
                         <span *ngIf="options?.showWeight"
-                            class="tank-commodity-weight">{{tank?.commodity[options?.weightField]}}
+                            class="tank-commodity-weight">{{tank?.commodity[options?.weightField] | number :'1.0-2'}}
                             {{options?.weightUnit}}</span>
                     </div>
                     <span *ngIf="options?.showUllage"
                         class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField]}}
                         {{options?.ullageUnit}}</span>
                     <span *ngIf="options?.showFillingPercentage" class="tank-filling-percentage">{{options?.fillingPercentageField ?
-                        tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}%</span>
+                        (tank?.commodity[options?.fillingPercentageField] | number :'1.0-2'): (tank?.percentageFilled | number :'1.0-2')}}%</span>
                 </ng-container>
             </div>
         </div>

@@ -1,18 +1,6 @@
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { IResponseStatus, ValueObject } from '../../../shared/models/common.model';
-import { ICargo, ICargoNomination } from './cargo-planning.model';
-
-
-/**
- * Interface for   cargo master api response
- *
- * @export
- * @interface ICargoResponseModel
- */
-export interface ICargoResponseModel {
-    responseStatus: IResponseStatus;
-    cargos: ICargo[];
-}
+import { ICargoNomination } from './cargo-planning.model';
 
 
 /**
