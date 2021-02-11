@@ -1,15 +1,16 @@
-
 <form style="height: 100%;">
     <p-table *ngIf="synopticalRecords.length; else empty" [columns]="synopticalRecords" [value]="cols" dataKey="header"
-        id="synoptic-table" [expandedRowKeys]="expandedRows" styleClass="body-header-row-span-table" [scrollable]="true" scrollHeight="flex">
+        id="synoptic-table" [expandedRowKeys]="expandedRows" styleClass="body-header-row-span-table" [scrollable]="true"
+        scrollHeight="flex">
         <ng-template pTemplate="header" let-columns let-rowData>
             <tr *ngFor="let headerColumn of headerColumns; let headerIndex = index">
-                
+
                 <th>{{headerColumn.header | translate}}</th>
                 <th></th>
                 <th></th>
                 <ng-container *ngFor="let col of columns; let i= index">
-                    <th *ngIf="headerIndex > 0 || i%2 == 0" [attr.colSpan]="headerIndex ? 1 : 2" class="text-center">{{col[headerColumn.fields[0].key]}}</th>
+                    <th *ngIf="headerIndex > 0 || i%2 == 0" [attr.colSpan]="headerIndex ? 1 : 2" class="text-center">
+                        {{col[headerColumn.fields[0].key]}}</th>
                 </ng-container>
             </tr>
         </ng-template>
@@ -24,14 +25,18 @@
                 <tr>
                     <ng-container *ngFor="let header of headers; let headerIndex = index">
                         <th [attr.rowspan]="calculateRowSpan(header)">
-                            <button type="button" *ngIf="header.expandable && header.expandedFields && header.expandedFields.length" pButton pRipple [pRowToggler]="header"
+                            <button type="button"
+                                *ngIf="header.expandable && header.expandedFields && header.expandedFields.length"
+                                pButton pRipple [pRowToggler]="header"
                                 class="p-button-text p-button-rounded p-button-plain"
                                 [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
                             <span class="row-header">{{header.header | translate}}</span>
                         </th>
                     </ng-container>
                     <th [attr.rowspan]="calculateRowSpan(rowData)">
-                        <button type="button" *ngIf="rowData.expandable && rowData.expandedFields && rowData.expandedFields.length" pButton pRipple [pRowToggler]="rowData"
+                        <button type="button"
+                            *ngIf="rowData.expandable && rowData.expandedFields && rowData.expandedFields.length"
+                            pButton pRipple [pRowToggler]="rowData"
                             class="p-button-text p-button-rounded p-button-plain"
                             [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
                         <span class="row-header">{{rowData.header | translate}}</span>
@@ -58,19 +63,22 @@
             </ng-container>
         </ng-template>
         <ng-template #cell let-rowData="rowData" let-column="column" let-colIndex="colIndex">
-            <td *ngIf="!rowData.colSpan || colIndex%2 == 0" [attr.colSpan]="rowData.colSpan ? rowData.colSpan : 1" [class.text-center]="true">
+            <td *ngIf="!rowData.colSpan || colIndex%2 == 0" [attr.colSpan]="rowData.colSpan ? rowData.colSpan : 1"
+                [class.text-center]="true">
                 <ng-container *ngFor="let field of rowData.fields;let i = index">
-                    <div *ngIf="i > 0">&nbsp;-&nbsp;</div>
-                    <div class="error-icon-wrapper">
-                        <ng-container
-                            *ngIf="rowData.editable && synopticalService.editMode && (!rowData.editableByCondition || checkEditableCondition(field.key,colIndex)); else noEdit">
+                    <div class="pr-0" *ngIf="i > 0" [class.pr-20]="rowData.editable && synopticalService.editMode && (!rowData.editableByCondition || checkEditableCondition(field.key,colIndex))">
+                        &nbsp;-&nbsp;
+                    </div>
+                    <ng-container
+                        *ngIf="rowData.editable && synopticalService.editMode && (!rowData.editableByCondition || checkEditableCondition(field.key,colIndex)); else noEdit">
+                        <div class="error-icon-wrapper">
                             <ng-container [ngSwitch]="field.type">
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
                                     <p-calendar appendTo="body" [showButtonBar]="true" [showTime]="true"
                                         inputId="{{field.key + colIndex}}" id="{{field.key + colIndex}}"
                                         [formControl]="getControl(colIndex,field.key)" [hideOnDateTimeSelect]="false"
-                                        [minDate]="today"
-                                        dateFormat="dd-mm-yy" (onClose)="onBlur(field,colIndex)" #subcoldatetime>
+                                        [minDate]="today" dateFormat="dd-mm-yy" (onClose)="onBlur(field,colIndex)"
+                                        #subcoldatetime>
                                         <p-footer>
                                             <button class="btn btn-main"
                                                 (click)="subcoldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
@@ -80,7 +88,8 @@
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.TIME">
                                     <p-calendar appendTo="body" inputId="{{field.key + colIndex}}"
-                                        id="{{field.key + colIndex}}" [timeOnly]="true" [readonlyInput]="true" [showButtonBar]="true" todayButtonStyleClass="hide"
+                                        id="{{field.key + colIndex}}" [timeOnly]="true" [readonlyInput]="true"
+                                        [showButtonBar]="true" todayButtonStyleClass="hide"
                                         [formControl]="getControl(colIndex,field.key)" (onBlur)="onBlur(field,colIndex)"
                                         #subcoltime>
                                     </p-calendar>
@@ -98,13 +107,13 @@
                             <cpdss-portal-validation-error [errors]="fieldError(colIndex, field.key)"
                                 [errorMessages]="errorMessages">
                             </cpdss-portal-validation-error>
-                        </ng-container>
-                        <ng-template #noEdit>
-                            <span>
-                                {{column[field.key]}}
-                            </span>
-                        </ng-template>
-                    </div>
+                        </div>
+                    </ng-container>
+                    <ng-template #noEdit>
+                        <span>
+                            {{column[field.key]}}
+                        </span>
+                    </ng-template>
                 </ng-container>
             </td>
         </ng-template>

@@ -265,7 +265,7 @@ hr{
 }
 .p-datatable .p-datatable-tbody > tr{
   color: $text-primary;
-  &:hover{
+  &:hover, &:focus{
     background: $dropdown-menu-hover-bg!important;
     color: $hover-color;
   }
@@ -418,6 +418,9 @@ hr{
 
 .grid-dropdown-icon .p-splitbutton-menubutton{
   background: url($images-theme + 'hamburger-menu-icon.png') no-repeat center center;
+  &:focus{
+    background: url($images-theme + 'hamburger-menu-icon-focus.png') no-repeat center center;
+  }
   &:hover{
     background: url($images-theme + 'hamburger-menu-icon.png') no-repeat center center;
   }
@@ -446,6 +449,15 @@ hr{
 .p-datatable .p-datatable-tbody > tr.p-highlight{
   color: $hover-color!important;
   background:$dropdown-menu-hover-bg!important;
+  .grid-dropdown-icon .p-splitbutton-menubutton{
+    background: url($images-theme + 'hamburger-menu-icon.png') no-repeat center center;
+    &:focus{
+      background: url($images-theme + 'hamburger-menu-icon.png') no-repeat center center;
+    }
+    &:hover{
+      background: url($images-theme + 'hamburger-menu-icon.png') no-repeat center center;
+    }
+  }
 }
 
 .sidebar{

@@ -897,12 +897,16 @@ input[type=number] {
 }
 
 .action-buttons{
- visibility: hidden;
+  button, a{
+    visibility: hidden;
+  }
 }
 .p-datatable .p-datatable-tbody > tr{
-  &:hover{
+  &:hover, &:focus{
     .action-buttons{
-      visibility: visible;
+      button, a{
+        visibility: visible;
+      }
     }
   }
 }
@@ -1071,6 +1075,9 @@ input[type=number] {
   /*overflow: auto;*/
   padding-left: 15px;
   padding-right: 15px;
+  &.ohq{
+    height: calc(100vh - 290px);
+  }
 }
 .column-class.column-laycan{
   min-width: 220px!important;
@@ -1932,10 +1939,15 @@ min-width: 50px !important;
 width: 50px !important;
 }
 }
-.column-priority{
+.column-priority, .column-qty{
   width: 73px!important;
 }
-
+.column-api, .column-temp{
+  width: 90px!important;
+}
+.column-max-tol, .column-min-tol{
+  width: 90px!important;
+}
 
 .check-rounded{
   width: 16px;
@@ -1968,4 +1980,21 @@ width: 50px !important;
 
 .hide{
   display: none
+}
+
+.action-buttons button:focus, .action-buttons a:focus, .action-buttons button:hover, .action-buttons a:hover{
+  visibility: visible!important;
+}
+.synoptical-table-wrapper{
+  td.text-center{
+    .error-icon-wrapper{
+      display: block;
+      max-width: 151px;
+      padding-left: 20px;
+      margin: auto;
+       input{
+        text-align: center;
+      }
+    }
+  }
 }

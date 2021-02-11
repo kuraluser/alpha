@@ -238,6 +238,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldPlaceholder: 'ENTER_QUANTITY',
         numberFormat: '1.0-2',
         showTotal: true,
+        fieldHeaderClass: 'column-qty',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR'
         }
@@ -253,6 +254,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldSuffix: '%',
         filterField: 'maxTolerance.value',
         fieldPlaceholder: 'ENTER_MAXTOLERANCE',
+        fieldHeaderClass: 'column-max-tol',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'max': 'CARGO_NOMINATION_MAX_TOLERANCE_MAX_ERROR',
@@ -270,6 +272,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldSuffix: '%',
         filterField: 'minTolerance.value',
         fieldPlaceholder: 'ENTER_MINTOLERANCE',
+        fieldHeaderClass: 'column-min-tol',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'max': 'CARGO_NOMINATION_MIN_TOLERANCE_MAX_ERROR',
@@ -288,6 +291,7 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'api.value',
         fieldPlaceholder: 'ENTER_API_EST',
         fieldClass: 'api',
+        fieldHeaderClass: 'column-api',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'min': 'CARGO_NOMINATION_API_MIN_ERROR'
@@ -305,6 +309,7 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'temperature.value',
         fieldPlaceholder: 'ENTER_TEMP_EST',
         fieldClass: 'temperature',
+        fieldHeaderClass: 'column-temp',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR'
         }
