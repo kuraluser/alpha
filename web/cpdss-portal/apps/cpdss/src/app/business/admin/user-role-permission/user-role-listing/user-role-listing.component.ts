@@ -17,7 +17,7 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
 import { Subject } from 'rxjs';
-import { switchMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 /**
  * Component class of user allocation
@@ -43,6 +43,8 @@ export class UserRoleListingComponent implements OnInit {
   public loading: boolean;
   public totalRecords: number;
   public currentPage: number;
+  public resetDataTable: boolean;
+  public pageState:IDataStateChange;
 
   private getUserDetails$ = new Subject<IDataStateChange>();
 
@@ -71,17 +73,15 @@ export class UserRoleListingComponent implements OnInit {
     this.columns = this.userRolePermissionTransformationService.getRoleListDatatableColumns();
     this.getPagePermission();
     this.getUserDetails$.pipe(
-      debounceTime(10),
-      distinctUntilChanged(),
-      switchMap((data: IDataStateChange) => {
-        return this.userRolePermissionApiService.getRoleDetails(data);
+      switchMap(() => {
+        return this.userRolePermissionApiService.getRoleDetails(this.pageState);
       })
     ).subscribe((roleDetailsRes: IRoleResponse) => {
       this.getUserDetails(roleDetailsRes);
       this.loading = false;
     });
-    const data: IDataStateChange = <IDataStateChange>{};
-    this.getUserDetails$.next(data);
+    this.pageState = <IDataStateChange>{};
+    this.getUserDetails$.next();
     this.addRoleBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['UserRoleListing'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
   }
 
@@ -109,6 +109,11 @@ export class UserRoleListingComponent implements OnInit {
     if (roleDetailsRes.responseStatus.status === '200') {
       this.totalRecords = roleDetailsRes.totalElements;
       const roles = roleDetailsRes.roles;
+      if(this.totalRecords &&  !roles?.length) {
+        this.currentPage -= 1; 
+        this.pageState['page'] =  this.currentPage;
+        this.getUserDetails$.next();
+      }
       const userDetailsArray = [];
       roles?.map((role) => {
         userDetailsArray.push(this.initUserRoleFormGroup(role))
@@ -135,9 +140,7 @@ export class UserRoleListingComponent implements OnInit {
         const roleDeleteRes: IRoleDeleteResponse = await this.userRolePermissionApiService.deleteRole(roleId).toPromise();
         this.ngxSpinnerService.hide();
         if (roleDeleteRes.responseStatus.status === '200') {
-          this.currentPage = 0;
-          const data: IDataStateChange = <IDataStateChange>{};
-          this.getUserDetails$.next(data);
+          this.getUserDetails$.next();
           this.messageService.add({ severity: 'success', summary: translationKeys['ROLE_DELETED_SUCCESS'], detail: translationKeys['ROLE_DELETE_SUCCESSFULLY'] });
         }
       }
@@ -197,7 +200,7 @@ export class UserRoleListingComponent implements OnInit {
    * @memberof UserRoleListingComponent
   */
   onDataStateChange(event: any) {
-    const data: IDataStateChange = {
+    this.pageState = {
       name: event.filter?.name,
       desc: event.filter?.description,
       pageSize: event.paginator.rows,
@@ -206,7 +209,7 @@ export class UserRoleListingComponent implements OnInit {
       orderBy: event.sort.sortOrder,
     };
     this.loading = true;
-    this.getUserDetails$.next(data);
+    this.getUserDetails$.next();
   }
 
   /**
@@ -215,7 +218,8 @@ export class UserRoleListingComponent implements OnInit {
   */
   roleSaved() {
     this.currentPage = 0;
-    const data: IDataStateChange = <IDataStateChange>{};
-    this.getUserDetails$.next(data);
+    this.resetDataTable = true;
+    this.pageState = <IDataStateChange>{};
+    this.getUserDetails$.next();
   }
 }

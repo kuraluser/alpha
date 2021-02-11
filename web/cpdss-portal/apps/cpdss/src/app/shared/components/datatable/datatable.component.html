@@ -69,7 +69,7 @@
                 <ng-template #filterTemplate let-col="column">
                     <ng-container *ngIf="col.filter" [ngSwitch]="col.filterType">
                         <input *ngSwitchCase="filterType.TEXT" type="text" id="{{col.field+'_filter'}}"
-                            (input)="filterData($event , col)"
+                            (input)="filterData($event , col)" [ngModel]="filterObject[col.filterField]" [ngModelOptions]="{standalone: true}"
                             [placeholder]="col.filterPlaceholder| translate" class="p-column-filter">
                         <input *ngSwitchCase="filterType.NUMBER" type="number" id="{{col.field+'_filter'}}"
                             (input)="datatable.filter($event.target.value, col?.filterField ? col?.filterField : col.field, col.filterMatchMode)"
@@ -327,7 +327,7 @@
             </ng-template>
         </p-table>
         <ng-container *ngIf="paginator">
-            <p-paginator  currentPageReportTemplate={{currentPageReportTemplate}} [showJumpToPageDropdown]="true" [alwaysShow]="false" #paginator [showCurrentPageReport]="true"   [rows]="rows" [totalRecords]="totalRecords"  (onPageChange)="onPageChange($event)" [rowsPerPageOptions]="rowsPerPage"></p-paginator>
+            <p-paginator  currentPageReportTemplate={{currentPageReportTemplate}} [showJumpToPageDropdown]="true"  #paginator [showCurrentPageReport]="true"   [rows]="rows" [totalRecords]="totalRecords"  (onPageChange)="onPageChange($event)" [rowsPerPageOptions]="rowsPerPage"></p-paginator>
         </ng-container>
         
     </div>

@@ -11,7 +11,7 @@
                 [editMode]="editMode" (columnClick)="columnClick($event)" (deleteRow)="onDeleteRow($event)" [form]="userRoleForm" (editRow)="editRow($event)"
                 [paginator]="true" [rows]="10" [totalRecords]="totalRecords" 
                 [lazy]="true" (onDataStateChange)="onDataStateChange($event)" [loading]="loading"
-                [(currentPage)]="currentPage"></cpdss-portal-datatable>
+                [(currentPage)]="currentPage" [(reset)]="resetDataTable"></cpdss-portal-datatable>
 
     <cpdss-portal-add-user-role *ngIf="addUserRole" (displayPopUp)="addRolePopUp($event)" (roleSaved)="roleSaved()"></cpdss-portal-add-user-role>
         </div>

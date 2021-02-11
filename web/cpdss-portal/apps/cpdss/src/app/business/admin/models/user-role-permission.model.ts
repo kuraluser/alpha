@@ -221,7 +221,7 @@ export interface IDataStateChange {
     name: string,
     desc: string,
     pageSize: string,
-    page: string,
+    page: number,
     sortBy: string,
     orderBy: string,
 }

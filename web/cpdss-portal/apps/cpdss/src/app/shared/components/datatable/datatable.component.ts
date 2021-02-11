@@ -148,6 +148,15 @@ export class DatatableComponent implements OnInit {
     this.updateCurrentPage(currentPage)
   }
 
+  @Input() 
+  set reset(resetDataTable: boolean) {
+    if(resetDataTable) {
+      this.datatable.reset();
+      this.filterObject = {};
+      this.resetChange.emit(false);
+    }
+  }
+
   get dataTable() {
     return this.form.get('dataTable') as FormArray;
   }
@@ -167,6 +176,7 @@ export class DatatableComponent implements OnInit {
   @Output() editRow = new EventEmitter<IDataTableEvent>();
   @Output() onDataStateChange = new EventEmitter<IDataTablePageChangeEvent>();
   @Output() currentPageChange = new EventEmitter<number>();
+  @Output() resetChange = new EventEmitter<boolean>();
   
   // public fields
   readonly fieldType = DATATABLE_FIELD_TYPE;
@@ -680,7 +690,6 @@ export class DatatableComponent implements OnInit {
   loadDetails(event: LazyLoadEvent) {
     if(event.sortField) {
       this.updateCurrentPage(0);
-      this.onDataStateChange.emit(this.setStateValue('sort'));
     }
   }
 
@@ -743,7 +752,7 @@ export class DatatableComponent implements OnInit {
     const data = {
       paginator: {
         currentPage: event?.page ? event.page : 0,
-        rows: this.paginatorRef.paginatorState.rows
+        rows: event.rows ? event.rows : 0
       },
       filter: this.filterObject,
       action: 'paginator',
@@ -766,7 +775,6 @@ export class DatatableComponent implements OnInit {
     if(col?.filterByServer) {
       this.updateCurrentPage(0);
       this.filterObject[col.filterField] = ($event.target.value).trim();
-      this.onDataStateChange.emit(this.setStateValue('filter'));
     } else {
       this.datatable.filter(($event.target.value).trim(), col?.filterField ? col?.filterField : col.field, col.filterMatchMode)
     }
