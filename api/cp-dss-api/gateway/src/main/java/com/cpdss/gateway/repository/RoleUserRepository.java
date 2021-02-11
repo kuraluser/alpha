@@ -23,6 +23,7 @@ public interface RoleUserRepository extends CrudRepository<RoleUserMapping, Long
   @Query("FROM RoleUserMapping RM WHERE RM.roles.id = ?1 and RM.isActive = ?2")
   List<RoleUserMapping> findByRolesAndIsActive(Long roleId, boolean b);
 
-  @Query("FROM RoleUserMapping RM WHERE RM.roles.id = ?1 AND RM.users.id in (:userIds)")
-  List<RoleUserMapping> findByRolesAndUsersInIsActive(Long roleId, List<Long> userIds);
+  //  @Query("FROM RoleUserMapping RM WHERE RM.roles.id = ?1 AND RM.users.id in (:userIds)")
+  //  List<RoleUserMapping> findByRolesAndUsersInIsActive(@Param("roleId") Long roleId,
+  // @Param("userIds") List<Long> userIds);
 }

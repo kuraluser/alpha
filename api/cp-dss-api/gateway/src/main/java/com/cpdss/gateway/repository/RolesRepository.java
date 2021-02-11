@@ -4,9 +4,11 @@ package com.cpdss.gateway.repository;
 import com.cpdss.gateway.entity.Roles;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface RolesRepository extends CrudRepository<Roles, Long> {
+public interface RolesRepository
+    extends JpaRepository<Roles, Long>, JpaSpecificationExecutor<Roles> {
 
   public List<Roles> findByCompanyXIdAndIsActive(Long companyXId, Boolean isActive);
 

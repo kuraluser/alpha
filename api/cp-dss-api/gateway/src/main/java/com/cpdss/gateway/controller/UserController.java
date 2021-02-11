@@ -13,6 +13,10 @@ import com.cpdss.gateway.domain.ScreenResponse;
 import com.cpdss.gateway.domain.UserAuthorizationsResponse;
 import com.cpdss.gateway.domain.UserResponse;
 import com.cpdss.gateway.service.UserService;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /*
@@ -107,13 +112,42 @@ public class UserController {
     }
   }
 
+  /**
+   * Get roles API
+   *
+   * @param headers header values
+   * @param pageSize pageSize value. Defaults to 10
+   * @param page page number value. Defaults to 0
+   * @param sortBy Sort column name. Default column - id
+   * @param orderBy Sort order. Default to ascending order
+   * @param params All request params (filter params)
+   * @return RoleResponse response object
+   * @throws CommonRestException Exception object
+   */
   @GetMapping("/roles")
-  public RoleResponse getRoles(@RequestHeader HttpHeaders headers) throws CommonRestException {
+  public RoleResponse getRoles(
+      @RequestHeader HttpHeaders headers,
+      @RequestParam(required = false, defaultValue = "10") int pageSize,
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "id") String sortBy,
+      @RequestParam(required = false, defaultValue = "ASC") String orderBy,
+      @RequestParam Map<String, String> params)
+      throws CommonRestException {
     RoleResponse response = null;
     try {
       log.info("getScreens: {}");
       Long companyId = 1L;
-      response = userService.getRoles(companyId, CORRELATION_ID_HEADER);
+
+      //      Get filters
+      List<String> filterKeys = Arrays.asList("id", "name", "description", "companyXId");
+      Map<String, String> filterParams =
+          params.entrySet().stream()
+              .filter(e -> filterKeys.contains(e.getKey()))
+              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+      response =
+          userService.getRoles(
+              companyId, CORRELATION_ID_HEADER, filterParams, page, pageSize, sortBy, orderBy);
 
     } catch (Exception e) {
       log.error("Error in getScreens ", e);

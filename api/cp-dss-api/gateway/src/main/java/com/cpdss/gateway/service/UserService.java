@@ -5,6 +5,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.FilterCriteria;
 import com.cpdss.gateway.domain.Permission;
 import com.cpdss.gateway.domain.PermissionResponse;
 import com.cpdss.gateway.domain.Resource;
@@ -13,6 +14,7 @@ import com.cpdss.gateway.domain.RolePermission;
 import com.cpdss.gateway.domain.RolePermissions;
 import com.cpdss.gateway.domain.RoleResponse;
 import com.cpdss.gateway.domain.RoleScreen;
+import com.cpdss.gateway.domain.RolesSpecification;
 import com.cpdss.gateway.domain.ScreenData;
 import com.cpdss.gateway.domain.ScreenInfo;
 import com.cpdss.gateway.domain.ScreenResponse;
@@ -31,12 +33,18 @@ import com.cpdss.gateway.repository.ScreenRepository;
 import com.cpdss.gateway.repository.UsersRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -147,7 +155,6 @@ public class UserService {
    *
    * @param token - The token in string format
    * @return {@link AccessToken} - The keycloak access token instance
-   * @throws GenericServiceException
    * @throws VerificationException
    */
   // private AccessToken parseKeycloakToken(String token) throws
@@ -296,10 +303,49 @@ public class UserService {
     return roleScreenDto;
   }
 
-  public RoleResponse getRoles(Long companyId, String correlationIdHeader) {
+  /**
+   * Method to get roles
+   *
+   * @param companyId companyId value
+   * @param correlationIdHeader correlationId value
+   * @param filterParams filter keys and values
+   * @param page page number
+   * @param pageSize pageSize value
+   * @param sortBy column to be sorted
+   * @param orderBy order to be used while sorting
+   * @return RoleResponse response object
+   */
+  public RoleResponse getRoles(
+      Long companyId,
+      String correlationIdHeader,
+      Map<String, String> filterParams,
+      int page,
+      int pageSize,
+      String sortBy,
+      String orderBy) {
+
+    //      Filter
+    Specification<Roles> specification =
+        Specification.where(
+                new RolesSpecification(new FilterCriteria("companyXId", ":", companyId)))
+            .and(new RolesSpecification(new FilterCriteria("isActive", ":", true)));
+
+    for (Map.Entry<String, String> entry : filterParams.entrySet()) {
+      String filterKey = entry.getKey();
+      String value = entry.getValue();
+      specification =
+          specification.and(new RolesSpecification(new FilterCriteria(filterKey, "like", value)));
+    }
+
+    //      Paging and sorting
+    Pageable paging =
+        PageRequest.of(
+            page, pageSize, Sort.by(Sort.Direction.valueOf(orderBy.toUpperCase()), sortBy));
+    Page<Roles> pagedResult = this.rolesRepository.findAll(specification, paging);
+
     RoleResponse roleResponse = new RoleResponse();
     List<Role> roleList = new ArrayList<Role>();
-    List<Roles> roles = this.rolesRepository.findByCompanyXIdAndIsActive(companyId, true);
+    List<Roles> roles = pagedResult.toList();
     if (roles != null && !roles.isEmpty()) {
       roles.forEach(
           roleEntity -> {
@@ -313,8 +359,10 @@ public class UserService {
     }
     CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
     commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    commonSuccessResponse.setCorrelationId(correlationIdHeader);
     roleResponse.setResponseStatus(commonSuccessResponse);
     roleResponse.setRoles(roleList);
+    roleResponse.setTotalElements(pagedResult.getTotalElements());
     return roleResponse;
   }
 
@@ -403,12 +451,13 @@ public class UserService {
       screenIds.add(screenInfo.getId());
     }
 
-    if (permission.getDeselectedUserId() != null) {
-      List<RoleUserMapping> roleUserList =
-          this.roleUserRepository.findByRolesAndIsActive(role.get().getId(), true);
-      roleUserList.stream()
-          .filter(ru -> permission.getDeselectedUserId().contains(ru.getUsers().getId()))
-          .forEach(roleUser -> roleUser.setIsActive(false));
+    List<RoleUserMapping> roleUserList =
+        this.roleUserRepository.findByRolesAndIsActive(role.get().getId(), true);
+    if (roleUserList != null && roleUserList.size() != 0) {
+      roleUserList.forEach(
+          a -> {
+            a.setIsActive(false);
+          });
     }
 
     List<Screen> screens =
