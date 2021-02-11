@@ -191,13 +191,20 @@ export class PortsComponent implements OnInit {
   */
   private initPortsFormGroup(ports: IPortsValueObject, index: number) {
     const layCanData = (ports.operation.value && [OPERATIONS.BUNKERING, OPERATIONS.DISCHARGING, OPERATIONS.TRANSIT].includes(ports.operation.value.id));
+    const layCanArray = [];
+    const layCanFrom = this.convertToDate(ports.layCan.value?.split('to')[0]?.trim());
+    const layCanTo = this.convertToDate(ports.layCan.value?.split('to')[1]?.trim());
+if(layCanFrom && layCanTo){
+  layCanArray.push(layCanFrom)
+  layCanArray.push(layCanTo)
+}
     return this.fb.group({
       port: this.fb.control(ports.port.value, [Validators.required, portDuplicationValidator('port')]),
       portOrder: this.fb.control(ports.portOrder),
       portcode: this.fb.control(ports.portcode.value, [Validators.required]),
       operation: this.fb.control(ports.operation.value, [Validators.required, portDuplicationValidator('operation')]),
       seaWaterDensity: this.fb.control(ports.seaWaterDensity.value, [Validators.required, Validators.min(0), numberValidator(4, 2)]),
-      layCan: this.fb.control({ value: ports.layCan.value, disabled: layCanData }, { validators: layCanData ? [] : Validators.required }),
+      layCan: this.fb.control({ value: layCanFrom && layCanTo ? layCanArray : null, disabled: layCanData }, { validators: layCanData ? [] : Validators.required }),
       layCanFrom: this.fb.control({ value: this.convertToDate(ports.layCan.value?.split('to')[0]?.trim()), disabled: layCanData }, layCanData ? [] : { validators: layCanData ? [] : Validators.required }),
       layCanTo: this.fb.control({ value: this.convertToDate(ports.layCan.value?.split('to')[1]?.trim()), disabled: layCanData }, layCanData ? [] : { validators: layCanData ? [] : Validators.required }),
       maxDraft: this.fb.control(ports.maxDraft.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
@@ -318,7 +325,8 @@ export class PortsComponent implements OnInit {
         form.controls.layCanTo.setValidators([Validators.required]);
       }
       form.controls.port.updateValueAndValidity();
-      this.updateValidityAndEditMode(index, 'layCan')
+      this.updateValidityAndEditMode(index, 'layCan');
+      this.updateValidityAndEditMode(index, 'eta');
       form.controls.layCanTo.updateValueAndValidity();
       form.controls.layCanFrom.updateValueAndValidity();
       this.updateValuesIfBunkering(event.data, form, index);
@@ -328,7 +336,6 @@ export class PortsComponent implements OnInit {
       const layCanTo = event.data.layCan.value.split('to')[1].trim()
       this.portsLists[valueIndex]['layCanFrom'].value = layCanFrom;
       this.portsLists[valueIndex]['layCanTo'].value = layCanTo;
-      this.updateField(event.index, 'layCan', event.data.layCan.value);
       this.updateField(event.index, 'layCanFrom', this.convertToDate(layCanFrom));
       this.updateField(event.index, 'layCanTo', this.convertToDate(layCanTo));
       this.updateValidityAndEditMode(index, 'eta');

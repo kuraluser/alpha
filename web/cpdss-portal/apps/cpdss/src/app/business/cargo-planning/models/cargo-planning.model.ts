@@ -248,7 +248,7 @@ export interface IPortsValueObject {
     portcode: ValueObject<string>;
     operation: ValueObject<IOperations>;
     seaWaterDensity: ValueObject<number>;
-    layCan: ValueObject<any>;
+    layCan: ValueObject<string>;
     layCanFrom: ValueObject<string>;
     layCanTo: ValueObject<string>;
     maxDraft: ValueObject<number>;

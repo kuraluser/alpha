@@ -293,8 +293,8 @@ export interface IPortList {
     maxAirDraft: number;
     eta: string;
     etd: string;
-    layCanFrom: string;
-    layCanTo: string;
+    layCanFrom: any;
+    layCanTo: any;
     isDelete?: boolean;
     isAdd?: boolean;
     storeKey?: number;

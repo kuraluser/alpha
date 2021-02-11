@@ -12,7 +12,7 @@ import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { whiteSpaceValidator } from '../../directives/space-validator.directive';
-
+import { saveAs } from 'file-saver';
 
 /**
  *  popup for creating / editing loadable-study
@@ -212,7 +212,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
             continue;
           } else {
             if (uploadFile.length < 5) {
-              const fileNameExist = this.uploadedFiles.some(file => file?.name?.toLowerCase() === uploadedFileVar[i].name.toLowerCase());
+              const fileNameExist = this.uploadedFiles.some(file => file?.id ? (file?.fileName?.toLowerCase() === uploadedFileVar[i].name.toLowerCase()) : (file?.name?.toLowerCase() === uploadedFileVar[i].name.toLowerCase()));
               if (fileNameExist) {
                 this.showError = true;
                 this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_NAME_EXIST_ERROR"
@@ -247,7 +247,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     } else {
       const blob = new Blob([this.uploadedFiles[index]], { type: this.uploadedFiles[index].type })
       const fileurl = window.URL.createObjectURL(blob)
-      window.open(fileurl)
+      saveAs(fileurl, this.uploadedFiles[index]?.name)
     }
   }
 

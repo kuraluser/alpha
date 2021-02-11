@@ -6,8 +6,8 @@ import { FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
  */
 export const portDateRangeValidator: ValidatorFn = (control: FormControl): ValidationErrors | null => {
     if (control.root && control.parent && control.parent?.value.layCan) {
-        const fromDate: Date = control.parent.value.layCanFrom;
-        const toDate: Date = control.parent.value.layCanTo;
+        const fromDate: Date = control.parent.value.layCan[0];
+        const toDate: Date = control.parent.value.layCan[1];
         if (fromDate && toDate) {
             fromDate.setHours(0, 0, 0, 0)
             toDate.setHours(23, 59, 59, 0)

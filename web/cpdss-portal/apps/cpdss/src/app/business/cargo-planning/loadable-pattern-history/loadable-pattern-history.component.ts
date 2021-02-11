@@ -35,7 +35,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
   set selectedLoadableStudy(selectedLoadableStudy: LoadableStudy) {
     this._selectedLoadableStudy = selectedLoadableStudy;
     this.loadableStudyId = selectedLoadableStudy?.id;
-    if (selectedLoadableStudy) {
+    if (this.loadableStudyId) {
+      this.router.navigate([`/business/cargo-planning/loadable-pattern-history/0/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
     }
   }
 
@@ -204,7 +205,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @memberof LoadablePatternHistoryComponent
    */
   onLoadableStudyChange(event) {
-    this.loadableStudyId = event?.id;
+    this.loadableStudyId = event;
     this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
     this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
   }

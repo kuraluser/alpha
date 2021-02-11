@@ -4,7 +4,7 @@ import { IResponse } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { INewLoadableStudy } from '../../core/components/new-loadable-study-popup/new-loadable-study-popup.model';
 import { ILoadablePatternsResponse, ILoadableStudiesResponse, ILoadableStudyResponse, LoadableStudy } from '../models/loadable-study-list.model'
-
+import { saveAs } from 'file-saver';
 @Injectable()
 export class LoadableStudyListApiService {
   loadableStudyList: LoadableStudy[];
@@ -82,6 +82,6 @@ export class LoadableStudyListApiService {
   * @memberof LoadableStudyListApiService
   */
   downloadAttachment(vesselId: number, voyageId: number, loadableStudyId: number, attachmentId: number) {
-    window.open(`${self.location.origin}/api/cloud/vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/attachments/${attachmentId}`)
+    saveAs(`${self.location.origin}/api/cloud/vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/attachments/${attachmentId}`)
   }
 }  

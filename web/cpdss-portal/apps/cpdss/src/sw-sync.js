@@ -336,7 +336,7 @@
           sync.type = 'loadable-pattern-processing';
           setTimeout(() => {
             clearInterval(timer);
-          }, 10000);
+          }, 600000);
           notifyClients(sync);
         }
         if (syncView.loadableStudyStatusId === 3 || syncView.loadableStudyStatusId === 5) {

@@ -229,7 +229,7 @@ export class DatatableComponent implements OnInit {
     colEditable = col?.editable
     if (this.editMode && (colEditable === undefined || colEditable) && event?.data[event.field]?.isEditable && !event.data?.isAdd && event.field !== 'actions') {
       const control = this.field(event.index, event.field);
-      if (col?.fieldType !== this.fieldType.DATETIME) {
+      if (col?.fieldType !== this.fieldType.DATETIME && col?.fieldType !== this.fieldType.DATERANGE) {
         event.data[event.field].isEditMode = control?.invalid;
       }
       if (control?.dirty && control?.valid) {
@@ -611,23 +611,10 @@ export class DatatableComponent implements OnInit {
   */
   onDateRangeSelect(event, formGroupIndex: number, formControlName: string, rowData: Object) {
     const formControl = this.field(formGroupIndex, formControlName);
-    let firstSelectedDate;
-    if (rowData[formControlName].value) {
-      const firstDate = rowData[formControlName].value.split('-')
-      firstSelectedDate = new Date(firstDate[2], firstDate[1] - 1, firstDate[0])
-    }
-    const compareDate = new Date(event);
-    if (rowData[formControlName].value.includes('to')) {
-      rowData[formControlName].value = this.formatDateTime(event);
-      formControl.setValue("");
-    }
-    else if (rowData[formControlName].value && compareDate > firstSelectedDate) {
-      rowData[formControlName].value = rowData[formControlName].value + ' to ' + this.formatDateTime(event);
-      formControl.setValue(rowData[formControlName].value.toString());
-      this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
-    } else {
-      rowData[formControlName].value = this.formatDateTime(event);
-      formControl.setValue("");
+    if(formControl?.value[0] && formControl?.value[1]){
+      rowData[formControlName].value = this.formatDateTime(formControl?.value[0]) + ' to ' + this.formatDateTime(formControl?.value[1]);
+      rowData[formControlName].isEditMode = false;
+        this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
     }
   }
 
@@ -635,7 +622,7 @@ export class DatatableComponent implements OnInit {
   /**
   * Range date cleared
   */
-  onClearDateRange(formGroupIndex: number, formControlName: string, rowData: Object) {
+  onClearDateRange(event, formGroupIndex: number, formControlName: string, rowData: Object) {
     const formControl = this.field(formGroupIndex, formControlName);
     rowData[formControlName].value = "";
     formControl.setErrors({ 'required': true });

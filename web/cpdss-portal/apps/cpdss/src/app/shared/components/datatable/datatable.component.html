@@ -260,15 +260,13 @@
                                             [disabled]="disabledField(rowIndex, col.field)"
                                             [hidden]="disabledField(rowIndex, col.field)"
                                             (onSelect)="onDateRangeSelect($event, rowIndex, col.field, rowData)"
+                                            (onClose)="onDateRangeSelect($event, rowIndex, col.field, rowData)"
                                             (onClearClick)="onClearDateRange($event, rowIndex, col.field,rowData)"
                                             [dateFormat]="col.dateFormat" selectionMode="range"
                                             [placeholder]="col.fieldPlaceholder| translate" [minDate]="col.minDate"
                                             id="{{col.field+'_'+rowIndex}}" [hideOnDateTimeSelect]="false"
+                                            [formControlName]="col.field"
                                             #coldaterange>
-                                            <p-footer><button class="btn btn-main"
-                                                (click)="coldaterange.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL'
-                                                |
-                                                translate}}</button></p-footer>
                                         </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">

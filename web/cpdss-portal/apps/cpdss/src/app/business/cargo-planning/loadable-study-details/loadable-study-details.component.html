@@ -96,9 +96,9 @@
                 [disableUnitChange]="loadableStudyDetailsApiService.disableUnitChange"
                 (changeBlocked)="unitChangeBlocked()"></cpdss-portal-unit-dropdown>
         </div>
-        <div class="pr-15" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
+        <div class="pr-15" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudies?.length">
             <button id="commingle_btn" class="btn btn-main  ml-10" type="button" (click)="showComminglePopup()"
-                [disabled]="showCommingleButton || !loadableStudies?.length"
+                [disabled]="showCommingleButton"
                 *cpdssPortalPermission="addCommingleBtnPermissionContext">{{'COMMINGLE_BUTTON' | translate}}</button>
         </div>
         <div class="pr-15">
