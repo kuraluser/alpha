@@ -309,18 +309,18 @@ export class OnBoardQuantityComponent implements OnInit {
    * @memberof OnBoardQuantityComponent
    */
   onRowSelection(event) {
+    this.enableOrDisableControls(this.obqForm, ['api', 'quantity']);
+    const data = event.data
+    this.selectedTank = data;
     if(this.selectedIndex !== event.index) {
-      this.enableOrDisableControls(this.obqForm, ['api', 'quantity']);
-      const data = event.data
-      this.selectedTank = data;
-      this.selectedIndex = event.index
-      this.obqForm.controls.cargo.setValue(data?.cargo?.value?.name)
-      this.obqForm.controls.api.setValue(data?.api.value);
-      this.obqForm.controls.quantity.setValue(data?.quantity.value);
+      this.selectedIndex = event.index;
+      this.obqForm.controls.api.setValue(Number(data?.api.value));
+      this.obqForm.controls.quantity.setValue(Number(data?.quantity.value));
       this.obqForm.controls.quantity.setValidators([Validators.required, Validators.min(0), numberValidator(2, 7), Validators.max(Number(event.data?.fullCapacityCubm * event?.data?.api?.value))]);
-      this.setFillingPercentage(this.selectedTankId);
-      this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
     }
+    this.obqForm.controls.cargo.setValue(data?.cargo?.value?.name);
+    this.setFillingPercentage(this.selectedTankId);
+    this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
   }
 
   /**
