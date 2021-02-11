@@ -423,11 +423,7 @@ export class LoadablePlanTransformationService {
       { field: 'metricTon', header: 'STOWAGE_BALLAST_METRIC_TON' },
       { field: 'cubicMeter', header: 'STOWAGE_BALLAST_CUB_METER' },
       { field: 'percentage', header: 'STOWAGE_BALLAST_PERCENTAGE' },
-      { field: 'sg', header: 'STOWAGE_BALLAST_SG' },
-      { field: 'lcg', header: 'STOWAGE_BALLAST_LCG' },
-      { field: 'vcg', header: 'STOWAGE_BALLAST_VCG' },
-      { field: 'tcg', header: 'STOWAGE_BALLAST_TCG' },
-      { field: 'inertia', header: 'STOWAGE_BALLAST_INERTIA' },
+      { field: 'sg', header: 'STOWAGE_BALLAST_SG' }
     ]
   }
 
