@@ -289,10 +289,16 @@ export class NewLoadableStudyPopupComponent implements OnInit {
         loadLineXId: loadableStudyObj.loadLineXId,
         draftRestriction: loadableStudyObj.draftRestriction ? loadableStudyObj.draftRestriction : ''
       }
-
-      this.newLoadableStudyFormGroup.patchValue({
-        duplicateExisting: loadableStudyObj.createdFromId ? loadableStudyObj : null
-      })
+      if(loadableStudyObj?.createdFromId) {
+        this._loadableStudyList?.map((loadableStudy) => {
+          if(loadableStudyObj.createdFromId === loadableStudy.id) {
+            this.newLoadableStudyFormGroup.patchValue({
+              duplicateExisting: loadableStudy
+            })
+          }
+        })
+      }
+      
       this.newLoadableStudyFormGroup.controls['duplicateExisting'].disable();
     } else {
       this.newLoadableStudyFormGroup.patchValue({
