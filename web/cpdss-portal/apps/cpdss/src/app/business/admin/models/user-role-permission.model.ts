@@ -107,7 +107,8 @@ export interface ITreeNodeData {
  */
 export interface IRoleResponse {
     responseStatus: IResponseStatus;
-    roles: IRoleDetail[]
+    roles: IRoleDetail[],
+    totalElements: number
 }
 
 /**
@@ -208,4 +209,19 @@ export interface ISavePermissionResponse {
     responseStatus: IResponseStatus,
     roleId: number,
     message: string
+}
+
+/**
+ * Interface for state pagination , filter and sort
+ *
+ * @export
+ * @interface IDataStateChange
+ */
+export interface IDataStateChange {
+    name: string,
+    desc: string,
+    pageSize: string,
+    page: string,
+    sortBy: string,
+    orderBy: string,
 }

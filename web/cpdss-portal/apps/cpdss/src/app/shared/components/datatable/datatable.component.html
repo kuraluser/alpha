@@ -3,7 +3,8 @@
         <p-table #datatable  [columns]="columns"   [scrollable]="true" scrollHeight="flex" [value]="value" [editMode]="editMode" [selectionMode]="selectionMode" [loading]="loading"
             (onEditComplete)="onEditComplete($event)" (onRowSelect)="onRowSelect($event)" [(selection)]="selection"
             (columnClick)="onClick($event)" [reorderableColumns]="tableRowReOrder" (onRowReorder)="onRowReorder($event)"
-            (onFilter)="onFilter($event)" [customSort]="customSort" (sortFunction)="sortFunction($event)">
+            (onFilter)="onFilter($event)" [customSort]="customSort" (sortFunction)="sortFunction($event)"
+            [lazy]="lazy" (onLazyLoad)="loadDetails($event)"> 
             <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
                     <col *ngIf="progress" class="column-class column-loader">
@@ -68,7 +69,7 @@
                 <ng-template #filterTemplate let-col="column">
                     <ng-container *ngIf="col.filter" [ngSwitch]="col.filterType">
                         <input *ngSwitchCase="filterType.TEXT" type="text" id="{{col.field+'_filter'}}"
-                            (input)="datatable.filter(($event.target.value).trim(), col?.filterField ? col?.filterField : col.field, col.filterMatchMode)"
+                            (input)="filterData($event , col)"
                             [placeholder]="col.filterPlaceholder| translate" class="p-column-filter">
                         <input *ngSwitchCase="filterType.NUMBER" type="number" id="{{col.field+'_filter'}}"
                             (input)="datatable.filter($event.target.value, col?.filterField ? col?.filterField : col.field, col.filterMatchMode)"
@@ -122,10 +123,16 @@
                             [pEditableColumnRowIndex]="rowIndex" (click)="onClick($event, rowData, rowIndex, col)">
                             <div [attr.tabindex]="col.field !== 'actions' && col.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+rowIndex : null"
                                 (keyup)="onFocus($event, rowData, col, colIndex)" id="{{'cell'+col.field + '_' + rowIndex}}">
-                                <span *ngSwitchCase="fieldType.SLNO">{{rowData[col.field] ? rowData[col.field] :
-                                    rowIndex+ 1}}</span>
-                                <span *ngSwitchCase="fieldType.ICON"><i
-                                        class="{{col.fieldValueIcon+'-'+rowData[col.field]}}"></i></span>
+                                
+                                <ng-container *ngIf="!lazy;else lazyRef">
+                                    <span *ngSwitchCase="fieldType.SLNO">{{rowData[col.field] ? rowData[col.field] :
+                                        rowIndex+ 1}}</span>
+                                    <span *ngSwitchCase="fieldType.ICON"><i
+                                            class="{{col.fieldValueIcon+'-'+rowData[col.field]}}"></i></span>
+                                </ng-container>
+                                <ng-template #lazyRef>
+                                    <span *ngSwitchCase="fieldType.SLNO">{{getSlNo(rowIndex)}}</span>
+                                </ng-template>
 
                                 <ng-container *ngSwitchCase="fieldType.ACTION">
                                     <div class="action-buttons" *ngIf="!rowData.isLoadable">
@@ -321,5 +328,9 @@
                 </tr>
             </ng-template>
         </p-table>
+        <ng-container *ngIf="paginator">
+            <p-paginator  currentPageReportTemplate={{currentPageReportTemplate}} [showJumpToPageDropdown]="true" [alwaysShow]="false" #paginator [showCurrentPageReport]="true"   [rows]="rows" [totalRecords]="totalRecords"  (onPageChange)="onPageChange($event)" [rowsPerPageOptions]="rowsPerPage"></p-paginator>
+        </ng-container>
+        
     </div>
 </div>

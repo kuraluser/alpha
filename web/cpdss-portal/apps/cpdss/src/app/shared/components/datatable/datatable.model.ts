@@ -44,6 +44,7 @@ export interface IDataTableColumn {
     subHeader?: string;
     numberFormat?: string;
     showTotal?: boolean;
+    filterByServer?: boolean
 }
 
 /**
@@ -175,4 +176,39 @@ export enum DATATABLE_ACTION {
     DUPLICATE = 'DUPLICATE',
     VIEW = 'VIEW',
     EDIT = 'EDIT'
+}
+
+/**
+ * Interface for datatable 
+ *
+ * @export
+ * @interface IDataTablePageChangeEvent
+ */
+export interface IDataTablePageChangeEvent {
+    paginator: IPaginator;
+    filter: any;
+    action: string;
+    sort: ISort
+}
+
+/**
+ * Interface for Paginator 
+ *
+ * @export
+ * @interface IPaginator
+ */
+export interface IPaginator {
+    currentPage: number,
+    rows: number
+}
+
+/**
+ * Interface for sort 
+ *
+ * @export
+ * @interface ISort
+ */
+export interface ISort {
+    sortField: string,
+    sortOrder: string
 }

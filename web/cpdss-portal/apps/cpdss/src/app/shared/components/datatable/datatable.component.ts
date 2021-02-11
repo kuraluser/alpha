@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { MenuItem, SortEvent } from 'primeng/api';
+import { MenuItem, SortEvent , LazyLoadEvent } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { ObjectUtils } from 'primeng/utils';
-import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableEvent, IDataTableFilterEvent, IDataTableSortEvent } from './datatable.model';
+import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableEvent, IDataTableFilterEvent, IDataTableSortEvent , IDataTablePageChangeEvent } from './datatable.model';
+import { Paginator } from 'primeng/paginator';
 
 /**
  * Compoent for Datatable
@@ -21,6 +22,7 @@ import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_F
 export class DatatableComponent implements OnInit {
 
   @ViewChild('datatable') datatable: Table;
+  @ViewChild('paginator') paginatorRef: Paginator
 
   // properties
   @Input()
@@ -85,7 +87,66 @@ export class DatatableComponent implements OnInit {
   @Input() showTotal = false;
 
 
-  @Input() loading = false;
+  @Input()
+  set loading(loading: boolean) {
+    this._loading = loading;
+  }
+
+  get loading() : boolean {
+    return this._loading;
+  }
+
+  @Input() paginator: boolean;
+
+  @Input() 
+  set rowsPerPage(rows: number[]) {
+    this._rowsPerPage = rows;
+  }
+
+  get rowsPerPage() : Array<number>  {
+    return this._rowsPerPage;
+  }
+  
+  @Input()
+  set rows(rows: number) {
+    this._rows = rows;
+  }
+
+  get rows() : number {
+    return this._rows;
+  }
+
+  @Input()
+  set totalRecords(totalRecords: number) {
+    this._totalRecords = totalRecords;
+  }
+
+  get totalRecords() : number {
+    return this._totalRecords;
+  }
+
+  @Input()
+  set currentPageReportTemplate(totalRecords: string) {
+    this._currentPageReportTemplate = totalRecords;
+  }
+
+  get currentPageReportTemplate() : string {
+    return this._currentPageReportTemplate;
+  }
+
+  @Input() 
+  set lazy(lazy: boolean) {
+    this._lazy = lazy;
+  }
+
+  get lazy(): boolean{
+    return this._lazy;
+  }
+
+  @Input() 
+  set currentPage(currentPage: number) {
+    this.updateCurrentPage(currentPage)
+  }
 
   get dataTable() {
     return this.form.get('dataTable') as FormArray;
@@ -104,7 +165,9 @@ export class DatatableComponent implements OnInit {
   @Output() filter = new EventEmitter<IDataTableFilterEvent>();
   @Output() sort = new EventEmitter<IDataTableSortEvent>();
   @Output() editRow = new EventEmitter<IDataTableEvent>();
-
+  @Output() onDataStateChange = new EventEmitter<IDataTablePageChangeEvent>();
+  @Output() currentPageChange = new EventEmitter<number>();
+  
   // public fields
   readonly fieldType = DATATABLE_FIELD_TYPE;
   readonly filterType = DATATABLE_FILTER_TYPE;
@@ -113,13 +176,20 @@ export class DatatableComponent implements OnInit {
   selectedRowEvent: IDataTableEvent;
   totalColSpan: number;
   customSort: boolean;
+  filterObject: object = {};
+
 
   // private fields
   private _columns: IDataTableColumn[];
   private _value: Array<any>;
   private _form: FormGroup;
   private _editMode: DATATABLE_EDITMODE;
-
+  private _lazy: boolean;
+  private _totalRecords: number;
+  private _rows: number;
+  private _rowsPerPage: number[];
+  private _currentPageReportTemplate: string;
+  private _loading: boolean;
 
 
   // public methods
@@ -127,6 +197,9 @@ export class DatatableComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this._rowsPerPage = [10,50,100];
+    this._currentPageReportTemplate = "{currentPage} of {totalPages}";
+    this._loading = false;
     if (!this.form) {
       this.form = this.fb.group({
         dataTable: this.fb.array([...this.value])
@@ -612,6 +685,17 @@ export class DatatableComponent implements OnInit {
     });
     this.sort.emit(event);
   }
+  
+  /**
+   * lazy loading for sorting
+   * @param {LazyLoadEvent}  event
+   */
+  loadDetails(event: LazyLoadEvent) {
+    if(event.sortField) {
+      this.updateCurrentPage(0);
+      this.onDataStateChange.emit(this.setStateValue('sort'));
+    }
+  }
 
   /**
    * Checks field disabled or not
@@ -660,6 +744,85 @@ export class DatatableComponent implements OnInit {
     });
 
     return rowSpan;
+  }
+
+  /**
+   * Method called on PageChange
+   *
+   * @returns
+   * @memberof DatatableComponent
+   */
+  onPageChange(event) {
+    const data = {
+      paginator: {
+        currentPage: event?.page ? event.page : 0,
+        rows: this.paginatorRef.paginatorState.rows
+      },
+      filter: this.filterObject,
+      action: 'paginator',
+      sort: {
+        sortField: this.datatable._sortField,
+        sortOrder: this.datatable._sortField ? this.datatable._sortOrder === 1 ? 'asc' : 'desc' : '',
+      }
+    }
+    this.currentPageChange.emit(event?.page ? event.page : 0)
+    this.onDataStateChange.emit(data);
+  }
+
+  /**
+   * Method called on filter the data
+   *
+   * @returns
+   * @memberof DatatableComponent
+   */
+  filterData($event , col) {
+    if(col?.filterByServer) {
+      this.updateCurrentPage(0);
+      this.filterObject[col.filterField] = ($event.target.value).trim();
+      this.onDataStateChange.emit(this.setStateValue('filter'));
+    } else {
+      this.datatable.filter(($event.target.value).trim(), col?.filterField ? col?.filterField : col.field, col.filterMatchMode)
+    }
+  }
+
+  /**
+   * set state value for server side sorting
+   *
+   * @param {string} action
+   * @memberof DatatableComponent
+   */
+  setStateValue(action: string) {
+    return {
+      paginator: {
+        currentPage: this.paginatorRef.paginatorState.page ? this.paginatorRef.paginatorState.page : 0,
+        rows: this.paginatorRef.paginatorState.rows
+      },
+      filter: this.filterObject,
+      action: action,
+      sort: {
+        sortField: this.datatable._sortField,
+        sortOrder: this.datatable._sortField ? this.datatable._sortOrder === 1 ? 'asc' : 'desc' : '',
+      }
+    }
+  }
+  /**
+   * set state value for server side sorting
+   *
+   * @param {number} index
+   * @memberof DatatableComponent
+   */
+  getSlNo(index: number) {
+    return (this.paginatorRef?.paginatorState?.page*this.paginatorRef?.paginatorState?.rows) + (index +1);
+  }
+
+  /**
+   * update current page
+   *
+   * @param {number} currentPage
+   * @memberof DatatableComponent
+   */
+  private updateCurrentPage(currentPage: number): void {
+    setTimeout(() => {this.paginatorRef.changePage(currentPage) , this.currentPageChange.emit(currentPage)});
   }
 
 }

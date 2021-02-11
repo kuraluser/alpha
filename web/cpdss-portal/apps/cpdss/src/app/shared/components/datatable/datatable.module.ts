@@ -10,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { CalendarModule } from 'primeng/calendar';
 import { NumberDirectiveModule } from '../../directives/number-directive/number-directive.module';
-
+import { PaginatorModule } from 'primeng/paginator';
 
 /**
  * Module for DataTable
@@ -30,6 +30,7 @@ import { NumberDirectiveModule } from '../../directives/number-directive/number-
     TranslateModule,
     SplitButtonModule,
     CalendarModule,
+    PaginatorModule,
     NumberDirectiveModule
   ],
   exports: [DatatableComponent]

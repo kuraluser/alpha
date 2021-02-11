@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { AdminModule } from '../admin.module';
 
-import { IUserRolePermissionResponse , IUserDetailsResponse , IRoleResponse , ISavePermissionResponse , IUserPermissionModel , IRoleDeleteResponse , IUserRoleModel , ISaveUserRoleResponse } from '../models/user-role-permission.model';
+import { IUserRolePermissionResponse , IDataStateChange , IUserDetailsResponse , IRoleResponse , ISavePermissionResponse , IUserPermissionModel , IRoleDeleteResponse , IUserRoleModel , ISaveUserRoleResponse } from '../models/user-role-permission.model';
 
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 
@@ -18,6 +18,8 @@ import { CommonApiService } from '../../../shared/services/common/common-api.ser
 })
 export class UserRolePermissionApiService {
 
+public page: number = 0;
+public pageSize: number = 10;
 /**
 * 
 * Api Service for User Role
@@ -46,8 +48,9 @@ export class UserRolePermissionApiService {
   * Get api for get Role Details
   * @memberof UserRolePermissionApiService
   */
- getRoleDetails(): Observable<IRoleResponse> {
-  return this.commonApiService.get<IRoleResponse>(`roles`);
+ getRoleDetails(params: IDataStateChange): Observable<IRoleResponse> {
+  let opts = `${params.name ?  'name='+params.name : ''}${params.desc ?  '&description='+params.desc : ''}&orderBy=${params.orderBy ?  params.orderBy : ''}&page=${params.page ?  params.page : this.page}&pageSize=${params.pageSize ?  params.pageSize : this.pageSize}&sortBy=${params.sortBy ?  params.sortBy : ''}`
+  return this.commonApiService.get<IRoleResponse>(`roles?${opts}`);
  }
 
   /**
@@ -79,5 +82,4 @@ export class UserRolePermissionApiService {
   rolePermission(savePermission: IUserPermissionModel): Observable<ISavePermissionResponse>{
     return this.commonApiService.post<IUserPermissionModel, ISavePermissionResponse>(`user/role/permission`, savePermission);
   }
-
 }

@@ -44,6 +44,7 @@ export class UserRolePermissionTransformationService {
         filterField: 'name',
         sortable: true,
         sortField: 'name',
+        filterByServer: true
       },
       {
         field: 'description',
@@ -53,6 +54,7 @@ export class UserRolePermissionTransformationService {
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'description',
+        filterByServer: true
       },
       {
         field: 'actions',
