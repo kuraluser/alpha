@@ -1019,10 +1019,12 @@ export class LoadableStudyDetailsTransformationService {
       if (Object.prototype.hasOwnProperty.call(commingle, key)) {
         if (key === 'cargo1') {
           _cargoList.cargo1Id = commingle[key].value?.cargoId;
+          _cargoList.cargoNomination1Id = commingle[key].value?.id
         } else if (key === 'cargo1pct') {
           _cargoList.cargo1pct = commingle[key].value;
         } else if (key === 'cargo2') {
           _cargoList.cargo2Id = commingle[key].value?.cargoId;
+          _cargoList.cargoNomination2Id = commingle[key].value?.id
         } else if (key === 'cargo2pct') {
           _cargoList.cargo2pct = commingle[key].value;
         } else if (key === 'quantity') {

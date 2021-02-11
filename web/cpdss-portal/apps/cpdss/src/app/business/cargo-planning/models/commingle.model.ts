@@ -93,6 +93,8 @@ export interface ICargoGroup {
     quantity?: number;
     cargo1pct?: number;
     cargo2pct?: number;
+    cargoNomination1Id?: number;
+    cargoNomination2Id?: number;
 }
 /**
  *Interface for listData 
