@@ -148,7 +148,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     if (this.newLoadableStudyFormGroup.valid) {
       const nameExistence = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
       this.newLoadableStudyNameExist = this.isEdit ? (this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim() === this.selectedLoadableStudy.name.toLocaleLowerCase() ? false : nameExistence) : nameExistence;
-      const translationKeys = await this.translateService.get(['LOADABLE_STUDY_CREATE_SUCCESS', 'LOADABLE_STUDY_CREATED_SUCCESSFULLY', 'LOADABLE_STUDY_CREATE_ERROR', 'LOADABLE_STUDY_ALREADY_EXIST', 'LOADABLE_STUDY_UPDATE_SUCCESS', 'LOADABLE_STUDY_UPDATED_SUCCESSFULLY']).toPromise();
+      const translationKeys = await this.translateService.get(['NEW_LOADABLE_STUDY_POPUP__NAME_EXIST','LOADABLE_STUDY_CREATE_SUCCESS', 'LOADABLE_STUDY_CREATED_SUCCESSFULLY', 'LOADABLE_STUDY_CREATE_ERROR', 'LOADABLE_STUDY_ALREADY_EXIST', 'LOADABLE_STUDY_UPDATE_SUCCESS', 'LOADABLE_STUDY_UPDATED_SUCCESSFULLY']).toPromise();
       let isLoadableStudyAvailable;
       isLoadableStudyAvailable = this.duplicateLoadableStudy && Object.keys(this.duplicateLoadableStudy)?.length === 0 && this.duplicateLoadableStudy.constructor === Object;
       if (!this.newLoadableStudyNameExist) {
@@ -182,8 +182,10 @@ export class NewLoadableStudyPopupComponent implements OnInit {
             this.addedNewLoadableStudy.emit(result.loadableStudyId)
           }
         } catch (error) {
-          //TODO: The validation error for lodable study with same name exist error should be given in api response
-          // this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: translationKeys['LOADABLE_STUDY_CREATION_FAILED'] });
+          if(error.error.errorCode === 'ERR-RICO-105') {
+            this.newLoadableStudyNameExist = true;
+            this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: translationKeys['NEW_LOADABLE_STUDY_POPUP__NAME_EXIST'] });
+          }
         }
         this.ngxSpinnerService.hide();
       } else {
