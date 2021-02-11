@@ -58,9 +58,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   datePipe: DatePipe = new DatePipe('en-US');
   synopticalRecordsCopy: ISynopticalRecords[] = [];
   loadableQuantityValue: number;
-  get today(){
-    return new Date();
-  } 
+  today = new Date() 
     
 
   constructor(
@@ -80,6 +78,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   * @memberof SynopticalTableComponent
   */
   ngOnInit() {
+    this.today.setSeconds(0,0);
     this.initActionSubscriptions()
     this.synopticalService.onInitCompleted$
       .pipe(takeUntil(this.ngUnsubscribe))
