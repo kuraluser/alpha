@@ -46,9 +46,13 @@
                         (click)="saveStowage()">{{'LOADABLE_PLAN_SAVE_STOWAGE_BUTTON_LABEL'| translate}}
                     </button>
                 </div>
+                <div class="row">
+                    <div class="col content-wrapper-view-more">
                 <cpdss-portal-datatable *ngIf="loadablePlanForm.controls?.cargoTanks" [columns]="cargoGridColumns"
                     [value]="cargoTankDetails" [editMode]="editMode" [form]="loadablePlanForm.controls?.cargoTanks">
                 </cpdss-portal-datatable>
+                    </div>
+                </div>
             </div>
             <div class="col" *ngIf="selectedTab === tankType.BALLAST">
                 <cpdss-portal-ballast-stowage [ballastDetails]="ballastDetails"></cpdss-portal-ballast-stowage>
