@@ -32,5 +32,6 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
   public Optional<LoadableStudy> findByVoyageAndLoadableStudyStatusAndIsActive(
       Voyage voyage, Long status, Boolean isActive);
 
-  public LoadableStudy findByVoyageAndNameAndIsActive(Voyage voyage, String name, boolean isActive);
+  public LoadableStudy findByVoyageAndNameIgnoreCaseAndIsActive(
+      Voyage voyage, String name, boolean isActive);
 }

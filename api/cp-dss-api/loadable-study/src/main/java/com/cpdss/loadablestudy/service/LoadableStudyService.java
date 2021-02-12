@@ -919,15 +919,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private void validateLoadableStudyName(Voyage voyage, LoadableStudyDetail request)
       throws GenericServiceException {
     LoadableStudy duplicate =
-        this.loadableStudyRepository.findByVoyageAndNameAndIsActive(
+        this.loadableStudyRepository.findByVoyageAndNameIgnoreCaseAndIsActive(
             voyage, request.getName(), true);
-    // new LS
-    if (request.getId() == 0 && null != duplicate) {
-      throw new GenericServiceException(
-          "LS already exists with given name",
-          CommonErrorCodes.E_CPDSS_LS_NAME_EXISTS,
-          HttpStatusCode.BAD_REQUEST);
-    } else if (null != duplicate && request.getId() != duplicate.getId().longValue()) {
+    if ((request.getId() == 0 && null != duplicate)
+        || (null != duplicate && request.getId() != duplicate.getId().longValue())) {
       throw new GenericServiceException(
           "LS already exists with given name",
           CommonErrorCodes.E_CPDSS_LS_NAME_EXISTS,
@@ -3106,6 +3101,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder builder =
           com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
       builder.setLoadablePatternId(pattern.getId());
+      builder.setLoadableStudyStatusId(pattern.getLoadableStudyStatus());
       Optional.ofNullable(pattern.getCaseNumber()).ifPresent(item -> builder.setCaseNumber(item));
       replyBuilder.addLoadablePattern(builder.build());
     }
