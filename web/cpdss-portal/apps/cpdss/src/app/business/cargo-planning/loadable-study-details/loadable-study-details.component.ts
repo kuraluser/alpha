@@ -309,6 +309,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       else if (event.data.type === 'loadable-pattern-no-solution') {
         this.noPlanMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName)
       }
+      else if (event.data.type === 'loadable-pattern-no-response') {
+        this.noResponseMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
+      }
     });
   }
 
@@ -698,6 +701,19 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_NO_PLAN', 'GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE']).toPromise();
     this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE'] });
   }
+
+    /**
+ * Toast to show pattern bo reposnse
+ *
+ * @param {string} selectedVoyageNo
+ * @param {string} selectedLoadableStudyName
+ * @memberof LoadableStudyDetailsComponent
+ */
+async noResponseMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
+  this.messageService.clear("process");
+  const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR', 'GENERATE_LOADABLE_PATTERN_RESPONSE']).toPromise();
+  this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_RESPONSE'], closable: true });
+}
 
   /* Handler for unit change event
  *

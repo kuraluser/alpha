@@ -330,16 +330,20 @@
       });
       const syncView = await syncResponse.json();
       if (syncView.responseStatus.status === '200') {
-        if (syncView.loadableStudyStatusId === 4) {
+        if (syncView.loadableStudyStatusId === 4 || syncView.loadableStudyStatusId === 5) {
           const sync = {};
           sync.pattern = data;
           sync.type = 'loadable-pattern-processing';
           setTimeout(() => {
+            const sync = {};
+            sync.pattern = data;
+            sync.type = 'loadable-pattern-no-response';
+            notifyClients(sync);
             clearInterval(timer);
-          }, 600000);
+          }, 300000);
           notifyClients(sync);
         }
-        if (syncView.loadableStudyStatusId === 3 || syncView.loadableStudyStatusId === 5) {
+        if (syncView.loadableStudyStatusId === 3 ) {
           const sync = {};
           sync.pattern = data;
           sync.type = 'loadable-pattern-completed';
@@ -357,7 +361,7 @@
       if (syncView.responseStatus.status === '500') {
         clearInterval(timer);
       }
-    }, 2500);
+    }, 3500);
   }
 
 
