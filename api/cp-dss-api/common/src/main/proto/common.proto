@@ -7,4 +7,5 @@ message ResponseStatus {
 	string status = 1;
 	string message = 2;
 	string code = 3;
+	int32 httpStatusCode = 4;
 }

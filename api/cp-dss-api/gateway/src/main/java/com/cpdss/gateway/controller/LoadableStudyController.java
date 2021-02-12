@@ -14,6 +14,7 @@ import com.cpdss.gateway.domain.Comment;
 import com.cpdss.gateway.domain.CommingleCargo;
 import com.cpdss.gateway.domain.CommingleCargoResponse;
 import com.cpdss.gateway.domain.CommonResponse;
+import com.cpdss.gateway.domain.ConfirmPlanStatusResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
 import com.cpdss.gateway.domain.LoadOnTopRequest;
 import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
@@ -1118,6 +1119,14 @@ public class LoadableStudyController {
     }
   }
 
+  /**
+   * @param vesselId
+   * @param voyageId
+   * @param loadablePatternId
+   * @param headers
+   * @return
+   * @throws CommonRestException CommonResponse
+   */
   @PostMapping(
       value =
           "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/confirm-plan/{loadablePatternId}")
@@ -1136,6 +1145,41 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when confirmPlan", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * @param vesselId
+   * @param voyageId
+   * @param loadablePatternId
+   * @param headers
+   * @return
+   * @throws CommonRestException ConfirmPlanStatusResponse
+   */
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/confirm-plan-status/{loadablePatternId}")
+  public ConfirmPlanStatusResponse confirmPlanStatus(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadablePatternId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.loadableStudyService.confirmPlanStatus(
+          loadablePatternId, voyageId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when confirmPlanStatus", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when confirmPlanStatus", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

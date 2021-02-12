@@ -15,67 +15,70 @@ public final class Loadicator {
       // @@protoc_insertion_point(interface_extends:LoadicatorRequest)
       com.google.protobuf.MessageOrBuilder {
 
-    /**
-     * <code>.StowagePlanDetails stowagePlanDetails = 1;</code>
-     *
-     * @return Whether the stowagePlanDetails field is set.
-     */
-    boolean hasStowagePlanDetails();
-    /**
-     * <code>.StowagePlanDetails stowagePlanDetails = 1;</code>
-     *
-     * @return The stowagePlanDetails.
-     */
-    com.cpdss.common.generated.Loadicator.StowagePlanDetails getStowagePlanDetails();
-    /** <code>.StowagePlanDetails stowagePlanDetails = 1;</code> */
+    /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+    java.util.List<com.cpdss.common.generated.Loadicator.StowagePlanDetails>
+        getStowagePlanDetailsList();
+    /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+    com.cpdss.common.generated.Loadicator.StowagePlanDetails getStowagePlanDetails(int index);
+    /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+    int getStowagePlanDetailsCount();
+    /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+    java.util.List<? extends com.cpdss.common.generated.Loadicator.StowagePlanDetailsOrBuilder>
+        getStowagePlanDetailsOrBuilderList();
+    /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
     com.cpdss.common.generated.Loadicator.StowagePlanDetailsOrBuilder
-        getStowagePlanDetailsOrBuilder();
+        getStowagePlanDetailsOrBuilder(int index);
 
-    /**
-     * <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code>
-     *
-     * @return Whether the stowageDetailsInfo field is set.
-     */
-    boolean hasStowageDetailsInfo();
-    /**
-     * <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code>
-     *
-     * @return The stowageDetailsInfo.
-     */
-    com.cpdss.common.generated.Loadicator.StowageDetailsInfo getStowageDetailsInfo();
-    /** <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+    /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+    java.util.List<com.cpdss.common.generated.Loadicator.StowageDetailsInfo>
+        getStowageDetailsInfoList();
+    /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+    com.cpdss.common.generated.Loadicator.StowageDetailsInfo getStowageDetailsInfo(int index);
+    /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+    int getStowageDetailsInfoCount();
+    /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+    java.util.List<? extends com.cpdss.common.generated.Loadicator.StowageDetailsInfoOrBuilder>
+        getStowageDetailsInfoOrBuilderList();
+    /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
     com.cpdss.common.generated.Loadicator.StowageDetailsInfoOrBuilder
-        getStowageDetailsInfoOrBuilder();
+        getStowageDetailsInfoOrBuilder(int index);
 
-    /**
-     * <code>.CargoInfo cargoInfo = 3;</code>
-     *
-     * @return Whether the cargoInfo field is set.
-     */
-    boolean hasCargoInfo();
-    /**
-     * <code>.CargoInfo cargoInfo = 3;</code>
-     *
-     * @return The cargoInfo.
-     */
-    com.cpdss.common.generated.Loadicator.CargoInfo getCargoInfo();
-    /** <code>.CargoInfo cargoInfo = 3;</code> */
-    com.cpdss.common.generated.Loadicator.CargoInfoOrBuilder getCargoInfoOrBuilder();
+    /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+    java.util.List<com.cpdss.common.generated.Loadicator.CargoInfo> getCargoInfoList();
+    /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+    com.cpdss.common.generated.Loadicator.CargoInfo getCargoInfo(int index);
+    /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+    int getCargoInfoCount();
+    /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+    java.util.List<? extends com.cpdss.common.generated.Loadicator.CargoInfoOrBuilder>
+        getCargoInfoOrBuilderList();
+    /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+    com.cpdss.common.generated.Loadicator.CargoInfoOrBuilder getCargoInfoOrBuilder(int index);
 
-    /**
-     * <code>.OtherTankInfo otherTankInfo = 4;</code>
-     *
-     * @return Whether the otherTankInfo field is set.
-     */
-    boolean hasOtherTankInfo();
-    /**
-     * <code>.OtherTankInfo otherTankInfo = 4;</code>
-     *
-     * @return The otherTankInfo.
-     */
-    com.cpdss.common.generated.Loadicator.OtherTankInfo getOtherTankInfo();
-    /** <code>.OtherTankInfo otherTankInfo = 4;</code> */
-    com.cpdss.common.generated.Loadicator.OtherTankInfoOrBuilder getOtherTankInfoOrBuilder();
+    /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+    java.util.List<com.cpdss.common.generated.Loadicator.OtherTankInfo> getOtherTankInfoList();
+    /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+    com.cpdss.common.generated.Loadicator.OtherTankInfo getOtherTankInfo(int index);
+    /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+    int getOtherTankInfoCount();
+    /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+    java.util.List<? extends com.cpdss.common.generated.Loadicator.OtherTankInfoOrBuilder>
+        getOtherTankInfoOrBuilderList();
+    /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+    com.cpdss.common.generated.Loadicator.OtherTankInfoOrBuilder getOtherTankInfoOrBuilder(
+        int index);
+
+    /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+    java.util.List<com.cpdss.common.generated.Loadicator.BallastInfo> getBallastInfoList();
+    /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+    com.cpdss.common.generated.Loadicator.BallastInfo getBallastInfo(int index);
+    /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+    int getBallastInfoCount();
+    /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+    java.util.List<? extends com.cpdss.common.generated.Loadicator.BallastInfoOrBuilder>
+        getBallastInfoOrBuilderList();
+    /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+    com.cpdss.common.generated.Loadicator.BallastInfoOrBuilder getBallastInfoOrBuilder(int index);
   }
   /** Protobuf type {@code LoadicatorRequest} */
   public static final class LoadicatorRequest extends com.google.protobuf.GeneratedMessageV3
@@ -88,7 +91,13 @@ public final class Loadicator {
       super(builder);
     }
 
-    private LoadicatorRequest() {}
+    private LoadicatorRequest() {
+      stowagePlanDetails_ = java.util.Collections.emptyList();
+      stowageDetailsInfo_ = java.util.Collections.emptyList();
+      cargoInfo_ = java.util.Collections.emptyList();
+      otherTankInfo_ = java.util.Collections.emptyList();
+      ballastInfo_ = java.util.Collections.emptyList();
+    }
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
@@ -109,6 +118,7 @@ public final class Loadicator {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -121,70 +131,70 @@ public final class Loadicator {
               break;
             case 10:
               {
-                com.cpdss.common.generated.Loadicator.StowagePlanDetails.Builder subBuilder = null;
-                if (stowagePlanDetails_ != null) {
-                  subBuilder = stowagePlanDetails_.toBuilder();
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  stowagePlanDetails_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.Loadicator.StowagePlanDetails>();
+                  mutable_bitField0_ |= 0x00000001;
                 }
-                stowagePlanDetails_ =
+                stowagePlanDetails_.add(
                     input.readMessage(
                         com.cpdss.common.generated.Loadicator.StowagePlanDetails.parser(),
-                        extensionRegistry);
-                if (subBuilder != null) {
-                  subBuilder.mergeFrom(stowagePlanDetails_);
-                  stowagePlanDetails_ = subBuilder.buildPartial();
-                }
-
+                        extensionRegistry));
                 break;
               }
             case 18:
               {
-                com.cpdss.common.generated.Loadicator.StowageDetailsInfo.Builder subBuilder = null;
-                if (stowageDetailsInfo_ != null) {
-                  subBuilder = stowageDetailsInfo_.toBuilder();
+                if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                  stowageDetailsInfo_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.Loadicator.StowageDetailsInfo>();
+                  mutable_bitField0_ |= 0x00000002;
                 }
-                stowageDetailsInfo_ =
+                stowageDetailsInfo_.add(
                     input.readMessage(
                         com.cpdss.common.generated.Loadicator.StowageDetailsInfo.parser(),
-                        extensionRegistry);
-                if (subBuilder != null) {
-                  subBuilder.mergeFrom(stowageDetailsInfo_);
-                  stowageDetailsInfo_ = subBuilder.buildPartial();
-                }
-
+                        extensionRegistry));
                 break;
               }
             case 26:
               {
-                com.cpdss.common.generated.Loadicator.CargoInfo.Builder subBuilder = null;
-                if (cargoInfo_ != null) {
-                  subBuilder = cargoInfo_.toBuilder();
+                if (!((mutable_bitField0_ & 0x00000004) != 0)) {
+                  cargoInfo_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.Loadicator.CargoInfo>();
+                  mutable_bitField0_ |= 0x00000004;
                 }
-                cargoInfo_ =
+                cargoInfo_.add(
                     input.readMessage(
                         com.cpdss.common.generated.Loadicator.CargoInfo.parser(),
-                        extensionRegistry);
-                if (subBuilder != null) {
-                  subBuilder.mergeFrom(cargoInfo_);
-                  cargoInfo_ = subBuilder.buildPartial();
-                }
-
+                        extensionRegistry));
                 break;
               }
             case 34:
               {
-                com.cpdss.common.generated.Loadicator.OtherTankInfo.Builder subBuilder = null;
-                if (otherTankInfo_ != null) {
-                  subBuilder = otherTankInfo_.toBuilder();
+                if (!((mutable_bitField0_ & 0x00000008) != 0)) {
+                  otherTankInfo_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.Loadicator.OtherTankInfo>();
+                  mutable_bitField0_ |= 0x00000008;
                 }
-                otherTankInfo_ =
+                otherTankInfo_.add(
                     input.readMessage(
                         com.cpdss.common.generated.Loadicator.OtherTankInfo.parser(),
-                        extensionRegistry);
-                if (subBuilder != null) {
-                  subBuilder.mergeFrom(otherTankInfo_);
-                  otherTankInfo_ = subBuilder.buildPartial();
+                        extensionRegistry));
+                break;
+              }
+            case 42:
+              {
+                if (!((mutable_bitField0_ & 0x00000010) != 0)) {
+                  ballastInfo_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.Loadicator.BallastInfo>();
+                  mutable_bitField0_ |= 0x00000010;
                 }
-
+                ballastInfo_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.Loadicator.BallastInfo.parser(),
+                        extensionRegistry));
                 break;
               }
             default:
@@ -201,6 +211,21 @@ public final class Loadicator {
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          stowagePlanDetails_ = java.util.Collections.unmodifiableList(stowagePlanDetails_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) != 0)) {
+          stowageDetailsInfo_ = java.util.Collections.unmodifiableList(stowageDetailsInfo_);
+        }
+        if (((mutable_bitField0_ & 0x00000004) != 0)) {
+          cargoInfo_ = java.util.Collections.unmodifiableList(cargoInfo_);
+        }
+        if (((mutable_bitField0_ & 0x00000008) != 0)) {
+          otherTankInfo_ = java.util.Collections.unmodifiableList(otherTankInfo_);
+        }
+        if (((mutable_bitField0_ & 0x00000010) != 0)) {
+          ballastInfo_ = java.util.Collections.unmodifiableList(ballastInfo_);
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -221,106 +246,137 @@ public final class Loadicator {
     }
 
     public static final int STOWAGEPLANDETAILS_FIELD_NUMBER = 1;
-    private com.cpdss.common.generated.Loadicator.StowagePlanDetails stowagePlanDetails_;
-    /**
-     * <code>.StowagePlanDetails stowagePlanDetails = 1;</code>
-     *
-     * @return Whether the stowagePlanDetails field is set.
-     */
-    public boolean hasStowagePlanDetails() {
-      return stowagePlanDetails_ != null;
+    private java.util.List<com.cpdss.common.generated.Loadicator.StowagePlanDetails>
+        stowagePlanDetails_;
+    /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+    public java.util.List<com.cpdss.common.generated.Loadicator.StowagePlanDetails>
+        getStowagePlanDetailsList() {
+      return stowagePlanDetails_;
     }
-    /**
-     * <code>.StowagePlanDetails stowagePlanDetails = 1;</code>
-     *
-     * @return The stowagePlanDetails.
-     */
-    public com.cpdss.common.generated.Loadicator.StowagePlanDetails getStowagePlanDetails() {
-      return stowagePlanDetails_ == null
-          ? com.cpdss.common.generated.Loadicator.StowagePlanDetails.getDefaultInstance()
-          : stowagePlanDetails_;
+    /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.Loadicator.StowagePlanDetailsOrBuilder>
+        getStowagePlanDetailsOrBuilderList() {
+      return stowagePlanDetails_;
     }
-    /** <code>.StowagePlanDetails stowagePlanDetails = 1;</code> */
+    /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+    public int getStowagePlanDetailsCount() {
+      return stowagePlanDetails_.size();
+    }
+    /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+    public com.cpdss.common.generated.Loadicator.StowagePlanDetails getStowagePlanDetails(
+        int index) {
+      return stowagePlanDetails_.get(index);
+    }
+    /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
     public com.cpdss.common.generated.Loadicator.StowagePlanDetailsOrBuilder
-        getStowagePlanDetailsOrBuilder() {
-      return getStowagePlanDetails();
+        getStowagePlanDetailsOrBuilder(int index) {
+      return stowagePlanDetails_.get(index);
     }
 
     public static final int STOWAGEDETAILSINFO_FIELD_NUMBER = 2;
-    private com.cpdss.common.generated.Loadicator.StowageDetailsInfo stowageDetailsInfo_;
-    /**
-     * <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code>
-     *
-     * @return Whether the stowageDetailsInfo field is set.
-     */
-    public boolean hasStowageDetailsInfo() {
-      return stowageDetailsInfo_ != null;
+    private java.util.List<com.cpdss.common.generated.Loadicator.StowageDetailsInfo>
+        stowageDetailsInfo_;
+    /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+    public java.util.List<com.cpdss.common.generated.Loadicator.StowageDetailsInfo>
+        getStowageDetailsInfoList() {
+      return stowageDetailsInfo_;
     }
-    /**
-     * <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code>
-     *
-     * @return The stowageDetailsInfo.
-     */
-    public com.cpdss.common.generated.Loadicator.StowageDetailsInfo getStowageDetailsInfo() {
-      return stowageDetailsInfo_ == null
-          ? com.cpdss.common.generated.Loadicator.StowageDetailsInfo.getDefaultInstance()
-          : stowageDetailsInfo_;
+    /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.Loadicator.StowageDetailsInfoOrBuilder>
+        getStowageDetailsInfoOrBuilderList() {
+      return stowageDetailsInfo_;
     }
-    /** <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+    /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+    public int getStowageDetailsInfoCount() {
+      return stowageDetailsInfo_.size();
+    }
+    /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+    public com.cpdss.common.generated.Loadicator.StowageDetailsInfo getStowageDetailsInfo(
+        int index) {
+      return stowageDetailsInfo_.get(index);
+    }
+    /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
     public com.cpdss.common.generated.Loadicator.StowageDetailsInfoOrBuilder
-        getStowageDetailsInfoOrBuilder() {
-      return getStowageDetailsInfo();
+        getStowageDetailsInfoOrBuilder(int index) {
+      return stowageDetailsInfo_.get(index);
     }
 
     public static final int CARGOINFO_FIELD_NUMBER = 3;
-    private com.cpdss.common.generated.Loadicator.CargoInfo cargoInfo_;
-    /**
-     * <code>.CargoInfo cargoInfo = 3;</code>
-     *
-     * @return Whether the cargoInfo field is set.
-     */
-    public boolean hasCargoInfo() {
-      return cargoInfo_ != null;
+    private java.util.List<com.cpdss.common.generated.Loadicator.CargoInfo> cargoInfo_;
+    /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+    public java.util.List<com.cpdss.common.generated.Loadicator.CargoInfo> getCargoInfoList() {
+      return cargoInfo_;
     }
-    /**
-     * <code>.CargoInfo cargoInfo = 3;</code>
-     *
-     * @return The cargoInfo.
-     */
-    public com.cpdss.common.generated.Loadicator.CargoInfo getCargoInfo() {
-      return cargoInfo_ == null
-          ? com.cpdss.common.generated.Loadicator.CargoInfo.getDefaultInstance()
-          : cargoInfo_;
+    /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.Loadicator.CargoInfoOrBuilder>
+        getCargoInfoOrBuilderList() {
+      return cargoInfo_;
     }
-    /** <code>.CargoInfo cargoInfo = 3;</code> */
-    public com.cpdss.common.generated.Loadicator.CargoInfoOrBuilder getCargoInfoOrBuilder() {
-      return getCargoInfo();
+    /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+    public int getCargoInfoCount() {
+      return cargoInfo_.size();
+    }
+    /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+    public com.cpdss.common.generated.Loadicator.CargoInfo getCargoInfo(int index) {
+      return cargoInfo_.get(index);
+    }
+    /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+    public com.cpdss.common.generated.Loadicator.CargoInfoOrBuilder getCargoInfoOrBuilder(
+        int index) {
+      return cargoInfo_.get(index);
     }
 
     public static final int OTHERTANKINFO_FIELD_NUMBER = 4;
-    private com.cpdss.common.generated.Loadicator.OtherTankInfo otherTankInfo_;
-    /**
-     * <code>.OtherTankInfo otherTankInfo = 4;</code>
-     *
-     * @return Whether the otherTankInfo field is set.
-     */
-    public boolean hasOtherTankInfo() {
-      return otherTankInfo_ != null;
+    private java.util.List<com.cpdss.common.generated.Loadicator.OtherTankInfo> otherTankInfo_;
+    /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+    public java.util.List<com.cpdss.common.generated.Loadicator.OtherTankInfo>
+        getOtherTankInfoList() {
+      return otherTankInfo_;
     }
-    /**
-     * <code>.OtherTankInfo otherTankInfo = 4;</code>
-     *
-     * @return The otherTankInfo.
-     */
-    public com.cpdss.common.generated.Loadicator.OtherTankInfo getOtherTankInfo() {
-      return otherTankInfo_ == null
-          ? com.cpdss.common.generated.Loadicator.OtherTankInfo.getDefaultInstance()
-          : otherTankInfo_;
+    /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.Loadicator.OtherTankInfoOrBuilder>
+        getOtherTankInfoOrBuilderList() {
+      return otherTankInfo_;
     }
-    /** <code>.OtherTankInfo otherTankInfo = 4;</code> */
-    public com.cpdss.common.generated.Loadicator.OtherTankInfoOrBuilder
-        getOtherTankInfoOrBuilder() {
-      return getOtherTankInfo();
+    /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+    public int getOtherTankInfoCount() {
+      return otherTankInfo_.size();
+    }
+    /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+    public com.cpdss.common.generated.Loadicator.OtherTankInfo getOtherTankInfo(int index) {
+      return otherTankInfo_.get(index);
+    }
+    /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+    public com.cpdss.common.generated.Loadicator.OtherTankInfoOrBuilder getOtherTankInfoOrBuilder(
+        int index) {
+      return otherTankInfo_.get(index);
+    }
+
+    public static final int BALLASTINFO_FIELD_NUMBER = 5;
+    private java.util.List<com.cpdss.common.generated.Loadicator.BallastInfo> ballastInfo_;
+    /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+    public java.util.List<com.cpdss.common.generated.Loadicator.BallastInfo> getBallastInfoList() {
+      return ballastInfo_;
+    }
+    /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.Loadicator.BallastInfoOrBuilder>
+        getBallastInfoOrBuilderList() {
+      return ballastInfo_;
+    }
+    /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+    public int getBallastInfoCount() {
+      return ballastInfo_.size();
+    }
+    /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+    public com.cpdss.common.generated.Loadicator.BallastInfo getBallastInfo(int index) {
+      return ballastInfo_.get(index);
+    }
+    /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+    public com.cpdss.common.generated.Loadicator.BallastInfoOrBuilder getBallastInfoOrBuilder(
+        int index) {
+      return ballastInfo_.get(index);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -337,17 +393,20 @@ public final class Loadicator {
 
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-      if (stowagePlanDetails_ != null) {
-        output.writeMessage(1, getStowagePlanDetails());
+      for (int i = 0; i < stowagePlanDetails_.size(); i++) {
+        output.writeMessage(1, stowagePlanDetails_.get(i));
       }
-      if (stowageDetailsInfo_ != null) {
-        output.writeMessage(2, getStowageDetailsInfo());
+      for (int i = 0; i < stowageDetailsInfo_.size(); i++) {
+        output.writeMessage(2, stowageDetailsInfo_.get(i));
       }
-      if (cargoInfo_ != null) {
-        output.writeMessage(3, getCargoInfo());
+      for (int i = 0; i < cargoInfo_.size(); i++) {
+        output.writeMessage(3, cargoInfo_.get(i));
       }
-      if (otherTankInfo_ != null) {
-        output.writeMessage(4, getOtherTankInfo());
+      for (int i = 0; i < otherTankInfo_.size(); i++) {
+        output.writeMessage(4, otherTankInfo_.get(i));
+      }
+      for (int i = 0; i < ballastInfo_.size(); i++) {
+        output.writeMessage(5, ballastInfo_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -358,19 +417,22 @@ public final class Loadicator {
       if (size != -1) return size;
 
       size = 0;
-      if (stowagePlanDetails_ != null) {
+      for (int i = 0; i < stowagePlanDetails_.size(); i++) {
         size +=
-            com.google.protobuf.CodedOutputStream.computeMessageSize(1, getStowagePlanDetails());
+            com.google.protobuf.CodedOutputStream.computeMessageSize(1, stowagePlanDetails_.get(i));
       }
-      if (stowageDetailsInfo_ != null) {
+      for (int i = 0; i < stowageDetailsInfo_.size(); i++) {
         size +=
-            com.google.protobuf.CodedOutputStream.computeMessageSize(2, getStowageDetailsInfo());
+            com.google.protobuf.CodedOutputStream.computeMessageSize(2, stowageDetailsInfo_.get(i));
       }
-      if (cargoInfo_ != null) {
-        size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, getCargoInfo());
+      for (int i = 0; i < cargoInfo_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, cargoInfo_.get(i));
       }
-      if (otherTankInfo_ != null) {
-        size += com.google.protobuf.CodedOutputStream.computeMessageSize(4, getOtherTankInfo());
+      for (int i = 0; i < otherTankInfo_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(4, otherTankInfo_.get(i));
+      }
+      for (int i = 0; i < ballastInfo_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(5, ballastInfo_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -388,22 +450,11 @@ public final class Loadicator {
       com.cpdss.common.generated.Loadicator.LoadicatorRequest other =
           (com.cpdss.common.generated.Loadicator.LoadicatorRequest) obj;
 
-      if (hasStowagePlanDetails() != other.hasStowagePlanDetails()) return false;
-      if (hasStowagePlanDetails()) {
-        if (!getStowagePlanDetails().equals(other.getStowagePlanDetails())) return false;
-      }
-      if (hasStowageDetailsInfo() != other.hasStowageDetailsInfo()) return false;
-      if (hasStowageDetailsInfo()) {
-        if (!getStowageDetailsInfo().equals(other.getStowageDetailsInfo())) return false;
-      }
-      if (hasCargoInfo() != other.hasCargoInfo()) return false;
-      if (hasCargoInfo()) {
-        if (!getCargoInfo().equals(other.getCargoInfo())) return false;
-      }
-      if (hasOtherTankInfo() != other.hasOtherTankInfo()) return false;
-      if (hasOtherTankInfo()) {
-        if (!getOtherTankInfo().equals(other.getOtherTankInfo())) return false;
-      }
+      if (!getStowagePlanDetailsList().equals(other.getStowagePlanDetailsList())) return false;
+      if (!getStowageDetailsInfoList().equals(other.getStowageDetailsInfoList())) return false;
+      if (!getCargoInfoList().equals(other.getCargoInfoList())) return false;
+      if (!getOtherTankInfoList().equals(other.getOtherTankInfoList())) return false;
+      if (!getBallastInfoList().equals(other.getBallastInfoList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -415,21 +466,25 @@ public final class Loadicator {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      if (hasStowagePlanDetails()) {
+      if (getStowagePlanDetailsCount() > 0) {
         hash = (37 * hash) + STOWAGEPLANDETAILS_FIELD_NUMBER;
-        hash = (53 * hash) + getStowagePlanDetails().hashCode();
+        hash = (53 * hash) + getStowagePlanDetailsList().hashCode();
       }
-      if (hasStowageDetailsInfo()) {
+      if (getStowageDetailsInfoCount() > 0) {
         hash = (37 * hash) + STOWAGEDETAILSINFO_FIELD_NUMBER;
-        hash = (53 * hash) + getStowageDetailsInfo().hashCode();
+        hash = (53 * hash) + getStowageDetailsInfoList().hashCode();
       }
-      if (hasCargoInfo()) {
+      if (getCargoInfoCount() > 0) {
         hash = (37 * hash) + CARGOINFO_FIELD_NUMBER;
-        hash = (53 * hash) + getCargoInfo().hashCode();
+        hash = (53 * hash) + getCargoInfoList().hashCode();
       }
-      if (hasOtherTankInfo()) {
+      if (getOtherTankInfoCount() > 0) {
         hash = (37 * hash) + OTHERTANKINFO_FIELD_NUMBER;
-        hash = (53 * hash) + getOtherTankInfo().hashCode();
+        hash = (53 * hash) + getOtherTankInfoList().hashCode();
+      }
+      if (getBallastInfoCount() > 0) {
+        hash = (37 * hash) + BALLASTINFO_FIELD_NUMBER;
+        hash = (53 * hash) + getBallastInfoList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -564,35 +619,47 @@ public final class Loadicator {
       }
 
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getStowagePlanDetailsFieldBuilder();
+          getStowageDetailsInfoFieldBuilder();
+          getCargoInfoFieldBuilder();
+          getOtherTankInfoFieldBuilder();
+          getBallastInfoFieldBuilder();
+        }
       }
 
       @java.lang.Override
       public Builder clear() {
         super.clear();
         if (stowagePlanDetailsBuilder_ == null) {
-          stowagePlanDetails_ = null;
+          stowagePlanDetails_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
-          stowagePlanDetails_ = null;
-          stowagePlanDetailsBuilder_ = null;
+          stowagePlanDetailsBuilder_.clear();
         }
         if (stowageDetailsInfoBuilder_ == null) {
-          stowageDetailsInfo_ = null;
+          stowageDetailsInfo_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
         } else {
-          stowageDetailsInfo_ = null;
-          stowageDetailsInfoBuilder_ = null;
+          stowageDetailsInfoBuilder_.clear();
         }
         if (cargoInfoBuilder_ == null) {
-          cargoInfo_ = null;
+          cargoInfo_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
         } else {
-          cargoInfo_ = null;
-          cargoInfoBuilder_ = null;
+          cargoInfoBuilder_.clear();
         }
         if (otherTankInfoBuilder_ == null) {
-          otherTankInfo_ = null;
+          otherTankInfo_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
         } else {
-          otherTankInfo_ = null;
-          otherTankInfoBuilder_ = null;
+          otherTankInfoBuilder_.clear();
+        }
+        if (ballastInfoBuilder_ == null) {
+          ballastInfo_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000010);
+        } else {
+          ballastInfoBuilder_.clear();
         }
         return this;
       }
@@ -620,25 +687,51 @@ public final class Loadicator {
       public com.cpdss.common.generated.Loadicator.LoadicatorRequest buildPartial() {
         com.cpdss.common.generated.Loadicator.LoadicatorRequest result =
             new com.cpdss.common.generated.Loadicator.LoadicatorRequest(this);
+        int from_bitField0_ = bitField0_;
         if (stowagePlanDetailsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            stowagePlanDetails_ = java.util.Collections.unmodifiableList(stowagePlanDetails_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
           result.stowagePlanDetails_ = stowagePlanDetails_;
         } else {
           result.stowagePlanDetails_ = stowagePlanDetailsBuilder_.build();
         }
         if (stowageDetailsInfoBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0)) {
+            stowageDetailsInfo_ = java.util.Collections.unmodifiableList(stowageDetailsInfo_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
           result.stowageDetailsInfo_ = stowageDetailsInfo_;
         } else {
           result.stowageDetailsInfo_ = stowageDetailsInfoBuilder_.build();
         }
         if (cargoInfoBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) != 0)) {
+            cargoInfo_ = java.util.Collections.unmodifiableList(cargoInfo_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
           result.cargoInfo_ = cargoInfo_;
         } else {
           result.cargoInfo_ = cargoInfoBuilder_.build();
         }
         if (otherTankInfoBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) != 0)) {
+            otherTankInfo_ = java.util.Collections.unmodifiableList(otherTankInfo_);
+            bitField0_ = (bitField0_ & ~0x00000008);
+          }
           result.otherTankInfo_ = otherTankInfo_;
         } else {
           result.otherTankInfo_ = otherTankInfoBuilder_.build();
+        }
+        if (ballastInfoBuilder_ == null) {
+          if (((bitField0_ & 0x00000010) != 0)) {
+            ballastInfo_ = java.util.Collections.unmodifiableList(ballastInfo_);
+            bitField0_ = (bitField0_ & ~0x00000010);
+          }
+          result.ballastInfo_ = ballastInfo_;
+        } else {
+          result.ballastInfo_ = ballastInfoBuilder_.build();
         }
         onBuilt();
         return result;
@@ -692,17 +785,140 @@ public final class Loadicator {
       public Builder mergeFrom(com.cpdss.common.generated.Loadicator.LoadicatorRequest other) {
         if (other == com.cpdss.common.generated.Loadicator.LoadicatorRequest.getDefaultInstance())
           return this;
-        if (other.hasStowagePlanDetails()) {
-          mergeStowagePlanDetails(other.getStowagePlanDetails());
+        if (stowagePlanDetailsBuilder_ == null) {
+          if (!other.stowagePlanDetails_.isEmpty()) {
+            if (stowagePlanDetails_.isEmpty()) {
+              stowagePlanDetails_ = other.stowagePlanDetails_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureStowagePlanDetailsIsMutable();
+              stowagePlanDetails_.addAll(other.stowagePlanDetails_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.stowagePlanDetails_.isEmpty()) {
+            if (stowagePlanDetailsBuilder_.isEmpty()) {
+              stowagePlanDetailsBuilder_.dispose();
+              stowagePlanDetailsBuilder_ = null;
+              stowagePlanDetails_ = other.stowagePlanDetails_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              stowagePlanDetailsBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getStowagePlanDetailsFieldBuilder()
+                      : null;
+            } else {
+              stowagePlanDetailsBuilder_.addAllMessages(other.stowagePlanDetails_);
+            }
+          }
         }
-        if (other.hasStowageDetailsInfo()) {
-          mergeStowageDetailsInfo(other.getStowageDetailsInfo());
+        if (stowageDetailsInfoBuilder_ == null) {
+          if (!other.stowageDetailsInfo_.isEmpty()) {
+            if (stowageDetailsInfo_.isEmpty()) {
+              stowageDetailsInfo_ = other.stowageDetailsInfo_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureStowageDetailsInfoIsMutable();
+              stowageDetailsInfo_.addAll(other.stowageDetailsInfo_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.stowageDetailsInfo_.isEmpty()) {
+            if (stowageDetailsInfoBuilder_.isEmpty()) {
+              stowageDetailsInfoBuilder_.dispose();
+              stowageDetailsInfoBuilder_ = null;
+              stowageDetailsInfo_ = other.stowageDetailsInfo_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              stowageDetailsInfoBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getStowageDetailsInfoFieldBuilder()
+                      : null;
+            } else {
+              stowageDetailsInfoBuilder_.addAllMessages(other.stowageDetailsInfo_);
+            }
+          }
         }
-        if (other.hasCargoInfo()) {
-          mergeCargoInfo(other.getCargoInfo());
+        if (cargoInfoBuilder_ == null) {
+          if (!other.cargoInfo_.isEmpty()) {
+            if (cargoInfo_.isEmpty()) {
+              cargoInfo_ = other.cargoInfo_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureCargoInfoIsMutable();
+              cargoInfo_.addAll(other.cargoInfo_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.cargoInfo_.isEmpty()) {
+            if (cargoInfoBuilder_.isEmpty()) {
+              cargoInfoBuilder_.dispose();
+              cargoInfoBuilder_ = null;
+              cargoInfo_ = other.cargoInfo_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+              cargoInfoBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getCargoInfoFieldBuilder()
+                      : null;
+            } else {
+              cargoInfoBuilder_.addAllMessages(other.cargoInfo_);
+            }
+          }
         }
-        if (other.hasOtherTankInfo()) {
-          mergeOtherTankInfo(other.getOtherTankInfo());
+        if (otherTankInfoBuilder_ == null) {
+          if (!other.otherTankInfo_.isEmpty()) {
+            if (otherTankInfo_.isEmpty()) {
+              otherTankInfo_ = other.otherTankInfo_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+            } else {
+              ensureOtherTankInfoIsMutable();
+              otherTankInfo_.addAll(other.otherTankInfo_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.otherTankInfo_.isEmpty()) {
+            if (otherTankInfoBuilder_.isEmpty()) {
+              otherTankInfoBuilder_.dispose();
+              otherTankInfoBuilder_ = null;
+              otherTankInfo_ = other.otherTankInfo_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+              otherTankInfoBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getOtherTankInfoFieldBuilder()
+                      : null;
+            } else {
+              otherTankInfoBuilder_.addAllMessages(other.otherTankInfo_);
+            }
+          }
+        }
+        if (ballastInfoBuilder_ == null) {
+          if (!other.ballastInfo_.isEmpty()) {
+            if (ballastInfo_.isEmpty()) {
+              ballastInfo_ = other.ballastInfo_;
+              bitField0_ = (bitField0_ & ~0x00000010);
+            } else {
+              ensureBallastInfoIsMutable();
+              ballastInfo_.addAll(other.ballastInfo_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.ballastInfo_.isEmpty()) {
+            if (ballastInfoBuilder_.isEmpty()) {
+              ballastInfoBuilder_.dispose();
+              ballastInfoBuilder_ = null;
+              ballastInfo_ = other.ballastInfo_;
+              bitField0_ = (bitField0_ & ~0x00000010);
+              ballastInfoBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getBallastInfoFieldBuilder()
+                      : null;
+            } else {
+              ballastInfoBuilder_.addAllMessages(other.ballastInfo_);
+            }
+          }
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -734,487 +950,1110 @@ public final class Loadicator {
         return this;
       }
 
-      private com.cpdss.common.generated.Loadicator.StowagePlanDetails stowagePlanDetails_;
-      private com.google.protobuf.SingleFieldBuilderV3<
+      private int bitField0_;
+
+      private java.util.List<com.cpdss.common.generated.Loadicator.StowagePlanDetails>
+          stowagePlanDetails_ = java.util.Collections.emptyList();
+
+      private void ensureStowagePlanDetailsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          stowagePlanDetails_ =
+              new java.util.ArrayList<com.cpdss.common.generated.Loadicator.StowagePlanDetails>(
+                  stowagePlanDetails_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
               com.cpdss.common.generated.Loadicator.StowagePlanDetails,
               com.cpdss.common.generated.Loadicator.StowagePlanDetails.Builder,
               com.cpdss.common.generated.Loadicator.StowagePlanDetailsOrBuilder>
           stowagePlanDetailsBuilder_;
-      /**
-       * <code>.StowagePlanDetails stowagePlanDetails = 1;</code>
-       *
-       * @return Whether the stowagePlanDetails field is set.
-       */
-      public boolean hasStowagePlanDetails() {
-        return stowagePlanDetailsBuilder_ != null || stowagePlanDetails_ != null;
-      }
-      /**
-       * <code>.StowagePlanDetails stowagePlanDetails = 1;</code>
-       *
-       * @return The stowagePlanDetails.
-       */
-      public com.cpdss.common.generated.Loadicator.StowagePlanDetails getStowagePlanDetails() {
+
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public java.util.List<com.cpdss.common.generated.Loadicator.StowagePlanDetails>
+          getStowagePlanDetailsList() {
         if (stowagePlanDetailsBuilder_ == null) {
-          return stowagePlanDetails_ == null
-              ? com.cpdss.common.generated.Loadicator.StowagePlanDetails.getDefaultInstance()
-              : stowagePlanDetails_;
+          return java.util.Collections.unmodifiableList(stowagePlanDetails_);
         } else {
-          return stowagePlanDetailsBuilder_.getMessage();
+          return stowagePlanDetailsBuilder_.getMessageList();
         }
       }
-      /** <code>.StowagePlanDetails stowagePlanDetails = 1;</code> */
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public int getStowagePlanDetailsCount() {
+        if (stowagePlanDetailsBuilder_ == null) {
+          return stowagePlanDetails_.size();
+        } else {
+          return stowagePlanDetailsBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public com.cpdss.common.generated.Loadicator.StowagePlanDetails getStowagePlanDetails(
+          int index) {
+        if (stowagePlanDetailsBuilder_ == null) {
+          return stowagePlanDetails_.get(index);
+        } else {
+          return stowagePlanDetailsBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
       public Builder setStowagePlanDetails(
+          int index, com.cpdss.common.generated.Loadicator.StowagePlanDetails value) {
+        if (stowagePlanDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureStowagePlanDetailsIsMutable();
+          stowagePlanDetails_.set(index, value);
+          onChanged();
+        } else {
+          stowagePlanDetailsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public Builder setStowagePlanDetails(
+          int index,
+          com.cpdss.common.generated.Loadicator.StowagePlanDetails.Builder builderForValue) {
+        if (stowagePlanDetailsBuilder_ == null) {
+          ensureStowagePlanDetailsIsMutable();
+          stowagePlanDetails_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          stowagePlanDetailsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public Builder addStowagePlanDetails(
           com.cpdss.common.generated.Loadicator.StowagePlanDetails value) {
         if (stowagePlanDetailsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          stowagePlanDetails_ = value;
+          ensureStowagePlanDetailsIsMutable();
+          stowagePlanDetails_.add(value);
           onChanged();
         } else {
-          stowagePlanDetailsBuilder_.setMessage(value);
+          stowagePlanDetailsBuilder_.addMessage(value);
         }
-
         return this;
       }
-      /** <code>.StowagePlanDetails stowagePlanDetails = 1;</code> */
-      public Builder setStowagePlanDetails(
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public Builder addStowagePlanDetails(
+          int index, com.cpdss.common.generated.Loadicator.StowagePlanDetails value) {
+        if (stowagePlanDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureStowagePlanDetailsIsMutable();
+          stowagePlanDetails_.add(index, value);
+          onChanged();
+        } else {
+          stowagePlanDetailsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public Builder addStowagePlanDetails(
           com.cpdss.common.generated.Loadicator.StowagePlanDetails.Builder builderForValue) {
         if (stowagePlanDetailsBuilder_ == null) {
-          stowagePlanDetails_ = builderForValue.build();
+          ensureStowagePlanDetailsIsMutable();
+          stowagePlanDetails_.add(builderForValue.build());
           onChanged();
         } else {
-          stowagePlanDetailsBuilder_.setMessage(builderForValue.build());
+          stowagePlanDetailsBuilder_.addMessage(builderForValue.build());
         }
-
         return this;
       }
-      /** <code>.StowagePlanDetails stowagePlanDetails = 1;</code> */
-      public Builder mergeStowagePlanDetails(
-          com.cpdss.common.generated.Loadicator.StowagePlanDetails value) {
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public Builder addStowagePlanDetails(
+          int index,
+          com.cpdss.common.generated.Loadicator.StowagePlanDetails.Builder builderForValue) {
         if (stowagePlanDetailsBuilder_ == null) {
-          if (stowagePlanDetails_ != null) {
-            stowagePlanDetails_ =
-                com.cpdss.common.generated.Loadicator.StowagePlanDetails.newBuilder(
-                        stowagePlanDetails_)
-                    .mergeFrom(value)
-                    .buildPartial();
-          } else {
-            stowagePlanDetails_ = value;
-          }
+          ensureStowagePlanDetailsIsMutable();
+          stowagePlanDetails_.add(index, builderForValue.build());
           onChanged();
         } else {
-          stowagePlanDetailsBuilder_.mergeFrom(value);
+          stowagePlanDetailsBuilder_.addMessage(index, builderForValue.build());
         }
-
         return this;
       }
-      /** <code>.StowagePlanDetails stowagePlanDetails = 1;</code> */
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public Builder addAllStowagePlanDetails(
+          java.lang.Iterable<? extends com.cpdss.common.generated.Loadicator.StowagePlanDetails>
+              values) {
+        if (stowagePlanDetailsBuilder_ == null) {
+          ensureStowagePlanDetailsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, stowagePlanDetails_);
+          onChanged();
+        } else {
+          stowagePlanDetailsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
       public Builder clearStowagePlanDetails() {
         if (stowagePlanDetailsBuilder_ == null) {
-          stowagePlanDetails_ = null;
+          stowagePlanDetails_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
           onChanged();
         } else {
-          stowagePlanDetails_ = null;
-          stowagePlanDetailsBuilder_ = null;
+          stowagePlanDetailsBuilder_.clear();
         }
-
         return this;
       }
-      /** <code>.StowagePlanDetails stowagePlanDetails = 1;</code> */
-      public com.cpdss.common.generated.Loadicator.StowagePlanDetails.Builder
-          getStowagePlanDetailsBuilder() {
-
-        onChanged();
-        return getStowagePlanDetailsFieldBuilder().getBuilder();
-      }
-      /** <code>.StowagePlanDetails stowagePlanDetails = 1;</code> */
-      public com.cpdss.common.generated.Loadicator.StowagePlanDetailsOrBuilder
-          getStowagePlanDetailsOrBuilder() {
-        if (stowagePlanDetailsBuilder_ != null) {
-          return stowagePlanDetailsBuilder_.getMessageOrBuilder();
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public Builder removeStowagePlanDetails(int index) {
+        if (stowagePlanDetailsBuilder_ == null) {
+          ensureStowagePlanDetailsIsMutable();
+          stowagePlanDetails_.remove(index);
+          onChanged();
         } else {
-          return stowagePlanDetails_ == null
-              ? com.cpdss.common.generated.Loadicator.StowagePlanDetails.getDefaultInstance()
-              : stowagePlanDetails_;
+          stowagePlanDetailsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public com.cpdss.common.generated.Loadicator.StowagePlanDetails.Builder
+          getStowagePlanDetailsBuilder(int index) {
+        return getStowagePlanDetailsFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public com.cpdss.common.generated.Loadicator.StowagePlanDetailsOrBuilder
+          getStowagePlanDetailsOrBuilder(int index) {
+        if (stowagePlanDetailsBuilder_ == null) {
+          return stowagePlanDetails_.get(index);
+        } else {
+          return stowagePlanDetailsBuilder_.getMessageOrBuilder(index);
         }
       }
-      /** <code>.StowagePlanDetails stowagePlanDetails = 1;</code> */
-      private com.google.protobuf.SingleFieldBuilderV3<
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.Loadicator.StowagePlanDetailsOrBuilder>
+          getStowagePlanDetailsOrBuilderList() {
+        if (stowagePlanDetailsBuilder_ != null) {
+          return stowagePlanDetailsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(stowagePlanDetails_);
+        }
+      }
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public com.cpdss.common.generated.Loadicator.StowagePlanDetails.Builder
+          addStowagePlanDetailsBuilder() {
+        return getStowagePlanDetailsFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.Loadicator.StowagePlanDetails.getDefaultInstance());
+      }
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public com.cpdss.common.generated.Loadicator.StowagePlanDetails.Builder
+          addStowagePlanDetailsBuilder(int index) {
+        return getStowagePlanDetailsFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.Loadicator.StowagePlanDetails.getDefaultInstance());
+      }
+      /** <code>repeated .StowagePlanDetails stowagePlanDetails = 1;</code> */
+      public java.util.List<com.cpdss.common.generated.Loadicator.StowagePlanDetails.Builder>
+          getStowagePlanDetailsBuilderList() {
+        return getStowagePlanDetailsFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
               com.cpdss.common.generated.Loadicator.StowagePlanDetails,
               com.cpdss.common.generated.Loadicator.StowagePlanDetails.Builder,
               com.cpdss.common.generated.Loadicator.StowagePlanDetailsOrBuilder>
           getStowagePlanDetailsFieldBuilder() {
         if (stowagePlanDetailsBuilder_ == null) {
           stowagePlanDetailsBuilder_ =
-              new com.google.protobuf.SingleFieldBuilderV3<
+              new com.google.protobuf.RepeatedFieldBuilderV3<
                   com.cpdss.common.generated.Loadicator.StowagePlanDetails,
                   com.cpdss.common.generated.Loadicator.StowagePlanDetails.Builder,
                   com.cpdss.common.generated.Loadicator.StowagePlanDetailsOrBuilder>(
-                  getStowagePlanDetails(), getParentForChildren(), isClean());
+                  stowagePlanDetails_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
           stowagePlanDetails_ = null;
         }
         return stowagePlanDetailsBuilder_;
       }
 
-      private com.cpdss.common.generated.Loadicator.StowageDetailsInfo stowageDetailsInfo_;
-      private com.google.protobuf.SingleFieldBuilderV3<
+      private java.util.List<com.cpdss.common.generated.Loadicator.StowageDetailsInfo>
+          stowageDetailsInfo_ = java.util.Collections.emptyList();
+
+      private void ensureStowageDetailsInfoIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          stowageDetailsInfo_ =
+              new java.util.ArrayList<com.cpdss.common.generated.Loadicator.StowageDetailsInfo>(
+                  stowageDetailsInfo_);
+          bitField0_ |= 0x00000002;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
               com.cpdss.common.generated.Loadicator.StowageDetailsInfo,
               com.cpdss.common.generated.Loadicator.StowageDetailsInfo.Builder,
               com.cpdss.common.generated.Loadicator.StowageDetailsInfoOrBuilder>
           stowageDetailsInfoBuilder_;
-      /**
-       * <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code>
-       *
-       * @return Whether the stowageDetailsInfo field is set.
-       */
-      public boolean hasStowageDetailsInfo() {
-        return stowageDetailsInfoBuilder_ != null || stowageDetailsInfo_ != null;
-      }
-      /**
-       * <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code>
-       *
-       * @return The stowageDetailsInfo.
-       */
-      public com.cpdss.common.generated.Loadicator.StowageDetailsInfo getStowageDetailsInfo() {
+
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.Loadicator.StowageDetailsInfo>
+          getStowageDetailsInfoList() {
         if (stowageDetailsInfoBuilder_ == null) {
-          return stowageDetailsInfo_ == null
-              ? com.cpdss.common.generated.Loadicator.StowageDetailsInfo.getDefaultInstance()
-              : stowageDetailsInfo_;
+          return java.util.Collections.unmodifiableList(stowageDetailsInfo_);
         } else {
-          return stowageDetailsInfoBuilder_.getMessage();
+          return stowageDetailsInfoBuilder_.getMessageList();
         }
       }
-      /** <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public int getStowageDetailsInfoCount() {
+        if (stowageDetailsInfoBuilder_ == null) {
+          return stowageDetailsInfo_.size();
+        } else {
+          return stowageDetailsInfoBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public com.cpdss.common.generated.Loadicator.StowageDetailsInfo getStowageDetailsInfo(
+          int index) {
+        if (stowageDetailsInfoBuilder_ == null) {
+          return stowageDetailsInfo_.get(index);
+        } else {
+          return stowageDetailsInfoBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
       public Builder setStowageDetailsInfo(
+          int index, com.cpdss.common.generated.Loadicator.StowageDetailsInfo value) {
+        if (stowageDetailsInfoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureStowageDetailsInfoIsMutable();
+          stowageDetailsInfo_.set(index, value);
+          onChanged();
+        } else {
+          stowageDetailsInfoBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public Builder setStowageDetailsInfo(
+          int index,
+          com.cpdss.common.generated.Loadicator.StowageDetailsInfo.Builder builderForValue) {
+        if (stowageDetailsInfoBuilder_ == null) {
+          ensureStowageDetailsInfoIsMutable();
+          stowageDetailsInfo_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          stowageDetailsInfoBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public Builder addStowageDetailsInfo(
           com.cpdss.common.generated.Loadicator.StowageDetailsInfo value) {
         if (stowageDetailsInfoBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          stowageDetailsInfo_ = value;
+          ensureStowageDetailsInfoIsMutable();
+          stowageDetailsInfo_.add(value);
           onChanged();
         } else {
-          stowageDetailsInfoBuilder_.setMessage(value);
+          stowageDetailsInfoBuilder_.addMessage(value);
         }
-
         return this;
       }
-      /** <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code> */
-      public Builder setStowageDetailsInfo(
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public Builder addStowageDetailsInfo(
+          int index, com.cpdss.common.generated.Loadicator.StowageDetailsInfo value) {
+        if (stowageDetailsInfoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureStowageDetailsInfoIsMutable();
+          stowageDetailsInfo_.add(index, value);
+          onChanged();
+        } else {
+          stowageDetailsInfoBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public Builder addStowageDetailsInfo(
           com.cpdss.common.generated.Loadicator.StowageDetailsInfo.Builder builderForValue) {
         if (stowageDetailsInfoBuilder_ == null) {
-          stowageDetailsInfo_ = builderForValue.build();
+          ensureStowageDetailsInfoIsMutable();
+          stowageDetailsInfo_.add(builderForValue.build());
           onChanged();
         } else {
-          stowageDetailsInfoBuilder_.setMessage(builderForValue.build());
+          stowageDetailsInfoBuilder_.addMessage(builderForValue.build());
         }
-
         return this;
       }
-      /** <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code> */
-      public Builder mergeStowageDetailsInfo(
-          com.cpdss.common.generated.Loadicator.StowageDetailsInfo value) {
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public Builder addStowageDetailsInfo(
+          int index,
+          com.cpdss.common.generated.Loadicator.StowageDetailsInfo.Builder builderForValue) {
         if (stowageDetailsInfoBuilder_ == null) {
-          if (stowageDetailsInfo_ != null) {
-            stowageDetailsInfo_ =
-                com.cpdss.common.generated.Loadicator.StowageDetailsInfo.newBuilder(
-                        stowageDetailsInfo_)
-                    .mergeFrom(value)
-                    .buildPartial();
-          } else {
-            stowageDetailsInfo_ = value;
-          }
+          ensureStowageDetailsInfoIsMutable();
+          stowageDetailsInfo_.add(index, builderForValue.build());
           onChanged();
         } else {
-          stowageDetailsInfoBuilder_.mergeFrom(value);
+          stowageDetailsInfoBuilder_.addMessage(index, builderForValue.build());
         }
-
         return this;
       }
-      /** <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public Builder addAllStowageDetailsInfo(
+          java.lang.Iterable<? extends com.cpdss.common.generated.Loadicator.StowageDetailsInfo>
+              values) {
+        if (stowageDetailsInfoBuilder_ == null) {
+          ensureStowageDetailsInfoIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, stowageDetailsInfo_);
+          onChanged();
+        } else {
+          stowageDetailsInfoBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
       public Builder clearStowageDetailsInfo() {
         if (stowageDetailsInfoBuilder_ == null) {
-          stowageDetailsInfo_ = null;
+          stowageDetailsInfo_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
           onChanged();
         } else {
-          stowageDetailsInfo_ = null;
-          stowageDetailsInfoBuilder_ = null;
+          stowageDetailsInfoBuilder_.clear();
         }
-
         return this;
       }
-      /** <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code> */
-      public com.cpdss.common.generated.Loadicator.StowageDetailsInfo.Builder
-          getStowageDetailsInfoBuilder() {
-
-        onChanged();
-        return getStowageDetailsInfoFieldBuilder().getBuilder();
-      }
-      /** <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code> */
-      public com.cpdss.common.generated.Loadicator.StowageDetailsInfoOrBuilder
-          getStowageDetailsInfoOrBuilder() {
-        if (stowageDetailsInfoBuilder_ != null) {
-          return stowageDetailsInfoBuilder_.getMessageOrBuilder();
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public Builder removeStowageDetailsInfo(int index) {
+        if (stowageDetailsInfoBuilder_ == null) {
+          ensureStowageDetailsInfoIsMutable();
+          stowageDetailsInfo_.remove(index);
+          onChanged();
         } else {
-          return stowageDetailsInfo_ == null
-              ? com.cpdss.common.generated.Loadicator.StowageDetailsInfo.getDefaultInstance()
-              : stowageDetailsInfo_;
+          stowageDetailsInfoBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public com.cpdss.common.generated.Loadicator.StowageDetailsInfo.Builder
+          getStowageDetailsInfoBuilder(int index) {
+        return getStowageDetailsInfoFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public com.cpdss.common.generated.Loadicator.StowageDetailsInfoOrBuilder
+          getStowageDetailsInfoOrBuilder(int index) {
+        if (stowageDetailsInfoBuilder_ == null) {
+          return stowageDetailsInfo_.get(index);
+        } else {
+          return stowageDetailsInfoBuilder_.getMessageOrBuilder(index);
         }
       }
-      /** <code>.StowageDetailsInfo stowageDetailsInfo = 2;</code> */
-      private com.google.protobuf.SingleFieldBuilderV3<
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.Loadicator.StowageDetailsInfoOrBuilder>
+          getStowageDetailsInfoOrBuilderList() {
+        if (stowageDetailsInfoBuilder_ != null) {
+          return stowageDetailsInfoBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(stowageDetailsInfo_);
+        }
+      }
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public com.cpdss.common.generated.Loadicator.StowageDetailsInfo.Builder
+          addStowageDetailsInfoBuilder() {
+        return getStowageDetailsInfoFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.Loadicator.StowageDetailsInfo.getDefaultInstance());
+      }
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public com.cpdss.common.generated.Loadicator.StowageDetailsInfo.Builder
+          addStowageDetailsInfoBuilder(int index) {
+        return getStowageDetailsInfoFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.Loadicator.StowageDetailsInfo.getDefaultInstance());
+      }
+      /** <code>repeated .StowageDetailsInfo stowageDetailsInfo = 2;</code> */
+      public java.util.List<com.cpdss.common.generated.Loadicator.StowageDetailsInfo.Builder>
+          getStowageDetailsInfoBuilderList() {
+        return getStowageDetailsInfoFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
               com.cpdss.common.generated.Loadicator.StowageDetailsInfo,
               com.cpdss.common.generated.Loadicator.StowageDetailsInfo.Builder,
               com.cpdss.common.generated.Loadicator.StowageDetailsInfoOrBuilder>
           getStowageDetailsInfoFieldBuilder() {
         if (stowageDetailsInfoBuilder_ == null) {
           stowageDetailsInfoBuilder_ =
-              new com.google.protobuf.SingleFieldBuilderV3<
+              new com.google.protobuf.RepeatedFieldBuilderV3<
                   com.cpdss.common.generated.Loadicator.StowageDetailsInfo,
                   com.cpdss.common.generated.Loadicator.StowageDetailsInfo.Builder,
                   com.cpdss.common.generated.Loadicator.StowageDetailsInfoOrBuilder>(
-                  getStowageDetailsInfo(), getParentForChildren(), isClean());
+                  stowageDetailsInfo_,
+                  ((bitField0_ & 0x00000002) != 0),
+                  getParentForChildren(),
+                  isClean());
           stowageDetailsInfo_ = null;
         }
         return stowageDetailsInfoBuilder_;
       }
 
-      private com.cpdss.common.generated.Loadicator.CargoInfo cargoInfo_;
-      private com.google.protobuf.SingleFieldBuilderV3<
+      private java.util.List<com.cpdss.common.generated.Loadicator.CargoInfo> cargoInfo_ =
+          java.util.Collections.emptyList();
+
+      private void ensureCargoInfoIsMutable() {
+        if (!((bitField0_ & 0x00000004) != 0)) {
+          cargoInfo_ =
+              new java.util.ArrayList<com.cpdss.common.generated.Loadicator.CargoInfo>(cargoInfo_);
+          bitField0_ |= 0x00000004;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
               com.cpdss.common.generated.Loadicator.CargoInfo,
               com.cpdss.common.generated.Loadicator.CargoInfo.Builder,
               com.cpdss.common.generated.Loadicator.CargoInfoOrBuilder>
           cargoInfoBuilder_;
-      /**
-       * <code>.CargoInfo cargoInfo = 3;</code>
-       *
-       * @return Whether the cargoInfo field is set.
-       */
-      public boolean hasCargoInfo() {
-        return cargoInfoBuilder_ != null || cargoInfo_ != null;
-      }
-      /**
-       * <code>.CargoInfo cargoInfo = 3;</code>
-       *
-       * @return The cargoInfo.
-       */
-      public com.cpdss.common.generated.Loadicator.CargoInfo getCargoInfo() {
+
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public java.util.List<com.cpdss.common.generated.Loadicator.CargoInfo> getCargoInfoList() {
         if (cargoInfoBuilder_ == null) {
-          return cargoInfo_ == null
-              ? com.cpdss.common.generated.Loadicator.CargoInfo.getDefaultInstance()
-              : cargoInfo_;
+          return java.util.Collections.unmodifiableList(cargoInfo_);
         } else {
-          return cargoInfoBuilder_.getMessage();
+          return cargoInfoBuilder_.getMessageList();
         }
       }
-      /** <code>.CargoInfo cargoInfo = 3;</code> */
-      public Builder setCargoInfo(com.cpdss.common.generated.Loadicator.CargoInfo value) {
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public int getCargoInfoCount() {
+        if (cargoInfoBuilder_ == null) {
+          return cargoInfo_.size();
+        } else {
+          return cargoInfoBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public com.cpdss.common.generated.Loadicator.CargoInfo getCargoInfo(int index) {
+        if (cargoInfoBuilder_ == null) {
+          return cargoInfo_.get(index);
+        } else {
+          return cargoInfoBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public Builder setCargoInfo(
+          int index, com.cpdss.common.generated.Loadicator.CargoInfo value) {
         if (cargoInfoBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          cargoInfo_ = value;
+          ensureCargoInfoIsMutable();
+          cargoInfo_.set(index, value);
           onChanged();
         } else {
-          cargoInfoBuilder_.setMessage(value);
+          cargoInfoBuilder_.setMessage(index, value);
         }
-
         return this;
       }
-      /** <code>.CargoInfo cargoInfo = 3;</code> */
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
       public Builder setCargoInfo(
+          int index, com.cpdss.common.generated.Loadicator.CargoInfo.Builder builderForValue) {
+        if (cargoInfoBuilder_ == null) {
+          ensureCargoInfoIsMutable();
+          cargoInfo_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          cargoInfoBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public Builder addCargoInfo(com.cpdss.common.generated.Loadicator.CargoInfo value) {
+        if (cargoInfoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargoInfoIsMutable();
+          cargoInfo_.add(value);
+          onChanged();
+        } else {
+          cargoInfoBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public Builder addCargoInfo(
+          int index, com.cpdss.common.generated.Loadicator.CargoInfo value) {
+        if (cargoInfoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargoInfoIsMutable();
+          cargoInfo_.add(index, value);
+          onChanged();
+        } else {
+          cargoInfoBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public Builder addCargoInfo(
           com.cpdss.common.generated.Loadicator.CargoInfo.Builder builderForValue) {
         if (cargoInfoBuilder_ == null) {
-          cargoInfo_ = builderForValue.build();
+          ensureCargoInfoIsMutable();
+          cargoInfo_.add(builderForValue.build());
           onChanged();
         } else {
-          cargoInfoBuilder_.setMessage(builderForValue.build());
+          cargoInfoBuilder_.addMessage(builderForValue.build());
         }
-
         return this;
       }
-      /** <code>.CargoInfo cargoInfo = 3;</code> */
-      public Builder mergeCargoInfo(com.cpdss.common.generated.Loadicator.CargoInfo value) {
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public Builder addCargoInfo(
+          int index, com.cpdss.common.generated.Loadicator.CargoInfo.Builder builderForValue) {
         if (cargoInfoBuilder_ == null) {
-          if (cargoInfo_ != null) {
-            cargoInfo_ =
-                com.cpdss.common.generated.Loadicator.CargoInfo.newBuilder(cargoInfo_)
-                    .mergeFrom(value)
-                    .buildPartial();
-          } else {
-            cargoInfo_ = value;
-          }
+          ensureCargoInfoIsMutable();
+          cargoInfo_.add(index, builderForValue.build());
           onChanged();
         } else {
-          cargoInfoBuilder_.mergeFrom(value);
+          cargoInfoBuilder_.addMessage(index, builderForValue.build());
         }
-
         return this;
       }
-      /** <code>.CargoInfo cargoInfo = 3;</code> */
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public Builder addAllCargoInfo(
+          java.lang.Iterable<? extends com.cpdss.common.generated.Loadicator.CargoInfo> values) {
+        if (cargoInfoBuilder_ == null) {
+          ensureCargoInfoIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, cargoInfo_);
+          onChanged();
+        } else {
+          cargoInfoBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
       public Builder clearCargoInfo() {
         if (cargoInfoBuilder_ == null) {
-          cargoInfo_ = null;
+          cargoInfo_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
           onChanged();
         } else {
-          cargoInfo_ = null;
-          cargoInfoBuilder_ = null;
+          cargoInfoBuilder_.clear();
         }
-
         return this;
       }
-      /** <code>.CargoInfo cargoInfo = 3;</code> */
-      public com.cpdss.common.generated.Loadicator.CargoInfo.Builder getCargoInfoBuilder() {
-
-        onChanged();
-        return getCargoInfoFieldBuilder().getBuilder();
-      }
-      /** <code>.CargoInfo cargoInfo = 3;</code> */
-      public com.cpdss.common.generated.Loadicator.CargoInfoOrBuilder getCargoInfoOrBuilder() {
-        if (cargoInfoBuilder_ != null) {
-          return cargoInfoBuilder_.getMessageOrBuilder();
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public Builder removeCargoInfo(int index) {
+        if (cargoInfoBuilder_ == null) {
+          ensureCargoInfoIsMutable();
+          cargoInfo_.remove(index);
+          onChanged();
         } else {
-          return cargoInfo_ == null
-              ? com.cpdss.common.generated.Loadicator.CargoInfo.getDefaultInstance()
-              : cargoInfo_;
+          cargoInfoBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public com.cpdss.common.generated.Loadicator.CargoInfo.Builder getCargoInfoBuilder(
+          int index) {
+        return getCargoInfoFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public com.cpdss.common.generated.Loadicator.CargoInfoOrBuilder getCargoInfoOrBuilder(
+          int index) {
+        if (cargoInfoBuilder_ == null) {
+          return cargoInfo_.get(index);
+        } else {
+          return cargoInfoBuilder_.getMessageOrBuilder(index);
         }
       }
-      /** <code>.CargoInfo cargoInfo = 3;</code> */
-      private com.google.protobuf.SingleFieldBuilderV3<
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.Loadicator.CargoInfoOrBuilder>
+          getCargoInfoOrBuilderList() {
+        if (cargoInfoBuilder_ != null) {
+          return cargoInfoBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(cargoInfo_);
+        }
+      }
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public com.cpdss.common.generated.Loadicator.CargoInfo.Builder addCargoInfoBuilder() {
+        return getCargoInfoFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.Loadicator.CargoInfo.getDefaultInstance());
+      }
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public com.cpdss.common.generated.Loadicator.CargoInfo.Builder addCargoInfoBuilder(
+          int index) {
+        return getCargoInfoFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.Loadicator.CargoInfo.getDefaultInstance());
+      }
+      /** <code>repeated .CargoInfo cargoInfo = 3;</code> */
+      public java.util.List<com.cpdss.common.generated.Loadicator.CargoInfo.Builder>
+          getCargoInfoBuilderList() {
+        return getCargoInfoFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
               com.cpdss.common.generated.Loadicator.CargoInfo,
               com.cpdss.common.generated.Loadicator.CargoInfo.Builder,
               com.cpdss.common.generated.Loadicator.CargoInfoOrBuilder>
           getCargoInfoFieldBuilder() {
         if (cargoInfoBuilder_ == null) {
           cargoInfoBuilder_ =
-              new com.google.protobuf.SingleFieldBuilderV3<
+              new com.google.protobuf.RepeatedFieldBuilderV3<
                   com.cpdss.common.generated.Loadicator.CargoInfo,
                   com.cpdss.common.generated.Loadicator.CargoInfo.Builder,
                   com.cpdss.common.generated.Loadicator.CargoInfoOrBuilder>(
-                  getCargoInfo(), getParentForChildren(), isClean());
+                  cargoInfo_, ((bitField0_ & 0x00000004) != 0), getParentForChildren(), isClean());
           cargoInfo_ = null;
         }
         return cargoInfoBuilder_;
       }
 
-      private com.cpdss.common.generated.Loadicator.OtherTankInfo otherTankInfo_;
-      private com.google.protobuf.SingleFieldBuilderV3<
+      private java.util.List<com.cpdss.common.generated.Loadicator.OtherTankInfo> otherTankInfo_ =
+          java.util.Collections.emptyList();
+
+      private void ensureOtherTankInfoIsMutable() {
+        if (!((bitField0_ & 0x00000008) != 0)) {
+          otherTankInfo_ =
+              new java.util.ArrayList<com.cpdss.common.generated.Loadicator.OtherTankInfo>(
+                  otherTankInfo_);
+          bitField0_ |= 0x00000008;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
               com.cpdss.common.generated.Loadicator.OtherTankInfo,
               com.cpdss.common.generated.Loadicator.OtherTankInfo.Builder,
               com.cpdss.common.generated.Loadicator.OtherTankInfoOrBuilder>
           otherTankInfoBuilder_;
-      /**
-       * <code>.OtherTankInfo otherTankInfo = 4;</code>
-       *
-       * @return Whether the otherTankInfo field is set.
-       */
-      public boolean hasOtherTankInfo() {
-        return otherTankInfoBuilder_ != null || otherTankInfo_ != null;
-      }
-      /**
-       * <code>.OtherTankInfo otherTankInfo = 4;</code>
-       *
-       * @return The otherTankInfo.
-       */
-      public com.cpdss.common.generated.Loadicator.OtherTankInfo getOtherTankInfo() {
+
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public java.util.List<com.cpdss.common.generated.Loadicator.OtherTankInfo>
+          getOtherTankInfoList() {
         if (otherTankInfoBuilder_ == null) {
-          return otherTankInfo_ == null
-              ? com.cpdss.common.generated.Loadicator.OtherTankInfo.getDefaultInstance()
-              : otherTankInfo_;
+          return java.util.Collections.unmodifiableList(otherTankInfo_);
         } else {
-          return otherTankInfoBuilder_.getMessage();
+          return otherTankInfoBuilder_.getMessageList();
         }
       }
-      /** <code>.OtherTankInfo otherTankInfo = 4;</code> */
-      public Builder setOtherTankInfo(com.cpdss.common.generated.Loadicator.OtherTankInfo value) {
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public int getOtherTankInfoCount() {
+        if (otherTankInfoBuilder_ == null) {
+          return otherTankInfo_.size();
+        } else {
+          return otherTankInfoBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public com.cpdss.common.generated.Loadicator.OtherTankInfo getOtherTankInfo(int index) {
+        if (otherTankInfoBuilder_ == null) {
+          return otherTankInfo_.get(index);
+        } else {
+          return otherTankInfoBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public Builder setOtherTankInfo(
+          int index, com.cpdss.common.generated.Loadicator.OtherTankInfo value) {
         if (otherTankInfoBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          otherTankInfo_ = value;
+          ensureOtherTankInfoIsMutable();
+          otherTankInfo_.set(index, value);
           onChanged();
         } else {
-          otherTankInfoBuilder_.setMessage(value);
+          otherTankInfoBuilder_.setMessage(index, value);
         }
-
         return this;
       }
-      /** <code>.OtherTankInfo otherTankInfo = 4;</code> */
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
       public Builder setOtherTankInfo(
+          int index, com.cpdss.common.generated.Loadicator.OtherTankInfo.Builder builderForValue) {
+        if (otherTankInfoBuilder_ == null) {
+          ensureOtherTankInfoIsMutable();
+          otherTankInfo_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          otherTankInfoBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public Builder addOtherTankInfo(com.cpdss.common.generated.Loadicator.OtherTankInfo value) {
+        if (otherTankInfoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureOtherTankInfoIsMutable();
+          otherTankInfo_.add(value);
+          onChanged();
+        } else {
+          otherTankInfoBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public Builder addOtherTankInfo(
+          int index, com.cpdss.common.generated.Loadicator.OtherTankInfo value) {
+        if (otherTankInfoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureOtherTankInfoIsMutable();
+          otherTankInfo_.add(index, value);
+          onChanged();
+        } else {
+          otherTankInfoBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public Builder addOtherTankInfo(
           com.cpdss.common.generated.Loadicator.OtherTankInfo.Builder builderForValue) {
         if (otherTankInfoBuilder_ == null) {
-          otherTankInfo_ = builderForValue.build();
+          ensureOtherTankInfoIsMutable();
+          otherTankInfo_.add(builderForValue.build());
           onChanged();
         } else {
-          otherTankInfoBuilder_.setMessage(builderForValue.build());
+          otherTankInfoBuilder_.addMessage(builderForValue.build());
         }
-
         return this;
       }
-      /** <code>.OtherTankInfo otherTankInfo = 4;</code> */
-      public Builder mergeOtherTankInfo(com.cpdss.common.generated.Loadicator.OtherTankInfo value) {
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public Builder addOtherTankInfo(
+          int index, com.cpdss.common.generated.Loadicator.OtherTankInfo.Builder builderForValue) {
         if (otherTankInfoBuilder_ == null) {
-          if (otherTankInfo_ != null) {
-            otherTankInfo_ =
-                com.cpdss.common.generated.Loadicator.OtherTankInfo.newBuilder(otherTankInfo_)
-                    .mergeFrom(value)
-                    .buildPartial();
-          } else {
-            otherTankInfo_ = value;
-          }
+          ensureOtherTankInfoIsMutable();
+          otherTankInfo_.add(index, builderForValue.build());
           onChanged();
         } else {
-          otherTankInfoBuilder_.mergeFrom(value);
+          otherTankInfoBuilder_.addMessage(index, builderForValue.build());
         }
-
         return this;
       }
-      /** <code>.OtherTankInfo otherTankInfo = 4;</code> */
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public Builder addAllOtherTankInfo(
+          java.lang.Iterable<? extends com.cpdss.common.generated.Loadicator.OtherTankInfo>
+              values) {
+        if (otherTankInfoBuilder_ == null) {
+          ensureOtherTankInfoIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, otherTankInfo_);
+          onChanged();
+        } else {
+          otherTankInfoBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
       public Builder clearOtherTankInfo() {
         if (otherTankInfoBuilder_ == null) {
-          otherTankInfo_ = null;
+          otherTankInfo_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
           onChanged();
         } else {
-          otherTankInfo_ = null;
-          otherTankInfoBuilder_ = null;
+          otherTankInfoBuilder_.clear();
         }
-
         return this;
       }
-      /** <code>.OtherTankInfo otherTankInfo = 4;</code> */
-      public com.cpdss.common.generated.Loadicator.OtherTankInfo.Builder getOtherTankInfoBuilder() {
-
-        onChanged();
-        return getOtherTankInfoFieldBuilder().getBuilder();
-      }
-      /** <code>.OtherTankInfo otherTankInfo = 4;</code> */
-      public com.cpdss.common.generated.Loadicator.OtherTankInfoOrBuilder
-          getOtherTankInfoOrBuilder() {
-        if (otherTankInfoBuilder_ != null) {
-          return otherTankInfoBuilder_.getMessageOrBuilder();
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public Builder removeOtherTankInfo(int index) {
+        if (otherTankInfoBuilder_ == null) {
+          ensureOtherTankInfoIsMutable();
+          otherTankInfo_.remove(index);
+          onChanged();
         } else {
-          return otherTankInfo_ == null
-              ? com.cpdss.common.generated.Loadicator.OtherTankInfo.getDefaultInstance()
-              : otherTankInfo_;
+          otherTankInfoBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public com.cpdss.common.generated.Loadicator.OtherTankInfo.Builder getOtherTankInfoBuilder(
+          int index) {
+        return getOtherTankInfoFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public com.cpdss.common.generated.Loadicator.OtherTankInfoOrBuilder getOtherTankInfoOrBuilder(
+          int index) {
+        if (otherTankInfoBuilder_ == null) {
+          return otherTankInfo_.get(index);
+        } else {
+          return otherTankInfoBuilder_.getMessageOrBuilder(index);
         }
       }
-      /** <code>.OtherTankInfo otherTankInfo = 4;</code> */
-      private com.google.protobuf.SingleFieldBuilderV3<
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.Loadicator.OtherTankInfoOrBuilder>
+          getOtherTankInfoOrBuilderList() {
+        if (otherTankInfoBuilder_ != null) {
+          return otherTankInfoBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(otherTankInfo_);
+        }
+      }
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public com.cpdss.common.generated.Loadicator.OtherTankInfo.Builder addOtherTankInfoBuilder() {
+        return getOtherTankInfoFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.Loadicator.OtherTankInfo.getDefaultInstance());
+      }
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public com.cpdss.common.generated.Loadicator.OtherTankInfo.Builder addOtherTankInfoBuilder(
+          int index) {
+        return getOtherTankInfoFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.Loadicator.OtherTankInfo.getDefaultInstance());
+      }
+      /** <code>repeated .OtherTankInfo otherTankInfo = 4;</code> */
+      public java.util.List<com.cpdss.common.generated.Loadicator.OtherTankInfo.Builder>
+          getOtherTankInfoBuilderList() {
+        return getOtherTankInfoFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
               com.cpdss.common.generated.Loadicator.OtherTankInfo,
               com.cpdss.common.generated.Loadicator.OtherTankInfo.Builder,
               com.cpdss.common.generated.Loadicator.OtherTankInfoOrBuilder>
           getOtherTankInfoFieldBuilder() {
         if (otherTankInfoBuilder_ == null) {
           otherTankInfoBuilder_ =
-              new com.google.protobuf.SingleFieldBuilderV3<
+              new com.google.protobuf.RepeatedFieldBuilderV3<
                   com.cpdss.common.generated.Loadicator.OtherTankInfo,
                   com.cpdss.common.generated.Loadicator.OtherTankInfo.Builder,
                   com.cpdss.common.generated.Loadicator.OtherTankInfoOrBuilder>(
-                  getOtherTankInfo(), getParentForChildren(), isClean());
+                  otherTankInfo_,
+                  ((bitField0_ & 0x00000008) != 0),
+                  getParentForChildren(),
+                  isClean());
           otherTankInfo_ = null;
         }
         return otherTankInfoBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.Loadicator.BallastInfo> ballastInfo_ =
+          java.util.Collections.emptyList();
+
+      private void ensureBallastInfoIsMutable() {
+        if (!((bitField0_ & 0x00000010) != 0)) {
+          ballastInfo_ =
+              new java.util.ArrayList<com.cpdss.common.generated.Loadicator.BallastInfo>(
+                  ballastInfo_);
+          bitField0_ |= 0x00000010;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.Loadicator.BallastInfo,
+              com.cpdss.common.generated.Loadicator.BallastInfo.Builder,
+              com.cpdss.common.generated.Loadicator.BallastInfoOrBuilder>
+          ballastInfoBuilder_;
+
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public java.util.List<com.cpdss.common.generated.Loadicator.BallastInfo>
+          getBallastInfoList() {
+        if (ballastInfoBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(ballastInfo_);
+        } else {
+          return ballastInfoBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public int getBallastInfoCount() {
+        if (ballastInfoBuilder_ == null) {
+          return ballastInfo_.size();
+        } else {
+          return ballastInfoBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public com.cpdss.common.generated.Loadicator.BallastInfo getBallastInfo(int index) {
+        if (ballastInfoBuilder_ == null) {
+          return ballastInfo_.get(index);
+        } else {
+          return ballastInfoBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public Builder setBallastInfo(
+          int index, com.cpdss.common.generated.Loadicator.BallastInfo value) {
+        if (ballastInfoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBallastInfoIsMutable();
+          ballastInfo_.set(index, value);
+          onChanged();
+        } else {
+          ballastInfoBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public Builder setBallastInfo(
+          int index, com.cpdss.common.generated.Loadicator.BallastInfo.Builder builderForValue) {
+        if (ballastInfoBuilder_ == null) {
+          ensureBallastInfoIsMutable();
+          ballastInfo_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          ballastInfoBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public Builder addBallastInfo(com.cpdss.common.generated.Loadicator.BallastInfo value) {
+        if (ballastInfoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBallastInfoIsMutable();
+          ballastInfo_.add(value);
+          onChanged();
+        } else {
+          ballastInfoBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public Builder addBallastInfo(
+          int index, com.cpdss.common.generated.Loadicator.BallastInfo value) {
+        if (ballastInfoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBallastInfoIsMutable();
+          ballastInfo_.add(index, value);
+          onChanged();
+        } else {
+          ballastInfoBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public Builder addBallastInfo(
+          com.cpdss.common.generated.Loadicator.BallastInfo.Builder builderForValue) {
+        if (ballastInfoBuilder_ == null) {
+          ensureBallastInfoIsMutable();
+          ballastInfo_.add(builderForValue.build());
+          onChanged();
+        } else {
+          ballastInfoBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public Builder addBallastInfo(
+          int index, com.cpdss.common.generated.Loadicator.BallastInfo.Builder builderForValue) {
+        if (ballastInfoBuilder_ == null) {
+          ensureBallastInfoIsMutable();
+          ballastInfo_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          ballastInfoBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public Builder addAllBallastInfo(
+          java.lang.Iterable<? extends com.cpdss.common.generated.Loadicator.BallastInfo> values) {
+        if (ballastInfoBuilder_ == null) {
+          ensureBallastInfoIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, ballastInfo_);
+          onChanged();
+        } else {
+          ballastInfoBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public Builder clearBallastInfo() {
+        if (ballastInfoBuilder_ == null) {
+          ballastInfo_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000010);
+          onChanged();
+        } else {
+          ballastInfoBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public Builder removeBallastInfo(int index) {
+        if (ballastInfoBuilder_ == null) {
+          ensureBallastInfoIsMutable();
+          ballastInfo_.remove(index);
+          onChanged();
+        } else {
+          ballastInfoBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public com.cpdss.common.generated.Loadicator.BallastInfo.Builder getBallastInfoBuilder(
+          int index) {
+        return getBallastInfoFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public com.cpdss.common.generated.Loadicator.BallastInfoOrBuilder getBallastInfoOrBuilder(
+          int index) {
+        if (ballastInfoBuilder_ == null) {
+          return ballastInfo_.get(index);
+        } else {
+          return ballastInfoBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.Loadicator.BallastInfoOrBuilder>
+          getBallastInfoOrBuilderList() {
+        if (ballastInfoBuilder_ != null) {
+          return ballastInfoBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(ballastInfo_);
+        }
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public com.cpdss.common.generated.Loadicator.BallastInfo.Builder addBallastInfoBuilder() {
+        return getBallastInfoFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.Loadicator.BallastInfo.getDefaultInstance());
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public com.cpdss.common.generated.Loadicator.BallastInfo.Builder addBallastInfoBuilder(
+          int index) {
+        return getBallastInfoFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.Loadicator.BallastInfo.getDefaultInstance());
+      }
+      /** <code>repeated .BallastInfo ballastInfo = 5;</code> */
+      public java.util.List<com.cpdss.common.generated.Loadicator.BallastInfo.Builder>
+          getBallastInfoBuilderList() {
+        return getBallastInfoFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.Loadicator.BallastInfo,
+              com.cpdss.common.generated.Loadicator.BallastInfo.Builder,
+              com.cpdss.common.generated.Loadicator.BallastInfoOrBuilder>
+          getBallastInfoFieldBuilder() {
+        if (ballastInfoBuilder_ == null) {
+          ballastInfoBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.Loadicator.BallastInfo,
+                  com.cpdss.common.generated.Loadicator.BallastInfo.Builder,
+                  com.cpdss.common.generated.Loadicator.BallastInfoOrBuilder>(
+                  ballastInfo_,
+                  ((bitField0_ & 0x00000010) != 0),
+                  getParentForChildren(),
+                  isClean());
+          ballastInfo_ = null;
+        }
+        return ballastInfoBuilder_;
       }
 
       @java.lang.Override
@@ -1309,11 +2148,17 @@ public final class Loadicator {
     long getCompanyId();
 
     /**
-     * <code>int64 shipType = 5;</code>
+     * <code>string shipType = 5;</code>
      *
      * @return The shipType.
      */
-    long getShipType();
+    java.lang.String getShipType();
+    /**
+     * <code>string shipType = 5;</code>
+     *
+     * @return The bytes for shipType.
+     */
+    com.google.protobuf.ByteString getShipTypeBytes();
 
     /**
      * <code>string vesselCode = 6;</code>
@@ -1370,18 +2215,30 @@ public final class Loadicator {
     long getStatus();
 
     /**
-     * <code>int64 deadweightConstant = 12;</code>
+     * <code>string deadweightConstant = 12;</code>
      *
      * @return The deadweightConstant.
      */
-    long getDeadweightConstant();
+    java.lang.String getDeadweightConstant();
+    /**
+     * <code>string deadweightConstant = 12;</code>
+     *
+     * @return The bytes for deadweightConstant.
+     */
+    com.google.protobuf.ByteString getDeadweightConstantBytes();
 
     /**
-     * <code>int64 provisionalConstant = 13;</code>
+     * <code>string provisionalConstant = 13;</code>
      *
      * @return The provisionalConstant.
      */
-    long getProvisionalConstant();
+    java.lang.String getProvisionalConstant();
+    /**
+     * <code>string provisionalConstant = 13;</code>
+     *
+     * @return The bytes for provisionalConstant.
+     */
+    com.google.protobuf.ByteString getProvisionalConstantBytes();
 
     /**
      * <code>int64 calCount = 14;</code>
@@ -1429,6 +2286,19 @@ public final class Loadicator {
      * @return The dataSave.
      */
     boolean getDataSave();
+
+    /**
+     * <code>string processId = 19;</code>
+     *
+     * @return The processId.
+     */
+    java.lang.String getProcessId();
+    /**
+     * <code>string processId = 19;</code>
+     *
+     * @return The bytes for processId.
+     */
+    com.google.protobuf.ByteString getProcessIdBytes();
   }
   /** Protobuf type {@code StowagePlanDetails} */
   public static final class StowagePlanDetails extends com.google.protobuf.GeneratedMessageV3
@@ -1443,10 +2313,14 @@ public final class Loadicator {
 
     private StowagePlanDetails() {
       imoNumber_ = "";
+      shipType_ = "";
       vesselCode_ = "";
       portCode_ = "";
+      deadweightConstant_ = "";
+      provisionalConstant_ = "";
       saveStatus_ = "";
       saveMessage_ = "";
+      processId_ = "";
     }
 
     @java.lang.Override
@@ -1500,9 +2374,11 @@ public final class Loadicator {
                 companyId_ = input.readInt64();
                 break;
               }
-            case 40:
+            case 42:
               {
-                shipType_ = input.readInt64();
+                java.lang.String s = input.readStringRequireUtf8();
+
+                shipType_ = s;
                 break;
               }
             case 50:
@@ -1539,14 +2415,18 @@ public final class Loadicator {
                 status_ = input.readInt64();
                 break;
               }
-            case 96:
+            case 98:
               {
-                deadweightConstant_ = input.readInt64();
+                java.lang.String s = input.readStringRequireUtf8();
+
+                deadweightConstant_ = s;
                 break;
               }
-            case 104:
+            case 106:
               {
-                provisionalConstant_ = input.readInt64();
+                java.lang.String s = input.readStringRequireUtf8();
+
+                provisionalConstant_ = s;
                 break;
               }
             case 112:
@@ -1576,6 +2456,13 @@ public final class Loadicator {
             case 144:
               {
                 dataSave_ = input.readBool();
+                break;
+              }
+            case 154:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                processId_ = s;
                 break;
               }
             default:
@@ -1680,14 +2567,38 @@ public final class Loadicator {
     }
 
     public static final int SHIPTYPE_FIELD_NUMBER = 5;
-    private long shipType_;
+    private volatile java.lang.Object shipType_;
     /**
-     * <code>int64 shipType = 5;</code>
+     * <code>string shipType = 5;</code>
      *
      * @return The shipType.
      */
-    public long getShipType() {
-      return shipType_;
+    public java.lang.String getShipType() {
+      java.lang.Object ref = shipType_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        shipType_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string shipType = 5;</code>
+     *
+     * @return The bytes for shipType.
+     */
+    public com.google.protobuf.ByteString getShipTypeBytes() {
+      java.lang.Object ref = shipType_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        shipType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int VESSELCODE_FIELD_NUMBER = 6;
@@ -1805,25 +2716,73 @@ public final class Loadicator {
     }
 
     public static final int DEADWEIGHTCONSTANT_FIELD_NUMBER = 12;
-    private long deadweightConstant_;
+    private volatile java.lang.Object deadweightConstant_;
     /**
-     * <code>int64 deadweightConstant = 12;</code>
+     * <code>string deadweightConstant = 12;</code>
      *
      * @return The deadweightConstant.
      */
-    public long getDeadweightConstant() {
-      return deadweightConstant_;
+    public java.lang.String getDeadweightConstant() {
+      java.lang.Object ref = deadweightConstant_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        deadweightConstant_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string deadweightConstant = 12;</code>
+     *
+     * @return The bytes for deadweightConstant.
+     */
+    public com.google.protobuf.ByteString getDeadweightConstantBytes() {
+      java.lang.Object ref = deadweightConstant_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        deadweightConstant_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int PROVISIONALCONSTANT_FIELD_NUMBER = 13;
-    private long provisionalConstant_;
+    private volatile java.lang.Object provisionalConstant_;
     /**
-     * <code>int64 provisionalConstant = 13;</code>
+     * <code>string provisionalConstant = 13;</code>
      *
      * @return The provisionalConstant.
      */
-    public long getProvisionalConstant() {
-      return provisionalConstant_;
+    public java.lang.String getProvisionalConstant() {
+      java.lang.Object ref = provisionalConstant_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        provisionalConstant_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string provisionalConstant = 13;</code>
+     *
+     * @return The bytes for provisionalConstant.
+     */
+    public com.google.protobuf.ByteString getProvisionalConstantBytes() {
+      java.lang.Object ref = provisionalConstant_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        provisionalConstant_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int CALCOUNT_FIELD_NUMBER = 14;
@@ -1929,6 +2888,41 @@ public final class Loadicator {
       return dataSave_;
     }
 
+    public static final int PROCESSID_FIELD_NUMBER = 19;
+    private volatile java.lang.Object processId_;
+    /**
+     * <code>string processId = 19;</code>
+     *
+     * @return The processId.
+     */
+    public java.lang.String getProcessId() {
+      java.lang.Object ref = processId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        processId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string processId = 19;</code>
+     *
+     * @return The bytes for processId.
+     */
+    public com.google.protobuf.ByteString getProcessIdBytes() {
+      java.lang.Object ref = processId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        processId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -1955,8 +2949,8 @@ public final class Loadicator {
       if (companyId_ != 0L) {
         output.writeInt64(4, companyId_);
       }
-      if (shipType_ != 0L) {
-        output.writeInt64(5, shipType_);
+      if (!getShipTypeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, shipType_);
       }
       if (!getVesselCodeBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 6, vesselCode_);
@@ -1976,11 +2970,11 @@ public final class Loadicator {
       if (status_ != 0L) {
         output.writeInt64(11, status_);
       }
-      if (deadweightConstant_ != 0L) {
-        output.writeInt64(12, deadweightConstant_);
+      if (!getDeadweightConstantBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, deadweightConstant_);
       }
-      if (provisionalConstant_ != 0L) {
-        output.writeInt64(13, provisionalConstant_);
+      if (!getProvisionalConstantBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 13, provisionalConstant_);
       }
       if (calCount_ != 0L) {
         output.writeInt64(14, calCount_);
@@ -1996,6 +2990,9 @@ public final class Loadicator {
       }
       if (dataSave_ != false) {
         output.writeBool(18, dataSave_);
+      }
+      if (!getProcessIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 19, processId_);
       }
       unknownFields.writeTo(output);
     }
@@ -2018,8 +3015,8 @@ public final class Loadicator {
       if (companyId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, companyId_);
       }
-      if (shipType_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, shipType_);
+      if (!getShipTypeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, shipType_);
       }
       if (!getVesselCodeBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, vesselCode_);
@@ -2039,11 +3036,11 @@ public final class Loadicator {
       if (status_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(11, status_);
       }
-      if (deadweightConstant_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(12, deadweightConstant_);
+      if (!getDeadweightConstantBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, deadweightConstant_);
       }
-      if (provisionalConstant_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(13, provisionalConstant_);
+      if (!getProvisionalConstantBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, provisionalConstant_);
       }
       if (calCount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(14, calCount_);
@@ -2059,6 +3056,9 @@ public final class Loadicator {
       }
       if (dataSave_ != false) {
         size += com.google.protobuf.CodedOutputStream.computeBoolSize(18, dataSave_);
+      }
+      if (!getProcessIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(19, processId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -2080,20 +3080,21 @@ public final class Loadicator {
       if (getVesselId() != other.getVesselId()) return false;
       if (!getImoNumber().equals(other.getImoNumber())) return false;
       if (getCompanyId() != other.getCompanyId()) return false;
-      if (getShipType() != other.getShipType()) return false;
+      if (!getShipType().equals(other.getShipType())) return false;
       if (!getVesselCode().equals(other.getVesselCode())) return false;
       if (getBookingListId() != other.getBookingListId()) return false;
       if (getStowageId() != other.getStowageId()) return false;
       if (getPortId() != other.getPortId()) return false;
       if (!getPortCode().equals(other.getPortCode())) return false;
       if (getStatus() != other.getStatus()) return false;
-      if (getDeadweightConstant() != other.getDeadweightConstant()) return false;
-      if (getProvisionalConstant() != other.getProvisionalConstant()) return false;
+      if (!getDeadweightConstant().equals(other.getDeadweightConstant())) return false;
+      if (!getProvisionalConstant().equals(other.getProvisionalConstant())) return false;
       if (getCalCount() != other.getCalCount()) return false;
       if (!getSaveStatus().equals(other.getSaveStatus())) return false;
       if (!getSaveMessage().equals(other.getSaveMessage())) return false;
       if (getDamageCal() != other.getDamageCal()) return false;
       if (getDataSave() != other.getDataSave()) return false;
+      if (!getProcessId().equals(other.getProcessId())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -2114,7 +3115,7 @@ public final class Loadicator {
       hash = (37 * hash) + COMPANYID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCompanyId());
       hash = (37 * hash) + SHIPTYPE_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getShipType());
+      hash = (53 * hash) + getShipType().hashCode();
       hash = (37 * hash) + VESSELCODE_FIELD_NUMBER;
       hash = (53 * hash) + getVesselCode().hashCode();
       hash = (37 * hash) + BOOKINGLISTID_FIELD_NUMBER;
@@ -2128,9 +3129,9 @@ public final class Loadicator {
       hash = (37 * hash) + STATUS_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getStatus());
       hash = (37 * hash) + DEADWEIGHTCONSTANT_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getDeadweightConstant());
+      hash = (53 * hash) + getDeadweightConstant().hashCode();
       hash = (37 * hash) + PROVISIONALCONSTANT_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getProvisionalConstant());
+      hash = (53 * hash) + getProvisionalConstant().hashCode();
       hash = (37 * hash) + CALCOUNT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCalCount());
       hash = (37 * hash) + SAVESTATUS_FIELD_NUMBER;
@@ -2141,6 +3142,8 @@ public final class Loadicator {
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getDamageCal());
       hash = (37 * hash) + DATASAVE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getDataSave());
+      hash = (37 * hash) + PROCESSID_FIELD_NUMBER;
+      hash = (53 * hash) + getProcessId().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2288,7 +3291,7 @@ public final class Loadicator {
 
         companyId_ = 0L;
 
-        shipType_ = 0L;
+        shipType_ = "";
 
         vesselCode_ = "";
 
@@ -2302,9 +3305,9 @@ public final class Loadicator {
 
         status_ = 0L;
 
-        deadweightConstant_ = 0L;
+        deadweightConstant_ = "";
 
-        provisionalConstant_ = 0L;
+        provisionalConstant_ = "";
 
         calCount_ = 0L;
 
@@ -2315,6 +3318,8 @@ public final class Loadicator {
         damageCal_ = false;
 
         dataSave_ = false;
+
+        processId_ = "";
 
         return this;
       }
@@ -2360,6 +3365,7 @@ public final class Loadicator {
         result.saveMessage_ = saveMessage_;
         result.damageCal_ = damageCal_;
         result.dataSave_ = dataSave_;
+        result.processId_ = processId_;
         onBuilt();
         return result;
       }
@@ -2425,8 +3431,9 @@ public final class Loadicator {
         if (other.getCompanyId() != 0L) {
           setCompanyId(other.getCompanyId());
         }
-        if (other.getShipType() != 0L) {
-          setShipType(other.getShipType());
+        if (!other.getShipType().isEmpty()) {
+          shipType_ = other.shipType_;
+          onChanged();
         }
         if (!other.getVesselCode().isEmpty()) {
           vesselCode_ = other.vesselCode_;
@@ -2448,11 +3455,13 @@ public final class Loadicator {
         if (other.getStatus() != 0L) {
           setStatus(other.getStatus());
         }
-        if (other.getDeadweightConstant() != 0L) {
-          setDeadweightConstant(other.getDeadweightConstant());
+        if (!other.getDeadweightConstant().isEmpty()) {
+          deadweightConstant_ = other.deadweightConstant_;
+          onChanged();
         }
-        if (other.getProvisionalConstant() != 0L) {
-          setProvisionalConstant(other.getProvisionalConstant());
+        if (!other.getProvisionalConstant().isEmpty()) {
+          provisionalConstant_ = other.provisionalConstant_;
+          onChanged();
         }
         if (other.getCalCount() != 0L) {
           setCalCount(other.getCalCount());
@@ -2470,6 +3479,10 @@ public final class Loadicator {
         }
         if (other.getDataSave() != false) {
           setDataSave(other.getDataSave());
+        }
+        if (!other.getProcessId().isEmpty()) {
+          processId_ = other.processId_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -2676,35 +3689,78 @@ public final class Loadicator {
         return this;
       }
 
-      private long shipType_;
+      private java.lang.Object shipType_ = "";
       /**
-       * <code>int64 shipType = 5;</code>
+       * <code>string shipType = 5;</code>
        *
        * @return The shipType.
        */
-      public long getShipType() {
-        return shipType_;
+      public java.lang.String getShipType() {
+        java.lang.Object ref = shipType_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          shipType_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
-       * <code>int64 shipType = 5;</code>
+       * <code>string shipType = 5;</code>
+       *
+       * @return The bytes for shipType.
+       */
+      public com.google.protobuf.ByteString getShipTypeBytes() {
+        java.lang.Object ref = shipType_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          shipType_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string shipType = 5;</code>
        *
        * @param value The shipType to set.
        * @return This builder for chaining.
        */
-      public Builder setShipType(long value) {
+      public Builder setShipType(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
 
         shipType_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 shipType = 5;</code>
+       * <code>string shipType = 5;</code>
        *
        * @return This builder for chaining.
        */
       public Builder clearShipType() {
 
-        shipType_ = 0L;
+        shipType_ = getDefaultInstance().getShipType();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string shipType = 5;</code>
+       *
+       * @param value The bytes for shipType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setShipTypeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        shipType_ = value;
         onChanged();
         return this;
       }
@@ -2993,68 +4049,154 @@ public final class Loadicator {
         return this;
       }
 
-      private long deadweightConstant_;
+      private java.lang.Object deadweightConstant_ = "";
       /**
-       * <code>int64 deadweightConstant = 12;</code>
+       * <code>string deadweightConstant = 12;</code>
        *
        * @return The deadweightConstant.
        */
-      public long getDeadweightConstant() {
-        return deadweightConstant_;
+      public java.lang.String getDeadweightConstant() {
+        java.lang.Object ref = deadweightConstant_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          deadweightConstant_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
-       * <code>int64 deadweightConstant = 12;</code>
+       * <code>string deadweightConstant = 12;</code>
+       *
+       * @return The bytes for deadweightConstant.
+       */
+      public com.google.protobuf.ByteString getDeadweightConstantBytes() {
+        java.lang.Object ref = deadweightConstant_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          deadweightConstant_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string deadweightConstant = 12;</code>
        *
        * @param value The deadweightConstant to set.
        * @return This builder for chaining.
        */
-      public Builder setDeadweightConstant(long value) {
+      public Builder setDeadweightConstant(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
 
         deadweightConstant_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 deadweightConstant = 12;</code>
+       * <code>string deadweightConstant = 12;</code>
        *
        * @return This builder for chaining.
        */
       public Builder clearDeadweightConstant() {
 
-        deadweightConstant_ = 0L;
+        deadweightConstant_ = getDefaultInstance().getDeadweightConstant();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string deadweightConstant = 12;</code>
+       *
+       * @param value The bytes for deadweightConstant to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDeadweightConstantBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        deadweightConstant_ = value;
         onChanged();
         return this;
       }
 
-      private long provisionalConstant_;
+      private java.lang.Object provisionalConstant_ = "";
       /**
-       * <code>int64 provisionalConstant = 13;</code>
+       * <code>string provisionalConstant = 13;</code>
        *
        * @return The provisionalConstant.
        */
-      public long getProvisionalConstant() {
-        return provisionalConstant_;
+      public java.lang.String getProvisionalConstant() {
+        java.lang.Object ref = provisionalConstant_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          provisionalConstant_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
-       * <code>int64 provisionalConstant = 13;</code>
+       * <code>string provisionalConstant = 13;</code>
+       *
+       * @return The bytes for provisionalConstant.
+       */
+      public com.google.protobuf.ByteString getProvisionalConstantBytes() {
+        java.lang.Object ref = provisionalConstant_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          provisionalConstant_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string provisionalConstant = 13;</code>
        *
        * @param value The provisionalConstant to set.
        * @return This builder for chaining.
        */
-      public Builder setProvisionalConstant(long value) {
+      public Builder setProvisionalConstant(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
 
         provisionalConstant_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 provisionalConstant = 13;</code>
+       * <code>string provisionalConstant = 13;</code>
        *
        * @return This builder for chaining.
        */
       public Builder clearProvisionalConstant() {
 
-        provisionalConstant_ = 0L;
+        provisionalConstant_ = getDefaultInstance().getProvisionalConstant();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string provisionalConstant = 13;</code>
+       *
+       * @param value The bytes for provisionalConstant to set.
+       * @return This builder for chaining.
+       */
+      public Builder setProvisionalConstantBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        provisionalConstant_ = value;
         onChanged();
         return this;
       }
@@ -3310,6 +4452,82 @@ public final class Loadicator {
         return this;
       }
 
+      private java.lang.Object processId_ = "";
+      /**
+       * <code>string processId = 19;</code>
+       *
+       * @return The processId.
+       */
+      public java.lang.String getProcessId() {
+        java.lang.Object ref = processId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          processId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string processId = 19;</code>
+       *
+       * @return The bytes for processId.
+       */
+      public com.google.protobuf.ByteString getProcessIdBytes() {
+        java.lang.Object ref = processId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          processId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string processId = 19;</code>
+       *
+       * @param value The processId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setProcessId(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        processId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string processId = 19;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearProcessId() {
+
+        processId_ = getDefaultInstance().getProcessId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string processId = 19;</code>
+       *
+       * @param value The bytes for processId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setProcessIdBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        processId_ = value;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -3459,6 +4677,20 @@ public final class Loadicator {
      * @return The bytes for tankName.
      */
     com.google.protobuf.ByteString getTankNameBytes();
+
+    /**
+     * <code>int64 stowageId = 10;</code>
+     *
+     * @return The stowageId.
+     */
+    long getStowageId();
+
+    /**
+     * <code>int64 portId = 11;</code>
+     *
+     * @return The portId.
+     */
+    long getPortId();
   }
   /** Protobuf type {@code StowageDetailsInfo} */
   public static final class StowageDetailsInfo extends com.google.protobuf.GeneratedMessageV3
@@ -3561,6 +4793,16 @@ public final class Loadicator {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 tankName_ = s;
+                break;
+              }
+            case 80:
+              {
+                stowageId_ = input.readInt64();
+                break;
+              }
+            case 88:
+              {
+                portId_ = input.readInt64();
                 break;
               }
             default:
@@ -3815,6 +5057,28 @@ public final class Loadicator {
       }
     }
 
+    public static final int STOWAGEID_FIELD_NUMBER = 10;
+    private long stowageId_;
+    /**
+     * <code>int64 stowageId = 10;</code>
+     *
+     * @return The stowageId.
+     */
+    public long getStowageId() {
+      return stowageId_;
+    }
+
+    public static final int PORTID_FIELD_NUMBER = 11;
+    private long portId_;
+    /**
+     * <code>int64 portId = 11;</code>
+     *
+     * @return The portId.
+     */
+    public long getPortId() {
+      return portId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -3856,6 +5120,12 @@ public final class Loadicator {
       if (!getTankNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 9, tankName_);
       }
+      if (stowageId_ != 0L) {
+        output.writeInt64(10, stowageId_);
+      }
+      if (portId_ != 0L) {
+        output.writeInt64(11, portId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -3892,6 +5162,12 @@ public final class Loadicator {
       if (!getTankNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, tankName_);
       }
+      if (stowageId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(10, stowageId_);
+      }
+      if (portId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(11, portId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -3917,6 +5193,8 @@ public final class Loadicator {
       if (getTankId() != other.getTankId()) return false;
       if (!getShortName().equals(other.getShortName())) return false;
       if (!getTankName().equals(other.getTankName())) return false;
+      if (getStowageId() != other.getStowageId()) return false;
+      if (getPortId() != other.getPortId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -3946,6 +5224,10 @@ public final class Loadicator {
       hash = (53 * hash) + getShortName().hashCode();
       hash = (37 * hash) + TANKNAME_FIELD_NUMBER;
       hash = (53 * hash) + getTankName().hashCode();
+      hash = (37 * hash) + STOWAGEID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getStowageId());
+      hash = (37 * hash) + PORTID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4103,6 +5385,10 @@ public final class Loadicator {
 
         tankName_ = "";
 
+        stowageId_ = 0L;
+
+        portId_ = 0L;
+
         return this;
       }
 
@@ -4138,6 +5424,8 @@ public final class Loadicator {
         result.tankId_ = tankId_;
         result.shortName_ = shortName_;
         result.tankName_ = tankName_;
+        result.stowageId_ = stowageId_;
+        result.portId_ = portId_;
         onBuilt();
         return result;
       }
@@ -4221,6 +5509,12 @@ public final class Loadicator {
         if (!other.getTankName().isEmpty()) {
           tankName_ = other.tankName_;
           onChanged();
+        }
+        if (other.getStowageId() != 0L) {
+          setStowageId(other.getStowageId());
+        }
+        if (other.getPortId() != 0L) {
+          setPortId(other.getPortId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -4764,6 +6058,72 @@ public final class Loadicator {
         return this;
       }
 
+      private long stowageId_;
+      /**
+       * <code>int64 stowageId = 10;</code>
+       *
+       * @return The stowageId.
+       */
+      public long getStowageId() {
+        return stowageId_;
+      }
+      /**
+       * <code>int64 stowageId = 10;</code>
+       *
+       * @param value The stowageId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStowageId(long value) {
+
+        stowageId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 stowageId = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearStowageId() {
+
+        stowageId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long portId_;
+      /**
+       * <code>int64 portId = 11;</code>
+       *
+       * @return The portId.
+       */
+      public long getPortId() {
+        return portId_;
+      }
+      /**
+       * <code>int64 portId = 11;</code>
+       *
+       * @param value The portId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortId(long value) {
+
+        portId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portId = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortId() {
+
+        portId_ = 0L;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -4938,6 +6298,20 @@ public final class Loadicator {
      * @return The bytes for degc.
      */
     com.google.protobuf.ByteString getDegcBytes();
+
+    /**
+     * <code>int64 stowageId = 11;</code>
+     *
+     * @return The stowageId.
+     */
+    long getStowageId();
+
+    /**
+     * <code>int64 portId = 12;</code>
+     *
+     * @return The portId.
+     */
+    long getPortId();
   }
   /** Protobuf type {@code CargoInfo} */
   public static final class CargoInfo extends com.google.protobuf.GeneratedMessageV3
@@ -5054,6 +6428,16 @@ public final class Loadicator {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 degc_ = s;
+                break;
+              }
+            case 88:
+              {
+                stowageId_ = input.readInt64();
+                break;
+              }
+            case 96:
+              {
+                portId_ = input.readInt64();
                 break;
               }
             default:
@@ -5390,6 +6774,28 @@ public final class Loadicator {
       }
     }
 
+    public static final int STOWAGEID_FIELD_NUMBER = 11;
+    private long stowageId_;
+    /**
+     * <code>int64 stowageId = 11;</code>
+     *
+     * @return The stowageId.
+     */
+    public long getStowageId() {
+      return stowageId_;
+    }
+
+    public static final int PORTID_FIELD_NUMBER = 12;
+    private long portId_;
+    /**
+     * <code>int64 portId = 12;</code>
+     *
+     * @return The portId.
+     */
+    public long getPortId() {
+      return portId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -5434,6 +6840,12 @@ public final class Loadicator {
       if (!getDegcBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 10, degc_);
       }
+      if (stowageId_ != 0L) {
+        output.writeInt64(11, stowageId_);
+      }
+      if (portId_ != 0L) {
+        output.writeInt64(12, portId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -5473,6 +6885,12 @@ public final class Loadicator {
       if (!getDegcBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, degc_);
       }
+      if (stowageId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(11, stowageId_);
+      }
+      if (portId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(12, portId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -5499,6 +6917,8 @@ public final class Loadicator {
       if (!getApi().equals(other.getApi())) return false;
       if (!getDegf().equals(other.getDegf())) return false;
       if (!getDegc().equals(other.getDegc())) return false;
+      if (getStowageId() != other.getStowageId()) return false;
+      if (getPortId() != other.getPortId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -5530,6 +6950,10 @@ public final class Loadicator {
       hash = (53 * hash) + getDegf().hashCode();
       hash = (37 * hash) + DEGC_FIELD_NUMBER;
       hash = (53 * hash) + getDegc().hashCode();
+      hash = (37 * hash) + STOWAGEID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getStowageId());
+      hash = (37 * hash) + PORTID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -5687,6 +7111,10 @@ public final class Loadicator {
 
         degc_ = "";
 
+        stowageId_ = 0L;
+
+        portId_ = 0L;
+
         return this;
       }
 
@@ -5723,6 +7151,8 @@ public final class Loadicator {
         result.api_ = api_;
         result.degf_ = degf_;
         result.degc_ = degc_;
+        result.stowageId_ = stowageId_;
+        result.portId_ = portId_;
         onBuilt();
         return result;
       }
@@ -5812,6 +7242,12 @@ public final class Loadicator {
         if (!other.getDegc().isEmpty()) {
           degc_ = other.degc_;
           onChanged();
+        }
+        if (other.getStowageId() != 0L) {
+          setStowageId(other.getStowageId());
+        }
+        if (other.getPortId() != 0L) {
+          setPortId(other.getPortId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -6517,6 +7953,72 @@ public final class Loadicator {
         return this;
       }
 
+      private long stowageId_;
+      /**
+       * <code>int64 stowageId = 11;</code>
+       *
+       * @return The stowageId.
+       */
+      public long getStowageId() {
+        return stowageId_;
+      }
+      /**
+       * <code>int64 stowageId = 11;</code>
+       *
+       * @param value The stowageId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStowageId(long value) {
+
+        stowageId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 stowageId = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearStowageId() {
+
+        stowageId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long portId_;
+      /**
+       * <code>int64 portId = 12;</code>
+       *
+       * @return The portId.
+       */
+      public long getPortId() {
+        return portId_;
+      }
+      /**
+       * <code>int64 portId = 12;</code>
+       *
+       * @param value The portId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortId(long value) {
+
+        portId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portId = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortId() {
+
+        portId_ = 0L;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -6626,6 +8128,27 @@ public final class Loadicator {
      * @return The bytes for shortName.
      */
     com.google.protobuf.ByteString getShortNameBytes();
+
+    /**
+     * <code>int64 loadableStudyId = 6;</code>
+     *
+     * @return The loadableStudyId.
+     */
+    long getLoadableStudyId();
+
+    /**
+     * <code>int64 stowageId = 7;</code>
+     *
+     * @return The stowageId.
+     */
+    long getStowageId();
+
+    /**
+     * <code>int64 portId = 8;</code>
+     *
+     * @return The portId.
+     */
+    long getPortId();
   }
   /** Protobuf type {@code OtherTankInfo} */
   public static final class OtherTankInfo extends com.google.protobuf.GeneratedMessageV3
@@ -6702,6 +8225,21 @@ public final class Loadicator {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 shortName_ = s;
+                break;
+              }
+            case 48:
+              {
+                loadableStudyId_ = input.readInt64();
+                break;
+              }
+            case 56:
+              {
+                stowageId_ = input.readInt64();
+                break;
+              }
+            case 64:
+              {
+                portId_ = input.readInt64();
                 break;
               }
             default:
@@ -6863,6 +8401,39 @@ public final class Loadicator {
       }
     }
 
+    public static final int LOADABLESTUDYID_FIELD_NUMBER = 6;
+    private long loadableStudyId_;
+    /**
+     * <code>int64 loadableStudyId = 6;</code>
+     *
+     * @return The loadableStudyId.
+     */
+    public long getLoadableStudyId() {
+      return loadableStudyId_;
+    }
+
+    public static final int STOWAGEID_FIELD_NUMBER = 7;
+    private long stowageId_;
+    /**
+     * <code>int64 stowageId = 7;</code>
+     *
+     * @return The stowageId.
+     */
+    public long getStowageId() {
+      return stowageId_;
+    }
+
+    public static final int PORTID_FIELD_NUMBER = 8;
+    private long portId_;
+    /**
+     * <code>int64 portId = 8;</code>
+     *
+     * @return The portId.
+     */
+    public long getPortId() {
+      return portId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -6892,6 +8463,15 @@ public final class Loadicator {
       if (!getShortNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, shortName_);
       }
+      if (loadableStudyId_ != 0L) {
+        output.writeInt64(6, loadableStudyId_);
+      }
+      if (stowageId_ != 0L) {
+        output.writeInt64(7, stowageId_);
+      }
+      if (portId_ != 0L) {
+        output.writeInt64(8, portId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -6916,6 +8496,15 @@ public final class Loadicator {
       if (!getShortNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, shortName_);
       }
+      if (loadableStudyId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(6, loadableStudyId_);
+      }
+      if (stowageId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(7, stowageId_);
+      }
+      if (portId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(8, portId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -6937,6 +8526,9 @@ public final class Loadicator {
       if (!getTankName().equals(other.getTankName())) return false;
       if (!getQuantity().equals(other.getQuantity())) return false;
       if (!getShortName().equals(other.getShortName())) return false;
+      if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
+      if (getStowageId() != other.getStowageId()) return false;
+      if (getPortId() != other.getPortId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -6958,6 +8550,12 @@ public final class Loadicator {
       hash = (53 * hash) + getQuantity().hashCode();
       hash = (37 * hash) + SHORTNAME_FIELD_NUMBER;
       hash = (53 * hash) + getShortName().hashCode();
+      hash = (37 * hash) + LOADABLESTUDYID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
+      hash = (37 * hash) + STOWAGEID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getStowageId());
+      hash = (37 * hash) + PORTID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -7107,6 +8705,12 @@ public final class Loadicator {
 
         shortName_ = "";
 
+        loadableStudyId_ = 0L;
+
+        stowageId_ = 0L;
+
+        portId_ = 0L;
+
         return this;
       }
 
@@ -7138,6 +8742,9 @@ public final class Loadicator {
         result.tankName_ = tankName_;
         result.quantity_ = quantity_;
         result.shortName_ = shortName_;
+        result.loadableStudyId_ = loadableStudyId_;
+        result.stowageId_ = stowageId_;
+        result.portId_ = portId_;
         onBuilt();
         return result;
       }
@@ -7207,6 +8814,15 @@ public final class Loadicator {
         if (!other.getShortName().isEmpty()) {
           shortName_ = other.shortName_;
           onChanged();
+        }
+        if (other.getLoadableStudyId() != 0L) {
+          setLoadableStudyId(other.getLoadableStudyId());
+        }
+        if (other.getStowageId() != 0L) {
+          setStowageId(other.getStowageId());
+        }
+        if (other.getPortId() != 0L) {
+          setPortId(other.getPortId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -7528,6 +9144,105 @@ public final class Loadicator {
         checkByteStringIsUtf8(value);
 
         shortName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long loadableStudyId_;
+      /**
+       * <code>int64 loadableStudyId = 6;</code>
+       *
+       * @return The loadableStudyId.
+       */
+      public long getLoadableStudyId() {
+        return loadableStudyId_;
+      }
+      /**
+       * <code>int64 loadableStudyId = 6;</code>
+       *
+       * @param value The loadableStudyId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadableStudyId(long value) {
+
+        loadableStudyId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 loadableStudyId = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadableStudyId() {
+
+        loadableStudyId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long stowageId_;
+      /**
+       * <code>int64 stowageId = 7;</code>
+       *
+       * @return The stowageId.
+       */
+      public long getStowageId() {
+        return stowageId_;
+      }
+      /**
+       * <code>int64 stowageId = 7;</code>
+       *
+       * @param value The stowageId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStowageId(long value) {
+
+        stowageId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 stowageId = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearStowageId() {
+
+        stowageId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long portId_;
+      /**
+       * <code>int64 portId = 8;</code>
+       *
+       * @return The portId.
+       */
+      public long getPortId() {
+        return portId_;
+      }
+      /**
+       * <code>int64 portId = 8;</code>
+       *
+       * @param value The portId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortId(long value) {
+
+        portId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portId = 8;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortId() {
+
+        portId_ = 0L;
         onChanged();
         return this;
       }
@@ -8217,6 +9932,1161 @@ public final class Loadicator {
     }
   }
 
+  public interface BallastInfoOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:BallastInfo)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 stowagePlanId = 1;</code>
+     *
+     * @return The stowagePlanId.
+     */
+    long getStowagePlanId();
+
+    /**
+     * <code>int64 tankId = 2;</code>
+     *
+     * @return The tankId.
+     */
+    long getTankId();
+
+    /**
+     * <code>string tankName = 3;</code>
+     *
+     * @return The tankName.
+     */
+    java.lang.String getTankName();
+    /**
+     * <code>string tankName = 3;</code>
+     *
+     * @return The bytes for tankName.
+     */
+    com.google.protobuf.ByteString getTankNameBytes();
+
+    /**
+     * <code>string quantity = 4;</code>
+     *
+     * @return The quantity.
+     */
+    java.lang.String getQuantity();
+    /**
+     * <code>string quantity = 4;</code>
+     *
+     * @return The bytes for quantity.
+     */
+    com.google.protobuf.ByteString getQuantityBytes();
+
+    /**
+     * <code>string shortName = 5;</code>
+     *
+     * @return The shortName.
+     */
+    java.lang.String getShortName();
+    /**
+     * <code>string shortName = 5;</code>
+     *
+     * @return The bytes for shortName.
+     */
+    com.google.protobuf.ByteString getShortNameBytes();
+
+    /**
+     * <code>int64 stowageId = 6;</code>
+     *
+     * @return The stowageId.
+     */
+    long getStowageId();
+
+    /**
+     * <code>int64 portId = 7;</code>
+     *
+     * @return The portId.
+     */
+    long getPortId();
+  }
+  /** Protobuf type {@code BallastInfo} */
+  public static final class BallastInfo extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:BallastInfo)
+      BallastInfoOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use BallastInfo.newBuilder() to construct.
+    private BallastInfo(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private BallastInfo() {
+      tankName_ = "";
+      quantity_ = "";
+      shortName_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new BallastInfo();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private BallastInfo(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                stowagePlanId_ = input.readInt64();
+                break;
+              }
+            case 16:
+              {
+                tankId_ = input.readInt64();
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                tankName_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                quantity_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                shortName_ = s;
+                break;
+              }
+            case 48:
+              {
+                stowageId_ = input.readInt64();
+                break;
+              }
+            case 56:
+              {
+                portId_ = input.readInt64();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.Loadicator.internal_static_BallastInfo_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.Loadicator.internal_static_BallastInfo_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.Loadicator.BallastInfo.class,
+              com.cpdss.common.generated.Loadicator.BallastInfo.Builder.class);
+    }
+
+    public static final int STOWAGEPLANID_FIELD_NUMBER = 1;
+    private long stowagePlanId_;
+    /**
+     * <code>int64 stowagePlanId = 1;</code>
+     *
+     * @return The stowagePlanId.
+     */
+    public long getStowagePlanId() {
+      return stowagePlanId_;
+    }
+
+    public static final int TANKID_FIELD_NUMBER = 2;
+    private long tankId_;
+    /**
+     * <code>int64 tankId = 2;</code>
+     *
+     * @return The tankId.
+     */
+    public long getTankId() {
+      return tankId_;
+    }
+
+    public static final int TANKNAME_FIELD_NUMBER = 3;
+    private volatile java.lang.Object tankName_;
+    /**
+     * <code>string tankName = 3;</code>
+     *
+     * @return The tankName.
+     */
+    public java.lang.String getTankName() {
+      java.lang.Object ref = tankName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        tankName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string tankName = 3;</code>
+     *
+     * @return The bytes for tankName.
+     */
+    public com.google.protobuf.ByteString getTankNameBytes() {
+      java.lang.Object ref = tankName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        tankName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int QUANTITY_FIELD_NUMBER = 4;
+    private volatile java.lang.Object quantity_;
+    /**
+     * <code>string quantity = 4;</code>
+     *
+     * @return The quantity.
+     */
+    public java.lang.String getQuantity() {
+      java.lang.Object ref = quantity_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        quantity_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string quantity = 4;</code>
+     *
+     * @return The bytes for quantity.
+     */
+    public com.google.protobuf.ByteString getQuantityBytes() {
+      java.lang.Object ref = quantity_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        quantity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SHORTNAME_FIELD_NUMBER = 5;
+    private volatile java.lang.Object shortName_;
+    /**
+     * <code>string shortName = 5;</code>
+     *
+     * @return The shortName.
+     */
+    public java.lang.String getShortName() {
+      java.lang.Object ref = shortName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        shortName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string shortName = 5;</code>
+     *
+     * @return The bytes for shortName.
+     */
+    public com.google.protobuf.ByteString getShortNameBytes() {
+      java.lang.Object ref = shortName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        shortName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int STOWAGEID_FIELD_NUMBER = 6;
+    private long stowageId_;
+    /**
+     * <code>int64 stowageId = 6;</code>
+     *
+     * @return The stowageId.
+     */
+    public long getStowageId() {
+      return stowageId_;
+    }
+
+    public static final int PORTID_FIELD_NUMBER = 7;
+    private long portId_;
+    /**
+     * <code>int64 portId = 7;</code>
+     *
+     * @return The portId.
+     */
+    public long getPortId() {
+      return portId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (stowagePlanId_ != 0L) {
+        output.writeInt64(1, stowagePlanId_);
+      }
+      if (tankId_ != 0L) {
+        output.writeInt64(2, tankId_);
+      }
+      if (!getTankNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, tankName_);
+      }
+      if (!getQuantityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, quantity_);
+      }
+      if (!getShortNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, shortName_);
+      }
+      if (stowageId_ != 0L) {
+        output.writeInt64(6, stowageId_);
+      }
+      if (portId_ != 0L) {
+        output.writeInt64(7, portId_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (stowagePlanId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, stowagePlanId_);
+      }
+      if (tankId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, tankId_);
+      }
+      if (!getTankNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, tankName_);
+      }
+      if (!getQuantityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, quantity_);
+      }
+      if (!getShortNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, shortName_);
+      }
+      if (stowageId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(6, stowageId_);
+      }
+      if (portId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(7, portId_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.Loadicator.BallastInfo)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.Loadicator.BallastInfo other =
+          (com.cpdss.common.generated.Loadicator.BallastInfo) obj;
+
+      if (getStowagePlanId() != other.getStowagePlanId()) return false;
+      if (getTankId() != other.getTankId()) return false;
+      if (!getTankName().equals(other.getTankName())) return false;
+      if (!getQuantity().equals(other.getQuantity())) return false;
+      if (!getShortName().equals(other.getShortName())) return false;
+      if (getStowageId() != other.getStowageId()) return false;
+      if (getPortId() != other.getPortId()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + STOWAGEPLANID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getStowagePlanId());
+      hash = (37 * hash) + TANKID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getTankId());
+      hash = (37 * hash) + TANKNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getTankName().hashCode();
+      hash = (37 * hash) + QUANTITY_FIELD_NUMBER;
+      hash = (53 * hash) + getQuantity().hashCode();
+      hash = (37 * hash) + SHORTNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getShortName().hashCode();
+      hash = (37 * hash) + STOWAGEID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getStowageId());
+      hash = (37 * hash) + PORTID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.Loadicator.BallastInfo parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.Loadicator.BallastInfo parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.Loadicator.BallastInfo parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.Loadicator.BallastInfo parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.Loadicator.BallastInfo parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.Loadicator.BallastInfo parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.Loadicator.BallastInfo parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.Loadicator.BallastInfo parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.Loadicator.BallastInfo parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.Loadicator.BallastInfo parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.Loadicator.BallastInfo parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.Loadicator.BallastInfo parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.cpdss.common.generated.Loadicator.BallastInfo prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code BallastInfo} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:BallastInfo)
+        com.cpdss.common.generated.Loadicator.BallastInfoOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.Loadicator.internal_static_BallastInfo_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.Loadicator.internal_static_BallastInfo_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.Loadicator.BallastInfo.class,
+                com.cpdss.common.generated.Loadicator.BallastInfo.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.Loadicator.BallastInfo.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        stowagePlanId_ = 0L;
+
+        tankId_ = 0L;
+
+        tankName_ = "";
+
+        quantity_ = "";
+
+        shortName_ = "";
+
+        stowageId_ = 0L;
+
+        portId_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.Loadicator.internal_static_BallastInfo_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.Loadicator.BallastInfo getDefaultInstanceForType() {
+        return com.cpdss.common.generated.Loadicator.BallastInfo.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.Loadicator.BallastInfo build() {
+        com.cpdss.common.generated.Loadicator.BallastInfo result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.Loadicator.BallastInfo buildPartial() {
+        com.cpdss.common.generated.Loadicator.BallastInfo result =
+            new com.cpdss.common.generated.Loadicator.BallastInfo(this);
+        result.stowagePlanId_ = stowagePlanId_;
+        result.tankId_ = tankId_;
+        result.tankName_ = tankName_;
+        result.quantity_ = quantity_;
+        result.shortName_ = shortName_;
+        result.stowageId_ = stowageId_;
+        result.portId_ = portId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.Loadicator.BallastInfo) {
+          return mergeFrom((com.cpdss.common.generated.Loadicator.BallastInfo) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.Loadicator.BallastInfo other) {
+        if (other == com.cpdss.common.generated.Loadicator.BallastInfo.getDefaultInstance())
+          return this;
+        if (other.getStowagePlanId() != 0L) {
+          setStowagePlanId(other.getStowagePlanId());
+        }
+        if (other.getTankId() != 0L) {
+          setTankId(other.getTankId());
+        }
+        if (!other.getTankName().isEmpty()) {
+          tankName_ = other.tankName_;
+          onChanged();
+        }
+        if (!other.getQuantity().isEmpty()) {
+          quantity_ = other.quantity_;
+          onChanged();
+        }
+        if (!other.getShortName().isEmpty()) {
+          shortName_ = other.shortName_;
+          onChanged();
+        }
+        if (other.getStowageId() != 0L) {
+          setStowageId(other.getStowageId());
+        }
+        if (other.getPortId() != 0L) {
+          setPortId(other.getPortId());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.Loadicator.BallastInfo parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.Loadicator.BallastInfo) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long stowagePlanId_;
+      /**
+       * <code>int64 stowagePlanId = 1;</code>
+       *
+       * @return The stowagePlanId.
+       */
+      public long getStowagePlanId() {
+        return stowagePlanId_;
+      }
+      /**
+       * <code>int64 stowagePlanId = 1;</code>
+       *
+       * @param value The stowagePlanId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStowagePlanId(long value) {
+
+        stowagePlanId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 stowagePlanId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearStowagePlanId() {
+
+        stowagePlanId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long tankId_;
+      /**
+       * <code>int64 tankId = 2;</code>
+       *
+       * @return The tankId.
+       */
+      public long getTankId() {
+        return tankId_;
+      }
+      /**
+       * <code>int64 tankId = 2;</code>
+       *
+       * @param value The tankId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTankId(long value) {
+
+        tankId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 tankId = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTankId() {
+
+        tankId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object tankName_ = "";
+      /**
+       * <code>string tankName = 3;</code>
+       *
+       * @return The tankName.
+       */
+      public java.lang.String getTankName() {
+        java.lang.Object ref = tankName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          tankName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string tankName = 3;</code>
+       *
+       * @return The bytes for tankName.
+       */
+      public com.google.protobuf.ByteString getTankNameBytes() {
+        java.lang.Object ref = tankName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          tankName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string tankName = 3;</code>
+       *
+       * @param value The tankName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTankName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        tankName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tankName = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTankName() {
+
+        tankName_ = getDefaultInstance().getTankName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tankName = 3;</code>
+       *
+       * @param value The bytes for tankName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTankNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        tankName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object quantity_ = "";
+      /**
+       * <code>string quantity = 4;</code>
+       *
+       * @return The quantity.
+       */
+      public java.lang.String getQuantity() {
+        java.lang.Object ref = quantity_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          quantity_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string quantity = 4;</code>
+       *
+       * @return The bytes for quantity.
+       */
+      public com.google.protobuf.ByteString getQuantityBytes() {
+        java.lang.Object ref = quantity_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          quantity_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string quantity = 4;</code>
+       *
+       * @param value The quantity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setQuantity(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        quantity_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string quantity = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearQuantity() {
+
+        quantity_ = getDefaultInstance().getQuantity();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string quantity = 4;</code>
+       *
+       * @param value The bytes for quantity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setQuantityBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        quantity_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object shortName_ = "";
+      /**
+       * <code>string shortName = 5;</code>
+       *
+       * @return The shortName.
+       */
+      public java.lang.String getShortName() {
+        java.lang.Object ref = shortName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          shortName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string shortName = 5;</code>
+       *
+       * @return The bytes for shortName.
+       */
+      public com.google.protobuf.ByteString getShortNameBytes() {
+        java.lang.Object ref = shortName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          shortName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string shortName = 5;</code>
+       *
+       * @param value The shortName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setShortName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        shortName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string shortName = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearShortName() {
+
+        shortName_ = getDefaultInstance().getShortName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string shortName = 5;</code>
+       *
+       * @param value The bytes for shortName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setShortNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        shortName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long stowageId_;
+      /**
+       * <code>int64 stowageId = 6;</code>
+       *
+       * @return The stowageId.
+       */
+      public long getStowageId() {
+        return stowageId_;
+      }
+      /**
+       * <code>int64 stowageId = 6;</code>
+       *
+       * @param value The stowageId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStowageId(long value) {
+
+        stowageId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 stowageId = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearStowageId() {
+
+        stowageId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long portId_;
+      /**
+       * <code>int64 portId = 7;</code>
+       *
+       * @return The portId.
+       */
+      public long getPortId() {
+        return portId_;
+      }
+      /**
+       * <code>int64 portId = 7;</code>
+       *
+       * @param value The portId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortId(long value) {
+
+        portId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portId = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortId() {
+
+        portId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:BallastInfo)
+    }
+
+    // @@protoc_insertion_point(class_scope:BallastInfo)
+    private static final com.cpdss.common.generated.Loadicator.BallastInfo DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.Loadicator.BallastInfo();
+    }
+
+    public static com.cpdss.common.generated.Loadicator.BallastInfo getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<BallastInfo> PARSER =
+        new com.google.protobuf.AbstractParser<BallastInfo>() {
+          @java.lang.Override
+          public BallastInfo parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new BallastInfo(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<BallastInfo> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<BallastInfo> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.Loadicator.BallastInfo getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_LoadicatorRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -8241,6 +11111,10 @@ public final class Loadicator {
       internal_static_LoadicatorReply_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_LoadicatorReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_BallastInfo_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_BallastInfo_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -8250,38 +11124,47 @@ public final class Loadicator {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\020loadicator.proto\032\014common.proto\"\273\001\n\021Loa"
-          + "dicatorRequest\022/\n\022stowagePlanDetails\030\001 \001"
+      "\n\020loadicator.proto\032\014common.proto\"\336\001\n\021Loa"
+          + "dicatorRequest\022/\n\022stowagePlanDetails\030\001 \003"
           + "(\0132\023.StowagePlanDetails\022/\n\022stowageDetail"
-          + "sInfo\030\002 \001(\0132\023.StowageDetailsInfo\022\035\n\tcarg"
-          + "oInfo\030\003 \001(\0132\n.CargoInfo\022%\n\rotherTankInfo"
-          + "\030\004 \001(\0132\016.OtherTankInfo\"\363\002\n\022StowagePlanDe"
-          + "tails\022\n\n\002id\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\021\n\ti"
-          + "moNumber\030\003 \001(\t\022\021\n\tcompanyId\030\004 \001(\003\022\020\n\010shi"
-          + "pType\030\005 \001(\003\022\022\n\nvesselCode\030\006 \001(\t\022\025\n\rbooki"
-          + "ngListId\030\007 \001(\003\022\021\n\tstowageId\030\010 \001(\003\022\016\n\006por"
-          + "tId\030\t \001(\003\022\020\n\010portCode\030\n \001(\t\022\016\n\006status\030\013 "
-          + "\001(\003\022\032\n\022deadweightConstant\030\014 \001(\003\022\033\n\023provi"
-          + "sionalConstant\030\r \001(\003\022\020\n\010calCount\030\016 \001(\003\022\022"
-          + "\n\nsaveStatus\030\017 \001(\t\022\023\n\013saveMessage\030\020 \001(\t\022"
-          + "\021\n\tdamageCal\030\021 \001(\010\022\020\n\010dataSave\030\022 \001(\010\"\304\001\n"
-          + "\022StowageDetailsInfo\022\025\n\rstowagePlanId\030\001 \001"
-          + "(\003\022\017\n\007cargoId\030\002 \001(\003\022\023\n\013cargoBookId\030\003 \001(\003"
-          + "\022\021\n\tcargoName\030\004 \001(\t\022\027\n\017specificGravity\030\005"
-          + " \001(\t\022\020\n\010quantity\030\006 \001(\t\022\016\n\006tankId\030\007 \001(\003\022\021"
-          + "\n\tshortName\030\010 \001(\t\022\020\n\010tankName\030\t \001(\t\"\272\001\n\t"
-          + "CargoInfo\022\025\n\rstowagePlanId\030\001 \001(\003\022\017\n\007carg"
-          + "oId\030\002 \001(\003\022\021\n\tcargoName\030\003 \001(\t\022\023\n\013cargoAbb"
-          + "rev\030\004 \001(\t\022\024\n\014standardTemp\030\005 \001(\t\022\r\n\005grade"
-          + "\030\006 \001(\t\022\017\n\007density\030\007 \001(\t\022\013\n\003api\030\010 \001(\t\022\014\n\004"
-          + "degf\030\t \001(\t\022\014\n\004degc\030\n \001(\t\"m\n\rOtherTankInf"
-          + "o\022\025\n\rstowagePlanId\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003"
-          + "\022\020\n\010tankName\030\003 \001(\t\022\020\n\010quantity\030\004 \001(\t\022\021\n\t"
-          + "shortName\030\005 \001(\t\":\n\017LoadicatorReply\022\'\n\016re"
-          + "sponseStatus\030\001 \001(\0132\017.ResponseStatus2Q\n\021L"
-          + "oadicatorService\022<\n\022saveLoadicatorInfo\022\022"
-          + ".LoadicatorRequest\032\020.LoadicatorReply\"\000B\036"
-          + "\n\032com.cpdss.common.generatedP\000b\006proto3"
+          + "sInfo\030\002 \003(\0132\023.StowageDetailsInfo\022\035\n\tcarg"
+          + "oInfo\030\003 \003(\0132\n.CargoInfo\022%\n\rotherTankInfo"
+          + "\030\004 \003(\0132\016.OtherTankInfo\022!\n\013ballastInfo\030\005 "
+          + "\003(\0132\014.BallastInfo\"\206\003\n\022StowagePlanDetails"
+          + "\022\n\n\002id\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\021\n\timoNum"
+          + "ber\030\003 \001(\t\022\021\n\tcompanyId\030\004 \001(\003\022\020\n\010shipType"
+          + "\030\005 \001(\t\022\022\n\nvesselCode\030\006 \001(\t\022\025\n\rbookingLis"
+          + "tId\030\007 \001(\003\022\021\n\tstowageId\030\010 \001(\003\022\016\n\006portId\030\t"
+          + " \001(\003\022\020\n\010portCode\030\n \001(\t\022\016\n\006status\030\013 \001(\003\022\032"
+          + "\n\022deadweightConstant\030\014 \001(\t\022\033\n\023provisiona"
+          + "lConstant\030\r \001(\t\022\020\n\010calCount\030\016 \001(\003\022\022\n\nsav"
+          + "eStatus\030\017 \001(\t\022\023\n\013saveMessage\030\020 \001(\t\022\021\n\tda"
+          + "mageCal\030\021 \001(\010\022\020\n\010dataSave\030\022 \001(\010\022\021\n\tproce"
+          + "ssId\030\023 \001(\t\"\347\001\n\022StowageDetailsInfo\022\025\n\rsto"
+          + "wagePlanId\030\001 \001(\003\022\017\n\007cargoId\030\002 \001(\003\022\023\n\013car"
+          + "goBookId\030\003 \001(\003\022\021\n\tcargoName\030\004 \001(\t\022\027\n\017spe"
+          + "cificGravity\030\005 \001(\t\022\020\n\010quantity\030\006 \001(\t\022\016\n\006"
+          + "tankId\030\007 \001(\003\022\021\n\tshortName\030\010 \001(\t\022\020\n\010tankN"
+          + "ame\030\t \001(\t\022\021\n\tstowageId\030\n \001(\003\022\016\n\006portId\030\013"
+          + " \001(\003\"\335\001\n\tCargoInfo\022\025\n\rstowagePlanId\030\001 \001("
+          + "\003\022\017\n\007cargoId\030\002 \001(\003\022\021\n\tcargoName\030\003 \001(\t\022\023\n"
+          + "\013cargoAbbrev\030\004 \001(\t\022\024\n\014standardTemp\030\005 \001(\t"
+          + "\022\r\n\005grade\030\006 \001(\t\022\017\n\007density\030\007 \001(\t\022\013\n\003api\030"
+          + "\010 \001(\t\022\014\n\004degf\030\t \001(\t\022\014\n\004degc\030\n \001(\t\022\021\n\tsto"
+          + "wageId\030\013 \001(\003\022\016\n\006portId\030\014 \001(\003\"\251\001\n\rOtherTa"
+          + "nkInfo\022\025\n\rstowagePlanId\030\001 \001(\003\022\016\n\006tankId\030"
+          + "\002 \001(\003\022\020\n\010tankName\030\003 \001(\t\022\020\n\010quantity\030\004 \001("
+          + "\t\022\021\n\tshortName\030\005 \001(\t\022\027\n\017loadableStudyId\030"
+          + "\006 \001(\003\022\021\n\tstowageId\030\007 \001(\003\022\016\n\006portId\030\010 \001(\003"
+          + "\":\n\017LoadicatorReply\022\'\n\016responseStatus\030\001 "
+          + "\001(\0132\017.ResponseStatus\"\216\001\n\013BallastInfo\022\025\n\r"
+          + "stowagePlanId\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\020\n\010t"
+          + "ankName\030\003 \001(\t\022\020\n\010quantity\030\004 \001(\t\022\021\n\tshort"
+          + "Name\030\005 \001(\t\022\021\n\tstowageId\030\006 \001(\003\022\016\n\006portId\030"
+          + "\007 \001(\0032Q\n\021LoadicatorService\022<\n\022saveLoadic"
+          + "atorInfo\022\022.LoadicatorRequest\032\020.Loadicato"
+          + "rReply\"\000B\036\n\032com.cpdss.common.generatedP\000"
+          + "b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -8294,7 +11177,11 @@ public final class Loadicator {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadicatorRequest_descriptor,
             new java.lang.String[] {
-              "StowagePlanDetails", "StowageDetailsInfo", "CargoInfo", "OtherTankInfo",
+              "StowagePlanDetails",
+              "StowageDetailsInfo",
+              "CargoInfo",
+              "OtherTankInfo",
+              "BallastInfo",
             });
     internal_static_StowagePlanDetails_descriptor = getDescriptor().getMessageTypes().get(1);
     internal_static_StowagePlanDetails_fieldAccessorTable =
@@ -8319,6 +11206,7 @@ public final class Loadicator {
               "SaveMessage",
               "DamageCal",
               "DataSave",
+              "ProcessId",
             });
     internal_static_StowageDetailsInfo_descriptor = getDescriptor().getMessageTypes().get(2);
     internal_static_StowageDetailsInfo_fieldAccessorTable =
@@ -8334,6 +11222,8 @@ public final class Loadicator {
               "TankId",
               "ShortName",
               "TankName",
+              "StowageId",
+              "PortId",
             });
     internal_static_CargoInfo_descriptor = getDescriptor().getMessageTypes().get(3);
     internal_static_CargoInfo_fieldAccessorTable =
@@ -8350,13 +11240,22 @@ public final class Loadicator {
               "Api",
               "Degf",
               "Degc",
+              "StowageId",
+              "PortId",
             });
     internal_static_OtherTankInfo_descriptor = getDescriptor().getMessageTypes().get(4);
     internal_static_OtherTankInfo_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_OtherTankInfo_descriptor,
             new java.lang.String[] {
-              "StowagePlanId", "TankId", "TankName", "Quantity", "ShortName",
+              "StowagePlanId",
+              "TankId",
+              "TankName",
+              "Quantity",
+              "ShortName",
+              "LoadableStudyId",
+              "StowageId",
+              "PortId",
             });
     internal_static_LoadicatorReply_descriptor = getDescriptor().getMessageTypes().get(5);
     internal_static_LoadicatorReply_fieldAccessorTable =
@@ -8364,6 +11263,13 @@ public final class Loadicator {
             internal_static_LoadicatorReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus",
+            });
+    internal_static_BallastInfo_descriptor = getDescriptor().getMessageTypes().get(6);
+    internal_static_BallastInfo_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_BallastInfo_descriptor,
+            new java.lang.String[] {
+              "StowagePlanId", "TankId", "TankName", "Quantity", "ShortName", "StowageId", "PortId",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }

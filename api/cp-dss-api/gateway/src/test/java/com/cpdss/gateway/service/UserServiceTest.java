@@ -2,9 +2,9 @@
 package com.cpdss.gateway.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -31,14 +31,20 @@ import com.cpdss.gateway.repository.RolesRepository;
 import com.cpdss.gateway.repository.ScreenRepository;
 import com.cpdss.gateway.repository.UsersRepository;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 
 class UserServiceTest {
@@ -69,6 +75,7 @@ class UserServiceTest {
   private static final String STATUS = "200";
   private static final String AUTHORIZATION = "Authorization";
   private static final String AUTHORIZATION_VALUE = "4b5608ff-b77b-40c6-9645-d69856d4aafa";
+  private static final String CORRELATION_ID_VALUE = "8b5609cc-b00b-90a8-1085-p69856d4abgf";
 
   @BeforeEach
   public void init() {
@@ -239,7 +246,7 @@ class UserServiceTest {
 
     RoleUserMapping roleUserMapping = new RoleUserMapping();
 
-    when(this.rolesRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+    when(this.rolesRepository.findByIdAndCompanyXIdAndIsActive(anyLong(), anyLong(), anyBoolean()))
         .thenReturn(Optional.of(roleEntity));
     //	when(this.usersRepository.findByIdInAndIsActive(List, anyBoolean())).thenReturn(userList);
     when(this.screenRepository.findByIdIdAndIsActive(anyLong(), anyBoolean()))
@@ -286,12 +293,105 @@ class UserServiceTest {
     List<Users> userList = new ArrayList<Users>();
     userList.add(users);
 
-    when(this.rolesRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+    when(this.rolesRepository.findByIdAndCompanyXIdAndIsActive(anyLong(), anyLong(), anyBoolean()))
         .thenReturn(Optional.of(rolesEntity));
     when(this.rolesRepository.save(rolesEntity)).thenReturn(rolesEntity);
 
     roleResponse = userService.deleteRole(1L, 1L, "test");
 
     assertEquals(STATUS, roleResponse.getResponseStatus().getStatus());
+  }
+
+  /** Method to test get roles method - positive test */
+  @Test
+  void getRolesPositiveTest() {
+    when(this.rolesRepository.findAll(any(Specification.class), any(Pageable.class)))
+        .thenReturn(getRoles(new HashMap<>()));
+    RoleResponse roleResponse =
+        userService.getRoles(1L, CORRELATION_ID_VALUE, new HashMap<>(), 0, 5, "name", "asc");
+
+    assertAll(
+        () -> {
+          assertEquals(STATUS, roleResponse.getResponseStatus().getStatus());
+          assertEquals(
+              getRoles(new HashMap<>()).getTotalElements(), roleResponse.getRoles().size());
+          assertEquals(CORRELATION_ID_VALUE, roleResponse.getResponseStatus().getCorrelationId());
+        });
+  }
+
+  /** Method to test get roles method with filter - positive test */
+  @Test
+  void getRolesFilterPositiveTest() {
+    when(this.rolesRepository.findAll(any(Specification.class), any(Pageable.class)))
+        .thenReturn(getRoles(getRolesFilterParams()));
+    RoleResponse roleResponse =
+        userService.getRoles(1L, CORRELATION_ID_VALUE, getRolesFilterParams(), 0, 5, "name", "asc");
+
+    assertAll(
+        () -> {
+          assertEquals(STATUS, roleResponse.getResponseStatus().getStatus());
+          assertEquals(1, roleResponse.getRoles().size());
+          assertEquals(CORRELATION_ID_VALUE, roleResponse.getResponseStatus().getCorrelationId());
+        });
+  }
+
+  /** Method to test get roles method with filter - negative test */
+  @Test
+  void getRolesFilterNegativeTest() {
+    HashMap<String, String> filterParam =
+        new HashMap<String, String>() {
+          {
+            put("name", "test");
+          }
+        };
+    when(this.rolesRepository.findAll(any(Specification.class), any(Pageable.class)))
+        .thenReturn(getRoles(filterParam));
+    RoleResponse roleResponse =
+        userService.getRoles(1L, CORRELATION_ID_VALUE, filterParam, 0, 5, "name", "asc");
+
+    assertAll(
+        () -> {
+          assertEquals(STATUS, roleResponse.getResponseStatus().getStatus());
+          assertEquals(0, roleResponse.getRoles().size());
+          assertEquals(CORRELATION_ID_VALUE, roleResponse.getResponseStatus().getCorrelationId());
+        });
+  }
+
+  /**
+   * Method to get roles
+   *
+   * @return Page<Roles> object
+   */
+  private Page<Roles> getRoles(HashMap<String, String> filterParams) {
+    List<Roles> rolesList =
+        new ArrayList<Roles>() {
+          {
+            add(new Roles("admin", null, null, null, true, "AdminDescription", 1L));
+            add(new Roles("guest", null, null, null, true, "GuestDescription", 1L));
+          }
+        };
+
+    rolesList =
+        rolesList.stream()
+            .filter(
+                role ->
+                    role.getName().equals(filterParams.get("name"))
+                        || role.getDescription().equals(filterParams.get("description")))
+            .collect(Collectors.toList());
+
+    return new PageImpl<>(rolesList);
+  }
+
+  /**
+   * Method to return filterParams for get roles filter
+   *
+   * @return Map<String, String> filterParams object
+   */
+  private HashMap<String, String> getRolesFilterParams() {
+    return new HashMap<String, String>() {
+      {
+        put("name", "admin");
+      }
+    };
   }
 }

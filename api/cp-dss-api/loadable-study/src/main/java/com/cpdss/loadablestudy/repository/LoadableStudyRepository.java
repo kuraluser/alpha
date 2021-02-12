@@ -31,4 +31,6 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
       "FROM LoadableStudy LS WHERE LS.voyage= ?1 AND  LS.loadableStudyStatus.id = ?2 AND LS.isActive = ?3")
   public Optional<LoadableStudy> findByVoyageAndLoadableStudyStatusAndIsActive(
       Voyage voyage, Long status, Boolean isActive);
+
+  public LoadableStudy findByVoyageAndNameAndIsActive(Voyage voyage, String name, boolean isActive);
 }

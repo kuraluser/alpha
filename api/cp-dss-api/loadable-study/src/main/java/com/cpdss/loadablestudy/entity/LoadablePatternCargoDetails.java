@@ -52,6 +52,12 @@ public class LoadablePatternCargoDetails extends EntityDoc {
   @Column(name = "cargo_xid")
   private Long cargoId;
 
+  @Column(name = "api")
+  private BigDecimal api;
+
+  @Column(name = "temperature")
+  private BigDecimal temperature;
+
   @Column(name = "density")
   private BigDecimal density;
 }

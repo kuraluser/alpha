@@ -36054,7 +36054,7 @@ public final class VesselInfo {
           + " \001(\t\022\r\n\005aftC2\030\022 \001(\t\022\027\n\017aftBallastTanks\030\023"
           + " \001(\t\022\r\n\005aftC3\030\024 \001(\t\022\027\n\017aftBWCorrection\030\025"
           + " \001(\t\022\r\n\005aftC4\030\026 \001(\t\022\031\n\021aftMaxFlAllowence"
-          + "\030\027 \001(\t\022\031\n\021aftMinFlAllowence\030\030 \001(\t2\366\002\n\021Ve"
+          + "\030\027 \001(\t\022\031\n\021aftMinFlAllowence\030\030 \001(\t2\263\003\n\021Ve"
           + "sselInfoService\0228\n\026GetAllVesselsByCompan"
           + "y\022\016.VesselRequest\032\014.VesselReply\"\000\0226\n\024Get"
           + "VesselDetailsById\022\016.VesselRequest\032\014.Vess"
@@ -36064,8 +36064,9 @@ public final class VesselInfo {
           + "tVesselDetailsForAlgo\022\022.VesselAlgoReques"
           + "t\032\020.VesselAlgoReply\"\000\022C\n!GetVesselDetail"
           + "ForSynopticalTable\022\016.VesselRequest\032\014.Ves"
-          + "selReply\"\000B\036\n\032com.cpdss.common.generated"
-          + "P\000b\006proto3"
+          + "selReply\"\000\022;\n\031GetVesselDetailByVesselId\022"
+          + "\016.VesselRequest\032\014.VesselReply\"\000B\036\n\032com.c"
+          + "pdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

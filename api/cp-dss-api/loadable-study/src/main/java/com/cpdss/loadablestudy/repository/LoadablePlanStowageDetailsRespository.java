@@ -11,4 +11,7 @@ public interface LoadablePlanStowageDetailsRespository
     extends CommonCrudRepository<LoadablePlanStowageDetails, Long> {
   public List<LoadablePlanStowageDetails> findByLoadablePatternAndIsActive(
       LoadablePattern loadablePattern, Boolean isActive);
+
+  public List<LoadablePlanStowageDetails> findByLoadablePatternIdInAndIsActive(
+      List<Long> loadablePatternIds, boolean b);
 }

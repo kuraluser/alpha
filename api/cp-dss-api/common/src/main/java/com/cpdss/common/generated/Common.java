@@ -53,6 +53,13 @@ public final class Common {
      * @return The bytes for code.
      */
     com.google.protobuf.ByteString getCodeBytes();
+
+    /**
+     * <code>int32 httpStatusCode = 4;</code>
+     *
+     * @return The httpStatusCode.
+     */
+    int getHttpStatusCode();
   }
   /** Protobuf type {@code ResponseStatus} */
   public static final class ResponseStatus extends com.google.protobuf.GeneratedMessageV3
@@ -119,6 +126,11 @@ public final class Common {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 code_ = s;
+                break;
+              }
+            case 32:
+              {
+                httpStatusCode_ = input.readInt32();
                 break;
               }
             default:
@@ -258,6 +270,17 @@ public final class Common {
       }
     }
 
+    public static final int HTTPSTATUSCODE_FIELD_NUMBER = 4;
+    private int httpStatusCode_;
+    /**
+     * <code>int32 httpStatusCode = 4;</code>
+     *
+     * @return The httpStatusCode.
+     */
+    public int getHttpStatusCode() {
+      return httpStatusCode_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -281,6 +304,9 @@ public final class Common {
       if (!getCodeBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, code_);
       }
+      if (httpStatusCode_ != 0) {
+        output.writeInt32(4, httpStatusCode_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -298,6 +324,9 @@ public final class Common {
       }
       if (!getCodeBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, code_);
+      }
+      if (httpStatusCode_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(4, httpStatusCode_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -318,6 +347,7 @@ public final class Common {
       if (!getStatus().equals(other.getStatus())) return false;
       if (!getMessage().equals(other.getMessage())) return false;
       if (!getCode().equals(other.getCode())) return false;
+      if (getHttpStatusCode() != other.getHttpStatusCode()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -335,6 +365,8 @@ public final class Common {
       hash = (53 * hash) + getMessage().hashCode();
       hash = (37 * hash) + CODE_FIELD_NUMBER;
       hash = (53 * hash) + getCode().hashCode();
+      hash = (37 * hash) + HTTPSTATUSCODE_FIELD_NUMBER;
+      hash = (53 * hash) + getHttpStatusCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -478,6 +510,8 @@ public final class Common {
 
         code_ = "";
 
+        httpStatusCode_ = 0;
+
         return this;
       }
 
@@ -507,6 +541,7 @@ public final class Common {
         result.status_ = status_;
         result.message_ = message_;
         result.code_ = code_;
+        result.httpStatusCode_ = httpStatusCode_;
         onBuilt();
         return result;
       }
@@ -570,6 +605,9 @@ public final class Common {
         if (!other.getCode().isEmpty()) {
           code_ = other.code_;
           onChanged();
+        }
+        if (other.getHttpStatusCode() != 0) {
+          setHttpStatusCode(other.getHttpStatusCode());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -829,6 +867,39 @@ public final class Common {
         return this;
       }
 
+      private int httpStatusCode_;
+      /**
+       * <code>int32 httpStatusCode = 4;</code>
+       *
+       * @return The httpStatusCode.
+       */
+      public int getHttpStatusCode() {
+        return httpStatusCode_;
+      }
+      /**
+       * <code>int32 httpStatusCode = 4;</code>
+       *
+       * @param value The httpStatusCode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHttpStatusCode(int value) {
+
+        httpStatusCode_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 httpStatusCode = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearHttpStatusCode() {
+
+        httpStatusCode_ = 0;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -894,9 +965,10 @@ public final class Common {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\014common.proto\"?\n\016ResponseStatus\022\016\n\006stat"
-          + "us\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\022\014\n\004code\030\003 \001(\tB"
-          + "\036\n\032com.cpdss.common.generatedP\000b\006proto3"
+      "\n\014common.proto\"W\n\016ResponseStatus\022\016\n\006stat"
+          + "us\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\022\014\n\004code\030\003 \001(\t\022"
+          + "\026\n\016httpStatusCode\030\004 \001(\005B\036\n\032com.cpdss.com"
+          + "mon.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -906,7 +978,7 @@ public final class Common {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ResponseStatus_descriptor,
             new java.lang.String[] {
-              "Status", "Message", "Code",
+              "Status", "Message", "Code", "HttpStatusCode",
             });
   }
 

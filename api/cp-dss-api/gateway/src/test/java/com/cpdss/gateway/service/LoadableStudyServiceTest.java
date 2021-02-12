@@ -45,6 +45,7 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
+import com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
@@ -66,6 +67,7 @@ import com.cpdss.gateway.domain.AlgoStatusResponse;
 import com.cpdss.gateway.domain.Comment;
 import com.cpdss.gateway.domain.CommonResponse;
 import com.cpdss.gateway.domain.DischargingPortRequest;
+import com.cpdss.gateway.domain.LoadOnTopRequest;
 import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePatternResponse;
 import com.cpdss.gateway.domain.LoadablePlanDetails;
@@ -2186,5 +2188,61 @@ class LoadableStudyServiceTest {
       request.getSynopticalRecords().add(record);
     }
     return request;
+  }
+
+  @Test
+  void testSaveLoadOnTop() throws GenericServiceException {
+    LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
+    SaveCommentReply saveCommentReply =
+        SaveCommentReply.newBuilder()
+            .setResponseStatus(
+                ResponseStatus.newBuilder().setMessage("Success").setStatus(SUCCESS).build())
+            .build();
+
+    Mockito.when(
+            spy.saveLoadOnTop(ArgumentMatchers.any(LoadOnTopRequest.class), anyString(), anyLong()))
+        .thenCallRealMethod();
+    Mockito.when(spy.saveLoadOnTop(ArgumentMatchers.any(SaveLoadOnTopRequest.class)))
+        .thenReturn(saveCommentReply);
+
+    LoadOnTopRequest loadOnTopRequest = new LoadOnTopRequest();
+    loadOnTopRequest.setIsLoadOnTop(true);
+
+    SaveCommentResponse commentResponse =
+        spy.saveLoadOnTop(loadOnTopRequest, "corelationId", (long) 1);
+
+    Assert.assertEquals(
+        String.valueOf(HttpStatusCode.OK.value()), commentResponse.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadOnTopExceptionCase() throws GenericServiceException {
+    LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
+    SaveCommentReply saveCommentReply =
+        SaveCommentReply.newBuilder()
+            .setResponseStatus(
+                ResponseStatus.newBuilder()
+                    .setMessage("Failure")
+                    .setStatus(FAILED)
+                    .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                    .build())
+            .build();
+    Mockito.when(
+            loadableStudyService.saveLoadOnTop(
+                ArgumentMatchers.any(LoadOnTopRequest.class), anyString(), anyLong()))
+        .thenCallRealMethod();
+    Mockito.when(
+            loadableStudyService.saveLoadOnTop(ArgumentMatchers.any(SaveLoadOnTopRequest.class)))
+        .thenReturn(saveCommentReply);
+    LoadOnTopRequest loadOnTopRequest = new LoadOnTopRequest();
+    loadOnTopRequest.setIsLoadOnTop(true);
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.saveLoadOnTop(
+                    loadOnTopRequest, "corelationId", (long) 1));
+
+    assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code");
   }
 }
