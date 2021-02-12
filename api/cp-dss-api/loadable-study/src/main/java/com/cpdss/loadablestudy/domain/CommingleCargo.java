@@ -26,4 +26,6 @@ public class CommingleCargo {
   private String quantity;
 
   private Boolean isSlopOnly;
+
+  private Integer priority;
 }

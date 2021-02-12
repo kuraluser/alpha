@@ -69,4 +69,10 @@ public class SynopticalTableLoadicatorData extends EntityDoc {
 
   @Column(name = "list")
   private BigDecimal list;
+
+  @Column(name = "port_xid")
+  private Long portId;
+
+  @Column(name = "operation_xid")
+  private Long operationId;
 }

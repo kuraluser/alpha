@@ -45,7 +45,10 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply;
 import com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetails;
+import com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetailsResults;
+import com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.LodicatorResultDetails;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
@@ -1993,6 +1996,72 @@ class LoadableStudyServiceTest {
     return builder.build();
   }
 
+  /**
+   * testSaveLoadicatorResults
+   *
+   * <p>void
+   */
+  @Test
+  void testSaveLoadicatorResults() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadableStudy()));
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.saveLoadicatorResults(this.createLoadicatorResults(), responseObserver);
+    List<AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadicatorResultsInvalidLoadableStudy() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.saveLoadicatorResults(this.createLoadicatorResults(), responseObserver);
+    List<AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, results.get(0).getResponseStatus().getCode());
+  }
+
+  @Test
+  void testSaveLoadicatorResultsRuntimeException() {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(RuntimeException.class);
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+    loadableStudyService.saveLoadicatorResults(this.createLoadicatorResults(), responseObserver);
+    List<AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  /** @return LoadicatorResultsRequest */
+  private LoadicatorResultsRequest createLoadicatorResults() {
+    LoadicatorResultsRequest.Builder builder = LoadicatorResultsRequest.newBuilder();
+    builder.addLoadicatorPatternDetailsResults(buildLoadicatorPatternDetailsResults());
+    return builder.build();
+  }
+
+  /** @return LoadicatorPatternDetailsResults */
+  private LoadicatorPatternDetailsResults buildLoadicatorPatternDetailsResults() {
+    LoadicatorPatternDetailsResults.Builder builder = LoadicatorPatternDetailsResults.newBuilder();
+    builder.addLodicatorResultDetails(buildLodicatorResultDetails());
+    return builder.build();
+  }
+
+  /** @return LodicatorResultDetails */
+  private LodicatorResultDetails buildLodicatorResultDetails() {
+    LodicatorResultDetails.Builder builder = LodicatorResultDetails.newBuilder();
+    return builder.build();
+  }
+
+  /**
+   * testGetLoadablePatternDetailsInvalidTankDetails
+   *
+   * <p>void
+   */
   @Test
   void testGetLoadablePatternDetailsInvalidTankDetails() {
     Optional<LoadableStudy> optional = Optional.of(new LoadableStudy());
@@ -2023,6 +2092,11 @@ class LoadableStudyServiceTest {
     assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
   }
 
+  /**
+   * testGetLoadablePatternDetailsRuntimeException
+   *
+   * <p>void
+   */
   @Test
   void testGetLoadablePatternDetailsRuntimeException() {
     when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
@@ -2073,6 +2147,7 @@ class LoadableStudyServiceTest {
     return list;
   }
 
+  /** void */
   @Test
   void testSaveLoadablePatternsRuntimeException() {
     when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
@@ -2086,6 +2161,11 @@ class LoadableStudyServiceTest {
     assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
   }
 
+  /**
+   * *
+   *
+   * <p>void
+   */
   @Test
   void testSaveLoadablePatternsInvalidLoadableStudy() {
     when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))

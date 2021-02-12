@@ -47,9 +47,9 @@ public class CommingleCargo extends EntityDoc {
   @Column(name = "is_slop_only")
   private Boolean isSlopOnly;
 
-  @Column(name = "priority")
-  private Integer priority;
-
   @Column(name = "isactive")
   private Boolean isActive;
+
+  @Column(name = "priority")
+  private Integer priority;
 }

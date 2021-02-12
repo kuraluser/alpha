@@ -39,7 +39,9 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetailsResults;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
+import com.cpdss.common.generated.LoadableStudy.LodicatorResultDetails;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
@@ -110,6 +112,7 @@ import com.cpdss.gateway.domain.LoadableStudyAttachmentData;
 import com.cpdss.gateway.domain.LoadableStudyAttachmentResponse;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.LoadableStudyStatusResponse;
+import com.cpdss.gateway.domain.LoadicatorResultsRequest;
 import com.cpdss.gateway.domain.LoadingPort;
 import com.cpdss.gateway.domain.OnBoardQuantity;
 import com.cpdss.gateway.domain.OnBoardQuantityResponse;
@@ -2725,6 +2728,86 @@ public class LoadableStudyService {
   }
 
   /**
+   * @param loadicatorResultsRequest
+   * @param loadableStudiesId
+   * @param loadableStudiesId
+   * @param first
+   * @return AlgoPatternResponse
+   */
+  public AlgoPatternResponse saveLoadicatorResult(
+      LoadicatorResultsRequest loadicatorResultsRequest,
+      Long loadableStudiesId,
+      String correlationId)
+      throws GenericServiceException {
+    log.info("Inside saveLoadicatorResult gateway service with correlationId : " + correlationId);
+    AlgoPatternResponse response = new AlgoPatternResponse();
+    com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest.Builder request =
+        com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest.newBuilder();
+    createLoadicatorResultsRequest(loadicatorResultsRequest, loadableStudiesId, request);
+    AlgoReply grpcReply = this.saveLoadicatorResult(request);
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to saveLoadicatorResult plan",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * @param request
+   * @return AlgoReply
+   */
+  public AlgoReply saveLoadicatorResult(
+      com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest.Builder request) {
+    return this.loadableStudyServiceBlockingStub.saveLoadicatorResults(request.build());
+  }
+
+  /**
+   * @param loadicatorResultsRequest
+   * @param loadableStudiesId
+   * @param request void
+   */
+  private void createLoadicatorResultsRequest(
+      LoadicatorResultsRequest loadicatorResultsRequest,
+      Long loadableStudiesId,
+      com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest.Builder request) {
+    request.setLoadableStudyId(loadableStudiesId);
+    request.setProcessId(loadicatorResultsRequest.getProcessId());
+    loadicatorResultsRequest
+        .getLoadicatorResultsPatternWise()
+        .forEach(
+            lrpw -> {
+              LoadicatorPatternDetailsResults.Builder builder =
+                  LoadicatorPatternDetailsResults.newBuilder();
+              builder.setLoadablePatternId(lrpw.getLoadablePatternId());
+              lrpw.getLodicatorResultDetails()
+                  .forEach(
+                      lrd -> {
+                        LodicatorResultDetails.Builder loadicatorResultsBuilder =
+                            LodicatorResultDetails.newBuilder();
+                        loadicatorResultsBuilder.setBlindSector(lrd.getBlindSector());
+                        loadicatorResultsBuilder.setCalculatedDraftAftPlanned(
+                            lrd.getCalculatedDraftAftPlanned());
+                        loadicatorResultsBuilder.setCalculatedDraftFwdPlanned(
+                            lrd.getCalculatedDraftFwdPlanned());
+                        loadicatorResultsBuilder.setCalculatedDraftMidPlanned(
+                            lrd.getCalculatedDraftMidPlanned());
+                        loadicatorResultsBuilder.setCalculatedTrimPlanned(
+                            lrd.getCalculatedTrimPlanned());
+                        loadicatorResultsBuilder.setHog(lrd.getHog());
+                        loadicatorResultsBuilder.setList(lrd.getList());
+                        loadicatorResultsBuilder.setPortId(lrd.getPortId());
+                        loadicatorResultsBuilder.setOperationId(lrd.getOperationId());
+                        builder.addLodicatorResultDetails(loadicatorResultsBuilder);
+                      });
+              request.addLoadicatorPatternDetailsResults(builder);
+            });
+  }
+
+  /**
    * @param loadablePlanDetailsResponses
    * @param loadableStudiesId
    * @param first
@@ -3064,7 +3147,7 @@ public class LoadableStudyService {
               synopticalRecord.setFinalDraftMid(str.getFinalDraftMid());
               synopticalRecord.setCalculatedTrimPlanned(str.getCalculatedTrimPlanned());
               synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
-              // synopticalRecord.setBallastPlanned(str.getBallastPlanned());
+              synopticalRecord.setBallastPlanned(str.getBallastPlannedTotal());
               response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
             });
   }
