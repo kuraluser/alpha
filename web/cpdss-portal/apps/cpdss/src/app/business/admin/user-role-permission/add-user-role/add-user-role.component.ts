@@ -110,7 +110,7 @@ export class AddUserRoleComponent implements OnInit {
         }
       }
       catch (error) {
-        if (error.error.errorCode === 'ERR-RICO-400') {
+        if (error.error.errorCode === 'ERR-RICO-106') {
           this.isExisting = true;
           this.messageService.add({ severity: 'error', summary: translationKeys['NEW_ROLE_CREATE_ERROR'], detail: translationKeys['ROLE_ALREADY_EXIST'] });
         }
