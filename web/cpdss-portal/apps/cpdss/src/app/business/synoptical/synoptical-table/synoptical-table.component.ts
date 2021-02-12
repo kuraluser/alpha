@@ -58,8 +58,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   datePipe: DatePipe = new DatePipe('en-US');
   synopticalRecordsCopy: ISynopticalRecords[] = [];
   loadableQuantityValue: number;
-  today = new Date() 
-    
+  today = new Date()
+
 
   constructor(
     private synoticalApiService: SynopticalApiService,
@@ -78,7 +78,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   * @memberof SynopticalTableComponent
   */
   ngOnInit() {
-    this.today.setSeconds(0,0);
+    this.today.setSeconds(0, 0);
     this.initActionSubscriptions()
     this.synopticalService.onInitCompleted$
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -632,7 +632,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                   key: "ballastActualTotal",
                   type: this.fieldType.NUMBER
                 }],
-                editable: this.checkIfConfirmed(),
+                editable: false,
               },
             ]
           }
@@ -942,7 +942,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         key.fields.forEach(field => {
           const tempField = JSON.parse(JSON.stringify(field))
           tempField['key'] = fieldKey + item.id + field['key']
-          if(item.max){
+          if (item.max) {
             tempField['max'] = item.max;
           }
           subHeader.fields.push(tempField)
@@ -985,7 +985,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               id: record[primaryKey],
               header: record[headerLabel],
             }
-            if(maxKey && record[maxKey]){
+            if (maxKey && record[maxKey]) {
               fieldJson['max'] = record[maxKey]
             }
             this.listData[fieldKey].push(fieldJson)
@@ -1196,7 +1196,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
    * @returns {any}
    * @memberof SynopticalTableComponent
   */
-  onBlur(field: SynopticField, colIndex: number) {
+  onBlur(field: SynopticField, colIndex: number, updateValues = true) {
     const fc = this.getControl(colIndex, field.key)
     const operationType = this.synopticalRecords[colIndex].operationType;
     const otherIndex = operationType === 'ARR' ? colIndex + 1 : colIndex - 1;
@@ -1301,40 +1301,44 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             fcMax.setValue(fcMax.value, { emitEvent: false })
           }
         }
-        let inPortHours = 0;
-        if (fc.valid) {
-          const otherControl = this.getControl(otherIndex, field.key);
-          if (otherControl.valid) {
-            let arrDate, depDate;
-            if (otherIndex > colIndex) {
-              arrDate = fc.value;
-              depDate = otherControl.value;
-            } else {
-              depDate = fc.value;
-              arrDate = otherControl.value;
+        if (updateValues) {
+          let inPortHours = 0;
+          if (fc.valid) {
+            const otherControl = this.getControl(otherIndex, field.key);
+            if (otherControl.valid) {
+              let arrDate, depDate;
+              if (otherIndex > colIndex) {
+                arrDate = fc.value;
+                depDate = otherControl.value;
+              } else {
+                depDate = fc.value;
+                arrDate = otherControl.value;
+              }
+              inPortHours = Math.abs(depDate - arrDate) / 36e5;
+              inPortHours = Number(inPortHours.toFixed(2))
             }
-            inPortHours = Math.abs(depDate - arrDate) / 36e5;
-            inPortHours = Number(inPortHours.toFixed(2))
           }
+          this.getControl(colIndex, 'inPortHours')?.setValue(inPortHours)
+          this.getControl(otherIndex, 'inPortHours')?.setValue(inPortHours)
         }
-        this.getControl(colIndex, 'inPortHours')?.setValue(inPortHours)
-        this.getControl(otherIndex, 'inPortHours')?.setValue(inPortHours)
         break;
       case 'speed': case 'distance':
-        const speedControl = this.getControl(colIndex, 'speed')
-        const distanceControl = this.getControl(colIndex, 'distance')
-        let speed = 0, distance = 0, runningHours = 0;
-        if (speedControl.valid) {
-          speed = Number(speedControl.value);
+        if(updateValues){ 
+          const speedControl = this.getControl(colIndex, 'speed')
+          const distanceControl = this.getControl(colIndex, 'distance')
+          let speed = 0, distance = 0, runningHours = 0;
+          if (speedControl.valid) {
+            speed = Number(speedControl.value);
+          }
+          if (distanceControl.valid) {
+            distance = Number(distanceControl.value);
+          }
+          if (speed && distance) {
+            runningHours = Number(Number(distance / speed).toFixed(2));
+          }
+          this.getControl(colIndex, 'runningHours')?.setValue(runningHours)
+          this.getControl(otherIndex, 'runningHours')?.setValue(runningHours)
         }
-        if (distanceControl.valid) {
-          distance = Number(distanceControl.value);
-        }
-        if (speed && distance) {
-          runningHours = Number(Number(distance / speed).toFixed(2));
-        }
-        this.getControl(colIndex, 'runningHours')?.setValue(runningHours)
-        this.getControl(otherIndex, 'runningHours')?.setValue(runningHours)
         break;
       default:
         const planIndex = field.key.includes('plan') ? 0 : 1
@@ -1345,7 +1349,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           const totalKeys = totalCols.map(totalCol => totalCol.fields[0].key)
           if (field.key.startsWith(dynamicKey)) {
             const totalValue = this.synopticalRecords[colIndex][totalKeys[planIndex]]
-            const currentFieldValue = this.synopticalRecords[colIndex][field.key]
+            const currentFieldValue = this.synopticalRecords[colIndex][field.key] ?? 0;
             this.synopticalRecords[colIndex][totalKeys[planIndex]] = totalValue - currentFieldValue + fc.value
             this.synopticalRecords[colIndex][field.key] = fc.value;
           }
@@ -1428,7 +1432,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     this.synopticalRecords.forEach((_, portIndex) => {
       this.allColumns.forEach(col => {
         col.fields.forEach(field => {
-          this.onBlur(field, portIndex)
+          this.onBlur(field, portIndex, false)
         })
       })
       // check loadable quantity validation
