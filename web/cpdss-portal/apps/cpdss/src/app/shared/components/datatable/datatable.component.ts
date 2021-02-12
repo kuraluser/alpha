@@ -145,7 +145,9 @@ export class DatatableComponent implements OnInit {
 
   @Input() 
   set currentPage(currentPage: number) {
-    this.updateCurrentPage(currentPage)
+    if(currentPage !== this.paginatorRef.paginatorState.page) {
+      this.updateCurrentPage(currentPage)
+    }
   }
 
   @Input() 

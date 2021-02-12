@@ -3,7 +3,7 @@
 
 <p-table #datatable [value]="userDetails" [(selection)]="selectedUser" selectionMode="multiple"  (onRowSelect)="onRowSelect()" (onRowUnselect)="onRowSelect()" >
     <ng-template pTemplate="header">
-        <tr>
+        <tr *ngIf="userDetails?.length">
             <th style="width: 3rem">
                 <p-tableHeaderCheckbox (click)="onRowSelect()"></p-tableHeaderCheckbox>
             </th>
