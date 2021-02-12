@@ -290,9 +290,14 @@
                                             id="{{col.field+'_'+rowIndex}}" [minDate]="col.minDate"
                                             [dateFormat]="col.dateFormat ? col.dateFormat : 'dd-mm-yy'"
                                             [hideOnDateTimeSelect]="false" #coldatetime>
-                                            <p-footer><button class="btn btn-main"
+                                            <p-footer>
+                                                <div class="text-center">
+                                                <button class="btn btn-main"
                                                     (click)="coldatetime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' |
-                                                    translate}}</button></p-footer>
+                                                    translate}}</button>
+                                                </div>
+                                                </p-footer>
+                                                
                                         </p-calendar>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
