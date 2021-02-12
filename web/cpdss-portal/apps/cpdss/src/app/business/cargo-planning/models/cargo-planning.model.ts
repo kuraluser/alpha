@@ -258,7 +258,7 @@ export interface IPortsValueObject {
     isAdd: boolean;
     isDelete?: boolean;
     storeKey: number;
-    isLoadable: boolean;    
+    isActionsEnabled: boolean;    
     processing?: boolean;
 }
 

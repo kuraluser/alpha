@@ -498,7 +498,7 @@ export class LoadableStudyDetailsTransformationService {
     _port.eta = new ValueObject<string>(port.eta, true, isNewValue, false, isEditable);
     _port.etd = new ValueObject<string>(port.etd, true, isNewValue, false, isEditable);
     _port.isAdd = isNewValue;
-    _port.isLoadable = !isEdit;
+    _port.isActionsEnabled = isEdit;
     _port.isDelete = false;
     return _port;
   }

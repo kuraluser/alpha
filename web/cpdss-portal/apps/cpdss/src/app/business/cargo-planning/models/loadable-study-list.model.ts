@@ -23,6 +23,10 @@ export class LoadableStudy {
     dischargingCargoId: number;
     createdFromId?: number;
     loadOnTop: boolean;
+    isEditable?: boolean;
+    isDeletable?: boolean;
+    isDuplicate?: boolean;
+    isActionsEnabled?: boolean;
 }
 
 /**

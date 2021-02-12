@@ -206,6 +206,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
     if (this.loadableStudies.length) {
+      this.setProcessingLoadableStudyActions(0, 0);
       this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
       if (sessionStorage.getItem('loadableStudyInfo')) {
         this.displayLoadableQuntity = true;
@@ -312,6 +313,35 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       else if (event.data.type === 'loadable-pattern-no-response') {
         this.noResponseMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
       }
+      this.setProcessingLoadableStudyActions(event.data.pattern.loadableStudyId, event.data.statusId);
+    });
+  }
+
+  /**
+   * Enable/ Disable actions of currently processing/processed loadable study
+   *
+   * @param {*} event
+   * @memberof LoadableStudyDetailsComponent
+   */
+  setProcessingLoadableStudyActions(loadableStudyId: number, statusId: number) {
+    this.loadableStudies = this.loadableStudies.map(loadableStudy => {
+      if (loadableStudyId === loadableStudy?.id) {
+        if ([4, 5].includes(statusId) && this.router.url.includes('loadable-study-details')) {
+          loadableStudy.isActionsEnabled = false;
+        }
+        else if ([2, 3].includes(statusId)) {
+          loadableStudy.isEditable = false;
+          loadableStudy.isDeletable = false;
+          loadableStudy.isActionsEnabled = true;
+        }
+        else if ([6, 1].includes(statusId)) {
+          loadableStudy.isActionsEnabled = true;
+        }
+      } else if (!loadableStudyId && !statusId) {
+        loadableStudy.isEditable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
+        loadableStudy.isDeletable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
+      }
+      return loadableStudy;
     });
   }
 
@@ -658,7 +688,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     const res = await this.loadableStudyDetailsApiService.generateLoadablePattern(vesselId, voyageId, loadableStudyId).toPromise();
     if (res.responseStatus.status === '200') {
       data.processId = res.processId;
-      navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data })
+      navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });
+      this.selectedLoadableStudy.isActionsEnabled = false;
     } else {
       this.isGenerateClicked = false;
     }

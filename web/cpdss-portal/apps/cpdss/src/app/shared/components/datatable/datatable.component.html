@@ -135,7 +135,7 @@
                                 </ng-template>
 
                                 <ng-container *ngSwitchCase="fieldType.ACTION">
-                                    <div class="action-buttons" *ngIf="!rowData.isLoadable">
+                                    <div class="action-buttons" *ngIf="rowData.isActionsEnabled === undefined || rowData.isActionsEnabled">
                                         <p-splitButton appendTo="body" id="{{tableId + 'split_button_' + rowIndex}}"
                                             *ngIf="col.actions.length > 1" icon="null"
                                             menuStyleClass="grid-dropdown-menu" styleClass="grid-dropdown-icon"

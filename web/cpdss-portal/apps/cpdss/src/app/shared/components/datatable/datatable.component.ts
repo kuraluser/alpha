@@ -455,21 +455,21 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   getMoreOptions(rowData: any) {
-    if (rowData?.isAdd) {
-      return this.moreOptions.map(option => {
-        if (option.id === DATATABLE_ACTION.SAVE) {
-          option.visible = true;
-        }
-        return option;
-      });
-    } else {
-      return this.moreOptions.map(option => {
-        if (option.id === DATATABLE_ACTION.SAVE) {
-          option.visible = false;
-        }
-        return option;
-      });
-    }
+    return this.moreOptions.map(option => {
+      if (option.id === DATATABLE_ACTION.SAVE) {
+        option.visible = rowData?.isAdd;
+      }
+      if (option.id === DATATABLE_ACTION.EDIT) {
+        option.visible = rowData?.isEditable === undefined || rowData?.isEditable;
+      }
+      if (option.id === DATATABLE_ACTION.DELETE) {
+        option.visible = rowData?.isDeletable === undefined || rowData?.isDeletable;
+      }
+      if (option.id === DATATABLE_ACTION.DUPLICATE) {
+        option.visible = rowData?.isDuplicate === undefined || rowData?.isDuplicate;
+      }
+      return option;
+    });    
   }
 
   // private methods

@@ -334,10 +334,13 @@
           const sync = {};
           sync.pattern = data;
           sync.type = 'loadable-pattern-processing';
+          sync.statusId = syncView.loadableStudyStatusId;
           setTimeout(() => {
             const sync = {};
             sync.pattern = data;
             sync.type = 'loadable-pattern-no-response';
+            // sending default status
+            sync.statusId = 1;
             notifyClients(sync);
             clearInterval(timer);
           }, 300000);
@@ -347,6 +350,7 @@
           const sync = {};
           sync.pattern = data;
           sync.type = 'loadable-pattern-completed';
+          sync.statusId = syncView.loadableStudyStatusId;
           notifyClients(sync);
           clearInterval(timer);
         }
@@ -354,6 +358,7 @@
           const sync = {};
           sync.pattern = data;
           sync.type = 'loadable-pattern-no-solution';
+          sync.statusId = syncView.loadableStudyStatusId;
           notifyClients(sync);
           clearInterval(timer);
         }
