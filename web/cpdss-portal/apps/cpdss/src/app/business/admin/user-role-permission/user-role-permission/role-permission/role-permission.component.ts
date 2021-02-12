@@ -45,6 +45,7 @@ export class RolePermissionComponent implements OnInit {
     errorMessages: any;
     userDetails: IUserDetail[] = [];
     public saveRoleBtnPermissionContext:IPermissionContext;
+    public roleExistSta: boolean;
 
     // public method
     constructor(
@@ -98,8 +99,9 @@ export class RolePermissionComponent implements OnInit {
     */
     async getUserRolePermission() {
         this.ngxSpinnerService.show();
-        const userDetailsRes: IUserRolePermissionResponse = await this.userRolePermissionApiService.getUserRolePermission(this.roleId).toPromise();
+        const translationKeys = await this.translateService.get(['USER_PERMISSION_INVALID_USER_ERROR', 'USER_PERMISSION_INVALID_USER']).toPromise();
         try {
+            const userDetailsRes: IUserRolePermissionResponse = await this.userRolePermissionApiService.getUserRolePermission(this.roleId).toPromise();
             this.ngxSpinnerService.hide();
             const treeNode = [];
             if (userDetailsRes.responseStatus.status === '200') {
@@ -132,9 +134,9 @@ export class RolePermissionComponent implements OnInit {
             
         }
         catch (error) {
-            const translationKeys = await this.translateService.get(['USER_PERMISSION_INVALID_USER_ERROR', 'USER_PERMISSION_INVALID_USER']).toPromise();
-            if (error.error.errorCode === 'ERR-RICO-205') {
+            if (error.error.errorCode === 'ERR-RICO-400') {
                 this.messageService.add({ severity: 'error', summary: translationKeys['USER_PERMISSION_INVALID_USER_ERROR'], detail: translationKeys['USER_PERMISSION_INVALID_USER'] });
+                this.router.navigate(['./'], { relativeTo: this.activatedRoute.parent });
             }
             this.ngxSpinnerService.hide();
         }
@@ -413,9 +415,9 @@ export class RolePermissionComponent implements OnInit {
                 deselectedUserId: deselectedUserId ? deselectedUserId : []
             }
             this.ngxSpinnerService.show();
-           
-            const savePermissionRes: ISavePermissionResponse = await this.userRolePermissionApiService.rolePermission(userPermission).toPromise();
             try {
+            const savePermissionRes: ISavePermissionResponse = await this.userRolePermissionApiService.rolePermission(userPermission).toPromise();
+            
                 this.ngxSpinnerService.hide();
                 if (savePermissionRes.responseStatus.status === '200') {
                     this.messageService.add({ severity: 'success', summary: translationKeys['USER_PERMISSION_CREATE_SUCCESS'], detail: translationKeys['USER_PERMISSION_CREATED_SUCCESSFULLY'] });
@@ -423,8 +425,9 @@ export class RolePermissionComponent implements OnInit {
                 }
             }
             catch (error) {
-                if (error.error.errorCode === 'ERR-RICO-400') {
-                    this.messageService.add({ severity: 'error', summary: translationKeys['NEW_ROLE_CREATE_ERROR'], detail: translationKeys['ROLE_ALREADY_EXIST'] });
+                if (error.error.errorCode === 'ERR-RICO-106') {
+                    this.roleExistSta = true;
+                    this.messageService.add({ severity: 'error', summary: translationKeys['USER_PERMISSION_CREATE_ERROR'], detail: translationKeys['USER_PERMISSION_ALREADY_EXIST'] });
                 }
                 this.ngxSpinnerService.hide();
             }

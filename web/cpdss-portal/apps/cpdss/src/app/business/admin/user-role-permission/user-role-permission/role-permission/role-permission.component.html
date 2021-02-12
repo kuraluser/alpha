@@ -10,9 +10,10 @@
         
             <label for="user_role_name" class="col-form-label pl-15">{{'USER_ROLE_NAME'| translate }}</label>
             <div class="col-2">
-            <input type="text" id="user_role_name" class="form-control" formControlName="roleName" maxlength="10"/>
+            <input type="text" id="user_role_name" class="form-control" formControlName="roleName" maxlength="10" (change)="roleExistSta = false"/>
             <cpdss-portal-validation-error [errors]="fieldError('roleName')" [errorMessages]="errorMessages.roleName">
             </cpdss-portal-validation-error>
+            <p class="text-danger" *ngIf="roleExistSta">{{'NEW_USER_ROLE_ALREADY_EXIST' | translate}}</p>
         </div>
         <label for="user_role_description" class="col-form-label">{{'USER_ROLE_DESCRIPTION'| translate }}</label>
         <div class="col-4">
