@@ -168,7 +168,7 @@ public class UserController {
     PermissionResponse permissionResponse = new PermissionResponse();
 
     try {
-      log.info("save permission API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
+      log.info("save permission API. CorrelationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
       Long companyId = 1L;
       permissionResponse =
           userService.savePermission(
@@ -177,7 +177,7 @@ public class UserController {
       log.error("GenericServiceException in save voyage", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
-      log.error("Error in save permission ", e);
+      log.error("Error in save permission api", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

@@ -278,6 +278,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final Long DISCHARGING_OPERATION_ID = 2L;
   private static final Long BUNKERING_OPERATION_ID = 3L;
   private static final Long TRANSIT_OPERATION_ID = 4L;
+  private static final Long STS_LOADING_OPERATION_ID = 5L;
+  private static final Long STS_DISCHARGING_OPERATION_ID = 6L;
   private static final Long LOADABLE_STUDY_INITIAL_STATUS_ID = 1L;
   private static final Long LOADABLE_STUDY_PROCESSING_STARTED_ID = 4L;
   private static final Long LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID = 3L;
@@ -366,7 +368,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           LOADING_OPERATION_ID,
           DISCHARGING_OPERATION_ID,
           BUNKERING_OPERATION_ID,
-          TRANSIT_OPERATION_ID);
+          TRANSIT_OPERATION_ID,
+          STS_LOADING_OPERATION_ID,
+          STS_DISCHARGING_OPERATION_ID);
 
   private static final List<Long> SYNOPTICAL_TABLE_TANK_CATEGORIES =
       Arrays.asList(

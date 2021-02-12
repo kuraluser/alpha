@@ -431,6 +431,9 @@ public class UserService {
   public PermissionResponse savePermission(
       RolePermission permission, Long companyId, String correlationId)
       throws GenericServiceException {
+    if (permission.getRole().getName() != null) {
+      this.validateRoleName(permission.getRoleId(), permission.getRole().getName());
+    }
     PermissionResponse permissionResponse = new PermissionResponse();
     Optional<Roles> role =
         this.rolesRepository.findByIdAndCompanyXIdAndIsActive(
@@ -446,14 +449,14 @@ public class UserService {
         this.usersRepository.findByCompanyXIdAndIdInAndIsActive(
             companyId, permission.getUserId(), true);
 
-    List<Long> screenIds = new ArrayList<Long>();
+    List<Long> screenIds = new ArrayList<>();
     for (ScreenInfo screenInfo : permission.getScreens()) {
       screenIds.add(screenInfo.getId());
     }
 
     List<RoleUserMapping> roleUserList =
         this.roleUserRepository.findByRolesAndIsActive(role.get().getId(), true);
-    if (roleUserList != null && roleUserList.size() != 0) {
+    if (roleUserList != null && !roleUserList.isEmpty()) {
       roleUserList.forEach(
           a -> {
             a.setIsActive(false);
@@ -462,7 +465,7 @@ public class UserService {
 
     List<Screen> screens =
         this.screenRepository.findByCompanyXIdAndIdInAndIsActive(companyId, screenIds, true);
-    if (users != null && users.size() != 0) {
+    if (users != null && !users.isEmpty()) {
       users.forEach(
           user -> {
             Optional<RoleUserMapping> roleUserOpt =
@@ -481,7 +484,7 @@ public class UserService {
           });
     }
 
-    if (screens != null && screens.size() != 0) {
+    if (screens != null && !screens.isEmpty()) {
       screens.forEach(
           screen -> {
             Optional<com.cpdss.gateway.entity.RoleScreen> roleScreenrOpt =
@@ -527,18 +530,30 @@ public class UserService {
     return permissionResponse;
   }
 
-  public RoleResponse saveRole(Role role, Long companyId, String first)
-      throws GenericServiceException {
-    RoleResponse roleResponse = new RoleResponse();
-    Optional<Roles> roleEntityOpt =
-        this.rolesRepository.findByCompanyXIdAndNameAndIsActive(companyId, role.getName(), true);
-    Roles roleEntity = null;
-    if (!roleEntityOpt.isPresent()) {
-      roleEntity = new Roles();
-    } else {
+  /**
+   * * Check if role with same name exists
+   *
+   * @param companyId
+   * @param roleId
+   * @param roleName
+   * @throws GenericServiceException
+   */
+  private void validateRoleName(Long roleId, String roleName) throws GenericServiceException {
+    Roles duplicate = this.rolesRepository.findByNameIgnoreCaseAndIsActive(roleName, true);
+    if ((null == roleId && null != duplicate)
+        || (null != roleId && !duplicate.getId().equals(roleId))) {
       throw new GenericServiceException(
-          "Role already  exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
+          "Role with given name already exist",
+          CommonErrorCodes.E_CPDSS_ROLE_NAME_EXISTS,
+          HttpStatusCode.BAD_REQUEST);
     }
+  }
+
+  public RoleResponse saveRole(Role role, Long companyId, String correlationId)
+      throws GenericServiceException {
+    this.validateRoleName(null, role.getName());
+    RoleResponse roleResponse = new RoleResponse();
+    Roles roleEntity = new Roles();
     roleEntity.setIsActive(true);
     roleEntity.setName(role.getName());
     roleEntity.setDescription(role.getDescription());

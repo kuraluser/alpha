@@ -17,5 +17,5 @@ public interface RolesRepository
   Optional<Roles> findByCompanyXIdAndNameAndIsActive(
       Long companyXId, String name, boolean isActive);
 
-  Optional<Roles> findByNameAndIsActive(String name, boolean isActive);
+  public Roles findByNameIgnoreCaseAndIsActive(String name, boolean isActive);
 }
