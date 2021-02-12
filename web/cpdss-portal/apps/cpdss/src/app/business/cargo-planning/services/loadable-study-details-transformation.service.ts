@@ -326,6 +326,7 @@ export class LoadableStudyDetailsTransformationService {
         filterField: 'segregation.value.name',
         fieldPlaceholder: 'SELECT_SEGREGATION',
         fieldOptionLabel: 'name',
+        fieldHeaderClass: 'column-segregation',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR'
         }

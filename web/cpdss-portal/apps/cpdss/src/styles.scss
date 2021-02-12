@@ -1945,8 +1945,12 @@ width: 50px !important;
 .column-api, .column-temp{
   width: 90px!important;
 }
+
 .column-max-tol, .column-min-tol{
-  width: 90px!important;
+  width: 150px!important;
+}
+.column-segregation{
+  width: 120px!important;
 }
 
 .check-rounded{
@@ -1990,11 +1994,55 @@ width: 50px !important;
     .error-icon-wrapper{
       display: block;
       max-width: 151px;
-      padding-left: 20px;
+      padding-left: 15px;
+      padding-right: 15px;
       margin: auto;
        input{
         text-align: center;
       }
+      .error-icon{
+        right: -1px;
+      }
     }
   }
+}
+
+.p-datepicker .p-timepicker span{
+  font-size: 12px;
+}
+.p-datepicker .p-timepicker button{
+  height: auto;
+}
+
+.p-datepicker .p-timepicker button:hover, .p-datepicker .p-timepicker button:focus{
+  background: none;
+  outline: none;
+}
+
+.p-datepicker .p-timepicker button:enabled:hover{
+  background: none;
+}
+
+.p-dropdown{
+  max-width: 100%;
+}
+.error-icon-wrapper{
+  position: relative;
+  .error-icon{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    right: 0;
+  }
+} 
+
+.p-datatable-scrollable-header-table .p-calendar .p-inputtext{
+  padding: 0;
+    height: 17px;
+    margin-bottom: 0;
+    &:focus{
+      outline: none;
+      box-shadow: none!important;
+    }
 }

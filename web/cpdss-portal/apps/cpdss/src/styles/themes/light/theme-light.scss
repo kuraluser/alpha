@@ -28,7 +28,7 @@ body{
     }
   }
   .cargo-nomiantion-tab  .tab-btn{
-    color: $text-primary;
+    color: $text-primary!important;
     .tab-status-icon{
       border: 1px solid $status-border;
       color: $text-secondary;
@@ -47,6 +47,13 @@ body{
       .tab-status-icon{
         border: 1px solid $hover-color;
       }
+      color: $hover-color!important;
+      &:hover{
+        color: $hover-color!important;
+      }
+    }
+    &:hover{
+      color: $text-secondary!important;
     }
   }
 
@@ -1123,4 +1130,8 @@ tr:hover a{
     }
     
 }
+}
+
+.p-datepicker .p-timepicker button:enabled:hover{
+  color: $text-secondary;
 }

@@ -1,6 +1,7 @@
 .tank-wrapper-ohq {
     width: 500px;
     max-width: 500px;
+    padding-right: 23px;
 }
 
 .port-list {
@@ -43,4 +44,8 @@
     .content-outer-ohq {
         grid-template-columns: calc(100% - 370px) 370px;
     }
+}
+.tank-ohq-outer{
+    overflow-y: auto;
+    overflow-x: hidden;
 }

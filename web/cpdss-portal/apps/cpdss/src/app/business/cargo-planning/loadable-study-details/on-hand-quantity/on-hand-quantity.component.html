@@ -45,7 +45,7 @@
                 </div>
             </div>
         </div>
-        <div class="pr-15">
+        <div class="pr-15 tank-ohq-outer">
             <div class=" tank-wrapper-ohq">
                 <div class="row">
                     <div class="col">
@@ -106,7 +106,7 @@
                             <div class="col-6">
                                 <div class="row mb-15">
                                     <label for="" class="col-12 text-center">{{'OHQ_DENSITY'| translate}}</label>
-                                    <div class="col">
+                                    <div class="col error-icon-wrapper">
                                         <input type="text" cpdssPortalNumberDecimal class="form-control"
                                             formControlName="density"
                                             (change)="onChange($event, selectedTankFormGroupIndex, 'density')"
@@ -124,7 +124,7 @@
                                 <div class="row mb-15">
                                     <label for="" class="col-12 text-center">{{'OHQ_ARRIVAL'| translate}}
                                         {{'OHQ_QUANTITY'| translate}}</label>
-                                    <div class="col">
+                                    <div class="col error-icon-wrapper">
                                         <input type="text" cpdssPortalNumberDecimal class="form-control"
                                             formControlName="arrivalQuantity"
                                             (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalQuantity')"
@@ -138,10 +138,10 @@
                             </div>
                             <div class="col-6"
                                 [ngStyle]="{'visibility': ohqForm.controls.mode.value === OHQ_MODE.DEPARTURE ? 'visible': 'hidden'}">
-                                <div class="row mb-15">
+                                <div class="row">
                                     <label for="" class="col-12 text-center">{{'OHQ_DEPARTURE'| translate}}
                                         {{'OHQ_QUANTITY'| translate}}</label>
-                                    <div class="col">
+                                    <div class="col error-icon-wrapper">
                                         <input type="text" cpdssPortalNumberDecimal class="form-control"
                                             formControlName="departureQuantity"
                                             (change)="onChange($event, selectedTankFormGroupIndex, 'departureQuantity')"
