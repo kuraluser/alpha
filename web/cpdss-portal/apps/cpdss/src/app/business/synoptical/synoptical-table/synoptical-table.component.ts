@@ -277,7 +277,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         editable: true,
       },
       {
-        header: 'Seawater Specific Gravity',
+        header: 'Seawater Specific Gravity (T/m3)',
         fields: [{
           key: 'specificGravity',
           type: this.fieldType.NUMBER,
@@ -291,7 +291,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           header: '',
           subHeaders: [
             {
-              header: "H.W Tide",
+              header: "H.W Tide (m)",
               fields: [
                 {
                   key: 'hwTideFrom',
@@ -330,7 +330,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           header: '',
           subHeaders: [
             {
-              header: "L.W Tide",
+              header: "L.W Tide (m)",
               fields: [
                 {
                   key: 'lwTideFrom',
@@ -364,7 +364,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         ]
       },
       {
-        header: "Hogging/Sagging",
+        header: "Hogging/Sagging (cm)",
         fields: [
           { key: "hogSag" }
         ]
@@ -499,7 +499,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         ]
       },
       {
-        header: "Blind Sector",
+        header: "Blind Sector (m)",
         fields: [{
           key: "blindSector"
         }],
@@ -569,7 +569,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         expandedFields: []
       },
       {
-        header: 'Fresh W.T',
+        header: 'Fresh W.T (MT)',
         dynamicKey: 'fwList',
         expandable: true,
         subHeaders: [
@@ -590,7 +590,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         expandedFields: []
       },
       {
-        header: 'Lube Oil Total',
+        header: 'Lube Oil Total (MT)',
         dynamicKey: 'lubeList',
         expandable: true,
         subHeaders: [
@@ -640,7 +640,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         expandedFields: []
       },
       {
-        header: 'Others',
+        header: 'Others (MT)',
         subHeaders: [{
           header: '',
           subHeaders: [
@@ -667,7 +667,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         ]
       },
       {
-        header: 'Constant',
+        header: 'Constant (MT)',
         subHeaders: [{
           header: '',
           subHeaders: [
