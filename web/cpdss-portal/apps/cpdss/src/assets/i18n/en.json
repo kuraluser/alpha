@@ -321,6 +321,7 @@
 	"LOADABLE_QUANTITY_UNIT_HOURS": "HOURS",
 	"LOADABLE_QUANTITY_UNIT_DAYS": "DAYS",
 	"LOADABLE_QUANTITY_UNIT_MT/DAY": "MT/DAYS",
+	"SEA_WATER_DENSITY": "T/m3",
 	"LOADABLE_QUANTITY_NEGATIVE_VALUE": "System wont accept negative value for loadable quantity. Please enter correct figures.",
 	"LOADABLE_QUANTITY_TOTAL_QUANTITY_REQUIRED": "Loadable quantity is required",
 	"LOADABLE_PATTERN_GENERATE_BUTTON_LABEL": "Generate loadable patterns",
