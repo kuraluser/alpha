@@ -270,12 +270,11 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.updateField(event.index, 'cargo', event?.data?.cargo?.value);
     }
 
-    this.updateCommingleButton();
-
     if (!event.data?.isAdd) {
       if (this.cargoNominationForm.valid) {
         this.ngxSpinnerService.show();
         event.data.processing = true;
+        this.updateCommingleButton(true);
         const row = this.cargoNominations[event.index];
         this.updateRowByUnit(row, this.loadableStudyDetailsApiService.currentUnit, this.loadableStudyDetailsApiService.baseUnit);
         const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
@@ -326,7 +325,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
             if (res) {
               this.cargoNominations.splice(event.index, 1);
               this.cargoNominations = [...this.cargoNominations];
-              this.updateCommingleButton();
+              this.updateCommingleButton(false);
               const dataTableControl = <FormArray>this.cargoNominationForm.get('dataTable');
               dataTableControl.removeAt(event.index);
               this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
@@ -348,6 +347,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
 
     if (this.row(event.index).valid) {
       this.ngxSpinnerService.show();
+      this.updateCommingleButton(true);
       const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
       if (res) {
@@ -358,7 +358,6 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
           }
         }
         this.cargoNominations = [...this.cargoNominations];
-        this.updateCommingleButton();
       }
       this.ngxSpinnerService.hide();
 
@@ -447,7 +446,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       dataTable: this.fb.array([...cargoNominationArray])
     });
     this.cargoNominations = _cargoNominations;
-    this.updateCommingleButton();
+    this.updateCommingleButton(false);
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
     this.ngxSpinnerService.hide();
   }
@@ -524,6 +523,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
           this.cargoNominations[index].id = event.data.cargoNominationId;
           this.cargoNominations[index].processing = false;
           this.cargoNominations = [...this.cargoNominations];
+          this.updateCommingleButton(false);
         }
       }
     });
@@ -621,16 +621,13 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    *
    * @memberof CargoNominationComponent
    */
-  private async updateCommingleButton() {
+  private async updateCommingleButton(disableCommingleButton) {
     const addedCargoNominations = this.cargoNominations.filter((cargoNomination) => !cargoNomination.isAdd);
     if (addedCargoNominations.length >= 2) { 
       if(this.dataTableLoading){
         this.cargoNominationUpdate.emit(true);
-        setTimeout(() => {
-          this.updateCommingleButton();
-        }, 2000);
       }else{
-        this.cargoNominationUpdate.emit(false)
+        this.cargoNominationUpdate.emit(disableCommingleButton)
       }
     } else {
       this.cargoNominationUpdate.emit(true)

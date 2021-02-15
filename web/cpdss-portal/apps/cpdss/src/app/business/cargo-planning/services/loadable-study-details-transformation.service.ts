@@ -601,7 +601,8 @@ export class LoadableStudyDetailsTransformationService {
         fieldClass: 'lay-can',
         dateFormat: 'dd-mm-yy',
         errorMessages: {
-          'required': 'PORT_LAY_CAN_REQUIRED_ERROR'
+          'required': 'PORT_LAY_CAN_REQUIRED_ERROR',
+          'toDate': 'PORT_LAY_CAN_TO_DATE_ERROR'
         }
       },
       {

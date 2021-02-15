@@ -717,7 +717,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   async generatedMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
     this.messageService.clear("process");
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE', 'GENERATE_LOADABLE_PATTERN_COMPLETED']).toPromise();
-    this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETED'], closable: true });
+    this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETED'],  key: "process", closable: true });
   }
 
   /**
@@ -730,7 +730,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   async noPlanMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
     this.messageService.clear("process");
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_NO_PLAN', 'GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE']).toPromise();
-    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE'] });
+    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE'] , key: "process"});
   }
 
     /**
@@ -743,7 +743,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
 async noResponseMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
   this.messageService.clear("process");
   const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR', 'GENERATE_LOADABLE_PATTERN_RESPONSE']).toPromise();
-  this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_RESPONSE'], closable: true });
+  this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_RESPONSE'], key: "process", closable: true });
 }
 
   /* Handler for unit change event

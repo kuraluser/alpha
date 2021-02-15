@@ -628,6 +628,9 @@ export class DatatableComponent implements OnInit {
       rowData[formControlName].isEditMode = false;
         this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
     }
+    else if(formControl?.value[0] && !formControl?.value[1]){
+      formControl.setErrors({ 'toDate': true });
+    }
   }
 
 

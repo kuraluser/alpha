@@ -519,6 +519,10 @@ export class CommingleComponent implements OnInit {
       if (response) {
         this.commingleForm.controls['cargo1'].setValue(null);
         this.commingleForm.controls['cargo2'].setValue(null);
+        this.selectedCargo1 = null;
+        this.selectedCargo2 = null;
+        this.cargoNominationsCargo1 = this.cargoNominationsCargo;
+        this.cargoNominationsCargo2 = this.cargoNominationsCargo;
       }
     });
   }
