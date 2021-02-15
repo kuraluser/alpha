@@ -335,7 +335,7 @@
             </ng-template>
         </p-table>
         <ng-container *ngIf="paginator">
-            <p-paginator  currentPageReportTemplate={{currentPageReportTemplate}} [showJumpToPageDropdown]="false"  #paginator [showCurrentPageReport]="true"   [rows]="rows" [totalRecords]="totalRecords"  (onPageChange)="onPageChange($event)" [rowsPerPageOptions]="rowsPerPage"></p-paginator>
+            <p-paginator [first]="first" currentPageReportTemplate={{currentPageReportTemplate}} [showJumpToPageDropdown]="false"  #paginator [showCurrentPageReport]="true"   [rows]="rows" [totalRecords]="totalRecords"  (onPageChange)="onPageChange($event)" [rowsPerPageOptions]="rowsPerPage"></p-paginator>
         </ng-container>
         
     </div>

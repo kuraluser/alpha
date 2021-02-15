@@ -145,9 +145,16 @@ export class DatatableComponent implements OnInit {
 
   @Input() 
   set currentPage(currentPage: number) {
-    if(currentPage !== this.paginatorRef.paginatorState.page) {
-      this.updateCurrentPage(currentPage)
-    }
+    this._currentPage = currentPage;
+  }
+
+  @Input() 
+  set first(first: number) {
+    this._first = first;
+  }
+
+  get first() :number {
+    return this._first;
   }
 
   @Input() 
@@ -177,6 +184,7 @@ export class DatatableComponent implements OnInit {
   @Output() sort = new EventEmitter<IDataTableSortEvent>();
   @Output() editRow = new EventEmitter<IDataTableEvent>();
   @Output() onDataStateChange = new EventEmitter<IDataTablePageChangeEvent>();
+  @Output() firstChange = new EventEmitter<number>();
   @Output() currentPageChange = new EventEmitter<number>();
   @Output() resetChange = new EventEmitter<boolean>();
   
@@ -201,7 +209,9 @@ export class DatatableComponent implements OnInit {
   private _rows: number;
   private _rowsPerPage: number[];
   private _currentPageReportTemplate: string;
+  private _currentPage: number;
   private _loading: boolean;
+  private _first: number;
 
 
   // public methods
@@ -209,6 +219,7 @@ export class DatatableComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this._first = 0;
     this._rowsPerPage = [10,50,100];
     this._currentPageReportTemplate = "Showing {currentPage} to {totalPages} of {totalRecords} entries";
     this._loading = false;
@@ -694,7 +705,12 @@ export class DatatableComponent implements OnInit {
    */
   loadDetails(event: LazyLoadEvent) {
     if(event.sortField) {
-      this.updateCurrentPage(0);
+      this._first = 0;
+      this._currentPage = 0;
+      this.currentPageChange.emit(this._currentPage);
+      this.firstChange.emit(this._first);
+      const data = this.setStateValue('sort');
+      this.onDataStateChange.emit(data);
     }
   }
 
@@ -766,6 +782,8 @@ export class DatatableComponent implements OnInit {
         sortOrder: this.datatable._sortField ? this.datatable._sortOrder === 1 ? 'asc' : 'desc' : '',
       }
     }
+    this._first = event.first;
+    this.firstChange.emit(this._first);
     this.currentPageChange.emit(event?.page ? event.page : 0)
     this.onDataStateChange.emit(data);
   }
@@ -778,8 +796,13 @@ export class DatatableComponent implements OnInit {
    */
   filterData($event , col) {
     if(col?.filterByServer) {
-      this.updateCurrentPage(0);
+      this._first = 0;
+      this._currentPage = 0;
       this.filterObject[col.filterField] = ($event.target.value).trim();
+      const data = this.setStateValue('filter');
+      this.firstChange.emit(this._first);
+      this.currentPageChange.emit(this._currentPage);
+      this.onDataStateChange.emit(data);
     } else {
       this.datatable.filter(($event.target.value).trim(), col?.filterField ? col?.filterField : col.field, col.filterMatchMode)
     }

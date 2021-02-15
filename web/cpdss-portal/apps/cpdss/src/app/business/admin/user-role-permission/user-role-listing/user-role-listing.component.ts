@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { first } from 'rxjs/operators';
@@ -31,7 +31,7 @@ import { switchMap } from 'rxjs/operators';
   templateUrl: './user-role-listing.component.html',
   styleUrls: ['./user-role-listing.component.scss']
 })
-export class UserRoleListingComponent implements OnInit {
+export class UserRoleListingComponent implements OnInit , OnDestroy {
 
   public columns: IDataTableColumn[];
   public roleList: IRoleDetail[] = [];
@@ -43,6 +43,7 @@ export class UserRoleListingComponent implements OnInit {
   public loading: boolean;
   public totalRecords: number;
   public currentPage: number;
+  public first: number;
   public resetDataTable: boolean;
   public pageState:IDataStateChange;
 
@@ -69,6 +70,7 @@ export class UserRoleListingComponent implements OnInit {
  * @memberof UserRoleListingComponent
  */
   ngOnInit(): void {
+    this.first = 0;
     this.currentPage = 0;
     this.columns = this.userRolePermissionTransformationService.getRoleListDatatableColumns();
     this.getPagePermission();
@@ -83,6 +85,15 @@ export class UserRoleListingComponent implements OnInit {
     this.pageState = <IDataStateChange>{};
     this.getUserDetails$.next();
     this.addRoleBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['UserRoleListing'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+  }
+
+  /**
+   * unsubscribe the observable
+   *
+   * @memberof UserRoleListingComponent
+  */
+ ngOnDestroy() {
+  this.getUserDetails$.unsubscribe();
   }
 
   /**
@@ -217,7 +228,7 @@ export class UserRoleListingComponent implements OnInit {
    * @memberof UserRoleListingComponent
   */
   roleSaved() {
-    this.currentPage = 0;
+    this.first = 0;
     this.resetDataTable = true;
     this.pageState = <IDataStateChange>{};
     this.getUserDetails$.next();
