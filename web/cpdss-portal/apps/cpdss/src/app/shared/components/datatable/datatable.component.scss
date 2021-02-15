@@ -1,13 +1,6 @@
 
 
-.colorpicker{
-    background-color: #000d20;
-}
 
-// TODO: need to be removed when this colorpicker is removed
-p-colorpicker.ng-invalid.empty ::ng-deep input {
-    background-color: #000d20 !important;
-}
 
 .color-rounded{
     width: 15px;

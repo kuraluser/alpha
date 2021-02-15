@@ -2052,3 +2052,13 @@ width: 50px !important;
 .no-wrap{
   white-space: nowrap;
 }
+.p-paginator-last{
+  margin-right: auto!important;
+}
+.p-paginator .p-dropdown .p-dropdown-label{
+  padding-top: 10px;
+}
+.p-paginator{
+  padding-left: 0;
+  padding-right: 0;
+}

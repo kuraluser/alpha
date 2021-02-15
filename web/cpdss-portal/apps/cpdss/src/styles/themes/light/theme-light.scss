@@ -1135,3 +1135,25 @@ tr:hover a{
 .p-datepicker .p-timepicker button:enabled:hover{
   color: $text-secondary;
 }
+.colorpicker{
+  background-color: $body-bg;
+}
+
+// TODO: need to be removed when this colorpicker is removed
+p-colorpicker.ng-invalid.empty ::ng-deep input {
+  background-color: $body-bg !important;
+}
+.p-paginator{
+  background:  $body-bg !important;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: $selected-bg;
+  border-color: $selected-bg;
+  color: $hover-color;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page:not(.p-highlight):hover{
+  background: $selected-bg;
+  color: $hover-color;
+}

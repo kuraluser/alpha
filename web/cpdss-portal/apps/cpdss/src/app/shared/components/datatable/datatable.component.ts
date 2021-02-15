@@ -210,7 +210,7 @@ export class DatatableComponent implements OnInit {
 
   ngOnInit(): void {
     this._rowsPerPage = [10,50,100];
-    this._currentPageReportTemplate = "{currentPage} of {totalPages}";
+    this._currentPageReportTemplate = "Showing {currentPage} to {totalPages} of {totalRecords} entries";
     this._loading = false;
     if (!this.form) {
       this.form = this.fb.group({
