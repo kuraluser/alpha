@@ -3111,7 +3111,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       List<LoadablePattern> patterns =
-          this.loadablePatternRepository.findByLoadableStudyAndIsActive(
+          this.loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
               loadableStudyOpt.get(), true);
       if (null != patterns && !patterns.isEmpty()) {
         this.buildPatternDetails(patterns, replyBuilder);
