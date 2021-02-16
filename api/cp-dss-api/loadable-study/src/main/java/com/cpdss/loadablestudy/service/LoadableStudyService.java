@@ -5515,13 +5515,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           && synopticalEntity.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL)) {
         this.buildObqDataForSynopticalTable(
             tank, cargoHistories, obqEntities, cargoBuilder, voyage);
-        if (!isEmpty(cargoBuilder.getActualWeight())) {
-          cargoActualTotal = cargoActualTotal.add(new BigDecimal(cargoBuilder.getActualWeight()));
-        }
-        if (!isEmpty(cargoBuilder.getPlannedWeight())) {
-          cargoPlannedTotal =
-              cargoPlannedTotal.add(new BigDecimal(cargoBuilder.getPlannedWeight()));
-        }
       } else if (request.getLoadablePatternId() > 0) {
         Optional<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> tankDataOpt =
             portSpecificCargoDetails.stream()
@@ -5543,6 +5536,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(tankDataOpt.get().getDensity())
               .ifPresent(density -> cargoBuilder.setDensity(valueOf(density)));
         }
+      }
+      if (!isEmpty(cargoBuilder.getActualWeight())) {
+        cargoActualTotal = cargoActualTotal.add(new BigDecimal(cargoBuilder.getActualWeight()));
+      }
+      if (!isEmpty(cargoBuilder.getPlannedWeight())) {
+        cargoPlannedTotal = cargoPlannedTotal.add(new BigDecimal(cargoBuilder.getPlannedWeight()));
       }
       builder.addCargo(cargoBuilder.build());
     }

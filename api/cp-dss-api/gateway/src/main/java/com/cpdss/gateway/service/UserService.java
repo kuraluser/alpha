@@ -541,7 +541,7 @@ public class UserService {
   private void validateRoleName(Long roleId, String roleName) throws GenericServiceException {
     Roles duplicate = this.rolesRepository.findByNameIgnoreCaseAndIsActive(roleName, true);
     if ((null == roleId && null != duplicate)
-        || (null != roleId && !duplicate.getId().equals(roleId))) {
+        || (null != roleId && null != duplicate && !duplicate.getId().equals(roleId))) {
       throw new GenericServiceException(
           "Role with given name already exist",
           CommonErrorCodes.E_CPDSS_ROLE_NAME_EXISTS,
