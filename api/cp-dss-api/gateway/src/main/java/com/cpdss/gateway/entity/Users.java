@@ -95,4 +95,10 @@ public class Users extends EntityDoc {
   @ManyToOne
   @JoinColumn(name = "role_xid")
   private Roles roles;
+
+  @Column(name = "user_password")
+  private String userPassword;
+
+  @Column(name = "is_login_suspended")
+  private Boolean loginSuspended;
 }

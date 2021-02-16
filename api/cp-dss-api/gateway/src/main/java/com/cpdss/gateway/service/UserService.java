@@ -18,6 +18,8 @@ import com.cpdss.gateway.domain.RolesSpecification;
 import com.cpdss.gateway.domain.ScreenData;
 import com.cpdss.gateway.domain.ScreenInfo;
 import com.cpdss.gateway.domain.ScreenResponse;
+import com.cpdss.gateway.domain.ShipLoginRequest;
+import com.cpdss.gateway.domain.ShipLoginResponse;
 import com.cpdss.gateway.domain.User;
 import com.cpdss.gateway.domain.UserAuthorizationsResponse;
 import com.cpdss.gateway.domain.UserResponse;
@@ -31,6 +33,8 @@ import com.cpdss.gateway.repository.RoleUserRepository;
 import com.cpdss.gateway.repository.RolesRepository;
 import com.cpdss.gateway.repository.ScreenRepository;
 import com.cpdss.gateway.repository.UsersRepository;
+import com.cpdss.gateway.security.ship.ShipJwtService;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +70,8 @@ public class UserService {
   @Autowired private RolesRepository rolesRepository;
 
   @Autowired private RoleUserRepository roleUserRepository;
+
+  @Autowired private ShipJwtService jwtService;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -593,5 +599,41 @@ public class UserService {
     roleResponse.setMessage(SUCCESS);
     roleResponse.setRoleId(roleEntity.getId());
     return roleResponse;
+  }
+
+  /**
+   * Generate JWT token for ship
+   *
+   * @param username
+   * @return
+   * @throws GenericServiceException
+   */
+  public ShipLoginResponse generateShipUserToken(ShipLoginRequest request, String correlationId)
+      throws GenericServiceException {
+    Users user = this.usersRepository.findByUsernameAndIsActive(request.getUsername(), true);
+    if (null == user) {
+      throw new GenericServiceException(
+          "User does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
+    }
+    user.setLastLoginDate(LocalDateTime.now());
+    this.usersRepository.save(user);
+    return new ShipLoginResponse(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId),
+        this.jwtService.generateToken(user));
+  }
+
+  /**
+   * If user exist by the username from request, update the last attempted date in db
+   *
+   * @param request
+   */
+  public void updateLastLoginAttemptedDateForShipUser(ShipLoginRequest request) {
+    Users user = this.usersRepository.findByUsernameAndIsActive(request.getUsername(), true);
+    if (null != user) {
+      user.setLastAttemptedDate(LocalDateTime.now());
+      this.usersRepository.save(user);
+    } else {
+      log.info("User doesn't exist with username: {}", request.getUsername());
+    }
   }
 }
