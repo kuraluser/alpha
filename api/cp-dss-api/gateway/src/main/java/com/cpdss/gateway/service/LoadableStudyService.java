@@ -739,16 +739,22 @@ public class LoadableStudyService {
     CargoNominationRequest cargoNominationRequest = builder.build();
     CargoNominationReply cargoNominationReply =
         loadableStudyServiceBlockingStub.saveCargoNomination(cargoNominationRequest);
-    if (cargoNominationReply != null
-        && cargoNominationReply.getResponseStatus() != null
-        && SUCCESS.equalsIgnoreCase(cargoNominationReply.getResponseStatus().getStatus())) {
-      cargoNominationResponse.setCargoNominationId(cargoNominationReply.getCargoNominationId());
-    } else {
-      throw new GenericServiceException(
-          "Error in saving cargo nomination",
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    if (!SUCCESS.equals(cargoNominationReply.getResponseStatus().getStatus())) {
+      if (!StringUtils.isEmpty(cargoNominationReply.getResponseStatus().getCode())) {
+        throw new GenericServiceException(
+            "GenericServiceException saveCargoNomination "
+                + cargoNominationReply.getResponseStatus().getMessage(),
+            cargoNominationReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(
+                Integer.valueOf(cargoNominationReply.getResponseStatus().getHttpStatusCode())));
+      } else {
+        throw new GenericServiceException(
+            "GenericServiceException saveCargoNomination",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
     }
+    cargoNominationResponse.setCargoNominationId(cargoNominationReply.getCargoNominationId());
     return cargoNominationResponse;
   }
 
@@ -1219,7 +1225,8 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to save discharging ports",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
     PortRotationResponse response = new PortRotationResponse();
     response.setResponseStatus(

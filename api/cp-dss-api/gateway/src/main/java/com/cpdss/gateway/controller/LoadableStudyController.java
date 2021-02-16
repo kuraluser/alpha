@@ -299,6 +299,9 @@ public class LoadableStudyController {
       response =
           loadableStudyService.saveCargoNomination(
               vesselId, voyageId, loadableStudyId, cargoNomination, headers);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in saveCargoNomination", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in getCargoNomination ", e);
       throw new CommonRestException(

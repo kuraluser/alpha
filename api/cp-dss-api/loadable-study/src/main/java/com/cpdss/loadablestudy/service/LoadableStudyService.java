@@ -1014,14 +1014,31 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         cargoNomination = new CargoNomination();
         cargoNomination = buildCargoNomination(cargoNomination, request);
       }
-      this.cargoNominationRepository.save(cargoNomination);
       // update port rotation table with loading ports from cargo nomination
       LoadableStudy loadableStudyRecord = loadableStudy.get();
+      // validate if requested are already added as transit ports
+      if (!cargoNomination.getCargoNominationPortDetails().isEmpty()) {
+        List<Long> requestedPortIds =
+            cargoNomination.getCargoNominationPortDetails().stream()
+                .map(CargoNominationPortDetails::getPortId)
+                .collect(Collectors.toList());
+        validateTransitPorts(loadableStudyRecord, requestedPortIds);
+      }
+      this.cargoNominationRepository.save(cargoNomination);
       this.updatePortRotationWithLoadingPorts(
           loadableStudyRecord, cargoNomination, existingCargoPortIds);
       cargoNominationReplyBuilder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS))
           .setCargoNominationId((cargoNomination.getId() != null) ? cargoNomination.getId() : 0);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException saveCargoNomination", e);
+      cargoNominationReplyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setHttpStatusCode(e.getStatus().value())
+              .setStatus(FAILED)
+              .build());
     } catch (Exception e) {
       log.error("Error saving cargo nomination", e);
       cargoNominationReplyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
@@ -1064,9 +1081,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     if (!CollectionUtils.isEmpty(requestedPortIds)
         && !CollectionUtils.isEmpty(existingCargoPortIds)) {
       existingCargoPortIds.removeAll(requestedPortIds);
-      loadableStudyPortRotationRepository.deleteLoadingPortRotation(
-          loadableStudy, existingCargoPortIds);
-      synopticalTableRepository.deleteSynopticalPorts(loadableStudy.getId(), existingCargoPortIds);
+      if (!CollectionUtils.isEmpty(existingCargoPortIds)) {
+        existingCargoPortIds.forEach(
+            existingPortId -> {
+              Long otherCargoRefExistCount =
+                  this.cargoNominationRepository.getCountCargoNominationWithPortIds(
+                      cargoNomination.getLoadableStudyXId(), cargoNomination, existingPortId);
+              if (Objects.equals(otherCargoRefExistCount, Long.valueOf("0"))) {
+                loadableStudyPortRotationRepository.deleteLoadingPortRotationByPort(
+                    loadableStudy, existingPortId);
+                synopticalTableRepository.deleteSynopticalPorts(
+                    loadableStudy.getId(), existingPortId);
+              }
+            });
+      }
     }
     // remove loading portIds from request which are already available in port
     // rotation for the
@@ -1091,6 +1119,26 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       // update loadable-study-port-rotation with ports from cargoNomination and port
       // attributes
       buildAndSaveLoadableStudyPortRotationEntities(loadableStudy, requestedPortIds, portReply);
+    }
+  }
+
+  /**
+   * Fetch transit ports for the specific loadableStudy if available in port rotation so that they
+   * are not added as loading ports
+   *
+   * @param cargoNomination
+   * @throws GenericServiceException
+   */
+  private void validateTransitPorts(LoadableStudy loadableStudy, List<Long> requestedPortIds)
+      throws GenericServiceException {
+    List<Long> transitPorts =
+        this.loadableStudyPortRotationRepository.getTransitPorts(loadableStudy, requestedPortIds);
+    if (!CollectionUtils.isEmpty(transitPorts)) {
+      throw new GenericServiceException(
+          "Ports exist as transit ports "
+              + StringUtils.collectionToCommaDelimitedString(transitPorts),
+          CommonErrorCodes.E_CPDSS_TRANSIT_PORT_EXISTS,
+          HttpStatusCode.BAD_REQUEST);
     }
   }
 
@@ -1791,7 +1839,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-
       LoadableStudy loadableStudy = loadableStudyOpt.get();
       loadableStudy.setDischargeCargoId(request.getDischargingCargoId());
       this.loadableStudyRepository.save(loadableStudy);
@@ -1814,6 +1861,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
       }
       if (!CollectionUtils.isEmpty(portIds)) {
+        // ports already added as transit cannot be again added as discharge ports
+        validateTransitPorts(loadableStudyOpt.get(), portIds);
         GetPortInfoByPortIdsRequest.Builder reqBuilder = GetPortInfoByPortIdsRequest.newBuilder();
         portIds.forEach(
             port -> {
@@ -1841,6 +1890,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           ResponseStatus.newBuilder()
               .setCode(e.getCode())
               .setMessage(e.getMessage())
+              .setHttpStatusCode(e.getStatus().value())
               .setStatus(FAILED)
               .build());
     } catch (Exception e) {
@@ -2036,7 +2086,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   loadableStudyPortRotationRepository.deleteLoadingPortRotationByPort(
                       loadableStudyOpt.get(), requestPortId);
                   synopticalTableRepository.deleteSynopticalPorts(
-                      loadableStudyOpt.get().getId(), requestedPortIds);
+                      loadableStudyOpt.get().getId(), requestPortId);
                 }
               });
         }
@@ -3461,7 +3511,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     // fetch the max priority for the cargoNomination ids and set as priority for commingle
     Long maxPriority =
         cargoNominationRepository.getMaxPriorityCargoNominationIn(cargoNominationIds);
-    commingleCargoEntity.setPriority(maxPriority != null ? maxPriority.intValue() : 0);
+    commingleCargoEntity.setPriority(maxPriority != null ? maxPriority.intValue() : null);
     commingleCargoEntity.setLoadableStudyXId(loadableStudyId);
     commingleCargoEntity.setPurposeXid(requestRecord.getPurposeId());
     commingleCargoEntity.setTankIds(
