@@ -318,6 +318,7 @@
   });
 
   async function checkLoadableStudyStatus(data) {
+    let currentStatus;
     const timer = setInterval(async () => {
       var headers = {
         'Accept': 'application/json',
@@ -330,20 +331,12 @@
       });
       const syncView = await syncResponse.json();
       if (syncView.responseStatus.status === '200') {
+        currentStatus = syncView.loadableStudyStatusId;
         if (syncView.loadableStudyStatusId === 4 || syncView.loadableStudyStatusId === 5) {
           const sync = {};
           sync.pattern = data;
           sync.type = 'loadable-pattern-processing';
           sync.statusId = syncView.loadableStudyStatusId;
-          setTimeout(() => {
-            const sync = {};
-            sync.pattern = data;
-            sync.type = 'loadable-pattern-no-response';
-            // sending default status
-            sync.statusId = 1;
-            notifyClients(sync);
-            clearInterval(timer);
-          }, 300000);
           notifyClients(sync);
         }
         if (syncView.loadableStudyStatusId === 3 ) {
@@ -367,6 +360,17 @@
         clearInterval(timer);
       }
     }, 3500);
+    setTimeout(() => {
+      if(currentStatus === 4){
+      const sync = {};
+      sync.pattern = data;
+      sync.type = 'loadable-pattern-no-response';
+      // sending default status
+      sync.statusId = 1;
+      notifyClients(sync);
+      clearInterval(timer);         
+    }
+    }, 300000);
   }
 
 
