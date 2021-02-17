@@ -2392,6 +2392,7 @@ public class LoadableStudyService {
               ? BigDecimal.ZERO
               : new BigDecimal(ballast.getCorrectedUllage()));
       record.setSg(ballast.getSpGravity());
+      record.setColorCode(ballast.getColorCode());
       list.add(record);
     }
     synopticalRecord.setBallastPlannedTotal(BigDecimal.ZERO);
@@ -2688,7 +2689,7 @@ public class LoadableStudyService {
               ? BigDecimal.ZERO
               : new BigDecimal(protoRec.getCorrectedUllage()));
       rec.setApi(
-          isEmpty(protoRec.getDensity()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getDensity()));
+          isEmpty(protoRec.getApi()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getApi()));
       rec.setCapacity(
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
       list.add(rec);

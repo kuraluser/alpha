@@ -902,7 +902,7 @@ message SynopticalCargoRecord{
 	string cargoAbbreviation = 8;
 	int64 cargoId = 9;
 	string capacity = 10;
-	string density = 11;
+	string api = 11;
 }
 
 message SynopticalOhqRecord{
@@ -924,6 +924,7 @@ message SynopticalBallastRecord{
 	string capacity = 5;
 	string correctedUllage = 6;
 	string spGravity = 7;
+	string colorCode = 8;
 }
 
 message SynopticalTableRequest{

@@ -5296,6 +5296,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(ballast.getCorrectedUllage())
               .ifPresent(ullage -> ballastBuilder.setCorrectedUllage(ullage));
           Optional.ofNullable(ballast.getSg()).ifPresent(sg -> ballastBuilder.setSpGravity(sg));
+          Optional.ofNullable(ballast.getColorCode()).ifPresent(colorCode -> ballastBuilder.setColorCode(colorCode));
         } else {
           log.info(
               "Ballast details not available for the tank: {}, pattern: {}",
@@ -5546,8 +5547,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(cargoBuilder::setColorCode);
           Optional.ofNullable(tankDataOpt.get().getCorrectedUllage())
               .ifPresent(ullage -> cargoBuilder.setCorrectedUllage(valueOf(ullage)));
-          Optional.ofNullable(tankDataOpt.get().getDensity())
-              .ifPresent(density -> cargoBuilder.setDensity(valueOf(density)));
+          Optional.ofNullable(tankDataOpt.get().getApi())
+              .ifPresent(api -> cargoBuilder.setApi(valueOf(api)));
         }
       }
       if (!isEmpty(cargoBuilder.getActualWeight())) {
@@ -5580,8 +5581,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         cargoBuilder.setPlannedWeight(valueOf(obqEntity.getPlannedArrivalWeight()));
       }
       if (null != obqEntity.getDensity()) {
-        cargoBuilder.setDensity(valueOf(obqEntity.getDensity()));
+        cargoBuilder.setApi(valueOf(obqEntity.getDensity()));
       }
+      if (null != obqEntity.getAbbreviation()) {
+          cargoBuilder.setCargoAbbreviation(obqEntity.getAbbreviation());
+        }
     } else {
       // data has to be populated from previous voyage - cargo history table
       // lazy loading the cargo history
