@@ -591,6 +591,15 @@ a{
 
 .badge-custom{
   color: $hover-color;
+  &.error{
+    background:$red;
+    }
+    &.success{
+    background:$green;
+    }
+    &.commingle{
+    background:$commingle;
+    }
 }
 .tanks-inner-outer-ohq{
   border-color: $tank-ohq-border;  
@@ -1135,12 +1144,12 @@ tr:hover a{
 .p-datepicker .p-timepicker button:enabled:hover{
   color: $text-secondary;
 }
-.colorpicker{
+.colorpicker, .p-colorpicker-preview{
   background-color: $body-bg;
 }
 
 // TODO: need to be removed when this colorpicker is removed
-p-colorpicker.ng-invalid.empty ::ng-deep input {
+p-colorpicker.ng-invalid.empty  input, p-colorpicker.ng-invalid.empty  .p-colorpicker-preview {
   background-color: $body-bg !important;
 }
 .p-paginator{
@@ -1157,3 +1166,8 @@ p-colorpicker.ng-invalid.empty ::ng-deep input {
   background: $selected-bg;
   color: $hover-color;
 }
+
+.p-inputtext.p-colorpicker-preview{
+  border: 1px solid darken( $body-bg, 10%);
+}
+
