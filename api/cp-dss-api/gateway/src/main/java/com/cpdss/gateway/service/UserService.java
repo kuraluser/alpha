@@ -18,6 +18,8 @@ import com.cpdss.gateway.domain.RolesSpecification;
 import com.cpdss.gateway.domain.ScreenData;
 import com.cpdss.gateway.domain.ScreenInfo;
 import com.cpdss.gateway.domain.ScreenResponse;
+import com.cpdss.gateway.domain.ShipLoginRequest;
+import com.cpdss.gateway.domain.ShipLoginResponse;
 import com.cpdss.gateway.domain.User;
 import com.cpdss.gateway.domain.UserAuthorizationsResponse;
 import com.cpdss.gateway.domain.UserResponse;
@@ -31,6 +33,8 @@ import com.cpdss.gateway.repository.RoleUserRepository;
 import com.cpdss.gateway.repository.RolesRepository;
 import com.cpdss.gateway.repository.ScreenRepository;
 import com.cpdss.gateway.repository.UsersRepository;
+import com.cpdss.gateway.security.ship.ShipJwtService;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +70,8 @@ public class UserService {
   @Autowired private RolesRepository rolesRepository;
 
   @Autowired private RoleUserRepository roleUserRepository;
+
+  @Autowired private ShipJwtService jwtService;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -431,6 +437,9 @@ public class UserService {
   public PermissionResponse savePermission(
       RolePermission permission, Long companyId, String correlationId)
       throws GenericServiceException {
+    if (permission.getRole().getName() != null) {
+      this.validateRoleName(permission.getRoleId(), permission.getRole().getName());
+    }
     PermissionResponse permissionResponse = new PermissionResponse();
     Optional<Roles> role =
         this.rolesRepository.findByIdAndCompanyXIdAndIsActive(
@@ -446,14 +455,14 @@ public class UserService {
         this.usersRepository.findByCompanyXIdAndIdInAndIsActive(
             companyId, permission.getUserId(), true);
 
-    List<Long> screenIds = new ArrayList<Long>();
+    List<Long> screenIds = new ArrayList<>();
     for (ScreenInfo screenInfo : permission.getScreens()) {
       screenIds.add(screenInfo.getId());
     }
 
     List<RoleUserMapping> roleUserList =
         this.roleUserRepository.findByRolesAndIsActive(role.get().getId(), true);
-    if (roleUserList != null && roleUserList.size() != 0) {
+    if (roleUserList != null && !roleUserList.isEmpty()) {
       roleUserList.forEach(
           a -> {
             a.setIsActive(false);
@@ -462,7 +471,7 @@ public class UserService {
 
     List<Screen> screens =
         this.screenRepository.findByCompanyXIdAndIdInAndIsActive(companyId, screenIds, true);
-    if (users != null && users.size() != 0) {
+    if (users != null && !users.isEmpty()) {
       users.forEach(
           user -> {
             Optional<RoleUserMapping> roleUserOpt =
@@ -481,7 +490,7 @@ public class UserService {
           });
     }
 
-    if (screens != null && screens.size() != 0) {
+    if (screens != null && !screens.isEmpty()) {
       screens.forEach(
           screen -> {
             Optional<com.cpdss.gateway.entity.RoleScreen> roleScreenrOpt =
@@ -527,18 +536,30 @@ public class UserService {
     return permissionResponse;
   }
 
-  public RoleResponse saveRole(Role role, Long companyId, String first)
-      throws GenericServiceException {
-    RoleResponse roleResponse = new RoleResponse();
-    Optional<Roles> roleEntityOpt =
-        this.rolesRepository.findByCompanyXIdAndNameAndIsActive(companyId, role.getName(), true);
-    Roles roleEntity = null;
-    if (!roleEntityOpt.isPresent()) {
-      roleEntity = new Roles();
-    } else {
+  /**
+   * * Check if role with same name exists
+   *
+   * @param companyId
+   * @param roleId
+   * @param roleName
+   * @throws GenericServiceException
+   */
+  private void validateRoleName(Long roleId, String roleName) throws GenericServiceException {
+    Roles duplicate = this.rolesRepository.findByNameIgnoreCaseAndIsActive(roleName, true);
+    if ((null == roleId && null != duplicate)
+        || (null != roleId && null != duplicate && !duplicate.getId().equals(roleId))) {
       throw new GenericServiceException(
-          "Role already  exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
+          "Role with given name already exist",
+          CommonErrorCodes.E_CPDSS_ROLE_NAME_EXISTS,
+          HttpStatusCode.BAD_REQUEST);
     }
+  }
+
+  public RoleResponse saveRole(Role role, Long companyId, String correlationId)
+      throws GenericServiceException {
+    this.validateRoleName(null, role.getName());
+    RoleResponse roleResponse = new RoleResponse();
+    Roles roleEntity = new Roles();
     roleEntity.setIsActive(true);
     roleEntity.setName(role.getName());
     roleEntity.setDescription(role.getDescription());
@@ -578,5 +599,41 @@ public class UserService {
     roleResponse.setMessage(SUCCESS);
     roleResponse.setRoleId(roleEntity.getId());
     return roleResponse;
+  }
+
+  /**
+   * Generate JWT token for ship
+   *
+   * @param username
+   * @return
+   * @throws GenericServiceException
+   */
+  public ShipLoginResponse generateShipUserToken(ShipLoginRequest request, String correlationId)
+      throws GenericServiceException {
+    Users user = this.usersRepository.findByUsernameAndIsActive(request.getUsername(), true);
+    if (null == user) {
+      throw new GenericServiceException(
+          "User does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
+    }
+    user.setLastLoginDate(LocalDateTime.now());
+    this.usersRepository.save(user);
+    return new ShipLoginResponse(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId),
+        this.jwtService.generateToken(user));
+  }
+
+  /**
+   * If user exist by the username from request, update the last attempted date in db
+   *
+   * @param request
+   */
+  public void updateLastLoginAttemptedDateForShipUser(ShipLoginRequest request) {
+    Users user = this.usersRepository.findByUsernameAndIsActive(request.getUsername(), true);
+    if (null != user) {
+      user.setLastAttemptedDate(LocalDateTime.now());
+      this.usersRepository.save(user);
+    } else {
+      log.info("User doesn't exist with username: {}", request.getUsername());
+    }
   }
 }

@@ -51,4 +51,7 @@ public class LoadablePlanStowageBallastDetails extends EntityDoc {
 
   @Column(name = "sg")
   private String sg;
+
+  @Column(name = "color_code")
+  private String colorCode;
 }

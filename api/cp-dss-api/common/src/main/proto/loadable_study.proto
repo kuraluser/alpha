@@ -100,6 +100,9 @@ service LoadableStudyService {
 	rpc SaveAlgoLoadableStudyStatus(AlgoStatusRequest) returns (AlgoStatusReply) {
 	}
 	
+	rpc SaveLoadicatorResults(LoadicatorResultsRequest) returns (AlgoReply){
+	}
+	
 	rpc SaveSynopticalTable(SynopticalTableRequest) returns (SynopticalTableReply){
 	}
 	
@@ -145,6 +148,29 @@ message RecalculateVolumeRequest {
 message RecalculateVolumeReply {
 	ResponseStatus responseStatus = 1;
 	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
+}
+
+message LoadicatorResultsRequest {
+	string processId = 1;
+	int64 loadableStudyId = 2;
+	repeated LoadicatorPatternDetailsResults loadicatorPatternDetailsResults = 3;
+}
+
+message LoadicatorPatternDetailsResults {
+	int64 loadablePatternId = 1;
+	repeated LodicatorResultDetails lodicatorResultDetails = 2;
+}
+
+message LodicatorResultDetails {
+	int64 portId = 1;
+	string hog = 2;
+	string calculatedDraftFwdPlanned = 3;
+	string calculatedDraftMidPlanned = 4;
+	string calculatedDraftAftPlanned = 5;
+	string calculatedTrimPlanned = 6;
+	string blindSector = 7;
+	string list = 8;
+	int64 operationId = 9;
 }
 
 message LoadicatorDataRequest {

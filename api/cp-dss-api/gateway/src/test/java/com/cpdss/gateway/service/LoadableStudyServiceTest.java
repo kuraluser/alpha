@@ -78,6 +78,9 @@ import com.cpdss.gateway.domain.LoadableQuantity;
 import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.LoadicatorPatternDetailsResults;
+import com.cpdss.gateway.domain.LoadicatorResultsRequest;
+import com.cpdss.gateway.domain.LodicatorResultDetails;
 import com.cpdss.gateway.domain.OnBoardQuantity;
 import com.cpdss.gateway.domain.OnBoardQuantityResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
@@ -143,6 +146,7 @@ class LoadableStudyServiceTest {
   private static final String MAX_TEMP_EXPECTED = "100";
 
   private static final String VOYAGE = "VOYAGE";
+  private static final String LOADICATOR_DATA = "LOADICATOR";
   private static final String LOADABLE_QUANTITY_DUMMY = "100";
   private static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
   private static final BigDecimal TEST_BIGDECIMAL_VALUE = new BigDecimal(100);
@@ -1352,6 +1356,100 @@ class LoadableStudyServiceTest {
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  /** @throws GenericServiceException void */
+  @Test
+  void testSaveLoadicatorResult() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.saveLoadicatorResult(
+                any(LoadicatorResultsRequest.class), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(
+            this.loadableStudyService.saveLoadicatorResult(
+                any(
+                    com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest.Builder
+                        .class)))
+        .thenReturn(
+            AlgoReply.newBuilder()
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    AlgoPatternResponse response =
+        this.loadableStudyService.saveLoadicatorResult(
+            createLoadicatorResultsRequest(), 1L, CORRELATION_ID_HEADER_VALUE);
+    assertAll(
+        () ->
+            assertEquals(
+                String.valueOf(HttpStatusCode.OK.value()),
+                response.getResponseStatus().getStatus(),
+                "response valid"));
+  }
+
+  /** @throws GenericServiceException void */
+  @Test
+  void testSaveLoadicatorResultGrpcFailure() throws GenericServiceException {
+    Mockito.when(
+            this.loadableStudyService.saveLoadicatorResult(
+                any(LoadicatorResultsRequest.class), anyLong(), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(
+            this.loadableStudyService.saveLoadicatorResult(
+                any(
+                    com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest.Builder
+                        .class)))
+        .thenReturn(
+            AlgoReply.newBuilder()
+                .setResponseStatus(
+                    ResponseStatus.newBuilder()
+                        .setStatus(FAILED)
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .build())
+                .build());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                this.loadableStudyService.saveLoadicatorResult(
+                    createLoadicatorResultsRequest(), 1L, CORRELATION_ID_HEADER_VALUE));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  /** @return LoadicatorResultsRequest */
+  private LoadicatorResultsRequest createLoadicatorResultsRequest() {
+    LoadicatorResultsRequest request = new LoadicatorResultsRequest();
+    request.setProcessId("");
+    request.setLoadicatorResultsPatternWise(createLoadicatorResultsPatternWise());
+    return request;
+  }
+
+  /** @return List<LoadicatorPatternDetailsResults> */
+  private List<LoadicatorPatternDetailsResults> createLoadicatorResultsPatternWise() {
+    List<LoadicatorPatternDetailsResults> patternDetailsResults =
+        new ArrayList<LoadicatorPatternDetailsResults>();
+    LoadicatorPatternDetailsResults detailsResults = new LoadicatorPatternDetailsResults();
+    patternDetailsResults.add(detailsResults);
+    detailsResults.setLoadablePatternId(1L);
+    detailsResults.setLodicatorResultDetails(createLodicatorResultDetails());
+    return patternDetailsResults;
+  }
+
+  /** @return List<LodicatorResultDetails> */
+  private List<LodicatorResultDetails> createLodicatorResultDetails() {
+    List<LodicatorResultDetails> details = new ArrayList<LodicatorResultDetails>();
+    LodicatorResultDetails lodicatorResultDetails = new LodicatorResultDetails();
+    lodicatorResultDetails.setBlindSector(LOADICATOR_DATA);
+    lodicatorResultDetails.setCalculatedDraftAftPlanned(LOADICATOR_DATA);
+    lodicatorResultDetails.setCalculatedDraftFwdPlanned(LOADICATOR_DATA);
+    lodicatorResultDetails.setCalculatedDraftMidPlanned(LOADICATOR_DATA);
+    lodicatorResultDetails.setCalculatedTrimPlanned(LOADICATOR_DATA);
+    lodicatorResultDetails.setHog(LOADICATOR_DATA);
+    lodicatorResultDetails.setList(LOADICATOR_DATA);
+    lodicatorResultDetails.setPortId(1L);
+    lodicatorResultDetails.setOperationId(1L);
+    details.add(lodicatorResultDetails);
+    return details;
   }
 
   /** @throws GenericServiceException void */

@@ -29,6 +29,6 @@ public interface SynopticalTableRepository extends CommonCrudRepository<Synoptic
   @Transactional
   @Modifying
   @Query(
-      "Update SynopticalTable set isActive = false where loadableStudyXId = ?1 AND portXid in ?2 ")
-  public void deleteSynopticalPorts(long loadableStudyXId, List<Long> portIds);
+      "Update SynopticalTable set isActive = false where loadableStudyXId = ?1 AND portXid = ?2 ")
+  public void deleteSynopticalPorts(long loadableStudyXId, Long portIds);
 }

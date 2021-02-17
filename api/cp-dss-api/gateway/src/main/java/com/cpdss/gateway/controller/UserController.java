@@ -130,7 +130,7 @@ public class UserController {
       @RequestParam(required = false, defaultValue = "10") int pageSize,
       @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "id") String sortBy,
-      @RequestParam(required = false, defaultValue = "ASC") String orderBy,
+      @RequestParam(required = false, defaultValue = "desc") String orderBy,
       @RequestParam Map<String, String> params)
       throws CommonRestException {
     RoleResponse response = null;
@@ -168,7 +168,7 @@ public class UserController {
     PermissionResponse permissionResponse = new PermissionResponse();
 
     try {
-      log.info("save permission API. correlationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
+      log.info("save permission API. CorrelationId: {}", headers.getFirst(CORRELATION_ID_HEADER));
       Long companyId = 1L;
       permissionResponse =
           userService.savePermission(
@@ -177,7 +177,7 @@ public class UserController {
       log.error("GenericServiceException in save voyage", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
-      log.error("Error in save permission ", e);
+      log.error("Error in save permission api", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

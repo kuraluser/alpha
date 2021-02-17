@@ -31,6 +31,7 @@ import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
 import com.cpdss.gateway.domain.LoadablePlanRequest;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.LoadicatorResultsRequest;
 import com.cpdss.gateway.domain.LoadingPort;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
@@ -221,6 +222,13 @@ class LoadableStudyControllerTest {
       CLOUD_API_URL_PREFIX + GET_CONFIRM_PLAN_API_URL;
   private static final String GET_CONFIRM_PLAN_SHIP_API_URL =
       SHIP_API_URL_PREFIX + GET_CONFIRM_PLAN_API_URL;
+
+  private static final String LOADICATOR_RESULT_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadicator-result";
+  private static final String LOADICATOR_RESULT_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + LOADICATOR_RESULT_API_URL;
+  private static final String LOADICATOR_RESULT_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + LOADICATOR_RESULT_API_URL;
 
   private static final String GET_PATTERN_LIST_API_URL =
       "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/patterns";
@@ -1110,6 +1118,56 @@ class LoadableStudyControllerTest {
    * @param url
    * @throws Exception void
    */
+  @ValueSource(strings = {LOADICATOR_RESULT_CLOUD_API_URL, LOADICATOR_RESULT_SHIP_API_URL})
+  @ParameterizedTest
+  void testSaveLoadicatorResult(String url) throws Exception {
+    when(this.loadableStudyService.saveLoadicatorResult(
+            any(LoadicatorResultsRequest.class), anyLong(), anyString()))
+        .thenReturn(new AlgoPatternResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(this.createLoadicatorResult())
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  /**
+   * @param exceptionClass
+   * @throws Exception void
+   */
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testSaveLoadicatorResultRuntimeException(Class<? extends Exception> exceptionClass)
+      throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.loadableStudyService.saveLoadicatorResult(
+            any(LoadicatorResultsRequest.class), anyLong(), anyString()))
+        .thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(
+                    LOADICATOR_RESULT_CLOUD_API_URL, TEST_VESSEL_ID, TEST_VOYAGE_ID, 1)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(this.createLoadicatorResult())
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  /**
+   * @param url
+   * @throws Exception void
+   */
   @ValueSource(
       strings = {
         GET_LOADABLE_STUDY_ALGO_STATUS_CLOUD_API_URL,
@@ -1168,6 +1226,14 @@ class LoadableStudyControllerTest {
     AlgoStatusRequest request = new AlgoStatusRequest();
     request.setProcessId("ID");
     request.setLoadableStudyStatusId(1L);
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.writeValueAsString(request);
+  }
+
+  /** @return Object */
+  private String createLoadicatorResult() throws JsonProcessingException {
+    LoadablePlanRequest request = new LoadablePlanRequest();
+    request.setProcessId("ID");
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(request);
   }
