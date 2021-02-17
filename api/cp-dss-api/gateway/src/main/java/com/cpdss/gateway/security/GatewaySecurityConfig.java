@@ -46,7 +46,8 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 public class GatewaySecurityConfig {
 
   public static final String SHORE_API_PREFIX = "/api/cloud/";
-  public static final String SHIP_API_PREFIX = "/api/ship/";
+  // TODO to be changed to commented values after the demo
+  public static final String SHIP_API_PREFIX = "/api/s/"; // "/api/ship/";
   public static final String AUTHORIZATION_HEADER = "authorization";
 
   private static final String SHIP_URL_PATTERN = SHIP_API_PREFIX + "**";
@@ -69,7 +70,9 @@ public class GatewaySecurityConfig {
           .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
           .and()
           .authorizeRequests()
-          .antMatchers(SHIP_URL_PATTERN)
+          // TODO to be changed to commented value after the demo
+          // .antMatchers(SHIP_URL_PATTERN)
+          .antMatchers("/**")
           .permitAll()
           .and()
           .authorizeRequests()
