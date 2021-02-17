@@ -144,7 +144,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'slNo',
         header: 'SL',
         fieldType: DATATABLE_FIELD_TYPE.SLNO,
-        sortable: true,
+        sortable: false,
         fieldHeaderClass: 'column-sl',
         fieldClass: 'sl'
       },
@@ -517,7 +517,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'slNo',
         header: 'SL',
         fieldType: DATATABLE_FIELD_TYPE.SLNO,
-        sortable: true,
+        sortable: false,
         fieldHeaderClass: 'column-sl',
         fieldClass: 'sl'
       },
@@ -769,7 +769,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'slNo',
         header: 'OHQ_SL',
         fieldType: DATATABLE_FIELD_TYPE.SLNO,
-        sortable: true,
+        sortable: false,
         fieldHeaderClass: 'column-sl',
         fieldClass: 'sl'
       },
@@ -1080,7 +1080,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'slNo',
         header: 'OBQ_SL',
         fieldType: DATATABLE_FIELD_TYPE.SLNO,
-        sortable: true,
+        sortable: false,
         fieldHeaderClass: 'column-sl',
         fieldClass: 'sl'
       },

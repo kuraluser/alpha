@@ -298,8 +298,27 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         fromGroup.markAllAsTouched();
         this.cargoNominationForm.updateValueAndValidity();
       }
-    }
+    }  
+    this.updateFormValidity(); 
     this.setDisableUnitChange()
+  }
+
+  /**
+   * Update validity of invalid rows if valid
+   *
+   * @memberof CargoNominationComponent
+   */
+  updateFormValidity() {
+    const formArray = (<FormArray>this.cargoNominationForm.get('dataTable')).controls;
+    formArray.forEach(async (row: FormGroup, index) => {
+      if (row.invalid && row.touched) {
+        const invalidFormControls = this.findInvalidControlsRecursive(row);
+        invalidFormControls.forEach((key) => {
+          const formControl = this.field(index, key);
+          formControl.updateValueAndValidity();
+        });
+      }
+    });  
   }
 
   /**
@@ -330,11 +349,12 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
               const dataTableControl = <FormArray>this.cargoNominationForm.get('dataTable');
               dataTableControl.removeAt(event.index);
               this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
+              this.updateFormValidity(); 
             }
             this.ngxSpinnerService.hide();
           }
         });
-    }
+      }
   }
 
   /**
@@ -379,6 +399,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         }
       }
     }
+    this.updateFormValidity(); 
   }
 
   /**
