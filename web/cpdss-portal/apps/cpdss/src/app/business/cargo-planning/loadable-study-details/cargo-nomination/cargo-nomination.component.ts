@@ -56,7 +56,6 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       const _cargoNomination = this.loadableStudyDetailsTransformationService.formatCargoNomination(cargoNomination);
       this.totalQuantity += _cargoNomination?.isDelete ? 0 : Number(_cargoNomination.quantity.value);
       _cargoNomination.priority.value = _cargoNomination.priority.value > cargoNominations.length ? cargoNominations.length : _cargoNomination.priority.value;
-      this.updateRowByUnit(_cargoNomination, this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit);
       return _cargoNomination
     });
     this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(this.totalQuantity);
@@ -180,8 +179,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.listData.cargoList = cargoNominationFormData?.cargos;
       this.listData.segregationList = cargoNominationFormData?.segregations;
       this.cargoNominationDetails = cargoNominationFormData;
+      this.onUnitChange(false);
       this.initCargoNominationArray(this.cargoNominationDetails?.cargoNominations);
-      this.onUnitChange();
     }
   }
 
@@ -459,6 +458,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     this.ngxSpinnerService.show();
     const _cargoNominations = cargoNominations?.map((item) => {
       const cargoData = this.loadableStudyDetailsTransformationService.getCargoNominationAsValueObject(item, false, this.listData);
+      this.updateRowByUnit(cargoData, this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit )
       return cargoData;
     });
     //TODO: need to remove this. Instead of calling api for each cargo for cargo specific ports must be coming from cargo nomination api
@@ -687,14 +687,15 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    *
    * @memberof CargoNominationComponent
    */
-    onUnitChange() {
+    onUnitChange(update = true) {
     const unitFrom = this.loadableStudyDetailsApiService.currentUnit
     const unitTo = <QUANTITY_UNIT>localStorage.getItem('unit');
     this.loadableStudyDetailsApiService.currentUnit = unitTo;
-    const formArray = <FormArray>this.cargoNominationForm.controls.dataTable;
-    this.cargoNominations.forEach(row => {
-      this.updateRowByUnit(row, unitFrom, unitTo);
-    })
+    if(update){
+      this.cargoNominations.forEach(row => {
+        this.updateRowByUnit(row, unitFrom, unitTo);
+      })
+    }
   }
 
   /**
