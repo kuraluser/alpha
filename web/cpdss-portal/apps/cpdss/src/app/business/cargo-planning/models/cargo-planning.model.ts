@@ -572,6 +572,7 @@ export interface IPortOBQTankDetail {
     fullCapacity: number;
     abbreviation: string;
     loadOnTop: boolean;
+    volume: number;
 }
 
 /**
