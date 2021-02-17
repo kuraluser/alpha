@@ -65,4 +65,6 @@ public class LoadableStudy {
   private List<Long> deletedAttachments;
 
   private Boolean loadOnTop;
+
+  private String loadableStudyStatusLastModifiedTime;
 }

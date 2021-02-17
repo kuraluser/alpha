@@ -666,6 +666,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 status -> {
                   builder.setStatusId(status.getId());
                   builder.setStatus(status.getName());
+                  List<LoadableStudyAlgoStatus> algoStatus =
+                      loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
+                          entity.getId(), true);
+                  if (!algoStatus.isEmpty()) {
+                    builder.setLoadableStudyStatusLastModifiedTime(
+                        algoStatus.stream()
+                            .reduce((f, s) -> s)
+                            .orElse(null)
+                            .getLastModifiedDateTime()
+                            .toString()); // getting the last algo status
+                  } else {
+                    builder.setLoadableStudyStatusLastModifiedTime("0");
+                  }
                 });
         Optional.ofNullable(entity.getDetails()).ifPresent(builder::setDetail);
         Optional.ofNullable(entity.getCharterer()).ifPresent(builder::setCharterer);
@@ -6094,7 +6107,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadablePatternRepository.updateLoadablePatternStatus(
               CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
           loadableStudyRepository.updateLoadableStudyStatus(
-              CONFIRMED_STATUS_ID, loadablePatternOpt.get().getLoadableStudy().getId());
+              CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
           replyBuilder.setConfirmed(true);
         }
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -6138,16 +6151,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 CONFIRMED_STATUS_ID,
                 true);
         if (!loadablePatternConfirmedOpt.isEmpty()) {
-          loadablePatternRepository.updateLoadablePatternStatus(
-              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadablePatternConfirmedOpt.get(0).getId());
-          loadablePatternRepository.updateLoadableStudyStatus(
+
+          loadablePatternRepository.updateLoadablePatternStatusToPlanGenerated(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
-              loadablePatternConfirmedOpt.get(0).getLoadableStudy().getId());
+              loadablePatternConfirmedOpt.get(0).getLoadableStudy().getVoyage().getId());
+          loadablePatternRepository.updateLoadablePatternStatusToPlanGenerated(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
+              loadablePatternConfirmedOpt.get(0).getLoadableStudy().getVoyage().getId());
         }
+
         loadablePatternRepository.updateLoadablePatternStatus(
             CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
         loadableStudyRepository.updateLoadableStudyStatus(
-            CONFIRMED_STATUS_ID, loadablePatternOpt.get().getLoadableStudy().getId());
+            CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
     } catch (Exception e) {
@@ -6188,6 +6204,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       } else {
         replyBuilder.setLoadableStudystatusId(
             loadableStudyAlgoStatusOpt.get().getLoadableStudyStatus().getId());
+        replyBuilder.setLoadableStudyStatusLastModifiedTime(
+            loadableStudyAlgoStatusOpt.get().getLastModifiedDateTime().toString());
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
     } catch (Exception e) {

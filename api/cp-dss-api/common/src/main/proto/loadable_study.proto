@@ -423,6 +423,7 @@ message LoadableStudyStatusRequest {
 message LoadableStudyStatusReply {
 	ResponseStatus responseStatus = 1;
 	int64 loadableStudystatusId = 2;
+	string loadableStudyStatusLastModifiedTime = 3;
 }
 
 message AlgoStatusRequest {
@@ -553,7 +554,7 @@ message LoadableStudyDetail{
 	int64 createdFromId = 20;
 	repeated int64 deletedAttachments = 21;
 	bool loadOnTop=22;
-	
+	string loadableStudyStatusLastModifiedTime = 23;
 }
 
 message LoadableStudyReply{

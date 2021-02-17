@@ -3,6 +3,7 @@ package com.cpdss.loadablestudy.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +25,7 @@ public interface LoadableStudyAlgoStatusRepository
 
   public Optional<LoadableStudyAlgoStatus> findByLoadableStudyIdAndProcessIdAndIsActive(
       Long loadableStudyId, String processId, Boolean isActive);
+
+  public List<LoadableStudyAlgoStatus> findByLoadableStudyIdAndIsActive(
+      Long loadableStudyId, Boolean isActive);
 }
