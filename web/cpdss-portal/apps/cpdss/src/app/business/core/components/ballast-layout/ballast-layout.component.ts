@@ -124,7 +124,7 @@ export class BallastLayoutComponent implements OnInit {
     if (isNaN(fillingratio)) {
       fillingratio = 0;
     }
-    return ((fillingratio).toString() + '%');
+    return ((fillingratio).toString());
   }
 
 

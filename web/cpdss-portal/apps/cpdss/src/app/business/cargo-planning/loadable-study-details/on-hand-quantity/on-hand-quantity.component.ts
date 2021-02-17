@@ -355,7 +355,6 @@ export class OnHandQuantityComponent implements OnInit {
     const departureVolume = this.quantityPipe.transform(event?.data.departureQuantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, event?.data?.density?.value);
     event.data.departureVolume = departureVolume ?? 0;
 
-    this.loadableStudyDetailsTransformationService.setOHQValidity(this.ohqForm.valid && this.ohqGroupValidity(this._selectedPortOHQTankDetails));
     const valueIndex = this.selectedPortOHQTankDetails.findIndex(ohqDetails => ohqDetails?.storeKey === event?.data?.storeKey);
     if (fromGroup.valid) {
       event.data.processing = true;
@@ -403,6 +402,12 @@ export class OnHandQuantityComponent implements OnInit {
             this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
           }
         }
+      } else if(row.invalid) {
+        const invalidFormControls = this.findInvalidControlsRecursive(row);
+        invalidFormControls.forEach((key) => {
+          const formControl = this.field(index, key);
+          formControl.updateValueAndValidity();
+        });
       }
     });
 
@@ -410,7 +415,7 @@ export class OnHandQuantityComponent implements OnInit {
       this.setFillingPercentage(this.selectedTankId);
       this.selectedTankFormGroup.get(event?.field).setValue(Number((this.field(event?.index, event?.field)).value));
     }
-
+    this.loadableStudyDetailsTransformationService.setOHQValidity(this.ohqForm.valid && this.ohqGroupValidity(this.selectedPortOHQTankDetails));
     this.tanks = [...this.tanks];
     this.rearTanks = [...this.rearTanks];
     this.ngxSpinnerService.hide();
