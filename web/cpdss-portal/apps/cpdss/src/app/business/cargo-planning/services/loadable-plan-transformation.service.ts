@@ -142,9 +142,9 @@ export class LoadablePlanTransformationService {
     _loadableQuantityDetails.maxTolerence = _loadableQuantityDetails.maxTolerence + '%';
     _loadableQuantityDetails.loadableBbls60f = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.BBLS, 'loadableMT'), '1.0-4');
     _loadableQuantityDetails.loadableBblsdbs = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.OBSBBLS, 'loadableMT'), '1.0-4');
-    _loadableQuantityDetails.loadableMT = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.loadableMT, '1.2-4');
     _loadableQuantityDetails.loadableKL = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.KL, 'loadableMT'), '1.2-4');
     _loadableQuantityDetails.loadableLT = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.LT, 'loadableMT'), '1.2-4');
+    _loadableQuantityDetails.loadableMT = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.loadableMT, '1.2-4');
     _loadableQuantityDetails.differencePercentageValue = Number(_loadableQuantityDetails.differencePercentage.replace('%', ''))
     _loadableQuantityDetails.differencePercentage = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.differencePercentageValue, '1.2-4') + '%';
     return loadableQuantity;
