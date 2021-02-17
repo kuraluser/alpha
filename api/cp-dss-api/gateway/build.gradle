@@ -12,6 +12,6 @@ appConfig {
 dependencies {
     implementation project(':common')
     testImplementation('net.devh:grpc-server-spring-boot-starter:2.10.1.RELEASE')
-    compileOnly 'org.keycloak:keycloak-spring-boot-starter:11.0.0'
-	compileOnly 'io.jsonwebtoken:jjwt:0.9.1'
+    implementation 'org.keycloak:keycloak-spring-boot-starter:11.0.0'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 }
