@@ -19,6 +19,7 @@ export class LoadableStudy {
     public maxAirTemperature: number;
     public maxWaterTemperature: number;
     public dischargingPortIds?: number[];
+    public loadableStudyStatusLastModifiedTime ?: string;
     loadableStudyAttachment?: ILoadableStudyAttachment[];
     dischargingCargoId: number;
     createdFromId?: number;

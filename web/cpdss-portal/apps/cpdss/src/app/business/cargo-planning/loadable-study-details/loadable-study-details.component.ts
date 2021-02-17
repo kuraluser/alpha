@@ -42,7 +42,15 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   set selectedLoadableStudy(selectedLoadableStudy: LoadableStudy) {
     this._selectedLoadableStudy = selectedLoadableStudy;
     this.isPatternGenerated = (this._selectedLoadableStudy?.statusId === 3 || this._selectedLoadableStudy?.statusId === 2) ? true : false;
-    this.isPatternOpenOrNoplan = (this._selectedLoadableStudy?.statusId === 1 || this._selectedLoadableStudy?.statusId === 6) ? false: true;
+    this.isPatternOpenOrNoplan = (this._selectedLoadableStudy?.statusId === 1 || this._selectedLoadableStudy?.statusId === 6) ? false : true;
+    if (this._selectedLoadableStudy?.statusId === 4) {
+      const modifiedDate = new Date(selectedLoadableStudy?.loadableStudyStatusLastModifiedTime);
+      const addFiveMinute = new Date(modifiedDate.getTime() + 300000);
+      const now = new Date();
+      if (addFiveMinute < now) {
+        this.isPatternOpenOrNoplan = false;
+      }
+    }
     this.loadableStudyId = selectedLoadableStudy ? selectedLoadableStudy?.id : this.loadableStudies?.length ? this.loadableStudies[0]?.id : 0;
     this.getLoadableStudyDetails(this.vesselId, this.voyageId, selectedLoadableStudy?.id);
   }
@@ -229,7 +237,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   async getLoadableStudyDetails(vesselId: number, voyageId: number, loadableStudyId: number) {
     const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
     this.ngxSpinnerService.show();
-    if (this.selectedLoadableStudy?.dischargingCargoId){
+    if (this.selectedLoadableStudy?.dischargingCargoId) {
       this.selectedDischargeCargo = { id: this.selectedLoadableStudy?.dischargingCargoId }
     } else {
       this.selectedDischargeCargo = null;
@@ -308,9 +316,19 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.generatedMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
       }
       else if (event.data.type === 'loadable-pattern-no-solution') {
+        if (event.data.pattern.loadableStudyId === this.loadableStudyId) {
+          this.isPatternOpenOrNoplan = false;
+          this.isPatternGenerated = false;
+          this.isGenerateClicked = false;
+        }
         this.noPlanMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName)
       }
       else if (event.data.type === 'loadable-pattern-no-response') {
+        if (event.data.pattern.loadableStudyId === this.loadableStudyId) {
+          this.isPatternOpenOrNoplan = false;
+          this.isPatternGenerated = false;
+          this.isGenerateClicked = false;
+        }
         this.noResponseMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
       }
       this.setProcessingLoadableStudyActions(event.data.pattern.loadableStudyId, event.data.statusId);
@@ -688,8 +706,12 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     const res = await this.loadableStudyDetailsApiService.generateLoadablePattern(vesselId, voyageId, loadableStudyId).toPromise();
     if (res.responseStatus.status === '200') {
       data.processId = res.processId;
-      navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });
-      this.selectedLoadableStudy.isActionsEnabled = false;
+      if (res.processId) {
+        navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });
+        this.selectedLoadableStudy.isActionsEnabled = false;
+      } else {
+        this.isGenerateClicked = false;
+      }
     } else {
       this.isGenerateClicked = false;
     }
@@ -717,7 +739,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   async generatedMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
     this.messageService.clear("process");
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE', 'GENERATE_LOADABLE_PATTERN_COMPLETED']).toPromise();
-    this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETED'],  key: "process", closable: true });
+    this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETED'], key: "process", closable: true });
   }
 
   /**
@@ -730,21 +752,21 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   async noPlanMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
     this.messageService.clear("process");
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_NO_PLAN', 'GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE']).toPromise();
-    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE'] , key: "process"});
+    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN_MESSAGE'], key: "process" });
   }
 
-    /**
- * Toast to show pattern bo reposnse
- *
- * @param {string} selectedVoyageNo
- * @param {string} selectedLoadableStudyName
- * @memberof LoadableStudyDetailsComponent
- */
-async noResponseMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
-  this.messageService.clear("process");
-  const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR', 'GENERATE_LOADABLE_PATTERN_RESPONSE']).toPromise();
-  this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_RESPONSE'], key: "process", closable: true });
-}
+  /**
+* Toast to show pattern bo reposnse
+*
+* @param {string} selectedVoyageNo
+* @param {string} selectedLoadableStudyName
+* @memberof LoadableStudyDetailsComponent
+*/
+  async noResponseMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
+    this.messageService.clear("process");
+    const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR', 'GENERATE_LOADABLE_PATTERN_RESPONSE']).toPromise();
+    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_RESPONSE'], life: 3000, key: "process", closable: true });
+  }
 
   /* Handler for unit change event
  *
