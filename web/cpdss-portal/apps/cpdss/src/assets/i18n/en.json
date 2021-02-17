@@ -458,7 +458,7 @@
 	"CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY": "Error",
 	"CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS": "Discharge port is required",
 	"NEW_LOADABLE_STUDY_POPUP_EDIT_HEADER": "Loadable Study",
-	"EDIT_PORT_ROTATION":"Edit port rotaion",
+	"EDIT_PORT_ROTATION":"Edit port rotation",
 	"EDIT_PORT_ROTATION_NOTE":"Note",
 	"EDIT_PORT_ROTATION_NOTE_DETAILS":"Changing port rotation will clear dates and times for ETA/ETD on the affected port items",
 	"CANCEL_BUTTON_EDIT_PORT_ROTATION_POPUP": "Cancel",
