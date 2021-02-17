@@ -98,7 +98,7 @@ export class VoyageStatusTransformationService {
         for (let index = 0; index < bunkerTankQuantities.length; index++) {
           if (bunkerTankQuantities[index]?.tankId === bunkerTank[groupIndex][tankIndex]?.id) {
             bunkerTank[groupIndex][tankIndex].commodity = bunkerTankQuantities[index];
-            let quantity = mode === OHQ_MODE.ARRIVAL ? bunkerTank[groupIndex][tankIndex]?.commodity?.arrivalQuantity : bunkerTank[groupIndex][tankIndex]?.commodity?.departureQuantity;
+            let quantity = mode === OHQ_MODE.ARRIVAL ? bunkerTank[groupIndex][tankIndex]?.commodity?.actualArrivalQuantity : bunkerTank[groupIndex][tankIndex]?.commodity?.actualDepartureQuantity;
             quantity = this.quantityPipe.transform(quantity, prevUnit, currUnit, bunkerTank[groupIndex][tankIndex].commodity?.density);
             bunkerTank[groupIndex][tankIndex].commodity.quantity = quantity ? Number(quantity.toFixed(2)) : 0;
             bunkerTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(bunkerTank[groupIndex][tankIndex].commodity.quantity, currUnit, AppConfigurationService.settings.volumeBaseUnit, bunkerTank[groupIndex][tankIndex].commodity?.density);
