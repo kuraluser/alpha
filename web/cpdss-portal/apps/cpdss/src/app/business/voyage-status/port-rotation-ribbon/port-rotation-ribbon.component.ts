@@ -145,9 +145,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * @param field 
    */
   editPort(event, port: IEditPortRotation, field: string) {
-    port.isDateEditable = false;
-    port.isTimeEditable = false;
-    port.isDistanceEditable = false;
+    const form = this.row(this.portList.indexOf(port));
+    this.setInvalid(port, form)
     if (port.isFutureDate === true) {
       if (field === 'date') {
         port.isDateEditable = true;
@@ -157,6 +156,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
         port.isDistanceEditable = true;
       }
     }
+    form.markAllAsTouched()
   }
 
   /**
@@ -423,18 +423,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       return dayString + '-' + monthString + '-' + date.getFullYear();
     }
   }
-  /**
-   *   
-   * Method to update form on date time select
-   *
-   * @param event 
-   * @param type 
-   * @param port 
-   */
-  onDateSelect(event, type, port) {
-    const index = this.portList.indexOf(port);
-    document.getElementById(index.toString()).focus();
-  }
+  
   /**
    * Method called when focusing out of the input
    * @param event 
@@ -443,18 +432,15 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    */
   onBlur(event, port, type) {
     const form = this.row(this.portList.indexOf(port));
-    if (form.valid) {
+    if (form.get(type).valid) {
       switch (type) {
         case 'date':
-          port.isDateEditable = false;
-          form.controls.time.updateValueAndValidity()
+          form.controls.time.markAsTouched();
+          form.controls.time.updateValueAndValidity();
           break;
         case 'time':
-          port.isTimeEditable = false;
-          form.controls.date.updateValueAndValidity()
           break;
         case 'distance':
-          port.isDistanceEditable = false;
           break;
         default:
           break;

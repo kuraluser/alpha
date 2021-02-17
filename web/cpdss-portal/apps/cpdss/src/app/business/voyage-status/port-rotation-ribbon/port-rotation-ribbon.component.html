@@ -48,7 +48,6 @@
                                     {{getControlLabel(port,'date') | date:'dd-MM-yyyy'}}</div>
                                 <div class="col text-secondary relative mr-10" *ngIf="port?.isDateEditable">
                                     <p-calendar appendTo="body" formControlName="date"
-                                        (onSelect)="onDateSelect($event, 'date', port)"
                                         (onClose)="onBlur($event, port, 'date')"
                                         id="eta_date_{{portList.indexOf(port)}}" [minDate]="minDate"
                                         dateFormat="dd-mm-yy">
@@ -64,7 +63,6 @@
                                     {{getControlLabel(port,'date') | date:'dd-MM-yyyy'}}</div>
                                 <div class="col text-secondary relative mr-10" *ngIf="port?.isDateEditable">
                                     <p-calendar appendTo="body" formControlName="date"
-                                        (onSelect)="onDateSelect($event, 'date', port)"
                                         (onClose)="onBlur($event, port, 'date')"
                                         id="etd_date_{{portList.indexOf(port)}}" [minDate]="minDate"
                                         dateFormat="dd-mm-yy"> 
@@ -86,7 +84,6 @@
                                     <p-calendar appendTo="body"
                                         placeholder="{{'PORT_ROTATION_RIBBON_ENTER_TIME'  | translate}}"
                                         formControlName="time" [timeOnly]="true"
-                                        (onSelect)="onDateSelect($event, 'time', port)"
                                         id="eta_time_{{portList.indexOf(port)}}"
                                         (onBlur)="onBlur($event, port, 'time')">
                                     </p-calendar>
@@ -108,7 +105,6 @@
                                     <p-calendar appendTo="body"
                                         placeholder="{{'PORT_ROTATION_RIBBON_ENTER_TIME'  | translate}}"
                                         formControlName="time" [timeOnly]="true" inputId="timeonly"
-                                        (onSelect)="onDateSelect($event, 'time', port)"
                                         id="etd_time_{{portList.indexOf(port)}}"
                                         (onBlur)="onBlur($event, port, 'time')"></p-calendar>
                                     <cpdss-portal-validation-error
