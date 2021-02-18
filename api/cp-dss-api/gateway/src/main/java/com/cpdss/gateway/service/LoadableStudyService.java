@@ -2688,8 +2688,7 @@ public class LoadableStudyService {
           isEmpty(protoRec.getCorrectedUllage())
               ? BigDecimal.ZERO
               : new BigDecimal(protoRec.getCorrectedUllage()));
-      rec.setApi(
-          isEmpty(protoRec.getApi()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getApi()));
+      rec.setApi(isEmpty(protoRec.getApi()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getApi()));
       rec.setCapacity(
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
       list.add(rec);
