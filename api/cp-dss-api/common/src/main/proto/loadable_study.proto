@@ -423,6 +423,7 @@ message LoadableStudyStatusRequest {
 message LoadableStudyStatusReply {
 	ResponseStatus responseStatus = 1;
 	int64 loadableStudystatusId = 2;
+	string loadableStudyStatusLastModifiedTime = 3;
 }
 
 message AlgoStatusRequest {
@@ -553,7 +554,7 @@ message LoadableStudyDetail{
 	int64 createdFromId = 20;
 	repeated int64 deletedAttachments = 21;
 	bool loadOnTop=22;
-	
+	string loadableStudyStatusLastModifiedTime = 23;
 }
 
 message LoadableStudyReply{
@@ -901,7 +902,7 @@ message SynopticalCargoRecord{
 	string cargoAbbreviation = 8;
 	int64 cargoId = 9;
 	string capacity = 10;
-	string density = 11;
+	string api = 11;
 }
 
 message SynopticalOhqRecord{
@@ -923,6 +924,7 @@ message SynopticalBallastRecord{
 	string capacity = 5;
 	string correctedUllage = 6;
 	string spGravity = 7;
+	string colorCode = 8;
 }
 
 message SynopticalTableRequest{

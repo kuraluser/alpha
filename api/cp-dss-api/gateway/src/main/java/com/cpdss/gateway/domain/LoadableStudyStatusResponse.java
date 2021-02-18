@@ -8,5 +8,6 @@ import lombok.Data;
 @Data
 public class LoadableStudyStatusResponse {
   private Long loadableStudyStatusId;
+  private String loadableStudyStatusLastModifiedTime;
   private CommonSuccessResponse responseStatus;
 }

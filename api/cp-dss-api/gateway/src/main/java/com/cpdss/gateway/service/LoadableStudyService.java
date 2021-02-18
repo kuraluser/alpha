@@ -379,6 +379,8 @@ public class LoadableStudyService {
       dto.setDischargingPortIds(grpcReply.getDischargingPortIdsList());
       dto.setStatus(grpcReply.getStatus());
       dto.setStatusId(grpcReply.getStatusId());
+      dto.setLoadableStudyStatusLastModifiedTime(
+          grpcReply.getLoadableStudyStatusLastModifiedTime());
 
       List<LoadableStudyAttachmentData> attachmentList = new ArrayList();
 
@@ -2390,6 +2392,7 @@ public class LoadableStudyService {
               ? BigDecimal.ZERO
               : new BigDecimal(ballast.getCorrectedUllage()));
       record.setSg(ballast.getSpGravity());
+      record.setColorCode(ballast.getColorCode());
       list.add(record);
     }
     synopticalRecord.setBallastPlannedTotal(BigDecimal.ZERO);
@@ -2686,7 +2689,7 @@ public class LoadableStudyService {
               ? BigDecimal.ZERO
               : new BigDecimal(protoRec.getCorrectedUllage()));
       rec.setApi(
-          isEmpty(protoRec.getDensity()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getDensity()));
+          isEmpty(protoRec.getApi()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getApi()));
       rec.setCapacity(
           isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
       list.add(rec);
@@ -3324,6 +3327,8 @@ public class LoadableStudyService {
           HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }
     response.setLoadableStudyStatusId(grpcReply.getLoadableStudystatusId());
+    response.setLoadableStudyStatusLastModifiedTime(
+        grpcReply.getLoadableStudyStatusLastModifiedTime());
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;

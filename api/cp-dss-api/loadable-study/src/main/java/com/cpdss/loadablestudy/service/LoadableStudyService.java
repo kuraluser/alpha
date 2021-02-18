@@ -666,6 +666,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 status -> {
                   builder.setStatusId(status.getId());
                   builder.setStatus(status.getName());
+                  List<LoadableStudyAlgoStatus> algoStatus =
+                      loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
+                          entity.getId(), true);
+                  if (!algoStatus.isEmpty()) {
+                    builder.setLoadableStudyStatusLastModifiedTime(
+                        algoStatus.stream()
+                            .reduce((f, s) -> s)
+                            .orElse(null)
+                            .getLastModifiedDateTime()
+                            .toString()); // getting the last algo status
+                  } else {
+                    builder.setLoadableStudyStatusLastModifiedTime("0");
+                  }
                 });
         Optional.ofNullable(entity.getDetails()).ifPresent(builder::setDetail);
         Optional.ofNullable(entity.getCharterer()).ifPresent(builder::setCharterer);
@@ -5283,6 +5296,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           Optional.ofNullable(ballast.getCorrectedUllage())
               .ifPresent(ullage -> ballastBuilder.setCorrectedUllage(ullage));
           Optional.ofNullable(ballast.getSg()).ifPresent(sg -> ballastBuilder.setSpGravity(sg));
+          Optional.ofNullable(ballast.getColorCode()).ifPresent(colorCode -> ballastBuilder.setColorCode(colorCode));
         } else {
           log.info(
               "Ballast details not available for the tank: {}, pattern: {}",
@@ -5533,8 +5547,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .ifPresent(cargoBuilder::setColorCode);
           Optional.ofNullable(tankDataOpt.get().getCorrectedUllage())
               .ifPresent(ullage -> cargoBuilder.setCorrectedUllage(valueOf(ullage)));
-          Optional.ofNullable(tankDataOpt.get().getDensity())
-              .ifPresent(density -> cargoBuilder.setDensity(valueOf(density)));
+          Optional.ofNullable(tankDataOpt.get().getApi())
+              .ifPresent(api -> cargoBuilder.setApi(valueOf(api)));
         }
       }
       if (!isEmpty(cargoBuilder.getActualWeight())) {
@@ -5567,8 +5581,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         cargoBuilder.setPlannedWeight(valueOf(obqEntity.getPlannedArrivalWeight()));
       }
       if (null != obqEntity.getDensity()) {
-        cargoBuilder.setDensity(valueOf(obqEntity.getDensity()));
+        cargoBuilder.setApi(valueOf(obqEntity.getDensity()));
       }
+      if (null != obqEntity.getAbbreviation()) {
+          cargoBuilder.setCargoAbbreviation(obqEntity.getAbbreviation());
+        }
     } else {
       // data has to be populated from previous voyage - cargo history table
       // lazy loading the cargo history
@@ -6094,7 +6111,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadablePatternRepository.updateLoadablePatternStatus(
               CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
           loadableStudyRepository.updateLoadableStudyStatus(
-              CONFIRMED_STATUS_ID, loadablePatternOpt.get().getLoadableStudy().getId());
+              CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
           replyBuilder.setConfirmed(true);
         }
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -6138,16 +6155,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 CONFIRMED_STATUS_ID,
                 true);
         if (!loadablePatternConfirmedOpt.isEmpty()) {
-          loadablePatternRepository.updateLoadablePatternStatus(
-              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadablePatternConfirmedOpt.get(0).getId());
-          loadablePatternRepository.updateLoadableStudyStatus(
+
+          loadablePatternRepository.updateLoadablePatternStatusToPlanGenerated(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
-              loadablePatternConfirmedOpt.get(0).getLoadableStudy().getId());
+              loadablePatternConfirmedOpt.get(0).getLoadableStudy().getVoyage().getId());
+          loadablePatternRepository.updateLoadablePatternStatusToPlanGenerated(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
+              loadablePatternConfirmedOpt.get(0).getLoadableStudy().getVoyage().getId());
         }
+
         loadablePatternRepository.updateLoadablePatternStatus(
             CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
         loadableStudyRepository.updateLoadableStudyStatus(
-            CONFIRMED_STATUS_ID, loadablePatternOpt.get().getLoadableStudy().getId());
+            CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
     } catch (Exception e) {
@@ -6188,6 +6208,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       } else {
         replyBuilder.setLoadableStudystatusId(
             loadableStudyAlgoStatusOpt.get().getLoadableStudyStatus().getId());
+        replyBuilder.setLoadableStudyStatusLastModifiedTime(
+            loadableStudyAlgoStatusOpt.get().getLastModifiedDateTime().toString());
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
     } catch (Exception e) {
