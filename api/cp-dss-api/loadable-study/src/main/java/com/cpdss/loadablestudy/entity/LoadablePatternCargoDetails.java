@@ -57,5 +57,4 @@ public class LoadablePatternCargoDetails extends EntityDoc {
 
   @Column(name = "temperature")
   private BigDecimal temperature;
-
 }
