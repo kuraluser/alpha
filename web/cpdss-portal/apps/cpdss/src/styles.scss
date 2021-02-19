@@ -1939,8 +1939,11 @@ min-width: 50px !important;
 width: 50px !important;
 }
 }
-.column-priority, .column-qty{
+.column-priority{
   width: 73px!important;
+}
+.column-qty{
+  width: 120px!important;
 }
 .column-api, .column-temp{
   width: 90px!important;
