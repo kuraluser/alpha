@@ -1,0 +1,992 @@
+syntax = "proto3";
+
+option java_multiple_files = false;
+option java_package = "com.cpdss.common.generated";
+
+// import common definitions like ResponseStatus
+import "common.proto";
+
+service LoadableStudyService {
+	rpc SaveVoyage (VoyageRequest) returns (VoyageReply) {
+	}
+	
+	rpc GetVoyagesByVessel (VoyageRequest) returns (VoyageListReply) {
+	}
+	
+	rpc SaveLoadableQuantity (LoadableQuantityRequest) returns (LoadableQuantityReply) {
+	}
+	
+	rpc FindLoadableStudiesByVesselAndVoyage (LoadableStudyRequest) returns (LoadableStudyReply){
+	}
+
+	rpc SaveLoadableStudy (LoadableStudyDetail) returns (LoadableStudyReply){
+	}
+	
+	rpc SaveCargoNomination (CargoNominationRequest) returns (CargoNominationReply){
+	}
+	
+	rpc GetLoadableStudyPortRotation (PortRotationRequest) returns (PortRotationReply){
+	}
+
+	rpc GetCargoNominationById (CargoNominationRequest) returns (CargoNominationReply){
+	}
+	
+	rpc GetValveSegregation (ValveSegregationRequest) returns (ValveSegregationReply){
+	}
+
+  	rpc getLoadableQuantity (LoadableQuantityReply) returns (LoadableQuantityResponse) {
+	}
+	
+	rpc SaveLoadableStudyPortRotation (PortRotationDetail) returns (PortRotationReply){
+	}
+	
+	rpc SaveLoadableStudyPortRotationList (PortRotationRequest) returns (PortRotationReply){
+	}
+	
+	rpc DeleteCargoNomination (CargoNominationRequest) returns (CargoNominationReply){
+	}
+		
+	rpc SaveDischargingPorts(PortRotationRequest) returns (PortRotationReply){
+	}
+	
+	rpc GetPortRotationByLoadableStudyId (PortRotationRequest) returns (PortRotationReply){
+	}
+		
+	rpc DeleteLoadableStudy(LoadableStudyRequest) returns (LoadableStudyReply){
+	}
+	
+	rpc DeletePortRotation(PortRotationRequest) returns (PortRotationReply){
+	}
+	
+	rpc GetOnHandQuantity(OnHandQuantityRequest) returns (OnHandQuantityReply){
+	}
+	
+	rpc SaveOnHandQuantity(OnHandQuantityDetail) returns (OnHandQuantityReply){
+	}
+	
+	rpc GetLoadablePatternDetails(LoadablePatternRequest) returns (LoadablePatternReply){
+	}
+	
+	rpc SaveLoadablePatterns(LoadablePatternAlgoRequest) returns (AlgoReply){
+	}
+	
+	rpc GetPurposeOfCommingle (PurposeOfCommingleRequest) returns (PurposeOfCommingleReply){
+	}
+	
+	rpc GetCommingleCargo (CommingleCargoRequest) returns (CommingleCargoReply){
+	}
+	
+	rpc SaveCommingleCargo (CommingleCargoRequest) returns (CommingleCargoReply){
+	}
+	
+	rpc GetLoadablePatternCommingleDetails (LoadablePatternCommingleDetailsRequest) returns (LoadablePatternCommingleDetailsReply) {
+	}
+	
+	rpc GenerateLoadablePatterns (AlgoRequest) returns (AlgoReply) {
+	}
+	
+	rpc getLoadablePatternList (LoadablePatternRequest) returns (LoadablePatternReply) {
+	}
+	
+	rpc GetOnBoardQuantity(OnBoardQuantityRequest) returns (OnBoardQuantityReply){
+	}
+	
+	rpc SaveOnBoardQuantity(OnBoardQuantityDetail) returns (OnBoardQuantityReply){
+	}
+	
+	rpc GetLoadicatorData(LoadicatorDataRequest) returns (LoadicatorDataReply) {
+	}
+	
+	rpc SaveAlgoLoadableStudyStatus(AlgoStatusRequest) returns (AlgoStatusReply) {
+	}
+	
+	rpc SaveLoadicatorResults(LoadicatorResultsRequest) returns (AlgoReply){
+	}
+	
+	rpc SaveSynopticalTable(SynopticalTableRequest) returns (SynopticalTableReply){
+	}
+	
+	rpc GetSynopticalTable (SynopticalTableRequest) returns (SynopticalTableReply){
+	}
+	
+	rpc GetSynopticalDataByPortId (SynopticalTableRequest) returns (SynopticalTableReply){
+	}
+	
+	rpc GetSynopticalPortDataByPortId (SynopticalTableRequest) returns (SynopticalTableReply){
+	}
+	
+	rpc GetLoadableStudyStatus(LoadableStudyStatusRequest) returns (LoadableStudyStatusReply) {
+	}
+	
+	rpc GetLoadablePlanDetails(LoadablePlanDetailsRequest) returns (LoadablePlanDetailsReply) {
+	}
+	
+	rpc RecalculateVolume(RecalculateVolumeRequest) returns (RecalculateVolumeReply) {
+	}
+	
+	rpc ConfirmPlanStatus(ConfirmPlanRequest) returns (ConfirmPlanReply) {
+	}	
+	
+	rpc ConfirmPlan(ConfirmPlanRequest) returns (ConfirmPlanReply) {
+	}
+	
+	rpc DownloadLoadableStudyAttachment(LoadableStudyAttachmentRequest) returns (LoadableStudyAttachmentReply){
+	}
+	
+	rpc SaveComment(SaveCommentRequest) returns (SaveCommentReply){
+	}
+	
+	rpc SaveLoadOnTop(SaveLoadOnTopRequest) returns (SaveCommentReply){
+	}
+}
+
+message RecalculateVolumeRequest {
+	int64 loadablePatternId = 1;
+	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
+}
+
+message RecalculateVolumeReply {
+	ResponseStatus responseStatus = 1;
+	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
+}
+
+message LoadicatorResultsRequest {
+	string processId = 1;
+	int64 loadableStudyId = 2;
+	repeated LoadicatorPatternDetailsResults loadicatorPatternDetailsResults = 3;
+}
+
+message LoadicatorPatternDetailsResults {
+	int64 loadablePatternId = 1;
+	repeated LodicatorResultDetails lodicatorResultDetails = 2;
+}
+
+message LodicatorResultDetails {
+	int64 portId = 1;
+	string hog = 2;
+	string calculatedDraftFwdPlanned = 3;
+	string calculatedDraftMidPlanned = 4;
+	string calculatedDraftAftPlanned = 5;
+	string calculatedTrimPlanned = 6;
+	string blindSector = 7;
+	string list = 8;
+	int64 operationId = 9;
+}
+
+message LoadicatorDataRequest {
+	string processId = 1;
+	repeated LoadicatorPatternDetails loadicatorPatternDetails= 2;
+	int64 loadableStudyId = 3;
+}
+message LoadicatorDataReply {
+	string processId = 1;
+	int64 loadableStudyId = 2;
+	ResponseStatus responseStatus = 3;
+}
+
+message LoadicatorPatternDetails {
+	int64 loadablePatternId = 1;
+	repeated LDtrim lDtrim = 2;
+	repeated LDStrength lDStrength = 3;
+	repeated LDIntactStability lDIntactStability = 4;
+}
+
+message LDtrim {
+   int64 id = 1;
+   string foreDraftValue = 2;
+   string aftDraftValue = 3;
+   string trimValue = 4;
+   string heelValue = 5;
+   string meanDraftValue = 6;
+   string meanDraftJudgement = 7;
+   string displacementValue = 8;
+   string displacementJudgement = 9;
+   string maximumDraftValue = 10;
+   string maximumDraftJudgement = 11;
+   string airDraftValue = 12;
+   string airDraftJudgement = 13;
+   string minimumForeDraftInRoughWeatherValue = 14;
+   string minimumForeDraftInRoughWeatherJudgement = 15;
+   string maximumAllowableVisibility = 16;
+   string maximumAllowableJudement = 17;
+   bool errorStatus = 18;
+   string errorDetails = 19;
+   string messageText = 20;
+   int64 portId = 21;
+   int64 stowagePlanId = 22;
+   
+}
+
+message LDStrength{
+   int64 id = 1;
+   string shearingForcePersentValue = 2;
+   string shearingForceJudgement = 3;
+   string sfFrameNumber = 4;
+   string sfSideShellValue = 5;
+   string sfSideShellJudgement = 6;
+   string sfSideShellFrameNumber = 7;
+   string sfHopperValue = 8;
+   string sfHopperJudgement = 9;
+   string sfHopperFrameNumber = 10;
+   string outerLongiBhdValue = 11;
+   string outerLongiBhdJudgement = 12;
+   string outerLongiBhdFrameNumber = 13;
+   string innerLongiBhdValue = 14;
+   string innerLongiBhdJudgement = 15;
+   string innerLongiBhdFrameNumber = 16;
+   string bendingMomentPersentValue = 17;
+   string bendingMomentPersentJudgement = 18;
+   string bendingMomentPersentFrameNumber = 19;
+   bool errorStatus = 20;
+   string errorDetails = 21;
+   string messageText = 22;
+   int64 portId = 23;
+   int64 stowagePlanId = 24;
+   
+}
+
+message LDIntactStability {
+   int64 id = 1;
+   string bigintialGomValue = 2;
+   string bigIntialGomJudgement = 3;
+   string maximumRightingLeverValue = 4;
+   string maximumRightingLeverJudgement = 5;
+   string angleatmaxrleverValue = 6;
+   string angleatmaxrleverJudgement = 7;
+   string areaofStability030Value = 8;
+   string areaofStability030Judgement = 9;
+   string areaofStability040Value = 10;
+   string areaofStability040Judgement = 11;
+   string areaofStability3040Value = 12;
+   string areaofStability3040Judgement = 13;
+   string heelBySteadyWindValue = 14;
+   string heelBySteadyWindJudgement = 15;
+   string stabilityAreaBaValue = 16;
+   string stabilityAreaBaJudgement = 17;
+   string gmAllowableCurveCheckValue = 18;
+   string gmAllowableCurveCheckJudgement = 19;
+   bool errorStatus = 20;
+   string errorDetails = 21;
+   string messageText = 22;
+   int64 portId = 23;
+   int64 stowagePlanId = 24;
+}
+message LoadablePatternAlgoRequest {
+	string processsId = 1;
+	repeated LoadablePlanDetails loadablePlanDetails = 2;
+	int64 loadableStudyId = 3;
+}
+
+message LoadablePlanDetails {
+	int32 caseNumber = 1;
+	repeated LoadablePlanPortWiseDetails loadablePlanPortWiseDetails = 2;
+	repeated string constraints = 3;
+}
+
+message LoadablePlanPortWiseDetails {
+	int64 portId = 1;
+	string portCode = 2;
+	LoadablePlanDetailsReply arrivalCondition = 3;
+	LoadablePlanDetailsReply departureCondition = 4;
+}
+
+message LoadablePlanDetailsRequest {
+	int64 loadablePatternId = 1;
+}
+
+message LoadablePlanDetailsReply {
+	ResponseStatus responseStatus = 1;
+	repeated LoadableQuantityCommingleCargoDetails loadableQuantityCommingleCargoDetails= 2;
+	repeated LoadableQuantityCargoDetails loadableQuantityCargoDetails = 3;
+	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 4;
+	repeated TankList tanks = 5;
+	repeated TankList ballastFrontTanks = 6;
+	repeated TankList ballastCenterTanks = 7;
+	repeated TankList ballastRearTanks = 8;
+	repeated LoadablePlanBallastDetails loadablePlanBallastDetails = 9;
+	repeated LoadablePlanComments loadablePlanComments = 10;
+	string caseNumber = 11;
+  	string date = 12;
+  	string voyageNumber = 13;
+  	int64 id = 14;
+}
+
+message LoadablePlanComments {
+	int64 id = 1;
+	string userName = 2;
+	string dataAndTime = 3;
+	string comment = 4;
+}
+
+message LoadablePlanBallastDetails {
+	int64 id = 1;
+ 	int64 tankId = 2;
+ 	string rdgLevel = 3;
+	string correctionFactor = 4;
+	string correctedLevel = 5;
+	string metricTon = 6; //quantity
+	string cubicMeter = 7;
+	string percentage = 8;
+	string sg = 9;
+	string lcg = 10;
+	string vcg = 11;
+	string tcg = 12;
+	string inertia = 13;
+	string tankName = 14;
+	string colorCode = 15;
+}
+
+message LoadablePlanStowageDetails {
+  int64 tankId = 1;
+  string cargoAbbreviation = 2;
+  string weight = 3; // MT
+  string correctedUllage = 4; // ullage(M)
+  string fillingRatio = 5;
+  string tankName = 6;
+  string rdgUllage = 7;
+  string correctionFactor = 8;
+  string observedM3 = 9;
+  string observedBarrels = 10;
+  string observedBarrelsAt60 = 11; // volume(BBLS)
+  string api = 12;
+  string temperature = 13;
+  int64 id = 14;
+  string colorCode = 15;
+}
+
+
+message LoadableQuantityCommingleCargoDetails {
+	 int64 id = 1;
+	 string grade = 2;
+	 string tankName = 3;
+	 string quantity = 4;
+	 string api = 5;
+	 string temp = 6;
+	 string cargo1Abbreviation = 7;
+	 string cargo2Abbreviation = 8;
+	 string cargo1Percentage = 9;
+	 string cargo2Percentage = 10;
+	 string cargo1Bblsdbs = 11;
+	 string cargo2Bblsdbs = 12;
+	 string cargo1Bbls60f = 13;
+	 string cargo2Bbls60f = 14;
+	 string cargo1LT = 15;
+	 string cargo2LT = 16;
+	 string cargo1MT = 17;
+	 string cargo2MT = 18;
+	 string cargo1KL = 19;
+	 string cargo2KL = 20;
+	 string orderedMT = 21;
+	 int32 priority = 22;
+	 int32 loadingOrder = 23;
+}
+
+message LoadableQuantityCargoDetails {
+	 int64 id = 1;
+	 string grade = 2;
+	 string estimatedAPI = 3;
+	 string estimatedTemp = 4;
+	 string orderBblsdbs = 5;
+	 string orderBbls60f = 6;
+	 string minTolerence = 7;
+	 string maxTolerence = 8;
+	 string loadableBblsdbs = 9;
+	 string loadableBbls60f = 10;
+	 string loadableLT = 11;
+	 string loadableMT = 12;
+	 string loadableKL = 13;
+	 string differencePercentage = 14;
+	 string differenceColor = 15;
+	 int64 cargoId = 16;
+	 string orderedMT = 17;
+	 string cargoAbbreviation = 18;
+	 string colorCode = 19;
+	 int32 priority = 20;
+	 int32 loadingOrder = 21;
+}
+
+message ConfirmPlanRequest {
+	int64 loadablePatternId = 1;
+	int64 voyageId = 2;
+}
+
+message ConfirmPlanReply {
+	ResponseStatus responseStatus = 1;
+	bool confirmed = 2;
+}
+
+message LoadableStudyStatusRequest {
+	int64 loadableStudyId = 1;
+	string processId = 2;
+}
+
+message LoadableStudyStatusReply {
+	ResponseStatus responseStatus = 1;
+	int64 loadableStudystatusId = 2;
+	string loadableStudyStatusLastModifiedTime = 3;
+}
+
+message AlgoStatusRequest {
+	string processsId = 1;
+	int64 loadableStudystatusId = 2;
+}
+
+message AlgoStatusReply {
+	ResponseStatus responseStatus = 1;
+}
+
+message AlgoRequest {
+	int64 loadableStudyId = 1;
+}
+
+message AlgoReply {
+	ResponseStatus responseStatus = 1;
+	string processsId = 2;
+}
+
+message VoyageRequest {
+	int64 captainId = 1;
+	int64 chiefOfficerId = 2;
+	int64 companyId = 3;
+	int64 vesselId = 4;
+	string voyageNo = 5;
+	string startDate = 6;
+	string endDate = 7;
+}
+
+message VoyageReply {
+	int64 voyageId = 1;
+	StatusReply responseStatus = 2;
+}
+
+message VoyageDetail{
+	int64 id = 1;
+	string voyageNumber = 2;
+	string startDate = 3;
+	string endDate = 4;
+	string status = 5;
+	int64 confirmedLoadableStudyId = 6;
+}
+
+message VoyageListReply{
+	StatusReply responseStatus = 1;
+	repeated VoyageDetail voyages = 2;
+}
+
+message StatusReply {
+	string status = 1;
+	string code = 2;
+	string message = 3;
+}
+
+
+message LoadableQuantityRequest {
+	string estSeaDensity = 1;
+	string tpc = 2;
+	string estSagging = 3;
+	string displacmentDraftRestriction = 4;
+	string vesselLightWeight = 5;
+	string dwt = 6;
+	string sgCorrection = 7;
+	string saggingDeduction = 8;
+	string estFOOnBoard = 9;
+	string estDOOnBoard = 10;
+	string estFreshWaterOnBoard = 11;
+	string constant = 12;
+	string otherIfAny = 13;
+	string totalQuantity = 14;
+	string distanceFromLastPort = 15;
+	string vesselAverageSpeed = 16;
+	int64 loadableStudyId = 17;
+	string updateDateAndTime = 18;
+	string sg = 19;
+	string boilerWaterOnBoard = 20;
+	string ballast = 21;
+	string runningHours = 22;
+	string runningDays = 23;
+	string foConInSZ = 24;
+	int64 portId = 25;
+	string draftRestriction = 26;
+	string subTotal = 27;
+	string foConsumptionPerDay = 28;
+	int64 id = 29;
+}
+
+message LoadableQuantityReply {
+	StatusReply responseStatus = 1;
+	int64 loadableQuantityId = 2;
+	int64 loadableStudyId = 3;
+}
+
+message LoadableStudyRequest{
+	int64 companyId = 1;
+	int64 vesselId = 2;
+	int64 voyageId = 3;
+	int64 loadableStudyId = 4;
+}
+
+message LoadableStudyAttachment{
+	bytes byteString = 1;
+	string fileName = 2;
+	int64 id = 3;
+}
+
+message LoadableStudyDetail{
+	int64 id = 1;
+	string name = 2;
+	string detail = 3;
+	int64 statusId = 4;
+	string status = 5;
+	string createdDate = 6;
+	string charterer = 7;
+	string subCharterer = 8;
+	string draftMark = 9;
+	int64 loadLineXId = 10;
+	string draftRestriction = 11;
+	string maxAirTemperature = 12;
+	string maxWaterTemperature = 13;
+	int64 duplicatedFromId = 14;
+	int64 voyageId = 15;
+	int64 vesselId = 16;
+	repeated LoadableStudyAttachment attachments = 17;
+	repeated int64 dischargingPortIds = 18;
+	int64 dischargingCargoId=19;
+	int64 createdFromId = 20;
+	repeated int64 deletedAttachments = 21;
+	bool loadOnTop=22;
+	string loadableStudyStatusLastModifiedTime = 23;
+}
+
+message LoadableStudyReply{
+	ResponseStatus responseStatus = 1;
+	repeated  LoadableStudyDetail loadableStudies = 2;
+	int64 id = 3;
+}
+
+message LoadingPortDetail{
+	int64 portId = 1;
+	string quantity = 2;
+}
+
+message segregationDetail{
+	int64 id = 1;
+	string value = 2;
+}
+
+message CargoNominationDetail {
+	int64 id = 1;
+	int64 loadableStudyId = 2;
+	int64 priority = 3;
+	string color = 4;
+	int64 cargoId = 5;
+	string abbreviation = 6;
+	repeated LoadingPortDetail loadingPortDetails = 7;
+	string quantity = 8;
+	string maxTolerance = 9;
+	string minTolerance = 10;
+	string apiEst = 11;
+	string tempEst = 12;
+	int64 segregationId = 13;
+}
+
+message CargoNominationRequest {
+	int64 vesselId = 1;
+	int64 voyageId = 2;
+	int64 loadableStudyId = 3;
+	int64 cargoNominationId = 4;
+	CargoNominationDetail cargoNominationDetail = 5;
+}
+
+message CargoNominationReply {
+	ResponseStatus responseStatus = 1;
+	int64 cargoNominationId = 2;
+	repeated CargoNominationDetail cargoNominations = 3;
+}
+
+
+message PortRotationRequest{
+	int64 loadableStudyId = 1;
+	int64 vesselId = 2;
+	int64 voyageId = 3;
+	repeated int64 dischargingPortIds = 4;
+	int64 id = 5;
+	repeated PortRotationDetail portRotationDetails = 6;
+	int64 dischargingCargoId=7;
+}
+
+message PortRotationDetail{
+	int64 id = 1;
+	int64 portId=2;
+	int64 berthId=3;
+	int64 operationId=4;
+	string seaWaterDensity=5;
+	string distanceBetweenPorts =6;
+	string timeOfStay=7;
+	string maxDraft=8;
+	string maxAirDraft=9;
+	string eta=10;
+	string etaActual=11;
+	string etd=12;
+	string etdActual=13;
+	string layCanFrom=14;
+	string layCanTo=15;
+	int64 loadableStudyId=16;
+	int64 portOrder=17;
+}
+
+message Operation{
+	int64 id=1;
+	string operationName=2;
+}
+
+message PortRotationReply{
+	ResponseStatus responseStatus = 1;
+	repeated PortRotationDetail ports=2;
+	repeated Operation operations=3;
+	int64 portRotationId = 4;
+}
+
+message LoadableQuantityResponse {
+	LoadableQuantityRequest loadableQuantityRequest = 1;
+	StatusReply responseStatus = 2;
+	int32 caseNo = 3;
+	string selectedZone = 4;
+}
+
+message ValveSegregation{
+	int64 id = 1;
+	string name = 2;
+}
+
+message ValveSegregationRequest{
+	int64 loadableStudyId = 1;
+}
+
+message ValveSegregationReply{
+	ResponseStatus responseStatus = 1;
+	repeated ValveSegregation valveSegregation = 2;
+}
+
+message OnHandQuantityRequest{
+	int64 companyId = 1;
+	int64 vesselId = 2;
+	int64 loadableStudyId = 3;
+	int64 portId = 4;
+}
+
+message OnHandQuantityDetail{
+	int64 id = 1;
+	int64 portId = 2;
+	int64 fuelTypeId = 3;
+	string fuelType = 4;
+	int64 tankId = 5;
+	string tankName = 6;
+	string arrivalVolume = 7;
+	string arrivalQuantity = 8;
+	string actualArrivalQuantity = 9;
+	string departureVolume = 10;
+	string departureQuantity = 11;
+	string actualDepartureQuantity = 12;
+	int64 loadableStudyId = 13;
+	string colorCode = 14;
+	string fuelTypeShortName = 15;
+	string density=16;
+}
+
+message TankDetail{
+	int64 tankId = 1;
+	int64 tankCategoryId = 2;
+	string tankCategoryName = 3;
+	string tankName = 4;
+	string frameNumberFrom = 5;
+	string frameNumberTo = 6;
+	string shortName = 7;
+	string fillCapacityCubm = 8;
+	string density = 9;
+	bool isSlopTank = 10;
+	string heightFrom = 11;
+	string heightTo = 12;
+	int32 tankOrder = 13;
+	int32 tankDisplayOrder = 14;
+	int32 tankGroup = 15;
+	string fullCapacityCubm = 16;
+}
+
+message TankList{
+	repeated TankDetail vesselTank = 1;
+}
+
+message OnHandQuantityReply{
+	ResponseStatus responseStatus = 1;
+	repeated OnHandQuantityDetail onHandQuantity = 2;
+	repeated TankList tanks = 3;
+	repeated TankList rearTanks = 4;
+	int64 id = 5;
+}
+
+message OnBoardQuantityRequest{
+	int64 companyId = 1;
+	int64 vesselId = 2;
+	int64 loadableStudyId = 3;
+	int64 portId = 4;
+	int64 voyageId = 5;
+}
+
+message OnBoardQuantityDetail{
+	int64 id = 1;
+	int64 portId = 2;
+	int64 tankId = 3;
+	string tankName = 4;
+	int64 cargoId = 5;
+	string cargoName = 6;
+	string sounding = 7;
+	string weight = 8;
+	string actualWeight = 9;
+	string volume = 10;
+	int64 loadableStudyId = 11;
+	string colorCode = 12;
+	string abbreviation = 13;
+	string density=14;
+	bool loadOnTop = 15;
+}
+
+message OnBoardQuantityReply{
+	ResponseStatus responseStatus = 1;
+	repeated OnBoardQuantityDetail onBoardQuantity = 2;
+	repeated TankList tanks = 3;
+	int64 id = 4;
+}
+
+message PurposeOfCommingle{
+	int64 id = 1;
+	string name = 2;
+}
+
+message PurposeOfCommingleRequest{
+	int64 loadableStudyId = 1;
+}
+
+message PurposeOfCommingleReply{
+	ResponseStatus responseStatus = 1;
+	repeated PurposeOfCommingle purposeOfCommingle = 2;
+}
+message LoadablePatternReply {
+ 	repeated LoadablePattern loadablePattern = 1;
+ 	ResponseStatus responseStatus = 2;
+ 	repeated TankList tanks = 3;
+ 	string loadablePatternCreatedDate = 4;
+    string loadableStudyName = 5;
+}
+
+message LoadablePattern {
+	int64 loadablePatternId = 1;
+	repeated LoadablePatternCargoDetails loadablePatternCargoDetails = 2;
+	repeated string constraints = 3;
+	int64 loadableStudyStatusId = 4;
+	int32 caseNumber = 5;
+	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 6;
+}
+
+message LoadablePatternCargoDetails {
+ 	int64 priority = 1;
+  	string cargoAbbreviation = 2;
+  	string cargoColor = 3;
+ 	string quantity = 4;
+ 	string orderedQuantity = 5;
+ 	bool isCommingle = 6;
+ 	int64 loadablePatternCommingleDetailsId = 7;
+ 	int32 loadingOrder = 8;
+ 	string api = 9;
+}
+
+message LoadablePatternRequest {
+ 	int64 loadableStudyId = 1;
+}
+
+message CommingleCargo{
+	int64 id = 1;
+	int64 purposeId = 2;
+	bool slopOnly = 3;
+	repeated int64 preferredTanks = 4;
+	int64 cargoNomination1Id = 5;
+	int64 cargo1Id = 6;
+	string cargo1pct = 7;
+	int64 cargoNomination2Id = 8;
+	int64 cargo2Id = 9;
+	string cargo2pct = 10;
+     string quantity = 11;
+}
+
+message CommingleCargoRequest{
+	int64 loadableStudyId = 1;
+	int64 vesselId = 2;
+	repeated CommingleCargo commingleCargo = 3;
+}
+
+message CommingleCargoReply{
+	ResponseStatus responseStatus = 1;
+	repeated CommingleCargo commingleCargo = 2;
+	repeated TankList tanks = 3;
+}
+
+
+message LoadablePatternCommingleDetailsRequest {
+	int64 loadablePatternCommingleDetailsId = 1;
+}
+
+message LoadablePatternCommingleDetailsReply {
+	int64 id = 1;
+	string tankShortName = 2;
+	string cargo1Abbrivation = 3;
+	string cargo2Abbrivation = 4;
+	string grade = 5;
+	string quantity = 6;
+	string api = 7;
+	string temperature = 8;
+	string cargo1Quantity = 9;
+	string cargo2Quantity = 10;
+	string cargo1Percentage = 11;
+	string cargo2Percentage = 12;
+	ResponseStatus responseStatus = 13;
+}
+
+message SynopticalRecord{
+	int64 id = 1;
+	int64 portId = 2;
+	string portName = 3;
+	string operationType = 4;
+	string distance = 5;
+	string speed = 6;
+	string runningHours = 7;
+	string inPortHours = 8;
+	string timeOfSunrise = 9;
+	string timeOfSunset = 10;
+	string hwTideFrom = 11;
+	string hwTideTo = 12;
+	string hwTideTimeFrom = 13;
+	string hwTideTimeTo = 14;
+	string lwTideFrom = 15;
+	string lwTideTo = 16;
+	string lwTideTimeFrom = 17;
+	string lwTideTimeTo = 18;
+	string specificGravity = 19;
+	string etaEtdActual = 20;
+	string etaEtdEstimated = 21;
+	repeated SynopticalCargoRecord cargo = 22;
+	string cargoPlannedTotal = 23; 
+	string cargoActualTotal = 24;
+	repeated SynopticalOhqRecord ohq = 25;
+	int64 portOrder = 26;
+	string othersPlanned = 27;
+	string othersActual = 28;
+	string constantPlanned = 29;
+	string constantActual = 30;
+	string totalDwtPlanned = 31;
+	string totalDwtActual = 32;
+	string displacementPlanned = 33;
+	string displacementActual = 34;
+	SynopticalTableLoadicatorData loadicatorData = 35;
+	string ballastPlanned = 36;
+	string ballastActual = 37;
+	repeated SynopticalBallastRecord ballast = 38;
+}
+
+message SynopticalCargoRecord{
+	int64 tankId = 1;
+	string tankName = 2;
+	string plannedWeight = 3;
+	string actualWeight = 4;
+	int64 obqId = 5;
+	string colorCode = 6;
+	string correctedUllage = 7;
+	string cargoAbbreviation = 8;
+	int64 cargoId = 9;
+	string capacity = 10;
+	string api = 11;
+}
+
+message SynopticalOhqRecord{
+	int64 tankId = 1;
+	string tankName = 2;
+	string plannedWeight = 3;
+	string actualWeight = 4;
+	int64 fuelTypeId = 5;
+	string fuelType = 6;
+	string density = 7;
+	string capacity = 8;
+}
+
+message SynopticalBallastRecord{
+	int64 tankId = 1;
+	string tankName = 2;
+	string plannedWeight = 3;
+	string actualWeight = 4;
+	string capacity = 5;
+	string correctedUllage = 6;
+	string spGravity = 7;
+	string colorCode = 8;
+}
+
+message SynopticalTableRequest{
+	int64 loadableStudyId = 1;
+	int64 vesselId = 2;
+	int64 voyageId = 3;
+	int64 portId = 4;
+	repeated SynopticalRecord synopticalRecord = 5;
+	int64 loadablePatternId = 6;	
+}
+
+message SynopticalTableReply{
+	ResponseStatus responseStatus = 1;
+	repeated SynopticalRecord synopticalRecords = 2;
+	int64 id = 3;
+	repeated TankList ballastFrontTanks = 4;
+	repeated TankList ballastCenterTanks = 5;
+	repeated TankList ballastRearTanks = 6;	
+	repeated TankList cargoTanks = 7;
+}
+
+message SynopticalTableLoadicatorData{
+	string hogSag = 1;
+	string finalDraftFwd = 2;
+	string finalDraftAft = 3;
+	string finalDraftMid = 4;
+	string finalDraftTrim = 5;
+	string calculatedDraftFwdPlanned = 6;
+	string calculatedDraftFwdActual = 7;
+	string calculatedDraftAftPlanned = 8;
+	string calculatedDraftAftActual = 9;
+	string calculatedDraftMidPlanned = 10;
+	string calculatedDraftMidActual = 11;
+	string calculatedTrimPlanned = 12;
+	string calculatedTrimActual = 13;
+	string blindSector = 14;
+	string list = 15;
+}
+
+message LoadableStudyAttachmentRequest{
+ 	int64 fileId = 1 ;
+ 	int64 loadableStudyId = 2;
+}
+
+message LoadableStudyAttachmentReply{
+	ResponseStatus responseStatus = 1;
+	string filePath = 2;
+	bytes byteString = 3;
+}
+
+message SaveCommentReply {
+	ResponseStatus responseStatus = 1;
+}
+
+message SaveCommentRequest{
+	int64 loadablePatternId=1;
+	string comment =2;
+	int64 user=3;
+}
+
+message SaveLoadOnTopRequest{
+bool loadOnTop=1;
+int64 loadableStudyId=2;
+}
+

@@ -1,0 +1,273 @@
+syntax = "proto3";
+
+option java_multiple_files = false;
+option java_package = "com.cpdss.common.generated";
+
+// import common definitions like ResponseStatus
+import "common.proto";
+
+service VesselInfoService {
+
+	rpc GetAllVesselsByCompany (VesselRequest) returns (VesselReply) {
+	}
+	
+	rpc GetVesselDetailsById (VesselRequest) returns (VesselReply) {
+	}
+	
+	rpc GetVesselTanks (VesselRequest) returns (VesselReply) {
+	}
+	
+	rpc GetVesselCargoTanks (VesselRequest) returns (VesselReply) {
+	}
+	
+	rpc GetVesselDetailsForAlgo (VesselAlgoRequest) returns (VesselAlgoReply) {
+	}
+	
+	rpc GetVesselDetailForSynopticalTable(VesselRequest) returns (VesselReply) {
+	}
+	
+	rpc GetVesselDetailByVesselId(VesselRequest) returns (VesselReply) {
+	}
+}
+
+message VesselRequest {
+	int64 companyId = 1;
+	int64 vesselId = 2;
+	int64 vesselDraftConditionId = 3;
+	string draftExtreme = 4;
+	repeated int64 tankCategories = 5;
+}
+
+message LoadLineDetail {
+	int64 id = 1;
+	string name = 2;
+	repeated string draftMarks = 3;
+}
+
+message VesselDetail {
+	int64 id = 1;
+	string name = 2;
+	int64 captainId = 3;
+	int64 cheifOfficerId = 4;
+	string imoNumber = 5;
+	string flag = 6;
+	string charterer = 7;
+	repeated LoadLineDetail loadLines = 8;
+	string code = 9;
+  string portOfRegistry = 10;
+  string builder = 11;
+  string officialNumber = 12;
+  string signalLetter = 13;
+  int64 navigationAreaId = 14;
+  string typeOfShip = 15;
+  string registerLength = 16;
+  string lengthOverall = 17;
+  string lengthBetweenPerpendiculars = 18;
+  string breadthMolded = 19;
+  string depthMolded = 20;
+  string designedLoaddraft = 21;
+  string draftFullLoadSummer = 22;
+  string thicknessOfUpperDeckStringerPlate = 23;
+  string thicknessOfKeelplate = 24;
+  string deadweight = 25;
+  string lightweight = 26;
+  string lcg = 27;
+  string keelToMastHeight = 28;
+  string deadweightConstant = 29;
+  string provisionalConstant = 30;
+  string deadweightConstantLcg = 31;
+  string provisionalConstantLcg = 32;
+  string grossTonnage = 33;
+  string netTonnage = 34;
+  string deadweightConstantTcg = 35;
+  string frameSpace3l = 36;
+  string frameSpace7l = 37;
+}
+
+message VesselLoadableQuantityDetails {
+	string displacmentDraftRestriction = 1;
+	string vesselLightWeight = 2;
+	string constant = 3;
+	string tpc = 4;
+	string dwt = 5;
+	string draftConditionName = 6;
+}
+
+message VesselTankDetail{
+	int64 tankId = 1;
+	int64 tankCategoryId = 2;
+	string tankCategoryName = 3;
+	string tankName = 4;
+	string frameNumberFrom = 5;
+	string frameNumberTo = 6;
+	string shortName = 7;
+	string fillCapacityCubm = 8;
+	string density = 9;
+	bool isSlopTank = 10;
+	string heightFrom = 11;
+	string heightTo = 12;
+	int32 tankOrder = 13;
+	int32 tankGroup = 14;
+	string lcg = 15;
+	string vcg = 16;
+	string tcg = 17;
+	int64 coatingTypeId = 18;
+	int64 tankTypeId = 19;
+	string fullCapacityCubm = 20;
+	string colourCode = 21;
+	string tankCategoryShortName = 22;
+	bool showInOhqObq = 23;
+	int32 tankDisplayOrder = 24;
+	string tankPositionCategory = 25;
+	bool isLoadicatorUsing = 26;
+}
+
+message VesselReply {
+	int64 vesselId = 1;
+	repeated VesselTankDetail vesselTanks = 2;
+	ResponseStatus responseStatus = 3;
+	repeated VesselDetail vessels = 4;
+	VesselLoadableQuantityDetails vesselLoadableQuantityDetails = 5;
+}
+
+	message VesselAlgoRequest {
+	int64 vesselId = 1;
+	}
+
+	message VesselAlgoReply {
+		VesselDetail vesselDetail = 1;
+		repeated VesselDraftCondition vesselDraftCondition = 2;
+		repeated VesselTankDetail vesselTankDetail = 3;
+		repeated HydrostaticData hydrostaticData = 4;
+		repeated VesselTankTCG vesselTankTCG = 5;
+		BMAndSF bMAndSF = 6;
+		ResponseStatus responseStatus = 7;
+		repeated UllageDetails ullageDetails = 8;
+	}
+	
+	message UllageDetails {
+	int64 id = 1;
+	int64 tankId = 2;
+	string ullageDepth = 3;
+	string evenKeelCapacityCubm = 4;
+	string soundDepth = 5;
+	}
+
+	message VesselDraftCondition {
+	   int64 id = 1;
+	   int64 draftConditionId = 2;
+	   string depth = 3;
+	   string freeboard = 4;
+	   string draftExtreme = 5;
+	   string displacement = 6;
+	   string deadWeight = 7;
+	}
+
+	message HydrostaticData {
+		int64 id = 1;
+ 	 	string trim = 2;
+  		string draft = 3;
+ 	 	string displacement = 4;
+ 		string lcb = 5;
+  		string lcf = 6;
+  		string vcb = 7;
+  		string tkm = 8;
+  		string lkm = 9;
+  		string mtc = 10;
+		string tpc = 11;
+	}
+
+	message VesselTankTCG {
+		int64 id = 1;
+		int64 tankId = 2;
+		string capacity = 3;
+		string tcg = 4;
+	}
+		
+	message BMAndSF {
+		repeated BendingMoment bendingMoment = 1;
+		repeated ShearingForce shearingForce = 2;
+		repeated CalculationSheet calculationSheet = 3;
+		repeated CalculationSheetTankGroup calculationSheetTankGroup = 4;
+		repeated MinMaxValuesForBMAndSf minMaxValuesForBMAndSf = 5;
+		repeated StationValues stationValues = 6;
+		repeated InnerBulkHeadSF InnerBulkHeadSF = 7;
+	}
+		
+	message BendingMoment {
+	int64 id = 1;
+	string frameNumber = 2;
+	string baseDraft = 3;
+	string baseValue = 4;
+	string draftCorrection = 5;
+	string trimCorrection = 6;
+	}
+		
+	message ShearingForce {
+		int64 id = 1;
+		string frameNumber = 2;
+ 		string baseDraft = 3;
+  		string baseValue = 4;
+ 		string draftCorrection = 5;
+  		string trimCorrection = 6;
+	}
+		
+	message CalculationSheet {
+		int64 id = 1;
+		int32 tankGroup = 2;
+		int64 tankId = 3;
+		string weightRatio = 4;
+		string lcg = 5;
+	}
+		
+	message CalculationSheetTankGroup {
+		int64 id = 1;
+		int32 tankGroup = 2;
+		string lcg = 3; 
+		string frameNumber = 4;
+	}
+		
+	message MinMaxValuesForBMAndSf {
+		int64 id = 1;
+		string frameNumber = 2;
+		string minBm = 3;
+		string maxBm = 4;
+		string minSf = 5;
+		string maxSf = 6;
+	}
+		
+	message StationValues {
+		string stationFrom = 1;
+		string stationTo = 2;
+		string frameNumberFrom = 3;
+		string frameNumberTo = 4;
+		string distance = 5;
+		int64 id = 6;
+	}
+		
+	message InnerBulkHeadSF {
+		string frameNumber = 1;
+		string foreAlpha = 2;
+		int64 foreCenterCargoTankId = 3;
+		string foreC1 = 4;
+		string foreWingTankIds = 5;
+		string foreC2 = 6;
+		string foreBallastTanks = 7;
+		string foreC3 = 8;
+		string foreBWCorrection = 9;
+		string foreC4 = 10;
+		string foreMaxAllowence = 11;
+		string foreMinAllowence = 12;
+		int64 id = 13;
+		string aftAlpha = 14;
+		int64 aftCenterCargoTankId = 15;
+		string aftC1 = 16;
+		string aftWingTankIds = 17;
+		string aftC2 = 18;
+		string aftBallastTanks = 19;
+		string aftC3 = 20;
+		string aftBWCorrection = 21;
+		string aftC4 = 22;
+		string aftMaxFlAllowence = 23;
+		string aftMinFlAllowence = 24;
+	}

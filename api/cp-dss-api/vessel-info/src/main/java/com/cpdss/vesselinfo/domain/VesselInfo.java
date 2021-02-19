@@ -1,0 +1,18 @@
+/* Licensed under Apache-2.0 */
+package com.cpdss.vesselinfo.domain;
+
+import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class VesselInfo {
+  private Long id;
+  private String name;
+  private String imoNumber;
+  private String typeOfShip;
+  private String code;
+  private BigDecimal deadweightConstant;
+  private BigDecimal provisionalConstant;
+}

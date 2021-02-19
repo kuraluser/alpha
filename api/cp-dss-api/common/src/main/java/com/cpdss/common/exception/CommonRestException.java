@@ -18,13 +18,13 @@ public class CommonRestException extends Exception {
   public CommonRestException(
       String code,
       HttpHeaders headers,
-      HttpStatus status,
+      com.cpdss.common.utils.HttpStatusCode status,
       String errorMessage,
       Throwable throwable) {
     super(errorMessage, throwable);
     this.code = code;
-    this.correlationId = headers.getFirst(Utils.CORRELATION_ID);
-    this.status = status;
+    this.correlationId = null != headers ? headers.getFirst(Utils.CORRELATION_ID) : null;
+    this.status = HttpStatus.valueOf(status.value());
   }
 
   public String getCode() {

@@ -1,6 +1,7 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.common.grpc;
 
+import io.grpc.ClientInterceptor;
 import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -9,6 +10,7 @@ import net.devh.boot.grpc.client.channelfactory.GrpcChannelConfigurer;
 import net.devh.boot.grpc.client.config.GrpcChannelProperties;
 import net.devh.boot.grpc.client.config.GrpcChannelsProperties;
 import net.devh.boot.grpc.client.config.NegotiationType;
+import net.devh.boot.grpc.client.interceptor.GrpcGlobalClientInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,5 +53,15 @@ public class GrpcClientConfig extends GrpcChannelsProperties {
             .keepAliveTimeout(5, TimeUnit.SECONDS);
       }
     };
+  }
+
+  /**
+   * Grpc Client interceptor
+   *
+   * @return
+   */
+  @GrpcGlobalClientInterceptor
+  public ClientInterceptor logClientInterceptor() {
+    return new GrpcClientInterceptor();
   }
 }

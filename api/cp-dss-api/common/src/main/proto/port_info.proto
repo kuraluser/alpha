@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+option java_multiple_files = false;
+option java_package = "com.cpdss.common.generated";
+
+// import common definitions like ResponseStatus
+import "common.proto";
+
+service PortInfoService {
+	rpc GetPortInfo (PortRequest) returns (PortReply) {
+	}
+	
+	rpc GetPortInfoByCargoId (GetPortInfoByCargoIdRequest) returns (GetPortInfoByCargoIdReply) {
+	}
+	
+	rpc GetPortInfoByPortIds (GetPortInfoByPortIdsRequest) returns (PortReply) {
+	}
+	
+	rpc GetPortInfoDetailsForAlgo (GetPortInfoByPortIdsRequest) returns (PortReply) {
+	}
+}
+
+message GetPortInfoByPortIdsRequest {
+	repeated int64 id = 1;
+}
+
+message PortRequest {
+	int64 companyId = 1;
+	int64 vesselId = 2;
+	int64 voyageId = 3;
+	int64 loadableStudyId = 4;
+}
+
+message PortDetail {
+	int64 id = 1;
+	string name = 2;
+	string code = 3;
+	string waterDensity = 4;
+	string maxDraft = 5;
+	string maxAirDraft = 6;
+	string averageTideHeight = 7;
+	string tideHeight = 8;
+	string hwTideFrom = 9;
+	string hwTideTo = 10;
+	string lwTideFrom = 11;
+	string lwTideTo = 12;
+	string hwTideTimeFrom = 13;
+	string hwTideTimeTo = 14;
+	string lwTideTimeFrom = 15;
+	string lwTideTimeTo = 16;
+	string sunriseTime = 17;
+	string sunsetTime = 18;
+}
+
+message PortReply {
+	ResponseStatus responseStatus = 1;
+	repeated PortDetail ports = 2;
+}
+
+message GetPortInfoByCargoIdRequest{
+	int64 cargoId = 1;
+}
+
+message GetPortInfoByCargoIdReply{
+	ResponseStatus responseStatus = 1;
+	repeated PortDetail ports = 2;
+}

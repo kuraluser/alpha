@@ -1,0 +1,12 @@
+appConfig {
+  grpc = 'y'
+  persistence = 'springData'
+  dataBase = 'postgres'
+  logging = 'y'
+  devTools = 'y'
+  javaMainClass = "com.cpdss.loadicatorintegration.Application"
+}
+
+dependencies {
+    implementation project(':common')
+}

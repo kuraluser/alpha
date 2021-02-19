@@ -1,9 +1,31 @@
 appConfig {
+  appName = 'company-info'
   rest = 'y'
   persistence = 'springData'
   dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
+  /*docker {
+   imageName = 'company-info'
+   containerName = 'company-info-container'
+   hostPortMapping {
+      hostRestPort = 8080
+      hostGrpcPort = 8090
+      hostDebugPort = 8888
+   }
+   volumeMapping {
+     volumeName = "testvol"
+     containerPath = "/testvol"
+   }
+   swarm {
+     serviceName = 'company-info-service'
+     swarmMode = REPLICATED_MODE
+     replicas = 1
+     rollbackOnUpdateFailure = true
+   }
+   environment = ['MYVAR1': 'MYVALUE1', 'MYVAR2': 'MYVALUE2']
+  }*/
+  
   javaMainClass = "com.cpdss.companyinfo.Application"
 }
 
