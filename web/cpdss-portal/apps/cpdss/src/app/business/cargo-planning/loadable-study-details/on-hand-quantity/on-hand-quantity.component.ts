@@ -402,7 +402,7 @@ export class OnHandQuantityComponent implements OnInit {
             this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
           }
         }
-      } else if(row.invalid) {
+      } else if (row.invalid) {
         const invalidFormControls = this.findInvalidControlsRecursive(row);
         invalidFormControls.forEach((key) => {
           const formControl = this.field(index, key);
@@ -668,11 +668,12 @@ export class OnHandQuantityComponent implements OnInit {
           ohqTankDetail.arrivalQuantity.value = ohqTankDetail.arrivalQuantity.value ? Number(ohqTankDetail.arrivalQuantity.value.toFixed(2)) : 0;
           ohqTankDetail.departureQuantity.value = this.quantityPipe.transform(ohqTankDetail.departureQuantity.value, _prevQuantitySelectedUnit, this.quantitySelectedUnit, ohqTankDetail.density.value);
           ohqTankDetail.departureQuantity.value = ohqTankDetail.departureQuantity.value ? Number(ohqTankDetail.departureQuantity.value.toFixed(2)) : 0;
-          const arrivalVolume = this.quantityPipe.transform(ohqTankDetail.arrivalQuantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, ohqTankDetail?.density?.value);
-          ohqTankDetail.arrivalVolume = arrivalVolume ?? 0;
-          const departureVolume = this.quantityPipe.transform(ohqTankDetail.departureQuantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, ohqTankDetail?.density?.value);
-          ohqTankDetail.departureVolume = departureVolume ?? 0;
         }
+        const arrivalVolume = this.quantityPipe.transform(ohqTankDetail.arrivalQuantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, ohqTankDetail?.density?.value);
+        ohqTankDetail.arrivalVolume = arrivalVolume ?? 0;
+        const departureVolume = this.quantityPipe.transform(ohqTankDetail.departureQuantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, ohqTankDetail?.density?.value);
+        ohqTankDetail.departureVolume = departureVolume ?? 0;
+
         const _prevFullcapacitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.volumeBaseUnit;
         if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {
           const fullCapacity = this.quantityPipe.transform(ohqTankDetail.fullCapacityCubm, _prevFullcapacitySelectedUnit, this.quantitySelectedUnit, ohqTankDetail.density.value);
