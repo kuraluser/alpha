@@ -1,10 +1,15 @@
 
 
-.colorpicker{
-    pointer-events: none;
+
+
+.color-rounded{
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: inline-block;
 }
 
-// TODO: need to be removed when this colorpicker is removed
-p-colorpicker.ng-invalid.ng-pristine ::ng-deep input {
-    background-color: #000000 !important;
+.row-loader {
+    display: inline-block;
+    font-size: 14px;
 }

@@ -1,0 +1,4 @@
+<div class="col text-secondary text-uppercase text-center pointer" [pTooltip]="constraint.length > 1 && constraints" tooltipPosition="top" >
+    {{constraint[0]}}
+    <span  *ngIf='constraint.length > 1'>...</span>
+</div>

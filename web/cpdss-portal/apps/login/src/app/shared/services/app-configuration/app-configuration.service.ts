@@ -20,7 +20,7 @@ export class AppConfigurationService {
    * load config json file
    */
   async load(): Promise<IAppConfiguration> {
-    const jsonFile = `assets/config/config.${environment.name}.${environment.production ? 'prod' : 'dev'}.json`;
+    const jsonFile = `assets/config/config.${environment.name}.${environment.config}.json`;
     let result: IAppConfiguration;
     try {
       result = (await this.http.get(jsonFile).toPromise()) as IAppConfiguration;

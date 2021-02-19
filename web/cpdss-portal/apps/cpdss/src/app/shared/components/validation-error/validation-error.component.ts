@@ -37,6 +37,9 @@ export class ValidationErrorComponent implements OnInit {
   constructor(private translateService: TranslateService) { }
 
   ngOnInit() {
+    if (this.errors) {
+      this.setErrors();
+    }
   }
   /**
    * Method for setting error component on respective form controll

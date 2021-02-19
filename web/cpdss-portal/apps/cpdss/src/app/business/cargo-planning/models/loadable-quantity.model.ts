@@ -4,7 +4,9 @@
 export class LoadableQuantityModel {
     public responseStatus: Status;
     public loadableQuantity: LodadableQuantity;
-    public isSummerZone: boolean;
+    public isSummerZone?: boolean;
+    public caseNo: number;
+    public selectedZone: string;
 }
 /**
  * Model for loadable quantity
@@ -37,6 +39,9 @@ export class LodadableQuantity {
     public foConInSZ?: string;
     public subTotal?: string;
     public totalQuantity?: string;
+    public loadableQuantityId?: number;
+    public id?: number;
+    private loadableStudyId?: number
 }
 
 /**
@@ -52,6 +57,7 @@ export class LoadableQuantityResponseModel {
 export class Status {
     status: string;
 }
+
 
 
 

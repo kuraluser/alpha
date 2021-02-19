@@ -197,7 +197,7 @@ hr{
   color:$red!important;
 }
 .logo{
-  background: url($images-theme + 'logo.png') no-repeat left center
+ /* background: url($images-theme + 'logo.png') no-repeat left center*/
 }
 .menu-item-text{
   color: $link-color;
@@ -640,7 +640,7 @@ div{
 }
 
 .p-inputtext{
-  color: $text-primary;
+  color: $text-secondary;
 }
 
 .text-secondary{
@@ -689,6 +689,9 @@ div{
 
 .sidebar{
   border-right: 1px solid $table-border;
+  .p-datatable-thead tr th{
+    background: $body-bg!important;
+  }
 }
 .icon-status-1{
   background: url($images-theme + 'sidebar-table-status-1.png') no-repeat center center;
@@ -900,4 +903,209 @@ a{
 
 .info-icon{
   border: 1px solid $text-secondary;
+}
+.p-toast .p-toast-message.p-toast-message-success{
+  color: $text-secondary;
+  border-color:$green;
+  background: $card-bg;
+}
+.p-toast .p-toast-message.p-toast-message-success .p-toast-message-icon{
+  color: $green;
+}
+.p-toast .p-toast-message.p-toast-message-warn{
+  background: $card-bg;
+  color: $text-secondary;
+}
+
+.confirmation-dialog{
+  &.p-toast .p-toast-message.p-toast-message-warn{
+    border: 1px solid $border-color!important;
+    
+  }
+}
+.p-dropdown .p-dropdown-label.p-placeholder{
+  color: $text-primary;
+}
+.cargo-nomination-table.ohq td:nth-child(3), .cargo-nomination-table.ohq td:nth-child(5){
+  border-right: 1px solid $table-border;
+}
+.cargo-nomination-table.ohq table > thead > tr > th:nth-child(3), .cargo-nomination-table.ohq table > thead > tr:first-child th:nth-child(4){
+  border-right: 1px solid $table-border;
+}
+.cargo-nomination-table.ohq table > thead > tr:nth-child(2)  th:nth-child(5){
+  border-right: 1px solid $table-border;
+}
+
+.tank-inner-wrapper-pattern{
+  border: 2px solid $tank-ohq-border; 
+  .tank-column-pattern{
+    >div{
+      border-color: $tank-ohq-border!important;
+      color: $text-secondary;
+      >div{
+        border-color: $tank-ohq-border; 
+      }
+    }
+  }
+}
+
+.ship-front-pattern:after{
+  background: url($images-theme + 'ship-front-pattern.png') no-repeat center center;
+}
+
+.checkbox-custom {
+  .checkmark {
+    border: 1px solid $text-secondary;
+    &:after {
+      border: solid $text-secondary;
+    }
+  }
+
+}
+
+.ship-rear-pattern{
+  border-left: 2px solid $tank-ohq-border; 
+  .rear-top-pattern{
+    border-top: 25px solid $tank-ohq-border;
+    &:after{
+      border-top: 25px solid $body-bg;
+    }
+  }
+  .rear-bottom-pattern{
+    border-bottom: 25px solid $tank-ohq-border;
+    &:after{
+      border-bottom: 25px solid $body-bg;
+    }
+  }
+}
+.tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div .tank-name{
+  color: $text-secondary;
+}
+
+.content-pattern:nth-child(odd){
+  border-right: 1px solid $border-color;
+  border-bottom: 1px solid $border-color;
+}
+.content-pattern:nth-child(2){
+  border-right: 0;
+  border-bottom: 1px solid $border-color!important;
+  border-left: 1px solid $border-color!important;
+}
+.content-pattern:only-child{
+  border-right: 0;
+  border-bottom: 0;
+}
+.cpdss{
+  background: url($images-theme + 'cpdss.png') no-repeat;
+  display: inline-block;
+  width: 109px;
+  height: 12px;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.tanks-column-ohq, .rear-tank-wrapper-ohq{
+  > div{
+    &.active{
+      outline:3px solid $text-secondary!important;
+    }
+  }
+}
+
+.table-pattern{
+  &.p-datatable .p-datatable-tbody > tr > td{
+    border-right: 1px solid $table-border;
+  }
+  &.p-datatable .p-datatable-thead > tr > th{
+    border-right: 1px solid $table-border;
+  }
+  &.p-datatable .p-datatable-tfoot > tr > td{
+    color: $text-secondary;
+    border-bottom: 1px solid $table-border;
+    &:nth-last-child(2){
+      border-right: 1px solid $table-border;
+      border-left: 1px solid $table-border;
+    }
+    &:last-child(2){
+      border-left: 1px solid $table-border;
+    }
+  }
+}
+
+
+.heading-border, .th-border{
+  border-bottom: 2px solid $table-border;
+}
+.p-datatable .p-datatable-tfoot > tr > td{
+  border-bottom: 1px solid $table-border;
+}
+.colspan-table.p-datatable .p-datatable-tfoot > tr > td{
+  color: $text-primary;
+}
+.p-datatable .p-datatable-tfoot > tr > td{
+  color: $text-secondary;
+}
+.table-eta{
+  .p-datatable .p-datatable-tbody > tr > th{
+    color: $text-secondary;
+    border-bottom: 1px solid $table-border;
+  }
+}
+
+.loadable-plan-ballast .tank-outer-pattern, .loadable-plan-stowage.tank-outer-pattern{
+  .ship-rear-pattern{
+    .rear-top-pattern{
+      border-top: 35px solid $tank-ohq-border; 
+      &:after{
+        border-top: 35px solid $body-bg; 
+        top: -36px;
+      }
+    }
+    .rear-bottom-pattern{
+      border-bottom: 35px solid $tank-ohq-border; 
+      &:after{
+        border-bottom: 35px solid $body-bg; 
+        bottom: -36px;
+      }
+    }
+  }
+}
+.front-tank-wrapper, .rear-tank-ullage-and-percentage{
+  color: $text-secondary;
+}
+
+.edit-port-rotation{
+  .p-orderlist .p-orderlist-list .p-orderlist-item{
+    border-top: 1px solid $table-border;
+    color: $text-primary;
+    
+  }
+  .p-orderlist .p-orderlist-list .p-orderlist-item:not(.p-highlight):hover, .p-orderlist .p-orderlist-list .p-orderlist-item.p-highlight{
+    background: $dropdown-menu-hover-bg url($images-theme + 'grab-handles.png') no-repeat;
+    color: $text-secondary;
+    background-position: 95% 15px;
+  }
+  .p-orderlist .p-orderlist-list .p-orderlist-item:hover + .p-orderlist-droppoint{
+    background: $dropdown-menu-hover-bg;
+  }
+}
+.p-orderlist .p-orderlist-list .p-orderlist-item.p-highlight + .p-orderlist-droppoint{
+  background: $dropdown-menu-hover-bg;
+}
+.p-orderlist{
+  li:last-child{
+    border-bottom: 1px solid $table-border;
+  }
+}
+
+.circle-outline{
+  border: 2px solid $text-primary;
+  background: $body-bg;
+}
+
+.port-rotation-border{
+  border-right: 2px dashed $text-primary;
+}
+.p-component-overlay{
+  background: rgba($body-bg, 0.6)!important;
 }

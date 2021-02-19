@@ -41,3 +41,11 @@ body{
 .text-secondary {
     color: $text-secondary!important;
 }
+.cpdss{
+    background: url($images-theme + 'cpdss.png') no-repeat;
+    display: inline-block;
+    width: 109px;
+    height: 12px;
+    margin-left: 10px;
+    vertical-align: middle;
+}

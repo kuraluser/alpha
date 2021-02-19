@@ -8,7 +8,7 @@ import { OwlOptions } from 'ngx-owl-carousel-o';
 // Login component for shore-module
 
 @Component({
-  selector: 'app-login-shore',
+  selector: 'cpdss-login-shore',
   templateUrl: './login-shore.component.html',
   styleUrls: ['./login-shore.component.scss']
 })
@@ -33,18 +33,20 @@ export class LoginShoreComponent implements OnInit {
   }
   idpList = [];
   settings: IAppConfiguration;
-  realm: string = '';
+  realm = '';
+  logo = '';
 
   constructor(private kcService: KeycloakService, private appConfig: AppConfigurationService) { }
 
   ngOnInit(): void {
     this.settings = AppConfigurationService.settings;
+    this.logo = localStorage.getItem('logo');
     this.createIdpInput();
   }
 
   // to bind input buttons dynamically from api response with identity-provider enabled
   createIdpInput() {
-    let idpConfig = localStorage.getItem('keycloakIdpConfig').split(',');
+    const idpConfig = localStorage.getItem('keycloakIdpConfig').split(',');
     this.realm = localStorage.getItem('realm');
     for (let i = 0; i < idpConfig.length; i++) {
       this.idpList.push(idpConfig[i]);
@@ -53,9 +55,9 @@ export class LoginShoreComponent implements OnInit {
 
   // common login function for all identity-providers
   login(idp) {
-    let imageUrl = localStorage.getItem('logoUrl');
+    const logoUrl = localStorage.getItem('logo');
     this.kcService.login({
-      redirectUri: window.location.protocol + '//' + window.location.hostname + ':' + this.settings.targetPort + '/?realm=' + this.realm + '&imgurl=' + imageUrl,
+      redirectUri: window.location.protocol + '//' + window.location.hostname + this.settings.path + '?realm=' + this.realm + '&logoUrl=' + logoUrl,
       idpHint: idp
     });
   }

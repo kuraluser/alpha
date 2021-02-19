@@ -1,5 +1,8 @@
 import { SelectItem } from 'primeng/api';
-import { CPDSSDB, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
+import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
+import { CPDSSDB, IFuelType, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
+import { ITank } from '../../core/models/common.model';
+import {  IPort, IPortList } from '../../core/models/common.model';
 
 /**
  * Interface for cargo nomination value object
@@ -26,6 +29,7 @@ export interface ICargoNominationValueObject {
     isAdd: boolean;
     isDelete?: boolean;
     storeKey: number;
+    processing?: boolean;
 }
 
 /**
@@ -36,18 +40,18 @@ export interface ICargoNominationValueObject {
  */
 export interface ICargoNomination {
     id: number;
-    priority: number;
-    color: string;
+    priority?: number;
+    color?: string;
     cargoId: number;
-    abbreviation: string;
-    loadingPorts: ILoadingPort[];
-    quantity: number;
-    api: number;
-    temperature: number;
-    minTolerance: number;
-    maxTolerance: number;
-    segregationId: number;
-    loadableStudyId: number;
+    abbreviation?: string;
+    loadingPorts?: ILoadingPort[];
+    quantity?: number;
+    api?: number;
+    temperature?: number;
+    minTolerance?: number;
+    maxTolerance?: number;
+    segregationId?: number;
+    loadableStudyId?: number;
     isDelete?: boolean;
     isAdd?: boolean;
     storeKey?: number;
@@ -89,9 +93,9 @@ export interface ICargoPortsResponse {
  */
 export interface ICargo {
     id: number;
-    name: string;
-    abbreviation: string;
-    api: number;
+    name?: string;
+    abbreviation?: string;
+    api?: number;
     ports?: IPort[];
 }
 
@@ -123,21 +127,6 @@ export interface ILoadingPortValueObject {
 }
 
 /**
- * Interface for port
- *
- * @export
- * @interface IPort
- */
-export interface IPort {
-    id: number;
-    name: string;
-    code: string;
-    maxAirDraft: number;
-    maxDraft: number;
-    waterDensity: number;
-}
-
-/**
  * Interface for cargo nomination list data
  *
  * @export
@@ -147,17 +136,6 @@ export interface ICargoNominationAllDropdownData {
     priorityList: SelectItem[];
     cargoList: ICargo[];
     segregationList: ISegregation[];
-    ports: IPort[];
-}
-
-/**
- * Interface for port api response
- *
- * @export
- * @interface IPortsResponse
- */
-export interface IPortsResponse {
-    responseStatus: IResponseStatus;
     ports: IPort[];
 }
 
@@ -192,7 +170,7 @@ export interface ILoadingPopupData {
  * @export
  * @interface ICargoNominationEvent
  */
-export interface ICargoNominationEvent {
+export interface ICargoNominationEvent extends IDataTableEvent {
     data: ICargoNominationValueObject;
     field: string;
     index: number;
@@ -213,7 +191,7 @@ export class CargoNominationDB extends CPDSSDB {
     constructor() {
         super();
         this.version(1).stores({
-            cargoNominations: '++,storeKey'
+            cargoNominations: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
         });
     }
 
@@ -241,34 +219,6 @@ export interface IPortAllDropdownData {
 export interface IOperations {
     id: number;
     operationName: string;
-}
-
-/**
- * Interface for port
- *
- * @export
- * @interface IPortList
- */
-export interface IPortList {
-    id: number;
-    portOrder: number;
-    loadableStudyId: number;
-    portId: number;
-    operationId: number;
-    seaWaterDensity: number;
-    distanceBetweenPorts: number;
-    timeOfStay: number;
-    maxDraft: number;
-    maxAirDraft: number;
-    eta: string;
-    etd: string;
-    layCanFrom: string;
-    layCanTo: string;
-    isDelete?: boolean;
-    isAdd?: boolean;
-    storeKey?: number;
-    vesselId?: number;
-    voyageId?: number;
 }
 
 /**
@@ -308,7 +258,8 @@ export interface IPortsValueObject {
     isAdd: boolean;
     isDelete?: boolean;
     storeKey: number;
-    isLoadable: boolean;
+    isActionsEnabled: boolean;    
+    processing?: boolean;
 }
 
 
@@ -368,27 +319,149 @@ export interface IOHQPortRotationResponse {
  */
 export interface IPortOHQResponse {
     responseStatus: IResponse;
-    onHandQuantities: IPortOHQDetails[];
+    onHandQuantities: IPortOHQTankDetail[];
+    tanks: ITank[][];
+    rearTanks: ITank[][];
+}
+
+/**
+ * Enum for ohq voyage mode
+ *
+ * @export
+ * @enum {number}
+ */
+export enum OHQ_MODE {
+    ARRIVAL = "ARRIVAL",
+    DEPARTURE = "DEPARTURE"
 }
 
 /**
  * Interface for details ohq details of specific port
  *
  * @export
- * @interface IPortOHQDetails
+ * @interface IPortOHQTankDetail
  */
-export interface IPortOHQDetails {
+export interface IPortOHQTankDetail {
     id: number;
     fuelTypeId: number;
     fuelTypeName: string;
     tankId: number;
     tankName: string;
-    arrivalVolume: number;
+    density: number;
     arrivalQuantity: number;
-    departureVolume: number;
     departureQuantity: number;
+    arrivalVolume: number;
+    departureVolume: number;
+    portId: number;
+    storeKey: number;
+    vesselId: number;
+    voyageId: number;
+    loadableStudyId: number;
+    colorCode: string;
+    fuelTypeShortName: string;
+    fullCapacityCubm: number;
+    fullCapacity: number;
 }
 
+/**
+ * Interface for OHQ port details
+ *
+ * @export
+ * @interface IPortOHQTankDetailValueObject
+ */
+export interface IPortOHQTankDetailValueObject {
+    slNo: number;
+    id: number;
+    fuelTypeId: number;
+    fuelTypeName: string;
+    tankId: number;
+    tankName: string;
+    density: ValueObject<number>;
+    arrivalQuantity: ValueObject<number>;
+    departureQuantity: ValueObject<number>;
+    arrivalVolume: number;
+    departureVolume: number;
+    portId: number;
+    storeKey: number;
+    colorCode: string;
+    quantity: number;
+    volume: number;
+    percentageFilled: string;
+    fullCapacityCubm: number;
+    fullCapacity: number;    
+    processing?: boolean;
+}
+
+
+
+/**
+ * Interface for ohq grid list data
+ *
+ * @export
+ * @interface IPortOHQListData
+ */
+export interface IPortOHQListData {
+    fuelTypes: IFuelType[];
+}
+/**
+ * Interface for OHQ grid events
+ *
+ * @export
+ * @interface IPortOHQTankDetailEvent
+ * @extends {IDataTableEvent}
+ */
+export interface IPortOHQTankDetailEvent extends IDataTableEvent {
+    data: IPortOHQTankDetailValueObject;
+    field: string;
+    index: number;
+    originalEvent: MouseEvent;
+}
+
+/**
+ * Interface for ohq tanks
+ *
+ * @export
+ * @interface IOHQTank
+ * @extends {ITank}
+ */
+export interface IBunkerTank extends ITank {
+    id: number;
+    categoryId: number;
+    categoryName: string;
+    name: string;
+    frameNumberFrom: number;
+    frameNumberTo: number;
+    shortName: string;
+    heightFrom?: number;
+    heightTo?: number;
+    fullCapacityCubm?: string;
+    density: number;
+    group: number;
+    order: number;
+    slopTank: boolean;
+    commodity?: IPortOHQTankDetailValueObject;
+    gridColumn?: string;
+    percentageFilled?: string;
+}
+
+/**
+ * Class for OHQ Dexie db
+ *
+ * @export
+ * @class OHQDB
+ * @extends {CPDSSDB}
+ */
+export class OHQDB extends CPDSSDB {
+    ohq!: Dexie.Table<IPortOHQTankDetail, number>;
+
+    constructor() {
+        super();
+        this.version(1).stores({
+            ohq: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
+        });
+    }
+
+}
 
 /**
  * Class for port Dexie db
@@ -403,12 +476,20 @@ export class PortsDB extends CPDSSDB {
     constructor() {
         super();
         this.version(1).stores({
-            ports: '++,storeKey'
+            ports: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
         });
     }
 
 }
 
+
+/**
+ * Model for loadable study list 
+ */
+export class PatternHistory {
+    public name: string;
+    public statusId: number;
+}
 
 /**
  * ENUM for operations
@@ -421,4 +502,162 @@ export enum OPERATIONS {
     DISCHARGING = 2,
     BUNKERING = 3,
     TRANSIT = 4
+}
+
+/**
+ * Interface for commingle cargo details 
+ *
+ * @export
+ * @interface ICommingleDetails
+ */
+export interface ICommingleDetails {
+    id: number;
+    tankShortName: string;
+    cargo1Abbrivation: string;
+    cargo2Abbrivation: string;
+    grade: string;
+    quantity: number;
+    api: string;
+    temperature: string;
+    cargo1Quantity: number;
+    cargo2Quantity: number;
+    cargo1Percentage: string;
+    cargo2Percentage: string;
+    cargoQuantity: string;
+    cargoPercentage: string;
+}
+
+/**
+ * Interface for commingle cargo details api reponse
+ *
+ * @export
+ * @interface ICommingleCargoDetailsResponse
+ */
+export interface ICommingleCargoDetailsResponse extends ICommingleDetails {
+    responseStatus: IResponse;
+}
+
+/**
+ * Interface for port obq details api
+ *
+ * @export
+ * @interface IPortOBQResponse
+ */
+export interface IPortOBQResponse {
+    responseStatus: IResponse;
+    onBoardQuantities: IPortOBQTankDetail[];
+    tanks: ITank[][];
+}
+
+/**
+ * Interface for details ohq details of specific port
+ *
+ * @export
+ * @interface IPortOBQTankDetail
+ */
+export interface IPortOBQTankDetail {
+    storeKey?: number;
+    id: number;
+    cargoId: number;
+    tankId: number;
+    tankName: string;
+    api: number;
+    quantity: number;
+    colorCode: string;
+    portId: number;
+    vesselId: number;
+    voyageId: number;
+    loadableStudyId: number;
+    fullCapacityCubm: number;
+    fullCapacity: number;
+    abbreviation: string;
+    loadOnTop: boolean;
+    volume: number;
+}
+
+/**
+ * Interface for OBQ port details
+ *
+ * @export
+ * @interface IPortOBQTankDetailValueObject
+ */
+export interface IPortOBQTankDetailValueObject {
+    storeKey: number;
+    slNo: number;
+    id: number;
+    tankId: number;
+    tankName: string;
+    cargo: ValueObject<ICargo>;
+    api: ValueObject<number>;
+    quantity: ValueObject<number>;
+    volume: number;
+    colorCode: string;
+    portId: number;
+    percentageFilled: string;
+    fullCapacityCubm: number;
+    fullCapacity: number;
+    abbreviation: string;
+    loadOnTop: boolean;    
+    processing?: boolean;
+}
+
+/**
+ * Interface for load on top object for loadable study
+ *
+ * @export
+ * @interface ILoadOnTop
+ */
+export interface ILoadOnTop {
+    isLoadOnTop: boolean
+}
+
+/**
+ * Interface for obq grid list data
+ *
+ * @export
+ * @interface IPortOBQListData
+ */
+export interface IPortOBQListData {
+    cargoList: ICargo[];
+}
+
+/**
+ * Class for OBQ Dexie db
+ *
+ * @export
+ * @class OBQDB
+ * @extends {CPDSSDB}
+ */
+export class OBQDB extends CPDSSDB {
+    obq!: Dexie.Table<IPortOBQTankDetail, number>;
+
+    constructor() {
+        super();
+        this.version(1).stores({
+            obq: '++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status'
+        });
+    }
+
+}
+
+/**
+ * Interface for generate loadable pattern response
+ *
+ * @export
+ * @interface IGeneratePatternResponse
+ */
+export interface IGeneratePatternResponse {
+    responseStatus: IResponse;
+    processId: string;
+}
+
+/**
+ * Interface for get confir status
+ *
+ * @export
+ * @interface IConfirmStatusResponse
+ */
+export interface IConfirmStatusResponse {
+    responseStatus: IResponse;
+    confirmed: boolean;
 }

@@ -1,16 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { VesselDetailsModel } from '../../model/vessel-details.model';
+import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { LoadableStudy, TableColumns } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
-import { Voyage } from '../../core/models/common.models';
+import { Voyage } from '../../core/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
 import { LoadableStudyListTransformationService } from '../services/loadable-study-list-transformation.service';
 import { IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Dropdown } from 'primeng/dropdown';
 
 /**
  * Loadable study list
@@ -24,18 +25,18 @@ export class LoadableStudyListComponent implements OnInit {
   loadableStudyList: LoadableStudy[];
   voyages: Voyage[];
   selectedVoyage: Voyage;
-  selectedLoadableStudy: LoadableStudy[];
+  selectedLoadableStudy: LoadableStudy;
   loading = true;
   cols: TableColumns[];
   display = false;
+  isEdit = false;
   isDuplicateExistingLoadableStudy = true;
-  vesselDetails: VesselDetailsModel;
+  vesselDetails: IVessel;
   voyageId: number;
   columns: IDataTableColumn[];
   loadableStudyListForm: FormGroup;
   readonly editMode = null;
   isVoyageIdSelected = true;
-
 
   constructor(private loadableStudyListApiService: LoadableStudyListApiService,
     private vesselsApiService: VesselsApiService, private router: Router,
@@ -46,10 +47,10 @@ export class LoadableStudyListComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.activatedRoute.params.subscribe(async params => {
-      this.voyageId = params.id ? Number(params.id): 0;
+      this.voyageId = params.id ? Number(params.id) : 0;
       this.ngxSpinnerService.show();
       const res = await this.vesselsApiService.getVesselsInfo().toPromise();
-      this.vesselDetails = res[0] ?? <VesselDetailsModel>{};
+      this.vesselDetails = res[0] ?? <IVessel>{};
       this.voyages = await this.voyageService.getVoyagesByVesselId(this.vesselDetails?.id).toPromise();
       this.ngxSpinnerService.hide();
       this.getLoadableStudyInfo(this.vesselDetails?.id, this.voyageId);
@@ -63,7 +64,11 @@ export class LoadableStudyListComponent implements OnInit {
    * Take the user to particular loadable study
    */
   onRowSelect(event: IDataTableEvent) {
-    this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
+    if (event?.field !== 'actions') {
+      this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
+    } else {
+      this.callNewLoadableStudyPopup(true, event.data)
+    }
   }
 
   /**
@@ -80,8 +85,10 @@ export class LoadableStudyListComponent implements OnInit {
   }
 
   // invoke popup which binds new-loadable-study-popup component
-  callNewLoadableStudyPopup() {
+  callNewLoadableStudyPopup(isEdit, editLoadableStudy = null) {
     if (this.selectedVoyage) {
+      this.selectedLoadableStudy = editLoadableStudy;
+      this.isEdit = isEdit;
       this.display = true;
     }
     else
@@ -124,10 +131,28 @@ export class LoadableStudyListComponent implements OnInit {
   /**
    * called when name is clicked
    */
-  columnClick(data: IDataTableEvent) {
-    if (data?.field === 'name') {
-      this.onRowSelect(data);
+  columnClick(event: IDataTableEvent) {
+    if (event?.field === 'actions') {
+      this.callNewLoadableStudyPopup(true, event.data)
+    } else {
+      this.onRowSelect(event);
     }
   }
 
+  /**
+ * Handler for added new loadable study
+ *
+ * @param {*} event
+ * @memberof LoadableStudyListComponent
+ */
+  onNewLoadableStudyAdded(event) {
+    this.router.navigate(['business/cargo-planning/loadable-study-details/' + this.vesselDetails?.id + '/' + this.selectedVoyage.id + '/' + event]);
+  }
+
+  /**
+   * Clear filter data
+   */
+  clearFilter(dropdown: Dropdown) {
+    dropdown.resetFilter();
+  }
 }

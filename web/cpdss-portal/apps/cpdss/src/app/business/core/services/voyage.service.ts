@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { IVoyageResponse, Voyage } from '../models/common.models';
+import { IVoyageResponse, Voyage } from '../models/common.model';
 
 @Injectable()
 export class VoyageService {

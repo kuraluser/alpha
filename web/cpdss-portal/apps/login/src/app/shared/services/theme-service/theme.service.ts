@@ -11,7 +11,7 @@ import { DOCUMENT } from '@angular/common';
 export class ThemeService {
 
   private _mainTheme$: BehaviorSubject<string> = new BehaviorSubject('theme');
-  private _darkMode$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  private _darkMode$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _renderer: Renderer2;
   private head: HTMLElement;
   private themeLinks: HTMLElement[] = [];

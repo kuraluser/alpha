@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   name: 'dev',
-  uriPath: 'api/cloud/'
+  uriPath: 'api/cloud/',
+  config: ''
 };
 
 /*

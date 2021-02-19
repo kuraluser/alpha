@@ -1,0 +1,17 @@
+<p-table [columns]="cols" [value]="parameterList" class="parameter-table" [scrollable]="true" scrollHeight="flex" >
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th *ngFor="let col of columns">
+                {{col.header |  translate}}
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+
+        <tr>
+            <td *ngFor="let col of columns">
+                {{rowData[col.field] |   translate}}
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

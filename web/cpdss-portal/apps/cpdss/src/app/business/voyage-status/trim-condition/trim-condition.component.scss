@@ -1,0 +1,31 @@
+.trim-even-keel {
+    height: 70px;
+}
+
+.trim-head {
+    height: 70px;
+}
+
+.trim-stern {
+    height: 70px;
+}
+
+.trim-condition-wrapper{
+    height: 110px;
+    background-size: 100% 41px;
+    position: relative;
+    &:after{
+        position: absolute;
+        top: 46px;
+        bottom: 0;
+        height: 41px;
+        width: 100%;
+        content: "";
+        z-index: -1;
+        background-size: 100% 41px;
+    }
+}
+
+.sag{
+    padding-top: 80px;
+}

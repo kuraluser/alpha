@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { VesselDetailsModel } from '../../../model/vessel-details.model';
+import { IVessel } from '../../models/vessel-details.model';
 
 /**
  * Componnet for shareble Vessel Icon widget
@@ -14,9 +14,10 @@ import { VesselDetailsModel } from '../../../model/vessel-details.model';
   styleUrls: ['./vessel-info.component.scss']
 })
 export class VesselInfoComponent implements OnInit {
-  @Input() vesselDetails: VesselDetailsModel;
+  @Input() vesselDetails: IVessel;
   vesselName: string;
   imoNumber: number;
+  flagPath: string;
   constructor() { }
 
   ngOnInit(): void {
@@ -29,6 +30,7 @@ export class VesselInfoComponent implements OnInit {
   async getVesselDetails() {
     this.vesselName = this.vesselDetails.name;
     this.imoNumber = Number(this.vesselDetails.imoNumber);
+    this.flagPath = this.vesselDetails.flagPath;
   }
 
 }

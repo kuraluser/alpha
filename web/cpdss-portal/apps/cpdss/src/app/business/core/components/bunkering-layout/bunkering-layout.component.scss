@@ -1,0 +1,175 @@
+.tank-outer-ohq {
+    height: 260px;
+    position: relative;
+
+    .rear-top-ohq {
+        width: 0;
+        height: 0;
+        border-left: 0px solid transparent;
+        border-right: 56px solid transparent;
+        position: absolute;
+        top: 0;
+        left: 15px;
+
+        &:after {
+            content: "";
+            width: 0;
+            height: 0;
+            border-left: 0px solid transparent;
+            border-right: 56px solid transparent;
+            position: absolute;
+            top: -26px;
+            left: -3px;
+            z-index: 1;
+        }
+    }
+
+    .rear-bottom-ohq {
+        width: 0;
+        height: 0;
+        border-left: 0px solid transparent;
+        border-right: 56px solid transparent;
+        position: absolute;
+        bottom: 0;
+        left: 15px;
+        z-index: 1;
+
+        &:after {
+            content: "";
+            width: 0;
+            height: 0;
+            border-left: 0px solid transparent;
+            border-right: 56px solid transparent;
+            position: absolute;
+            top: 3px;
+            left: 0px;
+            z-index: 1;
+        }
+    }
+}
+
+.tanks-inner-wrapper-ohq {
+    height: 100%;
+    position: relative;
+    margin-left: 50px;
+    border-right: 0;
+}
+
+.tanks-inner-outer-ohq {
+    width: 85%;
+    height: 100%;
+    position: relative;
+
+    .tanks-column-ohq {
+        display: grid;
+        grid-template-rows: auto;
+        height: 100%;
+        position: relative;
+        .tank-btn-rounded{
+            margin-left: 3px;
+            margin-top: 3px;
+        }
+        >div {
+            width: 100%;
+            border: 1px solid;
+            position: relative;
+            cursor: pointer;
+            .tank-level {
+                position: absolute;
+                width: 100%;
+                bottom: 0;
+                height: 30%;
+                left: 0;
+                max-height: 100%;
+            }
+
+            .tank-name {
+                position: absolute;
+                left: 3px;
+                right: 3px;
+                top: 17px;
+                z-index: 2;
+                text-align: center;
+                font-size: 12px;
+                overflow: hidden;
+            }
+
+            &:first-child {
+                border-top: 0;
+            }
+
+            //   &:last-child{
+            //     border-right: 0;
+            // }
+        }
+
+    }
+}
+
+.rear-tank-wrapper-ohq {
+    position: absolute;
+    left: 15px;
+    bottom: 0;
+    top: 0;
+    width: 50px;
+    .tank-btn-rounded{
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: 3px auto;
+    }
+    >div {
+        border: 1px solid;
+        position: relative;
+        width: 100%;
+        height: 20%;
+        &:first-child{
+            .tank-btn-rounded{
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 13px;        
+        }
+        .tank-name {
+            bottom: 0px;
+        }
+    }
+        &.active {
+            border-width: 3px;
+            outline-offset: -2px;
+        }
+
+        .tank-level {
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            height: 30%;
+            left: 0;
+            max-height: 100%;
+        }
+
+        .tank-name {
+            position: absolute;
+            left: 3px;
+            right: 3px;
+            bottom: 5px;
+            z-index: 2;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        &:last-child {
+            border-bottom: 0;
+
+            .tank-name {
+                top: 12px;
+            }
+        }
+    }
+}
+
+@media (max-width: 1400px) {
+    .tank-outer-ohq {
+        height: 235px;
+    }
+}

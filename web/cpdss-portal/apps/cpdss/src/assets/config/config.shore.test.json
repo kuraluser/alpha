@@ -1,0 +1,9 @@
+{
+    "apiUrl" : "",
+    "keycloakUrl": "https://keyclock.thinkpalm.info:8443/auth/",
+    "path": "/cpdss",
+    "redirectPath": "",
+    "clientId": "frontend",
+    "baseUnit": "MT",
+    "volumeBaseUnit": "KL"
+}

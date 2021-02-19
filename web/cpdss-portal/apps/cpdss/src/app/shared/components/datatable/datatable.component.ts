@@ -1,9 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, SortEvent , LazyLoadEvent } from 'primeng/api';
 import { Table } from 'primeng/table';
-import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableEvent } from './datatable.model';
+import { ObjectUtils } from 'primeng/utils';
+import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableEvent, IDataTableFilterEvent, IDataTableSortEvent , IDataTablePageChangeEvent } from './datatable.model';
+import { Paginator } from 'primeng/paginator';
 
 /**
  * Compoent for Datatable
@@ -20,6 +22,7 @@ import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_F
 export class DatatableComponent implements OnInit {
 
   @ViewChild('datatable') datatable: Table;
+  @ViewChild('paginator') paginatorRef: Paginator
 
   // properties
   @Input()
@@ -28,14 +31,19 @@ export class DatatableComponent implements OnInit {
   }
   set columns(columns: IDataTableColumn[]) {
     this._columns = columns;
+    const colsWithSubCol = columns.filter(col => col?.columns?.length);
+    this.totalColSpan = columns.length - colsWithSubCol?.length;
+    colsWithSubCol.forEach(col => {
+      this.totalColSpan += + col?.columns.length;
+    });
     this.setActions(columns);
   }
 
   @Input()
-  get value(): [] {
+  get value(): Array<any> {
     return this._value;
   }
-  set value(value: []) {
+  set value(value: Array<any>) {
     if (value)
       this._value = value;
   }
@@ -54,7 +62,17 @@ export class DatatableComponent implements OnInit {
 
   @Input() selectionMode: DATATABLE_SELECTIONMODE;
 
-  @Input() editMode: DATATABLE_EDITMODE;
+  @Input() progress = false;
+
+  @Input()
+  get editMode(): DATATABLE_EDITMODE {
+    return this._editMode;
+  }
+
+  set editMode(editMode: DATATABLE_EDITMODE) {
+    this.customSort = editMode ? true : false;
+    this._editMode = editMode;
+  }
 
   @Input() filterable: boolean;
 
@@ -63,6 +81,90 @@ export class DatatableComponent implements OnInit {
   @Input() sortMode: boolean;
 
   @Input() tableRowReOrder = false;
+
+  @Input() tableId: string;
+
+  @Input() showTotal = false;
+
+
+  @Input()
+  set loading(loading: boolean) {
+    this._loading = loading;
+  }
+
+  get loading() : boolean {
+    return this._loading;
+  }
+
+  @Input() paginator: boolean;
+
+  @Input() 
+  set rowsPerPage(rows: number[]) {
+    this._rowsPerPage = rows;
+  }
+
+  get rowsPerPage() : Array<number>  {
+    return this._rowsPerPage;
+  }
+  
+  @Input()
+  set rows(rows: number) {
+    this._rows = rows;
+  }
+
+  get rows() : number {
+    return this._rows;
+  }
+
+  @Input()
+  set totalRecords(totalRecords: number) {
+    this._totalRecords = totalRecords;
+  }
+
+  get totalRecords() : number {
+    return this._totalRecords;
+  }
+
+  @Input()
+  set currentPageReportTemplate(totalRecords: string) {
+    this._currentPageReportTemplate = totalRecords;
+  }
+
+  get currentPageReportTemplate() : string {
+    return this._currentPageReportTemplate;
+  }
+
+  @Input() 
+  set lazy(lazy: boolean) {
+    this._lazy = lazy;
+  }
+
+  get lazy(): boolean{
+    return this._lazy;
+  }
+
+  @Input() 
+  set currentPage(currentPage: number) {
+    this._currentPage = currentPage;
+  }
+
+  @Input() 
+  set first(first: number) {
+    this._first = first;
+  }
+
+  get first() :number {
+    return this._first;
+  }
+
+  @Input() 
+  set reset(resetDataTable: boolean) {
+    if(resetDataTable) {
+      this.datatable.reset();
+      this.filterObject = {};
+      this.resetChange.emit(false);
+    }
+  }
 
   get dataTable() {
     return this.form.get('dataTable') as FormArray;
@@ -78,21 +180,38 @@ export class DatatableComponent implements OnInit {
   @Output() rowSelection = new EventEmitter<IDataTableEvent>();
   @Output() columnClick = new EventEmitter<IDataTableEvent>();
   @Output() rowReorder = new EventEmitter<IDataTableEvent>();
-
+  @Output() filter = new EventEmitter<IDataTableFilterEvent>();
+  @Output() sort = new EventEmitter<IDataTableSortEvent>();
+  @Output() editRow = new EventEmitter<IDataTableEvent>();
+  @Output() onDataStateChange = new EventEmitter<IDataTablePageChangeEvent>();
+  @Output() firstChange = new EventEmitter<number>();
+  @Output() currentPageChange = new EventEmitter<number>();
+  @Output() resetChange = new EventEmitter<boolean>();
+  
   // public fields
   readonly fieldType = DATATABLE_FIELD_TYPE;
   readonly filterType = DATATABLE_FILTER_TYPE;
   readonly filterMatchMode = DATATABLE_FILTER_MATCHMODE;
   moreOptions: MenuItem[];
   selectedRowEvent: IDataTableEvent;
-  dateRange = '';
-  dateTime = new Date();
+  totalColSpan: number;
+  customSort: boolean;
+  filterObject: object = {};
+
 
   // private fields
   private _columns: IDataTableColumn[];
-  private _value: [];
+  private _value: Array<any>;
   private _form: FormGroup;
-
+  private _editMode: DATATABLE_EDITMODE;
+  private _lazy: boolean;
+  private _totalRecords: number;
+  private _rows: number;
+  private _rowsPerPage: number[];
+  private _currentPageReportTemplate: string;
+  private _currentPage: number;
+  private _loading: boolean;
+  private _first: number;
 
 
   // public methods
@@ -100,6 +219,10 @@ export class DatatableComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this._first = 0;
+    this._rowsPerPage = [10,50,100];
+    this._currentPageReportTemplate = "Showing {currentPage} to {totalPages} of {totalRecords} entries";
+    this._loading = false;
     if (!this.form) {
       this.form = this.fb.group({
         dataTable: this.fb.array([...this.value])
@@ -114,13 +237,30 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   onEditComplete(event: IDataTableEvent): void {
-    if (this.editMode && (!event.data.isAdd || !this.columns.some(col => col.fieldType === this.fieldType.ACTION)) && event.field !== 'actions') {
-      const control = this.field(event.index, event.field);
-      if (control?.dirty && control?.valid) {
-        event.data[event.field].value = control.value;
-        this.editComplete.emit(event);
+    let colEditable, col;
+    for (let index = 0; index < this.columns.length; index++) {
+      if (this.columns[index].field === event?.field) {
+        col = this.columns[index];
+        break;
+      } else {
+        col = this.columns[index]?.columns?.find(column => column?.field === event?.field);
+        if (col !== undefined) {
+          break;
+        }
       }
-      event.data[event.field].isEditMode = control?.invalid;
+    }
+    colEditable = col?.editable
+    if (this.editMode && (colEditable === undefined || colEditable) && event?.data[event.field]?.isEditable && !event.data?.isAdd && event.field !== 'actions') {
+      const control = this.field(event.index, event.field);
+      if (col?.fieldType !== this.fieldType.DATETIME && col?.fieldType !== this.fieldType.DATERANGE) {
+        event.data[event.field].isEditMode = control?.invalid;
+      }
+      if (control?.dirty && control?.valid) {
+        if (col?.fieldType === DATATABLE_FIELD_TYPE.COLORPICKER) {
+          event.data[event.field].value = control.value;
+          this.editComplete.emit(event);
+        }
+      }
     }
   }
 
@@ -128,12 +268,12 @@ export class DatatableComponent implements OnInit {
    * Hadler for table cell edit change event
    *
    * @param event
-   * @param {Object} rowData
+   * @param {any} rowData
    * @param {number} rowIndex
    * @param {IDataTableColumn} col
    * @memberof DatatableComponent
    */
-  onChange(event, rowData: Object, rowIndex: number, col: IDataTableColumn) {
+  onChange(event, rowData: any, rowIndex: number, col: IDataTableColumn) {
     rowData[col.field].value = this.field(rowIndex, col.field).value;
     if (!event?.originalEvent?.target?.className?.includes('p-colorpicker')) {
       this.editComplete.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
@@ -144,12 +284,12 @@ export class DatatableComponent implements OnInit {
    * Hadler for table cell value click event
    *
    * @param {MouseEvent} event
-   * @param {Object} rowData
+   * @param {any} rowData
    * @param {number} rowIndex
    * @param {IDataTableColumn} col
    * @memberof DatatableComponent
    */
-  onCellValueClick(event: MouseEvent, rowData: Object, rowIndex: number, col: IDataTableColumn) {
+  onCellValueClick(event: MouseEvent, rowData: any, rowIndex: number, col: IDataTableColumn) {
     event.stopPropagation(); // Please dont remove this line
     const control = this.field(rowIndex, col.field);
     control.markAsTouched();
@@ -177,9 +317,9 @@ export class DatatableComponent implements OnInit {
    * @param col 
    * @param colIndex 
    */
-  onFocus(event, rowData: Object, rowIndex: number, col: IDataTableColumn, colIndex: number) {
+  onFocus(event, rowData: any, col: IDataTableColumn, colIndex: number) {
     const code = (event.keyCode ? event.keyCode : event.which);
-    if (code === 9 && col.fieldType !== this.fieldType.ACTION && (col.editable === undefined || col.editable) && rowData[col.field]?.isEditable) {
+    if (code === 9 && col.fieldType !== this.fieldType.ACTION && (col.editable === undefined || col.editable) && rowData[col.field]?.isEditable && !rowData?.isAdd) {
       const prevField = this.columns[colIndex - 1].field;
       if (prevField && rowData[prevField]) {
         rowData[prevField].isEditMode = false
@@ -201,6 +341,16 @@ export class DatatableComponent implements OnInit {
       rowData[col.field].isEditMode = true;
     }
     this.columnClick.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
+  }
+
+  /**
+   * Handler for filter event
+   *
+   * @param {IDataTableFilterEvent} event
+   * @memberof DatatableComponent
+   */
+  onFilter(event: IDataTableFilterEvent) {
+    this.filter.emit(event);
   }
 
   /**
@@ -245,12 +395,12 @@ export class DatatableComponent implements OnInit {
    * Handler for actions dropdown button
    *
    * @param {MouseEvent} event
-   * @param {object} rowData
+   * @param {any} rowData
    * @param {number} rowIndex
    * @param {IDataTableColumn} col
    * @memberof DatatableComponent
    */
-  onDropdownClick(event: MouseEvent, rowData: object, rowIndex: number, col: IDataTableColumn) {
+  onDropdownClick(event: MouseEvent, rowData: any, rowIndex: number, col: IDataTableColumn) {
     this.selectedRowEvent = { originalEvent: event, data: rowData, index: rowIndex, field: col.field };
   }
 
@@ -287,13 +437,13 @@ export class DatatableComponent implements OnInit {
    * Handler for option click
    *
    * @param {MouseEvent} event
-   * @param {object} rowData
+   * @param {any} rowData
    * @param {number} rowIndex
    * @param {IDataTableColumn} col
    * @param {MenuItem} option
    * @memberof DatatableComponent
    */
-  onOptionClick(event: MouseEvent, rowData: object, rowIndex: number, col: IDataTableColumn, option: MenuItem) {
+  onOptionClick(event: MouseEvent, rowData: any, rowIndex: number, col: IDataTableColumn, option: MenuItem) {
     this.selectedRowEvent = { originalEvent: event, data: rowData, index: rowIndex, field: col.field };
     option.command();
   }
@@ -316,21 +466,21 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   getMoreOptions(rowData: any) {
-    if (rowData?.isAdd) {
-      return this.moreOptions.map(option => {
-        if (option.id === DATATABLE_ACTION.SAVE) {
-          option.visible = true;
-        }
-        return option;
-      });
-    } else {
-      return this.moreOptions.map(option => {
-        if (option.id === DATATABLE_ACTION.SAVE) {
-          option.visible = false;
-        }
-        return option;
-      });
-    }
+    return this.moreOptions.map(option => {
+      if (option.id === DATATABLE_ACTION.SAVE) {
+        option.visible = rowData?.isAdd;
+      }
+      if (option.id === DATATABLE_ACTION.EDIT) {
+        option.visible = rowData?.isEditable === undefined || rowData?.isEditable;
+      }
+      if (option.id === DATATABLE_ACTION.DELETE) {
+        option.visible = rowData?.isDeletable === undefined || rowData?.isDeletable;
+      }
+      if (option.id === DATATABLE_ACTION.DUPLICATE) {
+        option.visible = rowData?.isDuplicate === undefined || rowData?.isDuplicate;
+      }
+      return option;
+    });    
   }
 
   // private methods
@@ -394,12 +544,37 @@ export class DatatableComponent implements OnInit {
             }
           }
           break;
+
+        case DATATABLE_ACTION.EDIT:
+          _option = {
+            id: DATATABLE_ACTION.EDIT,
+            label: label,
+            icon: 'pencil-icon',
+            command: () => {
+              this.onEdit();
+            }
+          }
+          break;
         default:
           break;
       }
       return _option;
     });
 
+  }
+
+
+
+  /**
+  * Handler for api row edit event
+  *
+  * @param {MouseEvent} event
+  * @param {Object} rowData
+  * @param {number} rowIndex
+  * @memberof DatatableComponent
+  */
+  onEdit() {
+    this.editRow.emit(this.selectedRowEvent);
   }
 
   /**
@@ -424,6 +599,8 @@ export class DatatableComponent implements OnInit {
   * Format date time(dd-mm-yyyy hh:mm)
   */
   formatDateTime(date, isTime = false) {
+    if (!date)
+      return ""
     let month = date.getMonth() + 1;
     let day = date.getDate();
     let hour = date.getHours();
@@ -453,63 +630,38 @@ export class DatatableComponent implements OnInit {
   }
 
   /**
-  * Range date select
+  * Range date selected
   */
-  onDateRangeSelect(value) {
-    if (Array.isArray(value)) {
-      this.dateRange = this.formatDateTime(value[0]) + ' to ' + this.formatDateTime(value[1])
-    } else {
-      if (this.dateRange === '' || this.dateRange.includes("to")) {
-        this.dateRange = this.formatDateTime(value)
-      }
-      else {
-        this.dateRange = this.dateRange + ' to ' + this.formatDateTime(value)
-      }
+  onDateRangeSelect(event, formGroupIndex: number, formControlName: string, rowData: Object) {
+    const formControl = this.field(formGroupIndex, formControlName);
+    if(formControl?.value[0] && formControl?.value[1]){
+      rowData[formControlName].value = this.formatDateTime(formControl?.value[0]) + ' to ' + this.formatDateTime(formControl?.value[1]);
+      rowData[formControlName].isEditMode = false;
+        this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
+    }
+    else if(formControl?.value[0] && !formControl?.value[1]){
+      formControl.setErrors({ 'toDate': true });
     }
   }
 
-  /**
-  * Range date selected
-  */
-  onDateRangeSelected(event, formGroupIndex: number, formControlName: string, rowData: Object) {
-    const formControl = this.field(formGroupIndex, formControlName);
-    formControl.markAsTouched();
-    if (this.dateRange.includes("to")) {
-      formControl.setValue(this.dateRange)
-      rowData[formControlName].value = formControl.value;
-      this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
-    } else {
-      formControl.setErrors({ 'required': true });
-    }
-  }
 
   /**
   * Range date cleared
   */
-  onClearDateRange(value) {
-    this.dateRange = '';
+  onClearDateRange(event, formGroupIndex: number, formControlName: string, rowData: Object) {
+    const formControl = this.field(formGroupIndex, formControlName);
+    rowData[formControlName].value = "";
+    formControl.setErrors({ 'required': true });
   }
 
   /**
-  * Date and time select
+  * On closing Date panel 
   */
-  onDateTimeSelect(value, formGroupIndex: number, formControlName: string, rowData: Object) {
+  onDatePanelClosed(event, formGroupIndex: number, formControlName: string, rowData: any) {
     const formControl = this.field(formGroupIndex, formControlName);
-    formControl.markAsTouched();
-    formControl.setValue(this.formatDateTime(value, true))
-    rowData[formControlName].value = formControl.value;
-    this.editComplete.emit({ originalEvent: value, data: rowData, index: formGroupIndex, field: formControlName });
-  }
-
-  /**
-  * Not selcting Date and time 
-  */
-  onDateTimeNotSelected(value, formGroupIndex: number, formControlName: string, rowData: Object) {
-    const formControl = this.field(formGroupIndex, formControlName);
-    formControl.markAsTouched();
-    if (formControl.value === null) {
-      formControl.setErrors({ 'required': true });
-    }
+    rowData[formControlName].value = this.formatDateTime(formControl.value, true);
+    rowData[formControlName].isEditMode = formControl?.invalid;
+    this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
   }
 
   /**
@@ -520,7 +672,181 @@ export class DatatableComponent implements OnInit {
   onRowReorder(event) {
     this.rowReorder.emit(event)
   }
+
+  /**
+   * Custom sort function
+   *
+   * @param {SortEvent} event
+   * @memberof DatatableComponent
+   */
+  sortFunction(event: SortEvent) {
+    event.data.sort((data1, data2) => {
+      const value1 = ObjectUtils.resolveFieldData(data1, event?.field);
+      const value2 = ObjectUtils.resolveFieldData(data2, event?.field);
+      let result = null;
+      if (value1 == null && value2 != null)
+        result = -1;
+      else if (value1 != null && value2 == null)
+        result = 1;
+      else if (value1 == null && value2 == null)
+        result = 0;
+      else if (typeof value1 === 'string' && typeof value2 === 'string')
+        result = value1.localeCompare(value2);
+      else
+        result = (value1 < value2) ? -1 : (value1 > value2) ? 1 : 0;
+      return (event?.order * result);
+    });
+    this.sort.emit(event);
+  }
+  
+  /**
+   * lazy loading for sorting
+   * @param {LazyLoadEvent}  event
+   */
+  loadDetails(event: LazyLoadEvent) {
+    if(event.sortField) {
+      this._first = 0;
+      this._currentPage = 0;
+      this.currentPageChange.emit(this._currentPage);
+      this.firstChange.emit(this._first);
+      const data = this.setStateValue('sort');
+      this.onDataStateChange.emit(data);
+    }
+  }
+
+  /**
+   * Checks field disabled or not
+   * @param formGroupIndex 
+   * @param formControlName 
+   */
+  disabledField(formGroupIndex: number, formControlName: string) {
+    const formControl = this.field(formGroupIndex, formControlName);
+    return formControl.disabled;
+
+  }
+
+  /**
+ * Get the total value of a column
+ * @param col 
+ * @param index 
+ */
+  getTotal(col: IDataTableColumn, index: number) {
+    if (!index)
+      return "Total"
+    else if (col.showTotal && col.fieldType === this.fieldType.NUMBER) {
+      let total = 0;
+      this.value.forEach(row => {
+        if (row[col.field]) {
+          const value = row[col.field].value ?? 0;
+          total += value
+        }
+      })
+      return total.toFixed(2);
+    }
+    return ""
+  }
+
+  /**
+   * Method to get rowspan
+   *
+   * @param {IDataTableColumn[]} columns
+   * @param {*} filterable
+   * @returns
+   * @memberof DatatableComponent
+   */
+  getRowSpan(columns: IDataTableColumn[], filterable) {
+    let rowSpan = filterable ? 1 : 0;
+    columns.forEach(col => {
+      rowSpan = rowSpan < col?.columns?.length ? col?.columns?.length : rowSpan;
+    });
+
+    return rowSpan;
+  }
+
+  /**
+   * Method called on PageChange
+   *
+   * @returns
+   * @memberof DatatableComponent
+   */
+  onPageChange(event) {
+    const data = {
+      paginator: {
+        currentPage: event?.page ? event.page : 0,
+        rows: event.rows ? event.rows : 0
+      },
+      filter: this.filterObject,
+      action: 'paginator',
+      sort: {
+        sortField: this.datatable._sortField,
+        sortOrder: this.datatable._sortField ? this.datatable._sortOrder === 1 ? 'asc' : 'desc' : '',
+      }
+    }
+    this._first = event.first;
+    this.firstChange.emit(this._first);
+    this.currentPageChange.emit(event?.page ? event.page : 0)
+    this.onDataStateChange.emit(data);
+  }
+
+  /**
+   * Method called on filter the data
+   *
+   * @returns
+   * @memberof DatatableComponent
+   */
+  filterData($event , col) {
+    if(col?.filterByServer) {
+      this._first = 0;
+      this._currentPage = 0;
+      this.filterObject[col.filterField] = ($event.target.value).trim();
+      const data = this.setStateValue('filter');
+      this.firstChange.emit(this._first);
+      this.currentPageChange.emit(this._currentPage);
+      this.onDataStateChange.emit(data);
+    } else {
+      this.datatable.filter(($event.target.value).trim(), col?.filterField ? col?.filterField : col.field, col.filterMatchMode)
+    }
+  }
+
+  /**
+   * set state value for server side sorting
+   *
+   * @param {string} action
+   * @memberof DatatableComponent
+   */
+  setStateValue(action: string) {
+    return {
+      paginator: {
+        currentPage: this.paginatorRef.paginatorState.page ? this.paginatorRef.paginatorState.page : 0,
+        rows: this.paginatorRef.paginatorState.rows
+      },
+      filter: this.filterObject,
+      action: action,
+      sort: {
+        sortField: this.datatable._sortField,
+        sortOrder: this.datatable._sortField ? this.datatable._sortOrder === 1 ? 'asc' : 'desc' : '',
+      }
+    }
+  }
+  /**
+   * set state value for server side sorting
+   *
+   * @param {number} index
+   * @memberof DatatableComponent
+   */
+  getSlNo(index: number) {
+    return (this.paginatorRef?.paginatorState?.page*this.paginatorRef?.paginatorState?.rows) + (index +1);
+  }
+
+  /**
+   * update current page
+   *
+   * @param {number} currentPage
+   * @memberof DatatableComponent
+   */
+  private updateCurrentPage(currentPage: number): void {
+    setTimeout(() => {this.paginatorRef.changePage(currentPage) , this.currentPageChange.emit(currentPage)});
+  }
+
 }
-
-
 

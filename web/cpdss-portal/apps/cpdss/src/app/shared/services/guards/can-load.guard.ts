@@ -32,7 +32,7 @@ export class CanLoadGuard extends KeycloakAuthGuard implements CanLoad {
   async checkAccessAllowed(data: Data): Promise<boolean> {
     // Force the user to log in if currently unauthenticated.
     if (!this.authenticated) {
-      window.location.href = window.location.protocol + '//' + window.location.hostname + ':' + AppConfigurationService.settings.redirectPort;
+      window.location.href = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
     }
 
     const loggedIn = await this.keycloak.isLoggedIn();
@@ -40,7 +40,7 @@ export class CanLoadGuard extends KeycloakAuthGuard implements CanLoad {
       return true;
     }
     else {
-      window.location.href = window.location.protocol + '//' + window.location.hostname + ':' + AppConfigurationService.settings.redirectPort;
+      window.location.href = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
     }
 
     // Get the roles required from the route.

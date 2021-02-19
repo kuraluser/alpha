@@ -13,14 +13,26 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { VesselInfoModule } from '../../core/components/vessel-info/vessel-info.module';
-import { SidePanelLoadableStudyListComponent } from './side-panel-loadable-study-list/side-panel-loadable-study-list.component';
 import { NewLoadableStudyPopupModule } from '../../core/components/new-loadable-study-popup/new-loadable-study-popup.module';
 import { OnHandQuantityComponent } from './on-hand-quantity/on-hand-quantity.component';
 import { PortsComponent } from './ports/ports.component';
 import { PermissionDirectiveModule } from '../../../shared/directives/permission/permission-directive.module';
 import { LoadableQuantityComponent } from './loadable-quantity/loadable-quantity.component';
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
+import { SidePanelLoadableStudyListModule } from '../../core/components/side-panel-loadable-study-list/side-panel-loadable-study-list.module';
 import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
+import { CommingleComponent } from './commingle/commingle.component';
+import { CheckboxModule } from 'primeng/checkbox';
+import { ColorPickerModule } from 'primeng/colorpicker';
+import { CommingleApiService } from '../services/commingle-api.service';
+import { OnBoardQuantityComponent } from './on-board-quantity/on-board-quantity.component';
+import { BunkeringLayoutModule } from '../../core/components/bunkering-layout/bunkering-layout.module';
+import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/cargo-tank-layout.module';
+import { NumberDirectiveModule } from '../../../shared/directives/number-directive/number-directive.module';
+import { UnitDropdownModule } from '../../../shared/components/unit-dropdown/unit-dropdown.module';
+import { QuantityPipeModule } from '../../../shared/pipes/quantity/quantity-pipe.module';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
+
 /**
  * Routing Module for Loadable Study Details Screen
  *
@@ -28,7 +40,7 @@ import { ValidationErrorModule } from '../../../shared/components/validation-err
  * @class LoadableStudyDetailsModule
  */
 @NgModule({
-  declarations: [LoadableStudyDetailsComponent, CargoNominationComponent, LoadingPortsPopupComponent, ApiTemperatureHistoryPopupComponent, SidePanelLoadableStudyListComponent, PortsComponent, LoadableQuantityComponent, OnHandQuantityComponent],
+  declarations: [LoadableStudyDetailsComponent, CargoNominationComponent, LoadingPortsPopupComponent, ApiTemperatureHistoryPopupComponent, PortsComponent, LoadableQuantityComponent, OnHandQuantityComponent, CommingleComponent, OnBoardQuantityComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -41,11 +53,19 @@ import { ValidationErrorModule } from '../../../shared/components/validation-err
     TranslateModule,
     VesselInfoModule,
     NewLoadableStudyPopupModule,
+    SidePanelLoadableStudyListModule,
     PermissionDirectiveModule,
-    ValidationErrorModule
+    ValidationErrorModule,
+    CheckboxModule,
+    ColorPickerModule,
+    BunkeringLayoutModule,
+    CargoTankLayoutModule,
+    NumberDirectiveModule,
+    UnitDropdownModule,
+    QuantityPipeModule
   ],
   providers: [
-    LoadableQuantityApiService
+    LoadableQuantityApiService, CommingleApiService, QuantityPipe
   ]
 })
 export class LoadableStudyDetailsModule { }

@@ -6,7 +6,8 @@ export const environment = {
   production: false,
   name: 'prod',
   uriPath: 'api/cloud/',
-  serviceWorkerScript: 'sw-sync.js'
+  serviceWorkerScript: 'sw-sync.js',
+  config: ''
 };
 
 /*

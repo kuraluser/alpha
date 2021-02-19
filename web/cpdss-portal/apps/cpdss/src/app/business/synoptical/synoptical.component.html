@@ -1,0 +1,55 @@
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col vessel-info-wrapper">
+                <cpdss-portal-vessel-info *ngIf="synopticalService.vesselInfo"
+                    [vesselDetails]="synopticalService.vesselInfo"></cpdss-portal-vessel-info>
+            </div>
+            <div class="col">
+                <h5 class="main-head inline-block">{{'SYNOPTICAL_TABLE' | translate }}
+                </h5>
+                <span class="ml-20 mr-10">
+                    {{'SYNOPTICAL_VOYAGE_LABEL' | translate }}</span>
+
+                <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.voyages"
+                    [(ngModel)]="synopticalService.selectedVoyage" optionLabel="voyageNo" [filter]="true"
+                    placeholder="{{ 'LOADABLE_STUDY_LIST_VOYAGE_NO_PLACEHOLDER' | translate }}"
+                    (onChange)="onVoyageSelected()">
+                </p-dropdown>
+                <!-- <span class="pl-15 text-danger" *ngIf="!synopticalService.isVoyageIdSelected">
+                    {{'NO_VOYAGE_NO_SELECTED' | translate }}</span> -->
+
+                <span class="ml-20 mr-10">
+                    {{'SYNOPTICAL_LOADABLE_STUDY_LABEL' | translate }}</span>
+                <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.loadableStudyList"
+                    [(ngModel)]="synopticalService.selectedLoadableStudy" optionLabel="name" [filter]="true"
+                    placeholder="{{'SYNOPTICAL_LOADABLESTUDY_PLACEHOLDER' | translate }}"
+                    (onChange)="onSelectLoadableStudy()">
+                </p-dropdown>
+
+                <span class="ml-20 mr-10">
+                    {{'SYNOPTICAL_LOADABLE_PATTERN_LABEL' | translate }}</span>
+                <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.loadablePatternsList"
+                    [(ngModel)]="synopticalService.selectedLoadablePattern" optionLabel="caseNumber" [filter]="true"
+                    placeholder="{{'SYNOPTICAL_LOADABLEPATTERN_PLACEHOLDER' | translate }}"
+                    (onChange)="onSelectLoadablePattern()">
+                </p-dropdown>
+               
+            </div>
+            <div class="ml-auto pr-15" *ngIf="synopticalService.showActions">
+                <button class="btn btn-main mr-10" (click)="synopticalService.onEditOrCancel()" *cpdssPortalPermission="editRoleBtnPermissionContext">{{synopticalService.editMode? 'Cancel':'Edit'}}</button>
+                <ng-container *ngIf="synopticalService.editMode">
+                    <button class="btn btn-main mr-10" *cpdssPortalPermission="saveRoleBtnPermissionContext"  (click)="synopticalService.saveChanges()">Save</button>
+                </ng-container>     
+                <ng-cotainer *ngIf="!synopticalService.editMode">
+                    <button class="btn btn-main mr-10" *cpdssPortalPermission="editRoleBtnPermissionContext" (click)="synopticalService.exportExcelFromTable()">Export</button>
+                </ng-cotainer>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col synoptical-table-wrapper">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+
+    </div>

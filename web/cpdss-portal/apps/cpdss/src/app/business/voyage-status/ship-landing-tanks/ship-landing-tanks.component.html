@@ -1,0 +1,52 @@
+<div>
+    <div class="row  pt-15">
+        <div class="col  text-center">
+            <a class="tab-btn tab-btn-default tab-landing tank-icon" [ngClass]="{'active': selectedTab === tankType.CARGO}"
+                id="ship_landing_cargo_tab" (click)="onTabClick(tankType.CARGO)">
+            </a>
+            <a class="tab-btn tab-btn-default tab-landing ballast-icon" [ngClass]="{'active': selectedTab === tankType.BALLAST}"
+                id="ship_landing_ballast_tab" (click)="onTabClick(tankType.BALLAST)">
+            </a>
+            <a class="tab-btn tab-btn-default tab-landing bunker-icon" [ngClass]="{'active': selectedTab === tankType.BUNKER}"
+            id="ship_landing_bunker_tab" (click)="onTabClick(tankType.BUNKER)">
+        </a>
+        </div>
+    </div>
+    <div class="row">
+        <div *ngIf="selectedTab === tankType.CARGO || selectedTab === tankType.BALLAST" class="col-7 pb-5 m-auto text-right">
+            <div class="switch-wrapper">
+                <span class="switch-label">View All</span>
+                <p-inputSwitch [(ngModel)]="viewAll"></p-inputSwitch>
+            </div>
+           </div>
+        <div class="col col-11 landing-page-tank-wrapper m-auto" *ngIf="selectedTab === tankType.CARGO">
+            <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks" [options]="cargoTankOptions" *ngIf="!viewAll">
+            </cpdss-portal-cargo-tank-layout>
+            <cpdss-portal-datatable [tableId]="'cargoTank'"  [columns]="cargoColumns"
+            [value]="cargoQuantities" *ngIf="viewAll">
+        </cpdss-portal-datatable>
+        </div>
+        <div class="col-11 m-auto loadable-plan-ballast landing-page-tank-wrapper" *ngIf="selectedTab === tankType.BALLAST">
+            <cpdss-portal-ballast-layout [tanks]="centerBallastTanks" [rearTanks]="rearBallastTanks"
+                    [frontTanks]="frontBallastTanks" [options]="ballastTankOptions" *ngIf="!viewAll">
+                </cpdss-portal-ballast-layout>
+                <cpdss-portal-datatable [tableId]="'ballastTank'"  [columns]="ballastColumns"
+            [value]="ballastQuantities" *ngIf="viewAll"></cpdss-portal-datatable>
+        </div>
+        <div class="col col-6 m-auto landing-page-tank-wrapper" *ngIf="selectedTab === tankType.BUNKER">
+            <div class="col text-center pb-10 pt-10">
+                <span class="mr-10 text-uppercase text-secondary">{{'SHIP_LANDING_TYPE'| translate}}</span>
+                <ng-container *ngFor="let fuelType of fuelTypes">
+                    <span class="badge-custom mr-5" *ngIf="fuelType?.shortName"
+                        [ngStyle]="{'background-color': fuelType?.colorCode}">{{fuelType?.shortName}}</span>
+                </ng-container>
+
+            </div>
+            
+                    <cpdss-portal-bunkering-layout [tanks]="bunkerTanks" [rearTanks]="rearBunkerTanks" [options]="ohqTankOptions"
+                        >
+                    </cpdss-portal-bunkering-layout>
+             
+        </div>
+    </div>
+</div>

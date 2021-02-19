@@ -1,9 +1,9 @@
 # UI application code owners
 
-/web/cpdss-portal/apps/login/ @shafeer-ao varsha.ts@alphaori.sg
-/web/cpdss-portal/apps/cpdss/src/app/login/ @shafeer-ao varsha.ts@alphaori.sg
+/web/cpdss-portal/apps/login/ @shafeer-ao varsha.ts@alphaori.sg arun.johnson@alphaori.sg gokul.p@alphaori.sg
+/web/cpdss-portal/apps/cpdss/src/app/login/ @shafeer-ao varsha.ts@alphaori.sg arun.johnson@alphaori.sg gokul.p@alphaori.sg
 /web/cpdss-portal/apps/cpdss/src/app/business/voyage-status/ akhila.va@alphaori.sg varsha.ts@alphaori.sg
-/web/cpdss-portal/apps/cpdss/src/app/business/cargo-planning/ @shafeer-ao varsha.ts@alphaori.sg
+/web/cpdss-portal/apps/cpdss/src/app/business/cargo-planning/ @shafeer-ao varsha.ts@alphaori.sg arun.johnson@alphaori.sg gokul.p@alphaori.sg
 
 # API applications code owners
 
