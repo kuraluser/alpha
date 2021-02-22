@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { LoginShipComponent } from './login-ship.component';
 import { LoginShipRoutingModule } from './login-ship-routing.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -11,7 +12,8 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [
     CommonModule,
     LoginShipRoutingModule,
-    TranslateModule
+    TranslateModule,
+    ReactiveFormsModule
   ]
 })
 export class LoginShipModule { }
