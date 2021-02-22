@@ -283,7 +283,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           type: this.fieldType.NUMBER,
           validators: ['dddd.dd.+']
         }],
-        editable: this.checkIfConfirmed(),
+        editable: true,
       },
       {
         header: 'H.W Tide & Time',

@@ -127,13 +127,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
 
     port.isSelected = true;
     port.isFocused = true;
-    if (port?.eta) {
-      if (port?.etaActual) {
-        port.isFutureDate = false;
-      }
-      else {
-        port.isFutureDate = true;
-      }
+    if (port?.eta && !port.etaActual) {
+      port.isFutureDate = false;
     }
     else {
       port.isFutureDate = true;
@@ -164,17 +159,17 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   */
   currentPosition() {
     let currentPort = 0;
-    for(let index=0; index < this.portList.length; index++){
-        const port = this.portList[index]
-        if (!port.etaActual) {
-          currentPort = index - 1;
-          break;
-        }
+    for (let index = 0; index < this.portList.length; index++) {
+      const port = this.portList[index]
+      if (!port.etaActual) {
+        currentPort = index - 1;
+        break;
+      }
     }
     if (currentPort < 0) {
       currentPort = 0;
     }
-    if (currentPort % 2 === 0){
+    if (currentPort % 2 === 0) {
       currentPort += 1
     }
     this.portList[currentPort].currentPort = true;
@@ -423,7 +418,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       return dayString + '-' + monthString + '-' + date.getFullYear();
     }
   }
-  
+
   /**
    * Method called when focusing out of the input
    * @param event 
