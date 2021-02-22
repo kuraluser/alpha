@@ -737,9 +737,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
  * @memberof LoadableStudyDetailsComponent
  */
   async generatedMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
-    this.messageService.clear("process");
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE', 'GENERATE_LOADABLE_PATTERN_COMPLETED']).toPromise();
-    this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETED'], key: "process", closable: true });
+    this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETE_DONE'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_COMPLETED'], sticky: true, closable: true });
   }
 
   /**
@@ -763,9 +762,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
 * @memberof LoadableStudyDetailsComponent
 */
   async noResponseMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
-    this.messageService.clear("process");
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR', 'GENERATE_LOADABLE_PATTERN_RESPONSE']).toPromise();
-    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_RESPONSE'], life: 3000, key: "process", closable: true });
+    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_RESPONSE'], sticky: true, closable: true});
   }
 
   /* Handler for unit change event

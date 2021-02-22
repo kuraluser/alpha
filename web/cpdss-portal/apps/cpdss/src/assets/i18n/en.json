@@ -690,5 +690,7 @@
 	"LOADABLE_PATTERN_HISTORY_CONFIRMED_PLAN_BUTTON_LABEL": "Confirmed",
 	"GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR" : "Error",
 	"GENERATE_LOADABLE_PATTERN_RESPONSE": " No reponse",
-	"PORT_LAY_CAN_TO_DATE_ERROR" : "Please select To date"
+	"PORT_LAY_CAN_TO_DATE_ERROR" : "Please select To date",
+	"LOADABLE_PATTERN_HISTORY_NO_PATTERN_GENERATED": "Pattern is not generated for this Loadable study",
+	"PORT_LAY_CAN_DATE_EQUAL": "Laycan from and to cant be same date"
 }

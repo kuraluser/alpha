@@ -87,7 +87,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));
-      this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+      if(this.isViewPattern){
+        this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+      }
       this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
     });
   }
@@ -205,9 +207,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @memberof LoadablePatternHistoryComponent
    */
   onLoadableStudyChange(event) {
-    this.loadableStudyId = event;
-    this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
-    this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
+    this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/${event}`]);
   }
 
   /**
@@ -276,9 +276,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
     this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_PATTERN_CONFIRM_SUMMARY', detail: detail, data: { confirmLabel: 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', rejectLabel: 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL' } });
     this.confirmationAlertService.confirmAlert$.pipe().subscribe(async (response) => {
       if(response){
-        this.ngxSpinnerService.show();
         const confirmResult = await this.loadablePatternApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, loadablePattern?.loadablePatternId).toPromise();
-        this.ngxSpinnerService.hide();
         if(confirmResult.responseStatus.status === '200'){
           this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
         }

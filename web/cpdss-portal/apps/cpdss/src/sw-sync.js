@@ -340,20 +340,20 @@
           notifyClients(sync);
         }
         if (syncView.loadableStudyStatusId === 3 ) {
+          clearInterval(timer);
           const sync = {};
           sync.pattern = data;
           sync.type = 'loadable-pattern-completed';
           sync.statusId = syncView.loadableStudyStatusId;
           notifyClients(sync);
-          clearInterval(timer);
         }
         if (syncView.loadableStudyStatusId === 6) {
+          clearInterval(timer);
           const sync = {};
           sync.pattern = data;
           sync.type = 'loadable-pattern-no-solution';
           sync.statusId = syncView.loadableStudyStatusId;
           notifyClients(sync);
-          clearInterval(timer);
         }
       }
       if (syncView.responseStatus.status === '500') {

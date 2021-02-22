@@ -7,7 +7,11 @@
   .content-pattern:nth-last-child(2){
     border-right: 0;
 }
-
+.content-center{
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
 // .content-pattern{
 //     height: 40vh;
 // }
