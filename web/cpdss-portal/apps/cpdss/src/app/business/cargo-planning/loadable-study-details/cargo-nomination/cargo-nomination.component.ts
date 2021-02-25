@@ -240,6 +240,14 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         this.openLoadingPopup = true;
       }
     } else if (['api', 'temperature'].includes(event.field)) {
+      if (event.data?.cargo?.value) {
+        this.loadingPopupData = <ILoadingPopupData>{
+          originalEvent: event.originalEvent,
+          rowData: event.data,
+          rowIndex: event.index,
+          ports: event.data?.cargo?.value?.ports
+        }
+      }
       this.openAPITemperatureHistoryPopup = true;
     }
     this.ngxSpinnerService.hide();
