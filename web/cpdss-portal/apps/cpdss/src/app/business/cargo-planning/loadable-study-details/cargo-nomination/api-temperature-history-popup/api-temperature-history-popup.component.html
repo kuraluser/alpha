@@ -1,13 +1,10 @@
-<p-dialog [(visible)]="visible" [modal]="true" [style]="{width: '50vw'}">
+<p-dialog [(visible)]="visible" [closable]="false" [modal]="true" [style]="{width: '50vw'}">
     <p-header>
-        API & Temperature History
+        API & Temperature History - {{apiTempHistoryPopupData.rowData.cargo.value.name}}
     </p-header>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-        magna aliqua.
-        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-        sint occaecat
-        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <p> PAST 5 DETAILS </p>
+    <cpdss-portal-datatable [tableId]="'apiTemperatureHistory'" [columns]="apiTempHistoryColumns"
+     [value]="apiTempHistoryData"></cpdss-portal-datatable>
     <p-footer>
         <button class="btn btn-secondary" (click)="closePopup()">Close</button>
     </p-footer>
