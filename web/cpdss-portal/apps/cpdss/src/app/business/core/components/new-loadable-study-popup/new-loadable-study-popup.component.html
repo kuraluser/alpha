@@ -1,18 +1,19 @@
-<p-dialog id="dialog_newLoadableStudyPopup" header="{{'NEW_LOADABLE_STUDY_POPUP_HEADER' | translate}}"
+<p-dialog id="dialog_newLoadableStudyPopup" header="{{popUpHeader | translate}}"
     [(visible)]="display" [modal]="true" styleClass="new-loadable-study-pop-up" [draggable]="false" [responsive]="true"
     [minY]="70" [closable]="false">
     <form [formGroup]="newLoadableStudyFormGroup" id="fg_newLoadableStudy" (submit)="saveLoadableStudy()">
         <div class="container-fluid">
             <div class="row">
+                <p class="text-danger text-center" *ngIf="savedloadableDetails && isLoadlineChanged()">{{'LOADABLE_STUDY_EDIT_UPDATING_LOADLING/DRAFT' | translate}}</p>
                 <div class="col-sm-6">
                     <div class="row form-group">
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DUPLICATE_EXISTING' | translate}}
                         </div>
-                        <div class="col">
-                            <p-dropdown styleClass="form-control" [options]="loadableStudyList"
+                        <div class="col dropdowm-medium">
+                            <p-dropdown styleClass="form-control" [options]="loadableStudyList" [tooltipPosition]="'top'" [tooltip]="getControlLabel('duplicateExisting')?.name?.length > 13 ? getControlLabel('duplicateExisting')?.name: ''"
                                 id="ddl_duplicateExisting" formControlName="duplicateExisting" optionLabel="name"
                                 (onChange)="onDuplicateExisting($event)"
-                                placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}">
+                                placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" [disabled]="isEdit" focusTrap>
                             </p-dropdown>
                         </div>
                     </div>
@@ -20,14 +21,14 @@
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_NAME' | translate}}</div>
                         <div class="col">
                             <input class="form-control" type="text" id="txt_newLoadableStudyName"
-                                formControlName="newLoadableStudyName">
+                                formControlName="newLoadableStudyName" focusTrap (change)="isNewLoadableStudyExist()">
                             <span
-                                *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && (form.newLoadableStudyName.errors?.required || form.newLoadableStudyName.errors?.pattern)"
+                                *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && (form.newLoadableStudyName.errors?.required || form.newLoadableStudyName.errors?.whitespace)"
                                 class="text-danger">
                                 {{'NEW_LOADABLE_STUDY_POPUP__NAME_REQUIRED' | translate}}!
                             </span>
                             <span
-                                *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && form.newLoadableStudyName.errors?.maxlength"
+                                *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && form.newLoadableStudyName.errors?.maxlength && !form.newLoadableStudyName.errors?.whitespace"
                                 class="text-danger">
                                 {{'NEW_LOADABLE_STUDY_POPUP_MAX_LENGTH' | translate}}!
                             </span>
@@ -42,7 +43,7 @@
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_ENQUIRY_DETAILS' | translate}}</div>
                         <div class="col">
                             <textarea class="form-control" type="text" id="txt_enquiryDetails"
-                                formControlName="enquiryDetails"></textarea>
+                                formControlName="enquiryDetails" focusTrap></textarea>
                             <span
                                 *ngIf="form.enquiryDetails.invalid && form.enquiryDetails.touched && form.enquiryDetails.errors?.maxlength"
                                 class="text-danger">
@@ -60,7 +61,7 @@
                                 <input type="file" name="fl_attachMail" #fileUpload
                                     accept="image/jpeg,image/jpg,image/png,application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document,.eml"
                                     formControlName="attachMail" (change)="selectFilesToUpload()"
-                                    title="No file selected" multiple />
+                                    title="No file selected" multiple focusTrap/>
 
                             </div>
                             <div *ngIf="showError" class="text-danger">
@@ -68,13 +69,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" *ngIf="uploadedFiles.length > 0">
+                    <div class="row" *ngIf="uploadedFiles?.length > 0">
                         <div class="col col-form-label"></div>
                         <div class="col">
                             <ol class="pl-10">
-                                <li *ngFor="let file of uploadedFiles; let i = index" [pTooltip]="file.name">
-                                    <a (click)="openFile(i)" class="file-name">{{file.name}}</a>
-                                    <span class="pi pi-times text-secondary font-x-small ml-5 pointer" (click)="removeFile(i)"></span>
+                                <li *ngFor="let file of uploadedFiles; let i = index" [pTooltip]="file?.name ? file?.name : file?.fileName">
+                                    <a (click)="openFile(i, file?.id)" class="file-name">{{file?.name ? file?.name : file.fileName}}</a>
+                                    <span class="pi pi-times text-secondary font-x-small ml-5 pointer" (click)="removeFile(i, file?.id)"></span>
                                 </li>
                             </ol>
                         </div>
@@ -83,7 +84,7 @@
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_CHARTERER' | translate}}</div>
                         <div class="col">
                             <input class="form-control" type="text" id="txt_charterer" formControlName="charterer"
-                                readonly>
+                                readonly focusTrap>
                         </div>
                     </div>
 
@@ -91,7 +92,7 @@
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_SUB_CHARTERER' | translate}}</div>
                         <div class="col">
                             <input class="form-control" type="text" id="txt_subCharterer"
-                                formControlName="subCharterer">
+                                formControlName="subCharterer" focusTrap>
                             <span
                                 *ngIf="form.subCharterer.invalid && form.subCharterer.touched && form.subCharterer.errors?.maxlength"
                                 class="text-danger">
@@ -106,17 +107,17 @@
                         <div class="col">
                             <p-dropdown styleClass="form-control" [options]="loadlineLists" id="ddl_loadLine"
                                 formControlName="loadLine" optionLabel="name" (onChange)="onloadLineChange()"
-                                placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}">
+                                placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" focusTrap>
                             </p-dropdown>
                         </div>
                     </div>
 
-                    <div class="row form-group" *ngIf="draftMarkList.length > 0">
+                    <div class="row form-group" *ngIf="draftMarkList?.length > 0">
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DRAFT_MARK' | translate}}</div>
                         <div class="col">
                             <p-dropdown styleClass="form-control" [options]="draftMarkList" id="ddl_draftMark"
                                 formControlName="draftMark" optionLabel="name"
-                                placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}">
+                                focusTrap>
                             </p-dropdown>
                         </div>
                     </div>
@@ -125,12 +126,12 @@
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DRAFT_RESTRICTION' | translate}}
                         </div>
                         <div class="col">
-                            <input class="form-control" type="number" id="txt_draftRestriction"
-                                formControlName="draftRestriction">
-                            <span
-                                *ngIf="form.draftRestriction.invalid && form.draftRestriction.touched && (form.draftRestriction.errors?.max || form.draftRestriction.errors?.min)"
+                            <input class="form-control" type="text" cpdssPortalNumberDecimal id="txt_draftRestriction"
+                                formControlName="draftRestriction" focusTrap>
+                                <span
+                                *ngIf="form.draftRestriction.invalid && form.draftRestriction.touched && form.draftRestriction.errors?.min"
                                 class="text-danger">
-                                {{'NEW_LOADABLE_STUDY_POPUP_MAX_DRAFT_DIGIT_LENGTH' | translate}}!
+                                {{'DRAFT_RESTRICTION_MIN' | translate}}
                             </span>
                         </div>
                     </div>
@@ -139,41 +140,52 @@
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_MAX_AIR_TEMP_EXPECTED' | translate}}
                         </div>
                         <div class="col">
-                            <input class="form-control" type="number" id="txt_maxAirTempExceeded"
-                                formControlName="maxAirTempExpected">
-                            <span
-                                *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && (form.maxAirTempExpected.errors?.max || form.maxAirTempExpected.errors?.min)"
-                                class="text-danger">
-                                {{'NEW_LOADABLE_STUDY_POPUP_MAX_TEMP_DIGIT_LENGTH' | translate}}!
-                            </span>
+                            <input class="form-control" type="text" cpdssPortalNumberDecimal id="txt_maxAirTempExceeded"
+                                formControlName="maxAirTempExpected" focusTrap>
+                                <span
+                                    *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && form.maxAirTempExpected.errors?.min"
+                                    class="text-danger">
+                                    {{'MAX_AIR_TEMP_MIN' | translate}}
+                                </span>
+                                <span
+                                    *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && form.maxAirTempExpected.errors?.max"
+                                    class="text-danger">
+                                    {{'MAX_AIR_TEMP_MAX' | translate}}
+                                </span>
                         </div>
                     </div>
                     <div class="row form-group">
                         <div class="col col-form-label">
                             {{'NEW_LOADABLE_STUDY_POPUP_MAX_WATER_TEMP_EXPECTED' | translate}}</div>
                         <div class="col">
-                            <input class="form-control" type="number" id="txt_maxWaterTempExceeded"
-                                formControlName="maxWaterTempExpected">
-                            <span
-                                *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && (form.maxWaterTempExpected.errors?.max || form.maxWaterTempExpected.errors?.min)"
-                                class="text-danger">
-                                {{'NEW_LOADABLE_STUDY_POPUP_MAX_TEMP_DIGIT_LENGTH' | translate}}!
-                            </span>
+                            <input class="form-control" type="text" cpdssPortalNumberDecimal id="txt_maxWaterTempExceeded"
+                                formControlName="maxWaterTempExpected" focusTrap>
+                                <span
+                                    *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && form.maxWaterTempExpected.errors?.min"
+                                    class="text-danger">
+                                    {{'MAX_WATER_TEMP_MIN' | translate}}
+                                </span>
+                                <span
+                                    *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && form.maxWaterTempExpected.errors?.max"
+                                    class="text-danger">
+                                    {{'MAX_WATER_TEMP_MAX' | translate}}
+                                </span>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
 
-
+       
     </form>
     <p-footer>
         <div class="row">
             <div class="col-sm-12 text-right">
                 <button type="button" class="btn btn-main" (click)="closeDialog()"
-                    id="new-loadable-study-popup-cancel">{{'NEW_LOADABLE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
+                    id="new-loadable-study-popup-cancel" focusTrap>{{'NEW_LOADABLE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
                 <button type="submit" class="btn btn-main" id="new-loadable-study-popup-save"
-                    form="fg_newLoadableStudy">{{'NEW_LOADABLE_STUDY_POPUP_SAVE_BUTTON' | translate}}</button>
+                    form="fg_newLoadableStudy" autofocus focusTrap>{{saveButtonLabel | translate}}</button>
             </div>
         </div>
     </p-footer>

@@ -9,7 +9,8 @@ import { ValidationErrorModule } from '../validation-error/validation-error.modu
 import { TranslateModule } from '@ngx-translate/core';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { CalendarModule } from 'primeng/calendar';
-
+import { NumberDirectiveModule } from '../../directives/number-directive/number-directive.module';
+import { PaginatorModule } from 'primeng/paginator';
 
 /**
  * Module for DataTable
@@ -28,7 +29,9 @@ import { CalendarModule } from 'primeng/calendar';
     ValidationErrorModule,
     TranslateModule,
     SplitButtonModule,
-    CalendarModule
+    CalendarModule,
+    PaginatorModule,
+    NumberDirectiveModule
   ],
   exports: [DatatableComponent]
 })

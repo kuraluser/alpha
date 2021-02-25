@@ -2,8 +2,8 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FileUpload } from 'primeng/fileupload';
 import { IDropdownEvent, INewLoadableStudy } from "./new-loadable-study-popup.model";
-import { IdraftMarks, ILoadLineList, INewLoadableStudyListNames, Voyage } from "../../models/common.models";
-import { VesselDetailsModel } from '../../../model/vessel-details.model';
+import { IdraftMarks, ILoadLineList, INewLoadableStudyListNames, Voyage } from "../../models/common.model";
+import { IVessel } from '../../../core/models/vessel-details.model';
 import { LoadableStudyListApiService } from '../../../cargo-planning/services/loadable-study-list-api.service';
 import { LoadableStudy } from '../../../cargo-planning/models/loadable-study-list.model';
 import { Router } from '@angular/router';
@@ -11,6 +11,8 @@ import { numberValidator } from '../../../cargo-planning/directives/validator/nu
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { whiteSpaceValidator } from '../../directives/space-validator.directive';
+import { saveAs } from 'file-saver';
 
 /**
  *  popup for creating / editing loadable-study
@@ -25,8 +27,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   @ViewChild('fileUpload') fileUpload: FileUpload;
   @Input() display;
   @Input()
-  get vesselInfoList(): VesselDetailsModel { return this._vesselInfoList; }
-  set vesselInfoList(vesselInfoList: VesselDetailsModel) {
+  get vesselInfoList(): IVessel { return this._vesselInfoList; }
+  set vesselInfoList(vesselInfoList: IVessel) {
     this._vesselInfoList = vesselInfoList;
   }
   @Input()
@@ -44,15 +46,15 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   get duplicateLoadableStudy(): LoadableStudy { return this._duplicateLoadableStudy; }
   set duplicateLoadableStudy(duplicateLoadableStudy: LoadableStudy) {
     this._duplicateLoadableStudy = duplicateLoadableStudy;
-    if (duplicateLoadableStudy)
-      this.getLoadableStudyDetailsForDuplicating(duplicateLoadableStudy);
   }
-
+  @Input() isEdit = false;
+  @Input() selectedLoadableStudy: LoadableStudy;
   @Output() displayPopup = new EventEmitter();
+  @Output() addedNewLoadableStudy = new EventEmitter<Object>();
 
   @ViewChild('fileUpload') fileUploadVariable: ElementRef;
 
-  private _vesselInfoList: VesselDetailsModel;
+  private _vesselInfoList: IVessel;
   private _voyage: Voyage;
   private _loadableStudyList: LoadableStudy[];
   private _duplicateLoadableStudy: LoadableStudy;
@@ -63,10 +65,15 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   loadlineList: ILoadLineList;
   draftMarkList: IdraftMarks[] = [];
   uploadedFiles: any[] = [];
+  editUploadFiles: any[] = [];
   loadlineLists: ILoadLineList[];
   showError = false;
   uploadError = "";
   newLoadableStudyNameExist = false;
+  popUpHeader = "";
+  saveButtonLabel = "";
+  savedloadableDetails: any;
+  deletedAttachments: number[];
   constructor(private loadableStudyListApiService: LoadableStudyListApiService,
     private formBuilder: FormBuilder,
     private router: Router,
@@ -75,6 +82,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService) { }
 
   ngOnInit(): void {
+    this.deletedAttachments = [];
+    this.popUpHeader = this.isEdit ? "NEW_LOADABLE_STUDY_POPUP_EDIT_HEADER" : "NEW_LOADABLE_STUDY_POPUP_HEADER"
+    this.saveButtonLabel = this.isEdit ? "NEW_LOADABLE_STUDY_POPUP_UPDATE_BUTTON" : "NEW_LOADABLE_STUDY_POPUP_SAVE_BUTTON";
     this.getVesselInfo();
   }
 
@@ -83,7 +93,17 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     this.uploadedFiles = [];
     this.loadlineLists = this.vesselInfoList?.loadlines;
     this.createNewLoadableStudyFormGroup();
-    this.getLoadlineSummer();
+    if (this.isEdit) {
+      this.updateLoadableStudyFormGroup(this.selectedLoadableStudy, true)
+    } else {
+      let isLoadableStudyAvailable;
+      isLoadableStudyAvailable = this.duplicateLoadableStudy && Object.keys(this.duplicateLoadableStudy)?.length === 0 && this.duplicateLoadableStudy.constructor === Object
+      if (!isLoadableStudyAvailable && this.duplicateLoadableStudy) {
+        this.updateLoadableStudyFormGroup(this.duplicateLoadableStudy, false);
+      } else {
+        this.getLoadlineSummer();
+      }
+    }
   }
 
   //get summer loadline data
@@ -91,7 +111,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     const result = this.loadlineLists.filter(e => e.name.toLowerCase() === 'summer');
     if (result.length > 0) {
       this.loadlineList = result[0];
-      const draftMarkSummer = Math.max(...this.loadlineList.draftMarks.map(Number));
+      const draftMarkSummer = this.loadlineList.draftMarks[0];
       this.newLoadableStudyFormGroup.patchValue({
         loadLine: this.loadlineList,
         draftMark: { id: draftMarkSummer, name: draftMarkSummer }
@@ -104,68 +124,68 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   async createNewLoadableStudyFormGroup() {
     this.newLoadableStudyFormGroup = this.formBuilder.group({
       duplicateExisting: '',
-      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100), Validators.pattern(/^\S+/)]),
+      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100), whiteSpaceValidator]),
       enquiryDetails: this.formBuilder.control('', [Validators.maxLength(1000)]),
       attachMail: null,
       charterer: this.vesselInfoList?.charterer,
-      subCharterer: this.formBuilder.control('', [Validators.maxLength(100)]),
+      subCharterer: this.formBuilder.control('', [Validators.maxLength(30)]),
       loadLine: '',
       draftMark: '',
-      draftRestriction: this.formBuilder.control('', [Validators.min(-99.99), Validators.max(99.99)]),
-      maxAirTempExpected: this.formBuilder.control('', [Validators.min(-999.99), Validators.max(999.99), numberValidator(2)]),
-      maxWaterTempExpected: this.formBuilder.control('', [Validators.min(-999.99), Validators.max(999.99), numberValidator(2)])
+      draftRestriction: this.formBuilder.control('', [numberValidator(2, 2), Validators.min(0.01)]),
+      maxAirTempExpected: this.formBuilder.control('', [numberValidator(2, 2), Validators.min(-99), Validators.max(99)]),
+      maxWaterTempExpected: this.formBuilder.control('', [numberValidator(2, 3), Validators.min(-99), Validators.max(999)])
     });
   }
 
-  // for duplicating a loadable study populating from mock API as of now.
-  // the actual data will come from parent component called "loadable-study-list" and have to bind form-group with actual data.
-  public async getLoadableStudyDetailsForDuplicating(loadableStudyObj: LoadableStudy) {
-    this.newLoadableStudyFormGroup.controls.duplicateExisting.setValue(loadableStudyObj);
-    this.newLoadableStudyFormGroup.controls.newLoadableStudyName.setValue(loadableStudyObj.name);
-    this.newLoadableStudyFormGroup.controls.enquiryDetails.setValue(loadableStudyObj.detail);
-    this.newLoadableStudyFormGroup.controls.charterer.setValue(loadableStudyObj.charterer);
-    this.newLoadableStudyFormGroup.controls.subCharterer.setValue(loadableStudyObj.subCharterer);
-    const loadLine = this.loadlineLists.find(loadline => loadableStudyObj.loadLineXId === loadline.id);
-    this.newLoadableStudyFormGroup.controls.loadLine.setValue(loadLine);
-    this.onloadLineChange();
-    const draftMark = this.draftMarkList.find(draftmark => draftmark.id === loadableStudyObj.draftMark);
-    this.newLoadableStudyFormGroup.controls.draftMark.setValue(draftMark);
-    this.newLoadableStudyFormGroup.controls.draftRestriction.setValue(loadableStudyObj.draftRestriction);
-    this.newLoadableStudyFormGroup.controls.maxAirTempExpected.setValue(loadableStudyObj.maxAirTemperature);
-    this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.setValue(loadableStudyObj.maxWaterTemperature);
+  // is Loadable Study Name Exist
+  isNewLoadableStudyExist() {
+    const nameExistence = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
+    this.newLoadableStudyNameExist = this.isEdit ? (this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim() === this.selectedLoadableStudy.name.toLocaleLowerCase() ? false : nameExistence) : nameExistence;
   }
 
   // post newLoadableStudyFormGroup for saving newly created loadable-study
   public async saveLoadableStudy() {
     if (this.newLoadableStudyFormGroup.valid) {
-      this.newLoadableStudyNameExist = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
-      const translationKeys = await this.translateService.get(['LOADABLE_STUDY_CREATE_SUCCESS', 'LOADABLE_STUDY_CREATED_SUCCESSFULLY', 'LOADABLE_STUDY_CREATE_ERROR', 'LOADABLE_STUDY_ALREADY_EXIST']).toPromise();
+      const nameExistence = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
+      this.newLoadableStudyNameExist = this.isEdit ? (this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim() === this.selectedLoadableStudy.name.toLocaleLowerCase() ? false : nameExistence) : nameExistence;
+      const translationKeys = await this.translateService.get(['NEW_LOADABLE_STUDY_POPUP__NAME_EXIST','LOADABLE_STUDY_CREATE_SUCCESS', 'LOADABLE_STUDY_CREATED_SUCCESSFULLY', 'LOADABLE_STUDY_CREATE_ERROR', 'LOADABLE_STUDY_ALREADY_EXIST', 'LOADABLE_STUDY_UPDATE_SUCCESS', 'LOADABLE_STUDY_UPDATED_SUCCESSFULLY']).toPromise();
+      let isLoadableStudyAvailable;
+      isLoadableStudyAvailable = this.duplicateLoadableStudy && Object.keys(this.duplicateLoadableStudy)?.length === 0 && this.duplicateLoadableStudy.constructor === Object;
       if (!this.newLoadableStudyNameExist) {
         this.newLoadableStudyPopupModel = {
-          id: 0,
-          createdFromId: this.newLoadableStudyFormGroup.controls.duplicateExisting.value?.id,
+          id: this.isEdit ? this.selectedLoadableStudy.id : 0,
+          createdFromId: (!isLoadableStudyAvailable && this.duplicateLoadableStudy && !this.isEdit) ? 
+            this.newLoadableStudyFormGroup.controls.duplicateExisting.value?.id : '',
           name: this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.trim(),
           detail: this.newLoadableStudyFormGroup.controls.enquiryDetails.value,
           attachMail: this.uploadedFiles,
           charterer: this.newLoadableStudyFormGroup.controls.charterer.value,
-          subCharterer: this.newLoadableStudyFormGroup.controls.subCharterer.value,
+          subCharterer: this.newLoadableStudyFormGroup?.controls?.subCharterer?.value ? this.newLoadableStudyFormGroup?.controls?.subCharterer?.value : "",
           loadLineXId: this.newLoadableStudyFormGroup.controls.loadLine.value?.id,
           draftMark: this.newLoadableStudyFormGroup.controls.draftMark.value?.id,
           draftRestriction: this.newLoadableStudyFormGroup.controls.draftRestriction.value,
-          maxAirTempExpected: this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value,
-          maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value
+          maxAirTempExpected: this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value !== undefined ? this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value + '' : '',
+          maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value !== undefined ? this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value + '' : '',
+          deletedAttachments: this.deletedAttachments.join(',')
         }
         this.ngxSpinnerService.show();
         try {
           const result = await this.loadableStudyListApiService.setLodableStudy(this.vesselInfoList?.id, this.voyage.id, this.newLoadableStudyPopupModel).toPromise();
           if (result.responseStatus.status === "200") {
-            this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
+            if (this.isEdit) {
+              this.isLoadlineChanged() ? sessionStorage.setItem('loadableStudyInfo', JSON.stringify({ voyageId: this.voyage.id, vesselId: this.vesselInfoList?.id })) : null;
+              this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
+            } else {
+              this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
+            }
             this.closeDialog();
-            this.router.navigate(['business/cargo-planning/loadable-study-details/' + this.vesselInfoList?.id + '/' + this.voyage.id + '/' + result.loadableStudyId]);
+            this.addedNewLoadableStudy.emit(result.loadableStudyId)
           }
         } catch (error) {
-          //TODO: The validation error for lodable study with same name exist error should be given in api response
-          // this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: translationKeys['LOADABLE_STUDY_CREATION_FAILED'] });
+          if(error.error.errorCode === 'ERR-RICO-105') {
+            this.newLoadableStudyNameExist = true;
+            this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: translationKeys['NEW_LOADABLE_STUDY_POPUP__NAME_EXIST'] });
+          }
         }
         this.ngxSpinnerService.hide();
       } else {
@@ -191,13 +211,19 @@ export class NewLoadableStudyPopupComponent implements OnInit {
             this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_SIZE_ERROR";
             continue;
           } else {
-            this.showError = false;
-            if(uploadFile.length < 5){
-              uploadFile.push(uploadedFileVar[i]);
-            }else{
+            if (uploadFile.length < 5) {
+              const fileNameExist = this.uploadedFiles.some(file => file?.id ? (file?.fileName?.toLowerCase() === uploadedFileVar[i].name.toLowerCase()) : (file?.name?.toLowerCase() === uploadedFileVar[i].name.toLowerCase()));
+              if (fileNameExist) {
+                this.showError = true;
+                this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_NAME_EXIST_ERROR"
+              } else {
+                this.showError = false;
+                uploadFile.push(uploadedFileVar[i]);
+              }
+            } else {
               this.showError = true;
               this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_LIMIT_ERROR"
-            }   
+            }
           }
         } else {
           this.showError = true;
@@ -215,14 +241,21 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   }
 
   //open selected file
-  openFile(index) {
-    const blob = new Blob([this.uploadedFiles[index]], { type: this.uploadedFiles[index].type })
-    const fileurl = window.URL.createObjectURL(blob)
-    window.open(fileurl)
+  openFile(index, fileID = null) {
+    if (fileID) {
+      this.loadableStudyListApiService.downloadAttachment(this.vesselInfoList?.id, this.voyage.id, this.selectedLoadableStudy?.id, fileID);
+    } else {
+      const blob = new Blob([this.uploadedFiles[index]], { type: this.uploadedFiles[index].type })
+      const fileurl = window.URL.createObjectURL(blob)
+      saveAs(fileurl, this.uploadedFiles[index]?.name)
+    }
   }
 
   //remove selected file
-  removeFile(index) {
+  removeFile(index,  fileID = null) {
+    if (fileID) {
+      this.deletedAttachments.push(fileID);
+    }
     this.uploadedFiles.splice(index, 1);
   }
 
@@ -234,20 +267,92 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     this.newLoadableStudyFormGroup.reset();
     this.displayPopup.emit(false);
     this.uploadError = "";
-    this.getVesselInfo();
   }
 
   /**
    * Load draft mark List based on selected loadLine vaule
    */
   onloadLineChange() {
-    const loadLine = this.newLoadableStudyFormGroup.get('loadLine').value
-    this.draftMarkList = loadLine.draftMarks.map(draftMarks => ({ id: draftMarks, name: draftMarks }));
+    const loadLine = this.newLoadableStudyFormGroup.get('loadLine').value;
+    this.draftMarkList = loadLine.draftMarks.map(draftMarks => ({ id: draftMarks, name: draftMarks.toFixed(2) }));
+    this.newLoadableStudyFormGroup.controls.draftMark.setValue(this.draftMarkList[0]);
   }
 
   //for set selcted loadable study value in loadable study form
   onDuplicateExisting(event: IDropdownEvent) {
-    this.getLoadableStudyDetailsForDuplicating(event.value);
+    this.updateLoadableStudyFormGroup(event.value, false);
+  }
+
+  //for edit/duplicate update the values 
+  updateLoadableStudyFormGroup(loadableStudyObj: LoadableStudy, isEdit: boolean) {
+    if (isEdit) {
+      this.savedloadableDetails = {
+        draftMark: loadableStudyObj.draftMark,
+        loadLineXId: loadableStudyObj.loadLineXId,
+        draftRestriction: loadableStudyObj.draftRestriction ? loadableStudyObj.draftRestriction : ''
+      }
+      if(loadableStudyObj?.createdFromId) {
+        this._loadableStudyList?.map((loadableStudy) => {
+          if(loadableStudyObj.createdFromId === loadableStudy.id) {
+            this.newLoadableStudyFormGroup.patchValue({
+              duplicateExisting: loadableStudy
+            })
+          }
+        })
+      }
+      
+      this.newLoadableStudyFormGroup.controls['duplicateExisting'].disable();
+    } else {
+      this.newLoadableStudyFormGroup.patchValue({
+        duplicateExisting: loadableStudyObj
+      })
+    }
+    this.newLoadableStudyFormGroup.patchValue({
+      newLoadableStudyName: loadableStudyObj.name,
+      enquiryDetails: loadableStudyObj.detail ? loadableStudyObj.detail : '',
+      charterer: loadableStudyObj.charterer,
+      subCharterer: loadableStudyObj?.subCharterer,
+      loadLine: loadableStudyObj,
+      draftMark: loadableStudyObj,
+      draftRestriction: loadableStudyObj.draftRestriction ? loadableStudyObj.draftRestriction : '',
+      maxAirTempExpected: loadableStudyObj.maxAirTemperature !== undefined ? loadableStudyObj.maxAirTemperature : '',
+      maxWaterTempExpected: loadableStudyObj.maxWaterTemperature !== undefined ? loadableStudyObj.maxWaterTemperature : ''
+    });
+    const result = this.loadlineLists.filter(loadline => loadline.id === loadableStudyObj.loadLineXId);
+    if (result.length > 0) {
+      this.loadlineList = result[0];
+      const selectedDraftMark = loadableStudyObj.draftMark;
+      this.newLoadableStudyFormGroup.patchValue({
+        loadLine: this.loadlineList,
+        draftMark: { id: selectedDraftMark, name: selectedDraftMark }
+      });
+    }
+    const loadLine = this.newLoadableStudyFormGroup.get('loadLine').value;
+    this.draftMarkList = loadLine.draftMarks?.map(draftMarks => ({ id: draftMarks, name: draftMarks.toFixed(2) }));
+    loadableStudyObj.loadableStudyAttachment ? this.uploadedFiles = [...loadableStudyObj.loadableStudyAttachment] : this.uploadedFiles = [];
+  }
+
+  /**
+   * check whether new draftMark , loadLineXId , draftRestriction
+   * has been selected
+   * @memberof NewLoadableStudyPopupComponent
+  */
+  isLoadlineChanged() {
+    const savedloadableDetails = this.savedloadableDetails;
+    if (savedloadableDetails && (this.savedloadableDetails.draftMark !== this.newLoadableStudyFormGroup.controls['draftMark'].value?.id ||
+      this.savedloadableDetails.loadLineXId !== this.newLoadableStudyFormGroup.controls['loadLine'].value?.id ||
+      (this.savedloadableDetails.draftRestriction !== this.newLoadableStudyFormGroup.controls['draftRestriction']?.value))) {
+      return true;
+    }
+  }
+
+  /**
+   *
+   * @param type 
+   * Get form control value to label
+   */
+  getControlLabel(type: string) {
+    return this.newLoadableStudyFormGroup.controls[type].value;
   }
 
 }

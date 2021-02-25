@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { ConfirmationAlertService } from './confirmation-alert.service';
 
 /**
@@ -13,11 +14,17 @@ import { ConfirmationAlertService } from './confirmation-alert.service';
   templateUrl: './confirmation-alert.component.html',
   styleUrls: ['./confirmation-alert.component.scss']
 })
-export class ConfirmationAlertComponent implements OnInit {
+export class ConfirmationAlertComponent implements OnInit, OnDestroy {
+
+  private subscriptions: Subscription = new Subscription();
+  isActive: boolean;
 
   constructor(private confirmationAlertService: ConfirmationAlertService) { }
 
   ngOnInit(): void {
+    this.subscriptions.add(this.confirmationAlertService.showToast$.subscribe((response) => {
+      this.isActive = response;
+    }));
   }
 
   /**
@@ -38,6 +45,10 @@ export class ConfirmationAlertComponent implements OnInit {
   onReject() {
     this.confirmationAlertService.onConfirm(false);
     this.confirmationAlertService.clear('confirmation-alert');
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
 }

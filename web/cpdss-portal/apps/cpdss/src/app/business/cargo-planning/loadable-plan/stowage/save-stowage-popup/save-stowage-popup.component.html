@@ -1,0 +1,28 @@
+<p-dialog [(visible)]="visible" styleClass="loading-port-pop-up" [draggable]="false" [responsive]="true" [minY]="70"
+    [closable]="false">
+    <p-header>
+        {{'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_HEADER'| translate}}
+    </p-header>
+    <form [formGroup]="saveStowageForm" id="form_save_stowage_comment" *ngIf="saveStowageForm">
+        <div class="col">
+            <div class="form-group row">
+                <div class="col-sm-12 pl-0">
+                    <label
+                        class="col-form-label pr-10">{{'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT'| translate}}</label>
+                    <textarea class="form-control" type="text" id="txt_enquiryDetails"
+                        placeholder="{{'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_PLACEHOLDER'| translate}}"
+                        formControlName="comment" focusTrap></textarea>
+                    <cpdss-portal-validation-error [errors]="fieldError('comment') | async"
+                        [errorMessages]="errorMessages">
+                    </cpdss-portal-validation-error>
+                </div>
+            </div>
+        </div>
+    </form>
+    <p-footer>
+        <button type="reset" id="save_stowage_cancel_btn" class="btn btn-main" form="form_save_stowage_comment"
+            (click)="closePopup()" focusTrap>{{'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_CANCEL'| translate}}</button>
+        <button type="submit" id="save_stowage_save_btn" class="btn btn-main" form="form_save_stowage_comment"
+            (click)="savePopup()" autofocus focusTrap>{{'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_SAVE'| translate}}</button>
+    </p-footer>
+</p-dialog>

@@ -1,0 +1,19 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col"><h5 class="main-head inline-block">{{'ROLE_LISTING'| translate}}</h5></div>
+        <div class="col text-right">
+            <a  class="btn btn-link icon-btn plus-icon-rounded float-right" (click)="addRolePopUp(true)" *cpdssPortalPermission="addRoleBtnPermissionContext">{{'ADD_ROLE_BUTTON_LABEL'| translate}}</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 role-listing-wrapper">
+            <cpdss-portal-datatable [filterable]="true" [tableId]="'user_role_list'" [columns]="columns" [value]="roleList"
+                [editMode]="editMode" (columnClick)="columnClick($event)" (deleteRow)="onDeleteRow($event)" [form]="userRoleForm" (editRow)="editRow($event)"
+                [paginator]="true" [rows]="10" [totalRecords]="totalRecords" 
+                [lazy]="true" (onDataStateChange)="onDataStateChange($event)" [loading]="loading"
+                [(currentPage)]="currentPage" [(first)]="first" [(reset)]="resetDataTable"></cpdss-portal-datatable>
+
+    <cpdss-portal-add-user-role *ngIf="addUserRole" (displayPopUp)="addRolePopUp($event)" (roleSaved)="roleSaved()"></cpdss-portal-add-user-role>
+        </div>
+    </div>
+</div>

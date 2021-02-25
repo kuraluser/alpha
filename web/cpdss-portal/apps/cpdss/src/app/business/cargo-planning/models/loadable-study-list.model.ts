@@ -5,8 +5,10 @@ import { IResponse } from '../../../shared/models/common.model';
  */
 export class LoadableStudy {
     public id: number;
+    slNo: number;
     public name: string;
     public status: string;
+    public statusId: number;
     public detail: string;
     public createdDate: string;
     public charterer: string;
@@ -17,6 +19,26 @@ export class LoadableStudy {
     public maxAirTemperature: number;
     public maxWaterTemperature: number;
     public dischargingPortIds?: number[];
+    public loadableStudyStatusLastModifiedTime ?: string;
+    loadableStudyAttachment?: ILoadableStudyAttachment[];
+    dischargingCargoId: number;
+    createdFromId?: number;
+    loadOnTop: boolean;
+    isEditable?: boolean;
+    isDeletable?: boolean;
+    isDuplicate?: boolean;
+    isActionsEnabled?: boolean;
+}
+
+/**
+ * Interface for loadable study attachments
+ *
+ * @export
+ * @interface ILoadableStudyAttachment
+ */
+export interface ILoadableStudyAttachment {
+    id: number;
+    fileName: string;
 }
 
 /**
@@ -27,6 +49,7 @@ export class LoadableStudy {
  */
 export interface IDischargingPortIds {
     portIds: number[];
+    dischargingCargoId: number;
 }
 
 /**
@@ -56,4 +79,25 @@ export interface ILoadableStudyResponse extends IResponse {
 export interface ILoadableStudiesResponse {
     requestStatus: any;
     loadableStudies: LoadableStudy[];
+}
+
+/**
+ * Interface for loadable pattern response
+ *
+ * @export
+ * @interface LoadablePattern
+ */
+export interface LoadablePattern {
+    loadablePatternId: number;
+    caseNumber: number;
+}
+
+/* Interface for loadable Patterns response
+*
+* @export
+* @interface ILoadablePatternsResponse
+*/
+export interface ILoadablePatternsResponse {
+   requestStatus: any;
+   loadablePatterns: LoadablePattern[];
 }

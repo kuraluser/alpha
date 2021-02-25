@@ -1,0 +1,70 @@
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h5 class="main-head inline-block">{{'ROLE_HEADING'| translate}}</h5>
+        </div>
+       
+    </div>
+    <div class="row" [formGroup]="roleDetailsForm" *ngIf="roleDetailsForm">
+        
+            <label for="user_role_name" class="col-form-label pl-15">{{'USER_ROLE_NAME'| translate }}</label>
+            <div class="col-2">
+            <input type="text" id="user_role_name" class="form-control" formControlName="roleName" maxlength="10" (change)="roleExistSta = false"/>
+            <cpdss-portal-validation-error [errors]="fieldError('roleName')" [errorMessages]="errorMessages.roleName">
+            </cpdss-portal-validation-error>
+            <p class="text-danger" *ngIf="roleExistSta">{{'NEW_USER_ROLE_ALREADY_EXIST' | translate}}</p>
+        </div>
+        <label for="user_role_description" class="col-form-label">{{'USER_ROLE_DESCRIPTION'| translate }}</label>
+        <div class="col-4">
+            <input type="text" id="user_role_description" class="form-control" formControlName="roleDescription" maxlength="100"/>
+                <cpdss-portal-validation-error  [errors]="fieldError('roleDescription')" [errorMessages]="errorMessages.roleDescription">
+                </cpdss-portal-validation-error>
+        </div>
+        <div class="ml-auto pr-15">
+            <button (click)="saveRoleDetails()" id="user_role_save" class="btn btn-main mr-10">{{'SAVE_BUTTON_ROLE_DETAILS'| translate}}</button>
+            <button (click)="cancel()" id="user_role_cancel" class="btn btn-main">{{'CANCEL_BUTTON_ROLE_DETAILS_LABEL'| translate}}</button>
+        </div>
+    </div>
+<div> 
+</div>
+<div class="row pt-15">
+    <div class="col-8">
+        <p class="text-secondary text-uppercase">{{'ROLE_MAPPING'| translate }}</p>
+    <p>{{'ROLE_MAPPING_HEADING'| translate }}</p>
+    <p-treeTable [value]="treeNode"  selectionMode="checkbox" [(selection)]="selectedNodes">
+        <ng-template pTemplate="body" let-rowNode  let-rowData="rowData">
+            <tr>
+                <td colspan="4">
+                    <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                    <label class="checkbox-custom mb-0">
+                        <input type="checkbox" [checked]="rowData.nodeChecked" (change)="parentNodeChange(rowNode,rowData)" [disabled]="!rowData.rootNodeStatus"/>
+                        {{rowData.name}}
+                        <span class="checkmark"></span>
+                    </label>
+                </td>
+                <ng-container *ngFor = "let col of cols">
+                        <td [ttEditableColumn]="rowData" [ttEditableColumnField]="col.field" class="permission-colum">
+                            <ng-container> 
+                                <label class="checkbox-custom mb-0">
+                                <input type="checkbox" [checked]="rowData[col.field]" (change)="checkboxChange(rowData, rowNode,col.field)" [disabled]="!rowData[col.isViewable] || !rowData[col.isReadOnly]"/>
+                                {{col.header}}
+                                <span class="checkmark"></span>
+                                </label>
+                            </ng-container> 
+                           
+                        </td>
+                </ng-container>
+            </tr>
+        </ng-template>
+    </p-treeTable>
+    </div>
+    <div class="col-4">
+        <cpdss-portal-user-allocate (selectedUserDetails)="userSelected($event)" [userDetails]="userDetails" [selectedUser]="selectedUser"></cpdss-portal-user-allocate>
+    </div>
+    
+</div>
+
+
+
+</div>

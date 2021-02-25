@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { IResponse } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { INewLoadableStudy } from '../../core/components/new-loadable-study-popup/new-loadable-study-popup.model';
-import { ILoadableStudiesResponse, ILoadableStudyResponse, LoadableStudy } from '../models/loadable-study-list.model'
-
+import { ILoadablePatternsResponse, ILoadableStudiesResponse, ILoadableStudyResponse, LoadableStudy } from '../models/loadable-study-list.model'
+import { saveAs } from 'file-saver';
 @Injectable()
 export class LoadableStudyListApiService {
   loadableStudyList: LoadableStudy[];
@@ -17,6 +17,14 @@ export class LoadableStudyListApiService {
    */
   getLoadableStudies(vesselId: number, voyageId: number): Observable<ILoadableStudiesResponse> {
     return this.commonApiService.get<ILoadableStudiesResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies
+    `);
+  }
+
+  /**
+ * Get loadable pattern list
+ */
+  getLoadablePatterns(vesselId: number, voyageId: number, loadableStudyId: number): Observable<ILoadablePatternsResponse> {
+    return this.commonApiService.get<ILoadablePatternsResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/patterns
     `);
   }
 
@@ -41,8 +49,11 @@ export class LoadableStudyListApiService {
     formData.append('subCharterer', loadableStudy.subCharterer);
     formData.append('maxAirTemperature', loadableStudy.maxAirTempExpected ? loadableStudy.maxAirTempExpected?.toString() : "");
     formData.append('maxWaterTemperature', loadableStudy.maxWaterTempExpected ? loadableStudy.maxWaterTempExpected?.toString() : "");
+    formData.append('deletedAttachments', loadableStudy.deletedAttachments);
     for (let i = 0; i < loadableStudy.attachMail.length; i++) {
-      formData.append('files', loadableStudy.attachMail[i]);
+      if (loadableStudy.attachMail[i]?.size) {
+        formData.append('files', loadableStudy.attachMail[i]);
+      }
 
     }
     return this.commonApiService.postFormData<ILoadableStudyResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudy.id}`, formData);
@@ -59,5 +70,18 @@ export class LoadableStudyListApiService {
    */
   deleteLodableStudy(vesselId: number, voyageId: number, loadableStudyId: number): Observable<IResponse> {
     return this.commonApiService.delete<IResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}`)
+  }
+
+  /**
+  *
+  *
+  * @param {number} vesselId
+  * @param {number} voyageId
+  * @param {number} loadableStudy
+  * @param {number} attachmentId
+  * @memberof LoadableStudyListApiService
+  */
+  downloadAttachment(vesselId: number, voyageId: number, loadableStudyId: number, attachmentId: number) {
+    saveAs(`${self.location.origin}/api/cloud/vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/attachments/${attachmentId}`)
   }
 }  

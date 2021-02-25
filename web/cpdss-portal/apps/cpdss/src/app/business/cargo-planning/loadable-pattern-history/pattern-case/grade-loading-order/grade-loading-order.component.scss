@@ -1,0 +1,13 @@
+.tank-order{
+    li{
+        margin-right: 0;
+        &:last-child{
+            span:last-child{
+                display: none;
+            }
+        }
+    }
+}
+.badge-custom{
+    border-radius:3px;
+    }

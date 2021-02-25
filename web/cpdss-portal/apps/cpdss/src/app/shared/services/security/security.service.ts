@@ -32,11 +32,13 @@ export class SecurityService {
 
   // setting logged-in user details
   static setUserProfile(userDetails: IUserProfile) {
+    localStorage.setItem('userDetails', JSON.stringify(userDetails))
     SecurityService._USER = userDetails;
   }
 
   // getting logged-in user details
   static getUserProfile(): IUserProfile {
+    SecurityService._USER = JSON.parse(localStorage.getItem('userDetails'));
     return SecurityService._USER;
   }
 

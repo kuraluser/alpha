@@ -14,9 +14,16 @@ export class LoadableStudyListTransformationService {
   getLoadableStudyListDatatableColumns(): IDataTableColumn[] {
     return [
       {
+        field: 'slNo',
+        header: 'SL',
+        fieldType: DATATABLE_FIELD_TYPE.SLNO,
+        fieldHeaderClass: 'column-sl',
+        fieldClass: 'sl'
+      },
+      {
         field: 'name',
         header: 'LOADABLE_STUDY_LIST_GRID_LOADABLE_STUDY_NAME_LABEL',
-        sortable: false,
+        sortable: true,
         filter: true,
         editable: false,
         filterPlaceholder: 'LOADABLE_STUDY_LIST_SEARCH_BY_NAME',
@@ -27,7 +34,7 @@ export class LoadableStudyListTransformationService {
       {
         field: 'detail',
         header: 'LOADABLE_STUDY_LIST_GRID_ENQUIRY_DETAILS_LABEL',
-        sortable: false,
+        sortable: true,
         filter: true,
         editable: false,
         filterPlaceholder: 'LOADABLE_STUDY_LIST_SEARCH_BY_DETAILS',
@@ -39,7 +46,7 @@ export class LoadableStudyListTransformationService {
         field: 'status',
         header: 'LOADABLE_STUDY_LIST_GRID_STATUS_LABEL',
         filter: true,
-        sortable: false,
+        sortable: true,
         editable: false,
         filterPlaceholder: 'LOADABLE_STUDY_LIST_SEARCH_BY_STATUS',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
@@ -49,7 +56,7 @@ export class LoadableStudyListTransformationService {
       {
         field: 'createdDate',
         header: 'LOADABLE_STUDY_LIST_GRID_DATE_LABEL',
-        sortable: false,
+        sortable: true,
         filter: true,
         editable: false,
         filterPlaceholder: 'LOADABLE_STUDY_LIST_SEARCH_BY_DATE',
@@ -59,11 +66,11 @@ export class LoadableStudyListTransformationService {
         filterFieldMaxvalue: new Date()
       },
       {
-        field: '',
+        field: 'actions',
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
         fieldValueIcon: '##',
-        actions: [DATATABLE_ACTION.VIEW]
+        actions: [DATATABLE_ACTION.EDIT]
       }
     ]
   }

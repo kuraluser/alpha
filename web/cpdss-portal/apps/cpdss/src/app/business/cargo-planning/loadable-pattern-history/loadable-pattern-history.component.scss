@@ -1,0 +1,13 @@
+.content-pattern:nth-child(even){
+    padding-left: 30px;
+  }
+  .content-pattern:last-child{
+      border-bottom: 0;
+  }
+  .content-pattern:nth-last-child(2){
+    border-right: 0;
+}
+
+// .content-pattern{
+//     height: 40vh;
+// }

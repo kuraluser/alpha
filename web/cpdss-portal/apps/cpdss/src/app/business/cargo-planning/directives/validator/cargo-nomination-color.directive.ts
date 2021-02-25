@@ -9,8 +9,8 @@ export const cargoNominationColorValidator: ValidatorFn = (control: FormControl)
     return null;
   }
   const cargoNominations = control.root.get('dataTable') as FormArray;
-  const cargoColors = cargoNominations.value.filter(item => item !== control.parent.value && !item?.isDelete && item.color).map(item => item.color);
-  const cargoColor = control.value;
+  const cargoColors = cargoNominations?.value.filter(item => item !== control.parent.value && !item?.isDelete && item.color).map(item => item.color);
+  const cargoColor = control?.value;
 
-  return cargoColors.includes(cargoColor) ? { duplicateColor: true } : null;
+  return cargoColors?.includes(cargoColor) ? { duplicateColor: true } : null;
 };

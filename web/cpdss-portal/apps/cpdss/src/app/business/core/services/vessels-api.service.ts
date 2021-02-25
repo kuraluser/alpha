@@ -2,21 +2,21 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { IVesselsResponse, VesselDetailsModel } from '../../model/vessel-details.model';
+import { IVesselsResponse, IVessel } from '../../core/models/vessel-details.model';
 
 /**
  * Service for vessels api
  */
 @Injectable()
 export class VesselsApiService {
-  private _vesselDetails: VesselDetailsModel[];
+  private _vesselDetails: IVessel[];
 
   constructor(private commonApiService: CommonApiService) { }
 
   /**
    * Vessel details api result mock
    */
-  getVesselsInfo(): Observable<VesselDetailsModel[]> {
+  getVesselsInfo(): Observable<IVessel[]> {
     if (this._vesselDetails) {
       return of(this._vesselDetails);
     } else {

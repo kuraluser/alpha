@@ -2867,6 +2867,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     loadablePatternCargoDetails.setAbbreviation(lpsd.getCargoAbbreviation());
     loadablePatternCargoDetails.setApi(new BigDecimal(lpsd.getApi()));
     loadablePatternCargoDetails.setTemperature(new BigDecimal(lpsd.getTemperature()));
+    loadablePatternCargoDetails.setColorCode(lpsd.getColorCode());
     loadablePatternCargoDetailsRepository.save(loadablePatternCargoDetails);
   }
 

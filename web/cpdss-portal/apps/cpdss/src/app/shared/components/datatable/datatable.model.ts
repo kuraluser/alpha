@@ -1,3 +1,4 @@
+import { SortEvent } from 'primeng/api';
 import { IValidationErrorMessages } from '../validation-error/validation-error.model';
 
 /**
@@ -7,10 +8,11 @@ import { IValidationErrorMessages } from '../validation-error/validation-error.m
  * @interface IDataTableColumn
  */
 export interface IDataTableColumn {
-    field: string;
+    field?: string;
     header: string;
     fieldType?: DATATABLE_FIELD_TYPE;
     sortable?: boolean;
+    sortField?: string;
     editable?: boolean;
     filter?: boolean;
     filterType?: DATATABLE_FILTER_TYPE;
@@ -18,6 +20,7 @@ export interface IDataTableColumn {
     filterPlaceholder?: string;
     filterMatchMode?: string;
     listName?: string;
+    filterListName?: string;
     listFilter?: boolean;
     arrayLabelField?: string;
     arrayFilterField?: string;
@@ -32,6 +35,16 @@ export interface IDataTableColumn {
     filterFieldMaxvalue?: any;
     minDate?: Date;
     dateFormat?: string;
+    columns?: IDataTableColumn[];
+    virtualScroll?: boolean;
+    rowspan?: number;
+    colspan?: number;
+    fieldColumnClass?: string,
+    subColumns? : IDataTableColumn[],
+    subHeader?: string;
+    numberFormat?: string;
+    showTotal?: boolean;
+    filterByServer?: boolean
 }
 
 /**
@@ -40,19 +53,22 @@ export interface IDataTableColumn {
  * @export
  * @enum {number}
  */
+
 export enum DATATABLE_FIELD_TYPE {
-    ICON = 'ICON',
-    SLNO = 'SLNO',
-    TEXT = 'TEXT',
-    NUMBER = 'NUMBER',
-    SELECT = 'SELECT',
-    COLORPICKER = 'COLORPICKER',
-    AUTOCOMPLETE = 'AUTOCOMPLETE',
-    ARRAY = 'ARRAY',
-    ACTION = 'ACTION',
-    DATE = 'DATE',
-    DATERANGE = 'DATERANGE',
-    DATETIME = 'DATETIME'
+  ICON = 'ICON',
+  SLNO = 'SLNO',
+  TEXT = 'TEXT',
+  NUMBER = 'NUMBER',
+  SELECT = 'SELECT',
+  COLORPICKER = 'COLORPICKER',
+  AUTOCOMPLETE = 'AUTOCOMPLETE',
+  ARRAY = 'ARRAY',
+  ACTION = 'ACTION',
+  DATE = 'DATE',
+  DATERANGE = 'DATERANGE',
+  DATETIME = 'DATETIME',
+  COLOR = 'COLOR',
+  TIME = "TIME"
 }
 
 /**
@@ -65,7 +81,8 @@ export enum DATATABLE_FILTER_TYPE {
     TEXT = 'TEXT',
     NUMBER = 'NUMBER',
     ARRAY = 'ARRAY',
-    DATE = 'DATE'
+    DATE = 'DATE',
+    SELECT = 'SELECT'
 }
 
 /**
@@ -123,6 +140,31 @@ export interface IDataTableEvent {
 }
 
 /**
+ * Interface for datatable filter events
+ *
+ * @export
+ * @interface IDataTableFilterEvent
+ */
+export interface IDataTableFilterEvent {
+    filters: any;
+    filteredValue: [];
+}
+
+/**
+ * Interface for datatable sort event
+ *
+ * @export
+ * @interface IDataTableSortEvent
+ * @extends {SortEvent}
+ */
+export interface IDataTableSortEvent extends SortEvent {
+    data?: any[];
+    mode?: string;
+    field?: string;
+    order?: number;
+}
+
+/**
  * Enum for Datatable action
  *
  * @export
@@ -132,5 +174,41 @@ export enum DATATABLE_ACTION {
     SAVE = 'SAVE',
     DELETE = 'DELETE',
     DUPLICATE = 'DUPLICATE',
-    VIEW = 'VIEW'
+    VIEW = 'VIEW',
+    EDIT = 'EDIT'
+}
+
+/**
+ * Interface for datatable 
+ *
+ * @export
+ * @interface IDataTablePageChangeEvent
+ */
+export interface IDataTablePageChangeEvent {
+    paginator: IPaginator;
+    filter: any;
+    action: string;
+    sort: ISort
+}
+
+/**
+ * Interface for Paginator 
+ *
+ * @export
+ * @interface IPaginator
+ */
+export interface IPaginator {
+    currentPage: number,
+    rows: number
+}
+
+/**
+ * Interface for sort 
+ *
+ * @export
+ * @interface ISort
+ */
+export interface ISort {
+    sortField: string,
+    sortOrder: string
 }

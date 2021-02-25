@@ -1,5 +1,3 @@
-import { IdraftMarks } from '../../models/common.models';
-
 /**
  *  model for new-loadable-study
  */
@@ -13,9 +11,10 @@ export interface INewLoadableStudy {
     draftMark: number;
     loadLineXId: number;
     draftRestriction: number;
-    maxAirTempExpected: number;
-    maxWaterTempExpected: number;
-    attachMail: string[];
+    maxAirTempExpected: string;
+    maxWaterTempExpected: string;
+    attachMail: any[];
+    deletedAttachments: string;
 }
 
 

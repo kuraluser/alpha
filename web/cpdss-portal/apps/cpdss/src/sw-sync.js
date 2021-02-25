@@ -3,19 +3,19 @@
 
   importScripts('dexie.min.js');
 
-  const db = new Dexie("CPDSS");
   let apiUrl;
-  if(self.location.protocol === 'https:') {
+  if (self.location.protocol === 'https:') {
     apiUrl = `${self.location.protocol}//${self.location.hostname}:${self.location.port}/api/cloud`;
   } else {
-    apiUrl = `${self.location.protocol}//192.168.1.177:8085/api/cloud`;
+    apiUrl = `${self.location.protocol}//192.168.2.89:8085/api/cloud`;
   }
-  
 
-
+  const db = new Dexie("CPDSS");
   db.version(1).stores({
-    cargoNominations: "++,storeKey",
-    ports: "++,storeKey"
+    cargoNominations: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+    ports: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+    ohq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+    obq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
   });
   db.open();
 
@@ -23,71 +23,85 @@
   setInterval(() => {
     serverSyncCargoNomination();
     serverSyncPorts();
-  }, 5000);
+    serverSyncOHQ();
+    serverSyncOBQ();
+  }, 2000);
 
   /**
-   * Fuction for synch of indexdb and server
+   * Fuction for sync of indexdb and server for cargo nomination grid
    *
    */
   async function serverSyncCargoNomination() {
+    // Remove all records with api initiated as status true
+    db.cargoNominations.where({ 'status': 1 }).delete();
+
     //Get all store keys
     await db.cargoNominations.orderBy('storeKey').uniqueKeys((storeKeys) => {
       storeKeys.forEach(async (key) => {
+        const timeStamp = Date.now - 60000;
         //Get all primary keys with storekey
-        const primaryKey = await db.cargoNominations.where({ 'storeKey': key }).primaryKeys();
+        const primaryKey = await db.cargoNominations.where({ 'storeKey': key }).and(data => data.status !== 1 && (!data.timeStamp || data.timeStamp < timeStamp)).primaryKeys();
 
-        //Get last update record of particular store key
-        const cargoNomination = await db.cargoNominations.where({ ':id': primaryKey.sort((a, b) => a > b ? a : b)[0] }).first();
-        if(cargoNomination) {
-          if (cargoNomination?.isDelete) {
-            // send delete sync request to the server
-            var headers = {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
+        if (primaryKey?.length) {
+          //Get last update record of particular store key
+          const cargoNomination = await db.cargoNominations.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
+          if (cargoNomination) {
+            const updated = await db.cargoNominations.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now(), status: 1 });
+            if (updated) {
+              if (cargoNomination?.isDelete) {
+                // send delete sync request to the server
+                var headers = {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                }
+                const syncResponse = await fetch(`${apiUrl}/vessels/${cargoNomination?.vesselId}/voyages/${cargoNomination?.voyageId}/loadable-studies/${cargoNomination?.loadableStudyId}/cargo-nominations/${cargoNomination.id}`, {
+                  method: 'DELETE',
+                  headers: headers
+                });
+
+                if (syncResponse.status === 200) {
+                  const sync = await syncResponse.json();
+                  sync.storeKey = cargoNomination.storeKey;
+                  sync.type = 'cargo_nomination_sync_finished';
+
+                  //on success of api call remove all rows of selected primary keys
+                  primaryKey.forEach(async (primaryKey) => await db.cargoNominations.delete(primaryKey))
+                  return notifyClients(sync);
+                }
+
+                return Promise.reject('sync failed: ' + syncResponse.status);
+              } else {
+                // send update or add sync request to the server
+                var headers = {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                }
+                const syncResponse = await fetch(`${apiUrl}/vessels/${cargoNomination?.vesselId}/voyages/${cargoNomination?.voyageId}/loadable-studies/${cargoNomination?.loadableStudyId}/cargo-nominations/${cargoNomination?.id}`, {
+                  method: 'POST',
+                  body: JSON.stringify(cargoNomination),
+                  headers: headers
+                });
+
+                if (syncResponse.status === 200) {
+                  const sync = await syncResponse.json();
+                  sync.storeKey = cargoNomination.storeKey;
+                  sync.type = 'cargo_nomination_sync_finished';
+
+                  // update id of cargo nomination if there are any new rows with same storekey
+                  const updated = await db.cargoNominations.where({ 'storeKey': key }).modify({ 'id': cargoNomination?.id });
+                  if (updated) {
+                    //on success of api call remove all rows of selected primary keys
+                    primaryKey.forEach(async (primaryKey) => await db.cargoNominations.delete(primaryKey));
+                  }
+                  return notifyClients(sync);
+                }
+
+                return Promise.reject('sync failed: ' + syncResponse.status);
+              }
             }
-            const syncResponse = await fetch(`${apiUrl}/vessels/${cargoNomination?.vesselId}/voyages/${cargoNomination?.voyageId}/loadable-studies/${cargoNomination?.loadableStudyId}/cargo-nominations/${cargoNomination.id}`, {
-              method: 'DELETE',
-              headers: headers
-            });
-  
-            if (syncResponse.status === 200) {
-              const sync = await syncResponse.json();
-              sync.storeKey = cargoNomination.storeKey;
-              sync.type = 'cargo_nomination_sync_finished';
-  
-              //on success of api call remove all rows of selected primary keys
-              primaryKey.forEach(async (primaryKey) => await db.cargoNominations.delete(primaryKey))
-              return notifyClients(sync);
-            }
-  
-            return Promise.reject('sync failed: ' + syncResponse.status);
-          } else {
-            // send update or add sync request to the server
-            var headers = {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            }
-            const syncResponse = await fetch(`${apiUrl}/vessels/${cargoNomination?.vesselId}/voyages/${cargoNomination?.voyageId}/loadable-studies/${cargoNomination?.loadableStudyId}/cargo-nominations/${cargoNomination?.id}`, {
-              method: 'POST',
-              body: JSON.stringify(cargoNomination),
-              headers: headers
-            });
-  
-            if (syncResponse.status === 200) {
-              const sync = await syncResponse.json();
-              sync.storeKey = cargoNomination.storeKey;
-              sync.type = 'cargo_nomination_sync_finished';
-  
-              //on success of api call remove all rows of selected primary keys
-              primaryKey.forEach(async (primaryKey) => await db.cargoNominations.delete(primaryKey))
-              return notifyClients(sync);
-            }
-  
-            return Promise.reject('sync failed: ' + syncResponse.status);
           }
         }
       });
-
     });
   }
 
@@ -95,64 +109,183 @@
    * Fuction for sync of port indexdb and server
    *
    */
-  async function serverSyncPorts(){
+  async function serverSyncPorts() {
+    // Remove all records with api initiated as status true
+    db.ports.where({ 'status': 1 }).delete();
+
     await db.ports.orderBy('storeKey').uniqueKeys((storeKeys) => {
       storeKeys.forEach(async (key) => {
+        const timeStamp = Date.now - 60000;
         //Get all primary keys with storekey
-        const primaryKey = await db.ports.where({ 'storeKey': key }).primaryKeys();
+        const primaryKey = await db.ports.where({ 'storeKey': key }).and(data => data.status !== 1 && (!data.timeStamp || data.timeStamp < timeStamp)).primaryKeys();
 
         //Get last update record of particular store key
-        const port = await db.ports.where({ ':id': primaryKey.sort((a, b) => a > b ? a : b)[0] }).first();
-        if(port) {
-          if (port?.isDelete) {
-            // send delete sync request to the server
-            var headers = {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
+        const port = await db.ports.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
+        if (port) {
+          const updated = await db.ports.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now(), status: 1 });
+          if (updated) {
+            if (port?.isDelete) {
+              // send delete sync request to the server
+              var headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              }
+              const syncResponse = await fetch(`${apiUrl}/vessels/${port?.vesselId}/voyages/${port?.voyageId}/loadable-studies/${port?.loadableStudyId}/ports/${port.id}`, {
+                method: 'DELETE',
+                headers: headers
+              });
+
+              if (syncResponse.status === 200) {
+                const sync = await syncResponse.json();
+                sync.storeKey = port.storeKey;
+                sync.type = 'ports_sync_finished';
+
+                //on success of api call remove all rows of selected primary keys
+                primaryKey.forEach(async (primaryKey) => await db.ports.delete(primaryKey))
+                return notifyClients(sync);
+              }
+
+              return Promise.reject('sync failed: ' + syncResponse.status);
+            } else {
+              // send update or add sync request to the server
+              var headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              }
+              const syncResponse = await fetch(`${apiUrl}/vessels/${port?.vesselId}/voyages/${port?.voyageId}/loadable-studies/${port?.loadableStudyId}/ports/${port?.id}`, {
+                method: 'POST',
+                body: JSON.stringify(port),
+                headers: headers
+              });
+
+              if (syncResponse.status === 200) {
+                const sync = await syncResponse.json();
+                sync.storeKey = port.storeKey;
+                sync.type = 'ports_sync_finished';
+
+                // update id of port if there are any new rows with same storekey
+                const updated = await db.ports.where({ 'storeKey': key }).modify({ 'id': port?.id });
+                if (updated) {
+                  //on success of api call remove all rows of selected primary keys
+                  primaryKey.forEach(async (primaryKey) => await db.ports.delete(primaryKey));
+                }
+
+                return notifyClients(sync);
+              }
+
+              return Promise.reject('sync failed: ' + syncResponse.status);
             }
-            const syncResponse = await fetch(`${apiUrl}/vessels/${port?.vesselId}/voyages/${port?.voyageId}/loadable-studies/${port?.loadableStudyId}/ports/${port.id}`, {
-              method: 'DELETE',
-              headers: headers
-            });
-  
-            if (syncResponse.status === 200) {
-              const sync = await syncResponse.json();
-              sync.storeKey = port.storeKey;
-              sync.type = 'ports_sync_finished';
-  
-              //on success of api call remove all rows of selected primary keys
-              primaryKey.forEach(async (primaryKey) => await db.ports.delete(primaryKey))
-              return notifyClients(sync);
-            }
-  
-            return Promise.reject('sync failed: ' + syncResponse.status);
-          } else {
-            // send update or add sync request to the server
-            var headers = {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            }
-            const syncResponse = await fetch(`${apiUrl}/vessels/${port?.vesselId}/voyages/${port?.voyageId}/loadable-studies/${port?.loadableStudyId}/ports/${port?.id}`, {
-              method: 'POST',
-              body: JSON.stringify(port),
-              headers: headers
-            });
-  
-            if (syncResponse.status === 200) {
-              const sync = await syncResponse.json();
-              sync.storeKey = port.storeKey;
-              sync.type = 'ports_sync_finished';
-  
-              //on success of api call remove all rows of selected primary keys
-              primaryKey.forEach(async (primaryKey) => await db.ports.delete(primaryKey))
-              return notifyClients(sync);
-            }
-  
-            return Promise.reject('sync failed: ' + syncResponse.status);
           }
         }
       });
+    });
+  }
 
+  /**
+   * Fuction for sync of indexdb and server for ohq
+   *
+   */
+  async function serverSyncOHQ() {
+    // Remove all records with api initiated as status true
+    db.ohq.where({ 'status': 1 }).delete();
+
+    //Get all store keys
+    await db.ohq.orderBy('storeKey').uniqueKeys((storeKeys) => {
+      storeKeys.forEach(async (key) => {
+        const timeStamp = Date.now - 60000;
+        //Get all primary keys with storekey
+        const primaryKey = await db.ohq.where({ 'storeKey': key }).and(data => data.status !== 1 && (!data.timeStamp || data.timeStamp < timeStamp)).primaryKeys();
+
+        if (primaryKey?.length) {
+          //Get last update record of particular store key
+          const ohq = await db.ohq.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
+          if (ohq) {
+            const updated = await db.ohq.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now(), status: 1 });
+            if (updated) {
+              // send update or add sync request to the server
+              var headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              }
+              const syncResponse = await fetch(`${apiUrl}/vessels/${ohq?.vesselId}/voyages/${ohq?.voyageId}/loadable-studies/${ohq?.loadableStudyId}/ports/${ohq?.portId}/on-hand-quantities/${ohq?.id}`, {
+                method: 'POST',
+                body: JSON.stringify(ohq),
+                headers: headers
+              });
+
+              if (syncResponse.status === 200) {
+                const sync = await syncResponse.json();
+                sync.storeKey = ohq.storeKey;
+                sync.type = 'ohq_sync_finished';
+
+                // update id of ohq if there are any new rows with same storekey
+                const updated = await db.ohq.where({ 'storeKey': key }).modify({ 'id': ohq?.id });
+                if (updated) {
+                  //on success of api call remove all rows of selected primary keys
+                  primaryKey.forEach(async (primaryKey) => await db.ohq.delete(primaryKey));
+                }
+                return notifyClients(sync);
+              }
+
+              return Promise.reject('sync failed: ' + syncResponse.status);
+            }
+          }
+        }
+      });
+    });
+  }
+
+  /**
+   * Fuction for sync of indexdb and server for obq
+   *
+   */
+  async function serverSyncOBQ() {
+    // Remove all records with api initiated as status true
+    db.obq.where({ 'status': 1 }).delete();
+
+    //Get all store keys
+    await db.obq.orderBy('storeKey').uniqueKeys((storeKeys) => {
+      storeKeys.forEach(async (key) => {
+        const timeStamp = Date.now - 60000;
+        //Get all primary keys with storekey
+        const primaryKey = await db.obq.where({ 'storeKey': key }).and(data => data.status !== 1 && (!data.timeStamp || data.timeStamp < timeStamp)).primaryKeys();
+
+        if (primaryKey?.length) {
+          //Get last update record of particular store key
+          const obq = await db.obq.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
+          if (obq) {
+            const updated = await db.obq.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now(), status: 1 });
+            if (updated) {
+              // send update or add sync request to the server
+              var headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              }
+              const syncResponse = await fetch(`${apiUrl}/vessels/${obq?.vesselId}/voyages/${obq?.voyageId}/loadable-studies/${obq?.loadableStudyId}/ports/${obq?.portId}/on-board-quantities/${obq?.id}`, {
+                method: 'POST',
+                body: JSON.stringify(obq),
+                headers: headers
+              });
+
+              if (syncResponse.status === 200) {
+                const sync = await syncResponse.json();
+                sync.storeKey = obq.storeKey;
+                sync.type = 'obq_sync_finished';
+
+                // update id of obq if there are any new rows with same storekey
+                const updated = await db.obq.where({ 'storeKey': key }).modify({ 'id': obq?.id });
+                if (updated) {
+                  //on success of api call remove all rows of selected primary keys
+                  primaryKey.forEach(async (primaryKey) => await db.obq.delete(primaryKey));
+                }
+                return notifyClients(sync);
+              }
+
+              return Promise.reject('sync failed: ' + syncResponse.status);
+            }
+          }
+        }
+      });
     });
   }
 
@@ -167,5 +300,78 @@
       client.postMessage(sync);
     }
   }
+
+  const syncStore = {}
+  self.addEventListener('message', event => {
+    if (event.data.type === 'loadable-pattern-status') {
+      // get a unique id to save the data
+      const id = event.data.data.loadableStudyId;
+      syncStore[id] = event.data
+      // register a sync and pass the id as tag for it to get the data
+      self.registration.sync.register(id)
+    }
+  })
+
+
+  self.addEventListener('sync', function (event) {
+    event.waitUntil(checkLoadableStudyStatus(syncStore[event.tag].data));
+  });
+
+  async function checkLoadableStudyStatus(data) {
+    let currentStatus;
+    const timer = setInterval(async () => {
+      var headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+      const syncResponse = await fetch(`${apiUrl}/vessels/${data?.vesselId}/voyages/${data?.voyageId}/loadable-studies/${data?.loadableStudyId}/loadable-pattern-status`, {
+        method: 'POST',
+        body: JSON.stringify({ processId: data?.processId }),
+        headers: headers
+      });
+      const syncView = await syncResponse.json();
+      if (syncView.responseStatus.status === '200') {
+        currentStatus = syncView.loadableStudyStatusId;
+        if (syncView.loadableStudyStatusId === 4 || syncView.loadableStudyStatusId === 5) {
+          const sync = {};
+          sync.pattern = data;
+          sync.type = 'loadable-pattern-processing';
+          sync.statusId = syncView.loadableStudyStatusId;
+          notifyClients(sync);
+        }
+        if (syncView.loadableStudyStatusId === 3 ) {
+          const sync = {};
+          sync.pattern = data;
+          sync.type = 'loadable-pattern-completed';
+          sync.statusId = syncView.loadableStudyStatusId;
+          notifyClients(sync);
+          clearInterval(timer);
+        }
+        if (syncView.loadableStudyStatusId === 6) {
+          const sync = {};
+          sync.pattern = data;
+          sync.type = 'loadable-pattern-no-solution';
+          sync.statusId = syncView.loadableStudyStatusId;
+          notifyClients(sync);
+          clearInterval(timer);
+        }
+      }
+      if (syncView.responseStatus.status === '500') {
+        clearInterval(timer);
+      }
+    }, 3500);
+    setTimeout(() => {
+      if(currentStatus === 4){
+      const sync = {};
+      sync.pattern = data;
+      sync.type = 'loadable-pattern-no-response';
+      // sending default status
+      sync.statusId = 1;
+      notifyClients(sync);
+      clearInterval(timer);         
+    }
+    }, 300000);
+  }
+
 
 }());

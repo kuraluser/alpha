@@ -152,7 +152,7 @@
               "fileReplacements": [
                 {
                   "replace": "apps/cpdss/src/environments/environment.ts",
-                  "with": "apps/cpdss/src/environments/environment.ship.prod.ts"
+                  "with": "apps/cpdss/src/environments/environment.ship.test.ts"
                 }
               ],
               "optimization": true,
@@ -182,7 +182,7 @@
               "fileReplacements": [
                 {
                   "replace": "apps/cpdss/src/environments/environment.ts",
-                  "with": "apps/cpdss/src/environments/environment.shore.prod.ts"
+                  "with": "apps/cpdss/src/environments/environment.shore.test.ts"
                 },
                 {
                   "replace": "apps/cpdss/src/app/business/core/routing-configuration/business-routing.config.ship.ts",
@@ -446,7 +446,7 @@
               "fileReplacements": [
                 {
                   "replace": "apps/login/src/environments/environment.ts",
-                  "with": "apps/login/src/environments/environment.ship.prod.ts"
+                  "with": "apps/login/src/environments/environment.ship.test.ts"
                 }
               ],
               "optimization": true,
@@ -474,7 +474,7 @@
               "fileReplacements": [
                 {
                   "replace": "apps/login/src/environments/environment.ts",
-                  "with": "apps/login/src/environments/environment.shore.prod.ts"
+                  "with": "apps/login/src/environments/environment.shore.test.ts"
                 },
                 {
                   "replace": "apps/login/src/app/routing-configuration/app-routing.config.ship.ts",

@@ -1,14 +1,16 @@
 <header>
-    <div class="logo"></div>
+    <div class="logo">
+        <img [src]="companyLogo"><span class="cpdss"></span>
+    </div>
     <div class="header-nav">
         <ul class="nav">
-            <li [ngClass]="{'nav-item dropdown':true ,'show': isSubMenu[i] }" (click)="showSubmenu(list.subMenu, i)"
+            <li [ngClass]="{'nav-item dropdown':true ,'show': list.isSubMenuOpen }" (click)="showSubmenu(list.subMenu, i)"
                 (focusout)="hide(list.subMenu, i)" *ngFor="let list of menuList; let i = index"
-                [routerLink]="list.menuLink" routerLinkActive="active">
+                [routerLink]="list.menuLink !== '' ? list.menuLink : null" routerLinkActive="active">
                 <div class="menu-item-icon {{list.menuIcon}}"></div>
-                <div class="menu-item-text">{{ list.menu | translate}}</div>
-                <div class="dropdown-menu" *ngIf="list.subMenu.length>0 && isSubMenu[i]">
-                    <a class="dropdown-item" href="#" *ngFor="let subMenu of list.subMenu">{{subMenu.name}}</a>
+                <div class="menu-item-text">{{ list.menu | translate}} </div>
+                <div class="dropdown-menu" *ngIf="list.subMenu.length>0 && list.isSubMenuOpen">
+                    <a class="dropdown-item"  *ngFor="let subMenuItem of list.subMenu;let subIndex = index" (click)="subRoute($event ,subMenuItem, list.subMenu , i)">{{subMenuItem.name | translate}}</a>
                 </div>
             </li>
         </ul>

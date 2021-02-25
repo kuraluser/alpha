@@ -1,6 +1,6 @@
 
 <div class="vessel-info" *ngIf="vesselName">
-    <div><img src="../../../../../assets/images/flags/japan.png" alt=""></div>
+    <div><img [src]="flagPath" alt="Flag Url"></div>
     <div>
         <h5 class="text-uppercase mb-0"> {{vesselName}}</h5>
         <div>{{'VESSEL_INFO_IMO' | translate }} {{imoNumber}}</div>

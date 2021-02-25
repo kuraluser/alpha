@@ -8,8 +8,8 @@
                 {{ 'LOADABLE_STUDY_LIST' | translate }}</h5>
             <span class="ml-20 mr-10">
                 {{ 'LOADABLE_STUDY_LIST_VOYAGE_NO'  | translate }}</span>
-            <p-dropdown styleClass="dropdown-w-100" [options]="voyages" [(ngModel)]="selectedVoyage"
-                optionLabel="voyageNo" [filter]="true"
+            <p-dropdown #dd styleClass="dropdown-w-100" [options]="voyages" [(ngModel)]="selectedVoyage"
+                optionLabel="voyageNo" [filter]="true" (click)="clearFilter(dd)"
                 placeholder="{{ 'LOADABLE_STUDY_LIST_VOYAGE_NO_PLACEHOLDER' | translate }}"
                 (onChange)="showLoadableStudyList()">
                 <ng-template pTemplate="selectedItem">
@@ -29,21 +29,21 @@
         </div>
 
         <div class="text-right pr-15">
-            <button class="btn btn-main" (click)="callNewLoadableStudyPopup()"
+            <button class="btn btn-main" (click)="callNewLoadableStudyPopup(false)"
                 id="btn_callNewLoadableStudyPopup">{{'LOADABLE_STUDY_LIST_CREATE_NEW_LOADABLE_STUDY' | translate}}</button>
         </div>
 
     </div>
     <div class="row">
-        <div class="col">
-            <cpdss-portal-datatable *ngIf="loadableStudyList" [form]="loadableStudyListForm" [columns]="columns"
+        <div class="col loadable-study-table-wrapper">
+            <cpdss-portal-datatable *ngIf="loadableStudyList" [tableId]="'loadable_studies'" [form]="loadableStudyListForm" [columns]="columns"
                 [value]="loadableStudyList" [filterable]="true" (viewRow)="onRowSelect($event)"
                 (columnClick)="columnClick($event)">
             </cpdss-portal-datatable>
         </div>
     </div>
 </div>
-<cpdss-portal-new-loadable-study-popup *ngIf="loadableStudyList && selectedVoyage" [display]="display"
+<cpdss-portal-new-loadable-study-popup *ngIf="loadableStudyList && selectedVoyage && display" [display]="display"
     (displayPopup)="setPopupVisibility($event)" [loadableStudyList]="loadableStudyList" [vesselInfoList]="vesselDetails"
-    [voyage]="selectedVoyage">
+    [voyage]="selectedVoyage" (addedNewLoadableStudy)="onNewLoadableStudyAdded($event)" [isEdit]="isEdit" [selectedLoadableStudy]="selectedLoadableStudy">
 </cpdss-portal-new-loadable-study-popup>

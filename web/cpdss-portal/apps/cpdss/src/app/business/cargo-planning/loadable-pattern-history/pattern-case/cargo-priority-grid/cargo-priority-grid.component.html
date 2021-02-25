@@ -1,0 +1,52 @@
+<div class="row">
+    <div class="col">
+        <p-table #dt [value]="loadablePatternCargoDetails" dataKey="id" styleClass="table-pattern"
+            [rowHover]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>{{'CARGO_PRIORITY_GRID_HEADER_PRIORITY' | translate}}</th>
+                    <th>{{'CARGO_PRIORITY_GRID_HEADER_GRADE' | translate}}</th>
+                    <th>{{'CARGO_PRIORITY_GRID_HEADER_QUANTITY' | translate}}</th>
+                    <th>{{'CARGO_PRIORITY_GRID_HEADER_TOLERENCE' | translate}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-priorityData>
+                <tr class="p-selectable-row" (click)="onRowSelect(priorityData)">
+                    <td>
+                        {{priorityData.priority}}
+                    </td>
+                    <td>
+                        <span class="badge-custom" [ngClass]="priorityData?.isCommingle ? 'commingle' : ''"
+                            [ngStyle]="!priorityData?.isCommingle && {'background': priorityData.cargoColor}">{{priorityData.cargoAbbreviation}}</span>
+                    </td>
+                    <td>
+                        {{priorityData.quantity}}
+                    </td>
+                    <td>
+                        <span class="badge-custom" [ngClass]="(priorityData?.quantity - priorityData?.orderedQuantity) >= 0 ? 'success' : 'error'"> {{(priorityData?.quantity - priorityData?.orderedQuantity).toFixed(2)}}
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <tr class="p-selectable-row">
+                    <td></td>
+                    <td>{{'CARGO_PRIORITY_GRID_FOOTER_TOTAL' | translate}}</td>
+                    <td>{{totalQuantity}}</td>
+                    <td><span class="badge-custom" [ngClass]="totalDifference >= 0 ? 'success' : 'error'"> {{totalDifference.toFixed(2)}} </span></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="8">{{'CARGO_PRIORITY_GRID_EMPTY_DATA' | translate}} </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    
+</div>
+<div class="row">
+    <!-- <div class="col text-center pt-20">
+        <button class="btn btn-main mr-10">{{'CARGO_PRIORITY_GRID_MORE_BUTTON_LABEL' | translate}}</button>
+    </div> -->
+</div>
