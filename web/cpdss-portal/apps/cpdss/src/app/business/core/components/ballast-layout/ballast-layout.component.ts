@@ -117,7 +117,7 @@ export class BallastLayoutComponent implements OnInit {
    * @memberof BallastLayoutComponent
    */
   getFillingPercentage(tank: ITank) {
-    let fillingratio: any = ((tank?.commodity?.volume / Number(tank?.fullCapacityCubm)) * 100).toFixed(3);
+    let fillingratio: any = ((tank?.commodity?.volume / Number(tank?.fullCapacityCubm)) * 100).toFixed(2);
     if (Number(fillingratio) >= 100) {
       fillingratio = 100;
     }

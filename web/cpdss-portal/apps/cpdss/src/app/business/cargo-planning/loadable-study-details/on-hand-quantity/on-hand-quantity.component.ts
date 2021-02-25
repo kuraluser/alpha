@@ -415,6 +415,7 @@ export class OnHandQuantityComponent implements OnInit {
       this.setFillingPercentage(this.selectedTankId);
       this.selectedTankFormGroup.get(event?.field).setValue(Number((this.field(event?.index, event?.field)).value));
     }
+    this.ohqForm.updateValueAndValidity();
     this.loadableStudyDetailsTransformationService.setOHQValidity(this.ohqForm.valid && this.ohqGroupValidity(this.selectedPortOHQTankDetails));
     this.tanks = [...this.tanks];
     this.rearTanks = [...this.rearTanks];
