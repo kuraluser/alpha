@@ -1041,6 +1041,9 @@ input[type=number] {
   display: grid;
   width: 100%;
   grid-template-columns: 220px calc(100% - 220px);
+  &.pattern-history{
+    height: calc(100vh - 140px);
+  }
 }
 
 .content-outer.sidebar-collapsed{
@@ -1358,6 +1361,10 @@ td.sl div{
           top: 50%;
           margin-top: -7px;
           font-size: 12px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          padding-left: 2px;
+          padding-right: 1px;
         }
       }
       &.two-column-tank{
@@ -1955,7 +1962,9 @@ width: 50px !important;
 .column-segregation{
   width: 120px!important;
 }
-
+.column-fuel-type{
+  width: 150px!important;
+}
 .check-rounded{
   width: 16px;
   height: 16px;

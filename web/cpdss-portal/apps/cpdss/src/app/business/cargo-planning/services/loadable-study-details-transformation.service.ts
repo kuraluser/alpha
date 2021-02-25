@@ -810,7 +810,8 @@ export class LoadableStudyDetailsTransformationService {
         filterListName: 'fuelTypes',
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.EQUALS,
         filterType: DATATABLE_FILTER_TYPE.SELECT,
-        filterPlaceholder: 'OHQ_SEARCH_FUEL_TYPE'
+        filterPlaceholder: 'OHQ_SEARCH_FUEL_TYPE',
+        fieldHeaderClass: 'column-fuel-type'
       },
       {
         field: 'tankName',
