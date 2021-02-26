@@ -1171,3 +1171,6 @@ p-colorpicker.ng-invalid.empty  input, p-colorpicker.ng-invalid.empty  .p-colorp
   border: 1px solid darken( $body-bg, 10%);
 }
 
+header{
+  background: url($images-theme + 'header-bg.png');
+}
