@@ -136,7 +136,7 @@ export interface ICargoTankDetail extends ILoadableCargo {
     cargoAbbreviation: string;
     weight: number;
     correctedUllage: number;
-    fillingRatio: number;
+    fillingRatio: string;
     tankName: string;
     rdgUllage: number;
     correctionFactor: number;
