@@ -82,6 +82,23 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     ];
   }
 
+  /**
+   * function to hide month-wise Api-Temp history grid
+   *
+   * @memberof ApiTemperatureHistoryPopupComponent
+   */
+  hideShowMonthWiseApiTempHistoryGrid(): void {
+  }
+
+  /**
+   * function to navigate to more cargo history grid
+   *
+   * @memberof ApiTemperatureHistoryPopupComponent
+   */
+  viewMore(): void {
+    this.closePopup();
+  }
+
   closePopup() {
     this.visible = false;
     this.visibleChange.emit(this.visible);
