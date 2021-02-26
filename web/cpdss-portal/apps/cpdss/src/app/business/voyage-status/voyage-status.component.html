@@ -21,7 +21,7 @@
                 {{'SHIP_LANDING_VOYAGE_DISTANCE' | translate}}
             </div>
             <div class="pr-15" >
-                 {{voyageStatusTransformationService.voyageDistance}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
+                {{voyageStatusTransformationService.voyageDistance? voyageStatusTransformationService.voyageDistance : 0}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
             </div>
         </div>
         <div class="row">
