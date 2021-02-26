@@ -37,6 +37,7 @@ export interface IDataTableColumn {
     dateFormat?: string;
     columns?: IDataTableColumn[];
     virtualScroll?: boolean;
+    showTemplate?: boolean;
     rowspan?: number;
     colspan?: number;
     fieldColumnClass?: string,

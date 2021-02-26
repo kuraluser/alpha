@@ -961,6 +961,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldPlaceholder: 'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER',
         fieldHeaderClass: 'column-cargo1',
         fieldClass: 'commingle-cargo1',
+        showTemplate: true,
         errorMessages: {
           'required': 'COMMINGLE_CARGO_SELECT_ERROR',
           'duplicate': 'COMMINGLE_MANUAL_SAME_CARGO_VALIDATION'
@@ -997,6 +998,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldPlaceholder: 'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER',
         fieldHeaderClass: 'column-cargo2',
         fieldClass: 'commingle-cargo2',
+        showTemplate: true,
         errorMessages: {
           'required': 'COMMINGLE_CARGO_SELECT_ERROR',
           'duplicate': 'COMMINGLE_MANUAL_SAME_CARGO_VALIDATION'

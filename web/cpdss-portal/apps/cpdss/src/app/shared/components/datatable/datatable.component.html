@@ -197,6 +197,12 @@
                                             (onChange)="onChange($event, rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}" [virtualScroll]="col.virtualScroll"
                                             itemSize="30">
+                                            <ng-template *ngIf="col?.showTemplate" let-item pTemplate="item">
+                                                <span>
+                                                    <i class="color-rounded align-top mr-5" [ngStyle]="{'background' : item.value.color}"></i>
+                                                    <span>{{item.label}}</span>
+                                                </span>
+                                            </ng-template>
                                         </p-dropdown>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
