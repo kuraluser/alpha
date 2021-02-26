@@ -81,7 +81,7 @@ export class CommingleComponent implements OnInit {
     private permissionsService: PermissionsService,
     private confirmationAlertService: ConfirmationAlertService,
     private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
-    ) { }
+  ) { }
 
 
   /**
@@ -161,7 +161,7 @@ export class CommingleComponent implements OnInit {
     this.commingleForm = this.fb.group({
       purpose: this.fb.control(null, Validators.required),
       preferredTanks: this.fb.control(null),
-      slopOnly: this.fb.control({ value:false, disabled:!this.isEditable}, [Validators.required]),
+      slopOnly: this.fb.control({ value: false, disabled: !this.isEditable }, [Validators.required]),
       cargo1: this.fb.control(null, [Validators.required]),
       cargo2: this.fb.control(null, [Validators.required]),
     });
@@ -302,7 +302,8 @@ export class CommingleComponent implements OnInit {
     this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo1;
     this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2;
     const _commingleLists = commingleData?.map((item) => {
-      const manualData = this.loadableStudyDetailsTransformationService.getCommingleValueObject(item, false, this.isEditable, this.listData);
+      let manualData = this.loadableStudyDetailsTransformationService.getCommingleValueObject(item, false, this.isEditable, this.listData);
+      manualData = this.convertUnit(manualData)
       return manualData;
     });
     const commingleListArray = _commingleLists.map(commingle => this.initCommingleManualFormGroup(commingle));
@@ -337,7 +338,7 @@ export class CommingleComponent implements OnInit {
       const dataTableControl = <FormArray>this.commingleManualForm.get('dataTable');
       dataTableControl.insert(0, this.initCommingleManualFormGroup(_commingle));
     }
-    else if(this.manualCommingleList?.length >= 3){
+    else if (this.manualCommingleList?.length >= 3) {
       this.isMaxCargo = true;
     }
 
@@ -377,6 +378,7 @@ export class CommingleComponent implements OnInit {
       const _commingleList = Array<ICargoGroup>();
       if (this.commingleManualForm.value.dataTable.length > 0) {
         for (let i = 0; i < this.manualCommingleList.length; i++) {
+          this.manualCommingleList[i] = this.convertUnit(this.manualCommingleList[i],true)
           _commingleList[i] = this.loadableStudyDetailsTransformationService.getCommingleAsValue(this.manualCommingleList[i]);
         }
       }
@@ -544,23 +546,30 @@ export class CommingleComponent implements OnInit {
   }
 
   /**
-   * Method to convert the quantities to current unit
+   * Method to convert the quantities by unit
    */
-  convertToCurrentUnit(){
-    const unitTo = localStorage.getItem('unit')
-    this.manualCommingleList.forEach( row => {
-      row.quantity.value = this.loadableStudyDetailsApiService.updateQuantityByUnit(row.quantity.value, this.loadableStudyDetailsApiService.baseUnit, unitTo, '')
-    })
-  }
-
-  /**
-   * Method to convert the quantities to current unit
-   */
-  convertToBaseUnit(){
-    const unitFrom = localStorage.getItem('unit')
-    this.manualCommingleList.forEach( row => {
-      row.quantity.value = this.loadableStudyDetailsApiService.updateQuantityByUnit(row.quantity.value, unitFrom, this.loadableStudyDetailsApiService.baseUnit, '')
-    })
+  convertUnit(row: ICommingleValueObject, toBaseUnit = false) {
+    let unitTo,unitFrom;
+    if(toBaseUnit){
+      unitFrom = localStorage.getItem('unit')
+      unitTo = this.loadableStudyDetailsApiService.baseUnit;  
+    } else {
+      unitFrom = this.loadableStudyDetailsApiService.baseUnit;
+      unitTo = localStorage.getItem('unit')
+    }
+    const api1 = Number(row.cargo1.value.api)
+    const api2 = Number(row.cargo2.value.api)
+    const per1 = Number(row.cargo1pct.value)
+    const per2 = Number(row.cargo2pct.value)
+    const netApi = api1 * per1 + api2 * per2;
+    row.cargo1.value.loadingPorts.forEach(port => {
+      port.quantity = this.loadableStudyDetailsApiService.updateQuantityByUnit(port.quantity, unitFrom, unitTo, netApi)
+    });
+    row.cargo2.value.loadingPorts.forEach(port => {
+      port.quantity = this.loadableStudyDetailsApiService.updateQuantityByUnit(port.quantity, unitFrom, unitTo, netApi)
+    });
+    row.quantity.value = this.loadableStudyDetailsApiService.updateQuantityByUnit(row.quantity.value, unitFrom, unitTo, netApi)
+    return row;
   }
 
 
