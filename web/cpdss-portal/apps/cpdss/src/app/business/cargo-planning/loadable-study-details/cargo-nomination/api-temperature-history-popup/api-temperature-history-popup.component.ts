@@ -99,6 +99,11 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     this.closePopup();
   }
 
+  /**
+   * function to close the api-temp history popup
+   *
+   * @memberof ApiTemperatureHistoryPopupComponent
+   */
   closePopup() {
     this.visible = false;
     this.visibleChange.emit(this.visible);
