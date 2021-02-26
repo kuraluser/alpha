@@ -52,9 +52,13 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   }
   set cargoNominations(cargoNominations: ICargoNominationValueObject[]) {
     this.totalQuantity = 0;
+    const unitFrom = <QUANTITY_UNIT>localStorage.getItem('unit');
+    const unitTo = this.loadableStudyDetailsApiService.baseUnit
     this.loadableStudyDetailsApiService.cargoNominations = cargoNominations.map((cargoNomination, _index) => {
       const _cargoNomination = this.loadableStudyDetailsTransformationService.formatCargoNomination(cargoNomination);
-      this.totalQuantity += _cargoNomination?.isDelete ? 0 : Number(_cargoNomination.quantity.value);
+      let value = _cargoNomination?.isDelete ? 0 : Number(_cargoNomination.quantity.value);
+      value = this.loadableStudyDetailsApiService.updateQuantityByUnit(value, unitFrom, unitTo, _cargoNomination.api.value, _cargoNomination.temperature.value)
+      this.totalQuantity += value;
       _cargoNomination.priority.value = _cargoNomination.priority.value > cargoNominations.length ? cargoNominations.length : _cargoNomination.priority.value;
       return _cargoNomination
     });
