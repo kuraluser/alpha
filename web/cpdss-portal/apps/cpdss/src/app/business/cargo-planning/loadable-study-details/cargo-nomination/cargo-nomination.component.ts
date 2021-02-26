@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Form, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
-import { ICargoNominationValueObject, ICargoNominationAllDropdownData, ICargoNominationDetailsResponse, ICargoNominationEvent, ICargoNomination, ILoadingPopupData } from '../../models/cargo-planning.model';
+import { ICargoNominationValueObject, ICargoNominationAllDropdownData, ICargoNominationDetailsResponse, ICargoNominationEvent, ICargoNomination, ILoadingPopupData, IApiTempPopupData } from '../../models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { cargoNominationColorValidator } from '../../directives/validator/cargo-nomination-color.directive'
@@ -98,6 +98,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   dataTableLoading: boolean;
   cargoNominationCheckUpdatesTimer;
   progress = true;
+  apiTempPopupData: IApiTempPopupData;
 
   // private fields
   private _loadableStudyId: number;
@@ -241,11 +242,9 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       }
     } else if (['api', 'temperature'].includes(event.field)) {
       if (event.data?.cargo?.value) {
-        this.loadingPopupData = <ILoadingPopupData>{
-          originalEvent: event.originalEvent,
-          rowData: event.data,
-          rowIndex: event.index,
-          ports: event.data?.cargo?.value?.ports
+        this.apiTempPopupData = <IApiTempPopupData>{
+          rowDataCargo: event.data?.cargo,
+          rowIndex: event.index
         }
       }
       this.openAPITemperatureHistoryPopup = true;

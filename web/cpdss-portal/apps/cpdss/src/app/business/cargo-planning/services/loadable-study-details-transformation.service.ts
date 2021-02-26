@@ -404,19 +404,19 @@ export class LoadableStudyDetailsTransformationService {
     return [
       {
         field: 'port',
-        header: 'PORT',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_PORT',
       },
       {
         field: 'date',
-        header: 'DATE',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_DATE',
       },
       {
         field: 'api',
-        header: 'API',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_API',
       },
       {
         field: 'temp',
-        header: 'TEMP (°F)',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_TEMP',
       }
     ]
   }

@@ -663,12 +663,23 @@ export interface IConfirmStatusResponse {
 }
 
 /**
- * Interface for get Api- Temperature History
+ * Interface for get Api-Temperature popup passvalue
  *
  * @export
- * @interface IApiTemperatureHistory
+ * @interface IApiTempPopupData
  */
-export interface IApiTemperatureHistory {
+export interface IApiTempPopupData {
+    rowDataCargo: ValueObject<ICargo>;
+    rowIndex: number;
+}
+
+/**
+ * Interface for get Api-Temperature History
+ *
+ * @export
+ * @interface IApiTempHistory
+ */
+export interface IApiTempHistory {
     port: string;
     date: string;
     api: number;

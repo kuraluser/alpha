@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { IApiTemperatureHistory, ILoadingPopupData } from '../../../models/cargo-planning.model';
+import { IApiTempHistory, IApiTempPopupData, ILoadingPopupData } from '../../../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
 import { IDataTableColumn } from './../../../../../shared/components/datatable/datatable.model';
 
@@ -26,21 +26,21 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
   }
 
   @Input()
-  get apiTempHistoryPopupData(): ILoadingPopupData {
+  get apiTempHistoryPopupData(): IApiTempPopupData {
     return this._apiTempHistoryPopupData;
   }
-  set apiTempHistoryPopupData(apiTempHistoryPopupData: ILoadingPopupData) {
+  set apiTempHistoryPopupData(apiTempHistoryPopupData: IApiTempPopupData) {
     this._apiTempHistoryPopupData = apiTempHistoryPopupData;
-    this.getApiTemperatureHistoryData();
+    this.getApiTempHistoryData();
   }
 
   @Output() visibleChange = new EventEmitter<boolean>();
 
   apiTempHistoryColumns: IDataTableColumn[];
-  apiTempHistoryData: IApiTemperatureHistory[];
+  apiTempHistoryData: IApiTempHistory[];
 
   private _visible: boolean;
-  private _apiTempHistoryPopupData: ILoadingPopupData;
+  private _apiTempHistoryPopupData: IApiTempPopupData;
 
   constructor(
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -51,11 +51,15 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
   }
 
   /**
-   *function to get last 5, Api & Temperature History
+   * function to get last 5, Api & Temperature History
    *
-   * @memberof ApiTemperatureHistoryPopupComponent
+   * @memberof ApiTempHistoryPopupComponent
    */
-  getApiTemperatureHistoryData(): void {
+  getApiTempHistoryData(): void {
+
+    /**
+     * This dummy data will remove after integrating the actual API
+     */
     this.apiTempHistoryData = [
       {
         port: 'Ahamedi',
