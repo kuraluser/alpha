@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -80,6 +81,9 @@ public class UserService {
   @Autowired private RoleUserMappingRepository roleUserMappingRepository;
 
   private static final String SHIP_URL_PREFIX = "/api/ship";
+
+  @Value("${ship.max.user.count}")
+  private int maxShipUserCount;
 
   /**
    * Retrieves the user information from user database
@@ -634,6 +638,89 @@ public class UserService {
       this.usersRepository.save(user);
     } else {
       log.info("User doesn't exist with username: {}", request.getUsername());
+    }
+  }
+
+  /**
+   * Save user
+   *
+   * @param request
+   * @param correlationId
+   * @return
+   * @throws GenericServiceException
+   */
+  public UserResponse saveUser(User request, String correlationId) throws GenericServiceException {
+    UserResponse response = new UserResponse();
+    if (this.isShip()) {
+      this.validateShipMaxUserCount();
+      Users entity = null;
+      if (0 != request.getId()) {
+        entity = this.usersRepository.findByIdAndIsActive(request.getId(), true);
+        if (null == entity) {
+          throw new GenericServiceException(
+              "User does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+      } else {
+        entity = new Users();
+        entity.setActive(true);
+        entity.setLoginSuspended(false);
+      }
+      this.checkUsernameDuplicate(request);
+      entity.setUsername(request.getUsername());
+      entity.setFirstName(request.getFirstName());
+      entity.setLastName(request.getLastName());
+      entity.setDesignation(request.getDesignation());
+      entity.setRoles(this.rolesRepository.getOne(request.getRoleId()));
+      if (null != request.getIsLoginSuspended()) {
+        entity.setLoginSuspended(request.getIsLoginSuspended());
+      }
+      entity = this.usersRepository.save(entity);
+      response.setId(entity.getId());
+    }
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * Check if max user count is reached for the given ship
+   *
+   * @throws GenericServiceException
+   */
+  private void validateShipMaxUserCount() throws GenericServiceException {
+    List<Users> userList = this.usersRepository.findByIsActive(true);
+    if (userList.size() >= this.maxShipUserCount) {
+      throw new GenericServiceException(
+          "Maximum ship user count reached",
+          CommonErrorCodes.E_CPDSS_MAX_SHIP_USER_COUNT_ERR,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  /**
+   * Check for duplicate user name
+   *
+   * @param request
+   * @throws GenericServiceException
+   */
+  private void checkUsernameDuplicate(User request) throws GenericServiceException {
+    Users duplicate = this.usersRepository.findByUsernameAndIsActive(request.getUsername(), true);
+    // if new user
+    if (request.getId() == 0) {
+      if (null != duplicate) {
+        throw new GenericServiceException(
+            "Username already in use",
+            CommonErrorCodes.E_CPDSS_USERNAME_IN_USE,
+            HttpStatusCode.BAD_REQUEST);
+      }
+    } else if (null != duplicate && !request.getId().equals(duplicate.getId())) {
+      // if the username has changed, and any users exist with changed username
+      throw new GenericServiceException(
+          "Username already in use",
+          CommonErrorCodes.E_CPDSS_USERNAME_IN_USE,
+          HttpStatusCode.BAD_REQUEST);
     }
   }
 }

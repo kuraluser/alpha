@@ -23,7 +23,7 @@ public interface UsersRepository extends CommonCrudRepository<Users, Long> {
   public List<Users> findByCompanyXIdAndIdInAndIsActive(
       Long companyXId, List<Long> userId, boolean isActive);
 
-  public Users findByUsernameAndIsActive(String username, boolean isActive);
-
   public Users findByIdAndIsActive(Long id, boolean isActive);
+
+  public Users findByUsernameAndIsActive(String username, boolean isActive);
 }

@@ -10,6 +10,7 @@ import com.cpdss.gateway.domain.Role;
 import com.cpdss.gateway.domain.RolePermission;
 import com.cpdss.gateway.domain.RoleResponse;
 import com.cpdss.gateway.domain.ScreenResponse;
+import com.cpdss.gateway.domain.User;
 import com.cpdss.gateway.domain.UserAuthorizationsResponse;
 import com.cpdss.gateway.domain.UserResponse;
 import com.cpdss.gateway.service.UserService;
@@ -100,7 +101,7 @@ public class UserController {
   public UserResponse getUsers(@RequestHeader HttpHeaders headers) throws CommonRestException {
     try {
       log.info("getUsers: {}");
-      return this.userService.getUsers(CORRELATION_ID_HEADER);
+      return this.userService.getUsers(headers.getFirst(CORRELATION_ID_HEADER));
     } catch (Exception e) {
       log.error("Error in getScreens ", e);
       throw new CommonRestException(
@@ -124,6 +125,30 @@ public class UserController {
    * @return RoleResponse response object
    * @throws CommonRestException Exception object
    */
+  @PostMapping("/users/{userId}")
+  public UserResponse saveUser(
+      @PathVariable Long userId,
+      @RequestBody @Valid User request,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("getUsers: {}");
+      request.setId(userId);
+      return this.userService.saveUser(request, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("Error in saveUser ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in saveUser ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
   @GetMapping("/roles")
   public RoleResponse getRoles(
       @RequestHeader HttpHeaders headers,

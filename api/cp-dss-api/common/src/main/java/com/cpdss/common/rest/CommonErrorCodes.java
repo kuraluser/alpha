@@ -20,6 +20,8 @@ public interface CommonErrorCodes {
   String E_CPDSS_VOYAGE_EXISTS = "100";
   String E_CPDSS_INVALID_USER = "101";
   String E_CPDSS_ALGO_ISSUE = "102";
+  String E_CPDSS_USERNAME_IN_USE = "103";
+  String E_CPDSS_MAX_SHIP_USER_COUNT_ERR = "104";
   String E_CPDSS_LS_NAME_EXISTS = "105";
   String E_CPDSS_ROLE_NAME_EXISTS = "106";
   String E_CPDSS_TRANSIT_PORT_EXISTS = "107";
