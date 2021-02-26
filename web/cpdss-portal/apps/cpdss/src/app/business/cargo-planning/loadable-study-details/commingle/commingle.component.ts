@@ -211,7 +211,9 @@ export class CommingleComponent implements OnInit {
         cargoGroups: [{
           id: 0,
           cargo1Id: this.commingleForm.value.cargo1.cargoId,
-          cargo2Id: this.commingleForm.value.cargo2.cargoId
+          cargo2Id: this.commingleForm.value.cargo2.cargoId,
+          cargoNomination1Id: this.commingleForm.value.cargo1.id,
+          cargoNomination2Id: this.commingleForm.value.cargo2.id
         }]
       }
       const result = await this.commingleApiService.saveVolMaxCommingle(this.vesselId, this.voyageId, this.loadableStudyId, data).toPromise();

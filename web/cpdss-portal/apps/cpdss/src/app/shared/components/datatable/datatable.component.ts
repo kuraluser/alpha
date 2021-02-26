@@ -44,8 +44,14 @@ export class DatatableComponent implements OnInit {
     return this._value;
   }
   set value(value: Array<any>) {
-    if (value)
+    if (value) {
       this._value = value;
+      if (!this.editMode) {
+        this.form = this.fb.group({
+          dataTable: this.fb.array([...this.value])
+        });
+      }
+    }
   }
 
   @Input()
@@ -223,11 +229,6 @@ export class DatatableComponent implements OnInit {
     this._rowsPerPage = [10,50,100];
     this._currentPageReportTemplate = "Showing {currentPage} to {totalPages} of {totalRecords} entries";
     this._loading = false;
-    if (!this.form) {
-      this.form = this.fb.group({
-        dataTable: this.fb.array([...this.value])
-      });
-    }
   }
 
   /**
