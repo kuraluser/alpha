@@ -2,7 +2,7 @@ import { SelectItem } from 'primeng/api';
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { CPDSSDB, IFuelType, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
 import { ITank } from '../../core/models/common.model';
-import {  IPort, IPortList } from '../../core/models/common.model';
+import { IPort, IPortList } from '../../core/models/common.model';
 
 /**
  * Interface for cargo nomination value object
@@ -258,7 +258,7 @@ export interface IPortsValueObject {
     isAdd: boolean;
     isDelete?: boolean;
     storeKey: number;
-    isActionsEnabled: boolean;    
+    isActionsEnabled: boolean;
     processing?: boolean;
 }
 
@@ -388,7 +388,7 @@ export interface IPortOHQTankDetailValueObject {
     volume: number;
     percentageFilled: string;
     fullCapacityCubm: number;
-    fullCapacity: number;    
+    fullCapacity: number;
     processing?: boolean;
 }
 
@@ -597,7 +597,7 @@ export interface IPortOBQTankDetailValueObject {
     fullCapacityCubm: number;
     fullCapacity: number;
     abbreviation: string;
-    loadOnTop: boolean;    
+    loadOnTop: boolean;
     processing?: boolean;
 }
 
@@ -660,4 +660,28 @@ export interface IGeneratePatternResponse {
 export interface IConfirmStatusResponse {
     responseStatus: IResponse;
     confirmed: boolean;
+}
+
+/**
+ * Interface for get Api-Temperature popup passvalue
+ *
+ * @export
+ * @interface IApiTempPopupData
+ */
+export interface IApiTempPopupData {
+    rowDataCargo: ValueObject<ICargo>;
+    rowIndex: number;
+}
+
+/**
+ * Interface for get Api-Temperature History
+ *
+ * @export
+ * @interface IApiTempHistory
+ */
+export interface IApiTempHistory {
+    port: string;
+    date: string;
+    api: number;
+    temp: number;
 }

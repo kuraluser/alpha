@@ -395,6 +395,33 @@ export class LoadableStudyDetailsTransformationService {
   }
 
   /**
+   * Method for api & Temp history grid
+   *
+   * @return {*}  {IDataTableColumn[]}
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  getCargoNominationApiTempHistoryColumns(): IDataTableColumn[] {
+    return [
+      {
+        field: 'port',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_PORT',
+      },
+      {
+        field: 'date',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_DATE',
+      },
+      {
+        field: 'api',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_API',
+      },
+      {
+        field: 'temp',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_TEMP',
+      }
+    ]
+  }
+
+  /**
    * Method for converting loading port data as value object
    *
    * @param {ILoadingPort} loadingPort
