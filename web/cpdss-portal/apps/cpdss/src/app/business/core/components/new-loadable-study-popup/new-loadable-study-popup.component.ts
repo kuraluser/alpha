@@ -324,7 +324,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       const selectedDraftMark = loadableStudyObj.draftMark;
       this.newLoadableStudyFormGroup.patchValue({
         loadLine: this.loadlineList,
-        draftMark: { id: selectedDraftMark, name: selectedDraftMark }
+        draftMark: { id: selectedDraftMark, name: selectedDraftMark.toFixed(2) }
       });
     }
     const loadLine = this.newLoadableStudyFormGroup.get('loadLine').value;
