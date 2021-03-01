@@ -471,13 +471,22 @@ hr{
   border-right: 1px solid $table-border;
 }
 .icon-status-1{
-  background: url($images-theme + 'sidebar-table-status-1.png') no-repeat center center;
+  background: url($images-theme + 'pending.png') no-repeat center center;
 }
 .icon-status-2{
-  background: url($images-theme + 'sidebar-table-status-2.png') no-repeat center center;
+  background: url($images-theme + 'confirmed.png') no-repeat center center;
+}
+.icon-status-3{
+  background: url($images-theme + 'plan-generated.png') no-repeat center center;
+}
+.icon-status-4{
+  background: url($images-theme + 'processing.png') no-repeat center center;
+}
+.icon-status-6{
+  background: url($images-theme + 'processing.png') no-repeat center center;
 }
 .icon-api-temp{
-  background: url($images-theme + 'history-icon-api-and-temp.png') no-repeat center center;
+  background: url($images-theme + 'no-solution.png') no-repeat center center;
 }
 
 .p-multiselect{

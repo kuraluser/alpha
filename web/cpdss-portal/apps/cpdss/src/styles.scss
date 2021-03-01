@@ -2078,3 +2078,60 @@ width: 50px !important;
 .p-datatable .p-datatable-thead > tr > th{
   white-space: normal;
 }
+
+.landing-page-tank-wrapper{
+  .tanks-inner-outer-ohq .tanks-column-ohq > div .tank-name{
+    left: 15px!important;
+    top: 0!important;
+    text-overflow: ellipsis;
+    text-align: left!important;
+  }
+  .rear-tank-wrapper-ohq > div .tank-name{
+    right: 11px!important;
+    height: 18px!important;
+    top: 0!important;
+    bottom: 0!important;
+    margin: auto!important;
+  }
+  .rear-tank-wrapper-ohq .tank-btn-rounded{
+    margin: auto!important;
+    top: 0!important;
+    bottom: 0!important;
+    left: auto!important;
+    right: 2px!important;
+  }
+  .rear-tank-wrapper-ohq > div:first-child{
+     .tank-btn-rounded{
+      left: auto!important;
+      bottom: 3px!important;
+      right: 2px!important;
+      top: auto!important;
+    }
+    .tank-name{
+      right: 15px!important;
+      left: 4px!important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: right!important;
+      bottom: 0!important;
+      top: auto!important;
+    }
+  }
+  .rear-tank-wrapper-ohq > div:last-child{
+    .tank-btn-rounded{
+     left: auto!important;
+     top: 3px!important;
+     right: 2px!important;
+     bottom: auto!important;
+   }
+   .tank-name{
+     right: 15px!important;
+     left: 4px!important;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     text-align: right!important;
+     top: 0!important;
+     bottom: auto!important;
+   }
+ }
+} 
