@@ -3,6 +3,9 @@ package com.cpdss.gateway.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.gateway.entity.Users;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+
 import java.util.List;
 
 /**
@@ -26,4 +29,8 @@ public interface UsersRepository extends CommonCrudRepository<Users, Long> {
   public Users findByIdAndIsActive(Long id, boolean isActive);
 
   public Users findByUsernameAndIsActive(String username, boolean isActive);
+
+  @Modifying
+  @Query("update Users us set us.userPassword = :password where us.id = :id")
+  int updateUserPasswordByUserId(String password, Long id);
 }

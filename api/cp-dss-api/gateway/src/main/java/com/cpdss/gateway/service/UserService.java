@@ -35,10 +35,9 @@ import com.cpdss.gateway.repository.ScreenRepository;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.ship.ShipJwtService;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -52,6 +51,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -74,6 +74,9 @@ public class UserService {
 
   @Autowired private ShipJwtService jwtService;
 
+  @Autowired
+  private PasswordEncoder passwordEncoder;
+
   private static final String SUCCESS = "SUCCESS";
 
   private static final String FAILED = "FAILED";
@@ -84,6 +87,15 @@ public class UserService {
 
   @Value("${ship.max.user.count}")
   private int maxShipUserCount;
+
+    @Value("${ship.user.password-age}")
+    private Integer[] passwordAge;
+
+    @Value("${ship.user.password-length-min}")
+    private Integer passwordMinLength;
+
+    @Value("${ship.user.password-length-max}")
+    private Integer passwordMaxLength;
 
   /**
    * Retrieves the user information from user database
@@ -276,7 +288,7 @@ public class UserService {
       if (!innerList.isEmpty()) {
         inner.getChilds().addAll(innerList);
       } else {
-        continue;
+        break;
       }
     }
     return list;
@@ -464,12 +476,13 @@ public class UserService {
       screenIds.add(screenInfo.getId());
     }
 
-    if (permission.getDeselectedUserId() != null) {
-      List<RoleUserMapping> roleUserList =
-          this.roleUserRepository.findByRolesAndIsActive(role.get().getId(), true);
-      roleUserList.stream()
-          .filter(ru -> permission.getDeselectedUserId().contains(ru.getUsers().getId()))
-          .forEach(roleUser -> roleUser.setIsActive(false));
+    List<RoleUserMapping> roleUserList =
+        this.roleUserRepository.findByRolesAndIsActive(role.get().getId(), true);
+    if (roleUserList != null && !roleUserList.isEmpty()) {
+      roleUserList.forEach(
+          a -> {
+            a.setIsActive(false);
+          });
     }
 
     List<Screen> screens =
@@ -722,4 +735,75 @@ public class UserService {
           HttpStatusCode.BAD_REQUEST);
     }
   }
+
+    @Transactional
+    public boolean resetPassword(String password, Long userId) throws GenericServiceException {
+        boolean response = false;
+        if (validatePasswordPolicies(userId, password)) {
+            String encodedPassword = passwordEncoder.encode(password);
+            int status = this.usersRepository.updateUserPasswordByUserId(encodedPassword, userId);
+            response = status > 0;
+            log.info("reset password for user id - {}" + (response ? "success" : "failed!"), userId);
+        }
+        return response;
+    }
+
+    /**
+     * password policies: DSS-1155
+     * 1. Age for each password, from properties (0-9999)
+     * 2. Length of password (8 character)
+     * 3. Complexity
+     * 3.1. Cannot contain username
+     * 3.2. At least 3 of the case must have (Lower-case, Upper-case, Number, Symbols)
+     *
+     * @return
+     */
+    private boolean validatePasswordPolicies(Long userId, String password) throws GenericServiceException {
+        Optional<Users> users = usersRepository.findById(userId);
+        if (users.isPresent()) {
+            String firstName = users.get().getFirstName();
+            String lasName = users.get().getLastName();
+            if (!password.contains(firstName) && !password.contains(lasName)) {
+                validateRegularExpression(password);
+                return true;
+            } else {
+                throw new GenericServiceException(
+                        "Password cannot contain first name/last name",
+                        CommonErrorCodes.E_CPDSS_PASSWORD_POLICIES_VIOLATION_1,
+                        HttpStatusCode.BAD_REQUEST
+                );
+            }
+        } else {
+            throw new GenericServiceException(
+                    "User not found for ID: " + userId,
+                    CommonErrorCodes.E_CPDSS_INVALID_USER,
+                    HttpStatusCode.BAD_REQUEST
+            );
+        }
+    }
+
+
+    public void validateRegularExpression(String password) throws GenericServiceException {
+        List<String> regexList = Arrays.asList(
+                "^(?=.*[0-9])(?=\\S+$).{"+passwordMinLength+","+passwordMaxLength+"}$",  // Check for if any number + no white space + length
+                "^(?=.*[a-z])(?=\\S+$).{"+passwordMinLength+","+passwordMaxLength+"}$",  // Check for if any small letter  + no white space + length
+                "^(?=.*[A-Z])(?=\\S+$).{"+passwordMinLength+","+passwordMaxLength+"}$",  // Check for if any capital letter  + no white space + length
+                "^(?=.*[@#$%^&+=])(?=\\S+$).{"+passwordMinLength+","+passwordMaxLength+"}$" // Check for if any special character  + no white space + length
+        );
+        int total = 0;
+        for (String regex : regexList) {
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(password);
+            if (matcher.matches()) {
+                total = total + 1;
+            }
+        }
+        if (total < 3) {
+            throw new GenericServiceException(
+                    "Passwords must use at least three of the four available character types: lowercase letters, uppercase letters, numbers, and symbols",
+                    CommonErrorCodes.E_CPDSS_PASSWORD_POLICIES_VIOLATION_2,
+                    HttpStatusCode.BAD_REQUEST
+            );
+        }
+    }
 }
