@@ -47,6 +47,10 @@ import com.cpdss.gateway.service.LoadableStudyService;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -1585,6 +1589,71 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error when saving LoadOnTop", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Get voyages by vessel
+   *
+   * @param vesselId
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(value = "/vessels/{vesselId}/voyagelist")
+  public VoyageResponse getVoyageList(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @RequestHeader HttpHeaders headers,
+      @RequestParam(required = false, defaultValue = "10") int pageSize,
+      @RequestParam(required = false, defaultValue = "0") int pageNo,
+      @RequestParam(required = false) String sortBy,
+      @RequestParam(required = false, defaultValue = "ASC") String orderBy,
+      @RequestParam(required = false) String fromStartDate,
+      @RequestParam(required = false) String toStartDate,
+      @RequestParam Map<String, String> params)
+      throws CommonRestException {
+    try {
+      log.info("getVoyageListByVessel: {}", getClientIp());
+
+      // Get filters
+      List<String> filterKeys =
+          Arrays.asList(
+              "voyageNo",
+              "cargos",
+              "dischargingPorts",
+              "loadingPorts",
+              "charterer",
+              "status",
+              "plannedStartDate",
+              "plannedEndDate",
+              "actualStartDate",
+              "actualEndDate");
+
+      Map<String, String> filterParams =
+          params.entrySet().stream()
+              .filter(e -> filterKeys.contains(e.getKey()))
+              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+      return this.loadableStudyService.getVoyageList(
+          vesselId,
+          headers.getFirst(CORRELATION_ID_HEADER),
+          filterParams,
+          pageNo,
+          pageSize,
+          fromStartDate,
+          toStartDate,
+          orderBy,
+          sortBy);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when listing voyages", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when listing voyages", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

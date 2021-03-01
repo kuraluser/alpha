@@ -11,6 +11,7 @@ import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingS
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
+import com.cpdss.common.generated.LoadableStudy.CargoDetails;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
@@ -18,6 +19,7 @@ import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
+import com.cpdss.common.generated.LoadableStudy.DischargingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
@@ -118,6 +120,7 @@ import com.cpdss.gateway.domain.OnBoardQuantity;
 import com.cpdss.gateway.domain.OnBoardQuantityResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
+import com.cpdss.gateway.domain.Port;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.Purpose;
@@ -141,6 +144,8 @@ import com.google.protobuf.ByteString;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -159,6 +164,10 @@ import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -195,6 +204,8 @@ public class LoadableStudyService {
   private static final Long DIESEL_OIL_TANK_CATEGORY_ID = 6L;
   private static final Long LUBRICATING_OIL_TANK_CATEGORY_ID = 14L;
   private static final Long LUBRICANT_OIL_TANK_CATEGORY_ID = 19L;
+
+  private static final String VOYAGE_DATE_FORMAT = "dd-MM-yyyy HH:mm";
 
   @Autowired private UsersRepository usersRepository;
 
@@ -4048,5 +4059,396 @@ public class LoadableStudyService {
 
   public SaveCommentReply saveLoadOnTop(SaveLoadOnTopRequest grpcRequest) {
     return this.loadableStudyServiceBlockingStub.saveLoadOnTop(grpcRequest);
+  }
+
+  /**
+   * Get voyage list by vessel
+   *
+   * @param vesselId
+   * @param first
+   * @return
+   * @throws GenericServiceException
+   */
+  public VoyageResponse getVoyageList(
+      Long vesselId,
+      String correlationId,
+      Map<String, String> filterParams,
+      int page,
+      int pageSize,
+      String fromStartDate,
+      String toStartDate,
+      String orderBy,
+      String sortBy)
+      throws GenericServiceException {
+    VoyageRequest.Builder request = VoyageRequest.newBuilder();
+    request.setVesselId(vesselId);
+    request.setPage(page);
+    request.setPageSize(pageSize);
+    Optional.ofNullable(fromStartDate).ifPresent(request::setFromStartDate);
+    Optional.ofNullable(toStartDate).ifPresent(request::setToStartDate);
+    VoyageListReply grpcReply = this.getVoyageList(request.build());
+
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to fetch voyage list",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    VoyageResponse response = new VoyageResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+
+    // filtering each column
+    List<VoyageDetail> list = this.getFilteredValues(filterParams, grpcReply.getVoyagesList());
+
+    List<Voyage> voyageList = new ArrayList<Voyage>();
+    for (VoyageDetail detail : list) {
+      Voyage voyage = new Voyage();
+      voyage.setId(detail.getId());
+      voyage.setVoyageNo(detail.getVoyageNumber());
+      voyage.setStatus(detail.getStatus());
+
+      voyage.setConfirmedLoadableStudyId(
+          detail.getConfirmedLoadableStudyId() != 0 ? detail.getConfirmedLoadableStudyId() : null);
+
+      List<Port> loadingPorts = new ArrayList<>();
+      if (detail.getLoadingPortsList() != null) {
+        detail
+            .getLoadingPortsList()
+            .forEach(
+                port -> {
+                  Port loadingPort = new Port();
+                  loadingPort.setId(port.getPortId());
+                  loadingPort.setName(port.getName());
+                  loadingPorts.add(loadingPort);
+                });
+      }
+      voyage.setLoadingPorts(loadingPorts);
+
+      List<Port> dischargingPorts = new ArrayList<>();
+      if (detail.getDischargingPortsList() != null) {
+        detail
+            .getDischargingPortsList()
+            .forEach(
+                port -> {
+                  Port dischargingPort = new Port();
+                  dischargingPort.setId(port.getPortId());
+                  dischargingPort.setName(port.getName());
+                  dischargingPorts.add(dischargingPort);
+                });
+      }
+      voyage.setDischargingPorts(dischargingPorts);
+
+      List<Cargo> cargos = new ArrayList<>();
+      if (detail.getCargosList() != null) {
+        detail
+            .getCargosList()
+            .forEach(
+                crgo -> {
+                  Cargo cargo = new Cargo();
+                  cargo.setId(crgo.getCargoId());
+                  cargo.setName(crgo.getName());
+                  cargos.add(cargo);
+                });
+      }
+      voyage.setCargos(cargos);
+      voyage.setCharterer(detail.getCharterer());
+
+      LocalDateTime plannedStartDate = null;
+      LocalDateTime plannedEndDate = null;
+      LocalDateTime actualStartDate = null;
+      LocalDateTime actualEndDate = null;
+
+      if (!detail.getActualStartDate().isEmpty() && !detail.getActualEndDate().isEmpty()) {
+        actualStartDate =
+            LocalDateTime.from(
+                DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getActualStartDate()));
+        actualEndDate =
+            LocalDateTime.from(
+                DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getActualEndDate()));
+
+        voyage.setActualEndDate(actualStartDate.toLocalDate());
+        voyage.setActualStartDate(actualEndDate.toLocalDate());
+      }
+
+      if (!detail.getStartDate().isEmpty() && !detail.getEndDate().isEmpty()) {
+        actualStartDate =
+            plannedStartDate =
+                LocalDateTime.from(
+                    DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getStartDate()));
+        plannedEndDate =
+            LocalDateTime.from(
+                DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getEndDate()));
+        voyage.setPlannedStartDate(plannedStartDate.toLocalDate());
+        voyage.setPlannedEndDate(plannedEndDate.toLocalDate());
+      }
+
+      voyageList.add(voyage);
+    } // sort list
+
+    if (null != sortBy) {
+      voyageList = this.getSortedList(voyageList, orderBy, sortBy.toLowerCase());
+    }
+
+    response.setVoyages(voyageList);
+    Pageable pageRequest = PageRequest.of(page, pageSize);
+
+    int total = voyageList.size();
+    int start = (int) pageRequest.getOffset();
+    int end = Math.min((start + pageRequest.getPageSize()), total);
+
+    List<Voyage> output = new ArrayList<>();
+
+    if (start <= end) {
+      output = voyageList.subList(start, end);
+    }
+
+    final Page<Voyage> pages = new PageImpl<>(output, pageRequest, total);
+
+    response.setTotalElements(pages.getTotalElements());
+    response.setVoyages(pages.toList());
+
+    return response;
+  }
+
+  /**
+   * Call grpc service to fetch list of voyages by vessel
+   *
+   * @param request
+   * @return
+   */
+  public VoyageListReply getVoyageList(VoyageRequest request) {
+    return this.loadableStudyServiceBlockingStub.getVoyages(request);
+  }
+
+  private Boolean containsLoadingPorts(List<LoadingPortDetail> list, String searchParam) {
+    Boolean status = false;
+    if (!list.isEmpty()) {
+      for (LoadingPortDetail loadingPortDetail : list) {
+        if (loadingPortDetail.getName().toLowerCase().contains(searchParam.toLowerCase())) {
+          status = true;
+        } else {
+          status = false;
+        }
+      }
+    } else {
+      status = false;
+    }
+    return status;
+  }
+
+  private Boolean containsDischargingPorts(List<DischargingPortDetail> list, String searchParam) {
+    Boolean status = false;
+    if (!list.isEmpty()) {
+      for (DischargingPortDetail dischargingPortDetail : list) {
+        if (dischargingPortDetail.getName().toLowerCase().contains(searchParam.toLowerCase())) {
+          status = true;
+        } else {
+          status = false;
+        }
+      }
+    } else {
+      status = false;
+    }
+    return status;
+  }
+
+  private Boolean containsCargos(List<CargoDetails> list, String searchParam) {
+    Boolean status = false;
+    if (!list.isEmpty()) {
+      for (CargoDetails cargo : list) {
+        if (cargo.getName().toLowerCase().contains(searchParam.toLowerCase())) {
+          status = true;
+        } else {
+          status = false;
+        }
+      }
+    } else {
+      status = false;
+    }
+    return status;
+  }
+
+  private List<VoyageDetail> getFilteredValues(
+      Map<String, String> filterParams, List<VoyageDetail> voyageList) {
+    return voyageList.stream()
+        .filter(
+            voyage -> {
+              Boolean status = true;
+              if (null != filterParams.get("voyageNo")) {
+                status =
+                    status
+                        && voyage
+                            .getVoyageNumber()
+                            .toLowerCase()
+                            .contains(filterParams.get("voyageNo").toLowerCase());
+              }
+              if (null != filterParams.get("charterer")) {
+                status =
+                    status
+                        && voyage
+                            .getCharterer()
+                            .toLowerCase()
+                            .contains(filterParams.get("charterer").toLowerCase());
+              }
+              if (null != filterParams.get("status")) {
+                status =
+                    status
+                        && voyage
+                            .getStatus()
+                            .toLowerCase()
+                            .contains(filterParams.get("status").toLowerCase());
+              }
+              if (null != filterParams.get("plannedStartDate")) {
+                status =
+                    status
+                        && voyage
+                            .getStartDate()
+                            .toLowerCase()
+                            .contains(filterParams.get("plannedStartDate").toLowerCase());
+              }
+              if (null != filterParams.get("plannedEndDate")) {
+                status =
+                    status
+                        && voyage
+                            .getEndDate()
+                            .toLowerCase()
+                            .contains(filterParams.get("plannedEndDate").toLowerCase());
+              }
+              if (null != filterParams.get("actualStartDate")) {
+                status =
+                    status
+                        && voyage
+                            .getActualStartDate()
+                            .toLowerCase()
+                            .contains(filterParams.get("actualStartDate").toLowerCase());
+              }
+              if (null != filterParams.get("actualEndDate")) {
+                status =
+                    status
+                        && voyage
+                            .getActualEndDate()
+                            .toLowerCase()
+                            .contains(filterParams.get("actualEndDate").toLowerCase());
+              }
+
+              if (null != filterParams.get("loadingPorts")) {
+                status =
+                    status
+                        && containsLoadingPorts(
+                            voyage.getLoadingPortsList(), filterParams.get("loadingPorts"));
+              }
+              if (null != filterParams.get("dischargingPorts")) {
+                status =
+                    status
+                        && containsDischargingPorts(
+                            voyage.getDischargingPortsList(), filterParams.get("dischargingPorts"));
+              }
+              if (null != filterParams.get("cargos")) {
+                status =
+                    status && containsCargos(voyage.getCargosList(), filterParams.get("cargos"));
+              }
+              return status;
+            })
+        .collect(Collectors.toList());
+  }
+
+  private List<Voyage> getSortedList(List<Voyage> voyageList, String orderBy, String sortBy) {
+    List<Voyage> voyages = null;
+    switch (sortBy) {
+      case "voyageno":
+        if (orderBy.equalsIgnoreCase("ASC")) {
+          voyages =
+              voyageList.stream()
+                  .sorted(Comparator.comparing(Voyage::getVoyageNo))
+                  .collect(Collectors.toList());
+        } else {
+          voyages =
+              voyageList.stream()
+                  .sorted(Comparator.comparing(Voyage::getVoyageNo).reversed())
+                  .collect(Collectors.toList());
+        }
+        break;
+      case "charterer":
+        if (orderBy.equalsIgnoreCase("ASC")) {
+          voyages =
+              voyageList.stream()
+                  .sorted(Comparator.comparing(Voyage::getCharterer))
+                  .collect(Collectors.toList());
+        } else {
+          voyages =
+              voyageList.stream()
+                  .sorted(Comparator.comparing(Voyage::getCharterer).reversed())
+                  .collect(Collectors.toList());
+        }
+        break;
+      case "status":
+        if (orderBy.equalsIgnoreCase("ASC")) {
+          voyages =
+              voyageList.stream()
+                  .sorted(Comparator.comparing(Voyage::getStatus))
+                  .collect(Collectors.toList());
+        } else {
+          voyages =
+              voyageList.stream()
+                  .sorted(Comparator.comparing(Voyage::getStatus).reversed())
+                  .collect(Collectors.toList());
+        }
+        break;
+      case "startdate":
+        if (orderBy.equalsIgnoreCase("ASC")) {
+          voyages =
+              voyageList.stream()
+                  .sorted(Comparator.comparing(Voyage::getPlannedStartDate))
+                  .collect(Collectors.toList());
+        } else {
+          voyages =
+              voyageList.stream()
+                  .sorted(Comparator.comparing(Voyage::getPlannedStartDate).reversed())
+                  .collect(Collectors.toList());
+        }
+        break;
+      case "enddate":
+        if (orderBy.equalsIgnoreCase("ASC")) {
+
+          voyages =
+              voyageList.stream()
+                  .sorted(Comparator.comparing(Voyage::getPlannedEndDate))
+                  .collect(Collectors.toList());
+        } else {
+          voyages =
+              voyageList.stream()
+                  .sorted(Comparator.comparing(Voyage::getPlannedEndDate).reversed())
+                  .collect(Collectors.toList());
+        }
+        break;
+      case "actualstartdate":
+        if (orderBy.equalsIgnoreCase("ASC")) {
+          voyages =
+              voyageList.stream()
+                  .sorted(Comparator.comparing(Voyage::getActualStartDate))
+                  .collect(Collectors.toList());
+        } else {
+          voyages =
+              voyageList.stream()
+                  .sorted(Comparator.comparing(Voyage::getActualStartDate).reversed())
+                  .collect(Collectors.toList());
+        }
+        break;
+      case "actualenddate":
+        if (orderBy.equalsIgnoreCase("ASC")) {
+          voyages =
+              voyageList.stream()
+                  .sorted(Comparator.comparing(Voyage::getActualEndDate))
+                  .collect(Collectors.toList());
+        } else {
+          voyages =
+              voyageList.stream()
+                  .sorted(Comparator.comparing(Voyage::getActualEndDate).reversed())
+                  .collect(Collectors.toList());
+        }
+        break;
+    }
+    return voyages;
   }
 }

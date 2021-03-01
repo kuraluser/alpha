@@ -1,5 +1,5 @@
-syntax = "proto3";
 
+syntax = "proto3";
 option java_multiple_files = false;
 option java_package = "com.cpdss.common.generated";
 
@@ -137,6 +137,9 @@ service LoadableStudyService {
 	}
 	
 	rpc SaveLoadOnTop(SaveLoadOnTopRequest) returns (SaveCommentReply){
+	}
+	
+	rpc GetVoyages (VoyageRequest) returns (VoyageListReply) {
 	}
 }
 
@@ -452,6 +455,10 @@ message VoyageRequest {
 	string voyageNo = 5;
 	string startDate = 6;
 	string endDate = 7;
+	int32 page = 8;
+	int32 pageSize = 9;
+	string fromStartDate=10;
+	string toStartDate=11;
 }
 
 message VoyageReply {
@@ -466,11 +473,18 @@ message VoyageDetail{
 	string endDate = 4;
 	string status = 5;
 	int64 confirmedLoadableStudyId = 6;
+	repeated LoadingPortDetail loadingPorts = 7;
+	repeated DischargingPortDetail dischargingPorts = 8;
+	repeated CargoDetails cargos = 9;
+	string charterer = 10;
+	string actualStartDate = 11;
+	string actualEndDate = 12;
 }
 
 message VoyageListReply{
 	StatusReply responseStatus = 1;
 	repeated VoyageDetail voyages = 2;
+		int64 totalElements=3;	
 }
 
 message StatusReply {
@@ -566,6 +580,7 @@ message LoadableStudyReply{
 message LoadingPortDetail{
 	int64 portId = 1;
 	string quantity = 2;
+	string name=3;
 }
 
 message segregationDetail{
@@ -988,5 +1003,16 @@ message SaveCommentRequest{
 message SaveLoadOnTopRequest{
 bool loadOnTop=1;
 int64 loadableStudyId=2;
+}
+
+message DischargingPortDetail{
+	int64 portId = 1;
+	string quantity = 2;
+	string name=3;
+}
+
+message CargoDetails{
+	int64 cargoId = 1;
+	string name=3;
 }
 

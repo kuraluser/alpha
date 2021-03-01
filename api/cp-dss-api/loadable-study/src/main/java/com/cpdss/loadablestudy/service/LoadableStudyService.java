@@ -14,6 +14,7 @@ import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
+import com.cpdss.common.generated.LoadableStudy.CargoDetails;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
@@ -22,6 +23,7 @@ import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
+import com.cpdss.common.generated.LoadableStudy.DischargingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.LDtrim;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
@@ -3521,7 +3523,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     List<Long> cargoNominationIds = new ArrayList<>();
     cargoNominationIds.add(requestRecord.getCargoNomination1Id());
     cargoNominationIds.add(requestRecord.getCargoNomination2Id());
-    // fetch the max priority for the cargoNomination ids and set as priority for commingle
+    // fetch the max priority for the cargoNomination ids and set as priority for
+    // commingle
     Long maxPriority =
         cargoNominationRepository.getMaxPriorityCargoNominationIn(cargoNominationIds);
     commingleCargoEntity.setPriority(maxPriority != null ? maxPriority.intValue() : null);
@@ -7114,5 +7117,170 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
       return seen.putIfAbsent(keys, Boolean.TRUE) == null;
     };
+  }
+
+  @Override
+  public void getVoyages(VoyageRequest request, StreamObserver<VoyageListReply> responseObserver) {
+    VoyageListReply.Builder builder = VoyageListReply.newBuilder();
+    try {
+      PortRequest.Builder portReqBuilder = PortRequest.newBuilder();
+      PortReply portReply = portInfoGrpcService.getPortInfo(portReqBuilder.build());
+      if (portReply != null
+          && portReply.getResponseStatus() != null
+          && !SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Error in calling port service",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
+      List<Voyage> entityList = null;
+
+      // apply date filter for actual start date
+      if (!request.getFromStartDate().isEmpty() && !request.getToStartDate().isEmpty()) {
+        LocalDate from =
+            LocalDate.from(
+                DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT).parse(request.getFromStartDate()));
+        LocalDate to =
+            LocalDate.from(
+                DateTimeFormatter.ofPattern(CREATED_DATE_FORMAT).parse(request.getToStartDate()));
+
+        entityList =
+            voyageRepository.findByIsActiveAndVesselXIdAndActualStartDateBetween(
+                true, request.getVesselId(), from, to);
+
+      } else {
+        entityList =
+            voyageRepository.findByIsActiveAndVesselXIdOrderByLastModifiedDateTimeDesc(
+                true, request.getVesselId());
+      }
+      for (Voyage entity : entityList) {
+        VoyageDetail.Builder detailbuilder = VoyageDetail.newBuilder();
+        detailbuilder.setId(entity.getId());
+        detailbuilder.setVoyageNumber(entity.getVoyageNo());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+        Optional.ofNullable(entity.getVoyageStartDate())
+            .ifPresent(startDate -> detailbuilder.setStartDate(formatter.format(startDate)));
+        Optional.ofNullable(entity.getVoyageEndDate())
+            .ifPresent(endDate -> detailbuilder.setEndDate(formatter.format(endDate)));
+        Optional.ofNullable(entity.getActualStartDate())
+            .ifPresent(startDate -> detailbuilder.setActualStartDate(formatter.format(startDate)));
+        Optional.ofNullable(entity.getActualEndDate())
+            .ifPresent(endDate -> detailbuilder.setActualEndDate(formatter.format(endDate)));
+        detailbuilder.setStatus(
+            entity.getVoyageStatus() != null ? entity.getVoyageStatus().getName() : "");
+
+        // fetch the confirmed loadable study for active voyages
+
+        if (entity.getVoyageStatus() != null
+            && STATUS_ACTIVE.equalsIgnoreCase(entity.getVoyageStatus().getName())) {
+          Stream<LoadableStudy> loadableStudyStream =
+              Optional.ofNullable(entity.getLoadableStudies())
+                  .map(Collection::stream)
+                  .orElseGet(Stream::empty);
+          Optional<LoadableStudy> loadableStudy =
+              loadableStudyStream
+                  .filter(
+                      loadableStudyElement ->
+                          (loadableStudyElement.getLoadableStudyStatus() != null
+                              && STATUS_CONFIRMED.equalsIgnoreCase(
+                                  loadableStudyElement.getLoadableStudyStatus().getName())))
+                  .findFirst();
+          if (loadableStudy.isPresent()) {
+            detailbuilder.setConfirmedLoadableStudyId(loadableStudy.get().getId());
+            List<Long> loadingPorts =
+                this.loadableStudyPortRotationRepository.getLoadingPorts(loadableStudy.get())
+                    .stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            portReply.getPortsList().stream()
+                .filter(port -> loadingPorts.contains(port.getId()))
+                .forEach(
+                    loadingPort -> {
+                      LoadingPortDetail.Builder loadingPortDetail = LoadingPortDetail.newBuilder();
+                      loadingPortDetail.setName(loadingPort.getName());
+                      loadingPortDetail.setPortId(loadingPort.getId());
+                      detailbuilder.addLoadingPorts(loadingPortDetail);
+                    });
+
+            List<Long> dischargingPorts =
+                this.loadableStudyPortRotationRepository.getDischarigingPorts(loadableStudy.get())
+                    .stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            portReply.getPortsList().stream()
+                .filter(port -> dischargingPorts.contains(port.getId()))
+                .forEach(
+                    dischargingPort -> {
+                      DischargingPortDetail.Builder dischargingPortDetail =
+                          DischargingPortDetail.newBuilder();
+                      dischargingPortDetail.setName(dischargingPort.getName());
+                      dischargingPortDetail.setPortId(dischargingPort.getId());
+                      detailbuilder.addDischargingPorts(dischargingPortDetail);
+                    });
+
+            List<CargoNomination> cargoList =
+                this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
+                    loadableStudy.get().getId(), true);
+
+            List<Long> cargos =
+                cargoList.stream()
+                    .map(CargoNomination::getCargoXId)
+                    .distinct()
+                    .collect(Collectors.toList());
+            CargoRequest cargoRequest =
+                CargoRequest.newBuilder()
+                    .setVesselId(loadableStudy.get().getVesselXId())
+                    .setVoyageId(loadableStudy.get().getVoyage().getId())
+                    .setLoadableStudyId(loadableStudy.get().getId())
+                    .build();
+            CargoReply cargoReply = this.getCargoInfo(cargoRequest);
+            if (!SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
+              throw new GenericServiceException(
+                  "Error in calling cargo service",
+                  CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                  HttpStatusCode.INTERNAL_SERVER_ERROR);
+            }
+
+            List<CargoDetail> cargoes =
+                cargoReply.getCargosList().stream()
+                    .filter(cargo -> cargos.contains(cargo.getId()))
+                    .collect(Collectors.toList());
+            cargoes.forEach(
+                cargo -> {
+                  CargoDetails.Builder cargoDetails = CargoDetails.newBuilder();
+                  cargoDetails.setName(cargo.getCrudeType());
+                  cargoDetails.setCargoId(cargo.getId());
+                  detailbuilder.addCargos(cargoDetails);
+                });
+
+            detailbuilder.setCharterer(loadableStudy.get().getCharterer());
+          }
+        }
+
+        builder.addVoyages(detailbuilder.build());
+      }
+      builder.setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
+
+    } catch (Exception e) {
+      log.error("Error in getVoyagesByVessel method ", e);
+      builder.setResponseStatus(
+          StatusReply.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * @param build
+   * @return PortReply
+   */
+  public PortReply getPortDetails(PortRequest build) {
+    return portInfoGrpcService.getPortInfo(build);
   }
 }

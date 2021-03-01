@@ -101,4 +101,12 @@ public interface LoadableStudyPortRotationRepository
   @Query(
       "SELECT portXId FROM LoadableStudyPortRotation where loadableStudy = ?1 AND operation.id = 4 AND portXId in ?2 AND isActive = true")
   public List<Long> getTransitPorts(LoadableStudy loadableStudy, List<Long> portIds);
+
+  @Query(
+      "SELECT portXId FROM LoadableStudyPortRotation where loadableStudy = ?1 AND operation.id = 1  AND isActive = true")
+  public List<Long> getLoadingPorts(LoadableStudy loadableStudy);
+
+  @Query(
+      "SELECT portXId FROM LoadableStudyPortRotation where loadableStudy = ?1 AND operation.id = 2  AND isActive = true")
+  public List<Long> getDischarigingPorts(LoadableStudy loadableStudy);
 }

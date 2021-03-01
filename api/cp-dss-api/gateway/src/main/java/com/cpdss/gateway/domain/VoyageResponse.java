@@ -18,4 +18,5 @@ public class VoyageResponse {
 
   private List<Voyage> voyages;
   private String message;
+  private Long totalElements;
 }
