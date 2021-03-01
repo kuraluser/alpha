@@ -5,7 +5,12 @@
   <p> {{'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS' | translate}} </p>
   <cpdss-portal-datatable [tableId]="'apiTemperatureHistory'" [columns]="apiTempHistoryColumns"
     [value]="apiTempHistoryData"></cpdss-portal-datatable>
+  <a class="btn btn-link icon-btn" (click)="hideShowMonthWiseApiTempHistoryGrid()"
+    id="hide-api-temp-monthwise-grid">{{'API_TEMP_HISTORY_POPUP_HIDE_SHOW_MONTH_DETAILS'|translate}}</a>
   <p-footer>
-    <button class="btn btn-secondary" (click)="closePopup()">Close</button>
+    <button class="btn btn-main" (click)="closePopup()"
+      id="api-temp-popup-close">{{'API_TEMP_HISTORY_POPUP_CLOSE'|translate}}</button>
+    <button class="btn btn-main" (click)="viewMore()"
+      id="api-temp-popup-view-more">{{'API_TEMP_HISTORY_POPUP_VIEW_MORE'|translate}}</button>
   </p-footer>
 </p-dialog>
