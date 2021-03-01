@@ -34,7 +34,7 @@
                 </cpdss-portal-side-panel-loadable-study-list>
             </div>
         </div>
-        <div class="pl-30" [ngClass]="!loadablePatterns.length ? 'content-center' : ''">
+        <div class="pl-30  pattern-container" [ngClass]="!loadablePatterns.length ? 'content-center' : ''">
             <div class="row" *ngIf="loadablePatterns.length">
                 <div *ngFor="let loadablePattern of loadablePatterns; let i = index"
                     class="col-6 pb-15 pt-10 content-pattern">

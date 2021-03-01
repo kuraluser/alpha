@@ -1,0 +1,70 @@
+<p-dialog header=" {{popUpHeader| translate}}" [(visible)]="visible"
+  styleClass="new-voayge-pop-up" [closable]="false" [draggable]="false" [modal]="true">
+  <form [formGroup]="addUserForm" (submit)="saveNewUserRole()" *ngIf="addUserForm">
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+
+          <div class="form-group row">
+            <label for="new_user_role" class="col-md-6 col-form-label text-secondary">{{'ADD_USER_NAME_LABEL' | translate}}</label>
+            <div class="col-md-6">
+              <input type="text" *ngIf="popupStatus !== 'VIEW';else viewUserNameRef" class="form-control" id="new_user" formControlName="userName"
+               (change)="trimFormControl('userName')" (input)="isExisting = false" maxlength="50" [placeholder]="'ADD_USER_NAME_PLACEHOLDER' | translate" focusTrap />
+               <ng-template #viewUserNameRef><span  class="form-control">{{formContolValue('userName')}}</span> </ng-template>
+            </div>
+            <cpdss-portal-validation-error [errors]="fieldError('userName')" [errorMessages]="errorMessages.userName">
+            </cpdss-portal-validation-error>
+
+          </div>
+          <div class="form-group row">
+            <label for="role_description" class="col-md-6 col-form-label text-secondary">{{'USER_DESIGNATION' | translate}}</label>
+            <div class="col-md-6">
+              <input type="text" *ngIf="popupStatus !== 'VIEW';else viewDesignationRef" class="form-control" id="role_description" maxlength="10" formControlName="userDesignation"
+              (change)="trimFormControl('userDesignation')" [placeholder]="'USER_DESIGNATION_PLACEHOLDER' | translate" focusTrap />
+              <ng-template #viewDesignationRef><span  class="form-control">{{formContolValue('userDesignation')}}</span></ng-template>
+            </div>
+            <cpdss-portal-validation-error  [errors]="fieldError('userDesignation')" [errorMessages]="errorMessages.userDesignation">
+            </cpdss-portal-validation-error>
+
+          </div>
+
+          <div class="form-group row">
+            <label for="role_description" class="col-md-6 col-form-label text-secondary">{{'USER_ROLE' | translate}}</label>
+            <div class="col-md-6">
+              <p-dropdown styleClass="form-control" [options]="roleList" *ngIf="popupStatus !== 'VIEW';else viewRoleRef"
+                id="role_id" formControlName="userRole" optionLabel="name"
+                placeholder="{{'USER_ROLE_PLACEHOLDER' | translate}}" focusTrap>
+            </p-dropdown>
+            <ng-template #viewRoleRef><span  class="form-control">{{formContolValue('userRole')}}</span>{{formContolValue('userRole')}}</ng-template>
+            </div>
+            <cpdss-portal-validation-error  [errors]="fieldError('userRole')" [errorMessages]="errorMessages.userRole">
+            </cpdss-portal-validation-error>
+
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div *ngIf="addUserForm.valid && isExisting" class="pt-5 text-danger">
+                {{'USER_ALREADY_EXIST' | translate}}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </form>
+  <p-footer>
+    <div class="row">
+      <div class="col text-right">
+        <button class="btn btn-main mr-10" id="role_user_popup_cancel" (click)="cancel()">{{
+          'USER_CANCEL_BUTTON' | translate }}</button>
+        <button class="btn btn-main" type="submit" id="role_user_popup_submit" (click)="saveNewUserRole()" *ngIf="popupStatus !== 'VIEW'">{{
+          'USER_SAVE_BUTTON' | translate }}</button>
+      </div>
+    </div>
+
+  </p-footer>
+</p-dialog>

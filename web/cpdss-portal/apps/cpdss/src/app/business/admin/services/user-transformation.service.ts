@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { AdminModule } from '../admin.module';
 
-import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn , DATATABLE_BUTTON } from '../../../shared/components/datatable/datatable.model';
-import { IUserDetails , IUserResponse , IUserDetalisValueObject } from '../models/user.model';
+import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn, DATATABLE_BUTTON } from '../../../shared/components/datatable/datatable.model';
+import { IUserDetails, IUserResponse, IUserDetalisValueObject } from '../models/user.model';
 
 /**
  * Api Service for user  tranformation of data
@@ -16,15 +16,15 @@ import { IUserDetails , IUserResponse , IUserDetalisValueObject } from '../model
 })
 export class UserTransformationService {
 
-  
+
   constructor() { }
 
-   /**
-   * Method for setting User List grid column
-   *
-   * @returns {IDataTableColumn[]}
-   * @memberof UserTransformationService
-  */
+  /**
+  * Method for setting User List grid column
+  *
+  * @returns {IDataTableColumn[]}
+  * @memberof UserTransformationService
+ */
   getRoleListDatatableColumns(): IDataTableColumn[] {
     return [
       {
@@ -82,13 +82,32 @@ export class UserTransformationService {
     ]
   }
 
-    /**
-   * Method for converting User details data to value object model
-   *
-   * @param {IUserDetails} userDetails
-   * @returns {IUserDetalisValueObject}
-   * @memberof UserTransformationService
-   */
+  /**
+  * Set validation Error to form control
+  * @memberof UserTransformationService
+  */
+  setValidationErrorMessage() {
+    return {
+      userName: {
+        'required': 'ADD_USER_POPUP_USER_REQUIRED_ERROR',
+        'pattern': 'ROLE_NAME_VALIDATION_ERROR',
+        'maxlength': 'ROLE_NAME_MAX_LENGTH'
+      },
+      userDesignation: {
+        'required': 'ADD_USER_POPUP_DESIGNATION_REQUIRED_ERROR'
+      },
+      userRole: {
+        'required': 'ADD_USER_POPUP_ROLE_REQUIRED_ERROR'
+      }
+    }
+  }
+  /**
+ * Method for converting User details data to value object model
+ *
+ * @param {IUserDetails} userDetails
+ * @returns {IUserDetalisValueObject}
+ * @memberof UserTransformationService
+ */
   getPortAsValueObject(userDetails: IUserDetails): IUserDetalisValueObject {
     const _user = <IUserDetalisValueObject>{};
     _user.id = userDetails.id;

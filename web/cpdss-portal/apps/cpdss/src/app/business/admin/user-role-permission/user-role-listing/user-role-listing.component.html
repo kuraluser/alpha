@@ -7,7 +7,7 @@
     </div>
     <div class="row">
         <div class="col-12 role-listing-wrapper">
-            <cpdss-portal-datatable [filterable]="true" [tableId]="'user_role_list'" [columns]="columns" [value]="roleList"
+            <cpdss-portal-datatable *ngIf="roleList" [filterable]="true" [tableId]="'user_role_list'" [columns]="columns" [value]="roleList"
                 [editMode]="editMode" (columnClick)="columnClick($event)" (deleteRow)="onDeleteRow($event)" [form]="userRoleForm" (editRow)="editRow($event)"
                 [paginator]="true" [rows]="10" [totalRecords]="totalRecords" 
                 [lazy]="true" (dataStateChange)="onDataStateChange($event)" [loading]="loading"

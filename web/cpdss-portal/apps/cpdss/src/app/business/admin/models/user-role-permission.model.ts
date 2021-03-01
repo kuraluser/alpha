@@ -10,22 +10,22 @@ import { ICargoTank, ILoadableCargo } from '../../core/models/common.model';
  */
 export interface IUserRolePermissionResponse {
     responseStatus: IResponseStatus;
-    screens: IScreenNode[]
-    role: roleDetail,
-    users: number[],
+    screens: IScreenNode[];
+    role: IRoleDetails;
+    users: number[];
 }
 
 /**
  * Interface for  role detail
  *
  * @export
- * @interface roleDetail
+ * @interface IRoleDetails
  */
-export interface roleDetail {
-    id: number, 
-    name: string, 
-    description: string , 
-    companyId: string
+export interface IRoleDetails {
+    id: number;
+    name: string; 
+    description: string; 
+    companyId: string;
 }
 
 
@@ -36,15 +36,15 @@ export interface roleDetail {
  * @interface IScreenNode
  */
 export interface IScreenNode {
-    id: number,
-    name: string,
-    languageKey: string,
-    add: boolean,
-    edit: boolean,
-    delete: boolean,
-    view: boolean,
-    moduleId: number,
-    childs: IScreenNode[]
+    id: number;
+    name: string;
+    languageKey: string;
+    add: boolean;
+    edit: boolean;
+    delete: boolean;
+    view: boolean;
+    moduleId: number;
+    childs: IScreenNode[];
 }
 
 /**
@@ -55,7 +55,7 @@ export interface IScreenNode {
  */
 export interface IUserDetailsResponse {
     responseStatus: IResponseStatus;
-    users: IUserDetail[]
+    users: IUserDetail[];
 }
 
 /**
@@ -65,12 +65,12 @@ export interface IUserDetailsResponse {
  * @interface IUserDetail
  */
 export interface IUserDetail {
-    id: number,
-    rolePermissions: null,
-    username: string,
-    firstName: string,
-    lastName: string,
-    name?: string
+    id: number;
+    rolePermissions: null;
+    username: string;
+    firstName: string;
+    lastName: string;
+    name?: string;
 }
 
 /**
@@ -80,23 +80,23 @@ export interface IUserDetail {
  * @interface ITreeNodeData
  */
 export interface ITreeNodeData {
-    name: string, 
-    add: boolean, 
-    edit: boolean, 
-    delete: boolean, 
-    view: boolean, 
-    id: number, 
-    moduleId: number, 
-    isChecked: boolean,
-    isAddVisible: boolean,
-    isDeleteVisible: boolean,
-    isEditVisible: boolean,
-    isViewVisible: boolean,
-    nodeChecked: boolean,
-    isReadOnlyAdd: boolean,
-    isReadOnlyEdit: boolean,
-    isReadOnlyDelete: boolean,
-    isReadOnlyView: boolean,
+    name: string; 
+    add: boolean; 
+    edit: boolean; 
+    delete: boolean; 
+    view: boolean;
+    id: number;
+    moduleId: number; 
+    isChecked: boolean;
+    isAddVisible: boolean;
+    isDeleteVisible: boolean;
+    isEditVisible: boolean;
+    isViewVisible: boolean;
+    nodeChecked: boolean;
+    isReadOnlyAdd: boolean;
+    isReadOnlyEdit: boolean;
+    isReadOnlyDelete: boolean;
+    isReadOnlyView: boolean;
 }
 
 /**
@@ -107,20 +107,20 @@ export interface ITreeNodeData {
  */
 export interface IRoleResponse {
     responseStatus: IResponseStatus;
-    roles: IRoleDetail[],
-    totalElements: number
+    roles: IRoleDetails[];
+    totalElements: number;
 }
 
 /**
  * Interface for  Role detail
  *
  * @export
- * @interface IRoleDetail
+ * @interface IRoleDetails
  */
-export interface IRoleDetail {
-    id: number,
-    name: string,
-    description: string
+export interface IRoleDetails {
+    id: number;
+    name: string;
+    description: string;
 }
 
 /**
@@ -130,9 +130,9 @@ export interface IRoleDetail {
  * @interface IRoleDeleteResponse
  */
 export interface IRoleDeleteResponse {
-    responseStatus: IResponseStatus,
-    roleId: number,
-    message: string
+    responseStatus: IResponseStatus;
+    roleId: number;
+    message: string;
 }
 
 /**
@@ -142,9 +142,9 @@ export interface IRoleDeleteResponse {
  * @interface IUserRoleModel
  */
 export interface IUserRoleModel {
-    name: string,
-    description: string,
-    roleId?:number
+    name: string;
+    description: string;
+    roleId?:number;
 }
 
 /**
@@ -154,10 +154,10 @@ export interface IUserRoleModel {
  * @interface ISaveUserRoleResponse
  */
 export interface ISaveUserRoleResponse {
-    roles: string,
-    responseStatus: IResponseStatus,
-    roleId: number,
-    message: string
+    roles: string;
+    responseStatus: IResponseStatus;
+    roleId: number;
+    message: string;
 }
 /**
  * Interface for user permission 
@@ -166,11 +166,11 @@ export interface ISaveUserRoleResponse {
  * @interface IUserPermissionModel
  */
 export interface IUserPermissionModel {
-    screens: IUserPermissionScreen[],
-    roleId: number,
-    userId: number[],
-    deselectedUserId: number[],
-    role: IUserPermissionRole
+    screens: IUserPermissionScreen[];
+    roleId: number;
+    userId: number[];
+    deselectedUserId: number[];
+    role: IUserPermissionRole;
 }
 
 /**
@@ -180,12 +180,12 @@ export interface IUserPermissionModel {
  * @interface IUserPermissionScreen
  */
 export interface IUserPermissionScreen {
-    id: number,
-    name: string,
-    add: boolean,
-    edit: boolean,
-    view: boolean,
-    delete: boolean
+    id: number;
+    name: string;
+    add: boolean;
+    edit: boolean;
+    view: boolean;
+    delete: boolean;
 }
 
 /**
@@ -195,8 +195,8 @@ export interface IUserPermissionScreen {
  * @interface IUserPermissionRole
  */
 export interface IUserPermissionRole {
-    name: string,
-    description: string
+    name: string;
+    description: string;
 }
 
 /**
@@ -206,9 +206,9 @@ export interface IUserPermissionRole {
  * @interface ISavePermissionResponse
  */
 export interface ISavePermissionResponse {
-    responseStatus: IResponseStatus,
-    roleId: number,
-    message: string
+    responseStatus: IResponseStatus;
+    roleId: number;
+    message: string;
 }
 
 /**
@@ -218,10 +218,10 @@ export interface ISavePermissionResponse {
  * @interface IDataStateChange
  */
 export interface IDataStateChange {
-    name: string,
-    desc: string,
-    pageSize: string,
-    page: number,
-    sortBy: string,
-    orderBy: string,
+    name: string;
+    desc: string;
+    pageSize: string;
+    page: number;
+    sortBy: string;
+    orderBy: string;
 }

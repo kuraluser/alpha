@@ -12,6 +12,9 @@
   align-items: center;
   display: flex;
 }
-// .content-pattern{
-//     height: 40vh;
-// }
+
+.pattern-container{
+  padding-left: 15px;
+  padding-right: 15px;
+  overflow-y: auto;
+}

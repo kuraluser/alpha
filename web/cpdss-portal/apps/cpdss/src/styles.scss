@@ -1411,35 +1411,53 @@ td.sl div{
         }
       }
       .tank-name{
-        top: 5px!important;
+        top: 0px!important;
         text-align: left!important;
         margin-top: 0!important;
-        left: 5px;
+        left: 11px;
+        width: calc(48% - 15px)!important;
       }
       .tank-commodity-name{
         position: absolute;
-        top: 5px;
+        top: 0px;
         right: 5px;
         text-align: right;
+        width: 40%;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .tank-item-valign{
         position: absolute;
         top: 50%;
         left: 5px;
         margin-top: -17px;
+        right: 5px;
       }
-      .tank-commodity-volume{
+      .tank-commodity-volume, .tank-commodity-weight{
         padding-bottom: 2px;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
       }
       .tank-commodity-ullage{
         position: absolute;
         bottom: 5px;
         left: 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 34%;
+        display: block;
       }
       .tank-filling-percentage{
         position: absolute;
         bottom: 5px;
         right: 5px;
+        text-align: right;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 45%;
       }
 }
 
@@ -2078,3 +2096,60 @@ width: 50px !important;
 .p-datatable .p-datatable-thead > tr > th{
   white-space: normal;
 }
+
+.landing-page-tank-wrapper{
+  .tanks-inner-outer-ohq .tanks-column-ohq > div .tank-name{
+    left: 15px!important;
+    top: 0!important;
+    text-overflow: ellipsis;
+    text-align: left!important;
+  }
+  .rear-tank-wrapper-ohq > div .tank-name{
+    right: 11px!important;
+    height: 18px!important;
+    top: 0!important;
+    bottom: 0!important;
+    margin: auto!important;
+  }
+  .rear-tank-wrapper-ohq .tank-btn-rounded{
+    margin: auto!important;
+    top: 0!important;
+    bottom: 0!important;
+    left: auto!important;
+    right: 2px!important;
+  }
+  .rear-tank-wrapper-ohq > div:first-child{
+     .tank-btn-rounded{
+      left: auto!important;
+      bottom: 3px!important;
+      right: 2px!important;
+      top: auto!important;
+    }
+    .tank-name{
+      right: 15px!important;
+      left: 4px!important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: right!important;
+      bottom: 0!important;
+      top: auto!important;
+    }
+  }
+  .rear-tank-wrapper-ohq > div:last-child{
+    .tank-btn-rounded{
+     left: auto!important;
+     top: 3px!important;
+     right: 2px!important;
+     bottom: auto!important;
+   }
+   .tank-name{
+     right: 15px!important;
+     left: 4px!important;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     text-align: right!important;
+     top: 0!important;
+     bottom: auto!important;
+   }
+ }
+} 
