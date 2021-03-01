@@ -3,20 +3,15 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { IDataTableColumn, DATATABLE_ACTION } from '../../../../shared/components/datatable/datatable.model';
 import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
+import { IUserResponse, IUserDetails , USER_POPUP_SELECTIONMODE } from '../../models/user.model';
+
+
+import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 
 import { UserTransformationService } from '../../services/user-transformation.service';
 import { UserApiService } from '../../services/user-api.service';
-import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
-import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
-import { IUserDetails, IUserResponse } from '../../models/user.model';
 
-/**
- * Component class of user allocation
- *
- * @export
- * @class UserListingComponent
- * @implements {OnInit}
- */
 @Component({
   selector: 'cpdss-portal-user-listing',
   templateUrl: './user-listing.component.html',
@@ -27,8 +22,11 @@ export class UserListingComponent implements OnInit {
   public columns: IDataTableColumn[];
   public userList: IUserDetails[];
   public editMode: boolean;
-  public userForm: FormGroup;
+  public addUser: boolean;
   public addUserBtnPermissionContext: IPermissionContext;
+  public userForm: FormGroup;
+  public popupStatus: string;
+  public userDetails: IUserDetails;
 
   constructor(
     private fb: FormBuilder,
@@ -79,6 +77,29 @@ export class UserListingComponent implements OnInit {
   */
   public resetPassword($event) {
     const event = $event;
+  }
+
+  /**
+ * Add Role
+ * @param {boolean} viewPopup
+ * @param {string} status
+ * @memberof UserListingComponent
+ */
+  addUserPopUp(viewPopup: boolean , status: string) {
+    this.addUser = viewPopup;
+    this.popupStatus = status;
+  }
+
+  /**
+ * view user details
+ * @param {string} status
+ * @param {*} data
+ * @memberof UserListingComponent
+ */
+  viewUserDetails(data: any , status: string) {
+    this.userDetails = data.data;
+    this.popupStatus = status;
+    this.addUser = true;
   }
 
 
