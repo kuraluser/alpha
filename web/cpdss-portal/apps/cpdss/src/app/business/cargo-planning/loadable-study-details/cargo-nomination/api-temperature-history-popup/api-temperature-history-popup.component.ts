@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { IApiTempHistory, IApiTempPopupData, ILoadingPopupData } from '../../../models/cargo-planning.model';
+import { IApiTempHistory, IApiTempPopupData, ILoadingPopupData, IMonths } from '../../../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
 import { IDataTableColumn } from './../../../../../shared/components/datatable/datatable.model';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 /**
  * To show the History of cargo Api & Temperature
@@ -32,22 +33,30 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
   set apiTempHistoryPopupData(apiTempHistoryPopupData: IApiTempPopupData) {
     this._apiTempHistoryPopupData = apiTempHistoryPopupData;
     this.getApiTempHistoryData();
+    this.ApiTempHistoryForm = this.fb.group({
+      selectMonth: this.fb.control(null),
+      selectPort: this.fb.control(null)
+    })
   }
 
   @Output() visibleChange = new EventEmitter<boolean>();
 
   apiTempHistoryColumns: IDataTableColumn[];
   apiTempHistoryData: IApiTempHistory[];
+  apiTempHistoryMonths: IMonths[];
+  ApiTempHistoryForm: FormGroup;
 
   private _visible: boolean;
   private _apiTempHistoryPopupData: IApiTempPopupData;
 
   constructor(
+    private fb: FormBuilder,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
   ) { }
 
   ngOnInit(): void {
     this.apiTempHistoryColumns = this.loadableStudyDetailsTransformationService.getCargoNominationApiTempHistoryColumns();
+    this.apiTempHistoryMonths = this.loadableStudyDetailsTransformationService.getMonthList();
   }
 
   /**

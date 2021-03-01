@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { ValueObject } from '../../../shared/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOHQPort, IPortAllDropdownData, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
+import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IMonths, IOHQPort, IPortAllDropdownData, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
 import { v4 as uuid4 } from 'uuid';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { ICargoGroup, ICommingleManual, ICommingleResponseModel, ICommingleValueObject, IPercentage } from '../models/commingle.model';
@@ -417,6 +417,65 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'temp',
         header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_TEMP',
+      }
+    ]
+  }
+
+  /**
+   * Method to return months.
+   *
+   * @return {*}  {IMonths[]}
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  getMonthList(): IMonths[]{
+    return [
+      {
+        id: 1,
+        month: 'January'
+      },
+      {
+        id: 2,
+        month: 'February'
+      },
+      {
+        id: 3,
+        month: 'March'
+      },
+      {
+        id: 4,
+        month: 'April'
+      },
+      {
+        id: 5,
+        month: 'May'
+      },
+      {
+        id: 6,
+        month: 'June'
+      },
+      {
+        id: 7,
+        month: 'July'
+      },
+      {
+        id: 8,
+        month: 'August'
+      },
+      {
+        id: 9,
+        month: 'September'
+      },
+      {
+        id: 10,
+        month: 'October'
+      },
+      {
+        id: 11,
+        month: 'November'
+      },
+      {
+        id: 12,
+        month: 'December'
       }
     ]
   }

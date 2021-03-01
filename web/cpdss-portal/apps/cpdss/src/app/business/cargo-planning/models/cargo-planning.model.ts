@@ -685,3 +685,14 @@ export interface IApiTempHistory {
     api: number;
     temp: number;
 }
+
+/**
+ * Interface for list months.
+ *
+ * @export
+ * @interface IMonths
+ */
+export interface IMonths {
+    id: number;
+    month: string;
+}

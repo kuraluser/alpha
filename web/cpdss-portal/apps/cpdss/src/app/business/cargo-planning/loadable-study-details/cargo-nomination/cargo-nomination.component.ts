@@ -246,6 +246,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       }
     } else if (['api', 'temperature'].includes(event.field)) {
       if (event.data?.cargo?.value) {
+        const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
+        event.data.cargo.value.ports = result?.ports;
         this.apiTempPopupData = <IApiTempPopupData>{
           rowDataCargo: event.data?.cargo,
           rowIndex: event.index
