@@ -805,7 +805,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           StringUtils.isEmpty(request.getMaxWaterTemperature())
               ? null
               : new BigDecimal(request.getMaxWaterTemperature()));
-      entity.setDischargeCargoId(request.getDischargingCargoId());
 
       Set<LoadableStudyAttachments> attachmentCollection = new HashSet<>();
       if (!request.getAttachmentsList().isEmpty()) {

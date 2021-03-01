@@ -276,7 +276,7 @@ public class UserService {
       if (!innerList.isEmpty()) {
         inner.getChilds().addAll(innerList);
       } else {
-        break;
+        continue;
       }
     }
     return list;
@@ -464,13 +464,12 @@ public class UserService {
       screenIds.add(screenInfo.getId());
     }
 
-    List<RoleUserMapping> roleUserList =
-        this.roleUserRepository.findByRolesAndIsActive(role.get().getId(), true);
-    if (roleUserList != null && !roleUserList.isEmpty()) {
-      roleUserList.forEach(
-          a -> {
-            a.setIsActive(false);
-          });
+    if (permission.getDeselectedUserId() != null) {
+      List<RoleUserMapping> roleUserList =
+          this.roleUserRepository.findByRolesAndIsActive(role.get().getId(), true);
+      roleUserList.stream()
+          .filter(ru -> permission.getDeselectedUserId().contains(ru.getUsers().getId()))
+          .forEach(roleUser -> roleUser.setIsActive(false));
     }
 
     List<Screen> screens =
