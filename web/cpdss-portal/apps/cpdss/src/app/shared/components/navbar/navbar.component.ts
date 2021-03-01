@@ -65,7 +65,8 @@ export class NavbarComponent implements OnInit {
         'isSubMenuOpen': false,
         'permissionMapping': AppConfigurationService.settings.permissionMapping['AdminComponent'],
         'subMenu': [
-          { 'name': 'User Role Permission' , 'subMenuLink': '/business/admin/user-role-permission' , 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserPermission'], 'isVisible': false}
+          { 'name': 'User Role Permission' , 'subMenuLink': '/business/admin/user-role-permission' , 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserRoleListing'], 'isVisible': false},
+          { 'name': 'User' , 'subMenuLink': '/business/admin/user-listing' , 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserListingComponent'], 'isVisible': false},
         ],
       },
       /* {

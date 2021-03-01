@@ -9,5 +9,6 @@
     "SynopticalComponent": "SYNOPTICAL",
     "AdminComponent": "ADMIN",
     "UserPermission": "USER_PERMISSION",
-    "UserRoleListing": "USER_ROLE_LISTING"
+    "UserRoleListing": "USER_ROLE_LISTING",
+    "UserListingComponent": "ADMIN_USER_CREATION"
 }

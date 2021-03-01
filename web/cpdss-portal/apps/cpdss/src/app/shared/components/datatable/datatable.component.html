@@ -131,8 +131,16 @@
                                             class="{{col.fieldValueIcon+'-'+rowData[col.field]}}"></i></span>
                                 </ng-container>
                                 <ng-template #lazyRef>
-                                    <span *ngSwitchCase="fieldType.SLNO">{{getSlNo(rowIndex)}}</span>
+                                    <span *ngSwitchCase="fieldType.SLNO">{{(paginatorRef?.paginatorState?.page*paginatorRef?.paginatorState?.rows) + (rowIndex +1)}}</span>
                                 </ng-template>
+
+                                <ng-container *ngSwitchCase="fieldType.BUTTON">
+                                        <ng-container *ngFor="let button of col?.buttons;let buttonIndex = index">
+                                            <a type="button" *ngIf="rowData[button?.field] || rowData[button?.field] === undefined" id="{{tableId + 'button' + rowIndex + buttonIndex}}"
+                                            class="{{button?.class}}" 
+                                            (click)="button($event, rowData, rowIndex, col, button)">Reset button</a>
+                                        </ng-container>
+                                </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.ACTION">
                                     <div class="action-buttons" *ngIf="rowData.isActionsEnabled === undefined || rowData.isActionsEnabled">

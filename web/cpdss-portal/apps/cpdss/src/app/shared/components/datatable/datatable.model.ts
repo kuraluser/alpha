@@ -45,7 +45,22 @@ export interface IDataTableColumn {
     subHeader?: string;
     numberFormat?: string;
     showTotal?: boolean;
-    filterByServer?: boolean
+    filterByServer?: boolean,
+    buttons?: IButtons[]
+}
+
+/**
+ * Interface for Button type
+ *
+ * @export
+ * @interface IButtons
+ */
+interface IButtons {
+    type: DATATABLE_BUTTON,
+    field: string,
+    icons?: string,
+    class?: string,
+    label?: string
 }
 
 /**
@@ -69,7 +84,8 @@ export enum DATATABLE_FIELD_TYPE {
   DATERANGE = 'DATERANGE',
   DATETIME = 'DATETIME',
   COLOR = 'COLOR',
-  TIME = "TIME"
+  TIME = "TIME",
+  BUTTON = 'BUTTON'
 }
 
 /**
@@ -212,4 +228,14 @@ export interface IPaginator {
 export interface ISort {
     sortField: string,
     sortOrder: string
+}
+
+/**
+ * Enum for Datatable button
+ *
+ * @export
+ * @enum {number}
+ */
+export enum DATATABLE_BUTTON {
+    RESETPASSWORD = 'RESET PASSWORD'
 }
