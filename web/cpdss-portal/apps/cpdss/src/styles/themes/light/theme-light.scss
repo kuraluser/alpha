@@ -785,11 +785,10 @@ a{
   color: $text-secondary;
 }
 
-.content-pattern:nth-child(odd){
-  border-right: 1px solid $border-color;
+.content-pattern{
   border-bottom: 1px solid $border-color;
 }
-.content-pattern:nth-child(2){
+.content-pattern:nth-child(even){
   border-right: 0;
   border-bottom: 1px solid $border-color!important;
   border-left: 1px solid $border-color!important;
@@ -797,6 +796,9 @@ a{
 .content-pattern:only-child{
   border-right: 0;
   border-bottom: 0;
+}
+.content-pattern:last-child, .content-pattern:nth-last-child(2){
+  border-bottom: 0!important;
 }
 .cpdss{
   background: url($images-theme + 'cpdss.png') no-repeat;
