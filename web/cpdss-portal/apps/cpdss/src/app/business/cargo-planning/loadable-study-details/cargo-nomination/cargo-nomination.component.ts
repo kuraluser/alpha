@@ -15,6 +15,8 @@ import { Subject } from 'rxjs';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { LoadableStudy, LOADABLE_STUDY_STATUS } from '../../models/loadable-study-list.model';
+import { IPermission } from '../../../../shared/models/user-profile.model';
 
 /**
  * Component class of cargonomination screen
@@ -40,6 +42,17 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     this._loadableStudyId = value;
     this.cargoNominationForm = null;
     this.getCargoNominationDetails();
+  }
+
+  @Input() permission: IPermission;
+
+  @Input()
+  get loadableStudy() {
+    return this._loadableStudy;
+  }
+  set loadableStudy(value: LoadableStudy) {
+    this._loadableStudy = value;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING].includes(this.loadableStudy?.statusId)? DATATABLE_EDITMODE.CELL : null;
   }
 
   @Input() vesselId: number;
@@ -94,7 +107,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   }
 
   // public fields
-  readonly editMode = DATATABLE_EDITMODE.CELL;
+  editMode: DATATABLE_EDITMODE;
   columns: IDataTableColumn[];
   listData = <ICargoNominationAllDropdownData>{};
   cargoNominationForm: FormGroup;
@@ -106,6 +119,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
 
   // private fields
   private _loadableStudyId: number;
+  private _loadableStudy: LoadableStudy;
   private _loadingPopupData: ILoadingPopupData;
   private _openLoadingPopup = false;
   private _openAPITemperatureHistoryPopup = false;
@@ -131,7 +145,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    * @memberof CargoNominationComponent
    */
   ngOnInit() {
-    this.columns = this.loadableStudyDetailsTransformationService.getCargoNominationDatatableColumns();
+    this.columns = this.loadableStudyDetailsTransformationService.getCargoNominationDatatableColumns(this.permission, this.loadableStudy?.statusId);
     this.initSubscriptions();
   }
 

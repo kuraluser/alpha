@@ -17,7 +17,7 @@
 </div>
 
 <cpdss-portal-loading-ports-popup *ngIf="loadingPopupData" [(visible)]="openLoadingPopup"
-  [(popupData)]="loadingPopupData"></cpdss-portal-loading-ports-popup>
+  [(popupData)]="loadingPopupData" [permission]="permission" [loadableStudy]="loadableStudy"></cpdss-portal-loading-ports-popup>
 
 <cpdss-portal-api-temperature-history-popup *ngIf="apiTempPopupData" [(apiTempHistoryPopupData)]="apiTempPopupData"
   [(visible)]="openAPITemperatureHistoryPopup">

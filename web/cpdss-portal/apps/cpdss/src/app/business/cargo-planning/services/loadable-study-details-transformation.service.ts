@@ -8,6 +8,7 @@ import { v4 as uuid4 } from 'uuid';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { ICargoGroup, ICommingleManual, ICommingleResponseModel, ICommingleValueObject, IPercentage } from '../models/commingle.model';
 import { IOperations, IPort, IPortList } from '../../core/models/common.model';
+import { LOADABLE_STUDY_STATUS } from '../models/loadable-study-list.model';
 
 /**
  * Transformation Service for Lodable Study details module
@@ -138,8 +139,8 @@ export class LoadableStudyDetailsTransformationService {
    * @returns {IDataTableColumn[]}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getCargoNominationDatatableColumns(): IDataTableColumn[] {
-    return [
+  getCargoNominationDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS): IDataTableColumn[] {
+    let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
         header: 'SL',
@@ -330,15 +331,28 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR'
         }
-      },
-      {
+      }
+    ];
+    if(permission && loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_PENDING) {
+      const actions: DATATABLE_ACTION[] = [];
+      if(permission.add) {
+        actions.push(DATATABLE_ACTION.DUPLICATE);
+        actions.push(DATATABLE_ACTION.SAVE);
+      }
+      if(permission.delete) {
+        actions.push(DATATABLE_ACTION.DELETE);
+      }
+      const action: IDataTableColumn = {
         field: 'actions',
         header: '',
         fieldHeaderClass: 'column-actions',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.SAVE, DATATABLE_ACTION.DELETE, DATATABLE_ACTION.DUPLICATE]
-      }
-    ]
+        actions: actions
+      };
+      columns = [...columns, action];
+    }
+
+    return columns;
   }
 
   /**
@@ -366,8 +380,8 @@ export class LoadableStudyDetailsTransformationService {
    * @returns {IDataTableColumn[]}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getCargoNominationLoadingPortDatatableColumns(): IDataTableColumn[] {
-    return [
+  getCargoNominationLoadingPortDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS): IDataTableColumn[] {
+    let columns: IDataTableColumn[] = [
       {
         field: 'name',
         header: 'PORT',
@@ -384,14 +398,24 @@ export class LoadableStudyDetailsTransformationService {
           'min': 'CARGO_NOMINATION_LOADING_PORT_MIN_ERROR',
           'pattern': 'CARGO_NOMINATION_LOADING_PORT_PATTERN_ERROR'
         }
-      },
-      {
+      }
+    ]
+
+    if(permission && loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_PENDING) {
+      const actions: DATATABLE_ACTION[] = [];
+      if(permission.delete) {
+        actions.push(DATATABLE_ACTION.DELETE);
+      }
+      const action: IDataTableColumn = {
         field: 'actions',
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.DELETE]
-      }
-    ]
+        actions: actions
+      };
+      columns = [...columns, action];
+    }
+
+    return columns;
   }
 
   /**

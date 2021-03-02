@@ -6,7 +6,7 @@ import { LoadableStudyDetailsApiService } from '../services/loadable-study-detai
 import { ActivatedRoute, Router } from '@angular/router';
 import { Voyage, IPort } from '../../core/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
-import { IDischargingPortIds, LoadableStudy } from '../models/loadable-study-list.model';
+import { IDischargingPortIds, LoadableStudy, LOADABLE_STUDY_STATUS } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { IVessel } from '../../core/models/vessel-details.model';
@@ -82,6 +82,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   displayLoadableQuntity: boolean;
   loadableQuantityNew: string;
   loadableQuantityModel: LoadableQuantityModel;
+  cargoNominationTabPermission: IPermission;
   portsTabPermission: IPermission;
   ohqTabPermissionContext: IPermissionContext;
   ohqTabPermission: IPermission;
@@ -101,6 +102,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   isPatternGenerated = false;
   isGenerateClicked = false;
   isPatternOpenOrNoplan = false;
+  LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
+
   constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private loadableStudyListApiService: LoadableStudyListApiService,
@@ -151,7 +154,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   setPagePermissionContext() {
-    const cargoNominationTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], false);
+    this.cargoNominationTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], false);
     this.cargoNominationTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW] };
 
     this.portsTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['PortsComponent'], false);
@@ -166,7 +169,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     const obqTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OnBoardQuantityComponent'], false);
     this.obqTabPermissionContext = { key: AppConfigurationService.settings.permissionMapping['OnBoardQuantityComponent'], actions: [PERMISSION_ACTION.VIEW] };
 
-    if (cargoNominationTabPermission === undefined || cargoNominationTabPermission?.view) {
+    if (this.cargoNominationTabPermission === undefined || this.cargoNominationTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
     } else if (this.portsTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.PORTS;
