@@ -254,11 +254,6 @@ public class UserController {
     return roleResponse;
   }
 
-  @GetMapping("/index-one")
-  public ResponseEntity<?> index1(){
-    return ResponseEntity.ok("Hello World");
-  }
-
   /**
    * Admin Role required to access this API
    *
