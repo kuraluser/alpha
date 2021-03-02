@@ -8,9 +8,9 @@
     <div class="row">
         <div class="col-12 role-listing-wrapper">
             <cpdss-portal-datatable *ngIf="userList" [filterable]="true" [tableId]="'user_list'" [columns]="columns" [value]="userList"
-               [form]="userForm" (columnClick)="viewUserDetails($event,'VIEW')"  (resetPassword)="resetPassword($event)" (buttonClick)="buttonClick($event)"></cpdss-portal-datatable>
+               [form]="userForm" (columnClick)="viewUserDetails($event,'VIEW')"  (resetPassword)="resetPassword($event)" (buttonClick)="buttonClick($event)" (editRow)="editUser($event, 'EDIT')"></cpdss-portal-datatable>
 
-                <cpdss-portal-add-user *ngIf="addUser" (displayPopUp)="addUserPopUp($event)" (roleSaved)="roleSaved()" [popupStatus]="popupStatus" [userDetails]="userDetails"></cpdss-portal-add-user>
+                <cpdss-portal-add-user *ngIf="addUser" (displayPopUp)="addUser = $event" [roles]="roles" (userSaved)="getUserDetails()" [popupStatus]="popupStatus" [userDetails]="userDetails"></cpdss-portal-add-user>
         </div>
     </div>
 </div>

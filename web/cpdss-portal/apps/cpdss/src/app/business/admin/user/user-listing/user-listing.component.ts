@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { TranslateService } from '@ngx-translate/core';
+import { MessageService } from 'primeng/api';
 
 import { IDataTableColumn, DATATABLE_ACTION } from '../../../../shared/components/datatable/datatable.model';
 import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
-import { IUserResponse, IUserDetails , USER_POPUP_SELECTIONMODE } from '../../models/user.model';
+import { IUserResponse, IUserDetails , IRoleDetails , IUserDetalisValueObject } from '../../models/user.model';
 
 
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
@@ -12,7 +15,14 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
 import { UserTransformationService } from '../../services/user-transformation.service';
 import { UserApiService } from '../../services/user-api.service';
 
-@Component({
+/**
+ * Component class of add user
+ *
+ * @export
+ * @class UserListingComponent
+ * @implements {OnInit}
+ */
+ @Component({
   selector: 'cpdss-portal-user-listing',
   templateUrl: './user-listing.component.html',
   styleUrls: ['./user-listing.component.scss']
@@ -20,16 +30,21 @@ import { UserApiService } from '../../services/user-api.service';
 export class UserListingComponent implements OnInit {
 
   public columns: IDataTableColumn[];
-  public userList: IUserDetails[];
+  public userList: IUserDetalisValueObject[];
   public editMode: boolean;
+  public roles: IRoleDetails[]; 
   public addUser: boolean;
   public addUserBtnPermissionContext: IPermissionContext;
   public userForm: FormGroup;
   public popupStatus: string;
   public userDetails: IUserDetails;
+  public maxUserCount: number;
 
   constructor(
     private fb: FormBuilder,
+    private ngxSpinnerService: NgxSpinnerService,
+    private translateService: TranslateService,
+    private messageService: MessageService,
     private userApiService: UserApiService,
     private userTransformationService: UserTransformationService,
     private permissionsService: PermissionsService,
@@ -53,13 +68,20 @@ export class UserListingComponent implements OnInit {
   * @memberof UserListingComponent
   */
   async getUserDetails() {
+    this.ngxSpinnerService.show();
     const userRes: IUserResponse = await this.userApiService.getUserDetails().toPromise();
-    const userList = userRes?.users;
-    const _userList = userList?.map((user) => {
-      const userData = this.userTransformationService.getPortAsValueObject(user);
-      return userData;
-    });
-    this.userList = _userList;
+    this.ngxSpinnerService.hide();
+    if(userRes.responseStatus.status === '200') {
+      const userList = userRes?.users;
+      this.maxUserCount = userRes.maxUserCount;
+      this.roles = userRes.roles;
+      const _userList = userList?.map((user) => {
+        const userData = this.userTransformationService.getPortAsValueObject(user);
+        return userData;
+      });
+      this.userList = _userList;
+    }
+    
   }
 
   /**
@@ -85,9 +107,15 @@ export class UserListingComponent implements OnInit {
  * @param {string} status
  * @memberof UserListingComponent
  */
-  addUserPopUp(viewPopup: boolean , status: string) {
-    this.addUser = viewPopup;
-    this.popupStatus = status;
+  async addUserPopUp(viewPopup: boolean , status: string) {
+    if (this.maxUserCount >= this.userList?.length) {
+      this.addUser = viewPopup;
+      this.popupStatus = status;
+    } else {
+      const translationKeys = await this.translateService.get([ 'USER_CREATE_ERROR', 'MAXIMUM_USER_EXCEED']).toPromise();
+      this.messageService.add({ severity: 'error', summary: translationKeys['USER_CREATE_ERROR'], detail: translationKeys['MAXIMUM_USER_EXCEED'] });
+    }
+    
   }
 
   /**
@@ -97,7 +125,25 @@ export class UserListingComponent implements OnInit {
  * @memberof UserListingComponent
  */
   viewUserDetails(data: any , status: string) {
+    if(data.field === 'actions' || data.field === 'buttons') {
+      return;
+    }
     this.userDetails = data.data;
+    this.popupStatus = status;
+    this.addUser = true;
+  }
+
+    /**
+   * route to edit role details page while clicking cloumn
+   * @param {any} event 
+   * @param {string} status
+   * @memberof UserListingComponent
+   */
+  editUser(event: any, status: string) {
+    if (event.field === 'buttons') {
+      return;
+    }
+    this.userDetails = event.data;
     this.popupStatus = status;
     this.addUser = true;
   }

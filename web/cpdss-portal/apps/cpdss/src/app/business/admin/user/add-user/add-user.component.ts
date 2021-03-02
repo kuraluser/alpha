@@ -6,7 +6,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 
 import { UserTransformationService } from '../../services/user-transformation.service';
 import { UserApiService } from '../../services/user-api.service';
-import { IRoleResponse , IRoleDetails , USER_POPUP_SELECTIONMODE ,  IUserDetails , IUserModel , ISaveUserResponse } from '../../models/user.model';
+import { IRoleDetails  , USER_POPUP_SELECTIONMODE ,  IUserDetails , IUserModel , ISaveUserResponse } from '../../models/user.model';
 
 /**
  * Component class of add user
@@ -23,6 +23,7 @@ import { IRoleResponse , IRoleDetails , USER_POPUP_SELECTIONMODE ,  IUserDetails
 export class AddUserComponent implements OnInit {
   
   @Input() popupStatus: USER_POPUP_SELECTIONMODE;
+  @Input() roles: IRoleDetails[];
   @Input() userDetails: IUserDetails;
   @Output() displayPopUp = new EventEmitter<boolean>();
   @Output() userSaved = new EventEmitter();
@@ -31,7 +32,6 @@ export class AddUserComponent implements OnInit {
   public addUserForm: FormGroup;
   public errorMessages: any;
   public isExisting: boolean;
-  public roleList: IRoleDetails[];
   public popUpHeader: string;
 
   constructor(
@@ -65,19 +65,16 @@ export class AddUserComponent implements OnInit {
    * @memberof AddUserComponent
   */
   async getRoles() {
-    this.ngxSpinnerService.show();
-    const roleRes: IRoleResponse = await this.userApiService.getRoles().toPromise();
-    this.ngxSpinnerService.hide();
-    this.roleList = roleRes.roles;
+    const selectedRole = this.roles?.filter((role: IRoleDetails) => role.name === this.userDetails.role);
     if(this.popupStatus !== 'ADD') {
       this.addUserForm.patchValue({
         userName: this.userDetails.username,
         userDesignation: this.userDetails.designation,
-        userRole: this.roleList?.filter((role: IRoleDetails) => role.name === this.userDetails.role)
+        userRole: selectedRole[0]
       })
     }
-    const translationKeys = await this.translateService.get(['ADD_USER_DETAILS', 'EDIT_USER_DETAILS', 'USER_DETAILS']).toPromise();
-    this.popUpHeader = this.popupStatus === 'ADD' ? translationKeys['ADD_USER_DETAILS'] : this.popupStatus === 'EDIT' ?  translationKeys['EDIT_USER_DETAILS'] :  translationKeys['USER_DETAILS']
+    const translationKeys = await this.translateService.get(['ADD_USER_DETAILS', 'EDIT_USER_DETAILS_HEADING', 'USER_DETAILS']).toPromise();
+    this.popUpHeader = this.popupStatus === 'ADD' ? translationKeys['ADD_USER_DETAILS'] : this.popupStatus === 'EDIT' ?  translationKeys['EDIT_USER_DETAILS_HEADING'] :  translationKeys['USER_DETAILS']
 
   }
 
@@ -140,18 +137,23 @@ export class AddUserComponent implements OnInit {
     this.isExisting = false;
     this.ngxSpinnerService.show();
     const newUserData:IUserModel = {
-      name: this.addUserForm.value.userName,
+      username: this.addUserForm.value.userName,
       designation: this.addUserForm.value.userDesignation,
-      role: this.addUserForm.value.userRole.id
+      roleId: this.addUserForm.value.userRole.id
     }
     let userId: number;
     this.popupStatus === 'ADD' ? userId = 0 : userId = this.userDetails.id;
-    const translationKeys = await this.translateService.get(['NEW_USER_CREATE_SUCCESS', 'NEW_USER_CREATED_SUCCESSFULLY', 'USER_CREATE_ERROR', 'USER_ALREADY_EXIST' , 'MAXIMUM_USER_EXCEED']).toPromise();
+    const translationKeys = await this.translateService.get(['NEW_USER_CREATE_SUCCESS', 'NEW_USER_CREATED_SUCCESSFULLY', 'USER_CREATE_ERROR', 'USER_ALREADY_EXIST' , 'MAXIMUM_USER_EXCEED' , 'EDIT_USER_DETAILS_SUCCESSFULLY' , 'EDIT_USER_DETAILS_SUCCESS']).toPromise();
     try {
       const res:ISaveUserResponse = await this.userApiService.saveUser(newUserData, userId).toPromise();
       if (res.responseStatus.status === "200") {
-        this.messageService.add({ severity: 'success', summary: translationKeys['NEW_USER_CREATE_SUCCESS'], detail: translationKeys['NEW_USER_CREATED_SUCCESSFULLY'] });
-        this.userSaved.emit('');
+        if(this.popupStatus === 'ADD') {
+          this.messageService.add({ severity: 'success', summary: translationKeys['NEW_USER_CREATE_SUCCESS'], detail: translationKeys['NEW_USER_CREATED_SUCCESSFULLY'] });
+        } else {
+          this.messageService.add({ severity: 'success', summary: translationKeys['EDIT_USER_DETAILS_SUCCESS'], detail: translationKeys['EDIT_USER_DETAILS_SUCCESSFULLY'] });
+        }
+        
+        this.userSaved.emit(newUserData);
         this.displayPopUp.emit(false);
         this.ngxSpinnerService.hide();
       }
@@ -160,7 +162,7 @@ export class AddUserComponent implements OnInit {
       if (error.error.errorCode === 'ERR-RICO-103') {
         this.isExisting = true;
         this.messageService.add({ severity: 'error', summary: translationKeys['USER_CREATE_ERROR'], detail: translationKeys['USER_ALREADY_EXIST'] });
-      } else if(error.error.errorCode === ' ERR-RICO-104') {
+      } else if(error.error.errorCode === 'ERR-RICO-104') {
         this.displayPopUp.emit(false);
         this.messageService.add({ severity: 'error', summary: translationKeys['USER_CREATE_ERROR'], detail: translationKeys['MAXIMUM_USER_EXCEED'] });
       }
