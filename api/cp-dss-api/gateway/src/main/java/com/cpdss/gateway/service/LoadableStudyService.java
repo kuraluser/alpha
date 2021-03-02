@@ -1813,6 +1813,8 @@ public class LoadableStudyService {
                     !StringUtils.isEmpty(commingleCargoGen.getQuantity())
                         ? new BigDecimal(commingleCargoGen.getQuantity())
                         : new BigDecimal("0"));
+                cargoGroup.setCargoNomination1Id(commingleCargoGen.getCargoNomination1Id());
+                cargoGroup.setCargoNomination2Id(commingleCargoGen.getCargoNomination2Id());
                 cargoGroups.add(cargoGroup);
               });
       commingleCargo.setCargoGroups(cargoGroups);

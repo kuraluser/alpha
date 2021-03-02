@@ -52,4 +52,10 @@ public class CommingleCargo extends EntityDoc {
 
   @Column(name = "priority")
   private Integer priority;
+  
+  @Column(name = "cargo_nomination1_xid")
+  private Long cargoNomination1Id;
+
+  @Column(name = "cargo_nomination2_xid")
+  private Long cargoNomination2Id;
 }

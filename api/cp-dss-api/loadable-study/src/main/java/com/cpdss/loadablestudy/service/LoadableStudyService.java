@@ -3434,6 +3434,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .ifPresent(cargo2Pct -> builder.setCargo2Pct(String.valueOf(cargo2Pct)));
             Optional.ofNullable(commingleCargo.getQuantity())
                 .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
+            Optional.ofNullable(commingleCargo.getCargoNomination1Id()).ifPresent(builder::setCargoNomination1Id);
+            Optional.ofNullable(commingleCargo.getCargoNomination2Id()).ifPresent(builder::setCargoNomination2Id);
             replyBuilder.addCommingleCargo(builder);
           });
     }
@@ -3528,6 +3530,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Long maxPriority =
         cargoNominationRepository.getMaxPriorityCargoNominationIn(cargoNominationIds);
     commingleCargoEntity.setPriority(maxPriority != null ? maxPriority.intValue() : null);
+    commingleCargoEntity.setCargoNomination1Id(requestRecord.getCargoNomination1Id());
+    commingleCargoEntity.setCargoNomination2Id(requestRecord.getCargoNomination2Id());
     commingleCargoEntity.setLoadableStudyXId(loadableStudyId);
     commingleCargoEntity.setPurposeXid(requestRecord.getPurposeId());
     commingleCargoEntity.setTankIds(
