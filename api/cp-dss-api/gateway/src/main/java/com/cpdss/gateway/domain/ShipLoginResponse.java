@@ -2,17 +2,12 @@
 package com.cpdss.gateway.domain;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 public class ShipLoginResponse implements Serializable {
 
@@ -22,4 +17,19 @@ public class ShipLoginResponse implements Serializable {
   private CommonSuccessResponse responseStatus;
 
   private String token;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private PasswordExpiryReminder expiryReminder;
+
+  public ShipLoginResponse(CommonSuccessResponse responseStatus, String token) {
+    this.responseStatus = responseStatus;
+    this.token = token;
+  }
+
+  public ShipLoginResponse(
+      CommonSuccessResponse responseStatus, String token, PasswordExpiryReminder expiryReminder) {
+    this.responseStatus = responseStatus;
+    this.token = token;
+    this.expiryReminder = expiryReminder;
+  }
 }

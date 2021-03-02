@@ -16,8 +16,9 @@ import javax.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -95,6 +96,8 @@ public class UserController {
   @GetMapping("/users")
   public UserResponse getUsers(@RequestHeader HttpHeaders headers) throws CommonRestException {
     try {
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      String currentPrincipalName = authentication.getName();
       log.info("getUsers: {}");
       return this.userService.getUsers(headers.getFirst(CORRELATION_ID_HEADER));
     } catch (Exception e) {
@@ -262,27 +265,25 @@ public class UserController {
    */
   @PostMapping("/users/reset-password")
   public ResponseEntity<ResetPasswordResponse> resetPassword(
-          @RequestBody ResetPasswordRequest request,
-          @RequestHeader HttpHeaders headers
-  ) throws CommonRestException {
+      @RequestBody ResetPasswordRequest request, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
     ResetPasswordResponse response = new ResetPasswordResponse();
     try {
       boolean var1 = userService.resetPassword(request.getPassword(), request.getUserId());
-      response.setResponseStatus(new CommonSuccessResponse(
-              "200",
-              headers.getFirst(CORRELATION_ID_HEADER)
-      ));
+      response.setResponseStatus(
+          new CommonSuccessResponse("200", headers.getFirst(CORRELATION_ID_HEADER)));
     } catch (GenericServiceException e) {
+      log.error("reset password failed - {}", e.getMessage());
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
+      log.error("reset password failed - {}", e.getMessage());
       throw new CommonRestException(
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              headers,
-              HttpStatusCode.INTERNAL_SERVER_ERROR,
-              e.getMessage(),
-              e);
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
     }
     return ResponseEntity.ok(response);
   }
-
 }

@@ -1,28 +1,13 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.service;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.FilterCriteria;
-import com.cpdss.gateway.domain.Permission;
-import com.cpdss.gateway.domain.PermissionResponse;
-import com.cpdss.gateway.domain.Resource;
-import com.cpdss.gateway.domain.Role;
-import com.cpdss.gateway.domain.RolePermission;
-import com.cpdss.gateway.domain.RolePermissions;
-import com.cpdss.gateway.domain.RoleResponse;
-import com.cpdss.gateway.domain.RoleScreen;
-import com.cpdss.gateway.domain.RolesSpecification;
-import com.cpdss.gateway.domain.ScreenData;
-import com.cpdss.gateway.domain.ScreenInfo;
-import com.cpdss.gateway.domain.ScreenResponse;
-import com.cpdss.gateway.domain.ShipLoginRequest;
-import com.cpdss.gateway.domain.ShipLoginResponse;
-import com.cpdss.gateway.domain.User;
-import com.cpdss.gateway.domain.UserAuthorizationsResponse;
-import com.cpdss.gateway.domain.UserResponse;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.entity.RoleUserMapping;
 import com.cpdss.gateway.entity.Roles;
 import com.cpdss.gateway.entity.Screen;
@@ -34,6 +19,7 @@ import com.cpdss.gateway.repository.RolesRepository;
 import com.cpdss.gateway.repository.ScreenRepository;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.ship.ShipJwtService;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -74,8 +60,7 @@ public class UserService {
 
   @Autowired private ShipJwtService jwtService;
 
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+  @Autowired private PasswordEncoder passwordEncoder;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -88,14 +73,17 @@ public class UserService {
   @Value("${ship.max.user.count}")
   private int maxShipUserCount;
 
-    @Value("${ship.user.password-age}")
-    private Integer[] passwordAge;
+  @Value("${ship.user.password-age}")
+  private Integer PASSWORD_AGE;
 
-    @Value("${ship.user.password-length-min}")
-    private Integer passwordMinLength;
+  @Value("${ship.user.password-length-min}")
+  private Integer passwordMinLength;
 
-    @Value("${ship.user.password-length-max}")
-    private Integer passwordMaxLength;
+  @Value("${ship.user.password-length-max}")
+  private Integer passwordMaxLength;
+
+  @Value("${ship.user.password-reminder}")
+  private Integer PASSWORD_EXPIRE_REMINDER;
 
   /**
    * Retrieves the user information from user database
@@ -618,14 +606,17 @@ public class UserService {
   }
 
   /**
-   * Generate JWT token for ship
+   * Generate Jwt Token, Password Expire Notification
    *
-   * @param username
+   * @param request
+   * @param correlationId
    * @return
    * @throws GenericServiceException
    */
   public ShipLoginResponse generateShipUserToken(ShipLoginRequest request, String correlationId)
       throws GenericServiceException {
+
+    ShipLoginResponse response = new ShipLoginResponse();
     Users user = this.usersRepository.findByUsernameAndIsActive(request.getUsername(), true);
     if (null == user) {
       throw new GenericServiceException(
@@ -633,9 +624,21 @@ public class UserService {
     }
     user.setLastLoginDate(LocalDateTime.now());
     this.usersRepository.save(user);
-    return new ShipLoginResponse(
-        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId),
-        this.jwtService.generateToken(user));
+
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    response.setToken(this.jwtService.generateToken(user));
+    if (user.getPasswordExpiryDate() != null) { // Password expire reminder
+      LocalDateTime timeNow = LocalDateTime.now();
+      long daysDiff =
+          DAYS.between(
+              timeNow, user.getPasswordExpiryDate()); // If value is 3 or below then add message
+      if (daysDiff <= PASSWORD_EXPIRE_REMINDER) {
+        response.setExpiryReminder(
+            new PasswordExpiryReminder(Timestamp.valueOf(user.getPasswordExpiryDate())));
+      }
+    }
+    return response;
   }
 
   /**
@@ -736,74 +739,88 @@ public class UserService {
     }
   }
 
-    @Transactional
-    public boolean resetPassword(String password, Long userId) throws GenericServiceException {
-        boolean response = false;
-        if (validatePasswordPolicies(userId, password)) {
-            String encodedPassword = passwordEncoder.encode(password);
-            int status = this.usersRepository.updateUserPasswordByUserId(encodedPassword, userId);
-            response = status > 0;
-            log.info("reset password for user id - {}" + (response ? "success" : "failed!"), userId);
-        }
-        return response;
+  @Transactional
+  public boolean resetPassword(String password, Long userId) throws GenericServiceException {
+    boolean response = false;
+    if (validatePasswordPolicies(userId, password)) {
+      String encodedPassword = passwordEncoder.encode(password);
+      LocalDateTime dateTime = LocalDateTime.now();
+      int status =
+          this.usersRepository.updateUserPasswordExpireDateAndTime(
+              userId, encodedPassword, dateTime.plusDays(PASSWORD_AGE), dateTime);
+      response = status > 0;
+      log.info("reset password for user id - {}" + (response ? "success" : "failed!"), userId);
     }
+    return response;
+  }
 
-    /**
-     * password policies: DSS-1155
-     * 1. Age for each password, from properties (0-9999)
-     * 2. Length of password (8 character)
-     * 3. Complexity
-     * 3.1. Cannot contain username
-     * 3.2. At least 3 of the case must have (Lower-case, Upper-case, Number, Symbols)
-     *
-     * @return
-     */
-    private boolean validatePasswordPolicies(Long userId, String password) throws GenericServiceException {
-        Optional<Users> users = usersRepository.findById(userId);
-        if (users.isPresent()) {
-            String firstName = users.get().getFirstName();
-            String lasName = users.get().getLastName();
-            if (!password.contains(firstName) && !password.contains(lasName)) {
-                validateRegularExpression(password);
-                return true;
-            } else {
-                throw new GenericServiceException(
-                        "Password cannot contain first name/last name",
-                        CommonErrorCodes.E_CPDSS_PASSWORD_POLICIES_VIOLATION_1,
-                        HttpStatusCode.BAD_REQUEST
-                );
-            }
-        } else {
-            throw new GenericServiceException(
-                    "User not found for ID: " + userId,
-                    CommonErrorCodes.E_CPDSS_INVALID_USER,
-                    HttpStatusCode.BAD_REQUEST
+  /**
+   * password policies: DSS-1155 1. Age for each password, from properties (0-9999) 2. Length of
+   * password (8 character) 3. Complexity 3.1. Cannot contain username 3.2. At least 3 of the case
+   * must have (Lower-case, Upper-case, Number, Symbols)
+   *
+   * @return
+   */
+  private boolean validatePasswordPolicies(Long userId, String password)
+      throws GenericServiceException {
+    Optional<Users> users = usersRepository.findById(userId);
+    if (users.isPresent()) {
+      String firstName = users.get().getFirstName();
+      String lasName = users.get().getLastName();
+      if (!password.contains(firstName) && !password.contains(lasName)) {
+        validateRegularExpression(password);
+        return true;
+      } else {
+        throw new GenericServiceException(
+            "Password cannot contain first name/last name",
+            CommonErrorCodes.E_CPDSS_PASSWORD_POLICIES_VIOLATION_1,
+            HttpStatusCode.BAD_REQUEST);
+      }
+    } else {
+      throw new GenericServiceException(
+          "User not found for ID: " + userId,
+          CommonErrorCodes.E_CPDSS_INVALID_USER,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  public void validateRegularExpression(String password) throws GenericServiceException {
+    List<String> regexList =
+        Arrays.asList(
+            "^(?=.*[0-9])(?=\\S+$).{"
+                + passwordMinLength
+                + ","
+                + passwordMaxLength
+                + "}$", // Check for if any number + no white space + length
+            "^(?=.*[a-z])(?=\\S+$).{"
+                + passwordMinLength
+                + ","
+                + passwordMaxLength
+                + "}$", // Check for if any small letter  + no white space + length
+            "^(?=.*[A-Z])(?=\\S+$).{"
+                + passwordMinLength
+                + ","
+                + passwordMaxLength
+                + "}$", // Check for if any capital letter  + no white space + length
+            "^(?=.*[@#$%^&+=])(?=\\S+$).{"
+                + passwordMinLength
+                + ","
+                + passwordMaxLength
+                + "}$" // Check for if any special character  + no white space + length
             );
-        }
+    int total = 0;
+    for (String regex : regexList) {
+      Pattern pattern = Pattern.compile(regex);
+      Matcher matcher = pattern.matcher(password);
+      if (matcher.matches()) {
+        total = total + 1;
+      }
     }
-
-
-    public void validateRegularExpression(String password) throws GenericServiceException {
-        List<String> regexList = Arrays.asList(
-                "^(?=.*[0-9])(?=\\S+$).{"+passwordMinLength+","+passwordMaxLength+"}$",  // Check for if any number + no white space + length
-                "^(?=.*[a-z])(?=\\S+$).{"+passwordMinLength+","+passwordMaxLength+"}$",  // Check for if any small letter  + no white space + length
-                "^(?=.*[A-Z])(?=\\S+$).{"+passwordMinLength+","+passwordMaxLength+"}$",  // Check for if any capital letter  + no white space + length
-                "^(?=.*[@#$%^&+=])(?=\\S+$).{"+passwordMinLength+","+passwordMaxLength+"}$" // Check for if any special character  + no white space + length
-        );
-        int total = 0;
-        for (String regex : regexList) {
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(password);
-            if (matcher.matches()) {
-                total = total + 1;
-            }
-        }
-        if (total < 3) {
-            throw new GenericServiceException(
-                    "Passwords must use at least three of the four available character types: lowercase letters, uppercase letters, numbers, and symbols",
-                    CommonErrorCodes.E_CPDSS_PASSWORD_POLICIES_VIOLATION_2,
-                    HttpStatusCode.BAD_REQUEST
-            );
-        }
+    if (total < 3) {
+      throw new GenericServiceException(
+          "Passwords must use at least three of the four available character types: lowercase letters, uppercase letters, numbers, and symbols",
+          CommonErrorCodes.E_CPDSS_PASSWORD_POLICIES_VIOLATION_2,
+          HttpStatusCode.BAD_REQUEST);
     }
+  }
 }

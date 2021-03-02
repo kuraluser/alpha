@@ -2,6 +2,7 @@
 package com.cpdss.gateway.controller;
 
 import com.cpdss.common.exception.CommonRestException;
+import com.cpdss.common.exception.PasswordExpireException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.ShipLoginRequest;
@@ -56,6 +57,15 @@ public class ShipAuthenticationController {
       log.error("Authentication exception", ae);
       log.info("Updating the last login attemt date");
       this.userService.updateLastLoginAttemptedDateForShipUser(request);
+      if (ae.getCause() instanceof PasswordExpireException) {
+        log.info("Password expire user - {}, message - {}", request.getUsername(), ae.getMessage());
+        throw new CommonRestException(
+            CommonErrorCodes.E_CPDSS_PASSWORD_EXPIRED,
+            headers,
+            HttpStatusCode.UNAUTHORIZED,
+            "Authentication exception occurred",
+            ae);
+      }
       throw new CommonRestException(
           CommonErrorCodes.E_HTTP_UNAUTHORIZED_RQST,
           headers,
