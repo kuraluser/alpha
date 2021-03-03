@@ -54,4 +54,8 @@ public class LoadablePlanStowageBallastDetails extends EntityDoc {
 
   @Column(name = "color_code")
   private String colorCode;
+
+  @ManyToOne
+  @JoinColumn(name = "port_rotation_xid")
+  private LoadableStudyPortRotation loadableStudyPortRotation;
 }

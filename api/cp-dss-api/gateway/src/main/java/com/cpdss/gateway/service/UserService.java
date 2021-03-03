@@ -198,7 +198,8 @@ public class UserService {
     roleUserList.forEach(
         roleUser -> {
           Optional<Users> userEntityOpt =
-              users.stream()
+              users
+                  .stream()
                   .filter(user -> user.getId().equals(roleUser.getUsers().getId()))
                   .findAny();
           if (userEntityOpt.isPresent()) {
@@ -241,7 +242,8 @@ public class UserService {
 
       for (ScreenData screen : list) {
         screens.removeAll(
-            screens.stream()
+            screens
+                .stream()
                 .filter(s -> s.getId().equals(screen.getId()))
                 .collect(Collectors.toList()));
         screen.getChilds().addAll(this.findInnerScreens(screen, screens, roleId, companyId));
@@ -267,7 +269,8 @@ public class UserService {
   private List<ScreenData> findInnerScreens(
       ScreenData parentScreen, List<Screen> screens, Long roleId, Long companyId) {
     List<ScreenData> list =
-        screens.stream()
+        screens
+            .stream()
             .filter(s -> s.getModuleId().equals(parentScreen.getId()))
             .map(s -> this.createInfo(s, roleId, companyId))
             .collect(Collectors.toList());
@@ -390,9 +393,28 @@ public class UserService {
     } else {
       // TODO the shore users has to be fetched from keycloak
     }
+    List<Roles> roles = this.rolesRepository.findByIsActiveOrderByName(true);
+    userResponse.setRoles(this.buildRoles(roles));
     userResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return userResponse;
+  }
+
+  /**
+   * Build role dto list
+   *
+   * @param roles
+   * @return
+   */
+  private List<Role> buildRoles(List<Roles> roles) {
+    List<Role> roleList = new ArrayList<>();
+    for (Roles role : roles) {
+      Role roleDto = new Role();
+      roleDto.setId(role.getId());
+      roleDto.setName(role.getName());
+      roleList.add(roleDto);
+    }
+    return roleList;
   }
 
   /**
@@ -415,6 +437,8 @@ public class UserService {
             if (null != userEntity.getRoles()) {
               user.setRole(userEntity.getRoles().getName());
             }
+            // TODO to be replaced with value from table
+            user.setDefaultUser(true);
             userList.add(user);
           });
     }
@@ -511,7 +535,9 @@ public class UserService {
             roleScreen.setRoles(role.get());
             roleScreen.setCompanyXId(companyId);
             Optional<ScreenInfo> sc =
-                permission.getScreens().stream()
+                permission
+                    .getScreens()
+                    .stream()
                     .filter(scr -> scr.getId().equals(screen.getId()))
                     .findAny();
             if (sc.isPresent()) {

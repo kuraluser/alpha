@@ -289,8 +289,9 @@ message LoadablePlanDetails {
 message LoadablePlanPortWiseDetails {
 	int64 portId = 1;
 	string portCode = 2;
-	LoadablePlanDetailsReply arrivalCondition = 3;
-	LoadablePlanDetailsReply departureCondition = 4;
+	int64 portRotationId = 3;
+	LoadablePlanDetailsReply arrivalCondition = 4;
+	LoadablePlanDetailsReply departureCondition = 5;
 }
 
 message LoadablePlanDetailsRequest {

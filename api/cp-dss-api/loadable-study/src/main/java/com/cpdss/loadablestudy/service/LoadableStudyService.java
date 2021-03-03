@@ -2761,6 +2761,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     lpd.getLoadablePlanPortWiseDetailsList()
         .forEach(
             lppwd -> {
+              LoadableStudyPortRotation loadableStudyPortRotation =
+                  this.loadableStudyPortRotationRepository.getOne(lppwd.getPortRotationId());
               lppwd
                   .getArrivalCondition()
                   .getLoadablePlanBallastDetailsList()
@@ -2770,6 +2772,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
                             lpbd,
                             lppwd.getPortId(),
+                            lppwd.getPortRotationId(),
                             loadablePattern);
                       });
               lppwd
@@ -2781,6 +2784,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
                             lpbd,
                             lppwd.getPortId(),
+                            lppwd.getPortRotationId(),
                             loadablePattern);
                       });
             });
@@ -2790,18 +2794,24 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param synopticalTableOpTypeDeparture
    * @param lpbd
    * @param portId
+   * @param loadableStudyPortRotation
    * @param loadablePattern void
    */
   private void saveLoadablePlanBallastDetailsOperationWise(
       String synopticalTableOpTypeDeparture,
       com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails lpbd,
       long portId,
+      Long portRotationId,
       LoadablePattern loadablePattern) {
     LoadablePlanStowageBallastDetails loadablePlanStowageBallastDetails =
         new LoadablePlanStowageBallastDetails();
     loadablePlanStowageBallastDetails.setLoadablePatternId(loadablePattern.getId());
     loadablePlanStowageBallastDetails.setOperationType(synopticalTableOpTypeDeparture);
     loadablePlanStowageBallastDetails.setPortXId(portId);
+    loadablePlanStowageBallastDetails.setLoadableStudyPortRotation(
+        0 != portRotationId
+            ? this.loadableStudyPortRotationRepository.getOne(portRotationId)
+            : null);
     loadablePlanStowageBallastDetails.setQuantity(
         !StringUtils.isEmpty(lpbd.getMetricTon()) ? new BigDecimal(lpbd.getMetricTon()) : null);
     loadablePlanStowageBallastDetails.setTankXId(lpbd.getTankId());
@@ -2829,6 +2839,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
                             lpsd,
                             lppwd.getPortId(),
+                            lppwd.getPortRotationId(),
                             loadablePattern);
                       });
               lppwd
@@ -2840,6 +2851,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
                             lpsd,
                             lppwd.getPortId(),
+                            lppwd.getPortRotationId(),
                             loadablePattern);
                       });
             });
@@ -2855,6 +2867,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       String synopticalTableOpTypeArrival,
       com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails lpsd,
       long portId,
+      Long portRotationId,
       LoadablePattern loadablePattern) {
     com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails loadablePatternCargoDetails =
         new com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails();
@@ -2864,6 +2877,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     loadablePatternCargoDetails.setPlannedQuantity(
         !StringUtils.isEmpty(lpsd.getWeight()) ? new BigDecimal(lpsd.getWeight()) : null);
     loadablePatternCargoDetails.setPortId(portId);
+    loadablePatternCargoDetails.setLoadableStudyPortRotation(
+        0 != portRotationId
+            ? this.loadableStudyPortRotationRepository.getOne(portRotationId)
+            : null);
     loadablePatternCargoDetails.setTankId(lpsd.getTankId());
     loadablePatternCargoDetails.setAbbreviation(lpsd.getCargoAbbreviation());
     loadablePatternCargoDetails.setApi(new BigDecimal(lpsd.getApi()));

@@ -27,4 +27,6 @@ public class User {
   private Long roleId;
 
   private Boolean isLoginSuspended;
+  
+  private Boolean defaultUser;
 }

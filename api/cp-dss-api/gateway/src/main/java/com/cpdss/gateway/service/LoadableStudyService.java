@@ -2948,6 +2948,8 @@ public class LoadableStudyService {
                         portWiseBuilder.setArrivalCondition(detailsBuilderArrival);
 
                         portWiseBuilder.setPortId(lppwd.getPortId());
+                        portWiseBuilder.setPortRotationId(
+                            null != lppwd.getPortRotationId() ? lppwd.getPortRotationId() : 0);
                         planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                       });
               planBuilder.setCaseNumber(lpd.getCaseNumber());
