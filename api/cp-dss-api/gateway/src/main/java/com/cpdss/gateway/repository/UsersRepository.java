@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * User repository - to interact with {@link Users} table
@@ -34,5 +35,5 @@ public interface UsersRepository extends CommonCrudRepository<Users, Long> {
   @Query(
       "update Users us set us.userPassword = :password, us.passwordExpiryDate = :expD, us.passwordUpdateDate = :upD where us.id = :id")
   int updateUserPasswordExpireDateAndTime(
-      Long id, String password, LocalDateTime expD, LocalDateTime upD);
+          @Param("id") Long id,  @Param("password") String password,  @Param("expD") LocalDateTime expD,  @Param("upD") LocalDateTime upD);
 }

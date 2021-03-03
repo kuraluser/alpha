@@ -403,10 +403,6 @@ class UserServiceTest {
   @MethodSource("validPasswordProvider")
   void restPasswordTest(String password){
     Long userId = 1l;
-
-    when(usersRepository.updateUserPasswordByUserId(password, userId))
-      .thenReturn(1);
-
   }
 
   @ParameterizedTest(name = "#{index} - Run test with password = {0}")
