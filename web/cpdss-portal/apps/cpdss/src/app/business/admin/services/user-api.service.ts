@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { AdminModule } from '../admin.module';
 
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { IUserDetails, IUserResponse , IRoleResponse , IUserModel , ISaveUserResponse } from '../models/user.model';
+import { IUserDetails, IUserResponse  , IUserModel , ISaveUserResponse } from '../models/user.model';
 
 /**
  * Api Service for user
@@ -25,14 +25,6 @@ export class UserApiService {
 */
   getUserDetails(): Observable<IUserResponse> {
     return this.commonApiService.get<IUserResponse>(`users`);
-  }
-
-  /**
-  * 
-  * Get api for get Role Details
-  */
-  getRoles(): Observable<IRoleResponse> {
-    return this.commonApiService.get<IRoleResponse>(`roles`);
   }
 
   /**

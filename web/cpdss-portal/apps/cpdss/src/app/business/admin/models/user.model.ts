@@ -10,22 +10,10 @@ import { IResponseStatus } from '../../../shared/models/common.model';
 export interface IUserResponse {
     responseStatus: IResponseStatus;
     users: IUserDetails[];
+    maxUserCount: number;
+    roles: IRoleDetails[];
 }
 
-/**
- * Interface for  role response
- *
- * @export
- * @interface IRoleResponse
- */
-export interface IRoleResponse {
-    message: string;
-    responseStatus: IResponseStatus;
-    roleId: string;
-    roles: IRoleDetails[];
-    totalElements: number;
-    users: string;
-}
 
 /**
  * Interface for  role details
@@ -54,6 +42,9 @@ export interface IUserDetails {
     role: string;
     rolePermissions: string;
     username: string;
+    roleId: number;
+    isLoginSuspended: boolean;
+    defaultUser: boolean;
 }
 
 /**
@@ -83,9 +74,9 @@ export interface IUserDetalisValueObject {
  * @interface IUserModel
 */
 export interface IUserModel {
-    name: string;
+    username: string;
     designation: string;
-    role: string;
+    roleId: string;
 }
 
 /**

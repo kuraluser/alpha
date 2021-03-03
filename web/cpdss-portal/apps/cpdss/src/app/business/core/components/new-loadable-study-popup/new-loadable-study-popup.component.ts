@@ -198,8 +198,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   }
 
   // this function triggers when choosing the files in fileUpload (primeng)
-  selectFilesToUpload() {
+  async selectFilesToUpload() {
     let uploadFile = [];
+    const sizeErrorFiles = [];
     const uploadedFileVar = this.fileUploadVariable.nativeElement.files;
     const extensions = ["docx", "pdf", "txt", "jpg", "jpeg", "png", "eml"];
     if (this.uploadedFiles.length < 5) {
@@ -207,8 +208,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
         const fileExtension = uploadedFileVar[i].name.substr((uploadedFileVar[i].name.lastIndexOf('.') + 1));
         if (extensions.includes(fileExtension.toLowerCase())) {
           if (uploadedFileVar[i].size / 1024 / 1024 >= 1) {
-            this.showError = true;
-            this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_SIZE_ERROR";
+            sizeErrorFiles.push(uploadedFileVar[i].name)
             continue;
           } else {
             if (uploadFile.length < 5) {
@@ -230,6 +230,11 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           this.uploadError = "NEW_LOADABLE_STUDY_LIST_POPUP_FILE_FORMAT_ERROR";
           continue;
         }
+      }
+      const translationKeys = await this.translateService.get(['NEW_LOADABLE_STUDY_LIST_POPUP_FILE_SIZE_ERROR' , 'NEW_LOADABLE_STUDY_LIST_POPUP_ERROR']).toPromise();
+      if(sizeErrorFiles?.length) {
+        const errMessage = sizeErrorFiles.toString() + ' '+ translationKeys['NEW_LOADABLE_STUDY_LIST_POPUP_FILE_SIZE_ERROR'];
+        this.messageService.add({ severity: 'error', summary: translationKeys['NEW_LOADABLE_STUDY_LIST_POPUP_ERROR'], detail:  errMessage});
       }
     } else {
       this.showError = true;

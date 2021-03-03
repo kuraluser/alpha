@@ -77,7 +77,7 @@ export class UserTransformationService {
         field: 'actions',
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.DELETE, DATATABLE_ACTION.EDIT]
+        actions: [DATATABLE_ACTION.EDIT , DATATABLE_ACTION.DELETE]
       }
     ]
   }
@@ -116,7 +116,7 @@ export class UserTransformationService {
     _user.firstName = userDetails.firstName;
     _user.lastName = userDetails.lastName;
     _user.role = userDetails.role;
-    _user.isActionsEnabled = false;
+    _user.isActionsEnabled = !userDetails.defaultUser;
     _user.isResetPassword = true;
     return _user;
   }

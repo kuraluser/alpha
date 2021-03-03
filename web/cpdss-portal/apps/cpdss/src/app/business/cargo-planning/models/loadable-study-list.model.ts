@@ -1,5 +1,4 @@
 import { IResponse } from '../../../shared/models/common.model';
-
 /**
  * Model for loadable study list 
  */
@@ -8,7 +7,7 @@ export class LoadableStudy {
     slNo: number;
     public name: string;
     public status: string;
-    public statusId: number;
+    public statusId: LOADABLE_STUDY_STATUS;
     public detail: string;
     public createdDate: string;
     public charterer: string;
@@ -100,4 +99,16 @@ export interface LoadablePattern {
 export interface ILoadablePatternsResponse {
    requestStatus: any;
    loadablePatterns: LoadablePattern[];
+}
+
+/**
+ * ENUM for Loadable Study Status
+ *
+ * @export
+ * @enum {number}
+ */
+export enum LOADABLE_STUDY_STATUS {
+    PLAN_PENDING = 1,
+    PLAN_CONFIRMED = 2,
+    PLAN_GENERATED = 3
 }
