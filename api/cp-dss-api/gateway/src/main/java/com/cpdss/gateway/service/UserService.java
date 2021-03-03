@@ -777,7 +777,8 @@ public class UserService {
         if (users.isPresent()) {
             String firstName = users.get().getFirstName();
             String lasName = users.get().getLastName();
-            if (!password.contains(firstName) && !password.contains(lasName)) {
+            String username = users.get().getUsername();
+            if (!password.contains(firstName) && !password.contains(lasName) && !password.contains(username)) {
                 validateRegularExpression(password);
                 return true;
             } else {
