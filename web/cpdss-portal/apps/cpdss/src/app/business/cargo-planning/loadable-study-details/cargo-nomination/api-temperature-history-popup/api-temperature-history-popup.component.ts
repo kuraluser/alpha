@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { IApiTempHistory, IApiTempPopupData, ILoadingPopupData, IMonths } from '../../../models/cargo-planning.model';
+import { IApiTempHistory, IApiTempPopupData, IMonths } from '../../../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
 import { IDataTableColumn } from './../../../../../shared/components/datatable/datatable.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { LoadableStudyDetailsApiService } from '../../../services/loadable-study-details-api.service';
+import { DatePipe } from '@angular/common';
 
 /**
  * To show the History of cargo Api & Temperature
@@ -42,7 +44,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
   @Output() visibleChange = new EventEmitter<boolean>();
 
   apiTempHistoryColumns: IDataTableColumn[];
-  apiTempHistoryData: IApiTempHistory[];
+  apiTempHistoryData: IApiTempHistory[] = [];
   apiTempHistoryMonths: IMonths[];
   ApiTempHistoryForm: FormGroup;
 
@@ -51,6 +53,8 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private datePipe: DatePipe,
+    private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
   ) { }
 
@@ -69,26 +73,43 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     /**
      * This dummy data will remove after integrating the actual API
      */
-    this.apiTempHistoryData = [
-      {
-        port: 'Ahamedi',
-        date: '10-03-2020',
-        api: 30.11,
-        temp: 80.1
-      },
-      {
-        port: 'Fujairah',
-        date: '18-03-2020',
-        api: 32.05,
-        temp: 75.5
-      },
-      {
-        port: 'Aalborg',
-        date: '21-03-2020',
-        api: 30.30,
-        temp: 90.5
-      }
-    ];
+    let mockResponse = [{
+      cargoId: 10,
+      loadingPortId: 46,
+      loadedDate: '01-10-2020 17:25',
+      api: 30.11,
+      temperature: 80.1
+    }, {
+      cargoId: 10,
+      loadingPortId: 46,
+      loadedDate: '30-09-2020 17:25',
+      api: 32.18,
+      temperature: 75.5
+    }, {
+      cargoId: 10,
+      loadingPortId: 46,
+      loadedDate: '29-09-2020 17:25',
+      api: 30.25,
+      temperature: 90.5
+    }, {
+      cargoId: 10,
+      loadingPortId: 46,
+      loadedDate: '28-09-2020 17:25',
+      api: 31.36,
+      temperature: 88.1
+    }, {
+      cargoId: 10,
+      loadingPortId: 46,
+      loadedDate: '27-09-2020 17:25',
+      api: 33.25,
+      temperature: 92.3
+    }];
+    const loadingPortArray = [...this.apiTempHistoryPopupData.rowDataCargo.value.ports];
+    this.apiTempHistoryData = mockResponse.map(historyObj => {
+      const loadingPort = loadingPortArray.find(port => port.id === historyObj.loadingPortId );
+      const formattedDate = this.datePipe.transform(historyObj.loadedDate.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"), 'dd-MM-yyyy');
+      return Object.assign(historyObj, {loadingPortName: loadingPort.name, loadedDate: formattedDate});
+    });
   }
 
   /**
@@ -114,6 +135,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
    * @memberof ApiTemperatureHistoryPopupComponent
    */
   closePopup() {
+    this.apiTempHistoryData = [];
     this.visible = false;
     this.visibleChange.emit(this.visible);
   }

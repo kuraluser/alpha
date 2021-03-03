@@ -680,10 +680,12 @@ export interface IApiTempPopupData {
  * @interface IApiTempHistory
  */
 export interface IApiTempHistory {
-    port: string;
-    date: string;
+    cargoId: number;
+    loadingPortName: string;
+    loadingPortId: number;
+    loadedDate: string;
     api: number;
-    temp: number;
+    temperature: number;
 }
 
 /**
@@ -693,6 +695,6 @@ export interface IApiTempHistory {
  * @interface IMonths
  */
 export interface IMonths {
-    id: number;
+    id: string;
     month: string;
 }

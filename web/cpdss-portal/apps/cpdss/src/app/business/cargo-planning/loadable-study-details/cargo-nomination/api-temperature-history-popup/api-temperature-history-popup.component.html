@@ -5,23 +5,29 @@
   <p> {{'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS' | translate}} </p>
   <cpdss-portal-datatable [tableId]="'apiTemperatureHistory'" [columns]="apiTempHistoryColumns"
     [value]="apiTempHistoryData"></cpdss-portal-datatable>
-    <form [formGroup]="ApiTempHistoryForm">
-      <div class="row">
-        <div class="col-sm-8">
-          <label class="col-form-label pr-10">{{'API_TEMP_HISTORY_POPUP_MONTH_PORT_DROPDOWN_LABEL'| translate}}</label>
-          <p-dropdown id="api_temp_popup_month_dropdown" styleClass="dropdown-w-180" appendTo="body" formControlName="selectMonth"
-            [options]="apiTempHistoryMonths" optionLabel="month"
-            placeholder="{{'API_TEMP_HISTORY_POPUP_MONTH_DROPDOWN_PLACEHOLDER'| translate}}" filter="true" focusTrap>
-          </p-dropdown>
+  <div class="row">
+    <div class="col">
+      <form [formGroup]="ApiTempHistoryForm" *ngIf="apiTempHistoryData.length > 0">
+        <div class="row">
+          <div class="col-sm-8">
+            <label
+              class="col-form-label pr-10">{{'API_TEMP_HISTORY_POPUP_MONTH_PORT_DROPDOWN_LABEL'| translate}}</label>
+            <p-dropdown id="api_temp_popup_month_dropdown" styleClass="dropdown-w-180" appendTo="body"
+              formControlName="selectMonth" [options]="apiTempHistoryMonths" optionLabel="month"
+              placeholder="{{'API_TEMP_HISTORY_POPUP_MONTH_DROPDOWN_PLACEHOLDER'| translate}}" filter="true" focusTrap>
+            </p-dropdown>
+          </div>
+          <div class="col-sm-4">
+            <p-dropdown id="api_temp_popup_port_dropdown" styleClass="dropdown-w-180" appendTo="body"
+              formControlName="selectPort" [options]="apiTempHistoryPopupData?.rowDataCargo?.value?.ports"
+              optionLabel="name" placeholder="{{'API_TEMP_HISTORY_POPUP_PORT_DROPDOWN_PLACEHOLDER'| translate}}"
+              filter="true" focusTrap>
+            </p-dropdown>
+          </div>
         </div>
-        <div class="col-sm-4">
-          <p-dropdown id="api_temp_popup_port_dropdown" styleClass="dropdown-w-180" appendTo="body" formControlName="selectPort"
-            [options]="apiTempHistoryPopupData?.rowDataCargo?.value?.ports" optionLabel="name"
-            placeholder="{{'API_TEMP_HISTORY_POPUP_PORT_DROPDOWN_PLACEHOLDER'| translate}}" filter="true" focusTrap>
-          </p-dropdown>
-        </div>
-      </div>
-    </form>
+      </form>
+    </div>
+  </div>
   <a class="btn btn-link icon-btn" (click)="hideShowMonthWiseApiTempHistoryGrid()"
     id="hide-api-temp-monthwise-grid">{{'API_TEMP_HISTORY_POPUP_HIDE_SHOW_MONTH_DETAILS'|translate}}</a>
   <p-footer>

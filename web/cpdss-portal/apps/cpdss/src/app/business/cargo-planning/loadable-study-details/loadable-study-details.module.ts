@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { LoadableStudyDetailsComponent } from './loadable-study-details.component';
 import { LoadableStudyDetailsRoutingModule } from './loadable-study-details-routing.module';
@@ -65,7 +65,7 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
     QuantityPipeModule
   ],
   providers: [
-    LoadableQuantityApiService, CommingleApiService, QuantityPipe
+    LoadableQuantityApiService, CommingleApiService, QuantityPipe, DatePipe
   ]
 })
 export class LoadableStudyDetailsModule { }
