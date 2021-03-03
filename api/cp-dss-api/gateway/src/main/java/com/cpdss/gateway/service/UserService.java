@@ -19,7 +19,7 @@ import com.cpdss.gateway.repository.RolesRepository;
 import com.cpdss.gateway.repository.ScreenRepository;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.ship.ShipJwtService;
-import java.sql.Timestamp;
+
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -622,9 +622,9 @@ public class UserService {
       throw new GenericServiceException(
           "User does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
     }
+    validatePasswordExpiry(user);
     user.setLastLoginDate(LocalDateTime.now());
     this.usersRepository.save(user);
-
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     response.setToken(this.jwtService.generateToken(user));
@@ -632,14 +632,24 @@ public class UserService {
       LocalDateTime timeNow = LocalDateTime.now();
       long daysDiff =
           DAYS.between(
-              timeNow, user.getPasswordExpiryDate()); // If value is 3 or below then add message
+              timeNow, user.getPasswordExpiryDate());
       if (daysDiff <= PASSWORD_EXPIRE_REMINDER) {
         response.setExpiryReminder(
-            new PasswordExpiryReminder(Timestamp.valueOf(user.getPasswordExpiryDate())));
+            new PasswordExpiryReminder(daysDiff+1));
       }
     }
     return response;
   }
+
+    private void validatePasswordExpiry(Users users) throws GenericServiceException {
+        if (users.getPasswordExpiryDate() != null
+                && LocalDateTime.now().isAfter(users.getPasswordExpiryDate())) {
+            throw new GenericServiceException(
+                    "Password expired on " + users.getPasswordExpiryDate(),
+                    CommonErrorCodes.E_CPDSS_PASSWORD_EXPIRED,
+                    HttpStatusCode.INTERNAL_SERVER_ERROR);
+        }
+    }
 
   /**
    * If user exist by the username from request, update the last attempted date in db

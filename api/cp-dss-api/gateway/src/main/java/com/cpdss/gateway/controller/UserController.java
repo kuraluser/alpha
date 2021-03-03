@@ -96,8 +96,6 @@ public class UserController {
   @GetMapping("/users")
   public UserResponse getUsers(@RequestHeader HttpHeaders headers) throws CommonRestException {
     try {
-      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-      String currentPrincipalName = authentication.getName();
       log.info("getUsers: {}");
       return this.userService.getUsers(headers.getFirst(CORRELATION_ID_HEADER));
     } catch (Exception e) {
@@ -269,7 +267,7 @@ public class UserController {
       throws CommonRestException {
     ResetPasswordResponse response = new ResetPasswordResponse();
     try {
-      boolean var1 = userService.resetPassword(request.getPassword(), request.getUserId());
+      userService.resetPassword(request.getPassword(), request.getUserId());
       response.setResponseStatus(
           new CommonSuccessResponse("200", headers.getFirst(CORRELATION_ID_HEADER)));
     } catch (GenericServiceException e) {
