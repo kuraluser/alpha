@@ -4,15 +4,9 @@ package com.cpdss.gateway.controller;
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.PermissionResponse;
-import com.cpdss.gateway.domain.Role;
-import com.cpdss.gateway.domain.RolePermission;
-import com.cpdss.gateway.domain.RoleResponse;
-import com.cpdss.gateway.domain.ScreenResponse;
-import com.cpdss.gateway.domain.User;
-import com.cpdss.gateway.domain.UserAuthorizationsResponse;
-import com.cpdss.gateway.domain.UserResponse;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.service.UserService;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +16,9 @@ import javax.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,7 +46,6 @@ public class UserController {
   /**
    * Retrieves user permissions information
    *
-   * @param id
    * @param headers
    * @return
    * @throws CommonRestException
@@ -257,5 +253,35 @@ public class UserController {
           e);
     }
     return roleResponse;
+  }
+
+  /**
+   * Admin Role required to access this API
+   *
+   * @param request ResetPasswordRequest {userid, password}
+   * @return ResetPasswordResponse
+   */
+  @PostMapping("/users/reset-password")
+  public ResponseEntity<ResetPasswordResponse> resetPassword(
+      @RequestBody ResetPasswordRequest request, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    ResetPasswordResponse response = new ResetPasswordResponse();
+    try {
+      userService.resetPassword(request.getPassword(), request.getUserId());
+      response.setResponseStatus(
+          new CommonSuccessResponse("200", headers.getFirst(CORRELATION_ID_HEADER)));
+    } catch (GenericServiceException e) {
+      log.error("reset password failed - {}", e.getMessage());
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("reset password failed - {}", e.getMessage());
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return ResponseEntity.ok(response);
   }
 }

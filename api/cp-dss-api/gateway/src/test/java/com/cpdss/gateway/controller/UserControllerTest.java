@@ -14,14 +14,18 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
+import com.cpdss.gateway.domain.ResetPasswordRequest;
 import com.cpdss.gateway.domain.RoleResponse;
 import com.cpdss.gateway.domain.UserAuthorizationsResponse;
 import com.cpdss.gateway.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
@@ -97,5 +101,19 @@ public class UserControllerTest {
                 .params(params)
                 .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa"))
         .andExpect(status().isOk());
+  }
+
+  @Test
+  void resetPasswordTest() throws Exception {
+    ResetPasswordRequest request = new ResetPasswordRequest(1l, "Test@1234");
+    ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    String json = ow.writeValueAsString(request);
+    when(userService.resetPassword("", 1l)).thenReturn(true);
+    this.mockMvc
+            .perform(
+                    get("/api/ship/users/reset-password")
+            .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa")
+            .contentType(MediaType.APPLICATION_JSON).content(json))
+            .andExpect(status().isOk());
   }
 }
