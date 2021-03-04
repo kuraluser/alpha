@@ -728,10 +728,10 @@ public class UserService {
 	private boolean validatePasswordPolicies(Long userId, String password) throws GenericServiceException {
 		Optional<Users> users = usersRepository.findById(userId);
 		if (users.isPresent()) {
-			String firstName = users.get().getFirstName();
-			String lasName = users.get().getLastName();
-			String username = users.get().getUsername();
-			if (!password.contains(firstName) && !password.contains(lasName) && !password.contains(username)) {
+			boolean firstNameCheck = users.get().getFirstName() == null ? false : password.contains(users.get().getFirstName());
+			boolean lastNameCheck = users.get().getLastName() == null ? false : password.contains(users.get().getLastName());
+			boolean userNameCheck = users.get().getUsername() == null ? false : password.contains(users.get().getUsername());
+			if (!firstNameCheck && !lastNameCheck && !userNameCheck) {
 				validateRegularExpression(password);
 				return true;
 			} else {
@@ -744,26 +744,6 @@ public class UserService {
 		}
 	}
 
-	/* *//**
-			 * password policies: DSS-1155 1. Age for each password, from properties
-			 * (0-9999) 2. Length of password (8 character) 3. Complexity 3.1. Cannot
-			 * contain username 3.2. At least 3 of the case must have (Lower-case,
-			 * Upper-case, Number, Symbols)
-			 *
-			 * @return
-			 *//*
-				 * private boolean validatePasswordPolicies(Long userId, String password) throws
-				 * GenericServiceException { Optional<Users> users =
-				 * usersRepository.findById(userId); if (users.isPresent()) { String firstName =
-				 * users.get().getFirstName(); String lasName = users.get().getLastName(); if
-				 * (!password.contains(firstName) && !password.contains(lasName)) {
-				 * validateRegularExpression(password); return true; } else { throw new
-				 * GenericServiceException( "Password cannot contain first name/last name",
-				 * CommonErrorCodes.E_CPDSS_PASSWORD_POLICIES_VIOLATION_1,
-				 * HttpStatusCode.BAD_REQUEST); } } else { throw new GenericServiceException(
-				 * "User not found for ID: " + userId, CommonErrorCodes.E_CPDSS_INVALID_USER,
-				 * HttpStatusCode.BAD_REQUEST); } }
-				 */
 	public void validateRegularExpression(String password) throws GenericServiceException {
 		List<String> regexList = Arrays.asList(
 				"^(?=.*[0-9])(?=\\S+$).{" + passwordMinLength + "," + passwordMaxLength + "}$", // Check for if any
