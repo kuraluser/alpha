@@ -141,6 +141,9 @@ service LoadableStudyService {
 	
 	rpc GetVoyages (VoyageRequest) returns (VoyageListReply) {
 	}
+	
+	rpc SaveVoyageStatus(SaveVoyageStatusRequest) returns (SaveVoyageStatusReply){
+	}
 }
 
 message RecalculateVolumeRequest {
@@ -1017,3 +1020,14 @@ message CargoDetails{
 	string name=3;
 }
 
+message SaveVoyageStatusRequest{
+string status=1;
+int64 voyageId=2;
+string actualStartDate=3;
+string actualEndDate=4;
+}
+
+message SaveVoyageStatusReply {
+	ResponseStatus responseStatus = 1;
+	int64 voyageId=2;
+}

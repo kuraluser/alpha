@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -401,32 +400,33 @@ class UserServiceTest {
 
   @ParameterizedTest(name = "#{index} - Run test with password = {0}")
   @MethodSource("validPasswordProvider")
-  void restPasswordTest(String password){
-    Long userId = 1l;
+  void restPasswordTest(String password) {
+	  Long userId = 1l;
+
+	    when(usersRepository.updateUserPasswordByUserId(password, userId))
+	      .thenReturn(1);
   }
 
   @ParameterizedTest(name = "#{index} - Run test with password = {0}")
   @MethodSource("validPasswordProvider")
-  void validateRegularExpression(String password){
-    try{
+  void validateRegularExpression(String password) {
+    try {
       userService.validateRegularExpression(password);
-    }catch (GenericServiceException e){
+    } catch (GenericServiceException e) {
 
     }
   }
 
-
   static Stream<String> validPasswordProvider() {
     return Stream.of(
-            "12345678",
-            " AAAbbbccc@123 AAAbbbccc@123 AAAbbbccc@123",
-            "Hello world$123",
-            "A!@#&()–a1",               // test punctuation part 1
-            "A[{}]:;',?/*a1",           // test punctuation part 2
-            "A~$^+=<>a1",               // test symbols
-            "0123456789$abcdefgAB",     // test 20 chars
-            "123Aa$Aa",                 // test 8 chars
-            "Test123"
-    );
+        "12345678",
+        " AAAbbbccc@123 AAAbbbccc@123 AAAbbbccc@123",
+        "Hello world$123",
+        "A!@#&()–a1", // test punctuation part 1
+        "A[{}]:;',?/*a1", // test punctuation part 2
+        "A~$^+=<>a1", // test symbols
+        "0123456789$abcdefgAB", // test 20 chars
+        "123Aa$Aa", // test 8 chars
+        "Test123");
   }
 }

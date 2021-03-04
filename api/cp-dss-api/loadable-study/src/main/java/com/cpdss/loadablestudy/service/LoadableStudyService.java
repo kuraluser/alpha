@@ -69,6 +69,8 @@ import com.cpdss.common.generated.LoadableStudy.RecalculateVolumeReply;
 import com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
+import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply;
+import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
@@ -138,6 +140,7 @@ import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.entity.VoyageHistory;
+import com.cpdss.loadablestudy.entity.VoyageStatus;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
@@ -166,6 +169,7 @@ import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepositor
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
@@ -245,6 +249,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private RestTemplate restTemplate;
   @Autowired private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
+  @Autowired private VoyageStatusRepository voyageStatusRepository;
 
   @Autowired
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
@@ -392,6 +397,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private static final String STATUS_CONFIRMED = "CONFIRMED";
 
   private static final long STOWAGE_STATUS = 1L;
+
+  private static final Long ACTIVE_VOYAGE_STATUS = 3L;
+
+  private static final String START_VOYAGE = "START";
+
+  private static final Long CLOSE_VOYAGE_STATUS = 2L;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -3451,8 +3462,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .ifPresent(cargo2Pct -> builder.setCargo2Pct(String.valueOf(cargo2Pct)));
             Optional.ofNullable(commingleCargo.getQuantity())
                 .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
-            Optional.ofNullable(commingleCargo.getCargoNomination1Id()).ifPresent(builder::setCargoNomination1Id);
-            Optional.ofNullable(commingleCargo.getCargoNomination2Id()).ifPresent(builder::setCargoNomination2Id);
+            Optional.ofNullable(commingleCargo.getCargoNomination1Id())
+                .ifPresent(builder::setCargoNomination1Id);
+            Optional.ofNullable(commingleCargo.getCargoNomination2Id())
+                .ifPresent(builder::setCargoNomination2Id);
             replyBuilder.addCommingleCargo(builder);
           });
     }
@@ -7145,12 +7158,22 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     VoyageListReply.Builder builder = VoyageListReply.newBuilder();
     try {
       PortRequest.Builder portReqBuilder = PortRequest.newBuilder();
-      PortReply portReply = portInfoGrpcService.getPortInfo(portReqBuilder.build());
+      PortReply portReply = this.GetPortInfo(portReqBuilder.build());
+
       if (portReply != null
           && portReply.getResponseStatus() != null
           && !SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
         throw new GenericServiceException(
             "Error in calling port service",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
+
+      CargoRequest cargoRequest = CargoRequest.newBuilder().build();
+      CargoReply cargoReply = this.getCargoInfo(cargoRequest);
+      if (!SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Error in calling cargo service",
             CommonErrorCodes.E_GEN_INTERNAL_ERR,
             HttpStatusCode.INTERNAL_SERVER_ERROR);
       }
@@ -7250,19 +7273,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     .map(CargoNomination::getCargoXId)
                     .distinct()
                     .collect(Collectors.toList());
-            CargoRequest cargoRequest =
-                CargoRequest.newBuilder()
-                    .setVesselId(loadableStudy.get().getVesselXId())
-                    .setVoyageId(loadableStudy.get().getVoyage().getId())
-                    .setLoadableStudyId(loadableStudy.get().getId())
-                    .build();
-            CargoReply cargoReply = this.getCargoInfo(cargoRequest);
-            if (!SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
-              throw new GenericServiceException(
-                  "Error in calling cargo service",
-                  CommonErrorCodes.E_GEN_INTERNAL_ERR,
-                  HttpStatusCode.INTERNAL_SERVER_ERROR);
-            }
 
             List<CargoDetail> cargoes =
                 cargoReply.getCargosList().stream()
@@ -7303,5 +7313,139 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   public PortReply getPortDetails(PortRequest build) {
     return portInfoGrpcService.getPortInfo(build);
+  }
+
+  @Override
+  public void saveVoyageStatus(
+      SaveVoyageStatusRequest request, StreamObserver<SaveVoyageStatusReply> responseObserver) {
+    SaveVoyageStatusReply.Builder replyBuilder = SaveVoyageStatusReply.newBuilder();
+    try {
+      Voyage voyageEntity = this.voyageRepository.findByIdAndIsActive(request.getVoyageId(), true);
+
+      if (null != voyageEntity) {
+        Stream<LoadableStudy> loadableStudyStream =
+            Optional.ofNullable(voyageEntity.getLoadableStudies())
+                .map(Collection::stream)
+                .orElseGet(Stream::empty);
+        Optional<LoadableStudy> loadableStudy =
+            loadableStudyStream
+                .filter(
+                    loadableStudyElement ->
+                        (loadableStudyElement.getLoadableStudyStatus() != null
+                            && STATUS_CONFIRMED.equalsIgnoreCase(
+                                loadableStudyElement.getLoadableStudyStatus().getName())))
+                .findFirst();
+        if (request.getStatus().equalsIgnoreCase(START_VOYAGE)) {
+          List<Voyage> activeVoyage =
+              this.voyageRepository.findByVoyageStatusAndIsActive(ACTIVE_VOYAGE_STATUS, true);
+          if (!activeVoyage.isEmpty()) {
+            throw new GenericServiceException(
+                "Active Voyage already exist",
+                CommonErrorCodes.E_CPDSS_ACTIVE_VOYAGE_EXISTS,
+                HttpStatusCode.BAD_REQUEST);
+          }
+          if (!loadableStudy.isPresent()) {
+            throw new GenericServiceException(
+                "Confirmed Loadable study does not exist",
+                CommonErrorCodes.E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+          Optional<VoyageStatus> status =
+              this.voyageStatusRepository.findByIdAndIsActive(ACTIVE_VOYAGE_STATUS, true);
+          if (!status.isPresent()) {
+            throw new GenericServiceException(
+                "Voyage status does not  exist",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+          voyageEntity.setVoyageStatus(status.get());
+
+          if (request.getActualStartDate().isEmpty()) {
+            LoadableStudyPortRotation minPortOrderEntity =
+                this.loadableStudyPortRotationRepository
+                    .findFirstByLoadableStudyAndIsActiveOrderByPortOrderAsc(
+                        loadableStudy.get(), true);
+            List<SynopticalTable> synopticalData = minPortOrderEntity.getSynopticalTable();
+            if (!synopticalData.isEmpty()) {
+              Optional<SynopticalTable> synoptical =
+                  synopticalData.stream()
+                      .filter(
+                          data ->
+                              data.getLoadableStudyPortRotation()
+                                  .getId()
+                                  .equals(minPortOrderEntity.getId()))
+                      .findAny();
+              if (synoptical.isPresent()) {
+                voyageEntity.setActualStartDate(synoptical.get().getEtaActual());
+              }
+            }
+          } else {
+            voyageEntity.setActualStartDate(
+                !StringUtils.isEmpty(request.getActualStartDate())
+                    ? LocalDateTime.from(
+                        DateTimeFormatter.ofPattern(DATE_FORMAT)
+                            .parse(request.getActualStartDate()))
+                    : null);
+          }
+        } else {
+          Optional<VoyageStatus> status =
+              this.voyageStatusRepository.findByIdAndIsActive(CLOSE_VOYAGE_STATUS, true);
+          if (!status.isPresent()) {
+            throw new GenericServiceException(
+                "Voyage status does not  exist",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          }
+          voyageEntity.setVoyageStatus(status.get());
+          if (request.getActualEndDate().isEmpty()) {
+            LoadableStudyPortRotation maxPortOrderEntity =
+                this.loadableStudyPortRotationRepository
+                    .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(
+                        loadableStudy.get(), true);
+            List<SynopticalTable> synopticalData = maxPortOrderEntity.getSynopticalTable();
+            if (!synopticalData.isEmpty()) {
+              Optional<SynopticalTable> synoptical =
+                  synopticalData.stream()
+                      .filter(
+                          data ->
+                              data.getLoadableStudyPortRotation()
+                                  .getId()
+                                  .equals(maxPortOrderEntity.getId()))
+                      .findAny();
+              if (synoptical.isPresent()) {
+                voyageEntity.setActualEndDate(synoptical.get().getEtdActual());
+              }
+            }
+          } else {
+            voyageEntity.setActualEndDate(
+                !StringUtils.isEmpty(request.getActualEndDate())
+                    ? LocalDateTime.from(
+                        DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualEndDate()))
+                    : null);
+          }
+        }
+        this.voyageRepository.save(voyageEntity);
+        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      }
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving voyage status", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      log.error("Error saving voyage status", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Error saving voyage status")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

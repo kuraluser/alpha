@@ -61,6 +61,8 @@ import com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest;
+import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply;
+import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
@@ -134,6 +136,8 @@ import com.cpdss.gateway.domain.SynopticalTableResponse;
 import com.cpdss.gateway.domain.ValveSegregation;
 import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.Voyage;
+import com.cpdss.gateway.domain.VoyageActionRequest;
+import com.cpdss.gateway.domain.VoyageActionResponse;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.domain.VoyageStatusRequest;
 import com.cpdss.gateway.domain.VoyageStatusResponse;
@@ -4084,6 +4088,7 @@ public class LoadableStudyService {
       String orderBy,
       String sortBy)
       throws GenericServiceException {
+
     VoyageRequest.Builder request = VoyageRequest.newBuilder();
     request.setVesselId(vesselId);
     request.setPage(page);
@@ -4188,7 +4193,8 @@ public class LoadableStudyService {
       }
 
       voyageList.add(voyage);
-    } // sort list
+    }
+    // sort list
 
     if (null != sortBy) {
       voyageList = this.getSortedList(voyageList, orderBy, sortBy.toLowerCase());
@@ -4232,7 +4238,7 @@ public class LoadableStudyService {
         if (loadingPortDetail.getName().toLowerCase().contains(searchParam.toLowerCase())) {
           status = true;
         } else {
-          status = false;
+          status = status || false;
         }
       }
     } else {
@@ -4248,7 +4254,7 @@ public class LoadableStudyService {
         if (dischargingPortDetail.getName().toLowerCase().contains(searchParam.toLowerCase())) {
           status = true;
         } else {
-          status = false;
+          status = status || false;
         }
       }
     } else {
@@ -4260,11 +4266,12 @@ public class LoadableStudyService {
   private Boolean containsCargos(List<CargoDetails> list, String searchParam) {
     Boolean status = false;
     if (!list.isEmpty()) {
+
       for (CargoDetails cargo : list) {
         if (cargo.getName().toLowerCase().contains(searchParam.toLowerCase())) {
           status = true;
         } else {
-          status = false;
+          status = status || false;
         }
       }
     } else {
@@ -4288,6 +4295,7 @@ public class LoadableStudyService {
                             .contains(filterParams.get("voyageNo").toLowerCase());
               }
               if (null != filterParams.get("charterer")) {
+
                 status =
                     status
                         && voyage
@@ -4296,6 +4304,7 @@ public class LoadableStudyService {
                             .contains(filterParams.get("charterer").toLowerCase());
               }
               if (null != filterParams.get("status")) {
+
                 status =
                     status
                         && voyage
@@ -4304,6 +4313,7 @@ public class LoadableStudyService {
                             .contains(filterParams.get("status").toLowerCase());
               }
               if (null != filterParams.get("plannedStartDate")) {
+
                 status =
                     status
                         && voyage
@@ -4312,6 +4322,7 @@ public class LoadableStudyService {
                             .contains(filterParams.get("plannedStartDate").toLowerCase());
               }
               if (null != filterParams.get("plannedEndDate")) {
+
                 status =
                     status
                         && voyage
@@ -4399,7 +4410,7 @@ public class LoadableStudyService {
                   .collect(Collectors.toList());
         }
         break;
-      case "startdate":
+      case "plannedstartdate":
         if (orderBy.equalsIgnoreCase("ASC")) {
           voyages =
               voyageList.stream()
@@ -4412,7 +4423,7 @@ public class LoadableStudyService {
                   .collect(Collectors.toList());
         }
         break;
-      case "enddate":
+      case "plannedenddate":
         if (orderBy.equalsIgnoreCase("ASC")) {
 
           voyages =
@@ -4454,5 +4465,30 @@ public class LoadableStudyService {
         break;
     }
     return voyages;
+  }
+
+  public VoyageActionResponse saveVoyageStatus(VoyageActionRequest request, String correlationId)
+      throws NumberFormatException, GenericServiceException {
+
+    SaveVoyageStatusRequest.Builder builder = SaveVoyageStatusRequest.newBuilder();
+    builder.setVoyageId(request.getVoyageId());
+    Optional.ofNullable(request.getActualStartDate()).ifPresent(builder::setActualStartDate);
+    Optional.ofNullable(request.getActualEndDate()).ifPresent(builder::setActualEndDate);
+    builder.setStatus(request.getStatus());
+    SaveVoyageStatusReply reply = this.saveVoyageStatus(builder.build());
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to save voyage status",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.BAD_REQUEST);
+    }
+    VoyageActionResponse response = new VoyageActionResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  public SaveVoyageStatusReply saveVoyageStatus(SaveVoyageStatusRequest grpcRequest) {
+    return this.loadableStudyServiceBlockingStub.saveVoyageStatus(grpcRequest);
   }
 }

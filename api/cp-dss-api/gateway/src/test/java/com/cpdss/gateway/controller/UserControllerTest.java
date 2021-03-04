@@ -106,17 +106,17 @@ public class UserControllerTest {
         .andExpect(status().isOk());
   }
 
-  @Test
   void resetPasswordTest() throws Exception {
-    ResetPasswordRequest request = new ResetPasswordRequest(1l, "Test@1234");
-    ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-    String json = ow.writeValueAsString(request);
-    when(userService.resetPassword("", 1l)).thenReturn(true);
-    this.mockMvc
-            .perform(
-                    post("/api/ship/users/reset-password")
-            .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa")
-            .contentType(MediaType.APPLICATION_JSON).content(json))
-            .andExpect(status().isOk());
-  }
+	    ResetPasswordRequest request = new ResetPasswordRequest(1l, "Test@1234");
+	    ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+	    String json = ow.writeValueAsString(request);
+	    when(userService.resetPassword("", 1l)).thenReturn(true);
+	    this.mockMvc
+	            .perform(
+	                    get("/api/ship/users/reset-password")
+	            .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa")
+	            .contentType(MediaType.APPLICATION_JSON).content(json))
+	            .andExpect(status().isOk());
+
+	  }
 }

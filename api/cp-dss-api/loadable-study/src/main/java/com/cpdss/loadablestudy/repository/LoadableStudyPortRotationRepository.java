@@ -109,4 +109,7 @@ public interface LoadableStudyPortRotationRepository
   @Query(
       "SELECT portXId FROM LoadableStudyPortRotation where loadableStudy = ?1 AND operation.id = 2  AND isActive = true")
   public List<Long> getDischarigingPorts(LoadableStudy loadableStudy);
+
+  public LoadableStudyPortRotation findFirstByLoadableStudyAndIsActiveOrderByPortOrderAsc(
+      LoadableStudy loadableStudy, boolean isActive);
 }

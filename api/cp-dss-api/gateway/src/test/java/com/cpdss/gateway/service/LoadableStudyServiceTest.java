@@ -15,7 +15,9 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
+import com.cpdss.common.generated.LoadableStudy.CargoDetails;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
+import com.cpdss.common.generated.LoadableStudy.DischargingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadablePattern;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
@@ -33,6 +35,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
@@ -102,7 +105,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -2342,5 +2347,118 @@ class LoadableStudyServiceTest {
                     loadOnTopRequest, "corelationId", (long) 1));
 
     assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code");
+  }
+
+  @Test
+  void testGetVoyageList() throws GenericServiceException {
+
+    LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
+    VoyageListReply.Builder voyageListReply =
+        VoyageListReply.newBuilder()
+            .setResponseStatus(StatusReply.newBuilder().setStatus(SUCCESS).build());
+    VoyageDetail.Builder voyageDetail = VoyageDetail.newBuilder();
+    voyageDetail.setVoyageNumber("test");
+    voyageDetail.setCharterer("charterer");
+    voyageDetail.setStatus("test");
+    voyageDetail.setStartDate("18-02-2021 10:10");
+    voyageDetail.setEndDate("18-02-2021 10:10");
+    voyageDetail.setActualStartDate("18-02-2021 10:10");
+    voyageDetail.setActualEndDate("18-02-2021 10:10");
+
+    LoadingPortDetail.Builder loadingPortBuilder = LoadingPortDetail.newBuilder();
+    loadingPortBuilder.setPortId(1L);
+    loadingPortBuilder.setName("test");
+    voyageDetail.addLoadingPorts(loadingPortBuilder.build());
+
+    DischargingPortDetail.Builder dischargingPortBuilder = DischargingPortDetail.newBuilder();
+    dischargingPortBuilder.setPortId(1L);
+    dischargingPortBuilder.setName("test");
+    voyageDetail.addDischargingPorts(dischargingPortBuilder.build());
+
+    CargoDetails.Builder cargoBuilder = CargoDetails.newBuilder();
+    cargoBuilder.setCargoId(1L);
+    cargoBuilder.setName("test");
+    voyageDetail.addCargos(cargoBuilder.build());
+
+    voyageListReply.addVoyages(voyageDetail.build());
+
+    Mockito.when(
+            spy.getVoyageList(
+                anyLong(),
+                anyString(),
+                any(),
+                Mockito.anyInt(),
+                Mockito.anyInt(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString()))
+        .thenCallRealMethod();
+
+    Mockito.when(spy.getVoyageList(ArgumentMatchers.any(VoyageRequest.class)))
+        .thenReturn(voyageListReply.build());
+
+    Map<String, String> filterParams = new HashMap<String, String>();
+    filterParams.put("voyageNo", "test");
+    filterParams.put("charterer", "ch");
+    filterParams.put("cargos", "test");
+    filterParams.put("dischargingPorts", "test");
+    filterParams.put("loadingPorts", "test");
+    filterParams.put("status", "test");
+    filterParams.put("plannedStartDate", "2021");
+    filterParams.put("plannedEndDate", "2021");
+    filterParams.put("actualStartDate", "2021");
+    filterParams.put("actualEndDate", "2021");
+
+    VoyageResponse response =
+        spy.getVoyageList(1L, "corelationId", filterParams, 1, 1, "", "", "", "charterer");
+
+    Assert.assertEquals(
+        String.valueOf(HttpStatusCode.OK.value()), response.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVoyageListGrpcFailure() throws GenericServiceException {
+
+    LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
+    VoyageListReply.Builder voyageListReply =
+        VoyageListReply.newBuilder()
+            .setResponseStatus(
+                StatusReply.newBuilder()
+                    .setStatus(FAILED)
+                    .setCode(String.valueOf(HttpStatusCode.BAD_REQUEST.value()))
+                    .build());
+    VoyageDetail.Builder voyageDetail = VoyageDetail.newBuilder();
+    voyageDetail.setVoyageNumber("test");
+    voyageDetail.setCharterer("charterer");
+    voyageDetail.setStatus("test");
+    voyageDetail.setStartDate("18-02-2021 10:10");
+    voyageDetail.setEndDate("18-02-2021 10:10");
+    voyageDetail.setActualStartDate("18-02-2021 10:10");
+    voyageDetail.setActualEndDate("18-02-2021 10:10");
+
+    Map<String, String> filterParams = new HashMap<String, String>();
+
+    Mockito.when(
+            spy.getVoyageList(
+                anyLong(),
+                anyString(),
+                any(),
+                Mockito.anyInt(),
+                Mockito.anyInt(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString()))
+        .thenCallRealMethod();
+    Mockito.when(spy.getVoyageList(ArgumentMatchers.any(VoyageRequest.class)))
+        .thenReturn(voyageListReply.build());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                spy.getVoyageList(1L, "corelationId", filterParams, 1, 1, "", "", "", "charterer"));
+    assertAll(
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 }

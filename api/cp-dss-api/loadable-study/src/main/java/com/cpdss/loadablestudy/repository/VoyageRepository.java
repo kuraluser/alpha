@@ -27,7 +27,7 @@ public interface VoyageRepository
 
   @Query(
       "select V from Voyage V WHERE V.isActive = :isActive AND V.vesselXId= :vesselId AND "
-          + " Date(V.actualStartDate) >= :from and Date(V.actualStartDate) <= :to ORDER BY V.lastModifiedDate DESC")
+          + " Date(V.voyageStartDate) >= :from and Date(V.voyageStartDate) <= :to ORDER BY V.lastModifiedDate DESC")
   public List<Voyage> findByIsActiveAndVesselXIdAndActualStartDateBetween(
       @Param("isActive") boolean isActive,
       @Param("vesselId") Long vesselXId,
@@ -36,4 +36,7 @@ public interface VoyageRepository
 
   public List<Voyage> findByIsActiveAndVesselXIdOrderByLastModifiedDateTimeDesc(
       boolean isActive, Long vesselXId);
+
+  @Query("select V from Voyage V WHERE V.voyageStatus.id =?1 AND V.isActive=?2")
+  public List<Voyage> findByVoyageStatusAndIsActive(Long voyageId, boolean b);
 }

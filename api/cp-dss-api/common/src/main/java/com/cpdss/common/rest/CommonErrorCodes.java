@@ -25,8 +25,13 @@ public interface CommonErrorCodes {
   String E_CPDSS_LS_NAME_EXISTS = "105";
   String E_CPDSS_ROLE_NAME_EXISTS = "106";
   String E_CPDSS_TRANSIT_PORT_EXISTS = "107";
+  String E_CPDSS_ACTIVE_VOYAGE_EXISTS = "108";
+  String E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST = "109";
 
-  String E_CPDSS_PASSWORD_POLICIES_VIOLATION_1 = "120"; // Password cannot contain first name or last name
-  String E_CPDSS_PASSWORD_POLICIES_VIOLATION_2 = "121"; // Passwords must use at least three of the four available character types: lowercase letters, uppercase letters, numbers, and symbols
+  String E_CPDSS_PASSWORD_POLICIES_VIOLATION_1 =
+      "120"; // Password cannot contain first name or last name
+  String E_CPDSS_PASSWORD_POLICIES_VIOLATION_2 =
+      "121"; // Passwords must use at least three of the four available character types: lowercase
+  // letters, uppercase letters, numbers, and symbols
   String E_CPDSS_PASSWORD_EXPIRED = "124";
 }

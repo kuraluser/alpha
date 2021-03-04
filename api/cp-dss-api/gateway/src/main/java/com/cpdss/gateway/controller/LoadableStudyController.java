@@ -40,6 +40,8 @@ import com.cpdss.gateway.domain.SaveCommentResponse;
 import com.cpdss.gateway.domain.SynopticalTableRequest;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
 import com.cpdss.gateway.domain.Voyage;
+import com.cpdss.gateway.domain.VoyageActionRequest;
+import com.cpdss.gateway.domain.VoyageActionResponse;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.domain.VoyageStatusRequest;
 import com.cpdss.gateway.domain.VoyageStatusResponse;
@@ -1599,7 +1601,7 @@ public class LoadableStudyController {
   }
 
   /**
-   * Get voyages by vessel
+   * Get voyages by vessel with pagination ,filtering and sorting
    *
    * @param vesselId
    * @return
@@ -1654,6 +1656,33 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when listing voyages", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @PostMapping(
+      value = "/vessels/{vesselId}/voyages/{voyageId}",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public VoyageActionResponse updateVoyageStatus(
+      @PathVariable Long voyageId,
+      @RequestBody @Valid VoyageActionRequest request,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("save voyage status: {}", getClientIp());
+      request.setVoyageId(voyageId);
+      return this.loadableStudyService.saveVoyageStatus(request, CORRELATION_ID_HEADER);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving voyage status", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error when saving voyage status", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

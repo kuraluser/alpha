@@ -8,9 +8,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.ShipLoginRequest;
 import com.cpdss.gateway.domain.ShipLoginResponse;
 import com.cpdss.gateway.service.UserService;
-
 import javax.validation.Valid;
-
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -33,57 +31,55 @@ import org.springframework.web.bind.annotation.RestController;
 @Log4j2
 public class ShipAuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+  @Autowired private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private UserService userService;
+  @Autowired private UserService userService;
 
-    private static final String CORRELATION_ID_HEADER = "correlationId";
+  private static final String CORRELATION_ID_HEADER = "correlationId";
 
-    /**
-     * Ship side authentication handler
-     *
-     * @param request
-     * @return
-     * @throws Exception
-     */
-    @PostMapping(value = "/api/ship/authenticate")
-    public ShipLoginResponse authenticate(
-            @RequestHeader HttpHeaders headers, @RequestBody @Valid ShipLoginRequest request)
-            throws CommonRestException {
-        try {
-            this.authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            return this.userService.generateShipUserToken(
-                    request, headers.getFirst(CORRELATION_ID_HEADER));
-        } catch (AuthenticationException ae) {
-            log.error("Authentication exception", ae);
-            log.info("Updating the last login attemt date");
-            this.userService.updateLastLoginAttemptedDateForShipUser(request);
-            throw new CommonRestException(
-                    CommonErrorCodes.E_HTTP_UNAUTHORIZED_RQST,
-                    headers,
-                    HttpStatusCode.UNAUTHORIZED,
-                    "Authentication exception occurred",
-                    ae);
-        } catch (GenericServiceException e) {
-            this.userService.updateLastLoginAttemptedDateForShipUser(request);
-            log.info("Password expire user - {}, message - {}", request.getUsername(), e.getMessage());
-            throw new CommonRestException(
-                    CommonErrorCodes.E_CPDSS_PASSWORD_EXPIRED,
-                    headers,
-                    HttpStatusCode.UNAUTHORIZED,
-                    "Authentication exception occurred",
-                    e);
-        } catch (Exception e) {
-            log.error("Exception occurred", e);
-            throw new CommonRestException(
-                    CommonErrorCodes.E_HTTP_UNAUTHORIZED_RQST,
-                    headers,
-                    HttpStatusCode.UNAUTHORIZED,
-                    "Exception occurred",
-                    e);
-        }
+  /**
+   * Ship side authentication handler
+   *
+   * @param request
+   * @return
+   * @throws Exception
+   */
+  @PostMapping(value = "/api/ship/authenticate")
+  public ShipLoginResponse authenticate(
+      @RequestHeader HttpHeaders headers, @RequestBody @Valid ShipLoginRequest request)
+      throws CommonRestException {
+    try {
+      this.authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+      return this.userService.generateShipUserToken(
+          request, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (AuthenticationException ae) {
+      log.error("Authentication exception", ae);
+      log.info("Updating the last login attemt date");
+      this.userService.updateLastLoginAttemptedDateForShipUser(request);
+      throw new CommonRestException(
+          CommonErrorCodes.E_HTTP_UNAUTHORIZED_RQST,
+          headers,
+          HttpStatusCode.UNAUTHORIZED,
+          "Authentication exception occurred",
+          ae);
+    } catch (GenericServiceException e) {
+      this.userService.updateLastLoginAttemptedDateForShipUser(request);
+      log.info("Password expire user - {}, message - {}", request.getUsername(), e.getMessage());
+      throw new CommonRestException(
+          CommonErrorCodes.E_CPDSS_PASSWORD_EXPIRED,
+          headers,
+          HttpStatusCode.UNAUTHORIZED,
+          "Authentication exception occurred",
+          e);
+    } catch (Exception e) {
+      log.error("Exception occurred", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_HTTP_UNAUTHORIZED_RQST,
+          headers,
+          HttpStatusCode.UNAUTHORIZED,
+          "Exception occurred",
+          e);
     }
+  }
 }
