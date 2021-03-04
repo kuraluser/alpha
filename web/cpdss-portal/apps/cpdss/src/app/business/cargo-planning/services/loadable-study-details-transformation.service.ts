@@ -333,7 +333,7 @@ export class LoadableStudyDetailsTransformationService {
         }
       }
     ];
-    if(permission && loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_PENDING) {
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if(permission.add) {
         actions.push(DATATABLE_ACTION.DUPLICATE);
@@ -401,7 +401,7 @@ export class LoadableStudyDetailsTransformationService {
       }
     ]
 
-    if(permission && loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_PENDING) {
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if(permission.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
@@ -1033,8 +1033,8 @@ export class LoadableStudyDetailsTransformationService {
   /**
    * Method to get Manual Commingle grid colums
    */
-  getManualCommingleDatatableColumns(): IDataTableColumn[] {
-    return [
+  getManualCommingleDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS): IDataTableColumn[] {
+    let columns: IDataTableColumn[] = [
       {
         field: 'cargo1',
         header: 'COMMINGLE_CARGO1',
@@ -1121,14 +1121,24 @@ export class LoadableStudyDetailsTransformationService {
           'min': 'COMMINGLE_MANUAL_QUANTITY_MIN_VALUE',
           'isMaxQuantity': 'COMMINGLE_QUANTITY_MAX_LIMIT'
         }
-      },
-      {
+      }
+    ];
+
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId)) {
+      const actions: DATATABLE_ACTION[] = [];
+      if(permission.delete) {
+        actions.push(DATATABLE_ACTION.DELETE);
+      }
+      const action: IDataTableColumn = {
         field: 'actions',
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.DELETE,]
-      }
-    ]
+        actions: actions
+      };
+      columns = [...columns, action];
+    }
+
+    return columns;
   }
   /**
    * Method for converting commingle  data as value

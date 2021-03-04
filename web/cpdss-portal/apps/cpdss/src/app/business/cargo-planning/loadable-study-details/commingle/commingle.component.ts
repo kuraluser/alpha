@@ -19,6 +19,7 @@ import { PercentageValidator } from '../../directives/validator/percentage-valid
 import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { first } from 'rxjs/operators';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
+import { LoadableStudy, LOADABLE_STUDY_STATUS } from '../../models/loadable-study-list.model';
 
 /**
  * Component class of commingle pop up
@@ -37,6 +38,15 @@ export class CommingleComponent implements OnInit {
   @Input() voyageId: number;
   @Input() loadableStudyId: number;
   @Input() vesselId: number;
+
+  @Input()
+  get loadableStudy() {
+    return this._loadableStudy;
+  }
+  set loadableStudy(value: LoadableStudy) {
+    this._loadableStudy = value;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId)? DATATABLE_EDITMODE.CELL : null;
+  }
 
   @Output() displayPopUp = new EventEmitter<boolean>();
 
@@ -60,17 +70,18 @@ export class CommingleComponent implements OnInit {
   listData = <ICommingleManual>{};
   commingleManualForm: FormGroup;
   manualCommingleList: ICommingleValueObject[];
-  readonly editMode = DATATABLE_EDITMODE.CELL;
+  editMode: DATATABLE_EDITMODE;
   preferredTanks: number[];
   commingleList: ICargoGroup[];
   errorMesages: any;
   selectedTanks: IVesselCargoTank[];
   cargoNominationPermissionContext: IPermissionContext;
   permission: IPermission;
-  isEditable = false;
   isMaxCargo = false;
   isMaxPreferredTank = false;
   extraPreferred = 0;
+
+  private _loadableStudy: LoadableStudy;
 
   constructor(private commingleApiService: CommingleApiService,
     private ngxSpinnerService: NgxSpinnerService,
@@ -93,9 +104,8 @@ export class CommingleComponent implements OnInit {
   ngOnInit() {
     this.cargoNominationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], true);
-    this.isEditable = this.permission ? this.permission?.edit : true;
     this.percentage = [{ id: 10, name: "10%" }, { id: 20, name: "20%" }, { id: 30, name: "30%" }, { id: 40, name: "40%" }, { id: 50, name: "50%" }, { id: 60, name: "60%" }, { id: 70, name: "70%" }, { id: 80, name: "80%" }, { id: 90, name: "90%" }, { id: 100, name: "100%" }];
-    this.columns = this.loadableStudyDetailsTransformationService.getManualCommingleDatatableColumns();
+    this.columns = this.loadableStudyDetailsTransformationService.getManualCommingleDatatableColumns(this.permission, this.loadableStudy?.statusId);
     this.createVolumeMaximisationFormGroup();
     this.getCommingle();
     this.errorMesages = this.commingleApiService.setValidationErrorMessage();
@@ -161,7 +171,7 @@ export class CommingleComponent implements OnInit {
     this.commingleForm = this.fb.group({
       purpose: this.fb.control(null, Validators.required),
       preferredTanks: this.fb.control(null),
-      slopOnly: this.fb.control({ value: false, disabled: !this.isEditable }, [Validators.required]),
+      slopOnly: this.fb.control({ value: false, disabled: !this.editMode }, [Validators.required]),
       cargo1: this.fb.control(null, [Validators.required]),
       cargo2: this.fb.control(null, [Validators.required]),
     });
@@ -304,7 +314,7 @@ export class CommingleComponent implements OnInit {
     this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo1;
     this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2;
     const _commingleLists = commingleData?.map((item) => {
-      let manualData = this.loadableStudyDetailsTransformationService.getCommingleValueObject(item, false, this.isEditable, this.listData);
+      let manualData = this.loadableStudyDetailsTransformationService.getCommingleValueObject(item, false, this.editMode ? true: false, this.listData);
       manualData = this.convertUnit(manualData)
       return manualData;
     });
@@ -320,10 +330,9 @@ export class CommingleComponent implements OnInit {
   /**
  * Method for adding new row for manual commingle
  *
- * @private
  * @memberof CommingleComponent
  */
-  private addNew(commingle: ICargoGroup = null) {
+  addNew(commingle: ICargoGroup = null) {
     if (this.manualCommingleList?.length <= 2) {
       this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo1;
       this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2;
@@ -335,7 +344,7 @@ export class CommingleComponent implements OnInit {
         cargo1Pct: null,
         cargo2Pct: null
       };
-      const _commingle = this.loadableStudyDetailsTransformationService.getCommingleValueObject(commingle, true, this.isEditable, this.listData);
+      const _commingle = this.loadableStudyDetailsTransformationService.getCommingleValueObject(commingle, true, this.editMode ? true : false, this.listData);
       this.manualCommingleList = [_commingle, ...this.manualCommingleList];
       const dataTableControl = <FormArray>this.commingleManualForm.get('dataTable');
       dataTableControl.insert(0, this.initCommingleManualFormGroup(_commingle));
