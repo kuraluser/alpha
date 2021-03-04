@@ -13,14 +13,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.gateway.domain.PermissionResponse;
-import com.cpdss.gateway.domain.Role;
-import com.cpdss.gateway.domain.RolePermission;
-import com.cpdss.gateway.domain.RoleResponse;
-import com.cpdss.gateway.domain.ScreenInfo;
-import com.cpdss.gateway.domain.ScreenResponse;
-import com.cpdss.gateway.domain.UserAuthorizationsResponse;
-import com.cpdss.gateway.domain.UserResponse;
+import com.cpdss.gateway.TestUtils;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.entity.RoleUserMapping;
 import com.cpdss.gateway.entity.Roles;
 import com.cpdss.gateway.entity.Screen;
@@ -30,12 +24,16 @@ import com.cpdss.gateway.repository.RoleUserRepository;
 import com.cpdss.gateway.repository.RolesRepository;
 import com.cpdss.gateway.repository.ScreenRepository;
 import com.cpdss.gateway.repository.UsersRepository;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,11 +42,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class UserServiceTest {
 
@@ -66,6 +66,7 @@ class UserServiceTest {
 
   @Mock private Roles roles;
 
+  @Spy
   @InjectMocks private UserService userService;
 
   @Mock private RolesRepository rolesRepository;
@@ -87,6 +88,7 @@ class UserServiceTest {
     when(roleUserMapping.getRoles()).thenReturn(roles);
     when(users.getRoleUserMappings()).thenReturn(roleUserMappingList);
     when(usersRepository.findByKeycloakIdAndIsActive(anyString(), anyBoolean())).thenReturn(users);
+    when(userService.isShip()).thenReturn(true);
   }
 
   @Test
@@ -400,16 +402,31 @@ class UserServiceTest {
 
   @ParameterizedTest(name = "#{index} - Run test with password = {0}")
   @MethodSource("validPasswordProvider")
-  void restPasswordTest(String password) {
-	  Long userId = 1l;
-
-	    when(usersRepository.updateUserPasswordByUserId(password, userId))
-	      .thenReturn(1);
+  void restPasswordTest(String password) throws GenericServiceException {
+    Users users = new Users();
+    users.setId(1l);
+    users.setFirstName("test");
+    users.setUsername("hello");
+    Optional<Users> usersOp = Optional.of(users);
+    when(usersRepository.updateUserPasswordExpireDateAndTime(1l, password, LocalDateTime.now().plusDays(1), LocalDateTime.now())).thenReturn(1);
+    when(usersRepository.findById(1l)).thenReturn(usersOp);
+    boolean resp = userService.resetPassword(password, usersOp.get().getId());
+    assertTrue(resp);
   }
 
   @ParameterizedTest(name = "#{index} - Run test with password = {0}")
   @MethodSource("validPasswordProvider")
-  void validateRegularExpression(String password) {
+  void validateRegularExpressionPositive(String password) throws GenericServiceException {
+    ReflectionTestUtils.setField(userService, "passwordMinLength", 8);
+    ReflectionTestUtils.setField(userService, "passwordMaxLength", 16);
+    userService.validateRegularExpression(password);
+  }
+
+  @ParameterizedTest(name = "#{index} - Run test with password = {0}")
+  @MethodSource("inValidPasswordProvider")
+  void validateRegularExpressionNegative(String password) {
+    ReflectionTestUtils.setField(userService, "passwordMinLength", 8);
+    ReflectionTestUtils.setField(userService, "passwordMaxLength", 16);
     try {
       userService.validateRegularExpression(password);
     } catch (GenericServiceException e) {
@@ -419,14 +436,62 @@ class UserServiceTest {
 
   static Stream<String> validPasswordProvider() {
     return Stream.of(
-        "12345678",
-        " AAAbbbccc@123 AAAbbbccc@123 AAAbbbccc@123",
-        "Hello world$123",
-        "A!@#&()–a1", // test punctuation part 1
-        "A[{}]:;',?/*a1", // test punctuation part 2
-        "A~$^+=<>a1", // test symbols
-        "0123456789$abcdefgAB", // test 20 chars
-        "123Aa$Aa", // test 8 chars
-        "Test123");
+            "A~$^+=<>a1", // test symbols
+            "Think@123" // test 8 chars
+    );
+  }
+
+  static Stream<String> inValidPasswordProvider() {
+    return Stream.of(
+            "12345678", "0123456789$abcdefgAB" // test 20 chars
+    );
+  }
+
+  // Save user success for dummy Object
+  @Test
+  public void saveUserTestSuccess() {
+    User user = TestUtils.getDummyUser();
+    user.setId(0l);
+
+    Users users = new Users();
+    users.setId(1l);
+
+    UserResponse response = null;
+    try {
+      ReflectionTestUtils.setField(userService, "maxShipUserCount", 1);
+      when(this.usersRepository.findByIdAndIsActive(1l, true)).thenReturn(null);
+      when(this.usersRepository.save(any(Users.class))).thenReturn(users);
+      response = this.userService.saveUser(user, RandomString.make(6));
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+    assertThat(1l == response.getId()).isTrue();
+  }
+
+  // Ship user count Max Test
+  @Test
+  public void saveUserTestFailure1() {
+    try {
+      ReflectionTestUtils.setField(userService, "maxShipUserCount", 0);
+      when(this.usersRepository.findByIdAndIsActive(1l, true)).thenReturn(null);
+      User user = TestUtils.getDummyUser();
+      this.userService.saveUser(user, RandomString.make(6));
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+  }
+
+  // User already exist Test
+  @Test
+  public void saveUserTestFailure2() {
+    try {
+      ReflectionTestUtils.setField(userService, "maxShipUserCount", 1);
+      when(this.usersRepository.findByIdAndIsActive(1l, true)).thenReturn(null);
+      User user = TestUtils.getDummyUser();
+      user.setId(1l);
+      this.userService.saveUser(user, RandomString.make(6));
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
   }
 }
