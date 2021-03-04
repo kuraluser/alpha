@@ -1,6 +1,9 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway;
 
+import com.cpdss.gateway.domain.User;
+import org.assertj.core.internal.bytebuddy.utility.RandomString;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
@@ -57,5 +60,13 @@ public class TestUtils {
     } else if (field.getType().equals(LocalDateTime.class)) {
       field.set(obj, LocalDateTime.now());
     }
+  }
+
+  public static User getDummyUser() {
+    User user = new User();
+    user.setUsername(RandomString.make(6));
+    user.setFirstName(RandomString.make(6));
+    user.setLastName(RandomString.make(6));
+    return user;
   }
 }
