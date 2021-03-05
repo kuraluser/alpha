@@ -53,8 +53,8 @@ export class AddUserComponent implements OnInit {
     this.visible = true;
     this.errorMessages = this.userTransformationService.setValidationErrorMessage();
     this.addUserForm = this.fb.group({
-      'userName': ['', [Validators.required , Validators.maxLength(50)]],
-      'userDesignation': ['', [Validators.required , Validators.maxLength(10)]],
+      'userName': ['', [Validators.required , Validators.maxLength(50) , Validators.pattern('^[a-zA-Z0-9 ]+') ]],
+      'userDesignation': ['', [Validators.required , Validators.maxLength(10), Validators.pattern('^[a-zA-Z0-9 ]+')]],
       'userRole': ['', [Validators.required]],
     });
     this.getRoles();
@@ -70,7 +70,7 @@ export class AddUserComponent implements OnInit {
       this.addUserForm.patchValue({
         userName: this.userDetails.username,
         userDesignation: this.userDetails.designation,
-        userRole: selectedRole[0]
+        userRole: (selectedRole && selectedRole[0]) || null
       })
     }
     const translationKeys = await this.translateService.get(['ADD_USER_DETAILS', 'EDIT_USER_DETAILS_HEADING', 'USER_DETAILS']).toPromise();

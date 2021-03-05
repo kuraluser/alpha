@@ -173,7 +173,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           const result = await this.loadableStudyListApiService.setLodableStudy(this.vesselInfoList?.id, this.voyage.id, this.newLoadableStudyPopupModel).toPromise();
           if (result.responseStatus.status === "200") {
             if (this.isEdit) {
-              this.isLoadlineChanged() ? sessionStorage.setItem('loadableStudyInfo', JSON.stringify({ voyageId: this.voyage.id, vesselId: this.vesselInfoList?.id })) : null;
+              if(this.isLoadlineChanged()){
+                sessionStorage.setItem('loadableStudyInfo', JSON.stringify({ voyageId: this.voyage.id, vesselId: this.vesselInfoList?.id }))
+              }
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
             } else {
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
@@ -211,7 +213,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
             sizeErrorFiles.push(uploadedFileVar[i].name)
             continue;
           } else {
-            if (uploadFile.length < 5) {
+            if ((uploadFile.length + this.uploadedFiles.length) < 5) {
               const fileNameExist = this.uploadedFiles.some(file => file?.id ? (file?.fileName?.toLowerCase() === uploadedFileVar[i].name.toLowerCase()) : (file?.name?.toLowerCase() === uploadedFileVar[i].name.toLowerCase()));
               if (fileNameExist) {
                 this.showError = true;
@@ -262,6 +264,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       this.deletedAttachments.push(fileID);
     }
     this.uploadedFiles.splice(index, 1);
+    this.showError = false;
   }
 
   // returns form-controls of newLoadableStudyFormGroup

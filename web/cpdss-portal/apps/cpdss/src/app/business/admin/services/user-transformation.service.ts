@@ -64,20 +64,6 @@ export class UserTransformationService {
         filterField: 'role',
         sortable: true,
         sortField: 'role'
-      },
-      {
-        field: 'buttons',
-        header: '',
-        fieldType: DATATABLE_FIELD_TYPE.BUTTON,
-        buttons: [
-          {type: DATATABLE_BUTTON.RESETPASSWORD , field: 'isResetPassword' , icons: '' , class: '' , label: ''}
-        ]
-      },
-      {
-        field: 'actions',
-        header: '',
-        fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.EDIT , DATATABLE_ACTION.DELETE]
       }
     ]
   }
@@ -90,11 +76,12 @@ export class UserTransformationService {
     return {
       userName: {
         'required': 'ADD_USER_POPUP_USER_REQUIRED_ERROR',
-        'pattern': 'ROLE_NAME_VALIDATION_ERROR',
+        'pattern': 'ADD_USER_POPUP_VALIDATION_ERROR',
         'maxlength': 'ROLE_NAME_MAX_LENGTH'
       },
       userDesignation: {
-        'required': 'ADD_USER_POPUP_DESIGNATION_REQUIRED_ERROR'
+        'required': 'ADD_USER_POPUP_DESIGNATION_REQUIRED_ERROR',
+        'pattern': 'ADD_USER_POPUP_DESIGNATION_VALIDATION_ERROR',
       },
       userRole: {
         'required': 'ADD_USER_POPUP_ROLE_REQUIRED_ERROR'
@@ -120,4 +107,23 @@ export class UserTransformationService {
     _user.isResetPassword = true;
     return _user;
   }
+
+  /**
+  * Set validation Error to form control
+  * @memberof UserTransformationService
+  */
+ setValidationErrorMessageResetPassword() {
+  return {
+    password: {
+      'required': 'RESET_PASSWORD_PASSWORD_REQUIRED',
+      'pattern': 'RESET_PASSWORD_PASSWORD_INVALID_PATTERN',
+      'isAllowedChar': 'RESET_PASSWORD_PASSWORD_INVALID',
+      'minlength': 'RESET_PASSWORD_PASSWORD_MINLENGTH' 
+    },
+    confirmPassword: {
+      'required': 'RESET_PASSWORD_CONFIRM_PASSWORD_REQUIRED',
+      'confirmPasswordValidator': 'RESET_PASSWORD_CONFIRM_PASSWORD_MATCH'
+    }
+  }
+}
 }

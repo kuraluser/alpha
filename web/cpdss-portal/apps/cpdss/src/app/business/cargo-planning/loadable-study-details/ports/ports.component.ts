@@ -16,6 +16,7 @@ import { IPortList, IPortsDetailsResponse } from '../../../core/models/common.mo
 import { portEtaEtdValidator } from '../../directives/validator/port-eta-etd-validator.directive'
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { LoadableStudy, LOADABLE_STUDY_STATUS } from '../../models/loadable-study-list.model';
 
 
 /**
@@ -52,8 +53,17 @@ export class PortsComponent implements OnInit {
     this.updatePortOrder();
   }
 
+  @Input()
+  get loadableStudy() {
+    return this._loadableStudy;
+  }
+  set loadableStudy(value: LoadableStudy) {
+    this._loadableStudy = value;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId)? DATATABLE_EDITMODE.CELL : null;
+  }
+
   // public fields
-  readonly editMode = DATATABLE_EDITMODE.CELL;
+  editMode: DATATABLE_EDITMODE;
   OPERATIONS: OPERATIONS;
   portsForm: FormGroup;
   columns: IDataTableColumn[];
@@ -66,6 +76,7 @@ export class PortsComponent implements OnInit {
 
   // private fields
   private _portsLists: IPortsValueObject[];
+  private _loadableStudy: LoadableStudy;
 
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
@@ -77,7 +88,7 @@ export class PortsComponent implements OnInit {
     private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns(this.permission);
+    this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns(this.permission, this.loadableStudy?.statusId);
     this.initSubscriptions();
     this.getPortDetails();
   }

@@ -13,7 +13,7 @@
                     <div class="col-7">
                         <p-dropdown id="commingle_purpose_dropdown" styleClass="form-control" appendTo="body"
                             [options]="purposeOfCommingle" optionLabel="name" id="purpose_commingle"
-                            (onChange)="selectPurpose($event)" formControlName="purpose" [readonly]="!isEditable">
+                            (onChange)="selectPurpose($event)" formControlName="purpose" [readonly]="!editMode">
                         </p-dropdown>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
                     <p-multiSelect [options]="preferredTankList" styleClass="w-100" appendTo="body"
                         defaultLabel="{{'COMMINGLE_SELECT_PREFERRED_TANK' | translate}}" (onChange)="onPreferredTankSelect()"
                         id="commingle_preferred_tank" optionLabel="shortName" formControlName="preferredTanks"
-                        [readonly]="!isEditable" [selectionLimit]="5">
+                        [readonly]="!editMode" [selectionLimit]="5">
                     </p-multiSelect>
                     <div class="text-danger" *ngIf="isMaxPreferredTank">{{'COMMINGLE_POPUP_PREFERRED_TANK_MAX_LIMIT' | translate}}</div>
                 </div>
@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        <div class="row mb-5" *ngIf="!isVolumeMaximum">
+        <div class="row mb-5" *ngIf="!isVolumeMaximum && editMode">
             <div class="col text-right">
                 <a id="add_new_btn" class="btn btn-link icon-btn float-right" (click)="addNew()"
                     *cpdssPortalPermission="cargoNominationPermissionContext"><i class="pi pi-plus mr-5"></i>
@@ -70,7 +70,7 @@
                         <div class="col">
                             <p-dropdown id="commingle_cargo1_dropdown" styleClass="form-control" appendTo="body"
                                 [filter]="true" [options]="cargoNominationsCargo1" optionLabel="name"
-                                formControlName="cargo1" (onChange)="onChange($event, 1)" [readonly]="!isEditable"
+                                formControlName="cargo1" (onChange)="onChange($event, 1)" [readonly]="!editMode"
                                 placeholder="{{'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER' | translate}}">
                                 <ng-template let-cargo pTemplate="item">
                                     <span>
@@ -90,12 +90,12 @@
                     </div>
                 </div>
 
-                <div class="col">
+                <div class="col" [ngClass]="{'mr-15': !editMode}">
                     <div class="row">
                         <div class="col">
                             <p-dropdown id="commingle_cargo2_dropdown" appendTo="body" styleClass="form-control"
                                 [filter]="true" [options]="cargoNominationsCargo2" optionLabel="name"
-                                formControlName="cargo2" (onChange)="onChange($event, 2)" [readonly]="!isEditable"
+                                formControlName="cargo2" (onChange)="onChange($event, 2)" [readonly]="!editMode"
                                 placeholder="{{'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER' | translate}}">
                                 <ng-template let-cargo pTemplate="item">
                                     <span>
@@ -115,7 +115,7 @@
 
                     </div>
                 </div>
-                <a class="delete-icon mr-15 mt-5 " (click)="clearCargo()" *ngIf="commingleForm.controls['cargo1'].valid || commingleForm.controls['cargo2'].valid"></a>
+                <a class="delete-icon mr-15 mt-5 " (click)="clearCargo()" *ngIf="editMode && (commingleForm.controls['cargo1'].valid || commingleForm.controls['cargo2'].valid)"></a>
             </div>
             <hr class="hr-margin" *ngIf="isVolumeMaximum">
         </div>
@@ -143,8 +143,9 @@
             <button class="btn btn-main mr-10" id="commingle_cancel" (click)="close()">{{'COMMINGLE_CANCEL' |
                 translate}}
             </button>
-            <button class="btn btn-main" type="submit" id="commingle_submit" form="commingle_form"
-                *cpdssPortalPermission="cargoNominationPermissionContext">{{'COMMINGLE_SAVE' | translate}}</button>
+            <ng-container *ngIf="editMode">
+                <button class="btn btn-main" type="submit" id="commingle_submit" form="commingle_form" *cpdssPortalPermission="cargoNominationPermissionContext">{{'COMMINGLE_SAVE' | translate}}</button>
+            </ng-container>
         </div>
     </p-footer>
 </p-dialog>

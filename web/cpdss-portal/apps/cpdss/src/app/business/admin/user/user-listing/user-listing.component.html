@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="row">
-        <div class="col"><h5 class="main-head inline-block"></h5></div>
+        <div class="col"><h5 class="main-head inline-block">{{'USER_LISTING' | translate}}</h5></div>
         <div class="col text-right">
             <a  id="add_user" class="btn btn-link icon-btn plus-icon-rounded float-right" (click)="addUserPopUp(true, 'ADD')" *cpdssPortalPermission="addUserBtnPermissionContext">{{'ADD_USER_DETAILS'| translate}}</a>
         </div>
@@ -8,9 +8,10 @@
     <div class="row">
         <div class="col-12 role-listing-wrapper">
             <cpdss-portal-datatable *ngIf="userList" [filterable]="true" [tableId]="'user_list'" [columns]="columns" [value]="userList"
-               [form]="userForm" (columnClick)="viewUserDetails($event,'VIEW')"  (resetPassword)="resetPassword($event)" (buttonClick)="buttonClick($event)" (editRow)="editUser($event, 'EDIT')"></cpdss-portal-datatable>
+               [form]="userForm" (columnClick)="viewUserDetails($event,'VIEW')" (deleteRow)="onDeleteRow($event)" (buttonClick)="resetPassword($event)" (editRow)="editUser($event, 'EDIT')"></cpdss-portal-datatable>
 
-                <cpdss-portal-add-user *ngIf="addUser" (displayPopUp)="addUser = $event" [roles]="roles" (userSaved)="getUserDetails()" [popupStatus]="popupStatus" [userDetails]="userDetails"></cpdss-portal-add-user>
+                <cpdss-portal-add-user *ngIf="addUser" (displayPopUp)="addUser = $event" (userSaved)="getUserDetails()" [popupStatus]="popupStatus" [userDetails]="userDetails" [roles]="roles"></cpdss-portal-add-user>
+                <cpdss-portal-reset-password *ngIf="resetPasswordPopup" (displayPopUp)="resetPopupStatus($event)" [userDetails]="userDetails"></cpdss-portal-reset-password>
         </div>
     </div>
 </div>

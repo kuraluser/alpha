@@ -333,13 +333,13 @@ export class LoadableStudyDetailsTransformationService {
         }
       }
     ];
-    if(permission && loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_PENDING) {
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
-      if(permission.add) {
+      if(permission?.add) {
         actions.push(DATATABLE_ACTION.DUPLICATE);
         actions.push(DATATABLE_ACTION.SAVE);
       }
-      if(permission.delete) {
+      if(permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
       }
       const action: IDataTableColumn = {
@@ -401,9 +401,9 @@ export class LoadableStudyDetailsTransformationService {
       }
     ]
 
-    if(permission && loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_PENDING) {
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
-      if(permission.delete) {
+      if(permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
       }
       const action: IDataTableColumn = {
@@ -620,9 +620,9 @@ export class LoadableStudyDetailsTransformationService {
  * @returns {IDataTableColumn[]}
  * @memberof LoadableStudyDetailsTransformationService
  */
-  getPortDatatableColumns(permissions: IPermission): IDataTableColumn[] {
+  getPortDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS): IDataTableColumn[] {
     const minDate = new Date();
-    return [
+    let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
         header: 'SL',
@@ -787,24 +787,28 @@ export class LoadableStudyDetailsTransformationService {
           'failedCompare': 'PORT_ETD_COMPARE_ERROR',
           'etdFailed': 'PORT_ETD_COMAPRE_WITH_ETA_ERROR'
         }
-      },
-      {
-        ...(permissions ? {
-          field: 'actions',
-          header: '',
-          fieldHeaderClass: 'column-actions',
-          fieldType: DATATABLE_FIELD_TYPE.ACTION,
-          actions: [(permissions?.add ? DATATABLE_ACTION.SAVE : []),
-          (permissions?.delete ? DATATABLE_ACTION.DELETE : [])]
-        } : {}),
+      }
+    ];
+
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId)) {
+      const actions: DATATABLE_ACTION[] = [];
+      if(permission?.add) {
+        actions.push(DATATABLE_ACTION.SAVE);
+      }
+      if(permission?.delete) {
+        actions.push(DATATABLE_ACTION.DELETE);
+      }
+      const action: IDataTableColumn = {
         field: 'actions',
         header: '',
         fieldHeaderClass: 'column-actions',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.SAVE, DATATABLE_ACTION.DELETE]
-      },
+        actions: actions
+      };
+      columns = [...columns, action];
+    }
 
-    ]
+    return columns;
   }
 
 
@@ -1033,8 +1037,8 @@ export class LoadableStudyDetailsTransformationService {
   /**
    * Method to get Manual Commingle grid colums
    */
-  getManualCommingleDatatableColumns(): IDataTableColumn[] {
-    return [
+  getManualCommingleDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS): IDataTableColumn[] {
+    let columns: IDataTableColumn[] = [
       {
         field: 'cargo1',
         header: 'COMMINGLE_CARGO1',
@@ -1121,14 +1125,24 @@ export class LoadableStudyDetailsTransformationService {
           'min': 'COMMINGLE_MANUAL_QUANTITY_MIN_VALUE',
           'isMaxQuantity': 'COMMINGLE_QUANTITY_MAX_LIMIT'
         }
-      },
-      {
+      }
+    ];
+
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId)) {
+      const actions: DATATABLE_ACTION[] = [];
+      if(permission?.delete) {
+        actions.push(DATATABLE_ACTION.DELETE);
+      }
+      const action: IDataTableColumn = {
         field: 'actions',
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.DELETE,]
-      }
-    ]
+        actions: actions
+      };
+      columns = [...columns, action];
+    }
+
+    return columns;
   }
   /**
    * Method for converting commingle  data as value

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { AdminModule } from '../admin.module';
 
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { IUserDetails, IUserResponse  , IUserModel , ISaveUserResponse } from '../models/user.model';
+import { IUserDetails, IUserResponse, IUserModel, ISaveUserResponse, IUserDeleteResponse , IResetPasswordModel, IResetPasswordResponse } from '../models/user.model';
 
 /**
  * Api Service for user
@@ -35,8 +35,27 @@ export class UserApiService {
   * @returns {ISaveUserResponse}
   * 
   */
- saveUser(userDetails: IUserModel, userId: number): Observable<ISaveUserResponse> {
-  return this.commonApiService.post<IUserModel,ISaveUserResponse>(`users/${userId}`,userDetails);
- }
-  
+  saveUser(userDetails: IUserModel, userId: number): Observable<ISaveUserResponse> {
+    return this.commonApiService.post<IUserModel, ISaveUserResponse>(`users/${userId}`, userDetails);
+  }
+
+  /**
+   * reset password api 
+   * @param {IResetPasswordModel} resetPasswordDetails
+   * @memberof UserApiService
+  */
+  resetPassword(resetPasswordDetails: IResetPasswordModel): Observable<IResetPasswordResponse> {
+    return this.commonApiService.post<IResetPasswordModel, IResetPasswordResponse>(`users/reset-password`, resetPasswordDetails);
+  }
+
+  /**
+  *
+  * delete role
+  * @param {number} roleId
+  * @memberof UserApiService
+  */
+  deleteUser(userId: number): Observable<IUserDeleteResponse> {
+    return this.commonApiService.delete<IUserDeleteResponse>(`users/delete/${userId}`)
+  }
+
 }

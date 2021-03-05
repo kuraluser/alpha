@@ -52,14 +52,6 @@ export interface IDischargingPortIds {
 }
 
 /**
- * Model for Table Columns
- */
-export class TableColumns {
-    public field: string;
-    public header: string;
-}
-
-/**
  * Interface for loadable study save response
  *
  * @export
@@ -110,5 +102,9 @@ export interface ILoadablePatternsResponse {
 export enum LOADABLE_STUDY_STATUS {
     PLAN_PENDING = 1,
     PLAN_CONFIRMED = 2,
-    PLAN_GENERATED = 3
+    PLAN_GENERATED = 3,
+    PLAN_ALGO_PROCESSING = 4,
+    PLAN_ALGO_PROCESSING_COMPETED = 5,
+    PLAN_NO_SOLUTION = 6,
+    PLAN_ERROR = 11
 }

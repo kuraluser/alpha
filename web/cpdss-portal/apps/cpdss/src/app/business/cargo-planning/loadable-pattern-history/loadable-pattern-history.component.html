@@ -16,7 +16,7 @@
                 <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)"></cpdss-portal-unit-dropdown>
             </span>
             <button class="btn btn-main mr-10 ml-10" id="btn_callNewLoadableStudyPopup"
-                (click)="openSidePane=!openSidePane">{{'LOADABLE_PATTERN_HISTORY_BUTTON_LABEL' | translate}}</button>
+                (click)="patternHistory()">{{'LOADABLE_PATTERN_HISTORY_BUTTON_LABEL' | translate}}</button>
             <button class="btn btn-main" id="btn_callNewLoadableStudyPopup"
                 (click)="backToLoadableStudy()">{{'LOADABLE_PATTERN_HISTORY_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
                 translate}}</button>
@@ -30,7 +30,7 @@
                 <cpdss-portal-side-panel-loadable-study-list [vesselInfo]="vesselInfo" [voyage]="selectedVoyage"
                     [(selectedLoadableStudy)]="selectedLoadableStudy" [loadableStudies]="loadableStudies"
                     (deleteLoadableStudy)="onDeleteLoadableStudy($event)"
-                    (selectedLoadableStudyChange)="onLoadableStudyChange($event)">
+                    (selectedLoadableStudyChange)="onLoadableStudyChange($event)" (newLoadableStudyAdded)="onNewLoadableStudyAdded($event)">
                 </cpdss-portal-side-panel-loadable-study-list>
             </div>
         </div>
