@@ -52,14 +52,6 @@ export interface IDischargingPortIds {
 }
 
 /**
- * Model for Table Columns
- */
-export class TableColumns {
-    public field: string;
-    public header: string;
-}
-
-/**
  * Interface for loadable study save response
  *
  * @export

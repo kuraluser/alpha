@@ -1,17 +1,19 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
-import { LoadableStudy, TableColumns } from '../models/loadable-study-list.model';
+import { LoadableStudy, LOADABLE_STUDY_STATUS } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
 import { Voyage } from '../../core/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
 import { LoadableStudyListTransformationService } from '../services/loadable-study-list-transformation.service';
 import { IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Dropdown } from 'primeng/dropdown';
+import { IPermission } from '../../../shared/models/user-profile.model';
+import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 
 /**
  * Loadable study list
@@ -27,23 +29,23 @@ export class LoadableStudyListComponent implements OnInit {
   selectedVoyage: Voyage;
   selectedLoadableStudy: LoadableStudy;
   loading = true;
-  cols: TableColumns[];
+  cols: IDataTableColumn[];
   display = false;
   isEdit = false;
   isDuplicateExistingLoadableStudy = true;
   vesselDetails: IVessel;
   voyageId: number;
   columns: IDataTableColumn[];
-  loadableStudyListForm: FormGroup;
   readonly editMode = null;
   isVoyageIdSelected = true;
+  permission: IPermission;
 
   constructor(private loadableStudyListApiService: LoadableStudyListApiService,
     private vesselsApiService: VesselsApiService, private router: Router,
     private translateService: TranslateService, private activatedRoute: ActivatedRoute,
     private voyageService: VoyageService, private loadableStudyListTransformationService: LoadableStudyListTransformationService,
-    private fb: FormBuilder,
-    private ngxSpinnerService: NgxSpinnerService) { }
+    private ngxSpinnerService: NgxSpinnerService,
+    private permissionsService: PermissionsService) { }
 
   async ngOnInit(): Promise<void> {
     this.activatedRoute.params.subscribe(async params => {
@@ -55,8 +57,9 @@ export class LoadableStudyListComponent implements OnInit {
       this.ngxSpinnerService.hide();
       this.getLoadableStudyInfo(this.vesselDetails?.id, this.voyageId);
       this.selectedVoyage = this.voyages.find(voyage => voyage.id === this.voyageId);
-    })
-    this.columns = this.loadableStudyListTransformationService.getLoadableStudyListDatatableColumns();
+    });
+    this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], false);
+    this.columns = this.loadableStudyListTransformationService.getLoadableStudyListDatatableColumns(this.permission);
     this.loading = false;
 
   }
@@ -78,8 +81,10 @@ export class LoadableStudyListComponent implements OnInit {
     this.ngxSpinnerService.show();
     if (voyageId !== 0) {
       const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
-      this.loadableStudyList = result.loadableStudies;
-      this.initLoadableStudyArray(this.loadableStudyList);
+      this.loadableStudyList = result.loadableStudies.map(loadableStudy => {
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudy?.statusId) ? true: false;
+        return loadableStudy;
+      });
     }
     this.ngxSpinnerService.hide();
   }
@@ -98,26 +103,6 @@ export class LoadableStudyListComponent implements OnInit {
   // set visibility of popup (show/hide)
   setPopupVisibility(emittedValue) {
     this.display = emittedValue;
-  }
-
-  private initLoadableStudyArray(loadableStudyLists: LoadableStudy[]) {
-    this.loadableStudyListForm = this.fb.group({
-      dataTable: this.fb.array([...loadableStudyLists])
-    });
-  }
-
-  /**
-  * Method for fetching form fields
-  *
-  * @private
-  * @param {number} formGroupIndex
-  * @param {string} formControlName
-  * @returns {FormControl}
-  * @memberof 
-  */
-  private field(formGroupIndex: number, formControlName: string): FormControl {
-    const formControl = <FormControl>(<FormArray>this.loadableStudyListForm.get('dataTable')).at(formGroupIndex).get(formControlName);
-    return formControl;
   }
 
   /**

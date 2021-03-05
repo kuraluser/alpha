@@ -1,6 +1,7 @@
 {
     "VoyageStatusComponent" : "STATUS",
     "CargoPlanningComponent" : "CARGOPLANNING",
+    "LoadableStudyListComponent" : "CARGOPLANNING_LOADABLE_STUDY_LIST",
     "CargoNominationComponent" : "CARGOPLANNING_CARGONOMINATION",
     "PortsComponent" : "CARGOPLANNING_PORTS",
     "OnHandQuantityComponent" : "CARGOPLANNING_ONHANDQUANTITITES",
