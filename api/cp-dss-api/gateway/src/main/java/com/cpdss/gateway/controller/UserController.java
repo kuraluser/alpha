@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -281,5 +282,26 @@ public class UserController {
           e);
     }
     return ResponseEntity.ok(response);
+  }
+
+  @DeleteMapping("/users/delete/{userId}")
+  public ResponseEntity<DeleteUserResponse> deleteUser(@PathVariable Long userId, @RequestHeader HttpHeaders headers) throws CommonRestException {
+    DeleteUserResponse var1 = new DeleteUserResponse();
+    CommonSuccessResponse var2 = new CommonSuccessResponse();
+    try {
+      if(userService.deleteUserByUserId(userId)){
+        var2.setStatus(HttpStatus.OK.value()+"");
+      }else{
+        var2.setStatus(HttpStatus.INTERNAL_SERVER_ERROR+"");
+      }
+      var2.setCorrelationId(headers.getFirst(CORRELATION_ID_HEADER));
+      var1.setResponseStatus(var2);
+      var1.setId(userId);
+    } catch (GenericServiceException e) {
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e){
+      e.printStackTrace();
+    }
+    return ResponseEntity.ok(var1);
   }
 }

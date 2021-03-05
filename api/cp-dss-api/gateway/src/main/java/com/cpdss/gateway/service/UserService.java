@@ -865,4 +865,39 @@ public class UserService {
           HttpStatusCode.BAD_REQUEST);
     }
   }
+
+  @Transactional
+    public boolean deleteUserByUserId(Long userId) throws GenericServiceException {
+
+      Optional<Users> users = usersRepository.findById(userId);
+      if(users.isPresent()){
+          if (!users.get().isActive()){
+              // already deleted user
+              log.info("Trying to delete user already deleted, User Id {}", userId);
+              throw new GenericServiceException(
+                      "User is not active!",
+                      CommonErrorCodes.E_CPDSS_INVALID_USER,
+                      HttpStatusCode.INTERNAL_SERVER_ERROR);
+          }
+          if(users.get().getIsShipUser() != null && users.get().getIsShipUser().booleanValue()){
+              // cannot delete
+              log.info("Trying to delete default user, User Id {}", userId);
+              throw new GenericServiceException(
+                      "Deleting default user is restricted",
+                      CommonErrorCodes.E_CPDSS_OPERATION_NOT_ALLOWED,
+                      HttpStatusCode.INTERNAL_SERVER_ERROR);
+          }
+          // update is active to False
+          int var1 = usersRepository.updateUserIsActiveToFalse(userId);
+          return var1 > 0;
+      }else{
+          // throw no user found
+          log.info("No user found with Id - {} to delete", userId);
+          throw new GenericServiceException(
+                  "User not found for id "+userId,
+                  CommonErrorCodes.E_CPDSS_INVALID_USER,
+                  HttpStatusCode.BAD_REQUEST
+          );
+      }
+    }
 }
