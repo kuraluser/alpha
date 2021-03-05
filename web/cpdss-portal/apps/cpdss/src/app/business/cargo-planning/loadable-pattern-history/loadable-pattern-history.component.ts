@@ -87,7 +87,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));
-      if(this.isViewPattern){
+      if (this.isViewPattern) {
         this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
       }
       this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
@@ -207,7 +207,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @memberof LoadablePatternHistoryComponent
    */
   onLoadableStudyChange(event) {
-    this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/${event}`]);
+    this.loadableStudyId = event;
+    this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
   }
 
   /**
@@ -275,13 +276,35 @@ export class LoadablePatternHistoryComponent implements OnInit {
     }
     this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_PATTERN_CONFIRM_SUMMARY', detail: detail, data: { confirmLabel: 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', rejectLabel: 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL' } });
     this.confirmationAlertService.confirmAlert$.pipe().subscribe(async (response) => {
-      if(response){
+      if (response) {
         const confirmResult = await this.loadablePatternApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, loadablePattern?.loadablePatternId).toPromise();
-        if(confirmResult.responseStatus.status === '200'){
+        if (confirmResult.responseStatus.status === '200') {
           this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
         }
       }
     })
   }
 
+  /**
+ * Handler for new loadable study added
+ *
+ * @param {*} event
+ * @memberof LoadablePatternHistoryComponent
+ */
+  onNewLoadableStudyAdded(event) {
+    this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/${event}`]);
+  }
+
+  /**
+* Handler for pattern history button
+*
+* @memberof LoadablePatternHistoryComponent
+*/
+  patternHistory() {
+    if(!this.isViewPattern){
+      this.router.navigate([`/business/cargo-planning/loadable-pattern-history/0/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
+    }else{
+      this.openSidePane = !this.openSidePane
+    }
+  }
 }

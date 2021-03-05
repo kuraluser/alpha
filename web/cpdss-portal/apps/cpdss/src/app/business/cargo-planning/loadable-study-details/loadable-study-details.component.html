@@ -126,7 +126,7 @@
                 <cpdss-portal-side-panel-loadable-study-list [vesselInfo]="vesselInfo" [voyage]="selectedVoyage"
                     [(selectedLoadableStudy)]="selectedLoadableStudy" [loadableStudies]="loadableStudies"
                     (deleteLoadableStudy)="onDeleteLoadableStudy($event)"
-                    (selectedLoadableStudyChange)="onLoadableStudyChange($event)">
+                    (selectedLoadableStudyChange)="onLoadableStudyChange($event)" (newLoadableStudyAdded)="onLoadableStudyChange($event)">
                 </cpdss-portal-side-panel-loadable-study-list>
             </div>
         </div>

@@ -41,6 +41,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
 
   @Output() selectedLoadableStudyChange = new EventEmitter<LoadableStudy>();
   @Output() deleteLoadableStudy = new EventEmitter<Event>();
+  @Output() newLoadableStudyAdded = new EventEmitter<LoadableStudy>();
 
   columns: IDataTableColumn[];
   display = false;
@@ -147,7 +148,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
    * @memberof SidePanelLoadableStudyListComponent
    */
   onNewLoadableStudyAdded(event) {
-    this.selectedLoadableStudyChange.emit(event);
+    this.newLoadableStudyAdded.emit(event);
   }
   
    /**
