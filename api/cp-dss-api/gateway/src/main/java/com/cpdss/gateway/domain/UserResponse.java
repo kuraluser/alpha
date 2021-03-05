@@ -14,8 +14,10 @@ public class UserResponse {
   private CommonSuccessResponse responseStatus;
 
   private List<User> users;
-  
+
   private List<Role> roles;
 
   private Long id;
+
+  private Integer maxUserCount;
 }

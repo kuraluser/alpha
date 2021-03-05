@@ -35,5 +35,8 @@ public interface UsersRepository extends CommonCrudRepository<Users, Long> {
   @Query(
       "update Users us set us.userPassword = :password, us.passwordExpiryDate = :expD, us.passwordUpdateDate = :upD where us.id = :id")
   int updateUserPasswordExpireDateAndTime(
-          @Param("id") Long id,  @Param("password") String password,  @Param("expD") LocalDateTime expD,  @Param("upD") LocalDateTime upD);
+      @Param("id") Long id,
+      @Param("password") String password,
+      @Param("expD") LocalDateTime expD,
+      @Param("upD") LocalDateTime upD);
 }

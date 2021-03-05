@@ -24,7 +24,6 @@ import com.cpdss.gateway.repository.RoleUserRepository;
 import com.cpdss.gateway.repository.RolesRepository;
 import com.cpdss.gateway.repository.ScreenRepository;
 import com.cpdss.gateway.repository.UsersRepository;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +31,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,8 +64,7 @@ class UserServiceTest {
 
   @Mock private Roles roles;
 
-  @Spy
-  @InjectMocks private UserService userService;
+  @Spy @InjectMocks private UserService userService;
 
   @Mock private RolesRepository rolesRepository;
 
@@ -408,7 +405,9 @@ class UserServiceTest {
     users.setFirstName("test");
     users.setUsername("hello");
     Optional<Users> usersOp = Optional.of(users);
-    when(usersRepository.updateUserPasswordExpireDateAndTime(1l, password, LocalDateTime.now().plusDays(1), LocalDateTime.now())).thenReturn(1);
+    when(usersRepository.updateUserPasswordExpireDateAndTime(
+            1l, password, LocalDateTime.now().plusDays(1), LocalDateTime.now()))
+        .thenReturn(1);
     when(usersRepository.findById(1l)).thenReturn(usersOp);
     boolean resp = userService.resetPassword(password, usersOp.get().getId());
     assertTrue(resp);
@@ -436,15 +435,15 @@ class UserServiceTest {
 
   static Stream<String> validPasswordProvider() {
     return Stream.of(
-            "A~$^+=<>a1", // test symbols
-            "Think@123" // test 8 chars
-    );
+        "A~$^+=<>a1", // test symbols
+        "Think@123" // test 8 chars
+        );
   }
 
   static Stream<String> inValidPasswordProvider() {
     return Stream.of(
-            "12345678", "0123456789$abcdefgAB" // test 20 chars
-    );
+        "12345678", "0123456789$abcdefgAB" // test 20 chars
+        );
   }
 
   // Save user success for dummy Object

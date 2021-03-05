@@ -24,4 +24,6 @@ public class VesselDetailsResponse {
   private BMAndSF bMAndSF;
 
   private List<UllageDetails> ullageDetails;
+
+  private List<UllageTrimCorrection> ullageTrimCorrections;
 }

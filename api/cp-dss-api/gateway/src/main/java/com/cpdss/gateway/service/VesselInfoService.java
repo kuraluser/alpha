@@ -1,6 +1,8 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.service;
 
+import static org.springframework.util.StringUtils.isEmpty;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
@@ -23,6 +25,7 @@ import com.cpdss.gateway.domain.MinMaxValuesForBMAndSf;
 import com.cpdss.gateway.domain.ShearingForce;
 import com.cpdss.gateway.domain.StationValues;
 import com.cpdss.gateway.domain.UllageDetails;
+import com.cpdss.gateway.domain.UllageTrimCorrection;
 import com.cpdss.gateway.domain.Vessel;
 import com.cpdss.gateway.domain.VesselDetailsResponse;
 import com.cpdss.gateway.domain.VesselDraftCondition;
@@ -199,8 +202,41 @@ public class VesselInfoService {
     vesselDetailsResponse.setUllageDetails(createVesselUllageDetails(vesselAlgoReply));
     vesselDetailsResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
-
+    vesselDetailsResponse.setUllageTrimCorrections(
+        this.buildUllageTrimCorrections(vesselAlgoReply));
     return vesselDetailsResponse;
+  }
+
+  /**
+   * Build ullage trim correction list
+   *
+   * @param vesselAlgoReply
+   * @return
+   */
+  private List<UllageTrimCorrection> buildUllageTrimCorrections(VesselAlgoReply vesselAlgoReply) {
+    List<UllageTrimCorrection> list = new ArrayList<>();
+    for (com.cpdss.common.generated.VesselInfo.UllageTrimCorrection dto :
+        vesselAlgoReply.getUllageTrimCorrectionList()) {
+      UllageTrimCorrection ullageTrimCorrection = new UllageTrimCorrection();
+      ullageTrimCorrection.setId(dto.getId());
+      ullageTrimCorrection.setTankId(dto.getTankId());
+      ullageTrimCorrection.setUllageDepth(
+          isEmpty(dto.getUllageDepth()) ? null : dto.getUllageDepth());
+      ullageTrimCorrection.setTrimM1(isEmpty(dto.getTrimM1()) ? null : dto.getTrimM1());
+      ullageTrimCorrection.setTrimM2(isEmpty(dto.getTrimM1()) ? null : dto.getTrimM2());
+      ullageTrimCorrection.setTrimM3(isEmpty(dto.getTrimM1()) ? null : dto.getTrimM3());
+      ullageTrimCorrection.setTrimM4(isEmpty(dto.getTrimM1()) ? null : dto.getTrimM4());
+      ullageTrimCorrection.setTrimM5(isEmpty(dto.getTrimM1()) ? null : dto.getTrimM5());
+      ullageTrimCorrection.setTrim0(isEmpty(dto.getTrim0()) ? null : dto.getTrim0());
+      ullageTrimCorrection.setTrim1(isEmpty(dto.getTrim1()) ? null : dto.getTrim1());
+      ullageTrimCorrection.setTrim2(isEmpty(dto.getTrim2()) ? null : dto.getTrim2());
+      ullageTrimCorrection.setTrim3(isEmpty(dto.getTrim3()) ? null : dto.getTrim3());
+      ullageTrimCorrection.setTrim4(isEmpty(dto.getTrim4()) ? null : dto.getTrim4());
+      ullageTrimCorrection.setTrim5(isEmpty(dto.getTrim5()) ? null : dto.getTrim5());
+      ullageTrimCorrection.setTrim6(isEmpty(dto.getTrim6()) ? null : dto.getTrim6());
+      list.add(ullageTrimCorrection);
+    }
+    return list;
   }
 
   /**
