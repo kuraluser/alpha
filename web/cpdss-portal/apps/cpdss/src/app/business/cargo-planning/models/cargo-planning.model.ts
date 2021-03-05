@@ -674,14 +674,25 @@ export interface IApiTempPopupData {
 }
 
 /**
- * Interface for get Api-Temperature History
+ * Interface for Cargo Api,Temperature history POPUP API response
+ *
+ * @export
+ * @interface ICargoApiTempHistoryResponse
+ */
+export interface ICargoApiTempHistoryResponse {
+    responseStatus: IResponseStatus;
+    portHistory: IApiTempHistory[];
+    monthlyHistory: IApiTempMonthWiseHistory[];
+}
+
+/**
+ * Interface for get Api,Temperature port history
  *
  * @export
  * @interface IApiTempHistory
  */
 export interface IApiTempHistory {
     cargoId: number;
-    loadingPortName: string;
     loadingPortId: number;
     loadedDate: string;
     api: number;
@@ -689,7 +700,7 @@ export interface IApiTempHistory {
 }
 
 /**
- * Interface for get Api-Temperature Month-wise history
+ * Interface for get Api,Temperature month-wise history
  *
  * @export
  * @interface IApiTempMonthWiseHistory

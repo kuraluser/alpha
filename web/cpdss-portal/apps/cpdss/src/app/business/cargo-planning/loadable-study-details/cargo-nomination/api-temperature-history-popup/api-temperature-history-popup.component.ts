@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { IApiTempHistory, IApiTempMonthWiseHistory, IApiTempPopupData, IMonths } from '../../../models/cargo-planning.model';
+import { IApiTempHistory, IApiTempMonthWiseHistory, IApiTempPopupData, ICargoApiTempHistoryResponse, IMonths } from '../../../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
 import { IDataTableColumn } from './../../../../../shared/components/datatable/datatable.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -33,7 +33,9 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
   }
   set apiTempHistoryPopupData(apiTempHistoryPopupData: IApiTempPopupData) {
     this._apiTempHistoryPopupData = apiTempHistoryPopupData;
-    this.getApiTempHistoryData();
+    const cargoId = apiTempHistoryPopupData.rowDataCargo.value.id;
+    const portIDs = [...apiTempHistoryPopupData.rowDataCargo.value.ports].map(port => (port.id));
+    this.getApiTempHistoryData(cargoId, portIDs);
     this.ApiTempHistoryForm = this.fb.group({
       selectMonth: this.fb.control(null),
       selectPort: this.fb.control(null)
@@ -44,6 +46,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
 
   apiTempHistoryColumns: IDataTableColumn[];
   apiTempHistoryData: IApiTempHistory[] = [];
+  monthwiseCargoHistory: IApiTempMonthWiseHistory[];
   apiTempHistoryMonths: IMonths[];
   ApiTempHistoryForm: FormGroup;
   monthWithPreccedingSucceedingArr: IMonths[] = [];
@@ -72,87 +75,46 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
    * function to get last 5, Api & Temperature History
    * @memberof ApiTempHistoryPopupComponent
    */
-  getApiTempHistoryData(): void {
+  async getApiTempHistoryData(cargoId: number, portIDs: number[]) {
+    // const cargoApiTempHistoryDetails: ICargoApiTempHistoryResponse = await this.loadableStudyDetailsApiService.getCargoApiTemperatureHistoryDetails(cargoId, portIDs).toPromise();
+
     /**
-     * This dummy data will remove after integrating the actual API
+     * This dummy data will remove and use above commented code after integrating the actual API
      */
-    let mockResponse = [{
-      cargoId: 10,
-      loadingPortId: 46,
-      loadedDate: '01-10-2020 17:25',
-      api: 30.11,
-      temperature: 80.1
-    }, {
-      cargoId: 10,
-      loadingPortId: 46,
-      loadedDate: '30-09-2020 17:25',
-      api: 32.18,
-      temperature: 75.5
-    }, {
-      cargoId: 10,
-      loadingPortId: 46,
-      loadedDate: '29-09-2020 17:25',
-      api: 30.25,
-      temperature: 90.5
-    }, {
-      cargoId: 10,
-      loadingPortId: 46,
-      loadedDate: '28-09-2020 17:25',
-      api: 31.36,
-      temperature: 88.1
-    }, {
-      cargoId: 10,
-      loadingPortId: 46,
-      loadedDate: '27-09-2020 17:25',
-      api: 33.25,
-      temperature: 92.3
-    }];
-
-    if (mockResponse) {
-      const loadingPortArray = [...this.apiTempHistoryPopupData.rowDataCargo.value.ports];
-      this.apiTempHistoryData = mockResponse.map(historyObj => {
-        const loadingPort = loadingPortArray.find(port => port.id === historyObj.loadingPortId);
-        const formattedDate = this.datePipe.transform(historyObj.loadedDate.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"), 'dd-MM-yyyy');
-        return Object.assign(historyObj, { loadingPortName: loadingPort.name, loadedDate: formattedDate });
-      });
-    }
-  }
-
-  /**
-   * function to do on select/change month.
-   * generate the preceding & succeding months with selected month.
-   * @param {*} event
-   * @memberof ApiTemperatureHistoryPopupComponent
-   */
-  onMonthChange(event): void {
-    this.monthWithPreccedingSucceedingArr = [];
-    const selectedMonth = this.apiTempHistoryMonths.find(month => (month.id === event?.value?.id));
-    const precedingMonth = selectedMonth.id == 1 ? this.apiTempHistoryMonths.find(month => (month.id === 12)) : this.apiTempHistoryMonths.find(month => (month.id === selectedMonth.id - 1));
-    const succeedingMonth = selectedMonth.id == 12 ? this.apiTempHistoryMonths.find(month => (month.id === 1)) : this.apiTempHistoryMonths.find(month => (month.id === selectedMonth.id + 1));
-    this.monthWithPreccedingSucceedingArr.push(precedingMonth, selectedMonth, succeedingMonth);
-    this.getMonthWiseApiTempHistoryData();
-  }
-
-  /**
-   * function to do on select/change port
-   * @param {*} event
-   * @memberof ApiTemperatureHistoryPopupComponent
-   */
-  onPortChange(event): void {
-    this.selectedPortID = event?.value?.id;
-    this.getMonthWiseApiTempHistoryData();
-  }
-
-  /**
-   * function to show month-wise Api & Temperature History
-   * @memberof ApiTemperatureHistoryPopupComponent
-   */
-  getMonthWiseApiTempHistoryData(): void {
-    /**
-     * this dummy array will remove once the actual API integrated.
-     */
-    const monthwiseCargoHistory: IApiTempMonthWiseHistory[] = [
-      {
+    const cargoApiTempHistoryDetails: ICargoApiTempHistoryResponse = {
+      responseStatus: { status: "200" },
+      portHistory: [{
+        cargoId: 10,
+        loadingPortId: 46,
+        loadedDate: '01-10-2020 17:25',
+        api: 30.11,
+        temperature: 80.1
+      }, {
+        cargoId: 10,
+        loadingPortId: 46,
+        loadedDate: '30-09-2020 17:25',
+        api: 32.18,
+        temperature: 75.5
+      }, {
+        cargoId: 10,
+        loadingPortId: 46,
+        loadedDate: '29-09-2020 17:25',
+        api: 30.25,
+        temperature: 90.5
+      }, {
+        cargoId: 10,
+        loadingPortId: 46,
+        loadedDate: '28-09-2020 17:25',
+        api: 31.36,
+        temperature: 88.1
+      }, {
+        cargoId: 10,
+        loadingPortId: 46,
+        loadedDate: '27-09-2020 17:25',
+        api: 33.25,
+        temperature: 92.3
+      }],
+      monthlyHistory: [{
         loadingPortId: 359,
         loadingYear: 2020,
         loadingMonth: 1,
@@ -357,15 +319,59 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
         api: 20.25,
         temperature: 92.3
       }
-    ];
+      ]
+    };
+    if (cargoApiTempHistoryDetails.responseStatus.status === '200') {
+      const mockResponse = cargoApiTempHistoryDetails?.portHistory;
+      this.monthwiseCargoHistory = cargoApiTempHistoryDetails?.monthlyHistory;
+      if (mockResponse.length) {
+        const loadingPortArray = [...this.apiTempHistoryPopupData.rowDataCargo.value.ports];
+        this.apiTempHistoryData = mockResponse.map(historyObj => {
+          const loadingPort = loadingPortArray.find(port => port.id === historyObj.loadingPortId);
+          const formattedDate = this.datePipe.transform(historyObj.loadedDate.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"), 'dd-MM-yyyy');
+          return Object.assign(historyObj, { loadingPortName: loadingPort.name, loadedDate: formattedDate });
+        });
+      }
+    }
+  }
 
+  /**
+   * function to do on select/change month.
+   * generate the preceding & succeding months with selected month.
+   * @param {*} event
+   * @memberof ApiTemperatureHistoryPopupComponent
+   */
+  onMonthChange(event): void {
+    this.monthWithPreccedingSucceedingArr = [];
+    const selectedMonth = this.apiTempHistoryMonths.find(month => (month.id === event?.value?.id));
+    const precedingMonth = selectedMonth.id == 1 ? this.apiTempHistoryMonths.find(month => (month.id === 12)) : this.apiTempHistoryMonths.find(month => (month.id === selectedMonth.id - 1));
+    const succeedingMonth = selectedMonth.id == 12 ? this.apiTempHistoryMonths.find(month => (month.id === 1)) : this.apiTempHistoryMonths.find(month => (month.id === selectedMonth.id + 1));
+    this.monthWithPreccedingSucceedingArr.push(precedingMonth, selectedMonth, succeedingMonth);
+    this.getMonthWiseApiTempHistoryData();
+  }
+
+  /**
+   * function to do on select/change port
+   * @param {*} event
+   * @memberof ApiTemperatureHistoryPopupComponent
+   */
+  onPortChange(event): void {
+    this.selectedPortID = event?.value?.id;
+    this.getMonthWiseApiTempHistoryData();
+  }
+
+  /**
+   * function to show month-wise Api & Temperature History
+   * @memberof ApiTemperatureHistoryPopupComponent
+   */
+  getMonthWiseApiTempHistoryData(): void {
     this.filteredMonthwiseHistory = [];
     this.monthWiseGridColData = {};
     if (this.monthWithPreccedingSucceedingArr.length && this.selectedPortID) {
       const seletedMonths = [... this.monthWithPreccedingSucceedingArr];
-      this.uniqueYears = [...new Set(monthwiseCargoHistory.map(data => data.loadingYear))];
+      this.uniqueYears = [...new Set(this.monthwiseCargoHistory.map(data => data.loadingYear))];
       seletedMonths.forEach(month => {
-        const filteredData = monthwiseCargoHistory.filter(obj => (month.id === obj.loadingMonth && obj.loadingPortId === this.selectedPortID));
+        const filteredData = [...this.monthwiseCargoHistory].filter(obj => (month.id === obj.loadingMonth && obj.loadingPortId === this.selectedPortID));
         this.filteredMonthwiseHistory = this.filteredMonthwiseHistory.concat(filteredData);
       });
       if (this.filteredMonthwiseHistory.length) {
@@ -431,6 +437,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     this.selectedPortID = undefined;
     this.monthWiseGridColData = {};
     this.apiTempHistoryData = [];
+    this.monthwiseCargoHistory = [];
     this.filteredMonthwiseHistory = [];
     this.monthWithPreccedingSucceedingArr = [];
     this.uniqueYears = [];

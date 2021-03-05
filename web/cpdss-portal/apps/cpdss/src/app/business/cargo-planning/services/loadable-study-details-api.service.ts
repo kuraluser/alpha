@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { IResponse, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, PortsDB, IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, OHQDB, IPortOBQResponse, IPortOBQTankDetail, OBQDB, ICargoNominationValueObject, ILoadOnTop, IGeneratePatternResponse } from '../models/cargo-planning.model';
+import { CargoNominationDB, ICargoNominationDetailsResponse, ICargoNomination, ICargoPortsResponse, PortsDB, IOHQPortRotationResponse, IPortOHQResponse, IPortOHQTankDetail, OHQDB, IPortOBQResponse, IPortOBQTankDetail, OBQDB, ICargoNominationValueObject, ILoadOnTop, IGeneratePatternResponse, ICargoApiTempHistoryResponse } from '../models/cargo-planning.model';
 import { IDischargingPortIds } from '../models/loadable-study-list.model';
 import { IPort, IPortList, IPortsDetailsResponse, IPortsResponse } from '../../core/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
@@ -310,6 +310,13 @@ export class LoadableStudyDetailsApiService {
     */
     saveLoadableStudyLoadOnTop(vesselId: number, voyageId: number, loadableStudyId: number, loadOnTop: ILoadOnTop): Observable<IResponse> {
         return this.commonApiService.post<ILoadOnTop, IResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/load-on-top`, loadOnTop);
+    }
+
+    getCargoApiTemperatureHistoryDetails(cargoID: number, loadingPortIDs: number[]): Observable<ICargoApiTempHistoryResponse> {
+        /**
+         * actual API will integrate with below code
+         */
+        return this.commonApiService.get<ICargoApiTempHistoryResponse>(`cargoId/${cargoID}/loadingPortIds/${loadingPortIDs}`);
     }
 
 }
