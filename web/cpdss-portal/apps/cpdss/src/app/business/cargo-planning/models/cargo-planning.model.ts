@@ -689,12 +689,26 @@ export interface IApiTempHistory {
 }
 
 /**
+ * Interface for get Api-Temperature Month-wise history
+ *
+ * @export
+ * @interface IApiTempMonthWiseHistory
+ */
+export interface IApiTempMonthWiseHistory {
+    loadingPortId: number;
+    loadingYear: number;
+    loadingMonth: number;
+    api: number|string;
+    temperature: number|string;
+}
+
+/**
  * Interface for list months.
  *
  * @export
  * @interface IMonths
  */
 export interface IMonths {
-    id: string;
+    id: number;
     month: string;
 }

@@ -454,52 +454,52 @@ export class LoadableStudyDetailsTransformationService {
   getMonthList(): IMonths[]{
     return [
       {
-        id: 'JAN',
-        month: 'January'
+        id: 1,
+        month: 'JANUARY'
       },
       {
-        id: 'FEB',
-        month: 'February'
+        id: 2,
+        month: 'FEBRUARY'
       },
       {
-        id: 'MAR',
-        month: 'March'
+        id: 3,
+        month: 'MARCH'
       },
       {
-        id: 'APR',
-        month: 'April'
+        id: 4,
+        month: 'APRIL'
       },
       {
-        id: 'MAY',
-        month: 'May'
+        id: 5,
+        month: 'MAY'
       },
       {
-        id: 'JUN',
-        month: 'June'
+        id: 6,
+        month: 'JUNE'
       },
       {
-        id: 'JUL',
-        month: 'July'
+        id: 7,
+        month: 'JULY'
       },
       {
-        id: 'AUG',
-        month: 'August'
+        id: 8,
+        month: 'AUGUST'
       },
       {
-        id: 'SEP',
-        month: 'September'
+        id: 9,
+        month: 'SEPTEMBER'
       },
       {
-        id: 'OCT',
-        month: 'October'
+        id: 10,
+        month: 'OCTOBER'
       },
       {
-        id: 'NOV',
-        month: 'November'
+        id: 11,
+        month: 'NOVEMBER'
       },
       {
-        id: 'DEC',
-        month: 'December'
+        id: 12,
+        month: 'DECEMBER'
       }
     ]
   }
