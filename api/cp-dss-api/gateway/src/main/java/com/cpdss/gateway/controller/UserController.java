@@ -285,21 +285,22 @@ public class UserController {
   }
 
   @DeleteMapping("/users/delete/{userId}")
-  public ResponseEntity<DeleteUserResponse> deleteUser(@PathVariable Long userId, @RequestHeader HttpHeaders headers) throws CommonRestException {
+  public ResponseEntity<DeleteUserResponse> deleteUser(
+      @PathVariable Long userId, @RequestHeader HttpHeaders headers) throws CommonRestException {
     DeleteUserResponse var1 = new DeleteUserResponse();
     CommonSuccessResponse var2 = new CommonSuccessResponse();
     try {
-      if(userService.deleteUserByUserId(userId)){
-        var2.setStatus(HttpStatus.OK.value()+"");
-      }else{
-        var2.setStatus(HttpStatus.INTERNAL_SERVER_ERROR+"");
+      if (userService.deleteUserByUserId(userId)) {
+        var2.setStatus(HttpStatus.OK.value() + "");
+      } else {
+        var2.setStatus(HttpStatus.INTERNAL_SERVER_ERROR + "");
       }
       var2.setCorrelationId(headers.getFirst(CORRELATION_ID_HEADER));
       var1.setResponseStatus(var2);
       var1.setId(userId);
     } catch (GenericServiceException e) {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
-    } catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
     }
     return ResponseEntity.ok(var1);

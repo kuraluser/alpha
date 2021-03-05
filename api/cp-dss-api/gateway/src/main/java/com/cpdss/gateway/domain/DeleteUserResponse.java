@@ -1,3 +1,4 @@
+/* Licensed under Apache-2.0 */
 package com.cpdss.gateway.domain;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -10,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DeleteUserResponse {
 
-    private CommonSuccessResponse responseStatus;
-    private Long id;
+  private CommonSuccessResponse responseStatus;
+  private Long id;
 }
