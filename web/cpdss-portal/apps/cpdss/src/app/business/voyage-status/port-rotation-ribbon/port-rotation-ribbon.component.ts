@@ -127,7 +127,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
 
     port.isSelected = true;
     port.isFocused = true;
-    if (port?.eta && !port.etaActual) {
+    if ((port.type === 'Arrival' && port.etaActual) || (port.type === 'Departure' && port.etdActual)) {
       port.isFutureDate = false;
     }
     else {
@@ -161,16 +161,12 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     let currentPort = 0;
     for (let index = 0; index < this.portList.length; index++) {
       const port = this.portList[index]
-      if (!port.etaActual) {
-        currentPort = index - 1;
-        break;
+      if ((port.type === 'Arrival' && port.etaActual) || (port.type === 'Departure' && port.etdActual)) {
+        currentPort = index;
       }
     }
     if (currentPort < 0) {
       currentPort = 0;
-    }
-    if (currentPort % 2 === 0) {
-      currentPort += 1
     }
     this.portList[currentPort].currentPort = true;
   }
@@ -385,6 +381,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       "operationType": this.portList[0].type === 'Arrival' ? "ARR" : "DEP",
       "portId": this.portList[0].portId
     }
+    this.portList[0].isFocused = true;
+    this.portList[0].isSelected = true;
     this.portDetails.emit(portDetails);
   }
 
