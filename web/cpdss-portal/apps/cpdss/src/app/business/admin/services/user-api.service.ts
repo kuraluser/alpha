@@ -55,7 +55,7 @@ export class UserApiService {
   * @memberof UserApiService
   */
   deleteUser(userId: number): Observable<IUserDeleteResponse> {
-    return this.commonApiService.delete<IUserDeleteResponse>(`user/role/${userId}`)
+    return this.commonApiService.delete<IUserDeleteResponse>(`users/delete/${userId}`)
   }
 
 }

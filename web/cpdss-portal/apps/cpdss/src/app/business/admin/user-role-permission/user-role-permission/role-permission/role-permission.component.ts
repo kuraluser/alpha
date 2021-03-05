@@ -161,9 +161,9 @@ export class RolePermissionComponent implements OnInit {
     isCheckBoxIsReadOnly(node: any , parentNode: any) {
         let rootNodeStatus: boolean = false;
         parentNode.view ?  (node.isReadOnlyView = true , rootNodeStatus = true) : node.isReadOnlyView = false;
-        (parentNode.add || !parentNode.isAddVisible) && node.view ?  node.isReadOnlyAdd = true : (node.isReadOnlyAdd = false , node.add = false);
-        (parentNode.edit || !parentNode.isEditVisible) && node.view ?  node.isReadOnlyEdit = true : (node.isReadOnlyEdit = false , node.edit = false);
-        (parentNode.delete || !parentNode.isDeleteVisible) && node.view ?  node.isReadOnlyDelete = true : (node.isReadOnlyDelete = false , node.delete = false);
+        (parentNode.add || !parentNode.isAddVisible) && node.view && node.isAddVisible?  node.isReadOnlyAdd = true : (node.isReadOnlyAdd = false , node.add = false);
+        (parentNode.edit || !parentNode.isEditVisible) && node.view && node.isEditVisible ?  node.isReadOnlyEdit = true : (node.isReadOnlyEdit = false , node.edit = false);
+        (parentNode.delete || !parentNode.isDeleteVisible) && node.view && node.isDeleteVisible ?  node.isReadOnlyDelete = true : (node.isReadOnlyDelete = false , node.delete = false);
         node.rootNodeStatus = rootNodeStatus;
     }
 

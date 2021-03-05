@@ -64,20 +64,6 @@ export class UserTransformationService {
         filterField: 'role',
         sortable: true,
         sortField: 'role'
-      },
-      {
-        field: 'buttons',
-        header: '',
-        fieldType: DATATABLE_FIELD_TYPE.BUTTON,
-        buttons: [
-          {type: DATATABLE_BUTTON.RESETPASSWORD , field: 'isResetPassword' , icons: '' , class: '' , label: ''}
-        ]
-      },
-      {
-        field: 'actions',
-        header: '',
-        fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: []
       }
     ]
   }

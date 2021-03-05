@@ -11,5 +11,6 @@
     "AdminComponent": "ADMIN",
     "UserPermission": "USER_PERMISSION",
     "UserRoleListing": "USER_ROLE_LISTING",
-    "UserListingComponent": "ADMIN_USER_CREATION"
+    "UserListingComponent": "ADMIN_USER_CREATION",
+    "UserResetPassword": "ADMIN_RESET_PASSWORD"
 }

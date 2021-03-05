@@ -6,7 +6,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 
-import { IDataTableColumn, DATATABLE_ACTION } from '../../../../shared/components/datatable/datatable.model';
+import { IDataTableColumn, DATATABLE_ACTION , DATATABLE_FIELD_TYPE , DATATABLE_BUTTON } from '../../../../shared/components/datatable/datatable.model';
 import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
 import { IUserResponse, IUserDetails , IRoleDetails , IUserDetalisValueObject , IUserDeleteResponse } from '../../models/user.model';
 
@@ -95,11 +95,31 @@ export class UserListingComponent implements OnInit {
   */
   getPagePermission() {
     const permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['UserListingComponent']);
+    const permissionResetPassword = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['UserResetPassword'], false);
+    if(permissionResetPassword?.view) {
+      this.columns.push({
+        field: 'buttons',
+        header: '',
+        fieldType: DATATABLE_FIELD_TYPE.BUTTON,
+        buttons: [
+          {type: DATATABLE_BUTTON.RESETPASSWORD , field: 'isResetPassword' , icons: '' , class: '' , label: ''}
+        ]
+      })
+    }
+    const actions = [];
     if (permission.edit) {
-      this.columns[this.columns.length - 1]['actions'].push(DATATABLE_ACTION.EDIT);
+      actions.push(DATATABLE_ACTION.EDIT);
     }
     if (permission.delete) {
-      this.columns[this.columns.length - 1]['actions'].push(DATATABLE_ACTION.DELETE);
+      actions.push(DATATABLE_ACTION.DELETE);
+    }
+    if(actions.length) {
+      this.columns.push( {
+        field: 'actions',
+        header: '',
+        fieldType: DATATABLE_FIELD_TYPE.ACTION,
+        actions: actions
+      })
     }
   }
 
@@ -176,13 +196,13 @@ export class UserListingComponent implements OnInit {
    * @memberof ResetPasswordComponent
    */
   async onDeleteRow(event) {
-    const roleId = event.data?.id;
+    const userId = event.data?.id;
     this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'USER_DELETE_SUMMARY', detail: 'USER_DELETE_DETAILS', data: { confirmLabel: 'USER_DELETE_CONFIRM_LABEL', rejectLabel: 'USER_DELETE_REJECT_LABEL' } });
     this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
       if (response) {
         const translationKeys = await this.translateService.get(['USER_DELETE_SUCCESSFULLY', 'USER_DELETED_SUCCESS']).toPromise();
         this.ngxSpinnerService.show();
-        const roleDeleteRes: IUserDeleteResponse = await this.userApiService.deleteUser(roleId).toPromise();
+        const roleDeleteRes: IUserDeleteResponse = await this.userApiService.deleteUser(userId).toPromise();
         this.ngxSpinnerService.hide();
         if (roleDeleteRes.responseStatus.status === '200') {
           this.getUserDetails();
