@@ -32,6 +32,7 @@ import { NumberDirectiveModule } from '../../../shared/directives/number-directi
 import { UnitDropdownModule } from '../../../shared/components/unit-dropdown/unit-dropdown.module';
 import { QuantityPipeModule } from '../../../shared/pipes/quantity/quantity-pipe.module';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
+import { TableModule } from 'primeng/table';
 
 /**
  * Routing Module for Loadable Study Details Screen
@@ -62,7 +63,8 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
     CargoTankLayoutModule,
     NumberDirectiveModule,
     UnitDropdownModule,
-    QuantityPipeModule
+    QuantityPipeModule,
+    TableModule
   ],
   providers: [
     LoadableQuantityApiService, CommingleApiService, QuantityPipe, DatePipe
