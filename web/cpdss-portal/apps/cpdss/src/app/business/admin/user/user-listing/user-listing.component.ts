@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { first } from 'rxjs/operators';
+
 import { NgxSpinnerService } from 'ngx-spinner';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 
 import { IDataTableColumn, DATATABLE_ACTION } from '../../../../shared/components/datatable/datatable.model';
 import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
-import { IUserResponse, IUserDetails , IRoleDetails , IUserDetalisValueObject } from '../../models/user.model';
+import { IUserResponse, IUserDetails , IRoleDetails , IUserDetalisValueObject , IUserDeleteResponse } from '../../models/user.model';
 
 
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
-
+import { ConfirmationAlertService } from '../../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { UserTransformationService } from '../../services/user-transformation.service';
 import { UserApiService } from '../../services/user-api.service';
 
@@ -34,6 +36,7 @@ export class UserListingComponent implements OnInit {
   public editMode: boolean;
   public roles: IRoleDetails[]; 
   public addUser: boolean;
+  public resetPasswordPopup: boolean;
   public addUserBtnPermissionContext: IPermissionContext;
   public userForm: FormGroup;
   public popupStatus: string;
@@ -48,6 +51,7 @@ export class UserListingComponent implements OnInit {
     private userApiService: UserApiService,
     private userTransformationService: UserTransformationService,
     private permissionsService: PermissionsService,
+    private confirmationAlertService: ConfirmationAlertService,
   ) { }
 
   /**
@@ -57,8 +61,8 @@ export class UserListingComponent implements OnInit {
  * @memberof UserListingComponent
  */
   ngOnInit(): void {
-    this.getPagePermission();
     this.columns = this.userTransformationService.getRoleListDatatableColumns();
+    this.getPagePermission();
     this.getUserDetails();
     this.addUserBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['UserListingComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
   }
@@ -91,14 +95,22 @@ export class UserListingComponent implements OnInit {
   */
   getPagePermission() {
     const permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['UserListingComponent']);
+    if (permission.edit) {
+      this.columns[this.columns.length - 1]['actions'].push(DATATABLE_ACTION.EDIT);
+    }
+    if (permission.delete) {
+      this.columns[this.columns.length - 1]['actions'].push(DATATABLE_ACTION.DELETE);
+    }
   }
 
   /**
   * reset password 
+  * @param {any} data
   * @memberof UserListingComponent
   */
-  public resetPassword($event) {
-    const event = $event;
+  public resetPassword(data: any) {
+    this.userDetails = data.data;
+    this.resetPopupStatus(true);
   }
 
   /**
@@ -108,7 +120,7 @@ export class UserListingComponent implements OnInit {
  * @memberof UserListingComponent
  */
   async addUserPopUp(viewPopup: boolean , status: string) {
-    if (this.maxUserCount >= this.userList?.length) {
+    if (this.maxUserCount > this.userList?.length) {
       this.addUser = viewPopup;
       this.popupStatus = status;
     } else {
@@ -132,6 +144,15 @@ export class UserListingComponent implements OnInit {
     this.popupStatus = status;
     this.addUser = true;
   }
+  
+    /**
+ * reset popup show/hide status
+ * @param {boolean} status
+ * @memberof UserListingComponent
+ */
+  resetPopupStatus(status: boolean) {
+    this.resetPasswordPopup = status;
+  }
 
     /**
    * route to edit role details page while clicking cloumn
@@ -147,6 +168,28 @@ export class UserListingComponent implements OnInit {
     this.popupStatus = status;
     this.addUser = true;
   }
-
+  
+  
+    /**
+   * delete user 
+   * @param event 
+   * @memberof ResetPasswordComponent
+   */
+  async onDeleteRow(event) {
+    const roleId = event.data?.id;
+    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'USER_DELETE_SUMMARY', detail: 'USER_DELETE_DETAILS', data: { confirmLabel: 'USER_DELETE_CONFIRM_LABEL', rejectLabel: 'USER_DELETE_REJECT_LABEL' } });
+    this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
+      if (response) {
+        const translationKeys = await this.translateService.get(['USER_DELETE_SUCCESSFULLY', 'USER_DELETED_SUCCESS']).toPromise();
+        this.ngxSpinnerService.show();
+        const roleDeleteRes: IUserDeleteResponse = await this.userApiService.deleteUser(roleId).toPromise();
+        this.ngxSpinnerService.hide();
+        if (roleDeleteRes.responseStatus.status === '200') {
+          this.getUserDetails();
+          this.messageService.add({ severity: 'success', summary: translationKeys['USER_DELETED_SUCCESS'], detail: translationKeys['USER_DELETE_SUCCESSFULLY'] });
+        }
+      }
+    });
+  }
 
 }

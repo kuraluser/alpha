@@ -107,11 +107,12 @@ export class NavbarComponent implements OnInit {
       } */
 
     ];
-    let isUserPermissionAvailable = setInterval(() => {
+    const isUserPermissionAvailable = setInterval(() => {
       if(JSON.parse(window.localStorage.getItem('_USER_PERMISSIONS'))) {
         this.userPermission = JSON.parse(window.localStorage.getItem('_USER_PERMISSIONS'));
-        this.getPagePermission(menuList);
         clearInterval(isUserPermissionAvailable);
+        this.getPagePermission(menuList);
+        
       }
     },50);
   }
@@ -122,20 +123,35 @@ export class NavbarComponent implements OnInit {
    * @memberof NavbarComponent
    */
   getPagePermission(menuList) {
+    this.menuList = []
     const list = [...menuList];
-    list?.map((menuItem , index) => {
+    list?.map((menuItem:IMenuItem , index) => {
       const permission = this.getPermission(menuItem.permissionMapping);
+      const menuListItem = [];
       if((permission && permission?.view)) {
-        this.menuList.push(menuItem)
-      }
-      if(menuItem.subMenu.length) {
-        menuItem.subMenu?.map((subMenu, subMenuIndex) => { 
-          const subMenuPermission = this.getPermission(subMenu.permissionMapping);
-          if(subMenuPermission && subMenuPermission?.view) {
-            this.menuList[index]['subMenu'][subMenuIndex] = subMenu;
+        menuListItem.push({
+          menu: menuItem.menu,
+          menuIcon: menuItem.menuIcon,
+          menuLink: menuItem.menuLink,
+          subMenu: [],
+          isSubMenuOpen: menuItem.isSubMenuOpen,
+          permissionMapping: menuItem.permissionMapping
+        });
+        if(menuItem.subMenu.length) {
+          menuItem.subMenu?.map((subMenu, subMenuIndex) => { 
+            const subMenuPermission = this.getPermission(subMenu.permissionMapping);
+            if(subMenuPermission && subMenuPermission?.view) {
+              menuListItem[0]['subMenu'].push(subMenu);
+            }
+          })
+          if(menuListItem[0]['subMenu']?.length) {
+            this.menuList = [...this.menuList , ...menuListItem];
           }
-        })
+        } else {
+          this.menuList = [...this.menuList , ...menuListItem];
+        }
       }
+      
     });
   }
 
@@ -155,7 +171,7 @@ export class NavbarComponent implements OnInit {
    * Display submenu when clicked
    */
   showSubmenu(list, index) {
-    this.menuList?.map((list: IMenuItem) => list.isSubMenuOpen = false);
+    this.menuList?.map((menuItem: IMenuItem) => menuItem.isSubMenuOpen = false);
     if (list.length > 0) {
       this.menuList[index].isSubMenuOpen = true;
     }
@@ -165,7 +181,7 @@ export class NavbarComponent implements OnInit {
    * Hide submenu on focus out
    */
   hide(list, index) {
-    this.menuList?.map((list: IMenuItem) => list.isSubMenuOpen = false);
+    this.menuList?.map((menuItem: IMenuItem) => menuItem.isSubMenuOpen = false);
   }
   /**
    * Change theme on button click

@@ -101,3 +101,33 @@ export enum USER_POPUP_SELECTIONMODE {
     EDIT = 'EDIT',
     VIEW = 'VIEW'
 }
+
+/**
+ * Interface for reset password model
+ * @export
+ * @interface IResetPasswordModel
+ */
+export interface IResetPasswordModel {
+    userId: number;
+    password: string;
+}
+
+/**
+ * Interface for reset password response
+ *
+ * @export
+ * @interface IResetPasswordResponse
+*/
+export interface IResetPasswordResponse {
+    responseStatus: IResponseStatus;
+    id: number;
+}
+
+/**
+ * Interface for delete user response
+ * @export
+ * @interface IUserDeleteResponse
+*/
+export interface IUserDeleteResponse {
+    responseStatus: IResponseStatus;
+}

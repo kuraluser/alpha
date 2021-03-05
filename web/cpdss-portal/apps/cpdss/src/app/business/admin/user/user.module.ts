@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
@@ -11,7 +12,8 @@ import { ValidationErrorModule } from '../../../shared/components/validation-err
 
 import { UserRoutingModule } from './user-routing.module'
 import { UserListingComponent } from './user-listing/user-listing.component';
-import { AddUserComponent } from './add-user/add-user.component'
+import { AddUserComponent } from './add-user/add-user.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component'
 
 /**
  * Module class User Module
@@ -20,9 +22,10 @@ import { AddUserComponent } from './add-user/add-user.component'
  * @class UserModule
  */
 @NgModule({
-  declarations: [UserListingComponent, AddUserComponent],
+  declarations: [UserListingComponent, AddUserComponent, ResetPasswordComponent],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     DialogModule,
     DropdownModule,
     FocusTrapModule,
