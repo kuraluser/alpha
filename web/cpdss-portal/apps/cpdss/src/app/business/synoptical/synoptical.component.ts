@@ -64,7 +64,7 @@ export class SynopticalComponent implements OnInit {
     this.synopticalService.selectedLoadablePattern = null;
     this.synopticalService.loadablePatternId = null; 
     this.synopticalService.getLoadableStudyInfo(this.synopticalService.vesselInfo?.id, this.synopticalService.selectedVoyage.id);
-    this.router.navigateByUrl('/business/synoptical')
+    this.router.navigateByUrl('/business/synoptical/' + this.synopticalService.vesselInfo.id + '/' + this.synopticalService.selectedVoyage.id)
   }
 
   /**

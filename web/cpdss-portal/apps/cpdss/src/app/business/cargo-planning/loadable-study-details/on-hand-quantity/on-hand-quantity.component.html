@@ -110,7 +110,7 @@
                                         <input type="text" cpdssPortalNumberDecimal class="form-control"
                                             formControlName="density"
                                             (change)="onChange($event, selectedTankFormGroupIndex, 'density')"
-                                            [readOnly]="!permission?.edit">
+                                            [readOnly]="!editMode">
                                         <cpdss-portal-validation-error
                                             [errors]="fieldError(selectedTankFormGroupIndex, 'density')| async"
                                             [errorMessages]="getErrorMessages('density')">
@@ -128,7 +128,7 @@
                                         <input type="text" cpdssPortalNumberDecimal class="form-control"
                                             formControlName="arrivalQuantity"
                                             (change)="onChange($event, selectedTankFormGroupIndex, 'arrivalQuantity')"
-                                            [readOnly]="!permission?.edit">
+                                            [readOnly]="!editMode">
                                         <cpdss-portal-validation-error
                                             [errors]="fieldError(selectedTankFormGroupIndex, 'arrivalQuantity')| async"
                                             [errorMessages]="getErrorMessages('arrivalQuantity')">
@@ -145,7 +145,7 @@
                                         <input type="text" cpdssPortalNumberDecimal class="form-control"
                                             formControlName="departureQuantity"
                                             (change)="onChange($event, selectedTankFormGroupIndex, 'departureQuantity')"
-                                            [readOnly]="!permission?.edit">
+                                            [readOnly]="!editMode">
                                         <cpdss-portal-validation-error
                                             [errors]="fieldError(selectedTankFormGroupIndex, 'departureQuantity')| async"
                                             [errorMessages]="getErrorMessages('departureQuantity')">
