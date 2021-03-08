@@ -124,13 +124,11 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       ports.isSelected = false;
       port.isFocused = false;
     });
-
     port.isSelected = true;
     port.isFocused = true;
     if ((port.type === 'Arrival' && port.etaActual) || (port.type === 'Departure' && port.etdActual)) {
       port.isFutureDate = false;
-    }
-    else {
+    } else {
       port.isFutureDate = true;
     }
   }

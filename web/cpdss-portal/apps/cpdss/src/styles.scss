@@ -316,7 +316,7 @@ a {
 
 .cargo-nomiantion-tab{
   .tab-btn {
-    padding: 20px;
+    padding: 20px 15px;
     font-size: $sub-heading-font-size;
     text-transform: uppercase;
     text-align: center;
@@ -1845,12 +1845,16 @@ height: 15px;
       text-align: left;
       padding-left: 3px;
       top: 7px;
+      left: 13px;
     }
     .tank-filling-percentage{
       position: absolute;
       top: 14px;
       left: 5px;
       bottom: auto;
+      }
+      .tank-btn-rounded{
+        margin-left: 5px;
       }
     }
   }
@@ -1900,6 +1904,9 @@ height: 15px;
     &:after, &:before{
       display: none;
     }
+    &.empty{
+      margin-top: -68px!important;
+    }
 }
 
 .p-overlaypanel.tank-tooltip{
@@ -1916,12 +1923,21 @@ height: 15px;
 
   .p-overlaypanel.tank-tooltip.ballast-tooltip{
     margin-top: -130px!important;
+    &.empty{
+      margin-top: -68px!important;
+    }
   }
   .p-overlaypanel.tank-tooltip.tank-ohq-tooltip{
     margin-top: -130px!important;
+    &.empty{
+      margin-top: -68px!important;
+    }
   }
   .p-overlaypanel.tank-tooltip.tank-ohq-tooltip-rear{
     margin-top: -115px!important;
+    &.empty{
+      margin-top: -68px!important;
+    }
   }
 
 .tank-btn-rounded{
@@ -2153,3 +2169,11 @@ width: 50px !important;
    }
  }
 } 
+
+.tank-wrapper-obq{
+  .tank-inner-wrapper-pattern .tank-column-pattern > div{
+    .tank-btn-rounded{
+      margin-left: 3px;
+    }
+  }
+}

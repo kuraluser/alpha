@@ -15,7 +15,7 @@
                         </div>
                         <div class="col text-right">
                             <label class="checkbox-custom">{{'OBQ_SLOP_TANK_LOAD_ON_TOP' | translate}}
-                                <input type="checkbox" formControlName="loadOnTop" (change)="toggleLoadOnTop($event)" [readonly]="!permission?.edit">
+                                <input type="checkbox" formControlName="loadOnTop" (change)="toggleLoadOnTop($event)" [attr.disabled]="!editMode ? true : null">
                                 <span class="checkmark"></span>
                             </label>
                         </div>
@@ -83,7 +83,7 @@
                             <label for="" class="col-12 text-center">{{'OBQ_API'| translate}}</label>
                             <div class="col">
                                 <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="api"
-                                    (change)="onChange($event,'api')" [readonly]="isEditable">
+                                    (change)="onChange($event,'api')" [readonly]="!editMode">
                                 <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'api')"
                                     [errorMessages]="getErrorMessages('api')">
                                 </cpdss-portal-validation-error>
@@ -95,7 +95,7 @@
                             <label for="" class="col-12 text-center">{{'OBQ_QUANTITY'| translate}}</label>
                             <div class="col">
                                 <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="quantity"
-                                    (change)="onChange($event,'quantity')" [readonly]="isEditable">
+                                    (change)="onChange($event,'quantity')" [readonly]="!editMode">
                                 <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'quantity')"
                                     [errorMessages]="getErrorMessages('quantity')">
                                 </cpdss-portal-validation-error>
