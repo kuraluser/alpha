@@ -27,14 +27,15 @@ public interface LoadablePatternRepository extends CommonCrudRepository<Loadable
 
   @Transactional
   @Modifying
-  @Query(
-      "UPDATE LoadablePattern SET loadableStudyStatus = ?1 WHERE loadableStudy IN (SELECT LS FROM LoadableStudy LS where LS.voyage.id = ?2)")
-  public void updateLoadablePatternStatusToPlanGenerated(Long loadableStudyStatusId, Long voyageId);
+  @Query("UPDATE LoadablePattern SET loadableStudyStatus = ?1 WHERE id = ?2")
+  public void updateLoadablePatternStatusToPlanGenerated(
+      Long loadableStudyStatusId, Long loadablePatternId);
 
   @Transactional
   @Modifying
-  @Query("UPDATE LoadableStudy SET loadableStudyStatus.id = ?1 WHERE voyage.id = ?2")
-  public void updateLoadableStudyStatusToPlanGenerated(Long loadableStudyStatusId, Long voyageId);
+  @Query("UPDATE LoadableStudy SET loadableStudyStatus.id = ?1 WHERE id = ?2")
+  public void updateLoadableStudyStatusToPlanGenerated(
+      Long loadableStudyStatusId, Long loadableStudyId);
 
   @Transactional
   @Modifying

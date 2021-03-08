@@ -1666,6 +1666,7 @@ public class LoadableStudyController {
           e);
     }
   }
+
   @PostMapping(
       value = "/vessels/{vesselId}/voyages/{voyageId}",
       consumes = MediaType.APPLICATION_JSON_VALUE,

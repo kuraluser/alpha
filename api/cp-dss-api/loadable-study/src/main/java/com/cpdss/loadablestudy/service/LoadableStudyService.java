@@ -6150,8 +6150,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 request.getVoyageId(), CONFIRMED_STATUS_ID, true);
         if (!loadablePatternConfirmedOpt.isEmpty()) {
           // set confirm status to false since some other plan is already confirmed
+          log.info("other plan is in confirmed status");
           replyBuilder.setConfirmed(false);
         } else {
+          log.info("confirming selected plan");
           loadablePatternRepository.updateLoadablePatternStatus(
               CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
           loadableStudyRepository.updateLoadableStudyStatus(
@@ -6199,15 +6201,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 CONFIRMED_STATUS_ID,
                 true);
         if (!loadablePatternConfirmedOpt.isEmpty()) {
-
+          log.info("changing status of other confirmed plan to plan generated");
           loadablePatternRepository.updateLoadablePatternStatusToPlanGenerated(
-              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
-              loadablePatternConfirmedOpt.get(0).getLoadableStudy().getVoyage().getId());
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadablePatternConfirmedOpt.get(0).getId());
           loadablePatternRepository.updateLoadableStudyStatusToPlanGenerated(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
-              loadablePatternConfirmedOpt.get(0).getLoadableStudy().getVoyage().getId());
+              loadablePatternConfirmedOpt.get(0).getLoadableStudy().getId());
         }
-
+        log.info("confirming selected plan");
         loadablePatternRepository.updateLoadablePatternStatus(
             CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
         loadableStudyRepository.updateLoadableStudyStatus(
