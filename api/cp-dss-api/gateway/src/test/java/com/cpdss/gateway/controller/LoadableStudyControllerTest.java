@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.AlgoPatternResponse;
@@ -804,6 +805,7 @@ class LoadableStudyControllerTest {
     request.setFuelTypeId(1L);
     request.setTankId(1L);
     request.setLoadableStudyId(1L);
+    request.setDensity(TEST_BIGDECIMAL_VALUE);
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(request);
   }
@@ -1663,9 +1665,13 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {GET_SYNOPTICAL_TABLE_CLOUD_API_URL, GET_SYNOPTICAL_TABLE_SHIP_API_URL})
   @ParameterizedTest
   void testSaveSynopticalTable(String url) throws Exception {
+    SynopticalTableResponse response = new SynopticalTableResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(
+            String.valueOf(HttpStatusCode.OK.value()), CORRELATION_ID_HEADER_VALUE));
     when(this.loadableStudyService.saveSynopticalTable(
             any(SynopticalTableRequest.class), anyLong(), anyLong(), anyLong(), anyString()))
-        .thenReturn(new SynopticalTableResponse());
+        .thenReturn(response);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.post(

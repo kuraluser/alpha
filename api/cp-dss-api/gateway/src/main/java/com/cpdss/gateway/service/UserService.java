@@ -1,28 +1,13 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.service;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.FilterCriteria;
-import com.cpdss.gateway.domain.Permission;
-import com.cpdss.gateway.domain.PermissionResponse;
-import com.cpdss.gateway.domain.Resource;
-import com.cpdss.gateway.domain.Role;
-import com.cpdss.gateway.domain.RolePermission;
-import com.cpdss.gateway.domain.RolePermissions;
-import com.cpdss.gateway.domain.RoleResponse;
-import com.cpdss.gateway.domain.RoleScreen;
-import com.cpdss.gateway.domain.RolesSpecification;
-import com.cpdss.gateway.domain.ScreenData;
-import com.cpdss.gateway.domain.ScreenInfo;
-import com.cpdss.gateway.domain.ScreenResponse;
-import com.cpdss.gateway.domain.ShipLoginRequest;
-import com.cpdss.gateway.domain.ShipLoginResponse;
-import com.cpdss.gateway.domain.User;
-import com.cpdss.gateway.domain.UserAuthorizationsResponse;
-import com.cpdss.gateway.domain.UserResponse;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.entity.RoleUserMapping;
 import com.cpdss.gateway.entity.Roles;
 import com.cpdss.gateway.entity.Screen;
@@ -35,15 +20,15 @@ import com.cpdss.gateway.repository.ScreenRepository;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.ship.ShipJwtService;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -51,6 +36,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -73,6 +59,8 @@ public class UserService {
 
   @Autowired private ShipJwtService jwtService;
 
+  @Autowired private PasswordEncoder passwordEncoder;
+
   private static final String SUCCESS = "SUCCESS";
 
   private static final String FAILED = "FAILED";
@@ -80,6 +68,21 @@ public class UserService {
   @Autowired private RoleUserMappingRepository roleUserMappingRepository;
 
   private static final String SHIP_URL_PREFIX = "/api/ship";
+
+  @Value("${ship.max.user.count}")
+  private int maxShipUserCount;
+
+  @Value("${ship.user.password-age}")
+  private Integer PASSWORD_AGE;
+
+  @Value("${ship.user.password-length-min}")
+  private Integer passwordMinLength;
+
+  @Value("${ship.user.password-length-max}")
+  private Integer passwordMaxLength;
+
+  @Value("${ship.user.password-reminder}")
+  private Integer PASSWORD_EXPIRE_REMINDER;
 
   /**
    * Retrieves the user information from user database
@@ -272,7 +275,7 @@ public class UserService {
       if (!innerList.isEmpty()) {
         inner.getChilds().addAll(innerList);
       } else {
-        break;
+        continue;
       }
     }
     return list;
@@ -330,7 +333,7 @@ public class UserService {
       String sortBy,
       String orderBy) {
 
-    //      Filter
+    // Filter
     Specification<Roles> specification =
         Specification.where(
                 new RolesSpecification(new FilterCriteria("companyXId", ":", companyId)))
@@ -343,7 +346,7 @@ public class UserService {
           specification.and(new RolesSpecification(new FilterCriteria(filterKey, "like", value)));
     }
 
-    //      Paging and sorting
+    // Paging and sorting
     Pageable paging =
         PageRequest.of(
             page, pageSize, Sort.by(Sort.Direction.valueOf(orderBy.toUpperCase()), sortBy));
@@ -383,12 +386,32 @@ public class UserService {
     UserResponse userResponse = new UserResponse();
     if (this.isShip()) {
       userResponse.setUsers(this.findShipUsers());
+      userResponse.setMaxUserCount(this.maxShipUserCount);
     } else {
       // TODO the shore users has to be fetched from keycloak
     }
+    List<Roles> roles = this.rolesRepository.findByIsActiveOrderByName(true);
+    userResponse.setRoles(this.buildRoles(roles));
     userResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return userResponse;
+  }
+
+  /**
+   * Build role dto list
+   *
+   * @param roles
+   * @return
+   */
+  private List<Role> buildRoles(List<Roles> roles) {
+    List<Role> roleList = new ArrayList<>();
+    for (Roles role : roles) {
+      Role roleDto = new Role();
+      roleDto.setId(role.getId());
+      roleDto.setName(role.getName());
+      roleList.add(roleDto);
+    }
+    return roleList;
   }
 
   /**
@@ -411,6 +434,7 @@ public class UserService {
             if (null != userEntity.getRoles()) {
               user.setRole(userEntity.getRoles().getName());
             }
+            user.setDefaultUser(userEntity.getIsShipUser());
             userList.add(user);
           });
     }
@@ -460,13 +484,12 @@ public class UserService {
       screenIds.add(screenInfo.getId());
     }
 
-    List<RoleUserMapping> roleUserList =
-        this.roleUserRepository.findByRolesAndIsActive(role.get().getId(), true);
-    if (roleUserList != null && !roleUserList.isEmpty()) {
-      roleUserList.forEach(
-          a -> {
-            a.setIsActive(false);
-          });
+    if (permission.getDeselectedUserId() != null) {
+      List<RoleUserMapping> roleUserList =
+          this.roleUserRepository.findByRolesAndIsActive(role.get().getId(), true);
+      roleUserList.stream()
+          .filter(ru -> permission.getDeselectedUserId().contains(ru.getUsers().getId()))
+          .forEach(roleUser -> roleUser.setIsActive(false));
     }
 
     List<Screen> screens =
@@ -602,24 +625,46 @@ public class UserService {
   }
 
   /**
-   * Generate JWT token for ship
+   * Generate Jwt Token, Password Expire Notification
    *
-   * @param username
+   * @param request
+   * @param correlationId
    * @return
    * @throws GenericServiceException
    */
   public ShipLoginResponse generateShipUserToken(ShipLoginRequest request, String correlationId)
       throws GenericServiceException {
+
+    ShipLoginResponse response = new ShipLoginResponse();
     Users user = this.usersRepository.findByUsernameAndIsActive(request.getUsername(), true);
     if (null == user) {
       throw new GenericServiceException(
           "User does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
     }
+    validatePasswordExpiry(user);
     user.setLastLoginDate(LocalDateTime.now());
     this.usersRepository.save(user);
-    return new ShipLoginResponse(
-        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId),
-        this.jwtService.generateToken(user));
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    response.setToken(this.jwtService.generateToken(user));
+    if (user.getPasswordExpiryDate() != null) { // Password expire reminder
+      LocalDateTime timeNow = LocalDateTime.now();
+      long daysDiff = DAYS.between(timeNow, user.getPasswordExpiryDate());
+      if (daysDiff <= PASSWORD_EXPIRE_REMINDER) {
+        response.setExpiryReminder(new PasswordExpiryReminder(daysDiff + 1));
+      }
+    }
+    return response;
+  }
+
+  private void validatePasswordExpiry(Users users) throws GenericServiceException {
+    if (users.getPasswordExpiryDate() != null
+        && LocalDateTime.now().isAfter(users.getPasswordExpiryDate())) {
+      throw new GenericServiceException(
+          "Password expired on " + users.getPasswordExpiryDate(),
+          CommonErrorCodes.E_CPDSS_PASSWORD_EXPIRED,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
   }
 
   /**
@@ -634,6 +679,190 @@ public class UserService {
       this.usersRepository.save(user);
     } else {
       log.info("User doesn't exist with username: {}", request.getUsername());
+    }
+  }
+
+  /**
+   * Save user
+   *
+   * @param request
+   * @param correlationId
+   * @return
+   * @throws GenericServiceException
+   */
+  public UserResponse saveUser(User request, String correlationId) throws GenericServiceException {
+    UserResponse response = new UserResponse();
+    if (this.isShip()) {
+      Users entity = null;
+      if (0 != request.getId()) {
+        entity = this.usersRepository.findByIdAndIsActive(request.getId(), true);
+        if (null == entity) {
+          throw new GenericServiceException(
+              "User does not exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+      } else {
+        this.validateShipMaxUserCount();
+        entity = new Users();
+        entity.setActive(true);
+        entity.setLoginSuspended(false);
+        entity.setIsShipUser(false);
+      }
+      this.checkUsernameDuplicate(request);
+      entity.setUsername(request.getUsername());
+      entity.setFirstName(request.getFirstName());
+      entity.setLastName(request.getLastName());
+      entity.setDesignation(request.getDesignation());
+      entity.setRoles(this.rolesRepository.getOne(request.getRoleId()));
+      if (null != request.getIsLoginSuspended()) {
+        entity.setLoginSuspended(request.getIsLoginSuspended());
+      }
+      entity = this.usersRepository.save(entity);
+      response.setId(entity.getId());
+    }
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * Check if max user count is reached for the given ship
+   *
+   * @throws GenericServiceException
+   */
+  private void validateShipMaxUserCount() throws GenericServiceException {
+    List<Users> userList = this.usersRepository.findByIsActive(true);
+    if (userList.size() >= this.maxShipUserCount) {
+      throw new GenericServiceException(
+          "Maximum ship user count reached",
+          CommonErrorCodes.E_CPDSS_MAX_SHIP_USER_COUNT_ERR,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  /**
+   * Check for duplicate user name
+   *
+   * @param request
+   * @throws GenericServiceException
+   */
+  private void checkUsernameDuplicate(User request) throws GenericServiceException {
+    Users duplicate = this.usersRepository.findByUsernameAndIsActive(request.getUsername(), true);
+    // if new user
+    if (request.getId() == 0) {
+      if (null != duplicate) {
+        throw new GenericServiceException(
+            "Username already in use",
+            CommonErrorCodes.E_CPDSS_USERNAME_IN_USE,
+            HttpStatusCode.BAD_REQUEST);
+      }
+    } else if (null != duplicate && !request.getId().equals(duplicate.getId())) {
+      // if the username has changed, and any users exist with changed username
+      throw new GenericServiceException(
+          "Username already in use",
+          CommonErrorCodes.E_CPDSS_USERNAME_IN_USE,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  @Transactional
+  public boolean resetPassword(String password, Long userId) throws GenericServiceException {
+    boolean response = false;
+    if (validatePasswordPolicies(userId, password)) {
+      String encodedPassword = passwordEncoder.encode(password);
+      LocalDateTime dateTime = LocalDateTime.now();
+      int status =
+          this.usersRepository.updateUserPasswordExpireDateAndTime(
+              userId, encodedPassword, dateTime.plusDays(PASSWORD_AGE), dateTime);
+      response = status > 0;
+      log.info("reset password for user id - {}" + (response ? "success" : "failed!"), userId);
+    }
+    return response;
+  }
+
+  /**
+   * password policies: DSS-1155 1. Age for each password, from properties (0-9999) 2. Length of
+   * password (8 character) 3. Complexity 3.1. Cannot contain username 3.2. At least 3 of the case
+   * must have (Lower-case, Upper-case, Number, Symbols)
+   *
+   * @return
+   */
+  private boolean validatePasswordPolicies(Long userId, String password)
+      throws GenericServiceException {
+    Optional<Users> users = usersRepository.findById(userId);
+    if (users.isPresent()) {
+      boolean firstNameCheck =
+          users.get().getFirstName() == null
+              ? false
+              : password.contains(users.get().getFirstName());
+      boolean lastNameCheck =
+          users.get().getLastName() == null ? false : password.contains(users.get().getLastName());
+      boolean userNameCheck =
+          users.get().getUsername() == null ? false : password.contains(users.get().getUsername());
+      if (!firstNameCheck && !lastNameCheck && !userNameCheck) {
+        validateRegularExpression(password);
+        return true;
+      } else {
+        throw new GenericServiceException(
+            "Password cannot contain first name/last name",
+            CommonErrorCodes.E_CPDSS_PASSWORD_POLICIES_VIOLATION_1,
+            HttpStatusCode.BAD_REQUEST);
+      }
+    } else {
+      throw new GenericServiceException(
+          "User not found for ID: " + userId,
+          CommonErrorCodes.E_CPDSS_INVALID_USER,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  public void validateRegularExpression(String password) throws GenericServiceException {
+    List<String> regexList =
+        Arrays.asList(
+            "^(?=.*[0-9])(?=\\S+$).{"
+                + passwordMinLength
+                + ","
+                + passwordMaxLength
+                + "}$", // Check for if any
+            // number + no white
+            // space + length
+            "^(?=.*[a-z])(?=\\S+$).{"
+                + passwordMinLength
+                + ","
+                + passwordMaxLength
+                + "}$", // Check for if any
+            // small letter + no
+            // white space + length
+            "^(?=.*[A-Z])(?=\\S+$).{"
+                + passwordMinLength
+                + ","
+                + passwordMaxLength
+                + "}$", // Check for if any
+            // capital letter + no
+            // white space + length
+            "^(?=.*[@#$%&*])(?=\\S+$).{"
+                + passwordMinLength
+                + ","
+                + passwordMaxLength
+                + "}$" // Check for if any
+            // special character
+            // + no white space
+            // + length
+            );
+    int total = 0;
+    for (String regex : regexList) {
+      Pattern pattern = Pattern.compile(regex);
+      Matcher matcher = pattern.matcher(password);
+      if (matcher.matches()) {
+        total = total + 1;
+      }
+    }
+    if (total < 3) {
+      throw new GenericServiceException(
+          "Passwords must use at least three of the four available character types: lowercase letters, uppercase letters, numbers, and symbols",
+          CommonErrorCodes.E_CPDSS_PASSWORD_POLICIES_VIOLATION_2,
+          HttpStatusCode.BAD_REQUEST);
     }
   }
 }

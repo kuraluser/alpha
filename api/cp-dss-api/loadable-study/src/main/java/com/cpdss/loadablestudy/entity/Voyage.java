@@ -51,6 +51,12 @@ public class Voyage extends EntityDoc {
   @Column(name = "voyage_end_date")
   private LocalDateTime voyageEndDate;
 
+  @Column(name = "actual_start_date")
+  private LocalDateTime actualStartDate;
+
+  @Column(name = "actual_end_date")
+  private LocalDateTime actualEndDate;
+
   @ManyToOne
   @JoinColumn(name = "voyage_status")
   private VoyageStatus voyageStatus;

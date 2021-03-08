@@ -18,4 +18,6 @@ public interface RolesRepository
       Long companyXId, String name, boolean isActive);
 
   public Roles findByNameIgnoreCaseAndIsActive(String name, boolean isActive);
+
+  public List<Roles> findByIsActiveOrderByName(Boolean isActive);
 }

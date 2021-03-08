@@ -8,6 +8,7 @@ import lombok.Data;
 public class LoadablePlanPortWiseDetails {
   private Long portId;
   private String portCode;
+  private Long portRotationId;
   private LoadablePlanDetailsResponse arrivalCondition;
   private LoadablePlanDetailsResponse departureCondition;
 }

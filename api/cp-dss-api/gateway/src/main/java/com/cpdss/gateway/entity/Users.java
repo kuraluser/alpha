@@ -101,4 +101,13 @@ public class Users extends EntityDoc {
 
   @Column(name = "is_login_suspended")
   private Boolean loginSuspended;
+
+  @Column(name = "password_expire_date")
+  private LocalDateTime passwordExpiryDate;
+
+  @Column(name = "password_update_date")
+  private LocalDateTime passwordUpdateDate;
+
+  @Column(name = "is_ship_user")
+  private Boolean isShipUser;
 }

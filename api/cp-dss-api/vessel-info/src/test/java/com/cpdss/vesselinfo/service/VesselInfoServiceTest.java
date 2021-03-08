@@ -21,6 +21,7 @@ import com.cpdss.vesselinfo.entity.ShearingForce;
 import com.cpdss.vesselinfo.entity.StationValues;
 import com.cpdss.vesselinfo.entity.TankCategory;
 import com.cpdss.vesselinfo.entity.UllageTableData;
+import com.cpdss.vesselinfo.entity.UllageTrimCorrection;
 import com.cpdss.vesselinfo.entity.Vessel;
 import com.cpdss.vesselinfo.entity.VesselDraftCondition;
 import com.cpdss.vesselinfo.entity.VesselTank;
@@ -44,6 +45,7 @@ import io.grpc.internal.testing.StreamRecorder;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
@@ -151,6 +153,7 @@ class VesselInfoServiceTest {
   @Test
   void testGetVesselDetailsForAlgo() {
     Vessel vessel = new Vessel();
+    this.setUllageTrimCorrections(vessel);
     when(this.vesselRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(vessel);
     when(this.vesselDraftConditionRepository.findByVesselAndIsActive(
             any(Vessel.class), anyBoolean()))
@@ -186,6 +189,27 @@ class VesselInfoServiceTest {
     assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  private void setUllageTrimCorrections(Vessel vessel) {
+    vessel.setUllageTrimCorrections(new HashSet<>());
+    UllageTrimCorrection correction = new UllageTrimCorrection();
+    correction.setId(TEST_ID);
+    correction.setTrim0(BigDecimal.ONE);
+    correction.setTrim1(BigDecimal.ONE);
+    correction.setTrim2(BigDecimal.ONE);
+    correction.setTrim3(BigDecimal.ONE);
+    correction.setTrim4(BigDecimal.ONE);
+    correction.setTrim5(BigDecimal.ONE);
+    correction.setTrim6(BigDecimal.ONE);
+    correction.setTrimM1(BigDecimal.ONE);
+    correction.setTrimM2(BigDecimal.ONE);
+    correction.setTrimM3(BigDecimal.ONE);
+    correction.setTrimM4(BigDecimal.ONE);
+    correction.setTrimM5(BigDecimal.ONE);
+    correction.setUllageDepth(BigDecimal.ONE);
+    correction.setIsActive(true);
+    vessel.getUllageTrimCorrections().add(correction);
   }
 
   @Test
