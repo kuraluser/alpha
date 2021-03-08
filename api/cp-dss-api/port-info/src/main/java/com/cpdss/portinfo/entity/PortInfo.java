@@ -5,11 +5,7 @@ import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -79,4 +75,9 @@ public class PortInfo extends EntityDoc {
 
   @Column(name = "lw_tide_time_to")
   private LocalTime lwTideTimeTo;
+
+  // bi-directional many-to-one association to Timezone
+  @ManyToOne
+  @JoinColumn(name = "timezone_xid")
+  private Timezone timezone;
 }

@@ -151,6 +151,37 @@ public final class PortInfoServiceGrpc {
     return getGetPortInfoDetailsForAlgoMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.PortEmptyRequest,
+      com.cpdss.common.generated.PortInfo.TimezoneResponse> getGetTimezoneMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetTimezone",
+      requestType = com.cpdss.common.generated.PortInfo.PortEmptyRequest.class,
+      responseType = com.cpdss.common.generated.PortInfo.TimezoneResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.PortEmptyRequest,
+      com.cpdss.common.generated.PortInfo.TimezoneResponse> getGetTimezoneMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.PortEmptyRequest, com.cpdss.common.generated.PortInfo.TimezoneResponse> getGetTimezoneMethod;
+    if ((getGetTimezoneMethod = PortInfoServiceGrpc.getGetTimezoneMethod) == null) {
+      synchronized (PortInfoServiceGrpc.class) {
+        if ((getGetTimezoneMethod = PortInfoServiceGrpc.getGetTimezoneMethod) == null) {
+          PortInfoServiceGrpc.getGetTimezoneMethod = getGetTimezoneMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.PortInfo.PortEmptyRequest, com.cpdss.common.generated.PortInfo.TimezoneResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetTimezone"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.PortInfo.PortEmptyRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.PortInfo.TimezoneResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new PortInfoServiceMethodDescriptorSupplier("GetTimezone"))
+              .build();
+        }
+      }
+    }
+    return getGetTimezoneMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -227,6 +258,13 @@ public final class PortInfoServiceGrpc {
       asyncUnimplementedUnaryCall(getGetPortInfoDetailsForAlgoMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void getTimezone(com.cpdss.common.generated.PortInfo.PortEmptyRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.TimezoneResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getGetTimezoneMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -257,6 +295,13 @@ public final class PortInfoServiceGrpc {
                 com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
                 com.cpdss.common.generated.PortInfo.PortReply>(
                   this, METHODID_GET_PORT_INFO_DETAILS_FOR_ALGO)))
+          .addMethod(
+            getGetTimezoneMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.PortInfo.PortEmptyRequest,
+                com.cpdss.common.generated.PortInfo.TimezoneResponse>(
+                  this, METHODID_GET_TIMEZONE)))
           .build();
     }
   }
@@ -306,6 +351,14 @@ public final class PortInfoServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getGetPortInfoDetailsForAlgoMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void getTimezone(com.cpdss.common.generated.PortInfo.PortEmptyRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.TimezoneResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetTimezoneMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -348,6 +401,13 @@ public final class PortInfoServiceGrpc {
     public com.cpdss.common.generated.PortInfo.PortReply getPortInfoDetailsForAlgo(com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetPortInfoDetailsForAlgoMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public com.cpdss.common.generated.PortInfo.TimezoneResponse getTimezone(com.cpdss.common.generated.PortInfo.PortEmptyRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetTimezoneMethod(), getCallOptions(), request);
     }
   }
 
@@ -396,12 +456,21 @@ public final class PortInfoServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetPortInfoDetailsForAlgoMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.PortInfo.TimezoneResponse> getTimezone(
+        com.cpdss.common.generated.PortInfo.PortEmptyRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetTimezoneMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_PORT_INFO = 0;
   private static final int METHODID_GET_PORT_INFO_BY_CARGO_ID = 1;
   private static final int METHODID_GET_PORT_INFO_BY_PORT_IDS = 2;
   private static final int METHODID_GET_PORT_INFO_DETAILS_FOR_ALGO = 3;
+  private static final int METHODID_GET_TIMEZONE = 4;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -435,6 +504,10 @@ public final class PortInfoServiceGrpc {
         case METHODID_GET_PORT_INFO_DETAILS_FOR_ALGO:
           serviceImpl.getPortInfoDetailsForAlgo((com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>) responseObserver);
+          break;
+        case METHODID_GET_TIMEZONE:
+          serviceImpl.getTimezone((com.cpdss.common.generated.PortInfo.PortEmptyRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.TimezoneResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -501,6 +574,7 @@ public final class PortInfoServiceGrpc {
               .addMethod(getGetPortInfoByCargoIdMethod())
               .addMethod(getGetPortInfoByPortIdsMethod())
               .addMethod(getGetPortInfoDetailsForAlgoMethod())
+              .addMethod(getGetTimezoneMethod())
               .build();
         }
       }
