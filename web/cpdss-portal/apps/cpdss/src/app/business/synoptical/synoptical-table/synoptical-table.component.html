@@ -74,7 +74,8 @@
             </ng-container>
         </ng-template>
         <ng-template #cell let-rowData="rowData" let-column="column" let-colIndex="colIndex">
-            <td *ngIf="!rowData.colSpan || colIndex%2 == 0" [attr.colSpan]="rowData.colSpan ? rowData.colSpan : 1"
+            <td *ngIf="rowData.betweenPorts && colIndex == 0"></td>
+            <td *ngIf="!rowData.colSpan || (colIndex%2 == 1 && (!rowData.betweenPorts || colIndex < synopticalRecords.length - 1))" [attr.colSpan]="rowData.colSpan ? rowData.colSpan : 1"
                 [class.text-center]="true">
                 <ng-container *ngFor="let field of rowData.fields;let i = index">
                     <div class="pr-0" *ngIf="i > 0" [class.pr-20]="rowData.editable && synopticalService.editMode && (!rowData.editableByCondition || checkEditableCondition(field.key,colIndex))">
@@ -127,6 +128,7 @@
                     </ng-template>
                 </ng-container>
             </td>
+            <td *ngIf="rowData.betweenPorts && colIndex == synopticalRecords.length - 1"></td>
         </ng-template>
     </p-table>
 </form>

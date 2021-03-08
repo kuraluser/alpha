@@ -7,13 +7,17 @@ const routes: Routes = [
   {
     path: '',
     component: SynopticalComponent,
+  },
+  {
+    path: ':vesselId/:voyageId',
+    component: SynopticalComponent,
     children: [
       {
-        path:':vesselId/:voyageId/:loadableStudyId',
+        path:':loadableStudyId',
         component: SynopticalTableComponent
       },
       {
-        path:':vesselId/:voyageId/:loadableStudyId/:loadablePatternId',
+        path:':loadableStudyId/:loadablePatternId',
         component: SynopticalTableComponent
       }
     ]

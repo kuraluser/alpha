@@ -88,12 +88,10 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(async route => {
               this.synopticalService.loadableStudyId = Number(route.loadableStudyId);
-              this.synopticalService.vesselId = Number(route.vesselId);
-              this.synopticalService.voyageId = Number(route.voyageId);
               if (route.loadablePatternId) {
                 this.synopticalService.loadablePatternId = Number(route.loadablePatternId);
               }
-              await this.synopticalService.setSelectedVoyage();
+              await this.synopticalService.setSelectedLoadableStudy();
               this.initData();
             });
         }
@@ -110,6 +108,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
     this.synopticalService.showActions = false;
+    this.synopticalService.destroy()
   }
 
   /**
@@ -202,7 +201,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         }],
         header: 'Distance (NM)',
         editable: true,
-        colSpan: 2
+        colSpan: 2,
+        betweenPorts:true,
       },
       {
         fields: [{
@@ -212,7 +212,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         }],
         header: 'Speed (NM/Hr)',
         editable: true,
-        colSpan: 2
+        colSpan: 2,
+        betweenPorts:true,
       },
       {
         fields: [{
@@ -221,7 +222,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         }],
         header: 'Running Hours',
         editable: true,
-        colSpan: 2
+        colSpan: 2,
+        betweenPorts:true,
       },
       {
         header: 'In Port Hours',
@@ -678,13 +680,14 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 type: this.fieldType.NUMBER,
                 validators: ['required', 'ddddddd.+']
               }],
-              editable: true,
+              editable: !this.checkIfConfirmed(),
             },
             {
               header: "Actual",
               fields: [{
                 key: 'constantActual',
                 type: this.fieldType.NUMBER,
+                validators: ['required', 'ddddddd.+']
               }],
               editable: this.checkIfConfirmed(),
             },
@@ -704,13 +707,14 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 type: this.fieldType.NUMBER,
                 validators: ['required', 'ddddddd.+']
               }],
-              editable: true,
+              editable: !this.checkIfConfirmed(),
             },
             {
               header: "Actual",
               fields: [{
                 key: 'totalDwtActual',
                 type: this.fieldType.NUMBER,
+                validators: ['required', 'ddddddd.+']
               }],
               editable: this.checkIfConfirmed(),
             },
@@ -737,6 +741,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'displacementActual',
                 type: this.fieldType.NUMBER,
+                validators: ['required', 'ddddddd.+']
               }],
               editable: this.checkIfConfirmed(),
             },
@@ -1276,14 +1281,14 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           const minValue: Date = fcMin.value;
           if (minValue) {
             minValue.setSeconds(0, 0)
-          }
-          if (value <= minValue) {
-            if (this.synopticalRecords[colIndex].operationType === 'ARR')
-              fc.setErrors({ etaMin: true })
-            else
-              fc.setErrors({ etdMin: true })
-          } else if (fcMin.hasError('etaMax') || fcMin.hasError('etdMax')) {
-            fcMin.setValue(fcMin.value, { emitEvent: false })
+            if (value <= minValue) {
+              if (this.synopticalRecords[colIndex].operationType === 'ARR')
+                fc.setErrors({ etaMin: true })
+              else
+                fc.setErrors({ etdMin: true })
+            } else if (fcMin.hasError('etaMax') || fcMin.hasError('etdMax')) {
+              fcMin.setValue(fcMin.value, { emitEvent: false })
+            }
           }
         }
         if (colIndex < this.synopticalRecords.length - 1) {
@@ -1291,14 +1296,14 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           const maxValue: Date = fcMax.value;
           if (maxValue) {
             maxValue.setSeconds(0, 0)
-          }
-          if (value >= maxValue) {
-            if (this.synopticalRecords[colIndex].operationType === 'ARR')
-              fc.setErrors({ etaMax: true })
-            else
-              fc.setErrors({ etdMax: true })
-          } else if (fcMax.hasError('etaMin') || fcMax.hasError('etdMin')) {
-            fcMax.setValue(fcMax.value, { emitEvent: false })
+            if (value >= maxValue) {
+              if (this.synopticalRecords[colIndex].operationType === 'ARR')
+                fc.setErrors({ etaMax: true })
+              else
+                fc.setErrors({ etdMax: true })
+            } else if (fcMax.hasError('etaMin') || fcMax.hasError('etdMin')) {
+              fcMax.setValue(fcMax.value, { emitEvent: false })
+            }
           }
         }
         if (updateValues) {
@@ -1323,7 +1328,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         }
         break;
       case 'speed': case 'distance':
-        if(updateValues){ 
+        if (updateValues) {
           const speedControl = this.getControl(colIndex, 'speed')
           const distanceControl = this.getControl(colIndex, 'distance')
           let speed = 0, distance = 0, runningHours = 0;
