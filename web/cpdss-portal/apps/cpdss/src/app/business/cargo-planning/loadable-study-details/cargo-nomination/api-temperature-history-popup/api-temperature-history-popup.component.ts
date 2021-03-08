@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { LoadableStudyDetailsApiService } from '../../../services/loadable-study-details-api.service';
 import { DatePipe } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Router } from '@angular/router';
 
 /**
  * To show the History of cargo Api & Temperature
@@ -65,6 +66,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     private datePipe: DatePipe,
     private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
+    private router: Router,
     private ngxSpinnerService: NgxSpinnerService
   ) { }
 
@@ -187,6 +189,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
    */
   viewMore(): void {
     this.closePopup();
+    this.router.navigate([`business/cargo-planning/cargo-history`]);
   }
 
   /**
