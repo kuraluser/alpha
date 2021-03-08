@@ -8,6 +8,8 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.AlgoPatternResponse;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.AlgoStatusResponse;
+import com.cpdss.gateway.domain.CargoHistoryRequest;
+import com.cpdss.gateway.domain.CargoHistoryResponse;
 import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CargoNominationResponse;
 import com.cpdss.gateway.domain.Comment;
@@ -1664,7 +1666,6 @@ public class LoadableStudyController {
           e);
     }
   }
-
   @PostMapping(
       value = "/vessels/{vesselId}/voyages/{voyageId}",
       consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -1683,6 +1684,45 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error when saving voyage status", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Get api-temp history
+   *
+   * @param vesselId
+   * @param loadableStudyId
+   * @param
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/cargo-history",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public CargoHistoryResponse getCargoHistory(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @RequestBody CargoHistoryRequest cargoHistoryRequest,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("getCargoHistory: {}", getClientIp());
+      return this.loadableStudyService.getCargoHistory(cargoHistoryRequest);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException getCargoHistory", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception getCargoHistory", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

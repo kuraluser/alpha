@@ -12,6 +12,8 @@ import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.CargoDetails;
+import com.cpdss.common.generated.LoadableStudy.CargoHistoryDetail;
+import com.cpdss.common.generated.LoadableStudy.CargoHistoryReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
@@ -89,6 +91,9 @@ import com.cpdss.gateway.domain.AlgoStatusResponse;
 import com.cpdss.gateway.domain.BunkerConditions;
 import com.cpdss.gateway.domain.Cargo;
 import com.cpdss.gateway.domain.CargoGroup;
+import com.cpdss.gateway.domain.CargoHistory;
+import com.cpdss.gateway.domain.CargoHistoryRequest;
+import com.cpdss.gateway.domain.CargoHistoryResponse;
 import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CargoNominationResponse;
 import com.cpdss.gateway.domain.Comment;
@@ -4088,7 +4093,6 @@ public class LoadableStudyService {
       String orderBy,
       String sortBy)
       throws GenericServiceException {
-
     VoyageRequest.Builder request = VoyageRequest.newBuilder();
     request.setVesselId(vesselId);
     request.setPage(page);
@@ -4266,7 +4270,6 @@ public class LoadableStudyService {
   private Boolean containsCargos(List<CargoDetails> list, String searchParam) {
     Boolean status = false;
     if (!list.isEmpty()) {
-
       for (CargoDetails cargo : list) {
         if (cargo.getName().toLowerCase().contains(searchParam.toLowerCase())) {
           status = true;
@@ -4295,7 +4298,6 @@ public class LoadableStudyService {
                             .contains(filterParams.get("voyageNo").toLowerCase());
               }
               if (null != filterParams.get("charterer")) {
-
                 status =
                     status
                         && voyage
@@ -4304,7 +4306,6 @@ public class LoadableStudyService {
                             .contains(filterParams.get("charterer").toLowerCase());
               }
               if (null != filterParams.get("status")) {
-
                 status =
                     status
                         && voyage
@@ -4313,7 +4314,6 @@ public class LoadableStudyService {
                             .contains(filterParams.get("status").toLowerCase());
               }
               if (null != filterParams.get("plannedStartDate")) {
-
                 status =
                     status
                         && voyage
@@ -4322,7 +4322,6 @@ public class LoadableStudyService {
                             .contains(filterParams.get("plannedStartDate").toLowerCase());
               }
               if (null != filterParams.get("plannedEndDate")) {
-
                 status =
                     status
                         && voyage
@@ -4490,5 +4489,133 @@ public class LoadableStudyService {
 
   public SaveVoyageStatusReply saveVoyageStatus(SaveVoyageStatusRequest grpcRequest) {
     return this.loadableStudyServiceBlockingStub.saveVoyageStatus(grpcRequest);
+  }
+
+  /**
+   * Save cargo nomination details using loadable-study service
+   *
+   * @param loadableStudyId
+   * @param headers
+   * @return
+   * @throws GenericServiceException
+   */
+  public CargoHistoryResponse getCargoHistory(CargoHistoryRequest request)
+      throws GenericServiceException {
+    CargoHistoryResponse cargoHistoryResponse = new CargoHistoryResponse();
+    // Build response with response status
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    cargoHistoryResponse.setResponseStatus(commonSuccessResponse);
+    // Build cargoNomination payload for grpc call
+    com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest.newBuilder();
+    builder.setCargoId(request.getCargoId());
+    if (!CollectionUtils.isEmpty(request.getLoadingPortIds())) {
+      builder.addAllPortIds(request.getLoadingPortIds());
+    }
+    com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest cargoHistoryRequest =
+        builder.build();
+    CargoHistoryReply cargoHistoryReply =
+        loadableStudyServiceBlockingStub.getCargoApiTempHistory(cargoHistoryRequest);
+    if (!SUCCESS.equals(cargoHistoryReply.getResponseStatus().getStatus())) {
+      if (!StringUtils.isEmpty(cargoHistoryReply.getResponseStatus().getCode())) {
+        throw new GenericServiceException(
+            "GenericServiceException getCargoHistory "
+                + cargoHistoryReply.getResponseStatus().getMessage(),
+            cargoHistoryReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(
+                Integer.valueOf(cargoHistoryReply.getResponseStatus().getHttpStatusCode())));
+      } else {
+        throw new GenericServiceException(
+            "GenericServiceException getCargoHistory",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
+    }
+    buildCargoHistoryResponse(request, cargoHistoryResponse, cargoHistoryReply);
+    return cargoHistoryResponse;
+  }
+
+  /**
+   * Builds the cargoHistory
+   *
+   * @param cargoHistoryResponse
+   * @param reply
+   * @return
+   */
+  private CargoHistoryResponse buildCargoHistoryResponse(
+      CargoHistoryRequest request,
+      CargoHistoryResponse cargoHistoryResponse,
+      CargoHistoryReply reply) {
+    if (reply != null && !reply.getCargoHistoryList().isEmpty()) {
+      List<CargoHistory> cargoHistoryList = new ArrayList<>();
+      reply
+          .getCargoHistoryList()
+          .forEach(
+              cargoHistoryDetail -> {
+                CargoHistory cargoHistory = new CargoHistory();
+                cargoHistory.setLoadingPortId(cargoHistoryDetail.getLoadingPortId());
+                cargoHistory.setLoadedDate(cargoHistoryDetail.getLoadedDate());
+                cargoHistory.setLoadedMonth(cargoHistoryDetail.getLoadedMonth());
+                cargoHistory.setApi(
+                    cargoHistoryDetail.getApi() != null
+                        ? new BigDecimal(cargoHistoryDetail.getApi())
+                        : new BigDecimal("0"));
+                cargoHistory.setTemperature(
+                    (cargoHistoryDetail.getTemperature() != null
+                            && !cargoHistoryDetail.getTemperature().trim().isEmpty())
+                        ? new BigDecimal(cargoHistoryDetail.getTemperature())
+                        : new BigDecimal("0"));
+                cargoHistoryList.add(cargoHistory);
+              });
+      // Fetch max 5 records for port history
+      List<CargoHistory> portHistoryList =
+          cargoHistoryList.stream().limit(5L).collect(Collectors.toList());
+      cargoHistoryResponse.setPortHistory(portHistoryList);
+      // Monthly history - group by loaded year and latest loaded date
+      Map<Integer, Optional<CargoHistoryDetail>> monthlyHistoryMap =
+          reply.getCargoHistoryList().stream()
+              .collect(
+                  Collectors.groupingBy(
+                      CargoHistoryDetail::getLoadedYear,
+                      Collectors.maxBy(
+                          Comparator.comparing(
+                              (CargoHistoryDetail ch) ->
+                                  LocalDateTime.from(
+                                      DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT)
+                                          .parse(ch.getLoadedDate()))))));
+      if (!CollectionUtils.isEmpty(monthlyHistoryMap.values())) {
+        List<CargoHistoryDetail> monthlyHistoryList =
+            monthlyHistoryMap.values().stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+        List<CargoHistory> monthlyCargoHistory = new ArrayList<CargoHistory>();
+        monthlyHistoryList.forEach(
+            cargoHistoryDetail -> {
+              if (request != null
+                  && !CollectionUtils.isEmpty(request.getLoadingPortIds())
+                  && request.getLoadingPortIds().contains(cargoHistoryDetail.getLoadingPortId())) {
+                CargoHistory cargoHistory = new CargoHistory();
+                cargoHistory.setLoadingPortId(cargoHistoryDetail.getLoadingPortId());
+                cargoHistory.setLoadedYear(cargoHistoryDetail.getLoadedYear());
+                cargoHistory.setLoadedMonth(cargoHistoryDetail.getLoadedMonth());
+                cargoHistory.setApi(
+                    cargoHistoryDetail.getApi() != null
+                        ? new BigDecimal(cargoHistoryDetail.getApi())
+                        : new BigDecimal("0"));
+                cargoHistory.setTemperature(
+                    cargoHistoryDetail.getTemperature() != null
+                        ? new BigDecimal(cargoHistoryDetail.getTemperature())
+                        : new BigDecimal("0"));
+                monthlyCargoHistory.add(cargoHistory);
+              }
+            });
+        // Sort by loaded year desc
+        monthlyCargoHistory.sort(Comparator.comparing(CargoHistory::getLoadedYear).reversed());
+        cargoHistoryResponse.setMonthlyHistory(monthlyCargoHistory);
+      }
+    }
+    return cargoHistoryResponse;
   }
 }
