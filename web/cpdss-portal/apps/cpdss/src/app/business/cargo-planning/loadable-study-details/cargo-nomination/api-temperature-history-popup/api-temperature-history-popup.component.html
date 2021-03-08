@@ -1,13 +1,13 @@
-<p-dialog [(visible)]="visible" [closable]="false" [draggable]="false" [modal]="true" [style]="{width: '50vw'}">
+<p-dialog [(visible)]="visible" [closable]="false" [draggable]="false" [modal]="true" [minY]="70" [style]="{width: '50vw'}">
   <p-header>
     {{'API_TEMP_HISTORY_POPUP_HEADING'|translate}} - {{apiTempHistoryPopupData.rowDataCargo.value.name}}
   </p-header>
   <p> {{'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS' | translate}} </p>
-  <cpdss-portal-datatable [tableId]="'apiTemperatureHistory'" [columns]="apiTempHistoryColumns"
+  <cpdss-portal-datatable *ngIf="apiTempHistoryData" [tableId]="'apiTemperatureHistory'" [columns]="apiTempHistoryColumns"
     [value]="apiTempHistoryData"></cpdss-portal-datatable>
   <div class="row">
     <div class="col">
-      <form [formGroup]="ApiTempHistoryForm" *ngIf="apiTempHistoryData.length > 0">
+      <form [formGroup]="apiTempHistoryForm" *ngIf="monthwiseCargoHistory?.length">
         <div class="row">
           <div class="col-sm-8">
             <label
@@ -30,10 +30,10 @@
     </div>
   </div>
   <br>
-  <div class="row" *ngIf="filteredMonthwiseHistory.length else empty">
+  <div class="row" *ngIf="apiTempHistoryForm?.value?.selectMonth && apiTempHistoryForm?.value?.selectPort">
     <div class="col">
 
-      <p-table id="month-wise-cargo-history-grid" [value]="uniqueYears" styleClass="body-header-row-span-table"
+      <p-table *ngIf="filteredMonthwiseHistory?.length else empty" id="month-wise-cargo-history-grid" [value]="uniqueYears" styleClass="body-header-row-span-table"
         [hidden]="showMonthWiseGrid">
         <ng-template pTemplate="header">
           <tr>
@@ -42,25 +42,25 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-year>
-          <tr>
+          <tr *ngIf="monthWiseGridColData[year]">
             <td rowspan="2">{{year}}</td>
             <td>{{'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_API' | translate}}</td>
             <td *ngFor="let item of monthWiseGridColData[year]">{{item.api || '-'}}</td>
           </tr>
-          <tr>
+          <tr *ngIf="monthWiseGridColData[year]">
             <td>{{'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_TEMP' | translate}}</td>
             <td *ngFor="let item of monthWiseGridColData[year]">{{item.temperature || '-'}}</td>
           </tr>
         </ng-template>
       </p-table>
 
-      <a class="btn btn-link icon-btn" (click)="hideShowMonthWiseApiTempHistoryGrid()"
+      <ng-template #empty>
+        {{'NO_RECORDS_FOUND'| translate}}
+      </ng-template>
+      <a class="btn btn-link icon-btn" *ngIf="filteredMonthwiseHistory?.length" (click)="hideShowMonthWiseApiTempHistoryGrid()"
       id="hide-api-temp-monthwise-grid">{{'API_TEMP_HISTORY_POPUP_HIDE_SHOW_MONTH_DETAILS'|translate}}</a>
     </div>
   </div>
-  <ng-template #empty>
-    {{'NO_RECORDS_FOUND'| translate}}
-  </ng-template>
   <p-footer>
     <button class="btn btn-main" (click)="closePopup()"
       id="api-temp-popup-close">{{'API_TEMP_HISTORY_POPUP_CLOSE'|translate}}</button>

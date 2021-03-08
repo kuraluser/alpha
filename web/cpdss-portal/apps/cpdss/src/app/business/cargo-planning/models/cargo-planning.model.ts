@@ -670,7 +670,21 @@ export interface IConfirmStatusResponse {
  */
 export interface IApiTempPopupData {
     rowDataCargo: ValueObject<ICargo>;
+    vesselId: number;
+    voyageId: number;
+    loadableStudyId: number;
     rowIndex: number;
+}
+
+/**
+ * Interface for Api, Temperature requeset params
+ *
+ * @export
+ * @interface IApiTempHistoryRequest
+ */
+export interface IApiTempHistoryRequest {
+    cargoId: number;
+    loadingPortIds: number[];
 }
 
 /**
@@ -707,8 +721,8 @@ export interface IApiTempHistory {
  */
 export interface IApiTempMonthWiseHistory {
     loadingPortId: number;
-    loadingYear: number;
-    loadingMonth: number;
+    loadedYear: number;
+    loadedMonth: number;
     api: number|string;
     temperature: number|string;
 }

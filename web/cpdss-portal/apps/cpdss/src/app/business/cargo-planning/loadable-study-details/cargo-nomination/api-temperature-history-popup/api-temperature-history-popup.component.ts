@@ -5,6 +5,7 @@ import { IDataTableColumn } from './../../../../../shared/components/datatable/d
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LoadableStudyDetailsApiService } from '../../../services/loadable-study-details-api.service';
 import { DatePipe } from '@angular/common';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 /**
  * To show the History of cargo Api & Temperature
@@ -36,7 +37,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     const cargoId = apiTempHistoryPopupData.rowDataCargo.value.id;
     const portIDs = [...apiTempHistoryPopupData.rowDataCargo.value.ports].map(port => (port.id));
     this.getApiTempHistoryData(cargoId, portIDs);
-    this.ApiTempHistoryForm = this.fb.group({
+    this.apiTempHistoryForm = this.fb.group({
       selectMonth: this.fb.control(null),
       selectPort: this.fb.control(null)
     })
@@ -45,10 +46,10 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
   @Output() visibleChange = new EventEmitter<boolean>();
 
   apiTempHistoryColumns: IDataTableColumn[];
-  apiTempHistoryData: IApiTempHistory[] = [];
+  apiTempHistoryData: IApiTempHistory[];
   monthwiseCargoHistory: IApiTempMonthWiseHistory[];
   apiTempHistoryMonths: IMonths[];
-  ApiTempHistoryForm: FormGroup;
+  apiTempHistoryForm: FormGroup;
   monthWithPreccedingSucceedingArr: IMonths[] = [];
   selectedPortID: number;
   filteredMonthwiseHistory: IApiTempMonthWiseHistory[] = [];
@@ -64,6 +65,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     private datePipe: DatePipe,
     private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
+    private ngxSpinnerService: NgxSpinnerService
   ) { }
 
   ngOnInit(): void {
@@ -76,254 +78,10 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
    * @memberof ApiTempHistoryPopupComponent
    */
   async getApiTempHistoryData(cargoId: number, portIDs: number[]) {
-    // const cargoApiTempHistoryDetails: ICargoApiTempHistoryResponse = await this.loadableStudyDetailsApiService.getCargoApiTemperatureHistoryDetails(cargoId, portIDs).toPromise();
-
-    /**
-     * This dummy data will remove and use above commented code after integrating the actual API
-     */
-    const cargoApiTempHistoryDetails: ICargoApiTempHistoryResponse = {
-      responseStatus: { status: "200" },
-      portHistory: [{
-        cargoId: 10,
-        loadingPortId: 46,
-        loadedDate: '01-10-2020 17:25',
-        api: 30.11,
-        temperature: 80.1
-      }, {
-        cargoId: 10,
-        loadingPortId: 46,
-        loadedDate: '30-09-2020 17:25',
-        api: 32.18,
-        temperature: 75.5
-      }, {
-        cargoId: 10,
-        loadingPortId: 46,
-        loadedDate: '29-09-2020 17:25',
-        api: 30.25,
-        temperature: 90.5
-      }, {
-        cargoId: 10,
-        loadingPortId: 46,
-        loadedDate: '28-09-2020 17:25',
-        api: 31.36,
-        temperature: 88.1
-      }, {
-        cargoId: 10,
-        loadingPortId: 46,
-        loadedDate: '27-09-2020 17:25',
-        api: 33.25,
-        temperature: 92.3
-      }],
-      monthlyHistory: [{
-        loadingPortId: 359,
-        loadingYear: 2020,
-        loadingMonth: 1,
-        api: 33.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 359,
-        loadingYear: 2019,
-        loadingMonth: 1,
-        api: 32.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 359,
-        loadingYear: 2018,
-        loadingMonth: 1,
-        api: 31.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 359,
-        loadingYear: 2017,
-        loadingMonth: 1,
-        api: 30.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 359,
-        loadingYear: 2016,
-        loadingMonth: 1,
-        api: 29.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2020,
-        loadingMonth: 1,
-        api: 33.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2019,
-        loadingMonth: 1,
-        api: 32.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2018,
-        loadingMonth: 1,
-        api: 31.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2017,
-        loadingMonth: 1,
-        api: 30.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2016,
-        loadingMonth: 1,
-        api: 29.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 359,
-        loadingYear: 2020,
-        loadingMonth: 2,
-        api: 33.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 359,
-        loadingYear: 2019,
-        loadingMonth: 2,
-        api: 32.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 359,
-        loadingYear: 2018,
-        loadingMonth: 2,
-        api: 31.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 359,
-        loadingYear: 2017,
-        loadingMonth: 2,
-        api: 30.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 359,
-        loadingYear: 2016,
-        loadingMonth: 2,
-        api: 29.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2020,
-        loadingMonth: 2,
-        api: 33.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2019,
-        loadingMonth: 2,
-        api: 32.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2018,
-        loadingMonth: 2,
-        api: 31.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2017,
-        loadingMonth: 2,
-        api: 30.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2016,
-        loadingMonth: 2,
-        api: 29.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 359,
-        loadingYear: 2020,
-        loadingMonth: 3,
-        api: 33.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 359,
-        loadingYear: 2019,
-        loadingMonth: 3,
-        api: 32.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 359,
-        loadingYear: 2018,
-        loadingMonth: 3,
-        api: 31.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 359,
-        loadingYear: 2017,
-        loadingMonth: 3,
-        api: 30.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 359,
-        loadingYear: 2016,
-        loadingMonth: 3,
-        api: 29.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2020,
-        loadingMonth: 3,
-        api: 33.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2019,
-        loadingMonth: 3,
-        api: 32.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2018,
-        loadingMonth: 3,
-        api: 31.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2017,
-        loadingMonth: 3,
-        api: 30.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2016,
-        loadingMonth: 3,
-        api: 29.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2019,
-        loadingMonth: 12,
-        api: 23.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2018,
-        loadingMonth: 12,
-        api: 22.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2017,
-        loadingMonth: 12,
-        api: 21.25,
-        temperature: 92.3
-      }, {
-        loadingPortId: 46,
-        loadingYear: 2016,
-        loadingMonth: 12,
-        api: 20.25,
-        temperature: 92.3
-      }
-      ]
-    };
+    this.ngxSpinnerService.show();
+    const cargoApiTempHistoryDetails: ICargoApiTempHistoryResponse = await this.loadableStudyDetailsApiService.getCargoApiTemperatureHistoryDetails(this.apiTempHistoryPopupData.vesselId, this.apiTempHistoryPopupData.voyageId, this.apiTempHistoryPopupData.loadableStudyId, {cargoId: cargoId, loadingPortIds:portIDs}).toPromise();
     if (cargoApiTempHistoryDetails.responseStatus.status === '200') {
-      const mockResponse = cargoApiTempHistoryDetails?.portHistory;
-      this.monthwiseCargoHistory = cargoApiTempHistoryDetails?.monthlyHistory;
+      const mockResponse = cargoApiTempHistoryDetails.portHistory;
       if (mockResponse.length) {
         const loadingPortArray = [...this.apiTempHistoryPopupData.rowDataCargo.value.ports];
         this.apiTempHistoryData = mockResponse.map(historyObj => {
@@ -332,7 +90,9 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
           return Object.assign(historyObj, { loadingPortName: loadingPort.name, loadedDate: formattedDate });
         });
       }
+      this.monthwiseCargoHistory = cargoApiTempHistoryDetails.monthlyHistory;
     }
+    this.ngxSpinnerService.hide();
   }
 
   /**
@@ -369,9 +129,9 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
     this.monthWiseGridColData = {};
     if (this.monthWithPreccedingSucceedingArr.length && this.selectedPortID) {
       const seletedMonths = [... this.monthWithPreccedingSucceedingArr];
-      this.uniqueYears = [...new Set(this.monthwiseCargoHistory.map(data => data.loadingYear))];
+      this.uniqueYears = [...new Set(this.monthwiseCargoHistory.map(data => data.loadedYear))];
       seletedMonths.forEach(month => {
-        const filteredData = [...this.monthwiseCargoHistory].filter(obj => (month.id === obj.loadingMonth && obj.loadingPortId === this.selectedPortID));
+        const filteredData = [...this.monthwiseCargoHistory].filter(obj => (month.id === obj.loadedMonth && obj.loadingPortId === this.selectedPortID));
         this.filteredMonthwiseHistory = this.filteredMonthwiseHistory.concat(filteredData);
       });
       if (this.filteredMonthwiseHistory.length) {
@@ -390,17 +150,17 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
    */
   groupArrayBasedKey(dataArray: IApiTempMonthWiseHistory[]): object {
     const selectedMonths = [...this.monthWithPreccedingSucceedingArr];
-    const uniqueYears = [...new Set(dataArray.map(obj => obj.loadingYear))];
+    const uniqueYears = [...new Set(dataArray.map(obj => obj.loadedYear))];
     const uniqueMonths = [...new Set(selectedMonths.map(obj => obj.id))];
     let result: {} = {};
     uniqueYears.forEach(year => {
-      const newArray: IApiTempMonthWiseHistory[] = dataArray.filter(data => (data.loadingYear === year));
+      const newArray: IApiTempMonthWiseHistory[] = dataArray.filter(data => (data.loadedYear === year));
       uniqueMonths.forEach(month => {
-        if (!newArray.some(data => data.loadingMonth === month)) {
+        if (!newArray.some(data => data.loadedMonth === month)) {
           const data = {
             loadingPortId: this.selectedPortID,
-            loadingYear: year,
-            loadingMonth: month,
+            loadedYear: year,
+            loadedMonth: month,
             api: '-',
             temperature: '-'
           }
