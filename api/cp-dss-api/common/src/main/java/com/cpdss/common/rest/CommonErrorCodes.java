@@ -34,4 +34,6 @@ public interface CommonErrorCodes {
       "121"; // Passwords must use at least three of the four available character types: lowercase
   // letters, uppercase letters, numbers, and symbols
   String E_CPDSS_PASSWORD_EXPIRED = "124";
+
+  String E_CPDSS_OPERATION_NOT_ALLOWED = "114";
 }
