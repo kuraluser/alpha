@@ -151,9 +151,10 @@
                         </ng-container>
                     </ul>
                 </p-overlayPanel>
+                <div class="tank-btn-rounded" *ngIf="options?.showTooltip" (mouseover)="tank && op.toggle($event)"
+                (mouseout)="tank && op.toggle($event)"></div>
                 <h5 class="tank-name">
-                    <div class="tank-btn-rounded" *ngIf="options?.showTooltip" (mouseover)="tank && op.toggle($event)"
-                        (mouseout)="tank && op.toggle($event)"></div>
+                   
                     {{tank?.shortName}}
                 </h5>
                 <ng-container *ngIf="tank?.commodity">
