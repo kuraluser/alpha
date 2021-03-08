@@ -65,7 +65,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     private synoticalApiService: SynopticalApiService,
     private route: ActivatedRoute,
     private ngxSpinner: NgxSpinnerService,
-    private synopticalService: SynopticalService,
+    public synopticalService: SynopticalService,
     private messageService: MessageService,
     private translateService: TranslateService,
   ) {

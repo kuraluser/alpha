@@ -41,9 +41,9 @@
                 <ng-container *ngIf="synopticalService.editMode">
                     <button class="btn btn-main mr-10" *cpdssPortalPermission="saveRoleBtnPermissionContext"  (click)="synopticalService.saveChanges()">Save</button>
                 </ng-container>     
-                <ng-cotainer *ngIf="!synopticalService.editMode">
+                <ng-container *ngIf="!synopticalService.editMode">
                     <button class="btn btn-main mr-10" *cpdssPortalPermission="editRoleBtnPermissionContext" (click)="synopticalService.exportExcelFromTable()">Export</button>
-                </ng-cotainer>
+                </ng-container>
             </div>
         </div>
         <div class="row">
