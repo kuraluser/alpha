@@ -493,4 +493,47 @@ class UserServiceTest {
       e.printStackTrace();
     }
   }
+
+  /** Already deleted user cannot Delete again */
+  @Test
+  public void deleteUserTest1() {
+    Users users = new Users();
+    users.setActive(false);
+    try {
+      when(usersRepository.findById(1l)).thenReturn(Optional.of(users));
+      userService.deleteUserByUserId(1l);
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /** Ship user cannot be deleted */
+  @Test
+  public void deleteUserTest2() {
+    Users users = new Users();
+    users.setActive(true);
+    users.setIsShipUser(true);
+    try {
+      when(usersRepository.findById(1l)).thenReturn(Optional.of(users));
+      userService.deleteUserByUserId(1l);
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /** Not a ship user and user is active */
+  @Test
+  public void deleteUserTest3() {
+    Users users = new Users();
+    users.setActive(true);
+    users.setIsShipUser(false);
+    try {
+      when(usersRepository.findById(1l)).thenReturn(Optional.of(users));
+      when(usersRepository.updateUserIsActiveToFalse(1l)).thenReturn(1);
+      boolean a = userService.deleteUserByUserId(1l);
+      assertTrue(a);
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+  }
 }
