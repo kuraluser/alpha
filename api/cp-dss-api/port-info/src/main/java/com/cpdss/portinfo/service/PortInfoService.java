@@ -9,12 +9,15 @@ import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
 import com.cpdss.common.generated.PortInfo.PortDetail;
 import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfo.PortRequest;
+import com.cpdss.common.generated.PortInfo.TimezoneResponse;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.portinfo.entity.BerthInfo;
 import com.cpdss.portinfo.entity.PortInfo;
+import com.cpdss.portinfo.entity.Timezone;
 import com.cpdss.portinfo.repository.CargoPortMappingRepository;
 import com.cpdss.portinfo.repository.PortInfoRepository;
+import com.cpdss.portinfo.repository.TimezoneRepository;
 import io.grpc.stub.StreamObserver;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -33,6 +36,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
 
   @Autowired private PortInfoRepository portRepository;
   @Autowired private CargoPortMappingRepository cargoPortMappingRepository;
+  @Autowired private TimezoneRepository timezoneRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -180,5 +184,41 @@ public class PortInfoService extends PortInfoServiceImplBase {
           }
           portReply.addPorts(portDetail);
         });
+  }
+
+  /**
+   * Fetch All Timezone data from DB
+   *
+   * @param request - Empty Object
+   * @param responseObserver - Id, Timezone, Offset-Value as object list
+   */
+  @Override
+  public void getTimezone(
+      com.cpdss.common.generated.PortInfo.PortEmptyRequest request,
+      StreamObserver<com.cpdss.common.generated.PortInfo.TimezoneResponse> responseObserver) {
+    TimezoneResponse.Builder replyBuilder = TimezoneResponse.newBuilder();
+    try {
+      List<Timezone> timezoneList = timezoneRepository.findAll();
+      log.info("Fetch all timezone success with size {}", timezoneList.size());
+      for (Timezone tz : timezoneList) {
+        com.cpdss.common.generated.PortInfo.Timezone.Builder timezone =
+            com.cpdss.common.generated.PortInfo.Timezone.newBuilder();
+        timezone.setId(tz.getId());
+        timezone.setTimezone(tz.getTimezone());
+        timezone.setOffsetValue(tz.getOffsetValue());
+        replyBuilder.addTimezones(timezone);
+      }
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      replyBuilder.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Fetch timezone failed, e - {}", e.getMessage());
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      replyBuilder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
 }
