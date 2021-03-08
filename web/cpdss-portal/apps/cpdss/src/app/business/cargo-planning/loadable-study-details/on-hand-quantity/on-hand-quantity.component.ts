@@ -14,6 +14,7 @@ import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { Observable, of } from 'rxjs';
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
+import { LoadableStudy, LOADABLE_STUDY_STATUS } from '../../models/loadable-study-list.model';
 
 /**
  * Compoent for OHQ tab
@@ -60,6 +61,15 @@ export class OnHandQuantityComponent implements OnInit {
       this.convertSelectedPortOHQTankDetails();
     }
 
+  }
+
+  @Input()
+  get loadableStudy() {
+    return this._loadableStudy;
+  }
+  set loadableStudy(value: LoadableStudy) {
+    this._loadableStudy = value;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId)? DATATABLE_EDITMODE.CELL : null;
   }
 
   get selectedPortOHQTankDetails() {
@@ -143,6 +153,7 @@ export class OnHandQuantityComponent implements OnInit {
   private _ohqForm: FormGroup;
   private _quantitySelectedUnit: QUANTITY_UNIT;
   private _prevQuantitySelectedUnit: QUANTITY_UNIT;
+  private _loadableStudy: LoadableStudy;
 
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
@@ -157,7 +168,6 @@ export class OnHandQuantityComponent implements OnInit {
    * @memberof OnHandQuantityComponent
    */
   ngOnInit(): void {
-    this.editMode = this.permission?.edit === undefined || this.permission?.edit ? DATATABLE_EDITMODE.CELL : false;
     this.columns = this.loadableStudyDetailsTransformationService.getOHQDatatableColumns();
     this.initSubscriptions();
   }
@@ -564,7 +574,7 @@ export class OnHandQuantityComponent implements OnInit {
    */
   fieldError(formGroupIndex: number, formControlName: string): Observable<ValidationErrors> {
     const formControl = this.field(formGroupIndex, formControlName);
-    return of((this.permission?.edit === undefined || this.permission?.edit) && formControl?.invalid && (formControl?.dirty || formControl?.touched) ? formControl?.errors : null);
+    return of(this.editMode && formControl?.invalid && (formControl?.dirty || formControl?.touched) ? formControl?.errors : null);
   }
 
   /**
