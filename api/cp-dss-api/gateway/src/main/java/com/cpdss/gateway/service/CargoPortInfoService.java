@@ -7,16 +7,16 @@ import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest;
+import com.cpdss.common.generated.PortInfo.PortEmptyRequest;
 import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfo.PortRequest;
+import com.cpdss.common.generated.PortInfo.Timezone;
+import com.cpdss.common.generated.PortInfo.TimezoneResponse;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.Cargo;
-import com.cpdss.gateway.domain.CargosResponse;
-import com.cpdss.gateway.domain.Port;
-import com.cpdss.gateway.domain.PortsResponse;
+import com.cpdss.gateway.domain.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -208,5 +208,44 @@ public class CargoPortInfoService {
       cargosResponse.setCargos(cargoList);
     }
     return cargosResponse;
+  }
+
+  /**
+   * Grpc Call to port-info, on getTimezone service.
+   *
+   * @return {@link com.cpdss.gateway.domain.TimezoneRestResponse}
+   * @throws GenericServiceException
+   */
+  public TimezoneRestResponse getTimezones() throws GenericServiceException {
+    PortEmptyRequest request = PortEmptyRequest.newBuilder().build();
+    TimezoneResponse grpcRep = portInfoServiceBlockingStub.getTimezone(request);
+    if (grpcRep != null
+        && grpcRep.getResponseStatus() != null
+        && SUCCESS.equalsIgnoreCase(grpcRep.getResponseStatus().getStatus())) {
+      TimezoneRestResponse restResponse = new TimezoneRestResponse();
+      restResponse.setResponseStatus(
+          new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), ""));
+      buildTimezoneResponse(restResponse, grpcRep);
+      log.info("Fetching all time zones, size {}", grpcRep.getTimezonesCount());
+      return restResponse;
+    } else {
+      log.error("Failed to fetch timezones from port-info");
+      throw new GenericServiceException(
+          "Error in calling cargo service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  private TimezoneRestResponse buildTimezoneResponse(
+      TimezoneRestResponse tzRep, TimezoneResponse tzRlp) {
+    List<com.cpdss.gateway.domain.Timezone> list = new ArrayList<>();
+    for (Timezone prOb : tzRlp.getTimezonesList()) {
+      list.add(
+          new com.cpdss.gateway.domain.Timezone(
+              prOb.getId(), prOb.getTimezone(), prOb.getOffsetValue()));
+    }
+    tzRep.setTimezones(list);
+    return tzRep;
   }
 }

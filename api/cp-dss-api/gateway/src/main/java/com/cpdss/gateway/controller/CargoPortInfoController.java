@@ -2,10 +2,12 @@
 package com.cpdss.gateway.controller;
 
 import com.cpdss.common.exception.CommonRestException;
+import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.CargosResponse;
 import com.cpdss.gateway.domain.PortsResponse;
+import com.cpdss.gateway.domain.TimezoneRestResponse;
 import com.cpdss.gateway.service.CargoPortInfoService;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
@@ -26,6 +28,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @RestController
 @RequestMapping({"/api/cloud", "/api/ship"})
 public class CargoPortInfoController {
+
+  private static final String CORRELATION_ID_HEADER = "correlationId";
 
   @Autowired private CargoPortInfoService cargoPortInfoService;
 
@@ -115,5 +119,38 @@ public class CargoPortInfoController {
       remoteAddr = curRequest.getRemoteAddr();
     }
     return remoteAddr;
+  }
+
+  /**
+   * Fetch available timezones in table Timezone, 'cpdss-ports'
+   *
+   * <p>Grpc call to port-info
+   *
+   * @see com.cpdss.gateway.domain.Timezone
+   * @param headers
+   * @return {@link com.cpdss.gateway.domain.TimezoneRestResponse}
+   * @throws GenericServiceException
+   * @throws CommonRestException
+   */
+  @GetMapping("/global-timezones")
+  public TimezoneRestResponse getTimezones(@RequestHeader HttpHeaders headers)
+      throws GenericServiceException, CommonRestException {
+    TimezoneRestResponse response = null;
+    try {
+      response = cargoPortInfoService.getTimezones();
+      response.getResponseStatus().setCorrelationId(headers.getFirst(CORRELATION_ID_HEADER));
+      log.info(
+          "Fetch all timezone success - CORRELATION_ID - {}",
+          headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("Error in timezone fetch, Message {}", e.getMessage());
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return response;
   }
 }
