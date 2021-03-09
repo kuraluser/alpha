@@ -5,6 +5,7 @@ import { SynopticalService } from './services/synoptical.service';
 import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../shared/services/permissions/permissions.service';
 import { IPermissionContext, PERMISSION_ACTION } from '../../shared/models/common.model';
+import { VOYAGE_STATUS } from '../core/models/common.model';
 
 /**
  * Component class of synoptical
@@ -89,6 +90,16 @@ export class SynopticalComponent implements OnInit {
    */
   onSelectLoadablePattern() {
     this.router.navigateByUrl('/business/synoptical/' + this.synopticalService.vesselInfo.id + '/' + this.synopticalService.selectedVoyage.id + '/' + this.synopticalService.selectedLoadableStudy.id + '/' + this.synopticalService.selectedLoadablePattern.loadablePatternId)
+  }
+
+  /**
+   * Check if voyage is closed or not
+   *
+   * @returns {boolean}
+   * @memberof SynopticalTableComponent
+   */
+  isEditable(): boolean {
+    return this.synopticalService?.selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE;
   }
 
 }

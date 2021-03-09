@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { LoadablePattern, LoadableStudy } from '../../cargo-planning/models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../../cargo-planning/services/loadable-study-list-api.service';
-import { Voyage } from '../../core/models/common.model';
+import { Voyage, VOYAGE_STATUS, VOYAGE_STATUS_LABEL } from '../../core/models/common.model';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
@@ -76,7 +76,7 @@ export class SynopticalService {
     if (this.selectedVoyage) {
       this.voyageId = this.selectedVoyage.id;
     } else if (this.voyages && this.voyageId) {
-      this.selectedVoyage = this.voyages.find(voyage => voyage.id === this.voyageId)
+      this.selectedVoyage = this.voyages.find(voyage => voyage.id === this.voyageId);
       await this.getLoadableStudyInfo(this.vesselInfo.id, this.selectedVoyage.id)
     }
   }

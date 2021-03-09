@@ -54,10 +54,11 @@ export interface IVessels {
 export class Voyage {
     public voyageNo: string;
     public id: number;
-    public status?: string;
+    public status?: VOYAGE_STATUS_LABEL;
     public confirmedLoadableStudyId?: number;
     public startDate?: string;
     public endDate?: string;
+    statusId?: VOYAGE_STATUS;
 }
 
 /**
@@ -302,4 +303,28 @@ export interface IPortList {
     voyageId?: number;
     etaActual?: string;
     etdActual?: string;
+}
+
+/**
+ * ENUM for voyage status
+ *
+ * @export
+ * @enum {number}
+ */
+export enum VOYAGE_STATUS {
+    OPEN = 1,
+    CLOSE = 2,
+    ACTIVE = 3
+}
+
+/**
+ * ENUM for voyage status labels
+ *
+ * @export
+ * @enum {number}
+ */
+export enum VOYAGE_STATUS_LABEL {
+    OPEN = "Open",
+    CLOSE = "Close",
+    ACTIVE = "Active"
 }
