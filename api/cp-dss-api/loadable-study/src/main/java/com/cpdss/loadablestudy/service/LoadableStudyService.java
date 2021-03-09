@@ -1764,6 +1764,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(endDate -> detailbuilder.setEndDate(formatter.format(endDate)));
         detailbuilder.setStatus(
             entity.getVoyageStatus() != null ? entity.getVoyageStatus().getName() : "");
+        Optional.ofNullable(entity.getVoyageStatus())
+            .ifPresent(status -> detailbuilder.setStatusId(status.getId()));
         // fetch the confirmed loadable study for active voyages
         if (entity.getVoyageStatus() != null
             && STATUS_ACTIVE.equalsIgnoreCase(entity.getVoyageStatus().getName())) {

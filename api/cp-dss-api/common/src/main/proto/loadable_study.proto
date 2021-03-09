@@ -486,6 +486,7 @@ message VoyageDetail{
 	string charterer = 10;
 	string actualStartDate = 11;
 	string actualEndDate = 12;
+	int64 statusId = 13;
 }
 
 message VoyageListReply{
