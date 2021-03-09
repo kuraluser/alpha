@@ -443,6 +443,7 @@ export class OnHandQuantityComponent implements OnInit {
       if (event.data.type === 'ohq_sync_finished') {
         const index = this.selectedPortOHQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
         if (index !== -1) {
+          this.loadableStudyDetailsTransformationService.ohqUpdated(event);
           this.selectedPortOHQTankDetails[index].id = event.data.id;
           this.selectedPortOHQTankDetails[index].processing = false;
           this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];

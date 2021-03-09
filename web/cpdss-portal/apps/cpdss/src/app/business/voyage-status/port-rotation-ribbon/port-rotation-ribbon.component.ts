@@ -467,15 +467,17 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   resetPreviousPort(index: number) {
     if (this.selectedPortIndex >= 0 && this.selectedPortIndex !== index) {
       const port = this.portList[this.selectedPortIndex];
-      const form = this.row(this.selectedPortIndex)
-      const date = this.convertToDate(port.type === "Arrival" ? port?.eta : port?.etd);
-      const dateActual = this.convertToDate(port.type === "Arrival" ? port?.etaActual : port?.etdActual);
-      form.controls.date.setValue(dateActual ? dateActual : date)
-      form.controls.time.setValue(dateActual ? dateActual : date)
-      form.controls.distance.setValue(port?.distanceBetweenPorts ? port?.distanceBetweenPorts : 0)
-      port.isDateEditable = false;
-      port.isDistanceEditable = false;
-      port.isTimeEditable = false;
+      if (port !== undefined) {
+        const form = this.row(this.selectedPortIndex)
+        const date = this.convertToDate(port.type === "Arrival" ? port?.eta : port?.etd);
+        const dateActual = this.convertToDate(port.type === "Arrival" ? port?.etaActual : port?.etdActual);
+        form.controls.date.setValue(dateActual ? dateActual : date)
+        form.controls.time.setValue(dateActual ? dateActual : date)
+        form.controls.distance.setValue(port?.distanceBetweenPorts ? port?.distanceBetweenPorts : 0)
+        port.isDateEditable = false;
+        port.isDistanceEditable = false;
+        port.isTimeEditable = false;
+      }
     }
     this.selectedPortIndex = index;
   }

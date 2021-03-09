@@ -6,6 +6,7 @@ import { Table } from 'primeng/table';
 import { ObjectUtils } from 'primeng/utils';
 import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_BUTTON , DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableEvent, IDataTableFilterEvent, IDataTableSortEvent , IDataTablePageChangeEvent } from './datatable.model';
 import { Paginator } from 'primeng/paginator';
+import { DecimalPipe } from '@angular/common';
 
 /**
  * Compoent for Datatable
@@ -223,7 +224,7 @@ export class DatatableComponent implements OnInit {
 
 
   // public methods
-  constructor(private translateService: TranslateService, private fb: FormBuilder) {
+  constructor(private translateService: TranslateService, private fb: FormBuilder, private decimalPipe: DecimalPipe) {
   }
 
   ngOnInit(): void {
@@ -767,7 +768,7 @@ export class DatatableComponent implements OnInit {
           total += value
         }
       })
-      return total.toFixed(2);
+      return this.decimalPipe.transform(total.toFixed(2), col?.numberFormat);
     }
     return ""
   }

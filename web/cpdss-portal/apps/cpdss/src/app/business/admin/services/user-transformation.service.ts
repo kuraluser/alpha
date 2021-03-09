@@ -29,14 +29,14 @@ export class UserTransformationService {
     return [
       {
         field: 'slNo',
-        header: 'OBQ_SL',
+        header: 'USER_SL',
         fieldType: DATATABLE_FIELD_TYPE.SLNO,
         fieldHeaderClass: 'column-sl',
         fieldClass: 'sl'
       },
       {
         field: 'username',
-        header: 'USER NAME',
+        header: 'USER_NAME',
         filter: true,
         filterPlaceholder: 'SEARCH_USER',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
@@ -47,7 +47,7 @@ export class UserTransformationService {
       },
       {
         field: 'designation',
-        header: 'DESIGNATION',
+        header: 'USER_DESIGNATION_HEADING',
         filter: true,
         filterPlaceholder: 'SEARCH_DESGNATION',
         filterType: DATATABLE_FILTER_TYPE.TEXT,

@@ -19,7 +19,7 @@ import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../s
 import { LoadableQuantityModel } from '../models/loadable-quantity.model';
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil , switchMap } from 'rxjs/operators';
 
 
 /**
@@ -297,6 +297,15 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.onCargoNominationChange();
       })
+      this.loadableStudyDetailsTransformationService.obqUpdate$.pipe(
+        switchMap(() => {
+          return this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id);
+        })
+      ).subscribe((loadableQuantityResult) => {
+        if (loadableQuantityResult.responseStatus.status === "200") {
+          loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
+        }
+      });
   }
 
   /**
@@ -336,7 +345,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         }
         this.noResponseMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
       }
-      this.setProcessingLoadableStudyActions(event.data.pattern.loadableStudyId, event.data.statusId);
+      this.setProcessingLoadableStudyActions(event.data?.pattern?.loadableStudyId, event.data.statusId);
     });
   }
 
@@ -591,7 +600,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       if (!cargoNomination.isAdd && this.dischargeCargos.indexOf(cargoNomination.cargo.value) === -1)
         this.dischargeCargos.push(cargoNomination.cargo.value)
     });
-    if (this.selectedDischargeCargo && !this.selectedDischargeCargo.name) {
+    if (this.selectedDischargeCargo) {
       this.selectedDischargeCargo = this.dischargeCargos.find(cargo => cargo.id === this.selectedDischargeCargo.id)
     }
   }

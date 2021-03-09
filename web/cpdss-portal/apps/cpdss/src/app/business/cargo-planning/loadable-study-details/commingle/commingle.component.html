@@ -115,7 +115,7 @@
 
                     </div>
                 </div>
-                <a class="delete-icon mr-15 mt-5 " (click)="clearCargo()" *ngIf="editMode && (commingleForm.controls['cargo1'].valid || commingleForm.controls['cargo2'].valid)"></a>
+                <a class="delete-icon mr-15 mt-5 " (click)="clearCargo()" *ngIf="editMode && (commingleForm.controls['cargo1'].value || commingleForm.controls['cargo2'].value)"></a>
             </div>
             <hr class="hr-margin" *ngIf="isVolumeMaximum">
         </div>
@@ -136,7 +136,7 @@
             </form>
         </div>
 
-        <p class="text-danger" *ngIf="commingleManualForm && !isVolumeMaximum && commingleManualForm.touched && !manualCommingleList?.length">{{'COMMINGLE_CARGO_VALID_DATA'| translate}}</p>
+        
     </form>
     <p-footer>
         <div class="float-right">

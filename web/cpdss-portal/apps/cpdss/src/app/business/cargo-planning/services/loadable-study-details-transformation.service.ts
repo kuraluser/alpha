@@ -28,6 +28,7 @@ export class LoadableStudyDetailsTransformationService {
   private _portValiditySource: Subject<boolean> = new Subject();
   private _ohqValiditySource: Subject<boolean> = new Subject();
   private _obqValiditySource: Subject<boolean> = new Subject();
+  private _ohqUpdate: Subject<any> = new Subject();
   private OPERATIONS: OPERATIONS;
 
   // public fields
@@ -38,6 +39,7 @@ export class LoadableStudyDetailsTransformationService {
   portValidity$ = this._portValiditySource.asObservable();
   ohqValidity$ = this._ohqValiditySource.asObservable();
   obqValidity$ = this._obqValiditySource.asObservable();
+  obqUpdate$ = this._ohqUpdate.asObservable();
 
   constructor() { }
 
@@ -362,6 +364,15 @@ export class LoadableStudyDetailsTransformationService {
    */
   addCargoNomination() {
     this._addCargoNominationSource.next();
+  }
+
+  /**
+   * Method for emitting observable for update ohq table
+   *
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  ohqUpdated(event) {
+    this._ohqUpdate.next(event);
   }
 
   /**

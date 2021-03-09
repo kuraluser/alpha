@@ -83,7 +83,7 @@ export class UserListingComponent implements OnInit {
         const userData = this.userTransformationService.getPortAsValueObject(user);
         return userData;
       });
-      this.userList = _userList;
+      this.userList = _userList ? _userList : [];
     }
     
   }
