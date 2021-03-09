@@ -7,7 +7,7 @@ import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNomina
 import { v4 as uuid4 } from 'uuid';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { ICargoGroup, ICommingleManual, ICommingleResponseModel, ICommingleValueObject, IPercentage } from '../models/commingle.model';
-import { IOperations, IPort, IPortList } from '../../core/models/common.model';
+import { IOperations, IPort, IPortList, VOYAGE_STATUS } from '../../core/models/common.model';
 import { LOADABLE_STUDY_STATUS } from '../models/loadable-study-list.model';
 
 /**
@@ -563,8 +563,8 @@ export class LoadableStudyDetailsTransformationService {
    * @returns
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getLoadableStudyGridColumns(): IDataTableColumn[] {
-    return [
+  getLoadableStudyGridColumns(permission: IPermission, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
+    let columns: IDataTableColumn[] =  [
       {
         field: 'name',
         header: 'LOADABLE_STUDY_DETAILS_LODABLE_STUDY_COLUMN_NAME',
@@ -588,6 +588,31 @@ export class LoadableStudyDetailsTransformationService {
         actions: [DATATABLE_ACTION.EDIT, DATATABLE_ACTION.DELETE, DATATABLE_ACTION.DUPLICATE]
       }
     ];
+
+    if(permission && [VOYAGE_STATUS.ACTIVE, VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+      const actions: DATATABLE_ACTION[] = [];
+      if(permission?.delete) {
+        actions.push(DATATABLE_ACTION.DELETE);
+      }
+
+      if(permission?.edit) {
+        actions.push(DATATABLE_ACTION.EDIT);
+      }
+
+      if(permission?.add) {
+        actions.push(DATATABLE_ACTION.DUPLICATE);
+      }
+
+      const action: IDataTableColumn = {
+        field: 'actions',
+        header: '',
+        fieldType: DATATABLE_FIELD_TYPE.ACTION,
+        actions: actions
+      };
+      columns = [...columns, action];
+    }
+
+    return columns;
   }
 
   /**

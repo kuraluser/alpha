@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { VesselsApiService } from '../core/services/vessels-api.service';
 import { IVessel } from '../core/models/vessel-details.model';
 import { VoyageService } from '../core/services/voyage.service';
-import { Voyage } from '../core/models/common.model';
+import { Voyage, VOYAGE_STATUS } from '../core/models/common.model';
 import { EditPortRotationApiService } from './services/edit-port-rotation-api.service';
 import { IPortsDetailsResponse } from '../core/models/common.model';
 import { VoyageApiService } from './services/voyage-api.service';
@@ -33,6 +33,7 @@ export class VoyageStatusComponent implements OnInit {
   selectedPortDetails: IVoyageDetails;
   voyageStatusResponse: IVoyageStatus;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit') ?? AppConfigurationService.settings.baseUnit;
+  VOYAGE_STATUS = VOYAGE_STATUS;
 
   constructor(private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,

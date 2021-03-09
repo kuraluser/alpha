@@ -5,7 +5,7 @@ import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { LoadableStudy, LOADABLE_STUDY_STATUS } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
-import { Voyage } from '../../core/models/common.model';
+import { Voyage, VOYAGE_STATUS } from '../../core/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
 import { LoadableStudyListTransformationService } from '../services/loadable-study-list-transformation.service';
 import { IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
@@ -14,6 +14,7 @@ import { Dropdown } from 'primeng/dropdown';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/common.model';
 
 /**
  * Loadable study list
@@ -39,6 +40,8 @@ export class LoadableStudyListComponent implements OnInit {
   readonly editMode = null;
   isVoyageIdSelected = true;
   permission: IPermission;
+  addLSBtnPermissionContext: IPermissionContext;
+  VOYAGE_STATUS = VOYAGE_STATUS;
 
   constructor(private loadableStudyListApiService: LoadableStudyListApiService,
     private vesselsApiService: VesselsApiService, private router: Router,
@@ -59,7 +62,8 @@ export class LoadableStudyListComponent implements OnInit {
       this.selectedVoyage = this.voyages.find(voyage => voyage.id === this.voyageId);
     });
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], false);
-    this.columns = this.loadableStudyListTransformationService.getLoadableStudyListDatatableColumns(this.permission);
+    this.addLSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+    this.columns = this.loadableStudyListTransformationService.getLoadableStudyListDatatableColumns(this.permission, this.selectedVoyage?.statusId);
     this.loading = false;
 
   }

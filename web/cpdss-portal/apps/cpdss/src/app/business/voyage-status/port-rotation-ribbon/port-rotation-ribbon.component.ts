@@ -6,7 +6,7 @@ import { EditPortRotationApiService } from '../services/edit-port-rotation-api.s
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { IEditPortRotation } from '../models/edit-port-rotation.model';
-import { IPortsDetailsResponse } from '../../core/models/common.model';
+import { IPortsDetailsResponse, VOYAGE_STATUS } from '../../core/models/common.model';
 import { Voyage } from '../../core/models/common.model';
 import { Subscription } from 'rxjs';
 import { OnDestroy } from '@angular/core';
@@ -51,6 +51,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   errorMesages: any;
   portOrderSubscription$: Subscription;
   responsiveOptions: { breakpoint: string; numVisible: number; numScroll: number; }[];
+  VOYAGE_STATUS = VOYAGE_STATUS;
 
   // private fields
   private _voyageDetails: Voyage;
@@ -138,18 +139,20 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * @param field 
    */
   editPort(event, port: IEditPortRotation, field: string) {
-    const form = this.row(this.portList.indexOf(port));
-    this.setInvalid(port, form)
-    if (port.isFutureDate === true) {
-      if (field === 'date') {
-        port.isDateEditable = true;
-      } else if (field === 'time') {
-        port.isTimeEditable = true;
-      } else if (field === 'distance') {
-        port.isDistanceEditable = true;
+    if(this.voyageDetails?.statusId !== VOYAGE_STATUS.CLOSE) {
+      const form = this.row(this.portList.indexOf(port));
+      this.setInvalid(port, form)
+      if (port.isFutureDate === true) {
+        if (field === 'date') {
+          port.isDateEditable = true;
+        } else if (field === 'time') {
+          port.isTimeEditable = true;
+        } else if (field === 'distance') {
+          port.isDistanceEditable = true;
+        }
       }
+      form.markAllAsTouched();
     }
-    form.markAllAsTouched()
   }
 
   /**
