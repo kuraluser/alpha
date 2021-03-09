@@ -887,7 +887,7 @@ a{
   }
   .p-orderlist .p-orderlist-list .p-orderlist-item:not(.p-highlight):hover, .p-orderlist .p-orderlist-list .p-orderlist-item.p-highlight{
     background: $dropdown-menu-hover-bg url($images-theme + 'grab-handles.png') no-repeat;
-    color: $text-secondary;
+    color: $hover-color;
   }
   .p-orderlist .p-orderlist-list .p-orderlist-item:hover + .p-orderlist-droppoint{
     background: $dropdown-menu-hover-bg;

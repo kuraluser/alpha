@@ -1557,6 +1557,7 @@ th{
 }
 
 .port-list{
+  white-space: initial;
   li{
       margin-right: 40px;
       padding: 2px 10px;
@@ -1754,7 +1755,7 @@ th .p-calendar .p-inputtext{
 }
 
 .p-orderlist .p-orderlist-list .p-orderlist-item:not(.p-highlight):hover, .p-orderlist .p-orderlist-list .p-orderlist-item.p-highlight{
-  background-position: 95% 15px;
+  background-position: 95% 15px!important;
 }
 
 .p-datatable .p-button.p-button-text.p-button-plain:enabled:hover{
