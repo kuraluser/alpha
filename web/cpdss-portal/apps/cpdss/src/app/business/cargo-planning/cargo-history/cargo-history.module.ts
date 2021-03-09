@@ -12,7 +12,12 @@ import { DialogModule } from 'primeng/dialog';
 import { PermissionDirectiveModule } from '../../../shared/directives/permission/permission-directive.module';
 import { VesselInfoModule } from '../../core/components/vessel-info/vessel-info.module';
 
-
+/**
+ * Module will import all the dependencies for Cargo-history
+ *
+ * @export
+ * @class CargoHistoryModule
+ */
 @NgModule({
   declarations: [CargoHistoryComponent],
   imports: [
