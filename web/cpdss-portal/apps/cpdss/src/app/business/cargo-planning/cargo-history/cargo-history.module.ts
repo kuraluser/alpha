@@ -22,16 +22,15 @@ import { VesselInfoModule } from '../../core/components/vessel-info/vessel-info.
   declarations: [CargoHistoryComponent],
   imports: [
     CommonModule,
-    DatatableModule,
     DropdownModule,
     TranslateModule,
     TableModule,
-    DatatableModule,
     VesselInfoModule,
     ValidationErrorModule,
-    CargoHistoryRoutingModule,
     DialogModule,
-    PermissionDirectiveModule
+    DatatableModule,
+    PermissionDirectiveModule,
+    CargoHistoryRoutingModule
   ]
 })
 export class CargoHistoryModule { }
