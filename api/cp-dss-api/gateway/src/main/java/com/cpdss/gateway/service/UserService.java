@@ -97,62 +97,60 @@ public class UserService {
     UserAuthorizationsResponse userAuthResponse = new UserAuthorizationsResponse();
     // Retrieve user information from user database
     String authorizationToken = headers.getFirst(HttpHeaders.AUTHORIZATION);
-    if (authorizationToken != null) {
-      // AccessToken token = parseKeycloakToken(authorizationToken);
-      Users usersEntity =
-          this.usersRepository.findByKeycloakIdAndIsActive(
-              "4b5608ff-b77b-40c6-9645-d69856d4aafa", true);
-      if (usersEntity == null) {
-        throw new GenericServiceException(
-            "Invalid user in request token",
-            CommonErrorCodes.E_CPDSS_INVALID_USER,
-            HttpStatusCode.valueOf(Integer.valueOf(CommonErrorCodes.E_HTTP_BAD_REQUEST)));
-      }
-      if (usersEntity.getId() != null) {
-        User user = new User();
-        user.setId(usersEntity.getId());
-        List<RoleUserMapping> roleUserList =
-            this.roleUserMappingRepository.findByUsersAndIsActive(
-                usersEntity, true); // usersEntity.getRoleUserMappings();
-        if (!CollectionUtils.isEmpty(roleUserList)) {
-          roleUserList.forEach(
-              roleUser -> {
-                if (roleUser.getRoles() != null) {
-                  RolePermissions rolePermissions = new RolePermissions();
-                  rolePermissions.setId(roleUser.getRoles().getId());
-                  rolePermissions.setRole(roleUser.getRoles().getName());
-                  List<ScreenInfo> screenInfoList =
-                      this.roleScreenRepository.findByRolesAndIsActive(roleUser.getRoles(), true);
-                  if (!CollectionUtils.isEmpty(screenInfoList)) {
-                    List<Resource> resourceList = new ArrayList<>();
-                    screenInfoList.forEach(
-                        screenInfo -> {
-                          Resource resource = new Resource();
-                          resource.setId(screenInfo.getId());
-                          resource.setName(screenInfo.getName());
-                          resource.setLanguageKey(screenInfo.getLanguageKey());
-                          Permission permission = new Permission();
-                          permission.setAdd(screenInfo.isAdd());
-                          permission.setDelete(screenInfo.isDelete());
-                          permission.setEdit(screenInfo.isEdit());
-                          permission.setView(screenInfo.isView());
-                          resource.setPermission(permission);
-                          resourceList.add(resource);
-                        });
-                    rolePermissions.setResources(resourceList);
-                  }
-                  user.setRolePermissions(rolePermissions);
-                }
-              });
-        }
-        userAuthResponse.setUser(user);
-      }
-    } else {
+    // if (authorizationToken != null) {
+    // AccessToken token = parseKeycloakToken(authorizationToken);
+    Users usersEntity =
+        this.usersRepository.findByKeycloakIdAndIsActive(
+            "4b5608ff-b77b-40c6-9645-d69856d4aafa", true);
+    if (usersEntity == null) {
       throw new GenericServiceException(
           "Invalid user in request token",
           CommonErrorCodes.E_CPDSS_INVALID_USER,
           HttpStatusCode.valueOf(Integer.valueOf(CommonErrorCodes.E_HTTP_BAD_REQUEST)));
     }
+    if (usersEntity.getId() != null) {
+      User user = new User();
+      user.setId(usersEntity.getId());
+      List<RoleUserMapping> roleUserList =
+          this.roleUserMappingRepository.findByUsersAndIsActive(
+              usersEntity, true); // usersEntity.getRoleUserMappings();
+      if (!CollectionUtils.isEmpty(roleUserList)) {
+        roleUserList.forEach(
+            roleUser -> {
+              if (roleUser.getRoles() != null) {
+                RolePermissions rolePermissions = new RolePermissions();
+                rolePermissions.setId(roleUser.getRoles().getId());
+                rolePermissions.setRole(roleUser.getRoles().getName());
+                List<ScreenInfo> screenInfoList =
+                    this.roleScreenRepository.findByRolesAndIsActive(roleUser.getRoles(), true);
+                if (!CollectionUtils.isEmpty(screenInfoList)) {
+                  List<Resource> resourceList = new ArrayList<>();
+                  screenInfoList.forEach(
+                      screenInfo -> {
+                        Resource resource = new Resource();
+                        resource.setId(screenInfo.getId());
+                        resource.setName(screenInfo.getName());
+                        resource.setLanguageKey(screenInfo.getLanguageKey());
+                        Permission permission = new Permission();
+                        permission.setAdd(screenInfo.isAdd());
+                        permission.setDelete(screenInfo.isDelete());
+                        permission.setEdit(screenInfo.isEdit());
+                        permission.setView(screenInfo.isView());
+                        resource.setPermission(permission);
+                        resourceList.add(resource);
+                      });
+                  rolePermissions.setResources(resourceList);
+                }
+                user.setRolePermissions(rolePermissions);
+              }
+            });
+      }
+      userAuthResponse.setUser(user);
+    }
+    /*} else {
+    	throw new GenericServiceException("Invalid user in request token", CommonErrorCodes.E_CPDSS_INVALID_USER,
+    			HttpStatusCode.valueOf(Integer.valueOf(CommonErrorCodes.E_HTTP_BAD_REQUEST)));
+    }*/
     CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
     commonSuccessResponse.setStatus(SUCCESS);
     userAuthResponse.setResponseStatus(commonSuccessResponse);

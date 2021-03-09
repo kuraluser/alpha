@@ -911,6 +911,7 @@ message SynopticalRecord{
 	string ballastPlanned = 36;
 	string ballastActual = 37;
 	repeated SynopticalBallastRecord ballast = 38;
+	int64 portRotationId = 39;
 }
 
 message SynopticalCargoRecord{
