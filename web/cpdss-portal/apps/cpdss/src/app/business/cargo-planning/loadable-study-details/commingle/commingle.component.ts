@@ -202,10 +202,16 @@ export class CommingleComponent implements OnInit {
     if (cargo === 1) {
       this.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.cargoId !== event.value.cargoId);
       this.selectedCargo1 = event.value;
+      this.selectedCargo2 = this.selectedCargo1?.cargoId === this.selectedCargo2?.cargoId ? null : this.selectedCargo2;
     } else {
       this.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.cargoId !== event.value.cargoId);
       this.selectedCargo2 = event.value;
+      this.selectedCargo1 = this.selectedCargo1?.cargoId === this.selectedCargo2?.cargoId ? null : this.selectedCargo1;
     }
+    this.commingleForm.patchValue({
+      cargo1: this.selectedCargo1,
+      cargo2: this.selectedCargo2
+    });
     this.commingleForm.controls['cargo1'].setValidators([Validators.required]);
     this.commingleForm.controls['cargo2'].setValidators([Validators.required]);
     this.commingleForm.controls['cargo1'].updateValueAndValidity();

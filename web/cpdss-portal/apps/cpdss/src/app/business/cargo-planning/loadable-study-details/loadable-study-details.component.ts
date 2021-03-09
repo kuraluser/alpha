@@ -297,7 +297,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.onCargoNominationChange();
       })
-      this.loadableStudyDetailsTransformationService.obqUpdate$.pipe(
+      this.loadableStudyDetailsTransformationService.obqUpdate$?.pipe(
         switchMap(() => {
           return this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id);
         })
@@ -317,20 +317,20 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   private async listenEvents() {
     navigator.serviceWorker.addEventListener('message', async event => {
       if (event.data.type === 'loadable-pattern-processing' && this.router.url.includes('loadable-study-details')) {
-        if (event.data.pattern.loadableStudyId === this.loadableStudyId) {
+        if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
           this.processingMessage();
         } else {
           this.messageService.clear("process");
         }
       }
       else if (event.data.type === 'loadable-pattern-completed') {
-        if (event.data.pattern.loadableStudyId === this.loadableStudyId) {
+        if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
           this.isPatternGenerated = true;
         }
         this.generatedMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
       }
       else if (event.data.type === 'loadable-pattern-no-solution') {
-        if (event.data.pattern.loadableStudyId === this.loadableStudyId) {
+        if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
           this.isPatternOpenOrNoplan = false;
           this.isPatternGenerated = false;
           this.isGenerateClicked = false;
@@ -338,7 +338,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.noPlanMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName)
       }
       else if (event.data.type === 'loadable-pattern-no-response') {
-        if (event.data.pattern.loadableStudyId === this.loadableStudyId) {
+        if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
           this.isPatternOpenOrNoplan = false;
           this.isPatternGenerated = false;
           this.isGenerateClicked = false;

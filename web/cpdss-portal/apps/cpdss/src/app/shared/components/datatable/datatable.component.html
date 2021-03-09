@@ -96,7 +96,7 @@
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
                 <tr formGroupName="{{rowIndex}}" [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex"
-                    [pSelectableRowDisabled]="!selectionMode" [pReorderableRow]="row(rowIndex)?.valid && rowIndex">
+                    [pSelectableRowDisabled]="!selectionMode" [pReorderableRow]="rowData?.id !== 0 && rowIndex">
                     <td *ngIf="progress">
                         <i class="pi" [ngClass]="{'pi-spin pi-spinner row-loader': rowData['processing']}"></i>
                     </td>
