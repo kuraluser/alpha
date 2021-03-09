@@ -522,7 +522,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 HttpStatusCode.BAD_REQUEST);
           }
         }
+        loadableQuantity.setLoadableStudyXId(loadableStudy.get());
+        List<LoadablePattern> generatedPatterns =
+            this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+                LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
+                loadableQuantity.getLoadableStudyXId(),
+                true);
 
+        if (!generatedPatterns.isEmpty()) {
+          throw new GenericServiceException(
+              "Save not allowed for plan generated loadable study",
+              CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+              HttpStatusCode.BAD_REQUEST);
+        }
         loadableQuantity.setConstant(new BigDecimal(loadableQuantityRequest.getConstant()));
         loadableQuantity.setDeadWeight(new BigDecimal(loadableQuantityRequest.getDwt()));
         loadableQuantity.setDisplacementAtDraftRestriction(
@@ -552,7 +564,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getVesselLightWeight()));
 
-        loadableQuantity.setLoadableStudyXId(loadableStudy.get());
         loadableQuantity.setOtherIfAny(new BigDecimal(loadableQuantityRequest.getOtherIfAny()));
         loadableQuantity.setSaggingDeduction(
             new BigDecimal(loadableQuantityRequest.getSaggingDeduction()));
@@ -625,9 +636,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     StatusReply.newBuilder()
                         .setStatus(FAILED)
                         .setMessage(INVALID_LOADABLE_QUANTITY)
-                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .setStatusCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
                 .build();
       }
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving loadable quantity", e);
+      loadableQuantityReply =
+          LoadableQuantityReply.newBuilder()
+              .setResponseStatus(
+                  StatusReply.newBuilder()
+                      .setCode(e.getCode())
+                      .setMessage(e.getMessage())
+                      .setStatus(FAILED)
+                      .setStatusCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
+              .build();
     } catch (Exception e) {
       log.error("Error in saving loadable quantity ", e);
       loadableQuantityReply =
@@ -636,7 +659,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   StatusReply.newBuilder()
                       .setStatus(FAILED)
                       .setMessage(FAILED)
-                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR))
+                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                      .setStatusCode(CommonErrorCodes.E_GEN_INTERNAL_ERR))
               .build();
     } finally {
       responseObserver.onNext(loadableQuantityReply);
@@ -1019,26 +1043,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      List<LoadablePattern> loadablePatterns =
-          this.loadablePatternRepository.findByLoadableStudyAndIsActive(loadableStudy.get(), true);
-      if (!loadablePatterns.isEmpty()) {
-        Optional<LoadablePattern> generatedPattern =
-            loadablePatterns.stream()
-                .filter(
-                    pattern ->
-                        pattern
-                            .getLoadableStudy()
-                            .getLoadableStudyStatus()
-                            .getId()
-                            .equals(LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID))
-                .findAny();
-        if (generatedPattern.isPresent()) {
-          throw new GenericServiceException(
-              "Save not allowed for plan generated loadable study",
-              CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
-              HttpStatusCode.BAD_REQUEST);
-        }
-      }
+
       CargoNomination cargoNomination = null;
       List<Long> existingCargoPortIds = null;
       if (request.getCargoNominationDetail() != null
@@ -1065,6 +1070,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         cargoNomination = new CargoNomination();
         cargoNomination = buildCargoNomination(cargoNomination, request);
       }
+
+      List<LoadablePattern> generatedPatterns =
+          this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudy.get(), true);
+      if (!generatedPatterns.isEmpty()) {
+        throw new GenericServiceException(
+            "Save not allowed for plan generated loadable study",
+            CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
       // update port rotation table with loading ports from cargo nomination
       LoadableStudy loadableStudyRecord = loadableStudy.get();
       // validate if requested are already added as transit ports
@@ -1851,6 +1867,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
         entity = portRoationOpt.get();
       }
+
+      List<LoadablePattern> generatedPatterns =
+          this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, entity.getLoadableStudy(), true);
+      if (!generatedPatterns.isEmpty()) {
+        throw new GenericServiceException(
+            "Save not allowed for plan generated loadable study",
+            CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
       entity =
           this.loadableStudyPortRotationRepository.save(
               this.createPortRotationEntity(entity, request));
@@ -1863,6 +1890,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setCode(e.getCode())
               .setMessage(e.getMessage())
               .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
               .build());
     } catch (Exception e) {
       log.error("Exception when saving loadable study port data", e);
@@ -2588,6 +2616,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               CommonErrorCodes.E_HTTP_BAD_REQUEST,
               HttpStatusCode.BAD_REQUEST);
         }
+
       } else {
         entity = new OnHandQuantity();
         Optional<LoadableStudy> loadableStudyOpt =
@@ -2601,6 +2630,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         entity.setLoadableStudy(loadableStudyOpt.get());
         entity.setPortXId(request.getPortId());
       }
+
+      List<LoadablePattern> generatedPatterns =
+          this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, entity.getLoadableStudy(), true);
+      if (!generatedPatterns.isEmpty()) {
+        throw new GenericServiceException(
+            "Save not allowed for plan generated loadable study",
+            CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+            HttpStatusCode.BAD_REQUEST);
+      }
       entity = this.buildOnHandQuantityEntity(entity, request);
       entity = this.onHandQuantityRepository.save(entity);
       replyBuilder
@@ -2613,6 +2652,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setCode(e.getCode())
               .setMessage(e.getMessage())
               .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
               .build());
     } catch (Exception e) {
       log.error("Exception when saving on hand quantities", e);
@@ -3515,29 +3555,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
 
-      List<LoadablePattern> loadablePatterns =
-          this.loadablePatternRepository.findByLoadableStudyAndIsActive(
-              loadableStudyOpt.get(), true);
-
-      if (!loadablePatterns.isEmpty()) {
-        Optional<LoadablePattern> generatedPattern =
-            loadablePatterns.stream()
-                .filter(
-                    pattern ->
-                        pattern
-                            .getLoadableStudy()
-                            .getLoadableStudyStatus()
-                            .getId()
-                            .equals(LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID))
-                .findAny();
-        if (generatedPattern.isPresent()) {
-          throw new GenericServiceException(
-              "Save not allowed for plan generated loadable study",
-              CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
-              HttpStatusCode.BAD_REQUEST);
-        }
-      }
-
       if (!CollectionUtils.isEmpty(request.getCommingleCargoList())) {
         // for existing commingle cargo find missing ids in request and delete them
         deleteCommingleCargo(request);
@@ -3571,6 +3588,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                           buildCommingleCargo(
                               commingleCargoEntity, commingleCargo, loadableStudyId);
                     }
+                    List<LoadablePattern> generatedPatterns =
+                        this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+                            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get(), true);
+                    if (!generatedPatterns.isEmpty()) {
+                      throw new GenericServiceException(
+                          "Save not allowed for plan generated loadable study",
+                          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+                          HttpStatusCode.BAD_REQUEST);
+                    }
+
                     commingleEntities.add(commingleCargoEntity);
                   } catch (Exception e) {
                     log.error("Exception in creating entities for save commingle cargo", e);
@@ -4627,6 +4654,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               HttpStatusCode.BAD_REQUEST);
         }
       }
+      List<LoadablePattern> generatedPatterns =
+          this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, entity.getLoadableStudy(), true);
+
+      if (!generatedPatterns.isEmpty()) {
+        throw new GenericServiceException(
+            "Save not allowed for plan generated loadable study",
+            CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+            HttpStatusCode.BAD_REQUEST);
+      }
       this.buildOnBoardQuantityEntity(entity, request);
       entity = this.onBoardQuantityRepository.save(entity);
       loadableStudyOpt.get().setLoadOnTop(request.getLoadOnTop());
@@ -4640,6 +4677,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setCode(e.getCode())
               .setMessage("GenericServiceException when saving on board quantities")
               .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
               .build());
     } catch (Exception e) {
       log.error("Exception when saving on board quantities", e);

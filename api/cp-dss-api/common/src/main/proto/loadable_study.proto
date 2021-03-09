@@ -499,6 +499,7 @@ message StatusReply {
 	string status = 1;
 	string code = 2;
 	string message = 3;
+	string statusCode = 4;
 }
 
 

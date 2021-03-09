@@ -336,7 +336,7 @@ public class LoadableStudyService {
           loadableQuantityReply.getResponseStatus().getMessage(),
           loadableQuantityReply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(
-              Integer.valueOf(loadableQuantityReply.getResponseStatus().getCode())));
+              Integer.valueOf(loadableQuantityReply.getResponseStatus().getStatusCode())));
     } else {
 
       loadableQuantityResponse.setResponseStatus(
@@ -914,7 +914,8 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to save loadable study - ports",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
     PortRotationResponse response = new PortRotationResponse();
     response.setId(grpcReply.getPortRotationId());
@@ -1721,7 +1722,8 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "Failed to save on hand quantities",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
     response.setId(grpcReply.getId());
     response.setResponseStatus(
@@ -2236,7 +2238,8 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "Failed to save on board quantities",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
     response.setId(grpcReply.getId());
     response.setResponseStatus(
