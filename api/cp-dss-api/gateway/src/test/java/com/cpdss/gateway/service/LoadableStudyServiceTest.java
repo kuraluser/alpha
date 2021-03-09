@@ -49,6 +49,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest;
+import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply;
+import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
@@ -94,6 +96,8 @@ import com.cpdss.gateway.domain.SaveCommentResponse;
 import com.cpdss.gateway.domain.SynopticalRecord;
 import com.cpdss.gateway.domain.SynopticalTableResponse;
 import com.cpdss.gateway.domain.Voyage;
+import com.cpdss.gateway.domain.VoyageActionRequest;
+import com.cpdss.gateway.domain.VoyageActionResponse;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.entity.RoleUserMapping;
 import com.cpdss.gateway.entity.Roles;
@@ -2458,6 +2462,56 @@ class LoadableStudyServiceTest {
             GenericServiceException.class,
             () ->
                 spy.getVoyageList(1L, "corelationId", filterParams, 1, 1, "", "", "", "charterer"));
+    assertAll(
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  @Test
+  void testSaveVoyageStatus() throws GenericServiceException {
+
+    LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
+    SaveVoyageStatusReply saveVoyageStatusReply =
+        SaveVoyageStatusReply.newBuilder()
+            .setResponseStatus(
+                ResponseStatus.newBuilder().setMessage("Success").setStatus(SUCCESS).build())
+            .build();
+    Mockito.when(spy.saveVoyageStatus(ArgumentMatchers.any(VoyageActionRequest.class), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(spy.saveVoyageStatus(ArgumentMatchers.any(SaveVoyageStatusRequest.class)))
+        .thenReturn(saveVoyageStatusReply);
+    VoyageActionRequest request = new VoyageActionRequest();
+    request.setVoyageId(1L);
+    request.setStatus("test");
+    request.setActualStartDate("test");
+    request.setActualEndDate("test");
+    VoyageActionResponse response = spy.saveVoyageStatus(request, "corelationId");
+    Assert.assertEquals(
+        String.valueOf(HttpStatusCode.OK.value()), response.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveVoyageStatusGrpcFailure() throws GenericServiceException {
+
+    LoadableStudyService spy = Mockito.mock(LoadableStudyService.class);
+    SaveVoyageStatusReply saveVoyageStatusReply =
+        SaveVoyageStatusReply.newBuilder()
+            .setResponseStatus(
+                ResponseStatus.newBuilder().setMessage("Failed").setStatus(FAILED).build())
+            .build();
+    Mockito.when(spy.saveVoyageStatus(ArgumentMatchers.any(VoyageActionRequest.class), anyString()))
+        .thenCallRealMethod();
+    Mockito.when(spy.saveVoyageStatus(ArgumentMatchers.any(SaveVoyageStatusRequest.class)))
+        .thenReturn(saveVoyageStatusReply);
+    VoyageActionRequest request = new VoyageActionRequest();
+    request.setVoyageId(1L);
+    request.setStatus("test");
+    request.setActualStartDate("test");
+    request.setActualEndDate("test");
+
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () -> spy.saveVoyageStatus(request, CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }

@@ -6564,6 +6564,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               HttpStatusCode.BAD_REQUEST);
         }
         entity.setDischargeCargoId(loadableStudyOpt.get().getDischargeCargoId());
+        entity.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
 
         List<OnHandQuantity> onHandQuantityList =
             this.onHandQuantityRepository.findByLoadableStudyAndIsActive(
@@ -7404,111 +7405,115 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       Voyage voyageEntity = this.voyageRepository.findByIdAndIsActive(request.getVoyageId(), true);
 
-      if (null != voyageEntity) {
-        Stream<LoadableStudy> loadableStudyStream =
-            Optional.ofNullable(voyageEntity.getLoadableStudies())
-                .map(Collection::stream)
-                .orElseGet(Stream::empty);
-        Optional<LoadableStudy> loadableStudy =
-            loadableStudyStream
-                .filter(
-                    loadableStudyElement ->
-                        (loadableStudyElement.getLoadableStudyStatus() != null
-                            && STATUS_CONFIRMED.equalsIgnoreCase(
-                                loadableStudyElement.getLoadableStudyStatus().getName())))
-                .findFirst();
-        if (request.getStatus().equalsIgnoreCase(START_VOYAGE)) {
-          List<Voyage> activeVoyage =
-              this.voyageRepository.findByVoyageStatusAndIsActive(ACTIVE_VOYAGE_STATUS, true);
-          if (!activeVoyage.isEmpty()) {
-            throw new GenericServiceException(
-                "Active Voyage already exist",
-                CommonErrorCodes.E_CPDSS_ACTIVE_VOYAGE_EXISTS,
-                HttpStatusCode.BAD_REQUEST);
-          }
-          if (!loadableStudy.isPresent()) {
-            throw new GenericServiceException(
-                "Confirmed Loadable study does not exist",
-                CommonErrorCodes.E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST,
-                HttpStatusCode.BAD_REQUEST);
-          }
-          Optional<VoyageStatus> status =
-              this.voyageStatusRepository.findByIdAndIsActive(ACTIVE_VOYAGE_STATUS, true);
-          if (!status.isPresent()) {
-            throw new GenericServiceException(
-                "Voyage status does not  exist",
-                CommonErrorCodes.E_HTTP_BAD_REQUEST,
-                HttpStatusCode.BAD_REQUEST);
-          }
-          voyageEntity.setVoyageStatus(status.get());
+      if (null == voyageEntity) {
+        throw new GenericServiceException(
+            " Voyage does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      Stream<LoadableStudy> loadableStudyStream =
+          Optional.ofNullable(voyageEntity.getLoadableStudies())
+              .map(Collection::stream)
+              .orElseGet(Stream::empty);
+      Optional<LoadableStudy> loadableStudy =
+          loadableStudyStream
+              .filter(
+                  loadableStudyElement ->
+                      (loadableStudyElement.getLoadableStudyStatus() != null
+                          && STATUS_CONFIRMED.equalsIgnoreCase(
+                              loadableStudyElement.getLoadableStudyStatus().getName())))
+              .findFirst();
+      if (request.getStatus().equalsIgnoreCase(START_VOYAGE)) {
+        List<Voyage> activeVoyage =
+            this.voyageRepository.findByVoyageStatusAndIsActive(ACTIVE_VOYAGE_STATUS, true);
+        if (!activeVoyage.isEmpty()) {
+          throw new GenericServiceException(
+              "Active Voyage already exist",
+              CommonErrorCodes.E_CPDSS_ACTIVE_VOYAGE_EXISTS,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        if (!loadableStudy.isPresent()) {
+          throw new GenericServiceException(
+              "Confirmed Loadable study does not exist",
+              CommonErrorCodes.E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        Optional<VoyageStatus> status =
+            this.voyageStatusRepository.findByIdAndIsActive(ACTIVE_VOYAGE_STATUS, true);
+        if (!status.isPresent()) {
+          throw new GenericServiceException(
+              "Voyage status does not  exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        voyageEntity.setVoyageStatus(status.get());
 
-          if (request.getActualStartDate().isEmpty()) {
-            LoadableStudyPortRotation minPortOrderEntity =
-                this.loadableStudyPortRotationRepository
-                    .findFirstByLoadableStudyAndIsActiveOrderByPortOrderAsc(
-                        loadableStudy.get(), true);
-            List<SynopticalTable> synopticalData = minPortOrderEntity.getSynopticalTable();
-            if (!synopticalData.isEmpty()) {
-              Optional<SynopticalTable> synoptical =
-                  synopticalData.stream()
-                      .filter(
-                          data ->
-                              data.getLoadableStudyPortRotation()
-                                  .getId()
-                                  .equals(minPortOrderEntity.getId()))
-                      .findAny();
-              if (synoptical.isPresent()) {
-                voyageEntity.setActualStartDate(synoptical.get().getEtaActual());
-              }
+        if (request.getActualStartDate().isEmpty()) {
+          LoadableStudyPortRotation minPortOrderEntity =
+              this.loadableStudyPortRotationRepository
+                  .findFirstByLoadableStudyAndIsActiveOrderByPortOrderAsc(
+                      loadableStudy.get(), true);
+          List<SynopticalTable> synopticalData = minPortOrderEntity.getSynopticalTable();
+          if (!synopticalData.isEmpty()) {
+            Optional<SynopticalTable> synoptical =
+                synopticalData.stream()
+                    .filter(
+                        data ->
+                            data.getLoadableStudyPortRotation()
+                                .getId()
+                                .equals(minPortOrderEntity.getId()))
+                    .findAny();
+            if (synoptical.isPresent()) {
+              voyageEntity.setActualStartDate(synoptical.get().getEtaActual());
             }
-          } else {
-            voyageEntity.setActualStartDate(
-                !StringUtils.isEmpty(request.getActualStartDate())
-                    ? LocalDateTime.from(
-                        DateTimeFormatter.ofPattern(DATE_FORMAT)
-                            .parse(request.getActualStartDate()))
-                    : null);
           }
         } else {
-          Optional<VoyageStatus> status =
-              this.voyageStatusRepository.findByIdAndIsActive(CLOSE_VOYAGE_STATUS, true);
-          if (!status.isPresent()) {
-            throw new GenericServiceException(
-                "Voyage status does not  exist",
-                CommonErrorCodes.E_HTTP_BAD_REQUEST,
-                HttpStatusCode.BAD_REQUEST);
-          }
-          voyageEntity.setVoyageStatus(status.get());
-          if (request.getActualEndDate().isEmpty()) {
-            LoadableStudyPortRotation maxPortOrderEntity =
-                this.loadableStudyPortRotationRepository
-                    .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(
-                        loadableStudy.get(), true);
-            List<SynopticalTable> synopticalData = maxPortOrderEntity.getSynopticalTable();
-            if (!synopticalData.isEmpty()) {
-              Optional<SynopticalTable> synoptical =
-                  synopticalData.stream()
-                      .filter(
-                          data ->
-                              data.getLoadableStudyPortRotation()
-                                  .getId()
-                                  .equals(maxPortOrderEntity.getId()))
-                      .findAny();
-              if (synoptical.isPresent()) {
-                voyageEntity.setActualEndDate(synoptical.get().getEtdActual());
-              }
-            }
-          } else {
-            voyageEntity.setActualEndDate(
-                !StringUtils.isEmpty(request.getActualEndDate())
-                    ? LocalDateTime.from(
-                        DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualEndDate()))
-                    : null);
-          }
+          voyageEntity.setActualStartDate(
+              !StringUtils.isEmpty(request.getActualStartDate())
+                  ? LocalDateTime.from(
+                      DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualStartDate()))
+                  : null);
         }
-        this.voyageRepository.save(voyageEntity);
-        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else {
+        Optional<VoyageStatus> status =
+            this.voyageStatusRepository.findByIdAndIsActive(CLOSE_VOYAGE_STATUS, true);
+        if (!status.isPresent()) {
+          throw new GenericServiceException(
+              "Voyage status does not  exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        voyageEntity.setVoyageStatus(status.get());
+        if (request.getActualEndDate().isEmpty()) {
+          LoadableStudyPortRotation maxPortOrderEntity =
+              this.loadableStudyPortRotationRepository
+                  .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(
+                      loadableStudy.get(), true);
+          List<SynopticalTable> synopticalData = maxPortOrderEntity.getSynopticalTable();
+          if (!synopticalData.isEmpty()) {
+            Optional<SynopticalTable> synoptical =
+                synopticalData.stream()
+                    .filter(
+                        data ->
+                            data.getLoadableStudyPortRotation()
+                                .getId()
+                                .equals(maxPortOrderEntity.getId()))
+                    .findAny();
+            if (synoptical.isPresent()) {
+              voyageEntity.setActualEndDate(synoptical.get().getEtdActual());
+            }
+          }
+        } else {
+          voyageEntity.setActualEndDate(
+              !StringUtils.isEmpty(request.getActualEndDate())
+                  ? LocalDateTime.from(
+                      DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualEndDate()))
+                  : null);
+        }
       }
+      this.voyageRepository.save(voyageEntity);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving voyage status", e);
       replyBuilder.setResponseStatus(
