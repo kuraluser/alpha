@@ -161,7 +161,7 @@
 	"LOADABLE_STUDY_CREATE_ERROR": "Error",
 	"LOADABLE_STUDY_ALREADY_EXIST": "Loadable study name already exist",
 	"LOADABLE_STUDY_DELETE_SUCCESS": "Success",
-	"LOADABLE_STUDY_DELETE_SUCCESSFULLY": "Loadable study delete successfully",
+	"LOADABLE_STUDY_DELETE_SUCCESSFULLY": "Loadable study deleted successfully",
 	"LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESS": "Success",
 	"LOADABLE_STUDY_DISCHARGING_PORT_UPDATE_SUCCESSFULLY": "Loadable study discharging ports updated successfully",
 	"LOADABLE_PATTERN_HISTORY_BUTTON_LABEL": "Pattern History",

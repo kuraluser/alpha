@@ -345,7 +345,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         }
         this.noResponseMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
       }
-      this.setProcessingLoadableStudyActions(event.data.pattern.loadableStudyId, event.data.statusId);
+      this.setProcessingLoadableStudyActions(event.data?.pattern?.loadableStudyId, event.data.statusId);
     });
   }
 
@@ -600,7 +600,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       if (!cargoNomination.isAdd && this.dischargeCargos.indexOf(cargoNomination.cargo.value) === -1)
         this.dischargeCargos.push(cargoNomination.cargo.value)
     });
-    if (this.selectedDischargeCargo && !this.selectedDischargeCargo.name) {
+    if (this.selectedDischargeCargo) {
       this.selectedDischargeCargo = this.dischargeCargos.find(cargo => cargo.id === this.selectedDischargeCargo.id)
     }
   }
