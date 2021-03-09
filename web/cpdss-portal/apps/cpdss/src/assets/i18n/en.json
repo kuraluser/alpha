@@ -756,6 +756,6 @@
 	"USER_DELETE_REJECT_LABEL": "No",
 	"USER_DELETE_SUCCESSFULLY": "User delete successfully",
 	"USER_DELETED_SUCCESS": "Success",
-	"USER_LISTING": "User Listing"
-
+	"USER_LISTING": "User Listing",
+	"CARGO_HISTORY": "Cargo History"
 }
