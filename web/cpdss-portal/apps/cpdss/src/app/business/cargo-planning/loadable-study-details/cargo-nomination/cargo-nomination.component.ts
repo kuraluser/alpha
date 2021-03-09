@@ -264,10 +264,13 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         event.data.cargo.value.ports = result?.ports;
         this.apiTempPopupData = <IApiTempPopupData>{
           rowDataCargo: event.data?.cargo,
+          vesselId: this.vesselId,
+          voyageId: this.voyageId,
+          loadableStudyId: this.loadableStudyId,
           rowIndex: event.index
         }
+        this.openAPITemperatureHistoryPopup = true;
       }
-      this.openAPITemperatureHistoryPopup = true;
     }
     this.ngxSpinnerService.hide();
   }

@@ -427,11 +427,11 @@ export class LoadableStudyDetailsTransformationService {
   getCargoNominationApiTempHistoryColumns(): IDataTableColumn[] {
     return [
       {
-        field: 'port',
+        field: 'loadingPortName',
         header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_PORT',
       },
       {
-        field: 'date',
+        field: 'loadedDate',
         header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_DATE',
       },
       {
@@ -439,7 +439,7 @@ export class LoadableStudyDetailsTransformationService {
         header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_API',
       },
       {
-        field: 'temp',
+        field: 'temperature',
         header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_TEMP',
       }
     ]
@@ -455,51 +455,51 @@ export class LoadableStudyDetailsTransformationService {
     return [
       {
         id: 1,
-        month: 'January'
+        month: 'JANUARY'
       },
       {
         id: 2,
-        month: 'February'
+        month: 'FEBRUARY'
       },
       {
         id: 3,
-        month: 'March'
+        month: 'MARCH'
       },
       {
         id: 4,
-        month: 'April'
+        month: 'APRIL'
       },
       {
         id: 5,
-        month: 'May'
+        month: 'MAY'
       },
       {
         id: 6,
-        month: 'June'
+        month: 'JUNE'
       },
       {
         id: 7,
-        month: 'July'
+        month: 'JULY'
       },
       {
         id: 8,
-        month: 'August'
+        month: 'AUGUST'
       },
       {
         id: 9,
-        month: 'September'
+        month: 'SEPTEMBER'
       },
       {
         id: 10,
-        month: 'October'
+        month: 'OCTOBER'
       },
       {
         id: 11,
-        month: 'November'
+        month: 'NOVEMBER'
       },
       {
         id: 12,
-        month: 'December'
+        month: 'DECEMBER'
       }
     ]
   }

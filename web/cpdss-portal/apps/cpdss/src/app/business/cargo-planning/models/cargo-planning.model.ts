@@ -670,20 +670,61 @@ export interface IConfirmStatusResponse {
  */
 export interface IApiTempPopupData {
     rowDataCargo: ValueObject<ICargo>;
+    vesselId: number;
+    voyageId: number;
+    loadableStudyId: number;
     rowIndex: number;
 }
 
 /**
- * Interface for get Api-Temperature History
+ * Interface for Api, Temperature requeset params
+ *
+ * @export
+ * @interface IApiTempHistoryRequest
+ */
+export interface IApiTempHistoryRequest {
+    cargoId: number;
+    loadingPortIds: number[];
+}
+
+/**
+ * Interface for Cargo Api,Temperature history POPUP API response
+ *
+ * @export
+ * @interface ICargoApiTempHistoryResponse
+ */
+export interface ICargoApiTempHistoryResponse {
+    responseStatus: IResponseStatus;
+    portHistory: IApiTempHistory[];
+    monthlyHistory: IApiTempMonthWiseHistory[];
+}
+
+/**
+ * Interface for get Api,Temperature port history
  *
  * @export
  * @interface IApiTempHistory
  */
 export interface IApiTempHistory {
-    port: string;
-    date: string;
+    cargoId: number;
+    loadingPortId: number;
+    loadedDate: string;
     api: number;
-    temp: number;
+    temperature: number;
+}
+
+/**
+ * Interface for get Api,Temperature month-wise history
+ *
+ * @export
+ * @interface IApiTempMonthWiseHistory
+ */
+export interface IApiTempMonthWiseHistory {
+    loadingPortId: number;
+    loadedYear: number;
+    loadedMonth: number;
+    api: number|string;
+    temperature: number|string;
 }
 
 /**
