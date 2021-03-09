@@ -8,4 +8,11 @@
       <h5 class="main-head inline-block">{{'CARGO_HISTORY'|translate}}</h5>
     </div>
   </div>
+  <div class="row">
+    <div class="col loadable-study-table-wrapper">
+      <cpdss-portal-datatable *ngIf="cargoHistoryGridData" [tableId]="'cargo_history_grid'"
+        [columns]="cargoHistoryGridColumns" [value]="cargoHistoryGridData">
+      </cpdss-portal-datatable>
+    </div>
+  </div>
 </div>

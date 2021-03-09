@@ -737,3 +737,20 @@ export interface IMonths {
     id: number;
     month: string;
 }
+
+/**
+ * Interface for Cargo-history table details
+ *
+ * @export
+ * @interface ICargoHistoryDetails
+ */
+export interface ICargoHistoryDetails {
+    vesselName: string;
+    loadingPort: string;
+    grade: string;
+    year: number;
+    month: number;
+    date: number;
+    api: number;
+    temperature: number;
+  }
