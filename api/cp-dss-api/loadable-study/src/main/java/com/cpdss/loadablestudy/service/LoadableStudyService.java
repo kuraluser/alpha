@@ -1019,6 +1019,26 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+      List<LoadablePattern> loadablePatterns =
+          this.loadablePatternRepository.findByLoadableStudyAndIsActive(loadableStudy.get(), true);
+      if (!loadablePatterns.isEmpty()) {
+        Optional<LoadablePattern> generatedPattern =
+            loadablePatterns.stream()
+                .filter(
+                    pattern ->
+                        pattern
+                            .getLoadableStudy()
+                            .getLoadableStudyStatus()
+                            .getId()
+                            .equals(LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID))
+                .findAny();
+        if (generatedPattern.isPresent()) {
+          throw new GenericServiceException(
+              "Save not allowed for plan generated loadable study",
+              CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+              HttpStatusCode.BAD_REQUEST);
+        }
+      }
       CargoNomination cargoNomination = null;
       List<Long> existingCargoPortIds = null;
       if (request.getCargoNominationDetail() != null
@@ -3494,6 +3514,30 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         throw new GenericServiceException(
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
+
+      List<LoadablePattern> loadablePatterns =
+          this.loadablePatternRepository.findByLoadableStudyAndIsActive(
+              loadableStudyOpt.get(), true);
+
+      if (!loadablePatterns.isEmpty()) {
+        Optional<LoadablePattern> generatedPattern =
+            loadablePatterns.stream()
+                .filter(
+                    pattern ->
+                        pattern
+                            .getLoadableStudy()
+                            .getLoadableStudyStatus()
+                            .getId()
+                            .equals(LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID))
+                .findAny();
+        if (generatedPattern.isPresent()) {
+          throw new GenericServiceException(
+              "Save not allowed for plan generated loadable study",
+              CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+              HttpStatusCode.BAD_REQUEST);
+        }
+      }
+
       if (!CollectionUtils.isEmpty(request.getCommingleCargoList())) {
         // for existing commingle cargo find missing ids in request and delete them
         deleteCommingleCargo(request);
