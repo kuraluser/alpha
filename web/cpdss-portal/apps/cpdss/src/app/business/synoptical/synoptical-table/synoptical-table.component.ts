@@ -14,6 +14,8 @@ import * as XLSX from 'xlsx';
 import { DatePipe } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { LOADABLE_STUDY_STATUS } from '../../cargo-planning/models/loadable-study-list.model';
+import { VOYAGE_STATUS } from '../../core/models/common.model';
 
 /**
  * Component class of synoptical table
@@ -247,7 +249,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 type: this.fieldType.DATETIME,
                 validators: ['required']
               }],
-              editable: !this.checkIfConfirmed(),
+              editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
             },
             {
               header: "Actual",
@@ -774,7 +776,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Plan',
-            editable: !this.checkIfConfirmed(),
+            editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
             editableByCondition: true
           },
           {
@@ -801,7 +803,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Plan',
-            editable: !this.checkIfConfirmed(),
+            editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
 
           },
           {
@@ -829,7 +831,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Plan',
-            editable: !this.checkIfConfirmed()
+            editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode()
 
           },
           {
@@ -857,7 +859,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Plan',
-            editable: !this.checkIfConfirmed(),
+            editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
 
           },
           {
@@ -885,7 +887,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Plan',
-            editable: !this.checkIfConfirmed(),
+            editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
 
           },
           {
@@ -1371,6 +1373,16 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   */
   checkIfConfirmed(): boolean {
     return this.synopticalService.selectedLoadableStudy?.status === "Confirmed" ?? false
+  }
+
+  /**
+   * Method to check if the loadable study plan is generated
+   *
+   * @returns {boolean}
+   * @memberof SynopticalTableComponent
+   */
+  checkIfEnableEditMode(): boolean {
+    return [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.synopticalService?.selectedLoadableStudy?.statusId) && this.synopticalService?.selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE;
   }
 
   /**

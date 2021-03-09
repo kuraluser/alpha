@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { LoadableStudyDetailsComponent } from './loadable-study-details.component';
 import { LoadableStudyDetailsRoutingModule } from './loadable-study-details-routing.module';
@@ -32,6 +32,7 @@ import { NumberDirectiveModule } from '../../../shared/directives/number-directi
 import { UnitDropdownModule } from '../../../shared/components/unit-dropdown/unit-dropdown.module';
 import { QuantityPipeModule } from '../../../shared/pipes/quantity/quantity-pipe.module';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
+import { TableModule } from 'primeng/table';
 
 /**
  * Routing Module for Loadable Study Details Screen
@@ -62,10 +63,11 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
     CargoTankLayoutModule,
     NumberDirectiveModule,
     UnitDropdownModule,
-    QuantityPipeModule
+    QuantityPipeModule,
+    TableModule
   ],
   providers: [
-    LoadableQuantityApiService, CommingleApiService, QuantityPipe
+    LoadableQuantityApiService, CommingleApiService, QuantityPipe, DatePipe
   ]
 })
 export class LoadableStudyDetailsModule { }

@@ -37,7 +37,9 @@
                
             </div>
             <div class="ml-auto pr-15" *ngIf="synopticalService.showActions">
-                <button class="btn btn-main mr-10" (click)="synopticalService.onEditOrCancel()" *cpdssPortalPermission="editRoleBtnPermissionContext">{{synopticalService.editMode? 'Cancel':'Edit'}}</button>
+                <ng-container *ngIf="isEditable()">
+                    <button class="btn btn-main mr-10" (click)="synopticalService.onEditOrCancel()" *cpdssPortalPermission="editRoleBtnPermissionContext">{{synopticalService.editMode? 'Cancel':'Edit'}}</button>
+                </ng-container>
                 <ng-container *ngIf="synopticalService.editMode">
                     <button class="btn btn-main mr-10" *cpdssPortalPermission="saveRoleBtnPermissionContext"  (click)="synopticalService.saveChanges()">Save</button>
                 </ng-container>     
