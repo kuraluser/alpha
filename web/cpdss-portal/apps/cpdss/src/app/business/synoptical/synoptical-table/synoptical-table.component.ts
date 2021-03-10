@@ -14,8 +14,7 @@ import * as XLSX from 'xlsx';
 import { DatePipe } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { LOADABLE_STUDY_STATUS } from '../../cargo-planning/models/loadable-study-list.model';
-import { VOYAGE_STATUS } from '../../core/models/common.model';
+import { VOYAGE_STATUS, LOADABLE_STUDY_STATUS } from '../../core/models/common.model';
 
 /**
  * Component class of synoptical table
@@ -221,6 +220,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fields: [{
           key: 'runningHours',
           type: this.fieldType.NUMBER,
+          validators: ['ddddddd.dd.+'],
         }],
         header: 'Running Hours',
         editable: true,
@@ -285,7 +285,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fields: [{
           key: 'specificGravity',
           type: this.fieldType.NUMBER,
-          validators: ['dddd.dd.+']
+          validators: ['dddd.ddd.+']
         }],
         editable: true,
       },
@@ -653,7 +653,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'othersPlanned',
                 type: this.fieldType.NUMBER,
-                validators: ['required', 'ddddddd.+']
+                validators: ['required', 'ddddddd.dd.+']
               }],
               editable: !this.checkIfConfirmed(),
             },
@@ -662,7 +662,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               fields: [{
                 key: 'othersActual',
                 type: this.fieldType.NUMBER,
-                validators: ['required', 'ddddddd.+']
+                validators: ['required', 'ddddddd.dd.+']
               }],
               editable: this.checkIfConfirmed(),
             },
@@ -1213,7 +1213,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     switch (field.key) {
       case 'hwTideFrom':
         fcMax = this.getControl(colIndex, 'hwTideTo')
-        if (fc.value > fcMax.value) {
+        if (typeof fcMax.value !=='undefined' && fc.value >= fcMax.value) {
           fc.setErrors({ fromMax: true })
         } else if (fcMax.hasError('toMin')) {
           fcMax.setValue(fcMax.value, { emitEvent: false })
@@ -1221,7 +1221,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'hwTideTo':
         fcMin = this.getControl(colIndex, 'hwTideFrom')
-        if (fc.value < fcMin.value) {
+        if (typeof fcMin.value !=='undefined' && fc.value <= fcMin.value) {
           fc.setErrors({ toMin: true })
         } else if (fcMin.hasError('fromMax')) {
           fcMin.setValue(fcMin.value, { emitEvent: false })
@@ -1229,7 +1229,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'lwTideFrom':
         fcMax = this.getControl(colIndex, 'lwTideTo')
-        if (fc.value > fcMax.value) {
+        if (typeof fcMax.value !=='undefined' &&fc.value >= fcMax.value) {
           fc.setErrors({ fromMax: true })
         } else if (fcMax.hasError('toMin')) {
           fcMax.setValue(fcMax.value, { emitEvent: false })
@@ -1237,7 +1237,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'lwTideTo':
         fcMin = this.getControl(colIndex, 'lwTideFrom')
-        if (fc.value < fcMin.value) {
+        if (typeof fcMin.value !=='undefined' && fc.value <= fcMin.value) {
           fc.setErrors({ toMin: true })
         } else if (fcMin.hasError('fromMax')) {
           fcMin.setValue(fcMin.value, { emitEvent: false })
@@ -1245,7 +1245,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'hwTideTimeFrom':
         fcMax = this.getControl(colIndex, 'hwTideTimeTo')
-        if (fc.value > fcMax.value) {
+        if (typeof fcMax.value !=='undefined' && fc.value >= fcMax.value) {
           fc.setErrors({ timeFromMax: true })
         } else if (fcMax.hasError('timeToMin')) {
           fcMax.setValue(fcMax.value, { emitEvent: false })
@@ -1253,7 +1253,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'hwTideTimeTo':
         fcMin = this.getControl(colIndex, 'hwTideTimeFrom')
-        if (fc.value < fcMin.value) {
+        if (typeof fcMin.value !=='undefined' && fc.value <= fcMin.value) {
           fc.setErrors({ timeToMin: true })
         } else if (fcMin.hasError('timeFromMax')) {
           fcMin.setValue(fcMin.value, { emitEvent: false })
@@ -1261,7 +1261,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'lwTideTimeFrom':
         fcMax = this.getControl(colIndex, 'lwTideTimeTo')
-        if (fc.value > fcMax.value) {
+        if (typeof fcMax.value !=='undefined' && fc.value >= fcMax.value) {
           fc.setErrors({ timeFromMax: true })
         } else if (fcMax.hasError('timeToMin')) {
           fcMax.setValue(fcMax.value, { emitEvent: false })
@@ -1269,7 +1269,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'lwTideTimeTo':
         fcMin = this.getControl(colIndex, 'lwTideTimeFrom')
-        if (fc.value < fcMin.value) {
+        if (typeof fcMin.value !=='undefined' && fc.value <= fcMin.value) {
           fc.setErrors({ timeToMin: true })
         } else if (fcMin.hasError('timeFromMax')) {
           fcMin.setValue(fcMin.value, { emitEvent: false })
@@ -1357,7 +1357,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           if (field.key.startsWith(dynamicKey)) {
             const totalValue = this.synopticalRecords[colIndex][totalKeys[planIndex]]
             const currentFieldValue = this.synopticalRecords[colIndex][field.key] ?? 0;
-            this.synopticalRecords[colIndex][totalKeys[planIndex]] = totalValue - currentFieldValue + fc.value
+            this.synopticalRecords[colIndex][totalKeys[planIndex]] = Number(Number(totalValue - currentFieldValue + fc.value).toFixed(2))
             this.synopticalRecords[colIndex][field.key] = fc.value;
           }
         })
@@ -1372,6 +1372,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
    * @memberof SynopticalTableComponent
   */
   checkIfConfirmed(): boolean {
+    if(this.synopticalService.selectedLoadablePattern){
+      return this.synopticalService.selectedLoadablePattern.loadableStudyStatusId === 2 ?? false
+    }
     return this.synopticalService.selectedLoadableStudy?.status === "Confirmed" ?? false
   }
 

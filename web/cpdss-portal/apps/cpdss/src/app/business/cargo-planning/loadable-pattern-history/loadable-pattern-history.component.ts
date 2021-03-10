@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ICargoTank, Voyage } from '../../core/models/common.model';
+import { ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS } from '../../core/models/common.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
 import { IVessel } from '../../core/models/vessel-details.model';
@@ -61,6 +61,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
   loadablePatternDetailsId: number;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
   prevQuantitySelectedUnit: QUANTITY_UNIT;
+  LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
+  VOYAGE_STATUS = VOYAGE_STATUS;
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -113,9 +115,6 @@ export class LoadablePatternHistoryComponent implements OnInit {
      */
   async getLoadableStudies(vesselId: number, voyageId: number, loadableStudyId: number) {
     this.ngxSpinnerService.show();
-    const res = await this.vesselsApiService.getVesselsInfo().toPromise();
-    this.vesselInfo = res[0] ?? <IVessel>{};
-    this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
     this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
@@ -165,6 +164,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
    */
   async getLoadablePatterns(vesselId: number, voyageId: number, loadableStudyId: number) {
     this.ngxSpinnerService.show();
+    const res = await this.vesselsApiService.getVesselsInfo().toPromise();
+    this.vesselInfo = res[0] ?? <IVessel>{};
+    this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
     this.loadablePatternResponse = await this.loadablePatternApiService.getLoadablePatterns(vesselId, voyageId, loadableStudyId).toPromise();
     if (this.loadablePatternResponse.responseStatus.status === '200') {
       this.loadablePatterns = this.loadablePatternResponse.loadablePatterns;

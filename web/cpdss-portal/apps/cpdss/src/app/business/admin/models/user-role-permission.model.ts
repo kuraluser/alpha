@@ -218,6 +218,7 @@ export interface ISavePermissionResponse {
  * @interface IDataStateChange
  */
 export interface IDataStateChange {
+    filter?: Object;
     name: string;
     desc: string;
     pageSize: string;

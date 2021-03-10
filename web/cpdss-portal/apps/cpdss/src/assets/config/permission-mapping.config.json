@@ -13,5 +13,7 @@
     "UserRoleListing": "USER_ROLE_LISTING",
     "UserListingComponent": "ADMIN_USER_CREATION",
     "UserResetPassword": "ADMIN_RESET_PASSWORD",
+    "voyagesComponent" : "VOYAGE_HISTORY",
+    "voyagesStartStop" : "EDIT_VOYAGE",
     "CargoHistoryComponent": "CARGOPLANNING_CARGO_HISTORY"
 }

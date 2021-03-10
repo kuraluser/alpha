@@ -8,9 +8,9 @@ import { ILoadingPort, ILoadingPortValueObject, ILoadingPopupData } from '../../
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
 import { ConfirmationAlertService } from '../../../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { first } from 'rxjs/operators';
-import { IPort } from '../../../../core/models/common.model';
+import { IPort, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../../core/models/common.model';
 import { IPermission } from '../../../../../shared/models/user-profile.model';
-import { LoadableStudy, LOADABLE_STUDY_STATUS } from '../../../models/loadable-study-list.model';
+import { LoadableStudy } from '../../../models/loadable-study-list.model';
 
 /**
  * Component class for loading ports popup
@@ -34,6 +34,8 @@ export class LoadingPortsPopupComponent implements OnInit {
     this._visible = visible;
   }
 
+  @Input() voyage: Voyage;
+
   @Input() permission: IPermission;
 
   @Input()
@@ -42,7 +44,7 @@ export class LoadingPortsPopupComponent implements OnInit {
   }
   set loadableStudy(value: LoadableStudy) {
     this._loadableStudy = value;
-    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId)? DATATABLE_EDITMODE.CELL : null;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId)? DATATABLE_EDITMODE.CELL : null;
   }
 
   @Input()
@@ -81,7 +83,7 @@ export class LoadingPortsPopupComponent implements OnInit {
     private confirmationAlertService: ConfirmationAlertService) { }
 
   ngOnInit(): void {
-    this.columns = this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortDatatableColumns(this.permission, this.loadableStudy?.statusId);
+    this.columns = this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortDatatableColumns(this.permission, this.loadableStudy?.statusId, this.voyage?.statusId);
   }
 
   /**

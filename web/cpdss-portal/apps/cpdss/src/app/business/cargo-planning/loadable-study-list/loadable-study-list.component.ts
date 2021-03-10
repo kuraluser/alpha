@@ -3,9 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
-import { LoadableStudy, LOADABLE_STUDY_STATUS } from '../models/loadable-study-list.model';
+import { LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
-import { Voyage, VOYAGE_STATUS } from '../../core/models/common.model';
+import { LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../core/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
 import { LoadableStudyListTransformationService } from '../services/loadable-study-list-transformation.service';
 import { IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
@@ -86,7 +86,7 @@ export class LoadableStudyListComponent implements OnInit {
     if (voyageId !== 0) {
       const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
       this.loadableStudyList = result.loadableStudies.map(loadableStudy => {
-        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudy?.statusId) ? true: false;
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.selectedVoyage?.statusId) ? true: false;
         return loadableStudy;
       });
     }

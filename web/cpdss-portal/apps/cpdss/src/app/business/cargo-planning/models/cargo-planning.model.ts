@@ -651,16 +651,6 @@ export interface IGeneratePatternResponse {
     processId: string;
 }
 
-/**
- * Interface for get confir status
- *
- * @export
- * @interface IConfirmStatusResponse
- */
-export interface IConfirmStatusResponse {
-    responseStatus: IResponse;
-    confirmed: boolean;
-}
 
 /**
  * Interface for get Api-Temperature popup passvalue

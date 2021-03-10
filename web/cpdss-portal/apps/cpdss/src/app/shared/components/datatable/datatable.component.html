@@ -79,8 +79,8 @@
                             [placeholder]="col.filterPlaceholder| translate" class="p-column-filter">
                             <p-calendar appendTo="body" *ngSwitchCase="filterType.DATE"
                             [maxDate]="col.filterFieldMaxvalue"
-                            (onSelect)="onDateSelect($event, col?.filterField, col?.filterMatchMode)" keepInvalid="true"
-                            (onInput)="onDateFilter($event.target.value, col?.filterField, col?.filterMatchMode)"
+                            (onSelect)="onDateSelect($event,col, col?.filterField, col?.filterMatchMode)" keepInvalid="true"
+                            (onInput)="onDateFilter($event.target.value, col, col?.filterField, col?.filterMatchMode)"
                             (onClearClick)="datatable.filter('', col?.filterField, 'contains')"
                             [showButtonBar]="true" styleClass="p-column-filter"
                             [placeholder]="col.filterPlaceholder| translate" [readonlyInput]="false"
@@ -138,7 +138,7 @@
                                         <ng-container *ngFor="let button of col?.buttons;let buttonIndex = index">
                                             <a type="button" *ngIf="rowData[button?.field] || rowData[button?.field] === undefined" id="{{tableId + 'button' + rowIndex + buttonIndex}}"
                                             class="{{button?.class}}" 
-                                            (click)="buttonEvent($event, rowData, rowIndex, col, button)">Reset button</a>
+                                            (click)="buttonEvent($event, rowData, rowIndex, button?.field, button)">{{button.label}}</a>
                                         </ng-container>
                                 </ng-container>
 
@@ -324,7 +324,8 @@
                                             }}</span>
                                     </ng-container>
                                 </ng-container>
-                                <span *ngSwitchDefault>{{rowData[col.field]}}</span>
+                                <span *ngSwitchDefault>
+                                    {{rowData[col.field]}}</span>
                             </div>
                         </td>
                     </ng-template>

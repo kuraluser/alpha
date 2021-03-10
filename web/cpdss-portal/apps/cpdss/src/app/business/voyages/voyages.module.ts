@@ -3,13 +3,33 @@ import { CommonModule } from '@angular/common';
 
 import { VoyagesRoutingModule } from './voyages-routing.module';
 import { VoyagesComponent } from './voyages.component';
+import { DatatableModule } from '../../shared/components/datatable/datatable.module';
+import { VoyageListTransformationService } from './services/voyage-list-transformation.service';
+import { VoyageListApiService } from './services/voyage-list-api.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { CalendarModule } from 'primeng/calendar';
+import { FormsModule } from '@angular/forms';
+import { DatePopUpComponent } from './date-pop-up/date-pop-up.component';
+import { DialogModule } from 'primeng/dialog';
 
-
+/**
+ * CPDSS app main module. All voyages list logic will be inside this module
+ *
+ * @export
+ * @class VoyagesModule
+ */
 @NgModule({
-  declarations: [VoyagesComponent],
+  declarations: [VoyagesComponent, DatePopUpComponent],
   imports: [
     CommonModule,
-    VoyagesRoutingModule
-  ]
+    VoyagesRoutingModule,
+    DatatableModule,
+    TranslateModule,
+    FormsModule,
+    CalendarModule,
+    DialogModule
+  ],
+  exports: [DatePopUpComponent],
+  providers: [ VoyageListTransformationService, VoyageListApiService ]
 })
 export class VoyagesModule { }

@@ -235,10 +235,10 @@ export interface IBallastTank extends ITank {
 export interface IPort {
     id: number;
     name: string;
-    code: string;
-    maxAirDraft: number;
-    maxDraft: number;
-    waterDensity: number;
+    code?: string;
+    maxAirDraft?: number;
+    maxDraft?: number;
+    waterDensity?: number;
 }
 
 /**
@@ -327,4 +327,20 @@ export enum VOYAGE_STATUS_LABEL {
     OPEN = "Open",
     CLOSE = "Close",
     ACTIVE = "Active"
+}
+
+/**
+ * ENUM for Loadable Study Status
+ *
+ * @export
+ * @enum {number}
+ */
+export enum LOADABLE_STUDY_STATUS {
+    PLAN_PENDING = 1,
+    PLAN_CONFIRMED = 2,
+    PLAN_GENERATED = 3,
+    PLAN_ALGO_PROCESSING = 4,
+    PLAN_ALGO_PROCESSING_COMPETED = 5,
+    PLAN_NO_SOLUTION = 6,
+    PLAN_ERROR = 11
 }

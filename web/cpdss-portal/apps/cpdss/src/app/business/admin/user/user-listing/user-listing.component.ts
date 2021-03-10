@@ -102,7 +102,7 @@ export class UserListingComponent implements OnInit {
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.BUTTON,
         buttons: [
-          {type: DATATABLE_BUTTON.RESETPASSWORD , field: 'isResetPassword' , icons: '' , class: '' , label: ''}
+          {type: DATATABLE_BUTTON.RESETPASSWORD , field: 'isResetPassword' , icons: '' , class: '' , label: 'Reset button'}
         ]
       })
     }

@@ -51,6 +51,14 @@ export class NavbarComponent implements OnInit {
         'permissionMapping': AppConfigurationService.settings.permissionMapping['CargoPlanningComponent']
       },
       {
+        'menu': 'VOYAGES',
+        'menuIcon': 'voyages',
+        'menuLink': 'voyage-list',
+        'subMenu': [],
+        'isSubMenuOpen': false,
+        'permissionMapping': AppConfigurationService.settings.permissionMapping['voyagesComponent']
+      },
+      {
         'menu': 'SYNOPTICAL',
         'menuIcon': 'synoptical-table',
         'menuLink': 'synoptical',

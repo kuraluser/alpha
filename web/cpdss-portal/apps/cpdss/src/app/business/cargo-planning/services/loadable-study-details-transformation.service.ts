@@ -7,8 +7,7 @@ import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNomina
 import { v4 as uuid4 } from 'uuid';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { ICargoGroup, ICommingleManual, ICommingleResponseModel, ICommingleValueObject, IPercentage } from '../models/commingle.model';
-import { IOperations, IPort, IPortList, VOYAGE_STATUS } from '../../core/models/common.model';
-import { LOADABLE_STUDY_STATUS } from '../models/loadable-study-list.model';
+import { IOperations, IPort, IPortList, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../core/models/common.model';
 
 /**
  * Transformation Service for Lodable Study details module
@@ -141,7 +140,7 @@ export class LoadableStudyDetailsTransformationService {
    * @returns {IDataTableColumn[]}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getCargoNominationDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS): IDataTableColumn[] {
+  getCargoNominationDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId:VOYAGE_STATUS): IDataTableColumn[] {
     let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
@@ -335,7 +334,7 @@ export class LoadableStudyDetailsTransformationService {
         }
       }
     ];
-    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId)) {
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if(permission?.add) {
         actions.push(DATATABLE_ACTION.DUPLICATE);
@@ -391,7 +390,7 @@ export class LoadableStudyDetailsTransformationService {
    * @returns {IDataTableColumn[]}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getCargoNominationLoadingPortDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS): IDataTableColumn[] {
+  getCargoNominationLoadingPortDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
     let columns: IDataTableColumn[] = [
       {
         field: 'name',
@@ -412,7 +411,7 @@ export class LoadableStudyDetailsTransformationService {
       }
     ]
 
-    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId)) {
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if(permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
@@ -580,12 +579,6 @@ export class LoadableStudyDetailsTransformationService {
         header: 'LOADABLE_STUDY_DETAILS_LODABLE_STUDY_COLUMN_STATUS',
         fieldType: DATATABLE_FIELD_TYPE.ICON,
         fieldValueIcon: 'icon-status'
-      },
-      {
-        field: 'actions',
-        header: '',
-        fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.EDIT, DATATABLE_ACTION.DELETE, DATATABLE_ACTION.DUPLICATE]
       }
     ];
 
@@ -656,7 +649,7 @@ export class LoadableStudyDetailsTransformationService {
  * @returns {IDataTableColumn[]}
  * @memberof LoadableStudyDetailsTransformationService
  */
-  getPortDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS): IDataTableColumn[] {
+  getPortDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
     const minDate = new Date();
     let columns: IDataTableColumn[] = [
       {
@@ -826,7 +819,7 @@ export class LoadableStudyDetailsTransformationService {
       }
     ];
 
-    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId)) {
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if(permission?.add) {
         actions.push(DATATABLE_ACTION.SAVE);
@@ -1073,7 +1066,7 @@ export class LoadableStudyDetailsTransformationService {
   /**
    * Method to get Manual Commingle grid colums
    */
-  getManualCommingleDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS): IDataTableColumn[] {
+  getManualCommingleDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
     let columns: IDataTableColumn[] = [
       {
         field: 'cargo1',
@@ -1164,7 +1157,7 @@ export class LoadableStudyDetailsTransformationService {
       }
     ];
 
-    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId)) {
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if(permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
