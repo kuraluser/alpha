@@ -2562,8 +2562,14 @@ public class LoadableStudyService {
             ? new BigDecimal(synopticalProtoRecord.getLwTideTo())
             : BigDecimal.ZERO);
     synopticalRecord.setLwTideTimeTo(synopticalProtoRecord.getLwTideTimeTo());
-    synopticalRecord.setEtaEtdActual(synopticalProtoRecord.getEtaEtdActual());
-    synopticalRecord.setEtaEtdPlanned(synopticalProtoRecord.getEtaEtdEstimated());
+    synopticalRecord.setEtaEtdActual(
+        isEmpty(synopticalProtoRecord.getEtaEtdActual())
+            ? null
+            : synopticalProtoRecord.getEtaEtdActual());
+    synopticalRecord.setEtaEtdPlanned(
+        isEmpty(synopticalProtoRecord.getEtaEtdEstimated())
+            ? null
+            : synopticalProtoRecord.getEtaEtdEstimated());
   }
 
   /**
