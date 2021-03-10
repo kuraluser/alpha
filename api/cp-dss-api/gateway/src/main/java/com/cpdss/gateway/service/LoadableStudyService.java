@@ -4559,7 +4559,7 @@ public class LoadableStudyService {
   }
 
   /**
-   * Save cargo nomination details using loadable-study service
+   * Get cargo history api and temp details using loadable-study service
    *
    * @param loadableStudyId
    * @param headers
