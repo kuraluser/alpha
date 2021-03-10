@@ -1,10 +1,11 @@
-<p-dialog [(visible)]="visible" [closable]="false" [draggable]="false" [modal]="true" [minY]="70" [style]="{width: '50vw'}">
+<p-dialog [(visible)]="visible" [closable]="false" [draggable]="false" [modal]="true" [minY]="70"
+  [style]="{width: '50vw'}">
   <p-header>
     {{'API_TEMP_HISTORY_POPUP_HEADING'|translate}} - {{apiTempHistoryPopupData.rowDataCargo.value.name}}
   </p-header>
   <p> {{'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS' | translate}} </p>
-  <cpdss-portal-datatable *ngIf="apiTempHistoryData" [tableId]="'apiTemperatureHistory'" [columns]="apiTempHistoryColumns"
-    [value]="apiTempHistoryData"></cpdss-portal-datatable>
+  <cpdss-portal-datatable *ngIf="apiTempHistoryData" [tableId]="'apiTemperatureHistory'"
+    [columns]="apiTempHistoryColumns" [value]="apiTempHistoryData"></cpdss-portal-datatable>
   <div class="row">
     <div class="col">
       <form [formGroup]="apiTempHistoryForm" *ngIf="monthwiseCargoHistory?.length">
@@ -33,8 +34,8 @@
   <div class="row" *ngIf="apiTempHistoryForm?.value?.selectMonth && apiTempHistoryForm?.value?.selectPort">
     <div class="col">
 
-      <p-table *ngIf="filteredMonthwiseHistory?.length else empty" id="month-wise-cargo-history-grid" [value]="uniqueYears" styleClass="body-header-row-span-table"
-        [hidden]="showMonthWiseGrid">
+      <p-table *ngIf="filteredMonthwiseHistory?.length else empty" id="month-wise-cargo-history-grid"
+        [value]="uniqueYears" styleClass="body-header-row-span-table" [hidden]="showMonthWiseGrid">
         <ng-template pTemplate="header">
           <tr>
             <th colspan="2"></th>
@@ -57,14 +58,15 @@
       <ng-template #empty>
         {{'NO_RECORDS_FOUND'| translate}}
       </ng-template>
-      <a class="btn btn-link icon-btn" *ngIf="filteredMonthwiseHistory?.length" (click)="hideShowMonthWiseApiTempHistoryGrid()"
-      id="hide-api-temp-monthwise-grid">{{'API_TEMP_HISTORY_POPUP_HIDE_SHOW_MONTH_DETAILS'|translate}}</a>
+      <a class="btn btn-link icon-btn" *ngIf="filteredMonthwiseHistory?.length"
+        (click)="hideShowMonthWiseApiTempHistoryGrid()"
+        id="hide-api-temp-monthwise-grid">{{'API_TEMP_HISTORY_POPUP_HIDE_SHOW_MONTH_DETAILS'|translate}}</a>
     </div>
   </div>
   <p-footer>
     <button class="btn btn-main" (click)="closePopup()"
       id="api-temp-popup-close">{{'API_TEMP_HISTORY_POPUP_CLOSE'|translate}}</button>
-    <button class="btn btn-main" (click)="viewMore()"
-      id="api-temp-popup-view-more">{{'API_TEMP_HISTORY_POPUP_VIEW_MORE'|translate}}</button>
+    <a class="btn btn-main" *ngIf="userPermission?.view" target="_blank" [routerLink]="['/business/cargo-planning/cargo-history']"
+      id="api-temp-popup-view-more">{{'API_TEMP_HISTORY_POPUP_VIEW_MORE'|translate}}</a>
   </p-footer>
 </p-dialog>
