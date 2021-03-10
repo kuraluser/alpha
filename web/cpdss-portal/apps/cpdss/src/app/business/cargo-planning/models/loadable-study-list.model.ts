@@ -81,6 +81,7 @@ export interface ILoadableStudiesResponse {
 export interface LoadablePattern {
     loadablePatternId: number;
     caseNumber: number;
+    loadableStudyStatusId: number;
 }
 
 /* Interface for loadable Patterns response
