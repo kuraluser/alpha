@@ -12,5 +12,7 @@
     "UserPermission": "USER_PERMISSION",
     "UserRoleListing": "USER_ROLE_LISTING",
     "UserListingComponent": "ADMIN_USER_CREATION",
-    "UserResetPassword": "ADMIN_RESET_PASSWORD"
+    "UserResetPassword": "ADMIN_RESET_PASSWORD",
+    "voyagesComponent" : "VOYAGE_HISTORY",
+    "voyagesStartStop" : "EDIT_VOYAGE"
 }

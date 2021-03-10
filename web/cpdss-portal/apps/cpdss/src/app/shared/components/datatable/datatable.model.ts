@@ -237,5 +237,7 @@ export interface ISort {
  * @enum {number}
  */
 export enum DATATABLE_BUTTON {
-    RESETPASSWORD = 'RESET PASSWORD'
+    RESETPASSWORD = 'RESET PASSWORD',
+    START_VOYAGE = "Start",
+    STOP_VOYAGE = "Stop"
 }

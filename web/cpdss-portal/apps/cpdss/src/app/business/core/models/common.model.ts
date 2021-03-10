@@ -235,10 +235,10 @@ export interface IBallastTank extends ITank {
 export interface IPort {
     id: number;
     name: string;
-    code: string;
-    maxAirDraft: number;
-    maxDraft: number;
-    waterDensity: number;
+    code?: string;
+    maxAirDraft?: number;
+    maxDraft?: number;
+    waterDensity?: number;
 }
 
 /**
