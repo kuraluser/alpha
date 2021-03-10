@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IResponse } from '../../../shared/models/common.model';
+import { IResponse , IConfirmStatusResponse } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { ICommingleCargoDetailsResponse, IConfirmStatusResponse } from '../models/cargo-planning.model';
+import { ICommingleCargoDetailsResponse } from '../models/cargo-planning.model';
 import { ILoadablePatternResponse } from '../models/loadable-pattern.model';
 
 /**

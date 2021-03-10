@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable , Subject } from 'rxjs';
 
 import { IBallastTank, ICargoTank } from '../../core/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
@@ -24,6 +25,10 @@ export class LoadablePlanTransformationService {
 
   private quantityPipe: QuantityPipe = new QuantityPipe();
   public baseUnit = AppConfigurationService.settings.baseUnit;
+  private savedComments = new Subject();
+
+  public savedComments$ = this.savedComments.asObservable();
+
   constructor() { }
 
   /**
@@ -503,6 +508,13 @@ export class LoadablePlanTransformationService {
   */
    convertQuantityBallast(ballast: IBallastStowageDetails, unitTo: QUANTITY_UNIT) {
     return this.quantityPipe.transform(ballast.metricTon, this.baseUnit, unitTo, ballast.sg)
+  }
+
+  /**
+   * comments saved 
+  */
+  commentsSaved() {
+    this.savedComments.next();
   }
 
 }

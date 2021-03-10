@@ -5,10 +5,12 @@ import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { IBallastTank, ICargoTank } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
-import { ICargoTankDetailValueObject, ILoadablePlanResponse ,  ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ILoadablePlanSynopticalRecord, ILoadablePlanCommentsDetails, IBallastStowageDetails } from '../models/loadable-plan.model';
+import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ILoadablePlanSynopticalRecord, ILoadablePlanCommentsDetails, IBallastStowageDetails } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
 import { DecimalPipe } from '@angular/common';
-import { ICargoResponseModel , ICargo } from '../../../shared/models/common.model';
+import { ICargoResponseModel, ICargo } from '../../../shared/models/common.model';
+import { ConfirmationAlertService } from '../../../shared/components/confirmation-alert/confirmation-alert.service';
+import { switchMap } from 'rxjs/operators';
 
 /**
  * Component class of loadable plan
@@ -73,6 +75,7 @@ export class LoadablePlanComponent implements OnInit {
   public date: string;
   public caseNumber: string;
   public cargos: ICargo[];
+  public isConfirmed: boolean;
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[] = [];
@@ -86,7 +89,8 @@ export class LoadablePlanComponent implements OnInit {
     private vesselsApiService: VesselsApiService,
     private loadablePlanApiService: LoadablePlanApiService,
     private loadablePlanTransformationService: LoadablePlanTransformationService,
-    private _decimalPipe: DecimalPipe
+    private _decimalPipe: DecimalPipe,
+    private confirmationAlertService: ConfirmationAlertService
   ) { }
 
   /**
@@ -102,7 +106,24 @@ export class LoadablePlanComponent implements OnInit {
       this.loadablePatternId = Number(params.get('loadablePatternId'))
       this.getCargos()
       this.getVesselInfo();
+      this.initSubsciptions();
     });
+    
+  }
+
+  /**
+    * Initialise all subscription in this page
+    *
+    * @memberof LoadablePlanComponent
+  */
+  async initSubsciptions() {
+    this.loadablePlanTransformationService.savedComments$.pipe(switchMap(() => {
+      return this.loadablePlanApiService.getLoadablePlanDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();;
+    })).subscribe((loadablePlanRes) => {
+       if(loadablePlanRes.responseStatus.status === '200') {
+        this.loadablePlanComments = loadablePlanRes.loadablePlanComments;
+       }
+    })
   }
 
   /**
@@ -114,7 +135,7 @@ export class LoadablePlanComponent implements OnInit {
     this.ngxSpinnerService.show();
     const cargos: ICargoResponseModel = await this.loadablePlanApiService.getCargos().toPromise();
     this.ngxSpinnerService.hide();
-    if(cargos.responseStatus.status === '200'){
+    if (cargos.responseStatus.status === '200') {
       this.cargos = cargos.cargos;
       this.getLoadablePlanDetails();
     }
@@ -221,14 +242,41 @@ export class LoadablePlanComponent implements OnInit {
     *
     * @memberof LoadablePlanComponent
   */
-  fingCargo(loadableQuantityCargoDetails): string{
+  fingCargo(loadableQuantityCargoDetails): string {
     let cargoDetail;
     this.cargos.map((cargo) => {
-      if(cargo.id === loadableQuantityCargoDetails.cargoId) {
+      if (cargo.id === loadableQuantityCargoDetails.cargoId) {
         cargoDetail = cargo;
       }
     })
     return cargoDetail.name;
+  }
+
+  /**
+   * for confirm stowage plan
+   *
+   * @param {*} event
+   * @memberof LoadablePlanComponent
+  */
+  async confirmPlan() {
+    this.ngxSpinnerService.show();
+    const result = await this.loadablePlanApiService.getConfirmStatus(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
+    this.ngxSpinnerService.hide();
+    let detail;
+    if (result.confirmed) {
+      detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_NOT_CONFIRM";
+    } else {
+      detail = "LOADABLE_PATTERN_CONFIRM_DETAILS_CONFIRM";
+    }
+    this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_PATTERN_CONFIRM_SUMMARY', detail: detail, data: { confirmLabel: 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', rejectLabel: 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL' } });
+    this.confirmationAlertService.confirmAlert$.pipe().subscribe(async (response) => {
+      if (response) {
+        const confirmResult = await this.loadablePlanApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
+        if (confirmResult.responseStatus.status === '200') {
+          this.isConfirmed = true;
+        }
+      }
+    })
   }
 
 }
