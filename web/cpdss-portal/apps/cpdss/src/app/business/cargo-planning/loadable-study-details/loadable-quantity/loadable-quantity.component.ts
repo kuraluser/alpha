@@ -3,8 +3,8 @@ import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } fro
 import { LoadableQuantityApiService } from '../../services/loadable-quantity-api.service';
 import { LodadableQuantity } from '../../models/loadable-quantity.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
-import { LoadableStudy, LOADABLE_STUDY_STATUS } from '../../models/loadable-study-list.model';
-import { Voyage,IPort } from '../../../core/models/common.model';
+import { LoadableStudy } from '../../models/loadable-study-list.model';
+import { Voyage,IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
@@ -32,7 +32,7 @@ export class LoadableQuantityComponent implements OnInit {
   }
   set selectedLoadableStudy(value: LoadableStudy) {
     this._selectedLoadableStudy = value;
-    this.isEditable = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(value?.statusId)? true : false;
+    this.isEditable = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(value?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId)? true : false;
   }
   @Input() vesselId: number;
   @Input() voyage: Voyage;
@@ -85,7 +85,7 @@ export class LoadableQuantityComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.loadableQuantityBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD, PERMISSION_ACTION.EDIT] };
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], false);
-    this.isEditable = (this.permission?.edit === undefined || this.permission?.edit || this.permission?.add === undefined || this.permission?.add) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.selectedLoadableStudy?.statusId)? true : false;
+    this.isEditable = (this.permission?.edit === undefined || this.permission?.edit || this.permission?.add === undefined || this.permission?.add) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.selectedLoadableStudy?.statusId)  && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId);
     this.errorMesages = this.loadableStudyDetailsTransformationService.setValidationErrorMessageForLoadableQuantity();
     this.ports = await this.getPorts();
     this.getLoadableQuantity();

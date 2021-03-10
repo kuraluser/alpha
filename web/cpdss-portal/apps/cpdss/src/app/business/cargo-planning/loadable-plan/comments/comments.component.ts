@@ -30,6 +30,7 @@ export class CommentsComponent implements OnInit {
   @Input() loadableStudyId: number;
   @Input() voyageId: number;
   @Input() loadablePatternId: number;
+  @Input() enableSubmit: boolean;
 
   @Input() set commentsDetails(value: ILoadablePlanCommentsDetails[]) {
     this._commentsDetails = value;

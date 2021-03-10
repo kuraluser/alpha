@@ -4,9 +4,9 @@ import { ICargo, LOADABLE_STUDY_DETAILS_TABS } from '../models/cargo-planning.mo
 import { LoadableStudyDetailsTransformationService } from '../services/loadable-study-details-transformation.service';
 import { LoadableStudyDetailsApiService } from '../services/loadable-study-details-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Voyage, IPort } from '../../core/models/common.model';
+import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../core/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
-import { IDischargingPortIds, LoadableStudy, LOADABLE_STUDY_STATUS } from '../models/loadable-study-list.model';
+import { IDischargingPortIds, LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { IVessel } from '../../core/models/vessel-details.model';
@@ -103,6 +103,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   isGenerateClicked = false;
   isPatternOpenOrNoplan = false;
   LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
+  VOYAGE_STATUS = VOYAGE_STATUS;
 
   constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,

@@ -1,4 +1,5 @@
 import { IResponse } from '../../../shared/models/common.model';
+import { LOADABLE_STUDY_STATUS } from '../../core/models/common.model';
 /**
  * Model for loadable study list 
  */
@@ -92,20 +93,4 @@ export interface LoadablePattern {
 export interface ILoadablePatternsResponse {
    requestStatus: any;
    loadablePatterns: LoadablePattern[];
-}
-
-/**
- * ENUM for Loadable Study Status
- *
- * @export
- * @enum {number}
- */
-export enum LOADABLE_STUDY_STATUS {
-    PLAN_PENDING = 1,
-    PLAN_CONFIRMED = 2,
-    PLAN_GENERATED = 3,
-    PLAN_ALGO_PROCESSING = 4,
-    PLAN_ALGO_PROCESSING_COMPETED = 5,
-    PLAN_NO_SOLUTION = 6,
-    PLAN_ERROR = 11
 }

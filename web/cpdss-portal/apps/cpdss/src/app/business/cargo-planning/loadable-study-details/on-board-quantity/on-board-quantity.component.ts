@@ -7,10 +7,10 @@ import { IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject } f
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { CommingleApiService } from '../../services/commingle-api.service';
-import { ITank, IPort, ITankOptions } from '../../../core/models/common.model';
+import { ITank, IPort, ITankOptions, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { maximumVolumeValidator } from '../../directives/validator/maximum-volumn.directive';
-import { LoadableStudy, LOADABLE_STUDY_STATUS } from '../../models/loadable-study-list.model';
+import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
@@ -35,6 +35,8 @@ export class OnBoardQuantityComponent implements OnInit {
 
   @Input() voyageId: number;
 
+  @Input() voyage: Voyage;
+
   @Input()
   get loadableStudyId() {
     return this._loadableStudyId;
@@ -55,7 +57,7 @@ export class OnBoardQuantityComponent implements OnInit {
   }
   set loadableStudy(value: LoadableStudy) {
     this._loadableStudy = value;
-    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId)? DATATABLE_EDITMODE.CELL : null;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId)? DATATABLE_EDITMODE.CELL : null;
   }
 
   @Input()

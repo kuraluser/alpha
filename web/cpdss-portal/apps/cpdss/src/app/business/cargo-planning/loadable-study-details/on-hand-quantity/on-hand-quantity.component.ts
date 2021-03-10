@@ -9,12 +9,12 @@ import { numberValidator } from '../../directives/validator/number-validator.dir
 import { groupTotalValidator } from '../../directives/validator/group-total.directive';
 import { maximumVolumeValidator } from '../../directives/validator/maximum-volumn.directive';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { IPort, ITankOptions } from '../../../core/models/common.model';
+import { IPort, ITankOptions, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { Observable, of } from 'rxjs';
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
-import { LoadableStudy, LOADABLE_STUDY_STATUS } from '../../models/loadable-study-list.model';
+import { LoadableStudy } from '../../models/loadable-study-list.model';
 
 /**
  * Compoent for OHQ tab
@@ -33,6 +33,8 @@ export class OnHandQuantityComponent implements OnInit {
   @ViewChild('ohqDatatable') ohqDatatable: ElementRef;
 
   @Input() voyageId: number;
+
+  @Input() voyage: Voyage;
 
   @Input()
   get loadableStudyId() {
@@ -69,7 +71,7 @@ export class OnHandQuantityComponent implements OnInit {
   }
   set loadableStudy(value: LoadableStudy) {
     this._loadableStudy = value;
-    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId)? DATATABLE_EDITMODE.CELL : null;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId)? DATATABLE_EDITMODE.CELL : null;
   }
 
   get selectedPortOHQTankDetails() {

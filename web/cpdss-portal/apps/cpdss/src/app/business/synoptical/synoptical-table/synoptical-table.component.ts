@@ -14,8 +14,7 @@ import * as XLSX from 'xlsx';
 import { DatePipe } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { LOADABLE_STUDY_STATUS } from '../../cargo-planning/models/loadable-study-list.model';
-import { VOYAGE_STATUS } from '../../core/models/common.model';
+import { VOYAGE_STATUS, LOADABLE_STUDY_STATUS } from '../../core/models/common.model';
 
 /**
  * Component class of synoptical table

@@ -12,11 +12,11 @@ import { IPermission } from '../../../../shared/models/user-profile.model';
 import { portDateRangeValidator } from '../../directives/validator/port-daterange-validator.directive';
 import { portDateCompareValidator } from '../../directives/validator/port-date-compare-validator.directive';
 import { portDuplicationValidator } from '../../directives/validator/port-duplication-validator.directive';
-import { IPortList, IPortsDetailsResponse } from '../../../core/models/common.model';
+import { IPortList, IPortsDetailsResponse, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { portEtaEtdValidator } from '../../directives/validator/port-eta-etd-validator.directive'
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { LoadableStudy, LOADABLE_STUDY_STATUS } from '../../models/loadable-study-list.model';
+import { LoadableStudy } from '../../models/loadable-study-list.model';
 
 
 /**
@@ -34,6 +34,7 @@ import { LoadableStudy, LOADABLE_STUDY_STATUS } from '../../models/loadable-stud
 export class PortsComponent implements OnInit {
 
   @Input() voyageId: number;
+  @Input() voyage: Voyage;
   @Input() loadableStudyId: number;
   @Input() vesselId: number;
   @Input() permission: IPermission;
@@ -59,7 +60,7 @@ export class PortsComponent implements OnInit {
   }
   set loadableStudy(value: LoadableStudy) {
     this._loadableStudy = value;
-    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) ? DATATABLE_EDITMODE.CELL : null;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) ? DATATABLE_EDITMODE.CELL : null;
   }
 
   // public fields
@@ -88,7 +89,7 @@ export class PortsComponent implements OnInit {
     private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns(this.permission, this.loadableStudy?.statusId);
+    this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns(this.permission, this.loadableStudy?.statusId, this.voyage?.statusId);
     this.initSubscriptions();
     this.getPortDetails();
   }

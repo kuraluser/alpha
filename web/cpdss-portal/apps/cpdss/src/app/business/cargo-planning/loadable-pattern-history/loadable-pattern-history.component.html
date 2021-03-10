@@ -48,7 +48,7 @@
                                 |
                                 translate}}</button>
                             <button class="btn btn-main" (click)="confirmPlan(loadablePattern)"
-                                *ngIf="loadablePattern?.loadableStudyStatusId !== 2">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL'
+                                *ngIf="loadablePattern?.loadableStudyStatusId !== LOADABLE_STUDY_STATUS.PLAN_CONFIRMED && selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL'
                                 |
                                 translate}}</button>
                             <button class="btn btn-main  confirmed" *ngIf="loadablePattern?.loadableStudyStatusId === 2"

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
-import { IBallastTank, ICargoTank } from '../../core/models/common.model';
+import { IBallastTank, ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
 import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCargo, ILoadableQuantityCommingleCargo, ILoadablePlanSynopticalRecord, ILoadablePlanCommentsDetails, IBallastStowageDetails } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
@@ -11,6 +11,9 @@ import { DecimalPipe } from '@angular/common';
 import { ICargoResponseModel, ICargo } from '../../../shared/models/common.model';
 import { ConfirmationAlertService } from '../../../shared/components/confirmation-alert/confirmation-alert.service';
 import { switchMap } from 'rxjs/operators';
+import { VoyageService } from '../../core/services/voyage.service';
+import { LoadableStudy } from '../models/loadable-study-list.model';
+import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
 
 /**
  * Component class of loadable plan
@@ -63,12 +66,16 @@ export class LoadablePlanComponent implements OnInit {
 
   voyageId: number;
   loadableStudyId: number;
+  loadableStudy: LoadableStudy;
   vesselId: number;
   loadablePatternId: number;
   vesselInfo: IVessel;
   loadableQuantityCargoDetails: ILoadableQuantityCargo[];
   loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
   loadablePlanBallastDetails: IBallastStowageDetails[];
+  selectedVoyage: Voyage;
+  LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
+  VOYAGE_STATUS = VOYAGE_STATUS;
   public loadablePlanSynopticalRecords: ILoadablePlanSynopticalRecord[];
   public loadablePlanComments: ILoadablePlanCommentsDetails[];
   public voyageNumber: string;
@@ -90,7 +97,9 @@ export class LoadablePlanComponent implements OnInit {
     private loadablePlanApiService: LoadablePlanApiService,
     private loadablePlanTransformationService: LoadablePlanTransformationService,
     private _decimalPipe: DecimalPipe,
-    private confirmationAlertService: ConfirmationAlertService
+    private confirmationAlertService: ConfirmationAlertService,
+    private voyageService: VoyageService,
+    private loadableStudyListApiService: LoadableStudyListApiService
   ) { }
 
   /**
@@ -107,7 +116,8 @@ export class LoadablePlanComponent implements OnInit {
       this.getCargos()
       this.getVesselInfo();
       this.initSubsciptions();
-    });
+	  this.getVoyages(this.vesselId, this.voyageId);
+      this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);    });
     
   }
 
@@ -152,6 +162,37 @@ export class LoadablePlanComponent implements OnInit {
     this.vesselInfo = res[0] ?? <IVessel>{};
     this.ngxSpinnerService.hide();
   }
+
+  /**
+   * Method to fetch all voyages in the vessel
+   *
+   * @param {number} vesselId
+   * @param {number} voyageId
+   * @memberof LoadablePlanComponent
+   */
+  async getVoyages(vesselId: number, voyageId: number) {
+    this.ngxSpinnerService.show();
+    const result = await this.voyageService.getVoyagesByVesselId(vesselId).toPromise();
+    const voyages = result ?? [];
+    this.selectedVoyage = voyages.find(voyage => voyage.id === voyageId);
+    this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Method to fetch all loadable studies
+   *
+   * @param {number} vesselId
+   * @param {number} voyageId
+   * @param {number} loadableStudyId
+   * @memberof LoadablePlanComponent
+   */
+  async getLoadableStudies(vesselId: number, voyageId: number, loadableStudyId: number) {
+    this.ngxSpinnerService.show();
+    const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
+    this.loadableStudy = result?.loadableStudies?.find(loadableStudy => loadableStudy.id === loadableStudyId);
+    this.ngxSpinnerService.hide();
+  }
+
 
   /**
   * Method to back to loadable study
