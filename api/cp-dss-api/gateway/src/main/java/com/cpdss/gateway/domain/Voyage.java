@@ -56,5 +56,5 @@ public class Voyage {
 
   private Long statusId;
 
-  private Integer timezoneId;
+  private Long timezoneId;
 }
