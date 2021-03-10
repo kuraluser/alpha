@@ -6540,17 +6540,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Transactional
   public void checkDuplicatedFromAndCloneEntity(LoadableStudyDetail request, LoadableStudy entity)
       throws GenericServiceException {
+
     if (0 != request.getDuplicatedFromId()) {
       try {
 
         List<CargoNomination> cargoNominationList =
             this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
                 request.getDuplicatedFromId(), true);
-
+        Map<Long, Long> cargoNominationIdMap = new HashMap<>();
         if (!cargoNominationList.isEmpty()) {
-          List<CargoNomination> crgoNominationList = new ArrayList<CargoNomination>();
           cargoNominationList.forEach(
               cargoNomination -> {
+                Long id = cargoNomination.getId();
                 CargoNomination crgoNomination = new CargoNomination();
                 List<CargoNominationPortDetails> oldCargoNominationPortDetails =
                     this.cargoNominationOperationDetailsRepository
@@ -6559,7 +6560,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 BeanUtils.copyProperties(cargoNomination, crgoNomination);
                 crgoNomination.setLoadableStudyXId(entity.getId());
                 crgoNomination.setId(null);
-                crgoNominationList.add(crgoNomination);
                 crgoNomination.setCargoNominationPortDetails(
                     new HashSet<CargoNominationPortDetails>());
                 oldCargoNominationPortDetails.forEach(
@@ -6573,8 +6573,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                           .getCargoNominationPortDetails()
                           .add(cargoNominationPortDetails);
                     });
+                CargoNomination ent = this.cargoNominationRepository.save(crgoNomination);
+                cargoNominationIdMap.put(id, ent.getId());
               });
-          this.cargoNominationRepository.saveAll(crgoNominationList);
         }
 
         List<LoadableStudyPortRotation> loadableStudyPortRotationParentList =
@@ -6655,15 +6656,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
                 request.getDuplicatedFromId(), true);
         if (!CommingleCargoList.isEmpty()) {
-          List<com.cpdss.loadablestudy.entity.CommingleCargo> CommingleCargos =
-              new ArrayList<com.cpdss.loadablestudy.entity.CommingleCargo>();
+          List<com.cpdss.loadablestudy.entity.CommingleCargo> CommingleCargos = new ArrayList<>();
 
           CommingleCargoList.forEach(
-              CommingleCargo -> {
-                entityManager.detach(CommingleCargo);
-                CommingleCargo.setId(null);
-                CommingleCargo.setLoadableStudyXId(entity.getId());
-                CommingleCargos.add(CommingleCargo);
+              commingleCargo -> {
+                entityManager.detach(commingleCargo);
+                commingleCargo.setId(null);
+                commingleCargo.setLoadableStudyXId(entity.getId());
+                commingleCargo.setCargoNomination1Id(
+                    cargoNominationIdMap.get(commingleCargo.getCargoNomination1Id()));
+                commingleCargo.setCargoNomination2Id(
+                    cargoNominationIdMap.get(commingleCargo.getCargoNomination2Id()));
+                CommingleCargos.add(commingleCargo);
               });
           this.commingleCargoRepository.saveAll(CommingleCargos);
         }

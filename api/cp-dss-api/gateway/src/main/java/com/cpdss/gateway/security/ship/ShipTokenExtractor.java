@@ -1,10 +1,14 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.security.ship;
 
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV;
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV_SHIP;
+
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Component;
  * @author suhail.k
  */
 @Component
+@ConditionalOnProperty(name = CPDSS_BUILD_ENV, havingValue = CPDSS_BUILD_ENV_SHIP)
 public class ShipTokenExtractor {
 
   private static final Logger logger = LogManager.getLogger(ShipTokenExtractor.class);

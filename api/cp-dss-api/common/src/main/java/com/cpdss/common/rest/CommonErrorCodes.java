@@ -17,6 +17,7 @@ public interface CommonErrorCodes {
   String E_HTTP_ILLEGAL_URL_PARAM = "201";
   String E_HTTP_ILLEGAL_JSON_PARAM = "202";
   String E_HTTP_UNAUTHORIZED_RQST = "209";
+  String E_HTTP_INVALID_TOKEN = "210";
   String E_CPDSS_VOYAGE_EXISTS = "100";
   String E_CPDSS_INVALID_USER = "101";
   String E_CPDSS_ALGO_ISSUE = "102";

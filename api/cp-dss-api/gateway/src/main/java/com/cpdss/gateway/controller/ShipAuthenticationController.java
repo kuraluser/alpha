@@ -1,6 +1,9 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.controller;
 
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV;
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV_SHIP;
+
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -11,6 +14,7 @@ import com.cpdss.gateway.service.UserService;
 import javax.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 @Log4j2
+@ConditionalOnProperty(name = CPDSS_BUILD_ENV, havingValue = CPDSS_BUILD_ENV_SHIP)
 public class ShipAuthenticationController {
 
   @Autowired private AuthenticationManager authenticationManager;

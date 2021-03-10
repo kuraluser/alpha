@@ -17,8 +17,8 @@ import org.springframework.security.core.GrantedAuthority;
 @Setter
 @AllArgsConstructor
 public class ShipUserContext implements Serializable {
-  private static final long serialVersionUID = 7838425285125292587L;
 
+  private static final long serialVersionUID = 7838425285125292587L;
   private final Long userId;
   private final List<GrantedAuthority> authorities;
 

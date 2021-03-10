@@ -57,9 +57,11 @@ public class UserService {
 
   @Autowired private RoleUserRepository roleUserRepository;
 
-  @Autowired private ShipJwtService jwtService;
+  @Autowired(required = false)
+  private ShipJwtService jwtService;
 
-  @Autowired private PasswordEncoder passwordEncoder;
+  @Autowired(required = false)
+  private PasswordEncoder passwordEncoder;
 
   private static final String SUCCESS = "SUCCESS";
 

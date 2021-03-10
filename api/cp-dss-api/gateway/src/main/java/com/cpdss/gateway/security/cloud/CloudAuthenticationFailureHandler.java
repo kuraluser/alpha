@@ -15,11 +15,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 
+/**
+ * Overrides the Keycloak default authentication failure handler to return customized error response
+ *
+ * @author suhail.k
+ */
 @Log4j2
-public class ShoreAuthenticationFailureHandler extends KeycloakAuthenticationFailureHandler {
+public class CloudAuthenticationFailureHandler extends KeycloakAuthenticationFailureHandler {
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
 
+  /**
+   * On authentication failure, {@link CommonErrorResponse} with appropriate error code will be
+   * returned
+   */
   @Override
   public void onAuthenticationFailure(
       HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
@@ -33,7 +42,7 @@ public class ShoreAuthenticationFailureHandler extends KeycloakAuthenticationFai
       final CommonErrorResponse errorResponse =
           new CommonErrorResponse(
               String.valueOf(HttpStatus.UNAUTHORIZED.value()),
-              CommonErrorCodes.E_HTTP_UNAUTHORIZED_RQST,
+              CommonErrorCodes.E_HTTP_INVALID_TOKEN,
               request.getHeader(CORRELATION_ID_HEADER));
       log.error("Error validating the JWT token : {}", errorResponse, exception);
       response.setStatus(HttpStatus.UNAUTHORIZED.value());
