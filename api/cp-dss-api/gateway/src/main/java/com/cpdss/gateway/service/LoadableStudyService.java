@@ -246,6 +246,7 @@ public class LoadableStudyService {
             .setVoyageNo(voyage.getVoyageNo())
             .setStartDate(!StringUtils.isEmpty(voyage.getStartDate()) ? voyage.getStartDate() : "")
             .setEndDate(!StringUtils.isEmpty(voyage.getEndDate()) ? voyage.getEndDate() : "")
+            .setTimezoneId(voyage.getTimezoneId())
             .build();
 
     VoyageReply voyageReply = this.saveVoyage(voyageRequest);
