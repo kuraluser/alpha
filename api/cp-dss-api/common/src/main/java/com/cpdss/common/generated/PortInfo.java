@@ -1600,32 +1600,6 @@ public final class PortInfo {
      * @return The bytes for sunsetTime.
      */
     com.google.protobuf.ByteString getSunsetTimeBytes();
-
-    /**
-     * <code>string timezone = 19;</code>
-     *
-     * @return The timezone.
-     */
-    java.lang.String getTimezone();
-    /**
-     * <code>string timezone = 19;</code>
-     *
-     * @return The bytes for timezone.
-     */
-    com.google.protobuf.ByteString getTimezoneBytes();
-
-    /**
-     * <code>string timezoneOffsetVal = 20;</code>
-     *
-     * @return The timezoneOffsetVal.
-     */
-    java.lang.String getTimezoneOffsetVal();
-    /**
-     * <code>string timezoneOffsetVal = 20;</code>
-     *
-     * @return The bytes for timezoneOffsetVal.
-     */
-    com.google.protobuf.ByteString getTimezoneOffsetValBytes();
   }
   /** Protobuf type {@code PortDetail} */
   public static final class PortDetail extends com.google.protobuf.GeneratedMessageV3
@@ -1656,8 +1630,6 @@ public final class PortInfo {
       lwTideTimeTo_ = "";
       sunriseTime_ = "";
       sunsetTime_ = "";
-      timezone_ = "";
-      timezoneOffsetVal_ = "";
     }
 
     @java.lang.Override
@@ -1811,20 +1783,6 @@ public final class PortInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 sunsetTime_ = s;
-                break;
-              }
-            case 154:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                timezone_ = s;
-                break;
-              }
-            case 162:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                timezoneOffsetVal_ = s;
                 break;
               }
             default:
@@ -2465,76 +2423,6 @@ public final class PortInfo {
       }
     }
 
-    public static final int TIMEZONE_FIELD_NUMBER = 19;
-    private volatile java.lang.Object timezone_;
-    /**
-     * <code>string timezone = 19;</code>
-     *
-     * @return The timezone.
-     */
-    public java.lang.String getTimezone() {
-      java.lang.Object ref = timezone_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        timezone_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string timezone = 19;</code>
-     *
-     * @return The bytes for timezone.
-     */
-    public com.google.protobuf.ByteString getTimezoneBytes() {
-      java.lang.Object ref = timezone_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        timezone_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int TIMEZONEOFFSETVAL_FIELD_NUMBER = 20;
-    private volatile java.lang.Object timezoneOffsetVal_;
-    /**
-     * <code>string timezoneOffsetVal = 20;</code>
-     *
-     * @return The timezoneOffsetVal.
-     */
-    public java.lang.String getTimezoneOffsetVal() {
-      java.lang.Object ref = timezoneOffsetVal_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        timezoneOffsetVal_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string timezoneOffsetVal = 20;</code>
-     *
-     * @return The bytes for timezoneOffsetVal.
-     */
-    public com.google.protobuf.ByteString getTimezoneOffsetValBytes() {
-      java.lang.Object ref = timezoneOffsetVal_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        timezoneOffsetVal_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -2603,12 +2491,6 @@ public final class PortInfo {
       if (!getSunsetTimeBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 18, sunsetTime_);
       }
-      if (!getTimezoneBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 19, timezone_);
-      }
-      if (!getTimezoneOffsetValBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 20, timezoneOffsetVal_);
-      }
       unknownFields.writeTo(output);
     }
 
@@ -2672,12 +2554,6 @@ public final class PortInfo {
       if (!getSunsetTimeBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(18, sunsetTime_);
       }
-      if (!getTimezoneBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(19, timezone_);
-      }
-      if (!getTimezoneOffsetValBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(20, timezoneOffsetVal_);
-      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2712,8 +2588,6 @@ public final class PortInfo {
       if (!getLwTideTimeTo().equals(other.getLwTideTimeTo())) return false;
       if (!getSunriseTime().equals(other.getSunriseTime())) return false;
       if (!getSunsetTime().equals(other.getSunsetTime())) return false;
-      if (!getTimezone().equals(other.getTimezone())) return false;
-      if (!getTimezoneOffsetVal().equals(other.getTimezoneOffsetVal())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -2761,10 +2635,6 @@ public final class PortInfo {
       hash = (53 * hash) + getSunriseTime().hashCode();
       hash = (37 * hash) + SUNSETTIME_FIELD_NUMBER;
       hash = (53 * hash) + getSunsetTime().hashCode();
-      hash = (37 * hash) + TIMEZONE_FIELD_NUMBER;
-      hash = (53 * hash) + getTimezone().hashCode();
-      hash = (37 * hash) + TIMEZONEOFFSETVAL_FIELD_NUMBER;
-      hash = (53 * hash) + getTimezoneOffsetVal().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2938,10 +2808,6 @@ public final class PortInfo {
 
         sunsetTime_ = "";
 
-        timezone_ = "";
-
-        timezoneOffsetVal_ = "";
-
         return this;
       }
 
@@ -2986,8 +2852,6 @@ public final class PortInfo {
         result.lwTideTimeTo_ = lwTideTimeTo_;
         result.sunriseTime_ = sunriseTime_;
         result.sunsetTime_ = sunsetTime_;
-        result.timezone_ = timezone_;
-        result.timezoneOffsetVal_ = timezoneOffsetVal_;
         onBuilt();
         return result;
       }
@@ -3109,14 +2973,6 @@ public final class PortInfo {
         }
         if (!other.getSunsetTime().isEmpty()) {
           sunsetTime_ = other.sunsetTime_;
-          onChanged();
-        }
-        if (!other.getTimezone().isEmpty()) {
-          timezone_ = other.timezone_;
-          onChanged();
-        }
-        if (!other.getTimezoneOffsetVal().isEmpty()) {
-          timezoneOffsetVal_ = other.timezoneOffsetVal_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -4469,158 +4325,6 @@ public final class PortInfo {
         checkByteStringIsUtf8(value);
 
         sunsetTime_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object timezone_ = "";
-      /**
-       * <code>string timezone = 19;</code>
-       *
-       * @return The timezone.
-       */
-      public java.lang.String getTimezone() {
-        java.lang.Object ref = timezone_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          timezone_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string timezone = 19;</code>
-       *
-       * @return The bytes for timezone.
-       */
-      public com.google.protobuf.ByteString getTimezoneBytes() {
-        java.lang.Object ref = timezone_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          timezone_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string timezone = 19;</code>
-       *
-       * @param value The timezone to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTimezone(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        timezone_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string timezone = 19;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearTimezone() {
-
-        timezone_ = getDefaultInstance().getTimezone();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string timezone = 19;</code>
-       *
-       * @param value The bytes for timezone to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTimezoneBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        timezone_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object timezoneOffsetVal_ = "";
-      /**
-       * <code>string timezoneOffsetVal = 20;</code>
-       *
-       * @return The timezoneOffsetVal.
-       */
-      public java.lang.String getTimezoneOffsetVal() {
-        java.lang.Object ref = timezoneOffsetVal_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          timezoneOffsetVal_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string timezoneOffsetVal = 20;</code>
-       *
-       * @return The bytes for timezoneOffsetVal.
-       */
-      public com.google.protobuf.ByteString getTimezoneOffsetValBytes() {
-        java.lang.Object ref = timezoneOffsetVal_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          timezoneOffsetVal_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string timezoneOffsetVal = 20;</code>
-       *
-       * @param value The timezoneOffsetVal to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTimezoneOffsetVal(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        timezoneOffsetVal_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string timezoneOffsetVal = 20;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearTimezoneOffsetVal() {
-
-        timezoneOffsetVal_ = getDefaultInstance().getTimezoneOffsetVal();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string timezoneOffsetVal = 20;</code>
-       *
-       * @param value The bytes for timezoneOffsetVal to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTimezoneOffsetValBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        timezoneOffsetVal_ = value;
         onChanged();
         return this;
       }
@@ -9320,7 +9024,7 @@ public final class PortInfo {
           + "rtInfoByPortIdsRequest\022\n\n\002id\030\001 \003(\003\"]\n\013Po"
           + "rtRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vesselId"
           + "\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017loadableStud"
-          + "yId\030\004 \001(\003\"\236\003\n\nPortDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004"
+          + "yId\030\004 \001(\003\"\361\002\n\nPortDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004"
           + "name\030\002 \001(\t\022\014\n\004code\030\003 \001(\t\022\024\n\014waterDensity"
           + "\030\004 \001(\t\022\020\n\010maxDraft\030\005 \001(\t\022\023\n\013maxAirDraft\030"
           + "\006 \001(\t\022\031\n\021averageTideHeight\030\007 \001(\t\022\022\n\ntide"
@@ -9329,28 +9033,27 @@ public final class PortInfo {
           + "To\030\014 \001(\t\022\026\n\016hwTideTimeFrom\030\r \001(\t\022\024\n\014hwTi"
           + "deTimeTo\030\016 \001(\t\022\026\n\016lwTideTimeFrom\030\017 \001(\t\022\024"
           + "\n\014lwTideTimeTo\030\020 \001(\t\022\023\n\013sunriseTime\030\021 \001("
-          + "\t\022\022\n\nsunsetTime\030\022 \001(\t\022\020\n\010timezone\030\023 \001(\t\022"
-          + "\031\n\021timezoneOffsetVal\030\024 \001(\t\"P\n\tPortReply\022"
-          + "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus"
-          + "\022\032\n\005ports\030\002 \003(\0132\013.PortDetail\".\n\033GetPortI"
-          + "nfoByCargoIdRequest\022\017\n\007cargoId\030\001 \001(\003\"`\n\031"
-          + "GetPortInfoByCargoIdReply\022\'\n\016responseSta"
-          + "tus\030\001 \001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003("
-          + "\0132\013.PortDetail\"\022\n\020PortEmptyRequest\"=\n\010Ti"
-          + "mezone\022\n\n\002id\030\001 \001(\003\022\020\n\010timezone\030\002 \001(\t\022\023\n\013"
-          + "offsetValue\030\003 \001(\t\"Y\n\020TimezoneResponse\022\'\n"
-          + "\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022\034"
-          + "\n\ttimezones\030\002 \003(\0132\t.Timezone2\324\002\n\017PortInf"
-          + "oService\022)\n\013GetPortInfo\022\014.PortRequest\032\n."
-          + "PortReply\"\000\022R\n\024GetPortInfoByCargoId\022\034.Ge"
-          + "tPortInfoByCargoIdRequest\032\032.GetPortInfoB"
-          + "yCargoIdReply\"\000\022B\n\024GetPortInfoByPortIds\022"
-          + "\034.GetPortInfoByPortIdsRequest\032\n.PortRepl"
-          + "y\"\000\022G\n\031GetPortInfoDetailsForAlgo\022\034.GetPo"
-          + "rtInfoByPortIdsRequest\032\n.PortReply\"\000\0225\n\013"
-          + "GetTimezone\022\021.PortEmptyRequest\032\021.Timezon"
-          + "eResponse\"\000B\036\n\032com.cpdss.common.generate"
-          + "dP\000b\006proto3"
+          + "\t\022\022\n\nsunsetTime\030\022 \001(\t\"P\n\tPortReply\022\'\n\016re"
+          + "sponseStatus\030\001 \001(\0132\017.ResponseStatus\022\032\n\005p"
+          + "orts\030\002 \003(\0132\013.PortDetail\".\n\033GetPortInfoBy"
+          + "CargoIdRequest\022\017\n\007cargoId\030\001 \001(\003\"`\n\031GetPo"
+          + "rtInfoByCargoIdReply\022\'\n\016responseStatus\030\001"
+          + " \001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003(\0132\013.P"
+          + "ortDetail\"\022\n\020PortEmptyRequest\"=\n\010Timezon"
+          + "e\022\n\n\002id\030\001 \001(\003\022\020\n\010timezone\030\002 \001(\t\022\023\n\013offse"
+          + "tValue\030\003 \001(\t\"Y\n\020TimezoneResponse\022\'\n\016resp"
+          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\ttim"
+          + "ezones\030\002 \003(\0132\t.Timezone2\324\002\n\017PortInfoServ"
+          + "ice\022)\n\013GetPortInfo\022\014.PortRequest\032\n.PortR"
+          + "eply\"\000\022R\n\024GetPortInfoByCargoId\022\034.GetPort"
+          + "InfoByCargoIdRequest\032\032.GetPortInfoByCarg"
+          + "oIdReply\"\000\022B\n\024GetPortInfoByPortIds\022\034.Get"
+          + "PortInfoByPortIdsRequest\032\n.PortReply\"\000\022G"
+          + "\n\031GetPortInfoDetailsForAlgo\022\034.GetPortInf"
+          + "oByPortIdsRequest\032\n.PortReply\"\000\0225\n\013GetTi"
+          + "mezone\022\021.PortEmptyRequest\032\021.TimezoneResp"
+          + "onse\"\000B\036\n\032com.cpdss.common.generatedP\000b\006"
+          + "proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -9396,8 +9099,6 @@ public final class PortInfo {
               "LwTideTimeTo",
               "SunriseTime",
               "SunsetTime",
-              "Timezone",
-              "TimezoneOffsetVal",
             });
     internal_static_PortReply_descriptor = getDescriptor().getMessageTypes().get(3);
     internal_static_PortReply_fieldAccessorTable =
