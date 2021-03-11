@@ -47,6 +47,7 @@ import com.cpdss.gateway.domain.VoyageActionResponse;
 import com.cpdss.gateway.domain.VoyageResponse;
 import com.cpdss.gateway.domain.VoyageStatusRequest;
 import com.cpdss.gateway.domain.VoyageStatusResponse;
+import com.cpdss.gateway.service.LoadableStudyCargoService;
 import com.cpdss.gateway.service.LoadableStudyService;
 import java.io.File;
 import java.io.FileInputStream;
@@ -59,6 +60,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +96,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class LoadableStudyController {
 
   @Autowired private LoadableStudyService loadableStudyService;
+
+  @Autowired private LoadableStudyCargoService loadableStudyCargoService;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
 
@@ -1724,6 +1728,59 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception getCargoHistory", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Get cargo history
+   *
+   * @param vesselId
+   * @param loadableStudyId
+   * @param
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(value = "/cargo-history", produces = MediaType.APPLICATION_JSON_VALUE)
+  public CargoHistoryResponse getAllCargoHistory(
+      @RequestHeader HttpHeaders headers,
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "10") int pageSize,
+      @RequestParam(required = false, defaultValue = "year")
+          @Pattern(
+              regexp = "vesselName|loadingPort|grade|year",
+              message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          String sortBy,
+      @RequestParam(required = false, defaultValue = "desc") String orderBy,
+      @RequestParam(required = false) String fromStartDate,
+      @RequestParam(required = false) String toStartDate,
+      @RequestParam Map<String, String> params)
+      throws CommonRestException {
+    try {
+      log.info("getAllCargoHistory: {}", getClientIp());
+
+      // Filter allowed filter params
+      List<String> filterKeys =
+          Arrays.asList(
+              "vesselName", "loadingPort", "grade", "year", "month", "date", "api", "temp");
+      Map<String, String> filterParams =
+          params.entrySet().stream()
+              .filter(e -> filterKeys.contains(e.getKey()))
+              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+      return this.loadableStudyCargoService.getAllCargoHistory(
+          filterParams, page, pageSize, sortBy, orderBy, fromStartDate, toStartDate);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException getAllCargoHistory", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception getAllCargoHistory", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

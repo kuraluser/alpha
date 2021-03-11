@@ -2,6 +2,7 @@
 package com.cpdss.common.config;
 
 import com.cpdss.common.logging.Log4j2Config;
+import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +36,9 @@ public class CommonConfig implements ApplicationContextAware {
   @Value("${security.enabled: 'n'}")
   private String isSecurityEnabled;
 
+  @Value("${system.timezone: 'UTC'}")
+  private String defaultTimeZone;
+
   @Override
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
     this.applicationContext = applicationContext;
@@ -48,6 +52,8 @@ public class CommonConfig implements ApplicationContextAware {
       throw new RuntimeException(
           "Failed to initialize CommonConfig. Run build task before starting the application");
     }
+    // Configuration change timezone to UTC, To all projects
+    TimeZone.setDefault(TimeZone.getTimeZone(defaultTimeZone));
   }
 
   @Bean("dataBaseType")

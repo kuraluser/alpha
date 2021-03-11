@@ -9,11 +9,13 @@ import lombok.Data;
 @Data
 @JsonInclude(Include.NON_NULL)
 public class CargoHistory {
+  private Long vesselId;
   private Long cargoId;
   private Long loadingPortId;
   private String loadedDate;
   private Integer loadedYear;
   private Integer loadedMonth;
+  private Integer loadedDay;
   private BigDecimal api;
   private BigDecimal temperature;
 }

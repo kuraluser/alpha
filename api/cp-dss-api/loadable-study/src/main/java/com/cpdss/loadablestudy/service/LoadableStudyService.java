@@ -213,6 +213,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -6541,17 +6545,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Transactional
   public void checkDuplicatedFromAndCloneEntity(LoadableStudyDetail request, LoadableStudy entity)
       throws GenericServiceException {
+
     if (0 != request.getDuplicatedFromId()) {
       try {
 
         List<CargoNomination> cargoNominationList =
             this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
                 request.getDuplicatedFromId(), true);
-
+        Map<Long, Long> cargoNominationIdMap = new HashMap<>();
         if (!cargoNominationList.isEmpty()) {
-          List<CargoNomination> crgoNominationList = new ArrayList<CargoNomination>();
           cargoNominationList.forEach(
               cargoNomination -> {
+                Long id = cargoNomination.getId();
                 CargoNomination crgoNomination = new CargoNomination();
                 List<CargoNominationPortDetails> oldCargoNominationPortDetails =
                     this.cargoNominationOperationDetailsRepository
@@ -6560,7 +6565,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 BeanUtils.copyProperties(cargoNomination, crgoNomination);
                 crgoNomination.setLoadableStudyXId(entity.getId());
                 crgoNomination.setId(null);
-                crgoNominationList.add(crgoNomination);
                 crgoNomination.setCargoNominationPortDetails(
                     new HashSet<CargoNominationPortDetails>());
                 oldCargoNominationPortDetails.forEach(
@@ -6574,8 +6578,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                           .getCargoNominationPortDetails()
                           .add(cargoNominationPortDetails);
                     });
+                CargoNomination ent = this.cargoNominationRepository.save(crgoNomination);
+                cargoNominationIdMap.put(id, ent.getId());
               });
-          this.cargoNominationRepository.saveAll(crgoNominationList);
         }
 
         List<LoadableStudyPortRotation> loadableStudyPortRotationParentList =
@@ -6656,15 +6661,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
                 request.getDuplicatedFromId(), true);
         if (!CommingleCargoList.isEmpty()) {
-          List<com.cpdss.loadablestudy.entity.CommingleCargo> CommingleCargos =
-              new ArrayList<com.cpdss.loadablestudy.entity.CommingleCargo>();
+          List<com.cpdss.loadablestudy.entity.CommingleCargo> CommingleCargos = new ArrayList<>();
 
           CommingleCargoList.forEach(
-              CommingleCargo -> {
-                entityManager.detach(CommingleCargo);
-                CommingleCargo.setId(null);
-                CommingleCargo.setLoadableStudyXId(entity.getId());
-                CommingleCargos.add(CommingleCargo);
+              commingleCargo -> {
+                entityManager.detach(commingleCargo);
+                commingleCargo.setId(null);
+                commingleCargo.setLoadableStudyXId(entity.getId());
+                commingleCargo.setCargoNomination1Id(
+                    cargoNominationIdMap.get(commingleCargo.getCargoNomination1Id()));
+                commingleCargo.setCargoNomination2Id(
+                    cargoNominationIdMap.get(commingleCargo.getCargoNomination2Id()));
+                CommingleCargos.add(commingleCargo);
               });
           this.commingleCargoRepository.saveAll(CommingleCargos);
         }
@@ -7586,8 +7594,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Calendar now = Calendar.getInstance();
       int year = now.get(Calendar.YEAR) - 5;
       List<com.cpdss.loadablestudy.entity.ApiTempHistory> apiTempHistList =
-          this.apiTempHistoryRepository.findApiTempHistoryWithLoadedYearAfter(
-              request.getCargoId(), year);
+          this.apiTempHistoryRepository.findApiTempHistoryWithYearAfter(request.getCargoId(), year);
       buildCargoHistoryReply(apiTempHistList, replyBuilder);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (Exception e) {
@@ -7612,11 +7619,79 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .ifPresent(builder::setLoadingPortId);
             Optional.ofNullable(apiTempRecord.getLoadedDate())
                 .ifPresent(loadedDate -> builder.setLoadedDate(formatter.format(loadedDate)));
-            Optional.ofNullable(apiTempRecord.getLoadedYear()).ifPresent(builder::setLoadedYear);
-            Optional.ofNullable(apiTempRecord.getLoadedMonth()).ifPresent(builder::setLoadedMonth);
+            Optional.ofNullable(apiTempRecord.getYear()).ifPresent(builder::setLoadedYear);
+            Optional.ofNullable(apiTempRecord.getMonth()).ifPresent(builder::setLoadedMonth);
             Optional.ofNullable(apiTempRecord.getApi())
                 .ifPresent(api -> builder.setApi(String.valueOf(api)));
-            Optional.ofNullable(apiTempRecord.getTemperature())
+            Optional.ofNullable(apiTempRecord.getTemp())
+                .ifPresent(temperature -> builder.setTemperature(String.valueOf(temperature)));
+            replyBuilder.addCargoHistory(builder);
+          });
+    }
+  }
+
+  @Override
+  public void getAllCargoHistory(
+      CargoHistoryRequest request, StreamObserver<CargoHistoryReply> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.CargoHistoryReply.Builder replyBuilder =
+        CargoHistoryReply.newBuilder();
+    try {
+      List<com.cpdss.loadablestudy.entity.ApiTempHistory> apiTempHistList = null;
+
+      // Paging and sorting while filtering is handled separately
+      Pageable pageable =
+          PageRequest.of(
+              request.getPage(),
+              request.getPageSize(),
+              Sort.by(
+                  Sort.Direction.valueOf(request.getOrderBy().toUpperCase()), request.getSortBy()));
+      // apply date filter for loaded date
+      if (!request.getFromStartDate().isEmpty() && !request.getToStartDate().isEmpty()) {
+        LocalDateTime fromDate =
+            LocalDateTime.from(
+                DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getFromStartDate()));
+        LocalDateTime toDate =
+            LocalDateTime.from(
+                DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getToStartDate()));
+        Page<com.cpdss.loadablestudy.entity.ApiTempHistory> pagedResult =
+            this.apiTempHistoryRepository.findAllByLoadedDateBetween(pageable, fromDate, toDate);
+        apiTempHistList = pagedResult.toList();
+      } else {
+        Page<com.cpdss.loadablestudy.entity.ApiTempHistory> pagedResult =
+            this.apiTempHistoryRepository.findAll(pageable);
+        apiTempHistList = pagedResult.toList();
+      }
+      buildAllCargoHistoryReply(apiTempHistList, replyBuilder);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+    } catch (Exception e) {
+      log.error("Exception when fetching getCargoApiTempHistory", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void buildAllCargoHistoryReply(
+      List<com.cpdss.loadablestudy.entity.ApiTempHistory> apiTempHistList,
+      com.cpdss.common.generated.LoadableStudy.CargoHistoryReply.Builder replyBuilder) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(ETA_ETD_FORMAT);
+    if (!CollectionUtils.isEmpty(apiTempHistList)) {
+      apiTempHistList.forEach(
+          apiTempRecord -> {
+            CargoHistoryDetail.Builder builder = CargoHistoryDetail.newBuilder();
+            Optional.ofNullable(apiTempRecord.getVesselId()).ifPresent(builder::setVesselId);
+            Optional.ofNullable(apiTempRecord.getCargoId()).ifPresent(builder::setCargoId);
+            Optional.ofNullable(apiTempRecord.getLoadingPortId())
+                .ifPresent(builder::setLoadingPortId);
+            Optional.ofNullable(apiTempRecord.getLoadedDate())
+                .ifPresent(loadedDate -> builder.setLoadedDate(formatter.format(loadedDate)));
+            Optional.ofNullable(apiTempRecord.getYear()).ifPresent(builder::setLoadedYear);
+            Optional.ofNullable(apiTempRecord.getMonth()).ifPresent(builder::setLoadedMonth);
+            Optional.ofNullable(apiTempRecord.getDate()).ifPresent(builder::setLoadedDay);
+            Optional.ofNullable(apiTempRecord.getApi())
+                .ifPresent(api -> builder.setApi(String.valueOf(api)));
+            Optional.ofNullable(apiTempRecord.getTemp())
                 .ifPresent(temperature -> builder.setTemperature(String.valueOf(temperature)));
             replyBuilder.addCargoHistory(builder);
           });

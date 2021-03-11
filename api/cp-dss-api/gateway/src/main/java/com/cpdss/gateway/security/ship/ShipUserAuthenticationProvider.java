@@ -1,7 +1,11 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.security.ship;
 
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV;
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV_SHIP;
+
 import java.util.Collections;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Component;
  * @author suhail.k
  */
 @Component
+@ConditionalOnProperty(name = CPDSS_BUILD_ENV, havingValue = CPDSS_BUILD_ENV_SHIP)
 public class ShipUserAuthenticationProvider implements AuthenticationProvider {
 
   @Override
