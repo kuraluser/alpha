@@ -97,7 +97,7 @@ export class NewVoyagePopupComponent implements OnInit {
     this.newVoyageForm = this.fb.group({
       'captain': [this.vesselDetails?.captainName],
       'chiefOfficer': [this.vesselDetails?.chiefOfficerName],
-      'voyageNo': [null, [Validators.required, Validators.pattern('^[a-zA-Z0-9 ][ A-Za-z0-9_.()&,-]*$'), Validators.maxLength(10)]],
+      'voyageNo': [null, [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]*$'), Validators.maxLength(10)]],
       'start_date': this.fb.control(null, [Validators.required, dateCompareValidator('end_date', '<')]),
       "end_date": this.fb.control(null, [Validators.required, dateCompareValidator('start_date', '>')])
     });
