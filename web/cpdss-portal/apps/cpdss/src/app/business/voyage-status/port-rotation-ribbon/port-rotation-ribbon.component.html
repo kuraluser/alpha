@@ -84,7 +84,10 @@
                                         placeholder="{{'PORT_ROTATION_RIBBON_ENTER_TIME'  | translate}}"
                                         formControlName="time" [timeOnly]="true"
                                         id="eta_time_{{portList.indexOf(port)}}"
-                                        (onBlur)="onBlur($event, port, 'time')">
+                                        (onBlur)="onBlur($event, port, 'time')" #portRibbonTime>
+                                        <p-footer>
+                                            <button class="btn btn-default" (click)="portRibbonTime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' | translate}}</button>
+                                        </p-footer>
                                     </p-calendar>
                                     <cpdss-portal-validation-error
                                         [errors]="fieldError(portList.indexOf(port), 'time' )"
