@@ -1,0 +1,21 @@
+<p-dialog id="dialog_stability_popup" header="{{'LOADABLE_PATTERN_STABILITY_POPUP_HEADER' | translate}}"
+    [(visible)]="display" [modal]="true" styleClass="stability-popup" [draggable]="false"
+    [responsive]="true" [closable]="false" *ngIf="display">
+    <div class="col" >
+
+        <cpdss-portal-datatable [tableId]="'stabilityPopup'" [columns]="columns" [value]="stabilityParameters" [scrollable]="false">
+        </cpdss-portal-datatable>
+
+    </div>
+    <p-footer>
+        <div class="row">
+            <div class="col-sm-12 text-right">
+                <button type="button" class="btn btn-main" (click)="closeDialog()"
+                    id="stability-popup-cancel">{{'STABILITY_POPUP_CANCEL_BUTTON' |
+                    translate}}</button>
+
+            </div>
+        </div>
+    </p-footer>
+</p-dialog>
+   

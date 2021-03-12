@@ -28,6 +28,7 @@ export interface ILoadablePattern {
     constraints: string[];
     loadablePatternCargoDetails: ILoadablePatternCargoDetail[];
     loadablePlanStowageDetails: ILoadablePlanStowageDetails[];
+    stabilityParameters: IStabilityParameter;
     loadableStudyStatusId: number;
     caseNumber: number;
 }
@@ -48,7 +49,8 @@ export interface ILoadablePatternCargoDetail extends ILoadableCargo {
     orderedQuantity: number;
     loadingOrder: number;
     api: number;
-    difference:number;
+    difference?: number;
+    tankName?: string;
 }
 
 /**
@@ -63,7 +65,7 @@ export interface ILoadablePlanStowageDetails extends ILoadableCargo {
     cargoAbbreviation: string;
     weight: number;
     correctedUllage: number;
-    fillingRatio: number;
+    fillingRatio: string;
     tankName: string;
     rdgUllage: number;
     correctionFactor: number;
@@ -74,6 +76,22 @@ export interface ILoadablePlanStowageDetails extends ILoadableCargo {
     temperature: number;
     colorCode: string;
     quantityMT: string;
+}
+
+/**
+ * Interface for stability parameter
+ *
+ * @export
+ * @interface IStabilityParameter
+ */
+export interface IStabilityParameter {
+    forwardDraft: string;
+    meanDraft: string;
+    afterDraft: string;
+    trim: string;
+    heel: string;
+    bendinMoment: string;
+    shearForce: string;
 }
 
 

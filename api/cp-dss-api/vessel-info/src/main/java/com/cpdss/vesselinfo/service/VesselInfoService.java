@@ -1,5 +1,7 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.vesselinfo.service;
+
+import static java.lang.String.valueOf;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
@@ -35,6 +37,7 @@ import com.cpdss.vesselinfo.entity.InnerBulkHeadValues;
 import com.cpdss.vesselinfo.entity.MinMaxValuesForBmsf;
 import com.cpdss.vesselinfo.entity.TankCategory;
 import com.cpdss.vesselinfo.entity.UllageTableData;
+import com.cpdss.vesselinfo.entity.UllageTrimCorrection;
 import com.cpdss.vesselinfo.entity.Vessel;
 import com.cpdss.vesselinfo.entity.VesselChartererMapping;
 import com.cpdss.vesselinfo.entity.VesselDraftCondition;
@@ -523,6 +526,14 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                       ullageDetailsBuilder(ullageTableData, ullageDetailsBuilder));
                 });
 
+        Set<UllageTrimCorrection> ullageTrimCorrections = vessel.getUllageTrimCorrections();
+        if (null != ullageTrimCorrections && !ullageTrimCorrections.isEmpty()) {
+          for (UllageTrimCorrection entity : ullageTrimCorrections) {
+            if (null != entity.getIsActive() && entity.getIsActive()) {
+              replyBuilder.addUllageTrimCorrection(this.buildUllageTrimCorrection(entity));
+            }
+          }
+        }
         replyBuilder.setBMAndSF(bMAndSFBuilder);
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }
@@ -538,6 +549,35 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * Build ullage trim correction value
+   *
+   * @param entity
+   * @return
+   */
+  private com.cpdss.common.generated.VesselInfo.UllageTrimCorrection buildUllageTrimCorrection(
+      UllageTrimCorrection entity) {
+    com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.Builder builder =
+        com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.newBuilder();
+    builder.setId(entity.getId());
+    Optional.ofNullable(entity.getTankId()).ifPresent(builder::setTankId);
+    Optional.ofNullable(entity.getUllageDepth())
+        .ifPresent(item -> builder.setUllageDepth(valueOf(item)));
+    Optional.ofNullable(entity.getTrimM1()).ifPresent(item -> builder.setTrimM1(valueOf(item)));
+    Optional.ofNullable(entity.getTrimM2()).ifPresent(item -> builder.setTrimM2(valueOf(item)));
+    Optional.ofNullable(entity.getTrimM3()).ifPresent(item -> builder.setTrimM3(valueOf(item)));
+    Optional.ofNullable(entity.getTrimM4()).ifPresent(item -> builder.setTrimM4(valueOf(item)));
+    Optional.ofNullable(entity.getTrimM5()).ifPresent(item -> builder.setTrimM5(valueOf(item)));
+    Optional.ofNullable(entity.getTrim0()).ifPresent(item -> builder.setTrim0(valueOf(item)));
+    Optional.ofNullable(entity.getTrim1()).ifPresent(item -> builder.setTrim1(valueOf(item)));
+    Optional.ofNullable(entity.getTrim2()).ifPresent(item -> builder.setTrim2(valueOf(item)));
+    Optional.ofNullable(entity.getTrim3()).ifPresent(item -> builder.setTrim3(valueOf(item)));
+    Optional.ofNullable(entity.getTrim4()).ifPresent(item -> builder.setTrim4(valueOf(item)));
+    Optional.ofNullable(entity.getTrim5()).ifPresent(item -> builder.setTrim5(valueOf(item)));
+    Optional.ofNullable(entity.getTrim6()).ifPresent(item -> builder.setTrim6(valueOf(item)));
+    return builder.build();
   }
 
   /**

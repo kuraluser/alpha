@@ -1,6 +1,6 @@
 <div *ngIf="form" [formGroup]="form" class="row" style="height: 100%">
     <div formArrayName="dataTable" class="col" style="height: 100%">
-        <p-table #datatable  [columns]="columns"   [scrollable]="true" scrollHeight="flex" [value]="value" [editMode]="editMode" [selectionMode]="selectionMode" [loading]="loading"
+        <p-table #datatable  [columns]="columns"  [scrollable]="scrollable" scrollHeight="flex" [value]="value" [editMode]="editMode" [selectionMode]="selectionMode" [loading]="loading"
             (onEditComplete)="onEditComplete($event)" (onRowSelect)="onRowSelect($event)" [(selection)]="selection"
             (columnClick)="onClick($event)" [reorderableColumns]="tableRowReOrder" (onRowReorder)="onRowReorder($event)"
             (onFilter)="onFilter($event)" [customSort]="customSort" (sortFunction)="sortFunction($event)"

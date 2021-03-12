@@ -14726,6 +14726,20 @@ public final class VesselInfo {
     /** <code>repeated .UllageDetails ullageDetails = 8;</code> */
     com.cpdss.common.generated.VesselInfo.UllageDetailsOrBuilder getUllageDetailsOrBuilder(
         int index);
+
+    /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.UllageTrimCorrection>
+        getUllageTrimCorrectionList();
+    /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+    com.cpdss.common.generated.VesselInfo.UllageTrimCorrection getUllageTrimCorrection(int index);
+    /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+    int getUllageTrimCorrectionCount();
+    /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.UllageTrimCorrectionOrBuilder>
+        getUllageTrimCorrectionOrBuilderList();
+    /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+    com.cpdss.common.generated.VesselInfo.UllageTrimCorrectionOrBuilder
+        getUllageTrimCorrectionOrBuilder(int index);
   }
   /** Protobuf type {@code VesselAlgoReply} */
   public static final class VesselAlgoReply extends com.google.protobuf.GeneratedMessageV3
@@ -14744,6 +14758,7 @@ public final class VesselInfo {
       hydrostaticData_ = java.util.Collections.emptyList();
       vesselTankTCG_ = java.util.Collections.emptyList();
       ullageDetails_ = java.util.Collections.emptyList();
+      ullageTrimCorrection_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -14896,6 +14911,20 @@ public final class VesselInfo {
                         extensionRegistry));
                 break;
               }
+            case 74:
+              {
+                if (!((mutable_bitField0_ & 0x00000020) != 0)) {
+                  ullageTrimCorrection_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.VesselInfo.UllageTrimCorrection>();
+                  mutable_bitField0_ |= 0x00000020;
+                }
+                ullageTrimCorrection_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.parser(),
+                        extensionRegistry));
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -14924,6 +14953,9 @@ public final class VesselInfo {
         }
         if (((mutable_bitField0_ & 0x00000010) != 0)) {
           ullageDetails_ = java.util.Collections.unmodifiableList(ullageDetails_);
+        }
+        if (((mutable_bitField0_ & 0x00000020) != 0)) {
+          ullageTrimCorrection_ = java.util.Collections.unmodifiableList(ullageTrimCorrection_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -15153,6 +15185,35 @@ public final class VesselInfo {
       return ullageDetails_.get(index);
     }
 
+    public static final int ULLAGETRIMCORRECTION_FIELD_NUMBER = 9;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.UllageTrimCorrection>
+        ullageTrimCorrection_;
+    /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.UllageTrimCorrection>
+        getUllageTrimCorrectionList() {
+      return ullageTrimCorrection_;
+    }
+    /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.VesselInfo.UllageTrimCorrectionOrBuilder>
+        getUllageTrimCorrectionOrBuilderList() {
+      return ullageTrimCorrection_;
+    }
+    /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+    public int getUllageTrimCorrectionCount() {
+      return ullageTrimCorrection_.size();
+    }
+    /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+    public com.cpdss.common.generated.VesselInfo.UllageTrimCorrection getUllageTrimCorrection(
+        int index) {
+      return ullageTrimCorrection_.get(index);
+    }
+    /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+    public com.cpdss.common.generated.VesselInfo.UllageTrimCorrectionOrBuilder
+        getUllageTrimCorrectionOrBuilder(int index) {
+      return ullageTrimCorrection_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -15191,6 +15252,9 @@ public final class VesselInfo {
       for (int i = 0; i < ullageDetails_.size(); i++) {
         output.writeMessage(8, ullageDetails_.get(i));
       }
+      for (int i = 0; i < ullageTrimCorrection_.size(); i++) {
+        output.writeMessage(9, ullageTrimCorrection_.get(i));
+      }
       unknownFields.writeTo(output);
     }
 
@@ -15228,6 +15292,11 @@ public final class VesselInfo {
       for (int i = 0; i < ullageDetails_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(8, ullageDetails_.get(i));
       }
+      for (int i = 0; i < ullageTrimCorrection_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(
+                9, ullageTrimCorrection_.get(i));
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -15261,6 +15330,7 @@ public final class VesselInfo {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
       if (!getUllageDetailsList().equals(other.getUllageDetailsList())) return false;
+      if (!getUllageTrimCorrectionList().equals(other.getUllageTrimCorrectionList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -15303,6 +15373,10 @@ public final class VesselInfo {
       if (getUllageDetailsCount() > 0) {
         hash = (37 * hash) + ULLAGEDETAILS_FIELD_NUMBER;
         hash = (53 * hash) + getUllageDetailsList().hashCode();
+      }
+      if (getUllageTrimCorrectionCount() > 0) {
+        hash = (37 * hash) + ULLAGETRIMCORRECTION_FIELD_NUMBER;
+        hash = (53 * hash) + getUllageTrimCorrectionList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -15443,6 +15517,7 @@ public final class VesselInfo {
           getHydrostaticDataFieldBuilder();
           getVesselTankTCGFieldBuilder();
           getUllageDetailsFieldBuilder();
+          getUllageTrimCorrectionFieldBuilder();
         }
       }
 
@@ -15496,6 +15571,12 @@ public final class VesselInfo {
           bitField0_ = (bitField0_ & ~0x00000010);
         } else {
           ullageDetailsBuilder_.clear();
+        }
+        if (ullageTrimCorrectionBuilder_ == null) {
+          ullageTrimCorrection_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000020);
+        } else {
+          ullageTrimCorrectionBuilder_.clear();
         }
         return this;
       }
@@ -15583,6 +15664,15 @@ public final class VesselInfo {
           result.ullageDetails_ = ullageDetails_;
         } else {
           result.ullageDetails_ = ullageDetailsBuilder_.build();
+        }
+        if (ullageTrimCorrectionBuilder_ == null) {
+          if (((bitField0_ & 0x00000020) != 0)) {
+            ullageTrimCorrection_ = java.util.Collections.unmodifiableList(ullageTrimCorrection_);
+            bitField0_ = (bitField0_ & ~0x00000020);
+          }
+          result.ullageTrimCorrection_ = ullageTrimCorrection_;
+        } else {
+          result.ullageTrimCorrection_ = ullageTrimCorrectionBuilder_.build();
         }
         onBuilt();
         return result;
@@ -15777,6 +15867,33 @@ public final class VesselInfo {
                       : null;
             } else {
               ullageDetailsBuilder_.addAllMessages(other.ullageDetails_);
+            }
+          }
+        }
+        if (ullageTrimCorrectionBuilder_ == null) {
+          if (!other.ullageTrimCorrection_.isEmpty()) {
+            if (ullageTrimCorrection_.isEmpty()) {
+              ullageTrimCorrection_ = other.ullageTrimCorrection_;
+              bitField0_ = (bitField0_ & ~0x00000020);
+            } else {
+              ensureUllageTrimCorrectionIsMutable();
+              ullageTrimCorrection_.addAll(other.ullageTrimCorrection_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.ullageTrimCorrection_.isEmpty()) {
+            if (ullageTrimCorrectionBuilder_.isEmpty()) {
+              ullageTrimCorrectionBuilder_.dispose();
+              ullageTrimCorrectionBuilder_ = null;
+              ullageTrimCorrection_ = other.ullageTrimCorrection_;
+              bitField0_ = (bitField0_ & ~0x00000020);
+              ullageTrimCorrectionBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getUllageTrimCorrectionFieldBuilder()
+                      : null;
+            } else {
+              ullageTrimCorrectionBuilder_.addAllMessages(other.ullageTrimCorrection_);
             }
           }
         }
@@ -17280,6 +17397,233 @@ public final class VesselInfo {
           ullageDetails_ = null;
         }
         return ullageDetailsBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.UllageTrimCorrection>
+          ullageTrimCorrection_ = java.util.Collections.emptyList();
+
+      private void ensureUllageTrimCorrectionIsMutable() {
+        if (!((bitField0_ & 0x00000020) != 0)) {
+          ullageTrimCorrection_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.UllageTrimCorrection>(
+                  ullageTrimCorrection_);
+          bitField0_ |= 0x00000020;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.UllageTrimCorrection,
+              com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.Builder,
+              com.cpdss.common.generated.VesselInfo.UllageTrimCorrectionOrBuilder>
+          ullageTrimCorrectionBuilder_;
+
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.UllageTrimCorrection>
+          getUllageTrimCorrectionList() {
+        if (ullageTrimCorrectionBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(ullageTrimCorrection_);
+        } else {
+          return ullageTrimCorrectionBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public int getUllageTrimCorrectionCount() {
+        if (ullageTrimCorrectionBuilder_ == null) {
+          return ullageTrimCorrection_.size();
+        } else {
+          return ullageTrimCorrectionBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public com.cpdss.common.generated.VesselInfo.UllageTrimCorrection getUllageTrimCorrection(
+          int index) {
+        if (ullageTrimCorrectionBuilder_ == null) {
+          return ullageTrimCorrection_.get(index);
+        } else {
+          return ullageTrimCorrectionBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public Builder setUllageTrimCorrection(
+          int index, com.cpdss.common.generated.VesselInfo.UllageTrimCorrection value) {
+        if (ullageTrimCorrectionBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureUllageTrimCorrectionIsMutable();
+          ullageTrimCorrection_.set(index, value);
+          onChanged();
+        } else {
+          ullageTrimCorrectionBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public Builder setUllageTrimCorrection(
+          int index,
+          com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.Builder builderForValue) {
+        if (ullageTrimCorrectionBuilder_ == null) {
+          ensureUllageTrimCorrectionIsMutable();
+          ullageTrimCorrection_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          ullageTrimCorrectionBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public Builder addUllageTrimCorrection(
+          com.cpdss.common.generated.VesselInfo.UllageTrimCorrection value) {
+        if (ullageTrimCorrectionBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureUllageTrimCorrectionIsMutable();
+          ullageTrimCorrection_.add(value);
+          onChanged();
+        } else {
+          ullageTrimCorrectionBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public Builder addUllageTrimCorrection(
+          int index, com.cpdss.common.generated.VesselInfo.UllageTrimCorrection value) {
+        if (ullageTrimCorrectionBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureUllageTrimCorrectionIsMutable();
+          ullageTrimCorrection_.add(index, value);
+          onChanged();
+        } else {
+          ullageTrimCorrectionBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public Builder addUllageTrimCorrection(
+          com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.Builder builderForValue) {
+        if (ullageTrimCorrectionBuilder_ == null) {
+          ensureUllageTrimCorrectionIsMutable();
+          ullageTrimCorrection_.add(builderForValue.build());
+          onChanged();
+        } else {
+          ullageTrimCorrectionBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public Builder addUllageTrimCorrection(
+          int index,
+          com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.Builder builderForValue) {
+        if (ullageTrimCorrectionBuilder_ == null) {
+          ensureUllageTrimCorrectionIsMutable();
+          ullageTrimCorrection_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          ullageTrimCorrectionBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public Builder addAllUllageTrimCorrection(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.UllageTrimCorrection>
+              values) {
+        if (ullageTrimCorrectionBuilder_ == null) {
+          ensureUllageTrimCorrectionIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, ullageTrimCorrection_);
+          onChanged();
+        } else {
+          ullageTrimCorrectionBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public Builder clearUllageTrimCorrection() {
+        if (ullageTrimCorrectionBuilder_ == null) {
+          ullageTrimCorrection_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000020);
+          onChanged();
+        } else {
+          ullageTrimCorrectionBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public Builder removeUllageTrimCorrection(int index) {
+        if (ullageTrimCorrectionBuilder_ == null) {
+          ensureUllageTrimCorrectionIsMutable();
+          ullageTrimCorrection_.remove(index);
+          onChanged();
+        } else {
+          ullageTrimCorrectionBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.Builder
+          getUllageTrimCorrectionBuilder(int index) {
+        return getUllageTrimCorrectionFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public com.cpdss.common.generated.VesselInfo.UllageTrimCorrectionOrBuilder
+          getUllageTrimCorrectionOrBuilder(int index) {
+        if (ullageTrimCorrectionBuilder_ == null) {
+          return ullageTrimCorrection_.get(index);
+        } else {
+          return ullageTrimCorrectionBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.VesselInfo.UllageTrimCorrectionOrBuilder>
+          getUllageTrimCorrectionOrBuilderList() {
+        if (ullageTrimCorrectionBuilder_ != null) {
+          return ullageTrimCorrectionBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(ullageTrimCorrection_);
+        }
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.Builder
+          addUllageTrimCorrectionBuilder() {
+        return getUllageTrimCorrectionFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.getDefaultInstance());
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.Builder
+          addUllageTrimCorrectionBuilder(int index) {
+        return getUllageTrimCorrectionFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.getDefaultInstance());
+      }
+      /** <code>repeated .UllageTrimCorrection ullageTrimCorrection = 9;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.Builder>
+          getUllageTrimCorrectionBuilderList() {
+        return getUllageTrimCorrectionFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.UllageTrimCorrection,
+              com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.Builder,
+              com.cpdss.common.generated.VesselInfo.UllageTrimCorrectionOrBuilder>
+          getUllageTrimCorrectionFieldBuilder() {
+        if (ullageTrimCorrectionBuilder_ == null) {
+          ullageTrimCorrectionBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.UllageTrimCorrection,
+                  com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.Builder,
+                  com.cpdss.common.generated.VesselInfo.UllageTrimCorrectionOrBuilder>(
+                  ullageTrimCorrection_,
+                  ((bitField0_ & 0x00000020) != 0),
+                  getParentForChildren(),
+                  isClean());
+          ullageTrimCorrection_ = null;
+        }
+        return ullageTrimCorrectionBuilder_;
       }
 
       @java.lang.Override
@@ -35851,6 +36195,2507 @@ public final class VesselInfo {
     }
   }
 
+  public interface UllageTrimCorrectionOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:UllageTrimCorrection)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>int64 tankId = 2;</code>
+     *
+     * @return The tankId.
+     */
+    long getTankId();
+
+    /**
+     * <code>string ullageDepth = 3;</code>
+     *
+     * @return The ullageDepth.
+     */
+    java.lang.String getUllageDepth();
+    /**
+     * <code>string ullageDepth = 3;</code>
+     *
+     * @return The bytes for ullageDepth.
+     */
+    com.google.protobuf.ByteString getUllageDepthBytes();
+
+    /**
+     * <code>string trimM1 = 4;</code>
+     *
+     * @return The trimM1.
+     */
+    java.lang.String getTrimM1();
+    /**
+     * <code>string trimM1 = 4;</code>
+     *
+     * @return The bytes for trimM1.
+     */
+    com.google.protobuf.ByteString getTrimM1Bytes();
+
+    /**
+     * <code>string trimM2 = 5;</code>
+     *
+     * @return The trimM2.
+     */
+    java.lang.String getTrimM2();
+    /**
+     * <code>string trimM2 = 5;</code>
+     *
+     * @return The bytes for trimM2.
+     */
+    com.google.protobuf.ByteString getTrimM2Bytes();
+
+    /**
+     * <code>string trimM3 = 6;</code>
+     *
+     * @return The trimM3.
+     */
+    java.lang.String getTrimM3();
+    /**
+     * <code>string trimM3 = 6;</code>
+     *
+     * @return The bytes for trimM3.
+     */
+    com.google.protobuf.ByteString getTrimM3Bytes();
+
+    /**
+     * <code>string trimM4 = 7;</code>
+     *
+     * @return The trimM4.
+     */
+    java.lang.String getTrimM4();
+    /**
+     * <code>string trimM4 = 7;</code>
+     *
+     * @return The bytes for trimM4.
+     */
+    com.google.protobuf.ByteString getTrimM4Bytes();
+
+    /**
+     * <code>string trimM5 = 8;</code>
+     *
+     * @return The trimM5.
+     */
+    java.lang.String getTrimM5();
+    /**
+     * <code>string trimM5 = 8;</code>
+     *
+     * @return The bytes for trimM5.
+     */
+    com.google.protobuf.ByteString getTrimM5Bytes();
+
+    /**
+     * <code>string trim0 = 9;</code>
+     *
+     * @return The trim0.
+     */
+    java.lang.String getTrim0();
+    /**
+     * <code>string trim0 = 9;</code>
+     *
+     * @return The bytes for trim0.
+     */
+    com.google.protobuf.ByteString getTrim0Bytes();
+
+    /**
+     * <code>string trim1 = 10;</code>
+     *
+     * @return The trim1.
+     */
+    java.lang.String getTrim1();
+    /**
+     * <code>string trim1 = 10;</code>
+     *
+     * @return The bytes for trim1.
+     */
+    com.google.protobuf.ByteString getTrim1Bytes();
+
+    /**
+     * <code>string trim2 = 11;</code>
+     *
+     * @return The trim2.
+     */
+    java.lang.String getTrim2();
+    /**
+     * <code>string trim2 = 11;</code>
+     *
+     * @return The bytes for trim2.
+     */
+    com.google.protobuf.ByteString getTrim2Bytes();
+
+    /**
+     * <code>string trim3 = 12;</code>
+     *
+     * @return The trim3.
+     */
+    java.lang.String getTrim3();
+    /**
+     * <code>string trim3 = 12;</code>
+     *
+     * @return The bytes for trim3.
+     */
+    com.google.protobuf.ByteString getTrim3Bytes();
+
+    /**
+     * <code>string trim4 = 13;</code>
+     *
+     * @return The trim4.
+     */
+    java.lang.String getTrim4();
+    /**
+     * <code>string trim4 = 13;</code>
+     *
+     * @return The bytes for trim4.
+     */
+    com.google.protobuf.ByteString getTrim4Bytes();
+
+    /**
+     * <code>string trim5 = 14;</code>
+     *
+     * @return The trim5.
+     */
+    java.lang.String getTrim5();
+    /**
+     * <code>string trim5 = 14;</code>
+     *
+     * @return The bytes for trim5.
+     */
+    com.google.protobuf.ByteString getTrim5Bytes();
+
+    /**
+     * <code>string trim6 = 15;</code>
+     *
+     * @return The trim6.
+     */
+    java.lang.String getTrim6();
+    /**
+     * <code>string trim6 = 15;</code>
+     *
+     * @return The bytes for trim6.
+     */
+    com.google.protobuf.ByteString getTrim6Bytes();
+  }
+  /** Protobuf type {@code UllageTrimCorrection} */
+  public static final class UllageTrimCorrection extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:UllageTrimCorrection)
+      UllageTrimCorrectionOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use UllageTrimCorrection.newBuilder() to construct.
+    private UllageTrimCorrection(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private UllageTrimCorrection() {
+      ullageDepth_ = "";
+      trimM1_ = "";
+      trimM2_ = "";
+      trimM3_ = "";
+      trimM4_ = "";
+      trimM5_ = "";
+      trim0_ = "";
+      trim1_ = "";
+      trim2_ = "";
+      trim3_ = "";
+      trim4_ = "";
+      trim5_ = "";
+      trim6_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new UllageTrimCorrection();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private UllageTrimCorrection(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 16:
+              {
+                tankId_ = input.readInt64();
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                ullageDepth_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                trimM1_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                trimM2_ = s;
+                break;
+              }
+            case 50:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                trimM3_ = s;
+                break;
+              }
+            case 58:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                trimM4_ = s;
+                break;
+              }
+            case 66:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                trimM5_ = s;
+                break;
+              }
+            case 74:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                trim0_ = s;
+                break;
+              }
+            case 82:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                trim1_ = s;
+                break;
+              }
+            case 90:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                trim2_ = s;
+                break;
+              }
+            case 98:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                trim3_ = s;
+                break;
+              }
+            case 106:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                trim4_ = s;
+                break;
+              }
+            case 114:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                trim5_ = s;
+                break;
+              }
+            case 122:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                trim6_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_UllageTrimCorrection_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_UllageTrimCorrection_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.class,
+              com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.Builder.class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int TANKID_FIELD_NUMBER = 2;
+    private long tankId_;
+    /**
+     * <code>int64 tankId = 2;</code>
+     *
+     * @return The tankId.
+     */
+    public long getTankId() {
+      return tankId_;
+    }
+
+    public static final int ULLAGEDEPTH_FIELD_NUMBER = 3;
+    private volatile java.lang.Object ullageDepth_;
+    /**
+     * <code>string ullageDepth = 3;</code>
+     *
+     * @return The ullageDepth.
+     */
+    public java.lang.String getUllageDepth() {
+      java.lang.Object ref = ullageDepth_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        ullageDepth_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string ullageDepth = 3;</code>
+     *
+     * @return The bytes for ullageDepth.
+     */
+    public com.google.protobuf.ByteString getUllageDepthBytes() {
+      java.lang.Object ref = ullageDepth_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        ullageDepth_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIMM1_FIELD_NUMBER = 4;
+    private volatile java.lang.Object trimM1_;
+    /**
+     * <code>string trimM1 = 4;</code>
+     *
+     * @return The trimM1.
+     */
+    public java.lang.String getTrimM1() {
+      java.lang.Object ref = trimM1_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trimM1_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trimM1 = 4;</code>
+     *
+     * @return The bytes for trimM1.
+     */
+    public com.google.protobuf.ByteString getTrimM1Bytes() {
+      java.lang.Object ref = trimM1_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        trimM1_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIMM2_FIELD_NUMBER = 5;
+    private volatile java.lang.Object trimM2_;
+    /**
+     * <code>string trimM2 = 5;</code>
+     *
+     * @return The trimM2.
+     */
+    public java.lang.String getTrimM2() {
+      java.lang.Object ref = trimM2_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trimM2_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trimM2 = 5;</code>
+     *
+     * @return The bytes for trimM2.
+     */
+    public com.google.protobuf.ByteString getTrimM2Bytes() {
+      java.lang.Object ref = trimM2_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        trimM2_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIMM3_FIELD_NUMBER = 6;
+    private volatile java.lang.Object trimM3_;
+    /**
+     * <code>string trimM3 = 6;</code>
+     *
+     * @return The trimM3.
+     */
+    public java.lang.String getTrimM3() {
+      java.lang.Object ref = trimM3_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trimM3_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trimM3 = 6;</code>
+     *
+     * @return The bytes for trimM3.
+     */
+    public com.google.protobuf.ByteString getTrimM3Bytes() {
+      java.lang.Object ref = trimM3_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        trimM3_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIMM4_FIELD_NUMBER = 7;
+    private volatile java.lang.Object trimM4_;
+    /**
+     * <code>string trimM4 = 7;</code>
+     *
+     * @return The trimM4.
+     */
+    public java.lang.String getTrimM4() {
+      java.lang.Object ref = trimM4_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trimM4_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trimM4 = 7;</code>
+     *
+     * @return The bytes for trimM4.
+     */
+    public com.google.protobuf.ByteString getTrimM4Bytes() {
+      java.lang.Object ref = trimM4_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        trimM4_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIMM5_FIELD_NUMBER = 8;
+    private volatile java.lang.Object trimM5_;
+    /**
+     * <code>string trimM5 = 8;</code>
+     *
+     * @return The trimM5.
+     */
+    public java.lang.String getTrimM5() {
+      java.lang.Object ref = trimM5_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trimM5_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trimM5 = 8;</code>
+     *
+     * @return The bytes for trimM5.
+     */
+    public com.google.protobuf.ByteString getTrimM5Bytes() {
+      java.lang.Object ref = trimM5_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        trimM5_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM0_FIELD_NUMBER = 9;
+    private volatile java.lang.Object trim0_;
+    /**
+     * <code>string trim0 = 9;</code>
+     *
+     * @return The trim0.
+     */
+    public java.lang.String getTrim0() {
+      java.lang.Object ref = trim0_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim0_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim0 = 9;</code>
+     *
+     * @return The bytes for trim0.
+     */
+    public com.google.protobuf.ByteString getTrim0Bytes() {
+      java.lang.Object ref = trim0_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        trim0_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM1_FIELD_NUMBER = 10;
+    private volatile java.lang.Object trim1_;
+    /**
+     * <code>string trim1 = 10;</code>
+     *
+     * @return The trim1.
+     */
+    public java.lang.String getTrim1() {
+      java.lang.Object ref = trim1_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim1_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim1 = 10;</code>
+     *
+     * @return The bytes for trim1.
+     */
+    public com.google.protobuf.ByteString getTrim1Bytes() {
+      java.lang.Object ref = trim1_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        trim1_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM2_FIELD_NUMBER = 11;
+    private volatile java.lang.Object trim2_;
+    /**
+     * <code>string trim2 = 11;</code>
+     *
+     * @return The trim2.
+     */
+    public java.lang.String getTrim2() {
+      java.lang.Object ref = trim2_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim2_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim2 = 11;</code>
+     *
+     * @return The bytes for trim2.
+     */
+    public com.google.protobuf.ByteString getTrim2Bytes() {
+      java.lang.Object ref = trim2_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        trim2_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM3_FIELD_NUMBER = 12;
+    private volatile java.lang.Object trim3_;
+    /**
+     * <code>string trim3 = 12;</code>
+     *
+     * @return The trim3.
+     */
+    public java.lang.String getTrim3() {
+      java.lang.Object ref = trim3_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim3_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim3 = 12;</code>
+     *
+     * @return The bytes for trim3.
+     */
+    public com.google.protobuf.ByteString getTrim3Bytes() {
+      java.lang.Object ref = trim3_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        trim3_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM4_FIELD_NUMBER = 13;
+    private volatile java.lang.Object trim4_;
+    /**
+     * <code>string trim4 = 13;</code>
+     *
+     * @return The trim4.
+     */
+    public java.lang.String getTrim4() {
+      java.lang.Object ref = trim4_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim4_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim4 = 13;</code>
+     *
+     * @return The bytes for trim4.
+     */
+    public com.google.protobuf.ByteString getTrim4Bytes() {
+      java.lang.Object ref = trim4_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        trim4_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM5_FIELD_NUMBER = 14;
+    private volatile java.lang.Object trim5_;
+    /**
+     * <code>string trim5 = 14;</code>
+     *
+     * @return The trim5.
+     */
+    public java.lang.String getTrim5() {
+      java.lang.Object ref = trim5_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim5_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim5 = 14;</code>
+     *
+     * @return The bytes for trim5.
+     */
+    public com.google.protobuf.ByteString getTrim5Bytes() {
+      java.lang.Object ref = trim5_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        trim5_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TRIM6_FIELD_NUMBER = 15;
+    private volatile java.lang.Object trim6_;
+    /**
+     * <code>string trim6 = 15;</code>
+     *
+     * @return The trim6.
+     */
+    public java.lang.String getTrim6() {
+      java.lang.Object ref = trim6_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        trim6_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string trim6 = 15;</code>
+     *
+     * @return The bytes for trim6.
+     */
+    public com.google.protobuf.ByteString getTrim6Bytes() {
+      java.lang.Object ref = trim6_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        trim6_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (tankId_ != 0L) {
+        output.writeInt64(2, tankId_);
+      }
+      if (!getUllageDepthBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, ullageDepth_);
+      }
+      if (!getTrimM1Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, trimM1_);
+      }
+      if (!getTrimM2Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, trimM2_);
+      }
+      if (!getTrimM3Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, trimM3_);
+      }
+      if (!getTrimM4Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, trimM4_);
+      }
+      if (!getTrimM5Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, trimM5_);
+      }
+      if (!getTrim0Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, trim0_);
+      }
+      if (!getTrim1Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, trim1_);
+      }
+      if (!getTrim2Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, trim2_);
+      }
+      if (!getTrim3Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, trim3_);
+      }
+      if (!getTrim4Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 13, trim4_);
+      }
+      if (!getTrim5Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 14, trim5_);
+      }
+      if (!getTrim6Bytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 15, trim6_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (tankId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, tankId_);
+      }
+      if (!getUllageDepthBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, ullageDepth_);
+      }
+      if (!getTrimM1Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, trimM1_);
+      }
+      if (!getTrimM2Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, trimM2_);
+      }
+      if (!getTrimM3Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, trimM3_);
+      }
+      if (!getTrimM4Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, trimM4_);
+      }
+      if (!getTrimM5Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, trimM5_);
+      }
+      if (!getTrim0Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, trim0_);
+      }
+      if (!getTrim1Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, trim1_);
+      }
+      if (!getTrim2Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, trim2_);
+      }
+      if (!getTrim3Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, trim3_);
+      }
+      if (!getTrim4Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, trim4_);
+      }
+      if (!getTrim5Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, trim5_);
+      }
+      if (!getTrim6Bytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, trim6_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.UllageTrimCorrection)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.UllageTrimCorrection other =
+          (com.cpdss.common.generated.VesselInfo.UllageTrimCorrection) obj;
+
+      if (getId() != other.getId()) return false;
+      if (getTankId() != other.getTankId()) return false;
+      if (!getUllageDepth().equals(other.getUllageDepth())) return false;
+      if (!getTrimM1().equals(other.getTrimM1())) return false;
+      if (!getTrimM2().equals(other.getTrimM2())) return false;
+      if (!getTrimM3().equals(other.getTrimM3())) return false;
+      if (!getTrimM4().equals(other.getTrimM4())) return false;
+      if (!getTrimM5().equals(other.getTrimM5())) return false;
+      if (!getTrim0().equals(other.getTrim0())) return false;
+      if (!getTrim1().equals(other.getTrim1())) return false;
+      if (!getTrim2().equals(other.getTrim2())) return false;
+      if (!getTrim3().equals(other.getTrim3())) return false;
+      if (!getTrim4().equals(other.getTrim4())) return false;
+      if (!getTrim5().equals(other.getTrim5())) return false;
+      if (!getTrim6().equals(other.getTrim6())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + TANKID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getTankId());
+      hash = (37 * hash) + ULLAGEDEPTH_FIELD_NUMBER;
+      hash = (53 * hash) + getUllageDepth().hashCode();
+      hash = (37 * hash) + TRIMM1_FIELD_NUMBER;
+      hash = (53 * hash) + getTrimM1().hashCode();
+      hash = (37 * hash) + TRIMM2_FIELD_NUMBER;
+      hash = (53 * hash) + getTrimM2().hashCode();
+      hash = (37 * hash) + TRIMM3_FIELD_NUMBER;
+      hash = (53 * hash) + getTrimM3().hashCode();
+      hash = (37 * hash) + TRIMM4_FIELD_NUMBER;
+      hash = (53 * hash) + getTrimM4().hashCode();
+      hash = (37 * hash) + TRIMM5_FIELD_NUMBER;
+      hash = (53 * hash) + getTrimM5().hashCode();
+      hash = (37 * hash) + TRIM0_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim0().hashCode();
+      hash = (37 * hash) + TRIM1_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim1().hashCode();
+      hash = (37 * hash) + TRIM2_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim2().hashCode();
+      hash = (37 * hash) + TRIM3_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim3().hashCode();
+      hash = (37 * hash) + TRIM4_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim4().hashCode();
+      hash = (37 * hash) + TRIM5_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim5().hashCode();
+      hash = (37 * hash) + TRIM6_FIELD_NUMBER;
+      hash = (53 * hash) + getTrim6().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.UllageTrimCorrection parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.UllageTrimCorrection parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.UllageTrimCorrection parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.UllageTrimCorrection parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.UllageTrimCorrection parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.UllageTrimCorrection parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.UllageTrimCorrection parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.UllageTrimCorrection parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.UllageTrimCorrection parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.UllageTrimCorrection parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.UllageTrimCorrection parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.UllageTrimCorrection parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.VesselInfo.UllageTrimCorrection prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code UllageTrimCorrection} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:UllageTrimCorrection)
+        com.cpdss.common.generated.VesselInfo.UllageTrimCorrectionOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_UllageTrimCorrection_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_UllageTrimCorrection_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.class,
+                com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        tankId_ = 0L;
+
+        ullageDepth_ = "";
+
+        trimM1_ = "";
+
+        trimM2_ = "";
+
+        trimM3_ = "";
+
+        trimM4_ = "";
+
+        trimM5_ = "";
+
+        trim0_ = "";
+
+        trim1_ = "";
+
+        trim2_ = "";
+
+        trim3_ = "";
+
+        trim4_ = "";
+
+        trim5_ = "";
+
+        trim6_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_UllageTrimCorrection_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.UllageTrimCorrection
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.UllageTrimCorrection build() {
+        com.cpdss.common.generated.VesselInfo.UllageTrimCorrection result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.UllageTrimCorrection buildPartial() {
+        com.cpdss.common.generated.VesselInfo.UllageTrimCorrection result =
+            new com.cpdss.common.generated.VesselInfo.UllageTrimCorrection(this);
+        result.id_ = id_;
+        result.tankId_ = tankId_;
+        result.ullageDepth_ = ullageDepth_;
+        result.trimM1_ = trimM1_;
+        result.trimM2_ = trimM2_;
+        result.trimM3_ = trimM3_;
+        result.trimM4_ = trimM4_;
+        result.trimM5_ = trimM5_;
+        result.trim0_ = trim0_;
+        result.trim1_ = trim1_;
+        result.trim2_ = trim2_;
+        result.trim3_ = trim3_;
+        result.trim4_ = trim4_;
+        result.trim5_ = trim5_;
+        result.trim6_ = trim6_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.UllageTrimCorrection) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.UllageTrimCorrection) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.UllageTrimCorrection other) {
+        if (other
+            == com.cpdss.common.generated.VesselInfo.UllageTrimCorrection.getDefaultInstance())
+          return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (other.getTankId() != 0L) {
+          setTankId(other.getTankId());
+        }
+        if (!other.getUllageDepth().isEmpty()) {
+          ullageDepth_ = other.ullageDepth_;
+          onChanged();
+        }
+        if (!other.getTrimM1().isEmpty()) {
+          trimM1_ = other.trimM1_;
+          onChanged();
+        }
+        if (!other.getTrimM2().isEmpty()) {
+          trimM2_ = other.trimM2_;
+          onChanged();
+        }
+        if (!other.getTrimM3().isEmpty()) {
+          trimM3_ = other.trimM3_;
+          onChanged();
+        }
+        if (!other.getTrimM4().isEmpty()) {
+          trimM4_ = other.trimM4_;
+          onChanged();
+        }
+        if (!other.getTrimM5().isEmpty()) {
+          trimM5_ = other.trimM5_;
+          onChanged();
+        }
+        if (!other.getTrim0().isEmpty()) {
+          trim0_ = other.trim0_;
+          onChanged();
+        }
+        if (!other.getTrim1().isEmpty()) {
+          trim1_ = other.trim1_;
+          onChanged();
+        }
+        if (!other.getTrim2().isEmpty()) {
+          trim2_ = other.trim2_;
+          onChanged();
+        }
+        if (!other.getTrim3().isEmpty()) {
+          trim3_ = other.trim3_;
+          onChanged();
+        }
+        if (!other.getTrim4().isEmpty()) {
+          trim4_ = other.trim4_;
+          onChanged();
+        }
+        if (!other.getTrim5().isEmpty()) {
+          trim5_ = other.trim5_;
+          onChanged();
+        }
+        if (!other.getTrim6().isEmpty()) {
+          trim6_ = other.trim6_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.UllageTrimCorrection parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.UllageTrimCorrection) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long tankId_;
+      /**
+       * <code>int64 tankId = 2;</code>
+       *
+       * @return The tankId.
+       */
+      public long getTankId() {
+        return tankId_;
+      }
+      /**
+       * <code>int64 tankId = 2;</code>
+       *
+       * @param value The tankId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTankId(long value) {
+
+        tankId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 tankId = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTankId() {
+
+        tankId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object ullageDepth_ = "";
+      /**
+       * <code>string ullageDepth = 3;</code>
+       *
+       * @return The ullageDepth.
+       */
+      public java.lang.String getUllageDepth() {
+        java.lang.Object ref = ullageDepth_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          ullageDepth_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string ullageDepth = 3;</code>
+       *
+       * @return The bytes for ullageDepth.
+       */
+      public com.google.protobuf.ByteString getUllageDepthBytes() {
+        java.lang.Object ref = ullageDepth_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          ullageDepth_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string ullageDepth = 3;</code>
+       *
+       * @param value The ullageDepth to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUllageDepth(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        ullageDepth_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ullageDepth = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearUllageDepth() {
+
+        ullageDepth_ = getDefaultInstance().getUllageDepth();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ullageDepth = 3;</code>
+       *
+       * @param value The bytes for ullageDepth to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUllageDepthBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        ullageDepth_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trimM1_ = "";
+      /**
+       * <code>string trimM1 = 4;</code>
+       *
+       * @return The trimM1.
+       */
+      public java.lang.String getTrimM1() {
+        java.lang.Object ref = trimM1_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trimM1_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trimM1 = 4;</code>
+       *
+       * @return The bytes for trimM1.
+       */
+      public com.google.protobuf.ByteString getTrimM1Bytes() {
+        java.lang.Object ref = trimM1_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          trimM1_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trimM1 = 4;</code>
+       *
+       * @param value The trimM1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimM1(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        trimM1_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trimM1 = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTrimM1() {
+
+        trimM1_ = getDefaultInstance().getTrimM1();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trimM1 = 4;</code>
+       *
+       * @param value The bytes for trimM1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimM1Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        trimM1_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trimM2_ = "";
+      /**
+       * <code>string trimM2 = 5;</code>
+       *
+       * @return The trimM2.
+       */
+      public java.lang.String getTrimM2() {
+        java.lang.Object ref = trimM2_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trimM2_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trimM2 = 5;</code>
+       *
+       * @return The bytes for trimM2.
+       */
+      public com.google.protobuf.ByteString getTrimM2Bytes() {
+        java.lang.Object ref = trimM2_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          trimM2_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trimM2 = 5;</code>
+       *
+       * @param value The trimM2 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimM2(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        trimM2_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trimM2 = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTrimM2() {
+
+        trimM2_ = getDefaultInstance().getTrimM2();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trimM2 = 5;</code>
+       *
+       * @param value The bytes for trimM2 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimM2Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        trimM2_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trimM3_ = "";
+      /**
+       * <code>string trimM3 = 6;</code>
+       *
+       * @return The trimM3.
+       */
+      public java.lang.String getTrimM3() {
+        java.lang.Object ref = trimM3_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trimM3_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trimM3 = 6;</code>
+       *
+       * @return The bytes for trimM3.
+       */
+      public com.google.protobuf.ByteString getTrimM3Bytes() {
+        java.lang.Object ref = trimM3_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          trimM3_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trimM3 = 6;</code>
+       *
+       * @param value The trimM3 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimM3(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        trimM3_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trimM3 = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTrimM3() {
+
+        trimM3_ = getDefaultInstance().getTrimM3();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trimM3 = 6;</code>
+       *
+       * @param value The bytes for trimM3 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimM3Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        trimM3_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trimM4_ = "";
+      /**
+       * <code>string trimM4 = 7;</code>
+       *
+       * @return The trimM4.
+       */
+      public java.lang.String getTrimM4() {
+        java.lang.Object ref = trimM4_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trimM4_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trimM4 = 7;</code>
+       *
+       * @return The bytes for trimM4.
+       */
+      public com.google.protobuf.ByteString getTrimM4Bytes() {
+        java.lang.Object ref = trimM4_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          trimM4_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trimM4 = 7;</code>
+       *
+       * @param value The trimM4 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimM4(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        trimM4_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trimM4 = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTrimM4() {
+
+        trimM4_ = getDefaultInstance().getTrimM4();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trimM4 = 7;</code>
+       *
+       * @param value The bytes for trimM4 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimM4Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        trimM4_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trimM5_ = "";
+      /**
+       * <code>string trimM5 = 8;</code>
+       *
+       * @return The trimM5.
+       */
+      public java.lang.String getTrimM5() {
+        java.lang.Object ref = trimM5_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trimM5_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trimM5 = 8;</code>
+       *
+       * @return The bytes for trimM5.
+       */
+      public com.google.protobuf.ByteString getTrimM5Bytes() {
+        java.lang.Object ref = trimM5_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          trimM5_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trimM5 = 8;</code>
+       *
+       * @param value The trimM5 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimM5(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        trimM5_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trimM5 = 8;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTrimM5() {
+
+        trimM5_ = getDefaultInstance().getTrimM5();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trimM5 = 8;</code>
+       *
+       * @param value The bytes for trimM5 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrimM5Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        trimM5_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim0_ = "";
+      /**
+       * <code>string trim0 = 9;</code>
+       *
+       * @return The trim0.
+       */
+      public java.lang.String getTrim0() {
+        java.lang.Object ref = trim0_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim0_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim0 = 9;</code>
+       *
+       * @return The bytes for trim0.
+       */
+      public com.google.protobuf.ByteString getTrim0Bytes() {
+        java.lang.Object ref = trim0_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          trim0_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim0 = 9;</code>
+       *
+       * @param value The trim0 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim0(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        trim0_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim0 = 9;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim0() {
+
+        trim0_ = getDefaultInstance().getTrim0();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim0 = 9;</code>
+       *
+       * @param value The bytes for trim0 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim0Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        trim0_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim1_ = "";
+      /**
+       * <code>string trim1 = 10;</code>
+       *
+       * @return The trim1.
+       */
+      public java.lang.String getTrim1() {
+        java.lang.Object ref = trim1_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim1_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim1 = 10;</code>
+       *
+       * @return The bytes for trim1.
+       */
+      public com.google.protobuf.ByteString getTrim1Bytes() {
+        java.lang.Object ref = trim1_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          trim1_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim1 = 10;</code>
+       *
+       * @param value The trim1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim1(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        trim1_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim1 = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim1() {
+
+        trim1_ = getDefaultInstance().getTrim1();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim1 = 10;</code>
+       *
+       * @param value The bytes for trim1 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim1Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        trim1_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim2_ = "";
+      /**
+       * <code>string trim2 = 11;</code>
+       *
+       * @return The trim2.
+       */
+      public java.lang.String getTrim2() {
+        java.lang.Object ref = trim2_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim2_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim2 = 11;</code>
+       *
+       * @return The bytes for trim2.
+       */
+      public com.google.protobuf.ByteString getTrim2Bytes() {
+        java.lang.Object ref = trim2_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          trim2_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim2 = 11;</code>
+       *
+       * @param value The trim2 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim2(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        trim2_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim2 = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim2() {
+
+        trim2_ = getDefaultInstance().getTrim2();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim2 = 11;</code>
+       *
+       * @param value The bytes for trim2 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim2Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        trim2_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim3_ = "";
+      /**
+       * <code>string trim3 = 12;</code>
+       *
+       * @return The trim3.
+       */
+      public java.lang.String getTrim3() {
+        java.lang.Object ref = trim3_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim3_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim3 = 12;</code>
+       *
+       * @return The bytes for trim3.
+       */
+      public com.google.protobuf.ByteString getTrim3Bytes() {
+        java.lang.Object ref = trim3_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          trim3_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim3 = 12;</code>
+       *
+       * @param value The trim3 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim3(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        trim3_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim3 = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim3() {
+
+        trim3_ = getDefaultInstance().getTrim3();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim3 = 12;</code>
+       *
+       * @param value The bytes for trim3 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim3Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        trim3_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim4_ = "";
+      /**
+       * <code>string trim4 = 13;</code>
+       *
+       * @return The trim4.
+       */
+      public java.lang.String getTrim4() {
+        java.lang.Object ref = trim4_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim4_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim4 = 13;</code>
+       *
+       * @return The bytes for trim4.
+       */
+      public com.google.protobuf.ByteString getTrim4Bytes() {
+        java.lang.Object ref = trim4_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          trim4_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim4 = 13;</code>
+       *
+       * @param value The trim4 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim4(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        trim4_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim4 = 13;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim4() {
+
+        trim4_ = getDefaultInstance().getTrim4();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim4 = 13;</code>
+       *
+       * @param value The bytes for trim4 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim4Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        trim4_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim5_ = "";
+      /**
+       * <code>string trim5 = 14;</code>
+       *
+       * @return The trim5.
+       */
+      public java.lang.String getTrim5() {
+        java.lang.Object ref = trim5_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim5_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim5 = 14;</code>
+       *
+       * @return The bytes for trim5.
+       */
+      public com.google.protobuf.ByteString getTrim5Bytes() {
+        java.lang.Object ref = trim5_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          trim5_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim5 = 14;</code>
+       *
+       * @param value The trim5 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim5(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        trim5_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim5 = 14;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim5() {
+
+        trim5_ = getDefaultInstance().getTrim5();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim5 = 14;</code>
+       *
+       * @param value The bytes for trim5 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim5Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        trim5_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object trim6_ = "";
+      /**
+       * <code>string trim6 = 15;</code>
+       *
+       * @return The trim6.
+       */
+      public java.lang.String getTrim6() {
+        java.lang.Object ref = trim6_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          trim6_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string trim6 = 15;</code>
+       *
+       * @return The bytes for trim6.
+       */
+      public com.google.protobuf.ByteString getTrim6Bytes() {
+        java.lang.Object ref = trim6_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          trim6_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string trim6 = 15;</code>
+       *
+       * @param value The trim6 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim6(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        trim6_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim6 = 15;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTrim6() {
+
+        trim6_ = getDefaultInstance().getTrim6();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string trim6 = 15;</code>
+       *
+       * @param value The bytes for trim6 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTrim6Bytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        trim6_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:UllageTrimCorrection)
+    }
+
+    // @@protoc_insertion_point(class_scope:UllageTrimCorrection)
+    private static final com.cpdss.common.generated.VesselInfo.UllageTrimCorrection
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.UllageTrimCorrection();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.UllageTrimCorrection getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<UllageTrimCorrection> PARSER =
+        new com.google.protobuf.AbstractParser<UllageTrimCorrection>() {
+          @java.lang.Override
+          public UllageTrimCorrection parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new UllageTrimCorrection(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<UllageTrimCorrection> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<UllageTrimCorrection> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.UllageTrimCorrection getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_VesselRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -35931,6 +38776,10 @@ public final class VesselInfo {
       internal_static_InnerBulkHeadSF_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_InnerBulkHeadSF_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_UllageTrimCorrection_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_UllageTrimCorrection_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -35993,7 +38842,7 @@ public final class VesselInfo {
           + "(\0132\r.VesselDetail\022E\n\035vesselLoadableQuant"
           + "ityDetails\030\005 \001(\0132\036.VesselLoadableQuantit"
           + "yDetails\"%\n\021VesselAlgoRequest\022\020\n\010vesselI"
-          + "d\030\001 \001(\003\"\325\002\n\017VesselAlgoReply\022#\n\014vesselDet"
+          + "d\030\001 \001(\003\"\212\003\n\017VesselAlgoReply\022#\n\014vesselDet"
           + "ail\030\001 \001(\0132\r.VesselDetail\0223\n\024vesselDraftC"
           + "ondition\030\002 \003(\0132\025.VesselDraftCondition\022+\n"
           + "\020vesselTankDetail\030\003 \003(\0132\021.VesselTankDeta"
@@ -36001,72 +38850,80 @@ public final class VesselInfo {
           + "cData\022%\n\rvesselTankTCG\030\005 \003(\0132\016.VesselTan"
           + "kTCG\022\031\n\007bMAndSF\030\006 \001(\0132\010.BMAndSF\022\'\n\016respo"
           + "nseStatus\030\007 \001(\0132\017.ResponseStatus\022%\n\rulla"
-          + "geDetails\030\010 \003(\0132\016.UllageDetails\"r\n\rUllag"
-          + "eDetails\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013"
-          + "ullageDepth\030\003 \001(\t\022\034\n\024evenKeelCapacityCub"
-          + "m\030\004 \001(\t\022\022\n\nsoundDepth\030\005 \001(\t\"\236\001\n\024VesselDr"
-          + "aftCondition\022\n\n\002id\030\001 \001(\003\022\030\n\020draftConditi"
-          + "onId\030\002 \001(\003\022\r\n\005depth\030\003 \001(\t\022\021\n\tfreeboard\030\004"
-          + " \001(\t\022\024\n\014draftExtreme\030\005 \001(\t\022\024\n\014displaceme"
-          + "nt\030\006 \001(\t\022\022\n\ndeadWeight\030\007 \001(\t\"\253\001\n\017Hydrost"
-          + "aticData\022\n\n\002id\030\001 \001(\003\022\014\n\004trim\030\002 \001(\t\022\r\n\005dr"
-          + "aft\030\003 \001(\t\022\024\n\014displacement\030\004 \001(\t\022\013\n\003lcb\030\005"
-          + " \001(\t\022\013\n\003lcf\030\006 \001(\t\022\013\n\003vcb\030\007 \001(\t\022\013\n\003tkm\030\010 "
-          + "\001(\t\022\013\n\003lkm\030\t \001(\t\022\013\n\003mtc\030\n \001(\t\022\013\n\003tpc\030\013 \001"
-          + "(\t\"J\n\rVesselTankTCG\022\n\n\002id\030\001 \001(\003\022\016\n\006tankI"
-          + "d\030\002 \001(\003\022\020\n\010capacity\030\003 \001(\t\022\013\n\003tcg\030\004 \001(\t\"\316"
-          + "\002\n\007BMAndSF\022%\n\rbendingMoment\030\001 \003(\0132\016.Bend"
-          + "ingMoment\022%\n\rshearingForce\030\002 \003(\0132\016.Shear"
-          + "ingForce\022+\n\020calculationSheet\030\003 \003(\0132\021.Cal"
-          + "culationSheet\022=\n\031calculationSheetTankGro"
-          + "up\030\004 \003(\0132\032.CalculationSheetTankGroup\0227\n\026"
-          + "minMaxValuesForBMAndSf\030\005 \003(\0132\027.MinMaxVal"
-          + "uesForBMAndSf\022%\n\rstationValues\030\006 \003(\0132\016.S"
-          + "tationValues\022)\n\017InnerBulkHeadSF\030\007 \003(\0132\020."
-          + "InnerBulkHeadSF\"\207\001\n\rBendingMoment\022\n\n\002id\030"
-          + "\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\021\n\tbaseDraft\030"
-          + "\003 \001(\t\022\021\n\tbaseValue\030\004 \001(\t\022\027\n\017draftCorrect"
-          + "ion\030\005 \001(\t\022\026\n\016trimCorrection\030\006 \001(\t\"\207\001\n\rSh"
-          + "earingForce\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002"
-          + " \001(\t\022\021\n\tbaseDraft\030\003 \001(\t\022\021\n\tbaseValue\030\004 \001"
-          + "(\t\022\027\n\017draftCorrection\030\005 \001(\t\022\026\n\016trimCorre"
-          + "ction\030\006 \001(\t\"c\n\020CalculationSheet\022\n\n\002id\030\001 "
-          + "\001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\016\n\006tankId\030\003 \001(\003\022\023"
-          + "\n\013weightRatio\030\004 \001(\t\022\013\n\003lcg\030\005 \001(\t\"\\\n\031Calc"
-          + "ulationSheetTankGroup\022\n\n\002id\030\001 \001(\003\022\021\n\ttan"
-          + "kGroup\030\002 \001(\005\022\013\n\003lcg\030\003 \001(\t\022\023\n\013frameNumber"
-          + "\030\004 \001(\t\"u\n\026MinMaxValuesForBMAndSf\022\n\n\002id\030\001"
-          + " \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\r\n\005minBm\030\003 \001(\t"
-          + "\022\r\n\005maxBm\030\004 \001(\t\022\r\n\005minSf\030\005 \001(\t\022\r\n\005maxSf\030"
-          + "\006 \001(\t\"\205\001\n\rStationValues\022\023\n\013stationFrom\030\001"
-          + " \001(\t\022\021\n\tstationTo\030\002 \001(\t\022\027\n\017frameNumberFr"
-          + "om\030\003 \001(\t\022\025\n\rframeNumberTo\030\004 \001(\t\022\020\n\010dista"
-          + "nce\030\005 \001(\t\022\n\n\002id\030\006 \001(\003\"\221\004\n\017InnerBulkHeadS"
-          + "F\022\023\n\013frameNumber\030\001 \001(\t\022\021\n\tforeAlpha\030\002 \001("
-          + "\t\022\035\n\025foreCenterCargoTankId\030\003 \001(\003\022\016\n\006fore"
-          + "C1\030\004 \001(\t\022\027\n\017foreWingTankIds\030\005 \001(\t\022\016\n\006for"
-          + "eC2\030\006 \001(\t\022\030\n\020foreBallastTanks\030\007 \001(\t\022\016\n\006f"
-          + "oreC3\030\010 \001(\t\022\030\n\020foreBWCorrection\030\t \001(\t\022\016\n"
-          + "\006foreC4\030\n \001(\t\022\030\n\020foreMaxAllowence\030\013 \001(\t\022"
-          + "\030\n\020foreMinAllowence\030\014 \001(\t\022\n\n\002id\030\r \001(\003\022\020\n"
-          + "\010aftAlpha\030\016 \001(\t\022\034\n\024aftCenterCargoTankId\030"
-          + "\017 \001(\003\022\r\n\005aftC1\030\020 \001(\t\022\026\n\016aftWingTankIds\030\021"
-          + " \001(\t\022\r\n\005aftC2\030\022 \001(\t\022\027\n\017aftBallastTanks\030\023"
-          + " \001(\t\022\r\n\005aftC3\030\024 \001(\t\022\027\n\017aftBWCorrection\030\025"
-          + " \001(\t\022\r\n\005aftC4\030\026 \001(\t\022\031\n\021aftMaxFlAllowence"
-          + "\030\027 \001(\t\022\031\n\021aftMinFlAllowence\030\030 \001(\t2\263\003\n\021Ve"
-          + "sselInfoService\0228\n\026GetAllVesselsByCompan"
-          + "y\022\016.VesselRequest\032\014.VesselReply\"\000\0226\n\024Get"
-          + "VesselDetailsById\022\016.VesselRequest\032\014.Vess"
-          + "elReply\"\000\0220\n\016GetVesselTanks\022\016.VesselRequ"
-          + "est\032\014.VesselReply\"\000\0225\n\023GetVesselCargoTan"
-          + "ks\022\016.VesselRequest\032\014.VesselReply\"\000\022A\n\027Ge"
-          + "tVesselDetailsForAlgo\022\022.VesselAlgoReques"
-          + "t\032\020.VesselAlgoReply\"\000\022C\n!GetVesselDetail"
-          + "ForSynopticalTable\022\016.VesselRequest\032\014.Ves"
-          + "selReply\"\000\022;\n\031GetVesselDetailByVesselId\022"
-          + "\016.VesselRequest\032\014.VesselReply\"\000B\036\n\032com.c"
-          + "pdss.common.generatedP\000b\006proto3"
+          + "geDetails\030\010 \003(\0132\016.UllageDetails\0223\n\024ullag"
+          + "eTrimCorrection\030\t \003(\0132\025.UllageTrimCorrec"
+          + "tion\"r\n\rUllageDetails\022\n\n\002id\030\001 \001(\003\022\016\n\006tan"
+          + "kId\030\002 \001(\003\022\023\n\013ullageDepth\030\003 \001(\t\022\034\n\024evenKe"
+          + "elCapacityCubm\030\004 \001(\t\022\022\n\nsoundDepth\030\005 \001(\t"
+          + "\"\236\001\n\024VesselDraftCondition\022\n\n\002id\030\001 \001(\003\022\030\n"
+          + "\020draftConditionId\030\002 \001(\003\022\r\n\005depth\030\003 \001(\t\022\021"
+          + "\n\tfreeboard\030\004 \001(\t\022\024\n\014draftExtreme\030\005 \001(\t\022"
+          + "\024\n\014displacement\030\006 \001(\t\022\022\n\ndeadWeight\030\007 \001("
+          + "\t\"\253\001\n\017HydrostaticData\022\n\n\002id\030\001 \001(\003\022\014\n\004tri"
+          + "m\030\002 \001(\t\022\r\n\005draft\030\003 \001(\t\022\024\n\014displacement\030\004"
+          + " \001(\t\022\013\n\003lcb\030\005 \001(\t\022\013\n\003lcf\030\006 \001(\t\022\013\n\003vcb\030\007 "
+          + "\001(\t\022\013\n\003tkm\030\010 \001(\t\022\013\n\003lkm\030\t \001(\t\022\013\n\003mtc\030\n \001"
+          + "(\t\022\013\n\003tpc\030\013 \001(\t\"J\n\rVesselTankTCG\022\n\n\002id\030\001"
+          + " \001(\003\022\016\n\006tankId\030\002 \001(\003\022\020\n\010capacity\030\003 \001(\t\022\013"
+          + "\n\003tcg\030\004 \001(\t\"\316\002\n\007BMAndSF\022%\n\rbendingMoment"
+          + "\030\001 \003(\0132\016.BendingMoment\022%\n\rshearingForce\030"
+          + "\002 \003(\0132\016.ShearingForce\022+\n\020calculationShee"
+          + "t\030\003 \003(\0132\021.CalculationSheet\022=\n\031calculatio"
+          + "nSheetTankGroup\030\004 \003(\0132\032.CalculationSheet"
+          + "TankGroup\0227\n\026minMaxValuesForBMAndSf\030\005 \003("
+          + "\0132\027.MinMaxValuesForBMAndSf\022%\n\rstationVal"
+          + "ues\030\006 \003(\0132\016.StationValues\022)\n\017InnerBulkHe"
+          + "adSF\030\007 \003(\0132\020.InnerBulkHeadSF\"\207\001\n\rBending"
+          + "Moment\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022"
+          + "\021\n\tbaseDraft\030\003 \001(\t\022\021\n\tbaseValue\030\004 \001(\t\022\027\n"
+          + "\017draftCorrection\030\005 \001(\t\022\026\n\016trimCorrection"
+          + "\030\006 \001(\t\"\207\001\n\rShearingForce\022\n\n\002id\030\001 \001(\003\022\023\n\013"
+          + "frameNumber\030\002 \001(\t\022\021\n\tbaseDraft\030\003 \001(\t\022\021\n\t"
+          + "baseValue\030\004 \001(\t\022\027\n\017draftCorrection\030\005 \001(\t"
+          + "\022\026\n\016trimCorrection\030\006 \001(\t\"c\n\020CalculationS"
+          + "heet\022\n\n\002id\030\001 \001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\016\n\006t"
+          + "ankId\030\003 \001(\003\022\023\n\013weightRatio\030\004 \001(\t\022\013\n\003lcg\030"
+          + "\005 \001(\t\"\\\n\031CalculationSheetTankGroup\022\n\n\002id"
+          + "\030\001 \001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\013\n\003lcg\030\003 \001(\t\022\023"
+          + "\n\013frameNumber\030\004 \001(\t\"u\n\026MinMaxValuesForBM"
+          + "AndSf\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\r"
+          + "\n\005minBm\030\003 \001(\t\022\r\n\005maxBm\030\004 \001(\t\022\r\n\005minSf\030\005 "
+          + "\001(\t\022\r\n\005maxSf\030\006 \001(\t\"\205\001\n\rStationValues\022\023\n\013"
+          + "stationFrom\030\001 \001(\t\022\021\n\tstationTo\030\002 \001(\t\022\027\n\017"
+          + "frameNumberFrom\030\003 \001(\t\022\025\n\rframeNumberTo\030\004"
+          + " \001(\t\022\020\n\010distance\030\005 \001(\t\022\n\n\002id\030\006 \001(\003\"\221\004\n\017I"
+          + "nnerBulkHeadSF\022\023\n\013frameNumber\030\001 \001(\t\022\021\n\tf"
+          + "oreAlpha\030\002 \001(\t\022\035\n\025foreCenterCargoTankId\030"
+          + "\003 \001(\003\022\016\n\006foreC1\030\004 \001(\t\022\027\n\017foreWingTankIds"
+          + "\030\005 \001(\t\022\016\n\006foreC2\030\006 \001(\t\022\030\n\020foreBallastTan"
+          + "ks\030\007 \001(\t\022\016\n\006foreC3\030\010 \001(\t\022\030\n\020foreBWCorrec"
+          + "tion\030\t \001(\t\022\016\n\006foreC4\030\n \001(\t\022\030\n\020foreMaxAll"
+          + "owence\030\013 \001(\t\022\030\n\020foreMinAllowence\030\014 \001(\t\022\n"
+          + "\n\002id\030\r \001(\003\022\020\n\010aftAlpha\030\016 \001(\t\022\034\n\024aftCente"
+          + "rCargoTankId\030\017 \001(\003\022\r\n\005aftC1\030\020 \001(\t\022\026\n\016aft"
+          + "WingTankIds\030\021 \001(\t\022\r\n\005aftC2\030\022 \001(\t\022\027\n\017aftB"
+          + "allastTanks\030\023 \001(\t\022\r\n\005aftC3\030\024 \001(\t\022\027\n\017aftB"
+          + "WCorrection\030\025 \001(\t\022\r\n\005aftC4\030\026 \001(\t\022\031\n\021aftM"
+          + "axFlAllowence\030\027 \001(\t\022\031\n\021aftMinFlAllowence"
+          + "\030\030 \001(\t\"\200\002\n\024UllageTrimCorrection\022\n\n\002id\030\001 "
+          + "\001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013ullageDepth\030\003 \001(\t"
+          + "\022\016\n\006trimM1\030\004 \001(\t\022\016\n\006trimM2\030\005 \001(\t\022\016\n\006trim"
+          + "M3\030\006 \001(\t\022\016\n\006trimM4\030\007 \001(\t\022\016\n\006trimM5\030\010 \001(\t"
+          + "\022\r\n\005trim0\030\t \001(\t\022\r\n\005trim1\030\n \001(\t\022\r\n\005trim2\030"
+          + "\013 \001(\t\022\r\n\005trim3\030\014 \001(\t\022\r\n\005trim4\030\r \001(\t\022\r\n\005t"
+          + "rim5\030\016 \001(\t\022\r\n\005trim6\030\017 \001(\t2\263\003\n\021VesselInfo"
+          + "Service\0228\n\026GetAllVesselsByCompany\022\016.Vess"
+          + "elRequest\032\014.VesselReply\"\000\0226\n\024GetVesselDe"
+          + "tailsById\022\016.VesselRequest\032\014.VesselReply\""
+          + "\000\0220\n\016GetVesselTanks\022\016.VesselRequest\032\014.Ve"
+          + "sselReply\"\000\0225\n\023GetVesselCargoTanks\022\016.Ves"
+          + "selRequest\032\014.VesselReply\"\000\022A\n\027GetVesselD"
+          + "etailsForAlgo\022\022.VesselAlgoRequest\032\020.Vess"
+          + "elAlgoReply\"\000\022C\n!GetVesselDetailForSynop"
+          + "ticalTable\022\016.VesselRequest\032\014.VesselReply"
+          + "\"\000\022;\n\031GetVesselDetailByVesselId\022\016.Vessel"
+          + "Request\032\014.VesselReply\"\000B\036\n\032com.cpdss.com"
+          + "mon.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -36207,6 +39064,7 @@ public final class VesselInfo {
               "BMAndSF",
               "ResponseStatus",
               "UllageDetails",
+              "UllageTrimCorrection",
             });
     internal_static_UllageDetails_descriptor = getDescriptor().getMessageTypes().get(8);
     internal_static_UllageDetails_fieldAccessorTable =
@@ -36337,6 +39195,27 @@ public final class VesselInfo {
               "AftC4",
               "AftMaxFlAllowence",
               "AftMinFlAllowence",
+            });
+    internal_static_UllageTrimCorrection_descriptor = getDescriptor().getMessageTypes().get(20);
+    internal_static_UllageTrimCorrection_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_UllageTrimCorrection_descriptor,
+            new java.lang.String[] {
+              "Id",
+              "TankId",
+              "UllageDepth",
+              "TrimM1",
+              "TrimM2",
+              "TrimM3",
+              "TrimM4",
+              "TrimM5",
+              "Trim0",
+              "Trim1",
+              "Trim2",
+              "Trim3",
+              "Trim4",
+              "Trim5",
+              "Trim6",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }
