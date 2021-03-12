@@ -54,6 +54,8 @@ message PortDetail {
 	string lwTideTimeTo = 16;
 	string sunriseTime = 17;
 	string sunsetTime = 18;
+	string timezone = 19;
+	string timezoneOffsetVal = 20;
 }
 
 message PortReply {

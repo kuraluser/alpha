@@ -55,4 +55,6 @@ public class Voyage {
   private LocalDate actualEndDate;
 
   private Long statusId;
+
+  private Long timezoneId;
 }

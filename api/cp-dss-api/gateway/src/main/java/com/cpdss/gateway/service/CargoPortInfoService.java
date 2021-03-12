@@ -151,6 +151,8 @@ public class CargoPortInfoService {
                     !portDetail.getMaxAirDraft().isEmpty()
                         ? new BigDecimal(portDetail.getMaxAirDraft())
                         : null);
+                port.setTimezone(portDetail.getTimezone());
+                port.setTimezoneOffsetVal(portDetail.getTimezoneOffsetVal());
                 portList.add(port);
               });
       portsResponse.setPorts(portList);
