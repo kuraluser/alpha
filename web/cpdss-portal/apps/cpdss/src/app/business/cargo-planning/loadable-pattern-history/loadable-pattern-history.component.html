@@ -47,15 +47,17 @@
                                 (click)="viewPlan(loadablePattern)">{{'LOADABLE_PATTERN_HISTORY_VIEW_PLAN_BUTTON_LABEL'
                                 |
                                 translate}}</button>
-                            <button class="btn btn-main" (click)="confirmPlan(loadablePattern)"
+                            <button class="btn btn-main mr-10" (click)="confirmPlan(loadablePattern)"
                                 *ngIf="loadablePattern?.loadableStudyStatusId !== LOADABLE_STUDY_STATUS.PLAN_CONFIRMED && selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL'
                                 |
                                 translate}}</button>
-                            <button class="btn btn-main  confirmed" *ngIf="loadablePattern?.loadableStudyStatusId === 2"
+                            <button class="btn btn-main confirmed mr-10" *ngIf="loadablePattern?.loadableStudyStatusId === 2"
                                 [disabled]="true">
                                 <span class="pi pi-check check-rounded"></span>
                                 {{'LOADABLE_PATTERN_HISTORY_CONFIRMED_PLAN_BUTTON_LABEL' |
                                 translate}}</button>
+                                <button class="btn btn-main" (click)="viewStability(loadablePattern?.stabilityParameters)">
+                                    {{'LOADABLE_PATTERN_HISTORY_VIEW_STABILITY_BUTTON_LABEL' | translate}}</button>
                         </div>
                     </div>
                 </div>
@@ -71,3 +73,6 @@
     [loadablePatternDetailsId]="loadablePatternDetailsId" [vesselId]="vesselId" [voyageId]="voyageId"
     [loadableStudyId]="loadableStudyId" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
     (displayPopup)="setPopupVisibility($event)" *ngIf="display"></cpdss-portal-commingle-cargo-details-pop-up>
+<cpdss-portal-stability-pop-up [display]="showStability" [stabilityParameters]="stabilityParameters"
+    (displayPopup)="setStabilityPopupVisibility($event)" *ngIf="showStability"></cpdss-portal-stability-pop-up>
+

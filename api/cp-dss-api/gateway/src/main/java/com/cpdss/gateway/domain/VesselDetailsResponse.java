@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -24,4 +24,6 @@ public class VesselDetailsResponse {
   private BMAndSF bMAndSF;
 
   private List<UllageDetails> ullageDetails;
+
+  private List<UllageTrimCorrection> ullageTrimCorrections;
 }

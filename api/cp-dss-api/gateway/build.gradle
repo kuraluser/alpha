@@ -1,4 +1,16 @@
+//Environment variables
+ext{
+    dbHost = System.getenv('DB_HOST') ?: ""
+    dbName = System.getenv('DB_NAME') ?: ""
+    dbUser = System.getenv('DB_USER') ?: ""
+    dbPassword = System.getenv('DB_PASSWORD') ?: ""
+    grpcPort = System.getenv('GRPC_PORT') ?: ""
+	keycloakURL = System.getenv('KEYCLOAK_URL')?:""
+	hostRootPath = System.getenv('HOST_ROOT_PATH')?:""
+}
+
 appConfig {
+  appName = 'gateway'
   rest = 'y'
   grpcClient = 'y'
   persistence = 'springData'
@@ -6,12 +18,34 @@ appConfig {
   logging = 'y'
   devTools = 'y'
   security = 'y'
+  monitoring = 'y'
+  docker {
+        imageName = 'cpdss-gateway'
+        containerName = 'gateway-container'
+        networkName = 'cpdss-network'
+        hostVolumeMapping {
+          hostPath = hostRootPath
+          containerPath = "/data"
+        }
+        hostPortMapping {
+            hostRestPort = 8080
+        }
+        swarm {
+            serviceName = 'gateway-service'
+            swarmMode = REPLICATED_MODE
+            replicas = 1
+            rollbackOnUpdateFailure = true
+        }
+      environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 
+	  'DB_PASSWORD': dbPassword, 'ATTACHMENT_ROOT_PATH': '/data', 'KEYCLOAK_URL': keycloakURL]
+  }
   javaMainClass = "com.cpdss.gateway.Application"
+  keyvaluestore = 'y'
 }
 
 dependencies {
     implementation project(':common')
     testImplementation('net.devh:grpc-server-spring-boot-starter:2.10.1.RELEASE')
-    implementation 'org.keycloak:keycloak-spring-boot-starter:11.0.0'
+    implementation 'org.keycloak:keycloak-spring-security-adapter:12.0.3'
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 }

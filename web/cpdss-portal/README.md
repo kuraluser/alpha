@@ -124,3 +124,94 @@ Nx Cloud pairs with Nx in order to enable you to build and test code more rapidl
 Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
 
 Visit [Nx Cloud](https://nx.app/) to learn more.
+
+### Gulp commands
+
+ENVIRONMENT VARIABLES
+
+- `DOCKER_HOST <Docker host url> eg. tcp://127.0.0.1:2375`
+- `DOCKER_USER <User name of Docker>`
+- `DOCKER_PASSWORD <Password of Docker>`
+- `TAG_NAME <Image Tag Name> default is latest`
+- `CONTAINER_PORT <application portnumber> default is 80`
+- `HOST_MAPPED_PORT <port mapped to the host> default is 80`
+- `DOCKER_NETWORK_NAME <name of the docker network to attach>`
+
+Optional
+`DOCKER_VOLUME_NAME <Volume name for the Docker>`
+`CONTAINER_VOLUME_PATH <Folder Path of the volume inside the container>`
+
+Install gulp globally
+
+```
+npm install gulp -g
+```
+
+To install the packages use the following command
+
+```
+npm ci 
+```
+
+To build and run(Swarm Service) login application as ship with production enviornment
+
+```
+gulp build --login --ship --production
+gulp runService --login --ship --production
+```
+
+To build and run(Swarm Service) cpdss application as ship with production enviornment
+
+```
+gulp build --cpdss --ship --production
+gulp runService --cpdss --ship --production
+```
+
+To build and run(Swarm Service) login application as shore with production enviornment
+
+```
+gulp build --login --shore --production
+gulp runService --login --shore --production
+```
+
+To build and run(Swarm Service) cpdss application as shore with production enviornment
+
+```
+gulp build --cpdss --shore --production
+gulp runService --cpdss --shore --production
+```
+
+To build and run(Swarm Service) login application as ship with test enviornment
+
+```
+gulp build --login --ship --test
+gulp runService --login --ship --test
+```
+
+To build and run(Swarm Service) cpdss application as ship with test enviornment
+
+```
+gulp build --cpdss --ship --test
+gulp runService --cpdss --ship --test
+```
+
+To build and run(Swarm Service) login application as shore with test enviornment
+
+```
+gulp build --login --shore --test
+gulp runService --login --shore --test
+```
+
+To build and run(Swarm Service) cpdss application as shore with test enviornment
+
+```
+gulp build --cpdss --shore --test
+gulp runService --cpdss --shore --test
+```
+
+To remove the service use the following command with the parameters as described above
+
+```
+gulp removeService <parameters>
+eg: gulp removeService --login --ship --production
+```

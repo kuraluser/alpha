@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
@@ -51,10 +51,19 @@ public class Voyage extends EntityDoc {
   @Column(name = "voyage_end_date")
   private LocalDateTime voyageEndDate;
 
+  @Column(name = "actual_start_date")
+  private LocalDateTime actualStartDate;
+
+  @Column(name = "actual_end_date")
+  private LocalDateTime actualEndDate;
+
   @ManyToOne
   @JoinColumn(name = "voyage_status")
   private VoyageStatus voyageStatus;
 
   @OneToMany(mappedBy = "voyage")
   private Set<LoadableStudy> loadableStudies;
+
+  @Column(name = "timezone_xid")
+  private Long timezoneId;
 }

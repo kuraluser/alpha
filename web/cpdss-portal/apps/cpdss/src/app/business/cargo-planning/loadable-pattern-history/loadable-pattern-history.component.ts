@@ -8,7 +8,7 @@ import { IVessel } from '../../core/models/vessel-details.model';
 import { LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
 import { LoadablePatternHistoryApiService } from '../services/loadable-pattern-history-api.service';
-import { ILoadablePattern, ILoadablePatternCargoDetail, ILoadablePatternResponse } from '../models/loadable-pattern.model';
+import { ILoadablePattern, ILoadablePatternCargoDetail, ILoadablePatternResponse, IStabilityParameter } from '../models/loadable-pattern.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
@@ -61,6 +61,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
   loadablePatternDetailsId: number;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
   prevQuantitySelectedUnit: QUANTITY_UNIT;
+  showStability = false;
+  stabilityParameters: IStabilityParameter[];
   LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
   VOYAGE_STATUS = VOYAGE_STATUS;
 
@@ -309,4 +311,26 @@ export class LoadablePatternHistoryComponent implements OnInit {
       this.openSidePane = !this.openSidePane
     }
   }
+
+  /**
+   * for view stability pop up
+   *
+   * @param {IStabilityParameter} stabilityParameters
+   * @memberof LoadablePatternHistoryComponent
+   */
+  viewStability(stabilityParameters : IStabilityParameter){
+    this.stabilityParameters = stabilityParameters ? [stabilityParameters] : [];
+    this.showStability = true;
+  }
+
+   /**
+   * set visibility of stability popup (show/hide)
+   *
+   * @param {*} event
+   * @memberof LoadablePatternHistoryComponent
+   */
+  setStabilityPopupVisibility(emittedValue) {
+    this.showStability = emittedValue;
+  }
+
 }

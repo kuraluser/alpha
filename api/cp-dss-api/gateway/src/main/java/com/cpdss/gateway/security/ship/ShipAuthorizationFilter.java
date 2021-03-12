@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.security.ship;
 
 import java.io.IOException;
@@ -40,6 +40,7 @@ public class ShipAuthorizationFilter extends AbstractAuthenticationProcessingFil
     this.tokenExtractor = tokenExtractor;
   }
 
+  /** Attempt for authentication, validate the token */
   @Override
   public Authentication attemptAuthentication(
       HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -57,6 +58,7 @@ public class ShipAuthorizationFilter extends AbstractAuthenticationProcessingFil
     }
   }
 
+  /** On successfull authentication */
   @Override
   protected void successfulAuthentication(
       HttpServletRequest request,
@@ -70,6 +72,7 @@ public class ShipAuthorizationFilter extends AbstractAuthenticationProcessingFil
     chain.doFilter(request, response);
   }
 
+  /** On authentication failure */
   @Override
   protected void unsuccessfulAuthentication(
       HttpServletRequest request, HttpServletResponse response, AuthenticationException failed)

@@ -1,6 +1,8 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.security.ship;
 
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV;
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV_SHIP;
 import static com.cpdss.gateway.security.ship.ShipJwtService.USER_ID_CLAIM;
 
 import com.cpdss.gateway.entity.Users;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Component;
  * @author suhail.k
  */
 @Component
+@ConditionalOnProperty(name = CPDSS_BUILD_ENV, havingValue = CPDSS_BUILD_ENV_SHIP)
 public class ShipAuthenticationProvider implements AuthenticationProvider {
 
   private static final Logger logger = LogManager.getLogger(ShipAuthenticationProvider.class);
@@ -30,6 +34,7 @@ public class ShipAuthenticationProvider implements AuthenticationProvider {
 
   @Autowired private UsersRepository usersRepository;
 
+  /** Verify the token and user */
   @Override
   public Authentication authenticate(final Authentication authentication) {
     logger.debug("Inside JwtAuthenticationProvider");
@@ -45,7 +50,7 @@ public class ShipAuthenticationProvider implements AuthenticationProvider {
       if (null != user.getLoginSuspended() && user.getLoginSuspended()) {
         throw new AuthenticationServiceException("Login was suspended for the user");
       }
-      final ShipUserContext context = ShipUserContext.create(null, new ArrayList<>());
+      final ShipUserContext context = ShipUserContext.create(userId, new ArrayList<>());
       return new ShipAuthenticationToken(context, context.getAuthorities());
     } catch (AuthenticationServiceException ase) {
       throw new AuthenticationServiceException("Caught AuthenticationServiceException", ase);
@@ -54,6 +59,7 @@ public class ShipAuthenticationProvider implements AuthenticationProvider {
     }
   }
 
+  /** {@link ShipAuthenticationProvider} will only support {@link ShipAuthenticationToken} */
   @Override
   public boolean supports(final Class<?> authentication) {
     return (ShipAuthenticationToken.class.isAssignableFrom(authentication));

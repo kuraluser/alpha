@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.security.ship;
 
 import java.util.Collection;
@@ -19,7 +19,7 @@ public class ShipAuthenticationToken extends AbstractAuthenticationToken {
 
   private static final long serialVersionUID = -6255033892894604535L;
   private String jwtToken;
-  private ShipUserContext customerContext;
+  private ShipUserContext userContext;
 
   public ShipAuthenticationToken(String unsafeToken) {
     super(null);
@@ -28,10 +28,10 @@ public class ShipAuthenticationToken extends AbstractAuthenticationToken {
   }
 
   public ShipAuthenticationToken(
-      ShipUserContext customerContext, Collection<? extends GrantedAuthority> authorities) {
+      ShipUserContext userContext, Collection<? extends GrantedAuthority> authorities) {
     super(authorities);
     this.eraseCredentials();
-    this.customerContext = customerContext;
+    this.userContext = userContext;
     super.setAuthenticated(true);
   }
 
@@ -53,7 +53,7 @@ public class ShipAuthenticationToken extends AbstractAuthenticationToken {
 
   @Override
   public Object getPrincipal() {
-    return this.customerContext;
+    return this.userContext;
   }
 
   @Override
@@ -62,15 +62,15 @@ public class ShipAuthenticationToken extends AbstractAuthenticationToken {
     this.jwtToken = null;
   }
 
-  public ShipUserContext getCustomerContext() {
-    return customerContext;
+  public ShipUserContext getUserContext() {
+    return userContext;
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
-    result = prime * result + ((customerContext == null) ? 0 : customerContext.hashCode());
+    result = prime * result + ((userContext == null) ? 0 : userContext.hashCode());
     result = prime * result + ((jwtToken == null) ? 0 : jwtToken.hashCode());
     return result;
   }
@@ -81,9 +81,9 @@ public class ShipAuthenticationToken extends AbstractAuthenticationToken {
     if (!super.equals(obj)) return false;
     if (getClass() != obj.getClass()) return false;
     ShipAuthenticationToken other = (ShipAuthenticationToken) obj;
-    if (customerContext == null) {
-      if (other.customerContext != null) return false;
-    } else if (!customerContext.equals(other.customerContext)) return false;
+    if (userContext == null) {
+      if (other.userContext != null) return false;
+    } else if (!userContext.equals(other.userContext)) return false;
     if (jwtToken == null) {
       if (other.jwtToken != null) return false;
     } else if (!jwtToken.equals(other.jwtToken)) return false;

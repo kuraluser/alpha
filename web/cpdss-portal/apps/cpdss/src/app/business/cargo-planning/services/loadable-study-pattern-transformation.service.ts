@@ -41,7 +41,7 @@ export class LoadableStudyPatternTransformationService {
       {
         field: '',
         header: 'LOADABLE_PATTERN_COMPOSITION_BREAKDOWN',
-        fieldColumnClass: 'commingle-composition',
+        fieldColumnClass: 'commingle-composition colspan-header',
         columns: [
           {
             field: 'cargoPercentage',
@@ -70,6 +70,48 @@ export class LoadableStudyPatternTransformationService {
     commingleDetail.cargoQuantity = commingleDetail.cargo1Quantity + '\n' + commingleDetail.cargo2Quantity;
     commingleDetail.cargoPercentage = commingleDetail.cargo1Abbrivation + '-' + commingleDetail.cargo1Percentage + '%\n' + commingleDetail.cargo2Abbrivation + '-' + commingleDetail.cargo2Percentage + '%';
     return commingleDetail;
+  }
+
+  /**
+* Method for setting commingle details grid columns
+*
+* @returns {IDataTableColumn[]}
+* @memberof LoadableStudyPatternTransformationService
+*/
+  getStabilityDatatableColumns(): IDataTableColumn[] {
+    return [
+      {
+        field: '',
+        header: 'DRAFT',
+        fieldColumnClass: "colspan-header",
+        columns: [
+          {
+            field: 'forwardDraft',
+            header: 'Fore'
+          },
+          {
+            field: 'meanDraft',
+            header: 'Mid'
+          },
+          {
+            field: 'afterDraft',
+            header: 'Aft'
+          }
+        ]
+      },
+      {
+        field: 'trim',
+        header: 'Trim'
+      },
+      {
+        field: 'bendinMoment',
+        header: 'Bending Moment'
+      },
+      {
+        field: 'shearForce',
+        header: 'Shear Force'
+      }
+    ]
   }
 
 }

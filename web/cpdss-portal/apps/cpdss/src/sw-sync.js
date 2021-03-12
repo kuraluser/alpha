@@ -370,7 +370,7 @@
       notifyClients(sync);
       clearInterval(timer);         
     }
-    }, 300000);
+    }, 600000);
   }
 
 

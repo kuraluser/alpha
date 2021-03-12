@@ -1261,7 +1261,7 @@ td.sl div{
   font-weight: bold;
 }
 
-.commingle-pop-up, .commingle-cargo-details-popup{
+.commingle-pop-up{
   width: 720px;
 }
 
@@ -2112,6 +2112,31 @@ width: 50px !important;
 
 .p-datatable .p-datatable-thead > tr > th{
   white-space: normal;
+}
+
+.stability-popup, .commingle-cargo-details-popup{
+  width: 720px;
+  .p-datatable table {
+    table-layout: auto !important;
+    .column-class {
+      width: auto !important;
+    }
+  }
+}
+
+.commingle-composition-percentage, .commingle-composition-quantity {
+  div{
+    white-space: pre;
+  }
+}
+
+.colspan-header{
+  span{
+    display: block;
+    text-align: center;
+    padding-bottom: 5px;
+    margin-bottom: 3px;
+  }
 }
 
 .landing-page-tank-wrapper{
