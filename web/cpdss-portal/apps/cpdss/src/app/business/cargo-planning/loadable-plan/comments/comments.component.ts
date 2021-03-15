@@ -12,6 +12,8 @@ import { IResponse } from '../../../../shared/models/common.model';
 import { LoadablePlanApiService } from '../../services/loadable-plan-api.service';
 import { SecurityService } from "../../../../shared/services/security/security.service";
 import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
+import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 
 /**
  * Component class of comments component in loadable plan
@@ -43,6 +45,10 @@ export class CommentsComponent implements OnInit {
   private _commentsDetails: ILoadablePlanCommentsDetails[];
   public commentForm: FormGroup;
   public formError: boolean;
+  public isPermissionAvaliable: boolean;
+  public errorMessages = {
+    'required': 'COMMENTS_REQUIRED'
+  };
 
   constructor(
     private loadablePlanApiService: LoadablePlanApiService,
@@ -51,6 +57,8 @@ export class CommentsComponent implements OnInit {
     private messageService: MessageService,
     private translateService: TranslateService,
     private ngxSpinnerService: NgxSpinnerService,
+    private permissionsService: PermissionsService,
+    private appConfigurationService: AppConfigurationService,
     private loadablePlanTransformationService: LoadablePlanTransformationService
   ) { }
 
@@ -61,9 +69,11 @@ export class CommentsComponent implements OnInit {
    * @memberof CommentsComponent
   */
   ngOnInit(): void {
+    this.isPermissionAvaliable = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadablePlanAddComments'], false).view;
     this.commentForm = this.fb.group({
-      comment: [null, [Validators.required]]
+      comment: [{value:'', disabled: !this.isPermissionAvaliable}, [Validators.required, Validators.maxLength(100)]]
     })
+
   }
 
   /**

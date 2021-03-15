@@ -36,7 +36,7 @@ export class UserTransformationService {
       },
       {
         field: 'username',
-        header: 'USER_NAME',
+        header: 'USER_NAME_HEADING',
         filter: true,
         filterPlaceholder: 'SEARCH_USER',
         filterType: DATATABLE_FILTER_TYPE.TEXT,

@@ -13,6 +13,10 @@
     "UserRoleListing": "USER_ROLE_LISTING",
     "UserListingComponent": "ADMIN_USER_CREATION",
     "UserResetPassword": "ADMIN_RESET_PASSWORD",
+    "LoadablePlanComponent": "CARGOPLANNING_LOADABLE_PLAN",
+    "ConfirmLoadablePlan": "LOADABLE_PLAN_CONFIRMATION",
+    "EditStowage": "LOADABLE_PLAN_STOWAGE",
+    "LoadablePlanAddComments": "LOADABLE_PLAN_ADD_COMMENTS",
     "voyagesComponent" : "VOYAGE_HISTORY",
     "voyagesStartStop" : "EDIT_VOYAGE",
     "CargoHistoryComponent": "CARGOPLANNING_CARGO_HISTORY"

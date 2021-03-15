@@ -9,9 +9,11 @@
             <div class="col ml-30">
                 <textarea type="text" class="form-control" 
                 [placeholder]="'ENTER_COMMENTS' | translate" #comment  (keyup.enter)="submitComments()" maxlength="100" formControlName="comment"></textarea>
-                <p class="text-danger"  *ngIf="fieldError('comment')">{{'COMMENTS_REQUIRED'| translate}}</p>
+                <cpdss-portal-validation-error [errors]="fieldError('comment')"
+                [errorMessages]="errorMessages">
+                </cpdss-portal-validation-error>
             </div>
-            <div><button type="button" class="btn btn-main" id="comment-save" *ngIf="enableSubmit" (click)="submitComments()" >{{'SUBMIT_COMMENT' | translate}}</button></div>
+            <div><button type="button" class="btn btn-main" id="comment-save" *ngIf="enableSubmit" [disabled]="!isPermissionAvaliable" (click)="submitComments()" >{{'SUBMIT_COMMENT' | translate}}</button></div>
             
         </form>
         <div class="row">

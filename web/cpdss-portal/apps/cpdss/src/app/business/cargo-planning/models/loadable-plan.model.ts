@@ -23,7 +23,8 @@ export interface ILoadablePlanResponse {
     loadablePlanComments: ILoadablePlanCommentsDetails[],
     voyageNumber: string,
     date: string,
-    caseNumber: string
+    caseNumber: string,
+    loadableStudyStatusId: number
 }
 
 /**
