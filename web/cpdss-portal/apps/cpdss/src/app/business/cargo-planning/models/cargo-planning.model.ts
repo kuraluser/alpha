@@ -685,7 +685,7 @@ export interface IApiTempHistoryRequest {
  */
 export interface ICargoApiTempHistoryResponse {
     responseStatus: IResponseStatus;
-    portHistory: IApiTempHistory[];
+    portHistory: IApiTempPortHistory[];
     monthlyHistory: IApiTempMonthWiseHistory[];
 }
 
@@ -693,9 +693,9 @@ export interface ICargoApiTempHistoryResponse {
  * Interface for get Api,Temperature port history
  *
  * @export
- * @interface IApiTempHistory
+ * @interface IApiTempPortHistory
  */
-export interface IApiTempHistory {
+export interface IApiTempPortHistory {
     cargoId: number;
     loadingPortId: number;
     loadedDate: string;
