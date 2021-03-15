@@ -22,6 +22,8 @@ service PortInfoService {
 	rpc GetTimezone (PortEmptyRequest) returns (TimezoneResponse){
 
 	}
+
+	rpc GetPortInfoByPaging(PortRequestWithPaging) returns (PortReply){}
 }
 
 message GetPortInfoByPortIdsRequest {
@@ -33,6 +35,11 @@ message PortRequest {
 	int64 vesselId = 2;
 	int64 voyageId = 3;
 	int64 loadableStudyId = 4;
+}
+
+message PortRequestWithPaging{
+	int64 offset = 1;
+	int64 limit = 2;
 }
 
 message PortDetail {
