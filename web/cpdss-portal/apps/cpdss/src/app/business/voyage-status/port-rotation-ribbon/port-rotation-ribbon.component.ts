@@ -94,7 +94,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
         numScroll: 1
       },
       {
-        breakpoint: '1200',
+        breakpoint: '1200px',
         numVisible: 5,
         numScroll: 1
       },

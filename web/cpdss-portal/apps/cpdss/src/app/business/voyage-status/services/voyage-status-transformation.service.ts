@@ -60,12 +60,14 @@ export class VoyageStatusTransformationService {
       eta: {
         'required': 'PORT_ROTATION_RIBBON_ETA_REQUIRED',
         'maxError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MAX',
-        'minError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MIN'
+        'minError': 'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_MIN',
+        'compareDateWithPrevious':  'PORT_ROTATION_RIBBON_ETA_FAILED_COMPARE_ETD_DATE'
       },
       etd: {
         'required': 'PORT_ROTATION_RIBBON_ETD_REQUIRED',
         'maxError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MAX',
-        'minError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MIN'
+        'minError': 'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_MIN',
+        'compareDateWithPrevious':  'PORT_ROTATION_RIBBON_ETD_FAILED_COMPARE_ETA_DATE'
       },
       etaTime: {
         'required': 'PORT_ROTATION_RIBBON_TIME_REQUIRED',
