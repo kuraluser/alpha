@@ -3,11 +3,11 @@ import { Subject } from 'rxjs';
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { ValueObject } from '../../../shared/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOHQPort, IPortAllDropdownData, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
+import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IMonths, IOHQPort, IPortAllDropdownData, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
 import { v4 as uuid4 } from 'uuid';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { ICargoGroup, ICommingleManual, ICommingleResponseModel, ICommingleValueObject, IPercentage } from '../models/commingle.model';
-import { IOperations, IPort, IPortList } from '../../core/models/common.model';
+import { IOperations, IPort, IPortList, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../core/models/common.model';
 
 /**
  * Transformation Service for Lodable Study details module
@@ -27,6 +27,7 @@ export class LoadableStudyDetailsTransformationService {
   private _portValiditySource: Subject<boolean> = new Subject();
   private _ohqValiditySource: Subject<boolean> = new Subject();
   private _obqValiditySource: Subject<boolean> = new Subject();
+  private _ohqUpdate: Subject<any> = new Subject();
   private OPERATIONS: OPERATIONS;
 
   // public fields
@@ -37,6 +38,7 @@ export class LoadableStudyDetailsTransformationService {
   portValidity$ = this._portValiditySource.asObservable();
   ohqValidity$ = this._ohqValiditySource.asObservable();
   obqValidity$ = this._obqValiditySource.asObservable();
+  obqUpdate$ = this._ohqUpdate.asObservable();
 
   constructor() { }
 
@@ -138,8 +140,8 @@ export class LoadableStudyDetailsTransformationService {
    * @returns {IDataTableColumn[]}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getCargoNominationDatatableColumns(): IDataTableColumn[] {
-    return [
+  getCargoNominationDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId:VOYAGE_STATUS): IDataTableColumn[] {
+    let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
         header: 'SL',
@@ -330,15 +332,28 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR'
         }
-      },
-      {
+      }
+    ];
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+      const actions: DATATABLE_ACTION[] = [];
+      if(permission?.add) {
+        actions.push(DATATABLE_ACTION.DUPLICATE);
+        actions.push(DATATABLE_ACTION.SAVE);
+      }
+      if(permission?.delete) {
+        actions.push(DATATABLE_ACTION.DELETE);
+      }
+      const action: IDataTableColumn = {
         field: 'actions',
         header: '',
         fieldHeaderClass: 'column-actions',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.SAVE, DATATABLE_ACTION.DELETE, DATATABLE_ACTION.DUPLICATE]
-      }
-    ]
+        actions: actions
+      };
+      columns = [...columns, action];
+    }
+
+    return columns;
   }
 
   /**
@@ -348,6 +363,15 @@ export class LoadableStudyDetailsTransformationService {
    */
   addCargoNomination() {
     this._addCargoNominationSource.next();
+  }
+
+  /**
+   * Method for emitting observable for update ohq table
+   *
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  ohqUpdated(event) {
+    this._ohqUpdate.next(event);
   }
 
   /**
@@ -366,8 +390,8 @@ export class LoadableStudyDetailsTransformationService {
    * @returns {IDataTableColumn[]}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getCargoNominationLoadingPortDatatableColumns(): IDataTableColumn[] {
-    return [
+  getCargoNominationLoadingPortDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
+    let columns: IDataTableColumn[] = [
       {
         field: 'name',
         header: 'PORT',
@@ -384,12 +408,108 @@ export class LoadableStudyDetailsTransformationService {
           'min': 'CARGO_NOMINATION_LOADING_PORT_MIN_ERROR',
           'pattern': 'CARGO_NOMINATION_LOADING_PORT_PATTERN_ERROR'
         }
-      },
-      {
+      }
+    ]
+
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+      const actions: DATATABLE_ACTION[] = [];
+      if(permission?.delete) {
+        actions.push(DATATABLE_ACTION.DELETE);
+      }
+      const action: IDataTableColumn = {
         field: 'actions',
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.DELETE]
+        actions: actions
+      };
+      columns = [...columns, action];
+    }
+
+    return columns;
+  }
+
+  /**
+   * Method for api & Temp history grid
+   *
+   * @return {*}  {IDataTableColumn[]}
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  getCargoNominationApiTempHistoryColumns(): IDataTableColumn[] {
+    return [
+      {
+        field: 'loadingPortName',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_PORT',
+      },
+      {
+        field: 'loadedDate',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_DATE',
+      },
+      {
+        field: 'api',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_API',
+      },
+      {
+        field: 'temperature',
+        header: 'API_TEMP_HISTORY_POPUP_PAST_5_DETAILS_TABLE_TEMP',
+      }
+    ]
+  }
+
+  /**
+   * Method to return months.
+   *
+   * @return {*}  {IMonths[]}
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  getMonthList(): IMonths[]{
+    return [
+      {
+        id: 1,
+        month: 'JANUARY'
+      },
+      {
+        id: 2,
+        month: 'FEBRUARY'
+      },
+      {
+        id: 3,
+        month: 'MARCH'
+      },
+      {
+        id: 4,
+        month: 'APRIL'
+      },
+      {
+        id: 5,
+        month: 'MAY'
+      },
+      {
+        id: 6,
+        month: 'JUNE'
+      },
+      {
+        id: 7,
+        month: 'JULY'
+      },
+      {
+        id: 8,
+        month: 'AUGUST'
+      },
+      {
+        id: 9,
+        month: 'SEPTEMBER'
+      },
+      {
+        id: 10,
+        month: 'OCTOBER'
+      },
+      {
+        id: 11,
+        month: 'NOVEMBER'
+      },
+      {
+        id: 12,
+        month: 'DECEMBER'
       }
     ]
   }
@@ -442,8 +562,8 @@ export class LoadableStudyDetailsTransformationService {
    * @returns
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getLoadableStudyGridColumns(): IDataTableColumn[] {
-    return [
+  getLoadableStudyGridColumns(permission: IPermission, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
+    let columns: IDataTableColumn[] =  [
       {
         field: 'name',
         header: 'LOADABLE_STUDY_DETAILS_LODABLE_STUDY_COLUMN_NAME',
@@ -459,14 +579,33 @@ export class LoadableStudyDetailsTransformationService {
         header: 'LOADABLE_STUDY_DETAILS_LODABLE_STUDY_COLUMN_STATUS',
         fieldType: DATATABLE_FIELD_TYPE.ICON,
         fieldValueIcon: 'icon-status'
-      },
-      {
+      }
+    ];
+
+    if(permission && [VOYAGE_STATUS.ACTIVE, VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+      const actions: DATATABLE_ACTION[] = [];
+      if(permission?.delete) {
+        actions.push(DATATABLE_ACTION.DELETE);
+      }
+
+      if(permission?.edit) {
+        actions.push(DATATABLE_ACTION.EDIT);
+      }
+
+      if(permission?.add) {
+        actions.push(DATATABLE_ACTION.DUPLICATE);
+      }
+
+      const action: IDataTableColumn = {
         field: 'actions',
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.EDIT, DATATABLE_ACTION.DELETE, DATATABLE_ACTION.DUPLICATE]
-      }
-    ];
+        actions: actions
+      };
+      columns = [...columns, action];
+    }
+
+    return columns;
   }
 
   /**
@@ -510,9 +649,9 @@ export class LoadableStudyDetailsTransformationService {
  * @returns {IDataTableColumn[]}
  * @memberof LoadableStudyDetailsTransformationService
  */
-  getPortDatatableColumns(permissions: IPermission): IDataTableColumn[] {
+  getPortDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
     const minDate = new Date();
-    return [
+    let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
         header: 'SL',
@@ -602,7 +741,8 @@ export class LoadableStudyDetailsTransformationService {
         dateFormat: 'dd-mm-yy',
         errorMessages: {
           'required': 'PORT_LAY_CAN_REQUIRED_ERROR',
-          'toDate': 'PORT_LAY_CAN_TO_DATE_ERROR'
+          'toDate': 'PORT_LAY_CAN_TO_DATE_ERROR',
+          'datesEqual': 'PORT_LAY_CAN_DATE_EQUAL'
         }
       },
       {
@@ -676,24 +816,28 @@ export class LoadableStudyDetailsTransformationService {
           'failedCompare': 'PORT_ETD_COMPARE_ERROR',
           'etdFailed': 'PORT_ETD_COMAPRE_WITH_ETA_ERROR'
         }
-      },
-      {
-        ...(permissions ? {
-          field: 'actions',
-          header: '',
-          fieldHeaderClass: 'column-actions',
-          fieldType: DATATABLE_FIELD_TYPE.ACTION,
-          actions: [(permissions?.add ? DATATABLE_ACTION.SAVE : []),
-          (permissions?.delete ? DATATABLE_ACTION.DELETE : [])]
-        } : {}),
+      }
+    ];
+
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+      const actions: DATATABLE_ACTION[] = [];
+      if(permission?.add) {
+        actions.push(DATATABLE_ACTION.SAVE);
+      }
+      if(permission?.delete) {
+        actions.push(DATATABLE_ACTION.DELETE);
+      }
+      const action: IDataTableColumn = {
         field: 'actions',
         header: '',
         fieldHeaderClass: 'column-actions',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.SAVE, DATATABLE_ACTION.DELETE]
-      },
+        actions: actions
+      };
+      columns = [...columns, action];
+    }
 
-    ]
+    return columns;
   }
 
 
@@ -782,7 +926,8 @@ export class LoadableStudyDetailsTransformationService {
         filterListName: 'fuelTypes',
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.EQUALS,
         filterType: DATATABLE_FILTER_TYPE.SELECT,
-        filterPlaceholder: 'OHQ_SEARCH_FUEL_TYPE'
+        filterPlaceholder: 'OHQ_SEARCH_FUEL_TYPE',
+        fieldHeaderClass: 'column-fuel-type'
       },
       {
         field: 'tankName',
@@ -921,8 +1066,8 @@ export class LoadableStudyDetailsTransformationService {
   /**
    * Method to get Manual Commingle grid colums
    */
-  getManualCommingleDatatableColumns(): IDataTableColumn[] {
-    return [
+  getManualCommingleDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
+    let columns: IDataTableColumn[] = [
       {
         field: 'cargo1',
         header: 'COMMINGLE_CARGO1',
@@ -932,6 +1077,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldPlaceholder: 'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER',
         fieldHeaderClass: 'column-cargo1',
         fieldClass: 'commingle-cargo1',
+        showTemplate: true,
         errorMessages: {
           'required': 'COMMINGLE_CARGO_SELECT_ERROR',
           'duplicate': 'COMMINGLE_MANUAL_SAME_CARGO_VALIDATION'
@@ -968,6 +1114,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldPlaceholder: 'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER',
         fieldHeaderClass: 'column-cargo2',
         fieldClass: 'commingle-cargo2',
+        showTemplate: true,
         errorMessages: {
           'required': 'COMMINGLE_CARGO_SELECT_ERROR',
           'duplicate': 'COMMINGLE_MANUAL_SAME_CARGO_VALIDATION'
@@ -1007,14 +1154,24 @@ export class LoadableStudyDetailsTransformationService {
           'min': 'COMMINGLE_MANUAL_QUANTITY_MIN_VALUE',
           'isMaxQuantity': 'COMMINGLE_QUANTITY_MAX_LIMIT'
         }
-      },
-      {
+      }
+    ];
+
+    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+      const actions: DATATABLE_ACTION[] = [];
+      if(permission?.delete) {
+        actions.push(DATATABLE_ACTION.DELETE);
+      }
+      const action: IDataTableColumn = {
         field: 'actions',
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        actions: [DATATABLE_ACTION.DELETE,]
-      }
-    ]
+        actions: actions
+      };
+      columns = [...columns, action];
+    }
+
+    return columns;
   }
   /**
    * Method for converting commingle  data as value

@@ -7,9 +7,13 @@ import { DATATABLE_SELECTIONMODE, IDataTableColumn } from '../../../../shared/co
 import { LoadableStudy } from '../../../cargo-planning/models/loadable-study-list.model';
 import { LoadableStudyDetailsTransformationService } from '../../../cargo-planning/services/loadable-study-details-transformation.service';
 import { LoadableStudyListApiService } from '../../../cargo-planning/services/loadable-study-list-api.service';
-import { Voyage } from '../../../core/models/common.model';
+import { Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { IVessel } from '../../../core/models/vessel-details.model';
 import { first } from 'rxjs/operators';
+import { IPermission } from '../../../../shared/models/user-profile.model';
+import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
+import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 
 @Component({
   selector: 'cpdss-portal-side-panel-loadable-study-list',
@@ -41,12 +45,16 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
 
   @Output() selectedLoadableStudyChange = new EventEmitter<LoadableStudy>();
   @Output() deleteLoadableStudy = new EventEmitter<Event>();
+  @Output() newLoadableStudyAdded = new EventEmitter<LoadableStudy>();
 
   columns: IDataTableColumn[];
   display = false;
   isEdit = false;
   duplicateLoadableStudy: LoadableStudy;
   selectionMode = DATATABLE_SELECTIONMODE.SINGLE;
+  permission: IPermission;
+  addLSBtnPermissionContext: IPermissionContext;
+  VOYAGE_STATUS = VOYAGE_STATUS;
 
 
   private _loadableStudies: LoadableStudy[];
@@ -58,10 +66,13 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
     private translateService: TranslateService,
     private messageService: MessageService,
     private ngxSpinnerService: NgxSpinnerService,
-    private confirmationAlertService: ConfirmationAlertService) { }
+    private confirmationAlertService: ConfirmationAlertService,
+    private permissionsService: PermissionsService) { }
 
   ngOnInit(): void {
     this.duplicateLoadableStudy = <LoadableStudy>{};
+    this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], false);
+    this.addLSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
     this.getGridColumns();
   }
 
@@ -71,7 +82,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
    * @memberof SidePanelLoadableStudyListComponent
    */
   getGridColumns() {
-    this.columns = this.loadableStudyDetailsTransformationService.getLoadableStudyGridColumns();
+    this.columns = this.loadableStudyDetailsTransformationService.getLoadableStudyGridColumns(this.permission, this.voyage?.statusId);
   }
 
   /**
@@ -147,7 +158,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
    * @memberof SidePanelLoadableStudyListComponent
    */
   onNewLoadableStudyAdded(event) {
-    this.selectedLoadableStudyChange.emit(event);
+    this.newLoadableStudyAdded.emit(event);
   }
   
    /**

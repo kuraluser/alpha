@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service;
 
 import static org.junit.jupiter.api.Assertions.assertAll;

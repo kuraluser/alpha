@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable , Subject } from 'rxjs';
 
 import { IBallastTank, ICargoTank } from '../../core/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
@@ -24,6 +25,10 @@ export class LoadablePlanTransformationService {
 
   private quantityPipe: QuantityPipe = new QuantityPipe();
   public baseUnit = AppConfigurationService.settings.baseUnit;
+  private savedComments = new Subject();
+
+  public savedComments$ = this.savedComments.asObservable();
+
   constructor() { }
 
   /**
@@ -261,7 +266,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.observedM3 = this.convertQuantityCargo(cargoTankDetail, QUANTITY_UNIT.KL, 'weight');
     _cargoTankDetail.observedBarrels = this.convertQuantityCargo(cargoTankDetail, QUANTITY_UNIT.OBSBBLS, 'weight');
     _cargoTankDetail.observedBarrelsAt60 = this.convertQuantityCargo(cargoTankDetail, QUANTITY_UNIT.BBLS, 'weight');
-    _cargoTankDetail.fillingRatio = _cargoTankDetail.observedM3 / Number(cargoTankDetail.fullCapacityCubm) * 100;
+    _cargoTankDetail.fillingRatio = (_cargoTankDetail.observedM3 / Number(cargoTankDetail.fullCapacityCubm) * 100).toFixed(2);
     return _cargoTankDetail;
   }
 
@@ -280,7 +285,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.cargoAbbreviation = cargoTankDetail?.cargoAbbreviation;
     _cargoTankDetail.weight = new ValueObject<number>(cargoTankDetail?.weight, true, false);
     _cargoTankDetail.correctedUllage = new ValueObject<number>(cargoTankDetail?.correctedUllage, true, false);
-    _cargoTankDetail.fillingRatio = new ValueObject<number>(cargoTankDetail?.fillingRatio, true, false);
+    _cargoTankDetail.fillingRatio = new ValueObject<number>(Number(cargoTankDetail?.fillingRatio), true, false);
     _cargoTankDetail.tankName = cargoTankDetail?.tankName;
     _cargoTankDetail.rdgUllage = new ValueObject<number>(cargoTankDetail?.rdgUllage, true, isNewValue);
     _cargoTankDetail.correctionFactor = new ValueObject<number>(cargoTankDetail?.correctionFactor, true, false);
@@ -503,6 +508,13 @@ export class LoadablePlanTransformationService {
   */
    convertQuantityBallast(ballast: IBallastStowageDetails, unitTo: QUANTITY_UNIT) {
     return this.quantityPipe.transform(ballast.metricTon, this.baseUnit, unitTo, ballast.sg)
+  }
+
+  /**
+   * comments saved 
+  */
+  commentsSaved() {
+    this.savedComments.next();
   }
 
 }

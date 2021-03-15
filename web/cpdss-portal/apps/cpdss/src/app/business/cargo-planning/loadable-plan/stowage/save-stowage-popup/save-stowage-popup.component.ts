@@ -7,6 +7,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { IResponse } from '../../../../../shared/models/common.model';
 import { LoadablePlanApiService } from '../../../services/loadable-plan-api.service';
 import { ISaveComment } from '../../../models/loadable-plan.model';
+import { LoadablePlanTransformationService } from '../../../services/loadable-plan-transformation.service';
 
 /**
  * Component class for Save stowage Comment Popup
@@ -52,7 +53,8 @@ export class SaveStowagePopupComponent implements OnInit {
     private messageService: MessageService,
     private translateService: TranslateService,
     private ngxSpinnerService: NgxSpinnerService,
-    private loadablePlanApiService: LoadablePlanApiService) { }
+    private loadablePlanApiService: LoadablePlanApiService,
+    private loadablePlanTransformationService: LoadablePlanTransformationService) { }
 
   ngOnInit(): void {
     this.saveStowageForm = this.fb.group({
@@ -85,6 +87,7 @@ export class SaveStowagePopupComponent implements OnInit {
       const response: IResponse = await this.loadablePlanApiService.saveComments(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId, comment).toPromise();
       if (response?.responseStatus?.status === "200") {
         this.closePopup();
+        this.loadablePlanTransformationService.commentsSaved();
         this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS'], detail: translationKeys['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS_DETAILS'] });
       }
       this.ngxSpinnerService.hide();

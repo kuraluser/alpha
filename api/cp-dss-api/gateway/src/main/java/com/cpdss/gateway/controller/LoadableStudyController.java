@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.controller;
 
 import com.cpdss.common.exception.CommonRestException;
@@ -736,7 +736,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-      log.info("get loadable-patterns : {}", getClientIp());
+      log.info("saveLoadablePatterns : {}", getClientIp());
       log.info(
           "saveLoadablePatterns API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
       return loadableStudyService.saveLoadablePatterns(
@@ -1157,6 +1157,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+    	log.info("updateLoadableStudyStatus with process id - " , request.getProcessId());
       return this.loadableStudyService.saveAlgoLoadableStudyStatus(
           request, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
@@ -1375,6 +1376,8 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
+    	 log.info(
+    	          "getLoadableStudyStatus with process id " , loadablePlanRequest.getProcessId());
       return this.loadableStudyService.getLoadableStudyStatus(
           loadableStudyId,
           loadablePlanRequest.getProcessId(),

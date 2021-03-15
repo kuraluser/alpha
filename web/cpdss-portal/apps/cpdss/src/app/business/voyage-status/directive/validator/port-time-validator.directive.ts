@@ -14,12 +14,12 @@ export function portTimeValidator(index): ValidatorFn {
                 date.setHours(0, 0, 0, 0);
                 let minDate: Date, maxDate: Date, minTime: Date, maxTime: Date, errors = null;
                 if (index > 0) {
-                    minDate = portsData[index - 1].date
-                    minTime = portsData[index - 1].time
+                    minDate = new Date(portsData[index - 1].date)
+                    minTime = new Date(portsData[index - 1].time)
                 }
                 if (index < portsData.length - 1) {
-                    maxDate = portsData[index + 1].date
-                    maxTime = portsData[index + 1].time
+                    maxDate = new Date(portsData[index + 1].date)
+                    maxTime = new Date(portsData[index + 1].time)
                 }
                 if (minDate) {
                     minDate.setHours(0, 0, 0, 0);

@@ -69,7 +69,7 @@
                 </ng-template>
             </a>
         </div>
-        <div class="pr-6 text-right">
+        <div class="pr-15 text-right">
             <button id="pattern_history" class="btn btn-main mr-10" (click)="navigateToPatternHistory('0')"
                 [disabled]="!loadableStudies?.length">{{'LOADABLE_PATTERN_HISTORY_BUTTON_LABEL' | translate}}</button>
             <button id="generate_pattern" class="btn btn-main mr-10" (click)="onGenerateLoadablePattern()"
@@ -96,13 +96,14 @@
                 [disableUnitChange]="loadableStudyDetailsApiService.disableUnitChange"
                 (changeBlocked)="unitChangeBlocked()"></cpdss-portal-unit-dropdown>
         </div>
-        <div class="pr-15" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudies?.length">
+        <div class="pr-15"
+            *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudies?.length">
             <button id="commingle_btn" class="btn btn-main  ml-10" type="button" (click)="showComminglePopup()"
                 [disabled]="showCommingleButton"
                 *cpdssPortalPermission="addCommingleBtnPermissionContext">{{'COMMINGLE_BUTTON' | translate}}</button>
         </div>
         <div class="pr-15">
-            <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION">
+            <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
                 <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
                     [ngClass]="{'disabled': !loadableStudies?.length}"
                     *cpdssPortalPermission="addCargoBtnPermissionContext"
@@ -110,7 +111,7 @@
             </ng-container>
         </div>
         <div class="pr-15">
-            <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">
+            <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
                 <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
                     [ngClass]="{'disabled': !loadableStudies?.length}"
                     *cpdssPortalPermission="addPortBtnPermissionContext" (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'|
@@ -125,7 +126,7 @@
                 <cpdss-portal-side-panel-loadable-study-list [vesselInfo]="vesselInfo" [voyage]="selectedVoyage"
                     [(selectedLoadableStudy)]="selectedLoadableStudy" [loadableStudies]="loadableStudies"
                     (deleteLoadableStudy)="onDeleteLoadableStudy($event)"
-                    (selectedLoadableStudyChange)="onLoadableStudyChange($event)">
+                    (selectedLoadableStudyChange)="onLoadableStudyChange($event)" (newLoadableStudyAdded)="onLoadableStudyChange($event)">
                 </cpdss-portal-side-panel-loadable-study-list>
             </div>
         </div>
@@ -134,19 +135,20 @@
 
                 <cpdss-portal-cargo-nomination
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudyId && loadableStudies && loadableQuantityNew"
-                    [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
+                    [vesselId]="vesselId" [voyageId]="voyageId" [voyage]="selectedVoyage" [loadableStudyId]="loadableStudyId"
+                    [loadableStudy]="selectedLoadableStudy" [permission]="cargoNominationTabPermission"
                     (cargoNominationUpdate)="cargoNominationUpdate($event)"></cpdss-portal-cargo-nomination>
                 <cpdss-portal-ports
-                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && loadableStudyId && loadableStudies && loadableQuantityNew"
-                    [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId">
+                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && loadableStudyId && loadableStudies && loadableQuantityNew" [permission]="portsTabPermission" [voyage]="selectedVoyage"
+                    [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy">
                 </cpdss-portal-ports>
                 <cpdss-portal-on-hand-quantity
-                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ && loadableStudyId && loadableStudies && loadableQuantityNew"
+                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ && loadableStudyId && loadableStudies && loadableQuantityNew" [voyage]="selectedVoyage"
                     [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
-                    [permission]="ohqTabPermission" [quantitySelectedUnit]="currentUnit">
+                    [permission]="ohqTabPermission" [quantitySelectedUnit]="currentUnit" [loadableStudy]="selectedLoadableStudy">
                 </cpdss-portal-on-hand-quantity>
                 <cpdss-portal-on-board-quantity
-                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ && loadableStudyId && loadableStudies && loadableQuantityNew"
+                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ && loadableStudyId && loadableStudies && loadableQuantityNew" [voyage]="selectedVoyage"
                     [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
                     [loadableStudy]="selectedLoadableStudy" [quantitySelectedUnit]="currentUnit">
                 </cpdss-portal-on-board-quantity>
@@ -159,7 +161,8 @@
                             <label class="col-form-label pr-10">{{'DISCHARGE_DROPDOWN_LABEL' | translate}}</label>
                             <p-multiSelect id="discharge_ports" [ngModel]="dischargingPorts" [options]="ports"
                                 optionLabel="name" placeholder="{{ 'DISCHARGE_DROPDOWN_SELECT_PORT'| translate }}"
-                                (onChange)="onDischargePortChange($event)" [selectionLimit]="5">
+                                (onChange)="onDischargePortChange($event)" [selectionLimit]="5"
+                                [disabled]="![LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) || [VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
                             </p-multiSelect>
                             <span class="col error-column" *ngIf="!isSelectedDischargePort">
                                 <cpdss-portal-validation-error [errors]="fieldError()"
@@ -172,7 +175,8 @@
                                 <p-dropdown id="cargo_discharge" styleClass="w-150" [(ngModel)]="selectedDischargeCargo"
                                     [options]="dischargeCargos" optionLabel="name" [showClear]="true"
                                     placeholder="{{ 'CARGO_DISCHARGE_SELECT'| translate }}"
-                                    (onChange)="onDischargeCargoChange($event)">
+                                    (onChange)="onDischargeCargoChange($event)"
+                                    [disabled]="![LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) || [VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
                                 </p-dropdown>
                             </ng-container>
                         </ng-container>
@@ -185,5 +189,4 @@
 <cpdss-portal-loadable-quantity *ngIf="displayLoadableQuntity" (displayPopUp)="displayPopUpTab($event)"
     (newLoadableQuantity)="loadableQuantity($event)" [vesselId]="vesselId" [voyage]="selectedVoyage"
     [selectedLoadableStudy]="selectedLoadableStudy"></cpdss-portal-loadable-quantity>
-<cpdss-portal-commingle *ngIf="displayCommingle" (displayPopUp)="displayComminglePopUpTab($event)" [vesselId]="vesselId"
-    [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"></cpdss-portal-commingle>
+<cpdss-portal-commingle *ngIf="displayCommingle" (displayPopUp)="displayComminglePopUpTab($event)" [vesselId]="vesselId" [voyage]="selectedVoyage" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy"></cpdss-portal-commingle>

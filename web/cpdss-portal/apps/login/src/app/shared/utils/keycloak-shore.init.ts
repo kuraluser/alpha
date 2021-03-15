@@ -18,7 +18,7 @@ export function keycloakShoreInitializer(keycloak: KeycloakService, http: HttpCl
                 const appSettings: IAppConfiguration = await appConfig.load();
 
                 const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json');
-                await http.get(environment.uriPath + hostUrl, { headers: httpHeaders }).toPromise().then(function (response: any) {
+                await http.get(appSettings.apiUrl + environment.uriPath + hostUrl, { headers: httpHeaders }).toPromise().then(function (response: any) {
                     if (response) {
                         localStorage.setItem('keycloakIdpConfig', response.providers);
                         localStorage.setItem('realm', response.realm);

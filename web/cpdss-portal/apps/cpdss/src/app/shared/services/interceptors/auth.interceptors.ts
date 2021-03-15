@@ -24,7 +24,7 @@ export class HttpAuthInterceptor implements HttpInterceptor {
         const token: string = SecurityService.getAuthToken();
 
         if (token) {
-            request = request.clone({ headers: request.headers.set('Authorization', 'Bearer ' + token) });
+            // request = request.clone({ headers: request.headers.set('Authorization', 'Bearer ' + token) });
         }
         if (localStorage.getItem('realm')) {
             request = request.clone({ headers: request.headers.set('X-TenantID', localStorage.getItem('realm')) });

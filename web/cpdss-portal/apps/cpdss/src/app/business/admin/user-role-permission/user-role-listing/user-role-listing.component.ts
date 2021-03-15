@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { NgxSpinnerService } from 'ngx-spinner';
 
-import { IRoleDetail, IRoleResponse, IRoleDeleteResponse, IDataStateChange } from '../../models/user-role-permission.model';
+import { IRoleDetails, IRoleResponse, IRoleDeleteResponse, IDataStateChange } from '../../models/user-role-permission.model';
 import { IDataTableColumn, DATATABLE_ACTION } from '../../../../shared/components/datatable/datatable.model';
 
 import { UserRolePermissionApiService } from '../../services/user-role-permission-api.service';
@@ -34,7 +34,7 @@ import { switchMap } from 'rxjs/operators';
 export class UserRoleListingComponent implements OnInit , OnDestroy {
 
   public columns: IDataTableColumn[];
-  public roleList: IRoleDetail[] = [];
+  public roleList: IRoleDetails[];
   public editMode: false;
   public userRoleForm: FormGroup;
   public addUserRole: boolean;
@@ -125,13 +125,6 @@ export class UserRoleListingComponent implements OnInit , OnDestroy {
         this.pageState['page'] =  this.currentPage;
         this.getUserDetails$.next();
       }
-      const userDetailsArray = [];
-      roles?.map((role) => {
-        userDetailsArray.push(this.initUserRoleFormGroup(role))
-      });
-      this.userRoleForm = this.fb.group({
-        dataTable: this.fb.array([...userDetailsArray])
-      });
       this.roleList = roles;
     }
   }
@@ -155,20 +148,6 @@ export class UserRoleListingComponent implements OnInit , OnDestroy {
           this.messageService.add({ severity: 'success', summary: translationKeys['ROLE_DELETED_SUCCESS'], detail: translationKeys['ROLE_DELETE_SUCCESSFULLY'] });
         }
       }
-    });
-  }
-
-  /**
-* Method for initializing form group
-* @private
-* @param {IRoleDetail} 
-* @returns
-* @memberof UserRoleListingComponent
-*/
-  private initUserRoleFormGroup(roleDetail: IRoleDetail) {
-    return this.fb.group({
-      name: this.fb.control(roleDetail.name),
-      description: this.fb.control(roleDetail.description),
     });
   }
 

@@ -1,6 +1,7 @@
 {
     "VoyageStatusComponent" : "STATUS",
     "CargoPlanningComponent" : "CARGOPLANNING",
+    "LoadableStudyListComponent" : "CARGOPLANNING_LOADABLE_STUDY_LIST",
     "CargoNominationComponent" : "CARGOPLANNING_CARGONOMINATION",
     "PortsComponent" : "CARGOPLANNING_PORTS",
     "OnHandQuantityComponent" : "CARGOPLANNING_ONHANDQUANTITITES",
@@ -9,5 +10,9 @@
     "SynopticalComponent": "SYNOPTICAL",
     "AdminComponent": "ADMIN",
     "UserPermission": "USER_PERMISSION",
-    "UserRoleListing": "USER_ROLE_LISTING"
+    "UserRoleListing": "USER_ROLE_LISTING",
+    "UserListingComponent": "ADMIN_USER_CREATION",
+    "UserResetPassword": "ADMIN_RESET_PASSWORD",
+    "voyagesComponent" : "VOYAGE_HISTORY",
+    "voyagesStartStop" : "EDIT_VOYAGE"
 }

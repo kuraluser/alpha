@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
 import lombok.Data;
@@ -15,4 +15,5 @@ public class LoadablePatternCargoDetails {
   private String orderedQuantity;
   private Integer loadingOrder;
   private String api;
+  private String tankName;
 }

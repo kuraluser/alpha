@@ -7,7 +7,7 @@ import { IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject } f
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { CommingleApiService } from '../../services/commingle-api.service';
-import { ITank, IPort, ITankOptions } from '../../../core/models/common.model';
+import { ITank, IPort, ITankOptions, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { maximumVolumeValidator } from '../../directives/validator/maximum-volumn.directive';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
@@ -35,6 +35,8 @@ export class OnBoardQuantityComponent implements OnInit {
 
   @Input() voyageId: number;
 
+  @Input() voyage: Voyage;
+
   @Input()
   get loadableStudyId() {
     return this._loadableStudyId;
@@ -46,8 +48,17 @@ export class OnBoardQuantityComponent implements OnInit {
   }
 
   @Input() vesselId: number;
-  @Input() loadableStudy: LoadableStudy;
+
   @Input() permission: IPermission;
+  
+  @Input()
+  get loadableStudy() {
+    return this._loadableStudy;
+  }
+  set loadableStudy(value: LoadableStudy) {
+    this._loadableStudy = value;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId)? DATATABLE_EDITMODE.CELL : null;
+  }
 
   @Input()
   get quantitySelectedUnit(): QUANTITY_UNIT {
@@ -96,7 +107,7 @@ export class OnBoardQuantityComponent implements OnInit {
   }
   
   
-  readonly editMode = DATATABLE_EDITMODE.CELL;
+  editMode: DATATABLE_EDITMODE;
   cargoList = [];
   selectedPort: IPort;
   obqForm: FormGroup;
@@ -105,7 +116,6 @@ export class OnBoardQuantityComponent implements OnInit {
   selectionMode = DATATABLE_SELECTIONMODE.SINGLE;
   selectedIndex = -1;
   tanks: ITank[][] = [];
-  isEditable = false;
   dataTableLoading: boolean;
   obqCheckUpdatesTimer;
   cargoTankOptions: ITankOptions = { showTooltip: true, ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'api', weightField: 'quantity', commodityNameField: 'abbreviation' };
@@ -116,6 +126,7 @@ export class OnBoardQuantityComponent implements OnInit {
   private _selectedPortOBQTankDetails: IPortOBQTankDetailValueObject[];  
   private _quantitySelectedUnit: QUANTITY_UNIT;
   private _prevQuantitySelectedUnit: QUANTITY_UNIT;
+  private _loadableStudy: LoadableStudy;
 
 
 
@@ -134,7 +145,6 @@ export class OnBoardQuantityComponent implements OnInit {
    * @memberof OnBoardQuantityComponent
    */
   ngOnInit(): void {
-    this.isEditable = this.permission ? this.permission?.edit : false;
     this.columns = this.loadableStudyDetailsTransformationService.getOBQDatatableColumns();
     this.initSubscriptions();
   }
@@ -513,14 +523,16 @@ export class OnBoardQuantityComponent implements OnInit {
    * @memberof OnBoardQuantityComponent
    */
   async toggleLoadOnTop(event) {
-    this.loadableStudy.loadOnTop = event.target.checked;
-    this.ngxSpinnerService.show();
-    const translationKeys = await this.translateService.get(['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS', 'LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS_DETAIL']).toPromise();
-    const res = await this.loadableStudyDetailsApiService.saveLoadableStudyLoadOnTop(this.vesselId, this.voyageId, this.loadableStudyId, { isLoadOnTop: event.target.checked }).toPromise();
-    if (res?.responseStatus?.status === "200") {
-      this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS_DETAIL'] });
+    if(this.editMode) {
+      this.loadableStudy.loadOnTop = event.target.checked;
+      this.ngxSpinnerService.show();
+      const translationKeys = await this.translateService.get(['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS', 'LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS_DETAIL']).toPromise();
+      const res = await this.loadableStudyDetailsApiService.saveLoadableStudyLoadOnTop(this.vesselId, this.voyageId, this.loadableStudyId, { isLoadOnTop: event.target.checked }).toPromise();
+      if (res?.responseStatus?.status === "200") {
+        this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_SUCCESS_DETAIL'] });
+      }
+      this.ngxSpinnerService.hide();
     }
-    this.ngxSpinnerService.hide();
   }
 
   /**

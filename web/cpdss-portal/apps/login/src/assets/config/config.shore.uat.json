@@ -1,0 +1,6 @@
+{
+    "apiUrl" : "",
+    "keycloakUrl": "https://mol-cpdss-uat.alphaorimarine.com/auth/",
+    "path": "/cpdss/",
+    "clientId": "frontend"
+}

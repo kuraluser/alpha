@@ -25,17 +25,19 @@ let containerPort = process.env.CONTAINER_PORT
   ? process.env.CONTAINER_PORT
   : 80;
 let hostMappedPort = process.env.HOST_MAPPED_PORT
-  ? process.env.HOST_MAPPED_PORT
+  ? parseInt(process.env.HOST_MAPPED_PORT)
   : 80;
-let containerVolumePath = '/testVol';
-let volumeName = 'testvol';
+let containerVolumePath = process.env.CONTAINER_VOLUME_PATH
+  ? process.env.CONTAINER_VOLUME_PATH
+  : undefined;
+let volumeName = process.env.DOCKER_VOLUME_NAME ? process.env.DOCKER_VOLUME_NAME : undefined;
 let containerName = `${appName}-container`;
 let serviceName = `${appName}-service`;
 let swarmMode = 'Replicated';
 let replicas = 1;
 let cpuSetLimit = 0.5;
 let memoryLimitInMB = 256;
-let dockerNetworkName = process.env.DOCKER_NETWORK_NAME;
+let dockerNetworkName = process.env.DOCKER_NETWORK_NAME? process.env.DOCKER_NETWORK_NAME : 'cpdss-network';
 let dockerClient = new Docker({
   protocol: 'http',
   host: host,
@@ -47,7 +49,7 @@ let dockerEnvVars = ['MY_EVN=test'];
 const registryAuth = {
   auth: '',
   password: dockerPassword,
-  serveraddress: `http://${dockerRegistry}`,
+  serveraddress: `https://${dockerRegistry}`,
   username: dockerUser,
 };
 
@@ -77,7 +79,7 @@ function buildApp(cb) {
 }
 //Copy files
 function copyFiles(cb) {
-  copyfiles(['-f', 'Dockerfile', './nginx/nginx.conf', './dist/apps/'], () => {
+  copyfiles(['-f', 'Dockerfile', './nginx/*.conf', './dist/apps/'], () => {
     cb();
   });
 }
@@ -146,20 +148,20 @@ async function pushImage(cb) {
 
 // Method to pull an Image
 async function pullImage(cb) {
-    //Pulling image
-    let stream = await dockerClient.pull(imageName, {
-      authconfig: registryAuth,
-    });
-    let progress = await new Promise((resolve, reject) => {
-      stream.on('data', (data) => console.log(data.toString('utf8')));
-      stream.on('end', () =>
-        console.log(`Successfully pulled ${appName}:${tagName}`)
-      );
-      dockerClient.modem.followProgress(stream, (err, res) =>
-        err ? reject(err) : resolve(res)
-      );
-    });
-    cb();
+  //Pulling image
+  let stream = await dockerClient.pull(imageName, {
+    authconfig: registryAuth,
+  });
+  let progress = await new Promise((resolve, reject) => {
+    stream.on('data', (data) => console.log(data.toString('utf8')));
+    stream.on('end', () =>
+      console.log(`Successfully pulled ${appName}:${tagName}`)
+    );
+    dockerClient.modem.followProgress(stream, (err, res) =>
+      err ? reject(err) : resolve(res)
+    );
+  });
+  cb();
 }
 
 // Method to run a container
@@ -178,9 +180,11 @@ async function runContainer(cb) {
       CpuPeriod: 100000,
       CpuQuota: cpuSetLimit * 100000,
       Memory: memoryLimitInMB * 1000000,
-      Binds: [`${volumeName}:${containerVolumePath}`],
       NetworkMode: dockerNetworkName ? dockerNetworkName : 'bridge',
     };
+    if (volumeName && containerVolumePath) {
+      hostConfig.Binds = [`${volumeName}:${containerVolumePath}`];
+    }
     //Adding exposed ports
     let exposedPorts = {};
     exposedPorts[`${containerPort}/tcp`] = {};
@@ -212,10 +216,6 @@ async function removeContainer(cb) {
 
 // Method to run a service
 async function runSwarmService(cb) {
-  //Adding volumes
-  let mountSettings = [
-    { Target: containerVolumePath, Source: volumeName, Type: 'volume' },
-  ];
   //Adding resource limits
   let resourceLimit = {};
   if (cpuSetLimit) {
@@ -234,8 +234,14 @@ async function runSwarmService(cb) {
     Image: imageName,
     Env: dockerEnvVars,
     Tty: false,
-    Mounts: mountSettings,
   };
+  if (volumeName && containerVolumePath) {
+    //Adding volumes
+    let mountSettings = [
+      { Target: containerVolumePath, Source: volumeName, Type: 'volume' },
+    ];
+    taskSpec['ContainerSpec'].Mounts = mountSettings;
+  }
   //Adding swarm mode
   let serviceMode = {};
   if (swarmMode === 'Replicated') {
@@ -271,7 +277,12 @@ async function runSwarmService(cb) {
   let endPointSpec = {};
   endPointSpec['Ports'] = portConfigArray;
 
-  let serviceResponse = await dockerClient.createService({
+  const auth = {
+    username: dockerUser,
+    password: dockerPassword,
+  };
+
+  let serviceResponse = await dockerClient.createService(auth, {
     Name: serviceName,
     TaskTemplate: taskSpec,
     Mode: serviceMode,
@@ -301,7 +312,7 @@ const runDocker = gulp.series(pullImage, runContainer);
 const removeDocker = gulp.series(removeContainer);
 
 const runService = gulp.series(pullImage, runSwarmService);
-const removeService = gulp.series(removeSwarmService); 
+const removeService = gulp.series(removeSwarmService);
 
 exports.build = build;
 exports.runDocker = runDocker;

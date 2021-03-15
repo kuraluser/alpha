@@ -24,6 +24,10 @@ const routes: Routes = [
       {
         path: 'loadable-plan/:vesselId/:voyageId/:loadableStudyId/:loadablePatternId',
         loadChildren: () => import('./loadable-plan/loadable-plan.module').then(m => m.LoadablePlanModule)
+      },
+      {
+        path: 'cargo-history',
+        loadChildren: () => import('./cargo-history/cargo-history.module').then(m => m.CargoHistoryModule)
       }
     ]
   },

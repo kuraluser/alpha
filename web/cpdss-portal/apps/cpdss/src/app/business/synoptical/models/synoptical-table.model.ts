@@ -67,6 +67,7 @@ export interface SynopticalColumn {
     inputs?: SynopticField[];
     dynamicKey?: string;
     colSpan?: number;
+    betweenPorts?: boolean;
 }
 
 /**

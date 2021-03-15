@@ -1,5 +1,5 @@
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
-import { IResponseStatus, ValueObject } from '../../../shared/models/common.model';
+import { IResponseStatus, ValueObject , IResponse } from '../../../shared/models/common.model';
 import { IBallastTank, ICargoTank, ILoadableCargo } from '../../core/models/common.model';
 
 
@@ -136,7 +136,7 @@ export interface ICargoTankDetail extends ILoadableCargo {
     cargoAbbreviation: string;
     weight: number;
     correctedUllage: number;
-    fillingRatio: number;
+    fillingRatio: string;
     tankName: string;
     rdgUllage: number;
     correctionFactor: number;
@@ -305,3 +305,5 @@ export interface ILoadablePlanCommentsDetails {
 export interface ISaveComment {
     comment: string;
 }
+
+

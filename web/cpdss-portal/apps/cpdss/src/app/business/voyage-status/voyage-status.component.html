@@ -13,7 +13,7 @@
             <div class="col">
                 <a class="btn btn-link icon-btn plus-icon-rounded" (click)="showDialog()"
                     id="show-popup">{{'NEW_VOYAGE_BUTTON_VOYAGE_STATUS' | translate}}</a>
-                <a class="btn btn-link icon-btn pencil-icon" (click)="showEditPortRotation()" id="show-edit-port-rotation-popup">{{'EDIT_PORT_ROTATION' |
+                <a class="btn btn-link icon-btn pencil-icon" *ngIf="selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE" (click)="showEditPortRotation()" id="show-edit-port-rotation-popup">{{'EDIT_PORT_ROTATION' |
                     translate}}</a>
                 <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)"></cpdss-portal-unit-dropdown>
             </div>
@@ -21,7 +21,7 @@
                 {{'SHIP_LANDING_VOYAGE_DISTANCE' | translate}}
             </div>
             <div class="pr-15" >
-                 {{voyageStatusTransformationService.voyageDistance}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
+                {{voyageStatusTransformationService.voyageDistance? voyageStatusTransformationService.voyageDistance : 0}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
             </div>
         </div>
         <div class="row">

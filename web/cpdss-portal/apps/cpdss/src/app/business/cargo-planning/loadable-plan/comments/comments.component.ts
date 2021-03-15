@@ -3,13 +3,15 @@ import { DatePipe } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 
 import { NgxSpinnerService } from 'ngx-spinner';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
 
 import { ILoadablePlanCommentsDetails, ISaveComment } from '../../models/loadable-plan.model';
 import { IResponse } from '../../../../shared/models/common.model';
 
 import { LoadablePlanApiService } from '../../services/loadable-plan-api.service';
 import { SecurityService } from "../../../../shared/services/security/security.service";
-
+import { LoadablePlanTransformationService } from '../../services/loadable-plan-transformation.service';
 
 /**
  * Component class of comments component in loadable plan
@@ -28,6 +30,7 @@ export class CommentsComponent implements OnInit {
   @Input() loadableStudyId: number;
   @Input() voyageId: number;
   @Input() loadablePatternId: number;
+  @Input() enableSubmit: boolean;
 
   @Input() set commentsDetails(value: ILoadablePlanCommentsDetails[]) {
     this._commentsDetails = value;
@@ -45,7 +48,10 @@ export class CommentsComponent implements OnInit {
     private loadablePlanApiService: LoadablePlanApiService,
     private datePipe: DatePipe,
     private fb: FormBuilder,
+    private messageService: MessageService,
+    private translateService: TranslateService,
     private ngxSpinnerService: NgxSpinnerService,
+    private loadablePlanTransformationService: LoadablePlanTransformationService
   ) { }
 
   /**
@@ -65,6 +71,7 @@ export class CommentsComponent implements OnInit {
   */
   async submitComments() {
     if (this.commentForm.valid) {
+      const translationKeys = await this.translateService.get(['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS', 'LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS_DETAILS']).toPromise();
       const comments: ISaveComment = {
         comment: this.commentForm.controls['comment'].value
       }
@@ -73,13 +80,8 @@ export class CommentsComponent implements OnInit {
       const response:IResponse = await this.loadablePlanApiService.saveComments(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId , comments).toPromise();
       this.ngxSpinnerService.hide();
       if(response.responseStatus.status === '200') {
-        let newCommentsData:ILoadablePlanCommentsDetails = {
-          comment: this.commentForm.controls['comment'].value,
-          userName: userProfile?.firstName + " " + userProfile?.lastName,
-          dataAndTime: this.datePipe.transform(new Date(), "dd-MM-yyyy hh:mm"),
-          id: 1
-        }
-        this._commentsDetails = [newCommentsData , ...this._commentsDetails];
+        this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS'], detail: translationKeys['LOADABLE_PLAN_SAVE_STOWAGE_POPUP_COMMENT_SUCCESS_DETAILS'] });
+        this.loadablePlanTransformationService.commentsSaved();
         this.commentForm.reset();
         this.formError = false;
       }

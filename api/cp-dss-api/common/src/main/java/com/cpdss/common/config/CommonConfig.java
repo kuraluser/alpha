@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.common.config;
 
 import com.cpdss.common.logging.Log4j2Config;
