@@ -16,4 +16,6 @@ public class CargoHistoryResponse {
   private List<CargoHistory> portHistory;
 
   private List<CargoHistory> monthlyHistory;
+
+  private List<CargoHistory> cargoHistory;
 }

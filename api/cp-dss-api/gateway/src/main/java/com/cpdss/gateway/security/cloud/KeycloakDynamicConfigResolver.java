@@ -1,6 +1,11 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.security.cloud;
 
+import static com.cpdss.gateway.custom.Constants.AUTHORIZATION_HEADER;
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV;
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV_CLOUD;
+import static com.cpdss.gateway.custom.Constants.CPDSS_KEYCLOAK_CLIENT;
+
 import lombok.extern.log4j.Log4j2;
 import org.keycloak.TokenVerifier;
 import org.keycloak.adapters.KeycloakConfigResolver;
@@ -10,7 +15,8 @@ import org.keycloak.adapters.OIDCHttpFacade;
 import org.keycloak.common.VerificationException;
 import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.adapters.config.AdapterConfig;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
@@ -23,19 +29,21 @@ import org.springframework.http.HttpMethod;
 @Configuration
 @Primary
 @Log4j2
+@ConditionalOnProperty(name = CPDSS_BUILD_ENV, havingValue = CPDSS_BUILD_ENV_CLOUD)
 public class KeycloakDynamicConfigResolver implements KeycloakConfigResolver {
 
   private KeycloakDeployment keycloakDeployment;
 
-  private static final String DUMMY_REALM = "DUMMY_REALM";
-  private static final String DUMMY_CLIENT = "DUMMY_REALM";
+  private static final String DUMMY_REALM = "master";
+  private static final String DUMMY_CLIENT = "dummy";
 
-  private static final String CPDSS_KEYCLOAK_CLIENT = "cpdss_api";
-  public static final String SHORE_API_PREFIX = "/api/cloud/";
-  public static final String SHIP_API_PREFIX = "/api/ship/";
-  public static final String AUTHORIZATION_HEADER = "authorization";
+  private AdapterConfig adapterConfig;
 
-  @Autowired private AdapterConfig adapterConfig;
+  @Value("${keycloak.auth-server-url}")
+  private String authServerUrl;
+
+  @Value("${keycloak.ssl-required}")
+  private String sslRequired;
 
   /**
    * Extract realm information from keycloak token. Keycloak token has url of token issuing realm in
@@ -45,13 +53,16 @@ public class KeycloakDynamicConfigResolver implements KeycloakConfigResolver {
   @Override
   public KeycloakDeployment resolve(OIDCHttpFacade.Request request) {
     // dummy data for preflight requests
+    if (null == this.adapterConfig) {
+      this.initializeAdapter();
+    }
     if (request.getMethod().equalsIgnoreCase(HttpMethod.OPTIONS.name())) {
-      log.info("Preflight request arrived");
+      log.debug("Preflight request arrived");
       this.adapterConfig.setRealm(DUMMY_REALM);
       this.adapterConfig.setResource(DUMMY_CLIENT);
     }
     if (null == request.getHeader(AUTHORIZATION_HEADER)) {
-      log.error("KeycloakDynamicConfigResolver: invalid authorization header");
+      log.debug("KeycloakDynamicConfigResolver: invalid authorization header");
       // dummy data for carrying out the error processing to keycloak library filters
       this.adapterConfig.setRealm(DUMMY_REALM);
       this.adapterConfig.setResource(DUMMY_CLIENT);
@@ -72,6 +83,14 @@ public class KeycloakDynamicConfigResolver implements KeycloakConfigResolver {
     }
     keycloakDeployment = KeycloakDeploymentBuilder.build(adapterConfig);
     return keycloakDeployment;
+  }
+
+  /** Initialize adapter */
+  private void initializeAdapter() {
+    this.adapterConfig = new AdapterConfig();
+    this.adapterConfig.setAuthServerUrl(this.authServerUrl);
+    this.adapterConfig.setSslRequired(this.sslRequired);
+    this.adapterConfig.setBearerOnly(true);
   }
 
   void setAdapterConfig(AdapterConfig adapterConfig) {
@@ -102,6 +121,10 @@ public class KeycloakDynamicConfigResolver implements KeycloakConfigResolver {
    * @throws VerificationException
    */
   public AccessToken parseKeycloakToken(String token) throws VerificationException {
-    return TokenVerifier.create(token.replace("Bearer ", ""), AccessToken.class).getToken();
+    try {
+      return TokenVerifier.create(token.replace("Bearer ", ""), AccessToken.class).getToken();
+    } catch (VerificationException e) {
+      return null;
+    }
   }
 }

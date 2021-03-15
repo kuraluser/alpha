@@ -53,4 +53,8 @@ public class Voyage {
 
   @JsonFormat(pattern = "dd-MM-yyyy")
   private LocalDate actualEndDate;
+
+  private Long statusId;
+
+  private Long timezoneId;
 }

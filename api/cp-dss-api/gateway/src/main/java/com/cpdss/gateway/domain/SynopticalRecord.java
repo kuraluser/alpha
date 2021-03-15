@@ -31,6 +31,7 @@ public class SynopticalRecord {
   private String lwTideTimeTo;
   private BigDecimal specificGravity;
   private Long portId;
+  private Long portRotationId;
   private String portName;
   private Long portOrder;
   private List<SynopticalCargoBallastRecord> cargos;

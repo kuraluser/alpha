@@ -34,19 +34,19 @@ public class ApiTempHistory extends EntityDoc {
   private LocalDateTime loadedDate;
 
   @Column(name = "loaded_year")
-  private Integer loadedYear;
+  private Integer year;
 
   @Column(name = "loaded_month")
-  private Integer loadedMonth;
+  private Integer month;
 
   @Column(name = "loaded_day")
-  private Integer loadedDay;
+  private Integer date;
 
   @Column(name = "api")
   private BigDecimal api;
 
   @Column(name = "temperature")
-  private BigDecimal temperature;
+  private BigDecimal temp;
 
   @Column(name = "is_active")
   private Boolean isActive;

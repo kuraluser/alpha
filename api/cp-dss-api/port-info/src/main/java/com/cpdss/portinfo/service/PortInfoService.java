@@ -171,6 +171,10 @@ public class PortInfoService extends PortInfoServiceImplBase {
               .ifPresent(item -> portDetail.setSunriseTime(timeFormatter.format(item)));
           Optional.ofNullable(port.getTimeOfSunSet())
               .ifPresent(item -> portDetail.setSunsetTime(timeFormatter.format(item)));
+          if (port.getTimezone() != null) {
+            portDetail.setTimezone(port.getTimezone().getTimezone());
+            portDetail.setTimezoneOffsetVal(port.getTimezone().getOffsetValue());
+          }
 
           if (!port.getBerthInfoSet().isEmpty()) {
             BerthInfo maxDraftBerthInfo =

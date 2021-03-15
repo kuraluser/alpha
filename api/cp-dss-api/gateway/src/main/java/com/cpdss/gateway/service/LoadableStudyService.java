@@ -155,6 +155,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -216,6 +217,10 @@ public class LoadableStudyService {
 
   private static final String VOYAGE_DATE_FORMAT = "dd-MM-yyyy HH:mm";
 
+  private static final String SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL = "ARR";
+  private static final String SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE = "DEP";
+  private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
+
   @Autowired private UsersRepository usersRepository;
 
   /**
@@ -241,6 +246,7 @@ public class LoadableStudyService {
             .setVoyageNo(voyage.getVoyageNo())
             .setStartDate(!StringUtils.isEmpty(voyage.getStartDate()) ? voyage.getStartDate() : "")
             .setEndDate(!StringUtils.isEmpty(voyage.getEndDate()) ? voyage.getEndDate() : "")
+            .setTimezoneId(voyage.getTimezoneId() != null ? voyage.getTimezoneId().intValue() : 0)
             .build();
 
     VoyageReply voyageReply = this.saveVoyage(voyageRequest);
@@ -331,7 +337,7 @@ public class LoadableStudyService {
           loadableQuantityReply.getResponseStatus().getMessage(),
           loadableQuantityReply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(
-              Integer.valueOf(loadableQuantityReply.getResponseStatus().getCode())));
+              Integer.valueOf(loadableQuantityReply.getResponseStatus().getStatusCode())));
     } else {
 
       loadableQuantityResponse.setResponseStatus(
@@ -909,7 +915,8 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to save loadable study - ports",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
     PortRotationResponse response = new PortRotationResponse();
     response.setId(grpcReply.getPortRotationId());
@@ -1174,6 +1181,7 @@ public class LoadableStudyService {
       voyage.setStartDate(detail.getStartDate());
       voyage.setEndDate(detail.getEndDate());
       voyage.setStatus(detail.getStatus());
+      voyage.setStatusId(detail.getStatusId());
       voyage.setConfirmedLoadableStudyId(
           detail.getConfirmedLoadableStudyId() != 0 ? detail.getConfirmedLoadableStudyId() : null);
       response.getVoyages().add(voyage);
@@ -1715,7 +1723,8 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "Failed to save on hand quantities",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
     response.setId(grpcReply.getId());
     response.setResponseStatus(
@@ -2230,7 +2239,8 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "Failed to save on board quantities",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
     response.setId(grpcReply.getId());
     response.setResponseStatus(
@@ -2381,6 +2391,7 @@ public class LoadableStudyService {
                 this.buildSynopticalBallastRecords(synopticalRecord, synopticalProtoRecord);
                 synopticalTableList.add(synopticalRecord);
               });
+      this.setSynopticalInPortHours(synopticalTableList);
       synopticalTableResponse.setSynopticalRecords(synopticalTableList);
     }
   }
@@ -2503,12 +2514,14 @@ public class LoadableStudyService {
    *
    * @param synopticalRecord
    * @param synopticalProtoRecord
+   * @param list
    */
   private void buildSynopticalRecord(
       SynopticalRecord synopticalRecord,
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord) {
     synopticalRecord.setId(synopticalProtoRecord.getId());
     synopticalRecord.setPortId(synopticalProtoRecord.getPortId());
+    synopticalRecord.setPortRotationId(synopticalProtoRecord.getPortRotationId());
     synopticalRecord.setPortName(synopticalProtoRecord.getPortName());
     synopticalRecord.setPortOrder(synopticalProtoRecord.getPortOrder());
     synopticalRecord.setSpecificGravity(
@@ -2527,10 +2540,6 @@ public class LoadableStudyService {
     synopticalRecord.setRunningHours(
         !isEmpty(synopticalProtoRecord.getRunningHours())
             ? new BigDecimal(synopticalProtoRecord.getRunningHours())
-            : BigDecimal.ZERO);
-    synopticalRecord.setInPortHours(
-        !isEmpty(synopticalProtoRecord.getInPortHours())
-            ? new BigDecimal(synopticalProtoRecord.getInPortHours())
             : BigDecimal.ZERO);
     synopticalRecord.setTimeOfSunrise(synopticalProtoRecord.getTimeOfSunrise());
     synopticalRecord.setTimeOfSunset(synopticalProtoRecord.getTimeOfSunset());
@@ -2554,8 +2563,73 @@ public class LoadableStudyService {
             ? new BigDecimal(synopticalProtoRecord.getLwTideTo())
             : BigDecimal.ZERO);
     synopticalRecord.setLwTideTimeTo(synopticalProtoRecord.getLwTideTimeTo());
-    synopticalRecord.setEtaEtdActual(synopticalProtoRecord.getEtaEtdActual());
-    synopticalRecord.setEtaEtdPlanned(synopticalProtoRecord.getEtaEtdEstimated());
+    synopticalRecord.setEtaEtdActual(
+        isEmpty(synopticalProtoRecord.getEtaEtdActual())
+            ? null
+            : synopticalProtoRecord.getEtaEtdActual());
+    synopticalRecord.setEtaEtdPlanned(
+        isEmpty(synopticalProtoRecord.getEtaEtdEstimated())
+            ? null
+            : synopticalProtoRecord.getEtaEtdEstimated());
+  }
+
+  /**
+   * Calculate in port hours
+   *
+   * @param synopticalTableList
+   */
+  private void setSynopticalInPortHours(List<SynopticalRecord> synopticalTableList) {
+    List<SynopticalRecord> temp = new ArrayList<>();
+    temp.addAll(synopticalTableList);
+    temp.removeAll(
+        temp.stream()
+            .filter(item -> item.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE))
+            .collect(Collectors.toList()));
+    for (SynopticalRecord rec : temp) {
+      Optional<SynopticalRecord> arrOpt =
+          synopticalTableList.stream()
+              .filter(
+                  item ->
+                      item.getPortRotationId().equals(rec.getPortRotationId())
+                          && SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(item.getOperationType()))
+              .findAny();
+      Optional<SynopticalRecord> depOpt =
+          synopticalTableList.stream()
+              .filter(
+                  item ->
+                      item.getPortRotationId().equals(rec.getPortRotationId())
+                          && SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE.equals(item.getOperationType()))
+              .findAny();
+      if (arrOpt.isPresent() && depOpt.isPresent()) {
+        SynopticalRecord arr = arrOpt.get();
+        SynopticalRecord dep = depOpt.get();
+        if (arr.getInPortHours() == null && dep.getInPortHours() == null) {
+          if (null != arr.getEtaEtdActual() && null != dep.getEtaEtdActual()) {
+            LocalDateTime arrDateTime =
+                LocalDateTime.from(
+                    DateTimeFormatter.ofPattern(DATE_FORMAT).parse(arr.getEtaEtdActual()));
+            LocalDateTime depDateTime =
+                LocalDateTime.from(
+                    DateTimeFormatter.ofPattern(DATE_FORMAT).parse(dep.getEtaEtdActual()));
+            BigDecimal inPortHours =
+                new BigDecimal(arrDateTime.until(depDateTime, ChronoUnit.HOURS));
+            arr.setInPortHours(inPortHours);
+            dep.setInPortHours(inPortHours);
+          } else if (null != arr.getEtaEtdPlanned() && null != dep.getEtaEtdPlanned()) {
+            LocalDateTime arrDateTime =
+                LocalDateTime.from(
+                    DateTimeFormatter.ofPattern(DATE_FORMAT).parse(arr.getEtaEtdPlanned()));
+            LocalDateTime depDateTime =
+                LocalDateTime.from(
+                    DateTimeFormatter.ofPattern(DATE_FORMAT).parse(dep.getEtaEtdPlanned()));
+            BigDecimal inPortHours =
+                new BigDecimal(arrDateTime.until(depDateTime, ChronoUnit.HOURS));
+            arr.setInPortHours(inPortHours);
+            dep.setInPortHours(inPortHours);
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -4492,7 +4566,7 @@ public class LoadableStudyService {
   }
 
   /**
-   * Save cargo nomination details using loadable-study service
+   * Get cargo history api and temp details using loadable-study service
    *
    * @param loadableStudyId
    * @param headers

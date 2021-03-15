@@ -63,4 +63,7 @@ public class Voyage extends EntityDoc {
 
   @OneToMany(mappedBy = "voyage")
   private Set<LoadableStudy> loadableStudies;
+
+  @Column(name = "timezone_xid")
+  private Long timezoneId;
 }

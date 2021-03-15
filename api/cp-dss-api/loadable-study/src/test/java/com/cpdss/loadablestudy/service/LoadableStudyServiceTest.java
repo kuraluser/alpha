@@ -64,6 +64,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest;
+import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply;
+import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
@@ -4194,5 +4196,409 @@ class LoadableStudyServiceTest {
 
   private VoyageRequest createVoyageListRequest() {
     return VoyageRequest.newBuilder().setVesselId(1L).build();
+  }
+
+  @Test
+  public void testSaveVoyageStatusStart() throws GenericServiceException {
+
+    LoadableStudy loadableStudy = new LoadableStudy();
+    loadableStudy.setId(1L);
+    loadableStudy.setCharterer("CHARTERER");
+    LoadableStudyStatus loadableStudyStatus = new LoadableStudyStatus();
+    loadableStudyStatus.setName("CONFIRMED");
+    loadableStudy.setLoadableStudyStatus(loadableStudyStatus);
+    Set<LoadableStudy> ls_list = new HashSet();
+    ls_list.add(loadableStudy);
+
+    SaveVoyageStatusRequest request =
+        SaveVoyageStatusRequest.newBuilder()
+            .setActualEndDate("18-02-2021 10:10")
+            .setActualStartDate("18-02-2021 10:10")
+            .setStatus("start")
+            .setVoyageId(1L)
+            .build();
+    /* used for grpc testing */
+    StreamRecorder<SaveVoyageStatusReply> responseObserver = StreamRecorder.create();
+    Voyage voyage = new Voyage();
+    voyage.setId((long) 1);
+    voyage.setLoadableStudies(ls_list);
+
+    VoyageStatus status = new VoyageStatus();
+    status.setId(3L);
+    Mockito.when(
+            this.voyageRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(voyage);
+    Mockito.when(
+            this.voyageRepository.findByVoyageStatusAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(new ArrayList<Voyage>());
+    Mockito.when(
+            this.voyageStatusRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(Optional.of(status));
+    Mockito.when(this.voyageRepository.save(ArgumentMatchers.any(Voyage.class))).thenReturn(voyage);
+
+    loadableStudyService.saveVoyageStatus(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<SaveVoyageStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    SaveVoyageStatusReply response = results.get(0);
+    assertEquals(SUCCESS, response.getResponseStatus().getStatus());
+  }
+
+  @Test
+  public void testSaveVoyageStatusWithMultipleVoyages() throws GenericServiceException {
+
+    SaveVoyageStatusRequest request =
+        SaveVoyageStatusRequest.newBuilder()
+            .setActualEndDate("18-02-2021 10:10")
+            .setActualStartDate("18-02-2021 10:10")
+            .setStatus("start")
+            .setVoyageId(1L)
+            .build();
+    /* used for grpc testing */
+    StreamRecorder<SaveVoyageStatusReply> responseObserver = StreamRecorder.create();
+    Voyage voyage = new Voyage();
+    voyage.setId((long) 1);
+    List<Voyage> voyages = new ArrayList<Voyage>();
+    voyages.add(voyage);
+    Mockito.when(
+            this.voyageRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(voyage);
+    Mockito.when(
+            this.voyageRepository.findByVoyageStatusAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(voyages);
+
+    Mockito.when(this.voyageRepository.save(ArgumentMatchers.any(Voyage.class))).thenReturn(voyage);
+
+    loadableStudyService.saveVoyageStatus(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<SaveVoyageStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    SaveVoyageStatusReply response = results.get(0);
+    assertEquals(FAILED, response.getResponseStatus().getStatus());
+  }
+
+  @Test
+  public void testSaveVoyageStatusWithoutConfirmedLS() throws GenericServiceException {
+
+    SaveVoyageStatusRequest request =
+        SaveVoyageStatusRequest.newBuilder()
+            .setActualEndDate("18-02-2021 10:10")
+            .setActualStartDate("18-02-2021 10:10")
+            .setStatus("start")
+            .setVoyageId(1L)
+            .build();
+    /* used for grpc testing */
+    StreamRecorder<SaveVoyageStatusReply> responseObserver = StreamRecorder.create();
+    Voyage voyage = new Voyage();
+    voyage.setId((long) 1);
+
+    Mockito.when(
+            this.voyageRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(voyage);
+    Mockito.when(
+            this.voyageRepository.findByVoyageStatusAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(new ArrayList());
+
+    Mockito.when(this.voyageRepository.save(ArgumentMatchers.any(Voyage.class))).thenReturn(voyage);
+
+    loadableStudyService.saveVoyageStatus(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<SaveVoyageStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    SaveVoyageStatusReply response = results.get(0);
+    assertEquals(FAILED, response.getResponseStatus().getStatus());
+  }
+
+  @Test
+  public void testSaveVoyageStatusWithoutStatus() throws GenericServiceException {
+    LoadableStudy loadableStudy = new LoadableStudy();
+    loadableStudy.setId(1L);
+    loadableStudy.setCharterer("CHARTERER");
+    LoadableStudyStatus loadableStudyStatus = new LoadableStudyStatus();
+    loadableStudyStatus.setName("CONFIRMED");
+    loadableStudy.setLoadableStudyStatus(loadableStudyStatus);
+    Set<LoadableStudy> ls_list = new HashSet();
+    ls_list.add(loadableStudy);
+    SaveVoyageStatusRequest request =
+        SaveVoyageStatusRequest.newBuilder()
+            .setActualEndDate("18-02-2021 10:10")
+            .setActualStartDate("18-02-2021 10:10")
+            .setStatus("start")
+            .setVoyageId(1L)
+            .build();
+    /* used for grpc testing */
+    StreamRecorder<SaveVoyageStatusReply> responseObserver = StreamRecorder.create();
+    Voyage voyage = new Voyage();
+    voyage.setId((long) 1);
+    voyage.setLoadableStudies(ls_list);
+    Mockito.when(
+            this.voyageRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(voyage);
+    Mockito.when(
+            this.voyageRepository.findByVoyageStatusAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(new ArrayList());
+
+    Mockito.when(
+            this.voyageStatusRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(Optional.empty());
+    Mockito.when(this.voyageRepository.save(ArgumentMatchers.any(Voyage.class))).thenReturn(voyage);
+
+    loadableStudyService.saveVoyageStatus(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<SaveVoyageStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    SaveVoyageStatusReply response = results.get(0);
+    assertEquals(FAILED, response.getResponseStatus().getStatus());
+  }
+
+  @Test
+  public void testSaveVoyageStatusStop() throws GenericServiceException {
+
+    LoadableStudy loadableStudy = new LoadableStudy();
+    loadableStudy.setId(1L);
+    loadableStudy.setCharterer("CHARTERER");
+    LoadableStudyStatus loadableStudyStatus = new LoadableStudyStatus();
+    loadableStudyStatus.setName("CONFIRMED");
+    loadableStudy.setLoadableStudyStatus(loadableStudyStatus);
+    Set<LoadableStudy> ls_list = new HashSet();
+    ls_list.add(loadableStudy);
+
+    SaveVoyageStatusRequest request =
+        SaveVoyageStatusRequest.newBuilder()
+            .setActualEndDate("18-02-2021 10:10")
+            .setActualStartDate("18-02-2021 10:10")
+            .setStatus("stop")
+            .setVoyageId(1L)
+            .build();
+    /* used for grpc testing */
+    StreamRecorder<SaveVoyageStatusReply> responseObserver = StreamRecorder.create();
+    Voyage voyage = new Voyage();
+    voyage.setId((long) 1);
+    voyage.setLoadableStudies(ls_list);
+
+    VoyageStatus status = new VoyageStatus();
+    status.setId(3L);
+    Mockito.when(
+            this.voyageRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(voyage);
+    Mockito.when(
+            this.voyageRepository.findByVoyageStatusAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(new ArrayList<Voyage>());
+    Mockito.when(
+            this.voyageStatusRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(Optional.of(status));
+    Mockito.when(this.voyageRepository.save(ArgumentMatchers.any(Voyage.class))).thenReturn(voyage);
+
+    loadableStudyService.saveVoyageStatus(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<SaveVoyageStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    SaveVoyageStatusReply response = results.get(0);
+    assertEquals(SUCCESS, response.getResponseStatus().getStatus());
+  }
+
+  @Test
+  public void testSaveVoyageStatusStopWithNullEndDate() throws GenericServiceException {
+
+    LoadableStudy loadableStudy = new LoadableStudy();
+    loadableStudy.setId(1L);
+    loadableStudy.setCharterer("CHARTERER");
+    LoadableStudyStatus loadableStudyStatus = new LoadableStudyStatus();
+    loadableStudyStatus.setName("CONFIRMED");
+    loadableStudy.setLoadableStudyStatus(loadableStudyStatus);
+    Set<LoadableStudy> ls_list = new HashSet();
+    ls_list.add(loadableStudy);
+
+    SaveVoyageStatusRequest request =
+        SaveVoyageStatusRequest.newBuilder().setStatus("stop").setVoyageId(1L).build();
+    /* used for grpc testing */
+    StreamRecorder<SaveVoyageStatusReply> responseObserver = StreamRecorder.create();
+    Voyage voyage = new Voyage();
+    voyage.setId((long) 1);
+    voyage.setLoadableStudies(ls_list);
+
+    VoyageStatus status = new VoyageStatus();
+    status.setId(3L);
+    Mockito.when(
+            this.voyageRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(voyage);
+    Mockito.when(
+            this.voyageRepository.findByVoyageStatusAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(new ArrayList<Voyage>());
+    Mockito.when(
+            this.voyageStatusRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(Optional.of(status));
+    LoadableStudyPortRotation maxPortOrderEntity = new LoadableStudyPortRotation();
+    maxPortOrderEntity.setId(1L);
+    SynopticalTable synoptical = new SynopticalTable();
+    synoptical.setLoadableStudyPortRotation(maxPortOrderEntity);
+    List<SynopticalTable> synopticalList = new ArrayList<>();
+    synopticalList.add(synoptical);
+    maxPortOrderEntity.setSynopticalTable(synopticalList);
+    Mockito.when(
+            this.loadableStudyPortRotationRepository
+                .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(
+                    ArgumentMatchers.any(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(maxPortOrderEntity);
+    Mockito.when(this.voyageRepository.save(ArgumentMatchers.any(Voyage.class))).thenReturn(voyage);
+
+    loadableStudyService.saveVoyageStatus(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<SaveVoyageStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    SaveVoyageStatusReply response = results.get(0);
+    assertEquals(SUCCESS, response.getResponseStatus().getStatus());
+  }
+
+  @Test
+  public void testSaveVoyageStatusStopWithNullStartDate() throws GenericServiceException {
+
+    LoadableStudy loadableStudy = new LoadableStudy();
+    loadableStudy.setId(1L);
+    loadableStudy.setCharterer("CHARTERER");
+    LoadableStudyStatus loadableStudyStatus = new LoadableStudyStatus();
+    loadableStudyStatus.setName("CONFIRMED");
+    loadableStudy.setLoadableStudyStatus(loadableStudyStatus);
+    Set<LoadableStudy> ls_list = new HashSet();
+    ls_list.add(loadableStudy);
+
+    SaveVoyageStatusRequest request =
+        SaveVoyageStatusRequest.newBuilder().setStatus("start").setVoyageId(1L).build();
+    /* used for grpc testing */
+    StreamRecorder<SaveVoyageStatusReply> responseObserver = StreamRecorder.create();
+    Voyage voyage = new Voyage();
+    voyage.setId((long) 1);
+    voyage.setLoadableStudies(ls_list);
+
+    VoyageStatus status = new VoyageStatus();
+    status.setId(3L);
+    Mockito.when(
+            this.voyageRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(voyage);
+    Mockito.when(
+            this.voyageRepository.findByVoyageStatusAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(new ArrayList<Voyage>());
+    Mockito.when(
+            this.voyageStatusRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(Optional.of(status));
+    LoadableStudyPortRotation maxPortOrderEntity = new LoadableStudyPortRotation();
+    maxPortOrderEntity.setId(1L);
+    SynopticalTable synoptical = new SynopticalTable();
+    synoptical.setLoadableStudyPortRotation(maxPortOrderEntity);
+    List<SynopticalTable> synopticalList = new ArrayList<>();
+    synopticalList.add(synoptical);
+    maxPortOrderEntity.setSynopticalTable(synopticalList);
+    Mockito.when(
+            this.loadableStudyPortRotationRepository
+                .findFirstByLoadableStudyAndIsActiveOrderByPortOrderAsc(
+                    ArgumentMatchers.any(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(maxPortOrderEntity);
+    Mockito.when(this.voyageRepository.save(ArgumentMatchers.any(Voyage.class))).thenReturn(voyage);
+
+    loadableStudyService.saveVoyageStatus(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<SaveVoyageStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    SaveVoyageStatusReply response = results.get(0);
+    assertEquals(SUCCESS, response.getResponseStatus().getStatus());
+  }
+
+  @Test
+  public void testSaveVoyageStatusStopWithoutStatus() throws GenericServiceException {
+    LoadableStudy loadableStudy = new LoadableStudy();
+    loadableStudy.setId(1L);
+    loadableStudy.setCharterer("CHARTERER");
+    LoadableStudyStatus loadableStudyStatus = new LoadableStudyStatus();
+    loadableStudyStatus.setName("CONFIRMED");
+    loadableStudy.setLoadableStudyStatus(loadableStudyStatus);
+    Set<LoadableStudy> ls_list = new HashSet();
+    ls_list.add(loadableStudy);
+    SaveVoyageStatusRequest request =
+        SaveVoyageStatusRequest.newBuilder()
+            .setActualEndDate("18-02-2021 10:10")
+            .setActualStartDate("18-02-2021 10:10")
+            .setStatus("stop")
+            .setVoyageId(1L)
+            .build();
+    /* used for grpc testing */
+    StreamRecorder<SaveVoyageStatusReply> responseObserver = StreamRecorder.create();
+    Voyage voyage = new Voyage();
+    voyage.setId((long) 1);
+    voyage.setLoadableStudies(ls_list);
+    Mockito.when(
+            this.voyageRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(voyage);
+    Mockito.when(
+            this.voyageRepository.findByVoyageStatusAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(new ArrayList());
+
+    Mockito.when(
+            this.voyageStatusRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(Optional.empty());
+    Mockito.when(this.voyageRepository.save(ArgumentMatchers.any(Voyage.class))).thenReturn(voyage);
+
+    loadableStudyService.saveVoyageStatus(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<SaveVoyageStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    SaveVoyageStatusReply response = results.get(0);
+    assertEquals(FAILED, response.getResponseStatus().getStatus());
+  }
+
+  @Test
+  public void testSaveVoyageWithVoyageNull() throws GenericServiceException {
+
+    SaveVoyageStatusRequest request =
+        SaveVoyageStatusRequest.newBuilder()
+            .setActualEndDate("18-02-2021 10:10")
+            .setActualStartDate("18-02-2021 10:10")
+            .setStatus("stop")
+            .setVoyageId(1L)
+            .build();
+    /* used for grpc testing */
+    StreamRecorder<SaveVoyageStatusReply> responseObserver = StreamRecorder.create();
+
+    Mockito.when(
+            this.voyageRepository.findByIdAndIsActive(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
+        .thenReturn(null);
+
+    loadableStudyService.saveVoyageStatus(request, responseObserver);
+
+    assertNull(responseObserver.getError());
+    List<SaveVoyageStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    SaveVoyageStatusReply response = results.get(0);
+    assertEquals(FAILED, response.getResponseStatus().getStatus());
   }
 }

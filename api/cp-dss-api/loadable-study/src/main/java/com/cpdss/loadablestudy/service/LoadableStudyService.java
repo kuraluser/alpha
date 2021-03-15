@@ -213,6 +213,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -465,6 +469,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 ? LocalDateTime.from(
                     DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getEndDate()))
                 : null);
+        voyage.setTimezoneId((long) request.getTimezoneId());
         voyage = voyageRepository.save(voyage);
         // when Db save is complete we return to client a success message
         reply =
@@ -522,7 +527,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 HttpStatusCode.BAD_REQUEST);
           }
         }
+        loadableQuantity.setLoadableStudyXId(loadableStudy.get());
+        List<LoadablePattern> generatedPatterns =
+            this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+                LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
+                loadableQuantity.getLoadableStudyXId(),
+                true);
 
+        if (!generatedPatterns.isEmpty()) {
+          throw new GenericServiceException(
+              "Save not allowed for plan generated loadable study",
+              CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+              HttpStatusCode.BAD_REQUEST);
+        }
         loadableQuantity.setConstant(new BigDecimal(loadableQuantityRequest.getConstant()));
         loadableQuantity.setDeadWeight(new BigDecimal(loadableQuantityRequest.getDwt()));
         loadableQuantity.setDisplacementAtDraftRestriction(
@@ -552,7 +569,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 ? null
                 : new BigDecimal(loadableQuantityRequest.getVesselLightWeight()));
 
-        loadableQuantity.setLoadableStudyXId(loadableStudy.get());
         loadableQuantity.setOtherIfAny(new BigDecimal(loadableQuantityRequest.getOtherIfAny()));
         loadableQuantity.setSaggingDeduction(
             new BigDecimal(loadableQuantityRequest.getSaggingDeduction()));
@@ -625,9 +641,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     StatusReply.newBuilder()
                         .setStatus(FAILED)
                         .setMessage(INVALID_LOADABLE_QUANTITY)
-                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
+                        .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+                        .setStatusCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
                 .build();
       }
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving loadable quantity", e);
+      loadableQuantityReply =
+          LoadableQuantityReply.newBuilder()
+              .setResponseStatus(
+                  StatusReply.newBuilder()
+                      .setCode(e.getCode())
+                      .setMessage(e.getMessage())
+                      .setStatus(FAILED)
+                      .setStatusCode(CommonErrorCodes.E_HTTP_BAD_REQUEST))
+              .build();
     } catch (Exception e) {
       log.error("Error in saving loadable quantity ", e);
       loadableQuantityReply =
@@ -636,7 +664,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   StatusReply.newBuilder()
                       .setStatus(FAILED)
                       .setMessage(FAILED)
-                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR))
+                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                      .setStatusCode(CommonErrorCodes.E_GEN_INTERNAL_ERR))
               .build();
     } finally {
       responseObserver.onNext(loadableQuantityReply);
@@ -1019,6 +1048,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+
       CargoNomination cargoNomination = null;
       List<Long> existingCargoPortIds = null;
       if (request.getCargoNominationDetail() != null
@@ -1045,6 +1075,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         cargoNomination = new CargoNomination();
         cargoNomination = buildCargoNomination(cargoNomination, request);
       }
+
+      List<LoadablePattern> generatedPatterns =
+          this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudy.get(), true);
+      if (!generatedPatterns.isEmpty()) {
+        throw new GenericServiceException(
+            "Save not allowed for plan generated loadable study",
+            CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
       // update port rotation table with loading ports from cargo nomination
       LoadableStudy loadableStudyRecord = loadableStudy.get();
       // validate if requested are already added as transit ports
@@ -1764,6 +1805,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(endDate -> detailbuilder.setEndDate(formatter.format(endDate)));
         detailbuilder.setStatus(
             entity.getVoyageStatus() != null ? entity.getVoyageStatus().getName() : "");
+        Optional.ofNullable(entity.getVoyageStatus())
+            .ifPresent(status -> detailbuilder.setStatusId(status.getId()));
         // fetch the confirmed loadable study for active voyages
         if (entity.getVoyageStatus() != null
             && STATUS_ACTIVE.equalsIgnoreCase(entity.getVoyageStatus().getName())) {
@@ -1829,6 +1872,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
         entity = portRoationOpt.get();
       }
+
+      List<LoadablePattern> generatedPatterns =
+          this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, entity.getLoadableStudy(), true);
+      if (!generatedPatterns.isEmpty()) {
+        throw new GenericServiceException(
+            "Save not allowed for plan generated loadable study",
+            CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
       entity =
           this.loadableStudyPortRotationRepository.save(
               this.createPortRotationEntity(entity, request));
@@ -1841,6 +1895,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setCode(e.getCode())
               .setMessage(e.getMessage())
               .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
               .build());
     } catch (Exception e) {
       log.error("Exception when saving loadable study port data", e);
@@ -2566,6 +2621,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               CommonErrorCodes.E_HTTP_BAD_REQUEST,
               HttpStatusCode.BAD_REQUEST);
         }
+
       } else {
         entity = new OnHandQuantity();
         Optional<LoadableStudy> loadableStudyOpt =
@@ -2579,6 +2635,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         entity.setLoadableStudy(loadableStudyOpt.get());
         entity.setPortXId(request.getPortId());
       }
+
+      List<LoadablePattern> generatedPatterns =
+          this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, entity.getLoadableStudy(), true);
+      if (!generatedPatterns.isEmpty()) {
+        throw new GenericServiceException(
+            "Save not allowed for plan generated loadable study",
+            CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+            HttpStatusCode.BAD_REQUEST);
+      }
       entity = this.buildOnHandQuantityEntity(entity, request);
       entity = this.onHandQuantityRepository.save(entity);
       replyBuilder
@@ -2591,6 +2657,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setCode(e.getCode())
               .setMessage(e.getMessage())
               .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
               .build());
     } catch (Exception e) {
       log.error("Exception when saving on hand quantities", e);
@@ -3492,6 +3559,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         throw new GenericServiceException(
             "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
+
       if (!CollectionUtils.isEmpty(request.getCommingleCargoList())) {
         // for existing commingle cargo find missing ids in request and delete them
         deleteCommingleCargo(request);
@@ -3525,6 +3593,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                           buildCommingleCargo(
                               commingleCargoEntity, commingleCargo, loadableStudyId);
                     }
+                    List<LoadablePattern> generatedPatterns =
+                        this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+                            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get(), true);
+                    if (!generatedPatterns.isEmpty()) {
+                      throw new GenericServiceException(
+                          "Save not allowed for plan generated loadable study",
+                          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+                          HttpStatusCode.BAD_REQUEST);
+                    }
+
                     commingleEntities.add(commingleCargoEntity);
                   } catch (Exception e) {
                     log.error("Exception in creating entities for save commingle cargo", e);
@@ -4581,6 +4659,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               HttpStatusCode.BAD_REQUEST);
         }
       }
+      List<LoadablePattern> generatedPatterns =
+          this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, entity.getLoadableStudy(), true);
+
+      if (!generatedPatterns.isEmpty()) {
+        throw new GenericServiceException(
+            "Save not allowed for plan generated loadable study",
+            CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+            HttpStatusCode.BAD_REQUEST);
+      }
       this.buildOnBoardQuantityEntity(entity, request);
       entity = this.onBoardQuantityRepository.save(entity);
       loadableStudyOpt.get().setLoadOnTop(request.getLoadOnTop());
@@ -4594,6 +4682,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setCode(e.getCode())
               .setMessage("GenericServiceException when saving on board quantities")
               .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
               .build());
     } catch (Exception e) {
       log.error("Exception when saving on board quantities", e);
@@ -4770,6 +4859,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           ent.setActualQuantity(
               isEmpty(rec.getActualWeight()) ? null : new BigDecimal(rec.getActualWeight()));
           toBeSaved.add(ent);
+        } else {
+          LoadablePlanStowageBallastDetails ent = new LoadablePlanStowageBallastDetails();
+          ent.setTankXId(rec.getTankId());
+          ent.setIsActive(true);
+          ent.setLoadablePatternId(loadablePatternId);
+          ent.setPortXId(entity.getPortXid());
+          ent.setOperationType(entity.getOperationType());
+          ent.setLoadableStudyPortRotation(entity.getLoadableStudyPortRotation());
+          ent.setActualQuantity(
+              isEmpty(rec.getActualWeight()) ? null : new BigDecimal(rec.getActualWeight()));
+          toBeSaved.add(ent);
         }
       }
       this.loadablePlanStowageBallastDetailsRepository.saveAll(toBeSaved);
@@ -4881,6 +4981,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .findAny();
       if (entityOpt.isPresent()) {
         com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails cargoEntity = entityOpt.get();
+        cargoEntity.setActualQuantity(
+            isEmpty(cargoRecord.getActualWeight())
+                ? null
+                : new BigDecimal(cargoRecord.getActualWeight()));
+        toBeSavedCargoList.add(cargoEntity);
+      } else {
+        com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails cargoEntity =
+            new com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails();
+        cargoEntity.setLoadablePatternId(request.getLoadablePatternId());
+        cargoEntity.setPortId(entity.getPortXid());
+        cargoEntity.setTankId(cargoRecord.getTankId());
+        cargoEntity.setIsActive(true);
+        cargoEntity.setOperationType(entity.getOperationType());
+        cargoEntity.setLoadableStudyPortRotation(entity.getLoadableStudyPortRotation());
         cargoEntity.setActualQuantity(
             isEmpty(cargoRecord.getActualWeight())
                 ? null
@@ -5310,45 +5424,45 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<LoadablePlanStowageBallastDetails> ballastDetails,
       List<VesselTankDetail> sortedTankList,
       Long paatternId) {
-    List<LoadablePlanStowageBallastDetails> portBallastList =
+    List<LoadablePlanStowageBallastDetails> portBallastList = new ArrayList<>();
+    portBallastList.addAll(
         ballastDetails.stream()
             .filter(
                 bd ->
                     synopticalEntity.getPortXid().equals(bd.getPortXId())
                         && synopticalEntity.getOperationType().equals(bd.getOperationType()))
-            .collect(Collectors.toList());
-    if (null != portBallastList && !portBallastList.isEmpty()) {
-      for (VesselTankDetail tank : sortedTankList) {
-        if (!BALLAST_TANK_CATEGORY_ID.equals(tank.getTankCategoryId())) {
-          continue;
-        }
-        SynopticalBallastRecord.Builder ballastBuilder = SynopticalBallastRecord.newBuilder();
-        ballastBuilder.setTankId(tank.getTankId());
-        ballastBuilder.setTankName(tank.getShortName());
-        ballastBuilder.setCapacity(tank.getFullCapacityCubm());
-        Optional<LoadablePlanStowageBallastDetails> tankBallastDetail =
-            portBallastList.stream()
-                .filter(b -> b.getTankXId().longValue() == tank.getTankId())
-                .findAny();
-        if (tankBallastDetail.isPresent()) {
-          LoadablePlanStowageBallastDetails ballast = tankBallastDetail.get();
-          Optional.ofNullable(ballast.getQuantity())
-              .ifPresent(item -> ballastBuilder.setPlannedWeight(valueOf(item)));
-          Optional.ofNullable(ballast.getActualQuantity())
-              .ifPresent(item -> ballastBuilder.setActualWeight(valueOf(item)));
-          Optional.ofNullable(ballast.getCorrectedUllage())
-              .ifPresent(ullage -> ballastBuilder.setCorrectedUllage(ullage));
-          Optional.ofNullable(ballast.getSg()).ifPresent(sg -> ballastBuilder.setSpGravity(sg));
-          Optional.ofNullable(ballast.getColorCode())
-              .ifPresent(colorCode -> ballastBuilder.setColorCode(colorCode));
-        } else {
-          log.info(
-              "Ballast details not available for the tank: {}, pattern: {}",
-              tank.getTankId(),
-              paatternId);
-        }
-        builder.addBallast(ballastBuilder.build());
+            .collect(Collectors.toList()));
+
+    for (VesselTankDetail tank : sortedTankList) {
+      if (!BALLAST_TANK_CATEGORY_ID.equals(tank.getTankCategoryId())) {
+        continue;
       }
+      SynopticalBallastRecord.Builder ballastBuilder = SynopticalBallastRecord.newBuilder();
+      ballastBuilder.setTankId(tank.getTankId());
+      ballastBuilder.setTankName(tank.getShortName());
+      ballastBuilder.setCapacity(tank.getFullCapacityCubm());
+      Optional<LoadablePlanStowageBallastDetails> tankBallastDetail =
+          portBallastList.stream()
+              .filter(b -> b.getTankXId().longValue() == tank.getTankId())
+              .findAny();
+      if (tankBallastDetail.isPresent()) {
+        LoadablePlanStowageBallastDetails ballast = tankBallastDetail.get();
+        Optional.ofNullable(ballast.getQuantity())
+            .ifPresent(item -> ballastBuilder.setPlannedWeight(valueOf(item)));
+        Optional.ofNullable(ballast.getActualQuantity())
+            .ifPresent(item -> ballastBuilder.setActualWeight(valueOf(item)));
+        Optional.ofNullable(ballast.getCorrectedUllage())
+            .ifPresent(ullage -> ballastBuilder.setCorrectedUllage(ullage));
+        Optional.ofNullable(ballast.getSg()).ifPresent(sg -> ballastBuilder.setSpGravity(sg));
+        Optional.ofNullable(ballast.getColorCode())
+            .ifPresent(colorCode -> ballastBuilder.setColorCode(colorCode));
+      } else {
+        log.info(
+            "Ballast details not available for the tank: {}, pattern: {}",
+            tank.getTankId(),
+            paatternId);
+      }
+      builder.addBallast(ballastBuilder.build());
     }
   }
 
@@ -5756,11 +5870,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       SynopticalTable synopticalEntity,
       SynopticalRecord.Builder builder,
       List<LoadableStudyPortRotation> portRotations) {
+    /*Optional<LoadableStudyPortRotation> portRotation =
+    portRotations
+        .stream()
+        .filter(
+            pr -> pr.getId().equals(synopticalEntity.getLoadableStudyPortRotation().getId()))
+        .findFirst();*/
     Optional<LoadableStudyPortRotation> portRotation =
-        portRotations.stream()
-            .filter(
-                pr -> pr.getId().equals(synopticalEntity.getLoadableStudyPortRotation().getId()))
-            .findFirst();
+        Optional.of(synopticalEntity.getLoadableStudyPortRotation());
     if (portRotation.isPresent()) {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
       if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(synopticalEntity.getOperationType())) {
@@ -5777,6 +5894,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       if (null != portRotation.get().getPortOrder()) {
         builder.setPortOrder(portRotation.get().getPortOrder());
       }
+      builder.setPortRotationId(portRotation.get().getId());
     }
   }
 
@@ -6150,8 +6268,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 request.getVoyageId(), CONFIRMED_STATUS_ID, true);
         if (!loadablePatternConfirmedOpt.isEmpty()) {
           // set confirm status to false since some other plan is already confirmed
+          log.info("other plan is in confirmed status");
           replyBuilder.setConfirmed(false);
         } else {
+          log.info("confirming selected plan");
           loadablePatternRepository.updateLoadablePatternStatus(
               CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
           loadableStudyRepository.updateLoadableStudyStatus(
@@ -6199,15 +6319,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 CONFIRMED_STATUS_ID,
                 true);
         if (!loadablePatternConfirmedOpt.isEmpty()) {
-
+          log.info("changing status of other confirmed plan to plan generated");
           loadablePatternRepository.updateLoadablePatternStatusToPlanGenerated(
-              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
-              loadablePatternConfirmedOpt.get(0).getLoadableStudy().getVoyage().getId());
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadablePatternConfirmedOpt.get(0).getId());
           loadablePatternRepository.updateLoadableStudyStatusToPlanGenerated(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
-              loadablePatternConfirmedOpt.get(0).getLoadableStudy().getVoyage().getId());
+              loadablePatternConfirmedOpt.get(0).getLoadableStudy().getId());
         }
-
+        log.info("confirming selected plan");
         loadablePatternRepository.updateLoadablePatternStatus(
             CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
         loadableStudyRepository.updateLoadableStudyStatus(
@@ -6426,17 +6545,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Transactional
   public void checkDuplicatedFromAndCloneEntity(LoadableStudyDetail request, LoadableStudy entity)
       throws GenericServiceException {
+
     if (0 != request.getDuplicatedFromId()) {
       try {
 
         List<CargoNomination> cargoNominationList =
             this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
                 request.getDuplicatedFromId(), true);
-
+        Map<Long, Long> cargoNominationIdMap = new HashMap<>();
         if (!cargoNominationList.isEmpty()) {
-          List<CargoNomination> crgoNominationList = new ArrayList<CargoNomination>();
           cargoNominationList.forEach(
               cargoNomination -> {
+                Long id = cargoNomination.getId();
                 CargoNomination crgoNomination = new CargoNomination();
                 List<CargoNominationPortDetails> oldCargoNominationPortDetails =
                     this.cargoNominationOperationDetailsRepository
@@ -6445,7 +6565,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 BeanUtils.copyProperties(cargoNomination, crgoNomination);
                 crgoNomination.setLoadableStudyXId(entity.getId());
                 crgoNomination.setId(null);
-                crgoNominationList.add(crgoNomination);
                 crgoNomination.setCargoNominationPortDetails(
                     new HashSet<CargoNominationPortDetails>());
                 oldCargoNominationPortDetails.forEach(
@@ -6459,8 +6578,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                           .getCargoNominationPortDetails()
                           .add(cargoNominationPortDetails);
                     });
+                CargoNomination ent = this.cargoNominationRepository.save(crgoNomination);
+                cargoNominationIdMap.put(id, ent.getId());
               });
-          this.cargoNominationRepository.saveAll(crgoNominationList);
         }
 
         List<LoadableStudyPortRotation> loadableStudyPortRotationParentList =
@@ -6488,6 +6608,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               HttpStatusCode.BAD_REQUEST);
         }
         entity.setDischargeCargoId(loadableStudyOpt.get().getDischargeCargoId());
+        entity.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
 
         List<OnHandQuantity> onHandQuantityList =
             this.onHandQuantityRepository.findByLoadableStudyAndIsActive(
@@ -6540,15 +6661,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(
                 request.getDuplicatedFromId(), true);
         if (!CommingleCargoList.isEmpty()) {
-          List<com.cpdss.loadablestudy.entity.CommingleCargo> CommingleCargos =
-              new ArrayList<com.cpdss.loadablestudy.entity.CommingleCargo>();
+          List<com.cpdss.loadablestudy.entity.CommingleCargo> CommingleCargos = new ArrayList<>();
 
           CommingleCargoList.forEach(
-              CommingleCargo -> {
-                entityManager.detach(CommingleCargo);
-                CommingleCargo.setId(null);
-                CommingleCargo.setLoadableStudyXId(entity.getId());
-                CommingleCargos.add(CommingleCargo);
+              commingleCargo -> {
+                entityManager.detach(commingleCargo);
+                commingleCargo.setId(null);
+                commingleCargo.setLoadableStudyXId(entity.getId());
+                commingleCargo.setCargoNomination1Id(
+                    cargoNominationIdMap.get(commingleCargo.getCargoNomination1Id()));
+                commingleCargo.setCargoNomination2Id(
+                    cargoNominationIdMap.get(commingleCargo.getCargoNomination2Id()));
+                CommingleCargos.add(commingleCargo);
               });
           this.commingleCargoRepository.saveAll(CommingleCargos);
         }
@@ -7328,111 +7452,115 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       Voyage voyageEntity = this.voyageRepository.findByIdAndIsActive(request.getVoyageId(), true);
 
-      if (null != voyageEntity) {
-        Stream<LoadableStudy> loadableStudyStream =
-            Optional.ofNullable(voyageEntity.getLoadableStudies())
-                .map(Collection::stream)
-                .orElseGet(Stream::empty);
-        Optional<LoadableStudy> loadableStudy =
-            loadableStudyStream
-                .filter(
-                    loadableStudyElement ->
-                        (loadableStudyElement.getLoadableStudyStatus() != null
-                            && STATUS_CONFIRMED.equalsIgnoreCase(
-                                loadableStudyElement.getLoadableStudyStatus().getName())))
-                .findFirst();
-        if (request.getStatus().equalsIgnoreCase(START_VOYAGE)) {
-          List<Voyage> activeVoyage =
-              this.voyageRepository.findByVoyageStatusAndIsActive(ACTIVE_VOYAGE_STATUS, true);
-          if (!activeVoyage.isEmpty()) {
-            throw new GenericServiceException(
-                "Active Voyage already exist",
-                CommonErrorCodes.E_CPDSS_ACTIVE_VOYAGE_EXISTS,
-                HttpStatusCode.BAD_REQUEST);
-          }
-          if (!loadableStudy.isPresent()) {
-            throw new GenericServiceException(
-                "Confirmed Loadable study does not exist",
-                CommonErrorCodes.E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST,
-                HttpStatusCode.BAD_REQUEST);
-          }
-          Optional<VoyageStatus> status =
-              this.voyageStatusRepository.findByIdAndIsActive(ACTIVE_VOYAGE_STATUS, true);
-          if (!status.isPresent()) {
-            throw new GenericServiceException(
-                "Voyage status does not  exist",
-                CommonErrorCodes.E_HTTP_BAD_REQUEST,
-                HttpStatusCode.BAD_REQUEST);
-          }
-          voyageEntity.setVoyageStatus(status.get());
+      if (null == voyageEntity) {
+        throw new GenericServiceException(
+            " Voyage does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      Stream<LoadableStudy> loadableStudyStream =
+          Optional.ofNullable(voyageEntity.getLoadableStudies())
+              .map(Collection::stream)
+              .orElseGet(Stream::empty);
+      Optional<LoadableStudy> loadableStudy =
+          loadableStudyStream
+              .filter(
+                  loadableStudyElement ->
+                      (loadableStudyElement.getLoadableStudyStatus() != null
+                          && STATUS_CONFIRMED.equalsIgnoreCase(
+                              loadableStudyElement.getLoadableStudyStatus().getName())))
+              .findFirst();
+      if (request.getStatus().equalsIgnoreCase(START_VOYAGE)) {
+        List<Voyage> activeVoyage =
+            this.voyageRepository.findByVoyageStatusAndIsActive(ACTIVE_VOYAGE_STATUS, true);
+        if (!activeVoyage.isEmpty()) {
+          throw new GenericServiceException(
+              "Active Voyage already exist",
+              CommonErrorCodes.E_CPDSS_ACTIVE_VOYAGE_EXISTS,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        if (!loadableStudy.isPresent()) {
+          throw new GenericServiceException(
+              "Confirmed Loadable study does not exist",
+              CommonErrorCodes.E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        Optional<VoyageStatus> status =
+            this.voyageStatusRepository.findByIdAndIsActive(ACTIVE_VOYAGE_STATUS, true);
+        if (!status.isPresent()) {
+          throw new GenericServiceException(
+              "Voyage status does not  exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        voyageEntity.setVoyageStatus(status.get());
 
-          if (request.getActualStartDate().isEmpty()) {
-            LoadableStudyPortRotation minPortOrderEntity =
-                this.loadableStudyPortRotationRepository
-                    .findFirstByLoadableStudyAndIsActiveOrderByPortOrderAsc(
-                        loadableStudy.get(), true);
-            List<SynopticalTable> synopticalData = minPortOrderEntity.getSynopticalTable();
-            if (!synopticalData.isEmpty()) {
-              Optional<SynopticalTable> synoptical =
-                  synopticalData.stream()
-                      .filter(
-                          data ->
-                              data.getLoadableStudyPortRotation()
-                                  .getId()
-                                  .equals(minPortOrderEntity.getId()))
-                      .findAny();
-              if (synoptical.isPresent()) {
-                voyageEntity.setActualStartDate(synoptical.get().getEtaActual());
-              }
+        if (request.getActualStartDate().isEmpty()) {
+          LoadableStudyPortRotation minPortOrderEntity =
+              this.loadableStudyPortRotationRepository
+                  .findFirstByLoadableStudyAndIsActiveOrderByPortOrderAsc(
+                      loadableStudy.get(), true);
+          List<SynopticalTable> synopticalData = minPortOrderEntity.getSynopticalTable();
+          if (!synopticalData.isEmpty()) {
+            Optional<SynopticalTable> synoptical =
+                synopticalData.stream()
+                    .filter(
+                        data ->
+                            data.getLoadableStudyPortRotation()
+                                .getId()
+                                .equals(minPortOrderEntity.getId()))
+                    .findAny();
+            if (synoptical.isPresent()) {
+              voyageEntity.setActualStartDate(synoptical.get().getEtaActual());
             }
-          } else {
-            voyageEntity.setActualStartDate(
-                !StringUtils.isEmpty(request.getActualStartDate())
-                    ? LocalDateTime.from(
-                        DateTimeFormatter.ofPattern(DATE_FORMAT)
-                            .parse(request.getActualStartDate()))
-                    : null);
           }
         } else {
-          Optional<VoyageStatus> status =
-              this.voyageStatusRepository.findByIdAndIsActive(CLOSE_VOYAGE_STATUS, true);
-          if (!status.isPresent()) {
-            throw new GenericServiceException(
-                "Voyage status does not  exist",
-                CommonErrorCodes.E_HTTP_BAD_REQUEST,
-                HttpStatusCode.BAD_REQUEST);
-          }
-          voyageEntity.setVoyageStatus(status.get());
-          if (request.getActualEndDate().isEmpty()) {
-            LoadableStudyPortRotation maxPortOrderEntity =
-                this.loadableStudyPortRotationRepository
-                    .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(
-                        loadableStudy.get(), true);
-            List<SynopticalTable> synopticalData = maxPortOrderEntity.getSynopticalTable();
-            if (!synopticalData.isEmpty()) {
-              Optional<SynopticalTable> synoptical =
-                  synopticalData.stream()
-                      .filter(
-                          data ->
-                              data.getLoadableStudyPortRotation()
-                                  .getId()
-                                  .equals(maxPortOrderEntity.getId()))
-                      .findAny();
-              if (synoptical.isPresent()) {
-                voyageEntity.setActualEndDate(synoptical.get().getEtdActual());
-              }
-            }
-          } else {
-            voyageEntity.setActualEndDate(
-                !StringUtils.isEmpty(request.getActualEndDate())
-                    ? LocalDateTime.from(
-                        DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualEndDate()))
-                    : null);
-          }
+          voyageEntity.setActualStartDate(
+              !StringUtils.isEmpty(request.getActualStartDate())
+                  ? LocalDateTime.from(
+                      DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualStartDate()))
+                  : null);
         }
-        this.voyageRepository.save(voyageEntity);
-        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else {
+        Optional<VoyageStatus> status =
+            this.voyageStatusRepository.findByIdAndIsActive(CLOSE_VOYAGE_STATUS, true);
+        if (!status.isPresent()) {
+          throw new GenericServiceException(
+              "Voyage status does not  exist",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        voyageEntity.setVoyageStatus(status.get());
+        if (request.getActualEndDate().isEmpty()) {
+          LoadableStudyPortRotation maxPortOrderEntity =
+              this.loadableStudyPortRotationRepository
+                  .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(
+                      loadableStudy.get(), true);
+          List<SynopticalTable> synopticalData = maxPortOrderEntity.getSynopticalTable();
+          if (!synopticalData.isEmpty()) {
+            Optional<SynopticalTable> synoptical =
+                synopticalData.stream()
+                    .filter(
+                        data ->
+                            data.getLoadableStudyPortRotation()
+                                .getId()
+                                .equals(maxPortOrderEntity.getId()))
+                    .findAny();
+            if (synoptical.isPresent()) {
+              voyageEntity.setActualEndDate(synoptical.get().getEtdActual());
+            }
+          }
+        } else {
+          voyageEntity.setActualEndDate(
+              !StringUtils.isEmpty(request.getActualEndDate())
+                  ? LocalDateTime.from(
+                      DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualEndDate()))
+                  : null);
+        }
       }
+      this.voyageRepository.save(voyageEntity);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving voyage status", e);
       replyBuilder.setResponseStatus(
@@ -7466,8 +7594,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Calendar now = Calendar.getInstance();
       int year = now.get(Calendar.YEAR) - 5;
       List<com.cpdss.loadablestudy.entity.ApiTempHistory> apiTempHistList =
-          this.apiTempHistoryRepository.findApiTempHistoryWithLoadedYearAfter(
-              request.getCargoId(), year);
+          this.apiTempHistoryRepository.findApiTempHistoryWithYearAfter(request.getCargoId(), year);
       buildCargoHistoryReply(apiTempHistList, replyBuilder);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (Exception e) {
@@ -7492,11 +7619,79 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .ifPresent(builder::setLoadingPortId);
             Optional.ofNullable(apiTempRecord.getLoadedDate())
                 .ifPresent(loadedDate -> builder.setLoadedDate(formatter.format(loadedDate)));
-            Optional.ofNullable(apiTempRecord.getLoadedYear()).ifPresent(builder::setLoadedYear);
-            Optional.ofNullable(apiTempRecord.getLoadedMonth()).ifPresent(builder::setLoadedMonth);
+            Optional.ofNullable(apiTempRecord.getYear()).ifPresent(builder::setLoadedYear);
+            Optional.ofNullable(apiTempRecord.getMonth()).ifPresent(builder::setLoadedMonth);
             Optional.ofNullable(apiTempRecord.getApi())
                 .ifPresent(api -> builder.setApi(String.valueOf(api)));
-            Optional.ofNullable(apiTempRecord.getTemperature())
+            Optional.ofNullable(apiTempRecord.getTemp())
+                .ifPresent(temperature -> builder.setTemperature(String.valueOf(temperature)));
+            replyBuilder.addCargoHistory(builder);
+          });
+    }
+  }
+
+  @Override
+  public void getAllCargoHistory(
+      CargoHistoryRequest request, StreamObserver<CargoHistoryReply> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.CargoHistoryReply.Builder replyBuilder =
+        CargoHistoryReply.newBuilder();
+    try {
+      List<com.cpdss.loadablestudy.entity.ApiTempHistory> apiTempHistList = null;
+
+      // Paging and sorting while filtering is handled separately
+      Pageable pageable =
+          PageRequest.of(
+              request.getPage(),
+              request.getPageSize(),
+              Sort.by(
+                  Sort.Direction.valueOf(request.getOrderBy().toUpperCase()), request.getSortBy()));
+      // apply date filter for loaded date
+      if (!request.getFromStartDate().isEmpty() && !request.getToStartDate().isEmpty()) {
+        LocalDateTime fromDate =
+            LocalDateTime.from(
+                DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getFromStartDate()));
+        LocalDateTime toDate =
+            LocalDateTime.from(
+                DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getToStartDate()));
+        Page<com.cpdss.loadablestudy.entity.ApiTempHistory> pagedResult =
+            this.apiTempHistoryRepository.findAllByLoadedDateBetween(pageable, fromDate, toDate);
+        apiTempHistList = pagedResult.toList();
+      } else {
+        Page<com.cpdss.loadablestudy.entity.ApiTempHistory> pagedResult =
+            this.apiTempHistoryRepository.findAll(pageable);
+        apiTempHistList = pagedResult.toList();
+      }
+      buildAllCargoHistoryReply(apiTempHistList, replyBuilder);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+    } catch (Exception e) {
+      log.error("Exception when fetching getCargoApiTempHistory", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void buildAllCargoHistoryReply(
+      List<com.cpdss.loadablestudy.entity.ApiTempHistory> apiTempHistList,
+      com.cpdss.common.generated.LoadableStudy.CargoHistoryReply.Builder replyBuilder) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(ETA_ETD_FORMAT);
+    if (!CollectionUtils.isEmpty(apiTempHistList)) {
+      apiTempHistList.forEach(
+          apiTempRecord -> {
+            CargoHistoryDetail.Builder builder = CargoHistoryDetail.newBuilder();
+            Optional.ofNullable(apiTempRecord.getVesselId()).ifPresent(builder::setVesselId);
+            Optional.ofNullable(apiTempRecord.getCargoId()).ifPresent(builder::setCargoId);
+            Optional.ofNullable(apiTempRecord.getLoadingPortId())
+                .ifPresent(builder::setLoadingPortId);
+            Optional.ofNullable(apiTempRecord.getLoadedDate())
+                .ifPresent(loadedDate -> builder.setLoadedDate(formatter.format(loadedDate)));
+            Optional.ofNullable(apiTempRecord.getYear()).ifPresent(builder::setLoadedYear);
+            Optional.ofNullable(apiTempRecord.getMonth()).ifPresent(builder::setLoadedMonth);
+            Optional.ofNullable(apiTempRecord.getDate()).ifPresent(builder::setLoadedDay);
+            Optional.ofNullable(apiTempRecord.getApi())
+                .ifPresent(api -> builder.setApi(String.valueOf(api)));
+            Optional.ofNullable(apiTempRecord.getTemp())
                 .ifPresent(temperature -> builder.setTemperature(String.valueOf(temperature)));
             replyBuilder.addCargoHistory(builder);
           });

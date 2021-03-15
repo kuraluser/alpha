@@ -1,10 +1,14 @@
 /* Licensed under Apache-2.0 */
 package com.cpdss.gateway.security.ship;
 
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV;
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV_SHIP;
+
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.userdetails.User;
@@ -19,10 +23,12 @@ import org.springframework.stereotype.Component;
  * @author suhail.k
  */
 @Component
+@ConditionalOnProperty(name = CPDSS_BUILD_ENV, havingValue = CPDSS_BUILD_ENV_SHIP)
 public class ShipUserDetailService implements UserDetailsService {
 
   @Autowired private UsersRepository usersRepository;
 
+  /** Verify the user from database */
   @Override
   public UserDetails loadUserByUsername(String username) {
     Users user = this.usersRepository.findByUsernameAndIsActive(username, true);

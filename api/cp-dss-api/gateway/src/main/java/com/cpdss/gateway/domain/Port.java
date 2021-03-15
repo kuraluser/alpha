@@ -15,4 +15,6 @@ public class Port {
   private BigDecimal waterDensity;
   private BigDecimal maxDraft;
   private BigDecimal maxAirDraft;
+  private String timezone;
+  private String timezoneOffsetVal;
 }
