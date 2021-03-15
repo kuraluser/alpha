@@ -10,6 +10,7 @@ import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { dateCompareValidator } from '../directive/validator/date-compare-validator.directive'
+import { specialCharacterValidator } from '../../core/directives/special-character-validator.directive';
 
 /**
  * Component for new voyage popup
@@ -97,7 +98,7 @@ export class NewVoyagePopupComponent implements OnInit {
     this.newVoyageForm = this.fb.group({
       'captain': [this.vesselDetails?.captainName],
       'chiefOfficer': [this.vesselDetails?.chiefOfficerName],
-      'voyageNo': [null, [Validators.required, Validators.pattern('^[a-zA-Z0-9 ][ A-Za-z0-9_.()&,-]*$'), Validators.maxLength(10)]],
+      'voyageNo': this.fb.control(null, [Validators.required, specialCharacterValidator, Validators.maxLength(10)]),
       'start_date': this.fb.control(null, [Validators.required, dateCompareValidator('end_date', '<')]),
       "end_date": this.fb.control(null, [Validators.required, dateCompareValidator('start_date', '>')])
     });
