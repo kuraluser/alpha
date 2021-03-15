@@ -28,6 +28,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
   }
   set loadableStudies(loadableStudies: LoadableStudy[]) {
     this._loadableStudies = loadableStudies;
+    this.getGridColumns();
   }
 
   @Input()
@@ -73,7 +74,6 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
     this.duplicateLoadableStudy = <LoadableStudy>{};
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], false);
     this.addLSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
-    this.getGridColumns();
   }
 
   /**

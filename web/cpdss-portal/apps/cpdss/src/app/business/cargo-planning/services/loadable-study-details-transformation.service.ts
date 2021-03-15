@@ -582,7 +582,7 @@ export class LoadableStudyDetailsTransformationService {
       }
     ];
 
-    if(permission && [VOYAGE_STATUS.ACTIVE, VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if(permission && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if(permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);

@@ -357,7 +357,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   setProcessingLoadableStudyActions(loadableStudyId: number, statusId: number) {
-    this.loadableStudies = this.loadableStudies.map(loadableStudy => {
+    const loadableStudies = this.loadableStudies.map(loadableStudy => {
       if (loadableStudyId === loadableStudy?.id) {
         if ([4, 5].includes(statusId) && this.router.url.includes('loadable-study-details')) {
           loadableStudy.isActionsEnabled = false;
@@ -371,11 +371,13 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           loadableStudy.isActionsEnabled = true;
         }
       } else if (!loadableStudyId && !statusId) {
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED].includes(loadableStudy?.statusId) ? false : true;
         loadableStudy.isEditable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
         loadableStudy.isDeletable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
       }
       return loadableStudy;
     });
+    this.loadableStudies = loadableStudies;
   }
 
   /**
