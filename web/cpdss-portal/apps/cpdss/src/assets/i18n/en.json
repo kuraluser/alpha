@@ -799,6 +799,10 @@
 	"CARGO_HISTORY_TABLE_MONTH": "MONTH",
 	"CARGO_HISTORY_TABLE_DATE": "DATE",
 	"CARGO_HISTORY_TABLE_API": "API",
-	"CARGO_HISTORY_TABLE_TEMP": "TEMP (°F)"
-
+	"CARGO_HISTORY_TABLE_TEMP": "TEMP (°F)",
+	"CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_SUMMARY": "Please confirm",
+	"CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_DETAILS": "Any change in the cargo will have impact on the ports selected, comingle data, OHQ, OBQ and Synoptical Table. Please click yes to proceed.",
+    "CARGO_NOMINATION_SAVED_CARGO_DETAILS": "Any change in the cargo will have impact on the ports selected, comingle data, OHQ, OBQ and Synoptical Table. Please click yes to proceed.",
+	"CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_LABEL": "Yes",
+	"CARGO_NOMINATION_CARGO_NAME_CHANGE_REJECT_LABEL": "No"
 }

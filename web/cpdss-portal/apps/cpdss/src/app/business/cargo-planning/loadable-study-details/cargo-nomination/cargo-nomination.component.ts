@@ -129,6 +129,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   private _openAPITemperatureHistoryPopup = false;
   private totalQuantity = 0;
   private ngUnsubscribe: Subject<any> = new Subject();
+  private savedCargoNomination:ICargoNominationValueObject[];
 
 
   // public methods
@@ -286,6 +287,29 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    */
   async onEditComplete(event: ICargoNominationEvent) {
     const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
+    if (event.field === 'cargo' && !event.data?.isAdd) {
+      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_SUMMARY', detail: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_DETAILS', data: { confirmLabel: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_LABEL', rejectLabel: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_REJECT_LABEL' } });
+      this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
+      if (response) {
+        this.updateCargoNominationsDetails(valueIndex , event);
+      } else {
+        this.cargoNominations[valueIndex]['cargo'].value = this.savedCargoNomination[valueIndex]['cargo']['_value'];
+        this.updateField(event.index, 'cargo', this.savedCargoNomination[valueIndex]['cargo']['_value']);
+      }
+    });
+    } else {
+      this.updateCargoNominationsDetails(valueIndex , event);
+    }
+  }
+
+  /**
+   * update details
+   *
+   * @param {ICargoNominationEvent} event
+   * @param {number} valueIndex
+   * @memberof CargoNominationComponent
+   */
+  async updateCargoNominationsDetails(valueIndex: number, event: ICargoNominationEvent) {
     if (event.field === 'cargo') {
       this.cargoNominations[valueIndex]['abbreviation'].value = event.data.cargo.value.abbreviation;
       this.cargoNominations[valueIndex]['api'].value = event.data.cargo.value.api;
@@ -302,7 +326,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.cargoNominations[valueIndex]['cargo'].value = event?.data?.cargo?.value;
       this.updateField(event.index, 'cargo', event?.data?.cargo?.value);
     }
-
+    
     if (!event.data?.isAdd) {
       if (this.cargoNominationForm.valid) {
         this.ngxSpinnerService.show();
@@ -362,7 +386,11 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   async onDeleteRow(event: ICargoNominationEvent) {
     if (event?.data?.isDelete) {
       const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
-      this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'CARGONOMINATION_DELETE_SUMMARY', detail: 'CARGONOMINATION_DELETE_DETAILS', data: { confirmLabel: 'CARGONOMINATION_DELETE_CONFIRM_LABEL', rejectLabel: 'CARGONOMINATION_DELETE_REJECT_LABEL' } });
+      if(!event?.data?.isAdd) {
+        this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'CARGONOMINATION_DELETE_SUMMARY', detail: 'CARGO_NOMINATION_SAVED_CARGO_DETAILS', data: { confirmLabel: 'CARGONOMINATION_DELETE_CONFIRM_LABEL', rejectLabel: 'CARGONOMINATION_DELETE_REJECT_LABEL' } });
+      } else {
+        this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'CARGONOMINATION_DELETE_SUMMARY', detail: 'CARGONOMINATION_DELETE_DETAILS', data: { confirmLabel: 'CARGONOMINATION_DELETE_CONFIRM_LABEL', rejectLabel: 'CARGONOMINATION_DELETE_REJECT_LABEL' } });
+      }
       this.confirmationAlertService.confirmAlert$
         .pipe(first(), takeUntil(this.ngUnsubscribe))
         .subscribe(async (response) => {
@@ -501,6 +529,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       dataTable: this.fb.array([...cargoNominationArray])
     });
     this.cargoNominations = _cargoNominations;
+    this.savedCargoNomination = JSON.parse(JSON.stringify(this.cargoNominations));
     this.updateCommingleButton(false);
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
     this.ngxSpinnerService.hide();
@@ -578,6 +607,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
           this.cargoNominations[index].id = event.data.cargoNominationId;
           this.cargoNominations[index].processing = false;
           this.cargoNominations = [...this.cargoNominations];
+          this.savedCargoNomination = JSON.parse(JSON.stringify(this.cargoNominations));
           this.updateCommingleButton(false);
         }
       }
