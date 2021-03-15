@@ -10,7 +10,6 @@ export function specialCharacterValidator(control: FormControl): { specialCharac
   const specialCharRegx: RegExp = /^[a-zA-Z0-9 ]*$/;
   if (control.value) {
     const isContainSpecialChar = specialCharRegx.test(control.value);
-    const isValid = isContainSpecialChar;
-    return isValid ? null : { 'specialCharacter' : true };
+    return isContainSpecialChar ? null : { 'specialCharacter' : true };
   }
 }
