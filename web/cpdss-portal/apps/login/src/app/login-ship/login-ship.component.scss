@@ -1,15 +1,12 @@
 @import "../../styles/scss/variables.scss";
 
+
 .bg-wrapper {
     width: 100%;
     height: 100%;
-    display: grid;
-    grid-template-columns: 22% auto;
+    // background: url(../../assets/images/land.png) no-repeat;
     background-size: cover;
-
     >div {
-        display: grid;
-
         &:nth-child(2) {
             align-items: center;
         }
@@ -19,13 +16,14 @@
 
 
 .login-logo {
-    margin-bottom: 40px;
+    margin-bottom: 15px;
     margin-left: -10px;
 }
 
 .login-btn {
     border-radius: 0;
     width: 100px;
+    vertical-align: baseline;
 }
 
 .login-textfield {
@@ -45,12 +43,11 @@
 
 .login-wrapper {
     width: 740px;
-    margin-left: 60px;
-
+    margin:2% auto 0;
     .login-form {
         display: grid;
         grid-template-columns: 140px 175px 175px 105px auto;
-        align-items: center;
+        align-items: baseline;
     }
 }
 

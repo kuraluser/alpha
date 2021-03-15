@@ -25,7 +25,27 @@ import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { GlobalErrorHandler } from './shared/services/error-handlers/global-error-handler';
 import { ConfirmationAlertModule } from './shared/components/confirmation-alert/confirmation-alert.module';
 import { FocusTrapModule } from 'primeng/focustrap';
+import { tokenAuthCPDSSInitializer } from "../app/shared/utils/token-auth.cpdss.init";
 
+let providers: any = [
+  {
+    provide: APP_INITIALIZER,
+    useFactory: (appConfigService: AppConfigurationService) => () => appConfigService.load(),
+    deps: [AppConfigurationService, ActivatedRoute], multi: true
+  },
+  { provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true },
+  { provide: ErrorHandler, useClass: GlobalErrorHandler },
+];
+
+if (environment.name === 'shore') {
+  providers = [...providers, KeycloakService,
+  { provide: APP_INITIALIZER, useFactory: keycloakCPDSSInitializer, multi: true, deps: [KeycloakService, HttpClient, AppConfigurationService, ActivatedRoute] },
+  ]
+} else {
+  providers = [...providers, 
+    { provide: APP_INITIALIZER, useFactory: tokenAuthCPDSSInitializer, multi: true, deps: [HttpClient, AppConfigurationService, ActivatedRoute] },
+    ]
+}
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,17 +74,7 @@ import { FocusTrapModule } from 'primeng/focustrap';
     ConfirmationAlertModule.forRoot(),
     FocusTrapModule
   ],
-  providers: [
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (appConfigService: AppConfigurationService) => () => appConfigService.load(),
-      deps: [AppConfigurationService, ActivatedRoute], multi: true
-    },
-    KeycloakService,
-    { provide: APP_INITIALIZER, useFactory: keycloakCPDSSInitializer, multi: true, deps: [KeycloakService, HttpClient, AppConfigurationService, ActivatedRoute] },
-    { provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true },
-    { provide: ErrorHandler, useClass: GlobalErrorHandler },
-  ],
+  providers: providers,
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { environment } from 'apps/cpdss/src/environments/environment';
+import { CPDSSDB, PropertiesDB } from '../../models/common.model';
 import { IUserProfile } from "../../models/user-profile.model";
 
 /**
@@ -17,17 +19,31 @@ export class SecurityService {
   private static _TOKEN: string;
   private static _USER: IUserProfile;
   private static _LOGGED_IN = false;
+  private static propertiesDB = new PropertiesDB()
 
   constructor() { }
 
   // setting token
   static setAuthToken(jwtToken: string) {
     SecurityService._TOKEN = jwtToken;
+    localStorage.setItem('token', jwtToken);
+    this.propertiesDB.properties.add(jwtToken, 'token')
   }
 
   // getting token
   static getAuthToken(): string {
-    return SecurityService._TOKEN;
+    return localStorage.getItem('token');
+  }
+
+  // getting environment
+  static async getEnvironment() {
+    return await this.propertiesDB.properties.get('environment')
+  }
+
+  // setting environment
+  static setEnvironment(environment: string) {
+    localStorage.setItem('environment', environment);
+    this.propertiesDB.properties.add(environment, 'environment')
   }
 
   // setting logged-in user details
@@ -63,6 +79,7 @@ export class SecurityService {
     SecurityService._USER = null;
     SecurityService._LOGGED_IN = false;
     window.localStorage.clear();
+    this.propertiesDB.properties.clear();
   }
 
 }

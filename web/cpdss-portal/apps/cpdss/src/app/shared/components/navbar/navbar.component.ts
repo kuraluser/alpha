@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
 import { Observable } from 'rxjs';
@@ -7,6 +7,7 @@ import { SecurityService } from '../../services/security/security.service';
 import { ThemeService } from '../../services/theme-service/theme.service';
 import { IMenuItem , IPermission } from './navbar.component.model';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { environment } from 'apps/cpdss/src/environments/environment';
 
 @Component({
   selector: 'cpdss-portal-navbar',
@@ -21,9 +22,15 @@ export class NavbarComponent implements OnInit {
   companyLogo = '';
   userPermission: any;
 
-  constructor(private themeService: ThemeService, private keycloakService: KeycloakService,
+  private keycloakService: KeycloakService;
+
+  constructor(private themeService: ThemeService, private injector: Injector ,
     private router: Router,
-    private permissionsService: PermissionsService) { }
+    private permissionsService: PermissionsService) {
+      if(environment.name ==='shore') {
+        this.keycloakService = <KeycloakService>this.injector.get(KeycloakService);
+      }
+     }
 
   ngOnInit(): void {
 
@@ -208,7 +215,11 @@ export class NavbarComponent implements OnInit {
     try {
       const redirectUrl = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
       SecurityService.userLogoutAction();
-      this.keycloakService.logout(redirectUrl);
+      if(environment.name ==='shore') {
+        this.keycloakService.logout(redirectUrl);
+      } else {
+        window.location.href = redirectUrl;
+      }
 
     }
     catch {

@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { KeycloakService } from 'keycloak-angular';
 import { SecurityService } from "../shared/services/security/security.service";
 import { IUserProfile } from "../shared/models/user-profile.model";
 import { LoginService } from './login.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { PermissionsService } from '../shared/services/permissions/permissions.service';
+import { environment } from '../../environments/environment';
+import { MessageService } from 'primeng/api';
 
 /**
  *  CPDSS-main application login component
@@ -20,10 +22,20 @@ export class LoginComponent implements OnInit {
   loggedIn = false;
   user: IUserProfile;
 
-  constructor(private kycloakService: KeycloakService, private loginService: LoginService, private ngxSpinnerService: NgxSpinnerService, private permissionsService: PermissionsService) { }
+  private kycloakService: KeycloakService
+
+  constructor(private injector: Injector, private loginService: LoginService, private ngxSpinnerService: NgxSpinnerService, private permissionsService: PermissionsService, private messageService: MessageService) {
+    if (environment.name === 'shore') {
+      this.kycloakService = <KeycloakService>this.injector.get(KeycloakService);
+    }
+  }
 
   ngOnInit(): void {
-    this.loadKeycloakProperties();
+    if (environment.name === 'shore') {
+      this.loadKeycloakProperties();
+    } else {
+      this.loadTokenProperties()
+    }
   }
 
   // to fetch authentication token and user-profile from keycloak after login
@@ -47,6 +59,31 @@ export class LoginComponent implements OnInit {
         SecurityService.setUserProfile(this.user);
         this.permissionsService.setPermissions(this.user?.rolePermissions?.resources)
       }
+    }
+    catch (ex) {
+      console.log('Exception:loginComponent', ex);
+    }
+    this.ngxSpinnerService.hide();
+  }
+
+  // to fetch authentication token and user-profile in case of token based authentication
+  private async loadTokenProperties() {
+    this.ngxSpinnerService.show();
+    try {
+      const daysRemain = Number(localStorage.getItem('daysRemain'))
+      if(daysRemain){
+        this.messageService.add({severity:'warn', summary:'Password Expiry Remainder', detail:'Your Password will expire in ' + (daysRemain > 1? daysRemain + ' days': '24 hours') 
+        + '. Please contact administrator to reset the password'});
+        localStorage.removeItem('daysRemain')
+      }
+      const token = localStorage.getItem('token');
+      SecurityService.setAuthToken(token);
+      SecurityService.setEnvironment(environment.name);
+      /* get user details and user permission */
+      const result = await this.loginService.getUserDetails().toPromise();
+      this.user = <IUserProfile>{ ...this.user, ...result?.user };
+      SecurityService.setUserProfile(this.user);
+      this.permissionsService.setPermissions(this.user?.rolePermissions?.resources)
     }
     catch (ex) {
       console.log('Exception:loginComponent', ex);

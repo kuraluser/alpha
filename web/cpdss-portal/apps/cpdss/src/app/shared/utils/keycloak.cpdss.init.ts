@@ -14,7 +14,7 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
     return async (): Promise<any> => {
         const appSettings: IAppConfiguration = await appConfig.load();
         const logoutUrl = window.location.protocol + '//' + window.location.hostname + appSettings.redirectPath;
-
+        
         return new Promise(async (resolve, reject) => {
             try {
                 const logoKey = 'logoUrl';

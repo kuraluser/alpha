@@ -129,9 +129,29 @@ export class CPDSSDB extends Dexie {
     ports!: Dexie.Table<any, number>;
     ohq!: Dexie.Table<any, number>;
     obq!: Dexie.Table<any, number>;
+    properties!: Dexie.Table<any, number>;
     constructor() {
         super('CPDSS');
     }
+}
+
+/**
+ * Class for Properties Dexie db
+ *
+ * @export
+ * @class PropertiesDB
+ * @extends {CPDSSDB}
+ */
+export class PropertiesDB extends CPDSSDB {
+    properties!: Dexie.Table<any>;
+
+    constructor() {
+        super();
+        this.version(1).stores({
+            properties: ''
+        });
+    }
+
 }
 
 /**
