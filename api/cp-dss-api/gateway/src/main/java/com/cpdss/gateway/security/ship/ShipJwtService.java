@@ -1,5 +1,9 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.security.ship;
+
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV;
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV_SHIP;
+import static com.cpdss.gateway.custom.Constants.SHIP_TOKEN_SUBJECT;
 
 import com.cpdss.gateway.entity.Users;
 import io.jsonwebtoken.Claims;
@@ -16,6 +20,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,11 +29,10 @@ import org.springframework.stereotype.Component;
  * @author suhail.k
  */
 @Component
+@ConditionalOnProperty(name = CPDSS_BUILD_ENV, havingValue = CPDSS_BUILD_ENV_SHIP)
 public class ShipJwtService {
 
   private static final Logger logger = LogManager.getLogger(ShipJwtService.class);
-
-  private static final String SHIP_TOKEN_SUBJECT = "SHIP_JWT_TOKEN";
 
   public static final String USER_ID_CLAIM = "USER_ID";
 
@@ -54,19 +58,19 @@ public class ShipJwtService {
     try {
       return Jwts.parser().setSigningKey(tokenSigningKey.getBytes()).parseClaimsJws(token);
     } catch (ExpiredJwtException eje) {
-      logger.warn("Request to parse expired JWT", token, eje);
+      logger.warn("Request to parse expired JWT {}, {}", token, eje);
       throw eje;
     } catch (UnsupportedJwtException uje) {
-      logger.warn("Request to parse unsupported JWT", token, uje);
+      logger.warn("Request to parse unsupported JWT {}, {}", token, uje);
       throw uje;
     } catch (MalformedJwtException mje) {
-      logger.warn("Request to parse invalid JWT", token, mje);
+      logger.warn("Request to parse invalid JWT {}, {}", token, mje);
       throw mje;
     } catch (SignatureException se) {
-      logger.warn("Request to parse JWT with invalid signature", token, se);
+      logger.warn("Request to parse JWT with invalid signature {}, {}", token, se);
       throw se;
     } catch (IllegalArgumentException iae) {
-      logger.warn("Request to parse empty or null JWT", token, iae);
+      logger.warn("Request to parse empty or null JWT {}, {}", token, iae);
       throw iae;
     }
   }

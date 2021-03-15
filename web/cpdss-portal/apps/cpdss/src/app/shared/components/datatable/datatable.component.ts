@@ -93,6 +93,7 @@ export class DatatableComponent implements OnInit {
 
   @Input() showTotal = false;
 
+  @Input() scrollable = true;
 
   @Input()
   set loading(loading: boolean) {

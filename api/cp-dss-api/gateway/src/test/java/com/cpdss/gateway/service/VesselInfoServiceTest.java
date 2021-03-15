@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -20,6 +20,7 @@ import com.cpdss.common.generated.VesselInfo.MinMaxValuesForBMAndSf;
 import com.cpdss.common.generated.VesselInfo.ShearingForce;
 import com.cpdss.common.generated.VesselInfo.StationValues;
 import com.cpdss.common.generated.VesselInfo.UllageDetails;
+import com.cpdss.common.generated.VesselInfo.UllageTrimCorrection;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselDraftCondition;
@@ -31,6 +32,8 @@ import com.cpdss.gateway.domain.VesselDetailsResponse;
 import com.cpdss.gateway.repository.UsersRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -45,14 +48,17 @@ public class VesselInfoServiceTest {
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
   private static final String CORRELATION_ID_HEADER_VALUE = "1234";
+  private static final Long TEST_ID = 1L;
+  private static final String NUMERICAL_TEST_VALUE = "123";
 
   @BeforeEach
   public void init() {
     this.vesselInfoService = Mockito.mock(VesselInfoService.class);
   }
 
-  @Test
-  void testGetVesselsDetails() throws GenericServiceException {
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void testGetVesselsDetails(boolean empty) throws GenericServiceException {
     Mockito.when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString()))
         .thenCallRealMethod();
     VesselDraftCondition.Builder vesselDraftConditionBuilder = VesselDraftCondition.newBuilder();
@@ -86,6 +92,7 @@ public class VesselInfoServiceTest {
                 .addVesselTankTCG(vesselTankTcgBuilder.build())
                 .setBMAndSF(bMAndSFBuilder)
                 .addUllageDetails(ullageBuilder.build())
+                .addUllageTrimCorrection(this.createUllageTrimCorrection(empty))
                 .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
                 .build());
 
@@ -97,6 +104,28 @@ public class VesselInfoServiceTest {
                 String.valueOf(HttpStatusCode.OK.value()),
                 response.getResponseStatus().getStatus(),
                 "response valid"));
+  }
+
+  private UllageTrimCorrection createUllageTrimCorrection(boolean empty) {
+    UllageTrimCorrection.Builder builder = UllageTrimCorrection.newBuilder();
+    if (!empty) {
+      builder.setTrim0(NUMERICAL_TEST_VALUE);
+      builder.setTrim1(NUMERICAL_TEST_VALUE);
+      builder.setTrim2(NUMERICAL_TEST_VALUE);
+      builder.setTrim3(NUMERICAL_TEST_VALUE);
+      builder.setTrim4(NUMERICAL_TEST_VALUE);
+      builder.setTrim5(NUMERICAL_TEST_VALUE);
+      builder.setTrim6(NUMERICAL_TEST_VALUE);
+      builder.setTrimM1(NUMERICAL_TEST_VALUE);
+      builder.setTrimM2(NUMERICAL_TEST_VALUE);
+      builder.setTrimM3(NUMERICAL_TEST_VALUE);
+      builder.setTrimM4(NUMERICAL_TEST_VALUE);
+      builder.setTrimM5(NUMERICAL_TEST_VALUE);
+      builder.setUllageDepth(NUMERICAL_TEST_VALUE);
+    }
+    builder.setId(TEST_ID);
+    builder.setTankId(TEST_ID);
+    return builder.build();
   }
 
   @Test

@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -31,6 +31,7 @@ public class SynopticalRecord {
   private String lwTideTimeTo;
   private BigDecimal specificGravity;
   private Long portId;
+  private Long portRotationId;
   private String portName;
   private Long portOrder;
   private List<SynopticalCargoBallastRecord> cargos;

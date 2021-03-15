@@ -1185,3 +1185,13 @@ p-colorpicker.ng-invalid.empty  input, p-colorpicker.ng-invalid.empty  .p-colorp
 header{
   background: url($images-theme + 'header-bg.png');
 }
+
+.colspan-header{
+  span{
+    display: block;
+    text-align: center;
+    padding-bottom: 5px;
+    margin-bottom: 3px;
+    border-bottom: 2px solid $table-border;
+  }
+}

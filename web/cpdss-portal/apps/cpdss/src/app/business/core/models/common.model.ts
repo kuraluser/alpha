@@ -173,13 +173,14 @@ export enum TANKTYPE {
  * @interface ILoadableCargo
  */
 export interface ILoadableCargo {
-    cargoAbbreviation: string;
-    colorCode: string;
-    tankId: number;
-    quantity: number;
-    isCommingle: boolean;
+    cargoAbbreviation?: string;
+    colorCode?: string;
+    tankId?: number;
+    quantity?: number;
+    isCommingle?: boolean;
     volume?: number;
     ullage?: number;
+	fillingRatio?: string;
 }
 
 /**

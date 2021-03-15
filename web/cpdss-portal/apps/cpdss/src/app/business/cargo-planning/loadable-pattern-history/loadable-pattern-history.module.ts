@@ -22,6 +22,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { UnitDropdownModule } from '../../../shared/components/unit-dropdown/unit-dropdown.module';
 import { QuantityPipeModule } from '../../../shared/pipes/quantity/quantity-pipe.module';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
+import { StabilityPopUpComponent } from './stability-pop-up/stability-pop-up.component';
 
 /**
  * Routing Module for Loadable Pattern History Screen
@@ -30,7 +31,7 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
  * @class LoadablePatternHistoryModule
  */
 @NgModule({
-  declarations: [LoadablePatternHistoryComponent, PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, ConstraintComponent, CommingleCargoDetailsPopUpComponent ],
+  declarations: [LoadablePatternHistoryComponent, PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, ConstraintComponent, CommingleCargoDetailsPopUpComponent, StabilityPopUpComponent  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -48,7 +49,7 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 	UnitDropdownModule,
 	QuantityPipeModule
   ],
-  exports : [PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, ConstraintComponent, CommingleCargoDetailsPopUpComponent],
+  exports : [PatternCaseComponent, GradeLoadingOrderComponent, CargoPriorityGridComponent, ConstraintComponent, CommingleCargoDetailsPopUpComponent, StabilityPopUpComponent],
   providers: [QuantityPipe]
 })
 export class LoadablePatternHistoryModule { }
