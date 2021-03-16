@@ -129,7 +129,7 @@ export class CPDSSDB extends Dexie {
     ports!: Dexie.Table<any, number>;
     ohq!: Dexie.Table<any, number>;
     obq!: Dexie.Table<any, number>;
-    properties!: Dexie.Table<any, number>;
+    properties!: Dexie.Table<any>;
     constructor() {
         super('CPDSS');
     }

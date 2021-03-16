@@ -1,38 +1,57 @@
-( function () {
+(async function () {
   'use strict';
 
   importScripts('dexie.min.js');
-  let apiUrl;
+  let apiUrl, environment, appConfig, token;
+  let apiEndPoint = '/api/cloud';
   const db = new Dexie("CPDSS");
   db.version(1).stores({
-    properties: "",
     cargoNominations: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
     ports: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
     ohq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
     obq: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
+    properties: ""
   });
-  db.open().then(async () => {
-    let apiEndPoint = '/api/cloud';
-    const environment = await db.properties.get('environment')
-    if (environment !== 'shore') {
-      apiEndPoint = '/api/ship';
-    }
-    if (self.location.protocol === 'https:') {
-      apiUrl = `${self.location.protocol}//${self.location.hostname}:${self.location.port}${apiEndPoint}`;
-    } else {
-      apiUrl = `${self.location.protocol}//192.168.2.89:8085${apiEndPoint}`;
-    }
 
-    // Code for calling sync function in interval .Please dont remove this code
-    setInterval(() => {
-      getToken().then(token => {
+  const isOpen = await db.open();
+  if (isOpen) {
+     // Code for calling sync function in interval .Please dont remove this code
+    setInterval(async () => {
+      if (!environment) {
+        environment = await db.properties.get('environment');
+      }
+
+      if (!appConfig) {
+        appConfig = await db.properties.get('appConfig');
+      }
+
+      if (environment !== 'shore') {
+        apiEndPoint = '/api/ship';
+      }
+
+      if (appConfig?.path) {
+        apiEndPoint += appConfig?.path + apiEndPoint
+      }
+
+      if (self.location.protocol === 'https:') {
+        apiUrl = `${self.location.protocol}//${self.location.hostname}:${self.location.port}${apiEndPoint}`;
+      } else {
+        const port = environment === 'shore' ? 8085 : 8084;
+        apiUrl = `${self.location.protocol}//192.168.2.89:${port}${apiEndPoint}`;
+      }
+
+      if (!token) {
+        token = await getToken();
+      }
+
+      if (token) {
         serverSyncCargoNomination(token);
         serverSyncPorts(token);
         serverSyncOHQ(token);
         serverSyncOBQ(token);
-      })
+      }
     }, 2000);
-  });
+  }
 
   // Function to get token from index DB
   async function getToken() {

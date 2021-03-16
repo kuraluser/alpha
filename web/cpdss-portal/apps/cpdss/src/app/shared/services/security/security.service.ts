@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { environment } from 'apps/cpdss/src/environments/environment';
-import { CPDSSDB, PropertiesDB } from '../../models/common.model';
+import { PropertiesDB } from '../../models/common.model';
 import { IUserProfile } from "../../models/user-profile.model";
 
 /**
@@ -27,7 +26,6 @@ export class SecurityService {
   static setAuthToken(jwtToken: string) {
     SecurityService._TOKEN = jwtToken;
     localStorage.setItem('token', jwtToken);
-    this.propertiesDB.properties.add(jwtToken, 'token')
   }
 
   // getting token
@@ -36,14 +34,13 @@ export class SecurityService {
   }
 
   // getting environment
-  static async getEnvironment() {
+  static async getPropertiesDB() {
     return await this.propertiesDB.properties.get('environment')
   }
 
-  // setting environment
-  static setEnvironment(environment: string) {
-    localStorage.setItem('environment', environment);
-    this.propertiesDB.properties.add(environment, 'environment')
+  // setting properties in indexed db
+  static setPropertiesDB(value: string, key: string) {
+    this.propertiesDB.properties.add(value, key)
   }
 
   // setting logged-in user details
