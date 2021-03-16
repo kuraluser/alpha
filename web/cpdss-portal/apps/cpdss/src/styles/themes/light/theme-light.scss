@@ -1195,3 +1195,7 @@ header{
     border-bottom: 2px solid $table-border;
   }
 }
+
+.reset-btn{
+  background: url($images-theme + 'reset-icon.png');
+}

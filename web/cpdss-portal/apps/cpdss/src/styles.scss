@@ -810,6 +810,7 @@ tr{
   table-layout: auto!important;
   .p-column-filter{
     width: 100%;
+    max-width: 100px;
   }
 }
 
@@ -2200,6 +2201,19 @@ width: 50px !important;
   .tank-inner-wrapper-pattern .tank-column-pattern > div{
     .tank-btn-rounded{
       margin-left: 3px;
+    }
+  }
+}
+.reset-btn{
+  width: 15px;
+  height: 17px;
+  display: inline-block;
+  &:hover{}
+}
+tr:hover{
+  td{
+    .reset-btn{
+      background-position: bottom left;
     }
   }
 }
