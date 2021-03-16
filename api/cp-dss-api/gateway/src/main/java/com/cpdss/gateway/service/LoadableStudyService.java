@@ -4687,7 +4687,8 @@ public class LoadableStudyService {
                 cargoHistory.setLoadedDate(cargoHistoryDetail.getLoadedDate());
                 cargoHistory.setLoadedMonth(cargoHistoryDetail.getLoadedMonth());
                 cargoHistory.setApi(
-                    cargoHistoryDetail.getApi() != null
+                    (cargoHistoryDetail.getApi() != null
+                            && !cargoHistoryDetail.getApi().trim().isEmpty())
                         ? new BigDecimal(cargoHistoryDetail.getApi())
                         : new BigDecimal("0"));
                 cargoHistory.setTemperature(
