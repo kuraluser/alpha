@@ -528,18 +528,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           }
         }
         loadableQuantity.setLoadableStudyXId(loadableStudy.get());
-        List<LoadablePattern> generatedPatterns =
-            this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
-                LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
-                loadableQuantity.getLoadableStudyXId(),
-                true);
 
-        if (!generatedPatterns.isEmpty()) {
-          throw new GenericServiceException(
-              "Save not allowed for plan generated loadable study",
-              CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
-              HttpStatusCode.BAD_REQUEST);
-        }
+        this.isPatternGenerated(loadableQuantity.getLoadableStudyXId());
+
         loadableQuantity.setConstant(new BigDecimal(loadableQuantityRequest.getConstant()));
         loadableQuantity.setDeadWeight(new BigDecimal(loadableQuantityRequest.getDwt()));
         loadableQuantity.setDisplacementAtDraftRestriction(
@@ -813,6 +804,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Builder replyBuilder = LoadableStudyReply.newBuilder();
     LoadableStudy entity = null;
     try {
+
+      Voyage voyage = this.voyageRepository.findByIdAndIsActive(request.getVoyageId(), true);
+
+      if (null != voyage
+          && null != voyage.getVoyageStatus()
+          && voyage.getVoyageStatus().getId().equals(CLOSE_VOYAGE_STATUS)) {
+        throw new GenericServiceException(
+            "Save /Edit /Duplicate loadable study not allowed for closed voyage",
+            CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
       if (request.getId() != 0) {
         Optional<LoadableStudy> loadableStudy =
             this.loadableStudyRepository.findByIdAndIsActive(request.getId(), true);
@@ -824,7 +827,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
         entity = loadableStudy.get();
 
+        this.isPatternGenerated(entity);
+
       } else {
+        if (null != voyage
+            && null != voyage.getVoyageStatus()
+            && voyage.getVoyageStatus().getId().equals(ACTIVE_VOYAGE_STATUS)) {
+          throw new GenericServiceException(
+              "Save not allowed for active voyage",
+              CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+              HttpStatusCode.BAD_REQUEST);
+        }
         entity = new LoadableStudy();
       }
 
@@ -1076,15 +1089,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         cargoNomination = buildCargoNomination(cargoNomination, request);
       }
 
-      List<LoadablePattern> generatedPatterns =
-          this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
-              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudy.get(), true);
-      if (!generatedPatterns.isEmpty()) {
-        throw new GenericServiceException(
-            "Save not allowed for plan generated loadable study",
-            CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
-            HttpStatusCode.BAD_REQUEST);
-      }
+      this.isPatternGenerated(loadableStudy.get());
 
       // update port rotation table with loading ports from cargo nomination
       LoadableStudy loadableStudyRecord = loadableStudy.get();
@@ -1504,7 +1509,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       BigDecimal freshWaterOnBoard = BigDecimal.ZERO;
       BigDecimal boileWaterOnBoard = BigDecimal.ZERO;
       if (!portList.isEmpty()) {
+
         long firstPort = portList.iterator().next();
+
         List<OnHandQuantity> onHandQuantityList =
             this.onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudy.get(), true);
 
@@ -1553,7 +1560,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   .reduce(BigDecimal.ZERO, BigDecimal::add);
         }
       }
-
       VesselRequest replyBuilder =
           VesselRequest.newBuilder()
               .setVesselId(loadableStudy.get().getVesselXId())
@@ -1873,15 +1879,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         entity = portRoationOpt.get();
       }
 
-      List<LoadablePattern> generatedPatterns =
-          this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
-              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, entity.getLoadableStudy(), true);
-      if (!generatedPatterns.isEmpty()) {
-        throw new GenericServiceException(
-            "Save not allowed for plan generated loadable study",
-            CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
-            HttpStatusCode.BAD_REQUEST);
-      }
+      this.isPatternGenerated(entity.getLoadableStudy());
 
       entity =
           this.loadableStudyPortRotationRepository.save(
@@ -2202,6 +2200,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             HttpStatusCode.BAD_REQUEST);
       }
       LoadableStudy entity = entityOpt.get();
+
+      if (null != entity.getVoyage()
+          && null != entity.getVoyage().getVoyageStatus()
+          && entity.getVoyage().getVoyageStatus().getId().equals(CLOSE_VOYAGE_STATUS)) {
+        throw new GenericServiceException(
+            "Delete loadable study not allowed for closed voyage",
+            CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
+      this.isPatternGenerated(entity);
+      this.isPatternConfirmed(entity);
+
       if (null != entity.getLoadableStudyStatus()
           && LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID.equals(
               entity.getLoadableStudyStatus().getId())) {
@@ -2220,6 +2231,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setCode(e.getCode())
               .setMessage(e.getMessage())
               .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
               .build());
     } catch (Exception e) {
       log.error("Exception when saving loadable study - port data", e);
@@ -2228,6 +2240,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .setMessage("Exception when saving loadable study - port data")
               .setStatus(FAILED)
+              .setHttpStatusCode(Integer.valueOf(CommonErrorCodes.E_GEN_INTERNAL_ERR))
               .build());
     } finally {
       responseObserver.onNext(replyBuilder.build());
@@ -2637,7 +2650,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
 
       List<LoadablePattern> generatedPatterns =
-          this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+          this.loadablePatternRepository.findLoadablePatterns(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, entity.getLoadableStudy(), true);
       if (!generatedPatterns.isEmpty()) {
         throw new GenericServiceException(
@@ -3594,7 +3607,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                               commingleCargoEntity, commingleCargo, loadableStudyId);
                     }
                     List<LoadablePattern> generatedPatterns =
-                        this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+                        this.loadablePatternRepository.findLoadablePatterns(
                             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get(), true);
                     if (!generatedPatterns.isEmpty()) {
                       throw new GenericServiceException(
@@ -4660,7 +4673,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
       }
       List<LoadablePattern> generatedPatterns =
-          this.loadablePatternRepository.findPlanGeneratedLoadablePatterns(
+          this.loadablePatternRepository.findLoadablePatterns(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, entity.getLoadableStudy(), true);
 
       if (!generatedPatterns.isEmpty()) {
@@ -4777,6 +4790,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+
+      if (null != loadableStudyOpt.get().getVoyage()
+          && null != loadableStudyOpt.get().getVoyage().getVoyageStatus()
+          && loadableStudyOpt
+              .get()
+              .getVoyage()
+              .getVoyageStatus()
+              .getId()
+              .equals(CLOSE_VOYAGE_STATUS)) {
+        throw new GenericServiceException(
+            "Save not allowed for plan generated loadable study",
+            CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
       Optional<LoadablePattern> patternOpt = Optional.empty();
       if (request.getLoadablePatternId() > 0) {
         patternOpt =
@@ -4877,11 +4905,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   private void saveSynopticalOhqData(
-      LoadableStudy loadableStudy, SynopticalTable entity, SynopticalRecord record) {
+      LoadableStudy loadableStudy, SynopticalTable entity, SynopticalRecord record)
+      throws GenericServiceException {
     List<OnHandQuantity> ohqEntities =
         this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
             loadableStudy, record.getPortId(), true);
     List<OnHandQuantity> toBeSavedList = new ArrayList<>();
+
     for (SynopticalOhqRecord ohqRecord : record.getOhqList()) {
       OnHandQuantity ohqEntity = null;
       Optional<OnHandQuantity> ohqEntityOpt =
@@ -4890,7 +4920,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .findAny();
       if (ohqEntityOpt.isPresent()) {
         ohqEntity = ohqEntityOpt.get();
+
+        this.validateSaveSynopticalOhqData(ohqEntity, entity, ohqRecord, loadableStudy);
+
       } else {
+
+        this.isPatternConfirmed(loadableStudy);
+        this.isPatternGenerated(loadableStudy);
+
         ohqEntity = new OnHandQuantity();
         ohqEntity.setTankXId(ohqRecord.getTankId());
         ohqEntity.setPortXId(record.getPortId());
@@ -5012,21 +5049,33 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    *
    * @param loadableStudy
    * @param record
+   * @throws GenericServiceException
    */
-  private void saveSynopticalObqData(LoadableStudy loadableStudy, SynopticalRecord record) {
+  private void saveSynopticalObqData(LoadableStudy loadableStudy, SynopticalRecord record)
+      throws GenericServiceException {
     List<OnBoardQuantity> obqEntities =
         this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
             loadableStudy, record.getPortId(), true);
     List<OnBoardQuantity> toBeSavedList = new ArrayList<>();
+
     for (SynopticalCargoRecord cargoRecord : record.getCargoList()) {
+
       OnBoardQuantity obqEntity = null;
       Optional<OnBoardQuantity> obqEntityOpt =
           obqEntities.stream()
               .filter(obq -> obq.getTankId().equals(cargoRecord.getTankId()))
               .findAny();
       if (obqEntityOpt.isPresent()) {
+
         obqEntity = obqEntityOpt.get();
+
+        this.validateSaveSynopticalObqData(obqEntity, cargoRecord, loadableStudy);
+
       } else {
+
+        this.isPatternConfirmed(loadableStudy);
+        this.isPatternGenerated(loadableStudy);
+
         obqEntity = new OnBoardQuantity();
         obqEntity.setTankId(cargoRecord.getTankId());
         obqEntity.setPortId(record.getPortId());
@@ -5102,6 +5151,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    */
   public void saveSynopticalEtaEtdEstimates(SynopticalTable entity, SynopticalRecord record)
       throws GenericServiceException {
+
     LoadableStudyPortRotation prEntity = entity.getLoadableStudyPortRotation();
     if (null == prEntity) {
       throw new GenericServiceException(
@@ -5109,6 +5159,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+
+    Optional<LoadableStudy> loadableStudy =
+        this.loadableStudyRepository.findByIdAndIsActive(entity.getLoadableStudyXId(), true);
+    if (!loadableStudy.isPresent()) {
+      throw new GenericServiceException(
+          "Loadable study with given id does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    this.validateSaveSynopticalEtaEtdEstimates(entity, record, loadableStudy.get(), prEntity);
+
     LocalDateTime etaEtdEstimated =
         isEmpty(record.getEtaEtdEstimated())
             ? null
@@ -5128,9 +5190,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * @param entity
    * @param request
    * @return
+   * @throws GenericServiceException
    */
-  public SynopticalTable buildSynopticalTableEntity(
-      SynopticalTable entity, SynopticalRecord record) {
+  public SynopticalTable buildSynopticalTableEntity(SynopticalTable entity, SynopticalRecord record)
+      throws GenericServiceException {
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
     entity.setDistance(isEmpty(record.getDistance()) ? null : new BigDecimal(record.getDistance()));
     entity.setSpeed(isEmpty(record.getSpeed()) ? null : new BigDecimal(record.getSpeed()));
@@ -5181,8 +5244,36 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    *
    * @param entity
    * @param record
+   * @throws GenericServiceException
    */
-  private void buidlSynopticalTableVesselData(SynopticalTable entity, SynopticalRecord record) {
+  private void buidlSynopticalTableVesselData(SynopticalTable entity, SynopticalRecord record)
+      throws GenericServiceException {
+
+    Optional<LoadableStudy> loadableStudy =
+        this.loadableStudyRepository.findByIdAndIsActive(entity.getLoadableStudyXId(), true);
+    if (!loadableStudy.isPresent()) {
+      throw new GenericServiceException(
+          "Loadable study with given id does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    List<LoadablePattern> generatedPatterns =
+        this.loadablePatternRepository.findLoadablePatterns(
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudy.get(), true);
+
+    if (!generatedPatterns.isEmpty()
+        && (!entity.getOthersPlanned().toString().equals(record.getOthersPlanned())
+            || !entity.getConstantPlanned().toString().equals(record.getConstantPlanned())
+            || !entity.getDeadWeightPlanned().toString().equals(record.getTotalDwtPlanned())
+            || !entity
+                .getDisplacementPlanned()
+                .toString()
+                .equals(record.getDisplacementPlanned()))) {
+      throw new GenericServiceException(
+          "Cannot update planned values for plan generated loadable study",
+          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+          HttpStatusCode.BAD_REQUEST);
+    }
     entity.setOthersPlanned(
         isEmpty(record.getOthersPlanned()) ? null : new BigDecimal(record.getOthersPlanned()));
     entity.setOthersActual(
@@ -6934,6 +7025,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         entity.setLoadablePattern(loadablePatternOpt.get());
       }
       entity.setCreatedBy(Long.toString(request.getUser()));
+
       entity.setIsActive(true);
       entity = this.loadablePlanCommentsRepository.save(entity);
 
@@ -7695,6 +7787,112 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .ifPresent(temperature -> builder.setTemperature(String.valueOf(temperature)));
             replyBuilder.addCargoHistory(builder);
           });
+    }
+  }
+
+  private void isPatternGenerated(LoadableStudy loadableStudy) throws GenericServiceException {
+    List<LoadablePattern> generatedPatterns =
+        this.loadablePatternRepository.findLoadablePatterns(
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudy, true);
+
+    if (!generatedPatterns.isEmpty()) {
+      throw new GenericServiceException(
+          "Save not allowed for plan generated loadable study",
+          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  private void isPatternConfirmed(LoadableStudy loadableStudy) throws GenericServiceException {
+    List<LoadablePattern> confirmedPatterns =
+        this.loadablePatternRepository.findLoadablePatterns(
+            CONFIRMED_STATUS_ID, loadableStudy, true);
+
+    if (!confirmedPatterns.isEmpty()) {
+      throw new GenericServiceException(
+          "Save not allowed for plan confirmed loadable study",
+          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  private void validateSaveSynopticalOhqData(
+      OnHandQuantity ohqEntity,
+      SynopticalTable entity,
+      SynopticalOhqRecord ohqRecord,
+      LoadableStudy loadableStudy)
+      throws GenericServiceException {
+
+    List<LoadablePattern> generatedPatterns =
+        this.loadablePatternRepository.findLoadablePatterns(
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudy, true);
+
+    List<LoadablePattern> confirmedPatterns =
+        this.loadablePatternRepository.findLoadablePatterns(
+            CONFIRMED_STATUS_ID, loadableStudy, true);
+
+    if ((!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty())
+        && ((SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())
+                && ohqEntity.getArrivalQuantity().toString().equals(ohqRecord.getPlannedWeight()))
+            || (SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE.equals(entity.getOperationType())
+                && ohqEntity
+                    .getDepartureQuantity()
+                    .toString()
+                    .equals(ohqRecord.getPlannedWeight())))) {
+
+      throw new GenericServiceException(
+          "Cannot update planned values for plan generated loadable study",
+          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  private void validateSaveSynopticalObqData(
+      OnBoardQuantity obqEntity, SynopticalCargoRecord cargoRecord, LoadableStudy loadableStudy)
+      throws GenericServiceException {
+
+    List<LoadablePattern> generatedPatterns =
+        this.loadablePatternRepository.findLoadablePatterns(
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudy, true);
+
+    List<LoadablePattern> confirmedPatterns =
+        this.loadablePatternRepository.findLoadablePatterns(
+            CONFIRMED_STATUS_ID, loadableStudy, true);
+
+    if ((!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty())
+        && !cargoRecord.getPlannedWeight().equals(obqEntity.getPlannedArrivalWeight().toString())) {
+      throw new GenericServiceException(
+          "Cannot update planned values for plan generated loadable study",
+          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  private void validateSaveSynopticalEtaEtdEstimates(
+      SynopticalTable entity,
+      SynopticalRecord record,
+      LoadableStudy loadableStudy,
+      LoadableStudyPortRotation prEntity)
+      throws GenericServiceException {
+
+    List<LoadablePattern> generatedPatterns =
+        this.loadablePatternRepository.findLoadablePatterns(
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudy, true);
+
+    List<LoadablePattern> confirmedPatterns =
+        this.loadablePatternRepository.findLoadablePatterns(
+            CONFIRMED_STATUS_ID, loadableStudy, true);
+
+    if ((!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty())
+        && ((SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())
+                && prEntity.getEta().toString().equals(record.getEtaEtdEstimated()))
+            || (SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE.equals(entity.getOperationType())
+                && prEntity.getEtd().toString().equals(record.getEtaEtdEstimated())))) {
+
+      throw new GenericServiceException(
+          "Cannot update planned values for plan generated loadable study",
+          CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
+          HttpStatusCode.BAD_REQUEST);
     }
   }
 }

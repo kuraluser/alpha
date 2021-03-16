@@ -1297,7 +1297,8 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to delete loadable study",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
     response.setResponseStatus(
@@ -3841,6 +3842,7 @@ private StabilityParameter buildStabilityParamter(com.cpdss.gateway.domain.Stabi
     if (usersEntity != null) {
       request.setUser(usersEntity.getId());
     }
+
     builder.setUser(request.getUser());
     SaveCommentReply reply = this.saveComment(builder.build());
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {

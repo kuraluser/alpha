@@ -52,6 +52,6 @@ public interface LoadablePatternRepository extends CommonCrudRepository<Loadable
 
   @Query(
       "FROM LoadablePattern where loadableStudy.loadableStudyStatus.id = ?1 and loadableStudy=?2  and isActive = ?3")
-  public List<LoadablePattern> findPlanGeneratedLoadablePatterns(
+  public List<LoadablePattern> findLoadablePatterns(
       Long loadableStudyStatusId, LoadableStudy loadableStudy, boolean isActive);
 }
