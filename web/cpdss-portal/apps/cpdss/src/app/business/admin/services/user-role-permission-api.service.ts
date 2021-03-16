@@ -18,8 +18,8 @@ import { CommonApiService } from '../../../shared/services/common/common-api.ser
 })
 export class UserRolePermissionApiService {
 
-public page: number = 0;
-public pageSize: number = 10;
+public page = 0;
+public pageSize = 10;
 /**
 * 
 * Api Service for User Role
@@ -49,7 +49,7 @@ public pageSize: number = 10;
   * @memberof UserRolePermissionApiService
   */
  getRoleDetails(params: IDataStateChange): Observable<IRoleResponse> {
-  let opts = `${params.name ?  'name='+params.name : ''}${params.desc ?  '&description='+params.desc : ''}&orderBy=${params.orderBy ?  params.orderBy : ''}&page=${params.page ?  params.page : this.page}&pageSize=${params.pageSize ?  params.pageSize : this.pageSize}&sortBy=${params.sortBy ?  params.sortBy : ''}`
+  const opts = `${params.name ?  'name='+params.name : ''}${params.desc ?  '&description='+params.desc : ''}&orderBy=${params.orderBy ?  params.orderBy : ''}&page=${params.page ?  params.page : this.page}&pageSize=${params.pageSize ?  params.pageSize : this.pageSize}&sortBy=${params.sortBy ?  params.sortBy : ''}`
   return this.commonApiService.get<IRoleResponse>(`roles?${opts}`);
  }
 

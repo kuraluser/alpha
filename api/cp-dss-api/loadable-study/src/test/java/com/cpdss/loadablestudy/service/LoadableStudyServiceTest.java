@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.TestUtils.createDummyObject;
@@ -113,6 +113,7 @@ import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.entity.VoyageHistory;
 import com.cpdss.loadablestudy.entity.VoyageStatus;
+import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
@@ -239,6 +240,7 @@ class LoadableStudyServiceTest {
   @MockBean private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
   @MockBean private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
   @MockBean private VoyageStatusRepository voyageStatusRepository;
+  @MockBean private ApiTempHistoryRepository apiTempHistoryRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String VOYAGE = "VOYAGE";
@@ -1358,6 +1360,26 @@ class LoadableStudyServiceTest {
   void testDeleteLoadableStudyInvalidLoadableStudy() {
     LoadableStudy entity = new LoadableStudy();
     when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.empty());
+    StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
+    LoadableStudyRequest request = LoadableStudyRequest.newBuilder().setLoadableStudyId(1L).build();
+    this.loadableStudyService.deleteLoadableStudy(request, responseObserver);
+    List<LoadableStudyReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testDeleteLoadableStudyPatternGeneratedCase() {
+    LoadableStudy entity = new LoadableStudy();
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+    when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
+    LoadablePattern pattern = new LoadablePattern();
+    pattern.setId(1L);
+    List<LoadablePattern> patternList = new ArrayList<LoadablePattern>();
+    patternList.add(pattern);
+    when(this.loadablePatternRepository.findLoadablePatterns(anyLong(), any(), anyBoolean()))
+        .thenReturn(patternList);
     StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
     LoadableStudyRequest request = LoadableStudyRequest.newBuilder().setLoadableStudyId(1L).build();
     this.loadableStudyService.deleteLoadableStudy(request, responseObserver);

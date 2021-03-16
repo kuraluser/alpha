@@ -44,7 +44,6 @@ import { PermissionDirectiveModule } from '../../shared/directives/permission/pe
   ],
   providers: [
     LoadableStudyListApiService,
-    // SynopticalService,
     SynopticalApiService
   ]
 })

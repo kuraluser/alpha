@@ -11,10 +11,10 @@ export function portEtaEtdValidator(index): ValidatorFn {
             const date = new Date(control.value);
             let minDate: Date, maxDate: Date, errors = null;
             if (index > 0) {
-                minDate = portsData[index - 1].date
+                minDate = new Date(portsData[index - 1].date)
             }
             if (index < portsData.length - 1) {
-                maxDate = portsData[index + 1].date
+                maxDate = new Date(portsData[index + 1].date)
             }
             if (minDate) {
                 minDate.setHours(0, 0, 0, 0);

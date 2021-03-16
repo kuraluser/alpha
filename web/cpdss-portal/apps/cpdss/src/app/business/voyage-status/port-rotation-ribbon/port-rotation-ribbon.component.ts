@@ -6,7 +6,7 @@ import { EditPortRotationApiService } from '../services/edit-port-rotation-api.s
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { IEditPortRotation } from '../models/edit-port-rotation.model';
-import { IPortsDetailsResponse } from '../../core/models/common.model';
+import { IPortsDetailsResponse, VOYAGE_STATUS } from '../../core/models/common.model';
 import { Voyage } from '../../core/models/common.model';
 import { Subscription } from 'rxjs';
 import { OnDestroy } from '@angular/core';
@@ -51,6 +51,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   errorMesages: any;
   portOrderSubscription$: Subscription;
   responsiveOptions: { breakpoint: string; numVisible: number; numScroll: number; }[];
+  VOYAGE_STATUS = VOYAGE_STATUS;
 
   // private fields
   private _voyageDetails: Voyage;
@@ -124,18 +125,11 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       ports.isSelected = false;
       port.isFocused = false;
     });
-
     port.isSelected = true;
     port.isFocused = true;
-    if (port?.eta) {
-      if (port?.etaActual) {
-        port.isFutureDate = false;
-      }
-      else {
-        port.isFutureDate = true;
-      }
-    }
-    else {
+    if ((port.type === 'Arrival' && port.etaActual) || (port.type === 'Departure' && port.etdActual)) {
+      port.isFutureDate = false;
+    } else {
       port.isFutureDate = true;
     }
   }
@@ -145,18 +139,20 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * @param field 
    */
   editPort(event, port: IEditPortRotation, field: string) {
-    const form = this.row(this.portList.indexOf(port));
-    this.setInvalid(port, form)
-    if (port.isFutureDate === true) {
-      if (field === 'date') {
-        port.isDateEditable = true;
-      } else if (field === 'time') {
-        port.isTimeEditable = true;
-      } else if (field === 'distance') {
-        port.isDistanceEditable = true;
+    if(this.voyageDetails?.statusId !== VOYAGE_STATUS.CLOSE) {
+      const form = this.row(this.portList.indexOf(port));
+      this.setInvalid(port, form)
+      if (port.isFutureDate === true) {
+        if (field === 'date') {
+          port.isDateEditable = true;
+        } else if (field === 'time') {
+          port.isTimeEditable = true;
+        } else if (field === 'distance') {
+          port.isDistanceEditable = true;
+        }
       }
+      form.markAllAsTouched();
     }
-    form.markAllAsTouched()
   }
 
   /**
@@ -164,18 +160,14 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   */
   currentPosition() {
     let currentPort = 0;
-    for(let index=0; index < this.portList.length; index++){
-        const port = this.portList[index]
-        if (!port.etaActual) {
-          currentPort = index - 1;
-          break;
-        }
+    for (let index = 0; index < this.portList.length; index++) {
+      const port = this.portList[index]
+      if ((port.type === 'Arrival' && port.etaActual) || (port.type === 'Departure' && port.etdActual)) {
+        currentPort = index;
+      }
     }
     if (currentPort < 0) {
       currentPort = 0;
-    }
-    if (currentPort % 2 === 0){
-      currentPort += 1
     }
     this.portList[currentPort].currentPort = true;
   }
@@ -390,6 +382,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       "operationType": this.portList[0].type === 'Arrival' ? "ARR" : "DEP",
       "portId": this.portList[0].portId
     }
+    this.portList[0].isFocused = true;
+    this.portList[0].isSelected = true;
     this.portDetails.emit(portDetails);
   }
 
@@ -423,7 +417,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       return dayString + '-' + monthString + '-' + date.getFullYear();
     }
   }
-  
+
   /**
    * Method called when focusing out of the input
    * @param event 
@@ -476,15 +470,17 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   resetPreviousPort(index: number) {
     if (this.selectedPortIndex >= 0 && this.selectedPortIndex !== index) {
       const port = this.portList[this.selectedPortIndex];
-      const form = this.row(this.selectedPortIndex)
-      const date = this.convertToDate(port.type === "Arrival" ? port?.eta : port?.etd);
-      const dateActual = this.convertToDate(port.type === "Arrival" ? port?.etaActual : port?.etdActual);
-      form.controls.date.setValue(dateActual ? dateActual : date)
-      form.controls.time.setValue(dateActual ? dateActual : date)
-      form.controls.distance.setValue(port?.distanceBetweenPorts ? port?.distanceBetweenPorts : 0)
-      port.isDateEditable = false;
-      port.isDistanceEditable = false;
-      port.isTimeEditable = false;
+      if (port !== undefined) {
+        const form = this.row(this.selectedPortIndex)
+        const date = this.convertToDate(port.type === "Arrival" ? port?.eta : port?.etd);
+        const dateActual = this.convertToDate(port.type === "Arrival" ? port?.etaActual : port?.etdActual);
+        form.controls.date.setValue(dateActual ? dateActual : date)
+        form.controls.time.setValue(dateActual ? dateActual : date)
+        form.controls.distance.setValue(port?.distanceBetweenPorts ? port?.distanceBetweenPorts : 0)
+        port.isDateEditable = false;
+        port.isDistanceEditable = false;
+        port.isTimeEditable = false;
+      }
     }
     this.selectedPortIndex = index;
   }

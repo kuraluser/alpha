@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.companyinfo.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;

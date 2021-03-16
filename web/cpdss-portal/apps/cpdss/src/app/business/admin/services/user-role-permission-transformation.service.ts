@@ -29,14 +29,14 @@ export class UserRolePermissionTransformationService {
     return [
       {
         field: 'slNo',
-        header: 'OBQ_SL',
+        header: 'USER_ROLE_SL',
         fieldType: DATATABLE_FIELD_TYPE.SLNO,
         fieldHeaderClass: 'column-sl',
         fieldClass: 'sl'
       },
       {
         field: 'name',
-        header: 'ROLE NAME',
+        header: 'USER_ROLE_NAME_HEADING',
         filter: true,
         filterPlaceholder: 'SEARCH_ROLE_NAME',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
@@ -48,7 +48,7 @@ export class UserRolePermissionTransformationService {
       },
       {
         field: 'description',
-        header: 'DESCRIPTION',
+        header: 'USER_DESCRIPTION_HEADING',
         filter: true,
         filterPlaceholder: 'SEARCH_ROLE_DESCRIPTION',
         filterType: DATATABLE_FILTER_TYPE.TEXT,

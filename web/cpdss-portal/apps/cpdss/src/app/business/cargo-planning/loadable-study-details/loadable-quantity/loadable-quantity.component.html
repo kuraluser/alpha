@@ -21,7 +21,7 @@
                             <p-dropdown #dd id="loadable_quantity_port_dropdown" styleClass="form-control" [filter]="true"
                                 [options]="ports" formControlName="portName" optionLabel="name" (click)="clearFilter(dd)"
                                 placeholder="{{ 'LOADABLE_QUANTITY_SELECT_PORT_NAME'  | translate }}"
-                                [readonly]="isEditable">
+                                [readonly]="!isEditable">
                             </p-dropdown>
                         </div>
                         <div class="col error-column">
@@ -82,7 +82,7 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
                                 id="loadable_quantity_sea_water_density" formControlName="estSeaDensity"
-                                (change)="getSgCorrectionOnChange()" [readonly]="isEditable">
+                                (change)="getSgCorrectionOnChange()" [readonly]="!isEditable">
                         </div>
                         <div class="col unit-column">{{'SEA_WATER_DENSITY' | translate }}</div>
                         <div class="col error-column text-center">
@@ -109,7 +109,7 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false"
                                 id="loadable_quantity_estimate_sag" class="form-control" formControlName="estimateSag"
-                                (change)="getSagCorrectionOnChange()" [readonly]="isEditable">
+                                (change)="getSagCorrectionOnChange()" [readonly]="!isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_CM' | translate }}</div>
                         <div class="col error-column text-center">
@@ -136,7 +136,7 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false"
                                 id="loadable_quantity_fo_onboard" class="form-control" formControlName="foOnboard"
-                                (change)="getSubTotal()" [readonly]="isEditable">
+                                (change)="getSubTotal()" [readonly]="!isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -150,7 +150,7 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false"
                                 id="loadable_quantity_do_onboard" class="form-control" formControlName="doOnboard"
-                                (change)="getSubTotal()" [readonly]="isEditable">
+                                (change)="getSubTotal()" [readonly]="!isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -165,7 +165,7 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
                                 id="loadable_quantity_fresh_water_onboard" formControlName="freshWaterOnboard"
-                                (change)="getSubTotal()" [readonly]="isEditable">
+                                (change)="getSubTotal()" [readonly]="!isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -179,7 +179,7 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
                                 id="loadable_quantity_boiler_water_onboard" formControlName="boilerWaterOnboard"
-                                (change)="getSubTotal()" [readonly]="isEditable">
+                                (change)="getSubTotal()" [readonly]="!isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -193,7 +193,7 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false"
                                 id="loadable_quantity_ballast" class="form-control" formControlName="ballast"
-                                (change)="getSubTotal()" [readonly]="isEditable">
+                                (change)="getSubTotal()" [readonly]="!isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -217,7 +217,7 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false" id="loadable_quantity_others"
                                 class="form-control" formControlName="others" (change)="getSubTotal()"
-                                [readonly]="isEditable">
+                                [readonly]="!isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column">
@@ -273,7 +273,7 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
                                 id="loadable_quantity_dist_in_summery" formControlName="distanceInSummerzone"
-                                (change)="getRunningHours()" [readonly]="isEditable">
+                                (change)="getRunningHours()" [readonly]="!isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MILES' | translate }}</div>
                         <div class="col error-column text-center">
@@ -288,7 +288,7 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false"
                                 id="loadable_quantity_speed_in_sz" class="form-control" formControlName="speedInSz"
-                                (change)="getRunningHours()" [readonly]="isEditable">
+                                (change)="getRunningHours()" [readonly]="!isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_KNOTS' | translate }}</div>
                         <div class="col error-column text-center">
@@ -330,7 +330,7 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false"
                                 id="loadable_quantity_fo_con_day" class="form-control" formControlName="foConday"
-                                (change)="getFoConsumptionInSz()" [readonly]="isEditable">
+                                (change)="getFoConsumptionInSz()" [readonly]="!isEditable">
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT/DAY' | translate }}</div>
                         <div class="col error-column">
@@ -390,8 +390,10 @@
             <button class="btn btn-main mr-10" id="lodable_quantity_cancel"
                 (click)="cancel()">{{'LOADABLE_QUANTITY_CANCEL' | translate}}
             </button>
-            <button class="btn btn-main" type="submit" id="lodable_quantity_submit" form="fg_loadableQunatity"
+            <ng-container *ngIf="isEditable">
+                <button class="btn btn-main" type="submit" id="lodable_quantity_submit" form="fg_loadableQunatity"
                 *cpdssPortalPermission="loadableQuantityBtnPermissionContext">{{ buttonLabel | translate}}</button>
+            </ng-container>
         </div>
     </p-footer>
 </p-dialog>

@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadicatorintegration.service;
 
 import com.cpdss.common.generated.Common.ResponseStatus;

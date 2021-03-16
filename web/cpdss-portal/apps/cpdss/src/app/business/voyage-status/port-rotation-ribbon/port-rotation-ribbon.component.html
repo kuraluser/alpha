@@ -4,7 +4,6 @@
             <ng-template let-port pTemplate="item">
                 <div class="container-fluid " formGroupName="{{portList.indexOf(port)}}">
                     <div class="row">
-
                         <div class="col carousel-card mr-15 pt-10 pb-10" (click)="onClickPort(port)" tabIndex="{{portList.indexOf(port)}}" id="{{portList.indexOf(port)}}"
                             style="cursor: pointer;" [ngClass]="{'active': port?.isSelected}">
 
@@ -16,7 +15,7 @@
                                     <div class="card-border"></div>
                                 </div>
                                 <div class="mr-10" *ngIf="port.type !== 'Arrival'" (click)="editPort($event, port, 'distance')">
-                                    <div class="distance-port" *ngIf="!port?.isDistanceEditable">
+                                    <div class="distance-port" *ngIf="!port?.isDistanceEditable" [hidden]="portList.indexOf(port) === (portList?.length -1)">
                                         <div *ngIf="port?.currentPort" class="ship-location"></div>
                                         {{getControlLabel(port,'distance')}}
                                         {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
@@ -32,7 +31,7 @@
                                     </div>
                                 </div>
 
-                                <div class="pr-15 ml-auto" *ngIf="port.isFutureDate"> <a type="button"
+                                <div class="pr-15 ml-auto" *ngIf="voyageDetails?.statusId !== VOYAGE_STATUS.CLOSE && port.isFutureDate"> <a type="button"
                                         class="delete-icon "
                                         id="port_rotation_ribbon_delete__{{portList.indexOf(port)}}"
                                         (click)="deleteRow(port)"></a></div>
@@ -115,7 +114,7 @@
 
                             </div>
                             <div class="row mt-5">
-                                <a class="text-secondary btn btn-main btn-xs m-auto" *ngIf="port?.isFutureDate && port?.isFocused"
+                                <a class="text-secondary btn btn-main btn-xs m-auto" *ngIf="voyageDetails?.statusId !== VOYAGE_STATUS.CLOSE && port?.isFutureDate && port?.isFocused"
                                     id="port_rotation_ribbon_save__{{portList.indexOf(port)}}"
                                     (click)="save(port)">Save</a>
                             </div>

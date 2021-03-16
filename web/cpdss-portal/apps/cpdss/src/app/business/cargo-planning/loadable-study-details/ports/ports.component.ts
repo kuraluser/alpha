@@ -12,10 +12,11 @@ import { IPermission } from '../../../../shared/models/user-profile.model';
 import { portDateRangeValidator } from '../../directives/validator/port-daterange-validator.directive';
 import { portDateCompareValidator } from '../../directives/validator/port-date-compare-validator.directive';
 import { portDuplicationValidator } from '../../directives/validator/port-duplication-validator.directive';
-import { IPortList, IPortsDetailsResponse } from '../../../core/models/common.model';
+import { IPortList, IPortsDetailsResponse, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { portEtaEtdValidator } from '../../directives/validator/port-eta-etd-validator.directive'
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { LoadableStudy } from '../../models/loadable-study-list.model';
 
 
 /**
@@ -33,6 +34,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class PortsComponent implements OnInit {
 
   @Input() voyageId: number;
+  @Input() voyage: Voyage;
   @Input() loadableStudyId: number;
   @Input() vesselId: number;
   @Input() permission: IPermission;
@@ -52,8 +54,17 @@ export class PortsComponent implements OnInit {
     this.updatePortOrder();
   }
 
+  @Input()
+  get loadableStudy() {
+    return this._loadableStudy;
+  }
+  set loadableStudy(value: LoadableStudy) {
+    this._loadableStudy = value;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) ? DATATABLE_EDITMODE.CELL : null;
+  }
+
   // public fields
-  readonly editMode = DATATABLE_EDITMODE.CELL;
+  editMode: DATATABLE_EDITMODE;
   OPERATIONS: OPERATIONS;
   portsForm: FormGroup;
   columns: IDataTableColumn[];
@@ -66,6 +77,7 @@ export class PortsComponent implements OnInit {
 
   // private fields
   private _portsLists: IPortsValueObject[];
+  private _loadableStudy: LoadableStudy;
 
 
   constructor(private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
@@ -77,7 +89,7 @@ export class PortsComponent implements OnInit {
     private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns(this.permission);
+    this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns(this.permission, this.loadableStudy?.statusId, this.voyage?.statusId);
     this.initSubscriptions();
     this.getPortDetails();
   }
@@ -194,10 +206,10 @@ export class PortsComponent implements OnInit {
     const layCanArray = [];
     const layCanFrom = this.convertToDate(ports.layCan.value?.split('to')[0]?.trim());
     const layCanTo = this.convertToDate(ports.layCan.value?.split('to')[1]?.trim());
-if(layCanFrom && layCanTo){
-  layCanArray.push(layCanFrom)
-  layCanArray.push(layCanTo)
-}
+    if (layCanFrom && layCanTo) {
+      layCanArray.push(layCanFrom)
+      layCanArray.push(layCanTo)
+    }
     return this.fb.group({
       port: this.fb.control(ports.port.value, [Validators.required, portDuplicationValidator('port')]),
       portOrder: this.fb.control(ports.portOrder),
@@ -299,10 +311,10 @@ if(layCanFrom && layCanTo){
       this.updateField(event.index, 'portcode', event.data.port.value.code);
       this.portsLists[valueIndex]['maxDraft'].value = event.data.port.value.maxDraft;
       this.updateField(event.index, 'maxDraft', event.data.port.value.maxDraft);
-      this.updateValidityAndEditMode(event.index,'maxDraft')
+      this.updateValidityAndEditMode(event.index, 'maxDraft')
       this.portsLists[valueIndex]['maxAirDraft'].value = event.data.port.value.maxAirDraft;
       this.updateField(event.index, 'maxAirDraft', event.data.port.value.maxAirDraft);
-      this.updateValidityAndEditMode(event.index,'maxAirDraft')
+      this.updateValidityAndEditMode(event.index, 'maxAirDraft')
       this.portsLists[valueIndex]['seaWaterDensity'].value = event.data.port.value.waterDensity;
       this.updateField(event.index, 'seaWaterDensity', event.data.port.value.waterDensity);
       this.updateField(event.index, 'portOrder', this.portOrder);
@@ -512,21 +524,25 @@ if(layCanFrom && layCanTo){
  */
   async onRowReorder(event) {
     this.ngxSpinnerService.show();
-    for (let i = 0; i < this.portsLists.length; i++) {
-      const form = this.row(i);
-      this.portsLists[i].portOrder = i + 1;
-      this.portsLists[i].slNo = i + 1;
-      await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[i]), this.vesselId, this.voyageId, this.loadableStudyId);
+    if (this.portsLists[event.dragIndex]?.id !== 0 && this.portsLists[event.dropIndex]?.id !== 0) {
+      for (let i = 0; i < this.portsLists.length; i++) {
+        const form = this.row(i);
+        this.portsLists[i].portOrder = i + 1;
+        this.portsLists[i].slNo = i + 1;
+        if (this.portsLists[i].id !== 0) {
+          await this.loadableStudyDetailsApiService.setPort(this.loadableStudyDetailsTransformationService.getPortAsValue(this.portsLists[i]), this.vesselId, this.voyageId, this.loadableStudyId);
+        }
+      }
+      const portListArray = this.portsLists.map((ports, index) =>
+        this.initPortsFormGroup(ports, index)
+      );
+      this.portsForm = this.fb.group({
+        dataTable: this.fb.array([...portListArray])
+      });
+      setTimeout(() => {
+        this.updateFormValidity(portListArray)
+      }, 500);
     }
-    const portListArray = this.portsLists.map((ports, index) =>
-      this.initPortsFormGroup(ports, index)
-    );
-    this.portsForm = this.fb.group({
-      dataTable: this.fb.array([...portListArray])
-    });
-    setTimeout(() => {
-      this.updateFormValidity(portListArray)
-    }, 500);
     this.ngxSpinnerService.hide();
   }
 

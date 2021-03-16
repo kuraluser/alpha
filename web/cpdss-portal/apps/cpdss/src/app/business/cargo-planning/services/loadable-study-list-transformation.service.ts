@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
+import { IPermission } from '../../../shared/models/user-profile.model';
+import { VOYAGE_STATUS } from '../../core/models/common.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +13,8 @@ export class LoadableStudyListTransformationService {
   /**
 *  loadable study details transformation service
 */
-  getLoadableStudyListDatatableColumns(): IDataTableColumn[] {
-    return [
+  getLoadableStudyListDatatableColumns(permission: IPermission, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
+    let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
         header: 'SL',
@@ -64,14 +66,24 @@ export class LoadableStudyListTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.EQUALS,
         filterField: 'createdDate',
         filterFieldMaxvalue: new Date()
-      },
-      {
+      }
+    ];
+    
+    if(permission && [VOYAGE_STATUS.CLOSE, VOYAGE_STATUS.ACTIVE].includes(voyageStatusId)) {
+      const actions: DATATABLE_ACTION[] = [];
+      if(permission?.edit) {
+        actions.push(DATATABLE_ACTION.EDIT);
+      }
+      const action: IDataTableColumn = {
         field: 'actions',
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.ACTION,
         fieldValueIcon: '##',
-        actions: [DATATABLE_ACTION.EDIT]
-      }
-    ]
+        actions: actions
+      };
+      columns = [...columns, action];
+    }
+
+    return columns;
   }
 }

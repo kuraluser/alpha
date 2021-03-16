@@ -9,5 +9,6 @@ export interface IAppConfiguration {
     baseUnit: QUANTITY_UNIT;
     volumeBaseUnit: QUANTITY_UNIT;
     permissionMapping?: IDictionary<string>;
+    passwordMinLength?: number;
 }
 

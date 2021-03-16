@@ -293,6 +293,17 @@ message LoadablePlanDetails {
 	int32 caseNumber = 1;
 	repeated LoadablePlanPortWiseDetails loadablePlanPortWiseDetails = 2;
 	repeated string constraints = 3;
+	StabilityParameter stabilityParameters = 4;
+}
+
+message StabilityParameter {
+	string forwardDraft = 1;
+	string meanDraft = 2;
+	string afterDraft = 3;
+	string trim = 4;
+	string heel = 5;
+	string bendinMoment = 6;
+	string shearForce = 7;
 }
 
 message LoadablePlanPortWiseDetails {
@@ -392,6 +403,7 @@ message LoadableQuantityCommingleCargoDetails {
 	 string orderedMT = 21;
 	 int32 priority = 22;
 	 int32 loadingOrder = 23;
+	 int64 tankId = 24;
 }
 
 message LoadableQuantityCargoDetails {
@@ -491,6 +503,7 @@ message VoyageDetail{
 	string actualStartDate = 11;
 	string actualEndDate = 12;
 	int64 statusId = 13;
+	int64 noOfDays = 14;
 }
 
 message VoyageListReply{
@@ -813,6 +826,8 @@ message LoadablePattern {
 	int64 loadableStudyStatusId = 4;
 	int32 caseNumber = 5;
 	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 6;
+	StabilityParameter stabilityParameters = 7;	
+	repeated int64 commingleTankIds = 8;
 }
 
 message LoadablePatternCargoDetails {
@@ -825,6 +840,7 @@ message LoadablePatternCargoDetails {
  	int64 loadablePatternCommingleDetailsId = 7;
  	int32 loadingOrder = 8;
  	string api = 9;
+ 	string tankName = 10;
 }
 
 message LoadablePatternRequest {

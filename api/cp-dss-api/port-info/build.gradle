@@ -1,10 +1,34 @@
+//Environment variables
+ext{
+  dbHost = System.getenv('DB_HOST') ?: ""
+  dbName = System.getenv('DB_NAME') ?: ""
+  dbUser = System.getenv('DB_USER') ?: ""
+  dbPassword = System.getenv('DB_PASSWORD') ?: ""
+  grpcPort = System.getenv('GRPC_PORT') ?: ""
+}
+
 appConfig {
+  appName = 'port-info'
   grpcServer = 'y'
   persistence = 'springData'
   dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
-  javaMainClass = "com.cpdss.portinfoapi.Application"
+  docker {
+    imageName = 'cpdss-port-info'
+    containerName = 'port-info-container'
+    networkName = 'cpdss-network'
+    swarm {
+      serviceName = 'port-info-service'
+      swarmMode = REPLICATED_MODE
+      replicas = 1
+      rollbackOnUpdateFailure = true
+      memoryLimitInMB = 500
+      memoryReservationInMB = 400
+    }
+    environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword]
+  }
+  javaMainClass = "com.cpdss.portinfo.Application"
 }
 
 dependencies {
