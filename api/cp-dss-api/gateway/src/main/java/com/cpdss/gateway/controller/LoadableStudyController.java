@@ -1157,7 +1157,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-    	log.info("updateLoadableStudyStatus with process id - " , request.getProcessId());
+      log.info("updateLoadableStudyStatus with process id - ", request.getProcessId());
       return this.loadableStudyService.saveAlgoLoadableStudyStatus(
           request, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
@@ -1376,8 +1376,7 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-    	 log.info(
-    	          "getLoadableStudyStatus with process id " , loadablePlanRequest.getProcessId());
+      log.info("getLoadableStudyStatus with process id ", loadablePlanRequest.getProcessId());
       return this.loadableStudyService.getLoadableStudyStatus(
           loadableStudyId,
           loadablePlanRequest.getProcessId(),

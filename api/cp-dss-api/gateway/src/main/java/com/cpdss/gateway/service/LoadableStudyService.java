@@ -63,9 +63,9 @@ import com.cpdss.common.generated.LoadableStudy.RecalculateVolumeRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest;
-import com.cpdss.common.generated.LoadableStudy.StabilityParameter;
 import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply;
 import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest;
+import com.cpdss.common.generated.LoadableStudy.StabilityParameter;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
@@ -1187,9 +1187,8 @@ public class LoadableStudyService {
       voyage.setEndDate(detail.getEndDate());
       voyage.setStatus(detail.getStatus());
       voyage.setStatusId(detail.getStatusId());
-     // voyage.setNoOfDays(detail.getNoOfDays());
-      voyage.setNoOfDays(
-              detail.getNoOfDays() != 0 ? detail.getNoOfDays() : null);
+      // voyage.setNoOfDays(detail.getNoOfDays());
+      voyage.setNoOfDays(detail.getNoOfDays() != 0 ? detail.getNoOfDays() : null);
       voyage.setConfirmedLoadableStudyId(
           detail.getConfirmedLoadableStudyId() != 0 ? detail.getConfirmedLoadableStudyId() : null);
       response.getVoyages().add(voyage);
@@ -1438,7 +1437,8 @@ public class LoadableStudyService {
               LoadablePattern loadablePatternDto = new LoadablePattern();
               loadablePatternDto.setLoadablePatternId(loadablePattern.getLoadablePatternId());
               loadablePatternDto.setConstraints(buildLoadableStudyConstraints(loadablePattern));
-              loadablePatternDto.setStabilityParameters(buildStabilityParameter(loadablePattern.getStabilityParameters()));
+              loadablePatternDto.setStabilityParameters(
+                  buildStabilityParameter(loadablePattern.getStabilityParameters()));
               loadablePatternDto.setLoadableStudyStatusId(
                   loadablePattern.getLoadableStudyStatusId());
               loadablePatternDto.setLoadablePatternCargoDetails(
@@ -1477,11 +1477,11 @@ public class LoadableStudyService {
                         Optional.ofNullable(loadablePatternCargoDetail.getIsCommingle())
                             .ifPresent(
                                 commingle -> loadablePatternCargoDetails.setIsCommingle(commingle));
-                        
+
                         Optional.ofNullable(loadablePatternCargoDetail.getTankName())
-                        .ifPresent(
-                            tankName -> loadablePatternCargoDetails.setTankName(tankName));
-                        
+                            .ifPresent(
+                                tankName -> loadablePatternCargoDetails.setTankName(tankName));
+
                         Optional.ofNullable(
                                 loadablePatternCargoDetail.getLoadablePatternCommingleDetailsId())
                             .ifPresent(
@@ -1513,25 +1513,25 @@ public class LoadableStudyService {
   }
 
   /**
- * @param stabilityParams
- * @return
- * com.cpdss.gateway.domain.StabilityParameter
- */
-private com.cpdss.gateway.domain.StabilityParameter buildStabilityParameter(
-		StabilityParameter stabilityParams) {
-	log.info("builidng stability parameter to pass in API response");
-	com.cpdss.gateway.domain.StabilityParameter stabilityParameter = new com.cpdss.gateway.domain.StabilityParameter();
-	stabilityParameter.setAfterDraft(stabilityParams.getAfterDraft());
-	stabilityParameter.setBendinMoment(stabilityParams.getBendinMoment());
-	stabilityParameter.setForwardDraft(stabilityParams.getForwardDraft());
-	stabilityParameter.setHeel(stabilityParams.getHeel());
-	stabilityParameter.setMeanDraft(stabilityParams.getMeanDraft());
-	stabilityParameter.setShearForce(stabilityParams.getShearForce());
-	stabilityParameter.setTrim(stabilityParams.getTrim());
-	return stabilityParameter;
-}
+   * @param stabilityParams
+   * @return com.cpdss.gateway.domain.StabilityParameter
+   */
+  private com.cpdss.gateway.domain.StabilityParameter buildStabilityParameter(
+      StabilityParameter stabilityParams) {
+    log.info("builidng stability parameter to pass in API response");
+    com.cpdss.gateway.domain.StabilityParameter stabilityParameter =
+        new com.cpdss.gateway.domain.StabilityParameter();
+    stabilityParameter.setAfterDraft(stabilityParams.getAfterDraft());
+    stabilityParameter.setBendinMoment(stabilityParams.getBendinMoment());
+    stabilityParameter.setForwardDraft(stabilityParams.getForwardDraft());
+    stabilityParameter.setHeel(stabilityParams.getHeel());
+    stabilityParameter.setMeanDraft(stabilityParams.getMeanDraft());
+    stabilityParameter.setShearForce(stabilityParams.getShearForce());
+    stabilityParameter.setTrim(stabilityParams.getTrim());
+    return stabilityParameter;
+  }
 
-/**
+  /**
    * @param loadablePattern
    * @return List<String>
    */
@@ -3071,31 +3071,32 @@ private com.cpdss.gateway.domain.StabilityParameter buildStabilityParameter(
                         planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                       });
               planBuilder.setCaseNumber(lpd.getCaseNumber());
-              planBuilder.setStabilityParameters(buildStabilityParamter(lpd.getStabilityParameters()));
+              planBuilder.setStabilityParameters(
+                  buildStabilityParamter(lpd.getStabilityParameters()));
 
               request.addLoadablePlanDetails(planBuilder);
             });
   }
 
   /**
- * @param stabilityParameters
- * @return
- * StabilityParameter
- */
-private StabilityParameter buildStabilityParamter(com.cpdss.gateway.domain.StabilityParameter stabilityParameters) {
-	log.info("builidng stability parameter to pass to LS MS");
-	StabilityParameter.Builder builder = StabilityParameter.newBuilder();
-	Optional.ofNullable(stabilityParameters.getAfterDraft()).ifPresent(builder::setAfterDraft);
-	Optional.ofNullable(stabilityParameters.getBendinMoment()).ifPresent(builder::setBendinMoment);
-	Optional.ofNullable(stabilityParameters.getForwardDraft()).ifPresent(builder::setForwardDraft);
-	Optional.ofNullable(stabilityParameters.getHeel()).ifPresent(builder::setHeel);
-	Optional.ofNullable(stabilityParameters.getMeanDraft()).ifPresent(builder::setMeanDraft);
-	Optional.ofNullable(stabilityParameters.getShearForce()).ifPresent(builder::setShearForce);
-	Optional.ofNullable(stabilityParameters.getTrim()).ifPresent(builder::setTrim);
-	return builder.build();
-}
+   * @param stabilityParameters
+   * @return StabilityParameter
+   */
+  private StabilityParameter buildStabilityParamter(
+      com.cpdss.gateway.domain.StabilityParameter stabilityParameters) {
+    log.info("builidng stability parameter to pass to LS MS");
+    StabilityParameter.Builder builder = StabilityParameter.newBuilder();
+    Optional.ofNullable(stabilityParameters.getAfterDraft()).ifPresent(builder::setAfterDraft);
+    Optional.ofNullable(stabilityParameters.getBendinMoment()).ifPresent(builder::setBendinMoment);
+    Optional.ofNullable(stabilityParameters.getForwardDraft()).ifPresent(builder::setForwardDraft);
+    Optional.ofNullable(stabilityParameters.getHeel()).ifPresent(builder::setHeel);
+    Optional.ofNullable(stabilityParameters.getMeanDraft()).ifPresent(builder::setMeanDraft);
+    Optional.ofNullable(stabilityParameters.getShearForce()).ifPresent(builder::setShearForce);
+    Optional.ofNullable(stabilityParameters.getTrim()).ifPresent(builder::setTrim);
+    return builder.build();
+  }
 
-/**
+  /**
    * @param lpbd
    * @param detailsBuilder void
    */

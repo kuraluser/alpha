@@ -1,22 +1,14 @@
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.common.generated;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
-import static io.grpc.stub.ClientCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ClientCalls.asyncUnaryCall;
-import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
 import static io.grpc.stub.ClientCalls.blockingUnaryCall;
 import static io.grpc.stub.ClientCalls.futureUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
-/**
- */
+/** */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.27.1)",
     comments = "Source: port_info.proto")
@@ -27,345 +19,519 @@ public final class PortInfoServiceGrpc {
   public static final String SERVICE_NAME = "PortInfoService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.PortRequest,
-      com.cpdss.common.generated.PortInfo.PortReply> getGetPortInfoMethod;
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.PortRequest,
+          com.cpdss.common.generated.PortInfo.PortReply>
+      getGetPortInfoMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetPortInfo",
       requestType = com.cpdss.common.generated.PortInfo.PortRequest.class,
       responseType = com.cpdss.common.generated.PortInfo.PortReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.PortRequest,
-      com.cpdss.common.generated.PortInfo.PortReply> getGetPortInfoMethod() {
-    io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.PortRequest, com.cpdss.common.generated.PortInfo.PortReply> getGetPortInfoMethod;
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.PortRequest,
+          com.cpdss.common.generated.PortInfo.PortReply>
+      getGetPortInfoMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.PortInfo.PortRequest,
+            com.cpdss.common.generated.PortInfo.PortReply>
+        getGetPortInfoMethod;
     if ((getGetPortInfoMethod = PortInfoServiceGrpc.getGetPortInfoMethod) == null) {
       synchronized (PortInfoServiceGrpc.class) {
         if ((getGetPortInfoMethod = PortInfoServiceGrpc.getGetPortInfoMethod) == null) {
-          PortInfoServiceGrpc.getGetPortInfoMethod = getGetPortInfoMethod =
-              io.grpc.MethodDescriptor.<com.cpdss.common.generated.PortInfo.PortRequest, com.cpdss.common.generated.PortInfo.PortReply>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetPortInfo"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.PortInfo.PortRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.PortInfo.PortReply.getDefaultInstance()))
-              .setSchemaDescriptor(new PortInfoServiceMethodDescriptorSupplier("GetPortInfo"))
-              .build();
+          PortInfoServiceGrpc.getGetPortInfoMethod =
+              getGetPortInfoMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.PortInfo.PortRequest,
+                          com.cpdss.common.generated.PortInfo.PortReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetPortInfo"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.PortRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.PortReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new PortInfoServiceMethodDescriptorSupplier("GetPortInfo"))
+                      .build();
         }
       }
     }
     return getGetPortInfoMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest,
-      com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply> getGetPortInfoByCargoIdMethod;
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest,
+          com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply>
+      getGetPortInfoByCargoIdMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetPortInfoByCargoId",
       requestType = com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest.class,
       responseType = com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest,
-      com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply> getGetPortInfoByCargoIdMethod() {
-    io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest, com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply> getGetPortInfoByCargoIdMethod;
-    if ((getGetPortInfoByCargoIdMethod = PortInfoServiceGrpc.getGetPortInfoByCargoIdMethod) == null) {
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest,
+          com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply>
+      getGetPortInfoByCargoIdMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest,
+            com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply>
+        getGetPortInfoByCargoIdMethod;
+    if ((getGetPortInfoByCargoIdMethod = PortInfoServiceGrpc.getGetPortInfoByCargoIdMethod)
+        == null) {
       synchronized (PortInfoServiceGrpc.class) {
-        if ((getGetPortInfoByCargoIdMethod = PortInfoServiceGrpc.getGetPortInfoByCargoIdMethod) == null) {
-          PortInfoServiceGrpc.getGetPortInfoByCargoIdMethod = getGetPortInfoByCargoIdMethod =
-              io.grpc.MethodDescriptor.<com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest, com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetPortInfoByCargoId"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply.getDefaultInstance()))
-              .setSchemaDescriptor(new PortInfoServiceMethodDescriptorSupplier("GetPortInfoByCargoId"))
-              .build();
+        if ((getGetPortInfoByCargoIdMethod = PortInfoServiceGrpc.getGetPortInfoByCargoIdMethod)
+            == null) {
+          PortInfoServiceGrpc.getGetPortInfoByCargoIdMethod =
+              getGetPortInfoByCargoIdMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest,
+                          com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetPortInfoByCargoId"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new PortInfoServiceMethodDescriptorSupplier("GetPortInfoByCargoId"))
+                      .build();
         }
       }
     }
     return getGetPortInfoByCargoIdMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
-      com.cpdss.common.generated.PortInfo.PortReply> getGetPortInfoByPortIdsMethod;
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
+          com.cpdss.common.generated.PortInfo.PortReply>
+      getGetPortInfoByPortIdsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetPortInfoByPortIds",
       requestType = com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest.class,
       responseType = com.cpdss.common.generated.PortInfo.PortReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
-      com.cpdss.common.generated.PortInfo.PortReply> getGetPortInfoByPortIdsMethod() {
-    io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest, com.cpdss.common.generated.PortInfo.PortReply> getGetPortInfoByPortIdsMethod;
-    if ((getGetPortInfoByPortIdsMethod = PortInfoServiceGrpc.getGetPortInfoByPortIdsMethod) == null) {
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
+          com.cpdss.common.generated.PortInfo.PortReply>
+      getGetPortInfoByPortIdsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
+            com.cpdss.common.generated.PortInfo.PortReply>
+        getGetPortInfoByPortIdsMethod;
+    if ((getGetPortInfoByPortIdsMethod = PortInfoServiceGrpc.getGetPortInfoByPortIdsMethod)
+        == null) {
       synchronized (PortInfoServiceGrpc.class) {
-        if ((getGetPortInfoByPortIdsMethod = PortInfoServiceGrpc.getGetPortInfoByPortIdsMethod) == null) {
-          PortInfoServiceGrpc.getGetPortInfoByPortIdsMethod = getGetPortInfoByPortIdsMethod =
-              io.grpc.MethodDescriptor.<com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest, com.cpdss.common.generated.PortInfo.PortReply>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetPortInfoByPortIds"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.PortInfo.PortReply.getDefaultInstance()))
-              .setSchemaDescriptor(new PortInfoServiceMethodDescriptorSupplier("GetPortInfoByPortIds"))
-              .build();
+        if ((getGetPortInfoByPortIdsMethod = PortInfoServiceGrpc.getGetPortInfoByPortIdsMethod)
+            == null) {
+          PortInfoServiceGrpc.getGetPortInfoByPortIdsMethod =
+              getGetPortInfoByPortIdsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
+                          com.cpdss.common.generated.PortInfo.PortReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetPortInfoByPortIds"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.PortReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new PortInfoServiceMethodDescriptorSupplier("GetPortInfoByPortIds"))
+                      .build();
         }
       }
     }
     return getGetPortInfoByPortIdsMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
-      com.cpdss.common.generated.PortInfo.PortReply> getGetPortInfoDetailsForAlgoMethod;
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
+          com.cpdss.common.generated.PortInfo.PortReply>
+      getGetPortInfoDetailsForAlgoMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetPortInfoDetailsForAlgo",
       requestType = com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest.class,
       responseType = com.cpdss.common.generated.PortInfo.PortReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
-      com.cpdss.common.generated.PortInfo.PortReply> getGetPortInfoDetailsForAlgoMethod() {
-    io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest, com.cpdss.common.generated.PortInfo.PortReply> getGetPortInfoDetailsForAlgoMethod;
-    if ((getGetPortInfoDetailsForAlgoMethod = PortInfoServiceGrpc.getGetPortInfoDetailsForAlgoMethod) == null) {
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
+          com.cpdss.common.generated.PortInfo.PortReply>
+      getGetPortInfoDetailsForAlgoMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
+            com.cpdss.common.generated.PortInfo.PortReply>
+        getGetPortInfoDetailsForAlgoMethod;
+    if ((getGetPortInfoDetailsForAlgoMethod =
+            PortInfoServiceGrpc.getGetPortInfoDetailsForAlgoMethod)
+        == null) {
       synchronized (PortInfoServiceGrpc.class) {
-        if ((getGetPortInfoDetailsForAlgoMethod = PortInfoServiceGrpc.getGetPortInfoDetailsForAlgoMethod) == null) {
-          PortInfoServiceGrpc.getGetPortInfoDetailsForAlgoMethod = getGetPortInfoDetailsForAlgoMethod =
-              io.grpc.MethodDescriptor.<com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest, com.cpdss.common.generated.PortInfo.PortReply>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetPortInfoDetailsForAlgo"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.PortInfo.PortReply.getDefaultInstance()))
-              .setSchemaDescriptor(new PortInfoServiceMethodDescriptorSupplier("GetPortInfoDetailsForAlgo"))
-              .build();
+        if ((getGetPortInfoDetailsForAlgoMethod =
+                PortInfoServiceGrpc.getGetPortInfoDetailsForAlgoMethod)
+            == null) {
+          PortInfoServiceGrpc.getGetPortInfoDetailsForAlgoMethod =
+              getGetPortInfoDetailsForAlgoMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
+                          com.cpdss.common.generated.PortInfo.PortReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetPortInfoDetailsForAlgo"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.PortReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new PortInfoServiceMethodDescriptorSupplier("GetPortInfoDetailsForAlgo"))
+                      .build();
         }
       }
     }
     return getGetPortInfoDetailsForAlgoMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.PortEmptyRequest,
-      com.cpdss.common.generated.PortInfo.TimezoneResponse> getGetTimezoneMethod;
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.PortEmptyRequest,
+          com.cpdss.common.generated.PortInfo.TimezoneResponse>
+      getGetTimezoneMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetTimezone",
       requestType = com.cpdss.common.generated.PortInfo.PortEmptyRequest.class,
       responseType = com.cpdss.common.generated.PortInfo.TimezoneResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.PortEmptyRequest,
-      com.cpdss.common.generated.PortInfo.TimezoneResponse> getGetTimezoneMethod() {
-    io.grpc.MethodDescriptor<com.cpdss.common.generated.PortInfo.PortEmptyRequest, com.cpdss.common.generated.PortInfo.TimezoneResponse> getGetTimezoneMethod;
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.PortEmptyRequest,
+          com.cpdss.common.generated.PortInfo.TimezoneResponse>
+      getGetTimezoneMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.PortInfo.PortEmptyRequest,
+            com.cpdss.common.generated.PortInfo.TimezoneResponse>
+        getGetTimezoneMethod;
     if ((getGetTimezoneMethod = PortInfoServiceGrpc.getGetTimezoneMethod) == null) {
       synchronized (PortInfoServiceGrpc.class) {
         if ((getGetTimezoneMethod = PortInfoServiceGrpc.getGetTimezoneMethod) == null) {
-          PortInfoServiceGrpc.getGetTimezoneMethod = getGetTimezoneMethod =
-              io.grpc.MethodDescriptor.<com.cpdss.common.generated.PortInfo.PortEmptyRequest, com.cpdss.common.generated.PortInfo.TimezoneResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetTimezone"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.PortInfo.PortEmptyRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.PortInfo.TimezoneResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new PortInfoServiceMethodDescriptorSupplier("GetTimezone"))
-              .build();
+          PortInfoServiceGrpc.getGetTimezoneMethod =
+              getGetTimezoneMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.PortInfo.PortEmptyRequest,
+                          com.cpdss.common.generated.PortInfo.TimezoneResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetTimezone"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.PortEmptyRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.TimezoneResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new PortInfoServiceMethodDescriptorSupplier("GetTimezone"))
+                      .build();
         }
       }
     }
     return getGetTimezoneMethod;
   }
 
-  /**
-   * Creates a new async stub that supports all call types for the service
-   */
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.PortRequestWithPaging,
+          com.cpdss.common.generated.PortInfo.PortReply>
+      getGetPortInfoByPagingMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetPortInfoByPaging",
+      requestType = com.cpdss.common.generated.PortInfo.PortRequestWithPaging.class,
+      responseType = com.cpdss.common.generated.PortInfo.PortReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.PortRequestWithPaging,
+          com.cpdss.common.generated.PortInfo.PortReply>
+      getGetPortInfoByPagingMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.PortInfo.PortRequestWithPaging,
+            com.cpdss.common.generated.PortInfo.PortReply>
+        getGetPortInfoByPagingMethod;
+    if ((getGetPortInfoByPagingMethod = PortInfoServiceGrpc.getGetPortInfoByPagingMethod) == null) {
+      synchronized (PortInfoServiceGrpc.class) {
+        if ((getGetPortInfoByPagingMethod = PortInfoServiceGrpc.getGetPortInfoByPagingMethod)
+            == null) {
+          PortInfoServiceGrpc.getGetPortInfoByPagingMethod =
+              getGetPortInfoByPagingMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.PortInfo.PortRequestWithPaging,
+                          com.cpdss.common.generated.PortInfo.PortReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetPortInfoByPaging"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.PortRequestWithPaging
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.PortReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new PortInfoServiceMethodDescriptorSupplier("GetPortInfoByPaging"))
+                      .build();
+        }
+      }
+    }
+    return getGetPortInfoByPagingMethod;
+  }
+
+  /** Creates a new async stub that supports all call types for the service */
   public static PortInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceStub> factory =
-      new io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceStub>() {
-        @java.lang.Override
-        public PortInfoServiceStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-          return new PortInfoServiceStub(channel, callOptions);
-        }
-      };
+        new io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceStub>() {
+          @java.lang.Override
+          public PortInfoServiceStub newStub(
+              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+            return new PortInfoServiceStub(channel, callOptions);
+          }
+        };
     return PortInfoServiceStub.newStub(factory, channel);
   }
 
   /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
-  public static PortInfoServiceBlockingStub newBlockingStub(
-      io.grpc.Channel channel) {
+  public static PortInfoServiceBlockingStub newBlockingStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceBlockingStub> factory =
-      new io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceBlockingStub>() {
-        @java.lang.Override
-        public PortInfoServiceBlockingStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-          return new PortInfoServiceBlockingStub(channel, callOptions);
-        }
-      };
+        new io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceBlockingStub>() {
+          @java.lang.Override
+          public PortInfoServiceBlockingStub newStub(
+              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+            return new PortInfoServiceBlockingStub(channel, callOptions);
+          }
+        };
     return PortInfoServiceBlockingStub.newStub(factory, channel);
   }
 
-  /**
-   * Creates a new ListenableFuture-style stub that supports unary calls on the service
-   */
-  public static PortInfoServiceFutureStub newFutureStub(
-      io.grpc.Channel channel) {
+  /** Creates a new ListenableFuture-style stub that supports unary calls on the service */
+  public static PortInfoServiceFutureStub newFutureStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceFutureStub> factory =
-      new io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceFutureStub>() {
-        @java.lang.Override
-        public PortInfoServiceFutureStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-          return new PortInfoServiceFutureStub(channel, callOptions);
-        }
-      };
+        new io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceFutureStub>() {
+          @java.lang.Override
+          public PortInfoServiceFutureStub newStub(
+              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+            return new PortInfoServiceFutureStub(channel, callOptions);
+          }
+        };
     return PortInfoServiceFutureStub.newStub(factory, channel);
   }
 
-  /**
-   */
-  public static abstract class PortInfoServiceImplBase implements io.grpc.BindableService {
+  /** */
+  public abstract static class PortInfoServiceImplBase implements io.grpc.BindableService {
 
-    /**
-     */
-    public void getPortInfo(com.cpdss.common.generated.PortInfo.PortRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply> responseObserver) {
+    /** */
+    public void getPortInfo(
+        com.cpdss.common.generated.PortInfo.PortRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>
+            responseObserver) {
       asyncUnimplementedUnaryCall(getGetPortInfoMethod(), responseObserver);
     }
 
-    /**
-     */
-    public void getPortInfoByCargoId(com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply> responseObserver) {
+    /** */
+    public void getPortInfoByCargoId(
+        com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply>
+            responseObserver) {
       asyncUnimplementedUnaryCall(getGetPortInfoByCargoIdMethod(), responseObserver);
     }
 
-    /**
-     */
-    public void getPortInfoByPortIds(com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply> responseObserver) {
+    /** */
+    public void getPortInfoByPortIds(
+        com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>
+            responseObserver) {
       asyncUnimplementedUnaryCall(getGetPortInfoByPortIdsMethod(), responseObserver);
     }
 
-    /**
-     */
-    public void getPortInfoDetailsForAlgo(com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply> responseObserver) {
+    /** */
+    public void getPortInfoDetailsForAlgo(
+        com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>
+            responseObserver) {
       asyncUnimplementedUnaryCall(getGetPortInfoDetailsForAlgoMethod(), responseObserver);
     }
 
-    /**
-     */
-    public void getTimezone(com.cpdss.common.generated.PortInfo.PortEmptyRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.TimezoneResponse> responseObserver) {
+    /** */
+    public void getTimezone(
+        com.cpdss.common.generated.PortInfo.PortEmptyRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.TimezoneResponse>
+            responseObserver) {
       asyncUnimplementedUnaryCall(getGetTimezoneMethod(), responseObserver);
     }
 
-    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
+    /** */
+    public void getPortInfoByPaging(
+        com.cpdss.common.generated.PortInfo.PortRequestWithPaging request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetPortInfoByPagingMethod(), responseObserver);
+    }
+
+    @java.lang.Override
+    public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
-            getGetPortInfoMethod(),
-            asyncUnaryCall(
-              new MethodHandlers<
-                com.cpdss.common.generated.PortInfo.PortRequest,
-                com.cpdss.common.generated.PortInfo.PortReply>(
-                  this, METHODID_GET_PORT_INFO)))
+              getGetPortInfoMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.PortInfo.PortRequest,
+                      com.cpdss.common.generated.PortInfo.PortReply>(this, METHODID_GET_PORT_INFO)))
           .addMethod(
-            getGetPortInfoByCargoIdMethod(),
-            asyncUnaryCall(
-              new MethodHandlers<
-                com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest,
-                com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply>(
-                  this, METHODID_GET_PORT_INFO_BY_CARGO_ID)))
+              getGetPortInfoByCargoIdMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest,
+                      com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply>(
+                      this, METHODID_GET_PORT_INFO_BY_CARGO_ID)))
           .addMethod(
-            getGetPortInfoByPortIdsMethod(),
-            asyncUnaryCall(
-              new MethodHandlers<
-                com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
-                com.cpdss.common.generated.PortInfo.PortReply>(
-                  this, METHODID_GET_PORT_INFO_BY_PORT_IDS)))
+              getGetPortInfoByPortIdsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
+                      com.cpdss.common.generated.PortInfo.PortReply>(
+                      this, METHODID_GET_PORT_INFO_BY_PORT_IDS)))
           .addMethod(
-            getGetPortInfoDetailsForAlgoMethod(),
-            asyncUnaryCall(
-              new MethodHandlers<
-                com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
-                com.cpdss.common.generated.PortInfo.PortReply>(
-                  this, METHODID_GET_PORT_INFO_DETAILS_FOR_ALGO)))
+              getGetPortInfoDetailsForAlgoMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest,
+                      com.cpdss.common.generated.PortInfo.PortReply>(
+                      this, METHODID_GET_PORT_INFO_DETAILS_FOR_ALGO)))
           .addMethod(
-            getGetTimezoneMethod(),
-            asyncUnaryCall(
-              new MethodHandlers<
-                com.cpdss.common.generated.PortInfo.PortEmptyRequest,
-                com.cpdss.common.generated.PortInfo.TimezoneResponse>(
-                  this, METHODID_GET_TIMEZONE)))
+              getGetTimezoneMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.PortInfo.PortEmptyRequest,
+                      com.cpdss.common.generated.PortInfo.TimezoneResponse>(
+                      this, METHODID_GET_TIMEZONE)))
+          .addMethod(
+              getGetPortInfoByPagingMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.PortInfo.PortRequestWithPaging,
+                      com.cpdss.common.generated.PortInfo.PortReply>(
+                      this, METHODID_GET_PORT_INFO_BY_PAGING)))
           .build();
     }
   }
 
-  /**
-   */
-  public static final class PortInfoServiceStub extends io.grpc.stub.AbstractAsyncStub<PortInfoServiceStub> {
-    private PortInfoServiceStub(
-        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+  /** */
+  public static final class PortInfoServiceStub
+      extends io.grpc.stub.AbstractAsyncStub<PortInfoServiceStub> {
+    private PortInfoServiceStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }
 
     @java.lang.Override
-    protected PortInfoServiceStub build(
-        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+    protected PortInfoServiceStub build(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new PortInfoServiceStub(channel, callOptions);
     }
 
-    /**
-     */
-    public void getPortInfo(com.cpdss.common.generated.PortInfo.PortRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply> responseObserver) {
+    /** */
+    public void getPortInfo(
+        com.cpdss.common.generated.PortInfo.PortRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>
+            responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetPortInfoMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getGetPortInfoMethod(), getCallOptions()),
+          request,
+          responseObserver);
     }
 
-    /**
-     */
-    public void getPortInfoByCargoId(com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply> responseObserver) {
+    /** */
+    public void getPortInfoByCargoId(
+        com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply>
+            responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetPortInfoByCargoIdMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getGetPortInfoByCargoIdMethod(), getCallOptions()),
+          request,
+          responseObserver);
     }
 
-    /**
-     */
-    public void getPortInfoByPortIds(com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply> responseObserver) {
+    /** */
+    public void getPortInfoByPortIds(
+        com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>
+            responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetPortInfoByPortIdsMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getGetPortInfoByPortIdsMethod(), getCallOptions()),
+          request,
+          responseObserver);
     }
 
-    /**
-     */
-    public void getPortInfoDetailsForAlgo(com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply> responseObserver) {
+    /** */
+    public void getPortInfoDetailsForAlgo(
+        com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>
+            responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetPortInfoDetailsForAlgoMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getGetPortInfoDetailsForAlgoMethod(), getCallOptions()),
+          request,
+          responseObserver);
     }
 
-    /**
-     */
-    public void getTimezone(com.cpdss.common.generated.PortInfo.PortEmptyRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.TimezoneResponse> responseObserver) {
+    /** */
+    public void getTimezone(
+        com.cpdss.common.generated.PortInfo.PortEmptyRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.TimezoneResponse>
+            responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetTimezoneMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getGetTimezoneMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void getPortInfoByPaging(
+        com.cpdss.common.generated.PortInfo.PortRequestWithPaging request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetPortInfoByPagingMethod(), getCallOptions()),
+          request,
+          responseObserver);
     }
   }
 
-  /**
-   */
-  public static final class PortInfoServiceBlockingStub extends io.grpc.stub.AbstractBlockingStub<PortInfoServiceBlockingStub> {
-    private PortInfoServiceBlockingStub(
-        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+  /** */
+  public static final class PortInfoServiceBlockingStub
+      extends io.grpc.stub.AbstractBlockingStub<PortInfoServiceBlockingStub> {
+    private PortInfoServiceBlockingStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }
 
@@ -375,47 +541,51 @@ public final class PortInfoServiceGrpc {
       return new PortInfoServiceBlockingStub(channel, callOptions);
     }
 
-    /**
-     */
-    public com.cpdss.common.generated.PortInfo.PortReply getPortInfo(com.cpdss.common.generated.PortInfo.PortRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getGetPortInfoMethod(), getCallOptions(), request);
+    /** */
+    public com.cpdss.common.generated.PortInfo.PortReply getPortInfo(
+        com.cpdss.common.generated.PortInfo.PortRequest request) {
+      return blockingUnaryCall(getChannel(), getGetPortInfoMethod(), getCallOptions(), request);
     }
 
-    /**
-     */
-    public com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply getPortInfoByCargoId(com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest request) {
+    /** */
+    public com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply getPortInfoByCargoId(
+        com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetPortInfoByCargoIdMethod(), getCallOptions(), request);
     }
 
-    /**
-     */
-    public com.cpdss.common.generated.PortInfo.PortReply getPortInfoByPortIds(com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request) {
+    /** */
+    public com.cpdss.common.generated.PortInfo.PortReply getPortInfoByPortIds(
+        com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetPortInfoByPortIdsMethod(), getCallOptions(), request);
     }
 
-    /**
-     */
-    public com.cpdss.common.generated.PortInfo.PortReply getPortInfoDetailsForAlgo(com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request) {
+    /** */
+    public com.cpdss.common.generated.PortInfo.PortReply getPortInfoDetailsForAlgo(
+        com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetPortInfoDetailsForAlgoMethod(), getCallOptions(), request);
     }
 
-    /**
-     */
-    public com.cpdss.common.generated.PortInfo.TimezoneResponse getTimezone(com.cpdss.common.generated.PortInfo.PortEmptyRequest request) {
+    /** */
+    public com.cpdss.common.generated.PortInfo.TimezoneResponse getTimezone(
+        com.cpdss.common.generated.PortInfo.PortEmptyRequest request) {
+      return blockingUnaryCall(getChannel(), getGetTimezoneMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.PortInfo.PortReply getPortInfoByPaging(
+        com.cpdss.common.generated.PortInfo.PortRequestWithPaging request) {
       return blockingUnaryCall(
-          getChannel(), getGetTimezoneMethod(), getCallOptions(), request);
+          getChannel(), getGetPortInfoByPagingMethod(), getCallOptions(), request);
     }
   }
 
-  /**
-   */
-  public static final class PortInfoServiceFutureStub extends io.grpc.stub.AbstractFutureStub<PortInfoServiceFutureStub> {
-    private PortInfoServiceFutureStub(
-        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+  /** */
+  public static final class PortInfoServiceFutureStub
+      extends io.grpc.stub.AbstractFutureStub<PortInfoServiceFutureStub> {
+    private PortInfoServiceFutureStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }
 
@@ -425,44 +595,55 @@ public final class PortInfoServiceGrpc {
       return new PortInfoServiceFutureStub(channel, callOptions);
     }
 
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.PortInfo.PortReply> getPortInfo(
-        com.cpdss.common.generated.PortInfo.PortRequest request) {
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.PortInfo.PortReply>
+        getPortInfo(com.cpdss.common.generated.PortInfo.PortRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getGetPortInfoMethod(), getCallOptions()), request);
     }
 
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply> getPortInfoByCargoId(
-        com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest request) {
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply>
+        getPortInfoByCargoId(
+            com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getGetPortInfoByCargoIdMethod(), getCallOptions()), request);
     }
 
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.PortInfo.PortReply> getPortInfoByPortIds(
-        com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request) {
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.PortInfo.PortReply>
+        getPortInfoByPortIds(
+            com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getGetPortInfoByPortIdsMethod(), getCallOptions()), request);
     }
 
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.PortInfo.PortReply> getPortInfoDetailsForAlgo(
-        com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request) {
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.PortInfo.PortReply>
+        getPortInfoDetailsForAlgo(
+            com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getGetPortInfoDetailsForAlgoMethod(), getCallOptions()), request);
     }
 
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.PortInfo.TimezoneResponse> getTimezone(
-        com.cpdss.common.generated.PortInfo.PortEmptyRequest request) {
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.PortInfo.TimezoneResponse>
+        getTimezone(com.cpdss.common.generated.PortInfo.PortEmptyRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getGetTimezoneMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.PortInfo.PortReply>
+        getPortInfoByPaging(com.cpdss.common.generated.PortInfo.PortRequestWithPaging request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetPortInfoByPagingMethod(), getCallOptions()), request);
     }
   }
 
@@ -471,12 +652,13 @@ public final class PortInfoServiceGrpc {
   private static final int METHODID_GET_PORT_INFO_BY_PORT_IDS = 2;
   private static final int METHODID_GET_PORT_INFO_DETAILS_FOR_ALGO = 3;
   private static final int METHODID_GET_TIMEZONE = 4;
+  private static final int METHODID_GET_PORT_INFO_BY_PAGING = 5;
 
-  private static final class MethodHandlers<Req, Resp> implements
-      io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
-      io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
-      io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
-      io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
+  private static final class MethodHandlers<Req, Resp>
+      implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
+          io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
+          io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
+          io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
     private final PortInfoServiceImplBase serviceImpl;
     private final int methodId;
 
@@ -490,24 +672,41 @@ public final class PortInfoServiceGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_GET_PORT_INFO:
-          serviceImpl.getPortInfo((com.cpdss.common.generated.PortInfo.PortRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>) responseObserver);
+          serviceImpl.getPortInfo(
+              (com.cpdss.common.generated.PortInfo.PortRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>)
+                  responseObserver);
           break;
         case METHODID_GET_PORT_INFO_BY_CARGO_ID:
-          serviceImpl.getPortInfoByCargoId((com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply>) responseObserver);
+          serviceImpl.getPortInfoByCargoId(
+              (com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply>)
+                  responseObserver);
           break;
         case METHODID_GET_PORT_INFO_BY_PORT_IDS:
-          serviceImpl.getPortInfoByPortIds((com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>) responseObserver);
+          serviceImpl.getPortInfoByPortIds(
+              (com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>)
+                  responseObserver);
           break;
         case METHODID_GET_PORT_INFO_DETAILS_FOR_ALGO:
-          serviceImpl.getPortInfoDetailsForAlgo((com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>) responseObserver);
+          serviceImpl.getPortInfoDetailsForAlgo(
+              (com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>)
+                  responseObserver);
           break;
         case METHODID_GET_TIMEZONE:
-          serviceImpl.getTimezone((com.cpdss.common.generated.PortInfo.PortEmptyRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.TimezoneResponse>) responseObserver);
+          serviceImpl.getTimezone(
+              (com.cpdss.common.generated.PortInfo.PortEmptyRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.TimezoneResponse>)
+                  responseObserver);
+          break;
+        case METHODID_GET_PORT_INFO_BY_PAGING:
+          serviceImpl.getPortInfoByPaging(
+              (com.cpdss.common.generated.PortInfo.PortRequestWithPaging) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>)
+                  responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -525,8 +724,9 @@ public final class PortInfoServiceGrpc {
     }
   }
 
-  private static abstract class PortInfoServiceBaseDescriptorSupplier
-      implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
+  private abstract static class PortInfoServiceBaseDescriptorSupplier
+      implements io.grpc.protobuf.ProtoFileDescriptorSupplier,
+          io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     PortInfoServiceBaseDescriptorSupplier() {}
 
     @java.lang.Override
@@ -568,14 +768,17 @@ public final class PortInfoServiceGrpc {
       synchronized (PortInfoServiceGrpc.class) {
         result = serviceDescriptor;
         if (result == null) {
-          serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
-              .setSchemaDescriptor(new PortInfoServiceFileDescriptorSupplier())
-              .addMethod(getGetPortInfoMethod())
-              .addMethod(getGetPortInfoByCargoIdMethod())
-              .addMethod(getGetPortInfoByPortIdsMethod())
-              .addMethod(getGetPortInfoDetailsForAlgoMethod())
-              .addMethod(getGetTimezoneMethod())
-              .build();
+          serviceDescriptor =
+              result =
+                  io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
+                      .setSchemaDescriptor(new PortInfoServiceFileDescriptorSupplier())
+                      .addMethod(getGetPortInfoMethod())
+                      .addMethod(getGetPortInfoByCargoIdMethod())
+                      .addMethod(getGetPortInfoByPortIdsMethod())
+                      .addMethod(getGetPortInfoDetailsForAlgoMethod())
+                      .addMethod(getGetTimezoneMethod())
+                      .addMethod(getGetPortInfoByPagingMethod())
+                      .build();
         }
       }
     }
