@@ -1,6 +1,6 @@
 {
     "apiUrl" : "",
-    "keycloakUrl": "https://keyclock.thinkpalm.info:8443/auth/",
-    "path": ":9004/",
+    "keycloakUrl": "",
+    "path": ":9003/",
     "clientId": "frontend"
 }
