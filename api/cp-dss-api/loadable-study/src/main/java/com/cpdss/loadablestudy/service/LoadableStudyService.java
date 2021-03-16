@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
 import static java.lang.String.valueOf;
@@ -186,6 +186,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -239,6 +240,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Value("${algo.loadicator.api.url}")
   private String loadicatorUrl;
+
+  @Value("${loadablestudy.voyage.day.difference}")
+  private String dayDifference;
 
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
@@ -1828,8 +1832,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                               && STATUS_CONFIRMED.equalsIgnoreCase(
                                   loadableStudyElement.getLoadableStudyStatus().getName())))
                   .findFirst();
-          loadableStudy.ifPresent(
-              record -> detailbuilder.setConfirmedLoadableStudyId(record.getId()));
+
+          if (loadableStudy.isPresent()) {
+            detailbuilder.setConfirmedLoadableStudyId(loadableStudy.get().getId());
+            Long noOfDays = this.getNumberOfDays(loadableStudy.get());
+            Optional.ofNullable(noOfDays).ifPresent(item -> detailbuilder.setNoOfDays(item));
+          }
         }
         builder.addVoyages(detailbuilder.build());
       }
@@ -7439,6 +7447,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         if (entity.getVoyageStatus() != null
             && STATUS_ACTIVE.equalsIgnoreCase(entity.getVoyageStatus().getName())) {
+
           Stream<LoadableStudy> loadableStudyStream =
               Optional.ofNullable(entity.getLoadableStudies())
                   .map(Collection::stream)
@@ -7452,6 +7461,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                                   loadableStudyElement.getLoadableStudyStatus().getName())))
                   .findFirst();
           if (loadableStudy.isPresent()) {
+
             detailbuilder.setConfirmedLoadableStudyId(loadableStudy.get().getId());
             List<Long> loadingPorts =
                 this.loadableStudyPortRotationRepository.getLoadingPorts(loadableStudy.get())
@@ -7527,6 +7537,22 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  private Long getNumberOfDays(LoadableStudy entity) {
+    LoadableStudyPortRotation lastPort =
+        this.loadableStudyPortRotationRepository
+            .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(entity, true);
+    Long daysBetween = null;
+
+    if (null != lastPort && null != lastPort.getEtd()) {
+
+      daysBetween = ChronoUnit.DAYS.between(LocalDate.now(), lastPort.getEtd().toLocalDate());
+    }
+    if (null != daysBetween && daysBetween <= Long.parseLong(dayDifference)) {
+      return daysBetween;
+    }
+    return null;
   }
 
   /**

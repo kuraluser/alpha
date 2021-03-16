@@ -1187,6 +1187,9 @@ public class LoadableStudyService {
       voyage.setEndDate(detail.getEndDate());
       voyage.setStatus(detail.getStatus());
       voyage.setStatusId(detail.getStatusId());
+     // voyage.setNoOfDays(detail.getNoOfDays());
+      voyage.setNoOfDays(
+              detail.getNoOfDays() != 0 ? detail.getNoOfDays() : null);
       voyage.setConfirmedLoadableStudyId(
           detail.getConfirmedLoadableStudyId() != 0 ? detail.getConfirmedLoadableStudyId() : null);
       response.getVoyages().add(voyage);
@@ -4239,14 +4242,13 @@ private StabilityParameter buildStabilityParamter(com.cpdss.gateway.domain.Stabi
 
     // filtering each column
     List<VoyageDetail> list = this.getFilteredValues(filterParams, grpcReply.getVoyagesList());
-
     List<Voyage> voyageList = new ArrayList<Voyage>();
     for (VoyageDetail detail : list) {
       Voyage voyage = new Voyage();
       voyage.setId(detail.getId());
       voyage.setVoyageNo(detail.getVoyageNumber());
       voyage.setStatus(detail.getStatus());
-
+      voyage.setNoOfDays(detail.getNoOfDays());
       voyage.setConfirmedLoadableStudyId(
           detail.getConfirmedLoadableStudyId() != 0 ? detail.getConfirmedLoadableStudyId() : null);
 

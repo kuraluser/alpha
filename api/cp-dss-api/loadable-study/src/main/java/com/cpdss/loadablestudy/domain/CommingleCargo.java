@@ -28,7 +28,7 @@ public class CommingleCargo {
   private Boolean isSlopOnly;
 
   private Integer priority;
-  
+
   private Long cargoNomination1Id;
 
   private Long cargoNomination2Id;

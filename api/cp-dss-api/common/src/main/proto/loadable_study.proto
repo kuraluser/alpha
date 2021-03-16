@@ -503,6 +503,7 @@ message VoyageDetail{
 	string actualStartDate = 11;
 	string actualEndDate = 12;
 	int64 statusId = 13;
+	int64 noOfDays = 14;
 }
 
 message VoyageListReply{
