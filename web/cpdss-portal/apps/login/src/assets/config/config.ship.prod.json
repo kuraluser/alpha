@@ -1,6 +1,6 @@
 {
     "apiUrl" : "",
     "keycloakUrl": "",
-    "path": ":9003/",
+    "path": ":9005/",
     "clientId": "frontend"
 }
