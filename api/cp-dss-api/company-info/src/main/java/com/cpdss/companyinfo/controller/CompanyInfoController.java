@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CompanyInfoController {
 
   public static final String COMPANY_INFO_URI = "/api/cloud/companies/{domain}/idp-info";
+  public static final String SHIP_CAROUSAL_URI = "/api/ship/company/carousals";
 
   @Autowired private CompanyInfoService companyInfoService;
 
@@ -46,6 +47,27 @@ public class CompanyInfoController {
     try {
       log.debug("inside company info controller, domain:{}", domain);
       return this.companyInfoService.findCompanyInfoByDomain(domain);
+    } catch (GenericServiceException ge) {
+      throw new CommonRestException(ge.getCode(), null, ge.getStatus(), ge.getMessage(), ge);
+    } catch (Exception e) {
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          null,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @GetMapping(
+      value = SHIP_CAROUSAL_URI,
+      produces = MediaType.APPLICATION_JSON_VALUE,
+      consumes = MediaType.APPLICATION_JSON_VALUE)
+  public CompanyInfoResponse getCarousals()
+      throws CommonRestException {
+    try {
+      log.debug("inside get carousal info controller");
+      return this.companyInfoService.findShipCarousals();
     } catch (GenericServiceException ge) {
       throw new CommonRestException(ge.getCode(), null, ge.getStatus(), ge.getMessage(), ge);
     } catch (Exception e) {
