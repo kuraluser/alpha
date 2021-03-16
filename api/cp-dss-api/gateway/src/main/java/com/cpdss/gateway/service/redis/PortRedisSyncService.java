@@ -36,7 +36,7 @@ public class PortRedisSyncService extends CommonKeyValueStore<PortInfo>
                 portInfoDomains.add(domain);
               });
     }
-    this.storeData(PortInfo.class.getName(), new PortInfo(portInfoDomains));
-    log.info("port list count -> {} ", reply.getPortsCount());
+    this.storeData(PORT_MASTER_KEY, new PortInfo(portInfoDomains));
+    log.info("Port data added to Redis Cache, size {}", portInfoDomains.size());
   }
 }

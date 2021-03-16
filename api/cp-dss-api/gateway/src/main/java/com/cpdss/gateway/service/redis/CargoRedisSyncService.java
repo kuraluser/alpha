@@ -43,6 +43,7 @@ public class CargoRedisSyncService extends CommonKeyValueStore<CargoInfo>
                 domains.add(domain);
               });
     }
-    this.storeData(CargoInfo.class.getName(), new CargoInfo(domains));
+    this.storeData(CARGO_MASTER_KEY, new CargoInfo(domains));
+    log.info("Cargo data added to Redis Cache, size {}", domains.size());
   }
 }
