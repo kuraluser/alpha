@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service;
 
 import static java.lang.String.valueOf;
@@ -65,6 +65,7 @@ import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply;
 import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest;
+import com.cpdss.common.generated.LoadableStudy.StabilityParameter;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableLoadicatorData;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
@@ -174,6 +175,7 @@ import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -201,6 +203,9 @@ public class LoadableStudyService {
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @Value("${gateway.attachement.rootFolder}")
+  private String rootFolder;
 
   private static final String SUCCESS = "SUCCESS";
   private static final int LOADABLE_STUDY_ATTACHEMENT_MAX_SIZE = 1 * 1024 * 1024;
@@ -1182,6 +1187,9 @@ public class LoadableStudyService {
       voyage.setEndDate(detail.getEndDate());
       voyage.setStatus(detail.getStatus());
       voyage.setStatusId(detail.getStatusId());
+     // voyage.setNoOfDays(detail.getNoOfDays());
+      voyage.setNoOfDays(
+              detail.getNoOfDays() != 0 ? detail.getNoOfDays() : null);
       voyage.setConfirmedLoadableStudyId(
           detail.getConfirmedLoadableStudyId() != 0 ? detail.getConfirmedLoadableStudyId() : null);
       response.getVoyages().add(voyage);
@@ -1292,7 +1300,8 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to delete loadable study",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
     response.setResponseStatus(
@@ -1429,6 +1438,8 @@ public class LoadableStudyService {
               LoadablePattern loadablePatternDto = new LoadablePattern();
               loadablePatternDto.setLoadablePatternId(loadablePattern.getLoadablePatternId());
               loadablePatternDto.setConstraints(buildLoadableStudyConstraints(loadablePattern));
+              loadablePatternDto.setStabilityParameters(
+                  buildStabilityParameter(loadablePattern.getStabilityParameters()));
               loadablePatternDto.setLoadableStudyStatusId(
                   loadablePattern.getLoadableStudyStatusId());
               loadablePatternDto.setLoadablePatternCargoDetails(
@@ -1467,6 +1478,11 @@ public class LoadableStudyService {
                         Optional.ofNullable(loadablePatternCargoDetail.getIsCommingle())
                             .ifPresent(
                                 commingle -> loadablePatternCargoDetails.setIsCommingle(commingle));
+
+                        Optional.ofNullable(loadablePatternCargoDetail.getTankName())
+                            .ifPresent(
+                                tankName -> loadablePatternCargoDetails.setTankName(tankName));
+
                         Optional.ofNullable(
                                 loadablePatternCargoDetail.getLoadablePatternCommingleDetailsId())
                             .ifPresent(
@@ -1495,6 +1511,25 @@ public class LoadableStudyService {
     loadablePatternResponse.setResponseStatus(
         new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
     return loadablePatternResponse;
+  }
+
+  /**
+   * @param stabilityParams
+   * @return com.cpdss.gateway.domain.StabilityParameter
+   */
+  private com.cpdss.gateway.domain.StabilityParameter buildStabilityParameter(
+      StabilityParameter stabilityParams) {
+    log.info("builidng stability parameter to pass in API response");
+    com.cpdss.gateway.domain.StabilityParameter stabilityParameter =
+        new com.cpdss.gateway.domain.StabilityParameter();
+    stabilityParameter.setAfterDraft(stabilityParams.getAfterDraft());
+    stabilityParameter.setBendinMoment(stabilityParams.getBendinMoment());
+    stabilityParameter.setForwardDraft(stabilityParams.getForwardDraft());
+    stabilityParameter.setHeel(stabilityParams.getHeel());
+    stabilityParameter.setMeanDraft(stabilityParams.getMeanDraft());
+    stabilityParameter.setShearForce(stabilityParams.getShearForce());
+    stabilityParameter.setTrim(stabilityParams.getTrim());
+    return stabilityParameter;
   }
 
   /**
@@ -2925,7 +2960,8 @@ public class LoadableStudyService {
     ObjectMapper objectMapper = new ObjectMapper();
     try {
       objectMapper.writeValue(
-          new File("json/loadableStudyResult_" + loadableStudiesId + ".json"), loadablePlanRequest);
+          new File(this.rootFolder + "/json/loadableStudyResult_" + loadableStudiesId + ".json"),
+          loadablePlanRequest);
     } catch (IOException e) {
       log.error("Error in json writing ", e);
     }
@@ -3036,9 +3072,29 @@ public class LoadableStudyService {
                         planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                       });
               planBuilder.setCaseNumber(lpd.getCaseNumber());
+              planBuilder.setStabilityParameters(
+                  buildStabilityParamter(lpd.getStabilityParameters()));
 
               request.addLoadablePlanDetails(planBuilder);
             });
+  }
+
+  /**
+   * @param stabilityParameters
+   * @return StabilityParameter
+   */
+  private StabilityParameter buildStabilityParamter(
+      com.cpdss.gateway.domain.StabilityParameter stabilityParameters) {
+    log.info("builidng stability parameter to pass to LS MS");
+    StabilityParameter.Builder builder = StabilityParameter.newBuilder();
+    Optional.ofNullable(stabilityParameters.getAfterDraft()).ifPresent(builder::setAfterDraft);
+    Optional.ofNullable(stabilityParameters.getBendinMoment()).ifPresent(builder::setBendinMoment);
+    Optional.ofNullable(stabilityParameters.getForwardDraft()).ifPresent(builder::setForwardDraft);
+    Optional.ofNullable(stabilityParameters.getHeel()).ifPresent(builder::setHeel);
+    Optional.ofNullable(stabilityParameters.getMeanDraft()).ifPresent(builder::setMeanDraft);
+    Optional.ofNullable(stabilityParameters.getShearForce()).ifPresent(builder::setShearForce);
+    Optional.ofNullable(stabilityParameters.getTrim()).ifPresent(builder::setTrim);
+    return builder.build();
   }
 
   /**
@@ -3791,6 +3847,7 @@ public class LoadableStudyService {
     if (usersEntity != null) {
       request.setUser(usersEntity.getId());
     }
+
     builder.setUser(request.getUser());
     SaveCommentReply reply = this.saveComment(builder.build());
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
@@ -4187,14 +4244,13 @@ public class LoadableStudyService {
 
     // filtering each column
     List<VoyageDetail> list = this.getFilteredValues(filterParams, grpcReply.getVoyagesList());
-
     List<Voyage> voyageList = new ArrayList<Voyage>();
     for (VoyageDetail detail : list) {
       Voyage voyage = new Voyage();
       voyage.setId(detail.getId());
       voyage.setVoyageNo(detail.getVoyageNumber());
       voyage.setStatus(detail.getStatus());
-
+      voyage.setNoOfDays(detail.getNoOfDays());
       voyage.setConfirmedLoadableStudyId(
           detail.getConfirmedLoadableStudyId() != 0 ? detail.getConfirmedLoadableStudyId() : null);
 
@@ -4632,7 +4688,8 @@ public class LoadableStudyService {
                 cargoHistory.setLoadedDate(cargoHistoryDetail.getLoadedDate());
                 cargoHistory.setLoadedMonth(cargoHistoryDetail.getLoadedMonth());
                 cargoHistory.setApi(
-                    cargoHistoryDetail.getApi() != null
+                    (cargoHistoryDetail.getApi() != null
+                            && !cargoHistoryDetail.getApi().trim().isEmpty())
                         ? new BigDecimal(cargoHistoryDetail.getApi())
                         : new BigDecimal("0"));
                 cargoHistory.setTemperature(

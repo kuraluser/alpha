@@ -9,7 +9,7 @@
                 [routerLink]="list.menuLink !== '' ? list.menuLink : null" routerLinkActive="active">
                 <div class="menu-item-icon {{list.menuIcon}}"></div>
                 <div class="menu-item-text">{{ list.menu | translate}} </div>
-                <div class="dropdown-menu" *ngIf="list.subMenu.length>0 && list.isSubMenuOpen">
+                <div class="dropdown-menu" [hidden]="!(list.subMenu.length>0 && list.isSubMenuOpen)">
                     <a class="dropdown-item"  *ngFor="let subMenuItem of list.subMenu;let subIndex = index" (click)="subRoute($event ,subMenuItem, list.subMenu , i)">{{subMenuItem.name | translate}}</a>
                 </div>
             </li>

@@ -6,7 +6,7 @@
                     <cpdss-portal-datatable [tableId]="'ports'" [form]="portsForm" [columns]="columns"
                         [value]="portsLists" [editMode]="editMode" [listData]="listData" [filterable]="true"
                         [loading]="dataTableLoading" [progress]="progress" (editComplete)="onEditComplete($event)"
-                        (saveRow)="onRowSave($event)" (deleteRow)="onDeleteRow($event)" [tableRowReOrder]="true"
+                        (saveRow)="onRowSave($event)" (deleteRow)="onDeleteRow($event)" [tableRowReOrder]="editMode"
                         (rowReorder)="onRowReorder($event)" (sort)="onSort($event)" (filter)="onFilter($event)">
                     </cpdss-portal-datatable>
                 </div>

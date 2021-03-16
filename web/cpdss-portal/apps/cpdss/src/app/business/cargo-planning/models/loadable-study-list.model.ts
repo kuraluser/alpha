@@ -1,5 +1,5 @@
 import { IResponse } from '../../../shared/models/common.model';
-
+import { LOADABLE_STUDY_STATUS } from '../../core/models/common.model';
 /**
  * Model for loadable study list 
  */
@@ -8,7 +8,7 @@ export class LoadableStudy {
     slNo: number;
     public name: string;
     public status: string;
-    public statusId: number;
+    public statusId: LOADABLE_STUDY_STATUS;
     public detail: string;
     public createdDate: string;
     public charterer: string;
@@ -53,14 +53,6 @@ export interface IDischargingPortIds {
 }
 
 /**
- * Model for Table Columns
- */
-export class TableColumns {
-    public field: string;
-    public header: string;
-}
-
-/**
  * Interface for loadable study save response
  *
  * @export
@@ -90,6 +82,7 @@ export interface ILoadableStudiesResponse {
 export interface LoadablePattern {
     loadablePatternId: number;
     caseNumber: number;
+    loadableStudyStatusId: number;
 }
 
 /* Interface for loadable Patterns response

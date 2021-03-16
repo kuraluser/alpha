@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Form, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
-import { ICargoNominationValueObject, ICargoNominationAllDropdownData, ICargoNominationDetailsResponse, ICargoNominationEvent, ICargoNomination, ILoadingPopupData } from '../../models/cargo-planning.model';
+import { ICargoNominationValueObject, ICargoNominationAllDropdownData, ICargoNominationDetailsResponse, ICargoNominationEvent, ICargoNomination, ILoadingPopupData, IApiTempPopupData } from '../../models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { cargoNominationColorValidator } from '../../directives/validator/cargo-nomination-color.directive'
@@ -15,6 +15,9 @@ import { Subject } from 'rxjs';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { LoadableStudy } from '../../models/loadable-study-list.model';
+import { IPermission } from '../../../../shared/models/user-profile.model';
+import { LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 
 /**
  * Component class of cargonomination screen
@@ -32,6 +35,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
 
   @Input() voyageId: number;
 
+  @Input() voyage: Voyage;
+
   @Input()
   get loadableStudyId() {
     return this._loadableStudyId;
@@ -40,6 +45,17 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     this._loadableStudyId = value;
     this.cargoNominationForm = null;
     this.getCargoNominationDetails();
+  }
+
+  @Input() permission: IPermission;
+
+  @Input()
+  get loadableStudy() {
+    return this._loadableStudy;
+  }
+  set loadableStudy(value: LoadableStudy) {
+    this._loadableStudy = value;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId)? DATATABLE_EDITMODE.CELL : null;
   }
 
   @Input() vesselId: number;
@@ -52,9 +68,13 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   }
   set cargoNominations(cargoNominations: ICargoNominationValueObject[]) {
     this.totalQuantity = 0;
+    const unitFrom = <QUANTITY_UNIT>localStorage.getItem('unit');
+    const unitTo = this.loadableStudyDetailsApiService.baseUnit
     this.loadableStudyDetailsApiService.cargoNominations = cargoNominations.map((cargoNomination, _index) => {
       const _cargoNomination = this.loadableStudyDetailsTransformationService.formatCargoNomination(cargoNomination);
-      this.totalQuantity += _cargoNomination?.isDelete ? 0 : Number(_cargoNomination.quantity.value);
+      let value = _cargoNomination?.isDelete ? 0 : Number(_cargoNomination.quantity.value);
+      value = this.loadableStudyDetailsApiService.updateQuantityByUnit(value, unitFrom, unitTo, _cargoNomination.api.value, _cargoNomination.temperature.value)
+      this.totalQuantity += value;
       _cargoNomination.priority.value = _cargoNomination.priority.value > cargoNominations.length ? cargoNominations.length : _cargoNomination.priority.value;
       return _cargoNomination
     });
@@ -90,7 +110,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   }
 
   // public fields
-  readonly editMode = DATATABLE_EDITMODE.CELL;
+  editMode: DATATABLE_EDITMODE;
   columns: IDataTableColumn[];
   listData = <ICargoNominationAllDropdownData>{};
   cargoNominationForm: FormGroup;
@@ -98,9 +118,11 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   dataTableLoading: boolean;
   cargoNominationCheckUpdatesTimer;
   progress = true;
+  apiTempPopupData: IApiTempPopupData;
 
   // private fields
   private _loadableStudyId: number;
+  private _loadableStudy: LoadableStudy;
   private _loadingPopupData: ILoadingPopupData;
   private _openLoadingPopup = false;
   private _openAPITemperatureHistoryPopup = false;
@@ -126,7 +148,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    * @memberof CargoNominationComponent
    */
   ngOnInit() {
-    this.columns = this.loadableStudyDetailsTransformationService.getCargoNominationDatatableColumns();
+    this.columns = this.loadableStudyDetailsTransformationService.getCargoNominationDatatableColumns(this.permission, this.loadableStudy?.statusId, this.voyage?.statusId);
     this.initSubscriptions();
   }
 
@@ -240,7 +262,18 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         this.openLoadingPopup = true;
       }
     } else if (['api', 'temperature'].includes(event.field)) {
-      this.openAPITemperatureHistoryPopup = true;
+      if (event.data?.cargo?.value) {
+        const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
+        event.data.cargo.value.ports = result?.ports;
+        this.apiTempPopupData = <IApiTempPopupData>{
+          rowDataCargo: event.data?.cargo,
+          vesselId: this.vesselId,
+          voyageId: this.voyageId,
+          loadableStudyId: this.loadableStudyId,
+          rowIndex: event.index
+        }
+        this.openAPITemperatureHistoryPopup = true;
+      }
     }
     this.ngxSpinnerService.hide();
   }

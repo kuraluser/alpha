@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
 import java.util.List;
@@ -13,4 +13,5 @@ public class LoadablePattern {
   private List<LoadablePlanStowageDetails> loadablePlanStowageDetails;
   private Long loadableStudyStatusId;
   private Integer caseNumber;
+  private StabilityParameter stabilityParameters;
 }

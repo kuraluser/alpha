@@ -1,4 +1,8 @@
 {
 	"SIGN_IN": "Sign In",
-	"SIGN_IN_WITH" : "Sign In With"
+	"SIGN_IN_WITH" : "Sign In With",
+	"LOGIN_SHIP_USERNAME_REQUIRED": "User name is required",
+	"LOGIN_SHIP_PASSWORD_REQUIRED": "Password is required",
+	"LOGIN_SHIP_PASSWORD_MINLEGTH": "Minimum character legth is 8",
+	"LOGIN_SHIP_PASSWORD_PATTERN": "Only aphanumeric is allowed"
 }

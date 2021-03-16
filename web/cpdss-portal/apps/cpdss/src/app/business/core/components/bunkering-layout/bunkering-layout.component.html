@@ -51,7 +51,7 @@
                             <li class="col-7">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
                             <li class="col-5">{{tank?.commodity[options?.ullageField]}}
                                 {{options?.ullageUnit}}</li>
-                                <li class="col-7">{{'TANK_LAYOUT_SG'| translate}}</li>
+                                <li class="col-7">{{'TANK_LAYOUT_DENSITY'| translate}}</li>
                             <li class="col-5">{{(tank?.commodity[options?.densityField]?.value || tank?.commodity[options?.densityField]?.value === 0) ? tank?.commodity[options?.densityField].value : tank?.commodity[options?.densityField]}}</li>
                             <li class="col-7">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
                             <li class="col-5">{{tank?.commodity[options?.weightField]}}

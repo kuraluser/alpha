@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ICargoTank, Voyage } from '../../core/models/common.model';
+import { ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS } from '../../core/models/common.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
 import { LoadablePatternHistoryApiService } from '../services/loadable-pattern-history-api.service';
-import { ILoadablePattern, ILoadablePatternCargoDetail, ILoadablePatternResponse } from '../models/loadable-pattern.model';
+import { ILoadablePattern, ILoadablePatternCargoDetail, ILoadablePatternResponse, IStabilityParameter } from '../models/loadable-pattern.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
@@ -61,6 +61,10 @@ export class LoadablePatternHistoryComponent implements OnInit {
   loadablePatternDetailsId: number;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
   prevQuantitySelectedUnit: QUANTITY_UNIT;
+  showStability = false;
+  stabilityParameters: IStabilityParameter[];
+  LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
+  VOYAGE_STATUS = VOYAGE_STATUS;
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -87,7 +91,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));
-      this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+      if (this.isViewPattern) {
+        this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+      }
       this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
     });
   }
@@ -111,9 +117,6 @@ export class LoadablePatternHistoryComponent implements OnInit {
      */
   async getLoadableStudies(vesselId: number, voyageId: number, loadableStudyId: number) {
     this.ngxSpinnerService.show();
-    const res = await this.vesselsApiService.getVesselsInfo().toPromise();
-    this.vesselInfo = res[0] ?? <IVessel>{};
-    this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
     this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
@@ -163,6 +166,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
    */
   async getLoadablePatterns(vesselId: number, voyageId: number, loadableStudyId: number) {
     this.ngxSpinnerService.show();
+    const res = await this.vesselsApiService.getVesselsInfo().toPromise();
+    this.vesselInfo = res[0] ?? <IVessel>{};
+    this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
     this.loadablePatternResponse = await this.loadablePatternApiService.getLoadablePatterns(vesselId, voyageId, loadableStudyId).toPromise();
     if (this.loadablePatternResponse.responseStatus.status === '200') {
       this.loadablePatterns = this.loadablePatternResponse.loadablePatterns;
@@ -207,7 +213,6 @@ export class LoadablePatternHistoryComponent implements OnInit {
   onLoadableStudyChange(event) {
     this.loadableStudyId = event;
     this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
-    this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
   }
 
   /**
@@ -275,15 +280,57 @@ export class LoadablePatternHistoryComponent implements OnInit {
     }
     this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_PATTERN_CONFIRM_SUMMARY', detail: detail, data: { confirmLabel: 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', rejectLabel: 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL' } });
     this.confirmationAlertService.confirmAlert$.pipe().subscribe(async (response) => {
-      if(response){
-        this.ngxSpinnerService.show();
+      if (response) {
         const confirmResult = await this.loadablePatternApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, loadablePattern?.loadablePatternId).toPromise();
-        this.ngxSpinnerService.hide();
-        if(confirmResult.responseStatus.status === '200'){
+        if (confirmResult.responseStatus.status === '200') {
           this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
         }
       }
     })
+  }
+
+  /**
+ * Handler for new loadable study added
+ *
+ * @param {*} event
+ * @memberof LoadablePatternHistoryComponent
+ */
+  onNewLoadableStudyAdded(event) {
+    this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/${event}`]);
+  }
+
+  /**
+* Handler for pattern history button
+*
+* @memberof LoadablePatternHistoryComponent
+*/
+  patternHistory() {
+    if(!this.isViewPattern){
+      this.router.navigate([`/business/cargo-planning/loadable-pattern-history/0/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
+    }else{
+      this.openSidePane = !this.openSidePane
+    }
+  }
+
+  /**
+   * for view stability pop up
+   *
+   * @param {IStabilityParameter} stabilityParameters
+   * @memberof LoadablePatternHistoryComponent
+   */
+  viewStability(stabilityParameters : IStabilityParameter){
+    this.stabilityParameters = stabilityParameters ? [stabilityParameters] : [];
+    this.showStability = true;
+  }
+
+   /**
+   * set visibility of stability popup (show/hide)
+   *
+   * @param {*} event
+   * @memberof LoadablePatternHistoryComponent
+   */
+  setStabilityPopupVisibility(emittedValue) {
+    this.showStability = emittedValue;
   }
 
 }

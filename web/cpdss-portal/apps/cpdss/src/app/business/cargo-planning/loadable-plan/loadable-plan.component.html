@@ -18,7 +18,7 @@
 
             </div>
             <div class="ml-auto pr-15">
-                <button class="btn btn-main">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL' |
+                <button class="btn btn-main" id="confirm_plan" [disabled]="isConfirmed" *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE" (click)="confirmPlan()">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL' |
                 translate}}</button>
                 <a><img src="../../../../assets/images/themes/dark/download-arrow.png" alt="" class="ml-20"></a>
                 <a><img src="../../../../assets/images/themes/dark/print-icon.png" alt="" class="ml-20 mr-30"></a>
@@ -34,11 +34,11 @@
             </cpdss-portal-loadable-quantity>
         </div>
         <div>
-            <cpdss-portal-stowage [cargoTanks]="cargoTanks" [rearBallastTanks]="rearBallastTanks"
+            <cpdss-portal-stowage *ngIf="selectedVoyage && loadableStudy" [cargoTanks]="cargoTanks" [rearBallastTanks]="rearBallastTanks"
                 [centerBallastTanks]="centerBallastTanks" [frontBallastTanks]="frontBallastTanks"
                 [cargoTankDetails]="cargoTankDetails" [ballastDetails]="loadablePlanBallastDetails"
                 [vesselId]="vesselId" [voyageId]="voyageId" [loadablePatternId]="loadablePatternId"
-                [loadableStudyId]="loadableStudyId">
+                [loadableStudyId]="loadableStudyId" [voyage]="selectedVoyage" [loadableStudy]="loadableStudy">
             </cpdss-portal-stowage>
         </div>
         <div>
@@ -47,7 +47,7 @@
         </div>
         <div>
             <cpdss-portal-comments [loadablePatternId]="loadablePatternId" [loadableStudyId]="loadableStudyId"
-                [commentsDetails]="loadablePlanComments" [vesselId]="vesselId" [voyageId]="voyageId">
+                [commentsDetails]="loadablePlanComments" [vesselId]="vesselId" [voyageId]="voyageId" [enableSubmit]="true">
             </cpdss-portal-comments>
         </div>
     </div>

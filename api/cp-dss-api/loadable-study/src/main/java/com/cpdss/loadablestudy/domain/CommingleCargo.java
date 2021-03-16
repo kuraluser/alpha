@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.domain;
 
 import lombok.Data;
@@ -28,4 +28,8 @@ public class CommingleCargo {
   private Boolean isSlopOnly;
 
   private Integer priority;
+
+  private Long cargoNomination1Id;
+
+  private Long cargoNomination2Id;
 }

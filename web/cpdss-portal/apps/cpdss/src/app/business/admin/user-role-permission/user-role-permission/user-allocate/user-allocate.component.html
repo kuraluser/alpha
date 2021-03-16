@@ -8,7 +8,7 @@
                 <p-tableHeaderCheckbox (click)="onRowSelect()"></p-tableHeaderCheckbox>
             </th>
             <th>{{'SELECT_ALL' | translate}}</th>
-            <td><input type="text" id="search_user" class="form-control mb-5" [placeholder]="'SEARCH' | translate" (input)="datatable.filter(($event.target.value).trim(), 'name' , 'contains')"/></td>
+            <td><input type="text" id="search_user" class="form-control mb-5" [placeholder]="'SEARCH' | translate" (input)="datatable.filter(($event.target.value).trim(), 'username' , 'contains')"/></td>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-userDetail>
@@ -16,7 +16,7 @@
             <td>
                 <p-tableCheckbox [value]="userDetail" (onChange)="onChange($event)"></p-tableCheckbox>
             </td>
-            <td>{{userDetail.name}}</td>
+            <td>{{userDetail.username}}</td>
             <td></td>
         </tr>
     </ng-template>

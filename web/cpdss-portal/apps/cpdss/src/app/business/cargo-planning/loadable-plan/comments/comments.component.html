@@ -11,7 +11,7 @@
                 [placeholder]="'ENTER_COMMENTS' | translate" #comment  (keyup.enter)="submitComments()" maxlength="100" formControlName="comment"></textarea>
                 <p class="text-danger"  *ngIf="fieldError('comment')">{{'COMMENTS_REQUIRED'| translate}}</p>
             </div>
-            <div><button type="button" class="btn btn-main" id="comment-save" (click)="submitComments()" >{{'SUBMIT_COMMENT' | translate}}</button></div>
+            <div><button type="button" class="btn btn-main" id="comment-save" *ngIf="enableSubmit" (click)="submitComments()" >{{'SUBMIT_COMMENT' | translate}}</button></div>
             
         </form>
         <div class="row">

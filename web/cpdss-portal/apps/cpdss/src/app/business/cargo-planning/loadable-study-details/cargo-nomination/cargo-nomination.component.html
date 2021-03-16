@@ -1,23 +1,24 @@
 <div class="" *ngIf="cargoNominationForm">
-    <form [formGroup]="cargoNominationForm">
-        <div class="form-group row">
-            <div class="col" [ngClass]="{'datatable-loading': dataTableLoading }">
-                <div class="table-responsive-custom cargo-nomination-table">
-                    <cpdss-portal-datatable [tableId]="'cargo_nomination'" [form]="cargoNominationForm"
-                        [columns]="columns" [value]="cargoNominations" [loading]="dataTableLoading" [progress]="progress" [showTotal]="true"
-                        [editMode]="editMode" [listData]="listData" (cellValueClick)="onCellValueClick($event)"
-                        (editComplete)="onEditComplete($event)" [filterable]="true" (duplicateRow)="onDuplicate($event)"
-                        (saveRow)="onRowSave($event)" (deleteRow)="onDeleteRow($event)" (sort)="onSort($event)"
-                        (filter)="onFilter($event)">
-                    </cpdss-portal-datatable>
-                </div>
-            </div>
+  <form [formGroup]="cargoNominationForm">
+    <div class="form-group row">
+      <div class="col" [ngClass]="{'datatable-loading': dataTableLoading }">
+        <div class="table-responsive-custom cargo-nomination-table">
+          <cpdss-portal-datatable [tableId]="'cargo_nomination'" [form]="cargoNominationForm" [columns]="columns"
+            [value]="cargoNominations" [loading]="dataTableLoading" [progress]="progress" [showTotal]="true"
+            [editMode]="editMode" [listData]="listData" (cellValueClick)="onCellValueClick($event)"
+            (editComplete)="onEditComplete($event)" [filterable]="true" (duplicateRow)="onDuplicate($event)"
+            (saveRow)="onRowSave($event)" (deleteRow)="onDeleteRow($event)" (sort)="onSort($event)"
+            (filter)="onFilter($event)">
+          </cpdss-portal-datatable>
         </div>
-    </form>
+      </div>
+    </div>
+  </form>
 </div>
 
-<cpdss-portal-loading-ports-popup *ngIf="loadingPopupData" [(visible)]="openLoadingPopup"
-    [(popupData)]="loadingPopupData"></cpdss-portal-loading-ports-popup>
+<cpdss-portal-loading-ports-popup *ngIf="loadingPopupData" [(visible)]="openLoadingPopup" [voyage]="voyage"
+  [(popupData)]="loadingPopupData" [permission]="permission" [loadableStudy]="loadableStudy"></cpdss-portal-loading-ports-popup>
 
-<cpdss-portal-api-temperature-history-popup [(visible)]="openAPITemperatureHistoryPopup">
+<cpdss-portal-api-temperature-history-popup *ngIf="apiTempPopupData" [(apiTempHistoryPopupData)]="apiTempPopupData"
+  [(visible)]="openAPITemperatureHistoryPopup">
 </cpdss-portal-api-temperature-history-popup>

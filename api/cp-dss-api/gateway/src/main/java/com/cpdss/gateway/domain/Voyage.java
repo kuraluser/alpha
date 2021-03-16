@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -57,4 +57,6 @@ public class Voyage {
   private Long statusId;
 
   private Long timezoneId;
+
+  private Long noOfDays;
 }

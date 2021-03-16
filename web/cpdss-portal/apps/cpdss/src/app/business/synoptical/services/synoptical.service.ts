@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { LoadablePattern, LoadableStudy } from '../../cargo-planning/models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../../cargo-planning/services/loadable-study-list-api.service';
-import { Voyage } from '../../core/models/common.model';
+import { Voyage, VOYAGE_STATUS, VOYAGE_STATUS_LABEL } from '../../core/models/common.model';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
@@ -36,29 +37,46 @@ export class SynopticalService {
   loadablePatternId: number;
   editMode = false;
   showActions = false;
-  
+
   constructor(
     private loadableStudyListApiService: LoadableStudyListApiService,
     private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,
+    private route: ActivatedRoute
   ) {
   }
 
   // Init function to intialize data
   async init() {
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
-    this.vesselInfo = res[0] ?? <IVessel>{};
-    this.voyages = await this.voyageService.getVoyagesByVesselId(this.vesselInfo?.id).toPromise();
+    if (!this.vesselInfo) {
+      this.vesselInfo = res[0] ?? <IVessel>{};
+      this.vesselId = this.vesselInfo.id;
+    }
+    if (!this.voyages) {
+      this.voyages = await this.voyageService.getVoyagesByVesselId(this.vesselInfo?.id).toPromise();
+    }
     await this.setSelectedVoyage();
     this.onInitCompleted.next(true)
   }
 
+  // Destroy function to clear data
+  async destroy() {
+    this.selectedLoadableStudy = null;
+    this.loadableStudyId = null;
+    this.selectedLoadablePattern = null;
+    this.loadablePatternId = null;
+    this.selectedVoyage = null;
+    this.setSelectedVoyage();
+  }
+
   // Method to set selected voyages
   async setSelectedVoyage() {
+    this.voyageId = Number(this.route.snapshot.params?.voyageId)
     if (this.selectedVoyage) {
       this.voyageId = this.selectedVoyage.id;
     } else if (this.voyages && this.voyageId) {
-      this.selectedVoyage = this.voyages.find(voyage => voyage.id === this.voyageId)
+      this.selectedVoyage = this.voyages.find(voyage => voyage.id === this.voyageId);
       await this.getLoadableStudyInfo(this.vesselInfo.id, this.selectedVoyage.id)
     }
   }
@@ -77,6 +95,7 @@ export class SynopticalService {
       this.isVoyageIdSelected = true;
       const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
       this.loadableStudyList = result.loadableStudies;
+      this.loadableStudyId = Number(this.route.snapshot.params?.loadableStudyId)
       if (this.selectedLoadableStudy) {
         this.loadableStudyId = this.selectedLoadableStudy.id;
       } else if (this.loadableStudyId) {
