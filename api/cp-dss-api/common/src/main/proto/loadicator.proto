@@ -8,20 +8,15 @@ import "common.proto";
 
 service LoadicatorService {
 
-rpc saveLoadicatorInfo (LoadicatorRequest) returns (LoadicatorReply) {
-
+	rpc saveLoadicatorInfo (LoadicatorRequest) returns (LoadicatorReply) {
 	}
 }
 
 message LoadicatorRequest{
-	repeated StowagePlanDetails stowagePlanDetails=1;
-	repeated StowageDetailsInfo stowageDetailsInfo=2;
-	repeated CargoInfo cargoInfo=3;
-	repeated OtherTankInfo otherTankInfo=4;
-	repeated BallastInfo ballastInfo=5;
+	repeated StowagePlan stowagePlanDetails=1;
 }
 
-message StowagePlanDetails{
+message StowagePlan{
 	int64 id = 1;
 	int64 vesselId = 2;
 	string imoNumber = 3;
@@ -41,10 +36,15 @@ message StowagePlanDetails{
 	bool damageCal=17;
 	bool dataSave=18;
 	string processId=19;
+	int64 synopticalId = 20;
+	repeated StowageDetails stowageDetails = 21;
+	repeated CargoInfo cargoInfo = 22;
+	repeated OtherTankInfo otherTankInfo = 23;
+	repeated BallastInfo ballastInfo = 24;
 
 }
 
-message StowageDetailsInfo{
+message StowageDetails{
 	int64 stowagePlanId = 1;
 	int64 cargoId = 2;
 	int64 cargoBookId = 3;
@@ -56,7 +56,6 @@ message StowageDetailsInfo{
 	string tankName = 9;
 	int64 stowageId = 10;
 	int64 portId = 11;
-
 }
 
 message CargoInfo{

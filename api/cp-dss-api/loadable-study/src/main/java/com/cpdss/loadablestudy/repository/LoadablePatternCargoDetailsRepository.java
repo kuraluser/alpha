@@ -13,7 +13,7 @@ public interface LoadablePatternCargoDetailsRepository
       Long loadablePatternId, boolean isActive);
 
   public List<LoadablePatternCargoDetails>
-      findByLoadablePatternIdAndPortIdAndOperationTypeAndIsActive(
+      findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
           Long loadablePatternId, Long portId, String operationType, boolean isActive);
 
   public Optional<LoadablePatternCargoDetails> findById(Long loadablePatternId);
