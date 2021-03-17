@@ -64,4 +64,8 @@ public class OnHandQuantity extends EntityDoc {
 
   @Column(name = "density")
   private BigDecimal density;
+
+  @ManyToOne
+  @JoinColumn(name = "port_rotation_xid")
+  private LoadableStudyPortRotation portRotation;
 }
