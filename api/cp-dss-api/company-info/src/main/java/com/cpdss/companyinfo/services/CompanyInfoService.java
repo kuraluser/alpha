@@ -84,6 +84,7 @@ public class CompanyInfoService {
       response.setProviders(Arrays.asList(company.getKeycloakIdp().split(",")));
     }
     response.setLogo(company.getCompanyLogo());
+    response.setFavicon(company.getCompanyFavicon());
     Set<Carousals> carousals = company.getCarousals();
     if (null != carousals && !carousals.isEmpty()) {
       response.setCarousals(new ArrayList<>());

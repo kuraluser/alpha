@@ -19,4 +19,6 @@ public class CompanyInfoResponse {
   private List<String> carousals;
 
   private String logo;
+
+  private String favicon;
 }
