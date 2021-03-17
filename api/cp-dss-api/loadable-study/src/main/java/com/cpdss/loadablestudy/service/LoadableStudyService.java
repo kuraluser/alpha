@@ -212,6 +212,7 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -4219,6 +4220,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         onHandQuantity -> {
           com.cpdss.loadablestudy.domain.OnHandQuantity onHandQuantityDto =
               new com.cpdss.loadablestudy.domain.OnHandQuantity();
+          modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
           onHandQuantityDto =
               modelMapper.map(onHandQuantity, com.cpdss.loadablestudy.domain.OnHandQuantity.class);
           loadableStudy.getOnHandQuantity().add(onHandQuantityDto);
@@ -6384,11 +6386,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           log.info("other plan is in confirmed status");
           replyBuilder.setConfirmed(false);
         } else {
-          log.info("confirming selected plan");
-          loadablePatternRepository.updateLoadablePatternStatus(
-              CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
-          loadableStudyRepository.updateLoadableStudyStatus(
-              CONFIRMED_STATUS_ID, loadablePatternOpt.get().getLoadableStudy().getId());
+          log.info("plan is okay to confirm");
+
           replyBuilder.setConfirmed(true);
         }
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
