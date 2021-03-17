@@ -2991,6 +2991,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     loadablePatternCargoDetails.setApi(new BigDecimal(lpsd.getApi()));
     loadablePatternCargoDetails.setTemperature(new BigDecimal(lpsd.getTemperature()));
     loadablePatternCargoDetails.setColorCode(lpsd.getColorCode());
+    loadablePatternCargoDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
+    loadablePatternCargoDetails.setCorrectedUllage(
+        !StringUtils.isEmpty(lpsd.getCorrectedUllage())
+            ? new BigDecimal(lpsd.getCorrectedUllage())
+            : null);
     loadablePatternCargoDetailsRepository.save(loadablePatternCargoDetails);
   }
 
@@ -3040,6 +3045,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadablePlanStowageDetails.setTemperature(lpsd.getTemperature());
           loadablePlanStowageDetails.setIsActive(true);
           loadablePlanStowageDetails.setLoadablePattern(loadablePattern);
+          loadablePlanStowageDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
+          loadablePlanStowageDetails.setCorrectedUllage(lpsd.getCorrectedUllage());
           loadablePlanStowageDetailsRespository.save(loadablePlanStowageDetails);
         });
   }
@@ -4193,6 +4200,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           onBoardQuantityDto =
               modelMapper.map(
                   onBoardQuantity, com.cpdss.loadablestudy.domain.OnBoardQuantity.class);
+          onBoardQuantityDto.setApi(
+              null != onBoardQuantity.getDensity()
+                  ? String.valueOf(onBoardQuantity.getDensity())
+                  : "");
           loadableStudy.getOnBoardQuantity().add(onBoardQuantityDto);
         });
   }
@@ -4268,6 +4279,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 modelMapper.map(
                     loadableStudyPortRotation,
                     com.cpdss.loadablestudy.domain.LoadableStudyPortRotation.class);
+            loadableStudyPortRotationDto.setMaxAirDraft(
+                loadableStudyPortRotation.getAirDraftRestriction());
             loadableStudy.getLoadableStudyPortRotation().add(loadableStudyPortRotationDto);
           });
     }
@@ -4492,6 +4505,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         .ifPresent(
             maxWaterTemperature ->
                 loadableStudy.setMaxWaterTemp(String.valueOf(maxWaterTemperature)));
+
+    Optional.ofNullable(loadableStudyOpt.get().getLoadOnTop())
+        .ifPresent(loadOnTop -> loadableStudy.setLoadOnTop(loadOnTop));
   }
 
   /** Get on board quantity details corresponding to a loadable study */

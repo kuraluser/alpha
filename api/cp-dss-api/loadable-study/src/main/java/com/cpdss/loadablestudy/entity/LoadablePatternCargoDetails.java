@@ -63,4 +63,7 @@ public class LoadablePatternCargoDetails extends EntityDoc {
   @ManyToOne
   @JoinColumn(name = "port_rotation_xid")
   private LoadableStudyPortRotation loadableStudyPortRotation;
+
+  @Column(name = "correction_factor")
+  private String correctionFactor;
 }

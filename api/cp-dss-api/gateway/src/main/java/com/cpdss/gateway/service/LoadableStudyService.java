@@ -1187,9 +1187,8 @@ public class LoadableStudyService {
       voyage.setEndDate(detail.getEndDate());
       voyage.setStatus(detail.getStatus());
       voyage.setStatusId(detail.getStatusId());
-     // voyage.setNoOfDays(detail.getNoOfDays());
-      voyage.setNoOfDays(
-              detail.getNoOfDays() != 0 ? detail.getNoOfDays() : null);
+      // voyage.setNoOfDays(detail.getNoOfDays());
+      voyage.setNoOfDays(detail.getNoOfDays() != 0 ? detail.getNoOfDays() : null);
       voyage.setConfirmedLoadableStudyId(
           detail.getConfirmedLoadableStudyId() != 0 ? detail.getConfirmedLoadableStudyId() : null);
       response.getVoyages().add(voyage);
@@ -2923,7 +2922,7 @@ public class LoadableStudyService {
               LoadicatorPatternDetailsResults.Builder builder =
                   LoadicatorPatternDetailsResults.newBuilder();
               builder.setLoadablePatternId(lrpw.getLoadablePatternId());
-              lrpw.getLodicatorResultDetails()
+              lrpw.getLoadicatorResultDetails()
                   .forEach(
                       lrd -> {
                         LodicatorResultDetails.Builder loadicatorResultsBuilder =
@@ -3133,6 +3132,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lpsd.getTankName()).ifPresent(builder::setTankName);
     Optional.ofNullable(lpsd.getQuantityMT()).ifPresent(builder::setWeight);
     Optional.ofNullable(lpsd.getTemperature()).ifPresent(builder::setTemperature);
+    Optional.ofNullable(lpsd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
+    Optional.ofNullable(lpsd.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
     detailsBuilder.addLoadablePlanStowageDetails(builder.build());
   }
 

@@ -9,4 +9,5 @@ import lombok.Data;
 public class LoadablePlanRequest {
   private String processId;
   private List<LoadablePlanDetails> loadablePlanDetails;
+  private List<AlgoError> errors;
 }

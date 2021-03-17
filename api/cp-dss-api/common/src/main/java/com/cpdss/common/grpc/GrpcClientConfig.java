@@ -3,7 +3,6 @@ package com.cpdss.common.grpc;
 
 import io.grpc.ClientInterceptor;
 import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
-
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
@@ -45,17 +44,19 @@ public class GrpcClientConfig extends GrpcChannelsProperties {
     targets.forEach(
         (targetName, targetAddress) -> {
           GrpcChannelProperties properties = new GrpcChannelProperties();
-		  if (serviceType.contentEquals("static")) {
+          if (serviceType.contentEquals("static")) {
             properties.setAddress(serviceType + "://" + targetAddress);
           } else {
-              properties.setAddress(serviceType + ":/" + targetAddress);
+            properties.setAddress(serviceType + ":/" + targetAddress);
           }
           properties.setNegotiationType(NegotiationType.PLAINTEXT);
           getClient().put(targetName, properties);
         });
     return (channelBuilder, name) -> {
       if (channelBuilder instanceof NettyChannelBuilder) {
-        ((NettyChannelBuilder) channelBuilder).enableRetry().maxRetryAttempts(5)
+        ((NettyChannelBuilder) channelBuilder)
+            .enableRetry()
+            .maxRetryAttempts(5)
             .keepAliveTime(30, TimeUnit.SECONDS)
             .keepAliveTimeout(5, TimeUnit.SECONDS);
       }
