@@ -67,7 +67,7 @@
             <div class="row" *ngIf="isVolumeMaximum">
                 <div class="col">
                     <div class="row">
-                        <div class="col">
+                        <div class="col error-icon-wrapper">
                             <p-dropdown id="commingle_cargo1_dropdown" styleClass="form-control" appendTo="body"
                                 [filter]="true" [options]="cargoNominationsCargo1" optionLabel="name"
                                 formControlName="cargo1" (onChange)="onChange($event, 1)" [readonly]="!editMode"
@@ -92,7 +92,7 @@
 
                 <div class="col" [ngClass]="{'mr-15': !editMode}">
                     <div class="row">
-                        <div class="col">
+                        <div class="col error-icon-wrapper">
                             <p-dropdown id="commingle_cargo2_dropdown" appendTo="body" styleClass="form-control"
                                 [filter]="true" [options]="cargoNominationsCargo2" optionLabel="name"
                                 formControlName="cargo2" (onChange)="onChange($event, 2)" [readonly]="!editMode"

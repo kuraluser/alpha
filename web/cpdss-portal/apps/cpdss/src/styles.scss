@@ -1220,6 +1220,7 @@ td.sl div{
    min-width: 160px;
   text-transform: uppercase;
   padding-left: 0;
+  max-width: 190px;
 }
   &.p-dialog{
     /*max-width: 740px;*/
@@ -1229,6 +1230,7 @@ td.sl div{
     .col:nth-child(2){
       width: 120px;
       text-align: right;
+      max-width: 132px;
       input{
         text-align: right;
         &.p-dropdown-filter{
@@ -1455,7 +1457,6 @@ td.sl div{
         position: absolute;
         bottom: 5px;
         right: 5px;
-        text-align: right;
         overflow: hidden;
         text-overflow: ellipsis;
         width: 45%;
@@ -1847,7 +1848,7 @@ height: 15px;
       text-align: left;
       padding-left: 3px;
       top: 7px;
-      left: 13px;
+      left: 15px;
     }
     .tank-filling-percentage{
       position: absolute;
@@ -2216,4 +2217,7 @@ tr:hover{
       background-position: bottom left;
     }
   }
+}
+.p-dialog, .p-dialog-mask.p-component-overlay{
+  z-index: 9!important;
 }

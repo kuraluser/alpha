@@ -1199,3 +1199,9 @@ header{
 .reset-btn{
   background: url($images-theme + 'reset-icon.png');
 }
+
+.new-loadable-study-pop-up{
+  a:hover{
+    color: $text-secondary!important;
+  }
+}
