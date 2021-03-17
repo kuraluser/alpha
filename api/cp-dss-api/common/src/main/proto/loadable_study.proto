@@ -1073,6 +1073,7 @@ message CargoHistoryRequest {
 message CargoHistoryReply {
 	ResponseStatus responseStatus = 1;
 	repeated CargoHistoryDetail cargoHistory = 2;
+	int64 total = 3;
 }
 
 message CargoHistoryDetail {
