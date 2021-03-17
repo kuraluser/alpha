@@ -9,6 +9,7 @@ import lombok.Data;
 public class LoadablePlanDetails {
   private Integer caseNumber;
   private List<String> constraints;
+  private String slopQuantity;
   private List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails;
   private StabilityParameter stabilityParameters;
 }

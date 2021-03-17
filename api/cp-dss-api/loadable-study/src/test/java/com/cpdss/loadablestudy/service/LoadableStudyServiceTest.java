@@ -3852,7 +3852,7 @@ class LoadableStudyServiceTest {
     when(this.onBoardQuantityRepository.saveAll(any(List.class))).thenReturn(obqEntities);
     List<LoadablePatternCargoDetails> cargoList = this.createLoadablePatternCargoDetails();
     when(this.loadablePatternCargoDetailsRepository
-            .findByLoadablePatternIdAndPortIdAndOperationTypeAndIsActive(
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
                 anyLong(), anyLong(), anyString(), anyBoolean()))
         .thenReturn(cargoList);
     when(this.loadablePatternCargoDetailsRepository.saveAll(any(List.class))).thenReturn(cargoList);
@@ -3866,7 +3866,7 @@ class LoadableStudyServiceTest {
             any(LoadableStudy.class), anyBoolean()))
         .thenReturn(Arrays.asList(ID_TEST_VALUE));
     when(this.loadablePlanStowageBallastDetailsRepository
-            .findByLoadablePatternIdAndPortXIdAndOperationTypeAndIsActive(
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
                 anyLong(), anyLong(), anyString(), anyBoolean()))
         .thenReturn(this.createBallastEntities());
   }

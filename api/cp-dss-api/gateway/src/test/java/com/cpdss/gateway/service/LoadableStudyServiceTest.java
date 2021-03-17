@@ -84,8 +84,8 @@ import com.cpdss.gateway.domain.LoadableQuantityResponse;
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.LoadicatorPatternDetailsResults;
+import com.cpdss.gateway.domain.LoadicatorResultDetails;
 import com.cpdss.gateway.domain.LoadicatorResultsRequest;
-import com.cpdss.gateway.domain.LodicatorResultDetails;
 import com.cpdss.gateway.domain.OnBoardQuantity;
 import com.cpdss.gateway.domain.OnBoardQuantityResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
@@ -1440,14 +1440,14 @@ class LoadableStudyServiceTest {
     LoadicatorPatternDetailsResults detailsResults = new LoadicatorPatternDetailsResults();
     patternDetailsResults.add(detailsResults);
     detailsResults.setLoadablePatternId(1L);
-    detailsResults.setLodicatorResultDetails(createLodicatorResultDetails());
+    detailsResults.setLoadicatorResultDetails(createLodicatorResultDetails());
     return patternDetailsResults;
   }
 
   /** @return List<LodicatorResultDetails> */
-  private List<LodicatorResultDetails> createLodicatorResultDetails() {
-    List<LodicatorResultDetails> details = new ArrayList<LodicatorResultDetails>();
-    LodicatorResultDetails lodicatorResultDetails = new LodicatorResultDetails();
+  private List<LoadicatorResultDetails> createLodicatorResultDetails() {
+    List<LoadicatorResultDetails> details = new ArrayList<LoadicatorResultDetails>();
+    LoadicatorResultDetails lodicatorResultDetails = new LoadicatorResultDetails();
     lodicatorResultDetails.setBlindSector(LOADICATOR_DATA);
     lodicatorResultDetails.setCalculatedDraftAftPlanned(LOADICATOR_DATA);
     lodicatorResultDetails.setCalculatedDraftFwdPlanned(LOADICATOR_DATA);

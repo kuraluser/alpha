@@ -63,8 +63,7 @@ public class CompanyInfoController {
       value = SHIP_CAROUSAL_URI,
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE)
-  public CompanyInfoResponse getCarousals()
-      throws CommonRestException {
+  public CompanyInfoResponse getCarousals() throws CommonRestException {
     try {
       log.debug("inside get carousal info controller");
       return this.companyInfoService.findShipCarousals();

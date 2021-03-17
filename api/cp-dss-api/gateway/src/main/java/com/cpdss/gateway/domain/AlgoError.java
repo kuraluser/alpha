@@ -6,7 +6,7 @@ import lombok.Data;
 
 /** @Author jerin.g */
 @Data
-public class LoadicatorPatternDetailsResults {
-  private Long loadablePatternId;
-  private List<LoadicatorResultDetails> loadicatorResultDetails;
+public class AlgoError {
+  private String errorHeading;
+  private List<String> errorDetails;
 }
