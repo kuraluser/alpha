@@ -126,7 +126,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     this.setColumnHeader();
     const result = await this.synoticalApiService.getSynopticalTable(this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId, this.synopticalService.loadablePatternId).toPromise();
     if (result.responseStatus.status === "200") {
-      this.synopticalRecords = result.synopticalRecords ?? [];
+      this.synopticalService.synopticalRecords = result.synopticalRecords ?? [];
       this.synopticalService.showActions = true;
       this.dynamicColumns.forEach(dynamicColumn => {
         this.formatData(dynamicColumn)
@@ -983,7 +983,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     const maxKey = dynamicColumn.maxKey;
     const keys = dynamicColumn.subHeaders;
     this.listData[fieldKey] = [];
-    this.synopticalRecords.forEach(synopticalRecord => {
+    this.synopticalService.synopticalRecords.forEach(synopticalRecord => {
       if (synopticalRecord[fieldKey]) {
         synopticalRecord[fieldKey].forEach(record => {
           const index = this.listData[fieldKey].findIndex(item => item.id === record[primaryKey]);
@@ -1026,7 +1026,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   initForm() {
     this.allColumns = this.getAllColumns(this.cols);
 
-    this.synopticalRecords.forEach((record) => {
+    this.synopticalService.synopticalRecords.forEach((record) => {
       const fg = new FormGroup({})
       this.allColumns.forEach(column => {
         if (column.editable) {
@@ -1182,12 +1182,12 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
 */
   onKeyUp(field: SynopticField, colIndex: number) {
     const fc = this.getControl(colIndex, field.key)
-    const operationType = this.synopticalRecords[colIndex].operationType;
+    const operationType = this.synopticalService.synopticalRecords[colIndex].operationType;
     const otherIndex = operationType === 'ARR' ? colIndex + 1 : colIndex - 1;
     switch (field.key) {
       case 'speed': case 'distance': case 'runningHours':
       case 'inPortHours':
-        if (otherIndex >= 0 && otherIndex < this.synopticalRecords.length) {
+        if (otherIndex >= 0 && otherIndex < this.synopticalService.synopticalRecords.length) {
           this.getControl(otherIndex, field.key)?.setValue(fc.value)
         }
         break;
@@ -1205,7 +1205,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   */
   onBlur(field: SynopticField, colIndex: number, updateValues = true) {
     const fc = this.getControl(colIndex, field.key)
-    const operationType = this.synopticalRecords[colIndex].operationType;
+    const operationType = this.synopticalService.synopticalRecords[colIndex].operationType;
     const otherIndex = operationType === 'ARR' ? colIndex + 1 : colIndex - 1;
     if (!fc || fc.invalid)
       return;
@@ -1284,7 +1284,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           if (minValue) {
             minValue.setSeconds(0, 0)
             if (value <= minValue) {
-              if (this.synopticalRecords[colIndex].operationType === 'ARR')
+              if (this.synopticalService.synopticalRecords[colIndex].operationType === 'ARR')
                 fc.setErrors({ etaMin: true })
               else
                 fc.setErrors({ etdMin: true })
@@ -1293,13 +1293,13 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             }
           }
         }
-        if (colIndex < this.synopticalRecords.length - 1) {
+        if (colIndex < this.synopticalService.synopticalRecords.length - 1) {
           fcMax = this.getControl(colIndex + 1, field.key)
           const maxValue: Date = fcMax.value;
           if (maxValue) {
             maxValue.setSeconds(0, 0)
             if (value >= maxValue) {
-              if (this.synopticalRecords[colIndex].operationType === 'ARR')
+              if (this.synopticalService.synopticalRecords[colIndex].operationType === 'ARR')
                 fc.setErrors({ etaMax: true })
               else
                 fc.setErrors({ etdMax: true })
@@ -1355,10 +1355,10 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           const totalCols = this.getAllColumns(col.subHeaders)
           const totalKeys = totalCols.map(totalCol => totalCol.fields[0].key)
           if (field.key.startsWith(dynamicKey)) {
-            const totalValue = this.synopticalRecords[colIndex][totalKeys[planIndex]]
-            const currentFieldValue = this.synopticalRecords[colIndex][field.key] ?? 0;
-            this.synopticalRecords[colIndex][totalKeys[planIndex]] = Number(Number(totalValue - currentFieldValue + fc.value).toFixed(2))
-            this.synopticalRecords[colIndex][field.key] = fc.value;
+            const totalValue = this.synopticalService.synopticalRecords[colIndex][totalKeys[planIndex]]
+            const currentFieldValue = this.synopticalService.synopticalRecords[colIndex][field.key] ?? 0;
+            this.synopticalService.synopticalRecords[colIndex][totalKeys[planIndex]] = Number(Number(totalValue - currentFieldValue + fc.value).toFixed(2))
+            this.synopticalService.synopticalRecords[colIndex][field.key] = fc.value;
           }
         })
         break;
@@ -1449,7 +1449,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     let msgkeys, severity, valid = true;
     // Prompt all validations
     this.tableForm.markAllAsTouched();
-    this.synopticalRecords.forEach((_, portIndex) => {
+    this.synopticalService.synopticalRecords.forEach((_, portIndex) => {
       this.allColumns.forEach(col => {
         col.fields.forEach(field => {
           this.onBlur(field, portIndex, false)
@@ -1463,7 +1463,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           totalCols.forEach(totalCol => {
             totalCol.fields.forEach(field => {
               const totalKey = field.key
-              const totalValue = this.synopticalRecords[portIndex][totalKey]
+              const totalValue = this.synopticalService.synopticalRecords[portIndex][totalKey]
               if (totalValue > this.loadableQuantityValue) {
                 valid = false;
                 msgkeys = ['TOTAL_QUANTITY_ERROR', 'TOTAL_QUANTITY_ERROR_DETAILS']
@@ -1479,13 +1479,13 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       if (this.tableForm.valid) {
         this.ngxSpinner.show();
         const synopticalRecords = []
-        this.synopticalRecords.forEach((row, index: number) => {
+        this.synopticalService.synopticalRecords.forEach((row, index: number) => {
           const saveJson = {};
           saveJson['id'] = row.id;
           saveJson['portId'] = row.portId;
           this.headerColumns.forEach(col => {
             col.fields.forEach(field => {
-              saveJson[field.key] = this.synopticalRecords[index][field.key]
+              saveJson[field.key] = this.synopticalService.synopticalRecords[index][field.key]
             })
           })
           this.cols.forEach(col => {
@@ -1531,13 +1531,13 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       this.listData[fieldKey].forEach(item => {
         let json = {};
         json[primaryKey] = item.id
-        json = this.setFuelTypeId(json, fieldKey, this.synopticalRecords[index], item, primaryKey)
+        json = this.setFuelTypeId(json, fieldKey, this.synopticalService.synopticalRecords[index], item, primaryKey)
         subColumns.forEach(subCol => {
           subCol.fields.forEach(field => {
             const key = field.key;
             const value = this.getValueFromTable(fieldKey + item.id + key, subCol, index, field.type)
             json[key] = value;
-            this.synopticalRecords[index][fieldKey + item.id + key] = value;
+            this.synopticalService.synopticalRecords[index][fieldKey + item.id + key] = value;
           })
         })
         values.push(json)
@@ -1552,7 +1552,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         const key = field.key;
         const value = this.getValueFromTable(key, column, index, field.type)
         record[key] = value;
-        this.synopticalRecords[index][key] = value;
+        this.synopticalService.synopticalRecords[index][key] = value;
       })
     }
   }
@@ -1567,7 +1567,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     if (column.editable) {
       return this.convertToString(this.getControl(index, key).value, type)
     } else {
-      return this.synopticalRecords[index][key]
+      return this.synopticalService.synopticalRecords[index][key]
     }
   }
 
@@ -1596,7 +1596,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   */
   resetFormValues() {
     this.allColumns.forEach(col => {
-      this.synopticalRecords.forEach((record, index) => {
+      this.synopticalService.synopticalRecords.forEach((record, index) => {
         col.fields.forEach(field => {
           const fc = this.getControl(index, field.key)
           if (fc) {
@@ -1647,7 +1647,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   */
   editChanges() {
     this.synopticalService.editMode = true;
-    this.synopticalRecordsCopy = JSON.parse(JSON.stringify(this.synopticalRecords))
+    this.synopticalRecordsCopy = JSON.parse(JSON.stringify(this.synopticalService.synopticalRecords))
   }
 
   /**
@@ -1657,7 +1657,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   * @memberof SynopticalTableComponent
   */
   cancelChanges() {
-    this.synopticalRecords = JSON.parse(JSON.stringify(this.synopticalRecordsCopy))
+    this.synopticalService.synopticalRecords = JSON.parse(JSON.stringify(this.synopticalRecordsCopy))
     this.resetFormValues();
     this.synopticalService.editMode = false;
   }

@@ -37,6 +37,7 @@ export class SynopticalService {
   loadablePatternId: number;
   editMode = false;
   showActions = false;
+  synopticalRecords: any;
 
   constructor(
     private loadableStudyListApiService: LoadableStudyListApiService,

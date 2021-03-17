@@ -27,16 +27,19 @@
                     (onChange)="onSelectLoadableStudy()">
                 </p-dropdown>
 
-                <span class="ml-20 mr-10">
-                    {{'SYNOPTICAL_LOADABLE_PATTERN_LABEL' | translate }}</span>
-                <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.loadablePatternsList"
-                    [(ngModel)]="synopticalService.selectedLoadablePattern" optionLabel="caseNumber" [filter]="true"
-                    placeholder="{{'SYNOPTICAL_LOADABLEPATTERN_PLACEHOLDER' | translate }}"
-                    (onChange)="onSelectLoadablePattern()">
-                </p-dropdown>
+                <ng-container *ngIf="synopticalService.loadablePatternsList?.length">
+
+                    <span class="ml-20 mr-10">
+                        {{'SYNOPTICAL_LOADABLE_PATTERN_LABEL' | translate }}</span>
+                        <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.loadablePatternsList"
+                        [(ngModel)]="synopticalService.selectedLoadablePattern" optionLabel="caseNumber" [filter]="true"
+                        placeholder="{{'SYNOPTICAL_LOADABLEPATTERN_PLACEHOLDER' | translate }}"
+                        (onChange)="onSelectLoadablePattern()">
+                    </p-dropdown>
+                </ng-container>
                
             </div>
-            <div class="ml-auto pr-15" *ngIf="synopticalService.showActions">
+            <div class="ml-auto pr-15" *ngIf="synopticalService.showActions && synopticalService.synopticalRecords?.length">
                 <ng-container *ngIf="isEditable()">
                     <button class="btn btn-main mr-10" (click)="synopticalService.onEditOrCancel()" *cpdssPortalPermission="editRoleBtnPermissionContext">{{synopticalService.editMode? 'Cancel':'Edit'}}</button>
                 </ng-container>

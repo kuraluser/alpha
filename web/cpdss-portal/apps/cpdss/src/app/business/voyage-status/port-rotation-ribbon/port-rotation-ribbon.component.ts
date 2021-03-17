@@ -486,12 +486,14 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   }
 
   setInvalid(port, form) {
-    let control = form.controls.distance
-    port.isDistanceEditable = control.invalid && control.touched;
-    control = form.controls.date
-    port.isDateEditable = control.invalid && control.touched;
-    control = form.controls.time
-    port.isTimeEditable = control.invalid && control.touched;
+    if(port.isFutureDate){
+      let control = form.controls.distance
+      port.isDistanceEditable = control.invalid && control.touched;
+      control = form.controls.date
+      port.isDateEditable = control.invalid && control.touched;
+      control = form.controls.time
+      port.isTimeEditable = control.invalid && control.touched;
+    }
   }
 
 }
