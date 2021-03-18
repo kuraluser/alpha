@@ -122,6 +122,8 @@ export class VoyagesComponent implements OnInit, OnDestroy {
           voyage.isStop = voyage.status === 'Active' ? true : false;
           return voyage;
         });
+      }else{
+        this.voyageList = [];
       }
     }
 

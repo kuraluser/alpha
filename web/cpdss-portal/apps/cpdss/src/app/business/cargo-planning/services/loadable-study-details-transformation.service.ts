@@ -140,7 +140,7 @@ export class LoadableStudyDetailsTransformationService {
    * @returns {IDataTableColumn[]}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getCargoNominationDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId:VOYAGE_STATUS): IDataTableColumn[] {
+  getCargoNominationDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
     let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
@@ -334,13 +334,13 @@ export class LoadableStudyDetailsTransformationService {
         }
       }
     ];
-    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
-      if(permission?.add) {
+      if (permission?.add) {
         actions.push(DATATABLE_ACTION.DUPLICATE);
         actions.push(DATATABLE_ACTION.SAVE);
       }
-      if(permission?.delete) {
+      if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
       }
       const action: IDataTableColumn = {
@@ -411,9 +411,9 @@ export class LoadableStudyDetailsTransformationService {
       }
     ]
 
-    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
-      if(permission?.delete) {
+      if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
       }
       const action: IDataTableColumn = {
@@ -461,7 +461,7 @@ export class LoadableStudyDetailsTransformationService {
    * @return {*}  {IMonths[]}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getMonthList(): IMonths[]{
+  getMonthList(): IMonths[] {
     return [
       {
         id: 1,
@@ -563,7 +563,7 @@ export class LoadableStudyDetailsTransformationService {
    * @memberof LoadableStudyDetailsTransformationService
    */
   getLoadableStudyGridColumns(permission: IPermission, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
-    let columns: IDataTableColumn[] =  [
+    let columns: IDataTableColumn[] = [
       {
         field: 'name',
         header: 'LOADABLE_STUDY_DETAILS_LODABLE_STUDY_COLUMN_NAME',
@@ -584,15 +584,15 @@ export class LoadableStudyDetailsTransformationService {
 
     if(permission && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
-      if(permission?.delete) {
+      if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
       }
 
-      if(permission?.edit) {
+      if (permission?.edit) {
         actions.push(DATATABLE_ACTION.EDIT);
       }
 
-      if(permission?.add) {
+      if (permission?.add) {
         actions.push(DATATABLE_ACTION.DUPLICATE);
       }
 
@@ -819,12 +819,12 @@ export class LoadableStudyDetailsTransformationService {
       }
     ];
 
-    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
-      if(permission?.add) {
+      if (permission?.add) {
         actions.push(DATATABLE_ACTION.SAVE);
       }
-      if(permission?.delete) {
+      if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
       }
       const action: IDataTableColumn = {
@@ -1157,9 +1157,9 @@ export class LoadableStudyDetailsTransformationService {
       }
     ];
 
-    if(permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
-      if(permission?.delete) {
+      if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
       }
       const action: IDataTableColumn = {

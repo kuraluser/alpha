@@ -110,8 +110,6 @@ export class VoyageListTransformationService {
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'loadingPorts',
-        sortable: true,
-        sortField: 'loadingPorts',
         filterByServer: true
       },
       {
@@ -122,8 +120,6 @@ export class VoyageListTransformationService {
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'dischargingPorts',
-        sortable: true,
-        sortField: 'dischargingPorts',
         filterByServer: true
       },
       {
@@ -134,8 +130,6 @@ export class VoyageListTransformationService {
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'cargos',
-        sortable: true,
-        sortField: 'cargos',
         filterByServer: true
       },
       {
