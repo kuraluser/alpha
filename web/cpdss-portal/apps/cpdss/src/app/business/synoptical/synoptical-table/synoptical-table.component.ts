@@ -1195,6 +1195,23 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
     }
   }
+
+  /**
+   * function to clear Time-picker input field
+   *
+   * @param {*} ref
+   * @param {number} colIndex
+   * @param {string} key
+   * @memberof SynopticalTableComponent
+   */
+  clearTimeInput(ref, colIndex: number, key: string): void {
+    ref.value = null;
+    ref.updateInputField;
+    ref.hideOverlay();
+    const formControl = this.getControl(colIndex, key);
+    formControl.setValue(null);
+  }
+
   /**
    * Method to do validations on focusing out of an input
    *
@@ -1582,7 +1599,11 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       case this.fieldType.DATETIME:
         return this.datePipe.transform(value, 'dd-MM-yyyy HH:mm')
       case this.fieldType.TIME:
-        return this.datePipe.transform(value, 'HH:mm')
+        if (value === null) {
+          return '';
+        } else {
+          return this.datePipe.transform(value, 'HH:mm')
+        }
       default:
         return value;
     }

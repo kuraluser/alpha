@@ -101,9 +101,19 @@
                                 <ng-container *ngSwitchCase="fieldType.TIME">
                                     <p-calendar appendTo="body" inputId="{{field.key + colIndex}}"
                                         id="{{field.key + colIndex}}" [timeOnly]="true" [readonlyInput]="true"
-                                        [showButtonBar]="true" todayButtonStyleClass="hide"
+                                        [showButtonBar]="false" todayButtonStyleClass="hide"
                                         [formControl]="getControl(colIndex,field.key)" (onBlur)="onBlur(field,colIndex)"
                                         #subcoltime>
+                                        <p-footer>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <button class="btn btn-default" (click)="clearTimeInput(subcoltime, colIndex, field.key)">{{'DATA_TABLE_CLEAR_BUTTON_LABEL' | translate}}</button>
+                                                </div>
+                                                <div class="col text-right">
+                                                    <button class="btn btn-default" (click)="subcoltime.hideOverlay()">{{'DATA_TABLE_OK_BUTTON_LABEL' | translate}}</button>
+                                                </div>
+                                            </div>
+                                        </p-footer>
                                     </p-calendar>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.NUMBER">
