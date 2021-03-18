@@ -2221,3 +2221,14 @@ tr:hover{
 .p-dialog, .p-dialog-mask.p-component-overlay{
   z-index: 9!important;
 }
+
+.index-1{
+  z-index: 1!important;
+}
+
+.api-temp-pop-up{
+  max-width: 570px!important;
+  .column-class{
+    width: auto!important;
+  }
+}
