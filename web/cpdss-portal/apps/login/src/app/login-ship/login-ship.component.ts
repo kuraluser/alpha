@@ -24,6 +24,7 @@ export class LoginShipComponent implements OnInit {
   loginForm: FormGroup;
   settings: IAppConfiguration;
   logo = '';
+  carousels = [];
   customOptions: OwlOptions = {
     loop: true,
     margin: 0,
@@ -60,7 +61,8 @@ export class LoginShipComponent implements OnInit {
     this.loginForm = this.fb.group({
       userName: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(7)]]
-    })
+    });
+    this.carousels = localStorage.getItem('carousel') ? JSON.parse(localStorage.getItem('carousel')) : [];
   }
 
   /**

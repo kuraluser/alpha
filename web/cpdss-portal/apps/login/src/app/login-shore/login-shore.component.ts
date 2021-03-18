@@ -35,13 +35,14 @@ export class LoginShoreComponent implements OnInit {
   settings: IAppConfiguration;
   realm = '';
   logo = '';
-
+  carousels = [];
   constructor(private kcService: KeycloakService, private appConfig: AppConfigurationService) { }
 
   ngOnInit(): void {
     this.settings = AppConfigurationService.settings;
     this.logo = localStorage.getItem('logo');
     this.createIdpInput();
+    this.carousels = localStorage.getItem('carousel') ? JSON.parse(localStorage.getItem('carousel')) : [];
   }
 
   // to bind input buttons dynamically from api response with identity-provider enabled
