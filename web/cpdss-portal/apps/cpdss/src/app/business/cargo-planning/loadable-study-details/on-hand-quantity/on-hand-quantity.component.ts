@@ -355,7 +355,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
         break;
     }
 
-    if (event?.data[event?.field].value) {
+    if (Number(event?.data[event?.field].value)) {
       const formControl1 = this.field(event?.index, dependentKeys[0]);
       if (!formControl1.value) {
         formControl1.setValue(null);
