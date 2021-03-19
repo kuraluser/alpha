@@ -1727,7 +1727,7 @@ th .p-calendar .p-inputtext{
   box-shadow: none;
 }
 .p-orderlist .p-orderlist-list .p-orderlist-item{
-  padding-top: 10px;
+  padding-bottom: 0px;
 }
 
 .confirmation-wrapper{
@@ -2231,4 +2231,14 @@ tr:hover{
   .column-class{
     width: auto!important;
   }
+}
+
+@media  (max-width:1400px){
+  .sidebar-landing .p-datatable .p-datatable-tbody > tr > td, .sidebar-landing .p-datatable .p-datatable-tbody > tr > th{
+    padding: 5px !important;
+  }
+}
+
+.p-orderlist-droppoint{
+  height: 15px!important;
 }
