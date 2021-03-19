@@ -728,6 +728,29 @@ export interface IMonths {
     month: string;
 }
 
+export interface ICargoHistoryDataStateChange {
+    pageSize: number;
+    page: number;
+    sortBy: string;
+    orderBy: string;
+    vesselName: string;
+    loadingPortName: string;
+    grade: string;
+    loadedYear: number;
+    loadedMonth: number;
+    loadedDay: number;
+    api: number;
+    temperature: number;
+    startDate: string;
+    endDate: string;
+}
+
+export interface ICargoHistoryResponse {
+    responseStatus: IResponseStatus;
+    cargoHistory: ICargoHistoryDetails[];
+    totalElements: number;
+}
+
 /**
  * Interface for Cargo-history table details
  *
@@ -736,11 +759,11 @@ export interface IMonths {
  */
 export interface ICargoHistoryDetails {
     vesselName: string;
-    loadingPort: string;
+    loadingPortName: string;
     grade: string;
-    year: number;
-    month: number;
-    date: number;
+    loadedYear: number;
+    loadedMonth: number;
+    loadedDay: number;
     api: number;
     temperature: number;
   }
