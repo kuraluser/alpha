@@ -22,10 +22,19 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                 const logoKey = 'logoUrl';
                 const imageIndex = window.location.search.indexOf(logoKey);
                 let imgUri = window.location.search.substring(imageIndex + logoKey.length + 1);
+                imgUri = imgUri.split('&')[0];
                 if(imgUri) {
                     localStorage.setItem('companyLogo', imgUri);
                 } else if(localStorage.getItem('companyLogo') !== undefined && localStorage.getItem('companyLogo') !== 'undefined' && localStorage.getItem('companyLogo') !== '' && localStorage.getItem('companyLogo') !== null) {
                     imgUri = localStorage.getItem('companyLogo');
+                }
+                const faviconKey = 'faviconUrl';
+                const iconIndex = window.location.search.indexOf(faviconKey);
+                let iconUri = window.location.search.substring(iconIndex + faviconKey.length + 1);
+                if(iconUri) {
+                    localStorage.setItem('favicon', iconUri);
+                } else if(localStorage.getItem('favicon') !== undefined && localStorage.getItem('favicon') !== 'undefined' && localStorage.getItem('favicon') !== '' && localStorage.getItem('favicon') !== null) {
+                    iconUri = localStorage.getItem('favicon');
                 }
 
                 let realm = window.location.search.split('&')[0].split('=')[1];

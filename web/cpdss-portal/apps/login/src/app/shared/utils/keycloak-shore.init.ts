@@ -23,6 +23,7 @@ export function keycloakShoreInitializer(keycloak: KeycloakService, http: HttpCl
                         localStorage.setItem('keycloakIdpConfig', response.providers);
                         localStorage.setItem('realm', response.realm);
                         localStorage.setItem('logo', response.logo);
+                        localStorage.setItem('favicon', response.favicon); 
                         const keycloakUrl = appSettings.keycloakUrl;
                         const keycloakConfig = {
                             url: keycloakUrl,

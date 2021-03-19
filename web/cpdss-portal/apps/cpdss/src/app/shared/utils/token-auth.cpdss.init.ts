@@ -40,8 +40,15 @@ export function tokenAuthCPDSSInitializer(http: HttpClient, appConfig: AppConfig
                             SecurityService.initPropertiesDB(token);
                         } */
                     }
-                    if (arr[3]) {
-                        let daysRemain = arr[3].split('=')[1];
+                    let favicon = arr[3].split('=')[1];
+                    if (favicon) {
+                        localStorage.setItem('favicon', favicon);
+                    } else if (localStorage.getItem('favicon') !== undefined && localStorage.getItem('favicon') !== 'undefined' && localStorage.getItem('favicon') !== '' && localStorage.getItem('favicon') !== null) {
+                        favicon = localStorage.getItem('favicon');
+                    }
+                    
+                    if (arr[4]) {
+                        let daysRemain = arr[4].split('=')[1];
                         if (daysRemain) {
                             localStorage.setItem('daysRemain', daysRemain);
                         } else if (localStorage.getItem('daysRemain') !== undefined && localStorage.getItem('daysRemain') !== 'undefined' && localStorage.getItem('daysRemain') !== '' && localStorage.getItem('daysRemain') !== null) {
