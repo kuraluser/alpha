@@ -1745,13 +1745,17 @@ public class LoadableStudyController {
   }
 
   /**
-   * Get cargo history
+   * Get Cargo History API, with Filter and Sort
    *
-   * @param vesselId
-   * @param loadableStudyId
-   * @param
    * @param headers
-   * @return
+   * @param page
+   * @param pageSize
+   * @param sortBy
+   * @param orderBy
+   * @param startDate
+   * @param endDate
+   * @param params
+   * @return CargoHistoryResponse
    * @throws CommonRestException
    */
   @GetMapping(value = "/cargo-history", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -1765,8 +1769,8 @@ public class LoadableStudyController {
               message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           String sortBy,
       @RequestParam(required = false, defaultValue = "desc") String orderBy,
-      @RequestParam(required = false) String fromStartDate,
-      @RequestParam(required = false) String toStartDate,
+      @RequestParam(required = false) String startDate,
+      @RequestParam(required = false) String endDate,
       @RequestParam Map<String, String> params)
       throws CommonRestException {
     try {
@@ -1775,14 +1779,23 @@ public class LoadableStudyController {
       // Filter allowed filter params
       List<String> filterKeys =
           Arrays.asList(
-              "vesselName", "loadingPort", "grade", "year", "month", "date", "api", "temp");
+              "vesselName",
+              "loadingPort",
+              "grade",
+              "year",
+              "month",
+              "date",
+              "api",
+              "temperature",
+              "startDate",
+              "endDate");
       Map<String, String> filterParams =
           params.entrySet().stream()
               .filter(e -> filterKeys.contains(e.getKey()))
               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
       return this.loadableStudyCargoService.getAllCargoHistory(
-          filterParams, page, pageSize, sortBy, orderBy, fromStartDate, toStartDate);
+          filterParams, page, pageSize, sortBy, orderBy, startDate, endDate);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException getAllCargoHistory", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

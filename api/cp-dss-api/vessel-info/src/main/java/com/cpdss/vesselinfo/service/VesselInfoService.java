@@ -60,6 +60,7 @@ import com.cpdss.vesselinfo.repository.VesselTankRepository;
 import com.cpdss.vesselinfo.repository.VesselTankTcgRepository;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -1198,6 +1199,41 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .setMessage("Exception in getVesselDetailForSynopticalTable")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getVesselInfoByPaging(
+      com.cpdss.common.generated.VesselInfo.VesselRequestWithPaging request,
+      StreamObserver<VesselReply> responseObserver) {
+    VesselReply.Builder replyBuilder = VesselReply.newBuilder();
+    try {
+      List<Object[]> vesselResp = vesselRepository.findVesselIdAndNames();
+      if (!vesselResp.isEmpty()) {
+        log.info("Vessels list size {}", vesselResp.size());
+        for (Object[] var1 : vesselResp) {
+          VesselDetail.Builder builder = VesselDetail.newBuilder();
+          if (var1[0] != null) { // First param Id
+            BigInteger val = (BigInteger) var1[0];
+            builder.setId(val.longValue());
+          }
+          if (var1[1] != null) { // Second param Name
+            builder.setName((String) var1[1]);
+          }
+          replyBuilder.addVessels(builder);
+        }
+      }
+    } catch (Exception e) {
+      log.error("Exception in get all vessel Id and Name Only", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception in getVesselInfoByPaging")
               .setStatus(FAILED)
               .build());
     } finally {

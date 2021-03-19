@@ -28,6 +28,13 @@ service VesselInfoService {
 	
 	rpc GetVesselDetailByVesselId(VesselRequest) returns (VesselReply) {
 	}
+
+	rpc GetVesselInfoByPaging(VesselRequestWithPaging) returns (VesselReply){}
+}
+
+message VesselRequestWithPaging{
+	int64 offset = 1;
+	int64 limit = 2;
 }
 
 message VesselRequest {
