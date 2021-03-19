@@ -16,38 +16,6 @@ import { IDataTableColumn } from '../../../shared/components/datatable/datatable
 import { ICargoHistoryDataStateChange, ICargoHistoryDetails, ICargoHistoryResponse } from '../models/cargo-planning.model';
 
 /**
- * This temporary data will remove once the actual API integreted.
- */
-const tempData: ICargoHistoryResponse = {
-  responseStatus: {
-    status: '200'
-  },
-  cargoHistory: [
-    {
-      vesselName: 'YUFUSAN',
-      loadingPortName: 'Mina Al Ahmadi',
-      grade: 'Kuwait Export',
-      loadedYear: 2020,
-      loadedMonth: 1,
-      loadedDay: 12,
-      api: 30.50,
-      temperature: 88.3
-    },
-    {
-      vesselName: 'SHIZUKISAN',
-      loadingPortName: 'RAS TANURA',
-      grade: 'ARABIAN EXTRA LIGHT',
-      loadedYear: 2020,
-      loadedMonth: 1,
-      loadedDay: 4,
-      api: 39.60,
-      temperature: 97.8
-    }
-  ],
-  totalElements: 2
-}
-
-/**
  * Component to show Cargo history
  *
  * @export
@@ -92,7 +60,6 @@ export class CargoHistoryComponent implements OnInit, OnDestroy {
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
     this.vesselInfo = res[0] ?? <IVessel>{};
     this.userPermission = this.userPermissionService.getPermission(AppConfigurationService.settings.permissionMapping['CargoHistoryComponent'], false);
-
     this.getCargoHistoryDetails$.pipe(
       switchMap(() => {
         return this.cargoHistoryApiService.getCargoHistoryData(this.cargoHistoryPageState);
@@ -103,13 +70,6 @@ export class CargoHistoryComponent implements OnInit, OnDestroy {
     });
     this.cargoHistoryPageState = <ICargoHistoryDataStateChange>{};
     this.getCargoHistoryDetails$.next();
-
-    /*
-    * commented code will remove once the actual API integrated.
-    */
-    // this.getCargoHistoryDetais(tempData);
-    // this.loading = false;
-
     this.cargoHistoryGridColumns = this.cargoHistoryTransformationService.getCargoHistoryGridColumns(this.userPermission);
   }
 
@@ -150,8 +110,6 @@ export class CargoHistoryComponent implements OnInit, OnDestroy {
     this.cargoHistoryPageState['loadedDay'] = event.filter?.loadedDay;
     this.cargoHistoryPageState['api'] = event.filter?.api;
     this.cargoHistoryPageState['temperature'] = event.filter?.temperature;
-    this.cargoHistoryPageState['startDate'] = (this.filteredDates[0] && this.filteredDates[1]) ? this.dateFormat.transform(this.filteredDates[0], 'dd-MM-yyyy HH:mm') : null;
-    this.cargoHistoryPageState['endDate'] = (this.filteredDates[0] && this.filteredDates[1]) ? this.dateFormat.transform(this.filteredDates[1], 'dd-MM-yyyy HH:mm') : null;
     this.loading = true;
     this.getCargoHistoryDetails$.next();
   }
