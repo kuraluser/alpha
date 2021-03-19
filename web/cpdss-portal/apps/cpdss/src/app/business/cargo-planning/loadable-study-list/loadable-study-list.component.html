@@ -11,7 +11,7 @@
             <p-dropdown #dd styleClass="dropdown-w-100" [options]="voyages" [(ngModel)]="selectedVoyage"
                 optionLabel="voyageNo" [filter]="true" (click)="clearFilter(dd)"
                 placeholder="{{ 'LOADABLE_STUDY_LIST_VOYAGE_NO_PLACEHOLDER' | translate }}"
-                (onChange)="showLoadableStudyList()">
+                (onChange)="showLoadableStudyList()" resetFilterOnHide="true">
                 <ng-template pTemplate="selectedItem">
                     <div *ngIf="selectedVoyage">
                         <div>{{selectedVoyage.voyageNo}}</div>

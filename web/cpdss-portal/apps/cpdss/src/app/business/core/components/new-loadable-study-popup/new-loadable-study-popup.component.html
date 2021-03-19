@@ -12,7 +12,7 @@
                         <div class="col dropdowm-medium">
                             <p-dropdown styleClass="form-control" [options]="loadableStudyList" [tooltipPosition]="'top'" [tooltip]="getControlLabel('duplicateExisting')?.name?.length > 13 ? getControlLabel('duplicateExisting')?.name: ''"
                                 id="ddl_duplicateExisting" formControlName="duplicateExisting" optionLabel="name"
-                                (onChange)="onDuplicateExisting($event)"
+                                (onChange)="onDuplicateExisting($event)" resetFilterOnHide="true"
                                 placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" [disabled]="isEdit" focusTrap>
                             </p-dropdown>
                         </div>
@@ -106,7 +106,7 @@
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_LOADLINE' | translate}}</div>
                         <div class="col">
                             <p-dropdown styleClass="form-control" [options]="loadlineLists" id="ddl_loadLine"
-                                formControlName="loadLine" optionLabel="name" (onChange)="onloadLineChange()"
+                                formControlName="loadLine" optionLabel="name" (onChange)="onloadLineChange()" resetFilterOnHide="true"
                                 placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" focusTrap>
                             </p-dropdown>
                         </div>
@@ -116,7 +116,7 @@
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DRAFT_MARK' | translate}}</div>
                         <div class="col">
                             <p-dropdown styleClass="form-control" [options]="draftMarkList" id="ddl_draftMark"
-                                formControlName="draftMark" optionLabel="name"
+                                formControlName="draftMark" optionLabel="name" resetFilterOnHide="true"
                                 focusTrap>
                             </p-dropdown>
                         </div>

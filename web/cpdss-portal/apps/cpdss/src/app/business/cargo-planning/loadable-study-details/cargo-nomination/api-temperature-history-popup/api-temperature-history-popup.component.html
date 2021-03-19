@@ -15,12 +15,12 @@
             <p-dropdown id="api_temp_popup_month_dropdown" styleClass="dropdown-w-180" appendTo="body"
               formControlName="selectMonth" [options]="apiTempHistoryMonths" optionLabel="month"
               placeholder="{{'API_TEMP_HISTORY_POPUP_MONTH_DROPDOWN_PLACEHOLDER'| translate}}"
-              (onChange)="onMonthChange($event)" filter="true" focusTrap>
+              (onChange)="onMonthChange($event)" filter="true" resetFilterOnHide="true" focusTrap>
             </p-dropdown>
             <p-dropdown id="api_temp_popup_port_dropdown" styleClass="dropdown-w-180 ml-20" appendTo="body"
               formControlName="selectPort" [options]="apiTempHistoryPopupData?.rowDataCargo?.value?.ports"
               optionLabel="name" placeholder="{{'API_TEMP_HISTORY_POPUP_PORT_DROPDOWN_PLACEHOLDER'| translate}}"
-              (onChange)="onPortChange($event)" filter="true" focusTrap>
+              (onChange)="onPortChange($event)" filter="true" resetFilterOnHide="true" focusTrap>
             </p-dropdown>
           </div>
         </div>

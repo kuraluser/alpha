@@ -14,7 +14,8 @@
 
                     <p-dropdown id="voyage_dropdown" styleClass="dropdown-w-180" [options]="voyages"
                         [(ngModel)]="selectedVoyage" filter="true" optionLabel="voyageNo"
-                        (onChange)="onVoyageChange($event)"></p-dropdown>
+                        (onChange)="onVoyageChange($event)"
+                        resetFilterOnHide="true"></p-dropdown>
                 </div>
             </div>
         </div>
@@ -175,7 +176,7 @@
                                 <p-dropdown id="cargo_discharge" styleClass="w-150" [(ngModel)]="selectedDischargeCargo"
                                     [options]="dischargeCargos" optionLabel="name" [showClear]="true"
                                     placeholder="{{ 'CARGO_DISCHARGE_SELECT'| translate }}"
-                                    (onChange)="onDischargeCargoChange($event)"
+                                    (onChange)="onDischargeCargoChange($event)" resetFilterOnHide="true"
                                     [disabled]="![LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) || [VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
                                 </p-dropdown>
                             </ng-container>

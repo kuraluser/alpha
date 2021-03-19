@@ -11,7 +11,7 @@
             <div class="col-sm-12 pl-0">
                 <label class="col-form-label pr-10">{{'LOADING_PORT_POPUP_DROPDOWN_LABEL'| translate}}</label>
                 <p-dropdown id="port_dropdown" styleClass="dropdown-w-180" appendTo="body"  [options]="popupData?.ports" formControlName="addPort" optionLabel="name"
-                    placeholder="{{'LOADING_PORT_POPUP_DROPDOWN_PLACEHOLDER'| translate}}" filter="true" [disabled]="loadingPort?.length >= 5" focusTrap>
+                    placeholder="{{'LOADING_PORT_POPUP_DROPDOWN_PLACEHOLDER'| translate}}" filter="true" resetFilterOnHide="true" [disabled]="loadingPort?.length >= 5" focusTrap>
                 </p-dropdown>
                 <button id="add_port_button" class="btn btn-main w-auto ml-10" [disabled]="!loadingPortsFrom.get('addPort').value"
                     (click)="addPort(loadingPortsFrom.get('addPort').value)">{{'LOADING_PORT_POPUP_ADD_BUTTON'| translate}}</button>

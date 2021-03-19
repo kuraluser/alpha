@@ -13,7 +13,8 @@
                     <div class="col-7">
                         <p-dropdown id="commingle_purpose_dropdown" styleClass="form-control" appendTo="body"
                             [options]="purposeOfCommingle" optionLabel="name" id="purpose_commingle"
-                            (onChange)="selectPurpose($event)" formControlName="purpose" [readonly]="!editMode">
+                            (onChange)="selectPurpose($event)" formControlName="purpose" [readonly]="!editMode"
+                            resetFilterOnHide="true">
                         </p-dropdown>
                     </div>
                 </div>
@@ -72,7 +73,7 @@
                             <p-dropdown id="commingle_cargo1_dropdown" styleClass="form-control" appendTo="body"
                                 [filter]="true" [options]="cargoNominationsCargo1" optionLabel="name"
                                 formControlName="cargo1" (onChange)="onChange($event, 1)" [readonly]="!editMode"
-                                placeholder="{{'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER' | translate}}">
+                                placeholder="{{'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER' | translate}}" resetFilterOnHide="true">
                                 <ng-template let-cargo pTemplate="item">
                                     <span>
                                         <i class="color-rounded align-top mr-5" [ngStyle]="{'background' : cargo.value.color}"></i>
@@ -97,7 +98,7 @@
                             <p-dropdown id="commingle_cargo2_dropdown" appendTo="body" styleClass="form-control"
                                 [filter]="true" [options]="cargoNominationsCargo2" optionLabel="name"
                                 formControlName="cargo2" (onChange)="onChange($event, 2)" [readonly]="!editMode"
-                                placeholder="{{'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER' | translate}}">
+                                placeholder="{{'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER' | translate}}" resetFilterOnHide="true">
                                 <ng-template let-cargo pTemplate="item">
                                     <span>
                                         <i class="color-rounded align-top mr-5" [ngStyle]="{'background' : cargo.value.color}"></i>
