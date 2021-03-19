@@ -13,7 +13,8 @@ export function keycloakShoreInitializer(keycloak: KeycloakService, http: HttpCl
             try {
                 const hostname = window.location.hostname.split('.')[0];
                 let hostUrl = '';
-                hostUrl = 'companies/' + hostname + '/idp-info';
+
+                hostUrl = environment.name === 'ship' ?  'company/carousals' : 'companies/' + hostname + '/idp-info';
 
                 const appSettings: IAppConfiguration = await appConfig.load();
 
@@ -23,18 +24,21 @@ export function keycloakShoreInitializer(keycloak: KeycloakService, http: HttpCl
                         localStorage.setItem('keycloakIdpConfig', response.providers);
                         localStorage.setItem('realm', response.realm);
                         localStorage.setItem('logo', response.logo);
+                        localStorage.setItem('carousel', JSON.stringify(response.carousals));
                         localStorage.setItem('favicon', response.favicon); 
-                        const keycloakUrl = appSettings.keycloakUrl;
-                        const keycloakConfig = {
-                            url: keycloakUrl,
-                            realm: response.realm,
-                            clientId: appSettings.clientId,
+                        if(environment.name === 'shore'){
+                            const keycloakUrl = appSettings.keycloakUrl;
+                            const keycloakConfig = {
+                                url: keycloakUrl,
+                                realm: response.realm,
+                                clientId: appSettings.clientId,
+                            }
+    
+                            keycloak.init({
+                                config: keycloakConfig,
+                                enableBearerInterceptor: false
+                            });
                         }
-
-                        keycloak.init({
-                            config: keycloakConfig,
-                            enableBearerInterceptor: false
-                        });
                     }
                 });
                 resolve();
