@@ -337,8 +337,8 @@ export class LoadableStudyDetailsTransformationService {
     if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if (permission?.add) {
-        actions.push(DATATABLE_ACTION.DUPLICATE);
         actions.push(DATATABLE_ACTION.SAVE);
+        actions.push(DATATABLE_ACTION.DUPLICATE);
       }
       if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
@@ -563,7 +563,7 @@ export class LoadableStudyDetailsTransformationService {
    * @memberof LoadableStudyDetailsTransformationService
    */
   getLoadableStudyGridColumns(permission: IPermission, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
-    let columns: IDataTableColumn[] = [
+    let columns: IDataTableColumn[] =  [
       {
         field: 'name',
         header: 'LOADABLE_STUDY_DETAILS_LODABLE_STUDY_COLUMN_NAME',

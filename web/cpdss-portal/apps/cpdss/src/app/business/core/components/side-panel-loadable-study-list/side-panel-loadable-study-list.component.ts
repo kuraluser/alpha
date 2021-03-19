@@ -108,11 +108,17 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
     this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
       if (response) {
         this.ngxSpinnerService.show();
-        const translationKeys = await this.translateService.get(['LOADABLE_STUDY_DELETE_SUCCESS', 'LOADABLE_STUDY_DELETE_SUCCESSFULLY']).toPromise();
-        const res = await this.loadableStudyListApiService.deleteLodableStudy(this.vesselInfo?.id, this.voyage?.id, event?.data?.id).toPromise();
-        if (res?.responseStatus?.status === "200") {
-          this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_DELETE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_DELETE_SUCCESSFULLY'] });
-          this.deleteLoadableStudy.emit(event);
+        const translationKeys = await this.translateService.get(['LOADABLE_STUDY_DELETE_SUCCESS', 'LOADABLE_STUDY_DELETE_SUCCESSFULLY', 'LOADABLE_STUDY_DELETE_ERROR', 'LOADABLE_STUDY_DELETE_STATUS_ERROR']).toPromise();
+        try {
+          const res = await this.loadableStudyListApiService.deleteLodableStudy(this.vesselInfo?.id, this.voyage?.id, event?.data?.id).toPromise();
+          if (res?.responseStatus?.status === "200") {
+            this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_DELETE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_DELETE_SUCCESSFULLY'] });
+            this.deleteLoadableStudy.emit(event);
+          }
+        } catch (errorResponse) {
+          if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+            this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_DELETE_ERROR'], detail: translationKeys['LOADABLE_STUDY_DELETE_STATUS_ERROR'], life: 10000 });
+          }
         }
         this.ngxSpinnerService.hide();
       }
@@ -160,13 +166,13 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
   onNewLoadableStudyAdded(event) {
     this.newLoadableStudyAdded.emit(event);
   }
-  
-   /**
-   * Handler for row selection
-   *
-   * @param {*} event
-   * @memberof SidePanelLoadableStudyListComponent
-   */
+
+  /**
+  * Handler for row selection
+  *
+  * @param {*} event
+  * @memberof SidePanelLoadableStudyListComponent
+  */
   onEdit(event) {
     this.selectedLoadableStudy = event?.data;
     this.isEdit = true;

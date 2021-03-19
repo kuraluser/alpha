@@ -68,8 +68,7 @@ export class LoadableStudyListTransformationService {
         filterFieldMaxvalue: new Date()
       }
     ];
-    
-    if(permission && [VOYAGE_STATUS.CLOSE, VOYAGE_STATUS.ACTIVE].includes(voyageStatusId)) {
+    if(permission && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if(permission?.edit) {
         actions.push(DATATABLE_ACTION.EDIT);

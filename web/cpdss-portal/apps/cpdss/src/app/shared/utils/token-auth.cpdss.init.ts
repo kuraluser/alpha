@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { IAppConfiguration } from '../services/app-configuration/app-configuration.model';
 import { AppConfigurationService } from '../services/app-configuration/app-configuration.service';
+import { SecurityService } from '../services/security/security.service';
 
 /**
  *  initializer function for main ship application
@@ -33,6 +34,11 @@ export function tokenAuthCPDSSInitializer(http: HttpClient, appConfig: AppConfig
                         localStorage.setItem('token', token);
                     } else if (localStorage.getItem('token') !== undefined && localStorage.getItem('token') !== 'undefined' && localStorage.getItem('token') !== '' && localStorage.getItem('token') !== null) {
                         token = localStorage.getItem('token');
+                        //TODO: Handling scenario when user manually cleares service worker and indexed db
+                        /* const isPropertyExist = await SecurityService.getPropertiesDB('token');
+                        if(token && !isPropertyExist) {
+                            SecurityService.initPropertiesDB(token);
+                        } */
                     }
                     if (arr[3]) {
                         let daysRemain = arr[3].split('=')[1];

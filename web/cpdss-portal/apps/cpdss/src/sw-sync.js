@@ -92,7 +92,7 @@
                   headers: headers
                 });
 
-                if (syncResponse.status === 200) {
+                if (syncResponse.status === 200 || syncResponse.status === 400) {
                   const sync = await syncResponse.json();
                   sync.storeKey = cargoNomination.storeKey;
                   sync.type = 'cargo_nomination_sync_finished';
@@ -117,7 +117,7 @@
                   headers: headers
                 });
 
-                if (syncResponse.status === 200) {
+                if (syncResponse.status === 200 || syncResponse.status === 400) {
                   const sync = await syncResponse.json();
                   sync.storeKey = cargoNomination.storeKey;
                   sync.type = 'cargo_nomination_sync_finished';
@@ -171,7 +171,7 @@
                 headers: headers
               });
 
-              if (syncResponse.status === 200) {
+              if (syncResponse.status === 200 || syncResponse.status === 400) {
                 const sync = await syncResponse.json();
                 sync.storeKey = port.storeKey;
                 sync.type = 'ports_sync_finished';
@@ -195,7 +195,7 @@
                 headers: headers
               });
 
-              if (syncResponse.status === 200) {
+              if (syncResponse.status === 200 || syncResponse.status === 400) {
                 const sync = await syncResponse.json();
                 sync.storeKey = port.storeKey;
                 sync.type = 'ports_sync_finished';
@@ -251,7 +251,7 @@
                 headers: headers
               });
 
-              if (syncResponse.status === 200) {
+              if (syncResponse.status === 200|| syncResponse.status === 400) {
                 const sync = await syncResponse.json();
                 sync.storeKey = ohq.storeKey;
                 sync.type = 'ohq_sync_finished';
@@ -306,7 +306,7 @@
                 headers: headers
               });
 
-              if (syncResponse.status === 200) {
+              if (syncResponse.status === 200 || syncResponse.status === 400) {
                 const sync = await syncResponse.json();
                 sync.storeKey = obq.storeKey;
                 sync.type = 'obq_sync_finished';
