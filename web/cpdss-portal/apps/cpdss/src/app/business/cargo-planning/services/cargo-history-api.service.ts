@@ -1,10 +1,17 @@
 import { Injectable } from '@angular/core';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
+import { CargoPlanningModule } from '../cargo-planning.module';
 import { Observable } from 'rxjs';
 import { ICargoHistoryDataStateChange, ICargoHistoryResponse } from '../models/cargo-planning.model';
 
+/**
+ * API service for Cargo history module
+ *
+ * @export
+ * @class CargoHistoryApiService
+ */
 @Injectable({
-  providedIn: 'root'
+  providedIn: CargoPlanningModule
 })
 export class CargoHistoryApiService {
   public page: number = 0;
@@ -13,7 +20,7 @@ export class CargoHistoryApiService {
   constructor(private commonApiService: CommonApiService) { }
 
   /**
-   * API to get cargo history details
+   * method to get cargo history details
    * @param {*} params
    * @return {*}  {Observable<ICargoHistoryResponse>}
    * @memberof CargoHistoryApiService

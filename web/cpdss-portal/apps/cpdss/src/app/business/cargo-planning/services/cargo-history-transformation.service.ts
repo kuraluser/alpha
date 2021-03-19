@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { CargoPlanningModule } from '../cargo-planning.module';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from './../../../shared/components/datatable/datatable.model';
 
@@ -9,7 +10,7 @@ import { DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE
  * @class CargoHistoryTransformationService
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: CargoPlanningModule
 })
 export class CargoHistoryTransformationService {
 

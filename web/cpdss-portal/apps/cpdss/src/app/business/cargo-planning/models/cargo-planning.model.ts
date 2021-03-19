@@ -728,6 +728,12 @@ export interface IMonths {
     month: string;
 }
 
+/**
+ * Interface for cargo-history table state changes
+ *
+ * @export
+ * @interface ICargoHistoryDataStateChange
+ */
 export interface ICargoHistoryDataStateChange {
     pageSize: number;
     page: number;
@@ -745,6 +751,12 @@ export interface ICargoHistoryDataStateChange {
     endDate: string;
 }
 
+/**
+ * interface for cargo-history table API
+ *
+ * @export
+ * @interface ICargoHistoryResponse
+ */
 export interface ICargoHistoryResponse {
     responseStatus: IResponseStatus;
     cargoHistory: ICargoHistoryDetails[];
@@ -766,4 +778,4 @@ export interface ICargoHistoryDetails {
     loadedDay: number;
     api: number;
     temperature: number;
-  }
+}
