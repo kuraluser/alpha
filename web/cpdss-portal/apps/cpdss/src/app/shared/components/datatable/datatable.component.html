@@ -88,7 +88,7 @@
                         </p-calendar>
                         <p-dropdown *ngSwitchCase="filterType.SELECT" [options]="listData[col.filterListName]"
                             [showClear]="true" appendTo="body" [panelStyleClass]="col.componentFieldClass" optionLabel="name"
-                            [placeholder]="col.filterPlaceholder| translate"
+                            [placeholder]="col.filterPlaceholder| translate" resetFilterOnHide="true"
                             (onChange)="datatable.filter($event.value?.id, col?.filterField ? col?.filterField : col.field, col.filterMatchMode)">
                         </p-dropdown>
                     </ng-container>
@@ -202,7 +202,7 @@
                                             appendTo="body" [panelStyleClass]="col.componentFieldClass" [formControlName]="col.field" [filter]="col.listFilter"
                                             optionLabel="{{col.fieldOptionLabel}}"
                                             [placeholder]="col.fieldPlaceholder| translate"
-                                            (onChange)="onChange($event, rowData, rowIndex, col)"
+                                            (onChange)="onChange($event, rowData, rowIndex, col)" resetFilterOnHide="true"
                                             id="{{col.field+'_'+rowIndex}}" [virtualScroll]="col.virtualScroll"
                                             itemSize="30">
                                             <ng-template *ngIf="col?.showTemplate" let-item pTemplate="item">

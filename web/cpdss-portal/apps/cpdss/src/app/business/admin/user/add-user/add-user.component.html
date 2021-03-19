@@ -34,7 +34,8 @@
             <div class="col-md-6">
               <p-dropdown styleClass="form-control" [options]="roles" appendTo="body" *ngIf="popupStatus !== 'VIEW';else viewRoleRef"
                 id="role_id" formControlName="userRole" optionLabel="name"
-                placeholder="{{'USER_ROLE_PLACEHOLDER' | translate}}" focusTrap>
+                placeholder="{{'USER_ROLE_PLACEHOLDER' | translate}}" focusTrap
+                resetFilterOnHide="true">
             </p-dropdown>
             <ng-template #viewRoleRef><span  class="form-control">{{formContolValue('userRole')?.name}}</span></ng-template>
             </div>
