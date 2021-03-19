@@ -82,6 +82,7 @@ export class CommingleComponent implements OnInit {
   isMaxCargo = false;
   isMaxPreferredTank = false;
   extraPreferred = 0;
+  disableAddNewBtn = false;
 
   private _loadableStudy: LoadableStudy;
 
@@ -153,7 +154,7 @@ export class CommingleComponent implements OnInit {
           this.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.cargoId !== this.selectedCargo2.id);
         }
         this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => (this.commingleCargo.cargoGroups.some(group => group.cargo2Id === cargos.cargoId)) !== true);
-        this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2.filter(cargos => (this.commingleCargo.cargoGroups.some(group => group.cargo1Id === cargos.cargoId)) !== true);
+        this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => (this.commingleCargo.cargoGroups.some(group => group.cargo1Id === cargos.cargoId)) !== true);
         this.selectPurpose(null);
       }
       const cargoGroups = this.commingleCargo?.purposeId === 2 ? this.commingleData?.commingleCargo?.cargoGroups ?? [] : [];
@@ -271,13 +272,15 @@ export class CommingleComponent implements OnInit {
     const form = this.row(event.index);
     if (event.field === 'cargo1') {
       this.listData.cargoNominationsCargo2 = this.listData.cargoNominationsCargo2.filter(cargos => cargos.cargoId !== event.data.cargo1.value.cargoId);
-      this.manualCommingleList[event.index]['cargo1Color'].value = event?.data?.cargo1?.value?.color
+      this.cargoNominationsCargo2 = this.listData.cargoNominationsCargo2;
+      this.manualCommingleList[event.index]['cargo1Color'].value = event?.data?.cargo1?.value?.color;
       // this.updateField(event.index, 'cargo1Color', event?.data?.cargo1?.value?.color);
       form.controls.quantity.updateValueAndValidity();
     }
     if (event.field === 'cargo2') {
       this.listData.cargoNominationsCargo1 = this.listData.cargoNominationsCargo1.filter(cargos => cargos.cargoId !== event.data.cargo2.value.cargoId);
-      this.manualCommingleList[event.index]['cargo2Color'].value = event?.data?.cargo2?.value?.color
+      this.cargoNominationsCargo1 = this.listData.cargoNominationsCargo1;
+      this.manualCommingleList[event.index]['cargo2Color'].value = event?.data?.cargo2?.value?.color;
       // this.updateField(event.index, 'cargo2Color', event?.data?.cargo2?.value?.color);
       form.controls.quantity.updateValueAndValidity();
     }
@@ -356,6 +359,7 @@ export class CommingleComponent implements OnInit {
  * @memberof CommingleComponent
  */
   addNew(commingle: ICargoGroup = null) {
+    this.disableAddNewBtn = this.cargoNominationsCargo.length <=2 ? true : false;
     if (this.manualCommingleList?.length <= 2) {
       this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo1;
       this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo2;
@@ -396,6 +400,7 @@ export class CommingleComponent implements OnInit {
             this.commingleForm.controls['preferredTanks'].setValidators([]);
             this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
           }
+          this.disableAddNewBtn = false;
         }
       }
     });

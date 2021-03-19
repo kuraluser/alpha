@@ -47,8 +47,9 @@
             </div>
         </div>
         <div class="row mb-5" *ngIf="!isVolumeMaximum && editMode">
-            <div class="col text-right">
-                <a id="add_new_btn" class="btn btn-link icon-btn float-right" (click)="addNew()"
+            <div class="col text-right" >
+                <a id="add_new_btn" class="btn btn-link icon-btn float-right" (click)="addNew()" 
+                [ngStyle]="{'pointer-events': (disableAddNewBtn) ? 'none' : null}"
                     *cpdssPortalPermission="cargoNominationPermissionContext"><i class="pi pi-plus mr-5"></i>
                     {{'ADD_NEW_BUTTON_LABEL'| translate}}</a>
             </div>

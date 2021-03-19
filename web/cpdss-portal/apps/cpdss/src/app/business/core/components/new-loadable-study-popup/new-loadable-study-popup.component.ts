@@ -317,6 +317,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       this.newLoadableStudyFormGroup.patchValue({
         duplicateExisting: loadableStudyObj
       })
+      this.duplicateLoadableStudy = loadableStudyObj;
     }
     this.newLoadableStudyFormGroup.patchValue({
       newLoadableStudyName: loadableStudyObj.name,
