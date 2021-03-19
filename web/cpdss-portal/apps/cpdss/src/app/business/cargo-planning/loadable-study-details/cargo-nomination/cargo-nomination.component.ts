@@ -288,10 +288,12 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    */
   async onEditComplete(event: ICargoNominationEvent) {
     const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
-    if (event.field === 'cargo' && !event.data?.isAdd) {
+    const savedCargoIndex = this.savedCargoNomination.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
+    if (event.field === 'cargo' && !event.data?.isAdd && !this.savedCargoNomination[savedCargoIndex]['isAdd']) {
       this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_SUMMARY', detail: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_DETAILS', data: { confirmLabel: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_LABEL', rejectLabel: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_REJECT_LABEL' } });
       this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
       if (response) {
+        this.savedCargoNomination[savedCargoIndex]['isAdd'] = true;
         this.updateCargoNominationsDetails(valueIndex , event);
       } else {
         this.cargoNominations[valueIndex]['cargo'].value = this.savedCargoNomination[valueIndex]['cargo']['_value'];

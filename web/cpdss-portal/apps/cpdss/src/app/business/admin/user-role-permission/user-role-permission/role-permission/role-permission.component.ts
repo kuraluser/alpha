@@ -120,15 +120,21 @@ export class RolePermissionComponent implements OnInit {
                     treeNode.push(value);
                     if (userDetail.childs && userDetail.childs.length) {
                         isChecked = this.innerNodes(treeNode[index], userDetail.childs);
-                        isChecked && treeStructure.isChecked ? (treeNode[index]['data']['nodeChecked'] = true , this.selectedNodes = [...this.selectedNodes , treeNode[index]]) : null
+                        if(isChecked && treeStructure.isChecked) {
+                            (treeNode[index]['data']['nodeChecked'] = true , this.selectedNodes = [...this.selectedNodes , treeNode[index]]);
+                        }
                     } else {
-                        treeStructure.isChecked ? (treeNode[index]['data']['nodeChecked'] = true , this.selectedNodes = [...this.selectedNodes, treeNode[index]]) : null;
+                        if(treeStructure.isChecked) { 
+                            (treeNode[index]['data']['nodeChecked'] = true , this.selectedNodes = [...this.selectedNodes, treeNode[index]]);
+                        }
                     }
                 })
             }
             this.treeNode = [...treeNode];
             this.treeNode.map((node) => {
-                node.children.length ? this.hideCheckBoxBasedOnParentNode(node) : null;
+                if(node.children.length) {
+                    this.hideCheckBoxBasedOnParentNode(node);
+                }
                 node.data['rootNodeStatus'] = true;
             })
             
@@ -150,7 +156,9 @@ export class RolePermissionComponent implements OnInit {
     hideCheckBoxBasedOnParentNode(treeNode:TreeNode) {
         treeNode.children?.map((node) => {
             this.isCheckBoxIsReadOnly(node.data , treeNode.data);
-            node.children?.length ? this.hideCheckBoxBasedOnParentNode(node) : null
+            if(node.children?.length) {
+                this.hideCheckBoxBasedOnParentNode(node);
+            }
         })
     }
 
@@ -159,7 +167,7 @@ export class RolePermissionComponent implements OnInit {
     * @memberof RolePermissionComponent
     */
     isCheckBoxIsReadOnly(node: any , parentNode: any) {
-        let rootNodeStatus: boolean = false;
+        let rootNodeStatus = false;
         parentNode.view ?  (node.isReadOnlyView = true , rootNodeStatus = true) : node.isReadOnlyView = false;
         (parentNode.add || !parentNode.isAddVisible) && node.view && node.isAddVisible?  node.isReadOnlyAdd = true : (node.isReadOnlyAdd = false , node.add = false);
         (parentNode.edit || !parentNode.isEditVisible) && node.view && node.isEditVisible ?  node.isReadOnlyEdit = true : (node.isReadOnlyEdit = false , node.edit = false);
@@ -176,7 +184,7 @@ export class RolePermissionComponent implements OnInit {
         const treeNodesData = [];
         childs.map((child, index) => {
             let isChecked: boolean;
-            let treeStructure = this.dataTreeStructure(child);
+            const treeStructure = this.dataTreeStructure(child);
             const value: TreeNode = {
                 data: treeStructure,
                 expanded: false,
@@ -242,8 +250,12 @@ export class RolePermissionComponent implements OnInit {
     nodeSelectUnSelect(node: any, selctionStatus: boolean) {
         node.children.map((value) => {
             this.cols.map((col) => {
-                value.data[col.isViewable] ? value.data[col.field] = selctionStatus : null;
-                value.children?.length ? this.nodeSelectUnSelect(value, selctionStatus) : null
+                if(value.data[col.isViewable]) {
+                    value.data[col.field] = selctionStatus;
+                }
+                if(value.children?.length) {
+                    this.nodeSelectUnSelect(value, selctionStatus)
+                }
             })
         })
     }
@@ -255,14 +267,20 @@ export class RolePermissionComponent implements OnInit {
     parentNodeChange(node: any, rowData: any) {
         rowData['nodeChecked'] = !rowData['nodeChecked'];
         const treeNode = node?.node;
-        treeNode?.children?.length ? this.nodeSelectUnSelect(treeNode, rowData['nodeChecked']) : null;
+        if(treeNode?.children?.length) {
+            this.nodeSelectUnSelect(treeNode, rowData['nodeChecked']);
+        } 
         this.cols.map((col) => {
-            treeNode.data[col.isViewable] ? treeNode.data[col.field] = rowData['nodeChecked'] : null;
+            if(treeNode.data[col.isViewable]) {
+                treeNode.data[col.field] = rowData['nodeChecked'];
+            } 
         });
         this.childParentNodeRelation(this.treeNode);
-        this.treeNode.map((node) => {
-            node.children.length ? this.hideCheckBoxBasedOnParentNode(node) : null;
-            node.data['rootNodeStatus'] = true;
+        this.treeNode.map((_node) => {
+            if(_node.children.length) {
+                this.hideCheckBoxBasedOnParentNode(_node);
+            } 
+            _node.data['rootNodeStatus'] = true;
         })
     }
 
@@ -278,7 +296,9 @@ export class RolePermissionComponent implements OnInit {
         }
         this.childParentNodeRelation(this.treeNode);
         this.treeNode.map((node) => {
-            node.children.length ? this.hideCheckBoxBasedOnParentNode(node) : null;
+            if(node.children.length) {
+                this.hideCheckBoxBasedOnParentNode(node);
+            } 
             node.data['rootNodeStatus'] = true;
         })
     }
@@ -392,7 +412,7 @@ export class RolePermissionComponent implements OnInit {
                 return user.id
             })
             let deselectedUserDetails = [];
-            let deselectedUserId = [];
+            const deselectedUserId = [];
             if(this.selectedUser?.length) {
                 deselectedUserDetails = this.deselectedUserId();
             }
@@ -484,13 +504,15 @@ export class RolePermissionComponent implements OnInit {
         const userDetailsRes: IUserDetailsResponse = await this.userRolePermissionApiService.getUserDetails().toPromise();
         this.ngxSpinnerService.hide();
         if (userDetailsRes.responseStatus.status === '200') {
-            let userDetails = userDetailsRes.users;
+            const userDetails = userDetailsRes.users;
             userDetails?.map((userDetail) => {
                 this.userDetails.push({ ...userDetail, 'name': userDetail.firstName + ' ' + userDetail.lastName });
             });
             users?.map((userId) => {
                 const selectedUser = this.userDetails?.filter((userDetail) => userDetail.id === userId.id);
-                selectedUser && selectedUser.length ? this.selectedUser = [...this.selectedUser, selectedUser[0]] : null;
+                if(selectedUser && selectedUser.length) {
+                    this.selectedUser = [...this.selectedUser, selectedUser[0]];
+                }
             })
         }
     }
