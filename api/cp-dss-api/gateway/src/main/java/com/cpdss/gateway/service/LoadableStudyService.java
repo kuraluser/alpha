@@ -161,6 +161,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -225,6 +226,7 @@ public class LoadableStudyService {
   private static final String SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL = "ARR";
   private static final String SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE = "DEP";
   private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
+  private static final String ERROR_CODE_PREFIX = "ERR-RICO-";
 
   @Autowired private UsersRepository usersRepository;
 
@@ -1231,8 +1233,9 @@ public class LoadableStudyService {
         && !SUCCESS.equalsIgnoreCase(cargoNominationReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "Error in calling deleteCargoNomination",
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
+          cargoNominationReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(cargoNominationReply.getResponseStatus().getHttpStatusCode())));
     }
     return cargoNominationResponse;
   }
@@ -1378,7 +1381,8 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to delete port rotation",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
     PortRotationResponse response = new PortRotationResponse();
     response.setResponseStatus(
@@ -2002,8 +2006,9 @@ public class LoadableStudyService {
           && !SUCCESS.equalsIgnoreCase(commingleCargoReply.getResponseStatus().getStatus())) {
         throw new GenericServiceException(
             "Error in saving commingle cargo",
-            CommonErrorCodes.E_GEN_INTERNAL_ERR,
-            HttpStatusCode.INTERNAL_SERVER_ERROR);
+            commingleCargoReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(
+                Integer.valueOf(commingleCargoReply.getResponseStatus().getHttpStatusCode())));
       }
     }
     return commingleCargoResponse;
@@ -3535,7 +3540,7 @@ public class LoadableStudyService {
         voyageId,
         loadableStudyId);
     SynopticalTableResponse response = new SynopticalTableResponse();
-    List<Long> failedRecords = new ArrayList<>();
+    Map<Long, String> failedRecords = new HashMap<Long, String>();
     List<Thread> workers = new ArrayList<>();
     Set<Long> portIds =
         request.getSynopticalRecords().stream()
@@ -3573,13 +3578,20 @@ public class LoadableStudyService {
   private void saveSynopticalTable(
       SynopticalTableRequest grpcRequest,
       String correlationId,
-      List<Long> failedRecords,
+      Map<Long, String> failedRecords,
       CountDownLatch latch) {
     try {
       log.debug("calling grpc serice: saveSynopticalTable, correationId: {}", correlationId);
       SynopticalTableReply grpcReply = this.saveSynopticalTable(grpcRequest);
       if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
-        grpcRequest.getSynopticalRecordList().forEach(rec -> failedRecords.add(rec.getId()));
+        grpcRequest
+            .getSynopticalRecordList()
+            .forEach(
+                rec ->
+                    failedRecords.put(
+                        rec.getId(),
+                        ERROR_CODE_PREFIX
+                            + String.valueOf(grpcReply.getResponseStatus().getCode())));
       }
     } catch (Exception e) {
       log.error("Error calling synoptical table save grpc service", e);
@@ -4316,10 +4328,9 @@ public class LoadableStudyService {
       }
 
       if (!detail.getStartDate().isEmpty() && !detail.getEndDate().isEmpty()) {
-        actualStartDate =
-            plannedStartDate =
-                LocalDateTime.from(
-                    DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getStartDate()));
+        plannedStartDate =
+            LocalDateTime.from(
+                DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getStartDate()));
         plannedEndDate =
             LocalDateTime.from(
                 DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getEndDate()));
@@ -4328,11 +4339,6 @@ public class LoadableStudyService {
       }
 
       voyageList.add(voyage);
-    }
-    // sort list
-
-    if (null != sortBy) {
-      voyageList = this.getSortedList(voyageList, orderBy, sortBy.toLowerCase());
     }
 
     response.setVoyages(voyageList);
@@ -4350,8 +4356,14 @@ public class LoadableStudyService {
 
     final Page<Voyage> pages = new PageImpl<>(output, pageRequest, total);
 
+    // sort list
+
+    if (null != sortBy) {
+      voyageList = this.getSortedList(pages.toList(), orderBy, sortBy.toLowerCase());
+    }
+
     response.setTotalElements(pages.getTotalElements());
-    response.setVoyages(pages.toList());
+    response.setVoyages(voyageList);
 
     return response;
   }
@@ -4544,53 +4556,93 @@ public class LoadableStudyService {
         if (orderBy.equalsIgnoreCase("ASC")) {
           voyages =
               voyageList.stream()
+                  .filter(voyage -> Objects.nonNull(voyage.getPlannedStartDate()))
                   .sorted(Comparator.comparing(Voyage::getPlannedStartDate))
                   .collect(Collectors.toList());
+          voyages.addAll(
+              voyageList.stream()
+                  .filter(voyage -> Objects.isNull(voyage.getPlannedStartDate()))
+                  .collect(Collectors.toList()));
+
         } else {
           voyages =
               voyageList.stream()
+                  .filter(voyage -> Objects.nonNull(voyage.getPlannedStartDate()))
                   .sorted(Comparator.comparing(Voyage::getPlannedStartDate).reversed())
                   .collect(Collectors.toList());
+          voyages.addAll(
+              voyageList.stream()
+                  .filter(voyage -> Objects.isNull(voyage.getPlannedStartDate()))
+                  .collect(Collectors.toList()));
         }
         break;
       case "plannedenddate":
         if (orderBy.equalsIgnoreCase("ASC")) {
-
           voyages =
               voyageList.stream()
+                  .filter(voyage -> Objects.nonNull(voyage.getPlannedEndDate()))
                   .sorted(Comparator.comparing(Voyage::getPlannedEndDate))
                   .collect(Collectors.toList());
+          voyages.addAll(
+              voyageList.stream()
+                  .filter(voyage -> Objects.isNull(voyage.getPlannedEndDate()))
+                  .collect(Collectors.toList()));
         } else {
           voyages =
               voyageList.stream()
+                  .filter(voyage -> Objects.nonNull(voyage.getPlannedEndDate()))
                   .sorted(Comparator.comparing(Voyage::getPlannedEndDate).reversed())
                   .collect(Collectors.toList());
+          voyages.addAll(
+              voyageList.stream()
+                  .filter(voyage -> Objects.isNull(voyage.getPlannedEndDate()))
+                  .collect(Collectors.toList()));
         }
         break;
       case "actualstartdate":
         if (orderBy.equalsIgnoreCase("ASC")) {
           voyages =
               voyageList.stream()
+                  .filter(voyage -> Objects.nonNull(voyage.getActualStartDate()))
                   .sorted(Comparator.comparing(Voyage::getActualStartDate))
                   .collect(Collectors.toList());
+          voyages.addAll(
+              voyageList.stream()
+                  .filter(voyage -> Objects.isNull(voyage.getActualStartDate()))
+                  .collect(Collectors.toList()));
         } else {
           voyages =
               voyageList.stream()
+                  .filter(voyage -> Objects.nonNull(voyage.getActualStartDate()))
                   .sorted(Comparator.comparing(Voyage::getActualStartDate).reversed())
                   .collect(Collectors.toList());
+          voyages.addAll(
+              voyageList.stream()
+                  .filter(voyage -> Objects.isNull(voyage.getActualStartDate()))
+                  .collect(Collectors.toList()));
         }
         break;
       case "actualenddate":
         if (orderBy.equalsIgnoreCase("ASC")) {
           voyages =
               voyageList.stream()
+                  .filter(voyage -> Objects.nonNull(voyage.getActualEndDate()))
                   .sorted(Comparator.comparing(Voyage::getActualEndDate))
                   .collect(Collectors.toList());
+          voyages.addAll(
+              voyageList.stream()
+                  .filter(voyage -> Objects.isNull(voyage.getActualEndDate()))
+                  .collect(Collectors.toList()));
         } else {
           voyages =
               voyageList.stream()
+                  .filter(voyage -> Objects.nonNull(voyage.getActualEndDate()))
                   .sorted(Comparator.comparing(Voyage::getActualEndDate).reversed())
                   .collect(Collectors.toList());
+          voyages.addAll(
+              voyageList.stream()
+                  .filter(voyage -> Objects.isNull(voyage.getActualEndDate()))
+                  .collect(Collectors.toList()));
         }
         break;
     }

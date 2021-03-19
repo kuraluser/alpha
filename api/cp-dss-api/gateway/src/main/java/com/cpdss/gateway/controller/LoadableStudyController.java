@@ -527,6 +527,9 @@ public class LoadableStudyController {
     try {
       log.info("deleteCargoNomination: {}", getClientIp());
       response = loadableStudyService.deleteCargoNomination(id, headers);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when deleting CargoNomination", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in deleteCargoNomination ", e);
       throw new CommonRestException(
@@ -1661,9 +1664,11 @@ public class LoadableStudyController {
           sortBy);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when listing voyages", e);
+      e.printStackTrace();
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when listing voyages", e);
+      e.getMessage();
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
