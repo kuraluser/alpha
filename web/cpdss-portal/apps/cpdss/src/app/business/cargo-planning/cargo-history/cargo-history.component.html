@@ -7,11 +7,22 @@
     <div class="col">
       <h5 class="main-head inline-block">{{'CARGO_HISTORY'|translate}}</h5>
     </div>
+    <div class="col">
+      <span class="ml-20 mr-10">
+        {{ 'CARGO_HISTORY_DATE_RANGE_LABEL' | translate }}</span>
+      <p-calendar selectionMode="range" [readonlyInput]="true" inputId="range" dateFormat="dd-mm-yy"
+        (onSelect)="onDateRangeSelect()" [maxDate]="today" [(ngModel)]="filteredDates"
+        placeholder="{{ 'CARGO_HISTORY_DATE_RANGE_PLACEHOLDER'| translate }}" id="cargo_history_date_range_filter"
+        #cargoHistoryDateRange>
+      </p-calendar>
+    </div>
   </div>
   <div class="row">
     <div class="col loadable-study-table-wrapper">
-      <cpdss-portal-datatable *ngIf="cargoHistoryGridData" [tableId]="'cargo_history_grid'"
-        [columns]="cargoHistoryGridColumns" [value]="cargoHistoryGridData">
+      <cpdss-portal-datatable *ngIf="cargoHistoryGridData" [filterable]="true" [tableId]="'cargo_history_grid'"
+        [columns]="cargoHistoryGridColumns" [value]="cargoHistoryGridData" [paginator]="true" [rows]="10"
+        [totalRecords]="totalRecords" [lazy]="true" (dataStateChange)="onDataStateChange($event)" [loading]="loading"
+        [(currentPage)]="currentPage" [(first)]="first">
       </cpdss-portal-datatable>
     </div>
   </div>
