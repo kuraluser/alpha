@@ -112,39 +112,18 @@ import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.loadablestudy.domain.AlgoResponse;
+import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.domain.CargoHistory;
-import com.cpdss.loadablestudy.domain.LDIntactStability;
-import com.cpdss.loadablestudy.domain.LDStrength;
-import com.cpdss.loadablestudy.domain.LDTrim;
-import com.cpdss.loadablestudy.domain.LoadicatorAlgoRequest;
-import com.cpdss.loadablestudy.domain.LoadicatorPatternDetails;
-import com.cpdss.loadablestudy.domain.PortDetails;
+import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.CargoNomination;
-import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
-import com.cpdss.loadablestudy.entity.CargoNominationValveSegregation;
 import com.cpdss.loadablestudy.entity.CargoOperation;
-import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanComments;
-import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanConstraints;
-import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
-import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
-import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
-import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnBoardQuantity;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
-import com.cpdss.loadablestudy.entity.PurposeOfCommingle;
-import com.cpdss.loadablestudy.entity.SynopticalTable;
-import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
-import com.cpdss.loadablestudy.entity.Voyage;
-import com.cpdss.loadablestudy.entity.VoyageHistory;
-import com.cpdss.loadablestudy.entity.VoyageStatus;
 import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
@@ -220,6 +199,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -2845,7 +2825,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   saveLoadablePlanStowageDetails(loadablePattern, lpd);
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
                 });
-        this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId());
+        // this.saveLoadicatorInfo(loadableStudyOpt.get(), request.getProcesssId());
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
             loadableStudyOpt
@@ -7983,12 +7963,27 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       List<com.cpdss.loadablestudy.entity.ApiTempHistory> apiTempHistList = null;
 
       // Paging and sorting while filtering is handled separately
-      Pageable pageable =
-          PageRequest.of(
-              request.getPage(),
-              request.getPageSize(),
-              Sort.by(
-                  Sort.Direction.valueOf(request.getOrderBy().toUpperCase()), request.getSortBy()));
+      Pageable pageable = null;
+      if (request.getSortBy().length() > 0 && request.getOrderBy().length() > 0) {
+        pageable =
+            PageRequest.of(
+                0,
+                Integer.MAX_VALUE,
+                Sort.by(
+                    Sort.Direction.valueOf(request.getOrderBy().toUpperCase()),
+                    request.getSortBy()));
+        log.info(
+            "Cargo History grpc: page {}, page size {},  sort-order {}, sort-by {}",
+            request.getPage(),
+            request.getPageSize(),
+            request.getOrderBy(),
+            request.getSortBy());
+      } else {
+        pageable = PageRequest.of(0, Integer.MAX_VALUE);
+        log.info(
+            "Cargo History grpc: page {}, page size {}", request.getPage(), request.getPageSize());
+      }
+
       // apply date filter for loaded date
       if (!request.getFromStartDate().isEmpty() && !request.getToStartDate().isEmpty()) {
         LocalDateTime fromDate =
@@ -8000,16 +7995,63 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         Page<com.cpdss.loadablestudy.entity.ApiTempHistory> pagedResult =
             this.apiTempHistoryRepository.findAllByLoadedDateBetween(pageable, fromDate, toDate);
         apiTempHistList = pagedResult.toList();
+        replyBuilder.setTotal(pagedResult.getTotalElements());
+      } else if (!request.getFilterParamsMap().isEmpty()) {
+        Map<String, com.cpdss.common.generated.LoadableStudy.FilterIds> map =
+            request.getFilterParamsMap();
+
+        Specification<ApiTempHistory> specification =
+            Specification.where(
+                new ApiTempHistorySpecification(new SearchCriteria("id", "GREATER_THAN", 0)));
+
+        for (Map.Entry<String, com.cpdss.common.generated.LoadableStudy.FilterIds> var1 :
+            map.entrySet()) {
+          if (var1.getValue().getIdsList() != null && !var1.getValue().getIdsList().isEmpty()) {
+            specification =
+                specification.and(
+                    new ApiTempHistorySpecification(
+                        new SearchCriteria(var1.getKey(), "IN", var1.getValue().getIdsList())));
+          }
+          if (var1.getValue().getValuesList() != null
+              && !var1.getValue().getValuesList().isEmpty()) {
+            // Expected data Date range of loaded date
+            String startDate = var1.getValue().getValuesList().get(0);
+            String endDate = var1.getValue().getValuesList().get(1);
+            LocalDateTime fromDate =
+                LocalDateTime.from(DateTimeFormatter.ofPattern(DATE_FORMAT).parse(startDate));
+            LocalDateTime toDate =
+                LocalDateTime.from(DateTimeFormatter.ofPattern(DATE_FORMAT).parse(endDate));
+            specification =
+                specification.and(
+                    new ApiTempHistorySpecification(
+                        new SearchCriteria(
+                            var1.getKey(), "BETWEEN", Arrays.asList(fromDate, toDate))));
+          }
+
+          log.info(
+              "Cargo History grpc: Filter Key {}, Value {}",
+              var1.getKey(),
+              var1.getValue().getIdsList());
+        }
+
+        Page<ApiTempHistory> pagedResult =
+            apiTempHistoryRepository.findAll(specification, pageable);
+        apiTempHistList = pagedResult.toList();
+        replyBuilder.setTotal(pagedResult.getTotalElements());
+        log.info("ApiTempHistory paged result total {}", pagedResult.getTotalElements());
       } else {
         Page<com.cpdss.loadablestudy.entity.ApiTempHistory> pagedResult =
             this.apiTempHistoryRepository.findAll(pageable);
         apiTempHistList = pagedResult.toList();
+        replyBuilder.setTotal(pagedResult.getTotalElements());
+        log.info("ApiTempHistory no filter paged result total {}", pagedResult.getTotalElements());
       }
       buildAllCargoHistoryReply(apiTempHistList, replyBuilder);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     } catch (Exception e) {
       log.error("Exception when fetching getCargoApiTempHistory", e);
-      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED));
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
