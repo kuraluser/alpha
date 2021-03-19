@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { PropertiesDB } from '../../models/common.model';
 import { IUserProfile } from "../../models/user-profile.model";
+import { AppConfigurationService } from '../app-configuration/app-configuration.service';
 
 /**
  *  service class for setting auth-token and user details
@@ -33,9 +35,9 @@ export class SecurityService {
     return localStorage.getItem('token');
   }
 
-  // getting environment
-  static async getPropertiesDB() {
-    return await this.propertiesDB.properties.get('environment')
+  // getting properties in indexed db
+  static async getPropertiesDB(key: string) {
+    return await this.propertiesDB?.properties?.get(key)
   }
 
   // setting properties in indexed db
@@ -77,6 +79,22 @@ export class SecurityService {
     SecurityService._LOGGED_IN = false;
     window.localStorage.clear();
     this.propertiesDB.properties.clear();
+  }
+
+  /**
+   * Initialise properties db in indexed db while login
+   *
+   * @static
+   * @param {*} token
+   * @memberof SecurityService
+   */
+  static async initPropertiesDB(token) {
+    const serviceWorkerReady = await navigator.serviceWorker.ready;
+    if (serviceWorkerReady) {
+      SecurityService.setPropertiesDB(token, 'token');
+      SecurityService.setPropertiesDB(environment.name, 'environment');
+      SecurityService.setPropertiesDB(JSON.parse(JSON.stringify(AppConfigurationService.settings)), 'appConfig');
+    }
   }
 
 }

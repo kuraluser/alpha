@@ -163,6 +163,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
     this.loadableStudyDetailsApiService.disableUnitChange = false;
+    navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
   }
 
   /**
@@ -287,10 +288,12 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    */
   async onEditComplete(event: ICargoNominationEvent) {
     const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
-    if (event.field === 'cargo' && !event.data?.isAdd) {
+    const savedCargoIndex = this.savedCargoNomination.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
+    if (event.field === 'cargo' && !event.data?.isAdd && !this.savedCargoNomination[savedCargoIndex]['isAdd']) {
       this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_SUMMARY', detail: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_DETAILS', data: { confirmLabel: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_LABEL', rejectLabel: 'CARGO_NOMINATION_CARGO_NAME_CHANGE_REJECT_LABEL' } });
       this.confirmationAlertService.confirmAlert$.pipe(first()).subscribe(async (response) => {
       if (response) {
+        this.savedCargoNomination[savedCargoIndex]['isAdd'] = true;
         this.updateCargoNominationsDetails(valueIndex , event);
       } else {
         this.cargoNominations[valueIndex]['cargo'].value = this.savedCargoNomination[valueIndex]['cargo']['_value'];
@@ -599,19 +602,33 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.onUnitChangeBlocked();
       })
+    
+    navigator.serviceWorker.addEventListener('message', this.swMessageHandler,);
+  }
 
-    navigator.serviceWorker.addEventListener('message', async event => {
-      if (event.data.type === 'cargo_nomination_sync_finished') {
-        const index = this.cargoNominations?.findIndex((item) => item.storeKey === event.data.storeKey);
-        if (index !== -1) {
+  /**
+   * Handler for service worker message event
+   *
+   * @private
+   * @memberof CargoNominationComponent
+   */
+  private swMessageHandler = async (event) => {
+    const translationKeys = await this.translateService.get(['CARGONOMINATION_UPDATE_ERROR', 'CARGONOMINATION_UPDATE_STATUS_ERROR']).toPromise();
+    if (event?.data?.type === 'cargo_nomination_sync_finished') {
+      const index = this.cargoNominations?.findIndex((item) => item.storeKey === event.data.storeKey);
+      if (index !== -1) {
+        this.cargoNominations[index].processing = false;
+        if (event?.data?.status === '200') {
           this.cargoNominations[index].id = event.data.cargoNominationId;
-          this.cargoNominations[index].processing = false;
           this.cargoNominations = [...this.cargoNominations];
           this.savedCargoNomination = JSON.parse(JSON.stringify(this.cargoNominations));
           this.updateCommingleButton(false);
         }
       }
-    });
+      if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
+        this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_UPDATE_ERROR'], detail: translationKeys['CARGONOMINATION_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
+      }
+    }
   }
 
   /**

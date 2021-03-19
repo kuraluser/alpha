@@ -24,6 +24,8 @@ export class LoginShipComponent implements OnInit {
   loginForm: FormGroup;
   settings: IAppConfiguration;
   logo = '';
+  carousels = [];
+  favicon = '';
   customOptions: OwlOptions = {
     loop: true,
     margin: 0,
@@ -57,10 +59,12 @@ export class LoginShipComponent implements OnInit {
   ngOnInit(): void {
     this.settings = AppConfigurationService.settings;
     this.logo = localStorage.getItem('logo');
+    this.favicon = localStorage.getItem('favicon');
     this.loginForm = this.fb.group({
       userName: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(7)]]
-    })
+    });
+    this.carousels = localStorage.getItem('carousel') ? JSON.parse(localStorage.getItem('carousel')) : [];
   }
 
   /**
@@ -77,8 +81,9 @@ export class LoginShipComponent implements OnInit {
         if (result?.responseStatus?.status === '200') {
           const logoUrl = localStorage.getItem('logo');
           const realm = localStorage.getItem('realm');
+          const faviconUrl = localStorage.getItem('favicon'); 
           const token = result.token;
-          let redirectUri = window.location.protocol + '//' + window.location.hostname + this.settings.path + '?realm=' + realm + '&logoUrl=' + logoUrl + '&token=' + token;
+          let redirectUri = window.location.protocol + '//' + window.location.hostname + this.settings.path + '?realm=' + realm + '&logoUrl=' + logoUrl + '&token=' + token + '&faviconUrl=' + faviconUrl;
           if (typeof result.expiryReminder?.daysRemain !== 'undefined') {
             redirectUri += '&daysRemain=' + result.expiryReminder?.daysRemain
           }

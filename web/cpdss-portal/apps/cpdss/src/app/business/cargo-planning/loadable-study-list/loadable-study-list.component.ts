@@ -63,7 +63,6 @@ export class LoadableStudyListComponent implements OnInit {
     });
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], false);
     this.addLSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
-    this.columns = this.loadableStudyListTransformationService.getLoadableStudyListDatatableColumns(this.permission, this.selectedVoyage?.statusId);
     this.loading = false;
 
   }
@@ -114,6 +113,7 @@ export class LoadableStudyListComponent implements OnInit {
    */
   showLoadableStudyList() {
     this.isVoyageIdSelected = true;
+    this.columns = this.loadableStudyListTransformationService.getLoadableStudyListDatatableColumns(this.permission, this.selectedVoyage?.statusId);
     this.getLoadableStudyInfo(this.vesselDetails?.id, this.selectedVoyage.id);
   }
 

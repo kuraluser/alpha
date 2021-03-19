@@ -14,6 +14,8 @@ import { PermissionsService } from '../../../shared/services/permissions/permiss
 import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { ConfirmationAlertService } from '../../../shared/components/confirmation-alert/confirmation-alert.service';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Component class of pattern history screen
@@ -75,7 +77,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
     private loadablePatternApiService: LoadablePatternHistoryApiService,
     private permissionsService: PermissionsService,
     private quantityPipe: QuantityPipe,
-    private confirmationAlertService: ConfirmationAlertService) { }
+    private confirmationAlertService: ConfirmationAlertService,
+    private messageService: MessageService,
+    private translateService: TranslateService) { }
 
   /**
    * Component lifecycle ngOnit
@@ -281,9 +285,16 @@ export class LoadablePatternHistoryComponent implements OnInit {
     this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_PATTERN_CONFIRM_SUMMARY', detail: detail, data: { confirmLabel: 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', rejectLabel: 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL' } });
     this.confirmationAlertService.confirmAlert$.pipe().subscribe(async (response) => {
       if (response) {
-        const confirmResult = await this.loadablePatternApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, loadablePattern?.loadablePatternId).toPromise();
-        if (confirmResult.responseStatus.status === '200') {
-          this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
+        const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR']).toPromise();
+        try {
+          const confirmResult = await this.loadablePatternApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, loadablePattern?.loadablePatternId).toPromise();
+          if (confirmResult.responseStatus.status === '200') {
+            this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
+          }
+        } catch (errorResponse) {
+          if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+            this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_CONFIRM_ERROR'], detail: translationKeys['LOADABLE_PATTERN_CONFIRM_STATUS_ERROR'], life: 10000 });
+          }
         }
       }
     })

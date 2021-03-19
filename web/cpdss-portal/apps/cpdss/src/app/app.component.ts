@@ -13,6 +13,7 @@ export class AppComponent {
   constructor(private translateService: TranslateService, private serviceWorkerService: ServiceWorkerService) {
     this.initLanguageTranslator();
     this.serviceWorkerService.checkForUpdate();
+    this.setFavicon();
   }
 
   /**
@@ -26,6 +27,17 @@ export class AppComponent {
     } else {
       this.translateService.setDefaultLang('en');
       this.translateService.use('en');
+    }
+  }
+
+  /**
+   * changes favicon dynamically
+   */
+  setFavicon(){
+    const favicon = localStorage.getItem('favicon');
+    if (favicon) {
+    const dynamicFavicon = document.getElementById('cpdssfavicon');
+    dynamicFavicon.setAttribute('href', favicon);
     }
   }
 }

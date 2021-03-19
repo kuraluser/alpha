@@ -11,6 +11,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
 import { DatePopUpComponent } from './date-pop-up/date-pop-up.component';
 import { DialogModule } from 'primeng/dialog';
+import { TooltipModule } from 'primeng/tooltip';
 
 /**
  * CPDSS app main module. All voyages list logic will be inside this module
@@ -27,7 +28,8 @@ import { DialogModule } from 'primeng/dialog';
     TranslateModule,
     FormsModule,
     CalendarModule,
-    DialogModule
+    DialogModule,
+    TooltipModule
   ],
   exports: [DatePopUpComponent],
   providers: [ VoyageListTransformationService, VoyageListApiService ]

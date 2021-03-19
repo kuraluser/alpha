@@ -3,6 +3,7 @@ import { KeycloakConfig } from 'keycloak-js';
 import { HttpClient } from '@angular/common/http';
 import { IAppConfiguration } from '../services/app-configuration/app-configuration.model';
 import { AppConfigurationService } from '../services/app-configuration/app-configuration.service';
+import { SecurityService } from '../services/security/security.service';
 
 /**
  *  keycloak initializer function for main shore application
@@ -21,10 +22,19 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                 const logoKey = 'logoUrl';
                 const imageIndex = window.location.search.indexOf(logoKey);
                 let imgUri = window.location.search.substring(imageIndex + logoKey.length + 1);
+                imgUri = imgUri.split('&')[0];
                 if(imgUri) {
                     localStorage.setItem('companyLogo', imgUri);
                 } else if(localStorage.getItem('companyLogo') !== undefined && localStorage.getItem('companyLogo') !== 'undefined' && localStorage.getItem('companyLogo') !== '' && localStorage.getItem('companyLogo') !== null) {
                     imgUri = localStorage.getItem('companyLogo');
+                }
+                const faviconKey = 'faviconUrl';
+                const iconIndex = window.location.search.indexOf(faviconKey);
+                let iconUri = window.location.search.substring(iconIndex + faviconKey.length + 1);
+                if(iconUri) {
+                    localStorage.setItem('favicon', iconUri);
+                } else if(localStorage.getItem('favicon') !== undefined && localStorage.getItem('favicon') !== 'undefined' && localStorage.getItem('favicon') !== '' && localStorage.getItem('favicon') !== null) {
+                    iconUri = localStorage.getItem('favicon');
                 }
 
                 let realm = window.location.search.split('&')[0].split('=')[1];
@@ -57,12 +67,20 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                 if (!isLoggedIn) {
                     window.location.href = logoutUrl;
                 } else {
+                    //TODO: Handling scenario when user manually cleares service worker and indexed db
+                    /* const token = localStorage.getItem('token');
+                    const isPropertyExist = await SecurityService.getPropertiesDB('token');
+                    if(token && !isPropertyExist) {
+                        SecurityService.initPropertiesDB(token);
+                    } */
+
                     //If token expired
-                    keycloakInstance.onTokenExpired = () => {
-                        
+                    keycloakInstance.onTokenExpired = () => { 
                         if (keycloakInstance.refreshToken) {
                             const res = keycloakInstance.updateToken(5);
                             if (res) {
+                                SecurityService.setAuthToken(keycloakInstance.token);
+                                SecurityService.setPropertiesDB(keycloakInstance.token, 'token');
                                 return keycloakInstance.token;
                             } else {
                                 window.location.href = logoutUrl;

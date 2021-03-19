@@ -708,9 +708,13 @@ export class DatatableComponent implements OnInit {
   */
   onDatePanelClosed(event, formGroupIndex: number, formControlName: string, rowData: any) {
     const formControl = this.field(formGroupIndex, formControlName);
-    rowData[formControlName].value = this.formatDateTime(formControl.value, true);
+    const oldValue = rowData[formControlName].value;
+    const newValue = this.formatDateTime(formControl.value, true);
+    rowData[formControlName].value = newValue;
     rowData[formControlName].isEditMode = formControl?.invalid;
-    this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
+    if(oldValue !== newValue) {
+      this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
+    }
   }
 
   /**

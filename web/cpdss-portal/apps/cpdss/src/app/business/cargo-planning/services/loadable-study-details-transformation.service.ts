@@ -337,8 +337,8 @@ export class LoadableStudyDetailsTransformationService {
     if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if (permission?.add) {
-        actions.push(DATATABLE_ACTION.DUPLICATE);
         actions.push(DATATABLE_ACTION.SAVE);
+        actions.push(DATATABLE_ACTION.DUPLICATE);
       }
       if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
@@ -563,7 +563,7 @@ export class LoadableStudyDetailsTransformationService {
    * @memberof LoadableStudyDetailsTransformationService
    */
   getLoadableStudyGridColumns(permission: IPermission, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
-    let columns: IDataTableColumn[] = [
+    let columns: IDataTableColumn[] =  [
       {
         field: 'name',
         header: 'LOADABLE_STUDY_DETAILS_LODABLE_STUDY_COLUMN_NAME',
@@ -1072,6 +1072,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'cargo1',
         header: 'COMMINGLE_CARGO1',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        componentFieldClass: 'index-9',
         listName: 'cargoNominationsCargo1',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER',
@@ -1095,6 +1096,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'cargo1IdPct',
         header: 'COMMINGLE_CARGO_PERCENTAGE',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        componentFieldClass: 'index-9',
         listName: 'percentage',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_PERCENTAGE_PLACEHOLDER',
@@ -1109,6 +1111,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'cargo2',
         header: 'COMMINGLE_CARGO2',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        componentFieldClass: 'index-9',
         listName: 'cargoNominationsCargo2',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER',
@@ -1131,6 +1134,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'cargo2IdPct',
         header: 'COMMINGLE_CARGO_PERCENTAGE',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        componentFieldClass: 'index-9',
         listName: 'percentage',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_PERCENTAGE_PLACEHOLDER',

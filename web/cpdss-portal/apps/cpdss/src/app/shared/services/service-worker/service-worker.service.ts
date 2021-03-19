@@ -7,6 +7,7 @@ import { concat, interval } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { ConfirmationAlertService } from '../../components/confirmation-alert/confirmation-alert.service';
 import { CPDSSDB } from '../../models/common.model';
+import { SecurityService } from '../security/security.service';
 
 /**
  * Service for handling service worker events
@@ -74,9 +75,12 @@ export class ServiceWorkerService {
           this.ngxSpinnerService.show();
           this.updates.activateUpdate().then(() => {
             // TODO: delete existing db logic
-            this.cpdssDb?.delete().then(() => {
+            this.cpdssDb?.delete().then(async () => {
               console.log("Database successfully deleted");
-              this.cpdssDb.open();
+              const isOpen  = await this.cpdssDb.open();
+              if(isOpen) {
+                SecurityService.initPropertiesDB(localStorage.getItem('token'));
+              }
             }).catch((err) => {
               console.error("Could not delete database");
             }).finally(() => {

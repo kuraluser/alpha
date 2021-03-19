@@ -20,6 +20,9 @@ import { LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
+
 /**
  * Component class of loadable plan
  *
@@ -107,6 +110,8 @@ export class LoadablePlanComponent implements OnInit {
     private voyageService: VoyageService,
     private loadableStudyListApiService: LoadableStudyListApiService,
     private permissionsService: PermissionsService,
+    private messageService: MessageService,
+    private translateService: TranslateService
   ) { }
 
   /**
@@ -321,7 +326,7 @@ export class LoadablePlanComponent implements OnInit {
    * @memberof LoadablePlanComponent
   */
   async confirmPlan() {
-    if(this.loadableStudyStatus) {
+    if (this.loadableStudyStatus) {
       return;
     }
     this.ngxSpinnerService.show();
@@ -336,9 +341,16 @@ export class LoadablePlanComponent implements OnInit {
     this.confirmationAlertService.add({ key: 'confirmation-alert', sticky: true, severity: 'warn', summary: 'LOADABLE_PATTERN_CONFIRM_SUMMARY', detail: detail, data: { confirmLabel: 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', rejectLabel: 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL' } });
     this.confirmationAlertService.confirmAlert$.pipe().subscribe(async (response) => {
       if (response) {
-        const confirmResult = await this.loadablePlanApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
-        if (confirmResult.responseStatus.status === '200') {
-          this.loadableStudyStatus = true;
+        const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR']).toPromise();
+        try {
+          const confirmResult = await this.loadablePlanApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
+          if (confirmResult.responseStatus.status === '200') {
+            this.loadableStudyStatus = true;
+          }
+        } catch (errorResponse) {
+          if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+            this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_CONFIRM_ERROR'], detail: translationKeys['LOADABLE_PATTERN_CONFIRM_STATUS_ERROR'], life: 10000 });
+          }
         }
       }
     })

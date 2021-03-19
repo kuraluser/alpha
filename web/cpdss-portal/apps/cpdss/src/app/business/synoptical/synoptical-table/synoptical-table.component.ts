@@ -59,7 +59,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   datePipe: DatePipe = new DatePipe('en-US');
   synopticalRecordsCopy: ISynopticalRecords[] = [];
   loadableQuantityValue: number;
-  today = new Date()
+  today = new Date();
 
 
   constructor(
@@ -655,7 +655,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 type: this.fieldType.NUMBER,
                 validators: ['required', 'ddddddd.dd.+']
               }],
-              editable: !this.checkIfConfirmed(),
+              editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
             },
             {
               header: "Actual",
@@ -682,7 +682,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 type: this.fieldType.NUMBER,
                 validators: ['required', 'ddddddd.+']
               }],
-              editable: !this.checkIfConfirmed(),
+              editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
             },
             {
               header: "Actual",
@@ -709,7 +709,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 type: this.fieldType.NUMBER,
                 validators: ['required', 'ddddddd.+']
               }],
-              editable: !this.checkIfConfirmed(),
+              editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
             },
             {
               header: "Actual",
@@ -736,7 +736,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 type: this.fieldType.NUMBER,
                 validators: ['required', 'ddddddd.+']
               }],
-              editable: !this.checkIfConfirmed(),
+              editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
             },
             {
               header: "Actual",
@@ -1390,7 +1390,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   */
   checkIfConfirmed(): boolean {
     if(this.synopticalService.selectedLoadablePattern){
-      return this.synopticalService.selectedLoadablePattern.loadableStudyStatusId === 2 ?? false
+      return this.synopticalService.selectedLoadablePattern.loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_CONFIRMED ?? false
     }
     return this.synopticalService.selectedLoadableStudy?.status === "Confirmed" ?? false
   }
@@ -1513,15 +1513,20 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         const postData = {
           synopticalRecords: synopticalRecords
         }
-        const res = await this.synoticalApiService.saveSynopticalTable(postData, this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId, this.synopticalService.loadablePatternId).toPromise()
-        if (res?.responseStatus?.status === '200') {
-          msgkeys = ['SYNOPTICAL_UPDATE_SUCCESS', 'SYNOPTICAL_UPDATE_SUCCESSFULLY']
-          severity = 'success';
-          this.synopticalService.editMode = false;
-        } else {
+        try {
+          const res = await this.synoticalApiService.saveSynopticalTable(postData, this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId, this.synopticalService.loadablePatternId).toPromise();
+          if (res?.responseStatus?.status === '200') {
+            msgkeys = ['SYNOPTICAL_UPDATE_SUCCESS', 'SYNOPTICAL_UPDATE_SUCCESSFULLY']
+            severity = 'success';
+            this.synopticalService.editMode = false;
+          } else if (res?.responseStatus?.status === '207' && Object.values(res?.failedRecords).includes('ERR-RICO-110')) {
+            msgkeys = ['SYNOPTICAL_UPDATE_ERROR', 'SYNOPTICAL_UPDATE_STATUS_ERROR']
+            severity = 'error';
+          }
+        } catch (errorResponse) {          
           msgkeys = ['SYNOPTICAL_UPDATE_FAILED', 'SYNOPTICAL_UPDATE_FAILURE']
           severity = 'error';
-        }
+        }  
         this.ngxSpinner.hide();
       } else {
         msgkeys = ['SYNOPTICAL_UPDATE_INVALID', 'SYNOPTICAL_UPDATE_FIELDS_INVALID']
