@@ -18,4 +18,6 @@ public class CargoHistoryResponse {
   private List<CargoHistory> monthlyHistory;
 
   private List<CargoHistory> cargoHistory;
+
+  private Long totalElements;
 }

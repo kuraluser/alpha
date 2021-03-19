@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.redis;
 
+import java.util.Map;
+
 public interface RedisMasterSyncService {
 
   Integer OFFSET_VAL = 0;
@@ -10,4 +12,8 @@ public interface RedisMasterSyncService {
   String CARGO_MASTER_KEY = "cargo_master";
 
   void fetchDomainDataFromService();
+
+  Map<Long, String> fetchAllIdAndName();
+
+  Map<Long, String> filterByName(String var1);
 }

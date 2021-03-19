@@ -20,15 +20,9 @@ public class CargoInfo implements Doc {
 
   private List<CargoInfoDomain> cargos;
 
+  @Data
   public static class CargoInfoDomain {
+    private Long id;
     private String name;
-
-    public String getName() {
-      return name;
-    }
-
-    public void setName(String name) {
-      this.name = name;
-    }
   }
 }
