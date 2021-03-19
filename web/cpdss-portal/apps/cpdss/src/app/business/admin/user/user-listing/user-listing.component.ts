@@ -99,10 +99,12 @@ export class UserListingComponent implements OnInit {
     if(permissionResetPassword?.view) {
       this.columns.push({
         field: 'buttons',
-        header: '',
+        header: 'RESET_PASSWORD_HEADING',
+        fieldClass: 'text-center',
+        fieldColumnClass: 'text-center',
         fieldType: DATATABLE_FIELD_TYPE.BUTTON,
         buttons: [
-          {type: DATATABLE_BUTTON.RESETPASSWORD , field: 'isResetPassword' , icons: '' , class: '' , label: 'Reset button'}
+          {type: DATATABLE_BUTTON.RESETPASSWORD , field: 'isResetPassword' , icons: '' , class: 'reset-btn'}
         ]
       })
     }

@@ -11,6 +11,8 @@ import { IBunkerConditions, ICargoConditions, ICargoQuantities, IVoyageDetails, 
 import { VoyageStatusTransformationService } from './services/voyage-status-transformation.service';
 import { QUANTITY_UNIT } from '../../shared/models/common.model';
 import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
 /**
  * Component for voyage status
  */
@@ -39,7 +41,9 @@ export class VoyageStatusComponent implements OnInit {
     private voyageService: VoyageService,
     private voyageApiService: VoyageApiService,
     private ngxSpinnerService: NgxSpinnerService,
-    public voyageStatusTransformationService: VoyageStatusTransformationService) { }
+    public voyageStatusTransformationService: VoyageStatusTransformationService,
+    private messageService: MessageService,
+    private translateService: TranslateService) { }
 
   ngOnInit() {
     this.ngxSpinnerService.show();
@@ -98,6 +102,11 @@ export class VoyageStatusComponent implements OnInit {
     const voyage = voyages.filter(voyageActive => (voyageActive?.status === 'Active'));
     this.voyageInfo = voyage;
     this.selectedVoyage = voyage[0];
+    const alertForVoyageEnd = localStorage.getItem('alertForVoyageEnd');
+    if(alertForVoyageEnd !== 'true'){
+      this.alertForEnd()
+    }
+
   }
 
 
@@ -132,6 +141,22 @@ export class VoyageStatusComponent implements OnInit {
    */
   onUnitChange(event) {
     this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+  }
+
+  /**
+  * Handler for show alert for end voyage
+  *
+  * @memberof VoyageStatusComponent
+  */
+  async alertForEnd() {
+    localStorage.setItem('alertForVoyageEnd', 'true');
+    this.voyageInfo.forEach(async (voyage) => {
+      const translationKeys = await this.translateService.get(['VOYAGE_STATUS_ACTIVE_END_WARNING', 'VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_FIRST', 'VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_SECOND']).toPromise();
+      if (voyage?.noOfDays >= 0) {
+        this.messageService.add({ severity: 'warn', summary: translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING'], detail: translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_FIRST'] + " " + voyage?.endDate + ". " +  translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_SECOND'], sticky: true});
+      }
+    })
+
   }
 
 }

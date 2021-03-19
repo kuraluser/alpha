@@ -7,6 +7,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { PermissionsService } from '../shared/services/permissions/permissions.service';
 import { environment } from '../../environments/environment';
 import { MessageService } from 'primeng/api';
+import { AppConfigurationService } from '../shared/services/app-configuration/app-configuration.service';
 
 /**
  *  CPDSS-main application login component
@@ -57,7 +58,8 @@ export class LoginComponent implements OnInit {
         const result = await this.loginService.getUserDetails().toPromise();
         this.user = <IUserProfile>{ ...this.user, ...result?.user };
         SecurityService.setUserProfile(this.user);
-        this.permissionsService.setPermissions(this.user?.rolePermissions?.resources)
+        this.permissionsService.setPermissions(this.user?.rolePermissions?.resources);
+        this.setPropertiesDB(token);
       }
     }
     catch (ex) {
@@ -78,17 +80,29 @@ export class LoginComponent implements OnInit {
       }
       const token = localStorage.getItem('token');
       SecurityService.setAuthToken(token);
-      SecurityService.setEnvironment(environment.name);
+
       /* get user details and user permission */
       const result = await this.loginService.getUserDetails().toPromise();
       this.user = <IUserProfile>{ ...this.user, ...result?.user };
       SecurityService.setUserProfile(this.user);
-      this.permissionsService.setPermissions(this.user?.rolePermissions?.resources)
+      this.permissionsService.setPermissions(this.user?.rolePermissions?.resources);
+      this.setPropertiesDB(token);
     }
     catch (ex) {
       console.log('Exception:loginComponent', ex);
     }
-    this.ngxSpinnerService.hide();
+    this.ngxSpinnerService.hide();   
+  }
+
+  /**
+   * Set values in properties db
+   *
+   * @private
+   * @param {*} token
+   * @memberof LoginComponent
+   */
+  private async setPropertiesDB(token) {
+    SecurityService.initPropertiesDB(token);
   }
 
 }

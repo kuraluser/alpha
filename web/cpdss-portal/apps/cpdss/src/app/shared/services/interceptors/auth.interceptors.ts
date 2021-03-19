@@ -35,9 +35,12 @@ export class HttpAuthInterceptor implements HttpInterceptor {
             retry(1),
             map((event: HttpEvent<any>) => {
                 if (event instanceof HttpResponse) {
-                    const token = event.headers.get('token');
-                    if(environment.name !== 'shore' && token){
-                        SecurityService.setAuthToken(token)
+                    const refreshedToken = event.headers.get('token');
+                    if (environment.name !== 'shore' && refreshedToken) {
+                        SecurityService.setAuthToken(refreshedToken)
+                        navigator.serviceWorker.ready.then(() => {
+                            SecurityService.setPropertiesDB(refreshedToken, 'token');
+                        });
                     }
                 }
                 return event;

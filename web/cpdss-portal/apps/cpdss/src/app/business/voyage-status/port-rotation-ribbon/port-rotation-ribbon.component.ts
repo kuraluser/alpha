@@ -176,16 +176,23 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * @param port 
    */
   async deleteRow(port) {
-    const translationKeys = await this.translateService.get(['PORT_ROTATION_RIBBON_SUCCESS', 'PORT_ROTATION_RIBBON_DELETED_SUCCESSFULLY']).toPromise();
+    const translationKeys = await this.translateService.get(['PORT_ROTATION_RIBBON_SUCCESS', 'PORT_ROTATION_RIBBON_DELETED_SUCCESSFULLY', 'PORT_ROTATION_DELETE_ERROR', 'PORT_ROTATION_DELETE_STATUS_ERROR']).toPromise();
     this.portList.splice(this.portList.indexOf(port), 1);
     for (let i = 0; i < this.portList.length; i++) {
       if (this.portList[i].id === port.id) {
         this.portList.splice(i, 1);
       }
     }
-    const result = await this.editPortRotationApiService.deletePort(port, this.vesselDetails.id, this.voyageId, this.loadableStudyId).toPromise();
-    if (result.responseStatus === "200") {
-      this.messageService.add({ severity: 'success', summary: translationKeys['PORT_ROTATION_RIBBON_SUCCESS'], detail: translationKeys['PORT_ROTATION_RIBBON_DELETED_SUCCESSFULLY'] });
+    try {
+      const result = await this.editPortRotationApiService.deletePort(port, this.vesselDetails.id, this.voyageId, this.loadableStudyId).toPromise();
+      if (result.responseStatus === "200") {
+        this.messageService.add({ severity: 'success', summary: translationKeys['PORT_ROTATION_RIBBON_SUCCESS'], detail: translationKeys['PORT_ROTATION_RIBBON_DELETED_SUCCESSFULLY'] });
+      }
+    }
+    catch (errorResponse) {
+      if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+        this.messageService.add({ severity: 'error', summary: translationKeys['PORT_ROTATION_DELETE_ERROR'], detail: translationKeys['PORT_ROTATION_DELETE_STATUS_ERROR'], life: 10000 });
+      }
     }
   }
 
@@ -241,7 +248,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     const form = <FormGroup>(<FormArray>this.portRotationForm.get('portsData')).at(index);
     form.markAllAsTouched()
     form.updateValueAndValidity();
-    const translationKeys = await this.translateService.get(['PORT_ROTATION_RIBBON_SUCCESS', 'PORT_ROTATION_RIBBON_SAVED_SUCCESSFULLY', 'PORT_ROTATION_RIBBON_INVALID', 'PORT_ROTATION_RIBBON_INVALID_DATA']).toPromise();
+    const translationKeys = await this.translateService.get(['PORT_ROTATION_RIBBON_SUCCESS', 'PORT_ROTATION_RIBBON_SAVED_SUCCESSFULLY', 'PORT_ROTATION_RIBBON_INVALID', 'PORT_ROTATION_RIBBON_INVALID_DATA', 'PORT_ROTATION_UPDATE_ERROR', 'PORT_ROTATION_UPDATE_STATUS_ERROR']).toPromise();
     if (form.valid) {
       if (port.type === 'Arrival') {
         port.etaActual = this.formatDate(form.controls['date'].value) + ' ' + this.formatDate(null, form.controls['time'].value);
@@ -250,10 +257,17 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
         port.etdActual = this.formatDate(form.controls['date'].value) + ' ' + this.formatDate(null, form.controls['time'].value);
         port.distanceBetweenPorts = form.controls['distance'].value;
       }
-      const result = await this.editPortRotationApiService.savePortRotationRibbon(this.vesselDetails.id, this.voyageId, this.loadableStudyId, port).toPromise();
-      if (result.responseStatus.status === "200") {
+      try {
+        const result = await this.editPortRotationApiService.savePortRotationRibbon(this.vesselDetails.id, this.voyageId, this.loadableStudyId, port).toPromise();
+        if (result.responseStatus.status === "200") {
 
-        this.messageService.add({ severity: 'success', summary: translationKeys['PORT_ROTATION_RIBBON_SUCCESS'], detail: translationKeys['PORT_ROTATION_RIBBON_SAVED_SUCCESSFULLY'] });
+          this.messageService.add({ severity: 'success', summary: translationKeys['PORT_ROTATION_RIBBON_SUCCESS'], detail: translationKeys['PORT_ROTATION_RIBBON_SAVED_SUCCESSFULLY'] });
+        }
+      }
+      catch (errorResponse) {
+        if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+          this.messageService.add({ severity: 'error', summary: translationKeys['PORT_ROTATION_UPDATE_ERROR'], detail: translationKeys['PORT_ROTATION_UPDATE_STATUS_ERROR'], life: 10000 });
+        }
       }
     }
     else {
@@ -486,12 +500,14 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   }
 
   setInvalid(port, form) {
-    let control = form.controls.distance
-    port.isDistanceEditable = control.invalid && control.touched;
-    control = form.controls.date
-    port.isDateEditable = control.invalid && control.touched;
-    control = form.controls.time
-    port.isTimeEditable = control.invalid && control.touched;
+    if(port.isFutureDate){
+      let control = form.controls.distance
+      port.isDistanceEditable = control.invalid && control.touched;
+      control = form.controls.date
+      port.isDateEditable = control.invalid && control.touched;
+      control = form.controls.time
+      port.isTimeEditable = control.invalid && control.touched;
+    }
   }
 
 }

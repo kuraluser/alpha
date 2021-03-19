@@ -64,3 +64,35 @@ body{
 a{
     color: $link-text;
 }
+
+.p-toast .p-toast-message.p-toast-message-success{
+    color: $text-secondary;
+    border-color:$green;
+    background: $alert-bg;
+  }
+  .p-toast .p-toast-message.p-toast-message-success .p-toast-message-icon{
+    color: $green;
+  }
+  .p-toast .p-toast-message.p-toast-message-warn{
+    background: $alert-bg;
+    color: $text-secondary;
+  }
+  
+  .confirmation-dialog{
+    &.p-toast .p-toast-message.p-toast-message-warn{
+      border: 1px solid $border-color!important;
+      
+    }
+  }
+
+  .p-toast .p-toast-message.p-toast-message-error .p-toast-message-icon, .p-toast .p-toast-message.p-toast-message-error .p-toast-icon-close{
+    color: $red;
+  }
+  .p-toast .p-toast-message.p-toast-message-error{
+    color: $red;
+    border-color: $red;
+    background: $toast-bg;
+  } 
+  .p-toast-icon-close-icon {
+    color: $text-primary; 
+  } 

@@ -70,15 +70,22 @@ export class EditPortRotationComponent implements OnInit {
    */
   async saveEditPortRotation() {
     this.ngxSpinnerService.show();
-    const translationKeys = await this.translateService.get(['EDIT_PORT_ROTATION_POPUP_SUCCESS', 'EDIT_PORT_ROTATION_POPUP_SAVED_SUCCESSFULLY']).toPromise();
+    const translationKeys = await this.translateService.get(['EDIT_PORT_ROTATION_POPUP_SUCCESS', 'EDIT_PORT_ROTATION_POPUP_SAVED_SUCCESSFULLY', 'EDIT_PORT_ROTATION_POPUP_ERROR', 'EDIT_PORT_ROTATION_POPUP_STATUS_ERROR']).toPromise();
     const portSave: IEditPortRotationModel = { portList: [] };
     portSave.portList = JSON.parse(JSON.stringify(this.portList));
-    const res = await this.editPortRotationApiService.saveEditPortRotation(this.vesselDetails.id, this.voyageId, this.loadableStudyId, portSave).toPromise();
-    this.ngxSpinnerService.hide();
-    if (res?.responseStatus?.status === '200') {
-      this.voyageStatusTransformationService.portOrderChange.next(true);
-      this.messageService.add({ severity: 'success', summary: translationKeys['EDIT_PORT_ROTATION_POPUP_SUCCESS'], detail: translationKeys['EDIT_PORT_ROTATION_POPUP_SAVED_SUCCESSFULLY'] });
-      this.cancel();
+    try {
+      const res = await this.editPortRotationApiService.saveEditPortRotation(this.vesselDetails.id, this.voyageId, this.loadableStudyId, portSave).toPromise();
+      this.ngxSpinnerService.hide();
+      if (res?.responseStatus?.status === '200') {
+        this.voyageStatusTransformationService.portOrderChange.next(true);
+        this.messageService.add({ severity: 'success', summary: translationKeys['EDIT_PORT_ROTATION_POPUP_SUCCESS'], detail: translationKeys['EDIT_PORT_ROTATION_POPUP_SAVED_SUCCESSFULLY'] });
+        this.cancel();
+      }
+    }
+    catch (errorResponse) {
+      if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+        this.messageService.add({ severity: 'error', summary: translationKeys['EDIT_PORT_ROTATION_POPUP_ERROR'], detail: translationKeys['EDIT_PORT_ROTATION_POPUP_STATUS_ERROR'], life: 10000 });
+      }
     }
   }
 

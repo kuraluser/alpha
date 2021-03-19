@@ -25,6 +25,7 @@ export function keycloakShoreInitializer(keycloak: KeycloakService, http: HttpCl
                         localStorage.setItem('realm', response.realm);
                         localStorage.setItem('logo', response.logo);
                         localStorage.setItem('carousel', JSON.stringify(response.carousals));
+                        localStorage.setItem('favicon', response.favicon); 
                         if(environment.name === 'shore'){
                             const keycloakUrl = appSettings.keycloakUrl;
                             const keycloakConfig = {

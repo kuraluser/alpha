@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { LoadablePattern, LoadableStudy } from '../../cargo-planning/models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../../cargo-planning/services/loadable-study-list-api.service';
-import { Voyage, VOYAGE_STATUS, VOYAGE_STATUS_LABEL } from '../../core/models/common.model';
+import { LOADABLE_STUDY_STATUS, Voyage} from '../../core/models/common.model';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
@@ -37,12 +37,14 @@ export class SynopticalService {
   loadablePatternId: number;
   editMode = false;
   showActions = false;
+  synopticalRecords: any;
 
   constructor(
     private loadableStudyListApiService: LoadableStudyListApiService,
     private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
   }
 
@@ -112,11 +114,17 @@ export class SynopticalService {
   */
   async getLoadablePatterns() {
     const result = await this.loadableStudyListApiService.getLoadablePatterns(this.vesselId, this.voyageId, this.selectedLoadableStudy.id).toPromise();
-    this.loadablePatternsList = result.loadablePatterns;
-    if (this.selectedLoadablePattern) {
-      this.loadablePatternId = this.selectedLoadablePattern.loadablePatternId;
-    } else if (this.loadablePatternId) {
-      this.selectedLoadablePattern = this.loadablePatternsList.find(pattern => pattern.loadablePatternId === this.loadablePatternId)
+    if(this.selectedLoadableStudy.status === "Confirmed"){
+      this.selectedLoadablePattern = result.loadablePatterns.find(pattern => pattern.loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_CONFIRMED)
+      this.loadablePatternsList = [this.selectedLoadablePattern]
+      this.router.navigateByUrl('/business/synoptical/' + this.vesselInfo.id + '/' + this.selectedVoyage.id + '/' + this.selectedLoadableStudy.id + '/' + this.selectedLoadablePattern.loadablePatternId)
+    } else {
+      this.loadablePatternsList = result.loadablePatterns;
+      if (this.selectedLoadablePattern) {
+        this.loadablePatternId = this.selectedLoadablePattern.loadablePatternId;
+      } else if (this.loadablePatternId) {
+        this.selectedLoadablePattern = this.loadablePatternsList.find(pattern => pattern.loadablePatternId === this.loadablePatternId)
+      }
     }
   }
 

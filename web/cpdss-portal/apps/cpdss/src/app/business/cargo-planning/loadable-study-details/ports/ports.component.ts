@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -31,7 +31,7 @@ import { LoadableStudy } from '../../models/loadable-study-list.model';
   templateUrl: './ports.component.html',
   styleUrls: ['./ports.component.scss']
 })
-export class PortsComponent implements OnInit {
+export class PortsComponent implements OnInit, OnDestroy {
 
   @Input() voyageId: number;
   @Input() voyage: Voyage;
@@ -92,6 +92,10 @@ export class PortsComponent implements OnInit {
     this.columns = this.loadableStudyDetailsTransformationService.getPortDatatableColumns(this.permission, this.loadableStudy?.statusId, this.voyage?.statusId);
     this.initSubscriptions();
     this.getPortDetails();
+  }
+
+  ngOnDestroy() {
+    navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
   }
 
   /**
@@ -238,16 +242,30 @@ export class PortsComponent implements OnInit {
       this.addPort();
     });
 
-    navigator.serviceWorker.addEventListener('message', async event => {
-      if (event.data.type === 'ports_sync_finished') {
-        const index = this.portsLists.findIndex((item) => item.storeKey === event.data.storeKey);
-        if (index !== -1) {
+    navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
+  }
+
+  /**
+   * Handler for service worker message event
+   *
+   * @private
+   * @memberof PortsComponent
+   */
+  private swMessageHandler = async (event) => {
+    const translationKeys = await this.translateService.get(['PORT_UPDATE_ERROR', 'PORT_UPDATE_STATUS_ERROR']).toPromise();
+    if (event?.data?.type === 'ports_sync_finished') {
+      const index = this.portsLists?.findIndex((item) => item.storeKey === event.data.storeKey);
+      if (index !== -1) {
+        this.portsLists[index].processing = false;
+        if (event?.data?.status === '200') {
           this.portsLists[index].id = event.data.id;
-          this.portsLists[index].processing = false;
           this.portsLists = [...this.portsLists];
         }
       }
-    });
+      if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
+        this.messageService.add({ severity: 'error', summary: translationKeys['PORT_UPDATE_ERROR'], detail: translationKeys['PORT_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
+      }
+    }
   }
 
   /**

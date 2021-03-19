@@ -225,7 +225,7 @@ hr{
   &.btn-main{
     border: 1px solid $outline-border;
     &:hover{
-      color: $text-secondary;
+      color: $text-secondary!important;
     }
     &:focus{
       box-shadow: 0 0 0 2px rgba($outline-border, 0.25);
@@ -483,10 +483,10 @@ hr{
   background: url($images-theme + 'processing.png') no-repeat center center;
 }
 .icon-status-6{
-  background: url($images-theme + 'processing.png') no-repeat center center;
+  background: url($images-theme + 'no-solution.png') no-repeat center center;
 }
 .icon-api-temp{
-  background: url($images-theme + 'no-solution.png') no-repeat center center;
+  background: url($images-theme + 'history-icon-api-and-temp.png') no-repeat center center;
 }
 
 .p-multiselect{
@@ -1193,5 +1193,15 @@ header{
     padding-bottom: 5px;
     margin-bottom: 3px;
     border-bottom: 2px solid $table-border;
+  }
+}
+
+.reset-btn{
+  background: url($images-theme + 'reset-icon.png');
+}
+
+.new-loadable-study-pop-up{
+  a:hover{
+    color: $text-secondary!important;
   }
 }

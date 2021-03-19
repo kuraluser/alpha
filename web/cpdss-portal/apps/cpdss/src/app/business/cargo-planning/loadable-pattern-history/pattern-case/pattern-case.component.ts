@@ -27,7 +27,7 @@ export class PatternCaseComponent implements OnInit {
 
   loadablePatternDetailsId: number;
   tanks: ICargoTank[][];
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, fillingPercentageField: 'fillingRatio' }
+  cargoTankOptions: ITankOptions = { isFullyFilled: false,showTooltip: true, isSelectable: false, fillingPercentageField: 'fillingRatio', weightField: 'quantityMT' }
   constructor(private quantityPipe: QuantityPipe) { }
 
   /**

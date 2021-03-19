@@ -6,7 +6,7 @@
     "PortsComponent" : "CARGOPLANNING_PORTS",
     "OnHandQuantityComponent" : "CARGOPLANNING_ONHANDQUANTITITES",
     "LoadableQuantityComponent" : "LOADABLE_QUANTITY",
-    "LoadablePatternHistoryComponent": "LOADABLE_PATTERN",
+    "LoadablePatternHistoryComponent": "CARGOPLANNING_PATTERN_HISTORY",
     "SynopticalComponent": "SYNOPTICAL",
     "AdminComponent": "ADMIN",
     "UserPermission": "USER_PERMISSION",
@@ -19,5 +19,6 @@
     "LoadablePlanAddComments": "LOADABLE_PLAN_ADD_COMMENTS",
     "voyagesComponent" : "VOYAGE_HISTORY",
     "voyagesStartStop" : "EDIT_VOYAGE",
+    "GenerateButton" : "CARGOPLANNING_GENERATE_LOADABLE_PLAN",
     "CargoHistoryComponent": "CARGOPLANNING_CARGO_HISTORY"
 }

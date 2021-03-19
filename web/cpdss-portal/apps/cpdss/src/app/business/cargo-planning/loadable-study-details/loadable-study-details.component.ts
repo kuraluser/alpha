@@ -45,7 +45,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.isPatternOpenOrNoplan = (this._selectedLoadableStudy?.statusId === 1 || this._selectedLoadableStudy?.statusId === 6) ? false : true;
     if (this._selectedLoadableStudy?.statusId === 4) {
       const modifiedDate = new Date(selectedLoadableStudy?.loadableStudyStatusLastModifiedTime);
-      const addFiveMinute = new Date(modifiedDate.getTime() + 300000);
+      const addFiveMinute = new Date(modifiedDate.getTime() + 600000);
       const now = new Date();
       if (addFiveMinute < now) {
         this.isPatternOpenOrNoplan = false;
@@ -104,6 +104,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   isPatternOpenOrNoplan = false;
   LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
   VOYAGE_STATUS = VOYAGE_STATUS;
+  generateBtnPermissionContext: IPermissionContext;
 
   constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -185,6 +186,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.addCargoBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
     this.addPortBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortsComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
     this.addCommingleBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoNominationComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.EDIT] };
+    this.generateBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['GenerateButton'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.EDIT] };
   }
 
   /**
@@ -327,6 +329,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       else if (event.data.type === 'loadable-pattern-completed') {
         if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
           this.isPatternGenerated = true;
+          this.selectedLoadableStudy.statusId = 3;
         }
         this.generatedMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
       }
@@ -633,11 +636,20 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       portIds: this.selectedLoadableStudy.dischargingPortIds,
       dischargingCargoId: this.selectedDischargeCargo?.id ?? null
     };
-    const translationKeys = await this.translateService.get(sucessKeys).toPromise();
-    const res = await this.loadableStudyDetailsApiService.setLoadableStudyDischargingPorts(this.vesselId, this.voyageId, this.loadableStudyId, dischargingPortIds).toPromise();
-    if (res?.responseStatus?.status === "200") {
-      this.messageService.add({ severity: 'success', summary: translationKeys[sucessKeys[0]], detail: translationKeys[sucessKeys[1]] });
+    try {
+      const res = await this.loadableStudyDetailsApiService.setLoadableStudyDischargingPorts(this.vesselId, this.voyageId, this.loadableStudyId, dischargingPortIds).toPromise();
+      if (res?.responseStatus?.status === "200") {
+        const translationKeys = await this.translateService.get(sucessKeys).toPromise();
+        this.messageService.add({ severity: 'success', summary: translationKeys[sucessKeys[0]], detail: translationKeys[sucessKeys[1]] });
+      }
     }
+    catch (errorResponse) {
+      if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+        const translationKeys = await this.translateService.get(['LOADABLE_STUDY_DISCHARGE_PORT_ERROR', 'LOADABLE_STUDY_DISCHARGE_PORT_STATUS_ERROR']).toPromise();
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_DISCHARGE_PORT_ERROR'], detail: translationKeys['LOADABLE_STUDY_DISCHARGE_PORT_STATUS_ERROR'], life: 10000 });
+      }
+    }
+    
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
     this.ngxSpinnerService.hide();
   }
@@ -720,17 +732,26 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       processId: null
     }
     this.isGenerateClicked = true;
-    const res = await this.loadableStudyDetailsApiService.generateLoadablePattern(vesselId, voyageId, loadableStudyId).toPromise();
-    if (res.responseStatus.status === '200') {
-      data.processId = res.processId;
-      if (res.processId) {
-        navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });
-        this.selectedLoadableStudy.isActionsEnabled = false;
+    try {
+      const res = await this.loadableStudyDetailsApiService.generateLoadablePattern(vesselId, voyageId, loadableStudyId).toPromise();
+      if (res.responseStatus.status === '200') {
+      this.selectedLoadableStudy.statusId = 4;
+        data.processId = res.processId;
+        if (res.processId) {
+          navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });
+          this.selectedLoadableStudy.isActionsEnabled = false;
+        } else {
+          this.isGenerateClicked = false;
+        }
       } else {
         this.isGenerateClicked = false;
       }
-    } else {
-      this.isGenerateClicked = false;
+    }
+    catch (errorResponse) {
+      if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+        const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_ERROR', 'LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR']).toPromise();
+          this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_ERROR'], detail: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR'], life: 10000 });
+      }
     }
     this.ngxSpinnerService.hide();
   }

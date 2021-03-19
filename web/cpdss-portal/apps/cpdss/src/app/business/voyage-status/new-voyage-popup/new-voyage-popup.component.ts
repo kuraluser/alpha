@@ -99,8 +99,8 @@ export class NewVoyagePopupComponent implements OnInit {
       'captain': [this.vesselDetails?.captainName],
       'chiefOfficer': [this.vesselDetails?.chiefOfficerName],
       'voyageNo': this.fb.control(null, [Validators.required, specialCharacterValidator, Validators.maxLength(10)]),
-      'start_date': this.fb.control(null, [Validators.required, dateCompareValidator('end_date', '<')]),
-      "end_date": this.fb.control(null, [Validators.required, dateCompareValidator('start_date', '>')])
+      'start_date': this.fb.control(null, [dateCompareValidator('end_date', '<')]),
+      "end_date": this.fb.control(null, [dateCompareValidator('start_date', '>')])
     });
     this.showPopUp = true;
     this.isLoading = false;

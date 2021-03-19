@@ -17,7 +17,7 @@
     "build:cpdss:ship:test": "ng build -c ship-test --project cpdss --base-href /cpdss/",
     "build:cpdss:ship:uat": "ng build -c ship-uat --project cpdss --base-href /cpdss/",
     "start:cpdss:shore": "ng serve -c shore-development --port 9004 --project cpdss",
-    "build:cpdss:shore": "ng build -c shore-production --project cpdss --base-href",
+    "build:cpdss:shore": "ng build -c shore-production --project cpdss",
     "build:cpdss:shore:test": "ng build -c shore-test --project cpdss --base-href /cpdss/",
     "build:cpdss:shore:uat": "ng build -c shore-uat --project cpdss --base-href /cpdss/",
     "test:cpdss": "jest --config ./apps/cpdss/jest.config.js",

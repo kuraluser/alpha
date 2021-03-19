@@ -32,7 +32,7 @@
           <div class="form-group row">
             <label for="role_description" class="col-md-6 col-form-label text-secondary">{{'USER_ROLE' | translate}}</label>
             <div class="col-md-6">
-              <p-dropdown styleClass="form-control" [options]="roles" *ngIf="popupStatus !== 'VIEW';else viewRoleRef"
+              <p-dropdown styleClass="form-control" [options]="roles" appendTo="body" *ngIf="popupStatus !== 'VIEW';else viewRoleRef"
                 id="role_id" formControlName="userRole" optionLabel="name"
                 placeholder="{{'USER_ROLE_PLACEHOLDER' | translate}}" focusTrap>
             </p-dropdown>

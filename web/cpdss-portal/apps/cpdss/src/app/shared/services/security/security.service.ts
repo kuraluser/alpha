@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { environment } from 'apps/cpdss/src/environments/environment';
-import { CPDSSDB, PropertiesDB } from '../../models/common.model';
+import { environment } from '../../../../environments/environment';
+import { PropertiesDB } from '../../models/common.model';
 import { IUserProfile } from "../../models/user-profile.model";
+import { AppConfigurationService } from '../app-configuration/app-configuration.service';
 
 /**
  *  service class for setting auth-token and user details
@@ -27,7 +28,6 @@ export class SecurityService {
   static setAuthToken(jwtToken: string) {
     SecurityService._TOKEN = jwtToken;
     localStorage.setItem('token', jwtToken);
-    this.propertiesDB.properties.add(jwtToken, 'token')
   }
 
   // getting token
@@ -35,15 +35,14 @@ export class SecurityService {
     return localStorage.getItem('token');
   }
 
-  // getting environment
-  static async getEnvironment() {
-    return await this.propertiesDB.properties.get('environment')
+  // getting properties in indexed db
+  static async getPropertiesDB(key: string) {
+    return await this.propertiesDB?.properties?.get(key)
   }
 
-  // setting environment
-  static setEnvironment(environment: string) {
-    localStorage.setItem('environment', environment);
-    this.propertiesDB.properties.add(environment, 'environment')
+  // setting properties in indexed db
+  static setPropertiesDB(value: string, key: string) {
+    this.propertiesDB.properties.add(value, key)
   }
 
   // setting logged-in user details
@@ -80,6 +79,22 @@ export class SecurityService {
     SecurityService._LOGGED_IN = false;
     window.localStorage.clear();
     this.propertiesDB.properties.clear();
+  }
+
+  /**
+   * Initialise properties db in indexed db while login
+   *
+   * @static
+   * @param {*} token
+   * @memberof SecurityService
+   */
+  static async initPropertiesDB(token) {
+    const serviceWorkerReady = await navigator.serviceWorker.ready;
+    if (serviceWorkerReady) {
+      SecurityService.setPropertiesDB(token, 'token');
+      SecurityService.setPropertiesDB(environment.name, 'environment');
+      SecurityService.setPropertiesDB(JSON.parse(JSON.stringify(AppConfigurationService.settings)), 'appConfig');
+    }
   }
 
 }

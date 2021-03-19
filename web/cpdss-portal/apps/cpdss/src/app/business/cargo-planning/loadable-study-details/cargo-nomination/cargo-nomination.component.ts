@@ -163,6 +163,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
     this.loadableStudyDetailsApiService.disableUnitChange = false;
+    navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
   }
 
   /**
@@ -599,19 +600,33 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.onUnitChangeBlocked();
       })
+    
+    navigator.serviceWorker.addEventListener('message', this.swMessageHandler,);
+  }
 
-    navigator.serviceWorker.addEventListener('message', async event => {
-      if (event.data.type === 'cargo_nomination_sync_finished') {
-        const index = this.cargoNominations?.findIndex((item) => item.storeKey === event.data.storeKey);
-        if (index !== -1) {
+  /**
+   * Handler for service worker message event
+   *
+   * @private
+   * @memberof CargoNominationComponent
+   */
+  private swMessageHandler = async (event) => {
+    const translationKeys = await this.translateService.get(['CARGONOMINATION_UPDATE_ERROR', 'CARGONOMINATION_UPDATE_STATUS_ERROR']).toPromise();
+    if (event?.data?.type === 'cargo_nomination_sync_finished') {
+      const index = this.cargoNominations?.findIndex((item) => item.storeKey === event.data.storeKey);
+      if (index !== -1) {
+        this.cargoNominations[index].processing = false;
+        if (event?.data?.status === '200') {
           this.cargoNominations[index].id = event.data.cargoNominationId;
-          this.cargoNominations[index].processing = false;
           this.cargoNominations = [...this.cargoNominations];
           this.savedCargoNomination = JSON.parse(JSON.stringify(this.cargoNominations));
           this.updateCommingleButton(false);
         }
       }
-    });
+      if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
+        this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_UPDATE_ERROR'], detail: translationKeys['CARGONOMINATION_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
+      }
+    }
   }
 
   /**

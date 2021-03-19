@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -15,6 +15,8 @@ import { Observable, of } from 'rxjs';
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
+import { TranslateService } from '@ngx-translate/core';
+import { MessageService } from 'primeng/api';
 
 /**
  * Compoent for OHQ tab
@@ -28,7 +30,7 @@ import { LoadableStudy } from '../../models/loadable-study-list.model';
   templateUrl: './on-hand-quantity.component.html',
   styleUrls: ['./on-hand-quantity.component.scss']
 })
-export class OnHandQuantityComponent implements OnInit {
+export class OnHandQuantityComponent implements OnInit, OnDestroy {
 
   @ViewChild('ohqDatatable') ohqDatatable: ElementRef;
 
@@ -162,7 +164,18 @@ export class OnHandQuantityComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private fb: FormBuilder,
-    private quantityPipe: QuantityPipe) { }
+    private quantityPipe: QuantityPipe,
+    private translateService: TranslateService,
+    private messageService: MessageService) { }
+
+  /**
+   * OnDestroy function for ohq component
+   *
+   * @memberof OnHandQuantityComponent
+   */
+  ngOnDestroy(): void {
+    navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
+  }
 
   /**
    * NgOnit init function for ohq component
@@ -441,17 +454,32 @@ export class OnHandQuantityComponent implements OnInit {
    * @memberof OnHandQuantityComponent
    */
   private initSubscriptions() {
-    navigator.serviceWorker.addEventListener('message', async event => {
-      if (event.data.type === 'ohq_sync_finished') {
-        const index = this.selectedPortOHQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
-        if (index !== -1) {
+    navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
+  }
+
+  /**
+   * Handler for service worker message event
+   *
+   * @private
+   * @memberof OnHandQuantityComponent
+   */
+  private swMessageHandler = async (event) => {
+    const translationKeys = await this.translateService.get(['OHQ_UPDATE_ERROR', 'OHQ_UPDATE_STATUS_ERROR']).toPromise();
+    if (event?.data?.type === 'ohq_sync_finished') {
+      const index = this.selectedPortOHQTankDetails?.findIndex((item) => item.storeKey === event.data.storeKey);
+      if (index !== -1) {
+        this.selectedPortOHQTankDetails[index].processing = false;
+        if (event?.data?.status === '200') {
           this.loadableStudyDetailsTransformationService.ohqUpdated(event);
           this.selectedPortOHQTankDetails[index].id = event.data.id;
           this.selectedPortOHQTankDetails[index].processing = false;
           this.selectedPortOHQTankDetails = [...this.selectedPortOHQTankDetails];
         }
       }
-    });
+      if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
+        this.messageService.add({ severity: 'error', summary: translationKeys['OHQ_UPDATE_ERROR'], detail: translationKeys['OHQ_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
+      }
+    }
   }
 
   /**
