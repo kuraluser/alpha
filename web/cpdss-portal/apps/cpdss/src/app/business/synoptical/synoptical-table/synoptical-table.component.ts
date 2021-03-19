@@ -59,7 +59,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   datePipe: DatePipe = new DatePipe('en-US');
   synopticalRecordsCopy: ISynopticalRecords[] = [];
   loadableQuantityValue: number;
-  today = new Date()
+  today = new Date();
 
 
   constructor(
@@ -655,7 +655,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 type: this.fieldType.NUMBER,
                 validators: ['required', 'ddddddd.dd.+']
               }],
-              editable: !this.checkIfConfirmed(),
+              editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
             },
             {
               header: "Actual",
@@ -682,7 +682,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 type: this.fieldType.NUMBER,
                 validators: ['required', 'ddddddd.+']
               }],
-              editable: !this.checkIfConfirmed(),
+              editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
             },
             {
               header: "Actual",
@@ -709,7 +709,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 type: this.fieldType.NUMBER,
                 validators: ['required', 'ddddddd.+']
               }],
-              editable: !this.checkIfConfirmed(),
+              editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
             },
             {
               header: "Actual",
@@ -736,7 +736,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 type: this.fieldType.NUMBER,
                 validators: ['required', 'ddddddd.+']
               }],
-              editable: !this.checkIfConfirmed(),
+              editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode(),
             },
             {
               header: "Actual",
@@ -1390,7 +1390,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   */
   checkIfConfirmed(): boolean {
     if(this.synopticalService.selectedLoadablePattern){
-      return this.synopticalService.selectedLoadablePattern.loadableStudyStatusId === 2 ?? false
+      return this.synopticalService.selectedLoadablePattern.loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_CONFIRMED ?? false
     }
     return this.synopticalService.selectedLoadableStudy?.status === "Confirmed" ?? false
   }
