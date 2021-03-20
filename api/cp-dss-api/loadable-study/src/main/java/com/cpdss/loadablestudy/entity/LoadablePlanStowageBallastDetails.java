@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
@@ -54,4 +54,7 @@ public class LoadablePlanStowageBallastDetails extends EntityDoc {
 
   @Column(name = "color_code")
   private String colorCode;
+
+  @Column(name = "port_rotation_xid")
+  private Long portRotationId;
 }

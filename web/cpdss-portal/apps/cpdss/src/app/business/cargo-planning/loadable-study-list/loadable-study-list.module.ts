@@ -12,6 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NewLoadableStudyPopupModule } from "../../core/components/new-loadable-study-popup/new-loadable-study-popup.module";
 import { VesselInfoModule } from '../../core/components/vessel-info/vessel-info.module';
 import { DatatableModule } from '../../../shared/components/datatable/datatable.module';
+import { PermissionDirectiveModule } from '../../../shared/directives/permission/permission-directive.module';
 
 
 /**
@@ -30,7 +31,8 @@ import { DatatableModule } from '../../../shared/components/datatable/datatable.
     LoadableStudyListRoutingModule,
     NewLoadableStudyPopupModule,
     VesselInfoModule,
-    DatatableModule
+    DatatableModule,
+    PermissionDirectiveModule
   ]
 })
 export class LoadableStudyListModule { }

@@ -1,10 +1,12 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadicatorintegration.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,8 +21,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class OtherTankDetails extends EntityDoc {
 
-  @Column(name = "stowageplan_id")
-  private Long stowagePlanId;
+  @ManyToOne
+  @JoinColumn(name = "stowageplan_id")
+  private StowagePlan stowagePlan;
 
   @Column(name = "tank_name", length = 100)
   private String tankName;

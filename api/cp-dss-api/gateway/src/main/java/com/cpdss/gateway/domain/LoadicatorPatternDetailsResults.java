@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
 import java.util.List;
@@ -8,5 +8,5 @@ import lombok.Data;
 @Data
 public class LoadicatorPatternDetailsResults {
   private Long loadablePatternId;
-  private List<LodicatorResultDetails> lodicatorResultDetails;
+  private List<LoadicatorResultDetails> loadicatorResultDetails;
 }

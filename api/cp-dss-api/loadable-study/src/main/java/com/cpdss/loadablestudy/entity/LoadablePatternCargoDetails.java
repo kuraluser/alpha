@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
@@ -57,4 +57,10 @@ public class LoadablePatternCargoDetails extends EntityDoc {
 
   @Column(name = "temperature")
   private BigDecimal temperature;
+
+  @Column(name = "port_rotation_xid")
+  private Long portRotationId;
+
+  @Column(name = "correction_factor")
+  private String correctionFactor;
 }

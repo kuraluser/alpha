@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
@@ -13,7 +13,7 @@ public interface LoadablePatternCargoDetailsRepository
       Long loadablePatternId, boolean isActive);
 
   public List<LoadablePatternCargoDetails>
-      findByLoadablePatternIdAndPortIdAndOperationTypeAndIsActive(
+      findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
           Long loadablePatternId, Long portId, String operationType, boolean isActive);
 
   public Optional<LoadablePatternCargoDetails> findById(Long loadablePatternId);

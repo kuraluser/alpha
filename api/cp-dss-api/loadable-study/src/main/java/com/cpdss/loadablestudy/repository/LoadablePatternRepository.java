@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
@@ -27,14 +27,15 @@ public interface LoadablePatternRepository extends CommonCrudRepository<Loadable
 
   @Transactional
   @Modifying
-  @Query(
-      "UPDATE LoadablePattern SET loadableStudyStatus = ?1 WHERE loadableStudy IN (SELECT LS FROM LoadableStudy LS where LS.voyage.id = ?2)")
-  public void updateLoadablePatternStatusToPlanGenerated(Long loadableStudyStatusId, Long voyageId);
+  @Query("UPDATE LoadablePattern SET loadableStudyStatus = ?1 WHERE id = ?2")
+  public void updateLoadablePatternStatusToPlanGenerated(
+      Long loadableStudyStatusId, Long loadablePatternId);
 
   @Transactional
   @Modifying
-  @Query("UPDATE LoadableStudy SET loadableStudyStatus.id = ?1 WHERE voyage.id = ?2")
-  public void updateLoadableStudyStatusToPlanGenerated(Long loadableStudyStatusId, Long voyageId);
+  @Query("UPDATE LoadableStudy SET loadableStudyStatus.id = ?1 WHERE id = ?2")
+  public void updateLoadableStudyStatusToPlanGenerated(
+      Long loadableStudyStatusId, Long loadableStudyId);
 
   @Transactional
   @Modifying
@@ -48,4 +49,9 @@ public interface LoadablePatternRepository extends CommonCrudRepository<Loadable
 
   public List<LoadablePattern> findByLoadableStudyAndIsActive(
       LoadableStudy loadableStudy, boolean isActive);
+
+  @Query(
+      "FROM LoadablePattern where loadableStudy.loadableStudyStatus.id = ?1 and loadableStudy=?2  and isActive = ?3")
+  public List<LoadablePattern> findLoadablePatterns(
+      Long loadableStudyStatusId, LoadableStudy loadableStudy, boolean isActive);
 }

@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.domain;
 
 import lombok.Data;
@@ -27,4 +27,5 @@ public class LDTrim {
   private String errorDetails;
   private String messageText;
   private Long portId;
+  private Long synioticalId;
 }

@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.common.generated;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
@@ -65,6 +65,55 @@ public final class CargoInfoServiceGrpc {
     return getGetCargoInfoMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging,
+          com.cpdss.common.generated.CargoInfo.CargoReply>
+      getGetCargoInfoByPagingMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetCargoInfoByPaging",
+      requestType = com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging.class,
+      responseType = com.cpdss.common.generated.CargoInfo.CargoReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging,
+          com.cpdss.common.generated.CargoInfo.CargoReply>
+      getGetCargoInfoByPagingMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging,
+            com.cpdss.common.generated.CargoInfo.CargoReply>
+        getGetCargoInfoByPagingMethod;
+    if ((getGetCargoInfoByPagingMethod = CargoInfoServiceGrpc.getGetCargoInfoByPagingMethod)
+        == null) {
+      synchronized (CargoInfoServiceGrpc.class) {
+        if ((getGetCargoInfoByPagingMethod = CargoInfoServiceGrpc.getGetCargoInfoByPagingMethod)
+            == null) {
+          CargoInfoServiceGrpc.getGetCargoInfoByPagingMethod =
+              getGetCargoInfoByPagingMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging,
+                          com.cpdss.common.generated.CargoInfo.CargoReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetCargoInfoByPaging"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.CargoInfo.CargoReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new CargoInfoServiceMethodDescriptorSupplier("GetCargoInfoByPaging"))
+                      .build();
+        }
+      }
+    }
+    return getGetCargoInfoByPagingMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static CargoInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<CargoInfoServiceStub> factory =
@@ -117,6 +166,14 @@ public final class CargoInfoServiceGrpc {
       asyncUnimplementedUnaryCall(getGetCargoInfoMethod(), responseObserver);
     }
 
+    /** */
+    public void getCargoInfoByPaging(
+        com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetCargoInfoByPagingMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -127,6 +184,13 @@ public final class CargoInfoServiceGrpc {
                       com.cpdss.common.generated.CargoInfo.CargoRequest,
                       com.cpdss.common.generated.CargoInfo.CargoReply>(
                       this, METHODID_GET_CARGO_INFO)))
+          .addMethod(
+              getGetCargoInfoByPagingMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging,
+                      com.cpdss.common.generated.CargoInfo.CargoReply>(
+                      this, METHODID_GET_CARGO_INFO_BY_PAGING)))
           .build();
     }
   }
@@ -153,6 +217,17 @@ public final class CargoInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getCargoInfoByPaging(
+        com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetCargoInfoByPagingMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -172,6 +247,13 @@ public final class CargoInfoServiceGrpc {
     public com.cpdss.common.generated.CargoInfo.CargoReply getCargoInfo(
         com.cpdss.common.generated.CargoInfo.CargoRequest request) {
       return blockingUnaryCall(getChannel(), getGetCargoInfoMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.CargoInfo.CargoReply getCargoInfoByPaging(
+        com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging request) {
+      return blockingUnaryCall(
+          getChannel(), getGetCargoInfoByPagingMethod(), getCallOptions(), request);
     }
   }
 
@@ -195,9 +277,18 @@ public final class CargoInfoServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetCargoInfoMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.CargoInfo.CargoReply>
+        getCargoInfoByPaging(com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetCargoInfoByPagingMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_CARGO_INFO = 0;
+  private static final int METHODID_GET_CARGO_INFO_BY_PAGING = 1;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -219,6 +310,12 @@ public final class CargoInfoServiceGrpc {
         case METHODID_GET_CARGO_INFO:
           serviceImpl.getCargoInfo(
               (com.cpdss.common.generated.CargoInfo.CargoRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_CARGO_INFO_BY_PAGING:
+          serviceImpl.getCargoInfoByPaging(
+              (com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>)
                   responseObserver);
           break;
@@ -287,6 +384,7 @@ public final class CargoInfoServiceGrpc {
                   io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
                       .setSchemaDescriptor(new CargoInfoServiceFileDescriptorSupplier())
                       .addMethod(getGetCargoInfoMethod())
+                      .addMethod(getGetCargoInfoByPagingMethod())
                       .build();
         }
       }

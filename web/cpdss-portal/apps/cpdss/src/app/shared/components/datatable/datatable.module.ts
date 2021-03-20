@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { DatatableComponent } from './datatable.component';
@@ -33,6 +33,7 @@ import { PaginatorModule } from 'primeng/paginator';
     PaginatorModule,
     NumberDirectiveModule
   ],
-  exports: [DatatableComponent]
+  exports: [DatatableComponent],
+  providers: [DecimalPipe]
 })
 export class DatatableModule { }

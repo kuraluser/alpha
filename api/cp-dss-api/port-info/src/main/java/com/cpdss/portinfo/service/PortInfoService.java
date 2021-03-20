@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.portinfo.service;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -9,13 +9,17 @@ import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
 import com.cpdss.common.generated.PortInfo.PortDetail;
 import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfo.PortRequest;
+import com.cpdss.common.generated.PortInfo.TimezoneResponse;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.portinfo.entity.BerthInfo;
 import com.cpdss.portinfo.entity.PortInfo;
+import com.cpdss.portinfo.entity.Timezone;
 import com.cpdss.portinfo.repository.CargoPortMappingRepository;
 import com.cpdss.portinfo.repository.PortInfoRepository;
+import com.cpdss.portinfo.repository.TimezoneRepository;
 import io.grpc.stub.StreamObserver;
+import java.math.BigInteger;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,6 +37,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
 
   @Autowired private PortInfoRepository portRepository;
   @Autowired private CargoPortMappingRepository cargoPortMappingRepository;
+  @Autowired private TimezoneRepository timezoneRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -167,6 +172,10 @@ public class PortInfoService extends PortInfoServiceImplBase {
               .ifPresent(item -> portDetail.setSunriseTime(timeFormatter.format(item)));
           Optional.ofNullable(port.getTimeOfSunSet())
               .ifPresent(item -> portDetail.setSunsetTime(timeFormatter.format(item)));
+          if (port.getTimezone() != null) {
+            portDetail.setTimezone(port.getTimezone().getTimezone());
+            portDetail.setTimezoneOffsetVal(port.getTimezone().getOffsetValue());
+          }
 
           if (!port.getBerthInfoSet().isEmpty()) {
             BerthInfo maxDraftBerthInfo =
@@ -180,5 +189,82 @@ public class PortInfoService extends PortInfoServiceImplBase {
           }
           portReply.addPorts(portDetail);
         });
+  }
+
+  /**
+   * Fetch All Timezone data from DB
+   *
+   * @param request - Empty Object
+   * @param responseObserver - Id, Timezone, Offset-Value as object list
+   */
+  @Override
+  public void getTimezone(
+      com.cpdss.common.generated.PortInfo.PortEmptyRequest request,
+      StreamObserver<com.cpdss.common.generated.PortInfo.TimezoneResponse> responseObserver) {
+    TimezoneResponse.Builder replyBuilder = TimezoneResponse.newBuilder();
+    try {
+      List<Timezone> timezoneList = timezoneRepository.findAll();
+      log.info("Fetch all timezone success with size {}", timezoneList.size());
+      for (Timezone tz : timezoneList) {
+        com.cpdss.common.generated.PortInfo.Timezone.Builder timezone =
+            com.cpdss.common.generated.PortInfo.Timezone.newBuilder();
+        timezone.setId(tz.getId());
+        timezone.setTimezone(tz.getTimezone());
+        timezone.setOffsetValue(tz.getOffsetValue());
+        replyBuilder.addTimezones(timezone);
+      }
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      replyBuilder.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Fetch timezone failed, e - {}", e.getMessage());
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      replyBuilder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Request object have Page Number and Offset Value
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void getPortInfoByPaging(
+      com.cpdss.common.generated.PortInfo.PortRequestWithPaging request,
+      StreamObserver<PortReply> responseObserver) {
+
+    PortReply.Builder builder = PortReply.newBuilder();
+    try {
+      List<Object[]> objectArray = portRepository.findPortsIdAndNames();
+      objectArray.forEach(
+          var1 -> {
+            PortDetail.Builder reply = PortDetail.newBuilder();
+            if (var1[0] != null) { // First param Id
+              BigInteger val = (BigInteger) var1[0];
+              reply.setId(val.longValue());
+            }
+            if (var1[1] != null) { // Second param Name
+              reply.setName((String) var1[1]);
+            }
+            builder.addPorts(reply);
+          });
+      log.info("Port Name and Id returned with list size {}", objectArray.size());
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("SUCCESS");
+      builder.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getCargoInfoByPage method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      builder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

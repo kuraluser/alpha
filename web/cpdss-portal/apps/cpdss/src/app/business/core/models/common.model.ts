@@ -54,10 +54,11 @@ export interface IVessels {
 export class Voyage {
     public voyageNo: string;
     public id: number;
-    public status?: string;
+    public status?: VOYAGE_STATUS_LABEL;
     public confirmedLoadableStudyId?: number;
     public startDate?: string;
     public endDate?: string;
+    statusId?: VOYAGE_STATUS;
 }
 
 /**
@@ -172,13 +173,14 @@ export enum TANKTYPE {
  * @interface ILoadableCargo
  */
 export interface ILoadableCargo {
-    cargoAbbreviation: string;
-    colorCode: string;
-    tankId: number;
-    quantity: number;
-    isCommingle: boolean;
+    cargoAbbreviation?: string;
+    colorCode?: string;
+    tankId?: number;
+    quantity?: number;
+    isCommingle?: boolean;
     volume?: number;
     ullage?: number;
+	fillingRatio?: string;
 }
 
 /**
@@ -234,10 +236,10 @@ export interface IBallastTank extends ITank {
 export interface IPort {
     id: number;
     name: string;
-    code: string;
-    maxAirDraft: number;
-    maxDraft: number;
-    waterDensity: number;
+    code?: string;
+    maxAirDraft?: number;
+    maxDraft?: number;
+    waterDensity?: number;
 }
 
 /**
@@ -302,4 +304,44 @@ export interface IPortList {
     voyageId?: number;
     etaActual?: string;
     etdActual?: string;
+}
+
+/**
+ * ENUM for voyage status
+ *
+ * @export
+ * @enum {number}
+ */
+export enum VOYAGE_STATUS {
+    OPEN = 1,
+    CLOSE = 2,
+    ACTIVE = 3
+}
+
+/**
+ * ENUM for voyage status labels
+ *
+ * @export
+ * @enum {number}
+ */
+export enum VOYAGE_STATUS_LABEL {
+    OPEN = "Open",
+    CLOSE = "Close",
+    ACTIVE = "Active"
+}
+
+/**
+ * ENUM for Loadable Study Status
+ *
+ * @export
+ * @enum {number}
+ */
+export enum LOADABLE_STUDY_STATUS {
+    PLAN_PENDING = 1,
+    PLAN_CONFIRMED = 2,
+    PLAN_GENERATED = 3,
+    PLAN_ALGO_PROCESSING = 4,
+    PLAN_ALGO_PROCESSING_COMPETED = 5,
+    PLAN_NO_SOLUTION = 6,
+    PLAN_ERROR = 11
 }

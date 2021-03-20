@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.domain;
 
 import lombok.Data;
@@ -12,4 +12,6 @@ public class OnBoardQuantity {
   private Long cargoId;
   private String volume; // volumeInM3
   private String plannedArrivalWeight;
+  private String api;
+  private String colorCode;
 }

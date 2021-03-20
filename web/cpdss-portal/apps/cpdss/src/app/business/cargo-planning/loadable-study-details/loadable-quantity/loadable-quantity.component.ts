@@ -4,7 +4,7 @@ import { LoadableQuantityApiService } from '../../services/loadable-quantity-api
 import { LodadableQuantity } from '../../models/loadable-quantity.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
-import { Voyage,IPort } from '../../../core/models/common.model';
+import { Voyage,IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { numberValidator } from '../../directives/validator/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
@@ -26,7 +26,14 @@ import { Dropdown } from 'primeng/dropdown';
 })
 export class LoadableQuantityComponent implements OnInit {
 
-  @Input() selectedLoadableStudy: LoadableStudy;
+  @Input()
+  get selectedLoadableStudy() {
+    return this._selectedLoadableStudy;
+  }
+  set selectedLoadableStudy(value: LoadableStudy) {
+    this._selectedLoadableStudy = value;
+    this.isEditable = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(value?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId)? true : false;
+  }
   @Input() vesselId: number;
   @Input() voyage: Voyage;
   @Output() displayPopUp = new EventEmitter<boolean>();
@@ -57,7 +64,7 @@ export class LoadableQuantityComponent implements OnInit {
   isNoLwt = false;
   isNoConstant = false;
 
-  private _loadableStudies: LoadableStudy[];
+  private _selectedLoadableStudy: LoadableStudy;
 
   constructor(private fb: FormBuilder,
     private loadableQuantityApiService: LoadableQuantityApiService,
@@ -76,9 +83,9 @@ export class LoadableQuantityComponent implements OnInit {
    * @memberof LoadableQuantityComponent
    */
   async ngOnInit(): Promise<void> {
-    this.loadableQuantityBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+    this.loadableQuantityBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD, PERMISSION_ACTION.EDIT] };
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableQuantityComponent'], false);
-    this.isEditable = this.permission ? this.permission?.edit : false;
+    this.isEditable = (this.permission?.edit === undefined || this.permission?.edit || this.permission?.add === undefined || this.permission?.add) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.selectedLoadableStudy?.statusId)  && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId);
     this.errorMesages = this.loadableStudyDetailsTransformationService.setValidationErrorMessageForLoadableQuantity();
     this.ports = await this.getPorts();
     this.getLoadableQuantity();
@@ -483,7 +490,7 @@ export class LoadableQuantityComponent implements OnInit {
    */
   fieldError(formControlName: string): ValidationErrors {
     const formControl = this.field(formControlName);
-    return formControl.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
+    return this.isEditable && formControl.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
   }
 
   /**

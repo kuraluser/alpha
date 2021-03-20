@@ -1,9 +1,12 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadicatorintegration.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -71,4 +74,16 @@ public class StowagePlan extends EntityDoc {
 
   @Column(name = "process_id")
   private String processId;
+
+  @Column(name = "synoptical_xid")
+  private Long synopticalId;
+
+  @OneToMany(mappedBy = "stowagePlan", cascade = CascadeType.ALL)
+  private Set<StowageDetails> stowageDetails;
+
+  @OneToMany(mappedBy = "stowagePlan", cascade = CascadeType.ALL)
+  private Set<OtherTankDetails> otherTankDetails;
+
+  @OneToMany(mappedBy = "stowagePlan", cascade = CascadeType.ALL)
+  private Set<CargoData> cargoData;
 }

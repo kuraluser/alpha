@@ -1,11 +1,35 @@
+//Environment variables
+ext{
+  dbHost = System.getenv('DB_HOST') ?: ""
+  dbName = System.getenv('DB_NAME') ?: ""
+  dbUser = System.getenv('DB_USER') ?: ""
+  dbPassword = System.getenv('DB_PASSWORD') ?: ""
+  grpcPort = System.getenv('GRPC_PORT') ?: ""
+}
+
 appConfig {
+  appName = 'loadicator-integration'
   grpc = 'y'
   persistence = 'springData'
   dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
+  docker {
+    imageName = 'cpdss-loadicator-integration'
+    containerName = 'loadicator-integration-container'
+    networkName = 'cpdss-network'
+    swarm {
+      serviceName = 'loadicator-integration-service'
+      swarmMode = REPLICATED_MODE
+      replicas = 1
+      rollbackOnUpdateFailure = true
+    }
+    environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword]
+  }
   javaMainClass = "com.cpdss.loadicatorintegration.Application"
 }
+
+
 
 dependencies {
     implementation project(':common')

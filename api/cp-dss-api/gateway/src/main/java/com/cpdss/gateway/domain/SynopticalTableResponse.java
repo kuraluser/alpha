@@ -1,10 +1,11 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.List;
+import java.util.Map;
 import lombok.Data;
 
 @Data
@@ -17,5 +18,7 @@ public class SynopticalTableResponse {
 
   private Long id;
 
-  private List<Long> failedRecords;
+  // private List<Long> failedRecords;
+
+  private Map<Long, String> failedRecords;
 }

@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.domain;
 
 import java.util.List;
@@ -22,6 +22,7 @@ public class LoadableStudy {
   private String maxTempExpected;
   private String maxAirTemp;
   private String maxWaterTemp;
+  private Boolean loadOnTop;
   private LoadableQuantity loadableQuantity;
   private List<CommingleCargo> commingleCargos;
   private List<LoadableStudyPortRotation> loadableStudyPortRotation;

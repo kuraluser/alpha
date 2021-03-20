@@ -9,6 +9,8 @@ import "common.proto";
 service CargoInfoService {
 	rpc GetCargoInfo (CargoRequest) returns (CargoReply) {
 	}
+
+	rpc GetCargoInfoByPaging(CargoRequestWithPaging) returns (CargoReply){}
 }
 
 message CargoRequest {
@@ -16,6 +18,11 @@ message CargoRequest {
 	int64 vesselId = 2;
 	int64 voyageId = 3;
 	int64 loadableStudyId = 4;
+}
+
+message CargoRequestWithPaging{
+	int64 offset = 1;
+	int64 limit = 2;
 }
 
 message CargoDetail {

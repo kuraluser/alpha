@@ -1,5 +1,5 @@
-syntax = "proto3";
 
+syntax = "proto3";
 option java_multiple_files = false;
 option java_package = "com.cpdss.common.generated";
 
@@ -137,6 +137,18 @@ service LoadableStudyService {
 	}
 	
 	rpc SaveLoadOnTop(SaveLoadOnTopRequest) returns (SaveCommentReply){
+	}
+	
+	rpc GetVoyages (VoyageRequest) returns (VoyageListReply) {
+	}
+	
+	rpc SaveVoyageStatus(SaveVoyageStatusRequest) returns (SaveVoyageStatusReply){
+	}
+	
+	rpc GetCargoApiTempHistory (CargoHistoryRequest) returns (CargoHistoryReply) {
+	}
+	
+	rpc GetAllCargoHistory (CargoHistoryRequest) returns (CargoHistoryReply) {
 	}
 }
 
@@ -281,13 +293,25 @@ message LoadablePlanDetails {
 	int32 caseNumber = 1;
 	repeated LoadablePlanPortWiseDetails loadablePlanPortWiseDetails = 2;
 	repeated string constraints = 3;
+	StabilityParameter stabilityParameters = 4;
+}
+
+message StabilityParameter {
+	string forwardDraft = 1;
+	string meanDraft = 2;
+	string afterDraft = 3;
+	string trim = 4;
+	string heel = 5;
+	string bendinMoment = 6;
+	string shearForce = 7;
 }
 
 message LoadablePlanPortWiseDetails {
 	int64 portId = 1;
 	string portCode = 2;
-	LoadablePlanDetailsReply arrivalCondition = 3;
-	LoadablePlanDetailsReply departureCondition = 4;
+	int64 portRotationId = 3;
+	LoadablePlanDetailsReply arrivalCondition = 4;
+	LoadablePlanDetailsReply departureCondition = 5;
 }
 
 message LoadablePlanDetailsRequest {
@@ -379,6 +403,7 @@ message LoadableQuantityCommingleCargoDetails {
 	 string orderedMT = 21;
 	 int32 priority = 22;
 	 int32 loadingOrder = 23;
+	 int64 tankId = 24;
 }
 
 message LoadableQuantityCargoDetails {
@@ -452,6 +477,11 @@ message VoyageRequest {
 	string voyageNo = 5;
 	string startDate = 6;
 	string endDate = 7;
+	int32 page = 8;
+	int32 pageSize = 9;
+	string fromStartDate=10;
+	string toStartDate=11;
+	int32 timezoneId = 12;
 }
 
 message VoyageReply {
@@ -466,17 +496,27 @@ message VoyageDetail{
 	string endDate = 4;
 	string status = 5;
 	int64 confirmedLoadableStudyId = 6;
+	repeated LoadingPortDetail loadingPorts = 7;
+	repeated DischargingPortDetail dischargingPorts = 8;
+	repeated CargoDetails cargos = 9;
+	string charterer = 10;
+	string actualStartDate = 11;
+	string actualEndDate = 12;
+	int64 statusId = 13;
+	int64 noOfDays = 14;
 }
 
 message VoyageListReply{
 	StatusReply responseStatus = 1;
 	repeated VoyageDetail voyages = 2;
+		int64 totalElements=3;	
 }
 
 message StatusReply {
 	string status = 1;
 	string code = 2;
 	string message = 3;
+	string statusCode = 4;
 }
 
 
@@ -566,6 +606,7 @@ message LoadableStudyReply{
 message LoadingPortDetail{
 	int64 portId = 1;
 	string quantity = 2;
+	string name=3;
 }
 
 message segregationDetail{
@@ -785,6 +826,8 @@ message LoadablePattern {
 	int64 loadableStudyStatusId = 4;
 	int32 caseNumber = 5;
 	repeated LoadablePlanStowageDetails loadablePlanStowageDetails = 6;
+	StabilityParameter stabilityParameters = 7;	
+	repeated int64 commingleTankIds = 8;
 }
 
 message LoadablePatternCargoDetails {
@@ -797,6 +840,7 @@ message LoadablePatternCargoDetails {
  	int64 loadablePatternCommingleDetailsId = 7;
  	int32 loadingOrder = 8;
  	string api = 9;
+ 	string tankName = 10;
 }
 
 message LoadablePatternRequest {
@@ -889,6 +933,7 @@ message SynopticalRecord{
 	string ballastPlanned = 36;
 	string ballastActual = 37;
 	repeated SynopticalBallastRecord ballast = 38;
+	int64 portRotationId = 39;
 }
 
 message SynopticalCargoRecord{
@@ -990,3 +1035,60 @@ bool loadOnTop=1;
 int64 loadableStudyId=2;
 }
 
+message DischargingPortDetail{
+	int64 portId = 1;
+	string quantity = 2;
+	string name=3;
+}
+
+message CargoDetails{
+	int64 cargoId = 1;
+	string name=3;
+}
+
+message SaveVoyageStatusRequest{
+string status=1;
+int64 voyageId=2;
+string actualStartDate=3;
+string actualEndDate=4;
+}
+
+message SaveVoyageStatusReply {
+	ResponseStatus responseStatus = 1;
+	int64 voyageId=2;
+}
+
+message CargoHistoryRequest {
+	int64 cargoId = 1;
+	repeated int64 portIds = 2;
+	map<string, FilterIds> filterParams = 3;
+	int32 page = 4;
+	int32 pageSize = 5;
+	string sortBy = 6;
+	string orderBy = 7;
+	string fromStartDate=8;
+	string toStartDate=9;
+}
+
+message FilterIds{
+	repeated int64 ids = 1;
+	repeated string values = 2;
+}
+
+message CargoHistoryReply {
+	ResponseStatus responseStatus = 1;
+	repeated CargoHistoryDetail cargoHistory = 2;
+	int64 total = 3;
+}
+
+message CargoHistoryDetail {
+	int64 vesselId = 1;
+	int64 cargoId = 2;
+	int64 loadingPortId = 3;
+	string loadedDate = 4;
+	int32 loadedYear = 5;
+	int32 loadedMonth = 6;
+	int32 loadedDay = 7;
+	string api = 8;
+	string temperature = 9;
+}

@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
@@ -22,8 +22,11 @@ public interface LoadablePlanStowageBallastDetailsRepository
   public List<LoadablePlanStowageBallastDetails> findByLoadablePatternIdAndIsActive(
       Long loadablePatternId, boolean isActive);
 
+  public List<LoadablePlanStowageBallastDetails> findByLoadablePatternIdInAndIsActive(
+      List<Long> loadablePatternId, boolean isActive);
+
   public List<LoadablePlanStowageBallastDetails>
-      findByLoadablePatternIdAndPortXIdAndOperationTypeAndIsActive(
+      findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
           Long loadablePatternId, Long portId, String operationType, boolean isActive);
 
   @Query(

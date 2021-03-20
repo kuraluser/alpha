@@ -6,7 +6,7 @@
     </p-header>
     <form [formGroup]="loadingPortsFrom" *ngIf="loadingPortsFrom">
         <div class="col">
-        <div class="form-group row">
+        <div class="form-group row" *ngIf="editMode">
             
             <div class="col-sm-12 pl-0">
                 <label class="col-form-label pr-10">{{'LOADING_PORT_POPUP_DROPDOWN_LABEL'| translate}}</label>
@@ -27,6 +27,6 @@
     <p-footer>
         <button id="port_cancel_btn" class="btn btn-main"
             (click)="closePopup()" focusTrap>{{'LOADING_PORT_POPUP_CANCEL'| translate}}</button>
-        <button id="port_save_btn" class="btn btn-main" (click)="savePopup()" autofocus focusTrap>{{'LOADING_PORT_POPUP_SAVE'| translate}}</button>
+        <button *ngIf="editMode" id="port_save_btn" class="btn btn-main" (click)="savePopup()" autofocus focusTrap>{{'LOADING_PORT_POPUP_SAVE'| translate}}</button>
     </p-footer>
 </p-dialog>

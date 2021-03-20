@@ -22,6 +22,7 @@ import { BallastLayoutModule } from '../../core/components/ballast-layout/ballas
 import { SaveStowagePopupComponent } from './stowage/save-stowage-popup/save-stowage-popup.component';
 import { DialogModule } from 'primeng/dialog';
 import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
+import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
 
 /**
  * Module for loadable plan
@@ -44,7 +45,7 @@ import { ValidationErrorModule } from '../../../shared/components/validation-err
     DialogModule,
     ValidationErrorModule
   ],
-  providers: [LoadableQuantityApiService , DecimalPipe , LoadablePlanTransformationService , LoadablePlanApiService , DatePipe ],
+  providers: [LoadableQuantityApiService , DecimalPipe , LoadablePlanTransformationService , LoadablePlanApiService , DatePipe, LoadableStudyListApiService ],
   exports: [
     LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent
   ]

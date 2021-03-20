@@ -28,6 +28,13 @@ service VesselInfoService {
 	
 	rpc GetVesselDetailByVesselId(VesselRequest) returns (VesselReply) {
 	}
+
+	rpc GetVesselInfoByPaging(VesselRequestWithPaging) returns (VesselReply){}
+}
+
+message VesselRequestWithPaging{
+	int64 offset = 1;
+	int64 limit = 2;
 }
 
 message VesselRequest {
@@ -143,6 +150,7 @@ message VesselReply {
 		BMAndSF bMAndSF = 6;
 		ResponseStatus responseStatus = 7;
 		repeated UllageDetails ullageDetails = 8;
+		repeated UllageTrimCorrection ullageTrimCorrection = 9;
 	}
 	
 	message UllageDetails {
@@ -270,4 +278,22 @@ message VesselReply {
 		string aftC4 = 22;
 		string aftMaxFlAllowence = 23;
 		string aftMinFlAllowence = 24;
+	}
+	
+	message UllageTrimCorrection {
+		int64 id = 1;
+		int64 tankId = 2;
+		string ullageDepth = 3;
+		string trimM1 = 4;
+		string trimM2 = 5;
+		string trimM3 = 6;
+		string trimM4 = 7;
+		string trimM5 = 8;
+		string trim0 = 9;
+		string trim1 = 10;
+		string trim2 = 11;
+		string trim3 = 12;
+		string trim4 = 13;
+		string trim5 = 14;
+		string trim6 = 15;
 	}

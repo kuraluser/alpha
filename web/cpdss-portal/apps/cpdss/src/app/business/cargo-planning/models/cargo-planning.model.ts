@@ -2,7 +2,7 @@ import { SelectItem } from 'primeng/api';
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { CPDSSDB, IFuelType, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
 import { ITank } from '../../core/models/common.model';
-import {  IPort, IPortList } from '../../core/models/common.model';
+import { IPort, IPortList } from '../../core/models/common.model';
 
 /**
  * Interface for cargo nomination value object
@@ -258,7 +258,7 @@ export interface IPortsValueObject {
     isAdd: boolean;
     isDelete?: boolean;
     storeKey: number;
-    isActionsEnabled: boolean;    
+    isActionsEnabled: boolean;
     processing?: boolean;
 }
 
@@ -388,7 +388,7 @@ export interface IPortOHQTankDetailValueObject {
     volume: number;
     percentageFilled: string;
     fullCapacityCubm: number;
-    fullCapacity: number;    
+    fullCapacity: number;
     processing?: boolean;
 }
 
@@ -597,7 +597,7 @@ export interface IPortOBQTankDetailValueObject {
     fullCapacityCubm: number;
     fullCapacity: number;
     abbreviation: string;
-    loadOnTop: boolean;    
+    loadOnTop: boolean;
     processing?: boolean;
 }
 
@@ -651,13 +651,96 @@ export interface IGeneratePatternResponse {
     processId: string;
 }
 
+
 /**
- * Interface for get confir status
+ * Interface for get Api-Temperature popup passvalue
  *
  * @export
- * @interface IConfirmStatusResponse
+ * @interface IApiTempPopupData
  */
-export interface IConfirmStatusResponse {
-    responseStatus: IResponse;
-    confirmed: boolean;
+export interface IApiTempPopupData {
+    rowDataCargo: ValueObject<ICargo>;
+    vesselId: number;
+    voyageId: number;
+    loadableStudyId: number;
+    rowIndex: number;
 }
+
+/**
+ * Interface for Api, Temperature requeset params
+ *
+ * @export
+ * @interface IApiTempHistoryRequest
+ */
+export interface IApiTempHistoryRequest {
+    cargoId: number;
+    loadingPortIds: number[];
+}
+
+/**
+ * Interface for Cargo Api,Temperature history POPUP API response
+ *
+ * @export
+ * @interface ICargoApiTempHistoryResponse
+ */
+export interface ICargoApiTempHistoryResponse {
+    responseStatus: IResponseStatus;
+    portHistory: IApiTempHistory[];
+    monthlyHistory: IApiTempMonthWiseHistory[];
+}
+
+/**
+ * Interface for get Api,Temperature port history
+ *
+ * @export
+ * @interface IApiTempHistory
+ */
+export interface IApiTempHistory {
+    cargoId: number;
+    loadingPortId: number;
+    loadedDate: string;
+    api: number;
+    temperature: number;
+}
+
+/**
+ * Interface for get Api,Temperature month-wise history
+ *
+ * @export
+ * @interface IApiTempMonthWiseHistory
+ */
+export interface IApiTempMonthWiseHistory {
+    loadingPortId: number;
+    loadedYear: number;
+    loadedMonth: number;
+    api: number|string;
+    temperature: number|string;
+}
+
+/**
+ * Interface for list months.
+ *
+ * @export
+ * @interface IMonths
+ */
+export interface IMonths {
+    id: number;
+    month: string;
+}
+
+/**
+ * Interface for Cargo-history table details
+ *
+ * @export
+ * @interface ICargoHistoryDetails
+ */
+export interface ICargoHistoryDetails {
+    vesselName: string;
+    loadingPort: string;
+    grade: string;
+    year: number;
+    month: number;
+    date: number;
+    api: number;
+    temperature: number;
+  }

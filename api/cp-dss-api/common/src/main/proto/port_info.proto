@@ -18,6 +18,12 @@ service PortInfoService {
 	
 	rpc GetPortInfoDetailsForAlgo (GetPortInfoByPortIdsRequest) returns (PortReply) {
 	}
+
+	rpc GetTimezone (PortEmptyRequest) returns (TimezoneResponse){
+
+	}
+
+	rpc GetPortInfoByPaging(PortRequestWithPaging) returns (PortReply){}
 }
 
 message GetPortInfoByPortIdsRequest {
@@ -29,6 +35,11 @@ message PortRequest {
 	int64 vesselId = 2;
 	int64 voyageId = 3;
 	int64 loadableStudyId = 4;
+}
+
+message PortRequestWithPaging{
+	int64 offset = 1;
+	int64 limit = 2;
 }
 
 message PortDetail {
@@ -50,6 +61,8 @@ message PortDetail {
 	string lwTideTimeTo = 16;
 	string sunriseTime = 17;
 	string sunsetTime = 18;
+	string timezone = 19;
+	string timezoneOffsetVal = 20;
 }
 
 message PortReply {
@@ -64,4 +77,18 @@ message GetPortInfoByCargoIdRequest{
 message GetPortInfoByCargoIdReply{
 	ResponseStatus responseStatus = 1;
 	repeated PortDetail ports = 2;
+}
+
+message PortEmptyRequest {
+}
+
+message Timezone{
+	int64 id = 1;
+	string timezone = 2;
+	string offsetValue = 3;
+}
+
+message TimezoneResponse{
+	ResponseStatus responseStatus = 1;
+	repeated Timezone timezones = 2;
 }

@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { MenuItem, SortEvent , LazyLoadEvent } from 'primeng/api';
+import { MenuItem, SortEvent, LazyLoadEvent } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { ObjectUtils } from 'primeng/utils';
-import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableEvent, IDataTableFilterEvent, IDataTableSortEvent , IDataTablePageChangeEvent } from './datatable.model';
+import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_BUTTON, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableEvent, IDataTableFilterEvent, IDataTableSortEvent, IDataTablePageChangeEvent } from './datatable.model';
 import { Paginator } from 'primeng/paginator';
+import { DecimalPipe } from '@angular/common';
 
 /**
  * Compoent for Datatable
@@ -44,8 +45,14 @@ export class DatatableComponent implements OnInit {
     return this._value;
   }
   set value(value: Array<any>) {
-    if (value)
+    if (value) {
       this._value = value;
+      if (this.paginator) {
+        this.form = this.fb.group({
+          dataTable: this.fb.array([...this.value])
+        });
+      }
+    }
   }
 
   @Input()
@@ -86,33 +93,34 @@ export class DatatableComponent implements OnInit {
 
   @Input() showTotal = false;
 
+  @Input() scrollable = true;
 
   @Input()
   set loading(loading: boolean) {
     this._loading = loading;
   }
 
-  get loading() : boolean {
+  get loading(): boolean {
     return this._loading;
   }
 
   @Input() paginator: boolean;
 
-  @Input() 
+  @Input()
   set rowsPerPage(rows: number[]) {
     this._rowsPerPage = rows;
   }
 
-  get rowsPerPage() : Array<number>  {
+  get rowsPerPage(): Array<number> {
     return this._rowsPerPage;
   }
-  
+
   @Input()
   set rows(rows: number) {
     this._rows = rows;
   }
 
-  get rows() : number {
+  get rows(): number {
     return this._rows;
   }
 
@@ -121,7 +129,7 @@ export class DatatableComponent implements OnInit {
     this._totalRecords = totalRecords;
   }
 
-  get totalRecords() : number {
+  get totalRecords(): number {
     return this._totalRecords;
   }
 
@@ -130,36 +138,36 @@ export class DatatableComponent implements OnInit {
     this._currentPageReportTemplate = totalRecords;
   }
 
-  get currentPageReportTemplate() : string {
+  get currentPageReportTemplate(): string {
     return this._currentPageReportTemplate;
   }
 
-  @Input() 
+  @Input()
   set lazy(lazy: boolean) {
     this._lazy = lazy;
   }
 
-  get lazy(): boolean{
+  get lazy(): boolean {
     return this._lazy;
   }
 
-  @Input() 
+  @Input()
   set currentPage(currentPage: number) {
     this._currentPage = currentPage;
   }
 
-  @Input() 
+  @Input()
   set first(first: number) {
     this._first = first;
   }
 
-  get first() :number {
+  get first(): number {
     return this._first;
   }
 
-  @Input() 
+  @Input()
   set reset(resetDataTable: boolean) {
-    if(resetDataTable) {
+    if (resetDataTable) {
       this.datatable.reset();
       this.filterObject = {};
       this.resetChange.emit(false);
@@ -183,11 +191,13 @@ export class DatatableComponent implements OnInit {
   @Output() filter = new EventEmitter<IDataTableFilterEvent>();
   @Output() sort = new EventEmitter<IDataTableSortEvent>();
   @Output() editRow = new EventEmitter<IDataTableEvent>();
-  @Output() onDataStateChange = new EventEmitter<IDataTablePageChangeEvent>();
+  @Output() resetPassword = new EventEmitter<IDataTableEvent>();
+  @Output() dataStateChange = new EventEmitter<IDataTablePageChangeEvent>();
   @Output() firstChange = new EventEmitter<number>();
   @Output() currentPageChange = new EventEmitter<number>();
   @Output() resetChange = new EventEmitter<boolean>();
-  
+  @Output() buttonClick = new EventEmitter<IDataTableEvent>();
+
   // public fields
   readonly fieldType = DATATABLE_FIELD_TYPE;
   readonly filterType = DATATABLE_FILTER_TYPE;
@@ -215,12 +225,12 @@ export class DatatableComponent implements OnInit {
 
 
   // public methods
-  constructor(private translateService: TranslateService, private fb: FormBuilder) {
+  constructor(private translateService: TranslateService, private fb: FormBuilder, private decimalPipe: DecimalPipe) {
   }
 
   ngOnInit(): void {
     this._first = 0;
-    this._rowsPerPage = [10,50,100];
+    this._rowsPerPage = [10, 25, 50, 100];
     this._currentPageReportTemplate = "Showing {currentPage} to {totalPages} of {totalRecords} entries";
     this._loading = false;
     if (!this.form) {
@@ -480,7 +490,7 @@ export class DatatableComponent implements OnInit {
         option.visible = rowData?.isDuplicate === undefined || rowData?.isDuplicate;
       }
       return option;
-    });    
+    });
   }
 
   // private methods
@@ -563,6 +573,20 @@ export class DatatableComponent implements OnInit {
 
   }
 
+  /**
+ * Handler for option click
+ *
+ * @param {MouseEvent} event
+ * @param {any} rowData
+ * @param {number} rowIndex
+ * @param {IDataTableColumn} col
+ * @param {MenuItem} option
+ * @memberof DatatableComponent
+ */
+  buttonEvent(event: MouseEvent, rowData: any, rowIndex: number, field: string, option: MenuItem) {
+    this.selectedRowEvent = { originalEvent: event, data: rowData, index: rowIndex, field: field };
+    this.buttonClick.emit(this.selectedRowEvent);
+  }
 
 
   /**
@@ -577,19 +601,40 @@ export class DatatableComponent implements OnInit {
     this.editRow.emit(this.selectedRowEvent);
   }
 
+
   /**
   * Filter date
   */
-  onDateSelect(value, field, filterMatchMode) {
-    this.datatable.filter(this.formatDateTime(value), field, filterMatchMode);
+  onDateSelect(value, col, field, filterMatchMode) {
+    if (col?.filterByServer) {
+      this._first = 0;
+      this._currentPage = 0;
+      this.filterObject[col.filterField] = this.formatDateTime(value);
+      const data = this.setStateValue('filter');
+      this.firstChange.emit(this._first);
+      this.currentPageChange.emit(this._currentPage);
+      this.dataStateChange.emit(data);
+    } else {
+      this.datatable.filter(this.formatDateTime(value), field, filterMatchMode);
+    }
   }
 
   /**
    * Method for filtering date on enter key press
    * @param value 
    */
-  onDateFilter(value, field) {
-    this.datatable.filter(value, field, 'equals');
+  onDateFilter(value, col, field) {
+    if (col?.filterByServer) {
+      this._first = 0;
+      this._currentPage = 0;
+      this.filterObject[col.filterField] = value.trim();
+      const data = this.setStateValue('filter');
+      this.firstChange.emit(this._first);
+      this.currentPageChange.emit(this._currentPage);
+      this.dataStateChange.emit(data);
+    } else {
+      this.datatable.filter(value, field, 'equals');
+    }
   }
 
 
@@ -634,12 +679,16 @@ export class DatatableComponent implements OnInit {
   */
   onDateRangeSelect(event, formGroupIndex: number, formControlName: string, rowData: Object) {
     const formControl = this.field(formGroupIndex, formControlName);
-    if(formControl?.value[0] && formControl?.value[1]){
-      rowData[formControlName].value = this.formatDateTime(formControl?.value[0]) + ' to ' + this.formatDateTime(formControl?.value[1]);
-      rowData[formControlName].isEditMode = false;
+    if (formControl?.value[0] && formControl?.value[1]) {
+      if (formControl?.value[0] === formControl?.value[1]) {
+        formControl.setErrors({ 'datesEqual': true });
+      } else {
+        rowData[formControlName].value = this.formatDateTime(formControl?.value[0]) + ' to ' + this.formatDateTime(formControl?.value[1]);
+        rowData[formControlName].isEditMode = false;
         this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
+      }
     }
-    else if(formControl?.value[0] && !formControl?.value[1]){
+    else if (formControl?.value[0] && !formControl?.value[1]) {
       formControl.setErrors({ 'toDate': true });
     }
   }
@@ -698,19 +747,19 @@ export class DatatableComponent implements OnInit {
     });
     this.sort.emit(event);
   }
-  
+
   /**
    * lazy loading for sorting
    * @param {LazyLoadEvent}  event
    */
   loadDetails(event: LazyLoadEvent) {
-    if(event.sortField) {
+    if (event.sortField) {
       this._first = 0;
       this._currentPage = 0;
       this.currentPageChange.emit(this._currentPage);
       this.firstChange.emit(this._first);
       const data = this.setStateValue('sort');
-      this.onDataStateChange.emit(data);
+      this.dataStateChange.emit(data);
     }
   }
 
@@ -741,7 +790,7 @@ export class DatatableComponent implements OnInit {
           total += value
         }
       })
-      return total.toFixed(2);
+      return this.decimalPipe.transform(total.toFixed(2), col?.numberFormat);
     }
     return ""
   }
@@ -785,7 +834,7 @@ export class DatatableComponent implements OnInit {
     this._first = event.first;
     this.firstChange.emit(this._first);
     this.currentPageChange.emit(event?.page ? event.page : 0)
-    this.onDataStateChange.emit(data);
+    this.dataStateChange.emit(data);
   }
 
   /**
@@ -794,15 +843,15 @@ export class DatatableComponent implements OnInit {
    * @returns
    * @memberof DatatableComponent
    */
-  filterData($event , col) {
-    if(col?.filterByServer) {
+  filterData($event, col) {
+    if (col?.filterByServer) {
       this._first = 0;
       this._currentPage = 0;
       this.filterObject[col.filterField] = ($event.target.value).trim();
       const data = this.setStateValue('filter');
       this.firstChange.emit(this._first);
       this.currentPageChange.emit(this._currentPage);
-      this.onDataStateChange.emit(data);
+      this.dataStateChange.emit(data);
     } else {
       this.datatable.filter(($event.target.value).trim(), col?.filterField ? col?.filterField : col.field, col.filterMatchMode)
     }
@@ -828,15 +877,6 @@ export class DatatableComponent implements OnInit {
       }
     }
   }
-  /**
-   * set state value for server side sorting
-   *
-   * @param {number} index
-   * @memberof DatatableComponent
-   */
-  getSlNo(index: number) {
-    return (this.paginatorRef?.paginatorState?.page*this.paginatorRef?.paginatorState?.rows) + (index +1);
-  }
 
   /**
    * update current page
@@ -845,8 +885,9 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   private updateCurrentPage(currentPage: number): void {
-    setTimeout(() => {this.paginatorRef.changePage(currentPage) , this.currentPageChange.emit(currentPage)});
+    setTimeout(() => { this.paginatorRef.changePage(currentPage), this.currentPageChange.emit(currentPage) });
   }
+
 
 }
 

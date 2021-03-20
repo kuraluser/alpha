@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
@@ -64,4 +64,8 @@ public class OnHandQuantity extends EntityDoc {
 
   @Column(name = "density")
   private BigDecimal density;
+
+  @ManyToOne
+  @JoinColumn(name = "port_rotation_xid")
+  private LoadableStudyPortRotation portRotation;
 }

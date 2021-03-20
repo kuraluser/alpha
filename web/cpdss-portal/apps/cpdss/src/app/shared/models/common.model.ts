@@ -263,3 +263,14 @@ export interface ICargo {
     api?: number;
     ports?: IPort[];
 }
+
+/**
+ * Interface for get confirm status
+ *
+ * @export
+ * @interface IConfirmStatusResponse
+ */
+ export interface IConfirmStatusResponse {
+    responseStatus: IResponse;
+    confirmed: boolean;
+}

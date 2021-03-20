@@ -1,14 +1,15 @@
-/* Licensed under Apache-2.0 */
-package com.cpdss.gateway.domain;
+/* Licensed at AlphaOri Technologies */
+package com.cpdss.loadablestudy.domain;
 
 import lombok.Data;
 
 /** @Author jerin.g */
 @Data
-public class LodicatorResultDetails {
+public class LoadicatorResultDetails {
+  private Long synopticalId;
   private Long operationId;
   private Long portId;
-  private String hog;
+  private String deflection; // hog
   private String calculatedDraftFwdPlanned;
   private String calculatedDraftMidPlanned;
   private String calculatedDraftAftPlanned;

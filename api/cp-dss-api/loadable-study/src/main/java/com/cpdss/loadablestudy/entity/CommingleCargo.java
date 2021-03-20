@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
@@ -52,4 +52,10 @@ public class CommingleCargo extends EntityDoc {
 
   @Column(name = "priority")
   private Integer priority;
+
+  @Column(name = "cargo_nomination1_xid")
+  private Long cargoNomination1Id;
+
+  @Column(name = "cargo_nomination2_xid")
+  private Long cargoNomination2Id;
 }

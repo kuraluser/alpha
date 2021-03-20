@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -18,4 +18,5 @@ public class VoyageResponse {
 
   private List<Voyage> voyages;
   private String message;
+  private Long totalElements;
 }

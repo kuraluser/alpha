@@ -8,7 +8,7 @@
                 <li class="list-inline-item" *ngFor="let cargoDetail of loadablePatternCargoDetails">
                     <span class="badge-custom mr-5" class="badge-custom" [ngClass]="cargoDetail?.isCommingle ? 'commingle' : ''"
                     [ngStyle]="!cargoDetail?.isCommingle && {'background': cargoDetail.cargoColor}">
-                        {{cargoDetail.cargoAbbreviation}} </span> <span>></span>
+                        {{cargoDetail.cargoAbbreviation}} </span> <span class="ml-5 mr-5">></span>
                 </li>
             </ul>
         </div>

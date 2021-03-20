@@ -18,28 +18,35 @@
                 <div *ngFor="let tank of group" [ngClass]="{'active': tank?.id === selectedTankId}"
                     [ngStyle]="{'visibility': tank?.categoryId !== 2? 'hidden': 'visible'}"
                     (click)="onTankSelect($event, tank?.id)">
-                  
+
                     <div class="front-tank-content">
-                        <p-overlayPanel #op appendTo="body"  styleClass="tank-tooltip ballast-tooltip">
-                            <ul *ngIf="tank"  class="row list-unstyled">
+                        <p-overlayPanel #op appendTo="body" styleClass="tank-tooltip ballast-tooltip {{!(tank?.commodity && tank?.commodity[options?.weightField]) ? 'empty' : ''}}">
+                            <ul *ngIf="tank" class="row list-unstyled">
                                 <li class="col-7">{{'TANK_LAYOUT_TANK'| translate}}</li>
                                 <li class="col-5">{{tank?.shortName}}</li>
-                                <li class="col-7">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
-                                <li class="col-5">{{tank?.commodity? tank?.commodity[options?.ullageField] : ''}} {{options?.ullageUnit}}</li>
-                                <li class="col-7">{{'TANK_LAYOUT_SG'| translate}}</li>
-                                <li class="col-5">{{tank?.commodity? tank?.commodity[options?.densityField] : ''}}</li>
-                                <li class="col-7">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
-                                <li class="col-5">{{tank?.commodity? tank?.commodity[options?.weightField]: ''}}
-                                </li>
-                                <li class="col-7">{{'TANK_LAYOUT_PERCENTAGE'| translate}}</li>
-                                <li class="col-5">{{tank?.commodity? options?.fillingPercentageField ?
-                                    tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled : 0}}%</li>
+                                <ng-container *ngIf="tank?.commodity && tank?.commodity[options?.weightField]">
+                                    <li class="col-7">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
+                                    <li class="col-5">
+                                        {{tank?.commodity[options?.ullageField] ? tank?.commodity[options?.ullageField] : 0}}
+                                        {{options?.ullageUnit}}</li>
+                                    <li class="col-7">{{'TANK_LAYOUT_SG'| translate}}</li>
+                                    <li class="col-5">
+                                        {{tank?.commodity[options?.densityField] ? tank?.commodity[options?.densityField] : 0}}
+                                    </li>
+                                    <li class="col-7">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
+                                    <li class="col-5">
+                                        {{tank?.commodity[options?.weightField]? tank?.commodity[options?.weightField]: 0}}{{options?.weightUnit}}
+                                    </li>
+                                    <li class="col-7">{{'TANK_LAYOUT_PERCENTAGE'| translate}}</li>
+                                    <li class="col-5">{{tank?.commodity? options?.fillingPercentageField ?
+                                    tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled : 0}}%
+                                    </li>
+                                </ng-container>
                             </ul>
                         </p-overlayPanel>
                         <div class="tank-name">
-                            <div class="tank-btn-rounded"
-                                *ngIf="options?.showTooltip" (mouseover)="tank && op.toggle($event)"
-                                (mouseout)="tank && op.toggle($event)"></div>
+                            <div class="tank-btn-rounded" *ngIf="options?.showTooltip"
+                                (mouseover)="tank && op.toggle($event)" (mouseout)="tank && op.toggle($event)"></div>
                             {{tank?.shortName}}
                         </div>
                         <ng-container *ngIf="tank?.commodity">
@@ -58,39 +65,48 @@
         <div class="rear-top-pattern"></div>
         <div class="rear-bottom-pattern"></div>
         <ng-container *ngFor="let group of rearTanks">
-            <div *ngFor="let tank of group" class="rear-tank-pattern" [ngClass]="{'active': tank?.id === selectedTankId}"
+            <div *ngFor="let tank of group" class="rear-tank-pattern"
+                [ngClass]="{'active': tank?.id === selectedTankId}"
                 [ngStyle]="{'visibility': tank?.categoryId !== 2? 'hidden': 'visible'}"
                 (click)="onTankSelect($event, tank?.id)">
                 <div class="tank-level"
                     [ngStyle]="{'height': (tank?.commodity && options?.fillingPercentageField ? tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled) + '%', 'background-color': tank?.commodity?.colorCode}">
                 </div>
                 <div class="rear-tank-ullage-and-percentage">
-                    <p-overlayPanel #op appendTo="body" styleClass="tank-tooltip ballast-tooltip">
-                        <ul *ngIf="tank"  class="row list-unstyled">
+                    <p-overlayPanel #op appendTo="body" styleClass="tank-tooltip ballast-tooltip {{!(tank?.commodity && tank?.commodity[options?.weightField]) ? 'empty' : ''}}">
+                        <ul *ngIf="tank" class="row list-unstyled">
                             <li class="col-7">{{'TANK_LAYOUT_TANK'| translate}}</li>
                             <li class="col-5"> {{tank?.shortName}}</li>
-                            <li class="col-7">{{'TANK_LAYOUT_ULLAGE'| translate}} </li>
-                            <li class="col-5"> {{tank?.commodity? tank?.commodity[options?.ullageField] : ''}} {{options?.ullageUnit}}</li>
-                            <li class="col-7">{{'TANK_LAYOUT_SG'| translate}} </li>
-                            <li class="col-5">{{tank?.commodity? tank?.commodity[options?.densityField] : ''}}</li>
-                            <li class="col-7">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
-                            <li class="col-5">{{tank?.commodity? tank?.commodity[options?.weightField]: ''}}
-                            </li>
-                            <li class="col-7">{{'TANK_LAYOUT_PERCENTAGE'| translate}}</li>
-                            <li class="col-5">{{tank?.commodity? options?.fillingPercentageField ?
-                                tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled : 0}}%</li>
+                            <ng-container *ngIf="tank?.commodity && tank?.commodity[options?.weightField]">
+                                <li class="col-7">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
+                                <li class="col-5">
+                                    {{tank?.commodity[options?.ullageField] ? tank?.commodity[options?.ullageField] : 0}}
+                                    {{options?.ullageUnit}}</li>
+                                <li class="col-7">{{'TANK_LAYOUT_SG'| translate}}</li>
+                                <li class="col-5">
+                                    {{tank?.commodity[options?.densityField] ? tank?.commodity[options?.densityField] : 0}}
+                                </li>
+                                <li class="col-7">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
+                                <li class="col-5">
+                                    {{tank?.commodity[options?.weightField]? tank?.commodity[options?.weightField]: 0}}{{options?.weightUnit}}
+                                </li>
+                                <li class="col-7">{{'TANK_LAYOUT_PERCENTAGE'| translate}}</li>
+                                <li class="col-5">{{tank?.commodity? options?.fillingPercentageField ?
+                                tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled : 0}}%
+                                </li>
+                            </ng-container>
                         </ul>
                     </p-overlayPanel>
                     <div class="tank-name">
-                        <div class="tank-btn-rounded"
-                            *ngIf="options?.showTooltip" (mouseover)="tank && op.toggle($event)"
-                            (mouseout)="tank && op.toggle($event)"></div>
+                        <div class="tank-btn-rounded" *ngIf="options?.showTooltip"
+                            (mouseover)="tank && op.toggle($event)" (mouseout)="tank && op.toggle($event)"></div>
                         {{tank?.shortName}}
                     </div>
                     <ng-container *ngIf="tank?.commodity">
 
-                        <div *ngIf="options?.showFillingPercentage"
-                        class="tank-filling-percentage">{{options?.fillingPercentageField ? tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}%</div>
+                        <div *ngIf="options?.showFillingPercentage" class="tank-filling-percentage">
+                            {{options?.fillingPercentageField ? tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled}}%
+                        </div>
                         <span *ngIf="options?.showUllage"
                             class="tank-commodity-ullage">{{tank?.commodity[options?.ullageField]}}
                             {{options?.ullageUnit}}</span>
@@ -111,27 +127,34 @@
                 [class.active]="tank?.id === selectedTankId" (click)="onTankSelect($event, tank?.id)">
                 <div [ngStyle]="{'background-color':tank.commodity?.colorCode, 'height': (tank?.commodity && options?.fillingPercentageField ? tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled) + '%'}"
                     class="tank-level-pattern"></div>
-                <p-overlayPanel #op appendTo="body"  styleClass="tank-tooltip ballast-tooltip">
+                <p-overlayPanel #op appendTo="body" styleClass="ballast-tooltip tank-tooltip {{!(tank?.commodity && tank?.commodity[options?.weightField]) ? 'empty' : ''}}">
                     <ul *ngIf="tank" class="row list-unstyled">
                         <li class="col-7">{{'TANK_LAYOUT_TANK'| translate}}</li>
                         <li class="col-5">{{tank?.shortName}}</li>
-                        <li class="col-7">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
-                        <li class="col-5">{{tank?.commodity? tank?.commodity[options?.ullageField] : ''}} {{options?.ullageUnit}}</li>
-                        <li class="col-7">{{'TANK_LAYOUT_SG'| translate}}</li>
-                        <li class="col-5">{{tank?.commodity? tank?.commodity[options?.densityField] : ''}}</li>
-                        <li class="col-7">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
-                        <li class="col-5">{{tank?.commodity? tank?.commodity[options?.weightField]: ''}}
-                        </li>
-                        <li class="col-7">{{'TANK_LAYOUT_PERCENTAGE'| translate}}</li>
-                        <li class="col-5">{{tank?.commodity? options?.fillingPercentageField ?
-                            tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled : 0}}%</li>
+                        <ng-container *ngIf="tank?.commodity && tank?.commodity[options?.weightField]">
+                            <li class="col-7">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
+                            <li class="col-5">
+                                {{tank?.commodity[options?.ullageField] ? tank?.commodity[options?.ullageField] : 0}}
+                                {{options?.ullageUnit}}</li>
+                            <li class="col-7">{{'TANK_LAYOUT_SG'| translate}}</li>
+                            <li class="col-5">
+                                {{tank?.commodity[options?.densityField] ? tank?.commodity[options?.densityField] : 0}}
+                            </li>
+                            <li class="col-7">{{'TANK_LAYOUT_QUANTITY'| translate}}</li>
+                            <li class="col-5">
+                                {{tank?.commodity[options?.weightField]? tank?.commodity[options?.weightField]: 0}}{{options?.weightUnit}}
+                            </li>
+                            <li class="col-7">{{'TANK_LAYOUT_PERCENTAGE'| translate}}</li>
+                            <li class="col-5">{{tank?.commodity? options?.fillingPercentageField ?
+                            tank?.commodity[options?.fillingPercentageField] : tank?.percentageFilled : 0}}%
+                            </li>
+                        </ng-container>
                     </ul>
                 </p-overlayPanel>
+                <div class="tank-btn-rounded" *ngIf="options?.showTooltip" (mouseover)="tank && op.toggle($event)"
+                (mouseout)="tank && op.toggle($event)"></div>
                 <h5 class="tank-name">
-                    <div class="tank-btn-rounded"
-                        
-                        *ngIf="options?.showTooltip" (mouseover)="tank && op.toggle($event)"
-                        (mouseout)="tank && op.toggle($event)"></div>
+                   
                     {{tank?.shortName}}
                 </h5>
                 <ng-container *ngIf="tank?.commodity">

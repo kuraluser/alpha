@@ -1,4 +1,4 @@
-/* Licensed under Apache-2.0 */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadicatorintegration.service;
 
 import com.cpdss.common.generated.Common.ResponseStatus;
@@ -14,7 +14,6 @@ import com.cpdss.common.generated.Loadicator.CargoInfo;
 import com.cpdss.common.generated.Loadicator.LoadicatorReply;
 import com.cpdss.common.generated.Loadicator.LoadicatorRequest;
 import com.cpdss.common.generated.Loadicator.OtherTankInfo;
-import com.cpdss.common.generated.Loadicator.StowageDetailsInfo;
 import com.cpdss.common.generated.LoadicatorServiceGrpc.LoadicatorServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.loadicatorintegration.domain.StowagePlanDetail;
@@ -35,8 +34,10 @@ import com.cpdss.loadicatorintegration.repository.StowagePlanRepository;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -71,84 +72,38 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
     com.cpdss.common.generated.Loadicator.LoadicatorReply.Builder replyBuilder =
         LoadicatorReply.newBuilder();
     try {
-      List<StowagePlan> stowagePlan = new ArrayList<StowagePlan>();
-      List<StowagePlan> stowagePlanEntityList = new ArrayList<StowagePlan>();
-      if (null != request.getStowagePlanDetailsList()) {
-        stowagePlan = this.buildStowagePlan(request);
+      List<StowagePlan> stowagePlanList = new ArrayList<>();
+      for (com.cpdss.common.generated.Loadicator.StowagePlan plan :
+          request.getStowagePlanDetailsList()) {
+        StowagePlan entity = this.buildStowagePlan(plan);
+        if (!plan.getStowageDetailsList().isEmpty()) {
+          entity.setStowageDetails(new HashSet<>());
+          entity.getStowageDetails().addAll(this.buildStowageDetailSet(plan, entity));
+        }
+        entity.setOtherTankDetails(new HashSet<>());
+        if (!plan.getBallastInfoList().isEmpty()) {
+          entity.getOtherTankDetails().addAll(this.buildBallastDetailSet(plan, entity));
+        }
+        if (!plan.getOtherTankInfoList().isEmpty()) {
+          entity.getOtherTankDetails().addAll(this.buildOtherTankDetailSet(plan, entity));
+        }
+        if (!plan.getCargoInfoList().isEmpty()) {
+          entity.setCargoData(new HashSet<>());
+          entity.getCargoData().addAll(this.buildCargoDataSet(plan, entity));
+        }
+        stowagePlanList.add(entity);
       }
-      for (StowagePlan stowage : stowagePlan) {
-        StowagePlan newStowage = this.stowagePlanRepository.save(stowage);
-        stowagePlanEntityList.add(newStowage);
-
-        if (request.getStowageDetailsInfoList() != null) {
-
-          request
-              .getStowageDetailsInfoList()
-              .forEach(
-                  details -> {
-                    if (Long.valueOf(details.getPortId()).equals(newStowage.getPortId())
-                        && Long.valueOf(details.getStowageId()).equals(newStowage.getStowageId())) {
-                      StowageDetails stowageDetail =
-                          this.buildStowageDetails(details, newStowage.getId());
-                      stowageDetail = this.stowageDetailsRepository.save(stowageDetail);
-                    }
-                  });
-        }
-
-        if (null != request.getCargoInfoList()) {
-          request
-              .getCargoInfoList()
-              .forEach(
-                  cargoInfo -> {
-                    if (Long.valueOf(cargoInfo.getPortId()).equals(newStowage.getPortId())
-                        && Long.valueOf(cargoInfo.getStowageId())
-                            .equals(newStowage.getStowageId())) {
-                      CargoData cargoData = this.buildCargoData(cargoInfo, newStowage.getId());
-                      this.cargoDataRepository.save(cargoData);
-                    }
-                  });
-        }
-
-        if (null != request.getOtherTankInfoList()) {
-          request
-              .getOtherTankInfoList()
-              .forEach(
-                  otherTanks -> {
-                    if (Long.valueOf(otherTanks.getPortId()).equals(newStowage.getPortId())
-                        && Long.valueOf(otherTanks.getLoadableStudyId())
-                            .equals(newStowage.getBookingListId())) {
-                      OtherTankDetails otherTankDetails =
-                          this.buildOtherTankInfo(otherTanks, newStowage.getId());
-                      this.otherTankDetailsRepository.save(otherTankDetails);
-                    }
-                  });
-        }
-        if (null != request.getBallastInfoList()) {
-          request
-              .getBallastInfoList()
-              .forEach(
-                  ballast -> {
-                    if (Long.valueOf(ballast.getPortId()).equals(newStowage.getPortId())
-                        && Long.valueOf(ballast.getStowageId()).equals(newStowage.getStowageId())) {
-                      OtherTankDetails ballastInfo = this.buildBallast(ballast, newStowage.getId());
-                      this.otherTankDetailsRepository.save(ballastInfo);
-                    }
-                  });
-        }
-      }
-
-      Boolean status = this.getStatus(stowagePlan);
-      if (status) {
+      this.stowagePlanRepository.saveAll(stowagePlanList);
+      if (this.getStatus(stowagePlanList)) {
         replyBuilder
             .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
             .build();
 
         LoadicatorDataRequest.Builder loadableStudyrequest =
-            this.sendLoadicatorData(stowagePlanEntityList);
+            this.sendLoadicatorData(stowagePlanList);
         LoadicatorDataReply loadicatorDataReply =
             loadableStudyService.getLoadicatorData(loadableStudyrequest.build());
       }
-
     } catch (Exception e) {
       log.error("Error saving stowage plan", e);
       replyBuilder.setResponseStatus(
@@ -163,171 +118,167 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
     }
   }
 
-  private OtherTankDetails buildOtherTankInfo(OtherTankInfo otherTank, Long id) {
-
-    OtherTankDetails otherTankDetails = new OtherTankDetails();
-    otherTankDetails.setTankId(
-        StringUtils.isEmpty(otherTank.getTankId()) ? null : otherTank.getTankId());
-    otherTankDetails.setTankName(
-        StringUtils.isEmpty(otherTank.getTankName()) ? null : otherTank.getTankName());
-    otherTankDetails.setQuantity(
-        StringUtils.isEmpty(otherTank.getQuantity())
-            ? null
-            : new BigDecimal(otherTank.getQuantity()));
-    otherTankDetails.setShortName(
-        StringUtils.isEmpty(otherTank.getShortName()) ? null : otherTank.getShortName());
-    otherTankDetails.setStowagePlanId(id);
-
-    return otherTankDetails;
+  private Set<CargoData> buildCargoDataSet(
+      com.cpdss.common.generated.Loadicator.StowagePlan plan, StowagePlan entity) {
+    Set<CargoData> set = new HashSet<>();
+    for (CargoInfo cargo : plan.getCargoInfoList()) {
+      CargoData cargoData = new CargoData();
+      cargoData.setApi(StringUtils.isEmpty(cargo.getApi()) ? null : new BigDecimal(cargo.getApi()));
+      cargoData.setCargoName(
+          StringUtils.isEmpty(cargo.getCargoName()) ? null : cargo.getCargoName());
+      cargoData.setCargoAbbrev(
+          StringUtils.isEmpty(cargo.getCargoAbbrev()) ? null : cargo.getCargoAbbrev());
+      cargoData.setDegf(
+          StringUtils.isEmpty(cargo.getStandardTemp())
+              ? null
+              : new BigDecimal(cargo.getStandardTemp()));
+      cargoData.setGrade(StringUtils.isEmpty(cargo.getGrade()) ? null : cargo.getGrade());
+      cargoData.setDensity(
+          StringUtils.isEmpty(cargo.getDensity()) ? null : new BigDecimal(cargo.getDensity()));
+      cargoData.setDegc(
+          StringUtils.isEmpty(cargo.getDegc()) ? null : new BigDecimal(cargo.getDegc()));
+      cargoData.setStowagePlan(entity);
+      set.add(cargoData);
+    }
+    return set;
   }
 
-  private CargoData buildCargoData(CargoInfo cargo, Long id) {
-    CargoData cargoData = new CargoData();
-    cargoData.setApi(StringUtils.isEmpty(cargo.getApi()) ? null : new BigDecimal(cargo.getApi()));
-    // cargoData.setCargoId(StringUtils.isEmpty(cargo.getCargoId()) ? null : cargo.getCargoId());
-    cargoData.setCargoName(StringUtils.isEmpty(cargo.getCargoName()) ? null : cargo.getCargoName());
-    cargoData.setCargoAbbrev(
-        StringUtils.isEmpty(cargo.getCargoAbbrev()) ? null : cargo.getCargoAbbrev());
-
-    cargoData.setDegf(
-        StringUtils.isEmpty(cargo.getStandardTemp())
-            ? null
-            : new BigDecimal(cargo.getStandardTemp()));
-
-    cargoData.setGrade(StringUtils.isEmpty(cargo.getGrade()) ? null : cargo.getGrade());
-    cargoData.setDensity(
-        StringUtils.isEmpty(cargo.getDensity()) ? null : new BigDecimal(cargo.getDensity()));
-    cargoData.setDegc(
-        StringUtils.isEmpty(cargo.getDegc()) ? null : new BigDecimal(cargo.getDegc()));
-
-    cargoData.setStowagePlanId(id);
-    return cargoData;
+  private Set<OtherTankDetails> buildOtherTankDetailSet(
+      com.cpdss.common.generated.Loadicator.StowagePlan plan, StowagePlan entity) {
+    Set<OtherTankDetails> set = new HashSet<>();
+    for (OtherTankInfo otherTank : plan.getOtherTankInfoList()) {
+      OtherTankDetails otherTankDetails = new OtherTankDetails();
+      otherTankDetails.setTankId(
+          StringUtils.isEmpty(otherTank.getTankId()) ? null : otherTank.getTankId());
+      otherTankDetails.setTankName(
+          StringUtils.isEmpty(otherTank.getTankName()) ? null : otherTank.getTankName());
+      otherTankDetails.setQuantity(
+          StringUtils.isEmpty(otherTank.getQuantity())
+              ? null
+              : new BigDecimal(otherTank.getQuantity()));
+      otherTankDetails.setShortName(
+          StringUtils.isEmpty(otherTank.getShortName()) ? null : otherTank.getShortName());
+      otherTankDetails.setStowagePlan(entity);
+      set.add(otherTankDetails);
+    }
+    return set;
   }
 
-  private List<StowagePlan> buildStowagePlan(LoadicatorRequest request) {
-    List<StowagePlan> stowagePlanList = new ArrayList<StowagePlan>();
-    request
-        .getStowagePlanDetailsList()
-        .forEach(
-            stowagePlanInfo -> {
-              StowagePlan stowagePlan = new StowagePlan();
-              stowagePlan.setVesselXId(
-                  StringUtils.isEmpty(stowagePlanInfo.getVesselId())
-                      ? null
-                      : stowagePlanInfo.getVesselId());
-              stowagePlan.setBookingListId(
-                  StringUtils.isEmpty(stowagePlanInfo.getBookingListId())
-                      ? null
-                      : stowagePlanInfo.getBookingListId());
-              stowagePlan.setCalCount(
-                  StringUtils.isEmpty(stowagePlanInfo.getCalCount())
-                      ? null
-                      : stowagePlanInfo.getCalCount());
-              stowagePlan.setCompanyXId(
-                  StringUtils.isEmpty(stowagePlanInfo.getCompanyId())
-                      ? null
-                      : stowagePlanInfo.getCompanyId());
-              stowagePlan.setDamageCal(
-                  StringUtils.isEmpty(stowagePlanInfo.getDamageCal())
-                      ? null
-                      : stowagePlanInfo.getDamageCal());
-              stowagePlan.setDataSave(
-                  StringUtils.isEmpty(stowagePlanInfo.getDataSave())
-                      ? null
-                      : stowagePlanInfo.getDataSave());
-              stowagePlan.setDeadweightConstant(
-                  StringUtils.isEmpty(stowagePlanInfo.getDeadweightConstant())
-                      ? null
-                      : (long) (Double.parseDouble(stowagePlanInfo.getDeadweightConstant())));
-              stowagePlan.setPortCode(
-                  StringUtils.isEmpty(stowagePlanInfo.getPortCode())
-                      ? null
-                      : stowagePlanInfo.getPortCode());
-
-              stowagePlan.setPortId(
-                  StringUtils.isEmpty(stowagePlanInfo.getPortId())
-                      ? null
-                      : stowagePlanInfo.getPortId());
-              stowagePlan.setProvisionalConstant(
-                  StringUtils.isEmpty(stowagePlanInfo.getProvisionalConstant())
-                      ? null
-                      : (long) (Double.parseDouble(stowagePlanInfo.getProvisionalConstant())));
-
-              stowagePlan.setSaveMessage(
-                  StringUtils.isEmpty(stowagePlanInfo.getSaveMessage())
-                      ? null
-                      : stowagePlanInfo.getSaveMessage());
-              stowagePlan.setStowageId(
-                  StringUtils.isEmpty(stowagePlanInfo.getStowageId())
-                      ? null
-                      : stowagePlanInfo.getStowageId());
-              stowagePlan.setBookingListId(
-                  StringUtils.isEmpty(stowagePlanInfo.getBookingListId())
-                      ? null
-                      : stowagePlanInfo.getBookingListId());
-              stowagePlan.setStatus(
-                  StringUtils.isEmpty(stowagePlanInfo.getStatus())
-                      ? null
-                      : stowagePlanInfo.getStatus());
-              stowagePlan.setVesselCode(
-                  StringUtils.isEmpty(stowagePlanInfo.getVesselCode())
-                      ? null
-                      : stowagePlanInfo.getVesselCode());
-              stowagePlan.setProcessId(stowagePlanInfo.getProcessId());
-              stowagePlanList.add(stowagePlan);
-            });
-
-    return stowagePlanList;
+  private Set<OtherTankDetails> buildBallastDetailSet(
+      com.cpdss.common.generated.Loadicator.StowagePlan plan, StowagePlan entity) {
+    Set<OtherTankDetails> set = new HashSet<>();
+    for (BallastInfo ballast : plan.getBallastInfoList()) {
+      OtherTankDetails otherTankDetails = new OtherTankDetails();
+      otherTankDetails.setTankId(
+          StringUtils.isEmpty(ballast.getTankId()) ? null : ballast.getTankId());
+      otherTankDetails.setTankName(
+          StringUtils.isEmpty(ballast.getTankName()) ? null : ballast.getTankName());
+      otherTankDetails.setQuantity(
+          StringUtils.isEmpty(ballast.getQuantity())
+              ? null
+              : new BigDecimal(ballast.getQuantity()));
+      otherTankDetails.setShortName(
+          StringUtils.isEmpty(ballast.getShortName()) ? null : ballast.getShortName());
+      otherTankDetails.setStowagePlan(entity);
+    }
+    return set;
   }
 
-  private StowageDetails buildStowageDetails(StowageDetailsInfo stowageInfo, Long id) {
-    StowageDetails stowageDetails = null;
-
-    stowageDetails = new StowageDetails();
-    stowageDetails.setCargoBookId(
-        StringUtils.isEmpty(stowageInfo.getCargoBookId()) ? null : stowageInfo.getCargoBookId());
-    stowageDetails.setCargoId(
-        StringUtils.isEmpty(stowageInfo.getCargoId()) ? null : stowageInfo.getCargoId());
-    stowageDetails.setCargoName(
-        StringUtils.isEmpty(stowageInfo.getCargoName()) ? null : stowageInfo.getCargoName());
-    stowageDetails.setQuantity(
-        StringUtils.isEmpty(stowageInfo.getQuantity())
-            ? null
-            : new BigDecimal(stowageInfo.getQuantity()));
-    stowageDetails.setShortName(
-        StringUtils.isEmpty(stowageInfo.getShortName()) ? null : stowageInfo.getShortName());
-    stowageDetails.setSpecificGravity(
-        StringUtils.isEmpty(stowageInfo.getSpecificGravity())
-            ? null
-            : new BigDecimal(stowageInfo.getSpecificGravity()));
-    stowageDetails.setStowagePlanId(id);
-    stowageDetails.setTankId(
-        StringUtils.isEmpty(stowageInfo.getTankId()) ? null : stowageInfo.getTankId());
-    stowageDetails.setTankName(
-        StringUtils.isEmpty(stowageInfo.getTankName()) ? null : stowageInfo.getTankName());
-    return stowageDetails;
+  private Set<StowageDetails> buildStowageDetailSet(
+      com.cpdss.common.generated.Loadicator.StowagePlan plan, StowagePlan entity) {
+    Set<StowageDetails> set = new HashSet<>();
+    for (com.cpdss.common.generated.Loadicator.StowageDetails stowageInfo :
+        plan.getStowageDetailsList()) {
+      StowageDetails stowageDetails = new StowageDetails();
+      stowageDetails.setCargoBookId(
+          StringUtils.isEmpty(stowageInfo.getCargoBookId()) ? null : stowageInfo.getCargoBookId());
+      stowageDetails.setCargoId(
+          StringUtils.isEmpty(stowageInfo.getCargoId()) ? null : stowageInfo.getCargoId());
+      stowageDetails.setCargoName(
+          StringUtils.isEmpty(stowageInfo.getCargoName()) ? null : stowageInfo.getCargoName());
+      stowageDetails.setQuantity(
+          StringUtils.isEmpty(stowageInfo.getQuantity())
+              ? null
+              : new BigDecimal(stowageInfo.getQuantity()));
+      stowageDetails.setShortName(
+          StringUtils.isEmpty(stowageInfo.getShortName()) ? null : stowageInfo.getShortName());
+      stowageDetails.setSpecificGravity(
+          StringUtils.isEmpty(stowageInfo.getSpecificGravity())
+              ? null
+              : new BigDecimal(stowageInfo.getSpecificGravity()));
+      stowageDetails.setTankId(
+          StringUtils.isEmpty(stowageInfo.getTankId()) ? null : stowageInfo.getTankId());
+      stowageDetails.setTankName(
+          StringUtils.isEmpty(stowageInfo.getTankName()) ? null : stowageInfo.getTankName());
+      stowageDetails.setStowagePlan(entity);
+      set.add(stowageDetails);
+    }
+    return set;
   }
 
-  private OtherTankDetails buildBallast(BallastInfo otherTank, Long id) {
-
-    OtherTankDetails otherTankDetails = new OtherTankDetails();
-    otherTankDetails.setTankId(
-        StringUtils.isEmpty(otherTank.getTankId()) ? null : otherTank.getTankId());
-    otherTankDetails.setTankName(
-        StringUtils.isEmpty(otherTank.getTankName()) ? null : otherTank.getTankName());
-    otherTankDetails.setQuantity(
-        StringUtils.isEmpty(otherTank.getQuantity())
+  private StowagePlan buildStowagePlan(
+      com.cpdss.common.generated.Loadicator.StowagePlan stowagePlanInfo) {
+    StowagePlan stowagePlan = new StowagePlan();
+    stowagePlan.setVesselXId(
+        StringUtils.isEmpty(stowagePlanInfo.getVesselId()) ? null : stowagePlanInfo.getVesselId());
+    stowagePlan.setBookingListId(
+        StringUtils.isEmpty(stowagePlanInfo.getBookingListId())
             ? null
-            : new BigDecimal(otherTank.getQuantity()));
-    otherTankDetails.setShortName(
-        StringUtils.isEmpty(otherTank.getShortName()) ? null : otherTank.getShortName());
-    otherTankDetails.setStowagePlanId(id);
+            : stowagePlanInfo.getBookingListId());
+    stowagePlan.setCalCount(
+        StringUtils.isEmpty(stowagePlanInfo.getCalCount()) ? null : stowagePlanInfo.getCalCount());
+    stowagePlan.setCompanyXId(
+        StringUtils.isEmpty(stowagePlanInfo.getCompanyId())
+            ? null
+            : stowagePlanInfo.getCompanyId());
+    stowagePlan.setDamageCal(
+        StringUtils.isEmpty(stowagePlanInfo.getDamageCal())
+            ? null
+            : stowagePlanInfo.getDamageCal());
+    stowagePlan.setDataSave(
+        StringUtils.isEmpty(stowagePlanInfo.getDataSave()) ? null : stowagePlanInfo.getDataSave());
+    stowagePlan.setDeadweightConstant(
+        StringUtils.isEmpty(stowagePlanInfo.getDeadweightConstant())
+            ? null
+            : (long) (Double.parseDouble(stowagePlanInfo.getDeadweightConstant())));
+    stowagePlan.setPortCode(
+        StringUtils.isEmpty(stowagePlanInfo.getPortCode()) ? null : stowagePlanInfo.getPortCode());
 
-    return otherTankDetails;
+    stowagePlan.setPortId(
+        StringUtils.isEmpty(stowagePlanInfo.getPortId()) ? null : stowagePlanInfo.getPortId());
+    stowagePlan.setSynopticalId(
+        StringUtils.isEmpty(stowagePlanInfo.getSynopticalId())
+            ? null
+            : stowagePlanInfo.getSynopticalId());
+    stowagePlan.setProvisionalConstant(
+        StringUtils.isEmpty(stowagePlanInfo.getProvisionalConstant())
+            ? null
+            : (long) (Double.parseDouble(stowagePlanInfo.getProvisionalConstant())));
+
+    stowagePlan.setSaveMessage(
+        StringUtils.isEmpty(stowagePlanInfo.getSaveMessage())
+            ? null
+            : stowagePlanInfo.getSaveMessage());
+    stowagePlan.setStowageId(
+        StringUtils.isEmpty(stowagePlanInfo.getStowageId())
+            ? null
+            : stowagePlanInfo.getStowageId());
+    stowagePlan.setBookingListId(
+        StringUtils.isEmpty(stowagePlanInfo.getBookingListId())
+            ? null
+            : stowagePlanInfo.getBookingListId());
+    stowagePlan.setStatus(
+        StringUtils.isEmpty(stowagePlanInfo.getStatus()) ? null : stowagePlanInfo.getStatus());
+    stowagePlan.setVesselCode(
+        StringUtils.isEmpty(stowagePlanInfo.getVesselCode())
+            ? null
+            : stowagePlanInfo.getVesselCode());
+    stowagePlan.setProcessId(stowagePlanInfo.getProcessId());
+    return stowagePlan;
   }
 
-  public Boolean getStatus(List<StowagePlan> stowagePlans) throws InterruptedException {
-    Boolean status = false;
+  public boolean getStatus(List<StowagePlan> stowagePlans) throws InterruptedException {
+    boolean status = false;
     do {
       Thread.sleep(10000);
       List<Long> stowagePlanIds =
