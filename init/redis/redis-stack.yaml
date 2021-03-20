@@ -5,7 +5,7 @@ services:
     image: "bitnami/redis"
     environment:
       - REDIS_REPLICATION_MODE=master
-      - REDIS_PASSWORD=str0ng_passw0rd
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_AOF_ENABLED=no
     deploy:
       mode: replicated
@@ -15,8 +15,8 @@ services:
     environment:
       - REDIS_REPLICATION_MODE=replica
       - REDIS_MASTER_HOST=redis-master
-      - REDIS_MASTER_PASSWORD=str0ng_passw0rd
-      - REDIS_PASSWORD=str0ng_passw0rd
+      - REDIS_MASTER_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_AOF_ENABLED=no
     deploy:
       mode: replicated
@@ -26,10 +26,8 @@ services:
     environment:
       - REDIS_MASTER_SET=mymaster
       - REDIS_MASTER_HOST=redis-master
-      - REDIS_MASTER_PASSWORD=str0ng_passw0rd
+      - REDIS_MASTER_PASSWORD=${REDIS_PASSWORD}
       - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=10000
-    ports:
-      - "${PORT_NUM}:26379"
     deploy:
       mode: replicated
       replicas: 3
