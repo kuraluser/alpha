@@ -76,22 +76,48 @@ public class LoadableStudyCargoService {
     com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest.Builder builder =
         com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest.newBuilder();
 
+    log.info("Cargo History Filter - {}", filterParams.keySet());
+    log.info("Cargo History Sort   - {}, direction - {}", sortBy, orderBy);
+
+    // Below are the filter options, multiple filter available
     if (filterParams.get("vesselName") != null) { // Vessel Sort
       builder.putFilterParams(
-          "vesselId", getFilterData(redisVesselService, filterParams.get("vesselName"), null));
+          "vesselId",
+          getFilterData(redisVesselService, "IN", filterParams.get("vesselName"), null));
     }
     if (filterParams.get("loadingPort") != null) { // Port Sort
       builder.putFilterParams(
-          "loadingPortId", getFilterData(redisPortService, filterParams.get("loadingPort"), null));
+          "loadingPortId",
+          getFilterData(redisPortService, "IN", filterParams.get("loadingPort"), null));
     }
     if (filterParams.get("grade") != null) { // Cargo Sort
       builder.putFilterParams(
-          "cargoId", getFilterData(redisCargoService, filterParams.get("grade"), null));
+          "cargoId", getFilterData(redisCargoService, "IN", filterParams.get("grade"), null));
     }
     if (filterParams.get("startDate") != null) {
       builder.putFilterParams(
           "loadedDate",
-          getFilterData(null, filterParams.get("startDate"), filterParams.get("endDate")));
+          getFilterData(
+              null, "BETWEEN", filterParams.get("startDate"), filterParams.get("endDate")));
+    }
+    if (filterParams.get("loadedYear") != null) {
+      builder.putFilterParams(
+          "year", getFilterData(null, "LIKE", filterParams.get("loadedYear"), null));
+    }
+    if (filterParams.get("loadedMonth") != null) {
+      builder.putFilterParams(
+          "month", getFilterData(null, "LIKE", filterParams.get("loadedMonth"), null));
+    }
+    if (filterParams.get("loadedDay") != null) {
+      builder.putFilterParams(
+          "day", getFilterData(null, "LIKE", filterParams.get("loadedDay"), null));
+    }
+    if (filterParams.get("api") != null) {
+      builder.putFilterParams("api", getFilterData(null, "LIKE", filterParams.get("api"), null));
+    }
+    if (filterParams.get("temperature") != null) {
+      builder.putFilterParams(
+          "temp", getFilterData(null, "LIKE", filterParams.get("temperature"), null));
     }
 
     // due to the sorting for non-table elements, fetch
@@ -99,11 +125,23 @@ public class LoadableStudyCargoService {
     builder.setPage(-1);
     builder.setPageSize(-1);
 
-    if (!sortBy.equalsIgnoreCase("vesselName")
-        && !sortBy.equalsIgnoreCase("loadingPort")
-        && !sortBy.equalsIgnoreCase("grade")) {
-      builder.setSortBy(sortBy); // Required at LS
+    String SORT_BY = sortBy;
+    if (sortBy.equals("vesselName") || sortBy.equals("loadingPortName") || sortBy.equals("grade")) {
+      SORT_BY = "year";
     }
+    if (sortBy.equals("api")) {
+      SORT_BY = "api";
+    } else if (sortBy.equals("temperature")) {
+      SORT_BY = "temp";
+    } else {
+      SORT_BY =
+          sortBy.equals("loadedYear")
+              ? "year"
+              : sortBy.equals("loadedMonth")
+                  ? "month"
+                  : sortBy.equals("loadedDay") ? "day" : "year";
+    }
+    builder.setSortBy(SORT_BY); // Required at LS
     builder.setOrderBy(orderBy); // Required at LS
     // start date and end date moved to above
 
@@ -132,39 +170,82 @@ public class LoadableStudyCargoService {
     return cargoHistoryResponse;
   }
 
+  /**
+   * Add Filter Specification to grpc Builder
+   *
+   * @param service - For Redis {vessel, port, cargo}
+   * @param operation - For DB Operations {IN, LIKE, BETWEEN}
+   * @param val1
+   * @param val2
+   * @return object of filter
+   */
+  private LoadableStudy.FilterSpecification getFilterData(
+      RedisMasterSyncService service, String operation, String val1, String val2) {
+    LoadableStudy.FilterSpecification.Builder filterBuilder =
+        LoadableStudy.FilterSpecification.newBuilder();
+    if (service != null && operation.equals("IN")) { // Fill vessel, port, cargo ids
+      Map<Long, String> cacheData = service.filterByName(val1);
+      if (cacheData.size() > 0) {
+        filterBuilder.addAllIds(
+            sortRedisIdAndName(cacheData, val2).entrySet().stream()
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList()));
+      } else {
+        filterBuilder.addAllIds(Arrays.asList(-1l));
+      }
+    }
+    if (service == null && operation.equals("BETWEEN")) { // For date range filter
+      filterBuilder.addAllValues(Arrays.asList(val1, val2));
+    }
+    if (service == null && operation.equals("LIKE")) {
+      filterBuilder.addAllValues(Arrays.asList(val1));
+    }
+    filterBuilder.setOperation(operation);
+    log.info("Cargo History - Filter Specification {}", filterBuilder);
+    return filterBuilder.build();
+  }
+
   private CargoHistoryResponse sortCargoHistoryData(
       CargoHistoryResponse cargoHistoryResponse,
       String sortKey,
       String order,
       Integer pageNo,
       Integer pageSize) {
-    List<CargoHistory> beforeSort = new ArrayList<>(cargoHistoryResponse.getCargoHistory());
-    if (beforeSort == null) return cargoHistoryResponse;
+    if (cargoHistoryResponse.getCargoHistory() == null
+        || cargoHistoryResponse.getCargoHistory().isEmpty()) {
+      return cargoHistoryResponse;
+    }
+    List<CargoHistory> sortingList = new ArrayList<>(cargoHistoryResponse.getCargoHistory());
     cargoHistoryResponse.getCargoHistory().clear();
     if (sortKey.equalsIgnoreCase("vesselName")) {
       if (order.equalsIgnoreCase("asc"))
-        Collections.sort(beforeSort, Comparator.comparing(CargoHistory::getVesselName));
+        Collections.sort(sortingList, Comparator.comparing(CargoHistory::getVesselName));
       else
-        Collections.sort(beforeSort, (o1, o2) -> o2.getVesselName().compareTo(o1.getVesselName()));
+        Collections.sort(sortingList, (o1, o2) -> o2.getVesselName().compareTo(o1.getVesselName()));
     }
-    if (sortKey.equalsIgnoreCase("loadingPort")) {
+    if (sortKey.equalsIgnoreCase("loadingPortName")) {
       if (order.equalsIgnoreCase("asc"))
-        Collections.sort(beforeSort, Comparator.comparing(CargoHistory::getLoadingPortName));
+        Collections.sort(sortingList, Comparator.comparing(CargoHistory::getLoadingPortName));
       else
         Collections.sort(
-            beforeSort, (o1, o2) -> o2.getLoadingPortName().compareTo(o1.getLoadingPortName()));
+            sortingList, (o1, o2) -> o2.getLoadingPortName().compareTo(o1.getLoadingPortName()));
     }
     if (sortKey.equalsIgnoreCase("grade")) {
       if (order.equalsIgnoreCase("asc"))
-        Collections.sort(beforeSort, Comparator.comparing(CargoHistory::getGrade));
-      else Collections.sort(beforeSort, (o1, o2) -> o2.getGrade().compareTo(o1.getGrade()));
+        Collections.sort(sortingList, Comparator.comparing(CargoHistory::getGrade));
+      else Collections.sort(sortingList, (o1, o2) -> o2.getGrade().compareTo(o1.getGrade()));
     }
     // as we have to sort non-table columns, fetch all from tbl and sort/page here
     // ApiTempHistory - table keeps ids of vessel. cargo, port
-    int offset = pageNo + (pageNo * (pageSize - 1));
-    int limit = offset + (pageSize - 1);
+    int offset = pageNo + (pageNo * pageSize);
+    int limit = offset + pageSize;
     log.info("page offset {}, limit {}", offset, limit);
-    List<CargoHistory> pagedList = beforeSort.subList(offset, limit);
+    List<CargoHistory> pagedList = null;
+    if (limit < sortingList.size()) {
+      pagedList = sortingList.subList(offset, limit);
+    } else {
+      pagedList = sortingList;
+    }
     cargoHistoryResponse.setCargoHistory(pagedList);
     return cargoHistoryResponse;
   }
@@ -183,36 +264,6 @@ public class LoadableStudyCargoService {
       }
     }
     return cargoHistoryResponse;
-  }
-
-  /**
-   * Filter Ids means, Which column need to Filter (only for Filter)
-   *
-   * <p>Here Filter and Sort the ids
-   *
-   * @param service - Redis Bean
-   * @param val1 - if bean preset var 1 = date
-   * @param val2
-   * @return grpc generated FilterIds build
-   */
-  private LoadableStudy.FilterIds getFilterData(
-      RedisMasterSyncService service, String val1, String val2) {
-    LoadableStudy.FilterIds.Builder filterBuilder = LoadableStudy.FilterIds.newBuilder();
-    if (service != null) {
-      Map<Long, String> cacheData = service.filterByName(val1);
-      filterBuilder.addAllIds(
-          sortRedisIdAndName(cacheData, val2).entrySet().stream()
-              .map(Map.Entry::getKey)
-              .collect(Collectors.toList()));
-    } else {
-      try {
-        if (val1 != null && val2 != null) filterBuilder.addAllValues(Arrays.asList(val1, val2));
-
-      } catch (Exception e) {
-        log.info("Date range filter failed ", e);
-      }
-    }
-    return filterBuilder.build();
   }
 
   /**

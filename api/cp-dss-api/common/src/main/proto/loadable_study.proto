@@ -1061,7 +1061,7 @@ message SaveVoyageStatusReply {
 message CargoHistoryRequest {
 	int64 cargoId = 1;
 	repeated int64 portIds = 2;
-	map<string, FilterIds> filterParams = 3;
+	map<string, FilterSpecification> filterParams = 3;
 	int32 page = 4;
 	int32 pageSize = 5;
 	string sortBy = 6;
@@ -1070,9 +1070,10 @@ message CargoHistoryRequest {
 	string toStartDate=9;
 }
 
-message FilterIds{
+message FilterSpecification{
 	repeated int64 ids = 1;
 	repeated string values = 2;
+	string operation = 3;
 }
 
 message CargoHistoryReply {

@@ -32,6 +32,12 @@ public class ApiTempHistorySpecification implements Specification<ApiTempHistory
       predicates.add(
           builder.between(root.get(criteria.getKey()), dateRange.get(0), dateRange.get(1)));
     }
+    if (criteria.getOperation().equalsIgnoreCase("LIKE")) {
+      predicates.add(
+          builder.like(
+              builder.lower(root.get(criteria.getKey()).as(String.class)),
+              "%" + criteria.getValue().toString() + "%"));
+    }
     return builder.and(predicates.toArray(new Predicate[0]));
   }
 }

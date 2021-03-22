@@ -1763,9 +1763,9 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers,
       @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "10") int pageSize,
-      @RequestParam(required = false, defaultValue = "year")
+      @RequestParam(required = false, defaultValue = "loadedYear")
           @Pattern(
-              regexp = "vesselName|loadingPort|grade|year",
+              regexp = "vesselName|loadingPortName|grade|loadedYear",
               message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           String sortBy,
       @RequestParam(required = false, defaultValue = "desc") String orderBy,
@@ -1782,9 +1782,9 @@ public class LoadableStudyController {
               "vesselName",
               "loadingPort",
               "grade",
-              "year",
-              "month",
-              "date",
+              "loadedYear",
+              "loadedMonth",
+              "loadedDate",
               "api",
               "temperature",
               "startDate",
@@ -1793,7 +1793,9 @@ public class LoadableStudyController {
           params.entrySet().stream()
               .filter(e -> filterKeys.contains(e.getKey()))
               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
+      if (sortBy.equalsIgnoreCase("loadedYear")) {
+        sortBy = "year"; // db column name is 'year'
+      }
       return this.loadableStudyCargoService.getAllCargoHistory(
           filterParams, page, pageSize, sortBy, orderBy, startDate, endDate);
     } catch (GenericServiceException e) {

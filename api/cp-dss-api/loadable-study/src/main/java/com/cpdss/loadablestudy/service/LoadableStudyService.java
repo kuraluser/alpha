@@ -7985,35 +7985,27 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
 
       // apply date filter for loaded date
-      if (!request.getFromStartDate().isEmpty() && !request.getToStartDate().isEmpty()) {
-        LocalDateTime fromDate =
-            LocalDateTime.from(
-                DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getFromStartDate()));
-        LocalDateTime toDate =
-            LocalDateTime.from(
-                DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getToStartDate()));
-        Page<com.cpdss.loadablestudy.entity.ApiTempHistory> pagedResult =
-            this.apiTempHistoryRepository.findAllByLoadedDateBetween(pageable, fromDate, toDate);
-        apiTempHistList = pagedResult.toList();
-        replyBuilder.setTotal(pagedResult.getTotalElements());
-      } else if (!request.getFilterParamsMap().isEmpty()) {
-        Map<String, com.cpdss.common.generated.LoadableStudy.FilterIds> map =
+      if (!request.getFilterParamsMap().isEmpty()) {
+        Map<String, com.cpdss.common.generated.LoadableStudy.FilterSpecification> map =
             request.getFilterParamsMap();
 
         Specification<ApiTempHistory> specification =
             Specification.where(
                 new ApiTempHistorySpecification(new SearchCriteria("id", "GREATER_THAN", 0)));
 
-        for (Map.Entry<String, com.cpdss.common.generated.LoadableStudy.FilterIds> var1 :
+        for (Map.Entry<String, com.cpdss.common.generated.LoadableStudy.FilterSpecification> var1 :
             map.entrySet()) {
           if (var1.getValue().getIdsList() != null && !var1.getValue().getIdsList().isEmpty()) {
             specification =
                 specification.and(
                     new ApiTempHistorySpecification(
-                        new SearchCriteria(var1.getKey(), "IN", var1.getValue().getIdsList())));
+                        new SearchCriteria(
+                            var1.getKey(),
+                            var1.getValue().getOperation(),
+                            var1.getValue().getIdsList())));
           }
           if (var1.getValue().getValuesList() != null
-              && !var1.getValue().getValuesList().isEmpty()) {
+              && var1.getValue().getOperation().equals("BETWEEN")) {
             // Expected data Date range of loaded date
             String startDate = var1.getValue().getValuesList().get(0);
             String endDate = var1.getValue().getValuesList().get(1);
@@ -8025,13 +8017,22 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 specification.and(
                     new ApiTempHistorySpecification(
                         new SearchCriteria(
-                            var1.getKey(), "BETWEEN", Arrays.asList(fromDate, toDate))));
+                            var1.getKey(),
+                            var1.getValue().getOperation(),
+                            Arrays.asList(fromDate, toDate))));
+          }
+          if (var1.getValue().getValuesList() != null
+              && var1.getValue().getOperation().equalsIgnoreCase("LIKE")) {
+            specification =
+                specification.and(
+                    new ApiTempHistorySpecification(
+                        new SearchCriteria(
+                            var1.getKey(),
+                            var1.getValue().getOperation(),
+                            var1.getValue().getValues(0))));
           }
 
-          log.info(
-              "Cargo History grpc: Filter Key {}, Value {}",
-              var1.getKey(),
-              var1.getValue().getIdsList());
+          log.info("Cargo History grpc: Filter Key {}, Value {}", var1.getKey(), var1.getValue());
         }
 
         Page<ApiTempHistory> pagedResult =
@@ -8039,7 +8040,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         apiTempHistList = pagedResult.toList();
         replyBuilder.setTotal(pagedResult.getTotalElements());
         log.info("ApiTempHistory paged result total {}", pagedResult.getTotalElements());
-      } else {
+      } else { // on page load, no filter case
         Page<com.cpdss.loadablestudy.entity.ApiTempHistory> pagedResult =
             this.apiTempHistoryRepository.findAll(pageable);
         apiTempHistList = pagedResult.toList();
