@@ -13,8 +13,8 @@
     <div class="col calender-control-multi-date">
       <span class="ml-20 mr-10">
         {{ 'CARGO_HISTORY_DATE_RANGE_LABEL' | translate }}</span>
-      <p-calendar selectionMode="range" [readonlyInput]="true" inputId="range" dateFormat="dd-mm-yy"
-        (onSelect)="onDateRangeSelect()" [maxDate]="today" [(ngModel)]="filteredDates"
+      <p-calendar selectionMode="range" [readonlyInput]="true" inputId="range" dateFormat="dd-mm-yy" [showButtonBar]="true" todayButtonStyleClass="hide"
+        (onSelect)="onDateRangeSelect()" (onClearClick)="resetDateFilter()" [maxDate]="today" [(ngModel)]="filteredDates"
         placeholder="{{ 'CARGO_HISTORY_DATE_RANGE_PLACEHOLDER'| translate }}" id="cargo_history_date_range_filter"
         #cargoHistoryDateRange>
       </p-calendar>
