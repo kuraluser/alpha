@@ -303,7 +303,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
         draftRestriction: loadableStudyObj.draftRestriction ? loadableStudyObj.draftRestriction : ''
       }
       if(loadableStudyObj?.createdFromId) {
-        this._loadableStudyList?.map((loadableStudy) => {
+        this.loadableStudyList?.map((loadableStudy) => {
           if(loadableStudyObj.createdFromId === loadableStudy.id) {
             this.newLoadableStudyFormGroup.patchValue({
               duplicateExisting: loadableStudy

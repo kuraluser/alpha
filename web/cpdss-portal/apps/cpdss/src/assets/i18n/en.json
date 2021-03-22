@@ -380,6 +380,7 @@
 	"COMMINGLE_PERCENTAGE_SELECT_ERROR": "Required",
 	"COMMINGLE_PERCENTAGE_PLACEHOLDER": "Select percentage",
 	"COMMINGLE_MANUAL_SAVE_SUCCESS": "Success",
+	"COMMINGLE_MANUAL_SAVE_WARNING": "Warning",
 	"COMMINGLE_COMPLETED_SUCCESSFULLY": "Commingle details saved successfully",
 	"COMMINGLE_QUANTITY_MAX_LIMIT": "Total quantity is greater than commingable limit.",
 	"COMMINGLE_SELECT_PREFERRED_TANK": "Select preferred Tank",
@@ -852,5 +853,7 @@
     "CARGO_NOMINATION_SAVED_CARGO_DETAILS": "Any change in the cargo will have impact on the ports selected, comingle data, OHQ, OBQ and Synoptical Table. Please click yes to proceed.",
 	"CARGO_NOMINATION_CARGO_NAME_CHANGE_CONFIRM_LABEL": "Yes",
 	"CARGO_NOMINATION_CARGO_NAME_CHANGE_REJECT_LABEL": "No",
+	"CARGO_NOMINATION_PORT_SELECTION_ERROR_DETAIL" : "Same port is added as transit port. Please check",
+	"CARGO_NOMINATION_PORT_SELECTION_ERROR" : "Error",
 	"VOYAGE_LIST_GLOBAL_DATE_FILTER_INFO": "Date filter is based on the actual start date"
 }

@@ -227,7 +227,7 @@ export class CommingleComponent implements OnInit {
   async saveVolumeMaximisation() {
     if (this.commingleForm.valid) {
       this.ngxSpinnerService.show();
-      const translationKeys = await this.translateService.get(['NO_COMMINGLE_DATA_SAVED', 'COMMINGLE_VOL_MAX_SAVE_SUCCESS', 'COMMINGLE_COMPLETED_SUCCESSFULLY', 'COMMINGLE_SAVE_ERROR', 'COMMINGLE_SAVE_STATUS_ERROR']).toPromise();
+      const translationKeys = await this.translateService.get(['COMMINGLE_SAVE_ERROR', 'COMMINGLE_SAVE_STATUS_ERROR' , 'COMMINGLE_MANUAL_SAVE_WARNING','NO_COMMINGLE_DATA_SAVED','COMMINGLE_VOL_MAX_SAVE_SUCCESS', 'COMMINGLE_COMPLETED_SUCCESSFULLY']).toPromise();
       const data = {
         purposeId: this.commingleForm.value.purpose.id,
         slopOnly: this.commingleForm.value.slopOnly,
@@ -245,7 +245,7 @@ export class CommingleComponent implements OnInit {
           if (this.commingleForm.value.cargo1 && this.commingleForm.value.cargo2) {
             this.messageService.add({ severity: 'success', summary: translationKeys['COMMINGLE_VOL_MAX_SAVE_SUCCESS'], detail: translationKeys['COMMINGLE_COMPLETED_SUCCESSFULLY'] });
           } else {
-            this.messageService.add({ severity: 'success', summary: translationKeys['COMMINGLE_VOL_MAX_SAVE_SUCCESS'], detail: translationKeys['NO_COMMINGLE_DATA_SAVED'] });
+            this.messageService.add({ severity: 'warn', summary: translationKeys['COMMINGLE_MANUAL_SAVE_WARNING'], detail: translationKeys['NO_COMMINGLE_DATA_SAVED'] });
           }
 
           this.close();
@@ -419,7 +419,7 @@ export class CommingleComponent implements OnInit {
     this.commingleForm.markAllAsTouched();
     if (this.commingleForm.valid && this.commingleManualForm.valid) {
       this.ngxSpinnerService.show();
-      const translationKeys = await this.translateService.get(['COMMINGLE_MANUAL_SAVE_SUCCESS', 'COMMINGLE_COMPLETED_SUCCESSFULLY','NO_COMMINGLE_DATA_SAVED', 'COMMINGLE_SAVE_ERROR', 'COMMINGLE_SAVE_STATUS_ERROR']).toPromise();
+      const translationKeys = await this.translateService.get(['COMMINGLE_MANUAL_SAVE_WARNING','COMMINGLE_MANUAL_SAVE_SUCCESS', 'COMMINGLE_COMPLETED_SUCCESSFULLY','NO_COMMINGLE_DATA_SAVED', 'COMMINGLE_SAVE_ERROR', 'COMMINGLE_SAVE_STATUS_ERROR']).toPromise();
       const _commingleList = Array<ICargoGroup>();
       if (this.commingleManualForm.value.dataTable.length > 0) {
         for (let i = 0; i < this.manualCommingleList.length; i++) {
@@ -447,7 +447,7 @@ export class CommingleComponent implements OnInit {
           if (this.manualCommingleList?.length) {
             this.messageService.add({ severity: 'success', summary: translationKeys['COMMINGLE_MANUAL_SAVE_SUCCESS'], detail: translationKeys['COMMINGLE_COMPLETED_SUCCESSFULLY'] });
           } else {
-            this.messageService.add({ severity: 'success', summary: translationKeys['COMMINGLE_MANUAL_SAVE_SUCCESS'], detail: translationKeys['NO_COMMINGLE_DATA_SAVED'] });
+            this.messageService.add({ severity: 'warn', summary: translationKeys['COMMINGLE_MANUAL_SAVE_WARNING'], detail: translationKeys['NO_COMMINGLE_DATA_SAVED'] });
           }
 
           this.close();

@@ -644,9 +644,16 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
     }
     catch (errorResponse) {
+      const translationKeys = await this.translateService.get(['CARGO_NOMINATION_PORT_SELECTION_ERROR_DETAIL','CARGO_NOMINATION_PORT_SELECTION_ERROR','LOADABLE_STUDY_DISCHARGE_PORT_ERROR', 'LOADABLE_STUDY_DISCHARGE_PORT_STATUS_ERROR']).toPromise();
       if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
-        const translationKeys = await this.translateService.get(['LOADABLE_STUDY_DISCHARGE_PORT_ERROR', 'LOADABLE_STUDY_DISCHARGE_PORT_STATUS_ERROR']).toPromise();
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_DISCHARGE_PORT_ERROR'], detail: translationKeys['LOADABLE_STUDY_DISCHARGE_PORT_STATUS_ERROR'], life: 10000 });
+      } else {
+        if(errorResponse.error.errorCode === 'ERR-RICO-107') {
+          this.messageService.add({ severity: 'error', summary: translationKeys['CARGO_NOMINATION_PORT_SELECTION_ERROR'], detail: translationKeys['CARGO_NOMINATION_PORT_SELECTION_ERROR_DETAIL'] });
+          const dischargingPorts = [...this.dischargingPorts];
+          dischargingPorts.splice(dischargingPorts.length - 1, 1);
+          this.dischargingPorts = [...dischargingPorts];
+         }
       }
     }
     

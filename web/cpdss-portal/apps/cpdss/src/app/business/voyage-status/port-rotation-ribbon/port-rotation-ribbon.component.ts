@@ -8,12 +8,13 @@ import { MessageService } from 'primeng/api';
 import { IEditPortRotation } from '../models/edit-port-rotation.model';
 import { IPortsDetailsResponse, VOYAGE_STATUS } from '../../core/models/common.model';
 import { Voyage } from '../../core/models/common.model';
-import { Subscription } from 'rxjs';
+import { Subscription , fromEvent, Observable } from 'rxjs';
 import { OnDestroy } from '@angular/core';
 import { VoyageStatusTransformationService } from '../services/voyage-status-transformation.service';
 import { IVoyageDetails } from '../models/voyage-status.model';
 import { portEtaEtdValidator } from '../directive/validator/port-eta-etd-validator.directive';
 import { portTimeValidator } from '../directive/validator/port-time-validator.directive';
+
 /**
  * Component class of PortRotationRibbonComponent
  *
@@ -52,6 +53,10 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   portOrderSubscription$: Subscription;
   responsiveOptions: { breakpoint: string; numVisible: number; numScroll: number; }[];
   VOYAGE_STATUS = VOYAGE_STATUS;
+  resizeObservable$: Observable<Event>;
+  resizeSubscription$: Subscription;
+  numVisible: number;
+  portCarousel: IEditPortRotation[] = [];
 
   // private fields
   private _voyageDetails: Voyage;
@@ -72,6 +77,10 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * @memberof PortRotationRibbonComponent
    */
   async ngOnInit(): Promise<void> {
+    this.resizeObservable$ = fromEvent(window, 'resize')
+    this.resizeSubscription$ = this.resizeObservable$.subscribe(evt => {
+      this.setCarouselNumVisble(evt.target['innerWidth']);
+    })
     this.portOrderSubscription$ = this.voyageStatusTransformationService.portOrderChange.subscribe(data => {
       if (data) {
         this.getPortRotationRibbonData();
@@ -105,6 +114,29 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       }
     ];
   }
+
+  /**
+  * set carousel num visible
+  * @param {number} innerWidth
+  */
+  setCarouselNumVisble(innerWidth: number) {
+    this.portCarousel = [];
+    if (innerWidth > 1921) {
+      this.numVisible = 8;
+    } else if (innerWidth < 1600 && innerWidth > 1400) {
+      this.numVisible = 6;
+    } else if (innerWidth < 1400 && innerWidth > 1200) {
+      this.numVisible = 5;
+    } else if (innerWidth < 1200 && innerWidth > 1024) {
+      this.numVisible = 4;
+    } else {
+      this.numVisible = 4;
+    }
+    setTimeout(() => {
+      this.portCarousel = [...this.portList];
+    }, 50)
+  }
+
   /**
    * Method to select port
    * @param port 
@@ -139,7 +171,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * @param field 
    */
   editPort(event, port: IEditPortRotation, field: string) {
-    if(this.voyageDetails?.statusId !== VOYAGE_STATUS.CLOSE) {
+    if (this.voyageDetails?.statusId !== VOYAGE_STATUS.CLOSE) {
       const form = this.row(this.portList.indexOf(port));
       this.setInvalid(port, form)
       if (port.isFutureDate === true) {
@@ -338,6 +370,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.portOrderSubscription$.unsubscribe();
+    this.resizeSubscription$.unsubscribe();
   }
   /**
    * Get port rotation ribbon data
@@ -346,6 +379,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     this.ngxSpinnerService.show();
     const result = await this.editPortRotationApiService.getPorts().toPromise();
     const portsFormData: IPortsDetailsResponse = await this.editPortRotationApiService.getPortsDetails(this.vesselDetails.id, this.voyageId, this.loadableStudyId).toPromise();
+    this.portCarousel = [];
     this.voyageStatusTransformationService.voyageDistance = 0
     for (let i = 0; i < portsFormData?.portList?.length; i++) {
       this.voyageStatusTransformationService.voyageDistance = portsFormData?.portList[i].distanceBetweenPorts + this.voyageStatusTransformationService.voyageDistance;
@@ -384,6 +418,10 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     this.initPortRotationArray();
     this.currentPosition();
     this.errorMesages = this.voyageStatusTransformationService.setValidationErrorMessageForPortRotationRibbon();
+    this.setCarouselNumVisble(window.innerWidth);
+    setTimeout(() => {
+        this.portCarousel = [...this.portList];
+      }, 50)
     this.ngxSpinnerService.hide();
   }
 
