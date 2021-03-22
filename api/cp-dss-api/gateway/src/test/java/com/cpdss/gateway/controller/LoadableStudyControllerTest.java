@@ -17,48 +17,25 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
-import com.cpdss.gateway.domain.AlgoPatternResponse;
-import com.cpdss.gateway.domain.AlgoStatusRequest;
-import com.cpdss.gateway.domain.AlgoStatusResponse;
-import com.cpdss.gateway.domain.CargoNomination;
-import com.cpdss.gateway.domain.CargoNominationResponse;
-import com.cpdss.gateway.domain.CommingleCargoResponse;
-import com.cpdss.gateway.domain.CommonResponse;
-import com.cpdss.gateway.domain.ConfirmPlanStatusResponse;
-import com.cpdss.gateway.domain.DischargingPortRequest;
-import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
-import com.cpdss.gateway.domain.LoadablePatternResponse;
-import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
-import com.cpdss.gateway.domain.LoadablePlanRequest;
-import com.cpdss.gateway.domain.LoadableStudy;
-import com.cpdss.gateway.domain.LoadableStudyResponse;
-import com.cpdss.gateway.domain.LoadicatorResultsRequest;
-import com.cpdss.gateway.domain.LoadingPort;
-import com.cpdss.gateway.domain.OnHandQuantity;
-import com.cpdss.gateway.domain.OnHandQuantityResponse;
-import com.cpdss.gateway.domain.PortRotation;
-import com.cpdss.gateway.domain.PortRotationRequest;
-import com.cpdss.gateway.domain.PortRotationResponse;
-import com.cpdss.gateway.domain.SynopticalRecord;
-import com.cpdss.gateway.domain.SynopticalTableRequest;
-import com.cpdss.gateway.domain.SynopticalTableResponse;
-import com.cpdss.gateway.domain.VoyageResponse;
-import com.cpdss.gateway.domain.VoyageStatusRequest;
-import com.cpdss.gateway.domain.VoyageStatusResponse;
+import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.service.LoadableStudyCargoService;
 import com.cpdss.gateway.service.LoadableStudyService;
+import com.cpdss.gateway.service.SyncRedisMasterService;
+import com.cpdss.gateway.service.redis.RedisMasterSyncService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -90,6 +67,22 @@ class LoadableStudyControllerTest {
   @MockBean private CommingleCargoResponse commingleCargoResponse;
 
   @MockBean private VoyageStatusResponse voyageStatusResponse;
+
+  @MockBean private LoadableStudyCargoService loadableStudyCargoService;
+
+  @MockBean
+  @Qualifier("cargoRedisSyncService")
+  private RedisMasterSyncService redisCargoService;
+
+  @MockBean
+  @Qualifier("vesselRedisSyncService")
+  private RedisMasterSyncService redisVesselService;
+
+  @MockBean
+  @Qualifier("portRedisSyncService")
+  private RedisMasterSyncService redisPortService;
+
+  @MockBean SyncRedisMasterService syncRedisMasterService;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
   private static final String CORRELATION_ID_HEADER_VALUE = "1234";
@@ -1756,5 +1749,59 @@ class LoadableStudyControllerTest {
     request.setOperationType("ARR");
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(request);
+  }
+
+  // @Test
+  public void cargoHistorySuccess1() throws Exception {
+
+    Map<String, String> params = new HashMap<>();
+    params.put("loadedYear", "1997");
+    List<String> filterKeys =
+        Arrays.asList(
+            "vesselName",
+            "loadingPort",
+            "grade",
+            "loadedYear",
+            "loadedMonth",
+            "loadedDate",
+            "api",
+            "temperature",
+            "startDate",
+            "endDate");
+    Map<String, String> filterParams =
+        params.entrySet().stream()
+            .filter(e -> filterKeys.contains(e.getKey()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    when(loadableStudyCargoService.getAllCargoHistory(
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any()))
+        .thenReturn(getCargoHistoryResponse());
+    // this.loadableStudyCargoService.getAllCargoHistory(filterParams, 0, 10, "year", "desc", null,
+    // null);
+
+    mockMvc
+        .perform(
+            get("/api/ship/cargo-history")
+                .param("page", String.valueOf(0))
+                .param("pageSize", String.valueOf(10))
+                .param("sortBy", "loadingPortName")
+                .param("orderBy", "desc")
+                .param("page", String.valueOf(0)))
+        .andExpect(status().isOk());
+  }
+
+  private CargoHistoryResponse getCargoHistoryResponse() {
+    CargoHistoryResponse response = new CargoHistoryResponse();
+    CargoHistory history1 = new CargoHistory();
+    history1.setLoadedYear(1770);
+    history1.setVesselName("test");
+    history1.setLoadingPortName("test");
+    response.setCargoHistory(Arrays.asList(history1));
+    return response;
   }
 }

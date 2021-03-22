@@ -19,5 +19,5 @@ public class CargoHistoryResponse {
 
   private List<CargoHistory> cargoHistory;
 
-  private Long totalElements;
+  private Long totalElements = 0l;
 }
