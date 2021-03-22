@@ -6,5 +6,6 @@
     "clientId": "frontend",
     "baseUnit": "MT",
     "volumeBaseUnit": "KL",
-    "passwordMinLength": "8"
+    "passwordMinLength": "8",
+    "processingTimeout": 600000
 }

@@ -40,7 +40,8 @@ export class VoyagesComponent implements OnInit, OnDestroy {
   filterDates: Date[];
   isStartVoyage = false;
   startVoyageId: number;
-  permission: IPermission;
+  permissionStart: IPermission;
+  permissionStop: IPermission;
 
   public loading: boolean;
   public totalRecords: number;
@@ -63,13 +64,14 @@ export class VoyagesComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.ngxSpinnerService.show();
-    this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['voyagesStartStop'], false);
+    this.permissionStart = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['voyageStart'], false);
+    this.permissionStop = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['voyageStop'], false);
     this.first = 0;
     this.currentPage = 0;
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
     this.vesselDetails = res[0] ?? <IVessel>{};
     this.vesselId = this.vesselDetails?.id;
-    this.columns = this.voyageListTransformationService.getVoyageListDatatableColumns(this.permission);
+    this.columns = this.voyageListTransformationService.getVoyageListDatatableColumns(this.permissionStart, this.permissionStop);
     this.getVoyageLists$.pipe(
       switchMap(() => {
         return this.voyageListApiService.getVoyageList(this.vesselId, this.pageState, this.voyageListTransformationService.formatDateTime(this.filterDates && this.filterDates[0]), this.voyageListTransformationService.formatDateTime(this.filterDates && this.filterDates[1]))

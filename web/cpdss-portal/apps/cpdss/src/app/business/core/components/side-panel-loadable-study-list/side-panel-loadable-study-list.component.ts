@@ -38,7 +38,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
   set selectedLoadableStudy(selectedLoadableStudy: LoadableStudy) {
     this._selectedLoadableStudy = selectedLoadableStudy;
     const selectedLoadableStudyIndex = this.loadableStudies?.findIndex(loadableStudy => loadableStudy?.id === selectedLoadableStudy?.id);
-    this.scrollToSelectedRow(selectedLoadableStudyIndex)
+    this.scrollToSelectedRow(selectedLoadableStudyIndex);
   }
 
   @Input() voyage: Voyage;
@@ -74,6 +74,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
     this.duplicateLoadableStudy = <LoadableStudy>{};
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], false);
     this.addLSBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+    this.getGridColumns();
   }
 
   /**

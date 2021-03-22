@@ -20,7 +20,7 @@ export class VoyageListTransformationService {
  * @returns {IDataTableColumn[]}
  * @memberof VoyageListTransformationService
  */
-  getVoyageListDatatableColumns(permission: IPermission): IDataTableColumn[] {
+  getVoyageListDatatableColumns(permissionStart: IPermission, permissionStop: IPermission): IDataTableColumn[] {
     return [
       {
         field: 'slNo',
@@ -148,10 +148,10 @@ export class VoyageListTransformationService {
         field: 'buttons',
         header: '',
         fieldType: DATATABLE_FIELD_TYPE.BUTTON,
-        buttons: (permission && permission.view) ? [
-          {type: DATATABLE_BUTTON.START_VOYAGE , field: 'isStart' , icons: '' , class: '' , label: 'Start'},
-          {type: DATATABLE_BUTTON.STOP_VOYAGE , field: 'isStop' , icons: '' , class: '' , label: 'Stop'}
-        ] : []
+        buttons: [
+          ...(permissionStart && permissionStart.view ? [{type: DATATABLE_BUTTON.START_VOYAGE , field: 'isStart' , icons: '' , class: '' , label: 'Start'}] : []),
+          ...(permissionStop && permissionStop.view ? [{type: DATATABLE_BUTTON.STOP_VOYAGE , field: 'isStop' , icons: '' , class: '' , label: 'Stop'}] : []),
+        ]
       }
     ]
   }

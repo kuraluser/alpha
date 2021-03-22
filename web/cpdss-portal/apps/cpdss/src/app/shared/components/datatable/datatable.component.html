@@ -87,7 +87,7 @@
                             dateFormat="dd-mm-yy" id="{{col.field+'_filter'}}">
                         </p-calendar>
                         <p-dropdown #dropDown1 *ngSwitchCase="filterType.SELECT" [options]="listData[col.filterListName]"
-                            [showClear]="true" appendTo="body" [panelStyleClass]="col.componentFieldClass" optionLabel="name"
+                            [showClear]="true" appendTo="body" [panelStyleClass]="col.fieldComponentClass ? col.fieldComponentClass : 'index-1'" optionLabel="name"
                             [placeholder]="col.filterPlaceholder| translate" resetFilterOnHide="true"
                             (onChange)="datatable.filter($event.value?.id, col?.filterField ? col?.filterField : col.field, col.filterMatchMode)"
                             (onFocus)="setDropDownFocus(dropDown1)">
@@ -128,7 +128,7 @@
                                 <ng-container *ngIf="!lazy;else lazyRef">
                                     <span *ngSwitchCase="fieldType.SLNO">{{rowData[col.field] ? rowData[col.field] :
                                         rowIndex+ 1}}</span>
-                                    <span *ngSwitchCase="fieldType.ICON"><i
+                                    <span *ngSwitchCase="fieldType.ICON" [pTooltip]="col.showTooltip ? rowData[col.fieldValue] : null" tooltipPosition="right" ><i
                                             class="{{col.fieldValueIcon+'-'+rowData[col.field]}}"></i></span>
                                 </ng-container>
                                 <ng-template #lazyRef>
@@ -200,7 +200,7 @@
                                 <ng-container *ngSwitchCase="fieldType.SELECT">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <p-dropdown #dropDown2 [options]="listData[col.listName]" styleClass="form-control"
-                                            appendTo="body" [panelStyleClass]="col.componentFieldClass" [formControlName]="col.field" [filter]="col.listFilter"
+                                            appendTo="body" [panelStyleClass]="col.fieldComponentClass ? col.fieldComponentClass : 'index-1'" [formControlName]="col.field" [filter]="col.listFilter"
                                             optionLabel="{{col.fieldOptionLabel}}"
                                             [placeholder]="col.fieldPlaceholder| translate"
                                             (onChange)="onChange($event, rowData, rowIndex, col)" resetFilterOnHide="true"

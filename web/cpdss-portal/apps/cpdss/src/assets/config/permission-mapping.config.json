@@ -18,7 +18,8 @@
     "EditStowage": "LOADABLE_PLAN_STOWAGE",
     "LoadablePlanAddComments": "LOADABLE_PLAN_ADD_COMMENTS",
     "voyagesComponent" : "VOYAGE_HISTORY",
-    "voyagesStartStop" : "EDIT_VOYAGE",
+    "voyageStart" : "VOYAGE_HISTORY_START_VOYAGE",
+    "voyageStop" : "VOYAGE_HISTORY_STOP_VOYAGE",
     "GenerateButton" : "CARGOPLANNING_GENERATE_LOADABLE_PLAN",
     "CargoHistoryComponent": "CARGOPLANNING_CARGO_HISTORY"
 }

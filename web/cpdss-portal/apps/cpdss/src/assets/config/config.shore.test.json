@@ -5,5 +5,6 @@
     "redirectPath": "",
     "clientId": "frontend",
     "baseUnit": "MT",
-    "volumeBaseUnit": "KL"
+    "volumeBaseUnit": "KL",
+    "processingTimeout": 600000
 }

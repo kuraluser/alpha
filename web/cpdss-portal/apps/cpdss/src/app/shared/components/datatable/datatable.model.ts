@@ -47,7 +47,9 @@ export interface IDataTableColumn {
     showTotal?: boolean;
     filterByServer?: boolean,
     buttons?: IButtons[],
-    componentFieldClass?: string
+    fieldComponentClass?: string,
+    showTooltip?: boolean,
+    fieldValue?: string
 }
 
 /**

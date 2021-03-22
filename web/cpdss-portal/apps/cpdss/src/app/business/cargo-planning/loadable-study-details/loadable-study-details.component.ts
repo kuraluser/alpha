@@ -19,7 +19,7 @@ import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../s
 import { LoadableQuantityModel } from '../models/loadable-quantity.model';
 import { LoadableQuantityApiService } from '../services/loadable-quantity-api.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
-import { takeUntil , switchMap } from 'rxjs/operators';
+import { takeUntil, switchMap } from 'rxjs/operators';
 
 
 /**
@@ -42,15 +42,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   set selectedLoadableStudy(selectedLoadableStudy: LoadableStudy) {
     this._selectedLoadableStudy = selectedLoadableStudy;
     this.isPatternGenerated = (this._selectedLoadableStudy?.statusId === 3 || this._selectedLoadableStudy?.statusId === 2) ? true : false;
-    this.isPatternOpenOrNoplan = (this._selectedLoadableStudy?.statusId === 1 || this._selectedLoadableStudy?.statusId === 6) ? false : true;
-    if (this._selectedLoadableStudy?.statusId === 4) {
-      const modifiedDate = new Date(selectedLoadableStudy?.loadableStudyStatusLastModifiedTime);
-      const addFiveMinute = new Date(modifiedDate.getTime() + 600000);
-      const now = new Date();
-      if (addFiveMinute < now) {
-        this.isPatternOpenOrNoplan = false;
-      }
-    }
+    this.isPatternOpenOrNoplan = (this._selectedLoadableStudy?.statusId === 1 || this._selectedLoadableStudy?.statusId === 6) ? false : this.inProcessing();
     this.loadableStudyId = selectedLoadableStudy ? selectedLoadableStudy?.id : this.loadableStudies?.length ? this.loadableStudies[0]?.id : 0;
     this.getLoadableStudyDetails(this.vesselId, this.voyageId, selectedLoadableStudy?.id);
   }
@@ -252,9 +244,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.selectedDischargeCargo = this.dischargeCargos.find(cargo => cargo.id === this.selectedDischargeCargo.id)
     }
     this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
-    if(!this.dischargingPorts){
+    if (!this.dischargingPorts) {
       this.dischargingPorts = [];
-    } 
+    }
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
     // if no loadable study is selected set 1st loadable study as selected one and reload
     if (!loadableStudyId) {
@@ -300,15 +292,15 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.onCargoNominationChange();
       })
-      this.loadableStudyDetailsTransformationService.obqUpdate$?.pipe(
-        switchMap(() => {
-          return this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id);
-        })
-      ).subscribe((loadableQuantityResult) => {
-        if (loadableQuantityResult.responseStatus.status === "200") {
-          loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
-        }
-      });
+    this.loadableStudyDetailsTransformationService.obqUpdate$?.pipe(
+      switchMap(() => {
+        return this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id);
+      })
+    ).subscribe((loadableQuantityResult) => {
+      if (loadableQuantityResult.responseStatus.status === "200") {
+        loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
+      }
+    });
   }
 
   /**
@@ -656,7 +648,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
          }
       }
     }
-    
+
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
     this.ngxSpinnerService.hide();
   }
@@ -742,7 +734,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     try {
       const res = await this.loadableStudyDetailsApiService.generateLoadablePattern(vesselId, voyageId, loadableStudyId).toPromise();
       if (res.responseStatus.status === '200') {
-      this.selectedLoadableStudy.statusId = 4;
+        this.selectedLoadableStudy.statusId = 4;
         data.processId = res.processId;
         if (res.processId) {
           navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });
@@ -757,7 +749,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     catch (errorResponse) {
       if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
         const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_ERROR', 'LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR']).toPromise();
-          this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_ERROR'], detail: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR'], life: 10000 });
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_ERROR'], detail: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR'], life: 10000 });
       }
     }
     this.ngxSpinnerService.hide();
@@ -808,7 +800,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
 */
   async noResponseMessage(selectedVoyageNo: string, selectedLoadableStudyName: string) {
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR', 'GENERATE_LOADABLE_PATTERN_RESPONSE']).toPromise();
-    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_RESPONSE'], sticky: true, closable: true});
+    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_RESPONSE_ERROR'], detail: selectedVoyageNo + " " + selectedLoadableStudyName + " " + translationKeys['GENERATE_LOADABLE_PATTERN_RESPONSE'], sticky: true, closable: true });
   }
 
   /* Handler for unit change event
@@ -828,5 +820,24 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   */
   unitChangeBlocked() {
     this.loadableStudyDetailsApiService.unitChangeBlocked.next();
+  }
+
+  /**
+  * Method for set button visibility on processing
+  *
+  * @returns {boolean}
+  * @memberof LoadableStudyDetailsComponent
+  */
+  inProcessing() {
+    if (this.selectedLoadableStudy?.statusId === 4) {
+      const modifiedDate = new Date(this.selectedLoadableStudy?.loadableStudyStatusLastModifiedTime);
+      const addFiveMinute = new Date(modifiedDate.getTime() + AppConfigurationService.settings.processingTimeout);
+      const now = new Date();
+      if (addFiveMinute < now) {
+        return false;
+      } else {
+        return true;
+      }
+    }
   }
 }

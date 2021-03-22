@@ -578,10 +578,11 @@ export class LoadableStudyDetailsTransformationService {
         field: 'statusId',
         header: 'LOADABLE_STUDY_DETAILS_LODABLE_STUDY_COLUMN_STATUS',
         fieldType: DATATABLE_FIELD_TYPE.ICON,
-        fieldValueIcon: 'icon-status'
+        fieldValueIcon: 'icon-status',
+        showTooltip: true,
+        fieldValue: 'status'
       }
     ];
-
     if(permission && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if (permission?.delete) {
@@ -1074,7 +1075,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'cargo1',
         header: 'COMMINGLE_CARGO1',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
-        componentFieldClass: 'index-9',
+        fieldComponentClass: 'index-9',
         listName: 'cargoNominationsCargo1',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_CARGO_1_DROP_DOWN_PLACE_HOLDER',
@@ -1098,7 +1099,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'cargo1IdPct',
         header: 'COMMINGLE_CARGO_PERCENTAGE',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
-        componentFieldClass: 'index-9',
+        fieldComponentClass: 'index-9',
         listName: 'percentage',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_PERCENTAGE_PLACEHOLDER',
@@ -1113,7 +1114,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'cargo2',
         header: 'COMMINGLE_CARGO2',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
-        componentFieldClass: 'index-9',
+        fieldComponentClass: 'index-9',
         listName: 'cargoNominationsCargo2',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_CARGO_2_DROP_DOWN_PLACE_HOLDER',
@@ -1136,7 +1137,7 @@ export class LoadableStudyDetailsTransformationService {
         field: 'cargo2IdPct',
         header: 'COMMINGLE_CARGO_PERCENTAGE',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
-        componentFieldClass: 'index-9',
+        fieldComponentClass: 'index-9',
         listName: 'percentage',
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'COMMINGLE_PERCENTAGE_PLACEHOLDER',
