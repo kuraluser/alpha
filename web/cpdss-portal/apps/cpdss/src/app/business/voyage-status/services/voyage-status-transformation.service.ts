@@ -37,11 +37,11 @@ export class VoyageStatusTransformationService {
         for (let index = 0; index < ballastTankQuantities?.length; index++) {
           if (ballastTankQuantities[index]?.tankId === ballastTank[groupIndex][tankIndex]?.id) {
             ballastTank[groupIndex][tankIndex].commodity = ballastTankQuantities[index];
-            const plannedWeight = this.quantityPipe.transform(ballastTank[groupIndex][tankIndex].commodity.plannedWeight, prevUnit, currUnit, ballastTankQuantities[index]?.sg);
+            const plannedWeight = ballastTank[groupIndex][tankIndex].commodity.plannedWeight;
             ballastTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight.toFixed(2)) : 0;
-            const actualWeight = this.quantityPipe.transform(ballastTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, ballastTankQuantities[index]?.sg);
+            const actualWeight = ballastTank[groupIndex][tankIndex].commodity.actualWeight;
             ballastTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight.toFixed(2)) : 0;
-            ballastTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(ballastTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, AppConfigurationService.settings.volumeBaseUnit, ballastTank[groupIndex][tankIndex].commodity?.sg);
+            ballastTank[groupIndex][tankIndex].commodity.volume = ballastTank[groupIndex][tankIndex].density ? Number((ballastTank[groupIndex][tankIndex].commodity.actualWeight/ballastTank[groupIndex][tankIndex].density).toFixed(2)) : 0;
             ballastTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(ballastTank[groupIndex][tankIndex])
             break;
           }
@@ -217,11 +217,11 @@ export class VoyageStatusTransformationService {
       },
       {
         field: 'plannedWeight',
-        header: 'QUANTITY BEFORE LOADING'
+        header: 'QUANTITY BEFORE LOADING (MT)'
       },
       {
         field: 'actualWeight',
-        header: 'QUANTITY AFTER LOADING'
+        header: 'QUANTITY AFTER LOADING (MT)'
       },
       {
         field: 'percentageFilled',

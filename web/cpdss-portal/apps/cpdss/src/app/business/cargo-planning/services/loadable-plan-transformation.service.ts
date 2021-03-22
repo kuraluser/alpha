@@ -138,20 +138,20 @@ export class LoadablePlanTransformationService {
   */
   public getFormatedLoadableQuantityData(_decimalPipe: any, loadableQuantity: ILoadableQuantityCargo): ILoadableQuantityCargo {
     const _loadableQuantityDetails = loadableQuantity;
-    _loadableQuantityDetails.estimatedAPI = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.estimatedAPI, '1.2-4');
-    _loadableQuantityDetails.estimatedTemp = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.estimatedTemp, '1.2-4');
-    _loadableQuantityDetails.orderBbls60f = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.BBLS, 'orderedQuantity'), '1.0-4');
-    _loadableQuantityDetails.orderBblsdbs = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.OBSBBLS, 'orderedQuantity'), '1.0-4');
-    _loadableQuantityDetails.orderedQuantity = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.orderedQuantity, '1.0-4');
+    _loadableQuantityDetails.estimatedAPI = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.estimatedAPI, '1.2-2');
+    _loadableQuantityDetails.estimatedTemp = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.estimatedTemp, '1.2-2');
+    _loadableQuantityDetails.orderBbls60f = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.BBLS, 'orderedQuantity'), '1.0-2');
+    _loadableQuantityDetails.orderBblsdbs = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.OBSBBLS, 'orderedQuantity'), '1.0-2');
+    _loadableQuantityDetails.orderedQuantity = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.orderedQuantity, '1.0-2');
     _loadableQuantityDetails.minTolerence = _loadableQuantityDetails.minTolerence + '%';
     _loadableQuantityDetails.maxTolerence = _loadableQuantityDetails.maxTolerence + '%';
-    _loadableQuantityDetails.loadableBbls60f = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.BBLS, 'loadableMT'), '1.0-4');
-    _loadableQuantityDetails.loadableBblsdbs = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.OBSBBLS, 'loadableMT'), '1.0-4');
-    _loadableQuantityDetails.loadableKL = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.KL, 'loadableMT'), '1.2-4');
-    _loadableQuantityDetails.loadableLT = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.LT, 'loadableMT'), '1.2-4');
-    _loadableQuantityDetails.loadableMT = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.loadableMT, '1.2-4');
+    _loadableQuantityDetails.loadableBbls60f = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.BBLS, 'loadableMT'), '1.0-2');
+    _loadableQuantityDetails.loadableBblsdbs = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.OBSBBLS, 'loadableMT'), '1.0-2');
+    _loadableQuantityDetails.loadableKL = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.KL, 'loadableMT'), '1.2-2');
+    _loadableQuantityDetails.loadableLT = this.decimalConvertion(_decimalPipe, this.convertQuantityLoadable(_loadableQuantityDetails, QUANTITY_UNIT.LT, 'loadableMT'), '1.2-2');
+    _loadableQuantityDetails.loadableMT = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.loadableMT, '1.2-2');
     _loadableQuantityDetails.differencePercentageValue = Number(_loadableQuantityDetails.differencePercentage.replace('%', ''))
-    _loadableQuantityDetails.differencePercentage = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.differencePercentageValue, '1.2-4') + '%';
+    _loadableQuantityDetails.differencePercentage = this.decimalConvertion(_decimalPipe, _loadableQuantityDetails.differencePercentageValue, '1.2-2') + '%';
     return loadableQuantity;
   }
 
@@ -172,12 +172,12 @@ export class LoadablePlanTransformationService {
   */
   public getFormatedLoadableCommingleCargo(_decimalPipe: any, loadablePlanCommingleCargoDetails: ILoadableQuantityCommingleCargo): ICommingleCargoDispaly {
     const _loadablePlanCommingleCargoDetails = <ICommingleCargoDispaly>{};
-    _loadablePlanCommingleCargoDetails.api = this.decimalConvertion(_decimalPipe, loadablePlanCommingleCargoDetails.api, '1.2-4');
+    _loadablePlanCommingleCargoDetails.api = this.decimalConvertion(_decimalPipe, loadablePlanCommingleCargoDetails.api, '1.2-2');
     _loadablePlanCommingleCargoDetails.tankName = loadablePlanCommingleCargoDetails.tankName;
     _loadablePlanCommingleCargoDetails.grade = loadablePlanCommingleCargoDetails.grade;
-    _loadablePlanCommingleCargoDetails.quantityBLS = this.decimalConvertion(_decimalPipe, this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.BBLS, 'quantity'), '1.2-4');
-    _loadablePlanCommingleCargoDetails.quantity = this.decimalConvertion(_decimalPipe, loadablePlanCommingleCargoDetails.quantity, '1.2-4');
-    _loadablePlanCommingleCargoDetails.temp = this.decimalConvertion(_decimalPipe, loadablePlanCommingleCargoDetails.temp, '1.2-4');
+    _loadablePlanCommingleCargoDetails.quantityBLS = this.decimalConvertion(_decimalPipe, this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.BBLS, 'quantity'), '1.2-2');
+    _loadablePlanCommingleCargoDetails.quantity = this.decimalConvertion(_decimalPipe, loadablePlanCommingleCargoDetails.quantity, '1.2-2');
+    _loadablePlanCommingleCargoDetails.temp = this.decimalConvertion(_decimalPipe, loadablePlanCommingleCargoDetails.temp, '1.2-2');
     _loadablePlanCommingleCargoDetails.cargoPercentage = loadablePlanCommingleCargoDetails.cargo1Abbreviation + ' - ' + loadablePlanCommingleCargoDetails.cargo1Percentage + '%' + '<br>' + loadablePlanCommingleCargoDetails.cargo2Abbreviation + ' - ' + loadablePlanCommingleCargoDetails.cargo2Percentage + '%';
     _loadablePlanCommingleCargoDetails.cargoBblsdbs = loadablePlanCommingleCargoDetails.cargo1Bblsdbs + '<br>' + loadablePlanCommingleCargoDetails.cargo2Bblsdbs;
     _loadablePlanCommingleCargoDetails.cargoBbls60f = loadablePlanCommingleCargoDetails.cargo1Bbls60f + '<br>' + loadablePlanCommingleCargoDetails.cargo2Bbls60f;
@@ -185,9 +185,9 @@ export class LoadablePlanTransformationService {
     _loadablePlanCommingleCargoDetails.cargo2LT = this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.LT, 'cargo2MT');
     _loadablePlanCommingleCargoDetails.cargo1KL = this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.KL, 'cargo1MT');
     _loadablePlanCommingleCargoDetails.cargo2KL = this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.KL, 'cargo2MT');
-    _loadablePlanCommingleCargoDetails.cargoMT = this.decimalConvertion(_decimalPipe, loadablePlanCommingleCargoDetails.cargo1MT, '1.2-4') + '<br>' + this.decimalConvertion(_decimalPipe, loadablePlanCommingleCargoDetails.cargo2MT, '1.2-4');
-    _loadablePlanCommingleCargoDetails.cargoLT = this.decimalConvertion(_decimalPipe, _loadablePlanCommingleCargoDetails.cargo1LT, '1.2-4') + '<br>' + this.decimalConvertion(_decimalPipe, _loadablePlanCommingleCargoDetails.cargo2LT, '1.2-4');
-    _loadablePlanCommingleCargoDetails.cargoKL = this.decimalConvertion(_decimalPipe, _loadablePlanCommingleCargoDetails.cargo1KL, '1.2-4') + '<br>' + this.decimalConvertion(_decimalPipe, _loadablePlanCommingleCargoDetails.cargo2KL, '1.2-4');
+    _loadablePlanCommingleCargoDetails.cargoMT = this.decimalConvertion(_decimalPipe, loadablePlanCommingleCargoDetails.cargo1MT, '1.2-2') + '<br>' + this.decimalConvertion(_decimalPipe, loadablePlanCommingleCargoDetails.cargo2MT, '1.2-2');
+    _loadablePlanCommingleCargoDetails.cargoLT = this.decimalConvertion(_decimalPipe, _loadablePlanCommingleCargoDetails.cargo1LT, '1.2-2') + '<br>' + this.decimalConvertion(_decimalPipe, _loadablePlanCommingleCargoDetails.cargo2LT, '1.2-2');
+    _loadablePlanCommingleCargoDetails.cargoKL = this.decimalConvertion(_decimalPipe, _loadablePlanCommingleCargoDetails.cargo1KL, '1.2-2') + '<br>' + this.decimalConvertion(_decimalPipe, _loadablePlanCommingleCargoDetails.cargo2KL, '1.2-2');
     return _loadablePlanCommingleCargoDetails;
   }
 
@@ -234,11 +234,11 @@ export class LoadablePlanTransformationService {
     newBallast.cubicMeter = this.convertQuantityBallast(newBallast, QUANTITY_UNIT.KL).toString();
     if (newBallast.fullCapacityCubm) {
       newBallast.percentage = (Number(newBallast.cubicMeter) / Number(newBallast.fullCapacityCubm) * 100).toString();
-      newBallast.percentage = this.decimalConvertion(_decimalPipe, newBallast.percentage, "1.2-4");
+      newBallast.percentage = this.decimalConvertion(_decimalPipe, newBallast.percentage, "1.2-2");
     } else {
       newBallast.percentage = "0.00"
     }
-    newBallast.cubicMeter = this.decimalConvertion(_decimalPipe, newBallast.cubicMeter, "1.2-4");
+    newBallast.cubicMeter = this.decimalConvertion(_decimalPipe, newBallast.cubicMeter, "1.2-2");
     return newBallast
   }
 
@@ -446,20 +446,20 @@ export class LoadablePlanTransformationService {
     _synopticalRecord.portName = synopticalRecord.portName;
     _synopticalRecord.etaEtdPlanned = synopticalRecord.etaEtdPlanned;
 
-    _synopticalRecord.plannedFOTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.plannedFOTotal, '0.0-4');
-    _synopticalRecord.plannedDOTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.plannedDOTotal, '1.0-4');
-    _synopticalRecord.plannedFWTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.plannedFWTotal, '1.0-4');
-    _synopticalRecord.othersPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.othersPlanned, '1.0-4');
-    _synopticalRecord.totalDwtPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.totalDwtPlanned, '1.0-4');
-    _synopticalRecord.displacementPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.displacementPlanned, '1.0-4');
-    _synopticalRecord.specificGravity = this.decimalConvertion(_decimalPipe, synopticalRecord.specificGravity, '1.0-4');
-    _synopticalRecord.cargoPlannedTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.cargoPlannedTotal, '1.0-4');
-    _synopticalRecord.ballastPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.ballastPlanned, '1.0-4');
+    _synopticalRecord.plannedFOTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.plannedFOTotal, '0.0-2');
+    _synopticalRecord.plannedDOTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.plannedDOTotal, '1.0-2');
+    _synopticalRecord.plannedFWTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.plannedFWTotal, '1.0-2');
+    _synopticalRecord.othersPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.othersPlanned, '1.0-2');
+    _synopticalRecord.totalDwtPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.totalDwtPlanned, '1.0-2');
+    _synopticalRecord.displacementPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.displacementPlanned, '1.0-2');
+    _synopticalRecord.specificGravity = this.decimalConvertion(_decimalPipe, synopticalRecord.specificGravity, '1.0-2');
+    _synopticalRecord.cargoPlannedTotal = this.decimalConvertion(_decimalPipe, synopticalRecord.cargoPlannedTotal, '1.0-2');
+    _synopticalRecord.ballastPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord.ballastPlanned, '1.0-2');
 
-    _synopticalRecord.finalDraftFwd = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftFwd, '1.0-4') + 'm';
-    _synopticalRecord.finalDraftAft = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftAft, '1.0-4') + 'm';
-    _synopticalRecord.finalDraftMid = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftMid, '1.0-4') + 'm';
-    _synopticalRecord.calculatedTrimPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord?.calculatedTrimPlanned, '1.0-4') + 'm';
+    _synopticalRecord.finalDraftFwd = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftFwd, '1.0-2') + 'm';
+    _synopticalRecord.finalDraftAft = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftAft, '1.0-2') + 'm';
+    _synopticalRecord.finalDraftMid = this.decimalConvertion(_decimalPipe, synopticalRecord?.finalDraftMid, '1.0-2') + 'm';
+    _synopticalRecord.calculatedTrimPlanned = this.decimalConvertion(_decimalPipe, synopticalRecord?.calculatedTrimPlanned, '1.0-2') + 'm';
     return _synopticalRecord;
   }
 
