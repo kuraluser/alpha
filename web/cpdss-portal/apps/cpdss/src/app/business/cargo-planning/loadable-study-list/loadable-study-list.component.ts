@@ -83,11 +83,13 @@ export class LoadableStudyListComponent implements OnInit {
   async getLoadableStudyInfo(vesselId: number, voyageId: number) {
     this.ngxSpinnerService.show();
     if (voyageId !== 0) {
+      this.loadableStudyList = null;
       const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
-      this.loadableStudyList = result.loadableStudies.map(loadableStudy => {
+      const loadableStudyList = result.loadableStudies.map(loadableStudy => {
         loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.selectedVoyage?.statusId) ? true: false;
         return loadableStudy;
       });
+      loadableStudyList?.length ? this.loadableStudyList = [...loadableStudyList] : this.loadableStudyList = [];
     }
     this.ngxSpinnerService.hide();
   }
