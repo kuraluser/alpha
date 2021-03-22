@@ -1019,6 +1019,8 @@ export class LoadableStudyDetailsTransformationService {
     _ohqTankDetail.density = new ValueObject<number>(ohqTankDetail.density, true, isNewValue);
     _ohqTankDetail.arrivalQuantity = new ValueObject<number>(ohqTankDetail.arrivalQuantity, true, isNewValue);
     _ohqTankDetail.departureQuantity = new ValueObject<number>(ohqTankDetail.departureQuantity, true, isNewValue);
+    _ohqTankDetail.arrivalVolume = ohqTankDetail?.arrivalVolume;
+    _ohqTankDetail.departureVolume = ohqTankDetail?.departureVolume;
 
     return _ohqTankDetail;
   }
