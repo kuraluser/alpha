@@ -11,14 +11,17 @@ body{
 
 .pencil-icon {
     background: url($images-theme + 'pencil-icon.png') no-repeat;
-    &:hover{
-      background: url($images-theme + 'pencil-icon.png') no-repeat bottom center;
-    }
   } 
+
+  tr{
+    .pencil-icon {
+      background: url($images-theme + 'pencil-icon-sprite.png') no-repeat top center;
+    }
+  }
 
   tr:hover{
     .pencil-icon {
-      background: url($images-theme + 'pencil-icon.png') no-repeat bottom center;
+      background: url($images-theme + 'pencil-icon-sprite.png') no-repeat bottom center;
     }
   }
   .btn-link {

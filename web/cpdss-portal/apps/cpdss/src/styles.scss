@@ -671,7 +671,7 @@ h5{
 }
 
 .new-loadable-study-pop-up{
-  width: 735px;
+  width: 765px;
   .col-form-label{
     min-width: 165px;
     padding-right: 0;
@@ -2252,4 +2252,22 @@ tr:hover{
 .table-listing-wrapper-default{
   max-height: calc(100vh - 180px);
   height: auto;
+}
+
+.distance-port.last-port{
+  background: none;
+  &:after{
+    display: none;
+  }
+  .ship-location{
+    top: 3px!important;
+  }
+}
+
+.p-toast .p-toast-message .p-toast-icon-close:hover{
+  background: none!important;
+}
+.p-toast .p-toast-message .p-toast-icon-close:focus{
+  outline: none;
+  box-shadow: none!important;
 }
