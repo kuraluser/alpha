@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
@@ -42,6 +42,7 @@ export class CargoHistoryComponent implements OnInit, OnDestroy {
   first: number;
   cargoHistoryPageState: ICargoHistoryDataStateChange;
 
+  @ViewChild('cargoHistoryDateRange') dateRangeFilter: any;
   private getCargoHistoryDetails$ = new Subject<ICargoHistoryDataStateChange>();
 
   constructor(
@@ -123,6 +124,7 @@ export class CargoHistoryComponent implements OnInit, OnDestroy {
     if (this.filteredDates[0] && this.filteredDates[1]) {
       this.cargoHistoryPageState['startDate'] = this.dateFormat.transform(this.filteredDates[0], 'dd-MM-yyyy HH:mm');
       this.cargoHistoryPageState['endDate'] = this.dateFormat.transform(this.filteredDates[1], 'dd-MM-yyyy HH:mm');
+      this.dateRangeFilter.hideOverlay();
       this.loading = true;
       this.getCargoHistoryDetails$.next();
     }
