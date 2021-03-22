@@ -620,7 +620,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       const index = this.cargoNominations?.findIndex((item) => item.storeKey === event.data.storeKey);
       if (index !== -1) {
         this.cargoNominations[index].processing = false;
-        if (event?.data?.status === '200') {
+        if (event?.data?.responseStatus?.status === '200') {
           this.cargoNominations[index].id = event.data.cargoNominationId;
           this.cargoNominations = [...this.cargoNominations];
           this.savedCargoNomination = JSON.parse(JSON.stringify(this.cargoNominations));
