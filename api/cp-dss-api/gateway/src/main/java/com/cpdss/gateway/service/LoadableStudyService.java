@@ -952,7 +952,8 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to save loadable study - ports",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
     PortRotationResponse response = new PortRotationResponse();
     response.setResponseStatus(
@@ -2156,13 +2157,15 @@ public class LoadableStudyService {
     AlgoRequest request = AlgoRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     AlgoReply reply = this.generateLoadablePatterns(request);
+
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "failed to call algo",
           reply.getResponseStatus().getCode(),
           reply.getResponseStatus().getCode().equals(CommonErrorCodes.E_CPDSS_ALGO_ISSUE)
               ? HttpStatusCode.SERVICE_UNAVAILABLE
-              : HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+              : HttpStatusCode.valueOf(
+                  Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
     }
     algoPatternResponse.setProcessId(reply.getProcesssId());
     algoPatternResponse.setResponseStatus(
@@ -3189,6 +3192,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getOrderedQuantity()).ifPresent(builder::setOrderedMT);
     Optional.ofNullable(lqccd.getPriority()).ifPresent(builder::setPriority);
     Optional.ofNullable(lqccd.getLoadingOrder()).ifPresent(builder::setLoadingOrder);
+    Optional.ofNullable(lqccd.getTankId()).ifPresent(builder::setTankId);
+    Optional.ofNullable(lqccd.getFillingRatio()).ifPresent(builder::setFillingRatio);
     detailsBuilder.addLoadableQuantityCommingleCargoDetails(builder.build());
   }
 
@@ -4206,7 +4211,7 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "failed to save LoadOnTop",
           reply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
     }
     SaveCommentResponse response = new SaveCommentResponse();
     response.setResponseStatus(
@@ -4357,13 +4362,13 @@ public class LoadableStudyService {
     final Page<Voyage> pages = new PageImpl<>(output, pageRequest, total);
 
     // sort list
-
+    List<Voyage> sortedList = pages.toList();
     if (null != sortBy) {
-      voyageList = this.getSortedList(pages.toList(), orderBy, sortBy.toLowerCase());
+      sortedList = this.getSortedList(pages.toList(), orderBy, sortBy.toLowerCase());
     }
 
     response.setTotalElements(pages.getTotalElements());
-    response.setVoyages(voyageList);
+    response.setVoyages(sortedList);
 
     return response;
   }

@@ -1203,9 +1203,16 @@ class LoadableStudyServiceTest {
 
   @ParameterizedTest
   @ValueSource(longs = {0, 1})
-  void testSaveLoadableStudyPortRotation(Long id) {
-    when(this.loadableStudyRepository.findById(anyLong()))
-        .thenReturn(Optional.of(new LoadableStudy()));
+  void testSaveLoadableStudyPortRotation(Long id)
+      throws InstantiationException, IllegalAccessException {
+    Voyage voyage = new Voyage();
+    voyage.setId(1L);
+    VoyageStatus status = new VoyageStatus();
+    status.setId(2L);
+    voyage.setVoyageStatus(status);
+    LoadableStudy loadableStudy = this.createLoadableStudyEntity(voyage);
+
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(loadableStudy));
     LoadableStudyPortRotation entity = new LoadableStudyPortRotation();
     entity.setId(1L);
     when(this.loadableStudyPortRotationRepository.save(any(LoadableStudyPortRotation.class)))
@@ -1221,6 +1228,57 @@ class LoadableStudyServiceTest {
     assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadableStudyPortRotationClosedVoyage()
+      throws InstantiationException, IllegalAccessException {
+    Voyage voyage = new Voyage();
+    voyage.setId(1L);
+    VoyageStatus status = new VoyageStatus();
+    status.setId(2L);
+    voyage.setVoyageStatus(status);
+    LoadableStudy loadableStudy = this.createLoadableStudyEntity(voyage);
+
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(loadableStudy));
+    when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(voyage);
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudyPortRotation(
+        this.createPortRotationRequest().build(), responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadableStudyPortRotationPatternGenerated()
+      throws InstantiationException, IllegalAccessException {
+    Voyage voyage = new Voyage();
+    voyage.setId(1L);
+    VoyageStatus status = new VoyageStatus();
+    status.setId(1L);
+    voyage.setVoyageStatus(status);
+    LoadableStudyStatus lsStatus = new LoadableStudyStatus();
+    lsStatus.setId(3L);
+    LoadableStudy loadableStudy = this.createLoadableStudyEntity(voyage);
+    loadableStudy.setLoadableStudyStatus(lsStatus);
+
+    LoadablePattern pattern = new LoadablePattern();
+    pattern.setId(1L);
+    List<LoadablePattern> patterns = new ArrayList<LoadablePattern>();
+    patterns.add(pattern);
+
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(loadableStudy));
+    when(this.loadablePatternRepository.findLoadablePatterns(anyLong(), any(), anyBoolean()))
+        .thenReturn(patterns);
+    StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
+    this.loadableStudyService.saveLoadableStudyPortRotation(
+        this.createPortRotationRequest().build(), responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
   }
 
   @Test

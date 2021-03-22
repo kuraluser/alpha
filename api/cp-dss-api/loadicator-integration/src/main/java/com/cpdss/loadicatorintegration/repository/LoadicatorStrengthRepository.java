@@ -9,4 +9,6 @@ public interface LoadicatorStrengthRepository
     extends CommonCrudRepository<LoadicatorStrength, Long> {
 
   List<LoadicatorStrength> findByStowagePlanIdIn(List<Long> stowagePlanIds);
+
+  public LoadicatorStrength findByStowagePlanId(Long id);
 }

@@ -98,4 +98,10 @@ public class LoadablePlanCommingleDetails extends EntityDoc {
 
   @Column(name = "loading_order")
   private Integer loadingOrder;
+
+  @Column(name = "tank_id")
+  private Long tankId;
+
+  @Column(name = "filling_ratio")
+  private String fillingRatio;
 }
