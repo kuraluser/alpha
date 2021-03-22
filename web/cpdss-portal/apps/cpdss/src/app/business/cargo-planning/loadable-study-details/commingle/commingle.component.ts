@@ -614,7 +614,7 @@ export class CommingleComponent implements OnInit {
     const api2 = Number(row.cargo2.value.api)
     const per1 = Number(row.cargo1pct.value)
     const per2 = Number(row.cargo2pct.value)
-    const netApi = api1 * per1 + api2 * per2;
+    const netApi = (api1 * per1 + api2 * per2)/100;
     row.cargo1.value.loadingPorts.forEach(port => {
       port.quantity = this.loadableStudyDetailsApiService.updateQuantityByUnit(port.quantity, unitFrom, unitTo, netApi)
     });

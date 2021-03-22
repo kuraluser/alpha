@@ -65,6 +65,7 @@ export interface IUserDetalisValueObject {
     isEditable?: boolean;
     isActionsEnabled: boolean;
     isResetPassword: boolean;   
+    isDeletable: boolean;
 }
 
 /**
