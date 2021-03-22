@@ -86,10 +86,11 @@
                             [placeholder]="col.filterPlaceholder| translate" [readonlyInput]="false"
                             dateFormat="dd-mm-yy" id="{{col.field+'_filter'}}">
                         </p-calendar>
-                        <p-dropdown *ngSwitchCase="filterType.SELECT" [options]="listData[col.filterListName]"
+                        <p-dropdown #dropDown1 *ngSwitchCase="filterType.SELECT" [options]="listData[col.filterListName]"
                             [showClear]="true" appendTo="body" [panelStyleClass]="col.componentFieldClass" optionLabel="name"
                             [placeholder]="col.filterPlaceholder| translate" resetFilterOnHide="true"
-                            (onChange)="datatable.filter($event.value?.id, col?.filterField ? col?.filterField : col.field, col.filterMatchMode)">
+                            (onChange)="datatable.filter($event.value?.id, col?.filterField ? col?.filterField : col.field, col.filterMatchMode)"
+                            (onFocus)="setDropDownFocus(dropDown1)">
                         </p-dropdown>
                     </ng-container>
                 </ng-template>
@@ -198,11 +199,12 @@
 
                                 <ng-container *ngSwitchCase="fieldType.SELECT">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
-                                        <p-dropdown [options]="listData[col.listName]" styleClass="form-control"
+                                        <p-dropdown #dropDown2 [options]="listData[col.listName]" styleClass="form-control"
                                             appendTo="body" [panelStyleClass]="col.componentFieldClass" [formControlName]="col.field" [filter]="col.listFilter"
                                             optionLabel="{{col.fieldOptionLabel}}"
                                             [placeholder]="col.fieldPlaceholder| translate"
                                             (onChange)="onChange($event, rowData, rowIndex, col)" resetFilterOnHide="true"
+                                            (onFocus)="setDropDownFocus(dropDown2)"
                                             id="{{col.field+'_'+rowIndex}}" [virtualScroll]="col.virtualScroll"
                                             itemSize="30">
                                             <ng-template *ngIf="col?.showTemplate" let-item pTemplate="item">
