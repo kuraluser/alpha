@@ -362,6 +362,7 @@
 	"LOADABLE_QUANTITY_ERROR": "Please enter a valid number",
 	"UNIT_CHANGE_API_ERROR": "Cannot change unit without valid api and temperature",
 	"TOTAL_QUANTITY_ERROR": "Error",
+	"TOTAL_QUANTITY_INFO": "Info",
 	"TOTAL_QUANTITY_ERROR_DETAILS": "Total quantity should not be greater than loadable quantity",
 	"PORT_ROW_ADD_ERROR": "Warning",
 	"PORT_ROW_ADD_ERROR_DETAILS": "Please complete the data of previous port before saving this",

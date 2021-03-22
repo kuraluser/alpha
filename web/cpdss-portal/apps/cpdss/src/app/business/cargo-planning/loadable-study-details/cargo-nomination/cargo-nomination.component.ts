@@ -61,7 +61,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
 
   @Input() vesselId: number;
 
-  @Output() cargoNominationUpdate = new EventEmitter<boolean>();
+  @Output() cargoNominationUpdate = new EventEmitter<any>();
 
   // properties
   get cargoNominations(): ICargoNominationValueObject[] {
@@ -431,7 +431,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
 
     if (this.row(event.index).valid) {
       this.ngxSpinnerService.show();
-      this.updateCommingleButton(true);
+      this.updateCommingleButton(true, false);
       this.updateRowByUnit(this.cargoNominations[valueIndex], this.loadableStudyDetailsApiService.currentUnit, this.loadableStudyDetailsApiService.baseUnit);
       const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId);
       this.updateRowByUnit(this.cargoNominations[valueIndex], this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit);
@@ -624,7 +624,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
           this.cargoNominations[index].id = event.data.cargoNominationId;
           this.cargoNominations = [...this.cargoNominations];
           this.savedCargoNomination = JSON.parse(JSON.stringify(this.cargoNominations));
-          this.updateCommingleButton(false);
+          this.updateCommingleButton(false, false);
         }
       }
       if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
@@ -725,16 +725,16 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    *
    * @memberof CargoNominationComponent
    */
-  private async updateCommingleButton(disableCommingleButton) {
+  private async updateCommingleButton(disableCommingleButton, showQuantityError = true) {
     const addedCargoNominations = this.cargoNominations.filter((cargoNomination) => !cargoNomination.isAdd);
-    if (addedCargoNominations.length >= 2) {
-      if (this.dataTableLoading) {
-        this.cargoNominationUpdate.emit(true);
-      } else {
-        this.cargoNominationUpdate.emit(disableCommingleButton)
+    if (addedCargoNominations.length >= 2) { 
+      if(this.dataTableLoading){
+        this.cargoNominationUpdate.emit({ value: true, error: showQuantityError});
+      }else{
+        this.cargoNominationUpdate.emit({ value: disableCommingleButton, error: showQuantityError })
       }
     } else {
-      this.cargoNominationUpdate.emit(true)
+      this.cargoNominationUpdate.emit({ value: true, error: showQuantityError})
     }
   }
 

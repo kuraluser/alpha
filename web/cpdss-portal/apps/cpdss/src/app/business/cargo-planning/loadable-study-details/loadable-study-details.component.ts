@@ -233,7 +233,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   async getLoadableStudyDetails(vesselId: number, voyageId: number, loadableStudyId: number) {
-    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
+    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_INFO', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
     this.ngxSpinnerService.show();
     if (this.selectedLoadableStudy?.dischargingCargoId) {
       this.selectedDischargeCargo = { id: this.selectedLoadableStudy?.dischargingCargoId }
@@ -256,7 +256,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       if (loadableQuantityResult.responseStatus.status === "200") {
         loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity;
         if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
-          this.messageService.add({ severity: 'error', summary: translationKeys['TOTAL_QUANTITY_ERROR'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
+          this.messageService.clear();
+          this.messageService.add({ severity: 'info', summary: translationKeys['TOTAL_QUANTITY_INFO'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
         }
         this.loadableQuantityModel = loadableQuantityResult;
       }
@@ -516,9 +517,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    */
   async loadableQuantity(newloadableQuantity: string) {
     this.loadableQuantityNew = newloadableQuantity;
-    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
+    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_INFO', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
     if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
-      this.messageService.add({ severity: 'error', summary: translationKeys['TOTAL_QUANTITY_ERROR'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
+      this.messageService.add({ severity: 'info', summary: translationKeys['TOTAL_QUANTITY_INFO'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
     }
   }
 
@@ -540,12 +541,14 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
  * Cargo nomination update event haandler get value from commingle button
  */
   async cargoNominationUpdate(event) {
-    this.showCommingleButton = event;
+    this.showCommingleButton = event.value;
     // Show alert if total quantity exceeds loadable quantity
-    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_ERROR', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
-    if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
-      this.messageService.clear();
-      this.messageService.add({ severity: 'error', summary: translationKeys['TOTAL_QUANTITY_ERROR'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
+    if(event.error){
+      const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_INFO', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
+      if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
+        this.messageService.clear();
+        this.messageService.add({ severity: 'info', summary: translationKeys['TOTAL_QUANTITY_INFO'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
+      }
     }
 
   }
