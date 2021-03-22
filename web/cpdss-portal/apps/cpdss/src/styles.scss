@@ -2248,3 +2248,8 @@ tr:hover{
     width: 185px;
   }
 }
+
+.table-listing-wrapper-default{
+  max-height: calc(100vh - 180px);
+  height: auto;
+}
