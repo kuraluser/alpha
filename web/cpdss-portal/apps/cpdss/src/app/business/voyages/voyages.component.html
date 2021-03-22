@@ -1,17 +1,19 @@
 <div class="container-fluid">
-    <div class="row">
+    <div class="row mb-15">
         <div class="pl-15">
             <h5 class="main-head inline-block">{{ 'VOYAGE_LIST' | translate }}</h5>
             <label class="ml-20 mr-10 col-form-label">
                 {{ 'SEARCH' | translate }}</label>
         </div>
-        <div class="col calender-control">
-            <p-calendar styleClass="form-control" [(ngModel)]="filterDates" selectionMode="range" [readonlyInput]="true" inputId="range" dateFormat="dd-mm-yy" (onSelect)="onDateRangeSelect($event)" placeholder="{{ 'VOYAGE_LIST_DATE_RANGE_PLACEHOLDER'| translate }}" id="voyage_date_range_filter" #dateRangeFilter></p-calendar>
+        <div class="col calender-control-multi-date">
+            <p-calendar  [(ngModel)]="filterDates" selectionMode="range" [readonlyInput]="true" inputId="range" dateFormat="dd-mm-yy" (onSelect)="onDateRangeSelect($event)" placeholder="{{ 'VOYAGE_LIST_DATE_RANGE_PLACEHOLDER'| translate }}" id="voyage_date_range_filter" #dateRangeFilter></p-calendar>
         
         </div>
         <div class="col-4 pl-0">
 <span class="mt-10 pointer pi pi-info-circle" pTooltip="{{'VOYAGE_LIST_GLOBAL_DATE_FILTER_INFO' | translate}}" tooltipPosition="top"></span>
+
         </div>
+        <div class="ml-auto pr-15"><button class="btn btn-main ml-auto">Create New Voyage</button></div>
     </div>
     <div class="row">
         <div class="col-12  voyage-listing-wrapper">

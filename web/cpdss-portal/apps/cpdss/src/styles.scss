@@ -897,11 +897,11 @@ input[type=number] {
   margin-right: 5px;
 }
 
-.action-buttons{
-  button, a{
-    visibility: hidden;
-  }
-}
+// .action-buttons{
+//   button, a{
+//     visibility: hidden;
+//   }
+// }
 .p-datatable .p-datatable-tbody > tr{
   &:hover, &:focus{
     .action-buttons{
@@ -2241,4 +2241,10 @@ tr:hover{
 
 .p-orderlist-droppoint{
   height: 15px!important;
+}
+
+.calender-control-multi-date{
+  .p-calendar .p-inputtext{
+    width: 185px;
+  }
 }

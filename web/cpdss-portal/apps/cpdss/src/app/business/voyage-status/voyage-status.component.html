@@ -11,7 +11,7 @@
                     [(ngModel)]="selectedVoyage" resetFilterOnHide="true"></p-dropdown>
             </div>
             <div class="col">
-                <a class="btn btn-link icon-btn plus-icon-rounded" (click)="showDialog()"
+                <a class="btn btn-link icon-btn plus-icon-rounded ml-15" (click)="showDialog()"
                     id="show-popup">{{'NEW_VOYAGE_BUTTON_VOYAGE_STATUS' | translate}}</a>
                 <a class="btn btn-link icon-btn pencil-icon" *ngIf="selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE"
                     (click)="showEditPortRotation()" id="show-edit-port-rotation-popup">{{'EDIT_PORT_ROTATION' |
@@ -55,7 +55,7 @@
                     [selectedPortDetails]="selectedPortDetails" [shipLandingTanks]="voyageStatusResponse">
                 </cpdss-portal-ship-landing-tanks>
             </div>
-            <div class="col sidebar-right-landing tank-parameters-righ">
+            <div class="col sidebar-right-landing tank-parameters-right">
                 <cpdss-portal-cargo-details *ngIf="cargoConditions && cargoQuantities"
                     [cargoConditions]="cargoConditions" [cargoQuantities]="cargoQuantities"
                     [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"></cpdss-portal-cargo-details>

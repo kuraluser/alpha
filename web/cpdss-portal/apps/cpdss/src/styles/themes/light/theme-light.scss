@@ -11,8 +11,16 @@ body{
 
 .pencil-icon {
     background: url($images-theme + 'pencil-icon.png') no-repeat;
+    &:hover{
+      background: url($images-theme + 'pencil-icon.png') no-repeat bottom center;
+    }
   } 
 
+  tr:hover{
+    .pencil-icon {
+      background: url($images-theme + 'pencil-icon.png') no-repeat bottom center;
+    }
+  }
   .btn-link {
     color: $link-color !important;
     &:hover {
@@ -424,7 +432,7 @@ hr{
 }
 
 .grid-dropdown-icon .p-splitbutton-menubutton{
-  background: url($images-theme + 'hamburger-menu-icon.png') no-repeat center center;
+  background: url($images-theme + 'hamburger-menu-icon-focus.png') no-repeat center center;
   &:focus{
     background: url($images-theme + 'hamburger-menu-icon-focus.png') no-repeat center center;
   }
@@ -433,6 +441,11 @@ hr{
   }
 }
 
+tr:hover{
+  .grid-dropdown-icon .p-splitbutton-menubutton{
+    background: url($images-theme + 'hamburger-menu-icon.png') no-repeat center center;
+  }
+}
 .grid-dropdown-menu{
   &.p-menu.p-menu-overlay{
   background: $dropdown-bg!important;
@@ -974,6 +987,9 @@ tr:hover a{
     }
     h5{
       color: $hover-color;
+    }
+    .card-border{
+      border-top: 2px dashed  $hover-color;
     }
   }
 }
