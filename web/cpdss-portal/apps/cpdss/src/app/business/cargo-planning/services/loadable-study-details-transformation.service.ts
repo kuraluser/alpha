@@ -654,10 +654,10 @@ export class LoadableStudyDetailsTransformationService {
     let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
-        header: 'SL',
+        header: 'PORT_ORDER',
         fieldType: DATATABLE_FIELD_TYPE.SLNO,
         sortable: false,
-        fieldHeaderClass: 'column-sl',
+        fieldHeaderClass: 'column-portOrder',
         fieldClass: 'sl'
       },
       {

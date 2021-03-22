@@ -45,6 +45,7 @@
 	"QUANTITY": "Quantity",
 	"PORT": "Port",
 	"SL": "SL",
+	"PORT_ORDER": "Port Order",
 	"PRIORITY": "Priority",
 	"SEARCH_PRIORITY": "Search priority",
 	"SELECT_PRIORITY": "Select priority",
