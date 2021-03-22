@@ -117,7 +117,6 @@ export class CargoHistoryComponent implements OnInit, OnDestroy {
 
   /**
    * function to get cargo history by date-range
-   * @param {*} event
    * @memberof CargoHistoryComponent
    */
   onDateRangeSelect(): void {
@@ -128,6 +127,17 @@ export class CargoHistoryComponent implements OnInit, OnDestroy {
       this.loading = true;
       this.getCargoHistoryDetails$.next();
     }
+  }
+
+  /**
+   * function to reset the date-range filtering values.
+   * @memberof CargoHistoryComponent
+   */
+  resetDateFilter(): void {
+    this.cargoHistoryPageState['startDate'] = null;
+    this.cargoHistoryPageState['endDate'] = null;
+    this.loading = true;
+    this.getCargoHistoryDetails$.next();
   }
 
   /**

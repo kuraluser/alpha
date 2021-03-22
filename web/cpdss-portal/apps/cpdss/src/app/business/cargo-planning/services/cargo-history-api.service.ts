@@ -16,8 +16,6 @@ import { ICargoHistoryDataStateChange, ICargoHistoryResponse } from '../models/c
 export class CargoHistoryApiService {
   public page: number = 0;
   public pageSize: number = 10;
-  private filterStartDate: string;
-  private filterEndDate: string;
 
   constructor(private commonApiService: CommonApiService) { }
 
@@ -28,11 +26,7 @@ export class CargoHistoryApiService {
    * @memberof CargoHistoryApiService
    */
   getCargoHistoryData(params: ICargoHistoryDataStateChange): Observable<ICargoHistoryResponse> {
-    if (params.startDate && params.endDate) {
-      this.filterStartDate = params.startDate;
-      this.filterEndDate = params.endDate;
-    }
-    const requestParams = `page=${params.page ? params.page : this.page}&pageSize=${params.pageSize ? params.pageSize : this.pageSize}&orderBy=${params.orderBy ? params.orderBy : ''}&sortBy=${params.sortBy ? params.sortBy : ''}${params.vesselName ? '&vesselName=' + params.vesselName : ''}${params.grade ? '&grade=' + params.grade : ''}${params.loadingPortName ? '&loadingPortName=' + params.loadingPortName : ''}${params.loadedYear ? '&loadedYear=' + params.loadedYear : ''}${params.loadedMonth ? '&loadedMonth=' + params.loadedMonth : ''}${params.loadedDay ? '&loadedDay=' + params.loadedDay : ''}${params.api ? '&api=' + params.api : ''}${params.temperature ? '&temperature=' + params.temperature : ''}${this.filterStartDate ? '&startDate=' + this.filterStartDate : ''}${this.filterEndDate ? '&endDate=' + this.filterEndDate : ''}`;
+    const requestParams = `page=${params.page ? params.page : this.page}&pageSize=${params.pageSize ? params.pageSize : this.pageSize}&orderBy=${params.orderBy ? params.orderBy : ''}&sortBy=${params.sortBy ? params.sortBy : ''}${params.vesselName ? '&vesselName=' + params.vesselName : ''}${params.grade ? '&grade=' + params.grade : ''}${params.loadingPortName ? '&loadingPortName=' + params.loadingPortName : ''}${params.loadedYear ? '&loadedYear=' + params.loadedYear : ''}${params.loadedMonth ? '&loadedMonth=' + params.loadedMonth : ''}${params.loadedDay ? '&loadedDay=' + params.loadedDay : ''}${params.api ? '&api=' + params.api : ''}${params.temperature ? '&temperature=' + params.temperature : ''}${params.startDate ? '&startDate=' + params.startDate : ''}${params.endDate ? '&endDate=' + params.endDate : ''}`;
     return this.commonApiService.get<ICargoHistoryResponse>(`cargo-history?${requestParams}`);
   }
 }
