@@ -85,10 +85,10 @@ public class LoadableStudyCargoService {
           "vesselId",
           getFilterData(redisVesselService, "IN", filterParams.get("vesselName"), null));
     }
-    if (filterParams.get("loadingPort") != null) { // Port Sort
+    if (filterParams.get("loadingPortName") != null) { // Port Sort
       builder.putFilterParams(
           "loadingPortId",
-          getFilterData(redisPortService, "IN", filterParams.get("loadingPort"), null));
+          getFilterData(redisPortService, "IN", filterParams.get("loadingPortName"), null));
     }
     if (filterParams.get("grade") != null) { // Cargo Sort
       builder.putFilterParams(
@@ -110,7 +110,7 @@ public class LoadableStudyCargoService {
     }
     if (filterParams.get("loadedDay") != null) {
       builder.putFilterParams(
-          "day", getFilterData(null, "LIKE", filterParams.get("loadedDay"), null));
+          "date", getFilterData(null, "LIKE", filterParams.get("loadedDay"), null));
     }
     if (filterParams.get("api") != null) {
       builder.putFilterParams("api", getFilterData(null, "LIKE", filterParams.get("api"), null));
@@ -139,7 +139,7 @@ public class LoadableStudyCargoService {
               ? "year"
               : sortBy.equals("loadedMonth")
                   ? "month"
-                  : sortBy.equals("loadedDay") ? "day" : "year";
+                  : sortBy.equals("loadedDay") ? "date" : "year";
     }
     builder.setSortBy(SORT_BY); // Required at LS
     builder.setOrderBy(orderBy); // Required at LS
@@ -237,14 +237,20 @@ public class LoadableStudyCargoService {
     }
     // as we have to sort non-table columns, fetch all from tbl and sort/page here
     // ApiTempHistory - table keeps ids of vessel. cargo, port
-    int offset = pageNo + (pageNo * pageSize);
+    int offset = (pageNo * pageSize);
     int limit = offset + pageSize;
     log.info("page offset {}, limit {}", offset, limit);
     List<CargoHistory> pagedList = null;
     if (limit < sortingList.size()) {
       pagedList = sortingList.subList(offset, limit);
     } else {
-      pagedList = sortingList;
+      try {
+        if (offset <= sortingList.size()) {
+          pagedList = sortingList.subList(offset, (sortingList.size()));
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
     cargoHistoryResponse.setCargoHistory(pagedList);
     return cargoHistoryResponse;

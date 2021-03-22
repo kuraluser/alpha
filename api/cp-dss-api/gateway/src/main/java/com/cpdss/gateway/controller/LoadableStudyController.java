@@ -1780,11 +1780,11 @@ public class LoadableStudyController {
       List<String> filterKeys =
           Arrays.asList(
               "vesselName",
-              "loadingPort",
+              "loadingPortName",
               "grade",
               "loadedYear",
               "loadedMonth",
-              "loadedDate",
+              "loadedDay",
               "api",
               "temperature",
               "startDate",
