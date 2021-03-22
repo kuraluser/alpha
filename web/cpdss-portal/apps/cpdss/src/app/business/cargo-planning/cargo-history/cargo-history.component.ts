@@ -89,7 +89,7 @@ export class CargoHistoryComponent implements OnInit, OnDestroy {
         this.cargoHistoryPageState['page'] = this.currentPage;
         this.getCargoHistoryDetails$.next();
       }
-      this.cargoHistoryGridData = cargoHistory;
+      this.cargoHistoryGridData = cargoHistory?.length ? cargoHistory : [];
     }
   }
 
