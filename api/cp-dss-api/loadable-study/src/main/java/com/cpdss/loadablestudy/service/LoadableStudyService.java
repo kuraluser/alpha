@@ -4988,11 +4988,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       if (ohqEntityOpt.isPresent()) {
         ohqEntity = ohqEntityOpt.get();
 
-        this.validateSaveSynopticalOhqData(ohqEntity, entity, ohqRecord, loadableStudy);
-
       } else {
-
-        this.isPatternGeneratedOrConfirmed(loadableStudy);
 
         ohqEntity = new OnHandQuantity();
         ohqEntity.setTankXId(ohqRecord.getTankId());
@@ -5001,6 +4997,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         ohqEntity.setLoadableStudy(loadableStudy);
         ohqEntity.setIsActive(true);
       }
+      this.validateSaveSynopticalOhqData(ohqEntity, entity, ohqRecord, loadableStudy);
 
       if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())) {
         ohqEntity.setArrivalQuantity(
@@ -5135,11 +5132,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         obqEntity = obqEntityOpt.get();
 
-        this.validateSaveSynopticalObqData(obqEntity, cargoRecord, loadableStudy);
-
       } else {
-
-        this.isPatternGeneratedOrConfirmed(loadableStudy);
 
         obqEntity = new OnBoardQuantity();
         obqEntity.setTankId(cargoRecord.getTankId());
@@ -5147,6 +5140,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         obqEntity.setLoadableStudy(loadableStudy);
         obqEntity.setIsActive(true);
       }
+      this.validateSaveSynopticalObqData(obqEntity, cargoRecord, loadableStudy);
+
       obqEntity.setPlannedArrivalWeight(
           isEmpty(cargoRecord.getPlannedWeight())
               ? null
@@ -8156,11 +8151,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
     if ((!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty())
         && ((SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())
-                && ohqEntity.getArrivalQuantity().toString().equals(ohqRecord.getPlannedWeight()))
+                && ohqEntity.getArrivalQuantity() != null
+                && !Integer.toString(ohqEntity.getArrivalQuantity().intValue())
+                    .equals(ohqRecord.getPlannedWeight()))
             || (SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE.equals(entity.getOperationType())
-                && ohqEntity
-                    .getDepartureQuantity()
-                    .toString()
+                && ohqEntity.getDepartureQuantity() != null
+                && !Integer.toString(ohqEntity.getDepartureQuantity().intValue())
                     .equals(ohqRecord.getPlannedWeight())))) {
 
       throw new GenericServiceException(
@@ -8183,7 +8179,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CONFIRMED_STATUS_ID, loadableStudy, true);
 
     if ((!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty())
-        && !cargoRecord.getPlannedWeight().equals(obqEntity.getPlannedArrivalWeight().toString())) {
+        && null != obqEntity.getPlannedArrivalWeight()
+        && !cargoRecord
+            .getPlannedWeight()
+            .equals(Integer.toString(obqEntity.getPlannedArrivalWeight().intValue()))) {
       throw new GenericServiceException(
           "Cannot update planned values for plan generated loadable study",
           CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,
@@ -8245,15 +8244,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             CONFIRMED_STATUS_ID, loadablestudy, true);
     if ((!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty())
         && ((null != entity.getOthersPlanned()
-                && !entity.getOthersPlanned().toString().equals(record.getOthersPlanned()))
+                && !Integer.toString(entity.getOthersPlanned().intValue())
+                    .equals(record.getOthersPlanned()))
             || (null != entity.getConstantPlanned()
-                && !entity.getConstantPlanned().toString().equals(record.getConstantPlanned()))
+                && !Integer.toString(entity.getConstantPlanned().intValue())
+                    .equals(record.getConstantPlanned()))
             || (null != entity.getDeadWeightPlanned()
-                && !entity.getDeadWeightPlanned().toString().equals(record.getTotalDwtPlanned()))
+                && !Integer.toString(entity.getDeadWeightPlanned().intValue())
+                    .equals(record.getTotalDwtPlanned()))
             || (null != entity.getDisplacementPlanned()
-                && !entity
-                    .getDisplacementPlanned()
-                    .toString()
+                && !Integer.toString(entity.getDisplacementPlanned().intValue())
                     .equals(record.getDisplacementPlanned())))) {
       throw new GenericServiceException(
           "Cannot update planned values for plan generated loadable study",
