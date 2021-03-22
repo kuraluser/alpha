@@ -226,7 +226,7 @@ message LDtrim {
    string messageText = 20;
    int64 portId = 21;
    int64 stowagePlanId = 22;
-   
+   int64 synopticalId = 23;
 }
 
 message LDStrength{
@@ -254,7 +254,7 @@ message LDStrength{
    string messageText = 22;
    int64 portId = 23;
    int64 stowagePlanId = 24;
-   
+   int64 synopticalId = 25;
 }
 
 message LDIntactStability {
@@ -282,6 +282,7 @@ message LDIntactStability {
    string messageText = 22;
    int64 portId = 23;
    int64 stowagePlanId = 24;
+   int64 synopticalId = 25;
 }
 message LoadablePatternAlgoRequest {
 	string processsId = 1;
@@ -404,6 +405,7 @@ message LoadableQuantityCommingleCargoDetails {
 	 int32 priority = 22;
 	 int32 loadingOrder = 23;
 	 int64 tankId = 24;
+	 string fillingRatio = 25;
 }
 
 message LoadableQuantityCargoDetails {

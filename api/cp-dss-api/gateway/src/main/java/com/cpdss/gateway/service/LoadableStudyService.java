@@ -3189,6 +3189,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getOrderedQuantity()).ifPresent(builder::setOrderedMT);
     Optional.ofNullable(lqccd.getPriority()).ifPresent(builder::setPriority);
     Optional.ofNullable(lqccd.getLoadingOrder()).ifPresent(builder::setLoadingOrder);
+    Optional.ofNullable(lqccd.getTankId()).ifPresent(builder::setTankId);
+    Optional.ofNullable(lqccd.getFillingRatio()).ifPresent(builder::setFillingRatio);
     detailsBuilder.addLoadableQuantityCommingleCargoDetails(builder.build());
   }
 

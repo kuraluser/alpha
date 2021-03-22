@@ -34,8 +34,10 @@ import com.cpdss.loadicatorintegration.repository.StowagePlanRepository;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -294,49 +296,89 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   }
 
   public LoadicatorDataRequest.Builder sendLoadicatorData(List<StowagePlan> stowagePlanEntityList) {
+
     LoadicatorDataRequest.Builder request = LoadicatorDataRequest.newBuilder();
     List<Long> stowagePlanIds =
         stowagePlanEntityList.stream().map(StowagePlan::getId).collect(Collectors.toList());
     List<StowagePlan> stowagePlanList = this.stowagePlanRepository.findByIdIn(stowagePlanIds);
 
+    Map<Long, List<LoadicatorTrim>> ldTrimMap = new HashMap<Long, List<LoadicatorTrim>>();
     for (StowagePlan stowage : stowagePlanList) {
-      if (null != stowagePlanList) {
-        List<LoadicatorTrim> loadicatorTrimList =
-            this.loadicatorTrimRepository.findByStowagePlanIdIn(stowagePlanIds);
+      if (ldTrimMap.containsKey(stowage.getStowageId())) {
+        ldTrimMap
+            .get(stowage.getStowageId())
+            .add(this.loadicatorTrimRepository.findByStowagePlanId(stowage.getId()));
+      } else {
+        ArrayList<LoadicatorTrim> arr = new ArrayList<LoadicatorTrim>();
+        arr.add(this.loadicatorTrimRepository.findByStowagePlanId(stowage.getId()));
+        ldTrimMap.put(stowage.getStowageId(), arr);
+      }
+    }
+
+    Map<Long, List<LoadicatorStrength>> loadicatorStrengthMap =
+        new HashMap<Long, List<LoadicatorStrength>>();
+    for (StowagePlan stowage : stowagePlanList) {
+      if (loadicatorStrengthMap.containsKey(stowage.getStowageId())) {
+        loadicatorStrengthMap
+            .get(stowage.getStowageId())
+            .add(this.loadicatorStrengthRepository.findByStowagePlanId(stowage.getId()));
+      } else {
+        ArrayList<LoadicatorStrength> arr = new ArrayList<LoadicatorStrength>();
+        arr.add(this.loadicatorStrengthRepository.findByStowagePlanId(stowage.getId()));
+        loadicatorStrengthMap.put(stowage.getStowageId(), arr);
+      }
+    }
+
+    Map<Long, List<IntactStability>> intactStabilityMap =
+        new HashMap<Long, List<IntactStability>>();
+    for (StowagePlan stowage : stowagePlanList) {
+      if (intactStabilityMap.containsKey(stowage.getStowageId())) {
+        intactStabilityMap
+            .get(stowage.getStowageId())
+            .add(this.loadicatorIntactStabilityRepository.findByStowagePlanId(stowage.getId()));
+      } else {
+        ArrayList<IntactStability> arr = new ArrayList<IntactStability>();
+        arr.add(this.loadicatorIntactStabilityRepository.findByStowagePlanId(stowage.getId()));
+        intactStabilityMap.put(stowage.getStowageId(), arr);
+      }
+    }
+
+    if (null != stowagePlanList) {
+      for (StowagePlan stowagePlan : stowagePlanList) {
         LoadicatorPatternDetails.Builder loadicatorPatternDetails =
             LoadicatorPatternDetails.newBuilder();
 
-        if (loadicatorTrimList != null) {
-          loadicatorTrimList.forEach(
+        if (ldTrimMap.containsKey(stowagePlan.getId())) {
+          List<LoadicatorTrim> trimValues = ldTrimMap.get(stowagePlan.getId());
+          trimValues.forEach(
               trim -> {
                 LDtrim.Builder ldTrim = this.buildLoadicatorTrimDetails(trim);
                 loadicatorPatternDetails.addLDtrim(ldTrim);
               });
         }
-        List<LoadicatorStrength> loadicatorStrengthList =
-            this.loadicatorStrengthRepository.findByStowagePlanIdIn(stowagePlanIds);
-        if (loadicatorStrengthList != null) {
-          loadicatorStrengthList.forEach(
+
+        if (loadicatorStrengthMap.containsKey(stowagePlan.getId())) {
+          List<LoadicatorStrength> values1 = loadicatorStrengthMap.get(stowagePlan.getId());
+          values1.forEach(
               strength -> {
                 LDStrength.Builder ldStrength = this.buildStrengthDetails(strength);
                 loadicatorPatternDetails.addLDStrength(ldStrength);
               });
         }
-        if (loadicatorStrengthList != null) {
-          List<IntactStability> intactStabilityList =
-              this.loadicatorIntactStabilityRepository.findByStowagePlanIdIn(stowagePlanIds);
-          intactStabilityList.forEach(
+        if (intactStabilityMap.containsKey(stowagePlan.getId())) {
+          List<IntactStability> stabilityValues = intactStabilityMap.get(stowagePlan.getId());
+          stabilityValues.forEach(
               stability -> {
-                LDIntactStability.Builder ldStability = this.buildStabilityDetails(stability);
-                loadicatorPatternDetails.addLDIntactStability(ldStability);
+                LDIntactStability.Builder ldstability = this.buildStabilityDetails(stability);
+                loadicatorPatternDetails.addLDIntactStability(ldstability);
               });
         }
-        loadicatorPatternDetails.setLoadablePatternId(stowage.getStowageId());
+        loadicatorPatternDetails.setLoadablePatternId(stowagePlan.getStowageId());
         request.addLoadicatorPatternDetails(loadicatorPatternDetails);
       }
-      request.setProcessId(stowagePlanList.get(0).getProcessId());
-      request.setLoadableStudyId(stowagePlanList.get(0).getBookingListId());
     }
+    request.setProcessId(stowagePlanList.get(0).getProcessId());
+    request.setLoadableStudyId(stowagePlanList.get(0).getBookingListId());
     return request;
   }
 
@@ -347,6 +389,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
         this.stowagePlanRepository.findPortForStability(stability.getStowagePlanId());
     ldStability.setPortId(stowageDetail.getPortId());
     ldStability.setId(stability.getId());
+    ldStability.setSynopticalId(stowageDetail.getSynopticalId());
     Optional.ofNullable(stability.getStowagePlanId()).ifPresent(ldStability::setStowagePlanId);
     Optional.ofNullable(stability.getBigintialGomvalue())
         .ifPresent(item -> ldStability.setBigintialGomValue(String.valueOf(item)));
@@ -401,6 +444,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
     StowagePlanDetail stowageDetail =
         this.stowagePlanRepository.findPortForStrength(strength.getStowagePlanId());
     ldStrength.setPortId(stowageDetail.getPortId());
+    ldStrength.setSynopticalId(stowageDetail.getSynopticalId());
     ldStrength.setId(strength.getId());
     Optional.ofNullable(strength.getStowagePlanId()).ifPresent(ldStrength::setStowagePlanId);
     Optional.ofNullable(strength.getShearingForcePresentValue())
@@ -458,7 +502,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
     StowagePlanDetail stowageDetail =
         this.stowagePlanRepository.findPortForTrim(trim.getStowagePlanId());
     ldTrim.setPortId(stowageDetail.getPortId());
-
+    ldTrim.setSynopticalId(stowageDetail.getSynopticalId());
     ldTrim.setId(trim.getId());
     Optional.ofNullable(trim.getStowagePlanId()).ifPresent(ldTrim::setStowagePlanId);
     Optional.ofNullable(trim.getAftDraft())

@@ -8,4 +8,6 @@ import java.util.List;
 public interface LoadicatorTrimRepository extends CommonCrudRepository<LoadicatorTrim, Long> {
 
   List<LoadicatorTrim> findByStowagePlanIdIn(List<Long> stowagePlanIds);
+
+  public LoadicatorTrim findByStowagePlanId(Long stowageId);
 }

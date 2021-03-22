@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StowagePlanDetail {
-
-  Long id;
-
-  Long portId;
+  private Long id;
+  private Long portId;
+  private Long synopticalId;
 }

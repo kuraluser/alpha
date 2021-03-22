@@ -16,4 +16,6 @@ public class LoadablePatternCargoDetails {
   private Integer loadingOrder;
   private String api;
   private String tankName;
+  private Long tankId;
+  private String fillingRatio;
 }

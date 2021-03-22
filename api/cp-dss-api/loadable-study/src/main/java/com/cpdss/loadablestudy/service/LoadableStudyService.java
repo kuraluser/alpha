@@ -74,6 +74,7 @@ import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
 import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
 import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply;
 import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest;
+import com.cpdss.common.generated.LoadableStudy.StabilityParameter;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
@@ -124,6 +125,13 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnBoardQuantity;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
+import com.cpdss.loadablestudy.entity.PurposeOfCommingle;
+import com.cpdss.loadablestudy.entity.StabilityParameters;
+import com.cpdss.loadablestudy.entity.SynopticalTable;
+import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
+import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.entity.VoyageHistory;
+import com.cpdss.loadablestudy.entity.VoyageStatus;
 import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
@@ -149,6 +157,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
+import com.cpdss.loadablestudy.repository.StabilityParameterRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
@@ -245,6 +254,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
   @Autowired private VoyageStatusRepository voyageStatusRepository;
+  @Autowired private StabilityParameterRepository stabilityParameterRepository;
 
   @Autowired
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
@@ -2822,6 +2832,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             .getLoadablePlanBallastDetailsList(),
                         loadablePattern);
                   }
+                  saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
                   saveLoadablePlanStowageDetails(loadablePattern, lpd);
                   saveLoadablePlanBallastDetails(loadablePattern, lpd);
                 });
@@ -2860,6 +2871,28 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * @param loadablePattern
+   * @param lpd void
+   * @param lastLoadingPort
+   */
+  private void saveStabilityParameters(
+      LoadablePattern loadablePattern, LoadablePlanDetails lpd, Long lastLoadingPort) {
+    log.info("saving stability parameter to DB");
+    StabilityParameters stabilityParameter = new StabilityParameters();
+    stabilityParameter.setAftDraft(lpd.getStabilityParameters().getAfterDraft());
+    stabilityParameter.setBendingMoment(lpd.getStabilityParameters().getBendinMoment());
+    stabilityParameter.setFwdDraft(lpd.getStabilityParameters().getForwardDraft());
+    stabilityParameter.setHeal(lpd.getStabilityParameters().getHeel());
+    stabilityParameter.setLoadablePattern(loadablePattern);
+    stabilityParameter.setMeanDraft(lpd.getStabilityParameters().getMeanDraft());
+    stabilityParameter.setPortXid(lastLoadingPort);
+    stabilityParameter.setShearingForce(lpd.getStabilityParameters().getShearForce());
+    stabilityParameter.setTrimValue(lpd.getStabilityParameters().getTrim());
+    stabilityParameter.setIsActive(true);
+    stabilityParameterRepository.save(stabilityParameter);
   }
 
   /**
@@ -3089,6 +3122,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableQuantityCommingleCargoDetailsList.get(i).getPriority());
       loadablePlanCommingleDetails.setLoadingOrder(
           loadableQuantityCommingleCargoDetailsList.get(i).getLoadingOrder());
+      loadablePlanCommingleDetails.setTankId(
+          loadableQuantityCommingleCargoDetailsList.get(i).getTankId());
+      loadablePlanCommingleDetails.setFillingRatio(
+          loadableQuantityCommingleCargoDetailsList.get(i).getFillingRatio());
       loadablePlanCommingleDetailsRepository.save(loadablePlanCommingleDetails);
     }
   }
@@ -3337,6 +3374,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               Optional.ofNullable(loadablePattern.getCaseNumber())
                   .ifPresent(loadablePatternBuilder::setCaseNumber);
 
+              loadablePatternBuilder.setStabilityParameters(
+                  buildStabilityParamter(loadablePattern));
+
               List<LoadablePlanConstraints> loadablePlanConstraints =
                   loadablePlanConstraintsRespository.findByLoadablePatternAndIsActive(
                       loadablePattern, true);
@@ -3379,6 +3419,27 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * @param loadablePattern
+   * @return StabilityParameter
+   */
+  private StabilityParameter buildStabilityParamter(LoadablePattern loadablePattern) {
+    StabilityParameter.Builder builder = StabilityParameter.newBuilder();
+    stabilityParameterRepository
+        .findByLoadablePatternAndIsActive(loadablePattern, true)
+        .forEach(
+            sp -> {
+              builder.setAfterDraft(sp.getAftDraft());
+              builder.setBendinMoment(sp.getBendingMoment());
+              builder.setForwardDraft(sp.getFwdDraft());
+              builder.setHeel(sp.getHeal());
+              builder.setMeanDraft(sp.getMeanDraft());
+              builder.setShearForce(sp.getShearingForce());
+              builder.setTrim(sp.getTrimValue());
+            });
+    return builder.build();
   }
 
   /**
