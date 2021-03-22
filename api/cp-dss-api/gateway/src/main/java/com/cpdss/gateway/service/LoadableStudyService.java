@@ -4320,26 +4320,35 @@ public class LoadableStudyService {
       LocalDateTime actualStartDate = null;
       LocalDateTime actualEndDate = null;
 
-      if (!detail.getActualStartDate().isEmpty() && !detail.getActualEndDate().isEmpty()) {
+      if (!detail.getActualStartDate().isEmpty()) {
         actualStartDate =
             LocalDateTime.from(
                 DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getActualStartDate()));
+
+        voyage.setActualStartDate(actualStartDate.toLocalDate());
+      }
+
+      if (!detail.getActualEndDate().isEmpty()) {
+
         actualEndDate =
             LocalDateTime.from(
                 DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getActualEndDate()));
 
-        voyage.setActualEndDate(actualStartDate.toLocalDate());
-        voyage.setActualStartDate(actualEndDate.toLocalDate());
+        voyage.setActualEndDate(actualEndDate.toLocalDate());
       }
 
-      if (!detail.getStartDate().isEmpty() && !detail.getEndDate().isEmpty()) {
+      if (!detail.getStartDate().isEmpty()) {
         plannedStartDate =
             LocalDateTime.from(
                 DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getStartDate()));
+
+        voyage.setPlannedStartDate(plannedStartDate.toLocalDate());
+      }
+
+      if (!detail.getEndDate().isEmpty()) {
         plannedEndDate =
             LocalDateTime.from(
                 DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getEndDate()));
-        voyage.setPlannedStartDate(plannedStartDate.toLocalDate());
         voyage.setPlannedEndDate(plannedEndDate.toLocalDate());
       }
 

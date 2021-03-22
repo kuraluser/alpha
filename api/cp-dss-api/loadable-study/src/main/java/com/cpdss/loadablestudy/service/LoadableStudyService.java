@@ -7863,8 +7863,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     .filter(
                         data ->
                             data.getLoadableStudyPortRotation()
-                                .getId()
-                                .equals(minPortOrderEntity.getId()))
+                                    .getId()
+                                    .equals(minPortOrderEntity.getId())
+                                && SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(data.getOperationType()))
                     .findAny();
             if (synoptical.isPresent()) {
               voyageEntity.setActualStartDate(synoptical.get().getEtaActual());
@@ -7899,9 +7900,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     .filter(
                         data ->
                             data.getLoadableStudyPortRotation()
-                                .getId()
-                                .equals(maxPortOrderEntity.getId()))
+                                    .getId()
+                                    .equals(maxPortOrderEntity.getId())
+                                && SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE.equals(
+                                    data.getOperationType()))
                     .findAny();
+
             if (synoptical.isPresent()) {
               voyageEntity.setActualEndDate(synoptical.get().getEtdActual());
             }
