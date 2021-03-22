@@ -231,7 +231,7 @@ export class LoadablePlanTransformationService {
    */
   getFormattedBallastDetails(_decimalPipe, ballast: IBallastStowageDetails): IBallastStowageDetails {
     const newBallast = <IBallastStowageDetails>JSON.parse(JSON.stringify(ballast))
-    newBallast.cubicMeter = this.convertQuantityBallast(newBallast, QUANTITY_UNIT.KL).toString();
+    newBallast.cubicMeter = (Number(newBallast.metricTon)/Number(newBallast.sg)).toFixed(2);
     if (newBallast.fullCapacityCubm) {
       newBallast.percentage = (Number(newBallast.cubicMeter) / Number(newBallast.fullCapacityCubm) * 100).toString();
       newBallast.percentage = this.decimalConvertion(_decimalPipe, newBallast.percentage, "1.2-2");
