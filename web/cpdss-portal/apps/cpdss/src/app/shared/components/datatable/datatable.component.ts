@@ -7,6 +7,7 @@ import { ObjectUtils } from 'primeng/utils';
 import { DATATABLE_ACTION, DATATABLE_EDITMODE, DATATABLE_BUTTON, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableEvent, IDataTableFilterEvent, IDataTableSortEvent, IDataTablePageChangeEvent } from './datatable.model';
 import { Paginator } from 'primeng/paginator';
 import { DecimalPipe } from '@angular/common';
+import { Dropdown } from 'primeng/dropdown';
 
 /**
  * Compoent for Datatable
@@ -412,6 +413,17 @@ export class DatatableComponent implements OnInit {
    */
   onDropdownClick(event: MouseEvent, rowData: any, rowIndex: number, col: IDataTableColumn) {
     this.selectedRowEvent = { originalEvent: event, data: rowData, index: rowIndex, field: col.field };
+  }
+
+  /**
+   * for setting focus on filter of drop down.
+   * 
+   * @param {DropDown} dropDown
+   */
+  setDropDownFocus(dropDown: Dropdown): void {
+    if (dropDown?.filterViewChild?.nativeElement !== undefined) {
+      dropDown.filterViewChild.nativeElement.focus();
+    }
   }
 
   /**
@@ -891,7 +903,6 @@ export class DatatableComponent implements OnInit {
   private updateCurrentPage(currentPage: number): void {
     setTimeout(() => { this.paginatorRef.changePage(currentPage), this.currentPageChange.emit(currentPage) });
   }
-
 
 }
 
