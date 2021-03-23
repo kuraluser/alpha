@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpResponse, HttpHandler, HttpEvent, HttpErrorResponse
 } from '@angular/common/http';
 
@@ -6,7 +6,9 @@ import { Observable } from 'rxjs';
 import { catchError, map, retry } from 'rxjs/operators';
 import { SecurityService } from '../security/security.service';
 import { GlobalErrorHandler } from '../error-handlers/global-error-handler';
-import { environment } from 'apps/cpdss/src/environments/environment';
+import { environment } from '../../../../environments/environment';
+import { KeycloakService } from 'keycloak-angular';
+import { AppConfigurationService } from '../app-configuration/app-configuration.service';
 
 /**
  *  interceptor for API calls
@@ -16,7 +18,7 @@ import { environment } from 'apps/cpdss/src/environments/environment';
 @Injectable()
 export class HttpAuthInterceptor implements HttpInterceptor {
 
-    constructor(private globalErrorHandler: GlobalErrorHandler) { }
+    constructor(private globalErrorHandler: GlobalErrorHandler, @Optional() private keycloakService: KeycloakService) { }
 
     /**
      *  initiates interceptor with http module
@@ -31,6 +33,16 @@ export class HttpAuthInterceptor implements HttpInterceptor {
             request = request.clone({ headers: request.headers.set('X-TenantID', localStorage.getItem('realm')) });
         }
 
+        // Only work if keycloak instance is set. In case of ship refresh token will not be attempted as keycloak service is null
+        const keycloakInstance = this.keycloakService?.getKeycloakInstance();
+        // Attempt to refersh the token ifthe token is going to be expired in 180seconds or lesser.
+        keycloakInstance?.updateToken(AppConfigurationService.settings?.tokenMinValidity ?? 180).then((refreshed) => {
+            if (refreshed) {
+                SecurityService.setAuthToken(keycloakInstance.token);
+                SecurityService.setPropertiesDB(keycloakInstance.token, 'token');
+            }
+        });
+        
         return next.handle(request).pipe(
             retry(1),
             map((event: HttpEvent<any>) => {

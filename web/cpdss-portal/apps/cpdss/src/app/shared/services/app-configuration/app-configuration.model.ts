@@ -11,5 +11,6 @@ export interface IAppConfiguration {
     permissionMapping?: IDictionary<string>;
     passwordMinLength?: number;
     processingTimeout?: number;
+    tokenMinValidity?: number;
 }
 

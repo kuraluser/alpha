@@ -1,4 +1,4 @@
-import { KeycloakService } from 'keycloak-angular';
+import { KeycloakEvent, KeycloakEventType, KeycloakService } from 'keycloak-angular';
 import { KeycloakConfig } from 'keycloak-js';
 import { HttpClient } from '@angular/common/http';
 import { IAppConfiguration } from '../services/app-configuration/app-configuration.model';
@@ -15,7 +15,7 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
     return async (): Promise<any> => {
         const appSettings: IAppConfiguration = await appConfig.load();
         const logoutUrl = window.location.protocol + '//' + window.location.hostname + appSettings.redirectPath;
-        
+
         return new Promise(async (resolve, reject) => {
             try {
                 localStorage.setItem('alertForVoyageEnd', 'false');
@@ -75,20 +75,26 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                     } */
 
                     //If token expired
-                    keycloakInstance.onTokenExpired = () => { 
-                        if (keycloakInstance.refreshToken) {
-                            const res = keycloakInstance.updateToken(5);
-                            if (res) {
-                                SecurityService.setAuthToken(keycloakInstance.token);
-                                SecurityService.setPropertiesDB(keycloakInstance.token, 'token');
-                                return keycloakInstance.token;
+                    keycloak.keycloakEvents$.subscribe(async (response: KeycloakEvent) => {
+                        if (response.type === KeycloakEventType.OnTokenExpired) {
+                            if (keycloakInstance.refreshToken) {
+                                const refreshed = await keycloakInstance.updateToken(300);
+                                if (refreshed) {
+                                    SecurityService.setAuthToken(keycloakInstance.token);
+                                    SecurityService.setPropertiesDB(keycloakInstance.token, 'token');
+                                    return keycloakInstance.token;
+                                } else {
+                                    window.location.href = logoutUrl;
+                                }
                             } else {
                                 window.location.href = logoutUrl;
                             }
-                        } else {
-                            window.location.href = logoutUrl;
+                        } else if (response.type === KeycloakEventType.OnAuthRefreshError) {
+                            if (keycloak.isTokenExpired) {
+                                window.location.href = logoutUrl;
+                            }
                         }
-                    };
+                    });
                 }
 
                 resolve();
