@@ -140,6 +140,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+    navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
   }
 
   /**
@@ -311,39 +312,47 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   private async listenEvents() {
-    navigator.serviceWorker.addEventListener('message', async event => {
-      if (event.data.type === 'loadable-pattern-processing' && this.router.url.includes('loadable-study-details')) {
-        if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
-          this.processingMessage();
-        } else {
-          this.messageService.clear("process");
-        }
+    navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
+  }
+
+  /**
+   * Handler for service worker message event
+   *
+   * @private
+   * @memberof LoadableStudyDetailsComponent
+   */
+  private swMessageHandler = async event => {
+    if (event.data.type === 'loadable-pattern-processing' && this.router.url.includes('loadable-study-details')) {
+      if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
+        this.processingMessage();
+      } else {
+        this.messageService.clear("process");
       }
-      else if (event.data.type === 'loadable-pattern-completed') {
-        if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
-          this.isPatternGenerated = true;
-          this.selectedLoadableStudy.statusId = 3;
-        }
-        this.generatedMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
+    }
+    else if (event.data.type === 'loadable-pattern-completed') {
+      if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
+        this.isPatternGenerated = true;
+        this.selectedLoadableStudy.statusId = 3;
       }
-      else if (event.data.type === 'loadable-pattern-no-solution') {
-        if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
-          this.isPatternOpenOrNoplan = false;
-          this.isPatternGenerated = false;
-          this.isGenerateClicked = false;
-        }
-        this.noPlanMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName)
+      this.generatedMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
+    }
+    else if (event.data.type === 'loadable-pattern-no-solution') {
+      if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
+        this.isPatternOpenOrNoplan = false;
+        this.isPatternGenerated = false;
+        this.isGenerateClicked = false;
       }
-      else if (event.data.type === 'loadable-pattern-no-response') {
-        if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
-          this.isPatternOpenOrNoplan = false;
-          this.isPatternGenerated = false;
-          this.isGenerateClicked = false;
-        }
-        this.noResponseMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
+      this.noPlanMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName)
+    }
+    else if (event.data.type === 'loadable-pattern-no-response') {
+      if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
+        this.isPatternOpenOrNoplan = false;
+        this.isPatternGenerated = false;
+        this.isGenerateClicked = false;
       }
-      this.setProcessingLoadableStudyActions(event.data?.pattern?.loadableStudyId, event.data.statusId);
-    });
+      this.noResponseMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedLoadableStudyName);
+    }
+    this.setProcessingLoadableStudyActions(event.data?.pattern?.loadableStudyId, event.data.statusId);
   }
 
   /**

@@ -605,7 +605,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         this.onUnitChangeBlocked();
       })
 
-    navigator.serviceWorker.addEventListener('message', this.swMessageHandler,);
+    navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
   }
 
   /**

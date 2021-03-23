@@ -18,7 +18,6 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
 
         return new Promise(async (resolve, reject) => {
             try {
-                localStorage.setItem('alertForVoyageEnd', 'false');
                 const logoKey = 'logoUrl';
                 const imageIndex = window.location.search.indexOf(logoKey);
                 let imgUri = window.location.search.substring(imageIndex + logoKey.length + 1);
