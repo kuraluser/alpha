@@ -138,7 +138,7 @@
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudyId && loadableStudies && loadableQuantityNew"
                     [permission]="cargoNominationTabPermission" [vesselId]="vesselId" [voyageId]="voyageId" [voyage]="selectedVoyage"
                     [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy"
-                    (cargoNominationUpdate)="cargoNominationUpdate($event)"></cpdss-portal-cargo-nomination>
+                    (cargoNominationUpdate)="cargoNominationUpdate($event)"  ></cpdss-portal-cargo-nomination>
                 <cpdss-portal-ports
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && loadableStudyId && loadableStudies && loadableQuantityNew" [permission]="portsTabPermission" [voyage]="selectedVoyage"
                     [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy">
