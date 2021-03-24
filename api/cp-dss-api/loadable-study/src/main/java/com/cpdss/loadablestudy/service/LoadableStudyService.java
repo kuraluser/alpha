@@ -730,9 +730,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(maxTemp -> builder.setMaxAirTemperature(valueOf(maxTemp)));
         Optional.ofNullable(entity.getMaxWaterTemperature())
             .ifPresent(maxTemp -> builder.setMaxWaterTemperature(valueOf(maxTemp)));
-
         Optional.ofNullable(entity.getLoadOnTop())
             .ifPresent(loadOnTop -> builder.setLoadOnTop(loadOnTop));
+        Optional.ofNullable(entity.getIsCargoNominationComplete())
+            .ifPresent(builder::setIsCargoNominationComplete);
+        Optional.ofNullable(entity.getIsPortsComplete()).ifPresent(builder::setIsPortsComplete);
+        Optional.ofNullable(entity.getIsOhqComplete()).ifPresent(builder::setIsOhqComplete);
+        Optional.ofNullable(entity.getIsObqComplete()).ifPresent(builder::setIsObqComplete);
 
         Set<LoadableStudyPortRotation> portRotations = entity.getPortRotations();
         if (null != portRotations && !portRotations.isEmpty()) {
@@ -830,11 +834,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       : new BigDecimal(request.getDraftMark()));
           this.loadableQuantityRepository.save(loadableQuantity.get(0));
         }
+        entity.setIsCargoNominationComplete(request.getIsCargoNominationComplete());
+        entity.setIsPortsComplete(request.getIsPortsComplete());
+        entity.setIsOhqComplete(request.getIsOhqComplete());
+        entity.setIsObqComplete(request.getIsObqComplete());
+
       } else {
         if (request.getDuplicatedFromId() == 0) {
           this.checkIfVoyageActive(request.getVoyageId());
         }
         entity = new LoadableStudy();
+        entity.setIsCargoNominationComplete(false);
+        entity.setIsPortsComplete(false);
+        entity.setIsOhqComplete(false);
+        entity.setIsObqComplete(true);
       }
 
       this.validateLoadableStudySaveRequest(request, entity);
@@ -7682,10 +7695,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
         // fetch the confirmed loadable study for active voyages
 
-        if (entity.getVoyageStatus() != null
-            && (STATUS_ACTIVE.equalsIgnoreCase(entity.getVoyageStatus().getName())
-                || STATUS_CLOSE.equalsIgnoreCase(entity.getVoyageStatus().getName()))) {
-
           Stream<LoadableStudy> loadableStudyStream =
               Optional.ofNullable(entity.getLoadableStudies())
                   .map(Collection::stream)
@@ -7758,7 +7767,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
             detailbuilder.setCharterer(loadableStudy.get().getCharterer());
           }
-        }
+        
 
         builder.addVoyages(detailbuilder.build());
       }
