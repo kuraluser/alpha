@@ -56,4 +56,7 @@ public class LoadableQuantityCommingleCargoDetails {
 
   private Long tankId;
   private String fillingRatio;
+  private String correctedUllage; // ullage(M)
+  private String rdgUllage;
+  private String correctionFactor;
 }

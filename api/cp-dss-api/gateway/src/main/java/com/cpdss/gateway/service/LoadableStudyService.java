@@ -1571,6 +1571,7 @@ public class LoadableStudyService {
               details.setQuantityMT(lpsdl.getWeight());
               details.setColorCode(lpsdl.getColorCode());
               details.setFillingRatio(lpsdl.getFillingRatio());
+              details.setIsCommingle(lpsdl.getIsCommingle());
               loadablePlanStowageDetails.add(details);
             });
     return loadablePlanStowageDetails;
@@ -3196,6 +3197,9 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getLoadingOrder()).ifPresent(builder::setLoadingOrder);
     Optional.ofNullable(lqccd.getTankId()).ifPresent(builder::setTankId);
     Optional.ofNullable(lqccd.getFillingRatio()).ifPresent(builder::setFillingRatio);
+    Optional.ofNullable(lqccd.getCorrectedUllage()).ifPresent(builder::setCorrectedUllage);
+    Optional.ofNullable(lqccd.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
+    Optional.ofNullable(lqccd.getRdgUllage()).ifPresent(builder::setRdgUllage);
     detailsBuilder.addLoadableQuantityCommingleCargoDetails(builder.build());
   }
 
@@ -3425,6 +3429,7 @@ public class LoadableStudyService {
               loadablePlanStowageDetails.setWeight(lpsd.getWeight());
               loadablePlanStowageDetails.setId(lpsd.getId());
               loadablePlanStowageDetails.setColorCode(lpsd.getColorCode());
+              loadablePlanStowageDetails.setIsCommingle(lpsd.getIsCommingle());
               response.getLoadablePlanStowageDetails().add(loadablePlanStowageDetails);
             });
   }
