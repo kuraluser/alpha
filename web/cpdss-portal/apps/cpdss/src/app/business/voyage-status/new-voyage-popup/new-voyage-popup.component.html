@@ -20,36 +20,61 @@
             </div>
           </div>
           <div class="form-group row">
-            <label for="voyage_no_label" class="col-md-6 col-form-label text-secondary">{{'VOYAGE_NO' | translate}}</label>
+            <label for="voyage_no_label"
+              class="col-md-6 col-form-label text-secondary">{{'VOYAGE_NO' | translate}}</label>
             <div class="col-md-6">
               <input type="text" class="form-control" id="voyage_no" formControlName="voyageNo"
                 (change)="trimVoyageNo($event)">
             </div>
-            <cpdss-portal-validation-error *ngIf="fieldError('voyageNo')" [errors]="fieldError('voyageNo')" [errorMessages]="errorMessages.voyageNo">
+            <cpdss-portal-validation-error *ngIf="fieldError('voyageNo')" [errors]="fieldError('voyageNo')"
+              [errorMessages]="errorMessages.voyageNo">
             </cpdss-portal-validation-error>
 
           </div>
           <div class="form-group row">
-            <label for="start_date_label" class="col-md-6 col-form-label text-secondary">{{'VOYAGE_POP_UP_START_DATE_LABEL' |
+            <label for="start_date_label" class="col-md-4 col-form-label text-secondary">{{'VOYAGE_POP_UP_START_DATE_LABEL' |
               translate}}</label>
-            <div class="col-md-6">
+            <div class="col-md-4">
               <p-calendar appendTo="body" inputId="start_date" formControlName="start_date" dateFormat="dd-mm-yy"
-                (onSelect)="onDateSelect($event)"   #startDateTime [minDate]="date">
+                (onSelect)="onDateSelect($event)" #startDateTime [minDate]="date">
               </p-calendar>
             </div>
             <cpdss-portal-validation-error *ngIf="fieldError('start_date')" [errors]="fieldError('start_date')"
               [errorMessages]="errorMessages.start_date">
             </cpdss-portal-validation-error>
+            <div class="col-md-4">
+              <p-dropdown [(ngModel)]="startDateTimeZone" id="new_voyage_start_date_time_zone"
+                styleClass="dropdown-w-180 ml-20" appendTo="body" formControlName="selectStartDateTimeZone"
+                [options]="globalTimeZones" optionLabel="timezone"
+                placeholder="{{'VOYAGE_POP_UP_START_DATE_TIME_ZONE_PLACEHOLDER'|translate}}" filter="true"
+                resetFilterOnHide="true" focusTrap>
+              </p-dropdown>
+            </div>
+            <cpdss-portal-validation-error *ngIf="fieldError('selectStartDateTimeZone')"
+              [errors]="fieldError('selectStartDateTimeZone')" [errorMessages]="errorMessages.selectStartDateTimeZone">
+            </cpdss-portal-validation-error>
           </div>
           <div class="form-group row">
-            <label for="end_date_label" class="col-md-6 col-form-label text-secondary">{{'VOYAGE_POP_UP_END_DATE_LABEL' |
+            <label for="end_date_label" class="col-md-4 col-form-label text-secondary">{{'VOYAGE_POP_UP_END_DATE_LABEL' |
               translate}}</label>
-            <div class="col-md-6">
+            <div class="col-md-4">
               <p-calendar appendTo="body" inputId="end_date" formControlName="end_date" dateFormat="dd-mm-yy"
-                (onSelect)="onDateSelect($event)"   #endDateTime [minDate]="date"> 
+                (onSelect)="onDateSelect($event)" #endDateTime [minDate]="date">
               </p-calendar>
             </div>
-            <cpdss-portal-validation-error *ngIf="fieldError('end_date')" [errors]="fieldError('end_date')" [errorMessages]="errorMessages.end_date">
+            <cpdss-portal-validation-error *ngIf="fieldError('end_date')" [errors]="fieldError('end_date')"
+              [errorMessages]="errorMessages.end_date">
+            </cpdss-portal-validation-error>
+            <div class="col-md-4">
+              <p-dropdown [(ngModel)]="endDateTimeZone" id="new_voyage_end_date_time_zone"
+                styleClass=" ml-20" appendTo="body" formControlName="selectEndDateTimeZone"
+                [options]="globalTimeZones" optionLabel="timezone"
+                placeholder="{{'VOYAGE_POP_UP_END_DATE_TIME_ZONE_PLACEHOLDER'|translate}}" filter="true"
+                resetFilterOnHide="true" focusTrap>
+              </p-dropdown>
+            </div>
+            <cpdss-portal-validation-error *ngIf="fieldError('selectEndDateTimeZone')"
+              [errors]="fieldError('selectEndDateTimeZone')" [errorMessages]="errorMessages.selectEndDateTimeZone">
             </cpdss-portal-validation-error>
           </div>
           <div class="row">
