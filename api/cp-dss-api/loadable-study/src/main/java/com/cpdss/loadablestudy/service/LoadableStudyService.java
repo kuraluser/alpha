@@ -7981,6 +7981,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 .ifPresent(loadedDate -> builder.setLoadedDate(formatter.format(loadedDate)));
             Optional.ofNullable(apiTempRecord.getYear()).ifPresent(builder::setLoadedYear);
             Optional.ofNullable(apiTempRecord.getMonth()).ifPresent(builder::setLoadedMonth);
+            Optional.ofNullable(apiTempRecord.getDate()).ifPresent(builder::setLoadedDay);
             Optional.ofNullable(apiTempRecord.getApi())
                 .ifPresent(api -> builder.setApi(String.valueOf(api)));
             Optional.ofNullable(apiTempRecord.getTemp())
