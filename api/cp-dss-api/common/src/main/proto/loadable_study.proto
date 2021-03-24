@@ -597,6 +597,10 @@ message LoadableStudyDetail{
 	repeated int64 deletedAttachments = 21;
 	bool loadOnTop=22;
 	string loadableStudyStatusLastModifiedTime = 23;
+	bool isCargoNominationComplete=24;
+	bool isPortsComplete=25;
+	bool isOhqComplete=26;
+	bool isObqComplete=27;
 }
 
 message LoadableStudyReply{

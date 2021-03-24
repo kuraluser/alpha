@@ -2,6 +2,7 @@
 package com.cpdss.gateway.service;
 
 import static java.lang.String.valueOf;
+import static java.util.stream.Collectors.*;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -157,16 +158,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
@@ -434,6 +426,11 @@ public class LoadableStudyService {
           0 != grpcReply.getDischargingCargoId() ? grpcReply.getDischargingCargoId() : null);
       dto.setCreatedFromId(grpcReply.getCreatedFromId());
       dto.setLoadOnTop(grpcReply.getLoadOnTop());
+      dto.setIsCargoNominationComplete(grpcReply.getIsCargoNominationComplete());
+      dto.setIsPortsComplete(grpcReply.getIsPortsComplete());
+      dto.setIsOhqComplete(grpcReply.getIsOhqComplete());
+      dto.setIsObqComplete(grpcReply.getIsObqComplete());
+
       list.add(dto);
     }
     LoadableStudyResponse response = new LoadableStudyResponse();
@@ -478,6 +475,11 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getVoyageId()).ifPresent(builder::setVoyageId);
     Optional.ofNullable(request.getId()).ifPresent(builder::setId);
     Optional.ofNullable(request.getCreatedFromId()).ifPresent(builder::setDuplicatedFromId);
+    Optional.ofNullable(request.getIsCargoNominationComplete())
+        .ifPresent(builder::setIsCargoNominationComplete);
+    Optional.ofNullable(request.getIsPortsComplete()).ifPresent(builder::setIsPortsComplete);
+    Optional.ofNullable(request.getIsOhqComplete()).ifPresent(builder::setIsOhqComplete);
+    Optional.ofNullable(request.getIsObqComplete()).ifPresent(builder::setIsObqComplete);
     for (MultipartFile file : files) {
       builder.addAttachments(
           LoadableStudyAttachment.newBuilder()
@@ -4320,26 +4322,35 @@ public class LoadableStudyService {
       LocalDateTime actualStartDate = null;
       LocalDateTime actualEndDate = null;
 
-      if (!detail.getActualStartDate().isEmpty() && !detail.getActualEndDate().isEmpty()) {
+      if (!detail.getActualStartDate().isEmpty()) {
         actualStartDate =
             LocalDateTime.from(
                 DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getActualStartDate()));
+
+        voyage.setActualStartDate(actualStartDate.toLocalDate());
+      }
+
+      if (!detail.getActualEndDate().isEmpty()) {
+
         actualEndDate =
             LocalDateTime.from(
                 DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getActualEndDate()));
 
-        voyage.setActualEndDate(actualStartDate.toLocalDate());
-        voyage.setActualStartDate(actualEndDate.toLocalDate());
+        voyage.setActualEndDate(actualEndDate.toLocalDate());
       }
 
-      if (!detail.getStartDate().isEmpty() && !detail.getEndDate().isEmpty()) {
+      if (!detail.getStartDate().isEmpty()) {
         plannedStartDate =
             LocalDateTime.from(
                 DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getStartDate()));
+
+        voyage.setPlannedStartDate(plannedStartDate.toLocalDate());
+      }
+
+      if (!detail.getEndDate().isEmpty()) {
         plannedEndDate =
             LocalDateTime.from(
                 DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(detail.getEndDate()));
-        voyage.setPlannedStartDate(plannedStartDate.toLocalDate());
         voyage.setPlannedEndDate(plannedEndDate.toLocalDate());
       }
 
@@ -4747,11 +4758,13 @@ public class LoadableStudyService {
                 cargoHistory.setLoadedMonth(cargoHistoryDetail.getLoadedMonth());
                 cargoHistory.setApi(
                     (cargoHistoryDetail.getApi() != null
+                            && cargoHistoryDetail.getApi().length() > 0
                             && !cargoHistoryDetail.getApi().trim().isEmpty())
                         ? new BigDecimal(cargoHistoryDetail.getApi())
                         : new BigDecimal("0"));
                 cargoHistory.setTemperature(
                     (cargoHistoryDetail.getTemperature() != null
+                            && cargoHistoryDetail.getTemperature().length() > 0
                             && !cargoHistoryDetail.getTemperature().trim().isEmpty())
                         ? new BigDecimal(cargoHistoryDetail.getTemperature())
                         : new BigDecimal("0"));
@@ -4761,6 +4774,7 @@ public class LoadableStudyService {
       List<CargoHistory> portHistoryList =
           cargoHistoryList.stream().limit(5L).collect(Collectors.toList());
       cargoHistoryResponse.setPortHistory(portHistoryList);
+      /*
       // Monthly history - group by loaded year and latest loaded date
       Map<Integer, Optional<CargoHistoryDetail>> monthlyHistoryMap =
           reply.getCargoHistoryList().stream()
@@ -4773,14 +4787,41 @@ public class LoadableStudyService {
                                   LocalDateTime.from(
                                       DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT)
                                           .parse(ch.getLoadedDate()))))));
-      if (!CollectionUtils.isEmpty(monthlyHistoryMap.values())) {
-        List<CargoHistoryDetail> monthlyHistoryList =
-            monthlyHistoryMap.values().stream()
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+      */
+
+      // 1. Group By Year (last five year) -> year, list of cargo history object
+      // 2. Sort key(list) by month and filter. (it is sorted by date, from db query)
+      Map<Integer, List<CargoHistoryDetail>> filteredMap =
+          reply.getCargoHistoryList().stream()
+              .collect(
+                  groupingBy(
+                      CargoHistoryDetail::getLoadedYear,
+                      mapping(
+                          Function.identity(),
+                          collectingAndThen(
+                              toList(),
+                              e ->
+                                  e.stream()
+                                      .sorted(
+                                          Comparator.comparingInt(
+                                              CargoHistoryDetail::getLoadedMonth))
+                                      .filter(distinctByKey(CargoHistoryDetail::getLoadedMonth))
+                                      .collect(toList())))));
+      filteredMap
+          .entrySet()
+          .forEach(
+              ch -> {
+                log.info(
+                    "Cargo history, api-temp: grouping info, cargo - {} year - {}, history size - {}",
+                    request.getCargoId(),
+                    ch.getKey(),
+                    ch.getValue().size());
+              });
+      if (!CollectionUtils.isEmpty(filteredMap.values())) {
+        List<CargoHistoryDetail> filteredList =
+            filteredMap.values().stream().flatMap(Collection::stream).collect(toList());
         List<CargoHistory> monthlyCargoHistory = new ArrayList<CargoHistory>();
-        monthlyHistoryList.forEach(
+        filteredList.forEach(
             cargoHistoryDetail -> {
               if (request != null
                   && !CollectionUtils.isEmpty(request.getLoadingPortIds())
@@ -4789,12 +4830,14 @@ public class LoadableStudyService {
                 cargoHistory.setLoadingPortId(cargoHistoryDetail.getLoadingPortId());
                 cargoHistory.setLoadedYear(cargoHistoryDetail.getLoadedYear());
                 cargoHistory.setLoadedMonth(cargoHistoryDetail.getLoadedMonth());
+                cargoHistory.setLoadedDay(cargoHistoryDetail.getLoadedDay());
                 cargoHistory.setApi(
-                    cargoHistoryDetail.getApi() != null
+                    cargoHistoryDetail.getApi() != null && cargoHistoryDetail.getApi().length() > 0
                         ? new BigDecimal(cargoHistoryDetail.getApi())
                         : new BigDecimal("0"));
                 cargoHistory.setTemperature(
                     cargoHistoryDetail.getTemperature() != null
+                            && cargoHistoryDetail.getTemperature().length() > 0
                         ? new BigDecimal(cargoHistoryDetail.getTemperature())
                         : new BigDecimal("0"));
                 monthlyCargoHistory.add(cargoHistory);
